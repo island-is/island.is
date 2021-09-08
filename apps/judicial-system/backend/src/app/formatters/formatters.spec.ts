@@ -10,7 +10,6 @@ import {
 
 import {
   formatProsecutorCourtDateEmailNotification,
-  formatCourtDateNotificationCondition,
   formatCustodyProvisions,
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
@@ -759,22 +758,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
   })
 })
 
-describe('formatCourtDateNotificationCondition', () => {
-  test('should format prison court date notification', () => {
-    // Arrange
-    const courtDate = new Date('2020-12-20T13:32')
-    const defenderEmail = 'defender@defenders.is'
-
-    // Act
-    const res = formatCourtDateNotificationCondition(courtDate, defenderEmail)
-
-    // Assert
-    expect(res).toBe(
-      'courtDate=20.12.2020 13:32,defenderEmail=defender@defenders.is',
-    )
-  })
-})
-
 describe('formatPrisonRulingEmailNotification', () => {
   test('should format prison ruling notification', () => {
     // Arrange
@@ -1070,7 +1053,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 })
 
 describe('stripHtmlTags', () => {
-  test('should format court date notification condition', () => {
+  test('should strip html tags', () => {
     // Arrange
     const html = 'bla<strong>blab</strong>la<br /><br />blabla'
 
