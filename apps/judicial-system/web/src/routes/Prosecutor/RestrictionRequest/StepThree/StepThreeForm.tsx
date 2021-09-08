@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { Box, Text, Input } from '@island.is/island-ui/core'
 import {
   formatAccusedByGender,
@@ -31,6 +32,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
 
 interface Props {
   workingCase: Case
@@ -51,13 +53,14 @@ const StepThreeForm: React.FC<Props> = (props) => {
   )
 
   const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
 
   return (
     <>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Dómkröfur og lagagrundvöllur
+            {formatMessage(rcDemands.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
