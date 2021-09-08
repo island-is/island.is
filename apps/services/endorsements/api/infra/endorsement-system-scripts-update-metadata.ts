@@ -14,6 +14,7 @@ export const serviceSetup = (services: {
     .namespace('endorsement-system')
     .image('services-endorsements-api')
     .env({
+      MAX_CONCURRENT: '2',
       TEMPORARY_VOTER_REGISTRY_API_URL: ref(
         (h) => `http://${h.svc(services.servicesTemporaryVoterRegistryApi)}`,
       ),
