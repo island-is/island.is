@@ -3,11 +3,15 @@ import { Text, Box, UploadFile } from '@island.is/island-ui/core'
 
 import * as styles from './FileList.treat'
 import cn from 'classnames'
-import { getFileSizeInKilo, getFileType } from '@island.is/financial-aid/shared'
+import {
+  ApplicationFile,
+  getFileSizeInKilo,
+  getFileType,
+} from '@island.is/financial-aid/shared'
 
 interface Props {
   className?: string
-  files?: UploadFile[]
+  files?: UploadFile[] | ApplicationFile[]
 }
 
 const FileList = ({ className, files }: Props) => {
@@ -39,6 +43,9 @@ const FileList = ({ className, files }: Props) => {
                 <Text variant="small">{`Skjal • ${getFileSizeInKilo(
                   item,
                 )} KB`}</Text>
+                {'created' in item && (
+                  <Text variant="small"> {`${item.created}`}</Text>
+                )}
               </div>
             </a>
           )
