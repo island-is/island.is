@@ -1,5 +1,4 @@
 import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-restricted-imports
-import { useIntl } from 'react-intl'
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
 import {
