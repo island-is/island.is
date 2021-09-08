@@ -232,7 +232,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
-        exit: 'setEmployerNationalRegistryId',
+        exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN,
           actionCard: {
@@ -286,6 +286,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'firstPeriodStart',
                 ],
                 externalData: ['children'],
+              },
+              write: {
+                answers: ['employerNationalRegistryId'],
               },
               actions: [
                 {
@@ -461,7 +464,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        exit: 'setEmployerNationalRegistryId',
+        exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
           actionCard: {
@@ -690,7 +693,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
-      setEmployerNationalRegistryId: assign((context, event) => {
+      setEmployerReviewerNationalRegistryId: assign((context, event) => {
         // Only set if employer gets assigned
         if (event.type !== DefaultEvents.ASSIGN) {
           return context
@@ -699,7 +702,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
 
-        set(answers, 'employer.nationalRegistryId', application.assignees[0])
+        set(
+          answers,
+          'employerReviewerNationalRegistryId',
+          application.assignees[0],
+        )
 
         return context
       }),
