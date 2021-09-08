@@ -1,10 +1,15 @@
 import { uuid } from 'uuidv4'
+import { Op } from 'sequelize'
 
 import { Test } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/sequelize'
 import { ForbiddenException, NotFoundException } from '@nestjs/common'
 
-import { CaseState, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseFileState,
+  CaseState,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import { LoggingModule } from '@island.is/logging'
 
@@ -159,17 +164,18 @@ describe('FileController', () => {
       describe('Given some files', () => {
         const mockFiles = [{ id: uuid() }, { id: uuid() }]
 
-        beforeEach(() => {
+        it('should get all the files (not deleted)', async () => {
           fileModel.findAll.mockResolvedValueOnce(mockFiles)
-        })
 
-        it('should get all the files', async () => {
           const files = await fileController.getAllCaseFiles(caseId, user)
 
           expect(files).toStrictEqual(mockFiles)
 
           expect(fileModel.findAll).toHaveBeenCalledWith({
-            where: { caseId },
+            where: {
+              caseId,
+              state: { [Op.not]: CaseFileState.DELETED },
+            },
             order: [['created', 'DESC']],
           })
         })
@@ -239,7 +245,7 @@ describe('FileController', () => {
     })
   })
 
-  describe('Given an completed case', () => {
+  describe('Given a completed case', () => {
     const caseId = uuid()
 
     beforeEach(() => {

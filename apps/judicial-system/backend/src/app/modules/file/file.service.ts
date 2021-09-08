@@ -1,4 +1,5 @@
 import { uuid } from 'uuidv4'
+import { Op } from 'sequelize'
 
 import {
   BadRequestException,
@@ -10,6 +11,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { CaseFileState } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from './awsS3.service'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
@@ -89,7 +91,10 @@ export class FileService {
     this.logger.debug(`Getting all files for case ${caseId}`)
 
     return this.fileModel.findAll({
-      where: { caseId },
+      where: {
+        caseId,
+        state: { [Op.not]: CaseFileState.DELETED },
+      },
       order: [['created', 'DESC']],
     })
   }
