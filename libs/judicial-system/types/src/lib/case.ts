@@ -115,6 +115,7 @@ export interface Case {
   leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
+  translator?: string
   requestedValidToDate?: string
   demands?: string
   lawsBroken?: string
@@ -203,6 +204,7 @@ export interface UpdateCase {
   leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
+  translator?: string
   requestedValidToDate?: string
   demands?: string
   lawsBroken?: string
