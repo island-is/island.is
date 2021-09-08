@@ -4,7 +4,7 @@ import {
   StatusLayout,
   Footer,
 } from '@island.is/financial-aid-web/osk/src/components'
-import { FileList } from '../../../../web-shared/src/components'
+import { FileList } from '@island.is/financial-aid-web/shared/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osksrc/components/FormProvider/FormProvider'
 import { Box, Text } from '@island.is/island-ui/core'
 import * as styles from './fileUpload.treat'

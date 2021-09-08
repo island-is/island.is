@@ -30,7 +30,8 @@ export class UserResolver {
     private readonly logger: Logger,
   ) {}
 
-  private fakeUsers: { [key: string]: CurrentApplication } = {
+  private fakeUsers: { [key: string]: CurrentApplication | null } = {
+    '0000000000': null,
     '0000000001': {
       id: 'dbfc6ff1-58e0-4815-8fa9-1e06ddace1c3',
       state: ApplicationState.INPROGRESS,

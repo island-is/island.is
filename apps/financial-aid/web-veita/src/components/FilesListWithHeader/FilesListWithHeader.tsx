@@ -2,7 +2,7 @@ import React from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import { ApplicationFile } from '@island.is/financial-aid/shared'
-import { FileList } from '../../../../web-shared/src/components'
+import { FileList } from '@island.is/financial-aid-web/shared/src/components'
 import * as styles from './FilesListWithHeader.treat'
 
 interface Props {
