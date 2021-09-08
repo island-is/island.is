@@ -1,8 +1,8 @@
 import React from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import { ApplicationFile } from '@island.is/financial-aid/shared/index'
-import FileList from '@island.is/financial-aid/shared/components/FileList/FileList'
+import { ApplicationFile } from '@island.is/financial-aid/shared/lib'
+import FileList from '@island.is/financial-aid/shared/components'
 import * as styles from './FilesListWithHeader.treat'
 
 interface Props {

@@ -4,10 +4,7 @@ import { Box } from '@island.is/island-ui/core'
 import * as styles from './OptionsModal.treat'
 import cn from 'classnames'
 
-import {
-  getState,
-  ApplicationState,
-} from '@island.is/financial-aid/shared/index'
+import { getState, ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   state: ApplicationState

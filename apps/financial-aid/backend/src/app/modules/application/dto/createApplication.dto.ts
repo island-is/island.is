@@ -14,7 +14,7 @@ import {
   Employment,
   ApplicationState,
   CreateApplicationFile,
-} from '@island.is/financial-aid/shared/index'
+} from '@island.is/financial-aid/shared/lib'
 
 export class CreateApplicationDto {
   @IsNotEmpty()

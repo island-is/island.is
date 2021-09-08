@@ -8,8 +8,8 @@ import {
   ApplicationState,
   CurrentApplication,
   HomeCircumstances,
-} from '@island.is/financial-aid/shared/index'
-import type { User } from '@island.is/financial-aid/shared/index'
+} from '@island.is/financial-aid/shared/lib'
+import type { User } from '@island.is/financial-aid/shared/lib'
 import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,

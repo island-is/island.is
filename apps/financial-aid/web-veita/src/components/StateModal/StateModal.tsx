@@ -18,7 +18,7 @@ import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/sr
 import {
   Application,
   ApplicationState,
-} from '@island.is/financial-aid/shared/index'
+} from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   isVisible: boolean

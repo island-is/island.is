@@ -9,7 +9,7 @@ import { FormContext } from '@island.is/financial-aid-web/osk/src/components/For
 import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import { NavigationProps } from '@island.is/financial-aid/shared/index'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/useFileUpload'
 
 const IncomeFilesForm = () => {

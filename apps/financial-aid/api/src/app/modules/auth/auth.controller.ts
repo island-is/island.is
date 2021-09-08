@@ -24,7 +24,7 @@ import {
   COOKIE_EXPIRES_IN_MILLISECONDS,
   CSRF_COOKIE_NAME,
   AllowedFakeUsers,
-} from '@island.is/financial-aid/shared/index'
+} from '@island.is/financial-aid/shared/lib'
 
 import { SharedAuthService } from '@island.is/financial-aid/auth'
 

@@ -1,9 +1,9 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 
-import type { MunicipalitySettings } from '@island.is/financial-aid/shared/index'
+import type { MunicipalitySettings } from '@island.is/financial-aid/shared/lib'
 
-import { Municipality } from '@island.is/financial-aid/shared/index'
+import { Municipality } from '@island.is/financial-aid/shared/lib'
 
 @ObjectType()
 export class MunicipalityModel implements Municipality {

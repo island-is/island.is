@@ -5,7 +5,7 @@ import {
   CreateSignedUrlMutation,
   CreateApplicationFiles,
 } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
-import { FileType, SignedUrl } from '@island.is/financial-aid/shared/index'
+import { FileType, SignedUrl } from '@island.is/financial-aid/shared/lib'
 
 export const useFileUpload = (formFiles: UploadFile[]) => {
   const [files, _setFiles] = useState<UploadFile[]>([])

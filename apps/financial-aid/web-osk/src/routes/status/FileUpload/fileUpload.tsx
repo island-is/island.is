@@ -12,7 +12,7 @@ import {
   Application,
   ApplicationState,
   FileType,
-} from '@island.is/financial-aid/shared/index'
+} from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
 import { UpdateApplicationMutation } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 

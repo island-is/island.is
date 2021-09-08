@@ -10,7 +10,7 @@ import {
 import {
   ApplicationState,
   Application,
-} from '@island.is/financial-aid/shared/index'
+} from '@island.is/financial-aid/shared/lib'
 
 import { GetApplicationsQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 

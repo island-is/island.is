@@ -5,7 +5,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   COOKIE_EXPIRES_IN_SECONDS,
   User,
-} from '@island.is/financial-aid/shared/index'
+} from '@island.is/financial-aid/shared/lib'
 
 import { Credentials } from './auth.types'
 

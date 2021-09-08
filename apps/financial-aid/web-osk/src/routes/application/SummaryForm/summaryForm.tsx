@@ -32,7 +32,7 @@ import {
   getEmploymentStatus,
   formatPhoneNumber,
   formatNationalId,
-} from '@island.is/financial-aid/shared/index'
+} from '@island.is/financial-aid/shared/lib'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/useApplication'
 

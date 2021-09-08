@@ -17,7 +17,7 @@ import {
   Timeline,
 } from '@island.is/financial-aid-web/osk/src/components'
 
-import { getActiveTypeForStatus } from '@island.is/financial-aid/shared/index'
+import { getActiveTypeForStatus } from '@island.is/financial-aid/shared/lib'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
