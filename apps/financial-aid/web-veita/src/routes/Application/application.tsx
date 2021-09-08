@@ -216,10 +216,6 @@ const ApplicationProfile = () => {
         content: '??',
       },
       {
-        title: 'Fjöldi barna',
-        content: '??',
-      },
-      {
         title: 'Búsetuform',
         content:
           getHomeCircumstances[
