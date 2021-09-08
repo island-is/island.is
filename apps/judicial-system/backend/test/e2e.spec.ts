@@ -356,6 +356,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.requestedCourtDate ?? null).toBe(
     caseTwo.requestedCourtDate ?? null,
   )
+  expect(caseOne.translator ?? null).toBe(caseTwo.translator ?? null)
   expect(caseOne.requestedValidToDate ?? null).toBe(
     caseTwo.requestedValidToDate ?? null,
   )

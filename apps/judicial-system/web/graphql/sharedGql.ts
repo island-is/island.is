@@ -27,6 +27,7 @@ export const CaseQuery = gql`
       leadInvestigator
       arrestDate
       requestedCourtDate
+      translator
       requestedValidToDate
       demands
       lawsBroken

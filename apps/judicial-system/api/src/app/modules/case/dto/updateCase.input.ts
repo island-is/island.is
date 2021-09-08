@@ -90,6 +90,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly translator?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly demands?: string
 
   @Allow()

@@ -53,14 +53,18 @@ export const getAppealDate = (
     accusedAppealDecision === CaseAppealDecision.APPEAL
   ) {
     return rulingDate
+  } else if (accusedPostponedAppealDate && !prosecutorPostponedAppealDate) {
+    return accusedPostponedAppealDate
+  } else if (prosecutorPostponedAppealDate && !accusedPostponedAppealDate) {
+    return prosecutorPostponedAppealDate
+  } else {
+    const compareDates = compareAsc(
+      new Date(prosecutorPostponedAppealDate),
+      new Date(accusedPostponedAppealDate),
+    )
+
+    return compareDates === 1
+      ? accusedPostponedAppealDate
+      : prosecutorPostponedAppealDate
   }
-
-  const compareDates = compareAsc(
-    new Date(prosecutorPostponedAppealDate),
-    new Date(accusedPostponedAppealDate),
-  )
-
-  return compareDates === 1
-    ? accusedPostponedAppealDate
-    : prosecutorPostponedAppealDate
 }
