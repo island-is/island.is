@@ -490,8 +490,10 @@ const Auctions: Screen<AuctionsProps> = ({
         auction.lotId?.toLowerCase().includes(query) ||
         auction.lotItems?.toLowerCase().includes(query) ||
         auction.office?.toLowerCase().includes(query) ||
-        auction.location?.toLowerCase().includes(query))
-    )
+        auction.location?.toLowerCase().includes(query) ||
+        (auction.lotType === LOT_TYPES.REAL_ESTATE && auction.respondent?.toLowerCase().includes(query)) ||
+        (auction.lotType === LOT_TYPES.REAL_ESTATE && auction.petitioners?.toLowerCase().includes(query)))
+      )
   })
 
   return (
@@ -627,6 +629,8 @@ const Auctions: Screen<AuctionsProps> = ({
           !error &&
           filteredAuctions.slice(0, showCount).map((auction) => {
             const auctionDate = new Date(auction.auctionDate)
+            const auctionPetitioners = auction.petitioners?.split(',')
+            const auctionRespondents = auction.respondent?.split(',')
 
             return (
               <Box
@@ -666,6 +670,22 @@ const Auctions: Screen<AuctionsProps> = ({
                         linkText={auction.lotId}
                         href={`https://www.skra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname=${auction.lotId}&submitbutton=Leita`}
                       />
+                    )}
+
+                  {/* Real Estate respondents */}
+                  {auctionRespondents &&
+                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
+                      <Text paddingTop={2} paddingBottom={1}>
+                        {auctionRespondents. length > 1 ? 'Þinglýstir eigendur' : 'Þinglýstur eigandi'}: {auctionRespondents.join(', ')}
+                      </Text>
+                    )}
+
+                  {/* Real Estate petitioners */}
+                  {auctionPetitioners &&
+                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
+                      <Text paddingBottom={1}>
+                        {auctionPetitioners.length > 1 ? 'Gerðarbeiðendur' : 'Gerðarbeiðandi'}: {auctionPetitioners.join(', ')}
+                      </Text>
                     )}
 
                   {/* Vehicle link */}
