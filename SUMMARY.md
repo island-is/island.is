@@ -85,7 +85,6 @@
 - [API](apps/api/README.md)
 - [Application System](apps/application-system/README.md)
 - [Financial Aid System for Samband Sveitarfélaga](apps/financial-aid/README.md)
-  - [Financial Aid Web Shared](apps/financial-aid/web-shared/README.md)
 - [[DEPRECATED] Gjafakort](apps/gjafakort/README.md)
 - [Judicial System](apps/judicial-system/README.md)
 - [Reference Backend](apps/reference-backend/README.md)

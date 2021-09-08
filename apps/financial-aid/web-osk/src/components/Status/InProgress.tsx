@@ -9,7 +9,7 @@ import {
   CurrentApplication,
   months,
   getState,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/index'
 import {
   Timeline,
   Estimation,

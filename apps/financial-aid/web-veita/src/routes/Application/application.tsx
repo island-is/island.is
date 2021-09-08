@@ -31,7 +31,7 @@ import {
   calculateAidFinalAmount,
   formatPhoneNumber,
   FileType,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/index'
 
 import format from 'date-fns/format'
 

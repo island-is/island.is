@@ -3,7 +3,7 @@ import fetch from 'isomorphic-fetch'
 import { Injectable } from '@nestjs/common'
 import { uuid } from 'uuidv4'
 
-import { User, RolesRule } from '@island.is/financial-aid/shared'
+import { User, RolesRule } from '@island.is/financial-aid/shared/index'
 
 import { environment } from '../../../environments'
 

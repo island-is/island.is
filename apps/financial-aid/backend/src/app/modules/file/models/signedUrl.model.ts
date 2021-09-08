@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { SignedUrl } from '@island.is/financial-aid/shared'
+import { SignedUrl } from '@island.is/financial-aid/shared/index'
 
 export class SignedUrlModel implements SignedUrl {
   @ApiProperty()

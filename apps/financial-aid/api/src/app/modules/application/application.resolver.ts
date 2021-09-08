@@ -16,7 +16,7 @@ import { ApplicationInput } from './dto'
 import {
   Application,
   ApplicationFilters,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/index'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => ApplicationModel)

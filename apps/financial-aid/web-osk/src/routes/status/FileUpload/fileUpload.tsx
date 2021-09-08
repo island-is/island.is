@@ -6,15 +6,15 @@ import {
   StatusLayout,
   Files,
 } from '@island.is/financial-aid-web/osk/src/components'
-import { FormContext } from '@island.is/financial-aid-web/osksrc/components/FormProvider/FormProvider'
-import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFileUpload'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/useFileUpload'
 import {
   Application,
   ApplicationState,
   FileType,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/index'
 import { useMutation } from '@apollo/client'
-import { UpdateApplicationMutation } from '@island.is/financial-aid-web/oskgraphql/sharedGql'
+import { UpdateApplicationMutation } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)

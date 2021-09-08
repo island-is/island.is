@@ -4311,28 +4311,6 @@
         "docker-next": {}
       }
     },
-    "financial-aid-web-shared": {
-      "root": "apps/financial-aid/web-shared",
-      "sourceRoot": "apps/financial-aid/web-shared/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "apps/financial-aid/web-shared/tsconfig.lib.json",
-              "apps/financial-aid/web-shared/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/financial-aid/web-shared/**/*"
-            ]
-          }
-        }
-      }
-    },
     "gjafakort-api": {
       "root": "apps/gjafakort/api",
       "sourceRoot": "apps/gjafakort/api/src",

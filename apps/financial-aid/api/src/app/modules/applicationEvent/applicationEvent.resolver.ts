@@ -13,7 +13,7 @@ import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
 
 import { ApplicationEventInput } from './dto'
 
-import { ApplicationEvent } from '@island.is/financial-aid/shared'
+import { ApplicationEvent } from '@island.is/financial-aid/shared/index'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => ApplicationEventModel)

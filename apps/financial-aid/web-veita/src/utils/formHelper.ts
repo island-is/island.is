@@ -4,7 +4,7 @@ import differenceInDays from 'date-fns/differenceInDays'
 import differenceInYears from 'date-fns/differenceInYears'
 import differenceInWeeks from 'date-fns/differenceInWeeks'
 
-import { ApplicationState } from '@island.is/financial-aid/shared'
+import { ApplicationState } from '@island.is/financial-aid/shared/index'
 
 export const isPluralInIcelandic = (value: number): boolean =>
   value % 10 !== 1 || value % 100 === 11

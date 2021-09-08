@@ -4,7 +4,7 @@ import {
   HomeCircumstances,
   ApplicationState,
   CurrentApplication,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/index'
 
 @ObjectType()
 export class CurrentApplicationModel implements CurrentApplication {

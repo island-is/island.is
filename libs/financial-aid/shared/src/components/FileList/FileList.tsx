@@ -7,7 +7,7 @@ import {
   ApplicationFile,
   getFileSizeInKilo,
   getFileType,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/index'
 
 interface Props {
   className?: string
