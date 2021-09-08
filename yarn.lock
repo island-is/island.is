@@ -23758,10 +23758,10 @@ react-syntax-highlighter@^13.5.3:
     prismjs "^1.21.0"
     refractor "^3.1.0"
 
-react-table@7.6.0:
-  version "7.6.0"
-  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.6.0.tgz#83d765b96505b5332d108a2e0c27ab653f5a78c3"
-  integrity sha512-16kRTypBWz9ZwLnPWA8hc3eIC64POzO9GaMBiKaCcVM+0QOQzt0G7ebzGUM8SW0CYUpVM+glv1kMXrWj9tr3Sw==
+react-table@7.7.0:
+  version "7.7.0"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.7.0.tgz#e2ce14d7fe3a559f7444e9ecfe8231ea8373f912"
+  integrity sha512-jBlj70iBwOTvvImsU9t01LjFjy4sXEtclBovl3mTiqjz23Reu0DKnRza4zlLtOPACx6j2/7MrQIthIK1Wi+LIA==
 
 react-tabs@^3.1.1:
   version "3.2.1"
@@ -27106,10 +27106,10 @@ thunky@^1.0.2:
   resolved "https://registry.yarnpkg.com/thunky/-/thunky-1.1.0.tgz#5abaf714a9405db0504732bbccd2cedd9ef9537d"
   integrity sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA==
 
-timeout-signal@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/timeout-signal/-/timeout-signal-1.0.0.tgz#0b66a4a68e9a5260e9caa31827719d3818fdaa0c"
-  integrity sha512-4NiCwGDOjJNWFWITjVgFRySWkqUEvZZKD+FCk8gWL+310Qzu0Crny6RITQXY7pUkoVDc3W+sY8GUn4Ld7Nha6Q==
+timeout-signal@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/timeout-signal/-/timeout-signal-1.1.0.tgz#b3805c4b9422c239d87d5e69b20df7bc19b21da5"
+  integrity sha512-fuWY4tM1njcHCiOB7XkTmP0EOxzBkPbuQwPN+ZCzM6G0Tj4fMVgEffG/OPgiNUX48o+FhQEa2Oh4qjEDBCy5WQ==
   dependencies:
     abort-controller "^3.0.0"
 

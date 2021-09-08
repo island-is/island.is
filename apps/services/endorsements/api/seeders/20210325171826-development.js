@@ -1,23 +1,39 @@
 'use strict'
 const faker = require('faker')
+const {
+  getGenericEndorsementList,
+  getGenericEndorsement,
+} = require('../test/seedHelpers')
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    const endorsementIds = [
-      '9c0b4106-4213-43be-a6b2-ff324f4ba0c1',
-      '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
-      '9c0b4106-4213-43be-a6b2-ff324f4ba0c3',
-      '9c0b4106-4213-43be-a6b2-ff324f4ba0c4',
+    const fakePeople = [
+      '0101302399',
+      '0101307789',
+      '0101302209',
+      '0101302479',
+      '0101304339',
+      '0101304929',
+      '0101303019',
+      '0101302559',
+      '0101302719',
+      '0101303369',
+      '0101302639',
+      '0101305069',
+      '0101302989',
+      '0101302129',
     ]
 
     const endorsementLists = [
       {
-        id: endorsementIds[0],
-        title: faker.lorem.words(2),
-        description: faker.lorem.paragraph(1),
-        closed_date: null,
+        ...getGenericEndorsementList(),
         endorsement_meta: ['fullName', 'address'],
-        tags: ['partyApplicationSudurkjordaemi2021', 'partyLetter2021'],
+        endorsement_metadata: JSON.stringify([
+          { field: 'fullName' },
+          { field: 'address', keepUpToDate: true },
+          { field: 'voterRegion', keepUpToDate: true },
+        ]),
+        tags: ['partyApplicationSudurkjordaemi2021'],
         validation_rules: JSON.stringify([
           {
             type: 'minAgeAtDate',
@@ -31,16 +47,16 @@ module.exports = {
         meta: JSON.stringify({
           applicationId: 'someId',
         }),
-        created: new Date(),
-        modified: new Date(),
       },
       {
-        id: endorsementIds[1],
-        title: faker.lorem.words(3),
-        description: faker.lorem.paragraph(1),
-        closed_date: null,
-        tags: ['partyApplicationNordausturkjordaemi2021', 'partyLetter2021'],
+        ...getGenericEndorsementList(),
+        tags: ['partyApplicationNordausturkjordaemi2021'],
         endorsement_meta: ['fullName'],
+        endorsement_metadata: JSON.stringify([
+          { field: 'fullName' },
+          { field: 'address', keepUpToDate: true },
+          { field: 'voterRegion', keepUpToDate: true },
+        ]),
         validation_rules: JSON.stringify([
           {
             type: 'minAgeAtDate',
@@ -54,16 +70,17 @@ module.exports = {
         meta: JSON.stringify({
           applicationId: 'someId',
         }),
-        created: new Date(),
-        modified: new Date(),
       },
       {
-        id: endorsementIds[2],
-        title: faker.lorem.words(3),
-        description: faker.lorem.paragraph(1),
+        ...getGenericEndorsementList(),
         closed_date: new Date(),
-        tags: ['partyApplicationNordausturkjordaemi2021', 'partyLetter2021'],
+        tags: ['partyLetter2021'],
         endorsement_meta: ['fullName', 'address'],
+        endorsement_metadata: JSON.stringify([
+          { field: 'fullName' },
+          { field: 'address', keepUpToDate: true },
+          { field: 'voterRegion', keepUpToDate: true },
+        ]),
         validation_rules: JSON.stringify([
           {
             type: 'minAgeAtDate',
@@ -89,16 +106,16 @@ module.exports = {
         meta: JSON.stringify({
           applicationId: 'someId',
         }),
-        created: new Date(),
-        modified: new Date(),
       },
       {
-        id: endorsementIds[3],
-        title: faker.lorem.words(3),
-        description: faker.lorem.paragraph(1),
-        closed_date: null,
-        tags: ['partyApplicationNordausturkjordaemi2021', 'partyLetter2021'],
+        ...getGenericEndorsementList(),
+        tags: ['partyLetter2021'],
         endorsement_meta: ['fullName', 'address'],
+        endorsement_metadata: JSON.stringify([
+          { field: 'fullName' },
+          { field: 'address', keepUpToDate: true },
+          { field: 'voterRegion', keepUpToDate: true },
+        ]),
         validation_rules: JSON.stringify([
           {
             type: 'minAgeAtDate',
@@ -124,53 +141,45 @@ module.exports = {
         meta: JSON.stringify({
           applicationId: 'someId',
         }),
-        created: new Date(),
-        modified: new Date(),
       },
+      // lets add some random lists
+      ...Array(30)
+        .fill()
+        .map(() => getGenericEndorsementList()),
     ]
 
     await queryInterface.bulkInsert('endorsement_list', endorsementLists)
 
-    const endorsements = new Array(10).fill().map(() => ({
-      id: faker.random.uuid(),
-      endorser: faker.phone.phoneNumber('##########'),
-      endorsement_list_id: faker.random.arrayElement(endorsementIds),
-      meta: JSON.stringify({
-        fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
-      }),
-      created: new Date(),
-      modified: new Date(),
-    }))
-    endorsements.push({
-      id: faker.random.uuid(),
-      endorser: '0000000000',
-      endorsement_list_id: endorsementIds[0],
-      meta: JSON.stringify({
-        fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
-      }),
-      created: new Date(),
-      modified: new Date(),
-    })
-    endorsements.push({
-      id: faker.random.uuid(),
-      endorser: '0000000000',
-      endorsement_list_id: endorsementIds[1],
-      meta: JSON.stringify({
-        fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
-      }),
-      created: new Date(),
-      modified: new Date(),
-    })
-    endorsements.push({
-      id: faker.random.uuid(),
-      endorser: '0000000000',
-      endorsement_list_id: endorsementIds[2],
-      meta: JSON.stringify({
-        fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
-      }),
-      created: new Date(),
-      modified: new Date(),
-    })
+    const endorsementIds = [
+      endorsementLists[0].id,
+      endorsementLists[1].id,
+      endorsementLists[2].id,
+      endorsementLists[3].id,
+    ]
+
+    const endorsements = [
+      ...fakePeople.map((fakeNationalId) => ({
+        ...getGenericEndorsement(),
+        endorsement_list_id: faker.random.arrayElement(endorsementIds),
+        endorser: fakeNationalId,
+        meta: JSON.stringify({
+          fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
+          address: {
+            city: faker.random.words(2),
+            postalCode: faker.phone.phoneNumber('###'),
+            streetAddress: `${faker.random.word()} ${faker.phone.phoneNumber(
+              '##',
+            )}`,
+          },
+          signedTags: [],
+          bulkEndorsement: faker.random.boolean(),
+          voterRegion: {
+            voterRegionNumber: faker.phone.phoneNumber('#'),
+            voterRegionName: faker.random.word(),
+          },
+        }),
+      })),
+    ]
 
     await queryInterface.bulkInsert('endorsement', endorsements)
   },
