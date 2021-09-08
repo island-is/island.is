@@ -174,17 +174,26 @@ export class AuthController {
     return res.json({ logout: true })
   }
 
+  getReturnUrl = (service: string, applicationId: string) => {
+    switch (true) {
+      case service === 'veita':
+        return ReturnUrl.ADMIN
+      case applicationId != undefined:
+        return `${ReturnUrl.MYPAGE}/${applicationId}`
+      default:
+        return ReturnUrl.APPLICATION
+    }
+  }
+
   private logInUser(user: User, res: Response) {
     const csrfToken = new Entropy({ bits: 128 }).string()
 
     const jwtToken = this.sharedAuthService.signJwt(user, csrfToken)
 
-    if (res.req?.query.service === 'veita') {
-      user.returnUrl = ReturnUrl.ADMIN
-    }
-    if (res.req?.query.applicationId) {
-      user.returnUrl = ReturnUrl.MYPAGE
-    }
+    const returnUrl = this.getReturnUrl(
+      res.req?.query.service as string,
+      res.req?.query.applicationId as string,
+    )
 
     res
       .cookie(CSRF_COOKIE.name, csrfToken, {
@@ -195,10 +204,6 @@ export class AuthController {
         ...ACCESS_TOKEN_COOKIE.options,
         maxAge: COOKIE_EXPIRES_IN_MILLISECONDS,
       })
-      .redirect(
-        `${user.returnUrl}${
-          res.req?.query.applicationId ? `/${res.req.query.applicationId}` : ''
-        }`,
-      )
+      .redirect(returnUrl)
   }
 }
