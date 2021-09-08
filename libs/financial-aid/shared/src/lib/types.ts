@@ -36,6 +36,12 @@ export enum RolesRule {
   VEITA = 'veita',
 }
 
+export enum ReturnUrl {
+  APPLICATION = '/umsokn',
+  MYPAGE = '/stada',
+  ADMIN = '/nymal',
+}
+
 export enum FileType {
   TAXRETURN = 'TaxReturn',
   INCOME = 'Income',
@@ -177,6 +183,7 @@ export interface User {
   folder: string
   service: RolesRule
   currentApplication?: CurrentApplication
+  returnUrl: ReturnUrl
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
