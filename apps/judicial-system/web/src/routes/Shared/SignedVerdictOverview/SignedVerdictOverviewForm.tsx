@@ -288,8 +288,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE ||
         workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) &&
         workingCase.rulingDate &&
-        (user?.role === UserRole.JUDGE ||
-          user?.role === UserRole.REGISTRAR) && (
+        (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR) &&
+        user?.institution?.type !== InstitutionType.HIGH_COURT && (
           <Box marginBottom={7}>
             <AppealSection
               workingCase={workingCase}
