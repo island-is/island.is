@@ -289,8 +289,8 @@ interface LotTypeOption {
 
 const LOT_TYPES_OPTIONS: LotTypeOption[] = [
   {
-    filterLabel: 'Allar tegundir',
-    value: 'allar-tegundir',
+    filterLabel: 'Öll opin mál',
+    value: 'oll-opin-mal',
     lotType: '',
     auctionType: '',
   },
@@ -359,6 +359,12 @@ const LOT_TYPES_OPTIONS: LotTypeOption[] = [
     value: 'krofurettindi',
     lotType: LOT_TYPES.CLAIMS,
     auctionType: '',
+  },
+  {
+    filterLabel: 'Sölu lokið',
+    value: 'solu-lokid',
+    lotType: '',
+    auctionType: 'Sölu lokið',
   },
 ]
 
