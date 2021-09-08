@@ -186,11 +186,6 @@ export class AuthController {
       user.returnUrl = ReturnUrl.MYPAGE
     }
 
-    const returnURl =
-      user.returnUrl === ReturnUrl.MYPAGE
-        ? ReturnUrl.MYPAGE + '/' + res.req?.query.applicationId
-        : user.returnUrl
-
     res
       .cookie(CSRF_COOKIE.name, csrfToken, {
         ...CSRF_COOKIE.options,
@@ -200,6 +195,10 @@ export class AuthController {
         ...ACCESS_TOKEN_COOKIE.options,
         maxAge: COOKIE_EXPIRES_IN_MILLISECONDS,
       })
-      .redirect(returnURl)
+      .redirect(
+        `${user.returnUrl}${
+          res.req?.query.applicationId ? `/${res.req.query.applicationId}` : ''
+        }`,
+      )
   }
 }
