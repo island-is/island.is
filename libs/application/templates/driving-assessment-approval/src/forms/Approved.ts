@@ -1,6 +1,6 @@
 import {
   buildForm,
-  buildDescriptionField,
+  buildCustomField,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -10,10 +10,10 @@ export const Approved: Form = buildForm({
   title: 'Samþykkt',
   mode: FormModes.APPLYING,
   children: [
-    buildDescriptionField({
+    buildCustomField({
       id: 'approved',
+      component: 'Congratulations',
       title: 'Móttekið',
-      description: 'Akstursmat móttekið',
     }),
   ],
 })

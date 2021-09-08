@@ -56,7 +56,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE,
-  name: 'Umsókn um ökuskilríki',
+  name: m.applicationForDrivingLicense,
   dataSchema,
   readyForProduction: true,
   stateMachineConfig: {
@@ -64,7 +64,7 @@ const template: ApplicationTemplate<
     states: {
       [States.DRAFT]: {
         meta: {
-          name: 'Umsókn um ökuskilríki',
+          name: m.applicationForDrivingLicense.defaultMessage,
           progress: 0.33,
           lifecycle: DefaultStateLifeCycle,
           roles: [
