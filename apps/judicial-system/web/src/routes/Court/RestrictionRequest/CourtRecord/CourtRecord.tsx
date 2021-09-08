@@ -105,6 +105,10 @@ export const CourtRecord: React.FC = () => {
         )}`
       }
 
+      if (wc.translator) {
+        attendees += `\n${wc.translator} túlkur`
+      }
+
       return attendees
     }
 
