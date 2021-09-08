@@ -73,7 +73,7 @@ export const paymentPlan = {
     },
     paymentModeTitle: {
       id: `pdpp.application:section.paymentPlan.paymentModeTitle`,
-      defaultMessage: `Veldu greiðsludreifingu skuldar`,
+      defaultMessage: `Greiðsludreifing skuldar`,
       description: `Payment mode label`,
     },
     payByAmount: {
@@ -130,9 +130,19 @@ export const paymentPlan = {
     distributionDataTitle: {
       id: `pdpp.application:section.paymentPlan.distributionDataTitle`,
       defaultMessage: `
-      Hér er hægt að sjá heildargreiðsluáætlun skuldar
+      Hér má sjá sundurliðun greiðsluáætlunar. Athugið að vextir uppfærast daglega og sýnir áætlunin stöðu þeirra þann dag sem greiðsluáætlunin er gerð.
       `,
       description: `Total distribution plan`,
+    },
+    infoTitle: {
+      id: `pdpp.application:section.paymentPlan.infoTitle`,
+      defaultMessage: `Athugið`,
+      description: `Information box title`,
+    },
+    infoDescription: {
+      id: `pdpp.application:section.paymentPlan.infoDescription`,
+      defaultMessage: `Í síðasta gjalddaga fara eftirstöðvar á skuld. Til að endurnýja greiðsluáætlun þarf að hafa samband við innheimtumann. `,
+      description: `Information box description`,
     },
     wageDeductionLaw: {
       id: `pdpp.application:section.paymentPlan.wageDeductionLaw`,

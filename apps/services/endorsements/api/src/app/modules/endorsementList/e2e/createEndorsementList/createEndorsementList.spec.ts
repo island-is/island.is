@@ -16,6 +16,7 @@ describe('createEndorsementList', () => {
       description: 'Some description',
       tags: [EndorsementTag.PARTY_APPLICATION_NORDAUSTURKJORDAEMI_2021],
       endorsementMeta: ['fullName'],
+      endorsement_metadata: [{ field: 'fullName' }],
       validationRules: [
         {
           type: 'minAgeAtDate',
@@ -50,6 +51,7 @@ describe('createEndorsementList', () => {
       description: 'Some description',
       tags: [EndorsementTag.PARTY_APPLICATION_NORDAUSTURKJORDAEMI_2021],
       endorsementMeta: ['fullName'],
+      endorsement_metadata: [{ field: 'fullName' }],
       validationRules: [],
       meta: {},
     }
@@ -105,7 +107,7 @@ describe('createEndorsementList', () => {
       title: 'Some title',
       description: 'Some description',
       tags: [EndorsementTag.PARTY_APPLICATION_NORDAUSTURKJORDAEMI_2021],
-      endorsementMeta: ['fullName'],
+      endorsementMetadata: [{ field: 'fullName' }],
       validationRules: [
         {
           type: 'minAgeAtDate',

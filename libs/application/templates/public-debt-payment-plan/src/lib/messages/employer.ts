@@ -12,7 +12,7 @@ export const employer = {
     pageDescription: {
       id: `pdpp.application:application.employer.pageDescription`,
       defaultMessage:
-        'Skv. lögum ber launagreiðanda að draga af launum opinber gjöld utan staðgreiðslu, þ.e. þing- og sveitarsjóðsgjöld. Nánar má lesa um launaafdrátt á ',
+        'Samkvæmt 11. gr. laga um innheimtu opinberra skatta og gjalda, nr. 150/2019 ber launagreiðanda að draga af launum opinber gjöld utan staðgreiðslu, þ.e. þing- og sveitarsjóðsgjöld. Nánar má lesa um launaafdrátt á ',
       description: 'Employer page description',
     },
     disposableIncomePageTitle: {
@@ -30,17 +30,17 @@ export const employer = {
   labels: defineMessages({
     taxHomePage: {
       id: `pdpp.application:application.employer.taxHomePage`,
-      defaultMessage: 'heimasíðu skattsins',
+      defaultMessage: 'heimasíðu Skattsins',
       description: 'Employer tax home page link label',
     },
     employerIsCorrect: {
       id: `pdpp.application:application.employer.employerIsCorrect`,
-      defaultMessage: 'Þetta er réttur vinnuveitandi',
+      defaultMessage: 'Er minn vinnuveitandi',
       description: 'Employer is correct label',
     },
     employerIsNotCorrect: {
       id: `pdpp.application:application.employer.employerIsNotCorrect`,
-      defaultMessage: 'Nei þetta er ekki réttur vinnuveitandi',
+      defaultMessage: 'Er ekki minn vinnuveitandi',
       description: 'Employer is not correct label',
     },
     employerNationalIdLabel: {

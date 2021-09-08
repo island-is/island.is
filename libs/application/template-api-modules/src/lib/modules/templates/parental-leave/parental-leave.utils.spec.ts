@@ -155,7 +155,7 @@ describe('getEmployer', () => {
     set(application.answers, 'employer.email', expectedEmail)
     set(
       application.answers,
-      'employer.nationalRegistryId',
+      'employerNationalRegistryId',
       expectedNationalRegistryId,
     )
 
