@@ -284,6 +284,9 @@ export const regulationContentStyling = (wrapper: string) => {
     fontWeight: typography.regular,
     lineHeight: '2em',
   })
+  styleRegulation('.article__title--provisional', {
+    fontWeight: typography.headingsFontWeight,
+  })
   styleRegulation(
     `
     .article__title:first-child,
