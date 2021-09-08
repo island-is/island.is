@@ -81,6 +81,9 @@ export class Case implements TCase {
   readonly requestedCourtDate?: string
 
   @Field({ nullable: true })
+  readonly translator?: string
+
+  @Field({ nullable: true })
   readonly requestedValidToDate?: string
 
   @Field({ nullable: true })
