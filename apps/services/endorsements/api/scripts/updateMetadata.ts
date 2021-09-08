@@ -36,11 +36,6 @@ const limiter = new Bottleneck({
   maxConcurrent: Number(process.env.MAX_CONCURRENT) || 10,
 })
 
-if (!production) {
-  // Lets make sure it is clear in logs if this is running in dev mode
-  logger.warn('>>>RUNNING IN DEV MODE!!!<<<')
-}
-
 const createEndorsementListFieldMap = (
   endorsementLists: EndorsementList[],
 ): EndorsementListFieldMap =>
@@ -161,6 +156,10 @@ const processEndorsementLists = async (cb: () => void, index = 0) => {
 }
 
 export default async () => {
+  if (!production) {
+    // Lets make sure it is clear in logs if this is running in dev mode
+    logger.warn('>>>RUNNING IN DEV MODE!!!<<<')
+  }
   const app = await NestFactory.create(AppModule)
   endorsementMetadataService = app.get(EndorsementMetadataService)
   processEndorsementLists(() => {
