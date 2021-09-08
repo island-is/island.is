@@ -77,7 +77,7 @@ export class EndorsementMetadataService {
 
   async executeProviders(
     { providers, input }: ExecuteProvidersInput,
-    auth: Auth,
+    auth?: Auth,
   ) {
     // execute all provided providers
     const metadataRequests = Object.entries(providers).map(
@@ -130,7 +130,7 @@ export class EndorsementMetadataService {
 
   async getMetadata(
     input: MetadataInput,
-    auth: Auth,
+    auth?: Auth,
   ): Promise<EndorsementMetadata> {
     const providers = this.findProvidersByRequestedMetadataFields(input.fields)
     const providerData = await this.executeProviders({ providers, input }, auth)

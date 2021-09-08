@@ -132,7 +132,8 @@ export const PaymentPlanForm: Form = buildForm({
             buildTextField({
               id: 'applicant.name',
               title: info.labels.name,
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
+              required: true,
               disabled: true,
               defaultValue: (application: any) => {
                 return (application.externalData as PaymentPlanExternalData)
@@ -144,7 +145,8 @@ export const PaymentPlanForm: Form = buildForm({
               title: info.labels.nationalId,
               format: '######-####',
               width: 'half',
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
+              required: true,
               disabled: true,
               defaultValue: (application: any) =>
                 (application.externalData as PaymentPlanExternalData)
@@ -154,7 +156,8 @@ export const PaymentPlanForm: Form = buildForm({
               id: 'applicant.address',
               title: info.labels.address,
               width: 'half',
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
+              required: true,
               disabled: true,
               defaultValue: (application: any) =>
                 (application.externalData as PaymentPlanExternalData)
@@ -164,7 +167,8 @@ export const PaymentPlanForm: Form = buildForm({
               id: 'applicant.postalCode',
               title: info.labels.postalCode,
               width: 'half',
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
+              required: true,
               disabled: true,
               defaultValue: (application: any) =>
                 (application.externalData as PaymentPlanExternalData)
@@ -174,7 +178,8 @@ export const PaymentPlanForm: Form = buildForm({
               id: 'applicant.city',
               title: info.labels.city,
               width: 'half',
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
+              required: true,
               disabled: true,
               defaultValue: (application: any) =>
                 (application.externalData as PaymentPlanExternalData)
@@ -186,6 +191,7 @@ export const PaymentPlanForm: Form = buildForm({
               width: 'half',
               variant: 'email',
               backgroundColor: 'blue',
+              required: true,
               defaultValue: (application: any) =>
                 (application.externalData as PaymentPlanExternalData)
                   ?.userProfile?.data?.email,
@@ -197,6 +203,7 @@ export const PaymentPlanForm: Form = buildForm({
               width: 'half',
               variant: 'tel',
               backgroundColor: 'blue',
+              required: true,
               defaultValue: (application: any) =>
                 (application.externalData as PaymentPlanExternalData)
                   ?.userProfile?.data?.mobilePhoneNumber,
@@ -268,11 +275,6 @@ export const PaymentPlanForm: Form = buildForm({
       id: 'paymentPlanSection',
       title: section.paymentPlan,
       children: [
-        buildCustomField({
-          id: 'paymentPlanWageDeductionInfo',
-          title: paymentPlan.general.wageDeductionInfoPageTitle,
-          component: 'PaymentPlanWageDeductionInfo',
-        }),
         buildCustomField({
           id: `payment-plan-list`,
           title: paymentPlan.general.pageTitle,
