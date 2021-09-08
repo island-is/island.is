@@ -1,4 +1,5 @@
 import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-restricted-imports
+import { useIntl } from 'react-intl'
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
 import {
@@ -322,36 +323,6 @@ export const formatRequestedCustodyRestrictions = (
     : ''
 
   return `${requestedCustodyRestrictionsText}${paragraphBreak}${requestedOtherRestrictionsText}`
-}
-
-export function formatProsecutorDemands(
-  type: CaseType,
-  accusedNationalId: string,
-  accusedName: string,
-  court: string,
-  requestedValidToDate: Date | string,
-  isolation: boolean,
-  isExtension: boolean,
-  previousDecision?: CaseDecision,
-): string {
-  return `Þess er krafist að ${accusedName}, kt. ${formatNationalId(
-    accusedNationalId,
-  )}, sæti${
-    isExtension && previousDecision === CaseDecision.ACCEPTING
-      ? ' áframhaldandi'
-      : ''
-  } ${
-    type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
-  } með úrskurði ${court?.replace(
-    'Héraðsdómur',
-    'Héraðsdóms',
-  )}, til ${formatDate(requestedValidToDate, 'PPPPp')
-    ?.replace('dagur,', 'dagsins')
-    ?.replace(' kl.', ', kl.')}${
-    type === CaseType.CUSTODY && isolation
-      ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
-      : ''
-  }.`
 }
 
 // This function is always called with case type CUSTODY or TRAVEL_BAN
