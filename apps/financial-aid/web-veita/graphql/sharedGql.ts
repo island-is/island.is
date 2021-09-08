@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const GetApplicationQuery = gql`
-  query GetApplicantyQuery($input: ApplicationInput!) {
+  query GetFinancialAidApplicationQuery($input: ApplicationInput!) {
     application(input: $input) {
       id
       nationalId
@@ -26,6 +26,7 @@ export const GetApplicationQuery = gql`
         name
         size
         created
+        type
       }
       state
       formComment

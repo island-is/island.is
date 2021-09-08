@@ -16,6 +16,14 @@ export const CreateApplicationEventQuery = gql`
   }
 `
 
+export const CreateApplicationFiles = gql`
+  mutation createApplicationFiles($input: CreateApplicationFilesInput!) {
+    createApplicationFiles(input: $input) {
+      success
+    }
+  }
+`
+
 export const GetMunicipalityQuery = gql`
   query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
     municipality(input: $input) {
@@ -60,6 +68,14 @@ export const GetApplicationQuery = gql`
       state
       amount
       rejection
+    }
+  }
+`
+
+export const UpdateApplicationMutation = gql`
+  mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
+    updateApplication(input: $input) {
+      id
     }
   }
 `

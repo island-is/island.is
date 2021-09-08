@@ -1,4 +1,4 @@
-import { CurrentUser, Scopes } from '@island.is/auth-nest-tools'
+import { BypassAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { Controller, Get, Query } from '@nestjs/common'
 import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
@@ -33,9 +33,10 @@ export class VoterRegistryController {
   }
 
   @ApiOkResponse({
-    description: 'Finds voter registry entry given user authentication',
+    description: 'Finds voter registry entry given users national id',
     type: VoterRegistry,
   })
+  @BypassAuth() // currently we have no way to create system auth tokens, we will add those when available for better tracking
   @Get('/system')
   async findByNationalId(
     @Query() { nationalId }: FindOneDto,

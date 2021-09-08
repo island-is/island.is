@@ -41,32 +41,45 @@ const Login = ({ headline, about }: Props) => {
           >
             Innskráning
           </Button>
-          <br />
-          <br />
-          <Button
-            onClick={() => {
-              router.push(`${apiLoginRouteForFake}0000000000`)
-            }}
-            data-testid="logout-button"
-            preTextIconType="filled"
-            type="button"
-            variant="primary"
-          >
-            Plat notandi (Árnason)
-          </Button>
-          <br />
-          <br />
-          <Button
-            onClick={() => {
-              router.push(`${apiLoginRouteForFake}0000000001`)
-            }}
-            data-testid="logout-button"
-            preTextIconType="filled"
-            type="button"
-            variant="primary"
-          >
-            Plat notandi (Margrétdóttir)
-          </Button>
+          <Box paddingTop={4}>
+            <Button
+              onClick={() => {
+                router.push(`${apiLoginRouteForFake}?nationalId=0000000000`)
+              }}
+              data-testid="logout-button"
+              preTextIconType="filled"
+              type="button"
+              variant="primary"
+            >
+              Plat notandi (Árnason)
+            </Button>
+          </Box>
+          <Box paddingTop={4}>
+            <Button
+              onClick={() => {
+                router.push(`${apiLoginRouteForFake}?nationalId=0000000001`)
+              }}
+              data-testid="logout-button"
+              preTextIconType="filled"
+              type="button"
+              variant="primary"
+            >
+              Plat notandi (Margrétardóttir)
+            </Button>
+          </Box>
+          <Box paddingTop={4}>
+            <Button
+              onClick={() => {
+                router.push(`${apiLoginRouteForFake}?nationalId=0000000003`)
+              }}
+              data-testid="logout-button"
+              preTextIconType="filled"
+              type="button"
+              variant="primary"
+            >
+              Plat notandi (Frilluson)
+            </Button>
+          </Box>
         </Box>
       </div>
     </GridContainer>

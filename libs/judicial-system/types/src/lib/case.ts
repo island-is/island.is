@@ -1,68 +1,7 @@
-export enum Feature {
-  NONE = 'NONE', // must be at least one
-  R_CASES = 'R_CASES',
-}
-
-export enum InstitutionType {
-  PROSECUTORS_OFFICE = 'PROSECUTORS_OFFICE',
-  COURT = 'COURT',
-  HIGH_COURT = 'HIGH_COURT',
-}
-
-export interface Institution {
-  id: string
-  created: string
-  modified: string
-  type: InstitutionType
-  name: string
-}
-
-export const IntegratedCourts = [
-  'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf', // Héraðsdómur Reykjavíkur
-  'c9a51c9a-c0e3-4c1f-a9a2-828a3af05d1d', // Héraðsdómur Reykjaness
-]
-
-export enum UserRole {
-  PROSECUTOR = 'PROSECUTOR',
-  REGISTRAR = 'REGISTRAR',
-  JUDGE = 'JUDGE',
-  ADMIN = 'ADMIN',
-}
-
-export interface User {
-  id: string
-  created: string
-  modified: string
-  nationalId: string
-  name: string
-  title: string
-  mobileNumber: string
-  email: string
-  role: UserRole
-  institution?: Institution
-  active: boolean
-}
-
-export interface CreateUser {
-  nationalId: string
-  name: string
-  title: string
-  mobileNumber: string
-  email: string
-  role: UserRole
-  institutionId: string
-  active: boolean
-}
-
-export interface UpdateUser {
-  name?: string
-  title?: string
-  mobileNumber?: string
-  email?: string
-  role?: UserRole
-  institutionId?: string
-  active?: boolean
-}
+import type { Institution } from './institution'
+import type { Notification } from './notification'
+import type { CaseFile } from './file'
+import type { User } from './user'
 
 export enum CaseType {
   CUSTODY = 'CUSTODY',
@@ -79,58 +18,6 @@ export enum CaseType {
   INTERNET_USAGE = 'INTERNET_USAGE',
   OTHER = 'OTHER',
 }
-
-export const ICaseTypes = [
-  {
-    label: 'Húsleit',
-    value: CaseType.SEARCH_WARRANT,
-  },
-  {
-    label: 'Rof bankaleyndar',
-    value: CaseType.BANKING_SECRECY_WAIVER,
-  },
-  {
-    label: 'Símhlustun',
-    value: CaseType.PHONE_TAPPING,
-  },
-  {
-    label: 'Upplýsingar um fjarskiptasamskipti',
-    value: CaseType.TELECOMMUNICATIONS,
-  },
-  {
-    label: 'Eftirfararbúnaður',
-    value: CaseType.TRACKING_EQUIPMENT,
-  },
-  {
-    label: '',
-    options: [
-      {
-        label: 'Geðrannsókn',
-        value: CaseType.PSYCHIATRIC_EXAMINATION,
-      },
-      {
-        label: 'Hljóðupptökubúnaði komið fyrir',
-        value: CaseType.SOUND_RECORDING_EQUIPMENT,
-      },
-      {
-        label: 'Krufning',
-        value: CaseType.AUTOPSY,
-      },
-      {
-        label: 'Leit og líkamsrannsókn',
-        value: CaseType.BODY_SEARCH,
-      },
-      {
-        label: 'Upplýsingar um vefnotkun',
-        value: CaseType.INTERNET_USAGE,
-      },
-      {
-        label: 'Annað',
-        value: CaseType.OTHER,
-      },
-    ],
-  },
-]
 
 export enum CaseState {
   NEW = 'NEW',
@@ -158,9 +45,11 @@ export enum CaseCustodyProvisions {
   _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
   _95_1_D = '_95_1_D', // d-lið 1. mgr. 95. gr.
   _95_2 = '_95_2', // 2. mgr. 95. gr.
+  _97_3 = '_97_3', // 3. mgr. 97. gr.
   _98_2 = '_98_2', // 2. mgr. 98. gr.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
+  _115_1 = '_115_1', // 1. mgr. 115. gr útll.
 }
 /* eslint-enable @typescript-eslint/naming-convention */
 
@@ -204,8 +93,6 @@ export enum SessionArrangements {
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
   REMOTE_SESSION = 'REMOTE_SESSION',
 }
-
-export type Gender = 'karl' | 'kona' | 'annað'
 
 export interface Case {
   id: string
@@ -283,24 +170,6 @@ export interface Case {
   files?: CaseFile[]
 }
 
-export enum NotificationType {
-  HEADS_UP = 'HEADS_UP',
-  READY_FOR_COURT = 'READY_FOR_COURT',
-  RECEIVED_BY_COURT = 'RECEIVED_BY_COURT',
-  COURT_DATE = 'COURT_DATE',
-  RULING = 'RULING',
-  REVOKED = 'REVOKED',
-}
-
-export interface Notification {
-  id: string
-  created: string
-  caseId: string
-  type: NotificationType
-  condition?: string
-  recipients?: string
-}
-
 export interface CreateCase {
   type: CaseType
   description?: string
@@ -375,7 +244,7 @@ export interface UpdateCase {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
-  accusedPostponedAppealDate?: string | null
+  accusedPostponedAppealDate?: string
   prosecutorPostponedAppealDate?: string
   registrarId?: string
   judgeId?: string
@@ -384,14 +253,6 @@ export interface UpdateCase {
 export interface TransitionCase {
   modified: string
   transition: CaseTransition
-}
-
-export interface SendNotification {
-  type: NotificationType
-}
-
-export interface SendNotificationResponse {
-  notificationSent: boolean
 }
 
 export interface RequestSignatureResponse {
@@ -411,43 +272,14 @@ export interface CreateCourtCase {
   isExtension: boolean
 }
 
-export interface PresignedPost {
-  url: string
-  fields: { [key: string]: string }
-}
+export const completedCaseStates = [CaseState.ACCEPTED, CaseState.REJECTED]
 
-export interface CreatePresignedPost {
-  fileName: string
-}
-
-export interface DeleteFile {
-  id: string
-}
-
-export interface DeleteFileResponse {
-  success: boolean
-}
-
-export interface GetSignedUrl {
-  caseId: string
-  id: string
-}
-
-export interface SignedUrl {
-  url: string
-}
-
-export interface CaseFile {
-  id: string
-  created: string
-  modified: string
-  caseId: string
-  name: string
-  key: string
-  size: number
-}
-
-export interface CreateFile {
-  key: string
-  size: number
+export function hasCaseBeenAppealed(theCase: Case): boolean {
+  return (
+    completedCaseStates.includes(theCase.state) &&
+    (theCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+      theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+      Boolean(theCase.accusedPostponedAppealDate) ||
+      Boolean(theCase.prosecutorPostponedAppealDate))
+  )
 }

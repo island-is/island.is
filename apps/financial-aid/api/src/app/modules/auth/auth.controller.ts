@@ -24,6 +24,7 @@ import {
   COOKIE_EXPIRES_IN_MILLISECONDS,
   CSRF_COOKIE_NAME,
   ReturnUrl,
+  AllowedFakeUsers,
 } from '@island.is/financial-aid/shared'
 
 import { SharedAuthService } from '@island.is/financial-aid/auth'
@@ -85,7 +86,11 @@ export class AuthController {
     this.logger.debug(`Received login request for the service ${service}`)
 
     // Local development
-    if (environment.auth.allowFakeUsers && nationalId) {
+    if (
+      environment.auth.allowFakeUsers &&
+      nationalId &&
+      AllowedFakeUsers.includes(nationalId)
+    ) {
       this.logger.debug(`Logging in as ${nationalId} in development mode`)
       const fakeUser = this.authService.fakeUser(nationalId)
 

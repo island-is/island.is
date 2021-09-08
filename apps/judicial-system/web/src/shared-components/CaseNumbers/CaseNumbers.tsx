@@ -1,5 +1,5 @@
 import { Box, Text } from '@island.is/island-ui/core'
-import { Case } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import React from 'react'
 
 interface Props {

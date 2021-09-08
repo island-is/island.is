@@ -9,6 +9,7 @@ import { environment } from '../../../environments'
 import { UserModule } from '../user'
 import { CaseModule } from '../case'
 import { CourtModule } from '../court'
+import { EventModule } from '../event'
 import { Notification } from './models'
 import { NotificationService } from './notification.service'
 import { NotificationController } from './notification.controller'
@@ -22,6 +23,7 @@ import { NotificationController } from './notification.controller'
     CourtModule,
     SequelizeModule.forFeature([Notification]),
     CmsTranslationsModule,
+    EventModule,
   ],
   controllers: [NotificationController],
   providers: [NotificationService],

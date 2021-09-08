@@ -50,6 +50,14 @@ export class AuthService {
         service: RolesRule.VEITA,
         returnUrl: ReturnUrl.ADMIN,
       },
+      '0000000003': {
+        nationalId: '0000000003',
+        name: 'Lárhéðinn Frillason',
+        phoneNumber: '9999999',
+        folder: uuid(),
+        service: RolesRule.OSK,
+        returnUrl: ReturnUrl.APPLICATION,
+      },
     }
 
     if (nationalId in fakeUsers) {

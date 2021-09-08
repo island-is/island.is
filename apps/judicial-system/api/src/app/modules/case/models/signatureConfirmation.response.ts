@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { SignatureConfirmationResponse as TSignatureConfirmationResponse } from '@island.is/judicial-system/types'
+import type { SignatureConfirmationResponse as TSignatureConfirmationResponse } from '@island.is/judicial-system/types'
 
 @ObjectType()
 export class SignatureConfirmationResponse

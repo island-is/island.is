@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Input, InputBackgroundColor } from '@island.is/island-ui/core'
+import { Input, Icon, InputBackgroundColor } from '@island.is/island-ui/core'
 import { Controller, Control, ValidationRules } from 'react-hook-form'
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 
@@ -8,6 +8,7 @@ interface Props {
   defaultValue?: string
   disabled?: boolean
   control?: Control
+  icon?: React.ComponentProps<typeof Icon>['icon']
   rules?: ValidationRules
   error?: string
   id: string
@@ -40,6 +41,7 @@ export const InputController: FC<Props> = ({
   disabled = false,
   error,
   id,
+  icon,
   label,
   name = id,
   placeholder,
@@ -62,6 +64,7 @@ export const InputController: FC<Props> = ({
         <NumberFormat
           customInput={Input}
           id={id}
+          icon={icon}
           disabled={disabled}
           placeholder={placeholder}
           label={label}
@@ -91,6 +94,7 @@ export const InputController: FC<Props> = ({
         <NumberFormat
           customInput={Input}
           id={id}
+          icon={icon}
           disabled={disabled}
           backgroundColor={backgroundColor}
           placeholder={placeholder}
@@ -116,6 +120,7 @@ export const InputController: FC<Props> = ({
       return (
         <NumberFormat
           customInput={Input}
+          icon={icon}
           id={id}
           disabled={disabled}
           backgroundColor={backgroundColor}
@@ -144,6 +149,7 @@ export const InputController: FC<Props> = ({
           id={id}
           value={value}
           disabled={disabled}
+          icon={icon}
           placeholder={placeholder}
           label={label}
           backgroundColor={backgroundColor}
