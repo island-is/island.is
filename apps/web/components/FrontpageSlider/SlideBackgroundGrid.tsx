@@ -26,7 +26,7 @@ function SlideBackgroundGrid() {
           width="0.047"
           height="0.052"
         >
-          <circle fill="#ccdfff" fill-opacity="1" cx="2" cy="2" r="2" />
+          <circle fill="#ccdfff" fillOpacity="1" cx="2" cy="2" r="2" />
         </pattern>
       </defs>
       <rect
