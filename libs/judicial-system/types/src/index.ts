@@ -10,6 +10,7 @@ export type {
   SendNotificationResponse,
 } from './lib/notification'
 
+export { CaseFileState } from './lib/file'
 export type {
   PresignedPost,
   CreatePresignedPost,
