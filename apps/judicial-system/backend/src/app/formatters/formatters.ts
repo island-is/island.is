@@ -258,16 +258,6 @@ export function formatDefenderCourtDateEmailNotification(
     )}.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />Dómsalur: ${courtRoom}.`
 }
 
-export function formatCourtDateNotificationCondition(
-  courtDate?: Date,
-  defenderEmail?: string,
-): string {
-  return `courtDate=${formatDate(
-    courtDate,
-    'Pp',
-  )},defenderEmail=${defenderEmail}`
-}
-
 // This function is only intended for case type CUSTODY
 export function formatPrisonRulingEmailNotification(
   accusedGender?: CaseGender,
