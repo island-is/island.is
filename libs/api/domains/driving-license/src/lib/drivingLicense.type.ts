@@ -109,3 +109,9 @@ export interface QualityPhotoResult {
   qualityPhoto: string | null
   errorMessage: string | null
 }
+
+export interface StudentAssessment {
+  studentNationalId: string | null
+  teacherNationalId: string | null
+  teacherName: string | null
+}
