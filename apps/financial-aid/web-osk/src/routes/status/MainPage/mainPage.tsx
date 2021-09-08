@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useEffect, useState } from 'react'
+import React, { useMemo } from 'react'
 import {
   Text,
   Box,
@@ -17,11 +17,9 @@ import {
   StatusLayout,
   Timeline,
 } from '@island.is/financial-aid-web/osk/src/components'
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
 import {
   Application,
-  CurrentApplication,
   getActiveTypeForStatus,
 } from '@island.is/financial-aid/shared'
 
