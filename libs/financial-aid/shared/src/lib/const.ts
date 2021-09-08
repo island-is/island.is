@@ -11,3 +11,5 @@ export const AllowedFakeUsers = [
   '0000000002', // Veita user
   '0000000003', // User with an application which needs data
 ]
+
+export const LoginStatusPage = '/stada'

@@ -14,7 +14,7 @@ const Login = ({ headline, about }: Props) => {
 
   const apiLoginRouteForFake = router.query.id
     ? `/api/auth/login?applicationId=${router.query.id}&nationalId=`
-    : '/api/auth/login?'
+    : '/api/auth/login?nationalId='
 
   const apiLoginRouteForRealUsers = router.query.id
     ? `/api/auth/login?applicationId=${router.query.id}`
@@ -44,7 +44,7 @@ const Login = ({ headline, about }: Props) => {
           <Box paddingTop={4}>
             <Button
               onClick={() => {
-                router.push(`${apiLoginRouteForFake}?nationalId=0000000000`)
+                router.push(`${apiLoginRouteForFake}0000000000`)
               }}
               data-testid="logout-button"
               preTextIconType="filled"
@@ -57,7 +57,7 @@ const Login = ({ headline, about }: Props) => {
           <Box paddingTop={4}>
             <Button
               onClick={() => {
-                router.push(`${apiLoginRouteForFake}?nationalId=0000000001`)
+                router.push(`${apiLoginRouteForFake}0000000001`)
               }}
               data-testid="logout-button"
               preTextIconType="filled"
@@ -70,7 +70,7 @@ const Login = ({ headline, about }: Props) => {
           <Box paddingTop={4}>
             <Button
               onClick={() => {
-                router.push(`${apiLoginRouteForFake}?nationalId=0000000003`)
+                router.push(`${apiLoginRouteForFake}0000000003`)
               }}
               data-testid="logout-button"
               preTextIconType="filled"

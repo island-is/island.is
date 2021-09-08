@@ -4,6 +4,7 @@ import { Text, GridContainer, Button } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
 import { useRouter } from 'next/router'
+import { LoginStatusPage } from '@island.is/financial-aid/shared'
 
 const HasApplied = () => {
   const { user } = useContext(UserContext)
@@ -18,7 +19,7 @@ const HasApplied = () => {
 
       <Button
         onClick={() => {
-          router.push(`/stada/${user?.currentApplication?.id}`)
+          router.push(`${LoginStatusPage}/${user?.currentApplication?.id}`)
         }}
       >
         Kíktu á stöðu síðuna{' '}

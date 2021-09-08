@@ -9,6 +9,7 @@ import {
   CurrentApplication,
   months,
   getState,
+  LoginStatusPage,
 } from '@island.is/financial-aid/shared'
 import {
   Timeline,
@@ -41,7 +42,7 @@ const InProgress = ({ currentApplication }: Props) => {
             cta={{
               label: 'Hlaða upp gögnum',
               onClick: () => {
-                router.push(`stada/${router.query.id}/gogn`)
+                router.push(`${LoginStatusPage}/${router.query.id}/gogn`)
               },
             }}
             backgroundColor="blue"
