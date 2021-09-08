@@ -17,7 +17,7 @@ import {
   DrivingLicenseCategory,
   NeedsHealhCertificate,
   QualityPhotoResult,
-  NeedsQualityPhoto,
+  StudentAssessment,
 } from './drivingLicense.type'
 import {
   AkstursmatDto,
@@ -331,6 +331,32 @@ export class DrivingLicenseService {
       success: result > 0,
       qualityPhoto: image,
       errorMessage: null,
+    }
+  }
+
+  async getDrivingAssessment(
+    nationalId: string,
+  ): Promise<StudentAssessment | null> {
+    const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
+
+    if (!assessmentResult) {
+      return null
+    }
+
+    let teacherName: string | null
+    if (assessmentResult.kennitalaOkukennara) {
+      const teacherLicense = await this.getLicense(
+        assessmentResult.kennitalaOkukennara,
+      )
+      teacherName = teacherLicense?.name || null
+    } else {
+      teacherName = null
+    }
+
+    return {
+      studentNationalId: assessmentResult.kennitala ?? null,
+      teacherNationalId: assessmentResult.kennitalaOkukennara ?? null,
+      teacherName,
     }
   }
 }
