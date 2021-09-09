@@ -189,12 +189,6 @@ module.exports = {
             `UPDATE endorsement SET endorsement_list_id = '${aggregateId}' WHERE id = '${problematicEndorsement.id}';`,
           )
         }
-
-        // Finally delete the problematic endorsement_list
-        await runQuery(
-          queryInterface,
-          `DELETE FROM endorsement_list WHERE id = '${problematicId}';`,
-        )
       }
     }
   },
