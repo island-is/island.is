@@ -19,7 +19,6 @@ To run the API locally make sure you:
 
 [direnv](https://direnv.net/docs/installation.html) is recommended for autoloading environment variables
 
-
 ### Initialize the application
 
 ```bash
