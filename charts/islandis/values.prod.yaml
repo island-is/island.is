@@ -449,7 +449,6 @@ endorsement-system-scripts-update-metadata:
     DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
     DB_NAME: services_endorsements_api
     DB_USER: services_endorsements_api
-    MAX_CONCURRENT: '2'
     TEMPORARY_VOTER_REGISTRY_API_URL: >-
       http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local
   grantNamespaces:
