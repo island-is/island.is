@@ -12,7 +12,7 @@ interface PageProps {
 
 const AdminLayout = ({ children, className }: PageProps) => {
   useEffect(() => {
-    document.title = 'Sveita • Umsóknir um fjárhagsaðstoð'
+    document.title = 'Veita • Umsóknir um fjárhagsaðstoð'
   }, [])
 
   return (

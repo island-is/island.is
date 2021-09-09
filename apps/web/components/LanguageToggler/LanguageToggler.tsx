@@ -86,24 +86,21 @@ export const LanguageToggler = ({
     </Button>
   )
 
-  const LanguageButton = (
-    <>
-      {otherLanguage === 'en' ? (
-        <DialogPrompt
-          baseId={dialogId}
-          title={gn('switchToEnglishModalTitle')}
-          description={gn('switchToEnglishModalText')}
-          ariaLabel="Confirm switching to english"
-          disclosureElement={Disclosure}
-          onConfirm={onClick}
-          buttonTextConfirm="Confirm"
-          buttonTextCancel="Cancel"
-        />
-      ) : (
-        Disclosure
-      )}
-    </>
-  )
+  const LanguageButton =
+    otherLanguage === 'en' ? (
+      <DialogPrompt
+        baseId={dialogId}
+        title={gn('switchToEnglishModalTitle')}
+        description={gn('switchToEnglishModalText')}
+        ariaLabel="Confirm switching to english"
+        disclosureElement={Disclosure}
+        onConfirm={onClick}
+        buttonTextConfirm="Confirm"
+        buttonTextCancel="Cancel"
+      />
+    ) : (
+      Disclosure
+    )
 
   return !hideWhenMobile ? (
     LanguageButton

@@ -59,5 +59,21 @@ export const rcHearingArrangements = {
           'Notaður sem texti í "tilkynning um fyrirtökutíma hefur verið send" tilkynningaglugganum á fyrirtöku skrefi í farbannsmálum.',
       },
     }),
+    shared: defineMessages({
+      secondaryButtonText: {
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.modal.shared.secondary_button_text',
+        defaultMessage: 'Nei, senda seinna',
+        description:
+          'Notaður sem texti í "Nei, senda seinna" takkann í tilkynningaglugganum á fyrirtöku skrefi í farbannsmálum.',
+      },
+      primaryButtonText: {
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.modal.shared.primary_button_text',
+        defaultMessage: 'Já, senda núna',
+        description:
+          'Notaður sem texti í "Já, senda núna" takkann í tilkynningaglugganum á fyrirtöku skrefi í farbannsmálum.',
+      },
+    }),
   },
 }

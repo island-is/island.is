@@ -10,7 +10,7 @@ import {
 import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import { NavigationProps } from '@island.is/financial-aid/shared'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 const AboutForm = () => {
   const router = useRouter()

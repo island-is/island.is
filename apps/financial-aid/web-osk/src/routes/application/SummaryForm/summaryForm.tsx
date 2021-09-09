@@ -32,7 +32,8 @@ import {
   getEmploymentStatus,
   formatPhoneNumber,
   formatNationalId,
-} from '@island.is/financial-aid/shared'
+  Routes,
+} from '@island.is/financial-aid/shared/lib'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/useApplication'
 
@@ -245,7 +246,7 @@ const SummaryForm = () => {
             iconType="filled"
             variant="utility"
             onClick={() => {
-              router.push('gogn')
+              router.push(Routes.filesPage)
             }}
           >
             Breyta
