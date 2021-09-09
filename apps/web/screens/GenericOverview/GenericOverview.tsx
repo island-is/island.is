@@ -14,7 +14,6 @@ import {
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { SidebarLayout } from '../Layouts/SidebarLayout'
-import { Document } from '@contentful/rich-text-types'
 import { GET_GENERIC_OVERVIEW_PAGE_QUERY } from '@island.is/web/screens/queries'
 import {
   GetGenericOverviewPageQuery,

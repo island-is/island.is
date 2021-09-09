@@ -1,11 +1,4 @@
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  useMemo,
-  forwardRef,
-  Fragment,
-} from 'react'
+import React, { useRef, useState, useEffect, useMemo, Fragment } from 'react'
 import {
   Box,
   Button,
@@ -457,10 +450,11 @@ interface EventModalProps {
 const formatNumber = (value: number) =>
   value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
 
-const EventModal = forwardRef(({ event, onClose }: EventModalProps) => {
+const EventModal = ({ event, onClose }: EventModalProps) => {
   if (!event) {
     return null
   }
+
   return (
     <div className={eventStyles.eventModal}>
       <Box
@@ -535,4 +529,4 @@ const EventModal = forwardRef(({ event, onClose }: EventModalProps) => {
       </Box>
     </div>
   )
-})
+}
