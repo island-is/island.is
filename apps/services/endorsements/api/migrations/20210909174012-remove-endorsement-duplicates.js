@@ -13,6 +13,9 @@ module.exports = {
     // Defines which endorsement_list ids are allowed to be considered
     // for a merger
     const allowedIds = [
+      'f00df00d-f00d-400d-a00d-f00db00da00d',
+      'f00df00d-f00d-400d-a00d-b00df00db00d',
+
       'f810b582-6f7a-496a-85cf-99d81e3b0d86',
       '45e89dba-eec4-45fe-9846-ddd32558ef3e',
       'e3ee567c-bb03-4bed-b081-5cc3e8117317',
@@ -141,7 +144,7 @@ module.exports = {
       //   3.2 - Orders by amount, largest first
       const duplicateEndorsementLists = await getByQuery(
         queryInterface,
-        ` SELECT endorsement_list.id, endorsement_list.tags, COUNT(endorsement.endorser) 
+        ` SELECT endorsement_list.meta, endorsement_list.id, endorsement_list.tags, COUNT(endorsement.endorser) 
             FROM endorsement_list 
             LEFT JOIN endorsement
             ON (endorsement_list.id = endorsement.endorsement_list_id)
@@ -182,6 +185,13 @@ module.exports = {
         )
       } else {
         console.log(`Aggregating into endorsement list with id ${aggregateId}`)
+        console.log(
+          `...with metadata ${JSON.stringify(
+            duplicateEndorsementLists.find(
+              (endorsementList) => endorsementList.id === aggregateId,
+            ).meta,
+          )}`,
+        )
       }
 
       for (const problematicId of problematicIds) {
