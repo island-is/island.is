@@ -5,7 +5,7 @@ import {
   GridColumn,
   GridContainer,
 } from '@island.is/island-ui/core'
-import { Card } from '../Card/Card'
+import { Card } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 interface Card {

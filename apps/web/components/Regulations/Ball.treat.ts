@@ -1,6 +1,6 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
-import { hidden } from 'libs/island-ui/core/src/lib/AsyncSearch/shared/Menu/Menu.treat'
+
 const { color, spacing } = theme
 
 export const ball = style({
