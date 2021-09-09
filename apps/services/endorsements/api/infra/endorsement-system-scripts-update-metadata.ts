@@ -29,7 +29,7 @@ export const serviceSetup = (services: {
     .command('node')
     .args('--tls-min-v1.0', 'updateMetadata.js')
     .extraAttributes({
-      dev: { schedule: '1 */1 * * *' },
-      staging: { schedule: '1 */1 * * *' },
-      prod: { schedule: '1 */1 * * *' },
+      dev: { schedule: '1 */6 * * *' },
+      staging: { schedule: '1 */6 * * *' },
+      prod: { schedule: '1 */6 * * *' },
     })

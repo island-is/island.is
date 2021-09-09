@@ -470,7 +470,7 @@ endorsement-system-scripts-update-metadata:
     default: 2
     max: 3
     min: 2
-  schedule: 1 */1 * * *
+  schedule: 1 */6 * * *
   secrets:
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
     DB_PASS: /k8s/services-endorsements-api/DB_PASSWORD
