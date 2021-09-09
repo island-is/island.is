@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
-import { TranslationsModule } from '@island.is/api/domains/translations'
+import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
@@ -15,7 +15,6 @@ import {
   InstitutionModule,
   CourtModule,
   FeatureModule,
-  EventModule,
 } from './modules/'
 
 const debug = !environment.production
@@ -46,8 +45,7 @@ const autoSchemaFile = environment.production
     InstitutionModule,
     CourtModule,
     FeatureModule,
-    TranslationsModule,
-    EventModule,
+    CmsTranslationsModule,
   ],
   providers: [BackendAPI],
 })

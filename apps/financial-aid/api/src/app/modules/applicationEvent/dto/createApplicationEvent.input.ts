@@ -4,8 +4,8 @@ import { Field, InputType } from '@nestjs/graphql'
 
 import {
   CreateApplicationEvent,
-  ApplicationState,
-} from '@island.is/financial-aid/shared'
+  ApplicationEventType,
+} from '@island.is/financial-aid/shared/lib'
 
 @InputType()
 export class CreateApplicationEventInput implements CreateApplicationEvent {
@@ -19,5 +19,5 @@ export class CreateApplicationEventInput implements CreateApplicationEvent {
 
   @Allow()
   @Field(() => String)
-  readonly state!: ApplicationState
+  readonly eventType!: ApplicationEventType
 }

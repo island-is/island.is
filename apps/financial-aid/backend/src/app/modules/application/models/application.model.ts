@@ -5,19 +5,17 @@ import {
   Model,
   Table,
   UpdatedAt,
-  ForeignKey,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
-
-import { ApplicationEventModel } from '../../applicationEvent'
 
 import {
   HomeCircumstances,
   Employment,
   ApplicationState,
   Application,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
+
 import { ApplicationFileModel } from '../../file/models'
 
 @Table({

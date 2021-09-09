@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
   AlertMessage,
@@ -19,14 +20,15 @@ import {
   DateTime,
   FormContentContainer,
   FormFooter,
+  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
-  Case,
   CaseState,
+  NotificationType,
   SessionArrangements,
-  User,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { Case, User } from '@island.is/judicial-system/types'
 import {
   ReactSelectOption,
   UserData,
@@ -51,23 +53,18 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   isLoading: boolean
   users: UserData
-  handleNextButtonClick: () => void
 }
 
 const HearingArrangementsForm: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoading,
-    users,
-    handleNextButtonClick,
-  } = props
+  const { workingCase, setWorkingCase, isLoading, users } = props
+  const [modalVisible, setModalVisible] = useState(false)
   const [courtroomEM, setCourtroomEM] = useState('')
   const [defenderEmailEM, setDefenderEmailEM] = useState('')
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
   const [courtDateIsValid, setCourtDateIsValid] = useState(true)
-  const { updateCase } = useCase()
+  const { updateCase, sendNotification, isSendingNotification } = useCase()
   const { formatMessage } = useIntl()
+  const router = useRouter()
 
   const validations: FormSettings = {
     judge: {
@@ -140,6 +137,19 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   const defaultRegistrar = registrars?.find(
     (registrar: Option) => registrar.value === workingCase?.registrar?.id,
   )
+
+  const handleNextButtonClick = () => {
+    if (
+      workingCase.notifications?.find(
+        (notification) => notification.type === NotificationType.COURT_DATE,
+      )
+    ) {
+      router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+    } else {
+      setModalVisible(true)
+    }
+  }
+
   return (
     <>
       <FormContentContainer>
@@ -336,6 +346,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 label="Dómsalur"
                 defaultValue={workingCase.courtRoom}
                 placeholder="Skráðu inn dómsal"
+                autoComplete="off"
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'courtRoom',
@@ -415,6 +426,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 }`}
                 defaultValue={workingCase.defenderName}
                 placeholder="Fullt nafn"
+                autoComplete="off"
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'defenderName',
@@ -443,6 +455,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 }`}
                 defaultValue={workingCase.defenderEmail}
                 placeholder="Netfang"
+                autoComplete="off"
                 errorMessage={defenderEmailEM}
                 hasError={defenderEmailEM !== ''}
                 onChange={(event) =>
@@ -500,6 +513,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 }`}
                 defaultValue={workingCase.defenderPhoneNumber}
                 placeholder="Símanúmer"
+                autoComplete="off"
                 errorMessage={defenderPhoneNumberEM}
                 hasError={defenderPhoneNumberEM !== ''}
               />
@@ -510,12 +524,47 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isLoading}
           nextIsDisabled={!isValid || !courtDateIsValid}
-          nextButtonText="Staðfesta og senda"
-          onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>
+      {modalVisible && (
+        <Modal
+          title={formatMessage(icHearingArrangements.modal.heading)}
+          text={formatMessage(icHearingArrangements.modal.text, {
+            announcementSuffix:
+              workingCase.sessionArrangements !==
+                SessionArrangements.ALL_PRESENT || !workingCase.defenderEmail
+                ? '.'
+                : workingCase.defenderIsSpokesperson
+                ? ` og talsmann.`
+                : ` og verjanda.`,
+          })}
+          handlePrimaryButtonClick={async () => {
+            const notificationSent = await sendNotification(
+              workingCase.id,
+              NotificationType.COURT_DATE,
+            )
+
+            if (notificationSent) {
+              router.push(
+                `${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
+              )
+            }
+          }}
+          handleSecondaryButtonClick={() => {
+            router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+          }}
+          primaryButtonText={formatMessage(
+            icHearingArrangements.modal.primaryButtonText,
+          )}
+          secondaryButtonText={formatMessage(
+            icHearingArrangements.modal.secondaryButtonText,
+          )}
+          isPrimaryButtonLoading={isSendingNotification}
+        />
+      )}
     </>
   )
 }

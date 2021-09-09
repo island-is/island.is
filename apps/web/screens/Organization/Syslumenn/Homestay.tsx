@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   Button,
@@ -76,9 +76,13 @@ const Homestay: Screen<HomestayProps> = ({
   )
 
   const [showCount, setShowCount] = useState(10)
-  const [query, _setQuery] = useState('')
+  const [query, _setQuery] = useState(' ')
 
   const setQuery = (query: string) => _setQuery(query.toLowerCase())
+
+  useEffect(() => {
+    setQuery('')
+  }, [])
 
   const filteredItems = homestays.filter(
     (homestay) =>
@@ -131,6 +135,7 @@ const Homestay: Screen<HomestayProps> = ({
           size="sm"
           icon="search"
           iconType="outline"
+          value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
       </Box>

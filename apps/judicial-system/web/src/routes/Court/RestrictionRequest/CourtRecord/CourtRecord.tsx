@@ -20,11 +20,8 @@ import {
   formatAccusedByGender,
   NounCases,
 } from '@island.is/judicial-system/formatters'
-import {
-  AccusedPleaDecision,
-  Case,
-  CaseType,
-} from '@island.is/judicial-system/types'
+import { AccusedPleaDecision, CaseType } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   CaseData,
@@ -99,6 +96,10 @@ export const CourtRecord: React.FC = () => {
           wc?.accusedGender,
           NounCases.GENITIVE,
         )}`
+      }
+
+      if (wc.translator) {
+        attendees += `\n${wc.translator} túlkur`
       }
 
       return attendees

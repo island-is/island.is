@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import {
+import type {
   Notification as TNotification,
   NotificationType,
 } from '@island.is/judicial-system/types'
@@ -18,9 +18,6 @@ export class Notification implements TNotification {
 
   @Field(() => String)
   readonly type!: NotificationType
-
-  @Field({ nullable: true })
-  readonly condition?: string
 
   @Field({ nullable: true })
   readonly recipients?: string

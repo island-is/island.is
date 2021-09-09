@@ -143,7 +143,7 @@ export const m: MessageDir = {
     },
     submitApplication: {
       id: 'pa.application:overview.submit.application',
-      defaultMessage: 'Skila meðmælum',
+      defaultMessage: 'Loka söfnun',
       description: 'Submit application',
     },
   }),
@@ -348,7 +348,7 @@ export const m: MessageDir = {
       description: 'Label and placeholder for name input field',
     },
     descriptionPt1: {
-      id: 'ppale.application:collect.descripton.pt.one',
+      id: 'pa.application:collect.descripton.pt.one',
       defaultMessage:
         'Með því að mæla með úthlutun tiltekins listabókstafs til tilgreinds stjórnamálaflokks samþykkir þú að viðkomandi stjórnmálaflokkur, dómsmálaráðuneytið og Þjóðskrá Íslands fái aðgang að þeim upplýsingum sem skráðar eru. Þeir aðilar hafa ekki heimild til að miðla þeim upplýsingum frekar.',
       description: 'Disclaimer description, first paragraph',

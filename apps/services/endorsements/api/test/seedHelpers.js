@@ -7,8 +7,10 @@ module.exports = {
     description: faker.lorem.paragraph(1),
     closed_date: null,
     endorsement_meta: '{}', // default empty array in postgres
+    endorsement_metadata: '[]', // default empty array in postgres
     tags: '{}', // default empty array in postgres
     validation_rules: '[]',
+    meta: '{}',
     owner: faker.phone.phoneNumber('##########'),
     created: new Date(),
     modified: new Date(),

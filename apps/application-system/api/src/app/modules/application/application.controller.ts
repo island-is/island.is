@@ -54,7 +54,7 @@ import {
 } from '@island.is/application/template-loader'
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
-import { IntlService } from '@island.is/api/domains/translations'
+import { IntlService } from '@island.is/cms-translations'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { ApplicationService } from './application.service'
@@ -317,6 +317,12 @@ export class ApplicationController {
       throw new NotFoundException(
         `An application with the id ${decodedToken.applicationId} does not exist`,
       )
+    }
+
+    // For convenience if the user attempting to be assigned is already an assignee
+    // then return the application
+    if (existingApplication.assignees.includes(user.nationalId)) {
+      return existingApplication
     }
 
     if (existingApplication.state !== decodedToken.state) {

@@ -23,4 +23,11 @@ export const application = {
       description: 'No',
     },
   }),
+  deliveryOfData: defineMessages({
+    name: {
+      id: 'an.application:deliveryOfData.name',
+      defaultMessage: 'Afhending skjala',
+      description: 'Delivery of data',
+    },
+  }),
 }

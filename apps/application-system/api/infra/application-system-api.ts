@@ -181,6 +181,10 @@ export const serviceSetup = (services: {
         '/k8s/application-system/api/PARTY_APPLICATION_NORTH_ADMIN_EMAIL',
       PARTY_APPLICATION_SOUTH_ADMIN_EMAIL:
         '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_ADMIN_EMAIL',
+      DRIVING_LICENSE_SECRET:
+        '/k8s/application-system/api/DRIVING_LICENSE_SECRET',
+      DRIVING_LICENSE_XROAD_PATH:
+        '/k8s/application-system/api/DRIVING_LICENSE_XROAD_PATH',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
@@ -193,4 +197,15 @@ export const serviceSetup = (services: {
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '100m', memory: '256Mi' },
     })
-    .grantNamespaces('nginx-ingress-external', 'islandis')
+    .ingress({
+      primary: {
+        host: {
+          dev: 'application-payment-callback-xrd',
+          staging: 'application-payment-callback-xrd',
+          prod: 'application-payment-callback-xrd',
+        },
+        paths: ['/application-payment'],
+        public: false,
+      },
+    })
+    .grantNamespaces('nginx-ingress-internal', 'islandis')

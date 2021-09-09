@@ -5,7 +5,11 @@ import Link from 'next/link'
 import * as styles from './TableBody.treat'
 
 import cn from 'classnames'
-import { Application, getState } from '@island.is/financial-aid/shared'
+import {
+  Application,
+  getState,
+  months,
+} from '@island.is/financial-aid/shared/lib'
 import format from 'date-fns/format'
 
 import {
@@ -15,7 +19,6 @@ import {
 
 import {
   calcDifferenceInDate,
-  translateMonth,
   getTagByState,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
@@ -26,7 +29,7 @@ interface PageProps {
 
 const TableBody = ({ application, index }: PageProps) => {
   return (
-    <Link href={'application/' + application.id} key={'key-' + index}>
+    <Link href={'application/' + application.id}>
       <tr className={styles.link}>
         <td
           className={cn({
@@ -46,7 +49,7 @@ const TableBody = ({ application, index }: PageProps) => {
             [`${styles.tablePadding} `]: true,
           })}
         >
-          <Box>
+          <Box display="flex">
             <div className={`tags ${getTagByState(application.state)}`}>
               {getState[application.state]}
             </div>
@@ -66,11 +69,7 @@ const TableBody = ({ application, index }: PageProps) => {
             [`${styles.tablePadding} `]: true,
           })}
         >
-          <Text>
-            {translateMonth(
-              parseInt(format(new Date(application.created), 'M')),
-            )}
-          </Text>
+          <Text>{months[new Date(application.created).getMonth()]}</Text>
         </td>
       </tr>
     </Link>

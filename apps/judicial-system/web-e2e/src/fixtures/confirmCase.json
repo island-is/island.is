@@ -28,6 +28,9 @@
         "id": "a1fd62db-18a6-4741-88eb-a7b7a7e05833",
         "name": "Áki Ákærandi",
         "title": "aðstoðarsaksóknari",
+        "institution": {
+          "name": "Lögreglan á Höfuðborgarsvæðinu"
+        },
         "__typename": "User"
       },
       "courtCaseNumber": null,
@@ -39,6 +42,7 @@
       "accusedPleaAnnouncement": null,
       "litigationPresentations": null,
       "ruling": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Prioris generis est docilitas, memoria; Quod quidem nobis non saepe contingit. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quasi vero, inquit, perpetua oratio rhetorum solum, non etiam philosophorum sit. Duo Reges: constructio interrete. Non est ista, inquam, Piso, magna dissensio. Quantum Aristoxeni ingenium consumptum videmus in musicis? ",
+      "demands": "Þess er krafist að Batman Robinsson, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.",
       "decision": null,
       "validToDate": "2020-09-16T19:50:08.033Z",
       "custodyRestrictions": null,

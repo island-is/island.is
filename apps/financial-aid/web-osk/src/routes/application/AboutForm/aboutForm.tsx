@@ -2,15 +2,15 @@ import React from 'react'
 import { Text, BulletList, Bullet, Box, Link } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import { NavigationProps } from '@island.is/financial-aid/shared'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 const AboutForm = () => {
   const router = useRouter()
@@ -24,7 +24,7 @@ const AboutForm = () => {
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Varðandi rétt til fjárhagsaðstoðar
         </Text>
@@ -91,12 +91,9 @@ const AboutForm = () => {
             </Bullet>
           </BulletList>
         </Box>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
-        previousUrl={navigation?.prevUrl}
-        nextUrl={navigation?.nextUrl}
-      />
+      <Footer previousUrl={navigation?.prevUrl} nextUrl={navigation?.nextUrl} />
     </FormLayout>
   )
 }

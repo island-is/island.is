@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
 import * as Sentry from '@sentry/react'
@@ -19,9 +19,9 @@ import {
   getPeriodIndex,
 } from '../../lib/parentalLeaveUtils'
 import { useGetOrRequestLength } from '../../hooks/useGetOrRequestLength'
-import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import { daysToMonths } from '../../lib/directorateOfLabour.utils'
 import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
+import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
 
 type FieldPeriodEndDateProps = {
   field: {
@@ -41,15 +41,7 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
   const { formatMessage } = useLocale()
   const { id, title, props } = field
   const rights = getAvailablePersonalRightsInDays(application)
-  const { periods } = useApplicationAnswers(application)
-  const daysAlreadyUsed = useMemo(
-    () =>
-      periods.reduce(
-        (acc, period) => acc + (period?.days ? Number(period.days) : 0),
-        0,
-      ),
-    [periods],
-  )
+  const daysAlreadyUsed = useDaysAlreadyUsed(application)
   const { answers } = application
   const { getLength, loading } = useGetOrRequestLength(application)
   const { register, clearErrors, setError } = useFormContext()
@@ -82,10 +74,7 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
       if (length + daysAlreadyUsed > rights) {
         return setError(fieldId, {
           type: 'error',
-          message: formatMessage(errorMessages.exceedingLength, {
-            days: length + daysAlreadyUsed,
-            rights,
-          }),
+          message: formatMessage(errorMessages.exceedingLength),
         })
       }
 
@@ -93,7 +82,12 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
       setDays(length)
       setDuration(daysToMonths(length))
     } catch (e) {
-      Sentry.captureException(e)
+      Sentry.captureException(e.message)
+
+      setError(fieldId, {
+        type: 'error',
+        message: formatMessage(errorMessages.durationPeriods),
+      })
     }
   }
 
@@ -101,7 +95,7 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
     if (currentIndex < 0) {
       Sentry.captureException(
         new Error(
-          `Cannot render PeriodEndDate component with a currentIndex of -1, ${periods}`,
+          'Cannot render PeriodEndDate component with a currentIndex of -1',
         ),
       )
     }
@@ -130,6 +124,7 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
           children: undefined,
           placeholder: parentalLeaveFormMessages.endDate.placeholder,
           onChange: handleChange,
+          backgroundColor: 'blue',
         }}
       />
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import { Case, SessionArrangements } from '@island.is/judicial-system/types'
+import { SessionArrangements } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseData,
   JudgeSubsections,
@@ -41,20 +42,20 @@ const CourtRecord = () => {
           attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
         }
 
-        if (
-          wc.sessionArrangements === SessionArrangements.ALL_PRESENT &&
-          wc.accusedName
-        ) {
-          attendees += `${wc.accusedName} varnaraðili`
-        }
+        if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+          if (wc.accusedName) {
+            attendees += `${wc.accusedName} varnaraðili`
+          }
 
-        if (
-          wc.sessionArrangements === SessionArrangements.ALL_PRESENT &&
-          wc.defenderName
-        ) {
-          attendees += `\n${wc.defenderName} skipaður ${
-            wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-          } varnaraðila`
+          if (wc.defenderName) {
+            attendees += `\n${wc.defenderName} skipaður ${
+              wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+            } varnaraðila`
+          }
+
+          if (wc.translator) {
+            attendees += `\n${wc.translator} túlkur`
+          }
         }
       }
 
@@ -73,7 +74,7 @@ const CourtRecord = () => {
       }
       setWorkingCase(data.case)
     }
-  }, [workingCase, setWorkingCase, data])
+  }, [workingCase, setWorkingCase, data, autofill])
 
   return (
     <PageLayout

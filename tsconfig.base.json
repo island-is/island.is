@@ -48,7 +48,6 @@
         "libs/api/domains/application/src/index.ts"
       ],
       "@island.is/api/domains/auth": ["libs/api/domains/auth/src/index.ts"],
-      "@island.is/api/domains/cms": ["libs/api/domains/cms/src/index.ts"],
       "@island.is/api/domains/communications": [
         "libs/api/domains/communications/src/index.ts"
       ],
@@ -118,9 +117,6 @@
       ],
       "@island.is/api/domains/temporary-voter-registry": [
         "libs/api/domains/temporary-voter-registry/src/index.ts"
-      ],
-      "@island.is/api/domains/translations": [
-        "libs/api/domains/translations/src/index.ts"
       ],
       "@island.is/api/domains/user-profile": [
         "libs/api/domains/user-profile/src/index.ts"
@@ -253,6 +249,8 @@
       "@island.is/clients/rsk/v2": ["libs/clients/rsk/v2/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
+      "@island.is/cms": ["libs/cms/src/index.ts"],
+      "@island.is/cms-translations": ["libs/cms-translations/src/index.ts"],
       "@island.is/content-search-index-manager": [
         "libs/content-search-index-manager/src/index.ts"
       ],
@@ -272,11 +270,16 @@
       "@island.is/email-service": ["libs/email-service/src/index.ts"],
       "@island.is/feature-flags": ["libs/feature-flags/src/index.ts"],
       "@island.is/file-storage": ["libs/file-storage/src/index.ts"],
-      "@island.is/financial-aid-web/osk*": ["apps/financial-aid/web-osk/*"],
-      "@island.is/financial-aid-web/veita*": ["apps/financial-aid/web-veita/*"],
+      "@island.is/financial-aid-web/osk/*": ["apps/financial-aid/web-osk/*"],
+      "@island.is/financial-aid-web/veita/*": [
+        "apps/financial-aid/web-veita/*"
+      ],
       "@island.is/financial-aid/auth": ["libs/financial-aid/auth/src/index.ts"],
-      "@island.is/financial-aid/shared": [
-        "libs/financial-aid/shared/src/index.ts"
+      "@island.is/financial-aid/shared/components": [
+        "libs/financial-aid/shared/src/components/index.ts"
+      ],
+      "@island.is/financial-aid/shared/lib": [
+        "libs/financial-aid/shared/src/lib/index.ts"
       ],
       "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],
       "@island.is/gjafakort/application/*": [
@@ -329,6 +332,8 @@
       "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
+      "@island.is/regulations": ["libs/regulations/src/index.ts"],
+      "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],

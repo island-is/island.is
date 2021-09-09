@@ -13,7 +13,6 @@ import {
   Query,
   Req,
   DefaultValuePipe,
-  ParseIntPipe,
 } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
@@ -24,7 +23,10 @@ import {
   ACCESS_TOKEN_COOKIE_NAME,
   COOKIE_EXPIRES_IN_MILLISECONDS,
   CSRF_COOKIE_NAME,
-} from '@island.is/financial-aid/shared'
+  ReturnUrl,
+  AllowedFakeUsers,
+  RolesRule,
+} from '@island.is/financial-aid/shared/lib'
 
 import { SharedAuthService } from '@island.is/financial-aid/auth'
 
@@ -68,8 +70,10 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly sharedAuthService: SharedAuthService,
-    @Inject('IslandisLogin')
-    private readonly loginIS: IslandisLogin,
+    @Inject('IslandisLoginOsk')
+    private readonly loginOsk: IslandisLogin,
+    @Inject('IslandisLoginVeita')
+    private readonly loginVeita: IslandisLogin,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -83,7 +87,11 @@ export class AuthController {
     this.logger.debug(`Received login request for the service ${service}`)
 
     // Local development
-    if (environment.auth.allowFakeUsers && nationalId) {
+    if (
+      environment.auth.allowFakeUsers &&
+      nationalId &&
+      AllowedFakeUsers.includes(nationalId)
+    ) {
       this.logger.debug(`Logging in as ${nationalId} in development mode`)
       const fakeUser = this.authService.fakeUser(nationalId)
 
@@ -122,7 +130,10 @@ export class AuthController {
     const { authId, service } = req.cookies[REDIRECT_COOKIE_NAME] || {}
 
     try {
-      const verifyResult = await this.loginIS.verify(token)
+      const verifyResult =
+        service === 'osk'
+          ? await this.loginOsk.verify(token)
+          : await this.loginVeita.verify(token)
 
       if (verifyResult.user && verifyResult.user.authId === authId) {
         islandUser = verifyResult.user
@@ -148,6 +159,7 @@ export class AuthController {
       phoneNumber: islandUser.mobile,
       folder: uuid(),
       service: service,
+      returnUrl: ReturnUrl.APPLICATION,
     }
 
     return this.logInUser(user, res)
@@ -163,12 +175,26 @@ export class AuthController {
     return res.json({ logout: true })
   }
 
+  getReturnUrl = (service: RolesRule, applicationId: string | undefined) => {
+    switch (true) {
+      case service === RolesRule.OSK && applicationId !== undefined:
+        return `${ReturnUrl.MYPAGE}/${applicationId}`
+      case service === RolesRule.VEITA:
+        return ReturnUrl.ADMIN
+      default:
+        return ReturnUrl.APPLICATION
+    }
+  }
+
   private logInUser(user: User, res: Response) {
     const csrfToken = new Entropy({ bits: 128 }).string()
 
     const jwtToken = this.sharedAuthService.signJwt(user, csrfToken)
 
-    const returnUrl = user.service === 'osk' ? '/umsokn' : '/nymal'
+    const returnUrl = this.getReturnUrl(
+      res.req?.query.service as RolesRule,
+      res.req?.query.applicationId as string,
+    )
 
     res
       .cookie(CSRF_COOKIE.name, csrfToken, {

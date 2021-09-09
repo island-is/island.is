@@ -2,10 +2,10 @@ import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
-import type { User } from '@island.is/financial-aid/shared'
+import type { User } from '@island.is/financial-aid/shared/lib'
 
-import { GetSignedUrlDto } from './dto'
-import { SignedUrlModel } from './models'
+import { GetSignedUrlDto, CreateFilesDto } from './dto'
+import { CreateFilesModel, SignedUrlModel } from './models'
 import { FileService } from './file.service'
 
 @UseGuards(JwtAuthGuard)
@@ -34,5 +34,16 @@ export class FileController {
   })
   async createSignedUrlForId(@Param('id') id: string): Promise<SignedUrlModel> {
     return this.fileService.createSignedUrlForFileId(id)
+  }
+
+  @Post('')
+  @ApiCreatedResponse({
+    type: CreateFilesModel,
+    description: 'Uploads files',
+  })
+  async createFiles(
+    @Body() createFiles: CreateFilesDto,
+  ): Promise<CreateFilesModel> {
+    return await this.fileService.createFiles(createFiles)
   }
 }

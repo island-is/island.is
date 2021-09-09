@@ -9,7 +9,7 @@ import {
   TableHeaders,
   TableBody,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { Application } from '@island.is/financial-aid/shared'
+import { Application } from '@island.is/financial-aid/shared/lib'
 import { TableHeadersProps } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
 interface PageProps {
@@ -33,14 +33,22 @@ const ApplicationsTable = ({ applications, headers, className }: PageProps) => {
         <thead>
           <tr>
             {headers.map((item, index) => (
-              <TableHeaders header={item} index={index} />
+              <TableHeaders
+                header={item}
+                index={index}
+                key={'tableHeaders-' + index}
+              />
             ))}
           </tr>
         </thead>
 
         <tbody className={styles.tableBody}>
           {applications.map((item: Application, index: number) => (
-            <TableBody application={item} index={index} />
+            <TableBody
+              application={item}
+              index={index}
+              key={'tableBody-' + index}
+            />
           ))}
         </tbody>
       </table>

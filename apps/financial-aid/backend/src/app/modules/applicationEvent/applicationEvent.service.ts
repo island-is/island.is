@@ -16,9 +16,12 @@ export class ApplicationEventService {
     return this.applicationEventModel.findAll()
   }
 
-  async findById(id: string): Promise<ApplicationEventModel | null> {
-    return this.applicationEventModel.findOne({
-      where: { id },
+  async findById(id: string): Promise<ApplicationEventModel[]> {
+    return this.applicationEventModel.findAll({
+      where: {
+        applicationId: id,
+      },
+      order: [['created', 'DESC']],
     })
   }
 

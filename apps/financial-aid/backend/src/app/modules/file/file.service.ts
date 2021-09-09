@@ -6,10 +6,15 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { CloudFrontService } from './cloudFront.service'
 
-import { SignedUrlModel, ApplicationFileModel } from './models'
+import {
+  SignedUrlModel,
+  ApplicationFileModel,
+  CreateFilesModel,
+} from './models'
 
 import { environment } from '../../../environments'
 import { CreateFileDto } from './dto'
+import { CreateFilesDto } from './dto/createFiles.dto'
 
 @Injectable()
 export class FileService {
@@ -23,6 +28,28 @@ export class FileService {
 
   async createFile(createFile: CreateFileDto): Promise<ApplicationFileModel> {
     return this.fileModel.create(createFile)
+  }
+  async createFiles(createFiles: CreateFilesDto): Promise<CreateFilesModel> {
+    const promises = createFiles.files.map((file) =>
+      this.fileModel.create({
+        applicationId: file.applicationId,
+        name: file.name,
+        key: file.key,
+        size: file.size,
+        type: file.type,
+      }),
+    )
+    return await Promise.all(promises)
+      .then(() => {
+        return {
+          success: true,
+        }
+      })
+      .catch(() => {
+        return {
+          success: false,
+        }
+      })
   }
 
   async getAllApplicationFiles(

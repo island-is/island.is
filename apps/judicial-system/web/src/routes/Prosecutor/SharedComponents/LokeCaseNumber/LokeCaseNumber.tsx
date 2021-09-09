@@ -3,7 +3,7 @@ import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
-import { Case } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -60,6 +60,7 @@ const LokeCaseNumber: React.FC<Props> = (props) => {
         <Input
           data-testid="policeCaseNumber"
           name="policeCaseNumber"
+          autoComplete="off"
           label={formatMessage(policeCaseNumber.label)}
           placeholder={formatMessage(policeCaseNumber.placeholder)}
           defaultValue={workingCase.policeCaseNumber}

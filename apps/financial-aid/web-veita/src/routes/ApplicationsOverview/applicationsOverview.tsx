@@ -7,13 +7,14 @@ import {
   ApplicationsTable,
 } from '@island.is/financial-aid-web/veita/src/components'
 
-import { ApplicationState, Application } from '@island.is/financial-aid/shared'
+import {
+  ApplicationState,
+  Application,
+} from '@island.is/financial-aid/shared/lib'
 
 import { GetApplicationsQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
-
-import * as styles from './applicationsOverview.treat'
 
 interface ApplicationsProvider {
   applications?: Application[]
@@ -77,6 +78,13 @@ export const ApplicationsOverview = () => {
             headers={currentNavigationItem.headers}
             applications={applications}
           />
+        )}
+
+        {error && (
+          <div>
+            Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að
+            þessu upplýsingum?{' '}
+          </div>
         )}
 
         {loading && <LoadingDots />}

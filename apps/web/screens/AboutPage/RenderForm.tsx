@@ -124,10 +124,6 @@ export const RenderForm: React.FC<{
     }
   }, [status.type, formik.values.email])
 
-  const headingByStatus =
-    status.type === 'success'
-      ? n('formThankYou', 'Skráning tókst. Takk fyrir.')
-      : heading
   const textByStatus =
     status.type === 'success'
       ? n(
