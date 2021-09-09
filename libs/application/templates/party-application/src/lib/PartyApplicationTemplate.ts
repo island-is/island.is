@@ -223,8 +223,8 @@ const PartyApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ConstituencyForm').then((module) =>
-                  Promise.resolve(module.ConstituencyForm),
+                import('../forms/Approved').then((module) =>
+                  Promise.resolve(module.Approved),
                 ),
               read: 'all',
               write: 'all',
