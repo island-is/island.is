@@ -260,6 +260,31 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             </Box>
             <Box marginBottom={2}>
               <RadioButton
+                name="session-arrangements-all-present_spokesperson"
+                id="session-arrangements-all-present_spokesperson"
+                label={formatMessage(
+                  icHearingArrangements.sections.sessionArrangements.options
+                    .allPresentSpokesperson,
+                )}
+                checked={
+                  workingCase.sessionArrangements ===
+                  SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                }
+                onChange={() => {
+                  setAndSendToServer(
+                    'sessionArrangements',
+                    SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <RadioButton
                 name="session-arrangements-prosecutor-present"
                 id="session-arrangements-prosecutor-present"
                 label={formatMessage(

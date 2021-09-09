@@ -47,6 +47,14 @@ export const icHearingArrangements = {
           description:
             'Notaður sem texti fyrir valmöguleikann "Fulltrúar málsaðila mæta" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
         }),
+        allPresentSpokesperson: defineMessage({
+          id:
+            'judicial.system.investigation_cases:hearing_arrangements.session_arrangements.options.all_present_spokesperson',
+          defaultMessage:
+            'Fulltrúi ákæruvalds mætir og dómari kallar til talsmann',
+          description:
+            'Notaður sem texti fyrir valmöguleikann "Fulltrúi ákæruvalds mætir og dómari kallar til talsmann" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
+        }),
         prosecutorPresent: defineMessage({
           id:
             'judicial.system.investigation_cases:hearing_arrangements.session_arrangements.options.prosecutor_present',
