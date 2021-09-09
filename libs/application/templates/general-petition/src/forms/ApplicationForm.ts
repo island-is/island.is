@@ -123,15 +123,6 @@ export const LetterApplicationForm: Form = buildForm({
             buildTextField({
               id: 'listName',
               title: m.information.listName,
-              width: 'half',
-              backgroundColor: 'white',
-              required: true,
-              defaultValue: () => '',
-            }),
-            buildTextField({
-              id: 'slogan',
-              title: m.information.slogan,
-              width: 'half',
               backgroundColor: 'white',
               required: true,
               defaultValue: () => '',
