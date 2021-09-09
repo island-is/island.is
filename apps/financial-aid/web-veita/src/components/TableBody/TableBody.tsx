@@ -65,9 +65,7 @@ const TableBody = ({ application, index }: PageProps) => {
             [`${styles.tablePadding} `]: true,
           })}
         >
-          <Text>
-            {months[parseInt(format(new Date(application.created), 'MM'))]}
-          </Text>
+          <Text>{months[new Date(application.created).getMonth()]}</Text>
         </td>
       </tr>
     </Link>
