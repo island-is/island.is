@@ -14,5 +14,10 @@ export const fatalAccident = {
       defaultMessage: 'Var slysið banaslys?',
       description: 'Was the accident fatal?',
     },
+    fatalAccident: {
+      id: 'an.application:fatalAccident.labels.fatalAccident',
+      defaultMessage: 'Banaslys',
+      description: 'Fatal accident label',
+    },
   }),
 }
