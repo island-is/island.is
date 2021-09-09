@@ -1,15 +1,14 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { m } from '../../lib/messages'
 
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import ReviewSection, { ReviewSectionState, Step } from './ReviewSection'
-import { dateFormat } from '@island.is/shared/constants'
-import { MessageDescriptor } from '@formatjs/intl'
 import { ApplicationEligibility, RequirementKey } from '../../types/schema'
+import { useFormContext } from 'react-hook-form'
 
 const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
   return eligibility.requirements.map(({ key, requirementMet }) =>
@@ -54,12 +53,16 @@ const requirementKeyToStep = (key: string, isRequirementMet: boolean): Step => {
 
 const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
   const {
-    eligibility: { data: eligibility },
+    eligibility: { data: eligibilityData },
   } = application.externalData
+  const { setValue } = useFormContext()
 
-  const steps = extractReasons(
-    (eligibility as unknown) as ApplicationEligibility,
-  )
+  const eligibility = (eligibilityData as unknown) as ApplicationEligibility
+  const steps = extractReasons(eligibility)
+
+  useEffect(() => {
+    setValue('requirementsMet', eligibility.isEligible)
+  }, [eligibility, setValue])
 
   return (
     <Box marginBottom={10}>

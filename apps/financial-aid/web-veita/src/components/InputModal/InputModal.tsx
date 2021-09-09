@@ -6,7 +6,7 @@ import {
   CommentInput,
 } from '@island.is/financial-aid-web/veita/src/components'
 
-import { ApplicationState } from '@island.is/financial-aid/shared'
+import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   onShowInputChange(event: React.MouseEvent<HTMLButtonElement>): void

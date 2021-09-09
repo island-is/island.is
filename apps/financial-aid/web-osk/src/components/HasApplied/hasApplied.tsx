@@ -4,7 +4,7 @@ import { Text, GridContainer, Button } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
 import { useRouter } from 'next/router'
-import { Routes } from '@island.is/financial-aid/shared'
+import { Routes } from '@island.is/financial-aid/shared/lib'
 
 const HasApplied = () => {
   const { user } = useContext(UserContext)
