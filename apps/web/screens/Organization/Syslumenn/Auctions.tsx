@@ -278,6 +278,7 @@ const LOT_TYPES = {
 const AUCTION_TYPES = {
   START: 'Byrjun uppboðs',
   CONTINUATION: 'Framhald uppboðs',
+  SOLD: 'Sölu lokið'
 }
 
 interface LotTypeOption {
@@ -285,6 +286,7 @@ interface LotTypeOption {
   value: string
   lotType: string
   auctionType: string
+  excludeAuctionType: string
 }
 
 const LOT_TYPES_OPTIONS: LotTypeOption[] = [
@@ -293,78 +295,91 @@ const LOT_TYPES_OPTIONS: LotTypeOption[] = [
     value: 'oll-opin-mal',
     lotType: '',
     auctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: `${LOT_TYPES.REAL_ESTATE} - ${AUCTION_TYPES.START}`,
     value: 'fasteign-byrjun',
     lotType: LOT_TYPES.REAL_ESTATE,
     auctionType: AUCTION_TYPES.START,
+    excludeAuctionType: '',
   },
   {
     filterLabel: `${LOT_TYPES.REAL_ESTATE} - ${AUCTION_TYPES.CONTINUATION}`,
     value: 'fasteign-framhald',
     lotType: LOT_TYPES.REAL_ESTATE,
     auctionType: AUCTION_TYPES.CONTINUATION,
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.VEHICLE,
     value: 'okutaeki',
     lotType: LOT_TYPES.VEHICLE,
     auctionType: '',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.AIRCRAFT,
     value: 'loftfar',
     lotType: LOT_TYPES.AIRCRAFT,
     auctionType: '...',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.SHIP,
     value: 'skip',
     lotType: LOT_TYPES.SHIP,
     auctionType: '',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.LIQUID_ASSETS,
     value: 'lausafjarmunir',
     lotType: LOT_TYPES.LIQUID_ASSETS,
     auctionType: '',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING,
     value: 'hlutafjareign',
     lotType: LOT_TYPES.SHAREHOLDING,
     auctionType: '',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING_PLC,
     value: 'hlutafjareign-i-einkahlutafelagi',
     lotType: LOT_TYPES.SHAREHOLDING_PLC,
     auctionType: '',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING_LLC,
     value: 'hlutafjareign-i-hlutafelagi',
     lotType: LOT_TYPES.SHAREHOLDING_LLC,
     auctionType: '',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.STOCKS,
     value: 'verdbref',
     lotType: LOT_TYPES.STOCKS,
     auctionType: '...',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.CLAIMS,
     value: 'krofurettindi',
     lotType: LOT_TYPES.CLAIMS,
     auctionType: '',
+    excludeAuctionType: '',
   },
   {
-    filterLabel: 'Sölu lokið',
+    filterLabel: AUCTION_TYPES.SOLD,
     value: 'solu-lokid',
     lotType: '',
-    auctionType: 'Sölu lokið',
+    auctionType: AUCTION_TYPES.SOLD,
+    excludeAuctionType: '',
   },
 ]
 
@@ -480,6 +495,10 @@ const Auctions: Screen<AuctionsProps> = ({
       // Filter by auction type
       (lotTypeOption.auctionType
         ? auction.auctionType === lotTypeOption.auctionType
+        : true) &&
+      // Filter out excluded auction type
+      (lotTypeOption.excludeAuctionType
+        ? auction.auctionType !== lotTypeOption.excludeAuctionType
         : true) &&
       // Filter by Date
       (date
