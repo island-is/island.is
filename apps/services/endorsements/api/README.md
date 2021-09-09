@@ -1,4 +1,4 @@
-# Endorsement API
+# Endorsements API
 
 ## About
 
@@ -22,7 +22,7 @@ To run the API locally make sure you:
 ### Initialize the application
 
 ```bash
-yarn nx run application-templates-party-application:dev/init
+yarn nx run services-endorsements-api:dev/init
 ```
 
 ## Running locally
@@ -36,7 +36,7 @@ aws sso login
 Then run application using this command
 
 ```bash
-yarn nx run application-templates-party-application:dev
+yarn nx run services-endorsements-api:dev
 ```
 
 And go to localhost once project is ready and started
