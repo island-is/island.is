@@ -143,51 +143,6 @@ const PartyApplicationTemplate: ApplicationTemplate<
           },
         },
       },
-      [States.IN_REVIEW]: {
-        entry: 'assignToSupremeCourt',
-        meta: {
-          name: 'In Review',
-          progress: 0.9,
-          lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.AssignSupremeCourt,
-          },
-          roles: [
-            {
-              id: Roles.ASSIGNEE,
-              formLoader: () =>
-                import('../forms/InReview').then((module) =>
-                  Promise.resolve(module.InReview),
-                ),
-              actions: [
-                {
-                  event: DefaultEvents.APPROVE,
-                  name: 'Samþykkja',
-                  type: 'primary',
-                },
-                { event: DefaultEvents.REJECT, name: 'Hafna', type: 'reject' },
-              ],
-              write: 'all',
-            },
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Approved').then((val) =>
-                  Promise.resolve(val.Approved),
-                ),
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.APPROVE]: [
-            {
-              target: States.APPROVED,
-            },
-          ],
-          [DefaultEvents.REJECT]: { target: States.REJECTED },
-        },
-      },
       [States.REJECTED]: {
         meta: {
           name: 'Safna meðmælum',
@@ -282,7 +237,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
               target: States.APPROVED,
             },
           ],
-          [DefaultEvents.REJECT]: { target: States.COLLECT_ENDORSEMENTS },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
         },
       },
       [States.APPROVED]: {
