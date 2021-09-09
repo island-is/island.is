@@ -13,9 +13,6 @@ module.exports = {
     // Defines which endorsement_list ids are allowed to be considered
     // for a merger
     const allowedIds = [
-      'f00df00d-f00d-400d-a00d-f00db00da00d',
-      'f00df00d-f00d-400d-a00d-b00df00db00d',
-
       'f810b582-6f7a-496a-85cf-99d81e3b0d86',
       '45e89dba-eec4-45fe-9846-ddd32558ef3e',
       'e3ee567c-bb03-4bed-b081-5cc3e8117317',
@@ -208,6 +205,12 @@ module.exports = {
             `UPDATE endorsement SET endorsement_list_id = '${aggregateId}' WHERE id = '${problematicEndorsement.id}';`,
           )
         }
+
+        // Finally delete the problematic endorsement_list
+        await runQuery(
+          queryInterface,
+          `DELETE FROM endorsement_list WHERE id = '${problematicId}';`,
+        )
       }
     }
   },
