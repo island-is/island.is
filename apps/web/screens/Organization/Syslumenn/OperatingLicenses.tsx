@@ -32,6 +32,7 @@ import { OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useRouter } from 'next/router'
+import { useDateUtils } from "@island.is/web/i18n/useDateUtils";
 
 interface OperatingLicensesProps {
   organizationPage: Query['getOrganizationPage']
@@ -49,6 +50,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
+  const { format } = useDateUtils()
 
   const pageUrl = Router.pathname
 
@@ -132,11 +134,11 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
             </Text>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12']}>
-                <Text>{homestay.location}</Text>
-                <Text>{homestay.name}</Text>
-                <Text>{homestay.street}</Text>
-                <Text>{homestay.postalCode}</Text>
-                {homestay.validUntil && <Text>Gildir til {homestay.validUntil}</Text>}
+                <Text>Leyfisnúmer: {homestay.licenseNumber}</Text>
+                <Text>Staður: {homestay.location}</Text>
+                <Text>Gata: {homestay.street}</Text>
+                {homestay.postalCode && <Text>Póstnúmer: {homestay.postalCode}</Text>}
+                {homestay.validUntil && <Text>Gildir til {format(new Date(homestay.validUntil), 'd. MMMM yyyy')}</Text>}
                 <Text>{homestay.type}</Text>
                 <Text>{homestay.category}</Text>
                 <Text>Útgefandi: {homestay.issuedBy}</Text>

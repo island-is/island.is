@@ -221,6 +221,7 @@ export const GET_OPERATING_LICENSES_QUERY = gql`
       type category
       issuedBy
       licenseHolder
+      licenseNumber
     }
   }
 `
