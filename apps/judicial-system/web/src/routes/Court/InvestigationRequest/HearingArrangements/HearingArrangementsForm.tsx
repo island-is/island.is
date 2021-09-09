@@ -58,7 +58,6 @@ interface Props {
 const HearingArrangementsForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, users } = props
   const [modalVisible, setModalVisible] = useState(false)
-  const [courtroomEM, setCourtroomEM] = useState('')
   const [defenderEmailEM, setDefenderEmailEM] = useState('')
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
   const [courtDateIsValid, setCourtDateIsValid] = useState(true)
@@ -71,9 +70,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
     registrar: {
-      validations: ['empty'],
-    },
-    courtRoom: {
       validations: ['empty'],
     },
   }
@@ -376,26 +372,20 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   removeTabsValidateAndSet(
                     'courtRoom',
                     event,
-                    ['empty'],
+                    [],
                     workingCase,
                     setWorkingCase,
-                    courtroomEM,
-                    setCourtroomEM,
                   )
                 }
                 onBlur={(event) =>
                   validateAndSendToServer(
                     'courtRoom',
                     event.target.value,
-                    ['empty'],
+                    [],
                     workingCase,
                     updateCase,
-                    setCourtroomEM,
                   )
                 }
-                errorMessage={courtroomEM}
-                hasError={courtroomEM !== ''}
-                required
               />
             </BlueBox>
           </Box>
