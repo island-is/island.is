@@ -262,6 +262,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
                 },
                 { event: DefaultEvents.REJECT, name: 'Hafna', type: 'reject' },
               ],
+              read: 'all',
               write: 'all',
             },
             {
