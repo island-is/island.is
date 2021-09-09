@@ -152,13 +152,19 @@ module.exports = {
       )
 
       // Collect ids
-      const problematicIds = duplicateEndorsementLists
-        .map((endorsement) => endorsement.id)
-        .filter((id) => allowedIds.includes(id))
+      const problematicIds = duplicateEndorsementLists.map(
+        (endorsement) => endorsement.id,
+      )
 
-      // Since we have an ordered list, we know that if we splice the first id away
+      // Since we have an ordered list, we know that if we find the first id
       // We are aggregating to the largest list (by endorser count)
-      const aggregateId = problematicIds.splice(0, 1)[0]
+      const aggregateId = problematicIds.find((problematicId) =>
+        allowedIds.includes(problematicId),
+      )
+      const aggregateIdIndex = problematicIds.indexOf(aggregateId)
+
+      // Remove the aggregate
+      problematicIds.splice(aggregateIdIndex, 1)
 
       // If nothing is to be done after filtering
       // we log that
