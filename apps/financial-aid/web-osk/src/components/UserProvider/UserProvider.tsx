@@ -23,7 +23,6 @@ const UserProvider = ({ children }: Props) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(Cookies.get(CSRF_COOKIE_NAME)),
   )
-
   const { data } = useQuery(CurrentUserQuery, {
     fetchPolicy: 'no-cache',
   })

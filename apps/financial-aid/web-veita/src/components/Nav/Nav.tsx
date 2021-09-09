@@ -39,7 +39,7 @@ const Nav = () => {
 
           <Box paddingLeft={2} className={'headLine'}>
             <Text as="h1" lineHeight="sm">
-              <strong>Sveita</strong> • Umsóknir um fjárhagsaðstoð
+              <strong>Veita</strong> • Umsóknir um fjárhagsaðstoð
             </Text>
           </Box>
         </div>
