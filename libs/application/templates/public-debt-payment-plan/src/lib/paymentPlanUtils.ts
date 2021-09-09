@@ -26,7 +26,7 @@ export const prerequisitesFailed = (data: ExternalData) => {
     !prerequisites.wageReturns
   */
 
-  return !prerequisites.maxDebt
+  return prerequisites.maxDebt
 }
 
 export const formatIsk = (value: number): string =>

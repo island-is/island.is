@@ -47,7 +47,7 @@ export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
   const prerequisites = (application.externalData as PaymentPlanExternalData)
     .paymentPlanPrerequisites?.data?.conditions as PaymentScheduleConditions
 
-  if (prerequisites.maxDebt) return null
+  if (!prerequisites.maxDebt) return null
 
   return (
     <ModalBase
