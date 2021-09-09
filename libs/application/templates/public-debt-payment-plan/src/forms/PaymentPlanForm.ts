@@ -8,8 +8,10 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildSubmitField,
   buildTextField,
   CustomField,
+  DefaultEvents,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -18,6 +20,7 @@ import {
   conclusion,
   employer,
   info,
+  overview,
   section,
 } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
@@ -286,14 +289,24 @@ export const PaymentPlanForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'overviewMultiField',
-          title: 'Yfirlit og undirritun',
-          description:
-            'Á þessari síðu má sjá heildaryfirlit yfir umsókn vegna greiðsludreifingar skulda, gott að er að skoða þetta vel áður en farið er í rafræna undirritun. ',
+          title: overview.title,
+          description: overview.description,
           children: [
             buildCustomField({
               id: 'overviewScreen',
               title: '',
               component: 'Overview',
+            }),
+            buildSubmitField({
+              id: 'overview.submit',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.submitButton,
+                  type: 'primary',
+                },
+              ],
             }),
           ],
         }),
