@@ -128,14 +128,19 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
             paddingX={4}
           >
             <Text variant="h4" color="blue400" marginBottom={1}>
-              {homestay.name}
+              {homestay.name ? homestay.name : homestay.location}
             </Text>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12']}>
                 <Text>{homestay.location}</Text>
-                <Text>{homestay.issuedBy}</Text>
-                <Text>{homestay.validUntil}</Text>
-                <Text>{homestay.licenseHolder}</Text>
+                <Text>{homestay.name}</Text>
+                <Text>{homestay.street}</Text>
+                <Text>{homestay.postalCode}</Text>
+                {homestay.validUntil && <Text>Gildir til {homestay.validUntil}</Text>}
+                <Text>{homestay.type}</Text>
+                <Text>{homestay.category}</Text>
+                <Text>Útgefandi: {homestay.issuedBy}</Text>
+                <Text>Leyfishafi: {homestay.licenseHolder}</Text>
               </GridColumn>
             </GridRow>
           </Box>

@@ -215,8 +215,11 @@ export const GET_OPERATING_LICENSES_QUERY = gql`
     getOperatingLicenses {
       location
       name
-      issuedBy
+      street
+      postalCode
       validUntil
+      type category
+      issuedBy
       licenseHolder
     }
   }
