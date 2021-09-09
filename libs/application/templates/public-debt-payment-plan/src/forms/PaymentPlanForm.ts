@@ -1,7 +1,4 @@
-import {
-  PaymentScheduleConditions,
-  PaymentScheduleDebts,
-} from '@island.is/api/schema'
+import { PaymentScheduleDebts } from '@island.is/api/schema'
 import {
   buildCustomField,
   buildDataProviderItem,
@@ -215,17 +212,24 @@ export const PaymentPlanForm: Form = buildForm({
     buildSection({
       id: 'employer',
       title: section.employer,
-      condition: (_formValue, externalData) => {
-        const prerequisites = (externalData as PaymentPlanExternalData)
-          .paymentPlanPrerequisites?.data?.conditions as
-          | PaymentScheduleConditions
-          | undefined
-        return prerequisites?.taxReturns || false
-      },
       children: [
         buildMultiField({
           id: 'employerMultiField',
           title: employer.general.pageTitle,
+          condition: (_formValue, externalData) => {
+            const debts = (externalData as PaymentPlanExternalData)
+              ?.paymentPlanPrerequisites?.data?.debts
+            const employer = (externalData as PaymentPlanExternalData)
+              ?.paymentPlanPrerequisites?.data?.employer
+
+            return !!(
+              debts?.find((x) => x.type === 'OverpaidBenefits') !== undefined ||
+              (employer?.name &&
+                employer?.name.length > 0 &&
+                employer?.nationalId &&
+                employer?.nationalId.length > 0)
+            )
+          },
           children: [
             buildCustomField({
               id: 'employerInfoDescription',
@@ -261,13 +265,6 @@ export const PaymentPlanForm: Form = buildForm({
           title: employer.general.disposableIncomePageTitle,
           description: employer.general.disposableIncomePageDescription,
           component: 'DisposableIncome',
-          condition: (_formValue, externalData) => {
-            const debts = (externalData as PaymentPlanExternalData)
-              ?.paymentPlanPrerequisites?.data?.debts
-            return (
-              debts?.find((x) => x.type === 'OverpaidBenefits') !== undefined
-            )
-          },
         }),
       ],
     }),
