@@ -74,10 +74,10 @@ export class GeneralPetitionService {
     const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
       .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
         input: {
-          title: application.answers.partyName,
-          description: application.answers.partyLetter,
-          endorsementMeta: ['fullName', 'address', 'signedTags'],
-          tags: ['partyLetter2021'],
+          title: application.answers.listName,
+          description: application.answers.aboutList,
+          //endorsementMeta: ['fullName', 'address', 'signedTags'],
+          tags: ['generalPetition'],
           validationRules: [
             {
               type: 'minAge',
