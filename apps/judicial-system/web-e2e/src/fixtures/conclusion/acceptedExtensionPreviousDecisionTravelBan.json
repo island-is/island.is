@@ -10,7 +10,10 @@
       "accusedGender": "MALE",
       "decision": "ACCEPTING",
       "validToDate": "2020-12-22T11:23:00.000Z",
-      "parentCase": {"id": "test_id_parent", "decision": "ACCEPTING_ALTERNATIVE_TRAVEL_BAN"}
+      "parentCase": {
+        "id": "test_id_parent",
+        "decision": "ACCEPTING_ALTERNATIVE_TRAVEL_BAN"
+      }
     }
   }
 }

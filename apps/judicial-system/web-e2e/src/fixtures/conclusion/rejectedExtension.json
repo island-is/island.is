@@ -10,7 +10,7 @@
       "accusedGender": "MALE",
       "decision": "REJECTING",
       "validToDate": "2021-01-29T13:03T13:03:03.033Z",
-      "parentCase": {"id": "test_id_parent", "decision": "ACCEPTING"},
+      "parentCase": { "id": "test_id_parent", "decision": "ACCEPTING" },
       "custodyRestrictions": null
     }
   }

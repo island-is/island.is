@@ -9,7 +9,7 @@
       "accusedName": "Glanni Glæpur",
       "accusedGender": "MALE",
       "decision": "ACCEPTING_ALTERNATIVE_TRAVEL_BAN",
-      "parentCase": {"id": "test_id_parent", "decision": "ACCEPTING"},
+      "parentCase": { "id": "test_id_parent", "decision": "ACCEPTING" },
       "validToDate": "2020-12-22T11:23T13:03:03.033Z",
       "custodyRestrictions": null
     }
