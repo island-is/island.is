@@ -39,8 +39,6 @@ import getConfig from 'next/config'
 import { useQuery } from '@apollo/client'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useRouter } from 'next/router'
-import format from 'date-fns/format'
-import { LottieOptions } from '@island.is/web/libs/react-lottie/types'
 import { theme } from '@island.is/island-ui/theme'
 
 const { publicRuntimeConfig } = getConfig()
@@ -397,6 +395,7 @@ const Auctions: Screen<AuctionsProps> = ({
   const { linkResolver } = useLinkResolver()
   const { format } = useDateUtils()
   const Router = useRouter()
+  const auctionDataFetched = new Date()
 
   const pageUrl = Router.pathname
 
@@ -461,8 +460,6 @@ const Auctions: Screen<AuctionsProps> = ({
       input: {},
     },
   })
-
-  // TODO: Fix input focus bug, where after after initial load of the page and first key-up on the Input, the Input looses focus.
 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
@@ -613,7 +610,7 @@ const Auctions: Screen<AuctionsProps> = ({
         <GridRow>
           <GridColumn
             paddingTop={[2, 2, 0]}
-            paddingBottom={[4, 4, 6]}
+            paddingBottom={[1, 1, 1]}
             span="12/12"
           >
             <Input
@@ -628,6 +625,16 @@ const Auctions: Screen<AuctionsProps> = ({
           </GridColumn>
         </GridRow>
       </GridContainer>
+      <Box
+        display="flex"
+        alignItems="flexEnd"
+        flexDirection="column"
+        paddingBottom={3}
+      >
+        <Text variant="small">
+          Gögn sótt: {format(auctionDataFetched, "d. MMM yyyy 'kl.' hh:mm")}
+        </Text>
+      </Box>
       <Box
         borderTopWidth="standard"
         borderColor="standard"
