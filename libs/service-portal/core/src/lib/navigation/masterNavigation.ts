@@ -63,6 +63,11 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.endorsements,
             path: ServicePortalPath.Endorsements,
           },
+          {
+            // Medmaeli
+            name: 'Undirskriftalistar',
+            path: ServicePortalPath.Petitions,
+          },
         ],
       },
 

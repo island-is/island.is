@@ -1,6 +1,4 @@
 import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
-
 import {
   ServicePortalModule,
   ServicePortalPath,
@@ -15,6 +13,11 @@ export const endorsementsModule: ServicePortalModule = {
       name: m.endorsements,
       path: ServicePortalPath.Endorsements,
       render: () => lazy(() => import('./screens/Endorsements')),
+    },
+    {
+      name: m.endorsements,
+      path: ServicePortalPath.Petitions,
+      render: () => lazy(() => import('./screens/Petitions')),
     },
   ],
 }
