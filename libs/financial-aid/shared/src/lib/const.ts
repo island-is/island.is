@@ -11,3 +11,16 @@ export const AllowedFakeUsers = [
   '0000000002', // Veita user
   '0000000003', // User with an application which needs data
 ]
+
+export const Routes = {
+  status: '/stada',
+  statusPage: (id: string) => `/stada/${id}`,
+  statusFileUpload: (id: string) => `/stada/${id}/gogn`,
+  apiLoginRouteForFake: (id: string) =>
+    id
+      ? `/api/auth/login?applicationId=${id}&nationalId=`
+      : '/api/auth/login?nationalId=',
+  apiLoginRouteForRealUsers: (id: string) =>
+    id ? `/api/auth/login?applicationId=${id}` : '/api/auth/login',
+  filesPage: '/gogn',
+}
