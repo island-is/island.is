@@ -53,7 +53,6 @@ export const FormOverview: FC<FieldBaseProps> = ({
   refetch,
   goToScreen,
 }) => {
-  console.log(application)
   const answers = application.answers as AccidentNotification
   const { formatMessage } = useLocale()
 
