@@ -278,7 +278,7 @@ const LOT_TYPES = {
 const AUCTION_TYPES = {
   START: 'Byrjun uppboðs',
   CONTINUATION: 'Framhald uppboðs',
-  SOLD: 'Sölu lokið'
+  SOLD: 'Sölu lokið',
 }
 
 interface LotTypeOption {
@@ -510,9 +510,11 @@ const Auctions: Screen<AuctionsProps> = ({
         auction.lotItems?.toLowerCase().includes(query) ||
         auction.office?.toLowerCase().includes(query) ||
         auction.location?.toLowerCase().includes(query) ||
-        (auction.lotType === LOT_TYPES.REAL_ESTATE && auction.respondent?.toLowerCase().includes(query)) ||
-        (auction.lotType === LOT_TYPES.REAL_ESTATE && auction.petitioners?.toLowerCase().includes(query)))
-      )
+        (auction.lotType === LOT_TYPES.REAL_ESTATE &&
+          auction.respondent?.toLowerCase().includes(query)) ||
+        (auction.lotType === LOT_TYPES.REAL_ESTATE &&
+          auction.petitioners?.toLowerCase().includes(query)))
+    )
   })
 
   return (
@@ -695,7 +697,10 @@ const Auctions: Screen<AuctionsProps> = ({
                   {auctionRespondents &&
                     auction.lotType === LOT_TYPES.REAL_ESTATE && (
                       <Text paddingTop={2} paddingBottom={1}>
-                        {auctionRespondents. length > 1 ? 'Þinglýstir eigendur' : 'Þinglýstur eigandi'}: {auctionRespondents.join(', ')}
+                        {auctionRespondents.length > 1
+                          ? 'Þinglýstir eigendur'
+                          : 'Þinglýstur eigandi'}
+                        : {auctionRespondents.join(', ')}
                       </Text>
                     )}
 
@@ -703,7 +708,10 @@ const Auctions: Screen<AuctionsProps> = ({
                   {auctionPetitioners &&
                     auction.lotType === LOT_TYPES.REAL_ESTATE && (
                       <Text paddingBottom={1}>
-                        {auctionPetitioners.length > 1 ? 'Gerðarbeiðendur' : 'Gerðarbeiðandi'}: {auctionPetitioners.join(', ')}
+                        {auctionPetitioners.length > 1
+                          ? 'Gerðarbeiðendur'
+                          : 'Gerðarbeiðandi'}
+                        : {auctionPetitioners.join(', ')}
                       </Text>
                     )}
 
