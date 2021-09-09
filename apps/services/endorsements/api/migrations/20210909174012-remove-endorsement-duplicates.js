@@ -4,8 +4,7 @@ async function getByQuery(interface, query) {
 }
 
 async function runQuery(interface, query) {
-  const result = await interface.sequelize.query(query)
-  return true
+  return interface.sequelize.query(query)
 }
 
 module.exports = {
@@ -169,7 +168,6 @@ module.exports = {
       // If nothing is to be done after filtering
       // we log that
       if (!aggregateId || problematicIds.length == 0) {
-        console.log({ aggregateId, problematicIds })
         console.log(
           'Nothing to be done for',
           JSON.stringify({
@@ -180,6 +178,8 @@ module.exports = {
             ),
           }),
         )
+        console.log({ aggregateId, problematicIds })
+        continue
       } else {
         console.log(`Aggregating into endorsement list with id ${aggregateId}`)
         console.log(
@@ -198,6 +198,11 @@ module.exports = {
           `SELECT id FROM endorsement WHERE endorsement_list_id = '${problematicId}';`,
         )
 
+        console.log(
+          `Moving endorsements from endorsement list: ${problematicId} to ${aggregateId}`,
+          JSON.stringify(problematicEndorsements),
+        )
+
         for (const problematicEndorsement of problematicEndorsements) {
           // Make all endorsements point to the aggregateId
           await runQuery(
@@ -206,7 +211,9 @@ module.exports = {
           )
         }
 
-        // Finally delete the problematic endorsement_list
+        console.log(`Removing endorsement list: ${problematicId}`)
+
+        // Finally delete the merged endorsement_list
         await runQuery(
           queryInterface,
           `DELETE FROM endorsement_list WHERE id = '${problematicId}';`,
