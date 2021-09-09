@@ -3,6 +3,7 @@ import {
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
+  coreErrorMessages,
 } from '@island.is/application/core'
 import { NationalRegistryUser } from '@island.is/api/schema'
 
@@ -36,27 +37,20 @@ export class NationalRegistryProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
-          return this.handleError(response.errors)
+          console.error(`graphql error in ${this.type}: ${response.errors[0].message}`)
+          return Promise.reject({})
         }
 
         return Promise.resolve(response.data.nationalRegistryUser)
       })
-      .catch((error) => {
-        return this.handleError(error)
-      })
   }
 
-  handleError(error: any) {
-    console.log('Provider error - NationalRegistry:', error)
-    return Promise.resolve({})
-  }
-
-  onProvideError(result: string): FailedDataProviderResult {
+  onProvideError(result: unknown): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: result,
+      reason: coreErrorMessages.errorDataProvider,
       status: 'failure',
-      data: result,
+      data: {},
     }
   }
 
