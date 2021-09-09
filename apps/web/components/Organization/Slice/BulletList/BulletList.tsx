@@ -1,7 +1,7 @@
 import React from 'react'
 import { BulletListSlice as BulletListProps } from '@island.is/web/graphql/schema'
 import { Box } from '@island.is/island-ui/core'
-import { BulletList } from '../../../BulletList/BulletList'
+import { BulletList } from '@island.is/web/components'
 
 interface SliceProps {
   slice: BulletListProps

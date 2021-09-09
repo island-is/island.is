@@ -1,4 +1,4 @@
-import { ApplicationState } from '@island.is/financial-aid/shared'
+import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 export const navigationItems = [
   {

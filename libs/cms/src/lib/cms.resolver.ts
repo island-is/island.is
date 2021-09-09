@@ -435,9 +435,11 @@ export class CmsResolver {
 }
 
 @Resolver(() => LatestNewsSlice)
+@Directive(cacheControlDirective())
 export class LatestNewsSliceResolver {
   constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
 
+  @Directive(cacheControlDirective())
   @ResolveField(() => [News])
   async news(@Parent() { news: input }: LatestNewsSlice): Promise<News[]> {
     const newsList = await this.cmsElasticsearchService.getNews(
@@ -449,9 +451,11 @@ export class LatestNewsSliceResolver {
 }
 
 @Resolver(() => Article)
+@Directive(cacheControlDirective())
 export class ArticleResolver {
   constructor(private cmsContentfulService: CmsContentfulService) {}
 
+  @Directive(cacheControlDirective())
   @ResolveField(() => [Article])
   async relatedArticles(@Parent() article: Article) {
     return this.cmsContentfulService.getRelatedArticles(article.slug, 'is')
@@ -459,9 +463,11 @@ export class ArticleResolver {
 }
 
 @Resolver(() => AboutSubPage)
+@Directive(cacheControlDirective())
 export class AboutSubPageResolver {
   constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
 
+  @Directive(cacheControlDirective())
   @ResolveField(() => AboutPage)
   async parent(@Parent() { parent }: AboutSubPage) {
     if (parent) {

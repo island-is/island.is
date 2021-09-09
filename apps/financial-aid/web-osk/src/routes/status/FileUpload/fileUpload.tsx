@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -6,57 +6,53 @@ import {
   StatusLayout,
   Files,
 } from '@island.is/financial-aid-web/osk/src/components'
-import { FormContext } from '@island.is/financial-aid-web/osksrc/components/FormProvider/FormProvider'
-import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFileUpload'
-import { UserContext } from '@island.is/financial-aid-web/osksrc/components/UserProvider/UserProvider'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/useFileUpload'
 import {
   Application,
   ApplicationState,
   FileType,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
-import { UpdateApplicationMutation } from '@island.is/financial-aid-web/oskgraphql/sharedGql'
+import { UpdateApplicationMutation } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 const FileUpload = () => {
-  const { form } = useContext(FormContext)
+  const { form, updateForm } = useContext(FormContext)
   const router = useRouter()
-  const [nextButtonText, setNextButtonText] = useState('Senda gögn')
   const { uploadFiles } = useFileUpload(form.otherFiles)
-  const { user } = useContext(UserContext)
-
-  const currentApplication = useMemo(() => {
-    if (user?.currentApplication) {
-      return user.currentApplication
-    }
-  }, [user])
+  const [isLoading, setIsLoading] = useState(false)
 
   const [updateApplicationMutation] = useMutation<{ application: Application }>(
     UpdateApplicationMutation,
   )
 
   const proceed = async () => {
-    if (form?.otherFiles.length <= 0 || currentApplication === undefined) {
-      setNextButtonText('Engar skrár til staðar')
+    if (form?.otherFiles.length <= 0 || router.query.id === undefined) {
       return
     }
 
+    setIsLoading(true)
+
     try {
-      await uploadFiles(currentApplication.id, FileType.OTHER).then(
+      await uploadFiles(router.query.id as string, FileType.OTHER).then(
         async () => {
           await updateApplicationMutation({
             variables: {
               input: {
-                id: currentApplication.id,
+                id: router.query.id,
                 state: ApplicationState.INPROGRESS,
               },
             },
           })
-          setNextButtonText('Skrám hefur verið hlaðið upp')
+          updateForm({ ...form, status: ApplicationState.INPROGRESS })
+          router.push(`/${router.query.id}/gogn/send`)
         },
       )
     } catch (e) {
-      setNextButtonText('Ekki tókst að hlaða upp skrám')
+      router.push(`/${router.query.id}/gogn/villa`)
     }
+
+    setIsLoading(false)
   }
 
   return (
@@ -68,7 +64,8 @@ const FileUpload = () => {
       />
       <Footer
         previousUrl={`/${router.query.id}`}
-        nextButtonText={nextButtonText}
+        nextButtonText={'Senda gögn'}
+        nextIsLoading={isLoading}
         onNextButtonClick={() => proceed()}
       />
     </StatusLayout>

@@ -33,7 +33,7 @@ import {
   formatPhoneNumber,
   formatNationalId,
   Routes,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/useApplication'
 
