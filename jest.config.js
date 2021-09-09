@@ -171,5 +171,7 @@ module.exports = {
     '<rootDir>/libs/shared/types',
     '<rootDir>/libs/skilavottord/consts',
     '<rootDir>/libs/skilavottord/types',
+    '<rootDir>/libs/api/domains/rsk-company-info',
+    '<rootDir>/libs/clients/rsk-company-info',
   ],
 }

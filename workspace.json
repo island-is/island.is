@@ -8548,6 +8548,48 @@
           }
         }
       }
+    },
+    "api-domains-rsk-company-info": {
+      "root": "libs/api/domains/rsk-company-info",
+      "sourceRoot": "libs/api/domains/rsk-company-info/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/rsk-company-info/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/rsk-company-info"],
+          "options": {
+            "jestConfig": "libs/api/domains/rsk-company-info/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-rsk-company-info": {
+      "root": "libs/clients/rsk-company-info",
+      "sourceRoot": "libs/clients/rsk-company-info/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/rsk-company-info/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/rsk-company-info"],
+          "options": {
+            "jestConfig": "libs/clients/rsk-company-info/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }

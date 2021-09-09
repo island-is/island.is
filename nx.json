@@ -145,6 +145,9 @@
     "api-domains-rsk": {
       "tags": []
     },
+    "api-domains-rsk-company-info": {
+      "tags": []
+    },
     "api-domains-syslumenn": {
       "tags": []
     },
@@ -317,6 +320,9 @@
       "tags": []
     },
     "clients-regulations": {
+      "tags": []
+    },
+    "clients-rsk-company-info": {
       "tags": []
     },
     "clients-rsk-v1": {
