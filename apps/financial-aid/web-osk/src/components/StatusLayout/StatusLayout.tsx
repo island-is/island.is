@@ -15,12 +15,6 @@ interface Props {
 const StatusLayout = ({ children }: Props) => {
   const { isAuthenticated, user } = useContext(UserContext)
 
-  const currentState = useMemo(() => {
-    if (user?.currentApplication) {
-      return getState[user.currentApplication.state]
-    }
-  }, [user])
-
   useEffect(() => {
     document.title = 'Fjárhagsaðstoð – Staða'
   }, [])
@@ -43,30 +37,26 @@ const StatusLayout = ({ children }: Props) => {
       background="purple100"
       className={styles.processContainer}
     >
-      {!user.currentApplication ? (
-        <div>Þú hefur ekki sótt um?</div>
-      ) : (
-        <GridContainer className={styles.gridContainer}>
-          <div className={styles.gridRowContainer}>
-            <Box
-              background="white"
-              borderColor="white"
-              borderRadius="large"
-              className={styles.formContainer}
-            >
-              {children}
+      <GridContainer className={styles.gridContainer}>
+        <div className={styles.gridRowContainer}>
+          <Box
+            background="white"
+            borderColor="white"
+            borderRadius="large"
+            className={styles.formContainer}
+          >
+            {children}
+          </Box>
+          <Box className={styles.sidebarContent}>
+            <Box>
+              <Text as="h3" variant="h3" marginBottom={[1, 1, 2]}>
+                Umsókn um fjárhagsaðstoð hjá Hafnarfjarðarbæ
+              </Text>
             </Box>
-            <Box className={styles.sidebarContent}>
-              <Box>
-                <Text as="h3" variant="h3" marginBottom={[1, 1, 2]}>
-                  Umsókn um fjárhagsaðstoð hjá Hafnarfjarðarbæ
-                </Text>
-              </Box>
-              <LogoHfj className={styles.logo} />
-            </Box>
-          </div>
-        </GridContainer>
-      )}{' '}
+            <LogoHfj className={styles.logo} />
+          </Box>
+        </div>
+      </GridContainer>
     </Box>
   )
 }

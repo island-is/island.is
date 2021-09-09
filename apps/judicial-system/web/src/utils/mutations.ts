@@ -65,6 +65,7 @@ export const ExtendCaseMutation = gql`
       leadInvestigator
       arrestDate
       requestedCourtDate
+      translator
       requestedValidToDate
       demands
       lawsBroken

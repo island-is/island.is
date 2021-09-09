@@ -9,11 +9,9 @@ import {
   CurrentApplication,
   months,
   getState,
+  Routes,
 } from '@island.is/financial-aid/shared'
-import {
-  Timeline,
-  Estimation,
-} from '@island.is/financial-aid-web/osk/src/components'
+import { Estimation } from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
 
 interface Props {
@@ -41,7 +39,8 @@ const InProgress = ({ currentApplication }: Props) => {
             cta={{
               label: 'Hlaða upp gögnum',
               onClick: () => {
-                router.push(`${router.query.id}/gogn`)
+                router.push(`
+                ${Routes.statusFileUpload(router.query.id as string)}`)
               },
             }}
             backgroundColor="blue"

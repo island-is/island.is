@@ -41,7 +41,7 @@ const Modal: React.FC<ModalProps> = ({
     <motion.div
       key="modal"
       className={styles.container}
-      test-id="modal"
+      data-testid="modal"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

@@ -46,6 +46,7 @@ const dataSchema = z.object({
     z.array(z.enum(['yes', 'no'])),
     z.enum(['yes', 'no']),
   ]),
+  requirementsMet: z.boolean().refine((v) => v),
   certificate: z.array(z.enum(['yes', 'no'])).nonempty(),
   picture: z.array(z.enum(['yes', 'no'])).nonempty(),
 })
