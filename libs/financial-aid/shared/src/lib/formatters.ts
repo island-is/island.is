@@ -48,6 +48,16 @@ export const getEventType: KeyMapping<
     text: 'skrifaði athugasemd',
     isStaff: true,
   },
+  UserComment: {
+    header: 'Athugasemd',
+    text: 'skrifaði athugasemd',
+    isStaff: false,
+  },
+  FileUpload: {
+    header: 'Ný gögn',
+    text: 'sendi inn gögn',
+    isStaff: false,
+  },
 }
 
 export const getActiveSectionForTimeline: KeyMapping<

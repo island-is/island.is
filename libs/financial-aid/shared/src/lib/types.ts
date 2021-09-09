@@ -29,6 +29,8 @@ export enum ApplicationEventType {
   REJECTED = 'Rejected',
   APPROVED = 'Approved',
   STAFFCOMMENT = 'StaffComment',
+  USERCOMMENT = 'UserComment',
+  FILEUPLOAD = 'FileUpload',
 }
 
 export enum RolesRule {

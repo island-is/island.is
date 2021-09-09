@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, Icon } from '@island.is/island-ui/core'
 
 import * as styles from './History.treat'
 import cn from 'classnames'
@@ -79,24 +79,26 @@ const History = ({ className, applicantsName }: Props) => {
                     </Box>
                   )}
 
-                  {/* TODO: if sent meessage */}
-                  {/* <Box
-                    paddingLeft={3}
-                    marginBottom={2}
-                    className={styles.timelineMessages}
-                  >
-                 
-                    <Icon icon="chatbubble" type="outline" />{' '}
-                    <Text marginBottom={2}>
-                      „Hæhæ hér koma gögnin, afsakið þennan misskilning!
-                      Endilega heyrið í mér ef það vantar eitthvað fleira.“` “
-                    </Text>
-               
-                    <Icon icon="checkmark" />{' '}
-                    <Text fontWeight="semiBold">
-                      Skilaboð send á umsækjanda
-                    </Text>
-                  </Box> */}
+                  {item.eventType === ApplicationEventType.FILEUPLOAD && (
+                    <Box
+                      paddingLeft={3}
+                      marginBottom={2}
+                      className={styles.timelineMessages}
+                    >
+                      {item.comment && (
+                        <>
+                          <Icon icon="chatbubble" type="outline" />{' '}
+                          <Text marginBottom={2}>„{item.comment}“</Text>
+                        </>
+                      )}
+                    </Box>
+                  )}
+
+                  {/* TODO if staff sents comment to applicant */}
+                  {/* <Icon icon="checkmark" />{' '}
+                      <Text fontWeight="semiBold">
+                        Skilaboð send á umsækjanda
+                      </Text> */}
 
                   <Text variant="small" color="dark300" marginBottom={5}>
                     {format(new Date(item.created), 'dd/MM/yyyy HH:MM')}
