@@ -26,7 +26,7 @@ const Petitions = () => {
               variant: 'text',
               icon: 'arrowForward',
               //onClick: () =>
-                //router.push('/undirskriftalistar/' + 1),
+              //router.push('/undirskriftalistar/' + 1),
             }}
           />
           <ActionCard
