@@ -1,6 +1,6 @@
 import 'isomorphic-fetch'
 
-import { deleteCookie } from '@island.is/financial-aid/shared'
+import { deleteCookie } from '@island.is/financial-aid/shared/lib'
 
 const { API_URL = '' } = process.env // eslint-disable-line @typescript-eslint/naming-convention
 export const apiUrl = API_URL

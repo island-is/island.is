@@ -1,11 +1,5 @@
 import React from 'react'
-import {
-  Text,
-  GridContainer,
-  Box,
-  Link,
-  Button,
-} from '@island.is/island-ui/core'
+import { GridContainer, Box, Link, Button } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { Card, SimpleSlider } from '@island.is/web/components'
 import { GetLifeEventsQuery } from '@island.is/web/graphql/schema'
@@ -51,13 +45,16 @@ export const LifeEventsCardsSection = ({
           items={lifeEvents
             .filter((x) => x.slug && x.title)
             .map(
-              ({ title, __typename, thumbnail, image, intro, slug }, index) => {
+              (
+                { title, __typename: typename, thumbnail, image, intro, slug },
+                index,
+              ) => {
                 return (
                   <Card
                     key={index}
                     title={title}
                     description={intro}
-                    link={linkResolver(__typename as LinkType, [slug])}
+                    link={linkResolver(typename as LinkType, [slug])}
                     image={
                       thumbnail
                         ? {

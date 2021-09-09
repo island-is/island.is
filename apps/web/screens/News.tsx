@@ -123,7 +123,7 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   let selectedTag: GenericTag | undefined
 
-  for (let item of newsList) {
+  for (const item of newsList) {
     const tag = item.genericTags.find((t) => t.slug === selectedTagSlug)
 
     if (tag) {
@@ -145,7 +145,7 @@ const NewsListNew: Screen<NewsListProps> = ({
     },
   ]
 
-  const breadCrumbTags: BreadCrumbItem | BreadCrumbItem[] = !!newsItem
+  const breadCrumbTags: BreadCrumbItem | BreadCrumbItem[] = newsItem
     ?.genericTags?.length
     ? newsItem.genericTags
         .filter((t) => t.title && t.slug)
@@ -460,10 +460,10 @@ NewsListNew.getInitialProps = async ({ apolloClient, locale, query }) => {
   const newsList = getNewsResults?.data?.getNews?.items ?? []
   const total = getNewsResults?.data?.getNews?.total ?? 0
 
-  let selectedYear = newsItem?.date
+  const selectedYear = newsItem?.date
     ? parseInt(newsItem.date?.slice(0, 4), 10)
     : year
-  let selectedMonth = newsItem?.date
+  const selectedMonth = newsItem?.date
     ? parseInt(newsItem.date?.slice(5, 7), 10)
     : month
 

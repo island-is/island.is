@@ -3,7 +3,7 @@ import fetch from 'isomorphic-fetch'
 import { Injectable } from '@nestjs/common'
 import { uuid } from 'uuidv4'
 
-import { User, RolesRule } from '@island.is/financial-aid/shared'
+import { User, RolesRule, ReturnUrl } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../../../environments'
 
@@ -32,6 +32,7 @@ export class AuthService {
         phoneNumber: '9999999',
         folder: uuid(),
         service: RolesRule.OSK,
+        returnUrl: ReturnUrl.APPLICATION,
       },
       '0000000001': {
         nationalId: '0000000001',
@@ -39,6 +40,7 @@ export class AuthService {
         phoneNumber: '9999999',
         folder: uuid(),
         service: RolesRule.OSK,
+        returnUrl: ReturnUrl.APPLICATION,
       },
       '0000000002': {
         nationalId: '0000000002',
@@ -46,6 +48,7 @@ export class AuthService {
         phoneNumber: '9999999',
         folder: uuid(),
         service: RolesRule.VEITA,
+        returnUrl: ReturnUrl.ADMIN,
       },
       '0000000003': {
         nationalId: '0000000003',
@@ -53,6 +56,7 @@ export class AuthService {
         phoneNumber: '9999999',
         folder: uuid(),
         service: RolesRule.OSK,
+        returnUrl: ReturnUrl.APPLICATION,
       },
     }
 

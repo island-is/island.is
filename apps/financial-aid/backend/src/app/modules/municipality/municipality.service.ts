@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { MunicipalityModel } from './models'
 
-import { Municipality } from '@island.is/financial-aid/shared'
+import { Municipality } from '@island.is/financial-aid/shared/lib'
 
 import { MunicipalityQueryInput } from './dto'
 
