@@ -9,7 +9,7 @@ import {
   calculateAidFinalAmount,
   calulatePersonalTaxAllowanceUsed,
   calulateTaxOfAmount,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   aidAmount: number

@@ -10,7 +10,10 @@ import {
 import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import { NavigationProps } from '@island.is/financial-aid/shared'
+import {
+  NavigationProps,
+  currentMonth,
+} from '@island.is/financial-aid/shared/lib'
 
 const AboutForm = () => {
   const router = useRouter()
@@ -30,8 +33,9 @@ const AboutForm = () => {
         </Text>
 
         <Text variant="h3" fontWeight="light" marginBottom={3}>
-          Þú ert að sækja um <strong>fjárhagsaðstoð hjá Hafnarfirði</strong>.
-          Áður en þú heldur áfram er gott að hafa eftirfarandi í huga:
+          Þú ert að sækja um <strong>fjárhagsaðstoð hjá Hafnarfirði</strong>{' '}
+          fyrir {currentMonth()}. Áður en þú heldur áfram er gott að hafa
+          eftirfarandi í huga:
         </Text>
 
         <Box marginBottom={5}>

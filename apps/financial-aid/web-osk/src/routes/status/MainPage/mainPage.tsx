@@ -21,12 +21,12 @@ import {
 import {
   Application,
   getActiveTypeForStatus,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
-import { GetApplicationQuery } from '@island.is/financial-aid-web/oskgraphql'
+import { GetApplicationQuery } from '@island.is/financial-aid-web/osk/graphql'
 
 interface ApplicantData {
   application: Application
