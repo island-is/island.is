@@ -5,7 +5,11 @@ import Link from 'next/link'
 import * as styles from './TableBody.treat'
 
 import cn from 'classnames'
-import { Application, getState, months } from '@island.is/financial-aid/shared'
+import {
+  Application,
+  getState,
+  months,
+} from '@island.is/financial-aid/shared/lib'
 import format from 'date-fns/format'
 
 import {

@@ -10,7 +10,7 @@ import cn from 'classnames'
 import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/src/components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 
 import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
-import { ApplicationState } from '@island.is/financial-aid/shared'
+import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 

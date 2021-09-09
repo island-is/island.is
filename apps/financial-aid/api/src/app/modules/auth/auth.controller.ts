@@ -26,7 +26,7 @@ import {
   ReturnUrl,
   AllowedFakeUsers,
   RolesRule,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 import { SharedAuthService } from '@island.is/financial-aid/auth'
 
