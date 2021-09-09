@@ -44,9 +44,17 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
   const partyLetterRegistry = externalData.partyLetterRegistry
     .data as PartyLetterRegistry
   const endorsementListId = (externalData?.createEndorsementList.data as any).id
-  const { endorsements } = useEndorsements(endorsementListId, false)
+  const { endorsements: unfilteredEndorsements = [] } = useEndorsements(
+    endorsementListId,
+    false,
+  )
   const constituency =
     constituencyMapper[answers.constituency as EndorsementListTags]
+
+  // we want this screen to only use filtered endorsements
+  const endorsements = unfilteredEndorsements.filter((endorsement) =>
+    (answers.endorsements ?? []).includes(endorsement.id),
+  )
 
   return (
     <Box>
@@ -90,7 +98,7 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5">
             {formatMessage(m.supremeCourt.numberOfEndorsementsLabel)}
           </Text>
-          <Text marginBottom={1}>{answers.endorsements?.length}</Text>
+          <Text marginBottom={1}>{endorsements?.length}</Text>
           <Box marginTop={3} marginBottom={5}>
             {endorsements?.length && (
               <ExportAsCSV
