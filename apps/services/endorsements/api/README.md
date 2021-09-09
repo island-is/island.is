@@ -19,15 +19,8 @@ To run the API locally make sure you:
 
 [direnv](https://direnv.net/docs/installation.html) is recommended for autoloading environment variables
 
--- add this line to your ~/.zshrc or equivalent
 
-```bash
-eval "$(direnv hook zsh)"
-```
-
-once done you should see all variables autoload everytime you cd into the "island.is" folder
-
-### Initalize the application
+### Initialize the application
 
 ```bash
 yarn nx run application-templates-party-application:dev/init
