@@ -3835,10 +3835,10 @@
   resolved "https://registry.yarnpkg.com/@hugsmidjan/qj/-/qj-4.7.0.tgz#ef2793bf1f349bc01b2118dc2d20d6f22163fa84"
   integrity sha512-/kIAN1WvMTlzmtKXgIRl57KbTpAd9UmNgPfcO0NtZNllwhfKDRVOrN9c6ZeBxnrfWsYBP6/BFldYur1aBDBO2g==
 
-"@hugsmidjan/regulations-editor@0.3.5":
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.3.5.tgz#52ea8b57f2963738805d2c9659d180cd963b807a"
-  integrity sha512-cjbX25K5wFLEuJOIMGqYO5FKrXle7xDifbMCuNSFVpBSkpfEdsh48VTOQONLzVaK8eQDailIoYHE8WQxxjnB3g==
+"@hugsmidjan/regulations-editor@0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.3.6.tgz#fbb8c4a8b623d86e69cc195e6a7d6cd1acd675d6"
+  integrity sha512-jzXSxqwT7ZKlPH0mhO6jWfN0GjeeToj2dg9STOreapCqGiPhmYzSHKGl8gxpNQafDAfFbPnaoXnUWycifVem8Q==
   dependencies:
     "@hugsmidjan/qj" "^4.7.0"
     "@tinymce/tinymce-react" "^3.8.4"
@@ -12270,10 +12270,10 @@ csv-parse@4.16.0:
   resolved "https://registry.yarnpkg.com/csv-parse/-/csv-parse-4.16.0.tgz#b4c875e288a41f7ff917cb0d7d45880d563034f6"
   integrity sha512-Zb4tGPANH4SW0LgC9+s9Mnequs9aqn7N3/pCqNbVjs2XhEF6yWNU2Vm4OGl1v2Go9nw8rXt87Cm2QN/o6Vpqgg==
 
-csv-stringify@5.5.1:
-  version "5.5.1"
-  resolved "https://registry.yarnpkg.com/csv-stringify/-/csv-stringify-5.5.1.tgz#f42cdd379b0f7f142933a11f674b1a91ebd0fcd0"
-  integrity sha512-HM0/86Ks8OwFbaYLd495tqTs1NhscZL52dC4ieKYumy8+nawQYC0xZ63w1NqLf0M148T2YLYqowoImc1giPn0g==
+csv-stringify@5.6.5:
+  version "5.6.5"
+  resolved "https://registry.yarnpkg.com/csv-stringify/-/csv-stringify-5.6.5.tgz#c6d74badda4b49a79bf4e72f91cce1e33b94de00"
+  integrity sha512-PjiQ659aQ+fUTQqSrd1XEDnOr52jh30RBurfzkscaE2tPaFsDH5wOAHJiw8XAHphRknCwMUE9KRayc4K/NbO8A==
 
 currently-unhandled@^0.4.1:
   version "0.4.1"
@@ -18246,10 +18246,10 @@ js-yaml@^3.10.0, js-yaml@^3.12.1, js-yaml@^3.13.1, js-yaml@^3.14.0, js-yaml@^3.9
     argparse "^1.0.7"
     esprima "^4.0.0"
 
-jsbarcode@3.11.0:
-  version "3.11.0"
-  resolved "https://registry.yarnpkg.com/jsbarcode/-/jsbarcode-3.11.0.tgz#20623e008b101ef45d0cce9c8022cdf49be28547"
-  integrity sha512-/ozCd7wsa+VIHo9sUc03HneVEQrH7cVWfJolUT/WOW1m8mJ2e3iYZje6C9X3LFHdczlesqFHRpxLtbVsNtjyow==
+jsbarcode@3.11.5:
+  version "3.11.5"
+  resolved "https://registry.yarnpkg.com/jsbarcode/-/jsbarcode-3.11.5.tgz#390b3efd0271f35b9d68c7b8af6e972445969014"
+  integrity sha512-zv3KsH51zD00I/LrFzFSM6dst7rDn0vIMzaiZFL7qusTjPZiPtxg3zxetp0RR7obmjTw4f6NyGgbdkBCgZUIrA==
 
 jsbn@~0.1.0:
   version "0.1.1"
@@ -23758,10 +23758,10 @@ react-syntax-highlighter@^13.5.3:
     prismjs "^1.21.0"
     refractor "^3.1.0"
 
-react-table@7.6.0:
-  version "7.6.0"
-  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.6.0.tgz#83d765b96505b5332d108a2e0c27ab653f5a78c3"
-  integrity sha512-16kRTypBWz9ZwLnPWA8hc3eIC64POzO9GaMBiKaCcVM+0QOQzt0G7ebzGUM8SW0CYUpVM+glv1kMXrWj9tr3Sw==
+react-table@7.7.0:
+  version "7.7.0"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.7.0.tgz#e2ce14d7fe3a559f7444e9ecfe8231ea8373f912"
+  integrity sha512-jBlj70iBwOTvvImsU9t01LjFjy4sXEtclBovl3mTiqjz23Reu0DKnRza4zlLtOPACx6j2/7MrQIthIK1Wi+LIA==
 
 react-tabs@^3.1.1:
   version "3.2.1"
@@ -27106,10 +27106,10 @@ thunky@^1.0.2:
   resolved "https://registry.yarnpkg.com/thunky/-/thunky-1.1.0.tgz#5abaf714a9405db0504732bbccd2cedd9ef9537d"
   integrity sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA==
 
-timeout-signal@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/timeout-signal/-/timeout-signal-1.0.0.tgz#0b66a4a68e9a5260e9caa31827719d3818fdaa0c"
-  integrity sha512-4NiCwGDOjJNWFWITjVgFRySWkqUEvZZKD+FCk8gWL+310Qzu0Crny6RITQXY7pUkoVDc3W+sY8GUn4Ld7Nha6Q==
+timeout-signal@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/timeout-signal/-/timeout-signal-1.1.0.tgz#b3805c4b9422c239d87d5e69b20df7bc19b21da5"
+  integrity sha512-fuWY4tM1njcHCiOB7XkTmP0EOxzBkPbuQwPN+ZCzM6G0Tj4fMVgEffG/OPgiNUX48o+FhQEa2Oh4qjEDBCy5WQ==
   dependencies:
     abort-controller "^3.0.0"
 

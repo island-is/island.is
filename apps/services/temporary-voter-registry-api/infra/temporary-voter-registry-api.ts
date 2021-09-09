@@ -21,6 +21,6 @@ export const serviceSetup = (): ServiceBuilder<'temporary-voter-registry-api'> =
       ],
       postgres: postgresInfo,
     })
-    .grantNamespaces('islandis')
+    .grantNamespaces('islandis', 'endorsement-system')
     .liveness('/liveness')
     .readiness('/liveness')

@@ -48,12 +48,9 @@ export const EndorsementTable = ({
       : endorsement.meta.bulkEndorsement
       ? 'roseTinted100'
       : 'white'
-    const fullAddress =
-      endorsement.meta.address.streetAddress +
-      ', ' +
-      endorsement.meta.address.postalCode +
-      ' ' +
-      endorsement.meta.address.city
+    const fullAddress = `${endorsement.meta.address.streetAddress ?? ''}, ${
+      endorsement.meta.address.postalCode ?? ''
+    } ${endorsement.meta.address.city ?? ''}`
 
     return (
       <T.Row key={endorsement.id}>
