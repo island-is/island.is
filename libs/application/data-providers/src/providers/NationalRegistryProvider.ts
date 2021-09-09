@@ -33,16 +33,17 @@ export class NationalRegistryProvider extends BasicDataProvider {
       }
     `
 
-    return this.useGraphqlGateway(query)
-      .then(async (res: Response) => {
-        const response = await res.json()
-        if (response.errors) {
-          console.error(`graphql error in ${this.type}: ${response.errors[0].message}`)
-          return Promise.reject({})
-        }
+    return this.useGraphqlGateway(query).then(async (res: Response) => {
+      const response = await res.json()
+      if (response.errors) {
+        console.error(
+          `graphql error in ${this.type}: ${response.errors[0].message}`,
+        )
+        return Promise.reject({})
+      }
 
-        return Promise.resolve(response.data.nationalRegistryUser)
-      })
+      return Promise.resolve(response.data.nationalRegistryUser)
+    })
   }
 
   onProvideError(result: unknown): FailedDataProviderResult {
