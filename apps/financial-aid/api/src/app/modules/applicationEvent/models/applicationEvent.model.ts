@@ -3,7 +3,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import {
   ApplicationEvent,
   ApplicationEventType,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 @ObjectType()
 export class ApplicationEventModel implements ApplicationEvent {

@@ -7,8 +7,8 @@ import cn from 'classnames'
 
 import * as styles from './CommentSection.treat'
 import { useMutation } from '@apollo/client'
-import { CreateApplicationEventQuery } from '@island.is/financial-aid-web/veitagraphql/sharedGql'
-import { ApplicationEventType } from '@island.is/financial-aid/shared'
+import { CreateApplicationEventQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+import { ApplicationEventType } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   className?: string
