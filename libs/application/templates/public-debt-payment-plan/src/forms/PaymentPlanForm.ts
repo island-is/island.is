@@ -15,6 +15,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+import { Logo } from '../assets'
 import {
   application,
   conclusion,
@@ -67,6 +68,7 @@ export const PaymentPlanForm: Form = buildForm({
   id: 'PaymentPlanForm',
   title: application.name,
   mode: FormModes.APPLYING,
+  logo: Logo,
   children: [
     buildSection({
       id: 'externalData',
