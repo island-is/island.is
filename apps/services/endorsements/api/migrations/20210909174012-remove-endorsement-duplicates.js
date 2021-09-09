@@ -169,6 +169,7 @@ module.exports = {
       // If nothing is to be done after filtering
       // we log that
       if (!aggregateId || problematicIds.length == 0) {
+        console.log({ aggregateId, problematicIds })
         console.log(
           'Nothing to be done for',
           JSON.stringify({
@@ -179,6 +180,8 @@ module.exports = {
             ),
           }),
         )
+      } else {
+        console.log(`Aggregating into endorsement list with id ${aggregateId}`)
       }
 
       for (const problematicId of problematicIds) {
