@@ -64,7 +64,6 @@ const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
     setValue('requirementsMet', eligibility.isEligible)
   }, [eligibility, setValue])
 
-
   return (
     <Box marginBottom={10}>
       <Box
