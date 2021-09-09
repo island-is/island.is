@@ -2,6 +2,7 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { FileUploadResult } from '@island.is/financial-aid-web/osk/src/components'
 import { Text, Link } from '@island.is/island-ui/core'
+import { Routes } from '@island.is/financial-aid/shared/lib'
 
 const FileUploadFailure = () => {
   const router = useRouter()
@@ -11,7 +12,10 @@ const FileUploadFailure = () => {
       subtitle={'Eitthvað fór úrskeiðis við sendingu eftirfarandi gagna'}
       subtitleColor={'red400'}
       nextButtonText={'Til baka í innsendingu'}
-      nextButtonAction={() => router.push(`/${router.query.id}/gogn`)}
+      nextButtonAction={() =>
+        router.push(`
+      ${Routes.statusFileUpload(router.query.id as string)}`)
+      }
     >
       <Text marginTop={5}>
         Þú getur reynt aftur síðar eða sent gögnin með tölvupósti á{' '}

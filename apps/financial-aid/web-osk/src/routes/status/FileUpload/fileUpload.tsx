@@ -5,6 +5,7 @@ import {
   Footer,
   StatusLayout,
   Files,
+  ContentContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/useFileUpload'
@@ -21,8 +22,6 @@ import {
 } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
-
-import * as styles from './fileUpload.treat'
 
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
@@ -88,15 +87,17 @@ const FileUpload = () => {
 
   return (
     <StatusLayout>
-      <Box className={styles.widthAlmostFull}>
+      <ContentContainer>
+        <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
+          Senda inn gögn
+        </Text>
+
         <Files
           header="Senda inn gögn"
           fileKey="otherFiles"
           uploadFiles={form.otherFiles}
         />
-      </Box>
 
-      <Box className={styles.widthAlmostFull}>
         <Text as="h2" variant="h3" marginBottom={[2, 2, 3]}>
           Viltu láta fylgja með athugasemd?
         </Text>
@@ -114,7 +115,7 @@ const FileUpload = () => {
             }}
           />
         </Box>
-      </Box>
+      </ContentContainer>
 
       <Footer
         previousUrl={`/${router.query.id}`}

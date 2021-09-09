@@ -28,6 +28,8 @@ import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { GetApplicationQuery } from '@island.is/financial-aid-web/osk/graphql'
 
+import { Routes } from '@island.is/financial-aid/shared/lib'
+
 interface ApplicantData {
   application: Application
 }

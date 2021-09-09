@@ -37,10 +37,7 @@ const FileUploadSuccess = ({
           {subtitle}
         </Text>
         <Box marginTop={3}>
-          <FileList
-            files={form.otherFiles}
-            className={`contentUp delay-125 ${styles.widthAlmostFull}`}
-          />
+          <FileList files={form.otherFiles} className={`contentUp delay-125`} />
         </Box>
         {children}
       </ContentContainer>
