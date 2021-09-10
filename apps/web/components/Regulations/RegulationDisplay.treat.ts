@@ -2,6 +2,7 @@ import { style, globalStyle } from 'treat'
 import {
   regulationContentStyling,
   diffStyling,
+  regulationTitleStyling,
 } from '@island.is/regulations/styling'
 import { theme, spacing } from '@island.is/island-ui/theme'
 const { color, typography, border, shadows } = theme
@@ -39,6 +40,15 @@ export const statusHeader = style({
       boxShadow: '0 20px 20px -20px  rgba(28, 28, 28, .15)',
     },
   },
+
+  '@media': {
+    print: {
+      position: 'relative',
+      marginTop: 0,
+      paddingTop: 0,
+      paddingBottom: spacing[1],
+    },
+  },
 })
 
 export const diffInfo = style({
@@ -70,7 +80,10 @@ export const upcomingWarning = style({
 
 // ---------------------------------------------------------------------------
 
+export const diffText = style({})
+export const titleText = style({})
 export const bodyText = style({})
 
 regulationContentStyling(bodyText)
-diffStyling(bodyText)
+regulationTitleStyling(titleText)
+diffStyling(diffText)
