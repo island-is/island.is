@@ -1041,7 +1041,6 @@ describe('Notification', () => {
         expect(apiSendNotificationResponse.notification?.type).toBe(
           NotificationType.HEADS_UP,
         )
-        expect(apiSendNotificationResponse.notification?.condition).toBeNull()
         expect(apiSendNotificationResponse.notification?.recipients).toBe(
           `[{"success":true}]`,
         )
@@ -1057,9 +1056,6 @@ describe('Notification', () => {
           apiSendNotificationResponse.notification?.created,
         )
         expect(value?.type).toBe(apiSendNotificationResponse.notification?.type)
-        expect(value?.condition).toBe(
-          apiSendNotificationResponse.notification?.condition,
-        )
         expect(value?.recipients).toBe(
           apiSendNotificationResponse.notification?.recipients,
         )

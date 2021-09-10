@@ -1,7 +1,4 @@
-import {
-  PaymentScheduleConditions,
-  PaymentScheduleDebts,
-} from '@island.is/api/schema'
+import { PaymentScheduleDebts } from '@island.is/api/schema'
 import {
   buildCustomField,
   buildDataProviderItem,
@@ -11,8 +8,10 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildSubmitField,
   buildTextField,
   CustomField,
+  DefaultEvents,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -21,6 +20,7 @@ import {
   conclusion,
   employer,
   info,
+  overview,
   section,
 } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
@@ -215,17 +215,24 @@ export const PaymentPlanForm: Form = buildForm({
     buildSection({
       id: 'employer',
       title: section.employer,
-      condition: (_formValue, externalData) => {
-        const prerequisites = (externalData as PaymentPlanExternalData)
-          .paymentPlanPrerequisites?.data?.conditions as
-          | PaymentScheduleConditions
-          | undefined
-        return prerequisites?.taxReturns || false
-      },
       children: [
         buildMultiField({
           id: 'employerMultiField',
           title: employer.general.pageTitle,
+          condition: (_formValue, externalData) => {
+            const debts = (externalData as PaymentPlanExternalData)
+              ?.paymentPlanPrerequisites?.data?.debts
+            const employer = (externalData as PaymentPlanExternalData)
+              ?.paymentPlanPrerequisites?.data?.employer
+
+            return !!(
+              debts?.find((x) => x.type === 'OverpaidBenefits') !== undefined ||
+              (employer?.name &&
+                employer?.name.length > 0 &&
+                employer?.nationalId &&
+                employer?.nationalId.length > 0)
+            )
+          },
           children: [
             buildCustomField({
               id: 'employerInfoDescription',
@@ -261,13 +268,6 @@ export const PaymentPlanForm: Form = buildForm({
           title: employer.general.disposableIncomePageTitle,
           description: employer.general.disposableIncomePageDescription,
           component: 'DisposableIncome',
-          condition: (_formValue, externalData) => {
-            const debts = (externalData as PaymentPlanExternalData)
-              ?.paymentPlanPrerequisites?.data?.debts
-            return (
-              debts?.find((x) => x.type === 'OverpaidBenefits') !== undefined
-            )
-          },
         }),
       ],
     }),
@@ -289,14 +289,24 @@ export const PaymentPlanForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'overviewMultiField',
-          title: 'Yfirlit og undirritun',
-          description:
-            'Á þessari síðu má sjá heildaryfirlit yfir umsókn vegna greiðsludreifingar skulda, gott að er að skoða þetta vel áður en farið er í rafræna undirritun. ',
+          title: overview.title,
+          description: overview.description,
           children: [
             buildCustomField({
               id: 'overviewScreen',
               title: '',
               component: 'Overview',
+            }),
+            buildSubmitField({
+              id: 'overview.submit',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.submitButton,
+                  type: 'primary',
+                },
+              ],
             }),
           ],
         }),

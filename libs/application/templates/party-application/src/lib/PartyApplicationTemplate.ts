@@ -143,51 +143,6 @@ const PartyApplicationTemplate: ApplicationTemplate<
           },
         },
       },
-      [States.IN_REVIEW]: {
-        entry: 'assignToSupremeCourt',
-        meta: {
-          name: 'In Review',
-          progress: 0.9,
-          lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.AssignSupremeCourt,
-          },
-          roles: [
-            {
-              id: Roles.ASSIGNEE,
-              formLoader: () =>
-                import('../forms/InReview').then((module) =>
-                  Promise.resolve(module.InReview),
-                ),
-              actions: [
-                {
-                  event: DefaultEvents.APPROVE,
-                  name: 'Samþykkja',
-                  type: 'primary',
-                },
-                { event: DefaultEvents.REJECT, name: 'Hafna', type: 'reject' },
-              ],
-              write: 'all',
-            },
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Approved').then((val) =>
-                  Promise.resolve(val.Approved),
-                ),
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.APPROVE]: [
-            {
-              target: States.APPROVED,
-            },
-          ],
-          [DefaultEvents.REJECT]: { target: States.REJECTED },
-        },
-      },
       [States.REJECTED]: {
         meta: {
           name: 'Safna meðmælum',
@@ -239,7 +194,6 @@ const PartyApplicationTemplate: ApplicationTemplate<
       },
       [States.IN_REVIEW]: {
         entry: 'assignToSupremeCourt',
-        exit: 'clearAssignees',
         meta: {
           name: 'In Review',
           progress: 0.9,
@@ -262,13 +216,14 @@ const PartyApplicationTemplate: ApplicationTemplate<
                 },
                 { event: DefaultEvents.REJECT, name: 'Hafna', type: 'reject' },
               ],
+              read: 'all',
               write: 'all',
             },
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ConstituencyForm').then((module) =>
-                  Promise.resolve(module.ConstituencyForm),
+                import('../forms/Approved').then((module) =>
+                  Promise.resolve(module.Approved),
                 ),
               read: 'all',
               write: 'all',
@@ -281,10 +236,11 @@ const PartyApplicationTemplate: ApplicationTemplate<
               target: States.APPROVED,
             },
           ],
-          [DefaultEvents.REJECT]: { target: States.COLLECT_ENDORSEMENTS },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
         },
       },
       [States.APPROVED]: {
+        entry: 'assignToSupremeCourt',
         meta: {
           name: States.APPROVED,
           progress: 1,
@@ -328,13 +284,6 @@ const PartyApplicationTemplate: ApplicationTemplate<
           },
         }
       }),
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
     },
   },
   mapUserToRole(
@@ -345,8 +294,10 @@ const PartyApplicationTemplate: ApplicationTemplate<
       return Roles.ASSIGNEE
     } else if (application.applicant === nationalId) {
       return Roles.APPLICANT
-    } else if (application.state === States.COLLECT_ENDORSEMENTS) {
-      // TODO: Maybe display collection as closed in final state for signaturee
+    } else if (
+      application.state === States.COLLECT_ENDORSEMENTS ||
+      application.state === States.REJECTED
+    ) {
       // everyone can be signaturee if they are not the applicant
       return Roles.SIGNATUREE
     } else {

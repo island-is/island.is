@@ -16,7 +16,8 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { Organization, OrganizationTag } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { Card } from '../Card/Card'
+import { Card } from '@island.is/web/components'
+
 import * as styles from './FilteredCards.treat'
 
 const FILTER_TIMER = 300
