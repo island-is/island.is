@@ -142,7 +142,6 @@ export const AccidentNotificationSchema = z.object({
       RescueWorkAccidentLocationEnum.DURINGRESCUE,
       RescueWorkAccidentLocationEnum.OTHER,
       StudiesAccidentLocationEnum.ATTHESCHOOL,
-      StudiesAccidentLocationEnum.DURINGSTUDIES,
       StudiesAccidentLocationEnum.OTHER,
     ]),
   }),
