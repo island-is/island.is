@@ -365,7 +365,7 @@ jobs:
           PUBLISH: 'true'
 
       - name: Comment on PR
-        # if: needs.pre-checks.outputs.LABELED_FOR_DEPLOY == 'true'
+        if: needs.pre-checks.outputs.LABELED_FOR_DEPLOY == 'true'
         uses: actions/github-script@v4.1
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
