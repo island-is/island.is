@@ -23,6 +23,8 @@ import {
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 
+import { Routes } from '@island.is/financial-aid/shared/lib'
+
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
   const router = useRouter()
@@ -58,12 +60,20 @@ const FileUpload = () => {
               },
             },
           })
-          updateForm({ ...form, status: ApplicationState.INPROGRESS })
-          router.push(`/${router.query.id}/gogn/send`)
+
+          updateForm({
+            ...form,
+            status: ApplicationState.INPROGRESS,
+            fileUploadComment: comment,
+          })
+
+          router.push(
+            `${Routes.statusFileUpload(router.query.id as string)}/send`,
+          )
         },
       )
     } catch (e) {
-      router.push(`/${router.query.id}/gogn/villa`)
+      router.push(`${Routes.statusFileUpload(router.query.id as string)}/villa`)
     }
 
     setIsLoading(false)
@@ -81,7 +91,7 @@ const FileUpload = () => {
         },
       })
     } catch (e) {
-      alert('vikarði ekki lúði')
+      //TODO setja error message
     }
   }
 
