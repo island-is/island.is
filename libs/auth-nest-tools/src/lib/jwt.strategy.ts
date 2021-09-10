@@ -7,11 +7,18 @@ import type { AuthConfig } from './auth.module'
 import { JwtPayload } from './jwt.payload'
 import { Auth } from './auth'
 
+import {
+  parseNationalIdFromXRoadClient,
+  parseXRoadClientNationalIdFromRequest,
+} from './jwt.strategy.utils'
+
 const AUTH_BODY_FIELD_NAME = '__accessToken'
 const JWKS_URI = '/.well-known/openid-configuration/jwks'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
+  private allowXRoadClientHeaderAuthentication: boolean
+
   constructor(private config: AuthConfig) {
     super({
       secretOrKeyProvider: passportJwtSecret({
@@ -30,6 +37,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
       passReqToCallback: true,
     })
+
+    this.allowXRoadClientHeaderAuthentication =
+      config.allowXRoadClientHeaderAuthentication === true
   }
 
   private parseScopes(scopes: undefined | string | string[]): string[] {
@@ -44,6 +54,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(request: Request, payload: JwtPayload): Promise<Auth> {
     const actor = payload.actor ?? payload.act
+
+    if (this.allowXRoadClientHeaderAuthentication) {
+      const nationalId = parseXRoadClientNationalIdFromRequest(request)
+
+      if (nationalId !== null) {
+        payload.nationalId = nationalId
+      }
+    }
 
     return {
       nationalId: payload.nationalId,

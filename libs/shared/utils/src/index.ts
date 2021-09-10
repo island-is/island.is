@@ -4,3 +4,4 @@
  */
 export { getStaticEnv } from './lib/getStaticEnv'
 export { isRunningOnEnvironment } from './lib/isRunningOnEnvironment'
+export { isNumericCharacter } from './lib/string'
