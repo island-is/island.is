@@ -6,6 +6,7 @@ import {
   Input,
   Checkbox,
   Pagination,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { CopyLink } from '@island.is/application/ui-components'
 import { EndorsementTable } from '../components/EndorsementTable'
@@ -98,97 +99,105 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <Box marginBottom={8}>
-      <CopyLink
-        linkUrl={window.location.href}
-        buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
-      />
-      <Box marginTop={4} display="flex" alignItems="baseline">
-        <Text variant="h2">
-          {endorsementsHook && endorsementsHook.length > 0
-            ? endorsementsHook.length
-            : 0}
-        </Text>
-        <Box marginLeft={1}>
-          <Text variant="default">
-            {formatMessage(m.endorsementList.namesCount)}
-          </Text>
-        </Box>
-      </Box>
-      <Text variant="small" color="dark300">
-        {'Leyfilegur fjöldi meðmæla í ' +
-          constituency.region_name +
-          ' er á bilinu ' +
-          minEndorsements +
-          '-' +
-          maxEndorsements}
-      </Text>
-      <Box marginTop={4}>
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="center"
-          marginBottom={3}
-        >
-          <Checkbox
-            label={formatMessage(m.endorsementList.invalidSignatures)}
-            checked={showOnlyInvalidated}
-            onChange={() => {
-              setShowOnlyInvalidated(!showOnlyInvalidated)
-            }}
+      {error ? (
+        <AlertMessage
+          type="error"
+          title={formatMessage(m.endorsementList.alertMessageTitle)}
+          message={formatMessage(m.endorsementList.alertMessageDescription)}
+        />
+      ) : (
+        <Box>
+          <CopyLink
+            linkUrl={window.location.href}
+            buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
           />
+          <Box marginTop={4} display="flex" alignItems="baseline">
+            <Text variant="h2">
+              {endorsementsHook && endorsementsHook.length > 0
+                ? endorsementsHook.length
+                : 0}
+            </Text>
+            <Box marginLeft={1}>
+              <Text variant="default">
+                {formatMessage(m.endorsementList.namesCount)}
+              </Text>
+            </Box>
+          </Box>
+          <Text variant="small" color="dark300">
+            {'Leyfilegur fjöldi meðmæla í ' +
+              constituency.region_name +
+              ' er á bilinu ' +
+              minEndorsements +
+              '-' +
+              maxEndorsements}
+          </Text>
+          <Box marginTop={4}>
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              marginBottom={3}
+            >
+              <Checkbox
+                label={formatMessage(m.endorsementList.invalidSignatures)}
+                checked={showOnlyInvalidated}
+                onChange={() => {
+                  setShowOnlyInvalidated(!showOnlyInvalidated)
+                }}
+              />
 
-          <Input
-            name="searchbar"
-            placeholder={formatMessage(m.endorsementList.searchbar)}
-            icon="search"
-            backgroundColor="blue"
-            size="sm"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </Box>
-        <Box marginY={3}>
-          {error ? (
-            <h1>Has error</h1>
-          ) : (
-            <EndorsementTable
-              application={application}
-              endorsements={endorsements}
-            />
-          )}
-        </Box>
-        {!!endorsementsHook?.length && (
-          <Box marginY={3}>
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              renderLink={(page, className, children) => (
-                <Box
-                  cursor="pointer"
-                  className={className}
-                  onClick={() => handlePagination(page, filteredEndorsements)}
-                >
-                  {children}
-                </Box>
-              )}
-            />
+              <Input
+                name="searchbar"
+                placeholder={formatMessage(m.endorsementList.searchbar)}
+                icon="search"
+                backgroundColor="blue"
+                size="sm"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </Box>
+            <Box marginY={3}>
+              <EndorsementTable
+                application={application}
+                endorsements={endorsements}
+              />
+            </Box>
+            {!!endorsementsHook?.length && (
+              <Box marginY={3}>
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  renderLink={(page, className, children) => (
+                    <Box
+                      cursor="pointer"
+                      className={className}
+                      onClick={() =>
+                        handlePagination(page, filteredEndorsements)
+                      }
+                    >
+                      {children}
+                    </Box>
+                  )}
+                />
+              </Box>
+            )}
+            {!isClosedHook ? (
+              <Box marginY={5}>
+                <BulkUpload
+                  application={application}
+                  onSuccess={() => {
+                    refetch()
+                  }}
+                />
+              </Box>
+            ) : (
+              <Text variant="eyebrow" color="red400" marginTop={5}>
+                {formatMessage(m.endorsementList.isClosedMessage)}
+              </Text>
+            )}
           </Box>
-        )}
-        {!isClosedHook ? (
-          <Box marginY={5}>
-            <BulkUpload
-              application={application}
-              onSuccess={() => {
-                refetch()
-              }}
-            />
-          </Box>
-        ) : (
-          <Text variant="eyebrow" color="red400" marginTop={5}>
-            {formatMessage(m.endorsementList.isClosedMessage)}
-          </Text>
-        )}
-      </Box>
+        </Box>
+      )}
     </Box>
   )
 }

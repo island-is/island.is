@@ -53,7 +53,9 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
         },
       },
     }).catch((e) => {
-      toast.error(formatMessage(m.endorsementDisclaimer.toastMessage))
+      e.message.includes("closed")
+        ? toast.error(formatMessage(m.endorsementList.isClosedMessage))
+        : toast.error(formatMessage(m.endorsementDisclaimer.toastErrorMessage))
     })
     if (success) {
       setEndorsedNow(true)

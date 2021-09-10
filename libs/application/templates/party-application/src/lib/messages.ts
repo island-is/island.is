@@ -214,6 +214,16 @@ export const m: MessageDir = {
       defaultMessage: 'Meðmælendalista hefur verið lokað',
       description: 'Error message if endorsement list has been closed',
     },
+    alertMessageTitle: {
+      id: 'pa.application:endorsement.form.alertMessageTitle',
+      defaultMessage: 'Ekki tókst að sækja meðmælendalista',
+      description: 'Error message alert if endorsement list has been deleted',
+    },
+    alertMessageDescription: {
+      id: 'pa.application:endorsement.form.alertMessageDescription',
+      defaultMessage: 'Mögulega hefur honum verið eytt eða hann sameinaður öðrum lista.',
+      description: 'Error message alert text if endorsement list has been deleted',
+    },
   }),
   endorsementListSubmission: defineMessages({
     title: {
@@ -500,7 +510,7 @@ export const m: MessageDir = {
         'Þú ert ekki með skráða búsetu í þessu kjördæmi ertu viss um að vilja halda áfram?',
       description: 'Alert message if signaturee is in the wrong constituency',
     },
-    toastMessage: {
+    toastErrorMessage: {
       id: 'pa.application:endorsement.alert.descrtipion.toast.message',
       defaultMessage:
         'Ekki tókst að ná sambandi við vefþjónustu. Vinsamlegast reyndu aftur síðar',
