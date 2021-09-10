@@ -32,7 +32,7 @@ import { OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useRouter } from 'next/router'
-import { useDateUtils } from "@island.is/web/i18n/useDateUtils";
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 interface OperatingLicensesProps {
   organizationPage: Query['getOrganizationPage']
@@ -137,8 +137,15 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
                 <Text>Leyfisnúmer: {homestay.licenseNumber}</Text>
                 <Text>Staður: {homestay.location}</Text>
                 <Text>Gata: {homestay.street}</Text>
-                {homestay.postalCode && <Text>Póstnúmer: {homestay.postalCode}</Text>}
-                {homestay.validUntil && <Text>Gildir til {format(new Date(homestay.validUntil), 'd. MMMM yyyy')}</Text>}
+                {homestay.postalCode && (
+                  <Text>Póstnúmer: {homestay.postalCode}</Text>
+                )}
+                {homestay.validUntil && (
+                  <Text>
+                    Gildir til{' '}
+                    {format(new Date(homestay.validUntil), 'd. MMMM yyyy')}
+                  </Text>
+                )}
                 <Text>{homestay.type}</Text>
                 <Text>{homestay.category}</Text>
                 <Text>Útgefandi: {homestay.issuedBy}</Text>

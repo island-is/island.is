@@ -218,7 +218,8 @@ export const GET_OPERATING_LICENSES_QUERY = gql`
       street
       postalCode
       validUntil
-      type category
+      type
+      category
       issuedBy
       licenseHolder
       licenseNumber
