@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Text, Box, Icon } from '@island.is/island-ui/core'
 
 import * as styles from './History.treat'
@@ -15,7 +15,6 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
-import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface ApplicationEventData {
   applicationEvents: ApplicationEvent[]
@@ -28,7 +27,6 @@ interface Props {
 
 const History = ({ className, applicantsName }: Props) => {
   const router = useRouter()
-  const { admin } = useContext(AdminContext)
 
   const { data } = useQuery<ApplicationEventData>(GetApplicationEventQuery, {
     variables: { input: { id: router.query.id } },
