@@ -29,7 +29,6 @@ const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
   const router = useRouter()
   const { uploadFiles } = useFileUpload(form.otherFiles)
-  const [comment, setComment] = useState<string>()
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -63,7 +62,6 @@ const FileUpload = () => {
           updateForm({
             ...form,
             status: ApplicationState.INPROGRESS,
-            fileUploadComment: comment,
           })
 
           router.push(
@@ -84,7 +82,7 @@ const FileUpload = () => {
         variables: {
           input: {
             applicationId: router.query.id,
-            comment: comment,
+            comment: form.fileUploadComment,
             eventType: ApplicationEventType.FILEUPLOAD,
           },
         },
@@ -120,7 +118,10 @@ const FileUpload = () => {
             textarea
             backgroundColor="blue"
             onChange={(event) => {
-              setComment(event.currentTarget.value)
+              updateForm({
+                ...form,
+                fileUploadComment: event.currentTarget.value,
+              })
             }}
           />
         </Box>
