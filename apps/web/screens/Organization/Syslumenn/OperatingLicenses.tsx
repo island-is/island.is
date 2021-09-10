@@ -1,12 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   Button,
   GridColumn,
   GridRow,
   Input,
-  Link,
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
@@ -67,13 +66,23 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   )
 
   const [showCount, setShowCount] = useState(10)
-  const [query, _setQuery] = useState('')
+  const [query, _setQuery] = useState(' ')
+
+  useEffect(() => {
+    setQuery('')
+  }, [])
 
   const setQuery = (query: string) => _setQuery(query.toLowerCase())
 
   const filteredItems = operatingLicenses
-    .filter((homestay) => homestay.name?.toLowerCase().includes(query))
-    .sort((a, b) => a.name.localeCompare(b.name))
+    .filter(
+      (homestay) =>
+        homestay.name?.toLowerCase().includes(query) ||
+        homestay.location?.toLowerCase().includes(query) ||
+        homestay.licenseHolder?.toLowerCase().includes(query) ||
+        homestay.licenseNumber?.toLowerCase().includes(query),
+    )
+    .sort((a, b) => a.name?.localeCompare(b.name))
 
   return (
     <OrganizationWrapper
