@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { FileUploadResult } from '@island.is/financial-aid-web/osk/src/components'
 import { Routes } from '@island.is/financial-aid/shared/lib'
@@ -9,18 +9,23 @@ const FileUploadSuccess = () => {
 
   const { updateForm } = useContext(FormContext)
 
+  useEffect(() => {
+    router.events.on('routeChangeComplete', () => {
+      updateForm({
+        submitted: false,
+        incomeFiles: [],
+        taxReturnFiles: [],
+        otherFiles: [],
+      })
+    })
+  }, [])
+
   return (
     <FileUploadResult
       subtitle={'Eftirfarandi gögn hafa verið send inn'}
       subtitleColor={'mint600'}
       nextButtonText={'Til baka á forsíðu'}
       nextButtonAction={() => {
-        updateForm({
-          submitted: false,
-          incomeFiles: [],
-          taxReturnFiles: [],
-          otherFiles: [],
-        })
         router.push(`
       ${Routes.statusPage(router.query.id as string)}`)
       }}

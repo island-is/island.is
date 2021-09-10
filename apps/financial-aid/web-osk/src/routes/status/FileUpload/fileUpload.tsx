@@ -37,10 +37,9 @@ const FileUpload = () => {
     UpdateApplicationMutation,
   )
 
-  const [
-    createApplicationEventMutation,
-    { loading: isCreatingApplicationEvent },
-  ] = useMutation(CreateApplicationEventQuery)
+  const [createApplicationEventMutation] = useMutation(
+    CreateApplicationEventQuery,
+  )
 
   const sendingFiles = async () => {
     if (form?.otherFiles.length <= 0 || router.query.id === undefined) {
@@ -128,7 +127,7 @@ const FileUpload = () => {
       </ContentContainer>
 
       <Footer
-        previousUrl={`/${router.query.id}`}
+        previousUrl={Routes.statusPage(router.query.id as string)}
         nextButtonText={'Senda gögn'}
         nextIsLoading={isLoading}
         onNextButtonClick={() => {

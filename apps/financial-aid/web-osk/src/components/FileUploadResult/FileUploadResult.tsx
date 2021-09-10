@@ -25,7 +25,7 @@ const FileUploadResults = ({
   nextButtonAction,
   children,
 }: Props) => {
-  const { form, updateForm } = useContext(FormContext)
+  const { form } = useContext(FormContext)
 
   return (
     <StatusLayout>
