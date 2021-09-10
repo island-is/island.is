@@ -489,6 +489,32 @@ describe('FileController', () => {
             await expect(
               fileController.getCaseFileSignedUrl(caseId, fileId, user),
             ).rejects.toThrow(NotFoundException)
+
+            expect(fileModel.update).toHaveBeenCalledWith(
+              { state: CaseFileState.BOKEN_LINK },
+              { where: { id: fileId } },
+            )
+          })
+        })
+
+        describe('given a broken link case file', () => {
+          const fileId = uuid()
+          const key = `${caseId}/${fileId}/test.txt`
+          const mockFile = {
+            id: fileId,
+            caseId,
+            state: CaseFileState.BOKEN_LINK,
+            key,
+          }
+
+          beforeEach(() => {
+            fileModel.findOne.mockResolvedValueOnce(mockFile)
+          })
+
+          it('should throw when getting a case file signed url', async () => {
+            await expect(
+              fileController.getCaseFileSignedUrl(caseId, fileId, user),
+            ).rejects.toThrow(NotFoundException)
           })
         })
 

@@ -116,9 +116,19 @@ export class FileService {
       `Getting a signed url for file ${file.id} of case ${caseId}`,
     )
 
+    if (file.state === CaseFileState.BOKEN_LINK) {
+      throw new NotFoundException(
+        `File ${file.id} of case ${caseId} does not exists in AWS S3`,
+      )
+    }
+
     const exists = await this.awsS3Service.objectExists(file.key)
 
     if (!exists) {
+      await this.fileModel.update(
+        { state: CaseFileState.BOKEN_LINK },
+        { where: { id: file.id } },
+      )
       throw new NotFoundException(
         `File ${file.id} of case ${caseId} does not exists in AWS S3`,
       )
