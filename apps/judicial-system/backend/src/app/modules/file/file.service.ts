@@ -3,6 +3,7 @@ import { Op } from 'sequelize'
 
 import {
   BadRequestException,
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -20,6 +21,7 @@ import {
   CaseFile,
   DeleteFileResponse,
   SignedUrl,
+  UploadFileToCourtResponse,
 } from './models'
 
 @Injectable()
@@ -151,5 +153,38 @@ export class FileService {
     }
 
     return { success }
+  }
+
+  async uploadCaseFileToCourt(
+    caseId: string,
+    file: CaseFile,
+  ): Promise<UploadFileToCourtResponse> {
+    this.logger.debug(`Uploading file ${file.id} of case ${caseId} to court`)
+
+    if (file.state === CaseFileState.STORED_IN_COURT) {
+      throw new ForbiddenException(
+        `File ${file.id} of case ${caseId} has already been uploaded to court`,
+      )
+    }
+
+    if (file.state === CaseFileState.BOKEN_LINK) {
+      throw new NotFoundException(
+        `File ${file.id} of case ${caseId} does not exists in AWS S3`,
+      )
+    }
+
+    const exists = await this.awsS3Service.objectExists(file.key)
+
+    if (!exists) {
+      await this.fileModel.update(
+        { state: CaseFileState.BOKEN_LINK },
+        { where: { id: file.id } },
+      )
+      throw new NotFoundException(
+        `File ${file.id} of case ${caseId} does not exists in AWS S3`,
+      )
+    }
+
+    return { success: false }
   }
 }

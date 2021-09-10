@@ -9,6 +9,7 @@ export interface CreatePresignedPost {
 
 export interface DeleteFile {
   id: string
+  caseId: string
 }
 
 export interface DeleteFileResponse {
@@ -16,12 +17,21 @@ export interface DeleteFileResponse {
 }
 
 export interface GetSignedUrl {
-  caseId: string
   id: string
+  caseId: string
 }
 
 export interface SignedUrl {
   url: string
+}
+
+export interface UploadFileToCourt {
+  id: string
+  caseId: string
+}
+
+export interface UploadFileToCourtResponse {
+  success: boolean
 }
 
 export enum CaseFileState {

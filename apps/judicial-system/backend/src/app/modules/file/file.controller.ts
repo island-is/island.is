@@ -23,6 +23,7 @@ import {
   CaseState,
   CaseAppealDecision,
   completedCaseStates,
+  courtRoles,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -33,6 +34,7 @@ import {
   CaseFile,
   DeleteFileResponse,
   SignedUrl,
+  UploadFileToCourtResponse,
 } from './models'
 import { FileService } from './file.service'
 
@@ -85,11 +87,6 @@ export class FileController {
       return true
     }
 
-    // Registrars have permission to view files of completed cases
-    if (user.role === UserRole.REGISTRAR) {
-      return completedCaseStates.includes(existingCase.state)
-    }
-
     // Judges have permission to view files of completed cases, and
     // of uncompleted received cases they have been assigned to
     if (user.role === UserRole.JUDGE) {
@@ -100,8 +97,24 @@ export class FileController {
       )
     }
 
+    // Registrars have permission to view files of completed cases
+    if (user.role === UserRole.REGISTRAR) {
+      return completedCaseStates.includes(existingCase.state)
+    }
+
     // Other users do not have permission to view any case files
     return false
+  }
+
+  private doesUserHavePermissionToUploadCaseFilesToCourt(
+    user: User,
+    existingCase: Case,
+  ): boolean {
+    // Judges and registrars have permission to upload files of completed cases
+    return (
+      courtRoles.includes(user.role) &&
+      completedCaseStates.includes(existingCase.state)
+    )
   }
 
   @RolesRules(prosecutorRule)
@@ -131,7 +144,7 @@ export class FileController {
   @Post('file')
   @ApiCreatedResponse({
     type: CaseFile,
-    description: 'Creates a new file',
+    description: 'Creates a new case file',
   })
   async createCaseFile(
     @Param('caseId') caseId: string,
@@ -152,7 +165,7 @@ export class FileController {
   @ApiOkResponse({
     type: CaseFile,
     isArray: true,
-    description: 'Gets all existing files for an existing case',
+    description: 'Gets all existing case file',
   })
   async getAllCaseFiles(
     @Param('caseId') caseId: string,
@@ -171,7 +184,7 @@ export class FileController {
   @Delete('file/:id')
   @ApiOkResponse({
     type: DeleteFileResponse,
-    description: 'Deletes a file',
+    description: 'Deletes a case file',
   })
   async deleteCaseFile(
     @Param('caseId') caseId: string,
@@ -201,7 +214,7 @@ export class FileController {
   @Get('file/:id/url')
   @ApiOkResponse({
     type: PresignedPost,
-    description: 'Gets a signed url for an existing file',
+    description: 'Gets a signed url for a case file',
   })
   async getCaseFileSignedUrl(
     @Param('caseId') caseId: string,
@@ -229,5 +242,41 @@ export class FileController {
     }
 
     return this.fileService.getCaseFileSignedUrl(existingCase.id, file)
+  }
+
+  @RolesRules(judgeRule, registrarRule)
+  @Post('file/:id/court')
+  @ApiOkResponse({
+    type: PresignedPost,
+    description: 'Uploads a case file to court',
+  })
+  async uploadCaseFileToCourt(
+    @Param('caseId') caseId: string,
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+  ): Promise<UploadFileToCourtResponse> {
+    const existingCase = await this.caseService.findByIdAndUser(
+      caseId,
+      user,
+      false,
+    )
+
+    if (
+      !this.doesUserHavePermissionToUploadCaseFilesToCourt(user, existingCase)
+    ) {
+      throw new ForbiddenException(
+        `User ${user.id} does not have permission to upload files of case ${existingCase.id} to court`,
+      )
+    }
+
+    const file = await this.fileService.findById(id, existingCase.id)
+
+    if (!file) {
+      throw new NotFoundException(
+        `File ${id} of case ${existingCase.id} does not exist`,
+      )
+    }
+
+    return this.fileService.uploadCaseFileToCourt(existingCase.id, file)
   }
 }
