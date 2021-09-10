@@ -68,8 +68,8 @@ const History = ({ className, applicantsName }: Props) => {
                   <Text marginBottom={2}>
                     {' '}
                     {getEventType[item.eventType].isStaff
-                      ? admin?.name
-                      : applicantsName}{' '}
+                      ? 'Starfsmaður'
+                      : `Umsækjandi ${applicantsName}`}{' '}
                     <strong>{getEventType[item.eventType].text} </strong>
                   </Text>
 
