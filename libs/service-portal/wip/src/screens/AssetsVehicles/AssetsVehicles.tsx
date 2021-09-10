@@ -8,7 +8,7 @@ import { defineMessage } from 'react-intl'
 import { useNamespaces } from '@island.is/localization'
 
 export const AssetsVehicles: ServicePortalModuleComponent = () => {
-  useNamespaces(['service.portal', 'sp.assets'])
+  useNamespaces(['sp.assets'])
 
   return (
     <InfoScreen

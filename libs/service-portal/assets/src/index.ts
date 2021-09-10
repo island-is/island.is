@@ -1,5 +1,4 @@
 import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
 import {
   ServicePortalModule,
   ServicePortalRoute,
@@ -19,10 +18,12 @@ export const assetsModule: ServicePortalModule = {
           lazy(() => import('./screens/AssetsOverview/AssetsOverview')),
       },
       {
-        name: m.vehicles,
-        path: ServicePortalPath.AssetsVehicles,
+        name: m.realEstate + ' detail',
+        path: ServicePortalPath.AssetsRealEstateDetail,
         render: () =>
-          lazy(() => import('./screens/AssetsVehicles/AssetsVehicles')),
+          lazy(() =>
+            import('./screens/RealEstateAssetDetail/RealEstateAssetDetail'),
+          ),
       },
     ]
 

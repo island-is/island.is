@@ -211,6 +211,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'home',
         },
+        children: [
+          {
+            name: 'Detail assets',
+            path: ServicePortalPath.AssetsRealEstateDetail,
+            navHide: true,
+          },
+        ],
       },
 
       // Fjármál
