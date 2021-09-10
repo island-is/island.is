@@ -29,6 +29,7 @@ export interface Form {
   submitted: boolean
   section?: Array<string>
   formComment?: string
+  fileUploadComment?: string
 }
 
 export const initialState = {
