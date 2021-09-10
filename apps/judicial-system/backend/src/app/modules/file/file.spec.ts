@@ -25,7 +25,7 @@ describe('FileController', () => {
     create: jest.Mock
     findAll: jest.Mock
     findOne: jest.Mock
-    destroy: jest.Mock
+    update: jest.Mock
   }
   let caseService: CaseService
   let awsS3Service: AwsS3Service
@@ -36,7 +36,7 @@ describe('FileController', () => {
       create: jest.fn(),
       findAll: jest.fn(),
       findOne: jest.fn(),
-      destroy: jest.fn(),
+      update: jest.fn(),
     }
 
     const fileModule = await Test.createTestingModule({
@@ -325,7 +325,7 @@ describe('FileController', () => {
         })
 
         it('should delete the case file', async () => {
-          fileModel.destroy.mockResolvedValueOnce(1)
+          fileModel.update.mockResolvedValueOnce([1])
           const mockDeleteObject = jest.spyOn(awsS3Service, 'deleteObject')
 
           const { success } = await fileController.deleteCaseFile(
@@ -344,11 +344,11 @@ describe('FileController', () => {
 
           expect(success).toBe(true)
 
-          expect(fileModel.destroy).toHaveBeenCalledWith({
-            where: { id: fileId },
-          })
+          expect(fileModel.update).toHaveBeenCalledWith(
+            { state: CaseFileState.DELETED },
+            { where: { id: fileId } },
+          )
 
-          expect(mockDeleteObject).toHaveBeenCalledTimes(1)
           expect(mockDeleteObject).toHaveBeenCalledWith(key)
         })
       })

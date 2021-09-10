@@ -35,9 +35,12 @@ export class FileService {
   private async deleteFileFromDatabase(id: string): Promise<boolean> {
     this.logger.debug(`Deleting file ${id} from database`)
 
-    const nrOfRowsDeleted = await this.fileModel.destroy({ where: { id } })
+    const [nrOfRowsUpdated] = await this.fileModel.update(
+      { state: CaseFileState.DELETED },
+      { where: { id } },
+    )
 
-    return nrOfRowsDeleted > 0
+    return nrOfRowsUpdated > 0
   }
 
   private async tryDeleteFileFromS3(key: string) {

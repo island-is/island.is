@@ -55,6 +55,7 @@ export class CaseFile extends Model<CaseFile> {
     type: DataType.ENUM,
     allowNull: false,
     values: Object.values(CaseFileState),
+    defaultValue: CaseFileState.STORED_IN_RVG,
   })
   @ApiProperty({ enum: CaseFileState })
   state!: CaseFileState
