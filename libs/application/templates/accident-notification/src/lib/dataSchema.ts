@@ -123,7 +123,6 @@ export const AccidentNotificationSchema = z.object({
   rescueSquadInfo: CompanyInfoSchema,
   locationAndPurpose: z.object({
     location: z.string().min(1),
-    purpose: z.string().min(1),
   }),
   accidentLocation: z.object({
     answer: z.enum([
@@ -154,7 +153,6 @@ export const AccidentNotificationSchema = z.object({
     ]),
     locationAndPurpose: z.object({
       location: z.string().min(1),
-      purpose: z.string().min(1),
     }),
   }),
   workMachineRadio: z.enum([YES, NO]),

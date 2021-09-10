@@ -2,7 +2,6 @@ import {
   buildCheckboxField,
   buildCustomField,
   buildDataProviderItem,
-  buildDateField,
   buildDescriptionField,
   buildExternalDataProvider,
   buildFileUploadField,
@@ -18,6 +17,7 @@ import {
   FormModes,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
+import { WorkTypeIllustration } from '../assets/WorkTypeIllustration'
 import { NO, UPLOAD_ACCEPT, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import {
@@ -65,7 +65,6 @@ import {
   getAccidentTypeOptions,
   isAboardShip,
   isAgricultureAccident,
-  isDateOlderThanAYear,
   isFishermanAccident,
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
@@ -82,7 +81,6 @@ import {
 import { isHealthInsured } from '../utils/isHealthInsured'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
-import { WorkTypeIllustration } from '../assets/WorkTypeIllustration'
 
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
@@ -949,14 +947,9 @@ export const AccidentNotificationForm: Form = buildForm({
                   id: 'fishermanLocation.locationAndPurpose.location',
                   title: fishingLocationAndPurpose.labels.location,
                   backgroundColor: 'blue',
-                }),
-                buildTextField({
-                  id: 'fishermanLocation.locationAndPurpose.purpose',
-                  title: fishingLocationAndPurpose.labels.purpose,
-                  backgroundColor: 'blue',
-                  rows: 6,
                   variant: 'textarea',
-                  placeholder: fishingLocationAndPurpose.placeholder.purpose,
+                  required: true,
+                  rows: 4,
                 }),
               ],
             }),
@@ -974,14 +967,6 @@ export const AccidentNotificationForm: Form = buildForm({
               variant: 'textarea',
               required: true,
               rows: 4,
-            }),
-            buildTextField({
-              id: 'locationAndPurpose.purpose',
-              title: locationAndPurpose.labels.purpose,
-              backgroundColor: 'blue',
-              variant: 'textarea',
-              required: true,
-              rows: 6,
             }),
           ],
         }),
