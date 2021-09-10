@@ -10,7 +10,6 @@ export const hideLocationAndPurpose = (formValue: FormValue) => {
       answer: GeneralWorkplaceAccidentLocationEnum & StudiesAccidentLocationEnum
     }
   })?.accidentLocation?.answer
-  console.log(answer)
   return (
     answer === GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE ||
     answer === StudiesAccidentLocationEnum.ATTHESCHOOL
