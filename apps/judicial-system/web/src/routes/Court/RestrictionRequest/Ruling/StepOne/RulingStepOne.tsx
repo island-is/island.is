@@ -325,7 +325,8 @@ export const RulingStepOne: React.FC = () => {
                 <Box marginBottom={2}>
                   <Text as="h3" variant="h3">
                     {workingCase.type === CaseType.CUSTODY &&
-                    workingCase.decision === CaseDecision.ACCEPTING
+                    (!workingCase.decision ||
+                      workingCase.decision === CaseDecision.ACCEPTING)
                       ? 'Gæsluvarðhald'
                       : 'Farbann'}
                   </Text>
@@ -334,7 +335,8 @@ export const RulingStepOne: React.FC = () => {
                   name="validToDate"
                   datepickerLabel={
                     workingCase.type === CaseType.CUSTODY &&
-                    workingCase.decision === CaseDecision.ACCEPTING
+                    (!workingCase.decision ||
+                      workingCase.decision === CaseDecision.ACCEPTING)
                       ? 'Gæsluvarðhald til'
                       : 'Farbann til'
                   }
