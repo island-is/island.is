@@ -46,8 +46,6 @@ interface HomeProps {
 }
 
 const Home: Screen<HomeProps> = ({ organization, supportCategories, slug }) => {
-  // const linkResolver = useLinkResolver()
-
   const logoTitle =
     organization?.shortTitle ?? organization?.title ?? 'Ísland.is'
 
