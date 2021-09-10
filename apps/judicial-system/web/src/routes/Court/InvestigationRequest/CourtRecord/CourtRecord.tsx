@@ -46,16 +46,19 @@ const CourtRecord = () => {
           if (wc.accusedName) {
             attendees += `${wc.accusedName} varnaraðili`
           }
+        } else {
+          attendees +=
+            'Varnaraðili var ekki viðstaddur sbr. 104. gr. laga 88/2008 um meðferð sakamála.'
+        }
 
-          if (wc.defenderName) {
-            attendees += `\n${wc.defenderName} skipaður ${
-              wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-            } varnaraðila`
-          }
+        if (wc.defenderName) {
+          attendees += `\n${wc.defenderName} skipaður ${
+            wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+          } varnaraðila`
+        }
 
-          if (wc.translator) {
-            attendees += `\n${wc.translator} túlkur`
-          }
+        if (wc.translator) {
+          attendees += `\n${wc.translator} túlkur`
         }
       }
 
