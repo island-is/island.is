@@ -19,61 +19,63 @@ import {
 
 const { nationalRegistry } = environment
 
-const nationalRegistryGeneralLookupResponse: NationalRegistryGeneralLookupResponse = {
-  source: 'Þjóðskrá',
-  ssn: '1306886513',
-  name: 'Jón Gunnar Jónsson',
-  gender: 'kk',
-  address: 'Bessastaðir 1',
-  postalcode: '225',
-  city: 'Álftanes',
-  lastmodified: '2011-10-05T14:48:00.000Z',
-  charged: true,
-  error: '',
-}
+const nationalRegistryGeneralLookupResponse: NationalRegistryGeneralLookupResponse =
+  {
+    source: 'Þjóðskrá',
+    ssn: '1306886513',
+    name: 'Jón Gunnar Jónsson',
+    gender: 'kk',
+    address: 'Bessastaðir 1',
+    postalcode: '225',
+    city: 'Álftanes',
+    lastmodified: '2011-10-05T14:48:00.000Z',
+    charged: true,
+    error: '',
+  }
 
-const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse = {
-  source: 'Þjóðskrá',
-  familyssn: '1306886513',
-  results: [
-    {
-      name: 'Jón Gunnar Jónsson',
-      ssn: '1306886513',
-      gender: '1',
-      address: 'Bessastaðir 1',
-      postalcode: '225',
-      towncode: 1300,
-      city: 'Álftanes',
-    },
-    {
-      name: 'Guðrún Jónsdóttir',
-      ssn: '0409084390',
-      gender: '3',
-      address: 'Bessastaðir 1',
-      postalcode: '225',
-      towncode: 1300,
-      city: 'Álftanes',
-    },
-    {
-      name: 'Atli Jónsson',
-      ssn: '1201204330',
-      gender: '4',
-      address: 'Bessastaðir 1',
-      postalcode: '225',
-      towncode: 1300,
-      city: 'Álftanes',
-    },
-    {
-      name: 'Friðrik Jónsson',
-      ssn: '0101932149',
-      gender: '2',
-      address: 'Bessastaðir 1',
-      postalcode: '225',
-      towncode: 1300,
-      city: 'Álftanes',
-    },
-  ],
-}
+const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse =
+  {
+    source: 'Þjóðskrá',
+    familyssn: '1306886513',
+    results: [
+      {
+        name: 'Jón Gunnar Jónsson',
+        ssn: '1306886513',
+        gender: '1',
+        address: 'Bessastaðir 1',
+        postalcode: '225',
+        towncode: 1300,
+        city: 'Álftanes',
+      },
+      {
+        name: 'Guðrún Jónsdóttir',
+        ssn: '0409084390',
+        gender: '3',
+        address: 'Bessastaðir 1',
+        postalcode: '225',
+        towncode: 1300,
+        city: 'Álftanes',
+      },
+      {
+        name: 'Atli Jónsson',
+        ssn: '1201204330',
+        gender: '4',
+        address: 'Bessastaðir 1',
+        postalcode: '225',
+        towncode: 1300,
+        city: 'Álftanes',
+      },
+      {
+        name: 'Friðrik Jónsson',
+        ssn: '0101932149',
+        gender: '2',
+        address: 'Bessastaðir 1',
+        postalcode: '225',
+        towncode: 1300,
+        city: 'Álftanes',
+      },
+    ],
+  }
 
 const axiosGeneralLookupResponse: AxiosResponse = {
   data: [nationalRegistryGeneralLookupResponse],

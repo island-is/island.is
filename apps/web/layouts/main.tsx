@@ -393,62 +393,57 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
 
   const { origin } = absoluteUrl(req, 'localhost:4200')
   const respOrigin = `${origin}`
-  const [
-    categories,
-    alertBanner,
-    namespace,
-    megaMenuData,
-    footerMenuData,
-  ] = await Promise.all([
-    apolloClient
-      .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
-        query: GET_CATEGORIES_QUERY,
-        variables: {
-          input: {
-            lang: locale as ContentLanguage,
+  const [categories, alertBanner, namespace, megaMenuData, footerMenuData] =
+    await Promise.all([
+      apolloClient
+        .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
+          query: GET_CATEGORIES_QUERY,
+          variables: {
+            input: {
+              lang: locale as ContentLanguage,
+            },
           },
-        },
-      })
-      .then((res) => res.data.getArticleCategories),
-    apolloClient
-      .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
-        query: GET_ALERT_BANNER_QUERY,
-        variables: {
-          input: { id: '2foBKVNnRnoNXx9CfiM8to', lang },
-        },
-      })
-      .then((res) => res.data.getAlertBanner),
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'Global',
-            lang,
+        })
+        .then((res) => res.data.getArticleCategories),
+      apolloClient
+        .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
+          query: GET_ALERT_BANNER_QUERY,
+          variables: {
+            input: { id: '2foBKVNnRnoNXx9CfiM8to', lang },
           },
-        },
-      })
-      .then((res) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(res.data.getNamespace.fields)
-      }),
-    apolloClient
-      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
-        query: GET_GROUPED_MENU_QUERY,
-        variables: {
-          input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang },
-        },
-      })
-      .then((res) => res.data.getGroupedMenu),
-    apolloClient
-      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
-        query: GET_GROUPED_MENU_QUERY,
-        variables: {
-          input: { id: '7MeplCDXx2n01BoxRrekCi', lang },
-        },
-      })
-      .then((res) => res.data.getGroupedMenu),
-  ])
+        })
+        .then((res) => res.data.getAlertBanner),
+      apolloClient
+        .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+          query: GET_NAMESPACE_QUERY,
+          variables: {
+            input: {
+              namespace: 'Global',
+              lang,
+            },
+          },
+        })
+        .then((res) => {
+          // map data here to reduce data processing in component
+          return JSON.parse(res.data.getNamespace.fields)
+        }),
+      apolloClient
+        .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+          query: GET_GROUPED_MENU_QUERY,
+          variables: {
+            input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang },
+          },
+        })
+        .then((res) => res.data.getGroupedMenu),
+      apolloClient
+        .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+          query: GET_GROUPED_MENU_QUERY,
+          variables: {
+            input: { id: '7MeplCDXx2n01BoxRrekCi', lang },
+          },
+        })
+        .then((res) => res.data.getGroupedMenu),
+    ])
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 

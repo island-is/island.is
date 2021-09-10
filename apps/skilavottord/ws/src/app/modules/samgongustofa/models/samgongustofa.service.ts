@@ -302,9 +302,10 @@ export class SamgongustofaService {
             this.logger.info(
               `Start getting requestType from DB for vehicle ${vehicle['permno']}`,
             )
-            const resRequestType = await this.recyclingRequestService.findAllWithPermno(
-              vehicle['permno'],
-            )
+            const resRequestType =
+              await this.recyclingRequestService.findAllWithPermno(
+                vehicle['permno'],
+              )
             if (resRequestType.length > 0) {
               const requestType = resRequestType[0]['dataValues']['requestType']
               this.vehicleInformationList[i]['status'] = requestType

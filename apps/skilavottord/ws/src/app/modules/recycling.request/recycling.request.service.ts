@@ -38,12 +38,8 @@ export class RecyclingRequestService {
       this.logger.info(
         `---- Starting deRegisterVehicle call on ${vehiclePermno} ----`,
       )
-      const {
-        restAuthUrl,
-        restDeRegUrl,
-        restUsername,
-        restPassword,
-      } = environment.samgongustofa
+      const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
+        environment.samgongustofa
 
       const jsonObj = {
         username: restUsername,

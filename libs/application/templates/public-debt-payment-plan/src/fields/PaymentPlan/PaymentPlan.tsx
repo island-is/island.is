@@ -42,10 +42,8 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   const getDistribution = useLazyDistribution()
 
   const [isLoading, setIsLoading] = useState(false)
-  const [
-    distributionData,
-    setDistributionData,
-  ] = useState<PaymentScheduleDistribution | null>(null)
+  const [distributionData, setDistributionData] =
+    useState<PaymentScheduleDistribution | null>(null)
   const [displayInfo, setDisplayInfo] = useState(false)
 
   const externalData = application.externalData as PaymentPlanExternalData
@@ -54,9 +52,10 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   // Assign a payment to this screen by using the index of the step
   const payment = externalData.paymentPlanPrerequisites?.data?.debts[index]
   // Geta min/max month and min/max payment data
-  const initialMinMaxData = externalData.paymentPlanPrerequisites?.data?.allInitialSchedules.find(
-    (x) => x.scheduleType === payment?.type,
-  )
+  const initialMinMaxData =
+    externalData.paymentPlanPrerequisites?.data?.allInitialSchedules.find(
+      (x) => x.scheduleType === payment?.type,
+    )
   // Locate the entry of the payment plan in answers.
   const entryKey = getPaymentPlanKeyById(
     answers.paymentPlans,
@@ -98,12 +97,8 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     [getDistribution],
   )
 
-  const {
-    debouncedAmount,
-    debouncedMonths,
-    setAmount,
-    setMonths,
-  } = useDebouncedSliderValues(currentAnswers)
+  const { debouncedAmount, debouncedMonths, setAmount, setMonths } =
+    useDebouncedSliderValues(currentAnswers)
 
   useEffect(() => {
     if (payment && paymentMode !== undefined && initialMinMaxData) {

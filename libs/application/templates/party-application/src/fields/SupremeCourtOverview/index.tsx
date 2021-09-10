@@ -80,9 +80,11 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           </Text>
           <Text>
             {
-              (externalData.nationalRegistry?.data as {
-                fullName?: string
-              })?.fullName
+              (
+                externalData.nationalRegistry?.data as {
+                  fullName?: string
+                }
+              )?.fullName
             }
           </Text>
         </Box>

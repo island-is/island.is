@@ -25,8 +25,9 @@ import { useHasEndorsed } from '../../hooks/useHasEndorsed'
 import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
-  const endorsementListId = (application.externalData?.createEndorsementList
-    .data as any).id
+  const endorsementListId = (
+    application.externalData?.createEndorsementList.data as any
+  ).id
   const { partyLetter, partyName } = application.externalData
     .partyLetterRegistry?.data as any
 

@@ -198,12 +198,11 @@ export class ResourcesService {
     })
 
     if (identityResource) {
-      identityResource.userClaims = await this.identityResourceUserClaimModel.findAll(
-        {
+      identityResource.userClaims =
+        await this.identityResourceUserClaimModel.findAll({
           where: { identityResourceName: identityResource.name },
           raw: true,
-        },
-      )
+        })
     }
 
     return identityResource

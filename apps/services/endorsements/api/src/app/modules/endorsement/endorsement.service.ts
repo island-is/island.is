@@ -102,9 +102,10 @@ export class EndorsementService {
       (validation) => validation.type,
     )
     // find all metadata fields required for these types of validations
-    const metadataFieldsRequiredByValidation = this.validatorService.getRequiredValidationMetadataFields(
-      requestedValidationRules,
-    )
+    const metadataFieldsRequiredByValidation =
+      this.validatorService.getRequiredValidationMetadataFields(
+        requestedValidationRules,
+      )
 
     // get all metadata required for this endorsement
     return this.metadataService.getMetadata(

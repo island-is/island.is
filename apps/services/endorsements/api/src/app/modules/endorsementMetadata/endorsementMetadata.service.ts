@@ -103,9 +103,8 @@ export class EndorsementMetadataService {
     return fields.reduce(
       (metadata, fieldName) => ({
         ...metadata,
-        [fieldName]: this.fieldToProviderMap[fieldName].dataResolver(
-          providerData,
-        ),
+        [fieldName]:
+          this.fieldToProviderMap[fieldName].dataResolver(providerData),
       }),
       {} as EndorsementMetadata,
     )

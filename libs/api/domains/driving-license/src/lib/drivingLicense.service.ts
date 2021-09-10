@@ -99,11 +99,10 @@ export class DrivingLicenseService {
     type: DrivingLicenseApplicationType,
   ): Promise<ApplicationEligibility> {
     const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
-    const hasFinishedSchool = await this.drivingLicenseApi.getHasFinishedOkugerdi(
-      {
+    const hasFinishedSchool =
+      await this.drivingLicenseApi.getHasFinishedOkugerdi({
         nationalId,
-      },
-    )
+      })
 
     const canApply = await this.canApplyFor(nationalId, type)
 
@@ -182,16 +181,15 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
     input: NewTemporaryDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
-    const success = await this.drivingLicenseApi.postCreateDrivingLicenseTemporary(
-      {
+    const success =
+      await this.drivingLicenseApi.postCreateDrivingLicenseTemporary({
         willBringHealthCertificate: input.needsToPresentHealthCertificate,
         willBringQualityPhoto: input.needsToPresentQualityPhoto,
         juristictionId: input.juristictionId,
         nationalIdTeacher: input.teacherNationalId,
         nationalIdApplicant: nationalId,
         sendLicenseInMail: false,
-      },
-    )
+      })
 
     return {
       success,

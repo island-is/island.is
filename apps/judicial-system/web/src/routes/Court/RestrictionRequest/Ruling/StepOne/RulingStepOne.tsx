@@ -56,14 +56,10 @@ export const RulingStepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [validToDateIsValid, setValidToDateIsValid] = useState<boolean>(true)
   const [isolationToIsValid, setIsolationToIsValid] = useState<boolean>(true)
-  const [
-    courtCaseFactsErrorMessage,
-    setCourtCaseFactsErrorMessage,
-  ] = useState<string>('')
-  const [
-    courtLegalArgumentsErrorMessage,
-    setCourtLegalArgumentsErrorMessage,
-  ] = useState<string>('')
+  const [courtCaseFactsErrorMessage, setCourtCaseFactsErrorMessage] =
+    useState<string>('')
+  const [courtLegalArgumentsErrorMessage, setCourtLegalArgumentsErrorMessage] =
+    useState<string>('')
 
   const router = useRouter()
   const id = router.query.id

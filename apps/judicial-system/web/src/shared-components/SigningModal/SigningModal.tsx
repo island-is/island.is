@@ -39,10 +39,8 @@ const SigningModal: React.FC<SigningModalProps> = ({
   setModalVisible,
 }) => {
   const router = useRouter()
-  const [
-    signatureConfirmationResponse,
-    setSignatureConfirmationResponse,
-  ] = useState<SignatureConfirmationResponse>()
+  const [signatureConfirmationResponse, setSignatureConfirmationResponse] =
+    useState<SignatureConfirmationResponse>()
 
   const { transitionCase, sendNotification } = useCase()
 

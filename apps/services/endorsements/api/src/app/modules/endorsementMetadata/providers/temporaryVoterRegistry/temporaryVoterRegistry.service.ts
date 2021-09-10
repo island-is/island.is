@@ -18,11 +18,12 @@ export class TemporaryVoterRegistryService implements MetadataProvider {
   metadataKey = 'temporaryVoterRegistry'
 
   async getData({ nationalId }: TemporaryVoterRegistryInput) {
-    const results = await this.temporaryVoterRegistryApi.voterRegistryControllerFindByNationalId(
-      {
-        nationalId,
-      },
-    )
+    const results =
+      await this.temporaryVoterRegistryApi.voterRegistryControllerFindByNationalId(
+        {
+          nationalId,
+        },
+      )
     return {
       voterRegionNumber: results.regionNumber,
       voterRegionName: results.regionName,

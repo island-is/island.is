@@ -126,7 +126,7 @@ describe('AuditInterceptor', () => {
     context.getClass.mockReturnValue(MyClass)
     context.getHandler.mockReturnValue(MyClass.prototype.handler)
     const user = 'Test user'
-    const getCurrentUserMock = (getCurrentUser as unknown) as MockInstance<
+    const getCurrentUserMock = getCurrentUser as unknown as MockInstance<
       string,
       unknown[]
     >

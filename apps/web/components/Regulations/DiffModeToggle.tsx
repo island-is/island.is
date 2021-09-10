@@ -20,13 +20,8 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
   const { linkToRegulation } = useRegulationLinkResolver()
 
   const { regulation } = props
-  const {
-    timelineDate,
-    effectiveDate,
-    lastAmendDate,
-    showingDiff,
-    history,
-  } = regulation
+  const { timelineDate, effectiveDate, lastAmendDate, showingDiff, history } =
+    regulation
 
   const firstEvent = regulation.history[0]
 

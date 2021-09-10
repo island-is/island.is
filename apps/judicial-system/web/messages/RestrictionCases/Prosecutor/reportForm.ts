@@ -65,8 +65,7 @@ export const rcReportForm = {
           'Notaður sem titill í textaboxi fyrir "málsatvik" á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       placeholder: {
-        id:
-          'judicial.system.restriction_cases:report_form.case_facts.placeholder',
+        id: 'judicial.system.restriction_cases:report_form.case_facts.placeholder',
         defaultMessage:
           'Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?',
         description:
@@ -75,30 +74,26 @@ export const rcReportForm = {
     }),
     legalArguments: defineMessages({
       heading: {
-        id:
-          'judicial.system.restriction_cases:report_form.legal_arguments.heading',
+        id: 'judicial.system.restriction_cases:report_form.legal_arguments.heading',
         defaultMessage: 'Greinargerð um lagarök',
         description:
           'Notaður sem titill fyrir "lagarök" hlutann á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       tooltip: {
-        id:
-          'judicial.system.restriction_cases:report_form.legal_arguments.tooltip',
+        id: 'judicial.system.restriction_cases:report_form.legal_arguments.tooltip',
         defaultMessage:
           'Lagarök og lagaákvæði sem eiga við brotið og kröfuna skal taka fram hér.',
         description:
           'Notaður sem upplýsingatexti í upplýsingasvæði við "lagarök" titlinn á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       label: {
-        id:
-          'judicial.system.restriction_cases:report_form.legal_arguments.label',
+        id: 'judicial.system.restriction_cases:report_form.legal_arguments.label',
         defaultMessage: 'Lagarök',
         description:
           'Notaður sem titill í textaboxi fyrir "lagarök" á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       placeholder: {
-        id:
-          'judicial.system.restriction_cases:report_form.legal_arguments.placeholder',
+        id: 'judicial.system.restriction_cases:report_form.legal_arguments.placeholder',
         defaultMessage: 'Hver eru lagarökin fyrir kröfu um gæsluvarðhald?',
         description:
           'Notaður sem skýritexti í textaboxi fyrir "lagarök" á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
@@ -125,8 +120,7 @@ export const rcReportForm = {
           'Notaður sem titill í textaboxi fyrir "athugasemdir vegna málsmeðferðar" á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       placeholder: {
-        id:
-          'judicial.system.restriction_cases:report_form.comments.placeholder',
+        id: 'judicial.system.restriction_cases:report_form.comments.placeholder',
         defaultMessage:
           'Er eitthvað sem þú vilt koma á framfæri við dómstólinn varðandi fyrirtökuna eða málsmeðferðina?',
         description:

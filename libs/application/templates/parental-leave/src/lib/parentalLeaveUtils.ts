@@ -143,12 +143,8 @@ export const getTransferredDays = (
   }
 
   // This is a primary parent, let's have a look at the answers
-  const {
-    isRequestingRights,
-    requestDays,
-    isGivingRights,
-    giveDays,
-  } = getApplicationAnswers(application.answers)
+  const { isRequestingRights, requestDays, isGivingRights, giveDays } =
+    getApplicationAnswers(application.answers)
 
   let days = 0
 
@@ -291,11 +287,8 @@ export const getSelectedChild = (
 export const isEligibleForParentalLeave = (
   externalData: ExternalData,
 ): boolean => {
-  const {
-    dataProvider,
-    children,
-    existingApplications,
-  } = getApplicationExternalData(externalData)
+  const { dataProvider, children, existingApplications } =
+    getApplicationExternalData(externalData)
 
   return (
     dataProvider?.hasActivePregnancy &&
@@ -549,10 +542,8 @@ export const requiresOtherParentApproval = (
   const applicationAnswers = getApplicationAnswers(answers)
   const selectedChild = getSelectedChild(answers, externalData)
 
-  const {
-    isRequestingRights,
-    usePersonalAllowanceFromSpouse,
-  } = applicationAnswers
+  const { isRequestingRights, usePersonalAllowanceFromSpouse } =
+    applicationAnswers
 
   const needsApprovalForRequestingRights =
     selectedChild?.parentalRelation === ParentalRelations.primary
@@ -569,10 +560,8 @@ export const otherParentApprovalDescription = (
 ) => {
   const applicationAnswers = getApplicationAnswers(answers)
 
-  const {
-    isRequestingRights,
-    usePersonalAllowanceFromSpouse,
-  } = applicationAnswers
+  const { isRequestingRights, usePersonalAllowanceFromSpouse } =
+    applicationAnswers
 
   const description =
     isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
@@ -586,9 +575,8 @@ export const otherParentApprovalDescription = (
 }
 
 export const allowOtherParent = (answers: Application['answers']) => {
-  const { otherParent, otherParentRightOfAccess } = getApplicationAnswers(
-    answers,
-  )
+  const { otherParent, otherParentRightOfAccess } =
+    getApplicationAnswers(answers)
 
   return (
     otherParent === SPOUSE ||

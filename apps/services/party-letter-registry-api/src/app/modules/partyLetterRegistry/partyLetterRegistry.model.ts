@@ -23,14 +23,14 @@ export class PartyLetterRegistry extends Model {
     primaryKey: true,
     get() {
       // this adds a space cause of char 2 we remove added spaces here
-      const value: string = ((this as unknown) as Model).getDataValue(
+      const value: string = (this as unknown as Model).getDataValue(
         'partyLetter' as any,
       )
       return value.trim()
     },
     set(value: string) {
       // we want to ensure all inserted letters are uppercase
-      ;((this as unknown) as Model).setDataValue(
+      ;(this as unknown as Model).setDataValue(
         'partyLetter' as any,
         value.toUpperCase(),
       )

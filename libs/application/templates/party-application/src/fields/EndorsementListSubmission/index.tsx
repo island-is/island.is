@@ -56,12 +56,11 @@ const shouldShowWarning = (
 const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
   const { lang: locale, formatMessage } = useLocale()
   const { setValue } = useFormContext()
-  const {
-    constituency,
-    endorsements: endorsmentAnswers,
-  } = application.answers as SchemaFormValues
-  const endorsementListId = (application.externalData?.createEndorsementList
-    .data as any).id
+  const { constituency, endorsements: endorsmentAnswers } =
+    application.answers as SchemaFormValues
+  const endorsementListId = (
+    application.externalData?.createEndorsementList.data as any
+  ).id
 
   const [paginatedEndorsements, setPaginatedEndorsements] = useState<
     Endorsement[]

@@ -512,10 +512,12 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                           }
                         : selectedSharingInstitutionId
                         ? {
-                            label: (selectedSharingInstitutionId as ReactSelectOption)
-                              .label,
-                            value: (selectedSharingInstitutionId as ReactSelectOption)
-                              .value as string,
+                            label: (
+                              selectedSharingInstitutionId as ReactSelectOption
+                            ).label,
+                            value: (
+                              selectedSharingInstitutionId as ReactSelectOption
+                            ).value as string,
                           }
                         : null
                     }

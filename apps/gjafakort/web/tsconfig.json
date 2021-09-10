@@ -12,5 +12,5 @@
     "isolatedModules": true
   },
   "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts"],
-  "exclude": ["node_modules", "**/*.spec.ts", "**/*.spec.tsx"],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.spec.tsx"]
 }

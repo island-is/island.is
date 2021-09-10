@@ -174,6 +174,7 @@ export function isCaseBlockedFromUser(
     isCourtCaseHiddenFromUser(
       user,
       forUpdate,
+<<<<<<< HEAD
       hasCaseBeenAppealed((theCase as unknown) as TCase),
       theCase.courtId,
     ) ||
@@ -182,6 +183,9 @@ export function isCaseBlockedFromUser(
       theCase.isHeightenedSecurityLevel,
       theCase.creatingProsecutor?.id,
       theCase.prosecutor?.id,
+=======
+      hasCaseBeenAppealed(theCase as unknown as TCase),
+>>>>>>> 79cfc6f92 (yarn format)
     )
   )
 }

@@ -70,9 +70,8 @@ describe('skilavottordApiTest', () => {
           },
         ],
       }).compile()
-      samgongustofaService = moduleRef.get<SamgongustofaService>(
-        SamgongustofaService,
-      )
+      samgongustofaService =
+        moduleRef.get<SamgongustofaService>(SamgongustofaService)
       recyclingRequestService = moduleRef.get<RecyclingRequestService>(
         RecyclingRequestService,
       )
@@ -89,9 +88,8 @@ describe('skilavottordApiTest', () => {
         jest
           .spyOn(recyclingRequestService as any, 'findAllWithPermno')
           .mockImplementation(() => Promise.resolve(recyclingRequestModel))
-        const checkVehileResp = await samgongustofaService.getVehicleInformation(
-          kennitala,
-        )
+        const checkVehileResp =
+          await samgongustofaService.getVehicleInformation(kennitala)
         expect(checkVehileResp[0].permno).toBe('BAT01')
       })
     })

@@ -142,9 +142,8 @@ const processEndorsementLists = async (cb: () => void, index = 0) => {
     offset: index * endorsementListsChunkSize,
   })
 
-  const endorsementListFieldMap = createEndorsementListFieldMap(
-    endorsementLists,
-  )
+  const endorsementListFieldMap =
+    createEndorsementListFieldMap(endorsementLists)
 
   await processEndorsements(endorsementListFieldMap)
 
