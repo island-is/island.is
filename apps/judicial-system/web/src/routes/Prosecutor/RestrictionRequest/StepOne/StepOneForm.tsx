@@ -16,17 +16,15 @@ import {
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
 
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import {
-  restrictionDefendantForm,
-  defenderInfo,
-} from '@island.is/judicial-system-web/messages'
+import { accused } from '@island.is/judicial-system-web/messages'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 
@@ -104,19 +102,15 @@ export const StepOneForm: React.FC<Props> = (props) => {
         {workingCase.state === CaseState.RECEIVED && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(
-                restrictionDefendantForm.receivedAlert.title,
-              )}
-              message={formatMessage(
-                restrictionDefendantForm.receivedAlert.message,
-              )}
+              title={formatMessage(accused.receivedAlert.title)}
+              message={formatMessage(accused.receivedAlert.message)}
               type="warning"
             />
           </Box>
         )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(restrictionDefendantForm.general.heading)}
+            {formatMessage(accused.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
@@ -128,7 +122,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {formatMessage(restrictionDefendantForm.defendantInfo.heading)}
+              {formatMessage(accused.sections.accusedInfo.heading)}
             </Text>
           </Box>
           <DefendantInfo
@@ -144,7 +138,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
             marginBottom={2}
           >
             <Text as="h3" variant="h3">
-              {formatMessage(restrictionDefendantForm.defenderInfo.heading)}
+              {formatMessage(accused.sections.defenderInfo.heading)}
             </Text>
           </Box>
           <BlueBox>
@@ -152,8 +146,11 @@ export const StepOneForm: React.FC<Props> = (props) => {
               <Input
                 data-testid="defenderName"
                 name="defenderName"
-                label={formatMessage(defenderInfo.name.label)}
-                placeholder={formatMessage(defenderInfo.name.placeholder)}
+                autoComplete="off"
+                label={formatMessage(accused.sections.defenderInfo.name.label)}
+                placeholder={formatMessage(
+                  accused.sections.defenderInfo.name.placeholder,
+                )}
                 defaultValue={workingCase.defenderName}
                 onChange={(event) => setField(event.target)}
                 onBlur={(event) => validateAndSendToServer(event.target)}
@@ -163,8 +160,11 @@ export const StepOneForm: React.FC<Props> = (props) => {
               <Input
                 data-testid="defenderEmail"
                 name="defenderEmail"
-                label={formatMessage(defenderInfo.email.label)}
-                placeholder={formatMessage(defenderInfo.email.placeholder)}
+                autoComplete="off"
+                label={formatMessage(accused.sections.defenderInfo.email.label)}
+                placeholder={formatMessage(
+                  accused.sections.defenderInfo.email.placeholder,
+                )}
                 defaultValue={workingCase.defenderEmail}
                 errorMessage={defenderEmailErrorMessage}
                 hasError={defenderEmailErrorMessage !== ''}
@@ -182,9 +182,12 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 <Input
                   data-testid="defenderPhoneNumber"
                   name="defenderPhoneNumber"
-                  label={formatMessage(defenderInfo.phoneNumber.label)}
+                  autoComplete="off"
+                  label={formatMessage(
+                    accused.sections.defenderInfo.phoneNumber.label,
+                  )}
                   placeholder={formatMessage(
-                    defenderInfo.phoneNumber.placeholder,
+                    accused.sections.defenderInfo.phoneNumber.placeholder,
                   )}
                   defaultValue={workingCase.defenderPhoneNumber}
                   errorMessage={defenderPhoneNumberErrorMessage}
@@ -194,13 +197,18 @@ export const StepOneForm: React.FC<Props> = (props) => {
             </Box>
             <Checkbox
               name="sendRequestToDefender"
-              label={formatMessage(defenderInfo.sendRequest.label)}
-              tooltip={formatMessage(defenderInfo.sendRequest.tooltip, {
-                caseType:
-                  workingCase.type === CaseType.CUSTODY
-                    ? 'gæsluvarðhaldskröfuna'
-                    : 'farbannskröfuna',
-              })}
+              label={formatMessage(
+                accused.sections.defenderInfo.sendRequest.label,
+              )}
+              tooltip={formatMessage(
+                accused.sections.defenderInfo.sendRequest.tooltip,
+                {
+                  caseType:
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhaldskröfuna'
+                      : 'farbannskröfuna',
+                },
+              )}
               checked={workingCase.sendRequestToDefender}
               onChange={(event) => setAndSendToServer(event.target)}
               large
@@ -217,12 +225,10 @@ export const StepOneForm: React.FC<Props> = (props) => {
               marginBottom={2}
             >
               <Text as="h3" variant="h3">
-                {formatMessage(
-                  restrictionDefendantForm.leadInvestigator.heading,
-                )}{' '}
+                {formatMessage(accused.sections.leadInvestigator.heading)}{' '}
                 <Tooltip
                   text={formatMessage(
-                    restrictionDefendantForm.leadInvestigator.tooltip,
+                    accused.sections.leadInvestigator.tooltip,
                   )}
                 />
               </Text>
@@ -231,11 +237,10 @@ export const StepOneForm: React.FC<Props> = (props) => {
               <Input
                 data-testid="leadInvestigator"
                 name="leadInvestigator"
-                label={formatMessage(
-                  restrictionDefendantForm.leadInvestigator.label,
-                )}
+                autoComplete="off"
+                label={formatMessage(accused.sections.leadInvestigator.label)}
                 placeholder={formatMessage(
-                  restrictionDefendantForm.leadInvestigator.placeholder,
+                  accused.sections.leadInvestigator.placeholder,
                 )}
                 defaultValue={workingCase.leadInvestigator}
                 errorMessage={leadInvestigatorErrorMessage}

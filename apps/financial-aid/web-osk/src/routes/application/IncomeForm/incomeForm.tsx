@@ -2,8 +2,8 @@ import React, { useEffect, useState, useContext } from 'react'
 import { Text, BulletList, Bullet, Box } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   FormLayout,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
@@ -51,7 +51,7 @@ const IncomeForm = () => {
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Hefur þú fengið tekjur í þessum eða síðasta mánuði?
         </Text>
@@ -93,9 +93,9 @@ const IncomeForm = () => {
             <Bullet>Styrkir frá lífeyrissjóðum</Bullet>
           </BulletList>
         </Box>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />

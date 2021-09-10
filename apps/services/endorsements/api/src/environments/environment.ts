@@ -1,4 +1,6 @@
+const isProductionEnvironment = process.env.NODE_ENV === 'production'
 const devConfig = {
+  production: isProductionEnvironment,
   metadataProvider: {
     nationalRegistry: {
       baseSoapUrl: 'https://localhost:8443',
@@ -18,9 +20,13 @@ const devConfig = {
   audit: {
     defaultNamespace: '@island.is/services-endorsements-api',
   },
+  accessGroups: {
+    DMR: process.env.ACCESS_GROUP_DMR ?? '',
+  },
 }
 
 const prodConfig = {
+  production: isProductionEnvironment,
   metadataProvider: {
     nationalRegistry: {
       baseSoapUrl: process.env.SOFFIA_SOAP_URL,
@@ -42,6 +48,9 @@ const prodConfig = {
     serviceName: 'services-endorsements-api', // used in cloudwatch
     defaultNamespace: '@island.is/services-endorsements-api',
   },
+  accessGroups: {
+    DMR: process.env.ACCESS_GROUP_DMR ?? '',
+  },
 }
 
-export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
+export default isProductionEnvironment ? prodConfig : devConfig

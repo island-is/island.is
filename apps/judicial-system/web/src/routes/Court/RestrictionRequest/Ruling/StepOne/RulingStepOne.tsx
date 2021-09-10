@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Accordion,
   AccordionItem,
@@ -19,11 +20,11 @@ import {
   RulingInput,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
-  Case,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   parseArray,
@@ -49,6 +50,7 @@ import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { rcRulingStepOne } from '@island.is/judicial-system-web/messages'
 
 export const RulingStepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -68,6 +70,7 @@ export const RulingStepOne: React.FC = () => {
 
   const { user } = useContext(UserContext)
   const { updateCase, autofill } = useCase()
+  const { formatMessage } = useIntl()
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -184,7 +187,11 @@ export const RulingStepOne: React.FC = () => {
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
                   Greinargerð um málsatvik{' '}
-                  <Tooltip text="Greinargerð lögreglu er forbókuð hér fyrir neðan. Hægt er að breyta textanum og mun hann birtast með þeim hætti í úrskurði dómara." />
+                  <Tooltip
+                    text={formatMessage(
+                      rcRulingStepOne.sections.courtCaseFacts.tooltip,
+                    )}
+                  />
                 </Text>
               </Box>
               <Box marginBottom={5}>
@@ -227,7 +234,11 @@ export const RulingStepOne: React.FC = () => {
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
                   Greinargerð um lagarök{' '}
-                  <Tooltip text="Greinargerð lögreglu er forbókuð hér fyrir neðan. Hægt er að breyta textanum og mun hann birtast með þeim hætti í úrskurði dómara." />
+                  <Tooltip
+                    text={formatMessage(
+                      rcRulingStepOne.sections.courtLegalArguments.tooltip,
+                    )}
+                  />
                 </Text>
               </Box>
               <Box marginBottom={5}>

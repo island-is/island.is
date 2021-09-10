@@ -9,7 +9,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
 import ReviewSection, { ReviewSectionState } from './ReviewSection'
-import Review from '../Review'
+import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getExpectedDateOfBirth,
@@ -107,6 +107,10 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   const dob = getExpectedDateOfBirth(application)
   const dobDate = dob ? new Date(dob) : null
 
+  const canBeEdited =
+    application.state === ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN ||
+    application.state === ApplicationStates.APPROVED
+
   return (
     <Box marginBottom={10}>
       <Box
@@ -151,7 +155,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
                 )}
             </Button>
           </Box>
-          {application.state === ApplicationStates.APPROVED && (
+          {canBeEdited && (
             <Box display="inlineBlock">
               <Button
                 colorScheme="default"

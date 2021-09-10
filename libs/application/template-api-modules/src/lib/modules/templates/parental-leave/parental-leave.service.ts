@@ -24,6 +24,7 @@ import {
   generateAssignEmployerApplicationEmail,
   generateOtherParentRejected,
   generateApplicationApprovedByEmployerEmail,
+  generateApplicationApprovedByEmployerToEmployerEmail,
 } from './emailGenerators'
 import {
   getEmployer,
@@ -31,7 +32,16 @@ import {
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 
+interface VMSTError {
+  type: string
+  title: string
+  status: number
+  traceId: string
+  errors: Record<string, string[]>
+}
+
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
+const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
 
 @Injectable()
@@ -45,6 +55,16 @@ export class ParentalLeaveService {
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
   ) {}
+
+  private parseErrors(e: Error | VMSTError) {
+    if (e instanceof Error) {
+      return e.message
+    }
+
+    return {
+      message: Object.entries(e.errors).map(([, values]) => values.join(', ')),
+    }
+  }
 
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.sendEmail(
@@ -66,6 +86,7 @@ export class ParentalLeaveService {
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignEmployerApplicationEmail,
       application,
+      SIX_MONTHS_IN_SECONDS_EXPIRES,
     )
   }
 
@@ -135,6 +156,12 @@ export class ParentalLeaveService {
 
     for (const [index, period] of answers.entries()) {
       const isFirstPeriod = index === 0
+
+      // If a period doesn't have both startDate or endDate we skip it
+      if (!isFirstPeriod && (!period.startDate || !period.endDate)) {
+        continue
+      }
+
       const startDate = new Date(period.startDate)
       const endDate = new Date(period.endDate)
       const getPeriodLength = await this.parentalLeaveApi.parentalLeaveGetPeriodLength(
@@ -287,7 +314,9 @@ export class ParentalLeaveService {
       )
 
       if (!response.id) {
-        throw new Error(`Failed to send application: ${response.status}`)
+        throw new Error(
+          `Failed to send the parental leave application, no response.id from VMST API: ${response}`,
+        )
       }
 
       const employer = getEmployer(application)
@@ -300,12 +329,18 @@ export class ParentalLeaveService {
           generateApplicationApprovedByEmployerEmail,
           application,
         )
+
+        // Also send confirmation to employer
+        await this.sharedTemplateAPIService.sendEmail(
+          generateApplicationApprovedByEmployerToEmployerEmail,
+          application,
+        )
       }
 
       return response
     } catch (e) {
-      this.logger.error('Failed to send application', e)
-      throw e
+      this.logger.error('Failed to send the parental leave application', e)
+      throw this.parseErrors(e)
     }
   }
 }

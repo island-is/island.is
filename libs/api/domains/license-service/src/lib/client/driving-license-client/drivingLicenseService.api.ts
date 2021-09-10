@@ -1,7 +1,7 @@
 import fetch, { Response } from 'node-fetch'
+import FormData from 'form-data'
 import * as kennitala from 'kennitala'
 import format from 'date-fns/format'
-import parse from 'date-fns/parse'
 import { Cache as CacheManager } from 'cache-manager'
 import { Injectable, Inject, CACHE_MANAGER } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
@@ -13,6 +13,8 @@ import {
   PkPassServiceDriversLicenseResponse,
   PkPassServiceErrorResponse,
   PkPassServiceTokenResponse,
+  PkPassServiceVerifyDriversLicenseResponse,
+  PkPassVerifyResult,
 } from './genericDrivingLicense.type'
 import { parseDrivingLicensePayload } from './drivingLicenseMappers'
 import {
@@ -20,6 +22,8 @@ import {
   GenericLicenseClient,
   GenericLicenseUserdataExternal,
   GenericUserLicenseStatus,
+  PkPassVerification,
+  PkPassVerificationError,
 } from '../../licenceService.type'
 import { Config } from '../../licenseService.module'
 
@@ -237,6 +241,10 @@ export class GenericDrivingLicenseApi
   }
 
   async getPkPassUrl(nationalId: User['nationalId']): Promise<string | null> {
+    return this.getPkPassUrlByNationalId(nationalId)
+  }
+
+  async getPkPassUrlByNationalId(nationalId: string): Promise<string | null> {
     const accessToken = await this.getPkPassToken()
 
     if (!accessToken) {
@@ -352,5 +360,157 @@ export class GenericDrivingLicenseApi
     nationalId: User['nationalId'],
   ): Promise<GenericLicenseUserdataExternal | null> {
     return this.getLicense(nationalId)
+  }
+
+  async verifyPkpassByPdf417(
+    pdf417Text: string,
+  ): Promise<PkPassVerifyResult | null> {
+    const accessToken = await this.getPkPassToken()
+
+    if (!accessToken) {
+      return null
+    }
+
+    let res: Response | null = null
+
+    try {
+      const formData = new FormData()
+      formData.append('pdf417Text', pdf417Text)
+
+      const authHeaders = {
+        apiKey: this.pkpassApiKey,
+        accessToken: `smart ${accessToken}`,
+      }
+
+      res = await fetch(`${this.pkpassApiUrl}/verifyDriversLicense`, {
+        method: 'POST',
+        headers: { ...authHeaders, ...formData.getHeaders() },
+        body: formData.getBuffer().toString(),
+      })
+    } catch (e) {
+      this.logger.warn('Unable to verify pkpass drivers license', {
+        exception: e,
+      })
+      return null
+    }
+
+    if (!res.ok) {
+      const responseErrors: PkPassServiceErrorResponse = {}
+      try {
+        const json = await res.json()
+        responseErrors.message = json?.message ?? undefined
+        responseErrors.status = json?.status ?? undefined
+        responseErrors.data = json?.data ?? undefined
+      } catch {
+        // noop
+      }
+
+      this.logger.warn(
+        'Expected 200 status for pkpass verify drivers license service',
+        {
+          status: res.status,
+          statusText: res.statusText,
+          ...responseErrors,
+        },
+      )
+
+      return {
+        valid: false,
+        error: {
+          statusCode: res.status,
+          serviceError: responseErrors,
+        },
+      }
+    }
+
+    let json: unknown
+    try {
+      json = await res.json()
+    } catch (e) {
+      this.logger.warn('Unable to parse JSON for verify pkpass service', {
+        exception: e,
+      })
+      return null
+    }
+
+    const response = json as PkPassServiceVerifyDriversLicenseResponse
+
+    if (response.status !== 1) {
+      this.logger.warn('verify pkpass service response status is not "1"', {
+        serviceStatus: response.status,
+        serviceMessage: response.message,
+      })
+      return null
+    }
+
+    if (!response.data?.kennitala) {
+      this.logger.warn(
+        'verify pkpass service response does not include "kennitala" but returned status "1"',
+        {
+          serviceStatus: response.status,
+          serviceMessage: response.message,
+        },
+      )
+
+      return {
+        valid: true,
+      }
+    }
+
+    return {
+      valid: true,
+      nationalId: response.data.kennitala,
+    }
+  }
+
+  async verifyPkPass(data: string): Promise<PkPassVerification | null> {
+    const result = await this.verifyPkpassByPdf417(data)
+
+    if (!result) {
+      return null
+    }
+
+    let error: PkPassVerificationError | undefined
+
+    if (result.error) {
+      let data = ''
+
+      try {
+        data = JSON.stringify(result.error.serviceError?.data)
+      } catch {
+        // noop
+      }
+
+      error = {
+        status: (result.error.statusCode || 0).toString(),
+        message: result.error.serviceError?.message ?? 'Unknown error',
+        data,
+      }
+    }
+
+    let response:
+      | Record<string, string | null | GenericDrivingLicenseResponse['mynd']>
+      | undefined = undefined
+
+    if (result.nationalId) {
+      const nationalId = result.nationalId.replace('-', '')
+      const licenses = await this.requestFromXroadApi(nationalId)
+
+      const name = licenses?.[0]?.nafn ?? null
+      const photo = licenses?.[0]?.mynd ?? null
+
+      response = {
+        nationalId: result.nationalId,
+        name,
+        photo,
+        rawData: JSON.stringify(licenses?.[0]),
+      }
+    }
+
+    return {
+      valid: result.valid,
+      data: response ? JSON.stringify(response) : undefined,
+      error,
+    }
   }
 }

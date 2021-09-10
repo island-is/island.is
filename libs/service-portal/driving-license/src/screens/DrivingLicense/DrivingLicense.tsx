@@ -35,7 +35,7 @@ function DrivingLicense(): JSX.Element {
           ELIGABLE_FOR_DRIVING_LICENSE_AGE && (
           <Application
             heading={defineMessage({
-              id: 'service.portal:driving-license-general-license-title',
+              id: 'sp.driving-license:general-license-title',
               defaultMessage: 'Almenn ökuréttindi',
             })}
             subText={defineMessage({
@@ -49,11 +49,11 @@ function DrivingLicense(): JSX.Element {
         {(nationalRegistryUser?.age || 0) >= ELIGABLE_FOR_RENEWAL_AGE && (
           <Application
             heading={defineMessage({
-              id: 'service.portal:driving-license-renewal-heading',
+              id: 'sp.driving-license:renewal-heading',
               defaultMessage: 'Endurnýjun ökuskírteinis vegna aldurs',
             })}
             subText={defineMessage({
-              id: 'service.portal:driving-license-renewal-subtext',
+              id: 'sp.driving-license:renewal-subtext',
               defaultMessage:
                 'Almenn ökuréttindi (B réttindi) þarf að endurnýja við 70 ára aldur. Nýja ökuskírteinið gildir í 4 ár. Eftir það þarf að endurnýja það þriðja og annað hvert ár en eftir 80 ára aldur á árs fresti.',
             })}

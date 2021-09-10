@@ -8,6 +8,7 @@ import {
   StaticText,
 } from '@island.is/application/core'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import * as Sentry from '@sentry/react'
 
 import type {
   ChildInformation,
@@ -29,7 +30,7 @@ import {
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { calculateRemainingNumberOfDays } from '../../lib/directorateOfLabour.utils'
 import { getSelectedChild } from '../../lib/parentalLeaveUtils'
-import { Boolean } from '../../types'
+import { YesOrNo } from '../../types'
 
 export interface PregnancyStatusAndRightsResults {
   childrenAndExistingApplications: ChildrenAndExistingApplications
@@ -81,12 +82,20 @@ export class Children extends BasicDataProvider {
         const response = await res.json()
 
         if (response.errors) {
-          return this.handleError(response.errors)
+          Sentry.captureException(response.errors)
+          return Promise.reject(
+            'Response.errors queryParentalLeavesAndPregnancyStatus',
+          )
         }
 
         return Promise.resolve(response.data)
       })
-      .catch((error) => this.handleError(error))
+      .catch((error) => {
+        Sentry.captureException(error)
+        return Promise.reject(
+          'Catch error queryParentalLeavesAndPregnancyStatus',
+        )
+      })
   }
 
   async queryParentalLeavesEntitlements(
@@ -99,12 +108,18 @@ export class Children extends BasicDataProvider {
         const response = await res.json()
 
         if (response.errors) {
-          return this.handleError(response.errors)
+          Sentry.captureException(response.errors)
+          return Promise.reject(
+            'Response.errors queryParentalLeavesEntitlements',
+          )
         }
 
         return Promise.resolve(response.data.getParentalLeavesEntitlements)
       })
-      .catch((error) => this.handleError(error))
+      .catch((error) => {
+        Sentry.captureException(error)
+        return Promise.reject('Catch error queryParentalLeavesEntitlements')
+      })
   }
 
   async childrenAndExistingApplications(
@@ -174,7 +189,7 @@ export class Children extends BasicDataProvider {
       application.answers,
       'mock.useMockedApplication',
       NO,
-    ) as Boolean
+    ) as YesOrNo
 
     if (useApplication === NO) {
       const children = getChildrenFromMockData(application)
@@ -299,11 +314,6 @@ export class Children extends BasicDataProvider {
       children: childrenResult,
       existingApplications,
     }
-  }
-
-  handleError(error: Error | unknown) {
-    console.error('Provider.ParentalLeave.Children:', error)
-    return Promise.reject('Failed to fetch children')
   }
 
   onProvideSuccess(children: ChildInformation[]): SuccessfulDataProviderResult {

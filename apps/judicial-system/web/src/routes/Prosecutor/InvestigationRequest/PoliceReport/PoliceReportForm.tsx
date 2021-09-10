@@ -6,13 +6,13 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Case } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { reportForm } from '@island.is/judicial-system-web/messages'
+import { icReportForm } from '@island.is/judicial-system-web/messages'
 import {
   FormSettings,
   useCaseFormHelper,
@@ -45,7 +45,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
     validations,
   )
   const defaultProsecutorOnlySessionRequest = formatMessage(
-    reportForm.prosecutorOnly.input.defaultValue,
+    icReportForm.prosecutorOnly.input.defaultValue,
   )
   useEffect(() => {
     if (workingCase.requestProsecutorOnlySession) {
@@ -62,7 +62,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(reportForm.heading)}
+            {formatMessage(icReportForm.heading)}
           </Text>
         </Box>
         <Box marginBottom={5}>
@@ -73,19 +73,19 @@ const PoliceReportForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {formatMessage(reportForm.facts.heading)}{' '}
+              {formatMessage(icReportForm.caseFacts.heading)}{' '}
               <Tooltip
                 placement="right"
                 as="span"
-                text={formatMessage(reportForm.facts.tooltip)}
+                text={formatMessage(icReportForm.caseFacts.tooltip)}
               />
             </Text>
           </Box>
           <Input
             data-testid="caseFacts"
             name="caseFacts"
-            label={formatMessage(reportForm.facts.label)}
-            placeholder={formatMessage(reportForm.facts.placeholder)}
+            label={formatMessage(icReportForm.caseFacts.label)}
+            placeholder={formatMessage(icReportForm.caseFacts.placeholder)}
             errorMessage={caseFactsEM}
             hasError={caseFactsEM !== ''}
             defaultValue={workingCase?.caseFacts}
@@ -118,11 +118,11 @@ const PoliceReportForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {formatMessage(reportForm.legalArguments.heading)}{' '}
+              {formatMessage(icReportForm.legalArguments.heading)}{' '}
               <Tooltip
                 placement="right"
                 as="span"
-                text={formatMessage(reportForm.legalArguments.tooltip)}
+                text={formatMessage(icReportForm.legalArguments.tooltip)}
               />
             </Text>
           </Box>
@@ -130,8 +130,10 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             <Input
               data-testid="legalArguments"
               name="legalArguments"
-              label={formatMessage(reportForm.legalArguments.label)}
-              placeholder={formatMessage(reportForm.legalArguments.placeholder)}
+              label={formatMessage(icReportForm.legalArguments.label)}
+              placeholder={formatMessage(
+                icReportForm.legalArguments.placeholder,
+              )}
               defaultValue={workingCase?.legalArguments}
               errorMessage={legalArgumentsEM}
               hasError={legalArgumentsEM !== ''}
@@ -167,10 +169,10 @@ const PoliceReportForm: React.FC<Props> = (props) => {
                 <Checkbox
                   name="request-prosecutor-only-session"
                   label={formatMessage(
-                    reportForm.prosecutorOnly.checkbox.label,
+                    icReportForm.prosecutorOnly.checkbox.label,
                   )}
                   tooltip={formatMessage(
-                    reportForm.prosecutorOnly.checkbox.tooltip,
+                    icReportForm.prosecutorOnly.checkbox.tooltip,
                   )}
                   checked={workingCase.requestProsecutorOnlySession}
                   onChange={(evt) => {
@@ -188,9 +190,9 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               </Box>
               <Input
                 name="prosecutor-only-session-request"
-                label={formatMessage(reportForm.prosecutorOnly.input.label)}
+                label={formatMessage(icReportForm.prosecutorOnly.input.label)}
                 placeholder={formatMessage(
-                  reportForm.prosecutorOnly.input.placeholder,
+                  icReportForm.prosecutorOnly.input.placeholder,
                 )}
                 disabled={workingCase.requestProsecutorOnlySession === false}
                 defaultValue={workingCase.prosecutorOnlySessionRequest}
@@ -220,20 +222,18 @@ const PoliceReportForm: React.FC<Props> = (props) => {
           <Box component="section" marginBottom={10}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                {formatMessage(reportForm.proceduralComments.heading)}{' '}
+                {formatMessage(icReportForm.comments.heading)}{' '}
                 <Tooltip
                   placement="right"
                   as="span"
-                  text={formatMessage(reportForm.proceduralComments.tooltip)}
+                  text={formatMessage(icReportForm.comments.tooltip)}
                 />
               </Text>
             </Box>
             <Input
               name="comments"
-              label={formatMessage(reportForm.proceduralComments.label)}
-              placeholder={formatMessage(
-                reportForm.proceduralComments.placeholder,
-              )}
+              label={formatMessage(icReportForm.comments.label)}
+              placeholder={formatMessage(icReportForm.comments.placeholder)}
               defaultValue={workingCase?.comments}
               onChange={(event) =>
                 removeTabsValidateAndSet(

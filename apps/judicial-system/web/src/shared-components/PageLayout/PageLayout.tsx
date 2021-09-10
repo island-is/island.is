@@ -83,8 +83,12 @@ const PageLayout: React.FC<PageProps> = ({
         return 'Krafa um rannsóknarheimild samþykkt'
       } else {
         return isValidToDateInThePast
-          ? 'Gæsluvarðhaldi lokið'
-          : 'Gæsluvarðhald virkt'
+          ? `${
+              caseType === CaseType.CUSTODY ? 'Gæsluvarðhaldi' : 'Farbanni'
+            } lokið`
+          : `${
+              caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
+            } virkt`
       }
     } else if (decisionIsAcceptingAlternativeTravelBan) {
       return isValidToDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
@@ -131,29 +135,31 @@ const PageLayout: React.FC<PageProps> = ({
           </GridColumn>
           {showSidepanel && (
             <GridColumn span={['0', '0', '3/12', '3/12']}>
-              <Box marginLeft={2}>
-                <Box marginBottom={5}>
-                  <Logo />
+              <div className={styles.formStepperContainer}>
+                <Box marginLeft={2}>
+                  <Box marginBottom={5}>
+                    <Logo />
+                  </Box>
+                  <FormStepper
+                    // Remove the extension parts of the formstepper if the user is not applying for an extension
+                    sections={
+                      activeSection === Sections.EXTENSION ||
+                      activeSection === Sections.JUDGE_EXTENSION
+                        ? sections
+                        : sections.filter((_, index) => index <= 2)
+                    }
+                    formName={
+                      caseType === CaseType.CUSTODY
+                        ? 'Gæsluvarðhald'
+                        : caseType === CaseType.TRAVEL_BAN
+                        ? 'Farbann'
+                        : 'Rannsóknarheimild'
+                    }
+                    activeSection={activeSection}
+                    activeSubSection={activeSubSection}
+                  />
                 </Box>
-                <FormStepper
-                  // Remove the extension parts of the formstepper if the user is not applying for an extension
-                  sections={
-                    activeSection === Sections.EXTENSION ||
-                    activeSection === Sections.JUDGE_EXTENSION
-                      ? sections
-                      : sections.filter((_, index) => index <= 2)
-                  }
-                  formName={
-                    caseType === CaseType.CUSTODY
-                      ? 'Gæsluvarðhald'
-                      : caseType === CaseType.TRAVEL_BAN
-                      ? 'Farbann'
-                      : 'Rannsóknarheimild'
-                  }
-                  activeSection={activeSection}
-                  activeSubSection={activeSubSection}
-                />
-              </Box>
+              </div>
             </GridColumn>
           )}
         </GridRow>

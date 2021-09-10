@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import {
-  Case,
   CaseDecision,
   CaseState,
   CaseTransition,
   CaseType,
   NotificationType,
+} from '@island.is/judicial-system/types'
+import type {
+  Case,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
 } from '@island.is/judicial-system/types'
@@ -15,6 +18,10 @@ import { SignatureConfirmationQuery } from '../../utils/mutations'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import { Modal } from '..'
+import {
+  icConfirmation,
+  rcConfirmation,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface SigningModalProps {
@@ -37,6 +44,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
   ] = useState<SignatureConfirmationResponse>()
 
   const { transitionCase, sendNotification } = useCase()
+  const { formatMessage } = useIntl()
 
   const { data } = useQuery(SignatureConfirmationQuery, {
     variables: {
@@ -112,8 +120,12 @@ const SigningModal: React.FC<SigningModalProps> = ({
 
   const renderSuccessText = (caseType: CaseType) => {
     return caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
-      ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.'
-      : 'Úrskurður hefur verið sendur á ákæranda, dómritara og dómara sem kvað upp úrskurð. Úrskurðir eru eingöngu sendir á verjanda eða talsmann varnaraðila séu þeir viðstaddir þinghald. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.'
+      ? formatMessage(
+          caseType === CaseType.CUSTODY
+            ? rcConfirmation.modal.custodyCases.text
+            : rcConfirmation.modal.travelBanCases.text,
+        )
+      : formatMessage(icConfirmation.modal.text)
   }
 
   return (

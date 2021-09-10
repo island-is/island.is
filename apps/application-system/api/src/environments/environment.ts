@@ -48,6 +48,8 @@ const devConfig = {
     drivingLicense: {
       secret: process.env.DRIVING_LICENSE_SECRET,
       xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
+      xroadPath:
+        'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
       xroadBaseUrl: 'http://localhost:8081',
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
@@ -58,14 +60,11 @@ const devConfig = {
       xRoadClientId:
         process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
       xRoadProviderId:
-        process.env.PAYMENT_XROAD_PROVIDER_ID ??
-        'IS-DEV/GOV/10021/FJS-DEV-Public',
-      callbackAdditionUrl:
-        process.env.PAYMENT_ADDITION_CALLBACK_URL ??
-        '/payment/thiswillneverwork',
+        process.env.PAYMENT_XROAD_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
+      callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL ?? '/',
       callbackBaseUrl:
         process.env.PAYMENT_BASE_CALLBACK_URL ??
-        'https://localhost:3333/application/',
+        'https://localhost:3333/applications/',
       username: process.env.PAYMENT_USER,
       password: process.env.PAYMENT_PASSWORD,
     },
@@ -152,6 +151,7 @@ const prodConfig = {
       secret: process.env.DRIVING_LICENSE_SECRET,
       xroadClientId: process.env.XROAD_CLIENT_ID,
       xroadBaseUrl: process.env.XROAD_BASE_PATH,
+      xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH,
     },
     paymentOptions: {
       arkBaseUrl: process.env.ARK_BASE_URL,

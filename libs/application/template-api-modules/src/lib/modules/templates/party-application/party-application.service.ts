@@ -8,8 +8,15 @@ import {
   generateApplicationApprovedEmail,
   GenerateAssignSupremeCourtApplicationEmailOptions,
 } from './emailGenerators'
-import { EndorsementListApi, EndorsementListTagsEnum } from './gen/fetch'
+import {
+  EndorsementListApi,
+  EndorsementListTagsEnum,
+  EndorsementMetadataDtoFieldEnum,
+} from './gen/fetch'
+
 import type { Logger } from '@island.is/logging'
+
+const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
 
 export const PARTY_APPLICATION_SERVICE_OPTIONS =
   'PARTY_APPLICATION_SERVICE_OPTIONS'
@@ -101,6 +108,7 @@ export class PartyApplicationService {
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
           generateAssignSupremeCourtApplicationEmail(this.options.adminEmails),
           application,
+          ONE_DAY_IN_SECONDS_EXPIRES,
         )
       })
       .catch(() => {
@@ -148,7 +156,18 @@ export class PartyApplicationService {
         input: {
           title: partyLetter.partyName,
           description: partyLetter.partyLetter,
-          endorsementMeta: ['fullName', 'address', 'signedTags'],
+          endorsementMetadata: [
+            { field: EndorsementMetadataDtoFieldEnum.fullName },
+            { field: EndorsementMetadataDtoFieldEnum.signedTags },
+            {
+              field: EndorsementMetadataDtoFieldEnum.address,
+              keepUpToDate: true,
+            },
+            {
+              field: EndorsementMetadataDtoFieldEnum.voterRegion,
+              keepUpToDate: true,
+            },
+          ],
           tags: [application.answers.constituency as EndorsementListTagsEnum],
           validationRules: [
             {

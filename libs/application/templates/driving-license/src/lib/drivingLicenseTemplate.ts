@@ -4,16 +4,18 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  Application,
   DefaultStateLifeCycle,
   DefaultEvents,
 } from '@island.is/application/core'
-import { State } from 'xstate'
 import * as z from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 
-type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.PAYMENT }
+type Events =
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.PAYMENT }
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.REJECT }
 
 enum States {
   DRAFT = 'draft',
@@ -29,6 +31,7 @@ const dataSchema = z.object({
   juristiction: z.string(),
   healthDeclaration: z.object({
     usesContactGlasses: z.enum(['yes', 'no']),
+    hasReducedPeripheralVision: z.enum(['yes', 'no']),
     hasEpilepsy: z.enum(['yes', 'no']),
     hasHeartDisease: z.enum(['yes', 'no']),
     hasMentalIllness: z.enum(['yes', 'no']),
@@ -39,7 +42,13 @@ const dataSchema = z.object({
     hasOtherDiseases: z.enum(['yes', 'no']),
   }),
   teacher: z.string().nonempty(),
-  willBringAlongData: z.array(z.enum(['certificate', 'picture'])).nonempty(),
+  willBringQualityPhoto: z.union([
+    z.array(z.enum(['yes', 'no'])),
+    z.enum(['yes', 'no']),
+  ]),
+  requirementsMet: z.boolean().refine((v) => v),
+  certificate: z.array(z.enum(['yes', 'no'])).nonempty(),
+  picture: z.array(z.enum(['yes', 'no'])).nonempty(),
 })
 
 const template: ApplicationTemplate<
@@ -48,14 +57,15 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE,
-  name: 'Umsókn um ökuskilríki',
+  name: m.applicationForDrivingLicense,
   dataSchema,
+  readyForProduction: true,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
       [States.DRAFT]: {
         meta: {
-          name: 'Umsókn um ökuskilríki',
+          name: m.applicationForDrivingLicense.defaultMessage,
           progress: 0.33,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -88,6 +98,9 @@ const template: ApplicationTemplate<
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
+          onExit: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
           roles: [
             {
               id: 'applicant',
@@ -103,25 +116,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          '*': { target: States.PAYMENT_PENDING },
           [DefaultEvents.SUBMIT]: { target: States.DONE },
-        },
-      },
-      [States.PAYMENT_PENDING]: {
-        meta: {
-          name: 'Greiða',
-          progress: 1,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: 'applicant',
-              formLoader: () =>
-                import('../forms/paymentPending').then((val) =>
-                  Promise.resolve(val.PaymentPending),
-                ),
-              read: 'all',
-            },
-          ],
         },
       },
       [States.DONE]: {
@@ -144,7 +139,7 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(id: string, application: Application): ApplicationRole {
+  mapUserToRole(): ApplicationRole {
     return 'applicant'
   },
 }

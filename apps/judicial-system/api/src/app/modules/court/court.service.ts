@@ -3,7 +3,7 @@ import { formatISO } from 'date-fns' // eslint-disable-line no-restricted-import
 import { Injectable } from '@nestjs/common'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
-import { CaseType } from '@island.is/judicial-system/types'
+import type { CaseType } from '@island.is/judicial-system/types'
 
 // Maps case types to sub types in the court system
 const subTypes = {

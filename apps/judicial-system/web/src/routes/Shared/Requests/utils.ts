@@ -1,9 +1,11 @@
 import { TagVariant } from '@island.is/island-ui/core'
-import { CaseState } from '@island.is/judicial-system/types'
+import { CaseAppealDecision, CaseState } from '@island.is/judicial-system/types'
+import compareAsc from 'date-fns/compareAsc'
 
 export const mapCaseStateToTagVariant = (
   state: CaseState,
   isCourtRole: boolean,
+  isInvestigationCase?: boolean,
   isValidToDateInThePast?: boolean,
 ): { color: TagVariant; text: string } => {
   switch (state) {
@@ -26,12 +28,43 @@ export const mapCaseStateToTagVariant = (
       } else {
         return {
           color: 'blue',
-          text: 'Virkt',
+          text: isInvestigationCase ? 'Samþykkt' : 'Virkt',
         }
       }
     case CaseState.REJECTED:
-      return { color: 'rose', text: 'Kröfu hafnað' }
+      return {
+        color: 'rose',
+        text: 'Hafnað',
+      }
     default:
       return { color: 'white', text: 'Óþekkt' }
+  }
+}
+
+export const getAppealDate = (
+  prosecutorAppealDecision: CaseAppealDecision,
+  accusedAppealDecision: CaseAppealDecision,
+  prosecutorPostponedAppealDate: string,
+  accusedPostponedAppealDate: string,
+  rulingDate: string,
+) => {
+  if (
+    prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+    accusedAppealDecision === CaseAppealDecision.APPEAL
+  ) {
+    return rulingDate
+  } else if (accusedPostponedAppealDate && !prosecutorPostponedAppealDate) {
+    return accusedPostponedAppealDate
+  } else if (prosecutorPostponedAppealDate && !accusedPostponedAppealDate) {
+    return prosecutorPostponedAppealDate
+  } else {
+    const compareDates = compareAsc(
+      new Date(prosecutorPostponedAppealDate),
+      new Date(accusedPostponedAppealDate),
+    )
+
+    return compareDates === 1
+      ? accusedPostponedAppealDate
+      : prosecutorPostponedAppealDate
   }
 }

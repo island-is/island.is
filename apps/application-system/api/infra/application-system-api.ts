@@ -110,10 +110,9 @@ export const serviceSetup = (services: {
       SERVICE_DOCUMENTS_BASEPATH: ref(
         (h) => `http://${h.svc(services.documentsService)}`,
       ),
-      PARTY_APPLICATION_SUBMISSION_DESTINATION_EMAIL: 's@kogk.is',
       PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: {
-        dev: 's@kogk.is',
-        staging: 's@kogk.is',
+        dev: 'thorhildur@parallelradgjof.is',
+        staging: 'thorhildur@parallelradgjof.is',
         prod: 'postur@dmr.is',
       },
       ENDORSEMENTS_API_BASE_PATH: ref(
@@ -182,6 +181,10 @@ export const serviceSetup = (services: {
         '/k8s/application-system/api/PARTY_APPLICATION_NORTH_ADMIN_EMAIL',
       PARTY_APPLICATION_SOUTH_ADMIN_EMAIL:
         '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_ADMIN_EMAIL',
+      DRIVING_LICENSE_SECRET:
+        '/k8s/application-system/api/DRIVING_LICENSE_SECRET',
+      DRIVING_LICENSE_XROAD_PATH:
+        '/k8s/application-system/api/DRIVING_LICENSE_XROAD_PATH',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
@@ -194,4 +197,15 @@ export const serviceSetup = (services: {
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '100m', memory: '256Mi' },
     })
-    .grantNamespaces('nginx-ingress-external', 'islandis')
+    .ingress({
+      primary: {
+        host: {
+          dev: 'application-payment-callback-xrd',
+          staging: 'application-payment-callback-xrd',
+          prod: 'application-payment-callback-xrd',
+        },
+        paths: ['/application-payment'],
+        public: false,
+      },
+    })
+    .grantNamespaces('nginx-ingress-internal', 'islandis')

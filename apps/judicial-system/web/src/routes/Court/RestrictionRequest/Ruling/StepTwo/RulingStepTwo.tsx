@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Box,
   GridColumn,
@@ -7,7 +9,6 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
 import {
   FormFooter,
   PageLayout,
@@ -17,11 +18,12 @@ import {
   TimeInputField,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
-  Case,
   CaseAppealDecision,
+  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useQuery } from '@apollo/client'
@@ -46,17 +48,17 @@ import {
 import {
   capitalize,
   formatAccusedByGender,
+  formatConclusion,
   formatDate,
   NounCases,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { getConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useRouter } from 'next/router'
 import {
   useCase,
   useDateTime,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import * as style from './RulingStepTwo.treat'
+import { rcRulingStepTwo } from '@island.is/judicial-system-web/messages'
 
 export const RulingStepTwo: React.FC = () => {
   const router = useRouter()
@@ -68,6 +70,7 @@ export const RulingStepTwo: React.FC = () => {
   ] = useState<string>('')
 
   const { updateCase, autofill } = useCase()
+  const { formatMessage } = useIntl()
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -98,6 +101,27 @@ export const RulingStepTwo: React.FC = () => {
           theCase,
         )
       }
+
+      autofill(
+        'conclusion',
+        formatConclusion(
+          theCase.type,
+          theCase.accusedNationalId,
+          theCase.accusedName,
+          theCase.accusedGender,
+          theCase.decision,
+          new Date(theCase.validToDate),
+          theCase.custodyRestrictions?.includes(
+            CaseCustodyRestrictions.ISOLATION,
+          ),
+          theCase.parentCase !== undefined,
+          theCase.parentCase?.decision,
+          theCase.isolationToDate
+            ? new Date(theCase.isolationToDate)
+            : undefined,
+        ),
+        theCase,
+      )
 
       setWorkingCase(theCase)
     }
@@ -133,35 +157,34 @@ export const RulingStepTwo: React.FC = () => {
                     Úrskurðarorð
                   </Text>
                 </Box>
-                <BlueBox>
-                  <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
-                  <Input
-                    name="conclusion"
-                    label="Bæta texta við úrskurðarorð"
-                    placeholder="Hér er hægt að bæta texta við úrskurðarorð eftir þörfum"
-                    defaultValue={workingCase?.conclusion}
-                    onChange={(event) =>
-                      removeTabsValidateAndSet(
-                        'conclusion',
-                        event,
-                        [],
-                        workingCase,
-                        setWorkingCase,
-                      )
-                    }
-                    onBlur={(event) =>
-                      validateAndSendToServer(
-                        'conclusion',
-                        event.target.value,
-                        [],
-                        workingCase,
-                        updateCase,
-                      )
-                    }
-                    rows={7}
-                    textarea
-                  />
-                </BlueBox>
+                <Input
+                  name="conclusion"
+                  data-testid="conclusion"
+                  label="Úrskurðarorð"
+                  defaultValue={workingCase.conclusion}
+                  placeholder="Hver eru úrskurðarorðin"
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'conclusion',
+                      event,
+                      [],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'conclusion',
+                      event.target.value,
+                      [],
+                      workingCase,
+                      updateCase,
+                    )
+                  }
+                  textarea
+                  required
+                  rows={7}
+                />
               </Box>
             </Box>
             <Box component="section" marginBottom={8}>
@@ -172,8 +195,9 @@ export const RulingStepTwo: React.FC = () => {
               </Box>
               <Box marginBottom={3}>
                 <Text variant="h4" fontWeight="light">
-                  Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra
-                  úrskurð þennan til Landsréttar innan þriggja sólarhringa.
+                  {formatMessage(
+                    rcRulingStepTwo.sections.accusedAppealDecision.disclaimer,
+                  )}
                 </Text>
               </Box>
               <Box marginBottom={3}>
@@ -549,17 +573,20 @@ export const RulingStepTwo: React.FC = () => {
                 workingCase.decision ===
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
                 <Text variant="h4" fontWeight="light">
-                  {`Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera
-                atriði er lúta að framkvæmd ${
-                  workingCase.type === CaseType.CUSTODY &&
-                  workingCase.decision === CaseDecision.ACCEPTING
-                    ? 'gæsluvarðhaldsins'
-                    : 'farbannsins'
-                } undir dómara.`}
+                  {formatMessage(
+                    rcRulingStepTwo.sections.custodyRestrictions.disclaimer,
+                    {
+                      caseType:
+                        workingCase.type === CaseType.CUSTODY &&
+                        workingCase.decision === CaseDecision.ACCEPTING
+                          ? 'gæsluvarðhaldsins'
+                          : 'farbannsins',
+                    },
+                  )}
                 </Text>
               )}
             </Box>
-            <Box className={style.courtEndTimeContainer}>
+            <Box marginBottom={10}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
                   Þinghald
@@ -598,6 +625,7 @@ export const RulingStepTwo: React.FC = () => {
                         name="courtEndTime"
                         label="Þinghaldi lauk (kk:mm)"
                         placeholder="Veldu tíma"
+                        autoComplete="off"
                         defaultValue={formatDate(
                           workingCase.courtEndTime,
                           TIME_FORMAT,
@@ -619,6 +647,7 @@ export const RulingStepTwo: React.FC = () => {
               nextIsDisabled={
                 !workingCase.accusedAppealDecision ||
                 !workingCase.prosecutorAppealDecision ||
+                !workingCase.conclusion ||
                 !isValidCourtEndTime?.isValid
               }
             />

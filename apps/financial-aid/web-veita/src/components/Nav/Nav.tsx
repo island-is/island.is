@@ -1,114 +1,112 @@
 import React, { useContext } from 'react'
-import {
-  Logo,
-  Text,
-  Box,
-  Button,
-  GridContainer,
-  ButtonProps,
-} from '@island.is/island-ui/core'
+import { Logo, Text, Box, Divider, Icon } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-import { LogoHfj } from '../'
+import { LogoHfj } from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './Nav.treat'
 import cn from 'classnames'
+import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/src/components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 
-const Nav: React.FC = () => {
+import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
+import { ApplicationState } from '@island.is/financial-aid/shared'
+
+import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
+
+import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
+
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+
+const Nav = () => {
   const router = useRouter()
-  // const { isAuthenticated, setUser, user } = useContext(UserContext)
 
-  const otherItems = [
-    // {
-    //   label: 'Leit',
-    //   icon: 'search',
-    // },
-    // {
-    //   label: 'Tölfræði',
-    //   icon: 'cellular',
-    // },
-    // {
-    //   label: 'Stillingar',
-    //   icon: 'settings',
-    // },
-    {
-      label: 'Útskráning',
-      icon: 'logOut',
-    },
-  ]
+  const logOut = useLogOut()
 
-  const navLinks = [
-    {
-      label: 'Ný mál',
-      link: '/',
-    },
-    {
-      label: 'Í vinnslu',
-      link: '/vinnslu',
-    },
-    {
-      label: 'Afgreidd mál',
-      link: '/afgreidd',
-    },
-  ]
+  const { applicationFilters } = useContext(ApplicationFiltersContext)
+  const { admin } = useContext(AdminContext)
 
   return (
     <nav className={styles.container}>
       <header>
-        <div className={styles.logoContainer}>
+        <div className={`${styles.logoContainer} logoContainer`}>
           <Logo />
         </div>
         <div className={styles.logoHfjContainer}>
-          <LogoHfj className={styles.logoHfj} />
+          <Box className={`logoHfj`}>
+            <LogoHfj />
+          </Box>
 
-          <Box paddingLeft={2} className={styles.headline}>
+          <Box paddingLeft={2} className={'headLine'}>
             <Text as="h1" lineHeight="sm">
-              <strong>Sveita</strong> • Umsóknir um fjárhagsaðstoð
+              <strong>Veita</strong> • Umsóknir um fjárhagsaðstoð
             </Text>
           </Box>
         </div>
       </header>
 
       <div>
-        {navLinks.map((item, index) => {
+        {navigationItems.map((item: NavigationElement, index: number) => {
           return (
             <Link href={item.link} key={'NavigationLinks-' + index}>
               <a
+                aria-label={item.label}
                 className={cn({
                   [`${styles.link}`]: true,
                   [`${styles.activeLink}`]: router.pathname === item.link,
+                  [`${styles.linkHoverEffect}`]: router.pathname !== item.link,
                 })}
               >
-                <Text fontWeight="semiBold">{item.label}</Text>
+                <Box display="flex" justifyContent="spaceBetween">
+                  <Text fontWeight="semiBold">{item.label}</Text>
+                  <Text fontWeight="semiBold" color="dark300">
+                    {item.applicationState
+                      .map((state: ApplicationState) => {
+                        if (applicationFilters) {
+                          return applicationFilters[state]
+                        }
+                      })
+                      .reduce((a?: number, b?: number) => {
+                        return (a || 0) + (b || 0)
+                      })}
+                  </Text>
+                </Box>
               </a>
             </Link>
           )
         })}
       </div>
 
-      {/* <div className={`wrapper `}>navigation</div> */}
-
-      <div className={styles.otherItems}>
-        {otherItems.map((item, index) => {
-          return (
-            <Box display="block" marginBottom={2} key={index}>
-              <Button
-                colorScheme="default"
-                iconType="outline"
-                onClick={function noRefCheck() {}}
-                preTextIcon={item.icon as ButtonProps['icon']}
-                preTextIconType="outline"
-                size="default"
-                type="button"
-                variant="text"
-              >
-                {item.label}
-              </Button>
+      <Box display="block" marginBottom={2} marginTop={4}>
+        <Box marginBottom={3}>
+          <button
+            className={` ${styles.logOutButton} logOutButtonHover`}
+            onClick={() => logOut()}
+          >
+            <Icon
+              icon="logOut"
+              type="outline"
+              color="blue400"
+              className={styles.logOutButtonIcon}
+            />
+            <Text> Útskráning</Text>
+          </button>
+        </Box>
+        <Divider weight="purple200" />
+        {admin && (
+          <>
+            <Box display="flex" alignItems="center" paddingTop={3}>
+              <Icon
+                icon="person"
+                color="purple400"
+                size="small"
+                className={styles.personIcon}
+              />
+              <Text variant="small">{admin?.name}</Text>
             </Box>
-          )
-        })}
-      </div>
+          </>
+        )}
+      </Box>
     </nav>
   )
 }

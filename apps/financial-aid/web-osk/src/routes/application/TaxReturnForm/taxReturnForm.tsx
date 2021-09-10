@@ -1,31 +1,23 @@
-import React, { useEffect, useState, useContext, useReducer } from 'react'
-import {
-  Text,
-  InputFileUpload,
-  Box,
-  LinkContext,
-} from '@island.is/island-ui/core'
+import React, { useContext } from 'react'
+import { Text, LinkContext } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   FormLayout,
+  Files,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
-import * as styles from './taxReturnForm.treat'
+
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
-import cn from 'classnames'
 
 import { NavigationProps } from '@island.is/financial-aid/shared'
 
 const TaxReturnForm = () => {
   const router = useRouter()
 
-  const { form, updateForm } = useContext(FormContext)
-
-  const [state, dispatch] = useReducer(form?.incomeFiles, form?.incomeFiles)
-  const [error, setError] = useState<string | undefined>(undefined)
+  const { form } = useContext(FormContext)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -42,7 +34,7 @@ const TaxReturnForm = () => {
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Skattframtal
         </Text>
@@ -82,33 +74,14 @@ const TaxReturnForm = () => {
             um hvernig sækja má staðfest afrit skattframtals.
           </Text>
         </LinkContext.Provider>
+        <Files
+          header="Dragðu skattframtalið hingað"
+          fileKey="taxReturnFiles"
+          uploadFiles={form.taxReturnFiles}
+        />
+      </ContentContainer>
 
-        <div className={styles.fileContainer}>
-          <Box className={styles.files} marginBottom={2}>
-            <InputFileUpload
-              fileList={[]}
-              header="Dragðu skattframtalið hingað"
-              description="Tekið er við öllum hefðbundnum skráargerðum"
-              buttonLabel="Bættu við gögnum"
-              onChange={() => {}}
-              onRemove={() => {}}
-              // errorMessage={state.length > 0 ? error : undefined}
-            />
-          </Box>
-          <div
-            className={cn({
-              [`errorMessage ${styles.files}`]: true,
-              [`showErrorMessage`]: false,
-            })}
-          >
-            <Text color="red600" fontWeight="semiBold" variant="small">
-              Þú þarft að hlaða upp gögnum
-            </Text>
-          </div>
-        </div>
-      </FormContentContainer>
-
-      <FormFooter
+      <Footer
         previousUrl={navigation?.prevUrl}
         nextButtonText="Halda áfram"
         onNextButtonClick={() => errorCheck()}

@@ -19,7 +19,6 @@ import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import { ApplicationPayment } from './application.model'
-import { ApplicationPaymentChargeResponse } from './dto/applicationPaymentCharge'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -72,11 +71,18 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  createCharge(applicationId: string, auth: Auth) {
-    return this.paymentApiWithAuth(auth).paymentControllerCreateCharge({
-      authorization: auth.authorization,
-      applicationId: applicationId,
-    })
+  async createCharge(
+    applicationId: string,
+    auth: Auth,
+    chargeItemCode: string,
+  ) {
+    return this.paymentApiWithAuth(auth)
+      .paymentControllerCreateCharge({
+        applicationId: applicationId,
+        body: { chargeItemCode: chargeItemCode },
+        authorization: auth.authorization,
+      })
+      .catch(handleError)
   }
 
   async findAll(

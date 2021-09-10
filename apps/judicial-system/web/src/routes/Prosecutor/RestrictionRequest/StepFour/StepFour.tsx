@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
-import { Case, CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import {
+  CaseCustodyRestrictions,
+  CaseDecision,
+  CaseType,
+} from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
@@ -21,10 +26,13 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { reportForm } from '@island.is/judicial-system-web/messages'
+import { rcReportForm } from '@island.is/judicial-system-web/messages'
 import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatProsecutorDemands } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 
 export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -52,28 +60,41 @@ export const StepFour: React.FC = () => {
 
   useEffect(() => {
     if (id && !workingCase && data?.case) {
-      const theCase = data.case
+      const theCase: Case = data.case
 
       autofill(
         'demands',
-        formatProsecutorDemands(
-          theCase.type,
-          theCase.accusedNationalId,
-          theCase.accusedName,
-          theCase.court.name,
-          theCase.requestedValidToDate,
-          theCase.requestedCustodyRestrictions?.includes(
-            CaseCustodyRestrictions.ISOLATION,
-          ) ?? false,
-          theCase.parentCase !== undefined,
-          theCase.parentCase?.decision,
-        ),
+        `${formatMessage(rcReportForm.sections.demands.autofill, {
+          accusedName: theCase.accusedName,
+          accusedNationalId: formatNationalId(theCase.accusedNationalId),
+          extensionSuffix:
+            theCase.parentCase !== undefined &&
+            theCase.parentCase?.decision === CaseDecision.ACCEPTING
+              ? ' áframhaldandi'
+              : '',
+          caseType:
+            theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
+          court: theCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
+          requestedValidToDate: formatDate(
+            theCase.requestedValidToDate,
+            'PPPPp',
+          )
+            ?.replace('dagur,', 'dagsins')
+            ?.replace(' kl.', ', kl.'),
+          isolationSuffix:
+            theCase.type === CaseType.CUSTODY &&
+            theCase.requestedCustodyRestrictions?.includes(
+              CaseCustodyRestrictions.ISOLATION,
+            )
+              ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
+              : '',
+        })}`,
         theCase,
       )
 
       setWorkingCase(theCase)
     }
-  }, [id, workingCase, setWorkingCase, data, autofill])
+  }, [id, workingCase, setWorkingCase, data, autofill, formatMessage])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -114,23 +135,25 @@ export const StepFour: React.FC = () => {
           <FormContentContainer>
             <Box marginBottom={10}>
               <Text as="h1" variant="h1">
-                {formatMessage(reportForm.heading)}
+                {formatMessage(rcReportForm.heading)}
               </Text>
             </Box>
             <Box component="section" marginBottom={7}>
               <Box marginBottom={4}>
                 <Text as="h3" variant="h3">
-                  {formatMessage(reportForm.courtClaim.heading)}{' '}
+                  {formatMessage(rcReportForm.sections.demands.heading)}{' '}
                   <Tooltip
-                    text={formatMessage(reportForm.courtClaim.tooltip)}
+                    text={formatMessage(rcReportForm.sections.demands.tooltip)}
                   />
                 </Text>
               </Box>
               <Box marginBottom={3}>
                 <Input
                   name="demands"
-                  label={formatMessage(reportForm.courtClaim.label)}
-                  placeholder={formatMessage(reportForm.courtClaim.placeholder)}
+                  label={formatMessage(rcReportForm.sections.demands.label)}
+                  placeholder={formatMessage(
+                    rcReportForm.sections.demands.placeholder,
+                  )}
                   defaultValue={workingCase?.demands}
                   errorMessage={demandsErrorMessage}
                   hasError={demandsErrorMessage !== ''}
@@ -164,11 +187,13 @@ export const StepFour: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  {formatMessage(reportForm.facts.heading)}{' '}
+                  {formatMessage(rcReportForm.sections.caseFacts.heading)}{' '}
                   <Tooltip
                     placement="right"
                     as="span"
-                    text={formatMessage(reportForm.facts.tooltip)}
+                    text={formatMessage(
+                      rcReportForm.sections.caseFacts.tooltip,
+                    )}
                   />
                 </Text>
               </Box>
@@ -176,8 +201,10 @@ export const StepFour: React.FC = () => {
                 <Input
                   data-testid="caseFacts"
                   name="caseFacts"
-                  label={formatMessage(reportForm.facts.label)}
-                  placeholder={formatMessage(reportForm.facts.placeholder)}
+                  label={formatMessage(rcReportForm.sections.caseFacts.label)}
+                  placeholder={formatMessage(
+                    rcReportForm.sections.caseFacts.placeholder,
+                  )}
                   errorMessage={caseFactsErrorMessage}
                   hasError={caseFactsErrorMessage !== ''}
                   defaultValue={workingCase?.caseFacts}
@@ -211,11 +238,13 @@ export const StepFour: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  {formatMessage(reportForm.legalArguments.heading)}{' '}
+                  {formatMessage(rcReportForm.sections.legalArguments.heading)}{' '}
                   <Tooltip
                     placement="right"
                     as="span"
-                    text={formatMessage(reportForm.legalArguments.tooltip)}
+                    text={formatMessage(
+                      rcReportForm.sections.legalArguments.tooltip,
+                    )}
                   />
                 </Text>
               </Box>
@@ -223,9 +252,11 @@ export const StepFour: React.FC = () => {
                 <Input
                   data-testid="legalArguments"
                   name="legalArguments"
-                  label={formatMessage(reportForm.legalArguments.label)}
+                  label={formatMessage(
+                    rcReportForm.sections.legalArguments.label,
+                  )}
                   placeholder={formatMessage(
-                    reportForm.legalArguments.placeholder,
+                    rcReportForm.sections.legalArguments.placeholder,
                   )}
                   defaultValue={workingCase?.legalArguments}
                   errorMessage={legalArgumentsErrorMessage}
@@ -259,12 +290,12 @@ export const StepFour: React.FC = () => {
               <Box component="section" marginBottom={7}>
                 <Box marginBottom={2}>
                   <Text as="h3" variant="h3">
-                    {formatMessage(reportForm.proceduralComments.heading)}{' '}
+                    {formatMessage(rcReportForm.sections.comments.heading)}{' '}
                     <Tooltip
                       placement="right"
                       as="span"
                       text={formatMessage(
-                        reportForm.proceduralComments.tooltip,
+                        rcReportForm.sections.comments.tooltip,
                       )}
                     />
                   </Text>
@@ -272,9 +303,9 @@ export const StepFour: React.FC = () => {
                 <Box marginBottom={3}>
                   <Input
                     name="comments"
-                    label={formatMessage(reportForm.proceduralComments.label)}
+                    label={formatMessage(rcReportForm.sections.comments.label)}
                     placeholder={formatMessage(
-                      reportForm.proceduralComments.placeholder,
+                      rcReportForm.sections.comments.placeholder,
                     )}
                     defaultValue={workingCase?.comments}
                     onChange={(event) =>

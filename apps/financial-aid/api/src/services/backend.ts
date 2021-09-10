@@ -7,9 +7,16 @@ import {
   Municipality,
   UpdateApplication,
   CreateApplication,
+  GetSignedUrl,
+  SignedUrl,
+  ApplicationEvent,
+  CreateApplicationEvent,
+  ApplicationFilters,
+  CreateFilesResponse,
 } from '@island.is/financial-aid/shared'
 
 import { environment } from '../environments'
+import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -23,8 +30,13 @@ class BackendAPI extends RESTDataSource {
   getApplications(): Promise<Application[]> {
     return this.get('applications')
   }
+
   getApplication(id: string): Promise<Application> {
     return this.get(`applications/${id}`)
+  }
+
+  getApplicationFilters(): Promise<ApplicationFilters> {
+    return this.get('applicationFilters')
   }
 
   getMunicipality(id: string): Promise<Municipality> {
@@ -42,6 +54,26 @@ class BackendAPI extends RESTDataSource {
     updateApplication: UpdateApplication,
   ): Promise<Application> {
     return this.put(`applications/${id}`, updateApplication)
+  }
+
+  getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
+    return this.post('/file/url', getSignedUrl)
+  }
+
+  getApplicationEvents(id: string): Promise<ApplicationEvent[]> {
+    return this.get(`applicationEvents/${id}`)
+  }
+
+  createApplicationEvent(
+    createApplicationEvent: CreateApplicationEvent,
+  ): Promise<ApplicationEvent> {
+    return this.post('applicationEvent', createApplicationEvent)
+  }
+
+  createApplicationFiles(
+    createApplicationFiles: CreateApplicationFilesInput,
+  ): Promise<CreateFilesResponse> {
+    return this.post('/file', createApplicationFiles)
   }
 }
 

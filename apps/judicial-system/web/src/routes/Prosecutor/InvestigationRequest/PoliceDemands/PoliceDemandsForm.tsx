@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
-  DateTime,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
-  newSetAndSendDateToServer,
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -17,7 +16,7 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { policeDemandsForm } from '@island.is/judicial-system-web/messages'
+import { icDemands } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 const courtClaimPrefill: Partial<
@@ -33,22 +32,22 @@ const courtClaimPrefill: Partial<
   >
 > = {
   [CaseType.SEARCH_WARRANT]: {
-    text: policeDemandsForm.courtClaim.prefill.searchWarrant,
+    text: icDemands.sections.demands.prefill.searchWarrant,
     format: { accusedName: true, address: true },
   },
   [CaseType.BANKING_SECRECY_WAIVER]: {
-    text: policeDemandsForm.courtClaim.prefill.bankingSecrecyWaiver,
+    text: icDemands.sections.demands.prefill.bankingSecrecyWaiver,
   },
   [CaseType.PHONE_TAPPING]: {
-    text: policeDemandsForm.courtClaim.prefill.phoneTapping,
+    text: icDemands.sections.demands.prefill.phoneTapping,
     format: { accusedName: true },
   },
   [CaseType.TELECOMMUNICATIONS]: {
-    text: policeDemandsForm.courtClaim.prefill.teleCommunications,
+    text: icDemands.sections.demands.prefill.teleCommunications,
     format: { accusedName: true },
   },
   [CaseType.TRACKING_EQUIPMENT]: {
-    text: policeDemandsForm.courtClaim.prefill.trackingEquipment,
+    text: icDemands.sections.demands.prefill.trackingEquipment,
     format: { accusedName: true },
   },
 }
@@ -74,7 +73,6 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   }
   const { formatMessage } = useIntl()
   const { updateCase, autofill } = useCase()
-  const [, setRequestedValidToDateIsValid] = useState<boolean>(true)
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
@@ -107,57 +105,20 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(policeDemandsForm.general.heading)}
+            {formatMessage(icDemands.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(policeDemandsForm.requestToDate.heading)}{' '}
-              <Tooltip
-                placement="right"
-                text={formatMessage(policeDemandsForm.requestToDate.tooltip)}
-              />
-            </Text>
-          </Box>
-          <DateTime
-            name="reqValidToDate"
-            datepickerLabel={formatMessage(
-              policeDemandsForm.requestToDate.dateLabel,
-            )}
-            minDate={new Date()}
-            selectedDate={
-              workingCase.requestedValidToDate
-                ? new Date(workingCase.requestedValidToDate)
-                : undefined
-            }
-            onChange={(date: Date | undefined, valid: boolean) => {
-              newSetAndSendDateToServer(
-                'requestedValidToDate',
-                date,
-                valid,
-                workingCase,
-                setWorkingCase,
-                setRequestedValidToDateIsValid,
-                updateCase,
-              )
-            }}
-          />
-        </Box>
-
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(policeDemandsForm.courtClaim.heading)}
+              {formatMessage(icDemands.sections.demands.heading)}
             </Text>
           </Box>
           <Input
             data-testid="demands"
             name="demands"
-            label={formatMessage(policeDemandsForm.courtClaim.label)}
-            placeholder={formatMessage(
-              policeDemandsForm.courtClaim.placeholder,
-            )}
+            label={formatMessage(icDemands.sections.demands.label)}
+            placeholder={formatMessage(icDemands.sections.demands.placeholder)}
             defaultValue={workingCase.demands}
             errorMessage={demandsEM}
             hasError={demandsEM !== ''}
@@ -190,17 +151,17 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(policeDemandsForm.lawsBroken.heading)}
+              {formatMessage(icDemands.sections.lawsBroken.heading)}
             </Text>
           </Box>
           <Input
             data-testid="lawsBroken"
             name="lawsBroken"
-            label={formatMessage(policeDemandsForm.lawsBroken.label, {
+            label={formatMessage(icDemands.sections.lawsBroken.label, {
               defendant: 'varnaraðila',
             })}
             placeholder={formatMessage(
-              policeDemandsForm.lawsBroken.placeholder,
+              icDemands.sections.lawsBroken.placeholder,
             )}
             defaultValue={workingCase.lawsBroken}
             errorMessage={lawsBrokenEM}
@@ -231,18 +192,18 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             rows={7}
           />
         </Box>
-        <Box component="section" marginBottom={5}>
+        <Box component="section" marginBottom={10}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(policeDemandsForm.legalBasis.heading)}
+              {formatMessage(icDemands.sections.legalBasis.heading)}
             </Text>
           </Box>
           <Input
             data-testid="legal-basis"
             name="legal-basis"
-            label={formatMessage(policeDemandsForm.legalBasis.label)}
+            label={formatMessage(icDemands.sections.legalBasis.label)}
             placeholder={formatMessage(
-              policeDemandsForm.legalBasis.placeholder,
+              icDemands.sections.legalBasis.placeholder,
             )}
             defaultValue={workingCase.legalBasis}
             errorMessage={legalBasisEM}

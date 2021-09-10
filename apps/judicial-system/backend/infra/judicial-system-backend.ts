@@ -29,6 +29,11 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'https://securityserver.staging01.devland.is/r1/IS-TEST',
         prod: 'https://securityserver.island.is/r1/IS',
       },
+      CONTENTFUL_HOST: {
+        dev: 'preview.contentful.com',
+        staging: 'cdn.contentful.com',
+        prod: 'cdn.contentful.com',
+      },
       XROAD_CLIENT_ID: {
         dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Client',
         staging: 'IS-TEST/GOV/5804170510/Rettarvorslugatt-Client',
@@ -60,6 +65,8 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY',
       XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM',
       SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN',
+      CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN',
+      EVENT_URL: '/k8s/judicial-system/EVENT_URL',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useQuery, useLazyQuery } from '@apollo/client'
+import sub from 'date-fns/sub'
 import { Query } from '@island.is/api/schema'
 import {
   GET_CUSTOMER_CHARGETYPE,
@@ -10,9 +12,10 @@ import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/
 import {
   CustomerChargeType,
   CustomerRecords,
+  CustomerRecordsDetails,
 } from './FinanceTransactionsData.types'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import { m } from '../../lib/messages'
+import { m } from '@island.is/service-portal/core'
 import {
   Box,
   Text,
@@ -26,28 +29,33 @@ import {
   Select,
   AlertBanner,
   Hidden,
+  Input,
 } from '@island.is/island-ui/core'
-import { greidsluStadaHeaders } from '../../utils/dataHeaders'
-import {
-  exportHreyfingarCSV,
-  exportHreyfingarXSLX,
-} from '../../utils/filesHreyfingar'
-import { downloadXlsxDocument } from '@island.is/service-portal/graphql'
+import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
+import { transactionFilter } from '../../utils/simpleFilter'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
+const allChargeTypes = { label: 'Allar færslur', value: ALL_CHARGE_TYPES }
 
-const FinanceTransactions = () => {
+const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
-  const { downloadSheet } = downloadXlsxDocument()
 
-  const [fromDate, setFromDate] = useState<string>()
-  const [toDate, setToDate] = useState<string>()
-  const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>([])
+  const [fromDate, setFromDate] = useState<Date>()
+  const [toDate, setToDate] = useState<Date>()
+  const [q, setQ] = useState<string>('')
+  const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>()
 
   const { data: customerChartypeData } = useQuery<Query>(
     GET_CUSTOMER_CHARGETYPE,
+    {
+      onCompleted: () => {
+        if (customerChartypeData?.getCustomerChargeType?.chargeType) {
+          onDropdownSelect(allChargeTypes)
+        }
+      },
+    },
   )
   const chargeTypeData: CustomerChargeType =
     customerChartypeData?.getCustomerChargeType || {}
@@ -62,13 +70,21 @@ const FinanceTransactions = () => {
         variables: {
           input: {
             chargeTypeID: dropdownSelect,
-            dayFrom: fromDate,
-            dayTo: toDate,
+            dayFrom: format(fromDate, 'yyyy-MM-dd'),
+            dayTo: format(toDate, 'yyyy-MM-dd'),
           },
         },
       })
     }
   }, [toDate, fromDate, dropdownSelect])
+
+  useEffect(() => {
+    const backInTheDay = sub(new Date(), {
+      months: 3,
+    })
+    setFromDate(backInTheDay)
+    setToDate(new Date())
+  }, [])
 
   function onDropdownSelect(selection: any) {
     const allChargeTypeValues = chargeTypeData?.chargeType?.map((ct) => ct.id)
@@ -80,9 +96,8 @@ const FinanceTransactions = () => {
   }
 
   const recordsData: CustomerRecords = data?.getCustomerRecords || {}
-  const recordsDataArray = recordsData?.records || []
-
-  const allChargeTypes = { label: 'Allar færslur', value: ALL_CHARGE_TYPES }
+  const recordsDataArray =
+    (recordsData?.records && transactionFilter(recordsData?.records, q)) || []
   const chargeTypeSelect = (chargeTypeData?.chargeType || []).map((item) => ({
     label: item.name,
     value: item.id,
@@ -103,7 +118,7 @@ const FinanceTransactions = () => {
               {formatMessage({
                 id: 'sp.finance-transactions:intro',
                 defaultMessage:
-                  'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
+                  'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
               })}
             </Text>
           </Column>
@@ -116,12 +131,11 @@ const FinanceTransactions = () => {
                   <Columns space="p2" align="right">
                     <Column width="content">
                       <DropdownExport
-                        onGetCSV={() => exportHreyfingarCSV(recordsDataArray)}
+                        onGetCSV={() =>
+                          exportHreyfingarFile(recordsDataArray, 'csv')
+                        }
                         onGetExcel={() =>
-                          downloadSheet({
-                            headers: greidsluStadaHeaders,
-                            data: exportHreyfingarXSLX(recordsDataArray),
-                          })
+                          exportHreyfingarFile(recordsDataArray, 'xlsx')
                         }
                       />
                     </Column>
@@ -131,24 +145,29 @@ const FinanceTransactions = () => {
             </GridRow>
           ) : null}
           <GridRow>
-            <GridColumn paddingBottom={[1, 0]} span={['1/1', '4/12']}>
+            <GridColumn
+              paddingBottom={[1, 0]}
+              span={['1/1', '1/1', '1/1', '1/1', '4/12']}
+            >
               <Select
                 name="faerslur"
                 backgroundColor="blue"
                 placeholder={formatMessage(m.transactions)}
                 label={formatMessage(m.transactionsLabel)}
+                defaultValue={allChargeTypes}
                 size="sm"
                 options={[allChargeTypes, ...chargeTypeSelect]}
                 onChange={(sel) => onDropdownSelect(sel)}
               />
             </GridColumn>
-            <GridColumn span={['1/1', '4/12']}>
+            <GridColumn
+              paddingTop={[2, 2, 2, 2, 0]}
+              span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+            >
               <DatePicker
                 backgroundColor="blue"
-                handleChange={(d) => {
-                  const date = format(d, 'yyyy-MM-dd')
-                  setFromDate(date)
-                }}
+                handleChange={(d) => setFromDate(d)}
+                selected={fromDate}
                 icon="calendar"
                 iconType="outline"
                 size="sm"
@@ -157,13 +176,14 @@ const FinanceTransactions = () => {
                 placeholderText={formatMessage(m.chooseDate)}
               />
             </GridColumn>
-            <GridColumn span={['1/1', '4/12']}>
+            <GridColumn
+              paddingTop={[2, 2, 2, 2, 0]}
+              span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+            >
               <DatePicker
                 backgroundColor="blue"
-                handleChange={(d) => {
-                  const date = format(d, 'yyyy-MM-dd')
-                  setToDate(date)
-                }}
+                handleChange={(d) => setToDate(d)}
+                selected={toDate}
                 icon="calendar"
                 iconType="outline"
                 size="sm"
@@ -173,6 +193,16 @@ const FinanceTransactions = () => {
               />
             </GridColumn>
           </GridRow>
+          <Box marginTop={3}>
+            <Input
+              label="Leit"
+              name="Search1"
+              placeholder="Sláðu inn leitarorð"
+              size="sm"
+              onChange={(e) => setQ(e.target.value)}
+              value={q}
+            />
+          </Box>
         </Box>
         <Box marginTop={2}>
           {error && (

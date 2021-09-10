@@ -8,7 +8,8 @@ import {
   Input,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   useCase,
@@ -18,7 +19,7 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { caseFiles as m } from '@island.is/judicial-system-web/messages'
+import { rcCaseFiles as m } from '@island.is/judicial-system-web/messages'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/shared-components/MarkdownWrapper/MarkdownWrapper'
@@ -35,6 +36,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
   const {
     files,
     uploadErrorMessage,
+    allFilesUploaded,
     onChange,
     onRemove,
     onRetry,
@@ -52,25 +54,25 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         <Box marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.description.heading)}
+              {formatMessage(m.sections.description.heading)}
             </Text>
           </Box>
           <MarkdownWrapper
-            text={m.description.list}
+            text={m.sections.description.list}
             textProps={{ marginBottom: 0 }}
           />
         </Box>
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.files.heading)}
+            {formatMessage(m.sections.files.heading)}
           </Text>
         </Box>
         <Box marginBottom={10}>
           <ContentBlock>
             <InputFileUpload
               fileList={files}
-              header={formatMessage(m.files.label)}
-              buttonLabel={formatMessage(m.files.buttonLabel)}
+              header={formatMessage(m.sections.files.label)}
+              buttonLabel={formatMessage(m.sections.files.buttonLabel)}
               onChange={onChange}
               onRemove={onRemove}
               onRetry={onRetry}
@@ -82,19 +84,19 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         <Box>
           <Box marginBottom={3}>
             <Text variant="h3" as="h3">
-              {formatMessage(m.comments.heading)}{' '}
+              {formatMessage(m.sections.comments.heading)}{' '}
               <Tooltip
                 placement="right"
                 as="span"
-                text={formatMessage(m.comments.tooltip)}
+                text={formatMessage(m.sections.comments.tooltip)}
               />
             </Text>
           </Box>
           <Box marginBottom={10}>
             <Input
               name="caseFilesComments"
-              label={formatMessage(m.comments.label)}
-              placeholder={formatMessage(m.comments.placeholder)}
+              label={formatMessage(m.sections.comments.label)}
+              placeholder={formatMessage(m.sections.comments.placeholder)}
               defaultValue={workingCase?.caseFilesComments}
               onChange={(event) =>
                 removeTabsValidateAndSet(
@@ -126,7 +128,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
               ? Constants.STEP_SIX_ROUTE
               : Constants.IC_POLICE_CONFIRMATION_ROUTE
           }/${workingCase.id}`}
-          nextIsDisabled={false}
+          nextIsDisabled={!allFilesUploaded}
         />
       </FormContentContainer>
     </>

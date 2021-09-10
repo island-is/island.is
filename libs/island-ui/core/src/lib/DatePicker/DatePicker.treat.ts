@@ -4,12 +4,13 @@ import * as mixins from '../Input/Input.mixins'
 
 export const root = style({
   position: 'relative',
+  minWidth: '250px',
 })
 
 export const backgroundBlue = style({
   selectors: {
     [`${root} &`]: {
-      backgroundColor: theme.color.blue100,
+      backgroundColor: `${theme.color.blue100} !important`,
     },
   },
 })
@@ -153,6 +154,9 @@ globalStyle(`${root}.island-ui-datepicker .react-datepicker-wrapper`, {
 globalStyle(
   `${root}.island-ui-datepicker${root}.island-ui-datepicker .react-datepicker__header`,
   {
+    fontFamily: 'IBM Plex Sans',
+    fontStyle: 'normal',
+    fontWeight: 600,
     backgroundColor: `${theme.color.transparent}`,
     borderBottom: 'none',
   },

@@ -1,23 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import get from 'lodash/get'
 import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
-import { ChargeResult } from '@island.is/api/domains/payment'
+import type { Item } from '@island.is/clients/payment'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
-}
-
-interface Payment {
-  chargeItemCode: string
-  chargeItemName: string
-  priceAmount: number
-  performingOrgID: string
-  chargeType: string
 }
 
 @Injectable()
@@ -28,36 +18,59 @@ export class DrivingLicenseSubmissionService {
   ) {}
 
   async createCharge({
-    application: { id },
+    application: { id, externalData },
     authorization,
   }: TemplateApiModuleActionProps) {
-    return this.sharedTemplateAPIService.createCharge(authorization, id)
+    const parsedPaymentData = externalData.payment.data as Item
+    return this.sharedTemplateAPIService.createCharge(
+      authorization,
+      id,
+      parsedPaymentData.chargeItemCode,
+    )
   }
 
-  async submitApplication({ application }: TemplateApiModuleActionProps) {
+  async submitApplication({
+    application,
+    authorization,
+  }: TemplateApiModuleActionProps) {
     const { answers } = application
     const nationalId = application.applicant
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
+    const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
     const juristictionId = answers.juristiction
 
-    const result = await this.drivingLicenseService
-      .newDrivingLicense(nationalId, {
-        juristictionId: juristictionId as number,
-        needsToPresentHealthCertificate: needsHealthCert,
-      })
-      .catch((e) => {
-        return {
-          success: false,
-          errorMessage: e.message,
-        }
-      })
+    const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+      authorization,
+      application.id,
+    )
 
-    if (!result.success) {
-      throw new Error(`Application submission failed (${result.errorMessage})`)
-    }
+    if (isPayment.fulfilled) {
+      const result = await this.drivingLicenseService
+        .newDrivingLicense(nationalId, {
+          juristictionId: juristictionId as number,
+          needsToPresentHealthCertificate: needsHealthCert,
+          needsToPresentQualityPhoto: needsQualityPhoto,
+        })
+        .catch((e) => {
+          return {
+            success: false,
+            errorMessage: e.message,
+          }
+        })
 
-    return {
-      success: result.success,
+      if (!result.success) {
+        throw new Error(
+          `Application submission failed (${result.errorMessage})`,
+        )
+      }
+
+      return {
+        success: result.success,
+      }
+    } else {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
     }
   }
 
@@ -65,17 +78,14 @@ export class DrivingLicenseSubmissionService {
     application,
   }: TemplateApiModuleActionProps) {
     const { answers } = application
-    const studentNationalId = get(answers, 'student.nationalId')
+    const studentNationalId = (answers.student as { nationalId: string })
+      .nationalId
     const teacherNationalId = application.applicant
 
-    const result = await this.drivingLicenseService
-      .newDrivingAssessment(studentNationalId as string, teacherNationalId)
-      .catch((e) => {
-        return {
-          success: false,
-          errorMessage: e.message,
-        }
-      })
+    const result = await this.drivingLicenseService.newDrivingAssessment(
+      studentNationalId as string,
+      teacherNationalId,
+    )
 
     if (result.success) {
       await this.sharedTemplateAPIService.sendEmail(

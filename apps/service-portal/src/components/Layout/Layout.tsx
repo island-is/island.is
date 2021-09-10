@@ -49,8 +49,8 @@ const Layout: FC = ({ children }) => {
       <Box overflow="hidden" className={styles.layoutWrapper}>
         <ContentBlock>
           <Box paddingX={[2, 2, 4, 4, 6]} paddingY={[2, 2, 2, 7]}>
-            <Columns space={[0, 0, 0, 'containerGutter']} collapseBelow="lg">
-              <Column width="4/12">
+            <Columns space={[0, 0, 0, 3, 5]} collapseBelow="lg">
+              <Column width="content">
                 <Hidden below="lg">
                   <Sidebar />
                 </Hidden>
@@ -64,7 +64,9 @@ const Layout: FC = ({ children }) => {
             </Columns>
           </Box>
         </ContentBlock>
-        <Footer {...footerProps} />
+        <Hidden print={true}>
+          <Footer {...footerProps} />
+        </Hidden>
       </Box>
     </>
   )

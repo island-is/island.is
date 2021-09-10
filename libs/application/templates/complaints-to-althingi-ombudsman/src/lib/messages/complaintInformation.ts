@@ -39,4 +39,14 @@ export const complaintInformation = defineMessages({
     defaultMessage: `Athugið`,
     description: 'The title of the alert message',
   },
+  appealsHeader: {
+    id: 'ctao.application:complaintInformation.appeals.header',
+    defaultMessage: 'Hafa kæruleiðir verið tæmdar',
+    description: 'The header of the appeals section',
+  },
+  appealsSectionTitle: {
+    id: 'ctao.application:complaintInformation.appeals.sectionTitle',
+    defaultMessage: 'Kæruleiðir',
+    description: 'The title of the appeals section',
+  },
 })

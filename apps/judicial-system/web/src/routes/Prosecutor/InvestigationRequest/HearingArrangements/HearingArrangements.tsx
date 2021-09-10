@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import {
   Modal,
@@ -11,13 +12,12 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  Case,
   CaseState,
   CaseTransition,
   NotificationType,
-  User,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { Case, User } from '@island.is/judicial-system/types'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
@@ -26,6 +26,7 @@ import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { icRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
 import HearingArrangementsForms from './HearingArrangementsForm'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -37,6 +38,7 @@ const HearingArrangements = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const { user } = useContext(UserContext)
   const { courts } = useInstitution()
+  const { formatMessage } = useIntl()
   const {
     sendNotification,
     isSendingNotification,
@@ -78,7 +80,7 @@ const HearingArrangements = () => {
           }),
       )
     }
-  }, [userData])
+  }, [userData, user?.institution?.id])
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
@@ -134,8 +136,10 @@ const HearingArrangements = () => {
           />
           {modalVisible && (
             <Modal
-              title="Viltu senda tilkynningu?"
-              text="Með því að senda tilkynningu á dómara á vakt um að krafa um rannsóknarheimild sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála."
+              title={formatMessage(
+                icRequestedHearingArrangements.modal.heading,
+              )}
+              text={formatMessage(icRequestedHearingArrangements.modal.text)}
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"
               handleClose={() => setModalVisible(false)}

@@ -87,11 +87,12 @@ export class EndorsementService {
     const metadataFieldsRequiredByValidation = this.validatorService.getRequiredValidationMetadataFields(
       requestedValidationRules,
     )
+
     // get all metadata required for this endorsement
     return this.metadataService.getMetadata(
       {
         fields: [
-          ...endorsementList.endorsementMeta,
+          ...endorsementList.endorsementMetadata.map(({ field }) => field),
           ...metadataFieldsRequiredByValidation,
         ],
         nationalId,
@@ -122,6 +123,8 @@ export class EndorsementService {
       this.logger.debug('Failed validation rules', {
         listId: listId,
         nationalId,
+        validationRules,
+        metadata,
       })
       throw new BadRequestException('Failed list validation rules')
     }
@@ -157,7 +160,7 @@ export class EndorsementService {
       meta: {
         ...this.metadataService.pruneMetadataFields(
           metadata,
-          endorsementList.endorsementMeta,
+          endorsementList.endorsementMetadata.map(({ field }) => field),
         ),
         bulkEndorsement: false, // defaults to false we overwrite this value in bulk import
       },

@@ -25,14 +25,14 @@ export class Notification extends Model<Notification> {
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
-  id: string
+  id!: string
 
   @CreatedAt
   @Column({
     type: DataType.DATE,
   })
   @ApiProperty()
-  created: Date
+  created!: Date
 
   @ForeignKey(() => Case)
   @Column({
@@ -40,7 +40,7 @@ export class Notification extends Model<Notification> {
     allowNull: false,
   })
   @ApiProperty()
-  caseId: string
+  caseId!: string
 
   @Column({
     type: DataType.ENUM,
@@ -48,19 +48,12 @@ export class Notification extends Model<Notification> {
     values: Object.values(NotificationType),
   })
   @ApiProperty({ enum: NotificationType })
-  type: NotificationType
+  type!: NotificationType
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  condition: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  recipients: string
+  recipients?: string
 }

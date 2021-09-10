@@ -1,4 +1,4 @@
-import IslandisLogin, { VerifyResult } from 'islandis-login'
+import IslandisLogin, { VerifyResult } from '@island.is/login'
 import { Entropy } from 'entropy-string'
 import { uuid } from 'uuidv4'
 import { CookieOptions, Request, Response } from 'express'
@@ -14,14 +14,15 @@ import {
   Req,
 } from '@nestjs/common'
 
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
   EXPIRES_IN_MILLISECONDS,
 } from '@island.is/judicial-system/consts'
-import { User, UserRole } from '@island.is/judicial-system/types'
+import { UserRole } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 import {
   AuditedAction,
@@ -164,11 +165,7 @@ export class AuthController {
     const user = await this.authService.findUser(authUser.nationalId)
 
     if (!user || !this.authService.validateUser(user)) {
-      this.logger.error('Unknown user', {
-        extra: {
-          authUser,
-        },
-      })
+      this.logger.error('Blocking login attempt from an unknown user')
 
       return res.redirect('/?villa=innskraning-ekki-notandi')
     }

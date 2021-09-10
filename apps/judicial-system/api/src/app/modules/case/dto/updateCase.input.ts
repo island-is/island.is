@@ -2,7 +2,7 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import {
+import type {
   CaseAppealDecision,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
@@ -87,6 +87,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly requestedValidToDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly translator?: string
 
   @Allow()
   @Field({ nullable: true })

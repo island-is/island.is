@@ -4,6 +4,7 @@ import {
   ServicePortalModule,
   ServicePortalRoute,
   ServicePortalPath,
+  m,
 } from '@island.is/service-portal/core'
 
 export const assetsModule: ServicePortalModule = {
@@ -12,13 +13,16 @@ export const assetsModule: ServicePortalModule = {
   routes: () => {
     const routes: ServicePortalRoute[] = [
       {
-        name: defineMessage({
-          id: 'service.portal:real-estate',
-          defaultMessage: 'Fasteignir',
-        }),
+        name: m.realEstate,
         path: ServicePortalPath.AssetsRoot,
         render: () =>
           lazy(() => import('./screens/AssetsOverview/AssetsOverview')),
+      },
+      {
+        name: m.vehicles,
+        path: ServicePortalPath.AssetsVehicles,
+        render: () =>
+          lazy(() => import('./screens/AssetsVehicles/AssetsVehicles')),
       },
     ]
 

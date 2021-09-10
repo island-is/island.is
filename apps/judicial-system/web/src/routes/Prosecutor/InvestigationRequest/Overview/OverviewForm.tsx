@@ -1,12 +1,9 @@
 import React, { useContext } from 'react'
-import {
-  Accordion,
-  AccordionItem,
-  Box,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import { useIntl } from 'react-intl'
+
+import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
   FormContentContainer,
@@ -21,6 +18,8 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './Overview.treat'
 
@@ -33,6 +32,7 @@ interface Props {
 const OverviewForm: React.FC<Props> = (props) => {
   const { workingCase, handleNextButtonClick, isLoading } = props
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
 
   return (
     <>
@@ -60,7 +60,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                 }`,
               },
               {
-                title: 'Ósk um fyrirtökudag og tíma',
+                title: formatMessage(requestCourtDate.heading),
                 value: `${capitalize(
                   formatDate(workingCase.requestedCourtDate, 'PPPP', true) ??
                     '',
@@ -85,6 +85,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
+              defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
             isRCase
           />

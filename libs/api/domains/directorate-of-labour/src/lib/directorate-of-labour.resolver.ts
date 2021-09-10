@@ -13,7 +13,7 @@ import { PensionFund } from '../models/pensionFund.model'
 import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
-import { ParentalLeave } from '../models/parentalLeaves.model'
+import { ParentalLeave } from '../models/parentalLeave.model'
 import { ParentalLeavePeriodEndDate } from '../models/parentalLeavePeriodEndDate.model'
 import { ParentalLeavePeriodLength } from '../models/parentalLeavePeriodLength.model'
 import { GetParentalLeavesEntitlementsInput } from '../dto/getParentalLeavesEntitlements.input'
@@ -84,11 +84,11 @@ export class DirectorateOfLabourResolver {
   }
 
   @Query(() => ParentalLeavePeriodLength)
-  async getParentalLeavesPeriodsLength(
+  async getParentalLeavesPeriodLength(
     @Args('input') input: GetParentalLeavesPeriodLengthInput,
     @CurrentUser() user: User,
   ) {
-    return this.directorateOfLabourService.getParentalLeavesPeriodsLength(
+    return this.directorateOfLabourService.getParentalLeavesPeriodLength(
       user.nationalId,
       input.startDate,
       input.endDate,
