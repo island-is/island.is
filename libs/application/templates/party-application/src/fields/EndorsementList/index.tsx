@@ -33,7 +33,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const isClosedHook = useIsClosed(endorsementListId)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const { endorsements: endorsementsHook, refetch } = useEndorsements(
+  const { endorsements: endorsementsHook, refetch, error } = useEndorsements(
     endorsementListId,
     true,
   )
@@ -148,10 +148,14 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
           />
         </Box>
         <Box marginY={3}>
-          <EndorsementTable
-            application={application}
-            endorsements={endorsements}
-          />
+          {error ? (
+            <h1>Has error</h1>
+          ) : (
+            <EndorsementTable
+              application={application}
+              endorsements={endorsements}
+            />
+          )}
         </Box>
         {!!endorsementsHook?.length && (
           <Box marginY={3}>
