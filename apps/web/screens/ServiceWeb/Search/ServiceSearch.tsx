@@ -1,5 +1,4 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useRef } from 'react'
+import React from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Screen } from '../../../types'
@@ -20,7 +19,6 @@ import {
   GridColumn,
   GridRow,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   GET_NAMESPACE_QUERY,
@@ -38,10 +36,10 @@ import {
   GetSupportSearchResultsQuery,
 } from '../../../graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import * as styles from './ServiceSearch.treat'
-import * as sharedStyles from '../shared/styles.treat'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import { ServiceWebSearchInput } from '@island.is/web/components/'
+
+import * as sharedStyles from '../shared/styles.treat'
 
 const PERPAGE = 10
 
@@ -58,8 +56,6 @@ const ServiceSearch: Screen<CategoryProps> = ({
   searchResults,
   namespace,
 }) => {
-  const { activeLocale } = useI18n()
-  const searchRef = useRef<HTMLInputElement | null>(null)
   const Router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -97,7 +93,7 @@ const ServiceSearch: Screen<CategoryProps> = ({
           <GridRow marginBottom={3}>
             <GridColumn
               offset={[null, null, null, '1/12']}
-              span={['12/12', '12/12', '12/12', '6/12', '4/12']}
+              span={['12/12', '12/12', '12/12', '10/12', '7/12']}
             >
               <Stack space={[3, 3, 4]}>
                 <Breadcrumbs
@@ -119,30 +115,31 @@ const ServiceSearch: Screen<CategoryProps> = ({
                   initialInputValue={q}
                 />
 
-                {searchResultsItems.length === 0 ? (
-                  <>
-                    <Text variant="intro" as="p">
-                      {n(
-                        'nothingFoundWhenSearchingFor',
-                        'Ekkert fannst við leit á',
-                      )}{' '}
-                      <strong>{q}</strong>
-                    </Text>
+                {!!q &&
+                  (searchResultsItems.length === 0 ? (
+                    <>
+                      <Text variant="intro" as="p">
+                        {n(
+                          'nothingFoundWhenSearchingFor',
+                          'Ekkert fannst við leit á',
+                        )}{' '}
+                        <strong>{q}</strong>
+                      </Text>
 
-                    <Text variant="intro" as="p">
-                      {n('nothingFoundExtendedExplanation')}
-                    </Text>
-                  </>
-                ) : (
-                  <Box marginBottom={2}>
-                    <Text variant="intro" as="p">
-                      {totalSearchResults}{' '}
-                      {totalSearchResults === 1
-                        ? n('searchResult', 'leitarniðurstaða')
-                        : n('searchResults', 'leitarniðurstöður')}{' '}
-                    </Text>
-                  </Box>
-                )}
+                      <Text variant="intro" as="p">
+                        {n('nothingFoundExtendedExplanation')}
+                      </Text>
+                    </>
+                  ) : (
+                    <Box marginBottom={2}>
+                      <Text variant="intro" as="p">
+                        {totalSearchResults}{' '}
+                        {totalSearchResults === 1
+                          ? n('searchResult', 'leitarniðurstaða')
+                          : n('searchResults', 'leitarniðurstöður')}{' '}
+                      </Text>
+                    </Box>
+                  ))}
               </Stack>
             </GridColumn>
           </GridRow>
