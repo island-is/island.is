@@ -1,5 +1,6 @@
 import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
+import each from 'jest-each'
 
 import { Test } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/sequelize'
@@ -85,17 +86,32 @@ describe('FileController', () => {
     fileController = fileModule.get<FileController>(FileController)
   })
 
-  describe('Given an uncompleted case', () => {
-    const caseId = uuid()
+  describe('when uploading a case file', () => {
+    // RoleGuard blocks access for roles other than PROSECUTOR
+    const prosecutor = { role: UserRole.PROSECUTOR } as User
 
-    describe('Given a prosecutor', () => {
-      const user = { role: UserRole.PROSECUTOR } as User
-      const fileName = 'test.txt'
+    each`
+      state
+      ${CaseState.NEW}
+      ${CaseState.DRAFT}
+      ${CaseState.SUBMITTED}
+      ${CaseState.RECEIVED}
+    `.describe('given an uncompleted $state case', ({ state }) => {
+      const caseId = uuid()
+
+      beforeEach(() => {
+        const mockFindByIdAndUser = jest.spyOn(caseService, 'findByIdAndUser')
+        mockFindByIdAndUser.mockImplementation((id: string) =>
+          Promise.resolve({ id, state } as Case),
+        )
+      })
 
       it('should create a presigned post', async () => {
+        const fileName = 'test.txt'
+
         const presignedPost = await fileController.createCasePresignedPost(
           caseId,
-          user,
+          prosecutor,
           { fileName },
         )
 
@@ -119,10 +135,11 @@ describe('FileController', () => {
         )
       })
 
-      it('should create a file', async () => {
+      it('should create a case file', async () => {
         const id = uuid()
         const timeStamp = new Date()
         const size = 99999
+        const fileName = 'test.txt'
 
         fileModel.create.mockImplementation(
           (values: {
@@ -141,11 +158,11 @@ describe('FileController', () => {
 
         const presignedPost = await fileController.createCasePresignedPost(
           caseId,
-          user,
+          prosecutor,
           { fileName },
         )
 
-        const file = await fileController.createCaseFile(caseId, user, {
+        const file = await fileController.createCaseFile(caseId, prosecutor, {
           key: presignedPost.fields.key,
           size,
         })
@@ -160,70 +177,287 @@ describe('FileController', () => {
           size,
         })
       })
+    })
 
-      describe('Given some files', () => {
-        const mockFiles = [{ id: uuid() }, { id: uuid() }]
+    each`
+      state
+      ${CaseState.ACCEPTED}
+      ${CaseState.REJECTED}
+    `.describe('given a completed $state case', ({ state }) => {
+      const caseId = uuid()
 
-        it('should get all the files (not deleted)', async () => {
-          fileModel.findAll.mockResolvedValueOnce(mockFiles)
-
-          const files = await fileController.getAllCaseFiles(caseId, user)
-
-          expect(fileModel.findAll).toHaveBeenCalledWith({
-            where: {
-              caseId,
-              state: { [Op.not]: CaseFileState.DELETED },
-            },
-            order: [['created', 'DESC']],
-          })
-
-          expect(files).toStrictEqual(mockFiles)
-        })
+      beforeEach(() => {
+        const mockFindByIdAndUser = jest.spyOn(caseService, 'findByIdAndUser')
+        mockFindByIdAndUser.mockImplementation((id: string) =>
+          Promise.resolve({ id, state } as Case),
+        )
       })
 
-      describe('Given a file...', () => {
+      it('should throw when creating a presigned post', async () => {
+        const fileName = 'test.txt'
+
+        await expect(
+          fileController.createCasePresignedPost(caseId, prosecutor, {
+            fileName,
+          }),
+        ).rejects.toThrow(ForbiddenException)
+      })
+
+      it('should throw when creating a case file', async () => {
+        const size = 99999
+        const key = `${caseId}/${uuid()}/test.txt`
+
+        await expect(
+          fileController.createCaseFile(caseId, prosecutor, {
+            key,
+            size,
+          }),
+        ).rejects.toThrow(ForbiddenException)
+      })
+    })
+
+    describe('given a non-existing (or deleted) case', () => {
+      const caseId = uuid()
+
+      beforeEach(() => {
+        const mockFindByIdAndUser = jest.spyOn(caseService, 'findByIdAndUser')
+        mockFindByIdAndUser.mockRejectedValueOnce(new Error('Some error'))
+      })
+
+      it('should throw when creating a presigned url', async () => {
+        const fileName = 'test.txt'
+
+        await expect(
+          fileController.createCasePresignedPost(caseId, prosecutor, {
+            fileName,
+          }),
+        ).rejects.toThrow('Some error')
+      })
+
+      it('should throw when creating a case file', async () => {
+        const size = 99999
+        const key = `${caseId}/${uuid()}/test.txt`
+
+        await expect(
+          fileController.createCaseFile(caseId, prosecutor, {
+            key,
+            size,
+          }),
+        ).rejects.toThrow('Some error')
+      })
+    })
+  })
+
+  describe('when getting all case files', () => {
+    // RoleGuard blocks access for the ADMIN role. Also, mockFindByIdAndUser
+    // blocks access for some roles to some cases. This is not relevant in
+    // this test.
+    const prosecutor = { role: UserRole.PROSECUTOR } as User
+
+    describe('given a case', () => {
+      const caseId = uuid()
+
+      it('should get all case files (not deleted)', async () => {
+        const mockFiles = [{ id: uuid() }, { id: uuid() }]
+        fileModel.findAll.mockResolvedValueOnce(mockFiles)
+
+        const files = await fileController.getAllCaseFiles(caseId, prosecutor)
+
+        expect(fileModel.findAll).toHaveBeenCalledWith({
+          where: {
+            caseId,
+            state: { [Op.not]: CaseFileState.DELETED },
+          },
+          order: [['created', 'DESC']],
+        })
+
+        expect(files).toStrictEqual(mockFiles)
+      })
+    })
+
+    describe('given a non-existing (or deleted) case', () => {
+      const caseId = uuid()
+
+      beforeEach(() => {
+        const mockFindByIdAndUser = jest.spyOn(caseService, 'findByIdAndUser')
+        mockFindByIdAndUser.mockRejectedValueOnce(new Error('Some error'))
+      })
+
+      it('should throw when getting all case files', async () => {
+        await expect(
+          fileController.getAllCaseFiles(caseId, prosecutor),
+        ).rejects.toThrow('Some error')
+      })
+    })
+  })
+
+  describe('when removing a case file', () => {
+    // RoleGuard blocks access for roles other than PROSECUTOR
+    const prosecutor = { role: UserRole.PROSECUTOR } as User
+
+    each`
+      state
+      ${CaseState.NEW}
+      ${CaseState.DRAFT}
+      ${CaseState.SUBMITTED}
+      ${CaseState.RECEIVED}
+    `.describe('given an uncompleted $state case', ({ state }) => {
+      const caseId = uuid()
+
+      beforeEach(() => {
+        const mockFindByIdAndUser = jest.spyOn(caseService, 'findByIdAndUser')
+        mockFindByIdAndUser.mockImplementation((id: string) =>
+          Promise.resolve({ id, state } as Case),
+        )
+      })
+
+      describe('given a case file', () => {
         const fileId = uuid()
-        const key = `${caseId}/${fileId}/${fileName}`
+        const key = `${caseId}/${fileId}/text.txt`
         const mockFile = {
           id: fileId,
           caseId,
           key,
         }
 
-        describe('...that exists in the database', () => {
+        beforeEach(() => {
+          fileModel.findOne.mockResolvedValueOnce(mockFile)
+        })
+
+        it('should delete the case file', async () => {
+          fileModel.destroy.mockResolvedValueOnce(1)
+          const mockDeleteObject = jest.spyOn(awsS3Service, 'deleteObject')
+
+          const { success } = await fileController.deleteCaseFile(
+            caseId,
+            fileId,
+            prosecutor,
+          )
+
+          expect(fileModel.findOne).toHaveBeenCalledWith({
+            where: {
+              id: fileId,
+              caseId,
+              state: { [Op.not]: CaseFileState.DELETED },
+            },
+          })
+
+          expect(success).toBe(true)
+
+          expect(fileModel.destroy).toHaveBeenCalledWith({
+            where: { id: fileId },
+          })
+
+          expect(mockDeleteObject).toHaveBeenCalledTimes(1)
+          expect(mockDeleteObject).toHaveBeenCalledWith(key)
+        })
+      })
+
+      describe('given a non-existing (or deleted) case file', () => {
+        const fileId = uuid()
+
+        beforeEach(() => {
+          fileModel.findOne.mockResolvedValueOnce(null)
+        })
+
+        it('should throw when deleting the case file', async () => {
+          await expect(
+            fileController.deleteCaseFile(caseId, fileId, prosecutor),
+          ).rejects.toThrow(NotFoundException)
+        })
+      })
+    })
+
+    each`
+      state
+      ${CaseState.ACCEPTED}
+      ${CaseState.REJECTED}
+    `.describe('given a completed $state case', ({ state }) => {
+      const caseId = uuid()
+
+      beforeEach(() => {
+        const mockFindByIdAndUser = jest.spyOn(caseService, 'findByIdAndUser')
+        mockFindByIdAndUser.mockImplementation((id: string) =>
+          Promise.resolve({ id, state } as Case),
+        )
+      })
+
+      it('should throw when deleting the case file', async () => {
+        const fileId = uuid()
+
+        await expect(
+          fileController.deleteCaseFile(caseId, fileId, prosecutor),
+        ).rejects.toThrow(ForbiddenException)
+      })
+    })
+
+    describe('given a non-existing (or deleted) case', () => {
+      const caseId = uuid()
+
+      beforeEach(() => {
+        const mockFindByIdAndUser = jest.spyOn(caseService, 'findByIdAndUser')
+        mockFindByIdAndUser.mockRejectedValueOnce(new Error('Some error'))
+      })
+
+      it('should throw when deleting the case file', async () => {
+        const fileId = uuid()
+
+        await expect(
+          fileController.deleteCaseFile(caseId, fileId, prosecutor),
+        ).rejects.toThrow('Some error')
+      })
+    })
+  })
+
+  describe('when getting a case file signed url', () => {
+    // RoleGuard blocks access for the ADMIN role. Also, mockFindByIdAndUser
+    // blocks access for some roles to some cases. This is not relevant in
+    // this test.
+
+    each`
+      state | role | userIsAssignedJudge
+      ${CaseState.NEW} | ${UserRole.PROSECUTOR} | ${false}
+      ${CaseState.DRAFT} | ${UserRole.PROSECUTOR} | ${false}
+      ${CaseState.SUBMITTED} | ${UserRole.PROSECUTOR} | ${false}
+      ${CaseState.RECEIVED} | ${UserRole.PROSECUTOR} | ${false}
+      ${CaseState.RECEIVED} | ${UserRole.JUDGE} | ${true}
+      ${CaseState.ACCEPTED} | ${UserRole.PROSECUTOR} | ${false}
+      ${CaseState.ACCEPTED} | ${UserRole.REGISTRAR} | ${false}
+      ${CaseState.ACCEPTED} | ${UserRole.JUDGE} | ${false}
+      ${CaseState.REJECTED} | ${UserRole.PROSECUTOR} | ${false}
+      ${CaseState.REJECTED} | ${UserRole.REGISTRAR} | ${false}
+      ${CaseState.REJECTED} | ${UserRole.JUDGE} | ${false}
+    `.describe(
+      'given a $state case and a permitted $role user',
+      ({ state, role, userIsAssignedJudge }) => {
+        const caseId = uuid()
+        const user = { id: uuid(), role } as User
+
+        beforeEach(() => {
+          const mockFindByIdAndUser = jest.spyOn(caseService, 'findByIdAndUser')
+          mockFindByIdAndUser.mockImplementation((id: string) =>
+            Promise.resolve({
+              id,
+              state,
+              judgeId: userIsAssignedJudge ? user.id : undefined,
+            } as Case),
+          )
+        })
+
+        describe('given a case file', () => {
+          const fileId = uuid()
+          const key = `${caseId}/${fileId}/test.txt`
+          const mockFile = {
+            id: fileId,
+            caseId,
+            key,
+          }
+
           beforeEach(() => {
             fileModel.findOne.mockResolvedValueOnce(mockFile)
           })
 
-          it('should delete the file', async () => {
-            fileModel.destroy.mockResolvedValueOnce(1)
-            const mockDeleteObject = jest.spyOn(awsS3Service, 'deleteObject')
-
-            const { success } = await fileController.deleteCaseFile(
-              caseId,
-              fileId,
-              user,
-            )
-
-            expect(fileModel.findOne).toHaveBeenCalledWith({
-              where: {
-                id: fileId,
-                caseId,
-                state: { [Op.not]: CaseFileState.DELETED },
-              },
-            })
-
-            expect(success).toBe(true)
-
-            expect(fileModel.destroy).toHaveBeenCalledWith({
-              where: { id: fileId },
-            })
-
-            expect(mockDeleteObject).toHaveBeenCalledTimes(1)
-            expect(mockDeleteObject).toHaveBeenCalledWith(key)
-          })
-
-          it('should get a signed url', async () => {
+          it('should get a case file signed url', async () => {
             const mockUrl = uuid()
             const mockGetSignedUrl = jest.spyOn(awsS3Service, 'getSignedUrl')
             mockGetSignedUrl.mockResolvedValueOnce({ url: mockUrl })
@@ -248,7 +482,7 @@ describe('FileController', () => {
             expect(mockGetSignedUrl).toHaveBeenCalledWith(key)
           })
 
-          it('should throw when getting a presigned url for a file that does not exist in AWS S3', async () => {
+          it('should throw when getting a case file signed url and the file does not exist in AWS S3', async () => {
             const mockObjectExists = jest.spyOn(awsS3Service, 'objectExists')
             mockObjectExists.mockResolvedValueOnce(false)
 
@@ -258,60 +492,70 @@ describe('FileController', () => {
           })
         })
 
-        describe('...that does not exist in the database or has been deleted', () => {
+        describe('given a non-existing (or deleted) case file', () => {
+          const fileId = uuid()
+
           beforeEach(() => {
             fileModel.findOne.mockResolvedValueOnce(null)
           })
 
-          it('should throw when deleting the file', async () => {
-            await expect(
-              fileController.deleteCaseFile(caseId, fileId, user),
-            ).rejects.toThrow(NotFoundException)
-          })
-
-          it('should throw when getting a signed url', async () => {
+          it('should throw when getting a case file signed url', async () => {
             await expect(
               fileController.getCaseFileSignedUrl(caseId, fileId, user),
             ).rejects.toThrow(NotFoundException)
           })
         })
+      },
+    )
+
+    each`
+      state | role
+      ${CaseState.NEW} | ${UserRole.REGISTRAR}
+      ${CaseState.NEW} | ${UserRole.JUDGE}
+      ${CaseState.DRAFT} | ${UserRole.REGISTRAR}
+      ${CaseState.DRAFT} | ${UserRole.JUDGE}
+      ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}
+      ${CaseState.SUBMITTED} | ${UserRole.JUDGE}
+      ${CaseState.RECEIVED} | ${UserRole.REGISTRAR}
+      ${CaseState.RECEIVED} | ${UserRole.JUDGE}
+    `.describe(
+      'given a $state case and a blocked $role user',
+      ({ state, role }) => {
+        const caseId = uuid()
+        const user = { id: uuid(), role } as User
+
+        beforeEach(() => {
+          const mockFindByIdAndUser = jest.spyOn(caseService, 'findByIdAndUser')
+          mockFindByIdAndUser.mockImplementation((id: string) =>
+            Promise.resolve({ id, state } as Case),
+          )
+        })
+
+        it('should throw when getting a case file signed url', async () => {
+          const fileId = uuid()
+
+          await expect(
+            fileController.getCaseFileSignedUrl(caseId, fileId, user),
+          ).rejects.toThrow(ForbiddenException)
+        })
+      },
+    )
+
+    describe('given a non-existing (or deleted) case', () => {
+      const caseId = uuid()
+
+      beforeEach(() => {
+        const mockFindByIdAndUser = jest.spyOn(caseService, 'findByIdAndUser')
+        mockFindByIdAndUser.mockRejectedValueOnce(new Error('Some error'))
       })
-    })
-  })
 
-  describe('Given a completed case', () => {
-    const caseId = uuid()
-
-    beforeEach(() => {
-      const mockFindByIdAndUser = jest.spyOn(caseService, 'findByIdAndUser')
-      mockFindByIdAndUser.mockImplementation((id: string) =>
-        Promise.resolve({
-          id,
-          state: CaseState.ACCEPTED,
-        } as Case),
-      )
-    })
-
-    describe('Given a prosecutor', () => {
-      const user = { role: UserRole.PROSECUTOR } as User
-      const fileName = 'test.txt'
-
-      it('should throw when creating a presigned post', async () => {
-        await expect(
-          fileController.createCasePresignedPost(caseId, user, { fileName }),
-        ).rejects.toThrow(ForbiddenException)
-      })
-
-      it('should throw when creating a file', async () => {
-        const size = 99999
-        const key = `${caseId}/${uuid()}/${fileName}`
+      it('should throw when getting a case file signed url', async () => {
+        const prosecutor = {} as User
+        const fileId = uuid()
 
         await expect(
-          fileController.createCaseFile(caseId, user, {
-            key,
-            size,
-          }),
-        ).rejects.toThrow(ForbiddenException)
+          fileController.getCaseFileSignedUrl(caseId, fileId, prosecutor),
+        ).rejects.toThrow('Some error')
       })
     })
   })

@@ -85,6 +85,11 @@ export class FileController {
       return true
     }
 
+    // Registrars have permission to view files of completed cases
+    if (user.role === UserRole.REGISTRAR) {
+      return completedCaseStates.includes(existingCase.state)
+    }
+
     // Judges have permission to view files of completed cases, and
     // of uncompleted received cases they have been assigned to
     if (user.role === UserRole.JUDGE) {
@@ -93,11 +98,6 @@ export class FileController {
         (existingCase.state === CaseState.RECEIVED &&
           user.id === existingCase.judgeId)
       )
-    }
-
-    // Registrars have permission to view files of completed cases
-    if (user.role === UserRole.REGISTRAR) {
-      return completedCaseStates.includes(existingCase.state)
     }
 
     // Other users do not have permission to view any case files
