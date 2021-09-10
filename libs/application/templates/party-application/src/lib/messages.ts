@@ -221,8 +221,10 @@ export const m: MessageDir = {
     },
     alertMessageDescription: {
       id: 'pa.application:endorsement.form.alertMessageDescription',
-      defaultMessage: 'Mögulega hefur honum verið eytt eða hann sameinaður öðrum lista.',
-      description: 'Error message alert text if endorsement list has been deleted',
+      defaultMessage:
+        'Mögulega hefur honum verið eytt eða hann sameinaður öðrum lista.',
+      description:
+        'Error message alert text if endorsement list has been deleted',
     },
   }),
   endorsementListSubmission: defineMessages({
