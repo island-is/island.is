@@ -546,37 +546,63 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       {modalVisible && (
         <Modal
-          title={formatMessage(icHearingArrangements.modal.heading)}
-          text={formatMessage(icHearingArrangements.modal.text, {
-            announcementSuffix:
-              workingCase.sessionArrangements !==
-                SessionArrangements.ALL_PRESENT || !workingCase.defenderEmail
-                ? '.'
-                : workingCase.defenderIsSpokesperson
-                ? ` og talsmann.`
-                : ` og verjanda.`,
-          })}
+          title={formatMessage(
+            workingCase.sessionArrangements ===
+              SessionArrangements.REMOTE_SESSION
+              ? icHearingArrangements.modal.remoteSessionHeading
+              : icHearingArrangements.modal.heading,
+          )}
+          text={
+            workingCase.sessionArrangements ===
+            SessionArrangements.REMOTE_SESSION
+              ? ''
+              : formatMessage(icHearingArrangements.modal.text, {
+                  announcementSuffix:
+                    workingCase.sessionArrangements !==
+                      SessionArrangements.ALL_PRESENT ||
+                    !workingCase.defenderEmail
+                      ? '.'
+                      : workingCase.defenderIsSpokesperson
+                      ? ` og talsmann.`
+                      : ` og verjanda.`,
+                })
+          }
           handlePrimaryButtonClick={async () => {
-            const notificationSent = await sendNotification(
-              workingCase.id,
-              NotificationType.COURT_DATE,
-            )
-
-            if (notificationSent) {
+            if (
+              workingCase.sessionArrangements ===
+              SessionArrangements.REMOTE_SESSION
+            ) {
               router.push(
                 `${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
               )
+            } else {
+              const notificationSent = await sendNotification(
+                workingCase.id,
+                NotificationType.COURT_DATE,
+              )
+
+              if (notificationSent) {
+                router.push(
+                  `${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
+                )
+              }
             }
           }}
           handleSecondaryButtonClick={() => {
             router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
           }}
           primaryButtonText={formatMessage(
-            icHearingArrangements.modal.primaryButtonText,
+            workingCase.sessionArrangements ===
+              SessionArrangements.REMOTE_SESSION
+              ? icHearingArrangements.modal.primaryButtonRemoteSessionText
+              : icHearingArrangements.modal.primaryButtonText,
           )}
-          secondaryButtonText={formatMessage(
-            icHearingArrangements.modal.secondaryButtonText,
-          )}
+          secondaryButtonText={
+            workingCase.sessionArrangements ===
+            SessionArrangements.REMOTE_SESSION
+              ? undefined
+              : formatMessage(icHearingArrangements.modal.secondaryButtonText)
+          }
           isPrimaryButtonLoading={isSendingNotification}
         />
       )}

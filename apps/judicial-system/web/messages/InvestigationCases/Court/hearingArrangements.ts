@@ -80,6 +80,13 @@ export const icHearingArrangements = {
       description:
         'Notaður sem titill fyrir "tilkynning um fyrirtökutíma hefur verið send" tilkynningagluggan á fyrirtöku skrefi í rannsóknarheimildum.',
     },
+    remoteSessionHeading: {
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.modal.remote_session_heading',
+      defaultMessage: 'Enginn hefur verið boðaður í þinghald að svo stöddu',
+      description:
+        'Notaður sem titill fyrir "tilkynning um fyrirtökutíma hefur verið send" tilkynningagluggan á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
+    },
     text: {
       id: 'judicial.system.investigation_cases:hearing_arrangements.modal.text',
       defaultMessage:
@@ -100,6 +107,13 @@ export const icHearingArrangements = {
       defaultMessage: 'Já, senda núna',
       description:
         'Notaður sem texti í "Já, senda núna" takkann í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum.',
+    },
+    primaryButtonRemoteSessionText: {
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.modal.primary_button_remote_session_text',
+      defaultMessage: 'Áfram',
+      description:
+        'Notaður sem texti í takkanum í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
     },
   }),
 }
