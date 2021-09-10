@@ -68,7 +68,7 @@ export class SyslumennClient {
 
     const response: {
       data: ISyslumennAuction[]
-    } = await this.httpService.get(url, { headers: headers }).toPromise()
+    } = await lastValueFrom(this.httpService.get(url, { headers: headers }))
 
     return response.data
   }
@@ -77,9 +77,11 @@ export class SyslumennClient {
     await this.login()
 
     return (
-      await this.httpService
-        .get(`${this.clientConfig.url}/api/VirkLeyfi/${this.id}`)
-        .toPromise()
+      await lastValueFrom(
+        this.httpService.get(
+          `${this.clientConfig.url}/api/VirkLeyfi/${this.id}`,
+        ),
+      )
     ).data
   }
 
