@@ -18,10 +18,11 @@ type RegulationsSidebarBoxProps = {
   title: string | React.ReactElement
   colorScheme?: styles.ColorScheme
   children: NonNullable<ReactNode>
+  className?: string
 }
 
 export const RegulationsSidebarBox = (props: RegulationsSidebarBoxProps) => {
-  const { title, children, colorScheme = 'blueberry' } = props
+  const { title, children, colorScheme = 'blueberry', className } = props
   const c = styles.colors[colorScheme]
   const color = c.color
   const backgroundColor = c.backgroundColor
@@ -35,6 +36,7 @@ export const RegulationsSidebarBox = (props: RegulationsSidebarBoxProps) => {
       paddingBottom={2}
       position="relative"
       marginBottom={0}
+      className={className}
       style={
         {
           '--RegSidebarBox-linkColor': c.linkColor,
