@@ -632,7 +632,7 @@ const Auctions: Screen<AuctionsProps> = ({
         paddingBottom={3}
       >
         <Text variant="small">
-          Gögn sótt: {format(auctionDataFetched, "d. MMM yyyy 'kl.' hh:mm")}
+          Gögn sótt: {format(auctionDataFetched, "d. MMM yyyy 'kl.' HH:mm")}
         </Text>
       </Box>
       <Box
