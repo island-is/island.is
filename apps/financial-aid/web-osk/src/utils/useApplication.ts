@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 
 import { CreateApplicationQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
@@ -29,7 +29,11 @@ const useApplication = () => {
   }
 
   const createApplication = useMemo(
-    () => async (form: Form, user: User): Promise<string | undefined> => {
+    () => async (
+      form: Form,
+      user: User,
+      updateForm?: any,
+    ): Promise<string | undefined> => {
       if (isCreatingApplication === false) {
         const files = formatFiles(form.taxReturnFiles, FileType.TAXRETURN)
           .concat(formatFiles(form.incomeFiles, FileType.INCOME))
@@ -62,7 +66,8 @@ const useApplication = () => {
         })
 
         if (data) {
-          return data?.id
+          updateForm({ ...form, applicationId: data.createApplication.id })
+          return data
         }
       }
     },

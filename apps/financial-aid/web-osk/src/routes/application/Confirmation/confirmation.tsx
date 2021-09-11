@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
   Text,
   Box,
@@ -15,10 +15,12 @@ import {
 import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
-import { NavigationProps } from '@island.is/financial-aid/shared/lib'
+import { NavigationProps, Routes } from '@island.is/financial-aid/shared/lib'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 const Confirmation = () => {
   const router = useRouter()
+  const { form } = useContext(FormContext)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -32,12 +34,13 @@ const Confirmation = () => {
 
   const otherOptions = [
     {
-      text: 'Upplýsingar um fjárhagsaðstoð',
-      url: '/',
+      text: 'Sjá stöðu umsóknar',
+      url: `${Routes.statusPage(form?.applicationId as string)}`,
     },
     {
-      text: 'Hafðu samband',
-      url: '/',
+      text: 'Upplýsingar um fjárhagsaðstoð',
+      url:
+        'https://www.hafnarfjordur.is/ibuar/felagsleg-adstod/fjarhagsadstod/',
     },
   ]
 
@@ -74,25 +77,24 @@ const Confirmation = () => {
           Frekari aðgerðir í boði
         </Text>
         <Box marginBottom={[4, 4, 5]}>
-          <BulletList type={'ul'} space={2}>
-            {otherOptions.map((item, index) => {
-              return (
-                <Bullet key={'options-' + index}>
-                  <Button
-                    colorScheme="default"
-                    iconType="filled"
-                    onClick={() => router.push(item.url)}
-                    preTextIconType="filled"
-                    size="default"
-                    type="button"
-                    variant="text"
-                  >
-                    {item.text}
-                  </Button>
-                </Bullet>
-              )
-            })}
-          </BulletList>
+          {otherOptions.map((item, index) => {
+            return (
+              <Box marginBottom={3}>
+                <Button
+                  icon="open"
+                  colorScheme="default"
+                  iconType="outline"
+                  onClick={() => router.push(item.url)}
+                  preTextIconType="filled"
+                  size="small"
+                  type="button"
+                  variant="text"
+                >
+                  {item.text}
+                </Button>
+              </Box>
+            )
+          })}
         </Box>
       </ContentContainer>
     </FormLayout>

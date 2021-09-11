@@ -41,7 +41,7 @@ const SummaryForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
 
-  const { user } = useContext(UserContext)
+  const { user, setUser } = useContext(UserContext)
 
   const [isVisible, setIsVisible] = useState(false)
 
@@ -61,7 +61,7 @@ const SummaryForm = () => {
       return
     }
     try {
-      await createApplication(form, user).then(() => {
+      await createApplication(form, user, updateForm).then(() => {
         if (navigation?.nextUrl) {
           router.push(navigation.nextUrl)
         }
@@ -216,24 +216,32 @@ const SummaryForm = () => {
                 <>
                   {allFiles.map((file, index) => {
                     return (
-                      <a
-                        href={file.name}
-                        key={`file-` + index}
-                        className={styles.filesButtons}
-                        target="_blank"
-                        download
-                      >
-                        <Box marginRight={1} display="flex" alignItems="center">
-                          <Icon
-                            color="blue400"
-                            icon="document"
-                            size="small"
-                            type="outline"
-                          />
-                        </Box>
+                      <>
+                        {file && (
+                          <a
+                            href={file.name}
+                            key={`file-` + index}
+                            className={styles.filesButtons}
+                            target="_blank"
+                            download
+                          >
+                            <Box
+                              marginRight={1}
+                              display="flex"
+                              alignItems="center"
+                            >
+                              <Icon
+                                color="blue400"
+                                icon="document"
+                                size="small"
+                                type="outline"
+                              />
+                            </Box>
 
-                        <Text>{file.name}</Text>
-                      </a>
+                            <Text>{file.name}</Text>
+                          </a>
+                        )}
+                      </>
                     )
                   })}
                 </>

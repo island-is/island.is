@@ -7,6 +7,7 @@ import {
 import { UploadFile } from '@island.is/island-ui/core'
 
 export interface Form {
+  applicationId?: string
   customAddress?: boolean
   customHomeAddress?: string
   customPostalCode?: number
