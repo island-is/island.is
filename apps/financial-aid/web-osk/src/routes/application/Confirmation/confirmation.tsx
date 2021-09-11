@@ -32,18 +32,6 @@ const Confirmation = () => {
     'Ef þörf er á frekari upplýsingum eða gögnum mun fjölskylduþjónusta Hafnarfjarðar hafa samband.',
   ]
 
-  const otherOptions = [
-    {
-      text: 'Sjá stöðu umsóknar',
-      url: `${Routes.statusPage(form?.applicationId as string)}`,
-    },
-    {
-      text: 'Upplýsingar um fjárhagsaðstoð',
-      url:
-        'https://www.hafnarfjordur.is/ibuar/felagsleg-adstod/fjarhagsadstod/',
-    },
-  ]
-
   useEffect(() => {
     document.title = 'Umsókn um fjárhagsaðstoð'
   }, [])
