@@ -26,7 +26,7 @@ module.exports = {
                 'Approved',
                 'StaffComment',
                 'UserComment',
-                'FileUpload'
+                'FileUpload',
               ),
             }),
           ),
