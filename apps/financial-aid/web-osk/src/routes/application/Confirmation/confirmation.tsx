@@ -77,24 +77,43 @@ const Confirmation = () => {
           Frekari aðgerðir í boði
         </Text>
         <Box marginBottom={[4, 4, 5]}>
-          {otherOptions.map((item, index) => {
-            return (
-              <Box marginBottom={3}>
-                <Button
-                  icon="open"
-                  colorScheme="default"
-                  iconType="outline"
-                  onClick={() => router.push(item.url)}
-                  preTextIconType="filled"
-                  size="small"
-                  type="button"
-                  variant="text"
-                >
-                  {item.text}
-                </Button>
-              </Box>
-            )
-          })}
+          {form.applicationId && (
+            <Box marginBottom={3}>
+              <Button
+                icon="open"
+                colorScheme="default"
+                iconType="outline"
+                onClick={() =>
+                  router.push(Routes.statusPage(form?.applicationId as string))
+                }
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+              >
+                Sjá stöðu umsóknar
+              </Button>
+            </Box>
+          )}
+
+          <Box marginBottom={3}>
+            <Button
+              icon="open"
+              colorScheme="default"
+              iconType="outline"
+              preTextIconType="filled"
+              size="small"
+              type="button"
+              variant="text"
+            >
+              <a
+                href="https://www.hafnarfjordur.is/ibuar/felagsleg-adstod/fjarhagsadstod/"
+                target="_blank"
+              >
+                Upplýsingar um fjárhagsaðstoð
+              </a>
+            </Button>
+          </Box>
         </Box>
       </ContentContainer>
     </FormLayout>
