@@ -68,6 +68,7 @@ export const GetApplicationQuery = gql`
       state
       amount
       rejection
+      created
     }
   }
 `
