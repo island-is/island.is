@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Text, Icon, Box, Checkbox } from '@island.is/island-ui/core'
 
 import {
@@ -9,20 +9,21 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 import * as styles from './info.treat'
 import { useRouter } from 'next/router'
+import format from 'date-fns/format'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import { NavigationProps } from '@island.is/financial-aid/shared/lib'
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
+import { months, NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
 const ApplicationInfo = () => {
   const router = useRouter()
-  const { setUser, user } = useContext(UserContext)
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
+
+  const nextMonth = months[new Date().getMonth() + 1].toLowerCase()
 
   const logOut = useLogOut()
 
@@ -64,7 +65,7 @@ const ApplicationInfo = () => {
         <Text marginBottom={2}>
           Við þurfum að fá þig til að renna yfir nokkur atriði og gefa
           upplýsingar um búsetu og laun yfir síðustu 2 mánuði, ef einhver, til
-          að reikna út aðstoð til útgreiðslu í byrjun apríl.
+          að reikna út aðstoð til útgreiðslu í byrjun {nextMonth}.
         </Text>
         <Text marginBottom={3}>
           Í lokin velurðu að senda inn umsóknina eða eyða henni og öllum tengdum
