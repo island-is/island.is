@@ -9,7 +9,6 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 import * as styles from './info.treat'
 import { useRouter } from 'next/router'
-import format from 'date-fns/format'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
