@@ -11,12 +11,14 @@ import {
 import {
   ContentContainer,
   FormLayout,
+  Footer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import { NavigationProps, Routes } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
 const Confirmation = () => {
   const router = useRouter()
@@ -25,6 +27,8 @@ const Confirmation = () => {
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
   ) as NavigationProps
+
+  const logOut = useLogOut()
 
   const nextSteps = [
     'Fjölskylduþjónusta Hafnarfjarðar vinnur úr umsókninni. Afgreiðsla umsóknarinnar tekur 1–3 virka daga.',
@@ -104,6 +108,12 @@ const Confirmation = () => {
           </Box>
         </Box>
       </ContentContainer>
+      <Footer
+        hidePreviousButton={true}
+        nextButtonText={'Loka'}
+        nextButtonIcon={'close'}
+        onNextButtonClick={() => logOut()}
+      />
     </FormLayout>
   )
 }

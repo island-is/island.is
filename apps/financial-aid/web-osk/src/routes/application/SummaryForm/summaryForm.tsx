@@ -41,7 +41,7 @@ const SummaryForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
 
-  const { user, setUser } = useContext(UserContext)
+  const { user } = useContext(UserContext)
 
   const [isVisible, setIsVisible] = useState(false)
 
