@@ -76,7 +76,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   const createSignedUrl = async (
     filename: string,
   ): Promise<SignedUrl | undefined> => {
-    const validFileName = filename.replace(/ +/g, '_')
+    const validFileName = filename ? filename.replace(/ +/g, '_') : ''
 
     let signedUrl: SignedUrl | undefined = undefined
 
@@ -93,7 +93,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     return signedUrl
   }
 
-  const uploadFiles = async (applicationId: string, type: FileType) => {
+  const uploadingFiles = async (applicationId: string, type: FileType) => {
     const formatFiles = files.map((f) => {
       return {
         applicationId: applicationId,
@@ -210,5 +210,12 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     onChange([file as File], true)
   }
 
-  return { files, uploadErrorMessage, onChange, onRemove, onRetry, uploadFiles }
+  return {
+    files,
+    uploadErrorMessage,
+    onChange,
+    onRemove,
+    onRetry,
+    uploadingFiles,
+  }
 }

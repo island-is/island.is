@@ -23,10 +23,18 @@ const Files = ({ header, uploadFiles, fileKey }: Props) => {
     onChange,
     onRemove,
     onRetry,
+    uploadingFiles,
   } = useFileUpload(uploadFiles)
 
   useEffect(() => {
-    const formFiles = files.filter((f) => f.status === 'done')
+    // const formFiles = files.map((f) => {
+    //   if(!f.size){
+    //     uploadingFiles(f)
+    //   }
+    //   return
+    // })
+
+    const formFiles = files.filter((f) => f.size)
 
     updateForm({ ...form, [fileKey]: formFiles })
   }, [files])
