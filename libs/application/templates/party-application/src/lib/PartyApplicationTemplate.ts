@@ -194,7 +194,6 @@ const PartyApplicationTemplate: ApplicationTemplate<
       },
       [States.IN_REVIEW]: {
         entry: 'assignToSupremeCourt',
-        exit: 'clearAssignees',
         meta: {
           name: 'In Review',
           progress: 0.9,
@@ -241,6 +240,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
         },
       },
       [States.APPROVED]: {
+        entry: 'assignToSupremeCourt',
         meta: {
           name: States.APPROVED,
           progress: 1,
@@ -284,13 +284,6 @@ const PartyApplicationTemplate: ApplicationTemplate<
           },
         }
       }),
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
     },
   },
   mapUserToRole(
@@ -301,8 +294,10 @@ const PartyApplicationTemplate: ApplicationTemplate<
       return Roles.ASSIGNEE
     } else if (application.applicant === nationalId) {
       return Roles.APPLICANT
-    } else if (application.state === States.COLLECT_ENDORSEMENTS) {
-      // TODO: Maybe display collection as closed in final state for signaturee
+    } else if (
+      application.state === States.COLLECT_ENDORSEMENTS ||
+      application.state === States.REJECTED
+    ) {
       // everyone can be signaturee if they are not the applicant
       return Roles.SIGNATUREE
     } else {

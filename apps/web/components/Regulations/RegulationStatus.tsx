@@ -81,76 +81,72 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
           {txt('printedDate')} {formatDate(today)}
         </Text>
       </div>
-      <Hidden print={true}>
-        <Text>
-          <Ball type={color} />
+      <Text>
+        <Ball type={color} />
 
-          {!timelineDate || timelineDate === lastAmendDate ? (
-            repealedDate ? (
-              <>
-                {txt('statusRepealed') + ' '}
-                {onDateText || (
-                  <small className={s.metaDate}>
-                    {interpolate(txt('statusRepealed_on'), {
-                      date: formatDate(repealedDate),
-                    })}
-                  </small>
-                )}
-              </>
-            ) : !lastAmendDate ? (
-              <>
-                {txt(
-                  type === 'base'
-                    ? 'statusCurrentBase'
-                    : 'statusCurrentAmending',
-                ) + ' '}
-                {onDateText}
-              </>
-            ) : (
-              <>
-                {txt('statusCurrentUpdated') + ' '}
-                {onDateText ||
-                  (lastAmendDate && (
-                    <small className={s.metaDate}>
-                      {interpolate(txt('statusCurrent_amended'), {
-                        date: formatDate(lastAmendDate),
-                      })}
-                    </small>
-                  ))}
-              </>
-            )
-          ) : timelineDate > today ? (
+        {!timelineDate || timelineDate === lastAmendDate ? (
+          repealedDate ? (
             <>
-              {txt('statusUpcoming') + ' '}
+              {txt('statusRepealed') + ' '}
               {onDateText || (
                 <small className={s.metaDate}>
-                  {interpolate(txt('statusUpcoming_on'), {
-                    date: formatDate(timelineDate),
+                  {interpolate(txt('statusRepealed_on'), {
+                    date: formatDate(repealedDate),
                   })}
                 </small>
-              )}{' '}
-              {renderLinkToCurrent()}
+              )}
+            </>
+          ) : !lastAmendDate ? (
+            <>
+              {txt(
+                type === 'base' ? 'statusCurrentBase' : 'statusCurrentAmending',
+              ) + ' '}
+              {onDateText}
             </>
           ) : (
             <>
-              {txt(
-                timelineDate === effectiveDate
-                  ? 'statusOriginal'
-                  : 'statusHistoric',
-              ) + ' '}
-              {onDateText || (
-                <small className={s.metaDate}>
-                  {interpolate(txt('statusHistoric_period'), {
-                    dateFrom: formatDate(timelineDate),
-                    dateTo: formatDate(getNextHistoryDate()),
-                  })}
-                </small>
-              )}{' '}
-              {renderLinkToCurrent()}
+              {txt('statusCurrentUpdated') + ' '}
+              {onDateText ||
+                (lastAmendDate && (
+                  <small className={s.metaDate}>
+                    {interpolate(txt('statusCurrent_amended'), {
+                      date: formatDate(lastAmendDate),
+                    })}
+                  </small>
+                ))}
             </>
-          )}
-        </Text>
-      </Hidden>
+          )
+        ) : timelineDate > today ? (
+          <>
+            {txt('statusUpcoming') + ' '}
+            {onDateText || (
+              <small className={s.metaDate}>
+                {interpolate(txt('statusUpcoming_on'), {
+                  date: formatDate(timelineDate),
+                })}
+              </small>
+            )}{' '}
+            {renderLinkToCurrent()}
+          </>
+        ) : (
+          <>
+            {txt(
+              timelineDate === effectiveDate
+                ? 'statusOriginal'
+                : 'statusHistoric',
+            ) + ' '}
+            {onDateText || (
+              <small className={s.metaDate}>
+                {interpolate(txt('statusHistoric_period'), {
+                  dateFrom: formatDate(timelineDate),
+                  dateTo: formatDate(getNextHistoryDate()),
+                })}
+              </small>
+            )}{' '}
+            {renderLinkToCurrent()}
+          </>
+        )}
+      </Text>
     </>
   )
 }
