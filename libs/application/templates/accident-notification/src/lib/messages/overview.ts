@@ -60,4 +60,17 @@ export const overview = {
       description: 'Description of alert message that appears on overview page',
     },
   }),
+  forThirdParty: defineMessages({
+    description: {
+      id: 'an.application:overview.forThirdParty.description',
+      defaultMessage:
+        'Á þessari síðu má sjá upplýsingar um þann slasaða og nákvæma lýsingu á slysi, farðu vel yfir áður en þú staðfestir eða andmælir tilkynningu.',
+      description: 'Description visible for third party',
+    },
+    buttonText: {
+      id: 'an.application:overview.forThirdParty.buttonText',
+      defaultMessage: 'Athugasemd',
+      description: 'Comment button',
+    },
+  }),
 }

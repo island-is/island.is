@@ -5,4 +5,4 @@ set -euo pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-$DIR/run-proxy.js --namespace socat --service socat-redis --port 6379 --proxy-port 6379 --cluster ${CLUSTER:-dev-cluster01}
+"$DIR"/run-proxy.js --namespace socat --service socat-redis --port 6379 --proxy-port 6379 --cluster "${CLUSTER:-dev-cluster01}"

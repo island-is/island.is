@@ -1,10 +1,8 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import {
-  Case,
-  IntegratedCourts,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { IntegratedCourts } from '@island.is/judicial-system/consts'
+import { CaseState } from '@island.is/judicial-system/types'
+import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import {
@@ -57,7 +55,12 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
         </Text>
       </Box>
       <Box marginBottom={2}>
-        <Text>{formatMessage(courtCaseNumber.explanation)}</Text>
+        <Text>
+          {workingCase.state !== CaseState.SUBMITTED &&
+          workingCase.state !== CaseState.RECEIVED
+            ? formatMessage(courtCaseNumber.explanationDisabled)
+            : formatMessage(courtCaseNumber.explanation)}
+        </Text>
       </Box>
       <BlueBox>
         <div className={styles.createCourtCaseContainer}>
@@ -69,7 +72,11 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                     size="small"
                     onClick={() => handleCreateCourtCase(workingCase)}
                     loading={isCreatingCourtCase}
-                    disabled={Boolean(workingCase.courtCaseNumber)}
+                    disabled={Boolean(
+                      (workingCase.state !== CaseState.SUBMITTED &&
+                        workingCase.state !== CaseState.RECEIVED) ||
+                        workingCase.courtCaseNumber,
+                    )}
                     fluid
                   >
                     Stofna nýtt mál
@@ -115,6 +122,10 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                     setCourtCaseNumberEM,
                   )
                 }}
+                disabled={
+                  workingCase.state !== CaseState.SUBMITTED &&
+                  workingCase.state !== CaseState.RECEIVED
+                }
                 required
               />
             </div>

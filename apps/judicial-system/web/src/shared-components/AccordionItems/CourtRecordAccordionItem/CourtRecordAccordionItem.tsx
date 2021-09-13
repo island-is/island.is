@@ -11,10 +11,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   AccusedPleaDecision,
-  Case,
   CaseAppealDecision,
   CaseType,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 
 interface Props {

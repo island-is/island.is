@@ -1,15 +1,30 @@
 import { Op, WhereOptions } from 'sequelize'
 
-import { CaseState, User, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  CaseState,
+  hasCaseBeenAppealed,
+  InstitutionType,
+  UserRole,
+} from '@island.is/judicial-system/types'
+import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
 import { Case } from '../models'
 
-function getBlockedStates(role: UserRole) {
+function getBlockedStates(role: UserRole, institutionType?: InstitutionType) {
   const blockedStates = [CaseState.DELETED]
 
-  if (role !== UserRole.PROSECUTOR) {
-    blockedStates.push(CaseState.NEW)
+  if (role === UserRole.PROSECUTOR) {
+    return blockedStates
   }
+
+  blockedStates.push(CaseState.NEW)
+
+  if (institutionType !== InstitutionType.HIGH_COURT) {
+    return blockedStates
+  }
+
+  blockedStates.push(CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED)
 
   return blockedStates
 }
@@ -22,31 +37,43 @@ function courtMustMatchUserIInstitution(role: UserRole): boolean {
   return role === UserRole.REGISTRAR || role === UserRole.JUDGE
 }
 
-function isStateHiddenFromRole(state: CaseState, role: UserRole): boolean {
-  return getBlockedStates(role).includes(state)
+function isStateHiddenFromRole(
+  state: CaseState,
+  role: UserRole,
+  institutionType?: InstitutionType,
+): boolean {
+  return getBlockedStates(role, institutionType).includes(state)
 }
 
-function isProsecutorsOfficeHiddenFromUser(
-  prosecutorInstitutionId: string,
+function isProsecutorsOfficeCaseHiddenFromUser(
+  prosecutorInstitutionId: string | undefined,
   user: User,
   forUpdate: boolean,
-  sharedWithProsecutorsOfficeId: string,
+  sharedWithProsecutorsOfficeId: string | undefined,
 ): boolean {
   return (
     prosecutorsOfficeMustMatchUserInstitution(user.role) &&
-    prosecutorInstitutionId &&
-    prosecutorInstitutionId !== user.institution.id &&
+    Boolean(prosecutorInstitutionId) &&
+    prosecutorInstitutionId !== user.institution?.id &&
     (forUpdate ||
       !sharedWithProsecutorsOfficeId ||
-      sharedWithProsecutorsOfficeId !== user.institution.id)
+      sharedWithProsecutorsOfficeId !== user.institution?.id)
   )
 }
 
-function isCourtHiddenFromUser(courtId: string, user: User): boolean {
+function isCourtCaseHiddenFromUser(
+  courtId: string | undefined,
+  user: User,
+  forUpdate: boolean,
+  hasCaseBeenAppealed: boolean,
+): boolean {
   return (
     courtMustMatchUserIInstitution(user.role) &&
-    courtId &&
-    courtId !== user.institution.id
+    Boolean(courtId) &&
+    courtId !== user.institution?.id &&
+    (forUpdate ||
+      !hasCaseBeenAppealed ||
+      user.institution?.type !== InstitutionType.HIGH_COURT)
   )
 }
 
@@ -56,21 +83,26 @@ export function isCaseBlockedFromUser(
   forUpdate = true,
 ): boolean {
   return (
-    isStateHiddenFromRole(theCase.state, user.role) ||
-    isProsecutorsOfficeHiddenFromUser(
+    isStateHiddenFromRole(theCase.state, user.role, user.institution?.type) ||
+    isProsecutorsOfficeCaseHiddenFromUser(
       theCase.prosecutor?.institutionId,
       user,
       forUpdate,
       theCase.sharedWithProsecutorsOfficeId,
     ) ||
-    isCourtHiddenFromUser(theCase.courtId, user)
+    isCourtCaseHiddenFromUser(
+      theCase.courtId,
+      user,
+      forUpdate,
+      hasCaseBeenAppealed((theCase as unknown) as TCase),
+    )
   )
 }
 
 export function getCasesQueryFilter(user: User): WhereOptions {
   const blockStates = {
     [Op.not]: {
-      state: getBlockedStates(user.role),
+      state: getBlockedStates(user.role, user.institution?.type),
     },
   }
 
@@ -79,18 +111,23 @@ export function getCasesQueryFilter(user: User): WhereOptions {
       ? {
           [Op.or]: [
             { prosecutor_id: { [Op.is]: null } },
-            {
-              '$prosecutor.institution_id$': user.institution.id,
-            },
-            { shared_with_prosecutors_office_id: user.institution.id },
+            { '$prosecutor.institution_id$': user.institution?.id },
+            { shared_with_prosecutors_office_id: user.institution?.id },
           ],
+        }
+      : user.institution?.type === InstitutionType.HIGH_COURT
+      ? {
+          [Op.or]: {
+            accused_appeal_decision: CaseAppealDecision.APPEAL,
+            prosecutor_appeal_decision: CaseAppealDecision.APPEAL,
+            accused_postponed_appeal_date: { [Op.not]: null },
+            prosecutor_postponed_appeal_date: { [Op.not]: null },
+          },
         }
       : {
           [Op.or]: [
             { court_id: { [Op.is]: null } },
-            {
-              court_id: user.institution.id,
-            },
+            { court_id: user.institution?.id },
           ],
         }
 

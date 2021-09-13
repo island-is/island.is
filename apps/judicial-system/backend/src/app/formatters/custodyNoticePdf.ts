@@ -31,6 +31,7 @@ export async function getCustodyNoticePdfAsString(
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+
   doc
     .font('Helvetica-Bold')
     .fontSize(26)
@@ -40,7 +41,7 @@ export async function getCustodyNoticePdfAsString(
     .text('Úrskurður um gæsluvarðhald', { align: 'center' })
     .font('Helvetica')
     .text(
-      `Málsnúmer ${existingCase.court?.name.replace('dómur', 'dóms')} ${
+      `Málsnúmer ${existingCase.court?.name?.replace('dómur', 'dóms') ?? '?'} ${
         existingCase.courtCaseNumber
       }`,
       { align: 'center' },
@@ -54,10 +55,10 @@ export async function getCustodyNoticePdfAsString(
     .lineGap(8)
     .text('Sakborningur')
     .fontSize(12)
-    .text(existingCase.accusedName)
+    .text(existingCase.accusedName ?? 'Nafn ekki skráð')
     .font('Helvetica')
     .text(`kt. ${formatNationalId(existingCase.accusedNationalId)}`)
-    .text(existingCase.accusedAddress)
+    .text(existingCase.accusedAddress ?? 'Heimili ekki skráð')
     .text(' ')
     .text(' ')
     .font('Helvetica-Bold')
@@ -74,16 +75,18 @@ export async function getCustodyNoticePdfAsString(
     )
     .text(' ')
     .text(
-      `Úrskurður kveðinn upp ${formatDate(
-        existingCase.rulingDate,
-        'PPPp',
-      ).replace(' kl.', ', kl.')}`,
+      `Úrskurður kveðinn upp ${
+        formatDate(existingCase.rulingDate, 'PPPp')?.replace(' kl.', ', kl.') ??
+        '?'
+      }`,
     )
     .text(
-      `Úrskurður rennur út ${formatDate(
-        existingCase.validToDate,
-        'PPPp',
-      ).replace(' kl.', ', kl.')}`,
+      `Úrskurður rennur út ${
+        formatDate(existingCase.validToDate, 'PPPp')?.replace(
+          ' kl.',
+          ', kl.',
+        ) ?? '?'
+      }`,
     )
     .text(' ')
     .font('Helvetica-Bold')
@@ -108,7 +111,7 @@ export async function getCustodyNoticePdfAsString(
     })
     .font('Helvetica')
     .text(
-      existingCase.defenderName
+      existingCase.defenderName && !existingCase.defenderIsSpokesperson
         ? `${existingCase.defenderName}${
             existingCase.defenderPhoneNumber
               ? `, s. ${existingCase.defenderPhoneNumber}`

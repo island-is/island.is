@@ -66,3 +66,17 @@ export const linkHoverEffect = style({
     },
   },
 })
+
+export const logOutButton = style({
+  display: 'flex',
+  alignItems: 'center',
+})
+
+export const logOutButtonIcon = style({
+  marginRight: theme.spacing[2],
+  transition: 'transform 250ms ease',
+})
+
+export const personIcon = style({
+  marginRight: theme.spacing[1],
+})

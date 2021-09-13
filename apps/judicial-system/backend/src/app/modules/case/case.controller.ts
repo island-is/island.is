@@ -22,10 +22,10 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
+import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   CaseState,
   CaseTransition,
-  IntegratedCourts,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -39,7 +39,9 @@ import {
   TokenGuaard,
 } from '@island.is/judicial-system/auth'
 
+import { CaseFile } from '../file/models/file.model'
 import { UserService } from '../user'
+import { CaseEvent, EventService } from '../event'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
@@ -181,12 +183,13 @@ export class CaseController {
   constructor(
     private readonly caseService: CaseService,
     private readonly userService: UserService,
+    private readonly eventService: EventService,
   ) {}
 
   private async validateAssignedUser(
     assignedUserId: string,
     assignedUserRole: UserRole,
-    institutionId: string,
+    institutionId: string | undefined,
   ) {
     const assignedUser = await this.userService.findById(assignedUserId)
 
@@ -210,10 +213,16 @@ export class CaseController {
   @UseGuards(TokenGuaard)
   @Post('internal/case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
-  async internalCreate(@Body() caseToCreate: CreateCaseDto): Promise<Case> {
+  async internalCreate(
+    @Body() caseToCreate: CreateCaseDto,
+  ): Promise<Case | null> {
     const createdCase = await this.caseService.create(caseToCreate)
 
-    return this.caseService.findById(createdCase.id)
+    const resCase = await this.caseService.findById(createdCase.id)
+
+    this.eventService.postEvent(CaseEvent.CREATE_XRD, resCase as Case)
+
+    return resCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -223,10 +232,14 @@ export class CaseController {
   async create(
     @CurrentHttpUser() user: User,
     @Body() caseToCreate: CreateCaseDto,
-  ): Promise<Case> {
+  ): Promise<Case | null> {
     const createdCase = await this.caseService.create(caseToCreate, user)
 
-    return this.caseService.findById(createdCase.id)
+    const resCase = await this.caseService.findById(createdCase.id)
+
+    this.eventService.postEvent(CaseEvent.CREATE, resCase as Case)
+
+    return resCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -237,7 +250,7 @@ export class CaseController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
     @Body() caseToUpdate: UpdateCaseDto,
-  ): Promise<Case> {
+  ): Promise<Case | null> {
     // Make sure the user has access to this case
     const existingCase = await this.caseService.findByIdAndUser(id, user)
 
@@ -275,6 +288,7 @@ export class CaseController {
     }
 
     if (
+      existingCase.courtId &&
       IntegratedCourts.includes(existingCase.courtId) &&
       Boolean(caseToUpdate.courtCaseNumber) &&
       caseToUpdate.courtCaseNumber !== existingCase.courtCaseNumber
@@ -302,7 +316,7 @@ export class CaseController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
     @Body() transition: TransitionCaseDto,
-  ): Promise<Case> {
+  ): Promise<Case | null> {
     // Use existingCase.modified when client is ready to send last modified timestamp with all updates
 
     const existingCase = await this.caseService.findByIdAndUser(id, user)
@@ -310,10 +324,10 @@ export class CaseController {
     const state = transitionCase(transition.transition, existingCase.state)
 
     // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
-    const update = { state }
+    const update: { state: CaseState; parentCaseId?: null } = { state }
 
     if (state === CaseState.DELETED) {
-      update['parentCaseId'] = null
+      update.parentCaseId = null
     }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
@@ -327,7 +341,14 @@ export class CaseController {
       )
     }
 
-    return this.caseService.findById(updatedCase.id)
+    const resCase = await this.caseService.findById(updatedCase.id)
+
+    this.eventService.postEvent(
+      (transition.transition as unknown) as CaseEvent,
+      resCase as Case,
+    )
+
+    return resCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -457,7 +478,19 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(
+      id,
+      user,
+      true,
+      [
+        {
+          model: CaseFile,
+          as: 'caseFiles',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+      ],
+    )
 
     if (user?.id !== existingCase.judgeId) {
       throw new ForbiddenException(
@@ -481,7 +514,7 @@ export class CaseController {
   async extend(
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
-  ): Promise<Case> {
+  ): Promise<Case | null> {
     const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
     if (existingCase.childCase) {
@@ -490,6 +523,10 @@ export class CaseController {
 
     const extendedCase = await this.caseService.extend(existingCase, user)
 
-    return this.caseService.findById(extendedCase.id)
+    const resCase = await this.caseService.findById(extendedCase.id)
+
+    this.eventService.postEvent(CaseEvent.EXTEND, resCase as Case)
+
+    return resCase
   }
 }

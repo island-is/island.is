@@ -1,6 +1,5 @@
 import {
   BasicDataProvider,
-  Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
@@ -9,14 +8,14 @@ import { m } from '../lib/messages'
 export class QualityPhotoProvider extends BasicDataProvider {
   type = 'QualityPhotoProvider'
 
-  async provide(application: Application) {
+  async provide() {
     const query = `
         query HasQualityPhoto {
-            qualityPhoto {
+          qualityPhoto {
             success
             qualityPhoto
+          }
         }
-      }
       `
 
     const res = await this.useGraphqlGateway(query)
@@ -34,8 +33,8 @@ export class QualityPhotoProvider extends BasicDataProvider {
     }
 
     return {
-      success: response.data.qualityPhoto.success,
-      qualityPhoto: response.data.qualityPhoto.qualityPhoto,
+      success: !!response.data.qualityPhoto?.success,
+      qualityPhoto: response.data.qualityPhoto?.qualityPhoto,
     }
   }
 

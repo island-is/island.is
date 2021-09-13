@@ -1,10 +1,9 @@
 import { PaymentScheduleDebts } from '@island.is/api/schema'
-import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { paymentPlan } from '../../../lib/messages/paymentPlan'
-import * as styles from './PaymentPlanCard.treat'
 
 interface Props {
   payment: PaymentScheduleDebts
@@ -30,11 +29,7 @@ const ValueLine = ({
 )
 
 // TODO: Arrow down icon missing
-export const PaymentPlanCard = ({
-  payment,
-  isAnswered,
-  onEditClick,
-}: Props) => {
+export const PaymentPlanCard = ({ payment, isAnswered }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const { formatMessage } = useLocale()
 
@@ -46,24 +41,15 @@ export const PaymentPlanCard = ({
       paddingX={4}
       border="standard"
       borderRadius="large"
-      marginBottom={3}
+      marginBottom={2}
     >
       <Box display="flex" justifyContent="spaceBetween">
-        <Text variant="eyebrow" color="purple400">
-          {payment.organization}
-        </Text>
+        <Text variant="h3">{payment.paymentSchedule}</Text>
         <Tag variant="purple" disabled>
           {formatMessage(payment.explanation)}
         </Tag>
       </Box>
-      <Text variant="h3">
-        {isAnswered && (
-          <span className={styles.titleIcon}>
-            <Icon icon="checkmark" color="mint600" size="medium" />{' '}
-          </span>
-        )}
-        {payment.paymentSchedule}
-      </Text>
+
       <Text lineHeight="lg">
         <span>{formatMessage(paymentPlan.labels.totalAmount)}:</span>
         <b>{` ${payment.totalAmount.toLocaleString('is-IS')} kr.`}</b>
@@ -105,31 +91,20 @@ export const PaymentPlanCard = ({
       </AnimateHeight>
       <Box
         display="flex"
-        justifyContent="spaceBetween"
+        justifyContent="flexStart"
         alignItems="flexEnd"
         marginTop={isAnswered ? 0 : 2}
       >
         <div>
           <Button
             variant="text"
-            icon={isExpanded ? 'caretUp' : 'caretDown'}
+            icon={isExpanded ? 'arrowUp' : 'arrowDown'}
             iconType="outline"
             onClick={handleExpandClick}
           >
             {formatMessage(paymentPlan.labels.moreInfo)}
           </Button>
         </div>
-        {isAnswered && onEditClick && (
-          <Button
-            variant="ghost"
-            icon="pencil"
-            iconType="outline"
-            size="small"
-            onClick={onEditClick.bind(null, payment.type)}
-          >
-            {formatMessage(paymentPlan.labels.editPaymentPlan)}
-          </Button>
-        )}
       </Box>
     </Box>
   )

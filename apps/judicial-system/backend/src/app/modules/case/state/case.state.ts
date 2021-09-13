@@ -61,7 +61,7 @@ export const transitionCase = function (
   transition: CaseTransition,
   currentState: CaseState,
 ): CaseState {
-  const rule: Rule = caseStateMachine.get(transition)
+  const rule = caseStateMachine.get(transition)
 
   if (!rule?.from.includes(currentState)) {
     throw new ForbiddenException(

@@ -58,7 +58,11 @@ export const FormShell: FC<{
     sections,
     screens,
   } = state
-  const { mode = FormModes.APPLYING, renderLastScreenButton } = state.form
+  const {
+    mode = FormModes.APPLYING,
+    renderLastScreenButton,
+    renderLastScreenBackButton,
+  } = state.form
   const showProgressTag = mode !== FormModes.APPLYING
   const currentScreen = screens[activeScreen]
   const FormLogo = form.logo
@@ -146,6 +150,7 @@ export const FormShell: FC<{
                     activeScreenIndex={activeScreen}
                     numberOfScreens={screens.length}
                     renderLastScreenButton={renderLastScreenButton}
+                    renderLastScreenBackButton={renderLastScreenBackButton}
                     screen={currentScreen}
                     mode={mode}
                   />

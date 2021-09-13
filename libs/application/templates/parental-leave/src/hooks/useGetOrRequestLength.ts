@@ -44,7 +44,7 @@ export const useGetOrRequestLength = (application: Application) => {
         setLoading(false)
 
         throw new Error(
-          `Cannot calculate length between start and end dates from VMST: ${startDate}, ${endDate}, ${startToEndDatesLength}`,
+          `VMST: Cannot calculate length between start and end dates, startDate/${startDate} endDate/${endDate} startToEndDatesLength/${startToEndDatesLength}`,
         )
       }
 
@@ -67,7 +67,7 @@ export const useGetOrRequestLength = (application: Application) => {
         setLoading(false)
 
         throw new Error(
-          `Cannot calculate length for end date from VMST: ${startDate}, ${endDate}, ${startToEndDatesLength}, ${lazyLength}`,
+          `VMST: Cannot calculate length for end date, startDate/${startDate} endDate/${endDate} startToEndDatesLength/${startToEndDatesLength} lazyLength/${lazyLength}`,
         )
       }
 

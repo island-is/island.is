@@ -145,7 +145,10 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
             </GridRow>
           ) : null}
           <GridRow>
-            <GridColumn paddingBottom={[1, 0]} span={['1/1', '4/12']}>
+            <GridColumn
+              paddingBottom={[1, 0]}
+              span={['1/1', '1/1', '1/1', '1/1', '4/12']}
+            >
               <Select
                 name="faerslur"
                 backgroundColor="blue"
@@ -157,7 +160,10 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
                 onChange={(sel) => onDropdownSelect(sel)}
               />
             </GridColumn>
-            <GridColumn span={['1/1', '4/12']}>
+            <GridColumn
+              paddingTop={[2, 2, 2, 2, 0]}
+              span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+            >
               <DatePicker
                 backgroundColor="blue"
                 handleChange={(d) => setFromDate(d)}
@@ -170,7 +176,10 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
                 placeholderText={formatMessage(m.chooseDate)}
               />
             </GridColumn>
-            <GridColumn span={['1/1', '4/12']}>
+            <GridColumn
+              paddingTop={[2, 2, 2, 2, 0]}
+              span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+            >
               <DatePicker
                 backgroundColor="blue"
                 handleChange={(d) => setToDate(d)}

@@ -10,7 +10,8 @@ import { AppModule } from '../src/app'
 
 jest.mock('pdfkit', function () {
   class MockPDFDocument {
-    pipe(stream) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    pipe(stream: any) {
       return stream
     }
     font() {
@@ -38,7 +39,8 @@ jest.mock('pdfkit', function () {
 
 jest.mock('stream-buffers', function () {
   class MockWritableStreamBuffer {
-    on(_, fn) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    on(_: any, fn: () => void) {
       fn()
     }
     getContentsAsString() {

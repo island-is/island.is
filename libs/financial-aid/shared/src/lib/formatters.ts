@@ -3,6 +3,7 @@ import {
   Employment,
   KeyMapping,
   ApplicationState,
+  ApplicationEventType,
 } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -27,6 +28,18 @@ export const getState: KeyMapping<ApplicationState, string> = {
   InProgress: 'Í vinnslu',
   Rejected: 'Synjað',
   Approved: 'Samþykkt',
+}
+
+export const getEventType: KeyMapping<
+  ApplicationEventType,
+  { header: string; text: string }
+> = {
+  New: { header: 'Ný umsókn', text: 'sendi inn umsókn' },
+  DataNeeded: { header: 'Vantar gögn', text: 'óskaði eftir gögnum' },
+  InProgress: { header: 'Í vinnslu', text: 'breytti stöðu' },
+  Rejected: { header: 'Synjað', text: 'synjaði umsókn' },
+  Approved: { header: 'Samþykkt', text: 'samþykkti umsókn' },
+  StaffComment: { header: 'Athugasemd', text: 'skrifaði athugasemd' },
 }
 
 export const getActiveSectionForTimeline: KeyMapping<

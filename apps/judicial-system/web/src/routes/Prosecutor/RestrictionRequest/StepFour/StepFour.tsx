@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
-import { Case, CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {

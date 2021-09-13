@@ -28,14 +28,17 @@
         "id": "a1fd62db-18a6-4741-88eb-a7b7a7e05833",
         "name": "Áki Ákærandi",
         "title": "aðstoðarsaksóknari",
+        "institution": {
+          "name": "Lögreglan á Höfuðborgarsvæðinu"
+        },
         "__typename": "User"
       },
       "courtCaseNumber": null,
       "courtDate": null,
-      "courtStartDate": null,
+      "courtStartDate": "2020-09-16T19:50:08.033Z",
       "courtEndTime": null,
       "courtAttendees": null,
-      "policeDemands": null,
+      "demands": "Þess er krafist að Batman Robinsson, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.",
       "accusedPleaAnnouncement": null,
       "litigationPresentations": null,
       "ruling": null,

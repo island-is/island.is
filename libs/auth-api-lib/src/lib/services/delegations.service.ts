@@ -1,5 +1,3 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   Inject,
   Injectable,
@@ -8,10 +6,14 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
-import { RskApi } from '@island.is/clients/rsk/v2'
 import uniqBy from 'lodash/uniqBy'
-import type { CompaniesResponse } from '@island.is/clients/rsk/v2'
 import { uuid } from 'uuidv4'
+import startOfDay from 'date-fns/startOfDay'
+
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { RskApi } from '@island.is/clients/rsk/v2'
+import type { CompaniesResponse } from '@island.is/clients/rsk/v2'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import type {
   EinstaklingarGetForsjaRequest,
@@ -145,7 +147,7 @@ export class DelegationsService {
   }
 
   async findAllValidCustomTo(toNationalId: string): Promise<DelegationDTO[]> {
-    const now = new Date()
+    const today = startOfDay(new Date())
 
     const result = await this.delegationModel.findAll({
       where: {
@@ -156,8 +158,10 @@ export class DelegationsService {
           model: DelegationScope,
           where: {
             [Op.and]: [
-              { validFrom: { [Op.lt]: now } },
-              { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: now }] } },
+              { validFrom: { [Op.lte]: today } },
+              {
+                validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gte]: today }] },
+              },
             ],
           },
         },
@@ -261,13 +265,26 @@ export class DelegationsService {
     this.logger.debug(
       `Finding a delegation with from ${fromNationalId} to ${toNationalId}`,
     )
+
+    const today = startOfDay(new Date())
     const delegation = await this.delegationModel.findOne({
       where: {
         toNationalId: toNationalId,
         fromNationalId: fromNationalId,
       },
-      include: [DelegationScope],
+      include: [
+        {
+          model: DelegationScope,
+          required: false,
+          where: {
+            validTo: {
+              [Op.or]: [{ [Op.eq]: null }, { [Op.gte]: today }],
+            },
+          },
+        },
+      ],
     })
+
     return delegation
   }
 
@@ -296,7 +313,7 @@ export class DelegationsService {
   }
 
   async findAllValidCustomFrom(nationalId: string): Promise<DelegationDTO[]> {
-    const now = new Date()
+    const today = startOfDay(new Date())
 
     const result = await this.delegationModel.findAll({
       where: {
@@ -307,9 +324,7 @@ export class DelegationsService {
           model: DelegationScope,
           include: [ApiScope, IdentityResource],
           where: {
-            [Op.and]: [
-              { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: now }] } },
-            ],
+            validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gte]: today }] },
           },
         },
       ],

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   Decision,
   RulingInput,

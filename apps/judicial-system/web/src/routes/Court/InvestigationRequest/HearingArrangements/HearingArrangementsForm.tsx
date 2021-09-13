@@ -21,12 +21,11 @@ import {
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
-  Case,
   CaseState,
   SessionArrangements,
-  User,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { Case, User } from '@island.is/judicial-system/types'
 import {
   ReactSelectOption,
   UserData,

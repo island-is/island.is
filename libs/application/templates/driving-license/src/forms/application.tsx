@@ -30,6 +30,7 @@ export const application: Form = buildForm({
   title: m.applicationName,
   mode: FormModes.APPLYING,
   renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'externalData',

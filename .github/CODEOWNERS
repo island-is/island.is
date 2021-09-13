@@ -54,6 +54,7 @@
 /libs/application/templates/driving-assessment-approval/                                      @island-is/kosmos-kaos
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission   @island-is/kosmos-kaos
 /apps/application-system/api/src/app/modules/payment                                          @island-is/kosmos-kaos @island-is/aranja-applications
+/libs/api/domains/driving-license/                                                            @island-is/kosmos-kaos
 
 /apps/reference-next-app/                                                                     @island-is/aranja-core
 /libs/cms-translations/                                                                       @island-is/aranja-core

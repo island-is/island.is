@@ -7,7 +7,8 @@ import {
   formatDate,
   NounCases,
 } from '@island.is/judicial-system/formatters'
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case

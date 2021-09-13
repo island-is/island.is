@@ -20,9 +20,9 @@ export class HealthInsuranceService {
     return this.healthInsuranceAPI.getPendingApplication(nationalId)
   }
 
-  // return true or false when asked if person is health insured?
-  async isHealthInsured(nationalId: string): Promise<boolean> {
-    return this.healthInsuranceAPI.isHealthInsured(nationalId)
+  // return true or false when asked if person is health insured
+  async isHealthInsured(nationalId: string, date?: number): Promise<boolean> {
+    return this.healthInsuranceAPI.isHealthInsured(nationalId, date)
   }
 
   // Apply for Health insurance ( number 570 is identify number for health insurance application)

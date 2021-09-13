@@ -1330,6 +1330,11 @@ export const employerFormMessages = defineMessages({
     description:
       'Your employee has applied for parental leave. Do you approve of his/her selected periods?',
   },
+  buttonReject: {
+    id: 'pl.application:employer.review.reject',
+    defaultMessage: 'Óska eftir breytingum',
+    description: 'Request changes',
+  },
 })
 
 export const inReviewFormMessages = defineMessages({
@@ -1513,9 +1518,15 @@ export const errorMessages = defineMessages({
   exceedingLength: {
     id: 'pl.application:errors.exceeding.length',
     defaultMessage:
-      'Fór yfir réttindi {days} dagar > {rights} dagar. Veldu fyrri lokadagsetningu.',
+      'Farið yfir réttindi, vinsamlegast veldu fyrri lokadagsetningu.',
+    description: 'Rights exceeded, please, select an earlier end date.',
+  },
+  durationPeriods: {
+    id: 'pl.application:errors.duration.periods',
+    defaultMessage:
+      'Villa kom upp við útreikning á tímabilum, veldu annað tímabil eða hafðu samband við okkur til að fá stuðning.',
     description:
-      'Exceeded rights {days} days > {rights} days. Select an earlier end date.',
+      'An error happened while calculating your periods, choose another period or contact us for support.',
   },
 })
 

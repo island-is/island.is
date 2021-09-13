@@ -10,10 +10,10 @@ import {
   laws,
   caseTypes,
 } from '@island.is/judicial-system/formatters'
-import {
+import { CaseType } from '@island.is/judicial-system/types'
+import type {
   Case,
   CaseCustodyProvisions,
-  CaseType,
 } from '@island.is/judicial-system/types'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 

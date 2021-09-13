@@ -24,8 +24,19 @@ export class FileStorageService {
       throw new Error('Upload bucket not configured.')
     }
 
+    if (!filename) {
+      throw new Error('Missing filename.')
+    }
+
+    // To make sure we dont format the file extension when its present. If its not present return the filename
+    const splitFileName = filename.split('.')
+    const fName =
+      splitFileName.length >= 2
+        ? splitFileName.slice(0, -1).join('.')
+        : filename
+    const fExt = splitFileName.length >= 2 ? `.${splitFileName.pop()}` : ''
     const fileId = uuid()
-    const key = `${fileId}_${kebabCase(filename)}`
+    const key = `${fileId}_${kebabCase(fName)}${fExt}`
 
     const params = {
       Bucket: this.config.uploadBucket,

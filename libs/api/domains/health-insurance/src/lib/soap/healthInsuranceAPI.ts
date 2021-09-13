@@ -50,13 +50,16 @@ export class HealthInsuranceAPI {
   }
 
   // check whether the person is health insured
-  public async isHealthInsured(nationalId: string): Promise<boolean> {
+  public async isHealthInsured(
+    nationalId: string,
+    date = Date.now(),
+  ): Promise<boolean> {
     logger.info(`--- Starting isHealthInsured api call ---`)
 
     const args = {
       sendandi: '',
       kennitala: nationalId,
-      dagsetning: Date.now(),
+      dagsetning: date,
     }
     const res: GetSjukratryggdurTypeDto = await this.xroadCall(
       'sjukratryggdur',

@@ -18,12 +18,14 @@ import {
   RolesRule,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import type { User } from '@island.is/judicial-system/types'
 import {
   UserRole,
   CaseState,
   CaseAppealDecision,
+  hasCaseBeenAppealed,
+  completedCaseStates,
 } from '@island.is/judicial-system/types'
+import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
 import { Case, CaseService } from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
@@ -44,8 +46,6 @@ const judgeRule = UserRole.JUDGE as RolesRule
 // Allows registrars to perform any action
 const registrarRule = UserRole.REGISTRAR as RolesRule
 
-const completedCaseStates = [CaseState.ACCEPTED, CaseState.REJECTED]
-
 const sevenDays = 7 * 24 * 60 * 60 * 1000
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -57,16 +57,6 @@ export class FileController {
     private readonly caseService: CaseService,
   ) {}
 
-  private hasCaseBeenAppealed(existingCase: Case): boolean {
-    return (
-      completedCaseStates.includes(existingCase.state) &&
-      (existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-        existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
-        Boolean(existingCase.prosecutorPostponedAppealDate) ||
-        Boolean(existingCase.accusedPostponedAppealDate))
-    )
-  }
-
   private getAppealDate(existingCase: Case): Date {
     // Assumption: case has been appealed and the appeal date is in the past
 
@@ -75,7 +65,7 @@ export class FileController {
       existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
       existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
     ) {
-      return existingCase.rulingDate
+      return existingCase.rulingDate as Date // We should have date
     }
 
     // Otherwise, use the earliest postponed appeal date
@@ -108,7 +98,7 @@ export class FileController {
     // of uncompleted received cases they have been assigned to
     if (user.role === UserRole.JUDGE) {
       return (
-        (this.hasCaseBeenAppealed(existingCase) &&
+        (hasCaseBeenAppealed((existingCase as unknown) as TCase) &&
           this.isLessThanSevenDaysAfterAppealDate(existingCase)) ||
         (existingCase.state === CaseState.RECEIVED &&
           user.id === existingCase.judgeId)
@@ -118,7 +108,7 @@ export class FileController {
     // Registrars have permission to view files of appealed cases for 7 days
     if (user.role === UserRole.REGISTRAR) {
       return (
-        this.hasCaseBeenAppealed(existingCase) &&
+        hasCaseBeenAppealed((existingCase as unknown) as TCase) &&
         this.isLessThanSevenDaysAfterAppealDate(existingCase)
       )
     }
@@ -231,7 +221,11 @@ export class FileController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<SignedUrl> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
+    const existingCase = await this.caseService.findByIdAndUser(
+      caseId,
+      user,
+      false,
+    )
 
     if (!this.doesUserHavePermissionToViewCaseFiles(user, existingCase)) {
       throw new ForbiddenException(

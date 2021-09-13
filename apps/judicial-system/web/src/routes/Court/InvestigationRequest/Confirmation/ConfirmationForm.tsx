@@ -9,11 +9,8 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  Case,
-  CaseAppealDecision,
-  User,
-} from '@island.is/judicial-system/types'
+import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import type { Case, User } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'

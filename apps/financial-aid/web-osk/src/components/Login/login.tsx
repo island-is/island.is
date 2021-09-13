@@ -1,5 +1,5 @@
 import React from 'react'
-import { GridContainer, Button, Text } from '@island.is/island-ui/core'
+import { GridContainer, Button, Text, Box } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 
@@ -32,32 +32,45 @@ const Login = ({ headline, about }: Props) => {
       >
         Innskráning
       </Button>
-      <br />
-      <br />
-      <Button
-        onClick={() => {
-          router.push(`${apiLoginRoute}?nationalId=0000000000`)
-        }}
-        data-testid="logout-button"
-        preTextIconType="filled"
-        type="button"
-        variant="primary"
-      >
-        Plat notandi (Árnason)
-      </Button>
-      <br />
-      <br />
-      <Button
-        onClick={() => {
-          router.push(`${apiLoginRoute}?nationalId=0000000001`)
-        }}
-        data-testid="logout-button"
-        preTextIconType="filled"
-        type="button"
-        variant="primary"
-      >
-        Plat notandi (Margrétdóttir)
-      </Button>
+      <Box paddingTop={4}>
+        <Button
+          onClick={() => {
+            router.push(`${apiLoginRoute}?nationalId=0000000000`)
+          }}
+          data-testid="logout-button"
+          preTextIconType="filled"
+          type="button"
+          variant="primary"
+        >
+          Plat notandi (Árnason)
+        </Button>
+      </Box>
+      <Box paddingTop={4}>
+        <Button
+          onClick={() => {
+            router.push(`${apiLoginRoute}?nationalId=0000000001`)
+          }}
+          data-testid="logout-button"
+          preTextIconType="filled"
+          type="button"
+          variant="primary"
+        >
+          Plat notandi (Margrétardóttir)
+        </Button>
+      </Box>
+      <Box paddingTop={4}>
+        <Button
+          onClick={() => {
+            router.push(`${apiLoginRoute}?nationalId=0000000003`)
+          }}
+          data-testid="logout-button"
+          preTextIconType="filled"
+          type="button"
+          variant="primary"
+        >
+          Plat notandi (Frilluson)
+        </Button>
+      </Box>
     </GridContainer>
   )
 }

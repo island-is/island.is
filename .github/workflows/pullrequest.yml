@@ -87,8 +87,8 @@ jobs:
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --skip-cache | xargs realpath --relative-to $(pwd))
 
-      - name: Security audit Node modules
-        run: ./scripts/ci/20_security-audit.sh
+      # - name: Security audit Node modules
+      #   run: ./scripts/ci/20_security-audit.sh
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
@@ -224,6 +224,11 @@ jobs:
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@1.1.0
+        with:
+          ignore: node_modules
+          severity: warning
 
   formatting:
     needs:

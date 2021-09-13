@@ -11,7 +11,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { ApplicationModel } from '../../application'
 
-import { ApplicationState } from '@island.is/financial-aid/shared'
+import { ApplicationEventType } from '@island.is/financial-aid/shared'
 
 @Table({
   tableName: 'application_events',
@@ -45,15 +45,15 @@ export class ApplicationEventModel extends Model<ApplicationEventModel> {
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: Object.values(ApplicationState),
+    values: Object.values(ApplicationEventType),
   })
-  @ApiProperty({ enum: ApplicationState })
-  state: ApplicationState
+  @ApiProperty({ enum: ApplicationEventType })
+  eventType: ApplicationEventType
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  comment: string
+  comment?: string
 }

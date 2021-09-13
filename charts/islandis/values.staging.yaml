@@ -88,12 +88,13 @@ api:
     DOCUMENT_PROVIDER_TOKEN_URL_TEST: /k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST
     DRIVING_LICENSE_SECRET: /k8s/api/DRIVING_LICENSE_SECRET
     DRIVING_LICENSE_XROAD_PATH: /k8s/api/DRIVING_LICENSE_XROAD_PATH
-    FINANCE_PASS: /k8s/service-portal/FINANCE_PASS
-    FINANCE_USER: /k8s/service-portal/FINANCE_USER
     HEALTH_INSURANCE_XROAD_PASSWORD: /k8s/health-insurance/XROAD-PASSWORD
     HEALTH_INSURANCE_XROAD_USERNAME: /k8s/health-insurance/XROAD-USER
     HEALTH_INSURANCE_XROAD_WSDLURL: /k8s/api/HEALTH_INSURANCE_XROAD_WSDLURL
     PAYMENT_PASSWORD: /k8s/application-system-api/PAYMENT_PASSWORD
+    PAYMENT_SCHEDULE_PASSWORD: /k8s/api/PAYMENT_SCHEDULE_PASSWORD
+    PAYMENT_SCHEDULE_USER: /k8s/api/PAYMENT_SCHEDULE_USER
+    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: /k8s/api/PAYMENT_SCHEDULE_XROAD_PROVIDER_ID
     PAYMENT_USER: /k8s/application-system-api/PAYMENT_USER
     PAYMENT_XROAD_PROVIDER_ID: /k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID
     PKPASS_API_KEY: /k8s/api/PKPASS_API_KEY
@@ -181,7 +182,7 @@ application-system-api:
       annotations:
         kubernetes.io/ingress.class: nginx-internal-alb
       hosts:
-        - host: application-api-xrd.internal.staging01.devland.is
+        - host: application-payment-callback-xrd.internal.staging01.devland.is
           paths:
             - /application-payment
   initContainer:
@@ -220,6 +221,8 @@ application-system-api:
     DOCUMENT_PROVIDER_ONBOARDING_REVIEWER: /k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER
     DOKOBIT_ACCESS_TOKEN: /k8s/application-system/api/DOKOBIT_ACCESS_TOKEN
     DOKOBIT_URL: /k8s/application-system-api/DOKOBIT_URL
+    DRIVING_LICENSE_SECRET: /k8s/application-system/api/DRIVING_LICENSE_SECRET
+    DRIVING_LICENSE_XROAD_PATH: /k8s/application-system/api/DRIVING_LICENSE_XROAD_PATH
     EMAIL_FROM: /k8s/application-system/api/EMAIL_FROM
     EMAIL_FROM_NAME: /k8s/application-system/api/EMAIL_FROM_NAME
     EMAIL_REPLY_TO: /k8s/application-system/api/EMAIL_REPLY_TO
@@ -1086,3 +1089,4 @@ xroad-collector:
       eks.amazonaws.com/role-arn: arn:aws:iam::261174024191:role/xroad-collector
     create: true
     name: xroad-collector
+

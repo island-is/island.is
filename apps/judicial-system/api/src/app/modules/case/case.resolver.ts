@@ -9,8 +9,8 @@ import {
 } from '@nestjs/graphql'
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
 
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   AuditedAction,
   AuditTrailService,
@@ -22,7 +22,6 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { BackendAPI } from '../../../services'
-import { CaseEvent, EventService } from '../event'
 import { CaseFile } from '../file'
 import { CaseInterceptor, CasesInterceptor } from './interceptors'
 import {
@@ -47,7 +46,6 @@ import {
 @Resolver(() => Case)
 export class CaseResolver {
   constructor(
-    private readonly eventService: EventService,
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -87,17 +85,6 @@ export class CaseResolver {
     )
   }
 
-  private async postCaseEvent(
-    event: CaseEvent,
-    promisedCase: Promise<Case>,
-  ): Promise<Case> {
-    const theCase = await promisedCase
-
-    this.eventService.postEvent(event, theCase)
-
-    return theCase
-  }
-
   @Mutation(() => Case, { nullable: true })
   @UseInterceptors(CaseInterceptor)
   createCase(
@@ -111,7 +98,7 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_CASE,
-      this.postCaseEvent(CaseEvent.CREATE, backendApi.createCase(input)),
+      backendApi.createCase(input),
       (theCase) => theCase.id,
     )
   }
@@ -151,10 +138,7 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.TRANSITION_CASE,
-      this.postCaseEvent(
-        (transitionCase.transition as unknown) as CaseEvent,
-        backendApi.transitionCase(id, transitionCase),
-      ),
+      backendApi.transitionCase(id, transitionCase),
       id,
     )
   }
@@ -227,7 +211,7 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.EXTEND_CASE,
-      this.postCaseEvent(CaseEvent.EXTEND, backendApi.extendCase(input.id)),
+      backendApi.extendCase(input.id),
       (theCase) => theCase.id,
     )
   }

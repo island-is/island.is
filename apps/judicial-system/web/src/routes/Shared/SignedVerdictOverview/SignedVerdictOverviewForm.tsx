@@ -22,13 +22,15 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
-  Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
+  hasCaseBeenAppealed,
+  InstitutionType,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   capitalize,
@@ -153,11 +155,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
 
     const isCourtRoleWithAccess =
       (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR) &&
-      user?.institution?.id === workingCase.court?.id &&
-      (workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
-        workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-        Boolean(workingCase?.accusedPostponedAppealDate) ||
-        Boolean(workingCase?.prosecutorPostponedAppealDate))
+      (user?.institution?.id === workingCase.court?.id ||
+        user.institution?.type === InstitutionType.HIGH_COURT) &&
+      hasCaseBeenAppealed(workingCase)
 
     if (
       !isAppealGracePeriodExpired &&
@@ -284,11 +284,14 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             name: workingCase.defenderName ?? '',
             email: workingCase.defenderEmail,
             phoneNumber: workingCase.defenderPhoneNumber,
+            defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
           }}
         />
       </Box>
       {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-        workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
+        workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+        workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE ||
+        workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) &&
         workingCase.rulingDate &&
         (user?.role === UserRole.JUDGE ||
           user?.role === UserRole.REGISTRAR) && (

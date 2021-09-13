@@ -26,10 +26,12 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  Case,
   CaseAppealDecision,
   CaseDecision,
   CaseType,
+} from '@island.is/judicial-system/types'
+import type {
+  Case,
   RequestSignatureResponse,
 } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'

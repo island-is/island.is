@@ -27,6 +27,7 @@ export enum WhoIsTheNotificationForEnum {
   JURIDICALPERSON = 'juridicalPerson',
   ME = 'me',
   POWEROFATTORNEY = 'powerOfAttorney',
+  CHILDINCUSTODY = 'childInCustody',
 }
 
 export enum AccidentTypeEnum {

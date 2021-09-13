@@ -27,15 +27,15 @@ export class User extends Model<User> {
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
-  id: string
+  id!: string
 
   @CreatedAt
   @ApiProperty()
-  created: Date
+  created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  modified: Date
+  modified!: Date
 
   @Column({
     type: DataType.STRING,
@@ -43,35 +43,35 @@ export class User extends Model<User> {
     unique: true,
   })
   @ApiProperty()
-  nationalId: string
+  nationalId!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  name: string
+  name!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  title: string
+  title!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  mobileNumber: string
+  mobileNumber!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  email: string
+  email!: string
 
   @Column({
     type: DataType.ENUM,
@@ -79,7 +79,7 @@ export class User extends Model<User> {
     values: Object.values(UserRole),
   })
   @ApiProperty({ enum: UserRole })
-  role: UserRole
+  role!: UserRole
 
   @ForeignKey(() => Institution)
   @Column({
@@ -87,16 +87,16 @@ export class User extends Model<User> {
     allowNull: true,
   })
   @ApiProperty()
-  institutionId: string
+  institutionId?: string
 
   @BelongsTo(() => Institution, 'institutionId')
   @ApiProperty({ type: Institution })
-  institution: Institution
+  institution?: Institution
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  active: boolean
+  active!: boolean
 }

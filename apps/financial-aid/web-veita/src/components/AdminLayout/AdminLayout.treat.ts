@@ -16,6 +16,7 @@ export const gridWrapper = style({
 })
 
 export const childContainer = style({
+  overflow: 'hidden',
   gridColumn: '4/-1',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {

@@ -19,7 +19,6 @@ import {
   Text,
   Link,
   Button,
-  ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
@@ -35,13 +34,14 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
 import { Locale } from '@island.is/shared/types'
-import Head from 'next/head'
 import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '@island.is/web/utils/processMenuData'
 import * as styles from './OpenData.treat'
+import { useMeasure } from 'react-use'
+import cn from 'classnames'
 
 interface OpenDataProps {
   page: GetOpenDataPageQuery['getOpenDataPage']
@@ -64,6 +64,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
     externalLinkSectionDescription,
     externalLinkSectionImage,
   } = page
+  const [ref, { width, height }] = useMeasure()
   return (
     <Box id="main-content" position="relative" style={{ overflow: 'hidden' }}>
       <Box background="blue100">
@@ -116,7 +117,12 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
               </Box>
             </GridColumn>
             <GridColumn span={['12/12', '7/12', '7/12']}>
-              <Box className={styles.headerGraphWrapper}>
+              <Box
+                ref={ref}
+                className={cn(styles.headerGraphWrapper, {
+                  [styles.scroll]: width < 700,
+                })}
+              >
                 <Box className={styles.headerGraphParent}>
                   <SimpleLineChart graphData={pageHeaderGraph} />
                 </Box>

@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
-import {
+import type {
+  NotificationType,
+  SendNotificationResponse,
   Case,
   CaseTransition,
-  NotificationType,
   RequestSignatureResponse,
-  SendNotificationResponse,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import {

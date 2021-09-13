@@ -74,10 +74,7 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
       if (length + daysAlreadyUsed > rights) {
         return setError(fieldId, {
           type: 'error',
-          message: formatMessage(errorMessages.exceedingLength, {
-            days: length + daysAlreadyUsed,
-            rights,
-          }),
+          message: formatMessage(errorMessages.exceedingLength),
         })
       }
 
@@ -85,7 +82,12 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
       setDays(length)
       setDuration(daysToMonths(length))
     } catch (e) {
-      Sentry.captureException(e)
+      Sentry.captureException(e.message)
+
+      setError(fieldId, {
+        type: 'error',
+        message: formatMessage(errorMessages.durationPeriods),
+      })
     }
   }
 
@@ -93,7 +95,7 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
     if (currentIndex < 0) {
       Sentry.captureException(
         new Error(
-          `Cannot render PeriodEndDate component with a currentIndex of -1`,
+          'Cannot render PeriodEndDate component with a currentIndex of -1',
         ),
       )
     }
@@ -122,6 +124,7 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
           children: undefined,
           placeholder: parentalLeaveFormMessages.endDate.placeholder,
           onChange: handleChange,
+          backgroundColor: 'blue',
         }}
       />
 

@@ -2,6 +2,8 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import AppealSection from './AppealSection'
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { LocaleProvider } from '@island.is/localization'
+import { MockedProvider } from '@apollo/client/testing'
 
 describe('Appeal section component', () => {
   const baseWorkingCase = {
@@ -16,15 +18,19 @@ describe('Appeal section component', () => {
 
   test('should say when a case is no longer appealable', async () => {
     render(
-      <AppealSection
-        workingCase={{
-          ...baseWorkingCase,
-          isAppealDeadlineExpired: true,
-          rulingDate: '2020-09-16T19:50:00.000Z',
-        }}
-        setAccusedAppealDate={() => null}
-        setProsecutorAppealDate={() => null}
-      />,
+      <MockedProvider>
+        <LocaleProvider locale="is" messages={{}}>
+          <AppealSection
+            workingCase={{
+              ...baseWorkingCase,
+              isAppealDeadlineExpired: true,
+              rulingDate: '2020-09-16T19:50:00.000Z',
+            }}
+            setAccusedAppealDate={() => null}
+            setProsecutorAppealDate={() => null}
+          />
+        </LocaleProvider>
+      </MockedProvider>,
     )
 
     expect(
@@ -36,11 +42,15 @@ describe('Appeal section component', () => {
 
   test('should not show the "Accused appeals" button if the accused cannot appeal', async () => {
     render(
-      <AppealSection
-        workingCase={baseWorkingCase}
-        setAccusedAppealDate={() => null}
-        setProsecutorAppealDate={() => null}
-      />,
+      <MockedProvider>
+        <LocaleProvider locale="is" messages={{}}>
+          <AppealSection
+            workingCase={baseWorkingCase}
+            setAccusedAppealDate={() => null}
+            setProsecutorAppealDate={() => null}
+          />
+        </LocaleProvider>
+      </MockedProvider>,
     )
 
     expect(
@@ -50,11 +60,15 @@ describe('Appeal section component', () => {
 
   test('should not show the "Prosecutor appeals" button if the prosecutor cannot appeal', async () => {
     render(
-      <AppealSection
-        workingCase={baseWorkingCase}
-        setAccusedAppealDate={() => null}
-        setProsecutorAppealDate={() => null}
-      />,
+      <MockedProvider>
+        <LocaleProvider locale="is" messages={{}}>
+          <AppealSection
+            workingCase={baseWorkingCase}
+            setAccusedAppealDate={() => null}
+            setProsecutorAppealDate={() => null}
+          />
+        </LocaleProvider>
+      </MockedProvider>,
     )
 
     expect(

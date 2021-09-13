@@ -7,28 +7,10 @@ export const restrictionRequest = {
     description:
       'Notaður sem titill í kröfu PDF þar sem {caseType} er mála týpan og bætt er við sjálfkrafa í kóða',
   }),
-  caseNumber: defineMessage({
-    id: 'judicial.system.backend:pdf.restriction_request.case_number',
-    defaultMessage: 'LÖKE málsnúmer: {caseNumber}',
-    description:
-      'Notaður sem texti fyrir málsnúmer í kröfu PDF þar sem {caseNumber} er málsnúmerið og er bætt við sjálfkrafa í kóða',
-  }),
-  district: defineMessage({
-    id: 'judicial.system.backend:pdf.restriction_request.district',
-    defaultMessage: 'Embætti: {district}',
-    description:
-      'Notaður sem texti fyrir embætti í kröfu PDF þar sem {district} er embættið og er bætt við sjálfkrafa í kóða',
-  }),
   noDistrict: defineMessage({
     id: 'judicial.system.backend:pdf.restriction_request.no_district',
     defaultMessage: 'Ekki skráð',
     description: 'Notaður sem texti þegar embætti er ekki skráð',
-  }),
-  court: defineMessage({
-    id: 'judicial.system.backend:pdf.restriction_request.court',
-    defaultMessage: 'Dómstóll: {court}',
-    description:
-      'Notaður sem texti fyrir dómstól í kröfu PDF þar sem {court} er dómstóllinn og er bætt við sjálfkrafa í kóða',
   }),
   baseInfo: defineMessages({
     heading: {

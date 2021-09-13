@@ -1,6 +1,7 @@
 import { IsNumber, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
+import { FileType } from '@island.is/financial-aid/shared'
 
 export class CreateFileDto {
   @IsString()
@@ -18,4 +19,8 @@ export class CreateFileDto {
   @IsNumber()
   @ApiProperty()
   readonly size: number
+
+  @IsString()
+  @ApiProperty()
+  readonly type: FileType
 }

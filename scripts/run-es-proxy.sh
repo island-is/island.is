@@ -5,4 +5,4 @@ set -euo pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-$DIR/run-proxy.js --namespace es-proxy --service es-proxy --port 9200 --proxy-port 9200 --cluster ${CLUSTER:-dev-cluster01}
+"$DIR"/run-proxy.js --namespace es-proxy --service es-proxy --port 9200 --proxy-port 9200 --cluster "${CLUSTER:-dev-cluster01}"

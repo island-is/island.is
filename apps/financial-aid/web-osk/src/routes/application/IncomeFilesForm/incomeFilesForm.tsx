@@ -1,9 +1,6 @@
 import React, { useEffect, useContext } from 'react'
-import { Text, InputFileUpload } from '@island.is/island-ui/core'
 
 import {
-  FileUploadContainer,
-  ContentContainer,
   Footer,
   FormLayout,
   Files,
@@ -20,13 +17,7 @@ const IncomeFilesForm = () => {
 
   const { form, updateForm } = useContext(FormContext)
 
-  const {
-    files,
-    uploadErrorMessage,
-    onChange,
-    onRemove,
-    onRetry,
-  } = useFileUpload(form.incomeFiles)
+  const { files } = useFileUpload(form.incomeFiles)
 
   useEffect(() => {
     const formFiles = files.filter((f) => f.status === 'done')

@@ -2,10 +2,8 @@ import {
   capitalize,
   formatAccusedByGender,
 } from '@island.is/judicial-system/formatters'
-import {
-  CaseCustodyRestrictions,
-  CaseGender,
-} from '@island.is/judicial-system/types'
+import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import type { CaseGender } from '@island.is/judicial-system/types'
 import { restrictions as m } from '@island.is/judicial-system-web/messages'
 
 export const restrictions = [

@@ -10,7 +10,7 @@ interface Props {
 const Rejected = ({ state }: Props) => {
   return (
     <>
-      <Text as="h2" variant="h3" color="red400" marginBottom={[4, 4, 7]}>
+      <Text as="h2" variant="h3" color="red400" marginBottom={[4, 4, 5]}>
         Umsókn {getState[state].toLowerCase()}
       </Text>
 

@@ -23,10 +23,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   AccusedPleaDecision,
-  Case,
   CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   CaseData,

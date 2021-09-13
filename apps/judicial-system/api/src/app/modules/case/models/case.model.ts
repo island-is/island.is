@@ -1,6 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import {
+import type {
   AccusedPleaDecision,
   Case as TCase,
   CaseAppealDecision,

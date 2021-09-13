@@ -40,10 +40,6 @@ const SummaryForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
 
-  const allFiles = form.hasIncome
-    ? form.taxReturnFiles
-    : form.taxReturnFiles.concat(form.incomeFiles)
-
   const { user } = useContext(UserContext)
 
   const [isVisible, setIsVisible] = useState(false)
@@ -55,12 +51,16 @@ const SummaryForm = () => {
 
   const { createApplication } = useApplication()
 
+  const allFiles = form.incomeFiles
+    .concat(form.taxReturnFiles)
+    .concat(form.otherFiles)
+
   const handleNextButtonClick = async () => {
     if (!form || !user) {
       return
     }
     try {
-      await createApplication(form, user, allFiles).then(() => {
+      await createApplication(form, user).then(() => {
         if (navigation?.nextUrl) {
           router.push(navigation.nextUrl)
         }

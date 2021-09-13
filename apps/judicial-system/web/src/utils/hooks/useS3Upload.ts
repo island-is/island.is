@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
 import {
@@ -6,11 +6,12 @@ import {
   CreatePresignedPostMutation,
   DeleteFileMutation,
 } from '@island.is/judicial-system-web/graphql'
-import { Case, PresignedPost } from '@island.is/judicial-system/types'
+import type { Case, PresignedPost } from '@island.is/judicial-system/types'
 
 export const useS3Upload = (workingCase?: Case) => {
   const [files, setFiles] = useState<UploadFile[]>([])
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
+  const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
   const filesRef = useRef<UploadFile[]>(files)
 
   useEffect(() => {
@@ -23,6 +24,13 @@ export const useS3Upload = (workingCase?: Case) => {
     setFilesRefAndState(uploadCaseFiles ?? [])
   }, [workingCase?.files])
 
+  useMemo(() => {
+    setAllFilesUploaded(
+      files.filter((file) => file.status === 'done' || file.status === 'error')
+        .length === files.length,
+    )
+  }, [files])
+
   const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
   const [createFileMutation] = useMutation(CreateFileMutation)
   const [deleteFileMutation] = useMutation(DeleteFileMutation)
@@ -32,7 +40,12 @@ export const useS3Upload = (workingCase?: Case) => {
     filename: string,
   ): Promise<PresignedPost> => {
     const { data: presignedPostData } = await createPresignedPostMutation({
-      variables: { input: { caseId: workingCase?.id, fileName: filename } },
+      variables: {
+        input: {
+          caseId: workingCase?.id,
+          fileName: filename.normalize(),
+        },
+      },
     })
 
     return presignedPostData?.createPresignedPost
@@ -224,5 +237,12 @@ export const useS3Upload = (workingCase?: Case) => {
     onChange([file as File], true)
   }
 
-  return { files, uploadErrorMessage, onChange, onRemove, onRetry }
+  return {
+    files,
+    uploadErrorMessage,
+    allFilesUploaded,
+    onChange,
+    onRemove,
+    onRetry,
+  }
 }

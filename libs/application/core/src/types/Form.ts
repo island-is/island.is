@@ -63,6 +63,7 @@ export interface Form {
   type: FormItemTypes.FORM
   mode?: FormModes
   renderLastScreenButton?: boolean
+  renderLastScreenBackButton?: boolean
   icon?: string
   children: FormChildren[]
 }

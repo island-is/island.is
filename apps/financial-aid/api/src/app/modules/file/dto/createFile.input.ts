@@ -2,7 +2,10 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import { CreateApplicationFile } from '@island.is/financial-aid/shared'
+import {
+  CreateApplicationFile,
+  FileType,
+} from '@island.is/financial-aid/shared'
 
 @InputType()
 export class CreateApplicationFileInput implements CreateApplicationFile {
@@ -17,4 +20,8 @@ export class CreateApplicationFileInput implements CreateApplicationFile {
   @Allow()
   @Field()
   readonly size!: number
+
+  @Allow()
+  @Field(() => String)
+  readonly type!: FileType
 }

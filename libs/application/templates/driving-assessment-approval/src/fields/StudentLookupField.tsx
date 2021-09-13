@@ -26,7 +26,7 @@ interface Props extends FieldBaseProps {
 }
 
 interface ExpectedStudent {
-  nationalId: string
+  nationalId?: string
 }
 
 export const StudentLookupField: FC<Props> = ({ error, application }) => {
@@ -35,7 +35,7 @@ export const StudentLookupField: FC<Props> = ({ error, application }) => {
     name: 'student.nationalId',
     // FYI the watch value is not queried unless the value changes after rendering.
     // see react hook form's docs for useWatch for further info.
-    defaultValue: student.nationalId,
+    defaultValue: student?.nationalId,
   })
 
   const { formatMessage } = useLocale()
@@ -67,7 +67,7 @@ export const StudentLookupField: FC<Props> = ({ error, application }) => {
       {error && { error }}
 
       {result.student ? (
-        <Box>
+        <Box marginBottom={2}>
           <Text variant="h4">
             {formatText(m.student, application, formatMessage)}
           </Text>

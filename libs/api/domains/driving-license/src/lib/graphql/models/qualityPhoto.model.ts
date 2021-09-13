@@ -5,6 +5,6 @@ export class QualityPhoto {
   @Field()
   success!: boolean
 
-  @Field()
+  @Field({ nullable: true })
   qualityPhoto!: string | null
 }

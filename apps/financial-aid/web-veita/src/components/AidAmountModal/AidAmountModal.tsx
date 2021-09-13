@@ -1,9 +1,7 @@
 import React from 'react'
-import { ModalBase, Text, Box } from '@island.is/island-ui/core'
+import { ModalBase, Text, Box, Button } from '@island.is/island-ui/core'
 
 import * as styles from './AidAmountModal.treat'
-
-import { Button } from '@island.is/financial-aid-web/veita/src/components'
 
 import format from 'date-fns/format'
 

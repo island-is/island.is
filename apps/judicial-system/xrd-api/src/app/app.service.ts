@@ -2,9 +2,9 @@ import fetch from 'isomorphic-fetch'
 
 import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
 
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Case as TCase } from '@island.is/judicial-system/types'
+import type { Logger } from '@island.is/logging'
+import type { Case as TCase } from '@island.is/judicial-system/types'
 import {
   AuditedAction,
   AuditTrailService,

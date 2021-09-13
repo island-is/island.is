@@ -18,19 +18,26 @@ import {
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
+import { Audit } from '@island.is/nest/audit'
 import { FinanceService } from '@island.is/clients/finance'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
+@Audit({ namespace: '@island.is/api/finance' })
 export class FinanceResolver {
   constructor(private FinanceService: FinanceService) {}
 
   @Query(() => graphqlTypeJson)
+  @Audit()
   async getFinanceStatus(@CurrentUser() user: User) {
-    return this.FinanceService.getFinanceStatus(user.nationalId)
+    return this.FinanceService.getFinanceStatus(
+      user.nationalId,
+      user.authorization,
+    )
   }
 
   @Query(() => graphqlTypeJson)
+  @Audit()
   async getFinanceStatusDetails(
     @CurrentUser() user: User,
     @Args('input') input: GetFinancialOverviewInput,
@@ -39,15 +46,21 @@ export class FinanceResolver {
       user.nationalId,
       input.OrgID,
       input.chargeTypeID,
+      user.authorization,
     )
   }
 
   @Query(() => CustomerChargeType, { nullable: true })
+  @Audit()
   async getCustomerChargeType(@CurrentUser() user: User) {
-    return this.FinanceService.getCustomerChargeType(user.nationalId)
+    return this.FinanceService.getCustomerChargeType(
+      user.nationalId,
+      user.authorization,
+    )
   }
 
   @Query(() => CustomerRecords, { nullable: true })
+  @Audit()
   async getCustomerRecords(
     @CurrentUser() user: User,
     @Args('input') input: GetCustomerRecordsInput,
@@ -57,10 +70,12 @@ export class FinanceResolver {
       input.chargeTypeID,
       input.dayFrom,
       input.dayTo,
+      user.authorization,
     )
   }
 
   @Query(() => DocumentsListModel)
+  @Audit()
   async getDocumentsList(
     @CurrentUser() user: User,
     @Args('input') input: GetDocumentsListInput,
@@ -70,10 +85,12 @@ export class FinanceResolver {
       input.dayFrom,
       input.dayTo,
       input.listPath,
+      user.authorization,
     )
   }
 
   @Query(() => FinanceDocumentModel, { nullable: true })
+  @Audit()
   async getFinanceDocument(
     @CurrentUser() user: User,
     @Args('input') input: GetFinanceDocumentInput,
@@ -81,10 +98,12 @@ export class FinanceResolver {
     return this.FinanceService.getFinanceDocument(
       user.nationalId,
       input.documentID,
+      user.authorization,
     )
   }
 
   @Query(() => FinanceDocumentModel, { nullable: true })
+  @Audit()
   async getAnnualStatusDocument(
     @CurrentUser() user: User,
     @Args('input') input: GetAnnualStatusDocumentInput,
@@ -92,11 +111,16 @@ export class FinanceResolver {
     return this.FinanceService.getAnnualStatusDocument(
       user.nationalId,
       input.year,
+      user.authorization,
     )
   }
 
   @Query(() => CustomerTapsControlModel, { nullable: true })
+  @Audit()
   async getCustomerTapControl(@CurrentUser() user: User) {
-    return this.FinanceService.getCustomerTapControl(user.nationalId)
+    return this.FinanceService.getCustomerTapControl(
+      user.nationalId,
+      user.authorization,
+    )
   }
 }

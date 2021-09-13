@@ -23,12 +23,12 @@ const Files = ({ headline, about }: Props) => {
     onChange,
     onRemove,
     onRetry,
-  } = useFileUpload(form.incomeFiles)
+  } = useFileUpload(form.otherFiles)
 
   useEffect(() => {
     const formFiles = files.filter((f) => f.status === 'done')
 
-    updateForm({ ...form, incomeFiles: formFiles })
+    updateForm({ ...form, otherFiles: formFiles })
   }, [files])
 
   return (

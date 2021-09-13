@@ -2084,6 +2084,12 @@
             ]
           }
         },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/driving-assessment-approval/src/**/*.{js,ts,tsx}'"
+          }
+        },
         "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -5660,7 +5666,7 @@
           "options": {
             "cypressConfig": "apps/judicial-system/web-e2e/cypress.json",
             "tsConfig": "apps/judicial-system/web-e2e/tsconfig.e2e.json",
-            "devServerTarget": "judicial-system-web:serve",
+            "devServerTarget": "",
             "baseUrl": "http://localhost:4200"
           },
           "configurations": {
@@ -5669,10 +5675,11 @@
             }
           }
         },
-        "e2e-no-ci": {
+        "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n judicial-system-web-e2e -t react -d dist/apps/judicial-system/web"
+            "cypressConfig": "apps/judicial-system/web-e2e/cypress.json",
+            "command": "yarn e2e-ci -n judicial-system-web-e2e -c -d dist/apps/judicial-system/web"
           }
         },
         "lint": {
@@ -6521,6 +6528,31 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/education/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+          }
+        },
+        "init": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn schemas",
+              "yarn dev-services services-user-profile",
+              "yarn dev-services services-search-indexer",
+              "npx nx run services-user-profile:migrate"
+            ],
+            "parallel": false
+          }
+        },
+        "start": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "kubectl port-forward svc/socat-xroad 8081:80 -n socat &",
+              "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
+              "yarn start api &",
+              "yarn start services-user-profile &",
+              "yarn start service-portal &"
+            ],
+            "parallel": true
           }
         }
       }

@@ -7,9 +7,9 @@ import { CaseTransition } from '@island.is/judicial-system/types'
 export class TransitionCaseDto {
   @IsString()
   @ApiProperty()
-  readonly modified: Date
+  readonly modified!: Date
 
   @IsEnum(CaseTransition)
   @ApiProperty({ enum: CaseTransition })
-  readonly transition: CaseTransition
+  readonly transition!: CaseTransition
 }

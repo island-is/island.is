@@ -17,7 +17,8 @@ export const externalData = {
     },
     checkboxLabel: {
       id: `pdpp.application:application.externalData.checkboxLabel`,
-      defaultMessage: 'Ég samþykki',
+      defaultMessage:
+        'Ég skil að ofangreindra upplýsinga verður aflað við úrvinnslu á þessari umsókn.',
       description: 'External data checkbox label',
     },
   }),

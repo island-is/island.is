@@ -4,7 +4,6 @@ import { Logo, Text, Box, Link } from '@island.is/island-ui/core'
 import { LogoHfj } from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './login.treat'
-import cn from 'classnames'
 
 const Login = () => {
   useEffect(() => {
@@ -43,14 +42,6 @@ const Login = () => {
         <Link href="/api/auth/login?nationalId=0000000002&service=veita">
           Plat notandi
         </Link>
-
-        {/* <Button
-          onClick={() => {
-            // router.push('/api/auth/login?nationalId=0000000000')
-          }}
-        >
-          Innskráning
-        </Button> */}
       </Box>
     </div>
   )

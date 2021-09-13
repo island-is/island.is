@@ -1,3 +1,4 @@
+/// <reference path="../../support/index.d.ts" />
 describe('/domur/urskurdur/:id', () => {
   beforeEach(() => {
     cy.stubAPIResponses()

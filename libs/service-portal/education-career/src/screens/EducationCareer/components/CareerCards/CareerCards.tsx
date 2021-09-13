@@ -11,7 +11,8 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import * as styles from './CareerCards.treat'
-import { useLocale } from '@island.is/localization'
+import { defineMessage } from 'react-intl'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 const EducationExamFamilyOverviewsQuery = gql`
   query EducationExamFamilyOverviewsQuery {
@@ -27,6 +28,7 @@ const EducationExamFamilyOverviewsQuery = gql`
 `
 
 const CareerCards = () => {
+  useNamespaces('sp.education-career')
   const { data, loading } = useQuery<Query>(EducationExamFamilyOverviewsQuery)
   const { formatMessage } = useLocale()
 
@@ -60,7 +62,10 @@ const CareerCards = () => {
                   iconType="outline"
                   nowrap
                 >
-                  {formatMessage(m.viewDetail)}
+                  {formatMessage({
+                    id: 'sp.education-career:education-more',
+                    defaultMessage: 'Skoða nánar',
+                  })}
                 </Button>
               </Link>
             }
@@ -69,7 +74,12 @@ const CareerCards = () => {
       ))}
       {educationExamFamilyOverviews.length === 0 && (
         <Box marginTop={8}>
-          <EmptyState title={m.noDataFound} />
+          <EmptyState
+            title={defineMessage({
+              id: 'sp.education-career:education-no-data',
+              defaultMessage: 'Engin gögn fundust',
+            })}
+          />
         </Box>
       )}
     </>

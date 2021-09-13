@@ -28,13 +28,13 @@ const InProgress = ({ currentApplication }: Props) => {
 
   return (
     <>
-      <Text as="h2" variant="h3" color="blue400" marginBottom={[4, 4, 7]}>
+      <Text as="h2" variant="h3" color="blue400" marginBottom={[4, 4, 5]}>
         Umsókn {getState[currentApplication.state].toLowerCase()} til útgreiðslu
         í {months[nextMonth].toLowerCase()} {` `} {currentYear}
       </Text>
 
       {currentApplication.state === ApplicationState.DATANEEDED && (
-        <Box marginBottom={[4, 4, 7]}>
+        <Box marginBottom={[4, 4, 5]}>
           <ActionCard
             heading="Vantar gögn"
             text="Við þurfum að fá gögn frá þér áður en við getum haldið áfram með umsóknina."
@@ -48,8 +48,6 @@ const InProgress = ({ currentApplication }: Props) => {
           />
         </Box>
       )}
-
-      <Timeline state={currentApplication.state} />
 
       <Estimation
         homeCircumstances={currentApplication.homeCircumstances}

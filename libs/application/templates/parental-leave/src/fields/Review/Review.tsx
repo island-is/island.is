@@ -158,12 +158,14 @@ export const Review: FC<ReviewScreenProps> = ({
             </GridColumn>
           </GridRow>
         }
+        triggerValidation
       >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
               label={formatMessage(parentalLeaveFormMessages.applicant.email)}
               value={applicantEmail}
+              error={hasError('applicant.email')}
             />
           </GridColumn>
 
@@ -173,6 +175,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 parentalLeaveFormMessages.applicant.phoneNumber,
               )}
               value={applicantPhoneNumber}
+              error={hasError('applicant.phoneNumber')}
             />
           </GridColumn>
         </GridRow>
@@ -280,6 +283,7 @@ export const Review: FC<ReviewScreenProps> = ({
             )}
           </>
         }
+        triggerValidation
       >
         {otherParent === NO && (
           <RadioValue
@@ -477,6 +481,7 @@ export const Review: FC<ReviewScreenProps> = ({
             )}
           </>
         }
+        triggerValidation
       >
         <GridRow marginBottom={2}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -657,6 +662,7 @@ export const Review: FC<ReviewScreenProps> = ({
               )}
             </>
           }
+          triggerValidation
         >
           <GridRow marginBottom={2}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -815,6 +821,7 @@ export const Review: FC<ReviewScreenProps> = ({
               )}
             </>
           }
+          triggerValidation
         >
           <GridRow marginBottom={2}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -912,6 +919,7 @@ export const Review: FC<ReviewScreenProps> = ({
             )}
           </>
         }
+        triggerValidation
       >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>

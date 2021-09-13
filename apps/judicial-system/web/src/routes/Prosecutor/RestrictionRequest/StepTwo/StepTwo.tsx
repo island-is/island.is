@@ -3,14 +3,13 @@ import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import {
-  Case,
   CaseState,
   CaseTransition,
   CaseType,
   NotificationType,
-  User,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { Case, User } from '@island.is/judicial-system/types'
 import {
   CaseData,
   ProsecutorSubsections,

@@ -39,13 +39,14 @@ function HealthDeclaration({
         </Box>
       )}
       <GridRow>
-        <GridColumn span="9/12">
+        <GridColumn span={['12/12', '9/12']} paddingBottom={1}>
           <Text>{formatText(props.label, application, formatMessage)}</Text>
         </GridColumn>
-        <GridColumn span="3/12">
+        <GridColumn span={['8/12', '3/12']}>
           <RadioController
             id={field.id}
             split="1/2"
+            smallScreenSplit="1/2"
             largeButtons={false}
             defaultValue={
               (getValueViaPath(application.answers, field.id) as string[]) ??

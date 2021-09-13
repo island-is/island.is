@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { RequestSignatureResponse as TRequestSignatureResponse } from '@island.is/judicial-system/types'
+import type { RequestSignatureResponse as TRequestSignatureResponse } from '@island.is/judicial-system/types'
 
 @ObjectType()
 export class RequestSignatureResponse implements TRequestSignatureResponse {

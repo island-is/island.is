@@ -14,6 +14,7 @@ import {
   InProgress,
   Rejected,
   StatusLayout,
+  Timeline,
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { getActiveTypeForStatus } from '@island.is/financial-aid/shared'
@@ -51,6 +52,8 @@ const MainPage = () => {
 
             {getActiveTypeForStatus[currentApplication.state] ===
               'Rejected' && <Rejected state={currentApplication.state} />}
+
+            <Timeline state={currentApplication.state} />
           </>
         )}
 

@@ -88,9 +88,6 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
           alignItems="center"
           padding={[2, 2, 2]}
         >
-          {organizationLogo && !subPage && (
-            <img src={organizationLogo.url} width={80} />
-          )}
           <Box
             display="flex"
             flexDirection="row"
@@ -110,7 +107,6 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
                 <Text color="dark400">{graphDescription}</Text>
               )}
             </Box>
-
             {subPage && (
               <Box padding={[2, 2, 4]}>
                 <ExportCSVButton data={data} title={graphTitle} />
@@ -144,7 +140,7 @@ const FrameWrapper = ({ width, children }) => {
   return (
     <Box
       className={cn(styles.frameWrapper, {
-        [styles.scroll]: width < 840,
+        [styles.scroll]: width < 800,
       })}
       borderColor="purple100"
       borderWidth="standard"

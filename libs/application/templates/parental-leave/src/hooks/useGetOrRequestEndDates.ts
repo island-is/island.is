@@ -46,7 +46,7 @@ export const useGetOrRequestEndDates = (application: Application) => {
         setLoading(false)
 
         throw new Error(
-          `Cannot calculate temporary end date from VMST: ${startDate}, ${length}, ${temporaryLazyEndDate}`,
+          `VMST: Cannot calculate temporary end date, startDate/${startDate} length/${length} temporaryLazyEndDate/${temporaryLazyEndDate}`,
         )
       }
 
@@ -65,7 +65,7 @@ export const useGetOrRequestEndDates = (application: Application) => {
         setLoading(false)
 
         throw new Error(
-          `Cannot calculate length between startDate and calculated endDate from VMST: ${startDate}, ${length}, ${temporaryLazyEndDate}, ${startToEndDatesLength}`,
+          `VMST: Cannot calculate length between startDate and calculated endDate, startDate/${startDate} length/${length} temporaryLazyEndDate/${temporaryLazyEndDate} startToEndDatesLength/${startToEndDatesLength}`,
         )
       }
 
@@ -93,7 +93,7 @@ export const useGetOrRequestEndDates = (application: Application) => {
         setLoading(false)
 
         throw new Error(
-          `Cannot calculate end date from VMST: ${startDate}, ${length}, ${temporaryLazyEndDate}, ${startToEndDatesLength}, ${computedPercentage}, ${lazyEndDate}`,
+          `VMST: Cannot calculate end date, startDate/${startDate} length/${length} temporaryLazyEndDate/${temporaryLazyEndDate} startToEndDatesLength/${startToEndDatesLength} computedPercentage/${computedPercentage} lazyEndDate/${lazyEndDate}`,
         )
       }
 

@@ -13,12 +13,8 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  Institution,
-  InstitutionType,
-  User,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
+import type { Institution, User } from '@island.is/judicial-system/types'
 import { FormSettings } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { ReactSelectOption } from '../../../types'
 import { validate } from '../../../utils/validate'
@@ -29,7 +25,7 @@ type ExtendedOption = ReactSelectOption & { institution: Institution }
 
 interface Props {
   user: User
-  courts: Institution[]
+  allCourts: Institution[]
   prosecutorsOffices: Institution[]
   onSave: (user: User) => void
   loading: boolean
@@ -50,7 +46,7 @@ export const UserForm: React.FC<Props> = (props) => {
   const selectInstitutions = (user.role === UserRole.PROSECUTOR
     ? props.prosecutorsOffices
     : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
-    ? props.courts
+    ? props.allCourts
     : []
   ).map((institution) => ({
     label: institution.name,
@@ -112,7 +108,8 @@ export const UserForm: React.FC<Props> = (props) => {
     return user.role === UserRole.PROSECUTOR
       ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
       : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
-      ? user.institution?.type === InstitutionType.COURT
+      ? user.institution?.type === InstitutionType.COURT ||
+        user.institution?.type === InstitutionType.HIGH_COURT
       : false
   }
 

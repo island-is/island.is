@@ -21,6 +21,7 @@ export class ApplicationEventService {
       where: {
         applicationId: id,
       },
+      order: [['created', 'DESC']],
     })
   }
 

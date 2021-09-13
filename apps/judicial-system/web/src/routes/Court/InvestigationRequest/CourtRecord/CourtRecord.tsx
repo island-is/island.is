@@ -4,10 +4,10 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
-  Case,
   NotificationType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseData,
   JudgeSubsections,

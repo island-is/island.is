@@ -4,15 +4,6 @@ describe('/domur/thingbok/:id', () => {
     cy.visit('/domur/thingbok/test_id_stadfest')
   })
 
-  it('should require a valid court start time', () => {
-    cy.getByTestid('courtStartDate').click().blur()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('courtStartDate').type('122')
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('courtStartDate').clear().type('1222')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
-  })
-
   it('should autofill court attendees', () => {
     cy.getByTestid('courtAttendees').contains(
       'Áki Ákærandi aðstoðarsaksóknari Batman Robinsson kærða',
@@ -25,17 +16,10 @@ describe('/domur/thingbok/:id', () => {
     )
   })
 
-  it('should require a valid litigation presentation', () => {
-    cy.getByTestid('litigationPresentations').click().blur()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('litigationPresentations').type('lorem')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
-  })
-
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('continueButton').should('be.disabled')
-    cy.getByTestid('courtStartDate').type('1222')
-    cy.getByTestid('accusedPleaAnnouncement').type('lorem')
+    cy.getByTestid('courtStartDate-time').type('1222')
+    cy.get('#accused-plea-decision-rejecting').check()
     cy.getByTestid('litigationPresentations').type('lorem')
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()

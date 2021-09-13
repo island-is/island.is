@@ -19,62 +19,51 @@ const EducationExamResultQuery = gql`
       fullName
       grades {
         studentYear
-        icelandicGrade {
-          grade
+        courses {
+          label
+          gradeSum {
+            label
+            serialGrade {
+              grade
+              label
+              weight
+            }
+            elementaryGrade {
+              grade
+              label
+              weight
+            }
+          }
           competence
           competenceStatus
-          reading {
+          grades {
+            label
+            serialGrade {
+              grade
+              label
+              weight
+            }
+            elementaryGrade {
+              grade
+              label
+              weight
+            }
+            __typename
+          }
+          wordAndNumbers {
             grade
+            label
             weight
           }
-          grammar {
+          progressText {
             grade
+            label
             weight
           }
-          progressText
-        }
-        mathGrade {
-          grade
-          competence
-          competenceStatus
-          calculation {
-            grade
-            weight
-          }
-          geometry {
-            grade
-            weight
-          }
-          ratiosAndPercentages {
-            grade
-            weight
-          }
-          algebra {
-            grade
-            weight
-          }
-          numberComprehension {
-            grade
-            weight
-          }
-          wordAndNumbers
-          progressText
-        }
-        englishGrade {
-          grade
-          competence
-          competenceStatus
-          reading {
-            grade
-            weight
-          }
-          grammar {
-            grade
-            weight
-          }
-          progressText
+          __typename
         }
       }
+      __typename
     }
   }
 `
@@ -94,167 +83,6 @@ const StudentAssessmentTable = () => {
       },
     },
   )
-  const educationExamResult =
-    data?.educationExamResult?.grades.map((res) => ({
-      title: `Samræmd könnunarpróf ${res.studentYear}. bekkur`,
-      data: [
-        ...(res.englishGrade?.grade
-          ? [
-              {
-                subject: 'Enska',
-                serialRating: res.englishGrade?.grade,
-                abilityRating: res.englishGrade?.competence,
-                status: res.englishGrade?.competenceStatus,
-                breakdown: [
-                  ...(res.englishGrade?.reading.grade
-                    ? [
-                        {
-                          subject: 'Lesskilningur',
-                          rate: `(${res.englishGrade?.reading.weight}%)`,
-                          serialRating: res.englishGrade?.reading.grade,
-                        },
-                      ]
-                    : []),
-                  ...(res.englishGrade?.grammar.grade
-                    ? [
-                        {
-                          subject: 'Málnotkun',
-                          rate: `(${res.englishGrade?.grammar.weight}%)`,
-                          serialRating: res.englishGrade?.grammar.grade,
-                        },
-                      ]
-                    : []),
-                  ...(res.englishGrade?.progressText
-                    ? [
-                        {
-                          subject: 'Framfaraeinkunn',
-                          text: res.englishGrade?.progressText,
-                          multiCol: true,
-                        },
-                      ]
-                    : []),
-                ],
-              },
-            ]
-          : []),
-        ...(res.icelandicGrade?.grade
-          ? [
-              {
-                subject: 'Íslenska',
-                serialRating: res.icelandicGrade?.grade,
-                abilityRating: res.icelandicGrade?.competence,
-                status: res.icelandicGrade?.competenceStatus,
-                breakdown: [
-                  ...(res.icelandicGrade?.reading.grade
-                    ? [
-                        {
-                          subject: 'Lesskilningur',
-                          rate: `(${res.icelandicGrade?.reading.weight}%)`,
-                          serialRating: res.icelandicGrade?.reading.grade,
-                        },
-                      ]
-                    : []),
-                  ...(res.icelandicGrade?.grammar.grade
-                    ? [
-                        {
-                          subject: 'Málnotkun',
-                          rate: `(${res.icelandicGrade?.grammar.weight}%)`,
-                          serialRating: res.icelandicGrade?.grammar.grade,
-                        },
-                      ]
-                    : []),
-                  ...(res?.icelandicGrade?.progressText
-                    ? [
-                        {
-                          subject: 'Framfaraeinkunn',
-                          text: res?.icelandicGrade?.progressText,
-                          multiCol: true,
-                        },
-                      ]
-                    : []),
-                ],
-              },
-            ]
-          : []),
-        ...(res.mathGrade?.grade
-          ? [
-              {
-                subject: 'Stærðfræði',
-                serialRating: res.mathGrade?.grade,
-                abilityRating: res.mathGrade?.competence,
-                status: res.mathGrade?.competenceStatus,
-                breakdown: [
-                  ...(res.mathGrade?.calculation.grade
-                    ? [
-                        {
-                          subject: 'Reikningur og aðgerðir',
-                          rate: `(${res.mathGrade?.calculation.weight}%)`,
-                          serialRating: res.mathGrade?.calculation.grade,
-                        },
-                      ]
-                    : []),
-                  ...(res.mathGrade?.geometry.grade
-                    ? [
-                        {
-                          subject: 'Rúmfræði og mælingar',
-                          rate: `(${res.mathGrade?.geometry.weight}%)`,
-                          serialRating: res.mathGrade?.geometry.grade,
-                        },
-                      ]
-                    : []),
-                  ...(res.mathGrade?.algebra.grade
-                    ? [
-                        {
-                          subject: 'Algebra',
-                          rate: `(${res.mathGrade?.algebra.weight}%)`,
-                          serialRating: res.mathGrade?.algebra.grade,
-                        },
-                      ]
-                    : []),
-                  ...(res.mathGrade?.ratiosAndPercentages.grade
-                    ? [
-                        {
-                          subject: 'Hlutföll og prósentur',
-                          rate: `(${res.mathGrade?.ratiosAndPercentages.weight}%)`,
-                          serialRating:
-                            res.mathGrade?.ratiosAndPercentages.grade,
-                        },
-                      ]
-                    : []),
-                  ...(res.mathGrade?.numberComprehension.grade
-                    ? [
-                        {
-                          subject: 'Tölur og talnaskilningur',
-                          rate: `(${res.mathGrade?.numberComprehension.weight}%)`,
-                          serialRating:
-                            res.mathGrade?.numberComprehension.grade,
-                        },
-                      ]
-                    : []),
-                  ...(res?.mathGrade?.wordAndNumbers
-                    ? [
-                        {
-                          subject: 'Orðadæmi og talnadæmi',
-                          text: res?.mathGrade?.wordAndNumbers,
-                          multiCol: true,
-                        },
-                      ]
-                    : []),
-                  ...(res?.mathGrade?.progressText
-                    ? [
-                        {
-                          subject: 'Framfaraeinkunn',
-                          text: res?.mathGrade?.progressText,
-                          multiCol: true,
-                        },
-                      ]
-                    : []),
-                ],
-              },
-            ]
-          : []),
-      ],
-    })) || []
 
   if (queryLoading) {
     return <LoadingTemplate />
@@ -267,25 +95,25 @@ const StudentAssessmentTable = () => {
           {data?.educationExamResult.fullName}
         </Text>
       )}
-      {educationExamResult.map((studentAssessment, index) => (
+      {data?.educationExamResult.grades.map((studentAssessment, index) => (
         <Box key={index} marginBottom={7}>
           <Text variant="h3" marginBottom={3}>
-            {studentAssessment.title}
+            Samræmd könnunarpróf {studentAssessment.studentYear}. bekkur
           </Text>
           <T.Table>
             <T.Head>
               <T.Row>
                 <T.HeadData>Námsgrein</T.HeadData>
                 <T.HeadData>Vægi</T.HeadData>
+                <T.HeadData>Grunnskólaeinkunn</T.HeadData>
                 <T.HeadData>Raðeinkunn</T.HeadData>
                 <T.HeadData>Hæfnieinkunn</T.HeadData>
                 <T.HeadData>Staða</T.HeadData>
               </T.Row>
             </T.Head>
             <T.Body>
-              {studentAssessment.data.map((studentAssessment, index) => {
-                const containsBreakdown =
-                  studentAssessment.breakdown.length !== 0
+              {studentAssessment.courses.map((studentAssessment, index) => {
+                const containsBreakdown = studentAssessment.grades.length !== 0
                 const dataBox = {
                   ...(containsBreakdown
                     ? { borderBottomWidth: undefined }
@@ -298,48 +126,87 @@ const StudentAssessmentTable = () => {
                   <Fragment key={index}>
                     <T.Row>
                       <T.Data text={dataText} box={dataBox}>
-                        {studentAssessment.subject}
+                        {studentAssessment.label}
                       </T.Data>
                       <T.Data text={dataText} box={dataBox}></T.Data>
                       <T.Data text={dataText} box={dataBox}>
-                        {studentAssessment.serialRating}
+                        {studentAssessment.gradeSum?.elementaryGrade?.grade}
                       </T.Data>
                       <T.Data text={dataText} box={dataBox}>
-                        {studentAssessment.abilityRating}
+                        {studentAssessment.gradeSum?.serialGrade?.grade}
                       </T.Data>
                       <T.Data text={dataText} box={dataBox}>
-                        {studentAssessment.status}
+                        {studentAssessment.competence}
+                      </T.Data>
+                      <T.Data text={dataText} box={dataBox}>
+                        {studentAssessment.competenceStatus}
                       </T.Data>
                     </T.Row>
-                    {studentAssessment.breakdown.map((breakdown, index) => {
-                      const isLast =
-                        studentAssessment.breakdown.length - 1 !== index
+                    {studentAssessment.grades.map((grade, index) => {
                       const dataBox = {
-                        ...(isLast ? { borderBottomWidth: undefined } : {}),
+                        borderBottomWidth: undefined,
                         paddingTop: undefined,
-                      }
-                      if (breakdown.multiCol) {
-                        return (
-                          <T.Row key={index}>
-                            <T.Data box={dataBox}>{breakdown.subject}</T.Data>
-                            <T.Data box={dataBox} colSpan={4}>
-                              {breakdown.text}
-                            </T.Data>
-                          </T.Row>
-                        )
                       }
                       return (
                         <T.Row key={index}>
-                          <T.Data box={dataBox}>{breakdown.subject}</T.Data>
-                          <T.Data box={dataBox}>{breakdown.rate}</T.Data>
+                          <T.Data box={dataBox}>{grade.label}</T.Data>
                           <T.Data box={dataBox}>
-                            {breakdown.serialRating}
+                            {grade.elementaryGrade?.weight &&
+                              `(${grade.elementaryGrade.weight}%)`}
+                          </T.Data>
+                          <T.Data box={dataBox}>
+                            {grade.elementaryGrade?.grade}
+                          </T.Data>
+                          <T.Data box={dataBox}>
+                            {grade.serialGrade?.grade}
                           </T.Data>
                           <T.Data box={dataBox}></T.Data>
                           <T.Data box={dataBox}></T.Data>
                         </T.Row>
                       )
                     })}
+                    {studentAssessment.wordAndNumbers && (
+                      <T.Row key={index}>
+                        <T.Data
+                          box={{
+                            paddingTop: undefined,
+                            borderBottomWidth: undefined,
+                          }}
+                        >
+                          {studentAssessment.wordAndNumbers?.label}
+                        </T.Data>
+                        <T.Data
+                          box={{
+                            paddingTop: undefined,
+                            borderBottomWidth: undefined,
+                          }}
+                        >
+                          {studentAssessment.wordAndNumbers.weight}
+                        </T.Data>
+                        <T.Data
+                          box={{
+                            paddingTop: undefined,
+                            borderBottomWidth: undefined,
+                          }}
+                          colSpan={42}
+                        >
+                          {studentAssessment.wordAndNumbers.grade}
+                        </T.Data>
+                      </T.Row>
+                    )}
+                    {studentAssessment.progressText && (
+                      <T.Row key={index}>
+                        <T.Data box={{ paddingTop: undefined }}>
+                          {studentAssessment.progressText?.label}
+                        </T.Data>
+                        <T.Data box={{ paddingTop: undefined }}>
+                          {studentAssessment.progressText.weight}
+                        </T.Data>
+                        <T.Data box={{ paddingTop: undefined }} colSpan={42}>
+                          {studentAssessment.progressText.grade}
+                        </T.Data>
+                      </T.Row>
+                    )}
                   </Fragment>
                 )
               })}
@@ -348,7 +215,7 @@ const StudentAssessmentTable = () => {
         </Box>
       ))}
 
-      {educationExamResult.length === 0 && (
+      {data?.educationExamResult.grades.length === 0 && (
         <Box marginTop={8}>
           <EmptyState title={m.noDataFound} />
         </Box>

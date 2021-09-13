@@ -419,6 +419,14 @@ export const m = defineMessages({
     id: 'service.portal:accessControl',
     defaultMessage: 'Aðgangsstýring',
   },
+  accessControlGrant: {
+    id: 'service.portal:accessControlGrant',
+    defaultMessage: 'Veita aðgang',
+  },
+  accessControlAccess: {
+    id: 'service.portal:accessControlAccess',
+    defaultMessage: 'Aðgangur',
+  },
   educationStudentAssessment: {
     id: 'service.portal:educationStudentAssessment',
     defaultMessage: 'Samræmd könnunarpróf',

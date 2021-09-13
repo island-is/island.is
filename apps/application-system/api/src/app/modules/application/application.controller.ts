@@ -319,6 +319,12 @@ export class ApplicationController {
       )
     }
 
+    // For convenience if the user attempting to be assigned is already an assignee
+    // then return the application
+    if (existingApplication.assignees.includes(user.nationalId)) {
+      return existingApplication
+    }
+
     if (existingApplication.state !== decodedToken.state) {
       throw new NotFoundException('Application no longer in assignable state')
     }

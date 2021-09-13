@@ -1,5 +1,5 @@
-import { Case, User } from '@island.is/judicial-system/types'
-import { Validation } from '../utils/validate'
+import type { Case, User } from '@island.is/judicial-system/types'
+import type { Validation } from '../utils/validate'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',

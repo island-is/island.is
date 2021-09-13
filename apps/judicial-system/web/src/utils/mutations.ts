@@ -27,6 +27,10 @@ export const CasesQuery = gql`
       courtCaseNumber
       rulingDate
       courtEndTime
+      accusedAppealDecision
+      prosecutorAppealDecision
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       parentCase {
         id
       }

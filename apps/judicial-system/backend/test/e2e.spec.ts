@@ -3,21 +3,23 @@ import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 
 import {
-  Case as TCase,
   CaseState,
   CaseTransition,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseGender,
-  User as TUser,
   CaseDecision,
   NotificationType,
   CaseType,
   UserRole,
   AccusedPleaDecision,
-  Institution as TInstitution,
   SessionArrangements,
+} from '@island.is/judicial-system/types'
+import type {
+  User as TUser,
+  Case as TCase,
+  Institution as TInstitution,
 } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
@@ -74,7 +76,7 @@ beforeAll(async () => {
   const sharedAuthService = await app.resolve(SharedAuthService)
 
   await Institution.findOne({ where: { name: courtName } }).then((value) => {
-    court = institutionToTInstitution(value.toJSON() as Institution)
+    court = institutionToTInstitution(value?.toJSON() as Institution)
     return
   })
 
@@ -88,7 +90,7 @@ beforeAll(async () => {
   await Institution.findOne({ where: { name: prosecutorsOfficeName } }).then(
     (value) => {
       sharedWithProsecutorsOffice = institutionToTInstitution(
-        value.toJSON() as Institution,
+        value?.toJSON() as Institution,
       )
       return
     },
@@ -256,7 +258,7 @@ function userToCUser(user: User) {
   } as unknown) as CUser
 }
 
-function caseToCCase(dbCase: Case) {
+function caseToCCase(dbCase: Case): CCase {
   const theCase = dbCase.toJSON() as Case
 
   return ({
@@ -297,8 +299,8 @@ function caseToCCase(dbCase: Case) {
 }
 
 function expectInstitutionsToMatch(
-  institutionOne: TInstitution,
-  institutionTwo: TInstitution,
+  institutionOne?: TInstitution,
+  institutionTwo?: TInstitution,
 ) {
   expect(institutionOne?.id).toBe(institutionTwo?.id)
   expect(institutionOne?.created).toBe(institutionTwo?.created)
@@ -495,7 +497,7 @@ describe('Institution', () => {
       .send()
       .expect(200)
       .then((response) => {
-        expect(response.body.length).toBe(4)
+        expect(response.body.length).toBe(5)
       })
   })
 })
@@ -541,7 +543,7 @@ describe('User', () => {
         return User.findOne({ where: { id: apiUser.id } })
       })
       .then((value) => {
-        expectUsersToMatch(userToCUser(value.toJSON() as User), apiUser)
+        expectUsersToMatch(userToCUser(value?.toJSON() as User), apiUser)
       })
   })
 
@@ -604,7 +606,7 @@ describe('User', () => {
         })
       })
       .then((newValue) => {
-        expectUsersToMatch(userToCUser(newValue.toJSON() as User), apiUser)
+        expectUsersToMatch(userToCUser(newValue?.toJSON() as User), apiUser)
       })
   })
 
@@ -639,7 +641,7 @@ describe('User', () => {
       include: [{ model: Institution, as: 'institution' }],
     })
       .then((value) => {
-        dbUser = userToCUser(value.toJSON() as User)
+        dbUser = userToCUser(value?.toJSON() as User)
 
         return request(app.getHttpServer())
           .get(`/api/user/?nationalId=${judgeNationalId}`)
@@ -1032,14 +1034,14 @@ describe('Notification', () => {
 
         // Check the response
         expect(apiSendNotificationResponse.notificationSent).toBe(true)
-        expect(apiSendNotificationResponse.notification.id).toBeTruthy()
-        expect(apiSendNotificationResponse.notification.created).toBeTruthy()
-        expect(apiSendNotificationResponse.notification.caseId).toBe(dbCase.id)
-        expect(apiSendNotificationResponse.notification.type).toBe(
+        expect(apiSendNotificationResponse.notification?.id).toBeTruthy()
+        expect(apiSendNotificationResponse.notification?.created).toBeTruthy()
+        expect(apiSendNotificationResponse.notification?.caseId).toBe(dbCase.id)
+        expect(apiSendNotificationResponse.notification?.type).toBe(
           NotificationType.HEADS_UP,
         )
-        expect(apiSendNotificationResponse.notification.condition).toBeNull()
-        expect(apiSendNotificationResponse.notification.recipients).toBe(
+        expect(apiSendNotificationResponse.notification?.condition).toBeNull()
+        expect(apiSendNotificationResponse.notification?.recipients).toBe(
           `[{"success":true}]`,
         )
 
@@ -1049,16 +1051,16 @@ describe('Notification', () => {
         })
       })
       .then((value) => {
-        expect(value.id).toBe(apiSendNotificationResponse.notification.id)
-        expect(value.created.toISOString()).toBe(
-          apiSendNotificationResponse.notification.created,
+        expect(value?.id).toBe(apiSendNotificationResponse.notification?.id)
+        expect(value?.created.toISOString()).toBe(
+          apiSendNotificationResponse.notification?.created,
         )
-        expect(value.type).toBe(apiSendNotificationResponse.notification.type)
-        expect(value.condition).toBe(
-          apiSendNotificationResponse.notification.condition,
+        expect(value?.type).toBe(apiSendNotificationResponse.notification?.type)
+        expect(value?.condition).toBe(
+          apiSendNotificationResponse.notification?.condition,
         )
-        expect(value.recipients).toBe(
-          apiSendNotificationResponse.notification.recipients,
+        expect(value?.recipients).toBe(
+          apiSendNotificationResponse.notification?.recipients,
         )
       })
   })

@@ -4,8 +4,8 @@ import { createHash } from 'crypto'
 
 import { Inject, Injectable } from '@nestjs/common'
 
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 export enum AuditedAction {
   LOGIN = 'LOGIN',
