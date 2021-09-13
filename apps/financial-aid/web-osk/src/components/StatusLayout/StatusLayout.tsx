@@ -6,7 +6,7 @@ import * as styles from './StatusLayout.treat'
 import { LogoHfj, Login } from '@island.is/financial-aid-web/osk/src/components'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
-import { getState } from '@island.is/financial-aid/shared'
+import { getState } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   children: ReactNode

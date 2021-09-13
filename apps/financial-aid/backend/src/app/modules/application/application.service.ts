@@ -11,7 +11,7 @@ import {
   ApplicationFilters,
   ApplicationState,
   User,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import { ApplicationEventService } from '../applicationEvent'
 

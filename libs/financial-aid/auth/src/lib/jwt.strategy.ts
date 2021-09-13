@@ -4,7 +4,7 @@ import { Request } from 'express'
 import { Injectable, Inject } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 
-import { User } from '@island.is/financial-aid/shared'
+import { User } from '@island.is/financial-aid/shared/lib'
 
 import { Credentials } from './auth.types'
 import { authCookieExtractor } from './authCookieExtractor'

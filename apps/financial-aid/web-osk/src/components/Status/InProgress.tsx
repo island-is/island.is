@@ -10,7 +10,8 @@ import {
   months,
   getState,
   Routes,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
+
 import { Estimation } from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
 

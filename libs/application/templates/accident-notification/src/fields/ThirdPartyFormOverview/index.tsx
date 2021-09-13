@@ -163,12 +163,6 @@ export const ThirdPartyFormOverview: FC<FieldBaseProps> = ({
                   value={answers.locationAndPurpose.location}
                 />
               </GridColumn>
-              <GridColumn span="12/12">
-                <ValueLine
-                  label={locationAndPurpose.labels.purpose}
-                  value={answers.locationAndPurpose.purpose}
-                />
-              </GridColumn>
             </GridRow>
           </ThirdPartyReviewGroup>
         </>
@@ -185,12 +179,6 @@ export const ThirdPartyFormOverview: FC<FieldBaseProps> = ({
           </Text>
           <ThirdPartyReviewGroup isEditable={false}>
             <GridRow>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine
-                  label={workplaceData.labels.companyName}
-                  value={workplaceData.info.companyName}
-                />
-              </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
                   label={workplaceData.labels.nationalId}

@@ -5,7 +5,7 @@ import {
   ApplicationState,
   getState,
   months,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 import format from 'date-fns/format'
 
 interface Props {

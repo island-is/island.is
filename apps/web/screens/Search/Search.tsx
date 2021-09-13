@@ -1,12 +1,4 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React, {
-  useRef,
-  useEffect,
-  useState,
-  FC,
-  useLayoutEffect,
-  useMemo,
-} from 'react'
+import React, { useRef, useEffect, useState, FC, useMemo } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
@@ -286,7 +278,6 @@ const Search: Screen<CategoryProps> = ({
   }
 
   const isServer = typeof window === 'undefined'
-  console.log('sidebarDataTypes', sidebarDataTypes)
 
   return (
     <>

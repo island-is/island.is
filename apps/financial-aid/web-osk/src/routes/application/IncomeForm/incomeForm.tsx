@@ -13,7 +13,7 @@ import { useRouter } from 'next/router'
 import * as styles from './incomeForm.treat'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import cn from 'classnames'
-import { NavigationProps } from '@island.is/financial-aid/shared'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 const IncomeForm = () => {
   const router = useRouter()
