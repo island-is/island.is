@@ -943,16 +943,9 @@ export const AccidentNotificationForm: Form = buildForm({
                   id: 'fishermanLocation.locationAndPurpose.location',
                   title: fishingLocationAndPurpose.labels.location,
                   backgroundColor: 'blue',
-                  required: true,
-                }),
-                buildTextField({
-                  id: 'fishermanLocation.locationAndPurpose.purpose',
-                  title: fishingLocationAndPurpose.labels.purpose,
-                  backgroundColor: 'blue',
-                  rows: 6,
                   variant: 'textarea',
-                  placeholder: fishingLocationAndPurpose.placeholder.purpose,
                   required: true,
+                  rows: 4,
                 }),
               ],
             }),
@@ -972,14 +965,6 @@ export const AccidentNotificationForm: Form = buildForm({
               variant: 'textarea',
               required: true,
               rows: 4,
-            }),
-            buildTextField({
-              id: 'locationAndPurpose.purpose',
-              title: locationAndPurpose.labels.purpose,
-              backgroundColor: 'blue',
-              variant: 'textarea',
-              required: true,
-              rows: 6,
             }),
           ],
         }),
@@ -1189,14 +1174,6 @@ export const AccidentNotificationForm: Form = buildForm({
               title: companyInfo.labels.nationalId,
               backgroundColor: 'blue',
               format: '######-####',
-              width: 'half',
-              required: true,
-            }),
-            buildTextField({
-              id: 'companyInfo.companyName',
-              title: companyInfo.labels.companyName,
-              backgroundColor: 'blue',
-              width: 'half',
               required: true,
             }),
             buildCheckboxField({
@@ -1225,6 +1202,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'companyInfo.name',
               title: companyInfo.labels.name,
               backgroundColor: 'blue',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1234,6 +1212,7 @@ export const AccidentNotificationForm: Form = buildForm({
               backgroundColor: 'blue',
               variant: 'email',
               width: 'half',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1267,14 +1246,6 @@ export const AccidentNotificationForm: Form = buildForm({
               title: schoolInfo.labels.nationalId,
               backgroundColor: 'blue',
               format: '######-####',
-              width: 'half',
-              required: true,
-            }),
-            buildTextField({
-              id: 'schoolInfo.companyName',
-              title: schoolInfo.labels.companyName,
-              backgroundColor: 'blue',
-              width: 'half',
               required: true,
             }),
             buildCheckboxField({
@@ -1303,6 +1274,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'schoolInfo.name',
               title: schoolInfo.labels.name,
               backgroundColor: 'blue',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1312,6 +1284,7 @@ export const AccidentNotificationForm: Form = buildForm({
               backgroundColor: 'blue',
               variant: 'email',
               width: 'half',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1345,14 +1318,6 @@ export const AccidentNotificationForm: Form = buildForm({
               title: fishingCompanyInfo.labels.nationalId,
               backgroundColor: 'blue',
               format: '######-####',
-              width: 'half',
-              required: true,
-            }),
-            buildTextField({
-              id: 'fishingCompanyInfo.companyName',
-              title: fishingCompanyInfo.labels.companyName,
-              backgroundColor: 'blue',
-              width: 'half',
               required: true,
             }),
             buildCheckboxField({
@@ -1381,6 +1346,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'fishingCompanyInfo.name',
               title: fishingCompanyInfo.labels.name,
               backgroundColor: 'blue',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1390,6 +1356,7 @@ export const AccidentNotificationForm: Form = buildForm({
               backgroundColor: 'blue',
               width: 'half',
               variant: 'email',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1423,14 +1390,6 @@ export const AccidentNotificationForm: Form = buildForm({
               title: sportsClubInfo.labels.nationalId,
               backgroundColor: 'blue',
               format: '######-####',
-              width: 'half',
-              required: true,
-            }),
-            buildTextField({
-              id: 'sportsClubInfo.companyName',
-              title: sportsClubInfo.labels.companyName,
-              backgroundColor: 'blue',
-              width: 'half',
               required: true,
             }),
             buildCheckboxField({
@@ -1459,6 +1418,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'sportsClubInfo.name',
               title: sportsClubInfo.labels.name,
               backgroundColor: 'blue',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1468,6 +1428,7 @@ export const AccidentNotificationForm: Form = buildForm({
               backgroundColor: 'blue',
               width: 'half',
               variant: 'email',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1500,15 +1461,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'rescueSquadInfo.nationalRegistrationId',
               title: rescueSquadInfo.labels.nationalId,
               backgroundColor: 'blue',
-              width: 'half',
               format: '######-####',
-              required: true,
-            }),
-            buildTextField({
-              id: 'rescueSquadInfo.companyName',
-              title: rescueSquadInfo.labels.companyName,
-              backgroundColor: 'blue',
-              width: 'half',
               required: true,
             }),
             buildCheckboxField({
@@ -1535,6 +1488,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'rescueSquadInfo.name',
               title: rescueSquadInfo.labels.name,
               backgroundColor: 'blue',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1544,6 +1498,7 @@ export const AccidentNotificationForm: Form = buildForm({
               backgroundColor: 'blue',
               width: 'half',
               variant: 'email',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
