@@ -35,7 +35,7 @@ export interface Form {
 export const initialState = {
   submitted: false,
   incomeFiles: [],
-  taxReturnFiles: [] as UploadFile[],
+  taxReturnFiles: [],
   otherFiles: [],
 }
 

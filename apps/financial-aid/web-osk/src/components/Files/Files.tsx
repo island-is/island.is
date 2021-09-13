@@ -16,7 +16,6 @@ interface Props {
 
 const Files = ({ header, uploadFiles, fileKey }: Props) => {
   const { form, updateForm } = useContext(FormContext)
-  console.log('uploadfiles', uploadFiles)
 
   const {
     files,
@@ -26,15 +25,23 @@ const Files = ({ header, uploadFiles, fileKey }: Props) => {
     onRetry,
   } = useFileUpload(uploadFiles)
 
-  useEffect(() => {
-    const formFiles = files.filter((f) => f.status === 'done')
+  const stringifyFile = (file: UploadFile) => {
+    return {
+      key: file.key,
+      name: file.name,
+      size: file.size,
+      status: file.status,
+      percent: file?.percent,
+    }
+  }
 
-    // updateForm({
-    //   ...form,
-    //   [fileKey]: formFiles.map((f, i) => {
-    //     return { name: f.name + i }
-    //   }),
-    // })
+  useEffect(() => {
+    const formFiles = files
+      .filter((f) => f.status === 'done')
+      .map((f) => {
+        return stringifyFile(f)
+      })
+
     updateForm({ ...form, [fileKey]: formFiles })
   }, [files])
 

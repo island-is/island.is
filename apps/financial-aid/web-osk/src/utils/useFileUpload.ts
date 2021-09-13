@@ -53,7 +53,6 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     const newUploadFiles = newFiles as UploadFile[]
 
     if (!isRetry) {
-      console.log('retry false', newUploadFiles, files)
       setFiles([...newUploadFiles, ...files])
     }
 
@@ -171,11 +170,9 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
 
   const updateFile = (file: UploadFile) => {
     const newFiles = [...filesRef.current]
-    console.log('newFiles', newFiles)
     const updatedFiles = newFiles.map((newFile) => {
       return newFile.key === file.key ? file : newFile
     })
-    console.log('updatedFiles', updatedFiles)
     setFiles(updatedFiles)
   }
 
