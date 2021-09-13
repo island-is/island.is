@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text } from '@island.is/island-ui/core'
 
-import { getState, ApplicationState } from '@island.is/financial-aid/shared'
+import { getState, ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   state: ApplicationState

@@ -1,10 +1,11 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import {
   Text,
   Box,
   BulletList,
   Bullet,
   Button,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 
 import {
@@ -17,21 +18,37 @@ import {
   Timeline,
 } from '@island.is/financial-aid-web/osk/src/components'
 
-import { getActiveTypeForStatus } from '@island.is/financial-aid/shared'
-
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
+import {
+  Application,
+  getActiveTypeForStatus,
+} from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
+import { useQuery } from '@apollo/client'
+import { useRouter } from 'next/router'
+import { GetApplicationQuery } from '@island.is/financial-aid-web/osk/graphql'
+
+interface ApplicantData {
+  application: Application
+}
 
 const MainPage = () => {
-  const { user } = useContext(UserContext)
+  const router = useRouter()
   const logOut = useLogOut()
 
+  const { data, error, loading } = useQuery<ApplicantData>(
+    GetApplicationQuery,
+    {
+      variables: { input: { id: router.query.id } },
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  )
   const currentApplication = useMemo(() => {
-    if (user?.currentApplication) {
-      return user.currentApplication
+    if (data?.application) {
+      return data.application
     }
-  }, [user])
+  }, [data])
 
   return (
     <StatusLayout>
@@ -56,6 +73,14 @@ const MainPage = () => {
             <Timeline state={currentApplication.state} />
           </>
         )}
+        {error && (
+          <Text>
+            {' '}
+            Umsókn ekki fundin eða einhvað fór úrskeiðis, ertu viss þú hefur
+            sótt um?{' '}
+          </Text>
+        )}
+        {loading && <LoadingDots />}
 
         <Text as="h4" variant="h3" marginBottom={2} marginTop={[3, 3, 7]}>
           Frekari aðgerðir í boði

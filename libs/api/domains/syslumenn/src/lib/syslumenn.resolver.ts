@@ -3,8 +3,9 @@ import { GetHomestaysInput } from './dto/getHomestays.input'
 import { Homestay } from './models/homestay'
 import { SyslumennAuction } from './models/syslumennAuction'
 import { SyslumennService } from './syslumenn.service'
+import { OperatingLicense } from './models/operatingLicense'
 
-const cacheTime = process.env.CACHE_TIME || 5
+const cacheTime = process.env.CACHE_TIME || 300
 
 const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
 
@@ -22,5 +23,11 @@ export class SyslumennResolver {
   @Query(() => [SyslumennAuction])
   getSyslumennAuctions(): Promise<SyslumennAuction[]> {
     return this.syslumennService.getSyslumennAuctions()
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [OperatingLicense])
+  getOperatingLicenses(): Promise<OperatingLicense[]> {
+    return this.syslumennService.getOperatingLicenses()
   }
 }

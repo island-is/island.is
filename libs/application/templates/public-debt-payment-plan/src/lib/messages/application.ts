@@ -45,8 +45,8 @@ export const section = defineMessages({
   },
   overview: {
     id: `pdpp.application:section.overview`,
-    defaultMessage: 'Yfirlit og rafræn undirskrift',
-    description: 'Overview and e-signature section',
+    defaultMessage: 'Yfirlit',
+    description: 'Overview section',
   },
   confirmation: {
     id: `pdpp.application:section.confirmation`,

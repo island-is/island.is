@@ -114,7 +114,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
             ? debouncedAmount === undefined
               ? initialMinMaxData?.minPayment
               : debouncedAmount
-            : null,
+            : initialMinMaxData?.minPayment,
         monthCount:
           paymentMode === MONTHS
             ? debouncedMonths === undefined

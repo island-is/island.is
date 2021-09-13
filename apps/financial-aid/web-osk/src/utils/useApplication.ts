@@ -7,7 +7,7 @@ import {
   User,
   ApplicationState,
   FileType,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 import { Form } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { UploadFile } from '@island.is/island-ui/core'
 

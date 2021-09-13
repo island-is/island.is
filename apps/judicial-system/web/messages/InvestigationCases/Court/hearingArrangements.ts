@@ -79,5 +79,19 @@ export const icHearingArrangements = {
       description:
         'Notaður sem texti í "tilkynning um fyrirtökutíma hefur verið send" tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum.',
     },
+    secondaryButtonText: {
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.modal.secondary_button_text',
+      defaultMessage: 'Nei, senda seinna',
+      description:
+        'Notaður sem texti í "Nei, senda seinna" takkann í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum.',
+    },
+    primaryButtonText: {
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.modal.primary_button_text',
+      defaultMessage: 'Já, senda núna',
+      description:
+        'Notaður sem texti í "Já, senda núna" takkann í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum.',
+    },
   }),
 }
