@@ -27,9 +27,9 @@ export const rcConfirmation = {
     custodyCases: defineMessages({
       text: {
         id:
-          'judicial.system.restriction_cases:confirmation.modal.custody_cases.text',
+          'judicial.system.restriction_cases:confirmation.modal.custody_cases.text#markdown',
         defaultMessage:
-          'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
+          'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.<br/><br/>Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
         description:
           'Notaður sem texti í úrskurðar tilkynningaglugganum á staðfesingar skrefi í gæsluvarðhaldsmálum.',
       },
@@ -37,9 +37,9 @@ export const rcConfirmation = {
     travelBanCases: defineMessages({
       text: {
         id:
-          'judicial.system.restriction_cases:confirmation.modal.travel_ban_cases.text',
+          'judicial.system.restriction_cases:confirmation.modal.travel_ban_cases.text#markdown',
         defaultMessage:
-          'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
+          'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð.<br/><br/>Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
         description:
           'Notaður sem texti í úrskurðar tilkynningaglugganum á staðfesingar skrefi í farbannsmálum.',
       },
