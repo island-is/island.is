@@ -34,7 +34,6 @@ const CompanyInfoSchema = z.object({
   nationalRegistrationId: z
     .string()
     .refine((x) => (x ? kennitala.isCompany(x) : false)),
-  companyName: z.string().min(1),
   name: z.string().min(1),
   email: z.string().email(),
   phoneNumber: z.string().optional(),
