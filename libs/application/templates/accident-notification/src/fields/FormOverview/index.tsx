@@ -292,12 +292,6 @@ export const FormOverview: FC<FieldBaseProps> = ({
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
-                  label={workplaceData.labels.companyName}
-                  value={workplaceData.info.companyName}
-                />
-              </GridColumn>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine
                   label={workplaceData.labels.nationalId}
                   value={workplaceData.info.nationalRegistrationId ?? ''}
                 />
