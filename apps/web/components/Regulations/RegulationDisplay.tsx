@@ -1,11 +1,10 @@
 import * as s from './RegulationDisplay.treat'
 
 import React, { useState } from 'react'
-import { useRouter } from 'next/router'
 import { ISODate, prettyName } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
-import { Button, Stack, Text, Hidden } from '@island.is/island-ui/core'
+import { Button, Stack, Text, Hidden, Link } from '@island.is/island-ui/core'
 import { Sticky } from '@island.is/web/components'
 import { RegulationLayout } from './RegulationLayout'
 import { useRegulationLinkResolver } from './regulationUtils'
@@ -36,7 +35,6 @@ export type RegulationDisplayProps = {
 }
 
 export const RegulationDisplay = (props: RegulationDisplayProps) => {
-  const router = useRouter()
   const { regulation, texts, urlDate } = props
 
   const txt = useNamespace(texts)
@@ -94,15 +92,18 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
               {regulation.showingDiff ? (
                 <HTMLBox
                   component="span"
-                  className={s.bodyText}
+                  className={s.titleText + ' ' + s.diffText}
                   html={regulation.title}
                 />
               ) : (
-                regulation.title
+                <span className={s.titleText}>{regulation.title}</span>
               )}
             </Text>
 
-            <HTMLBox className={s.bodyText} html={regulation.text} />
+            <HTMLBox
+              className={s.bodyText + ' ' + s.diffText}
+              html={regulation.text}
+            />
 
             <Appendixes
               key={key}
@@ -123,20 +124,17 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
         <Sticky>
           <Stack space={3}>
             <Hidden print={true}>
-              <Button
-                preTextIcon="arrowBack"
-                preTextIconType="filled"
-                size="small"
-                type="button"
-                variant="text"
-                onClick={() => {
-                  window.history.length > 2
-                    ? router.back()
-                    : router.push(linkResolver('regulationshome').href)
-                }}
-              >
-                {txt('goBack')}
-              </Button>
+              <Link href={linkResolver('regulationshome').href}>
+                <Button
+                  preTextIcon="arrowBack"
+                  preTextIconType="filled"
+                  size="small"
+                  type="button"
+                  variant="text"
+                >
+                  {txt('goHome')}
+                </Button>
+              </Link>
             </Hidden>
 
             <RegulationInfoBox regulation={regulation} texts={texts} />
