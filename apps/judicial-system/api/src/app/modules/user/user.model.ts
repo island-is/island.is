@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import { User as TUser, UserRole } from '@island.is/judicial-system/types'
+import type { UserRole, User as TUser } from '@island.is/judicial-system/types'
 
 import { Institution } from '../institution'
 

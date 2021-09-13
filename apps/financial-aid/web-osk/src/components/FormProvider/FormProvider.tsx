@@ -1,6 +1,9 @@
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
 
-import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
+import {
+  HomeCircumstances,
+  Employment,
+} from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
 
 export interface Form {
@@ -16,6 +19,7 @@ export interface Form {
   hasIncome?: boolean
   incomeFiles: UploadFile[]
   taxReturnFiles: UploadFile[]
+  otherFiles: UploadFile[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string
   ledger?: string
@@ -31,6 +35,7 @@ export const initialState = {
   submitted: false,
   incomeFiles: [],
   taxReturnFiles: [],
+  otherFiles: [],
 }
 
 interface FormProvider {

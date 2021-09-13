@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import {
-  Case,
   CaseDecision,
   CaseState,
   CaseTransition,
   CaseType,
   NotificationType,
+} from '@island.is/judicial-system/types'
+import type {
+  Case,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
 } from '@island.is/judicial-system/types'
@@ -118,7 +120,11 @@ const SigningModal: React.FC<SigningModalProps> = ({
 
   const renderSuccessText = (caseType: CaseType) => {
     return caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
-      ? formatMessage(rcConfirmation.modal.text)
+      ? formatMessage(
+          caseType === CaseType.CUSTODY
+            ? rcConfirmation.modal.custodyCases.text
+            : rcConfirmation.modal.travelBanCases.text,
+        )
       : formatMessage(icConfirmation.modal.text)
   }
 

@@ -191,3 +191,38 @@ export const GET_HOMESTAYS_QUERY = gql`
     }
   }
 `
+
+export const GET_SYSLUMENN_AUCTIONS_QUERY = gql`
+  query GetSyslumennAuctions {
+    getSyslumennAuctions {
+      office
+      location
+      auctionType
+      lotType
+      lotName
+      lotId
+      lotItems
+      auctionDate
+      auctionTime
+      petitioners
+      respondent
+    }
+  }
+`
+
+export const GET_OPERATING_LICENSES_QUERY = gql`
+  query GetOperatingLicenses {
+    getOperatingLicenses {
+      location
+      name
+      street
+      postalCode
+      validUntil
+      type
+      category
+      issuedBy
+      licenseHolder
+      licenseNumber
+    }
+  }
+`

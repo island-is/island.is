@@ -17,7 +17,7 @@ import {
   NavigationProps,
   getHomeCircumstances,
   HomeCircumstances,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 const HomeCircumstancesForm = () => {
   const router = useRouter()

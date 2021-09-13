@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
-import { Case, CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import {
+  CaseCustodyRestrictions,
+  CaseDecision,
+  CaseType,
+} from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
@@ -24,7 +29,10 @@ import {
 import { rcReportForm } from '@island.is/judicial-system-web/messages'
 import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatProsecutorDemands } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 
 export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -52,28 +60,41 @@ export const StepFour: React.FC = () => {
 
   useEffect(() => {
     if (id && !workingCase && data?.case) {
-      const theCase = data.case
+      const theCase: Case = data.case
 
       autofill(
         'demands',
-        formatProsecutorDemands(
-          theCase.type,
-          theCase.accusedNationalId,
-          theCase.accusedName,
-          theCase.court.name,
-          theCase.requestedValidToDate,
-          theCase.requestedCustodyRestrictions?.includes(
-            CaseCustodyRestrictions.ISOLATION,
-          ) ?? false,
-          theCase.parentCase !== undefined,
-          theCase.parentCase?.decision,
-        ),
+        `${formatMessage(rcReportForm.sections.demands.autofill, {
+          accusedName: theCase.accusedName,
+          accusedNationalId: formatNationalId(theCase.accusedNationalId),
+          extensionSuffix:
+            theCase.parentCase !== undefined &&
+            theCase.parentCase?.decision === CaseDecision.ACCEPTING
+              ? ' áframhaldandi'
+              : '',
+          caseType:
+            theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
+          court: theCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
+          requestedValidToDate: formatDate(
+            theCase.requestedValidToDate,
+            'PPPPp',
+          )
+            ?.replace('dagur,', 'dagsins')
+            ?.replace(' kl.', ', kl.'),
+          isolationSuffix:
+            theCase.type === CaseType.CUSTODY &&
+            theCase.requestedCustodyRestrictions?.includes(
+              CaseCustodyRestrictions.ISOLATION,
+            )
+              ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
+              : '',
+        })}`,
         theCase,
       )
 
       setWorkingCase(theCase)
     }
-  }, [id, workingCase, setWorkingCase, data, autofill])
+  }, [id, workingCase, setWorkingCase, data, autofill, formatMessage])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [

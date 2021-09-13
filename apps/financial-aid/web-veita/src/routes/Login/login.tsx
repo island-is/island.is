@@ -4,11 +4,10 @@ import { Logo, Text, Box, Link } from '@island.is/island-ui/core'
 import { LogoHfj } from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './login.treat'
-import cn from 'classnames'
 
 const Login = () => {
   useEffect(() => {
-    document.title = 'Sveita • Innskráning'
+    document.title = 'Veita • Innskráning'
   }, [])
   return (
     <div className={` wrapper ${styles.gridWrapper}`}>
@@ -24,7 +23,7 @@ const Login = () => {
 
         <Box paddingLeft={2} marginLeft={2} className={`headLine`}>
           <Text as="h1" lineHeight="sm">
-            <strong>Sveita</strong> • Umsóknir um <br /> fjárhagsaðstoð
+            <strong>Veita</strong> • Umsóknir um <br /> fjárhagsaðstoð
           </Text>
         </Box>
       </Box>
@@ -43,14 +42,6 @@ const Login = () => {
         <Link href="/api/auth/login?nationalId=0000000002&service=veita">
           Plat notandi
         </Link>
-
-        {/* <Button
-          onClick={() => {
-            // router.push('/api/auth/login?nationalId=0000000000')
-          }}
-        >
-          Innskráning
-        </Button> */}
       </Box>
     </div>
   )

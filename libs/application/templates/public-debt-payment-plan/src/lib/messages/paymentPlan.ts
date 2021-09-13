@@ -11,10 +11,8 @@ export const paymentPlan = {
     },
     pageDescription: {
       id: `pdpp.application:section.paymentPlan.pageDescription`,
-      defaultMessage: `Hér gefur að líta yfirlit yfir þær
-      skuldir þar sem boðið er upp á greiðsludreifingu.
-      Til að ganga frá greiðsludreifingu þarf að gera
-      greiðsluáætlun fyrir allar útistandandi skuldir og undirrita áætlunina rafrænt.`,
+      defaultMessage: `Hér er yfirlit yfir þær skuldir sem hægt er að setja í greiðsluáætlun.`,
+      description: 'Description on overview for debts',
     },
     paymentPlanDescription: {
       id: `pdpp.application:section.paymentPlan.paymentPlanDescription`,
@@ -75,7 +73,7 @@ export const paymentPlan = {
     },
     paymentModeTitle: {
       id: `pdpp.application:section.paymentPlan.paymentModeTitle`,
-      defaultMessage: `Veldu greiðsludreifingu skuldar`,
+      defaultMessage: `Greiðsludreifing skuldar`,
       description: `Payment mode label`,
     },
     payByAmount: {
@@ -132,9 +130,24 @@ export const paymentPlan = {
     distributionDataTitle: {
       id: `pdpp.application:section.paymentPlan.distributionDataTitle`,
       defaultMessage: `
-      Hér er hægt að sjá heildargreiðsluáætlun skuldar
+      Hér má sjá sundurliðun greiðsluáætlunar. Athugið að vextir uppfærast daglega og sýnir áætlunin stöðu þeirra þann dag sem greiðsluáætlunin er gerð.
       `,
       description: `Total distribution plan`,
+    },
+    infoTitle: {
+      id: `pdpp.application:section.paymentPlan.infoTitle`,
+      defaultMessage: `Athugið`,
+      description: `Information box title`,
+    },
+    infoDescription: {
+      id: `pdpp.application:section.paymentPlan.infoDescription`,
+      defaultMessage: `Í síðasta gjalddaga fara eftirstöðvar á skuld. Til að endurnýja greiðsluáætlun þarf að hafa samband við innheimtumann. `,
+      description: `Information box description`,
+    },
+    wageDeductionLaw: {
+      id: `pdpp.application:section.paymentPlan.wageDeductionLaw`,
+      defaultMessage: `Lög um launafrádrátt`,
+      description: `Wage deduction law link`,
     },
   }),
 }

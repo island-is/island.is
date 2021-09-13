@@ -138,4 +138,13 @@ export class DelegationResolver {
     }
     return this.identityService.getIdentity(delegation.fromNationalId, user)
   }
+
+  @ResolveField('validTo', () => Date, { nullable: true })
+  resolveValidTo(@Parent() delegation: DelegationDTO): Date | undefined {
+    return delegation.scopes?.every(
+      (scope) => scope.validTo?.toString() === delegation.validTo?.toString(),
+    )
+      ? delegation.validTo
+      : undefined
+  }
 }

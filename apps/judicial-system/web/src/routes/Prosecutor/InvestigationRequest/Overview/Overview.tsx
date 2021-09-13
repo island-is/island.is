@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import {
-  Case,
   NotificationType,
   CaseState,
   CaseTransition,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   Modal,
   PageLayout,

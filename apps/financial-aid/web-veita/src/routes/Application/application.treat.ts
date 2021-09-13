@@ -12,7 +12,7 @@ export const widthFull = style({
   gridColumn: '1/-1',
 })
 
-export const widtAlmostFull = style({
+export const widthAlmostFull = style({
   gridColumn: '1/-1',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {

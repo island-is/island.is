@@ -61,9 +61,11 @@ export const laws = {
   _95_1_C: 'c-lið 1. mgr. 95. gr.',
   _95_1_D: 'd-lið 1. mgr. 95. gr.',
   _95_2: '2. mgr. 95. gr.',
+  _97_3: '3. mgr. 97. gr.',
   _98_2: '2. mgr. 98. gr.',
   _99_1_B: 'b-lið 1. mgr. 99. gr.',
   _100_1: '1. mgr. 100. gr. sml.',
+  _115_1: '1. mgr. 115. gr. útll.',
 }
 
 export const caseTypes = {
@@ -322,51 +324,21 @@ export const formatRequestedCustodyRestrictions = (
   return `${requestedCustodyRestrictionsText}${paragraphBreak}${requestedOtherRestrictionsText}`
 }
 
-export function formatProsecutorDemands(
-  type: CaseType,
-  accusedNationalId: string,
-  accusedName: string,
-  court: string,
-  requestedValidToDate: Date | string,
-  isolation: boolean,
-  isExtension: boolean,
-  previousDecision?: CaseDecision,
-): string {
-  return `Þess er krafist að ${accusedName}, kt. ${formatNationalId(
-    accusedNationalId,
-  )}, sæti${
-    isExtension && previousDecision === CaseDecision.ACCEPTING
-      ? ' áframhaldandi'
-      : ''
-  } ${
-    type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
-  } með úrskurði ${court?.replace(
-    'Héraðsdómur',
-    'Héraðsdóms',
-  )}, til ${formatDate(requestedValidToDate, 'PPPPp')
-    ?.replace('dagur,', 'dagsins')
-    ?.replace(' kl.', ', kl.')}${
-    type === CaseType.CUSTODY && isolation
-      ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
-      : ''
-  }.`
-}
-
 // This function is always called with case type CUSTODY or TRAVEL_BAN
 export function formatConclusion(
   type: CaseType,
   accusedNationalId: string,
-  accusedName: string,
-  accusedGender: CaseGender,
-  decision: CaseDecision,
-  validToDate: Date,
-  isolation: boolean,
-  isExtension: boolean,
+  accusedName?: string,
+  accusedGender?: CaseGender,
+  decision?: CaseDecision,
+  validToDate?: Date,
+  isolation?: boolean,
+  isExtension?: boolean,
   previousDecision?: CaseDecision,
   isolationToDate?: Date,
 ): string {
   const isolationEndsBeforeValidToDate =
-    isolationToDate && validToDate > isolationToDate
+    validToDate && isolationToDate && validToDate > isolationToDate
 
   return decision === CaseDecision.REJECTING
     ? `Kröfu um að ${formatAccusedByGender(

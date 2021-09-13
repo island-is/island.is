@@ -23,7 +23,10 @@ import {
   ACCESS_TOKEN_COOKIE_NAME,
   COOKIE_EXPIRES_IN_MILLISECONDS,
   CSRF_COOKIE_NAME,
-} from '@island.is/financial-aid/shared'
+  ReturnUrl,
+  AllowedFakeUsers,
+  RolesRule,
+} from '@island.is/financial-aid/shared/lib'
 
 import { SharedAuthService } from '@island.is/financial-aid/auth'
 
@@ -84,7 +87,11 @@ export class AuthController {
     this.logger.debug(`Received login request for the service ${service}`)
 
     // Local development
-    if (environment.auth.allowFakeUsers && nationalId) {
+    if (
+      environment.auth.allowFakeUsers &&
+      nationalId &&
+      AllowedFakeUsers.includes(nationalId)
+    ) {
       this.logger.debug(`Logging in as ${nationalId} in development mode`)
       const fakeUser = this.authService.fakeUser(nationalId)
 
@@ -152,6 +159,7 @@ export class AuthController {
       phoneNumber: islandUser.mobile,
       folder: uuid(),
       service: service,
+      returnUrl: ReturnUrl.APPLICATION,
     }
 
     return this.logInUser(user, res)
@@ -167,12 +175,26 @@ export class AuthController {
     return res.json({ logout: true })
   }
 
+  getReturnUrl = (service: RolesRule, applicationId: string | undefined) => {
+    switch (true) {
+      case service === RolesRule.OSK && applicationId !== undefined:
+        return `${ReturnUrl.MYPAGE}/${applicationId}`
+      case service === RolesRule.VEITA:
+        return ReturnUrl.ADMIN
+      default:
+        return ReturnUrl.APPLICATION
+    }
+  }
+
   private logInUser(user: User, res: Response) {
     const csrfToken = new Entropy({ bits: 128 }).string()
 
     const jwtToken = this.sharedAuthService.signJwt(user, csrfToken)
 
-    const returnUrl = user.service === 'osk' ? '/umsokn' : '/nymal'
+    const returnUrl = this.getReturnUrl(
+      res.req?.query.service as RolesRule,
+      res.req?.query.applicationId as string,
+    )
 
     res
       .cookie(CSRF_COOKIE.name, csrfToken, {

@@ -22,10 +22,33 @@ export enum ApplicationState {
   APPROVED = 'Approved',
 }
 
+export enum ApplicationEventType {
+  NEW = 'New',
+  INPROGRESS = 'InProgress',
+  DATANEEDED = 'DataNeeded',
+  REJECTED = 'Rejected',
+  APPROVED = 'Approved',
+  STAFFCOMMENT = 'StaffComment',
+}
+
 export enum RolesRule {
   OSK = 'osk',
   VEITA = 'veita',
 }
+
+export enum ReturnUrl {
+  APPLICATION = '/umsokn',
+  MYPAGE = '/stada',
+  ADMIN = '/nymal',
+}
+
+export enum FileType {
+  TAXRETURN = 'TaxReturn',
+  INCOME = 'Income',
+  OTHER = 'Other',
+}
+
+export type UploadFileType = 'otherFiles' | 'incomeFiles' | 'taxReturnFiles'
 
 export interface ApplicationFilters {
   New: number
@@ -77,12 +100,14 @@ export interface ApplicationFile {
   name: string
   key: string
   size: number
+  type: FileType
 }
 
 export interface CreateApplicationFile {
   name: string
   key: string
   size: number
+  type: FileType
 }
 
 export interface CreateApplication {
@@ -116,7 +141,7 @@ export interface UpdateApplication {
 
 export interface CreateApplicationEvent {
   applicationId: string
-  state: ApplicationState
+  eventType: ApplicationEventType
   comment?: string
 }
 
@@ -124,8 +149,8 @@ export interface ApplicationEvent {
   id: string
   created: string
   applicationId: string
+  eventType: ApplicationEventType
   comment?: string
-  state: ApplicationState
 }
 
 export interface Municipality {
@@ -158,6 +183,7 @@ export interface User {
   folder: string
   service: RolesRule
   currentApplication?: CurrentApplication
+  returnUrl: ReturnUrl
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
@@ -169,6 +195,10 @@ export interface GetSignedUrl {
 export interface SignedUrl {
   url: string
   key: string
+}
+
+export interface CreateFilesResponse {
+  success: boolean
 }
 
 // export type HomeCircumstances =

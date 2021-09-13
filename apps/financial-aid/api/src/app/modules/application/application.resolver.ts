@@ -16,7 +16,7 @@ import { ApplicationInput } from './dto'
 import {
   Application,
   ApplicationFilters,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => ApplicationModel)
@@ -52,8 +52,7 @@ export class ApplicationResolver {
     input: CreateApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Application> {
-    this.logger.debug('Creating case')
-
+    this.logger.debug('Creating application')
     return backendApi.createApplication(input)
   }
 

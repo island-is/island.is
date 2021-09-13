@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Case, CaseAppealDecision } from '@island.is/judicial-system/types'
+import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   FormContentContainer,

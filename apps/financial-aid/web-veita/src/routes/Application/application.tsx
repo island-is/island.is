@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { LoadingDots, Text, Box, Divider } from '@island.is/island-ui/core'
+import {
+  LoadingDots,
+  Text,
+  Box,
+  Divider,
+  Button,
+} from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 import * as styles from './application.treat'
@@ -24,7 +30,8 @@ import {
   months,
   calculateAidFinalAmount,
   formatPhoneNumber,
-} from '@island.is/financial-aid/shared'
+  FileType,
+} from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
 
@@ -40,12 +47,12 @@ import {
   GeneratedProfile,
   GenerateName,
   Profile,
-  Files,
   AdminLayout,
   StateModal,
   AidAmountModal,
   History,
-  Button,
+  CommentSection,
+  FilesListWithHeader,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
@@ -73,23 +80,20 @@ const ApplicationProfile = () => {
     return navigationItems.find((i) => i.applicationState.includes(state))
   }
 
-  const { data, error, loading } = useQuery<ApplicantData>(
-    GetApplicationQuery,
+  const { data, loading } = useQuery<ApplicantData>(GetApplicationQuery, {
+    variables: { input: { id: router.query.id } },
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+
+  const { data: dataMunicipality } = useQuery<MunicipalityData>(
+    GetMunicipalityQuery,
     {
-      variables: { input: { id: router.query.id } },
+      variables: { input: { id: 'hfj' } },
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     },
   )
-
-  const {
-    data: dataMunicipality,
-    loading: municipalityLoading,
-  } = useQuery<MunicipalityData>(GetMunicipalityQuery, {
-    variables: { input: { id: 'hfj' } },
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
 
   const [application, setApplication] = useState<Application>()
 
@@ -117,7 +121,7 @@ const ApplicationProfile = () => {
       {
         title: 'Tímabil',
         content:
-          months[parseInt(format(new Date(application.created), 'M'))] +
+          months[new Date(application.created).getMonth()] +
           format(new Date(application.created), ' y'),
       },
       {
@@ -212,10 +216,6 @@ const ApplicationProfile = () => {
         content: '??',
       },
       {
-        title: 'Fjöldi barna',
-        content: '??',
-      },
-      {
         title: 'Búsetuform',
         content:
           getHomeCircumstances[
@@ -250,7 +250,7 @@ const ApplicationProfile = () => {
           marginBottom={15}
           className={`${styles.applicantWrapper}`}
         >
-          <Box className={`contentUp   ${styles.widtAlmostFull} `}>
+          <Box className={`contentUp   ${styles.widthAlmostFull} `}>
             <Box
               marginBottom={3}
               display="flex"
@@ -350,18 +350,35 @@ const ApplicationProfile = () => {
           <>
             <Box
               marginBottom={[2, 2, 3]}
-              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+              className={`contentUp delay-125 ${styles.widthAlmostFull}`}
             >
               <Text as="h2" variant="h3" color="dark300">
                 Gögn frá umsækjanda
               </Text>
             </Box>
-            <Files
+            <FilesListWithHeader
               heading="Skattframtal"
-              filesArray={application.files}
-              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+              files={application.files?.filter(
+                (f) => f.type === FileType.TAXRETURN,
+              )}
+            />
+            <FilesListWithHeader
+              heading="Tekjugögn"
+              files={application.files?.filter(
+                (f) => f.type === FileType.INCOME,
+              )}
+            />
+            <FilesListWithHeader
+              heading="Innsend gögn"
+              files={application.files?.filter(
+                (f) => f.type === FileType.OTHER,
+              )}
             />
           </>
+
+          <CommentSection
+            className={`contentUp delay-125 ${styles.widthAlmostFull}`}
+          />
 
           <History />
         </Box>
