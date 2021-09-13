@@ -19,7 +19,6 @@ const FormInfo = ({ info, error }: Props) => {
 
   return (
     <>
-      {' '}
       {info.map((item, index) => {
         const err = error && item.info === undefined
         return (
