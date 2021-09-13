@@ -3134,6 +3134,134 @@ export interface ISubpageHeader extends Entry<ISubpageHeaderFields> {
   }
 }
 
+export interface ISupportCategoryFields {
+  /** Title */
+  title: string
+
+  /** Description */
+  description?: string | undefined
+
+  /** slug */
+  slug: string
+
+  /** organization */
+  organization: IOrganization
+}
+
+/** Category for the helpdesk questions, used for grouping QNAs */
+
+export interface ISupportCategory extends Entry<ISupportCategoryFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'supportCategory'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ISupportFormFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Category */
+  category: string
+
+  /** Form */
+  form?: Record<string, any> | undefined
+}
+
+export interface ISupportForm extends Entry<ISupportFormFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'supportForm'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ISupportQnaFields {
+  /** Question */
+  question: string
+
+  /** Answer */
+  answer: Document
+
+  /** slug */
+  slug: string
+
+  /** SubCategory */
+  subCategory: ISupportSubCategory
+
+  /** Category */
+  category: ISupportCategory
+
+  /** Organization */
+  organization: IOrganization
+}
+
+/** Helpdesk support questions and answer */
+
+export interface ISupportQna extends Entry<ISupportQnaFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'supportQNA'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ISupportSubCategoryFields {
+  /** Title */
+  title: string
+
+  /** Description */
+  description?: string | undefined
+
+  /** slug */
+  slug: string
+}
+
+export interface ISupportSubCategory extends Entry<ISupportSubCategoryFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'supportSubCategory'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ITabContentFields {
   /** tab title */
   tabTitle: string
@@ -3903,6 +4031,10 @@ export type CONTENT_TYPE =
   | 'storySection'
   | 'subArticle'
   | 'subpageHeader'
+  | 'supportCategory'
+  | 'supportForm'
+  | 'supportQNA'
+  | 'supportSubCategory'
   | 'tabContent'
   | 'tabSection'
   | 'teamList'

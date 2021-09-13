@@ -30,11 +30,6 @@ export const fishingCompanyInfo = {
       defaultMessage: 'Kennitala útgerðar',
       description: 'National ID of fishing company',
     },
-    companyName: {
-      id: 'an.application:fishingCompanyInfo.labels.companyName',
-      defaultMessage: 'Nafn útgerðar',
-      description: 'Name of fishing company',
-    },
     name: {
       id: 'an.application:fishingCompanyInfo.labels.name',
       defaultMessage: 'Fullt nafn',
