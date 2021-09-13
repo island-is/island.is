@@ -1,7 +1,5 @@
 import React from 'react'
-import chunk from 'lodash/chunk'
 import { useParams } from 'react-router-dom'
-import { format as formatKennitala } from 'kennitala'
 import { defineMessage } from 'react-intl'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -16,6 +14,7 @@ import AssetGrid from '../../components/AssetGrid'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
 import { Fasteign } from '../../types/RealEstateAssets.types'
 import amountFormat from '../../utils/amountFormat'
+import { ownersArray, unitsArray } from '../../utils/createUnits'
 
 const GetSingleRealEstateQuery = gql`
   query GetSingleRealEstateQuery($input: GetRealEstateInput!) {
@@ -36,80 +35,9 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
   })
   const assetData: Fasteign = data?.getRealEstateDetail || {}
 
-  const owners = assetData?.thinglystirEigendur?.map((owner) => {
-    return [
-      owner.nafn || '',
-      formatKennitala(owner.kennitala) || '',
-      owner.heimild || '',
-      owner.display || '',
-      'NOT AVAILABLE',
-    ]
-  })
+  const owners = ownersArray(assetData)
+  const units = unitsArray(assetData)
 
-  const units = assetData?.notkunareiningar?.data?.map((unit) => {
-    return {
-      header: {
-        title: 'Notkunareiningar',
-        value: unit.stadfang.display || '',
-      },
-      rows: chunk(
-        [
-          {
-            title: 'Notkunareiningarnúmer',
-            value: unit.notkunareininganr || '',
-          },
-          {
-            title: 'Gildandi fasteignamat',
-            value: amountFormat(unit.fasteignamat.gildandi) || '',
-          },
-          {
-            title: 'Staðfang',
-            value: unit.stadfang.displayShort || '',
-          },
-          {
-            title: 'Fyrirhugað fasteignamat 2022',
-            value: unit.fasteignamat.fyrirhugad
-              ? amountFormat(unit.fasteignamat.fyrirhugad)
-              : '',
-          },
-          {
-            title: 'Merking',
-            value: unit.merking || '',
-          },
-          // {
-          //   title: 'Húsmat',
-          //   value: unit.husmat?! || '',
-          // },
-          {
-            title: 'Sveitarfélag',
-            value: unit.stadfang.sveitarfelag || '',
-          },
-          {
-            title: 'Lóðarmat',
-            value: unit.lodarmat ? amountFormat(unit.lodarmat) : '',
-          },
-          {
-            title: 'Notkun',
-            value: unit.notkun || '',
-          },
-          {
-            title: 'Brunabótamat',
-            value: unit.brunabotamat ? amountFormat(unit.brunabotamat) : '',
-          },
-          {
-            title: 'Starfsemi',
-            value: unit.starfsemi || '',
-          },
-        ],
-        2,
-      ),
-    }
-  })
-
-  console.log('units', units)
-
-  console.log('data', data)
-  console.log('idididididididid', id)
   const displayOwners = owners || [[]]
   if (!id || error) {
     return <span>Show error</span>

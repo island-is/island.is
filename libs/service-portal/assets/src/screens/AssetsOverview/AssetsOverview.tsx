@@ -26,8 +26,6 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
   const { loading, error, data } = useQuery<Query>(GetRealEstateQuery)
   const assetData: FasteignirResponse = data?.getRealEstates || {}
 
-  console.log('assetData', assetData)
-
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>
