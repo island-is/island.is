@@ -23,6 +23,18 @@ export interface UploadFile {
   size?: number
 }
 
+export const fileToObject = (
+  file: File,
+  status?: UploadFileStatus,
+): UploadFile => {
+  return {
+    name: file.name,
+    percent: 0,
+    originalFileObj: file,
+    status: status || 'done',
+  }
+}
+
 interface UploadingIndicatorProps {
   percent?: number
 }
