@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  SessionArrangements,
+} from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -343,7 +346,14 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                     <RadioButton
                       name="prosecutor-appeal-decision"
                       id="prosecutor-postpone"
-                      label="Sækjandi tekur sér lögboðinn frest"
+                      label={formatMessage(
+                        workingCase.sessionArrangements ===
+                          SessionArrangements.REMOTE_SESSION
+                          ? icRulingStepTwo.sections.prosecutorAppealDecision
+                              .decisionPostponeInRemoteSession
+                          : icRulingStepTwo.sections.prosecutorAppealDecision
+                              .decisionPostpone,
+                      )}
                       value={CaseAppealDecision.POSTPONE}
                       checked={
                         workingCase.prosecutorAppealDecision ===

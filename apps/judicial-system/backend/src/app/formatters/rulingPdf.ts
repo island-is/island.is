@@ -6,6 +6,7 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
   capitalize,
@@ -638,11 +639,15 @@ function constructInvestigationRulingPdf(
       },
     )
     .text(' ')
-    .font('Helvetica')
-    .text('Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.', {
-      lineGap: 6,
-      paragraphGap: 0,
-    })
+  if (existingCase.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
+    doc
+      .font('Helvetica')
+      .text('Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.', {
+        lineGap: 6,
+        paragraphGap: 0,
+      })
+  }
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
