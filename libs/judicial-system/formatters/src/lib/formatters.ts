@@ -6,6 +6,7 @@ import {
   CaseDecision,
   CaseGender,
   CaseType,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -393,4 +394,15 @@ export function formatGender(gender?: CaseGender): string {
     default:
       return 'Kynsegin/Annað'
   }
+}
+
+export const areAccusedRightsHidden = (
+  isAccusedAbsent?: boolean,
+  sessionArrangements?: SessionArrangements,
+): boolean => {
+  return isAccusedAbsent
+    ? isAccusedAbsent
+    : sessionArrangements === SessionArrangements.ALL_PRESENT
+    ? false
+    : true
 }

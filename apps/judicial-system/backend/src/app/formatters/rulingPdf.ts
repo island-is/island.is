@@ -16,6 +16,7 @@ import {
   NounCases,
   formatAccusedByGender,
   caseTypes,
+  areAccusedRightsHidden,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -506,8 +507,12 @@ function constructInvestigationRulingPdf(
       paragraphGap: 4,
     }),
   )
-
-  if (!existingCase.isAccusedAbsent) {
+  if (
+    !areAccusedRightsHidden(
+      existingCase.isAccusedAbsent,
+      existingCase.sessionArrangements,
+    )
+  ) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
