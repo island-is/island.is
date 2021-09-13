@@ -46,6 +46,7 @@ const FileList = ({ className, files }: Props) => {
         {files.map((item, index) => {
           return (
             <Box
+              // TODO: disable hover when in Osk
               className={styles.filesLink}
               key={'file-' + index}
               onClick={() => {
