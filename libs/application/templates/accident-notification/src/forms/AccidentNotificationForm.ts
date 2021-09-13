@@ -356,7 +356,6 @@ export const AccidentNotificationForm: Form = buildForm({
                   format: '###-####',
                   width: 'half',
                   variant: 'tel',
-                  required: true,
                 }),
               ],
             }),
@@ -1038,6 +1037,7 @@ export const AccidentNotificationForm: Form = buildForm({
               title: accidentDetails.labels.time,
               placeholder: accidentDetails.placeholder.time,
               backgroundColor: 'blue',
+              required: true,
               width: 'half',
               format: '##:##',
             }),
@@ -1057,6 +1057,7 @@ export const AccidentNotificationForm: Form = buildForm({
               title: accidentDetails.labels.description,
               placeholder: accidentDetails.placeholder.description,
               backgroundColor: 'blue',
+              required: true,
               rows: 10,
               variant: 'textarea',
             }),
@@ -1209,6 +1210,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'companyInfo.email',
               title: companyInfo.labels.email,
               backgroundColor: 'blue',
+              variant: 'email',
               width: 'half',
               required: true,
               condition: (formValue) =>
@@ -1218,6 +1220,8 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'companyInfo.phoneNumber',
               title: companyInfo.labels.tel,
               backgroundColor: 'blue',
+              format: '###-####',
+              variant: 'tel',
               width: 'half',
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
@@ -1278,6 +1282,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'schoolInfo.email',
               title: schoolInfo.labels.email,
               backgroundColor: 'blue',
+              variant: 'email',
               width: 'half',
               required: true,
               condition: (formValue) =>
@@ -1287,6 +1292,8 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'schoolInfo.phoneNumber',
               title: schoolInfo.labels.tel,
               backgroundColor: 'blue',
+              format: '###-####',
+              variant: 'tel',
               width: 'half',
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
@@ -1348,6 +1355,7 @@ export const AccidentNotificationForm: Form = buildForm({
               title: fishingCompanyInfo.labels.email,
               backgroundColor: 'blue',
               width: 'half',
+              variant: 'email',
               required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
@@ -1357,6 +1365,8 @@ export const AccidentNotificationForm: Form = buildForm({
               title: fishingCompanyInfo.labels.tel,
               backgroundColor: 'blue',
               width: 'half',
+              format: '###-####',
+              variant: 'tel',
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1417,6 +1427,7 @@ export const AccidentNotificationForm: Form = buildForm({
               title: sportsClubInfo.labels.email,
               backgroundColor: 'blue',
               width: 'half',
+              variant: 'email',
               required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
@@ -1426,6 +1437,8 @@ export const AccidentNotificationForm: Form = buildForm({
               title: sportsClubInfo.labels.tel,
               backgroundColor: 'blue',
               width: 'half',
+              format: '###-####',
+              variant: 'tel',
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1484,6 +1497,7 @@ export const AccidentNotificationForm: Form = buildForm({
               title: rescueSquadInfo.labels.email,
               backgroundColor: 'blue',
               width: 'half',
+              variant: 'email',
               required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
@@ -1493,6 +1507,8 @@ export const AccidentNotificationForm: Form = buildForm({
               title: rescueSquadInfo.labels.tel,
               backgroundColor: 'blue',
               width: 'half',
+              format: '###-####',
+              variant: 'tel',
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
