@@ -1,4 +1,4 @@
-import { AuthenticationType, isEnrolledAsync, supportedAuthenticationTypesAsync } from 'expo-local-authentication'
+// import { AuthenticationType, isEnrolledAsync, supportedAuthenticationTypesAsync } from 'expo-local-authentication'
 import { AppState } from 'react-native'
 import { DefaultTheme } from 'styled-components'
 import createUse from 'zustand'
@@ -13,7 +13,7 @@ export interface UIStore extends State {
   inboxQuery: string
   applicationQuery: string
   initializedApp: boolean
-  authenticationTypes: AuthenticationType[]
+  // authenticationTypes: AuthenticationType[]
   isEnrolledBiometrics: boolean;
   setInboxQuery(query: string): void
   setApplicationQuery(query: string): void
@@ -27,7 +27,7 @@ export const uiStore = create<UIStore>((set, get) => ({
   inboxQuery: '',
   applicationQuery: '',
   initializedApp: false,
-  authenticationTypes: [],
+  // authenticationTypes: [],
   isEnrolledBiometrics: false,
   setInboxQuery(inboxQuery: string) {
     set({ inboxQuery })
@@ -41,19 +41,19 @@ export const useUiStore = createUse(uiStore)
 
 zustandFlipper(uiStore, 'UIStore')
 
-function updateBiometricsStatus() {
-  supportedAuthenticationTypesAsync().then(authenticationTypes => {
-    uiStore.setState({ authenticationTypes });
-  });
-  isEnrolledAsync().then(isEnrolledBiometrics => {
-    uiStore.setState({ isEnrolledBiometrics });
-  });
-}
+// function updateBiometricsStatus() {
+//   supportedAuthenticationTypesAsync().then(authenticationTypes => {
+//     uiStore.setState({ authenticationTypes });
+//   });
+//   isEnrolledAsync().then(isEnrolledBiometrics => {
+//     uiStore.setState({ isEnrolledBiometrics });
+//   });
+// }
 
-AppState.addEventListener('change', (state) => {
-  if (state === 'active') {
-    updateBiometricsStatus();
-  }
-})
+// AppState.addEventListener('change', (state) => {
+//   if (state === 'active') {
+//     updateBiometricsStatus();
+//   }
+// })
 
-updateBiometricsStatus();
+// updateBiometricsStatus();

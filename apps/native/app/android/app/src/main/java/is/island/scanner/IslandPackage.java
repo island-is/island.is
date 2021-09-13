@@ -1,4 +1,4 @@
-package is.island.app;
+package is.island.scanner;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;

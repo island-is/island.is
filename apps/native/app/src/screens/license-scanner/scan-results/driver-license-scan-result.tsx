@@ -18,7 +18,7 @@ function nationalIdToBirthDate(ssn?: string) {
   return [date, month, year].map((n) => n.toString().padStart(2, '0')).join('-')
 }
 
-export const DriverLicenseScanResult = ({ data }: any) => {
+export const DriverLicenseScanResult = ({ data, onLoad }: any) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string>()
@@ -27,6 +27,10 @@ export const DriverLicenseScanResult = ({ data }: any) => {
   const [photo, setPhoto] = useState<string>()
   const [birthDate, setBirthDate] = useState<string>()
   const intl = useIntl()
+
+  useEffect(() => {
+    onLoad(!loading);
+  }, [loading])
 
   useEffect(() => {
     client
@@ -40,7 +44,6 @@ export const DriverLicenseScanResult = ({ data }: any) => {
         },
       })
       .then((res) => {
-        console.log(res);
         if (res.errors) {
           setError(true)
           setErrorMessage(
@@ -72,7 +75,7 @@ export const DriverLicenseScanResult = ({ data }: any) => {
           }
         }
       })
-      .catch(() => {
+      .catch((err) => {
         setError(true)
         setErrorMessage(
           intl.formatMessage({ id: 'licenseScanDetail.errorNetwork' }),

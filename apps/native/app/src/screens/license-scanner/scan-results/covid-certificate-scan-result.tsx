@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { DecodedEudcc, parseEudcc } from './parse-eudcc'
 import { CovidResultCard } from '../covid-result-card'
 
-export const CovidCertificateScanResult = ({ data }: any) => {
+export const CovidCertificateScanResult = ({ data, onLoad }: any) => {
   const [loading, setLoading] = useState(true)
   const [decoded, setDecoded] = useState<DecodedEudcc>()
   const [error, setError] = useState<string>()
@@ -13,10 +13,12 @@ export const CovidCertificateScanResult = ({ data }: any) => {
       .then((value) => {
         setDecoded(value)
         setLoading(false)
+        onLoad(true);
       })
       .catch((err: Error) => {
         setError(err.message)
         setLoading(false)
+        onLoad(true);
       })
   }, [data])
 

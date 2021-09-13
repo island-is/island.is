@@ -1,4 +1,4 @@
-package is.island.app;
+package is.island.scanner;
 
 import com.reactnativenavigation.NavigationActivity;
 

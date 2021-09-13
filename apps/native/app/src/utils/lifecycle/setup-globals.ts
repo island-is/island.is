@@ -1,12 +1,12 @@
-import '../shim';
+import '../shim'
 
 import * as Sentry from '@sentry/react-native'
 import { LogBox, Settings } from 'react-native'
 import { Platform } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
-import messaging from '@react-native-firebase/messaging'
-import perf from '@react-native-firebase/perf'
-import { performanceMetrics } from '../performance-metrics'
+// import messaging from '@react-native-firebase/messaging'
+// import perf from '@react-native-firebase/perf'
+// import { performanceMetrics } from '../performance-metrics'
 import { config } from '../config'
 
 // uncomment polyfills that are needed.
@@ -38,20 +38,21 @@ import '@formatjs/intl-relativetimeformat/locale-data/is'
 import { setupQuickActions } from '../quick-actions'
 
 if (__DEV__) {
-  perf().setPerformanceCollectionEnabled(false)
+  // perf().setPerformanceCollectionEnabled(false)
 
   require('../devtools/index')
 } else {
   // initialize sentry
   Sentry.init({
-    dsn: config.sentryDsn,
+    dsn:
+      'https://0c2fcaf2123b490ba67fbd32c431e64a@o165858.ingest.sentry.io/5953732',
   })
 
   // enable performance metrics collection
-  performanceMetrics()
+  // performanceMetrics()
 
   // register device for remote messages
-  messaging().registerDeviceForRemoteMessages()
+  // messaging().registerDeviceForRemoteMessages()
 }
 
 // ignore expo warnings

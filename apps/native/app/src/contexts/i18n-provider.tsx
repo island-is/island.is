@@ -2,18 +2,17 @@ import React from 'react'
 import { IntlProvider } from 'react-intl'
 import { en } from '../messages/en'
 import { is } from '../messages/is'
-import { usePreferencesStore } from '../stores/preferences-store'
 
 export const I18nProvider = ({ children }: { children: React.ReactNode }) => {
-  const { locale } = usePreferencesStore()
+  const locale = 'is';
 
   return (
     <IntlProvider
       locale={locale}
-      messages={locale === 'is-IS' ? is : en}
+      messages={is}
       onError={(err) => {
         if (__DEV__) {
-          console.log(err);
+          // console.log(err);
         }
       }}
     >

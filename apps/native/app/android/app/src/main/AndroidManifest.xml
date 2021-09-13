@@ -1,7 +1,7 @@
 <manifest
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
-  package="is.island.app">
+  package="is.island.scanner">
   <uses-permission android:name="android.permission.INTERNET"/>
   <!-- OPTIONAL PERMISSIONS, REMOVE WHATEVER YOU DO NOT NEED -->
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
@@ -29,17 +29,6 @@
     android:allowBackup="false"
     android:theme="@style/AppTheme"
   >
-   <provider
-     android:name="androidx.core.content.FileProvider"
-     android:authorities="com.snjallveskid"
-     android:grantUriPermissions="true"
-     android:exported="false"
-     tools:replace="android:authorities">
-     <meta-data
-       android:name="android.support.FILE_PROVIDER_PATHS"
-       android:resource="@xml/passkit_file_paths"
-       tools:replace="android:resource" />
-   </provider>
     <activity
       android:name=".MainActivity"
       android:label="@string/app_name"

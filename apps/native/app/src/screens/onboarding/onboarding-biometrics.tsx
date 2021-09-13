@@ -64,8 +64,6 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
   const biometricType = useBiometricType(props.supportedAuthenticationTypes)
   const intl = useIntl()
 
-  console.log(biometricType, 'biometricTypebiometricType')
-
   useEffect(() => {
     // check screen active states
     AppState.addEventListener('change', (state) => {

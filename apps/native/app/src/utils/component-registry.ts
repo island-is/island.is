@@ -13,6 +13,7 @@ export const ComponentRegistry = {
   OnboardingPinCodeScreen: `${prefix}.screens.OnboardingPinCode`,
   OnboardingBiometricsScreen: `${prefix}.screens.OnboardingBiometrics`,
   OnboardingNotificationsScreen: `${prefix}.screens.OnboardingNotifications`,
+  ScannerHomeScreen: `${prefix}.screens.ScannerHome`,
   HomeScreen: `${prefix}.screens.Home`,
   InboxScreen: `${prefix}.screens.Inbox`,
   ApplicationsScreen: `${prefix}.screens.ApplicationsScreen`,

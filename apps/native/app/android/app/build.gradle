@@ -1,6 +1,6 @@
 apply plugin: "com.android.application"
-apply plugin: "com.google.gms.google-services"
-apply plugin: "com.google.firebase.firebase-perf"
+// apply plugin: "com.google.gms.google-services"
+// apply plugin: "com.google.firebase.firebase-perf"
 
 import com.android.build.OutputFile
 
@@ -127,18 +127,34 @@ def jscFlavor = 'org.webkit:android-jsc:+'
  */
 def enableHermes = project.ext.react.get("enableHermes", false);
 
+/**
+ * Get password from keychain
+ */
+def getPassword(String currentUser, String keyChain) {
+  def stdout = new ByteArrayOutputStream()
+  def stderr = new ByteArrayOutputStream()
+  exec {
+    commandLine 'security', '-q', 'find-generic-password', '-a', currentUser, '-s', keyChain, '-w'
+    standardOutput = stdout
+    errorOutput = stderr
+    ignoreExitValue true
+  }
+  stdout.toString().trim()
+}
+def pass = getPassword("island.is","island_upload_key")
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
         multiDexEnabled true
-        applicationId "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
+        applicationId "is.island.scanner" // project.config.get("BUNDLE_ID_ANDROID")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14
+        versionCode 17
         versionName "1.0.0"
         manifestPlaceholders = [
-            appAuthRedirectScheme: "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
+            appAuthRedirectScheme: "is.island.scanner" // project.config.get("BUNDLE_ID_ANDROID")
         ]
     }
     splits {
@@ -159,9 +175,9 @@ android {
         release {
             if (project.hasProperty('ISLANDAPP_UPLOAD_STORE_FILE')) {
                 storeFile file(ISLANDAPP_UPLOAD_STORE_FILE)
-                storePassword project.config.get("ISLANDAPP_UPLOAD_PASSWORD")
+                storePassword pass
                 keyAlias ISLANDAPP_UPLOAD_KEY_ALIAS
-                keyPassword project.config.get("ISLANDAPP_UPLOAD_PASSWORD")
+                keyPassword pass
             }
         }
     }
@@ -222,9 +238,10 @@ dependencies {
     implementation project(':react-native-sentry')
     implementation project(':react-native-custom-tabs')
     implementation project(':react-native-randombytes')
-    implementation project(':@react-native-firebase_app')
-    implementation project(':@react-native-firebase_messaging')
-    implementation project(':@react-native-firebase_perf')
+    implementation project(':react-native-datawedge-intents')
+    // implementation project(':@react-native-firebase_app')
+    // implementation project(':@react-native-firebase_messaging')
+    // implementation project(':@react-native-firebase_perf')
 
     addUnimodulesDependencies([
       modulesPaths: ['../../../node_modules'],

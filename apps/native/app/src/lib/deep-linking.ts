@@ -1,7 +1,7 @@
 import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
-import { notificationsStore } from '../stores/notifications-store'
+// import { notificationsStore } from '../stores/notifications-store'
 import { ComponentRegistry, MainBottomTabs } from '../utils/component-registry'
 import { config } from '../utils/config'
 import { openBrowser } from './rn-island'
@@ -190,21 +190,21 @@ export function navigateToNotification(
   notification: { id: string; link?: string },
   componentId?: string,
 ) {
-  const { id, link } = notification
-  // mark notification as read
-  if (id) {
-    notificationsStore.getState().actions.setRead(id);
-    const didNavigate = navigateTo(link ?? `/notification/${id}`)
-    if (!didNavigate && link) {
-      if (!componentId) {
-        // Use home tab for browser
-        Navigation.mergeOptions(MainBottomTabs, {
-          bottomTabs: {
-            currentTabIndex: 1,
-          },
-        })
-      }
-      openBrowser(link, componentId ?? ComponentRegistry.HomeScreen)
-    }
-  }
+  // const { id, link } = notification
+  // // mark notification as read
+  // if (id) {
+  //   notificationsStore.getState().actions.setRead(id);
+  //   const didNavigate = navigateTo(link ?? `/notification/${id}`)
+  //   if (!didNavigate && link) {
+  //     if (!componentId) {
+  //       // Use home tab for browser
+  //       Navigation.mergeOptions(MainBottomTabs, {
+  //         bottomTabs: {
+  //           currentTabIndex: 1,
+  //         },
+  //       })
+  //     }
+  //     openBrowser(link, componentId ?? ComponentRegistry.HomeScreen)
+  //   }
+  // }
 }

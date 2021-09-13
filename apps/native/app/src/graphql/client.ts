@@ -11,7 +11,7 @@ import { RetryLink } from '@apollo/client/link/retry'
 import CookieManager from '@react-native-community/react-native-cookies'
 import { authStore } from '../stores/auth-store'
 import { config } from '../utils/config'
-import { performanceLink } from './performance-link'
+// import { performanceLink } from './performance-link'
 
 const uri = `${config.apiEndpoint.replace(/\/$/, '')}/graphql`
 
@@ -115,7 +115,6 @@ const authLink = setContext(async (_, { headers }) => ({
 
 export const client = new ApolloClient({
   link: ApolloLink.from([
-    performanceLink,
     retryLink,
     errorLink,
     authLink,

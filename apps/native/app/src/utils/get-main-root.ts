@@ -56,71 +56,84 @@ export const getRightButtons = ({
 export function getMainRoot(): Layout {
   const rightButtons = getRightButtons()
   return {
-    bottomTabs: {
-      id: MainBottomTabs,
-      options: {
-        bottomTabs: {
-          testID: testIDs.TABBAR_MAIN,
-          currentTabIndex: 1,
-          tabsAttachMode: 'together',
-        },
-      },
+    stack: {
+      id: StackRegistry.HomeStack,
       children: [
         {
-          stack: {
-            id: StackRegistry.InboxStack,
-            children: [
-              {
-                component: {
-                  id: ComponentRegistry.InboxScreen,
-                  name: ComponentRegistry.InboxScreen,
-                  options: {
-                    topBar: {
-                      rightButtons,
-                    },
-                  },
-                },
-              },
-            ],
-          },
-        },
-        {
-          stack: {
-            id: StackRegistry.HomeStack,
-            children: [
-              {
-                component: {
-                  id: ComponentRegistry.HomeScreen,
-                  name: ComponentRegistry.HomeScreen,
-                  options: {
-                    topBar: {
-                      rightButtons,
-                    },
-                  },
-                },
-              },
-            ],
-          },
-        },
-        {
-          stack: {
-            id: StackRegistry.WalletStack,
-            children: [
-              {
-                component: {
-                  id: ComponentRegistry.WalletScreen,
-                  name: ComponentRegistry.WalletScreen,
-                  options: {
-                    topBar: {
-                      rightButtons,
-                    },
-                  },
-                },
-              },
-            ],
+          component: {
+            id: ComponentRegistry.ScannerHomeScreen,
+            name: ComponentRegistry.ScannerHomeScreen,
           },
         },
       ],
     },
   }
+  // return {
+  //   bottomTabs: {
+  //     id: MainBottomTabs,
+  //     options: {
+  //       bottomTabs: {
+  //         testID: testIDs.TABBAR_MAIN,
+  //         currentTabIndex: 1,
+  //         tabsAttachMode: 'together',
+  //       },
+  //     },
+  //     children: [
+  //       {
+  //         stack: {
+  //           id: StackRegistry.InboxStack,
+  //           children: [
+  //             {
+  //               component: {
+  //                 id: ComponentRegistry.InboxScreen,
+  //                 name: ComponentRegistry.InboxScreen,
+  //                 options: {
+  //                   topBar: {
+  //                     rightButtons,
+  //                   },
+  //                 },
+  //               },
+  //             },
+  //           ],
+  //         },
+  //       },
+  //       {
+  //         stack: {
+  //           id: StackRegistry.HomeStack,
+  //           children: [
+  //             {
+  //               component: {
+  //                 id: ComponentRegistry.HomeScreen,
+  //                 name: ComponentRegistry.HomeScreen,
+  //                 options: {
+  //                   topBar: {
+  //                     rightButtons,
+  //                   },
+  //                 },
+  //               },
+  //             },
+  //           ],
+  //         },
+  //       },
+  //       {
+  //         stack: {
+  //           id: StackRegistry.WalletStack,
+  //           children: [
+  //             {
+  //               component: {
+  //                 id: ComponentRegistry.WalletScreen,
+  //                 name: ComponentRegistry.WalletScreen,
+  //                 options: {
+  //                   topBar: {
+  //                     rightButtons,
+  //                   },
+  //                 },
+  //               },
+  //             },
+  //           ],
+  //         },
+  //       },
+  //     ],
+  //   },
+  // }
 }

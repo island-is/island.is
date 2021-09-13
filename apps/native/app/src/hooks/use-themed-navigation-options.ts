@@ -112,8 +112,8 @@ export const useThemedNavigationOptions = (
         appearanceMode: preferences.appearanceMode,
       })
       const intl = createIntl({
-        locale: preferences.locale,
-        messages: preferences.locale === 'en-US' ? en : is,
+        locale: 'is-IS',
+        messages: is,
       })
       const optionsToUpdate = callback?.(theme, intl, initializedApp) ?? {}
       return defaultsDeep(

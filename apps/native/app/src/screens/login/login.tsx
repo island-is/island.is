@@ -17,15 +17,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import { NavigationFunctionComponent } from 'react-native-navigation'
+import { Navigation, NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import logo from '../../assets/logo/logo-64w.png'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { openBrowser } from '../../lib/rn-island'
 import { useAuthStore } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
-import { nextOnboardingStep } from '../../utils/onboarding'
+// import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
+import { getMainRoot } from '../../utils/get-main-root'
 
 const Host = styled.View`
   flex: 1;
@@ -98,7 +99,6 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
   const onLoginPress = async () => {
     if (Platform.OS === 'android') {
       const chromeVersion = await getChromeVersion()
-      console.log('valid', chromeVersion)
       if (chromeVersion < 55) {
         // Show dialog on how to update.
         Alert.alert(
@@ -136,7 +136,7 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
       if (isAuth) {
         const userInfo = await authStore.fetchUserInfo()
         if (userInfo) {
-          await nextOnboardingStep()
+          Navigation.setRoot({ root: getMainRoot() })
         }
       }
     } catch (err) {
@@ -176,7 +176,7 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
           <Image
             source={logo}
             resizeMode="contain"
-            style={{ width: 48, height: 48 }}
+            style={{ width: 128, height: 128 }}
           />
           <View style={{ maxWidth: 300, minHeight: 170 }}>
             <Title>
@@ -210,7 +210,6 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
           </TouchableOpacity>
         </BottomRow>
       </SafeAreaView>
-      <Illustration isBottomAligned />
     </Host>
   )
 }

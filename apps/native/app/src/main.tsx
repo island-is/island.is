@@ -5,11 +5,11 @@ import { getAppRoot } from './utils/lifecycle/get-app-root'
 import { registerAllComponents } from './utils/lifecycle/setup-components'
 import { setupDevMenu } from './utils/lifecycle/setup-dev-menu'
 import { setupEventHandlers } from './utils/lifecycle/setup-event-handlers'
-import { setupNotifications, openInitialNotification } from './utils/lifecycle/setup-notifications'
+// import { setupNotifications, openInitialNotification } from './utils/lifecycle/setup-notifications'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
-import { showAppLockOverlay } from './utils/app-lock'
+// import { showAppLockOverlay } from './utils/app-lock'
 import { readAuthorizeResult } from './stores/auth-store'
-import { performanceMetricsAppLaunched } from './utils/performance-metrics'
+// import { performanceMetricsAppLaunched } from './utils/performance-metrics'
 
 async function startApp() {
 
@@ -26,7 +26,7 @@ async function startApp() {
   setupRoutes()
 
   // Setup notifications
-  setupNotifications()
+  // setupNotifications()
 
   // Register all components (screens, UI elements)
   registerAllComponents()
@@ -46,7 +46,7 @@ async function startApp() {
     await Navigation.dismissAllOverlays()
 
     // Show lock screen overlay
-    showAppLockOverlay({ enforceActivated: true })
+    // showAppLockOverlay({ enforceActivated: true })
 
     // Dismiss all modals
     await Navigation.dismissAllModals()
@@ -55,10 +55,10 @@ async function startApp() {
     await Navigation.setRoot({ root })
 
     // Open initial notification on android
-    openInitialNotification();
+    // openInitialNotification();
 
     // Mark app launched
-    performanceMetricsAppLaunched();
+    // performanceMetricsAppLaunched();
   })
 }
 

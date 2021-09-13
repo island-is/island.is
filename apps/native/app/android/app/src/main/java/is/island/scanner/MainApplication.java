@@ -1,7 +1,7 @@
-package is.island.app;
+package is.island.scanner;
 
-import is.island.app.generated.BasePackageList;
-import is.island.app.IslandPackage;
+import is.island.scanner.generated.BasePackageList;
+import is.island.scanner.IslandPackage;
 
 // npm packages
 import com.rnappauth.RNAppAuthPackage;
@@ -18,12 +18,13 @@ import com.reactnativeultimateconfig.UltimateConfigPackage;
 import com.reactnativeultimateconfig.UltimateConfigModule;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import io.sentry.react.RNSentryPackage;
-import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
-import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
-import io.invertase.firebase.perf.ReactNativeFirebasePerfPackage;
-import com.wix.interactable.Interactable;
+// import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
+// import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
+// import io.invertase.firebase.perf.ReactNativeFirebasePerfPackage;
 import com.github.droibit.android.reactnative.customtabs.CustomTabsPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
+import com.darryncampbell.rndatawedgeintents.RNDataWedgeIntentsPackage;
+
 
 // unimodules
 import org.unimodules.adapters.react.ModuleRegistryAdapter;
@@ -69,12 +70,12 @@ public class MainApplication extends NavigationApplication {
           packages.add(new RNLocalizePackage());
           packages.add(new UltimateConfigPackage());
           packages.add(new RNSentryPackage());
-          packages.add(new ReactNativeFirebaseAppPackage());
-          packages.add(new ReactNativeFirebaseMessagingPackage());
-          packages.add(new ReactNativeFirebasePerfPackage());
-          packages.add(new Interactable());
+          // packages.add(new ReactNativeFirebaseAppPackage());
+          // packages.add(new ReactNativeFirebaseMessagingPackage());
+          // packages.add(new ReactNativeFirebasePerfPackage());
           packages.add(new CustomTabsPackage());
           packages.add(new RandomBytesPackage());
+          packages.add(new RNDataWedgeIntentsPackage());
 
           // Unimodules
           List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(
@@ -122,7 +123,7 @@ public class MainApplication extends NavigationApplication {
          We use reflection here to pick up the class that initializes Flipper,
         since Flipper library is not available in release mode
         */
-        Class<?> aClass = Class.forName("is.island.app.ReactNativeFlipper");
+        Class<?> aClass = Class.forName("is.island.scanner.ReactNativeFlipper");
         aClass
             .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
             .invoke(null, context, reactInstanceManager);

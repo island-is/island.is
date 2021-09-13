@@ -23,30 +23,23 @@ const defaults = {
     scopes: [
       'openid',
       'profile',
-      'api_resource.scope',
+      '@island.is/user-profile:read',
       'offline_access',
-      '@island.is/applications:read',
-      '@island.is/documents',
-      // '@island.is/user-profile:read'
     ],
-    clientId: '@island.is-app',
+    clientId: '@island.is/apps/scanner',
   },
   apiEndpoint: 'https://island.is/api',
 }
 
 export const config: Config = {
   identityServer: {
-    clientId: env.IDENTITYSERVER_CLIENT_ID || '@island.is-app',
-    issuer: env.IDENTITYSERVER_ISSUER || defaults.identityServer.issuer,
+    clientId: defaults.identityServer.clientId,
+    issuer: defaults.identityServer.issuer,
     scopes:
-      env.IDENTITYSERVER_SCOPES?.split(' ') || defaults.identityServer.scopes,
+      defaults.identityServer.scopes,
   },
-  apiEndpoint: env.API_ENDPOINT || defaults.apiEndpoint,
-  bundleId:
-    Platform.select({
-      ios: env.BUNDLE_ID_IOS,
-      android: env.BUNDLE_ID_ANDROID,
-    }) || 'is.island.app',
+  apiEndpoint: defaults.apiEndpoint,
+  bundleId: 'is.island.scanner',
   sentryDsn: env.SENTRY_DSN,
   constants: ConstantsRest,
   env,

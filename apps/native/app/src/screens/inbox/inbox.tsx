@@ -246,8 +246,23 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   // search query updates
   useEffect(() => {
     setSearchLoading(false)
-    const q = ui.inboxQuery.toLocaleLowerCase().trim()
-    if (ui.inboxQuery.trim() !== '') {
+    let isEmpty: boolean;
+    let q: string;
+    try {
+      isEmpty = !ui.inboxQuery || ui.inboxQuery.trim() === '';
+    } catch (err) {
+      isEmpty = true;
+    }
+    try {
+      q = ui.inboxQuery.toLocaleLowerCase().trim()
+    } catch (err) {
+      try {
+        q = ui.inboxQuery.toLowerCase().trim()
+      } catch (err) {
+        q = '';
+      }
+    }
+    if (isEmpty) {
       setInboxItems(indexedItems.filter((item) => item.fulltext.includes(q)))
     } else {
       setInboxItems([...indexedItems])
