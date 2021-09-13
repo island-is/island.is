@@ -6,10 +6,12 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SendMailOptions } from 'nodemailer'
 import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
+import { SyslumennFormsInput } from './dto/syslumennForms.input'
 import { getTemplate as getContactUsTemplate } from './emailTemplates/contactUs'
 import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsAStory'
+import { getTemplate as getSyslumennFormsTemplate } from './emailTemplates/syslumennForms'
 
-type SendEmailInput = ContactUsInput | TellUsAStoryInput
+type SendEmailInput = ContactUsInput | TellUsAStoryInput | SyslumennFormsInput
 interface EmailTypeTemplateMap {
   [template: string]: (SendEmailInput) => SendMailOptions
 }
@@ -25,6 +27,7 @@ export class CommunicationsService {
   emailTypeTemplateMap: EmailTypeTemplateMap = {
     contactUs: getContactUsTemplate,
     tellUsAStory: getTellUsAStoryTemplate,
+    syslumennForms: getSyslumennFormsTemplate,
   }
 
   getEmailTemplate(input: SendEmailInput) {
