@@ -29,6 +29,7 @@ import {
   applicantInformation,
   application as applicationMessages,
   childInCustody,
+  fatalAccident,
   injuredPersonInformation,
   juridicalPerson,
   locationAndPurpose,
@@ -365,7 +366,13 @@ export const FormOverview: FC<FieldBaseProps> = ({
           <GridColumn span="12/12">
             <ValueLine
               label={overview.labels.accidentType}
-              value={accidentType.labels[answers.accidentType.radioButton]}
+              value={`${formatMessage(
+                accidentType.labels[answers.accidentType.radioButton],
+              )}${
+                answers.wasTheAccidentFatal === YES
+                  ? `, ${formatMessage(fatalAccident.labels.fatalAccident)}`
+                  : ''
+              }`}
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '6/12']}>
