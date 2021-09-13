@@ -8548,6 +8548,48 @@
           }
         }
       }
+    },
+    "api-domains-assets": {
+      "root": "libs/api/domains/assets",
+      "sourceRoot": "libs/api/domains/assets/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/assets/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/assets"],
+          "options": {
+            "jestConfig": "libs/api/domains/assets/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-assets": {
+      "root": "libs/clients/assets",
+      "sourceRoot": "libs/clients/assets/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/assets/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/assets"],
+          "options": {
+            "jestConfig": "libs/clients/assets/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }

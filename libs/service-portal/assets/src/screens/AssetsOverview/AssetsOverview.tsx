@@ -1,6 +1,8 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
 import { useNamespaces } from '@island.is/localization'
+import { gql, useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
@@ -9,8 +11,19 @@ import {
 import AssetListCards from '../../components/AssetListCards'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
 
+const GetRealEstateQuery = gql`
+  query GetRealEstateQuery {
+    getRealEstate
+  }
+`
+
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
+
+  const { loading, error, ...statusQuery } = useQuery<Query>(GetRealEstateQuery)
+  const assetData: any = statusQuery.data?.getRealEstate || {}
+
+  console.log('assetData', assetData)
 
   return (
     <>

@@ -79,6 +79,9 @@
     "api-domains-application": {
       "tags": []
     },
+    "api-domains-assets": {
+      "tags": []
+    },
     "api-domains-auth": {
       "tags": []
     },
@@ -280,6 +283,9 @@
       "tags": []
     },
     "cache": {
+      "tags": []
+    },
+    "clients-assets": {
       "tags": []
     },
     "clients-auth-public-api": {
