@@ -11,7 +11,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { ApplicationModel } from '../../application'
 
-import { ApplicationEventType } from '@island.is/financial-aid/shared'
+import { ApplicationEventType } from '@island.is/financial-aid/shared/lib'
 
 @Table({
   tableName: 'application_events',

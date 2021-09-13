@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 
-import { User } from '@island.is/financial-aid/shared'
+import { User } from '@island.is/financial-aid/shared/lib'
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {

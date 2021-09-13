@@ -15,7 +15,10 @@ import { UpdateApplicationMutation } from '@island.is/financial-aid-web/veita/gr
 
 import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/src/components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 
-import { Application, ApplicationState } from '@island.is/financial-aid/shared'
+import {
+  Application,
+  ApplicationState,
+} from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   isVisible: boolean
