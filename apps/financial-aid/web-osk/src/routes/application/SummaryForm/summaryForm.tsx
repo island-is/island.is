@@ -62,10 +62,11 @@ const SummaryForm = () => {
       label: 'Tekjur',
       url: 'tekjur',
       info:
-        form?.hasIncome &&
-        'Ég hef ' +
-          (form?.hasIncome ? '' : 'ekki') +
-          'fengið tekjur í þessum mánuði eða síðasta',
+        form?.hasIncome === undefined
+          ? undefined
+          : 'Ég hef ' +
+            (form?.hasIncome ? '' : 'ekki') +
+            'fengið tekjur í þessum mánuði eða síðasta',
     },
     {
       id: 'employmentCustom',
