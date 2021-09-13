@@ -30,7 +30,6 @@ export const OidcSignIn = ({ authDispatch }: Props): ReactElement => {
         // see this error. So we'll try a proper signin.
         return userManager.signinRedirect({ state: error.state })
       }
-      console.error(JSON.stringify(error))
       console.error('Error in oidc callback', error)
       setHasError(true)
     }

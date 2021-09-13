@@ -3,6 +3,7 @@ import React, { MouseEventHandler } from 'react'
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { Tag } from '../Tag/Tag'
+import { Link } from '../Link/Link'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 
 type ColorScheme = 'blue' | 'red'
@@ -46,7 +47,7 @@ export const TopicCard: React.FC<TopicCardProps> = ({
       background={colorSchemes[colorScheme].backgroundColor}
       borderRadius="large"
       display="flex"
-      component={href || onClick ? undefined : 'span'}
+      component={href ? Link : onClick ? 'button' : 'span'}
       href={href}
       onClick={onClick}
       padding={size === 'default' ? [2, 2, 3] : [2, 2, 2]}
