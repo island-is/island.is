@@ -26,11 +26,21 @@ export class AssetService extends RESTDataSource {
     request.headers.set('Content-Type', 'application/json')
   }
 
-  async getRealEstate(): Promise<AssetTest | null> {
-    const response = await this.get<AssetTest | null>('fasteignir', {
+  async getRealEstates(): Promise<AssetTest | null> {
+    const response = await this.get<AssetTest | null>('/fasteignir', {
       // Need api info
       cacheOptions: { ttl: this.options.ttl ?? 600 },
     })
+    return response
+  }
+
+  async getRealEstateDetail(assetId: string): Promise<AssetTest | null> {
+    const response = await this.get<AssetTest | null>(
+      `/fasteignir/${assetId}`,
+      {
+        cacheOptions: { ttl: this.options.ttl ?? 600 },
+      },
+    )
     return response
   }
 }

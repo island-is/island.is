@@ -3,7 +3,7 @@ import { Text, Table as T, Column, Columns } from '@island.is/island-ui/core'
 
 interface GridItem {
   title: string
-  value: string
+  value: string | number
 }
 
 interface Props {
@@ -21,12 +21,15 @@ const AssetGrid: FC<Props> = ({ tables, title }) => {
         {title}
       </Text>
       {tables?.map((table, i) => (
-        <T.Table box={i > 0 ? { marginTop: 'containerGutter' } : undefined}>
+        <T.Table
+          key={`table-${i}`}
+          box={i > 0 ? { marginTop: 'containerGutter' } : undefined}
+        >
           <T.Head>
             <T.Row>
               <T.HeadData colSpan={4}>
                 <Text variant="eyebrow" as="span">
-                  {table.header.title}
+                  {table?.header?.title}
                 </Text>{' '}
                 <Text variant="small" as="span">
                   {table.header.value}
@@ -35,10 +38,10 @@ const AssetGrid: FC<Props> = ({ tables, title }) => {
             </T.Row>
           </T.Head>
           <T.Body>
-            {table.rows.map((row) => (
-              <T.Row>
-                {row.map((rowitem) => (
-                  <T.Data colSpan={2}>
+            {table.rows.map((row, ii) => (
+              <T.Row key={`row-${ii}`}>
+                {row.map((rowitem, iii) => (
+                  <T.Data key={`rowitem-${iii}`} colSpan={2}>
                     <Columns>
                       <Column>
                         <Text variant="eyebrow" as="span">

@@ -1,6 +1,10 @@
 import React from 'react'
-import { defineMessage } from 'react-intl'
 import chunk from 'lodash/chunk'
+import { useParams } from 'react-router-dom'
+import { format as formatKennitala } from 'kennitala'
+import { defineMessage } from 'react-intl'
+import { gql, useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 import { useNamespaces } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -10,10 +14,106 @@ import {
 import TableUnits from '../../components/TableUnits'
 import AssetGrid from '../../components/AssetGrid'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
+import { Fasteign } from '../../types/RealEstateAssets.types'
+import amountFormat from '../../utils/amountFormat'
+
+const GetSingleRealEstateQuery = gql`
+  query GetSingleRealEstateQuery($input: GetRealEstateInput!) {
+    getRealEstateDetail(input: $input)
+  }
+`
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
+  const { id }: { id: string | undefined } = useParams()
 
+  const { loading, error, data } = useQuery<Query>(GetSingleRealEstateQuery, {
+    variables: {
+      input: {
+        assetId: id,
+      },
+    },
+  })
+  const assetData: Fasteign = data?.getRealEstateDetail || {}
+
+  const owners = assetData?.thinglystirEigendur?.map((owner) => {
+    return [
+      owner.nafn || '',
+      formatKennitala(owner.kennitala) || '',
+      owner.heimild || '',
+      owner.display || '',
+      'NOT AVAILABLE',
+    ]
+  })
+
+  const units = assetData?.notkunareiningar?.data?.map((unit) => {
+    return {
+      header: {
+        title: 'Notkunareiningar',
+        value: unit.stadfang.display || '',
+      },
+      rows: chunk(
+        [
+          {
+            title: 'Notkunareiningarnúmer',
+            value: unit.notkunareininganr || '',
+          },
+          {
+            title: 'Gildandi fasteignamat',
+            value: amountFormat(unit.fasteignamat.gildandi) || '',
+          },
+          {
+            title: 'Staðfang',
+            value: unit.stadfang.displayShort || '',
+          },
+          {
+            title: 'Fyrirhugað fasteignamat 2022',
+            value: unit.fasteignamat.fyrirhugad
+              ? amountFormat(unit.fasteignamat.fyrirhugad)
+              : '',
+          },
+          {
+            title: 'Merking',
+            value: unit.merking || '',
+          },
+          // {
+          //   title: 'Húsmat',
+          //   value: unit.husmat?! || '',
+          // },
+          {
+            title: 'Sveitarfélag',
+            value: unit.stadfang.sveitarfelag || '',
+          },
+          {
+            title: 'Lóðarmat',
+            value: unit.lodarmat ? amountFormat(unit.lodarmat) : '',
+          },
+          {
+            title: 'Notkun',
+            value: unit.notkun || '',
+          },
+          {
+            title: 'Brunabótamat',
+            value: unit.brunabotamat ? amountFormat(unit.brunabotamat) : '',
+          },
+          {
+            title: 'Starfsemi',
+            value: unit.starfsemi || '',
+          },
+        ],
+        2,
+      ),
+    }
+  })
+
+  console.log('units', units)
+
+  console.log('data', data)
+  console.log('idididididididid', id)
+  const displayOwners = owners || [[]]
+  if (!id || error) {
+    return <span>Show error</span>
+  }
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>
@@ -32,7 +132,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
       </Box>
       <Box>
         <TableUnits
-          title="Einimelur 24 - F2013002"
+          title={`${assetData?.sjalfgefidStadfang?.displayShort} - ${assetData?.fasteignanr}`}
           tables={[
             {
               header: [
@@ -42,94 +142,31 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
                 'Eignarhlutfall',
                 'Staða',
               ],
-              rows: [
-                [
-                  'Guðríður Jóna Sigurðardóttir',
-                  '220482-4859',
-                  'A+',
-                  '50,00%',
-                  'Þinglýst',
-                ],
-                [
-                  'Guðríður Jóna Sigurðardóttir',
-                  '220482-4859',
-                  'A+',
-                  '50,00%',
-                  'Þinglýst',
-                ],
-              ],
+              rows: displayOwners,
             },
             {
               header: [
-                'Gildandi fasteignamat 2021',
-                'Gildandi fasteignamat 2023',
+                `Gildandi fasteignamat ${assetData.fasteignamat?.gildandiAr}`,
+                `Gildandi fasteignamat ${assetData.fasteignamat?.fyrirhugadAr}`,
               ],
-              rows: [['55.400.000 kr.', '59.950.000 kr.']],
+              rows: [
+                [
+                  assetData.fasteignamat?.gildandi
+                    ? amountFormat(assetData.fasteignamat?.gildandi)
+                    : '',
+                  assetData.fasteignamat?.fyrirhugad
+                    ? amountFormat(assetData.fasteignamat?.fyrirhugad)
+                    : '',
+                ],
+              ],
             },
           ]}
         />
       </Box>
       <Box marginTop={7}>
-        <AssetGrid
-          title="Notkunareiningar"
-          tables={[
-            {
-              header: {
-                title: 'Notkunareiningar',
-                value: 'Einimelur 24, Reykjavíkurborg',
-              },
-              rows: [
-                [
-                  {
-                    title: 'Notkunareiningarnúmer',
-                    value: 'N2059550',
-                  },
-                  {
-                    title: 'Gildandi fasteignamat',
-                    value: '55.400.000 kr.',
-                  },
-                ],
-                [
-                  {
-                    title: 'Staðfang',
-                    value: 'Einimelur 24',
-                  },
-                  {
-                    title: 'Fyrirhugað fasteignamat 2022',
-                    value: '59.950.000 kr',
-                  },
-                ],
-              ],
-            },
-            {
-              header: {
-                title: 'Notkunareiningar',
-                value: 'Einimelur 24, Reykjavíkurborg',
-              },
-              rows: chunk(
-                [
-                  {
-                    title: 'Notkunareiningarnúmer',
-                    value: 'N2059550',
-                  },
-                  {
-                    title: 'Gildandi fasteignamat',
-                    value: '55.400.000 kr.',
-                  },
-                  {
-                    title: 'Staðfang',
-                    value: 'Einimelur 24',
-                  },
-                  {
-                    title: 'Fyrirhugað fasteignamat 2022',
-                    value: '59.950.000 kr',
-                  },
-                ],
-                2,
-              ),
-            },
-          ]}
-        />
+        {units && units?.length > 0 ? (
+          <AssetGrid title="Notkunareiningar" tables={units} />
+        ) : null}
       </Box>
       <Box marginTop={8}>
         <AssetDisclaimer />

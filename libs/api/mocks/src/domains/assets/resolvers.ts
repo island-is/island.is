@@ -9,6 +9,11 @@ export const resolvers: Resolvers = {
   },
 
   Query: {
-    getRealEstate: () => store.getFasteignir,
+    getRealEstates: () => store.getFasteignir,
+    getRealEstateDetail: (_, { input }) => {
+      const idMatch =
+        store.getSingleRealEstateAsset.fasteignanr === input.assetId
+      return idMatch ? store.getSingleRealEstateAsset : null
+    },
   },
 }

@@ -1,27 +1,30 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useNamespaces } from '@island.is/localization'
+import { useNamespaces, useLocale } from '@island.is/localization'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import { Box } from '@island.is/island-ui/core'
+import { Box, AlertBanner } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
   IntroHeader,
+  m,
 } from '@island.is/service-portal/core'
 import AssetListCards from '../../components/AssetListCards'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
+import { FasteignirResponse } from '../../types/RealEstateAssets.types'
 
 const GetRealEstateQuery = gql`
   query GetRealEstateQuery {
-    getRealEstate
+    getRealEstates
   }
 `
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
+  const { formatMessage } = useLocale()
 
-  const { loading, error, ...statusQuery } = useQuery<Query>(GetRealEstateQuery)
-  const assetData: any = statusQuery.data?.getRealEstate || {}
+  const { loading, error, data } = useQuery<Query>(GetRealEstateQuery)
+  const assetData: FasteignirResponse = data?.getRealEstates || {}
 
   console.log('assetData', assetData)
 
@@ -41,7 +44,16 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
           img="./assets/images/educationGrades.svg"
         />
       </Box>
-      <AssetListCards />
+      {loading && <span>Loading...</span>}
+      {data && <AssetListCards assets={assetData.fasteignir} />}
+      {error && (
+        <Box>
+          <AlertBanner
+            description={formatMessage(m.errorFetch)}
+            variant="error"
+          />
+        </Box>
+      )}
       <AssetDisclaimer />
     </>
   )
