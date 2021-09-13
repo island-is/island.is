@@ -180,9 +180,11 @@ function Barcode({ shouldPoll: initialPolling }: PropTypes) {
                 <Typography variant="h3">
                   {formatNumber(giftCard.amount)} kr.
                 </Typography>
-                <Typography variant="p">
-                  {t.fromPrefix} {giftCard.giftDetail.from}
-                </Typography>
+                {giftCard.giftDetail && (
+                  <Typography variant="p">
+                    {t.fromPrefix} {giftCard.giftDetail.from}
+                  </Typography>
+                )}
               </Box>
               <Button
                 noWrap
