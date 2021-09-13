@@ -201,4 +201,45 @@ export const accidentLocation = {
       description: 'Fisherman accident location description',
     },
   }),
+  homeAccidentLocation: defineMessages({
+    title: {
+      id: 'an.application:accidentLocation.homeAccidentLocation.title',
+      defaultMessage: 'Staðsetning á slysi',
+      description: 'Home accident location title',
+    },
+    description: {
+      id: 'an.application:accidentLocation.homeAccidentLocation.description',
+      defaultMessage:
+        'Nauðsynlegt er að gefa upp staðsetningu á slysinu... blabla',
+      description: 'Home accident location description',
+    },
+    address: {
+      id: 'an.application:accidentLocation.homeAccidentLocation.address',
+      defaultMessage: 'Heimili / póstfang',
+      description: 'Home accident location address input field',
+    },
+    postalCode: {
+      id:
+        'an.application:accidentLocation.fishermanAccidentLocation.postalCode',
+      defaultMessage: 'Póstnúmer',
+      description: 'Home accident location postal code input field',
+    },
+    community: {
+      id: 'an.application:accidentLocation.homeAccidentLocation.community',
+      defaultMessage: 'Sveitarfélag',
+      description: 'Home accident location community input field',
+    },
+    moreDetails: {
+      id: 'an.application:accidentLocation.homeAccidentLocation.moreDetails',
+      defaultMessage: 'Nánar',
+      description: 'Home accident location more details textarea field',
+    },
+    moreDetailsPlaceholder: {
+      id:
+        'an.application:accidentLocation.homeAccidentLocation.moreDetailsPlaceholder',
+      defaultMessage: 'T.d hæð 2, íbúð 101 eða sumarbústaður',
+      description:
+        'Home accident location more details placeholder in textarea field',
+    },
+  }),
 }
