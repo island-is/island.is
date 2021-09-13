@@ -8,6 +8,9 @@ export interface FeatureFlagHookValue<T> {
   loading: boolean
 }
 
+/**
+ * Hook to get a feature flag.
+ */
 export const useFeatureFlag = <T extends boolean | string>(
   featureFlag: string,
   defaultValue: T,
