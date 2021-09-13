@@ -953,6 +953,7 @@ export const AccidentNotificationForm: Form = buildForm({
           ],
         }),
         buildMultiField({
+          id: 'locationAndPurpose',
           title: locationAndPurpose.general.title,
           description: locationAndPurpose.general.description,
           condition: (formValue) =>
@@ -1165,6 +1166,7 @@ export const AccidentNotificationForm: Form = buildForm({
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
+          id: 'companyInfo',
           title: companyInfo.general.title,
           description: companyInfo.general.description,
           children: [
@@ -1234,6 +1236,7 @@ export const AccidentNotificationForm: Form = buildForm({
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
+          id: 'schoolInfo',
           title: schoolInfo.general.title,
           description: schoolInfo.general.description,
           children: [
@@ -1303,6 +1306,7 @@ export const AccidentNotificationForm: Form = buildForm({
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
+          id: 'fishingCompanyInfo',
           title: fishingCompanyInfo.general.title,
           description: fishingCompanyInfo.general.description,
           children: [
@@ -1372,6 +1376,7 @@ export const AccidentNotificationForm: Form = buildForm({
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
+          id: 'sportsClubInfo',
           title: sportsClubInfo.general.title,
           description: sportsClubInfo.general.description,
           children: [
@@ -1441,6 +1446,7 @@ export const AccidentNotificationForm: Form = buildForm({
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
+          id: 'rescueSquad',
           title: rescueSquadInfo.general.title,
           description: rescueSquadInfo.general.description,
           children: [
