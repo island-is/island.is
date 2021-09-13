@@ -35,7 +35,7 @@ export interface Form {
 export const initialState = {
   submitted: false,
   incomeFiles: [],
-  taxReturnFiles: [],
+  taxReturnFiles: [] as UploadFile[],
   otherFiles: [],
 }
 
@@ -52,14 +52,6 @@ interface Props {
 export const FormContext = createContext<FormProvider>({ form: initialState })
 
 const FormProvider = ({ children }: Props) => {
-  const getSessionStorageOrDefault = (key: any) => {
-    const stored = sessionStorage.getItem(key)
-    if (!stored) {
-      return initialState
-    }
-    return JSON.parse(stored)
-  }
-
   const storageKey = 'formState'
 
   const [form, updateForm] = useState(initialState)

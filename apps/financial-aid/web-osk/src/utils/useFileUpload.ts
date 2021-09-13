@@ -53,6 +53,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     const newUploadFiles = newFiles as UploadFile[]
 
     if (!isRetry) {
+      console.log('retry false', newUploadFiles, files)
       setFiles([...newUploadFiles, ...files])
     }
 
@@ -129,15 +130,15 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     })
 
     request.upload.addEventListener('error', (evt) => {
+      file.percent = 0
+      file.status = 'error'
+      setUploadErrorMessage('Næ ekki að hlaða upp')
+
       if (file.key) {
         delete requests[file.key]
       }
 
       if (evt.lengthComputable) {
-        file.percent = 0
-        file.status = 'error'
-        setUploadErrorMessage('Næ ekki að hlaða upp')
-
         updateFile(file)
       }
     })
@@ -170,11 +171,11 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
 
   const updateFile = (file: UploadFile) => {
     const newFiles = [...filesRef.current]
-
+    console.log('newFiles', newFiles)
     const updatedFiles = newFiles.map((newFile) => {
       return newFile.key === file.key ? file : newFile
     })
-
+    console.log('updatedFiles', updatedFiles)
     setFiles(updatedFiles)
   }
 
@@ -216,6 +217,5 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     onChange,
     onRemove,
     onRetry,
-    uploadingFiles,
   }
 }
