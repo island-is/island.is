@@ -316,49 +316,50 @@ export const RulingStepOne: React.FC = () => {
                 isRequired
               />
             </Box>
-            {workingCase.decision !== CaseDecision.REJECTING && (
-              <Box
-                component="section"
-                marginBottom={7}
-                data-testid="caseDecisionSection"
-              >
-                <Box marginBottom={2}>
-                  <Text as="h3" variant="h3">
-                    {workingCase.type === CaseType.CUSTODY &&
-                    workingCase.decision === CaseDecision.ACCEPTING
-                      ? 'Gæsluvarðhald'
-                      : 'Farbann'}
-                  </Text>
+            {workingCase.decision &&
+              workingCase.decision !== CaseDecision.REJECTING && (
+                <Box
+                  component="section"
+                  marginBottom={7}
+                  data-testid="caseDecisionSection"
+                >
+                  <Box marginBottom={2}>
+                    <Text as="h3" variant="h3">
+                      {workingCase.type === CaseType.CUSTODY &&
+                      workingCase.decision === CaseDecision.ACCEPTING
+                        ? 'Gæsluvarðhald'
+                        : 'Farbann'}
+                    </Text>
+                  </Box>
+                  <DateTime
+                    name="validToDate"
+                    datepickerLabel={
+                      workingCase.type === CaseType.CUSTODY &&
+                      workingCase.decision === CaseDecision.ACCEPTING
+                        ? 'Gæsluvarðhald til'
+                        : 'Farbann til'
+                    }
+                    selectedDate={
+                      workingCase.validToDate
+                        ? new Date(workingCase.validToDate)
+                        : undefined
+                    }
+                    minDate={new Date()}
+                    onChange={(date: Date | undefined, valid: boolean) => {
+                      newSetAndSendDateToServer(
+                        'validToDate',
+                        date,
+                        valid,
+                        workingCase,
+                        setWorkingCase,
+                        setValidToDateIsValid,
+                        updateCase,
+                      )
+                    }}
+                    required
+                  />
                 </Box>
-                <DateTime
-                  name="validToDate"
-                  datepickerLabel={
-                    workingCase.type === CaseType.CUSTODY &&
-                    workingCase.decision === CaseDecision.ACCEPTING
-                      ? 'Gæsluvarðhald til'
-                      : 'Farbann til'
-                  }
-                  selectedDate={
-                    workingCase.validToDate
-                      ? new Date(workingCase.validToDate)
-                      : undefined
-                  }
-                  minDate={new Date()}
-                  onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
-                      'validToDate',
-                      date,
-                      valid,
-                      workingCase,
-                      setWorkingCase,
-                      setValidToDateIsValid,
-                      updateCase,
-                    )
-                  }}
-                  required
-                />
-              </Box>
-            )}
+              )}
             {workingCase.type === CaseType.CUSTODY &&
               workingCase.decision === CaseDecision.ACCEPTING && (
                 <Box component="section" marginBottom={8}>

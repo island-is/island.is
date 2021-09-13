@@ -2,7 +2,6 @@ import {
   buildCheckboxField,
   buildCustomField,
   buildDataProviderItem,
-  buildDateField,
   buildDescriptionField,
   buildExternalDataProvider,
   buildFileUploadField,
@@ -18,6 +17,7 @@ import {
   FormModes,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
+import { WorkTypeIllustration } from '../assets/WorkTypeIllustration'
 import { NO, UPLOAD_ACCEPT, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import {
@@ -63,9 +63,9 @@ import {
 } from '../types'
 import {
   getAccidentTypeOptions,
+  hideLocationAndPurpose,
   isAboardShip,
   isAgricultureAccident,
-  isDateOlderThanAYear,
   isFishermanAccident,
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
@@ -82,7 +82,6 @@ import {
 import { isHealthInsured } from '../utils/isHealthInsured'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
-import { WorkTypeIllustration } from '../assets/WorkTypeIllustration'
 
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
@@ -486,7 +485,7 @@ export const AccidentNotificationForm: Form = buildForm({
             buildMultiField({
               id: 'powerOfAttorney',
               title: powerOfAttorney.upload.heading,
-              description: powerOfAttorney.upload.uploadDescription,
+              description: powerOfAttorney.upload.description,
               children: [
                 buildFileUploadField({
                   id: 'attachments.powerOfAttorneyFile',
@@ -494,6 +493,7 @@ export const AccidentNotificationForm: Form = buildForm({
                   introduction: '',
                   uploadAccept: UPLOAD_ACCEPT,
                   uploadHeader: powerOfAttorney.upload.uploadHeader,
+                  uploadDescription: powerOfAttorney.upload.uploadDescription,
                   uploadButtonLabel: powerOfAttorney.upload.uploadButtonLabel,
                 }),
               ],
@@ -793,11 +793,6 @@ export const AccidentNotificationForm: Form = buildForm({
                         accidentLocation.studiesAccidentLocation.atTheSchool,
                     },
                     {
-                      value: StudiesAccidentLocationEnum.DURINGSTUDIES,
-                      label:
-                        accidentLocation.studiesAccidentLocation.duringStudies,
-                    },
-                    {
                       value: StudiesAccidentLocationEnum.OTHER,
                       label: accidentLocation.studiesAccidentLocation.other,
                     },
@@ -965,7 +960,9 @@ export const AccidentNotificationForm: Form = buildForm({
         buildMultiField({
           title: locationAndPurpose.general.title,
           description: locationAndPurpose.general.description,
-          condition: (formValue) => !isFishermanAccident(formValue),
+          condition: (formValue) =>
+            !isFishermanAccident(formValue) &&
+            !hideLocationAndPurpose(formValue),
           children: [
             buildTextField({
               id: 'locationAndPurpose.location',
@@ -1159,7 +1156,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'attachments.injuryCertificateFile',
               title: attachments.general.uploadHeader,
               uploadAccept: UPLOAD_ACCEPT,
-              uploadHeader: attachments.general.uploadHeader,
+              uploadHeader: injuredPersonInformation.upload.uploadHeader,
               uploadDescription: attachments.general.uploadDescription,
               uploadButtonLabel: attachments.general.uploadButtonLabel,
               introduction: attachments.general.uploadIntroduction,
