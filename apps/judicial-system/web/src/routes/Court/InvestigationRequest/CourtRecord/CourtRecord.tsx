@@ -12,10 +12,13 @@ import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import CourtRecordForm from './CourtRecordForm'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { icCourtRecord } from '@island.is/judicial-system-web/messages'
+import { useIntl } from 'react-intl'
 
 const CourtRecord = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const { autofill } = useCase()
+  const { formatMessage } = useIntl()
 
   const router = useRouter()
   const id = router.query.id
@@ -74,6 +77,16 @@ const CourtRecord = () => {
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
+      }
+
+      if (theCase.sessionArrangements === SessionArrangements.REMOTE_SESSION) {
+        autofill(
+          'litigationPresentations',
+          formatMessage(
+            icCourtRecord.sections.litigationPresentations.autofill,
+          ),
+          theCase,
+        )
       }
       setWorkingCase(data.case)
     }
