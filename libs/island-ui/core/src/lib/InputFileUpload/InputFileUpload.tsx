@@ -9,6 +9,7 @@ import { Button } from '../Button/Button'
 import { theme, Colors } from '@island.is/island-ui/theme'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconTypes } from '../IconRC/iconMap'
+import { Tag } from '../..'
 
 export type UploadFileStatus = 'error' | 'done' | 'uploading'
 
@@ -62,6 +63,7 @@ interface UploadedFileProps {
   showFileSize: boolean
   onRemoveClick: (file: UploadFile) => void
   onRetryClick?: (file: UploadFile) => void
+  onOpenFile?: (file: UploadFile) => void
   defaultBackgroundColor?: Colors
   doneIcon?: IconTypes
 }
@@ -73,6 +75,7 @@ export const UploadedFile = ({
   doneIcon,
   onRemoveClick,
   onRetryClick,
+  onOpenFile,
 }: UploadedFileProps) => {
   const statusColor = (status?: UploadFileStatus): Colors => {
     switch (status) {
@@ -126,40 +129,49 @@ export const UploadedFile = ({
           <Text as="span">{` (${kb(file.size)}KB)`}</Text>
         )}
       </Text>
-      {isUploading ? (
-        <div
-          className={styles.progressIconAnimation}
-          aria-label="Hleð upp skrá"
-        >
-          <Icon color="blue400" icon={statusIcon(file.status)} />
-        </div>
-      ) : file.status === 'error' && onRetryClick ? (
-        <button
-          type={'button'}
-          onClick={(e) => {
-            e.stopPropagation()
-            if (!isUploading) {
-              onRetryClick(file)
-            }
-          }}
-          aria-label="Reyna aftur"
-        >
-          <Icon color="blue400" icon="reload" />
-        </button>
-      ) : (
-        <button
-          type={'button'}
-          onClick={(e) => {
-            e.stopPropagation()
-            if (!isUploading) {
-              onRemoveClick(file)
-            }
-          }}
-          aria-label="Fjarlægja skrá"
-        >
-          <Icon color="blue400" icon={statusIcon(file.status)} />
-        </button>
-      )}
+      <Box display="flex">
+        {isUploading ? (
+          <div
+            className={styles.progressIconAnimation}
+            aria-label="Hleð upp skrá"
+          >
+            <Icon color="blue400" icon={statusIcon(file.status)} />
+          </div>
+        ) : file.status === 'error' && onRetryClick ? (
+          <button
+            type={'button'}
+            onClick={(e) => {
+              e.stopPropagation()
+              if (!isUploading) {
+                onRetryClick(file)
+              }
+            }}
+            aria-label="Reyna aftur"
+          >
+            <Icon color="blue400" icon="reload" />
+          </button>
+        ) : (
+          <button
+            type={'button'}
+            onClick={(e) => {
+              e.stopPropagation()
+              if (!isUploading) {
+                onRemoveClick(file)
+              }
+            }}
+            aria-label="Fjarlægja skrá"
+          >
+            <Icon color="blue400" icon={statusIcon(file.status)} />
+          </button>
+        )}
+        {onOpenFile && (
+          <Box marginLeft={2}>
+            <Tag variant="darkerBlue" onClick={() => onOpenFile(file)}>
+              Opna
+            </Tag>
+          </Box>
+        )}
+      </Box>
 
       <UploadingIndicator percent={file.percent} />
     </Box>
@@ -203,6 +215,7 @@ export const InputFileUpload = ({
   onRetry,
   errorMessage,
   defaultFileBackgroundColor,
+  doneIcon,
 }: InputFileUploadProps) => {
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0 || !onChange) return
