@@ -34,6 +34,7 @@ export type RegulationHomeTexts = Partial<
 export type RegulationPageTexts = Partial<
   Record<
     | 'goBack' // 'Til baka'
+    | 'goHome' // 'Yfirlit reglugerða'
     | 'printThisVersion' // 'Prenta þessa útgáfu'
     | 'copyPermaLink' // "Afrita hlekk á þessa útgáfu"
     | 'redirectText' // 'Þessi reglugerð er enn sem komið er hýst á eldri vefslóð:'
@@ -62,7 +63,8 @@ export type RegulationPageTexts = Partial<
     | 'statusLinkToRepealed_long' // 'Sjá lokaútgfáfu reglugerðarinnar'
     | 'statusOnDate_past' // 'eins og hún var ${date}'
     | 'statusOnDate_future' // 'eins og hún líklega verður ${date}'
-    | 'affectingLinkPrefix' // 'Breytingar gerðar ${dates} af'
+    | 'affectingLinkPrefix' // 'Breytingar gerðar ${dates} af reglugerð'
+    | 'affectingLinkPrefixPlural' // 'Breytingar gerðar ${dates} af reglugerðum'
     | 'affectingLinkDateRange' // '${dateFrom} – ${dateTo}'
     | 'effectsTitle' // 'Áhrif ${name} á aðrar reglugerðir'
     | 'effectsChange' // 'Breytir ${name}'

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Link, Stack, Text } from '@island.is/island-ui/core'
+import { Button, Hidden, Link, Stack, Text } from '@island.is/island-ui/core'
 import { RegulationLayout } from './RegulationLayout'
 import { prettyName } from '@island.is/regulations'
 import { RegulationRedirect } from '@island.is/regulations/web'
@@ -44,22 +44,19 @@ export const RegulationRedirectMessage = (
       }
       sidebar={
         <Stack space={2}>
-          {
-            <Button
-              preTextIcon="arrowBack"
-              preTextIconType="filled"
-              size="small"
-              type="button"
-              variant="text"
-              onClick={() => {
-                window.history.length > 2
-                  ? router.back()
-                  : router.push(linkResolver('regulationshome').href)
-              }}
-            >
-              {txt('goBack')}
-            </Button>
-          }
+          <Hidden print={true}>
+            <Link href={linkResolver('regulationshome').href}>
+              <Button
+                preTextIcon="arrowBack"
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+              >
+                {txt('goHome')}
+              </Button>
+            </Link>
+          </Hidden>
         </Stack>
       }
     />
