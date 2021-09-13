@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import {
   CaseDecision,
@@ -23,6 +22,7 @@ import {
   rcConfirmation,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 
 interface SigningModalProps {
   workingCase: Case
@@ -44,7 +44,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
   ] = useState<SignatureConfirmationResponse>()
 
   const { transitionCase, sendNotification } = useCase()
-  const { formatMessage } = useIntl()
 
   const { data } = useQuery(SignatureConfirmationQuery, {
     variables: {
@@ -120,12 +119,10 @@ const SigningModal: React.FC<SigningModalProps> = ({
 
   const renderSuccessText = (caseType: CaseType) => {
     return caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
-      ? formatMessage(
-          caseType === CaseType.CUSTODY
-            ? rcConfirmation.modal.custodyCases.text
-            : rcConfirmation.modal.travelBanCases.text,
-        )
-      : formatMessage(icConfirmation.modal.text)
+      ? caseType === CaseType.CUSTODY
+        ? rcConfirmation.modal.custodyCases.text
+        : rcConfirmation.modal.travelBanCases.text
+      : icConfirmation.modal.text
   }
 
   return (
@@ -140,11 +137,13 @@ const SigningModal: React.FC<SigningModalProps> = ({
           : 'Undirritun tókst ekki'
       }
       text={
-        !signatureConfirmationResponse
-          ? renderControlCode()
-          : signatureConfirmationResponse.documentSigned
-          ? renderSuccessText(workingCase.type)
-          : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
+        !signatureConfirmationResponse ? (
+          renderControlCode()
+        ) : signatureConfirmationResponse.documentSigned ? (
+          <MarkdownWrapper text={renderSuccessText(workingCase.type)} />
+        ) : (
+          'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
+        )
       }
       secondaryButtonText={
         !signatureConfirmationResponse
