@@ -163,12 +163,6 @@ export const ThirdPartyFormOverview: FC<FieldBaseProps> = ({
                   value={answers.locationAndPurpose.location}
                 />
               </GridColumn>
-              <GridColumn span="12/12">
-                <ValueLine
-                  label={locationAndPurpose.labels.purpose}
-                  value={answers.locationAndPurpose.purpose}
-                />
-              </GridColumn>
             </GridRow>
           </ThirdPartyReviewGroup>
         </>
