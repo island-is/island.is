@@ -7,4 +7,5 @@ module.exports = {
   coverageDirectory: '../../coverage/libs/message-queue',
   globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },
   displayName: 'message-queue',
+  testEnvironment: 'node',
 }

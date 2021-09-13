@@ -11,5 +11,5 @@ module.exports = {
   coverageDirectory: '../../../coverage/apps/judicial-system/web',
   setupFilesAfterEnv: ['./jest.setup.ts'],
   displayName: 'judicial-system-web',
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
 }

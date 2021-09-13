@@ -1,4 +1,8 @@
-import { Application, ApplicationTypes } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/core'
 import { NO, YES, StatusTypes } from '../shared'
 
 import { answerValidators } from './answerValidators'
@@ -29,6 +33,7 @@ describe('answerValidators', () => {
     modified: new Date(),
     state: '',
     typeId: ApplicationTypes.HEALTH_INSURANCE,
+    status: ApplicationStatus.IN_PROGRESS,
   }
 
   it('should return error when status type is not a defined type', () => {

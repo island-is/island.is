@@ -13,6 +13,8 @@ if (isServer) {
     activeEnvironment = 'dev'
   } else if (process.env.NODE_ENV === 'development') {
     activeEnvironment = 'local'
+  } else if (process.env.NODE_ENV === 'test') {
+    activeEnvironment = 'local'
   } else {
     activeEnvironment = 'unknown'
   }
