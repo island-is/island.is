@@ -14,7 +14,7 @@ import {
   StudiesAccidentLocationEnum,
   StudiesAccidentTypeEnum,
   WhoIsTheNotificationForEnum,
-  WorkAccidentTypeEnum
+  WorkAccidentTypeEnum,
 } from '../types'
 import { isValid24HFormatTime } from '../utils'
 import { error } from './messages/error'
