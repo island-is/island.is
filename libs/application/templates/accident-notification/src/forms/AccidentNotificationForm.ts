@@ -63,6 +63,7 @@ import {
 } from '../types'
 import {
   getAccidentTypeOptions,
+  hideLocationAndPurpose,
   isAboardShip,
   isAgricultureAccident,
   isFishermanAccident,
@@ -792,11 +793,6 @@ export const AccidentNotificationForm: Form = buildForm({
                         accidentLocation.studiesAccidentLocation.atTheSchool,
                     },
                     {
-                      value: StudiesAccidentLocationEnum.DURINGSTUDIES,
-                      label:
-                        accidentLocation.studiesAccidentLocation.duringStudies,
-                    },
-                    {
                       value: StudiesAccidentLocationEnum.OTHER,
                       label: accidentLocation.studiesAccidentLocation.other,
                     },
@@ -964,7 +960,9 @@ export const AccidentNotificationForm: Form = buildForm({
         buildMultiField({
           title: locationAndPurpose.general.title,
           description: locationAndPurpose.general.description,
-          condition: (formValue) => !isFishermanAccident(formValue),
+          condition: (formValue) =>
+            !isFishermanAccident(formValue) &&
+            !hideLocationAndPurpose(formValue),
           children: [
             buildTextField({
               id: 'locationAndPurpose.location',
