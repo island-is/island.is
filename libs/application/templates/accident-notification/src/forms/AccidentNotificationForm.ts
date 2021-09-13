@@ -485,7 +485,7 @@ export const AccidentNotificationForm: Form = buildForm({
             buildMultiField({
               id: 'powerOfAttorney',
               title: powerOfAttorney.upload.heading,
-              description: powerOfAttorney.upload.uploadDescription,
+              description: powerOfAttorney.upload.description,
               children: [
                 buildFileUploadField({
                   id: 'attachments.powerOfAttorneyFile',
@@ -493,6 +493,7 @@ export const AccidentNotificationForm: Form = buildForm({
                   introduction: '',
                   uploadAccept: UPLOAD_ACCEPT,
                   uploadHeader: powerOfAttorney.upload.uploadHeader,
+                  uploadDescription: powerOfAttorney.upload.uploadDescription,
                   uploadButtonLabel: powerOfAttorney.upload.uploadButtonLabel,
                 }),
               ],
@@ -1155,7 +1156,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'attachments.injuryCertificateFile',
               title: attachments.general.uploadHeader,
               uploadAccept: UPLOAD_ACCEPT,
-              uploadHeader: attachments.general.uploadHeader,
+              uploadHeader: injuredPersonInformation.upload.uploadHeader,
               uploadDescription: attachments.general.uploadDescription,
               uploadButtonLabel: attachments.general.uploadButtonLabel,
               introduction: attachments.general.uploadIntroduction,
