@@ -1,5 +1,4 @@
 import { Injectable, Inject } from '@nestjs/common'
-import { Response } from 'node-fetch'
 import { uuid } from 'uuidv4'
 import * as kennitala from 'kennitala'
 import flatten from 'lodash/flatten'
@@ -80,19 +79,37 @@ export class EducationService {
       return []
     }
 
-    return family.filter(
-      (familyMember) =>
-        familyMember === myself ||
-        (this.isChild(familyMember) && !this.isChild(myself)),
-    )
+    // Note: we are explicitly sorting by name & national id, since we will
+    // use the index within the family to link to and select the correct
+    // family memember, so that indexes are consistant no matter how they
+    // are displayed or fetched.
+    // They also don't need to be absolute indexes, only indexes that are
+    // unique from the point of view of each viewer.
+
+    return family
+      .filter(
+        (familyMember) =>
+          familyMember === myself ||
+          (this.isChild(familyMember) && !this.isChild(myself)),
+      )
+      .sort((a, b) => {
+        const nameDiff = a.Nafn.localeCompare(b.Nafn)
+
+        if (nameDiff === 0) {
+          return a.Kennitala.localeCompare(b.Kennitala)
+        }
+
+        return nameDiff
+      })
   }
 
   async getExamFamilyOverviews(
     nationalId: string,
   ): Promise<ExamFamilyOverview[]> {
     const family = await this.getFamily(nationalId)
+
     const examFamilyOverviews = await Promise.all(
-      family.map(async (familyMember) => {
+      family.map(async (familyMember, index) => {
         const studentAssessment = await this.mmsApi.getStudentAssessment(
           familyMember.Kennitala,
         )
@@ -116,13 +133,14 @@ export class EducationService {
           organizationType: 'Menntamálastofnun',
           organizationName: 'Samræmd Könnunarpróf',
           yearInterval: getYearInterval(examDates),
+          familyIndex: index,
         }
       }),
     )
     return examFamilyOverviews.filter(Boolean) as ExamFamilyOverview[]
   }
 
-  private mapGrade(grade: GradeResult) {
+  private mapGrade(grade?: GradeResult) {
     if (!grade) {
       return undefined
     }
@@ -133,7 +151,7 @@ export class EducationService {
     }
   }
 
-  private mapGradeType(grade: GradeTypeResult) {
+  private mapGradeType(grade?: GradeTypeResult) {
     if (!grade) {
       return undefined
     }
@@ -144,10 +162,11 @@ export class EducationService {
     }
   }
 
-  private mapCourseGrade(grade: Grade) {
+  private mapCourseGrade(grade: Grade): any {
     if (!grade) {
       return undefined
     }
+
     return {
       label: grade.heiti,
       competence: grade.haefnieinkunn,
@@ -163,6 +182,7 @@ export class EducationService {
     const studentAssessment = await this.mmsApi.getStudentAssessment(
       familyMember.Kennitala,
     )
+
     return {
       id: `EducationExamResult${familyMember.Kennitala}`,
       fullName: familyMember.Nafn,
