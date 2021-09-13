@@ -62,11 +62,13 @@ interface UploadedFileProps {
   showFileSize: boolean
   onRemoveClick: (file: UploadFile) => void
   onRetryClick?: (file: UploadFile) => void
+  defaultBackgroundColor?: Colors
 }
 
-const UploadedFile = ({
+export const UploadedFile = ({
   file,
   showFileSize,
+  defaultBackgroundColor,
   onRemoveClick,
   onRetryClick,
 }: UploadedFileProps) => {
@@ -77,7 +79,7 @@ const UploadedFile = ({
       case 'done':
         return 'blue100'
       default:
-        return 'transparent'
+        return defaultBackgroundColor ?? 'transparent'
     }
   }
 
@@ -178,6 +180,7 @@ export interface InputFileUploadProps {
   onRetry?: (file: UploadFile) => void
   onChange?: (files: File[]) => void
   errorMessage?: string
+  defaultFileBackgroundColor?: Colors
 }
 
 export const InputFileUpload = ({
@@ -196,6 +199,7 @@ export const InputFileUpload = ({
   onRemove,
   onRetry,
   errorMessage,
+  defaultFileBackgroundColor,
 }: InputFileUploadProps) => {
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0 || !onChange) return
@@ -255,6 +259,7 @@ export const InputFileUpload = ({
             key={index}
             file={file}
             showFileSize={showFileSize}
+            defaultBackgroundColor={defaultFileBackgroundColor}
             onRemoveClick={onRemove}
             onRetryClick={onRetry}
           />
