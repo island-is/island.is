@@ -133,6 +133,12 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
         return {
           fixture: 'conclusion/acceptedTravelBan',
         }
+      } else if (
+        graphqlRequest.body.variables.input.id === 'test_id_without_decision'
+      ) {
+        return {
+          fixture: 'withoutDecision',
+        }
       }
     } else if (graphqlRequest.body.query.includes('TransitionCaseMutation')) {
       return {
