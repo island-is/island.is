@@ -1,4 +1,4 @@
-import { style, Style, styleMap } from 'treat'
+import { style, styleMap } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 // this is used to generate uniqe classname for button so we can target empty styles for icon
@@ -264,7 +264,7 @@ const utilityColors = (
   borderHover: string,
   textDisabled: string,
   borderDisabled: string,
-  borderHoverWidth: number = 1,
+  borderHoverWidth = 1,
 ) => ({
   backgroundColor: theme.color.transparent,
   boxShadow: `inset 0 0 0 1px ${border}`,

@@ -23,9 +23,9 @@ export const useFeatureFlag = <T extends boolean | string>(
     let mounted = true
     featureFlagClient
       .getValue(featureFlag, defaultValue, user)
-      .then((value: T) => {
+      .then((value) => {
         if (mounted) {
-          setState({ value, loading: false })
+          setState({ value: value as T, loading: false })
         }
       })
     return () => {

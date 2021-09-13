@@ -52,8 +52,10 @@ export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
   )
 }
 
+type FeatureFlagRecord = Record<string, boolean | string>
+
 export interface MockedFeatureFlagProviderProps {
-  flags: string[] | Record<string, boolean | string>
+  flags: string[] | FeatureFlagRecord
 }
 
 export const MockedFeatureFlagProvider: FC<MockedFeatureFlagProviderProps> = ({
@@ -62,7 +64,7 @@ export const MockedFeatureFlagProvider: FC<MockedFeatureFlagProviderProps> = ({
 }) => {
   const context = useMemo<FeatureFlagClient>(() => {
     const cleanFlags = Array.isArray(flags)
-      ? flags.reduce((obj, flag) => {
+      ? flags.reduce<FeatureFlagRecord>((obj, flag) => {
           obj[flag] = true
           return obj
         }, {})

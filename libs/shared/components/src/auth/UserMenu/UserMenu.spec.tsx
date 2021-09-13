@@ -18,7 +18,7 @@ import { ActorDelegationsQuery } from '../../graphql'
 
 const delegation = {
   name: 'Phil',
-  nationalId: '1111111118',
+  nationalId: '1111111111',
 }
 const mocks = [
   {
@@ -104,7 +104,7 @@ describe('UserMenu', () => {
       user: {
         profile: {
           name: 'John',
-          actor: { name: 'Anna', nationalId: '1111111119' },
+          actor: { name: 'Anna', nationalId: '2222222222' },
         },
       },
     })
@@ -147,7 +147,7 @@ describe('UserMenu', () => {
 
   it('can switch languages', async () => {
     // Arrange
-    const { baseElement } = renderAuthenticated(
+    renderAuthenticated(
       <>
         <UserMenu />
         <LocaleContext.Consumer>

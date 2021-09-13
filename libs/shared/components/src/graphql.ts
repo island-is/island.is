@@ -466,6 +466,10 @@ export type GetTranslationsInput = {
   lang: Scalars['String']
 }
 
+export type IsHealthInsuredInput = {
+  date: Scalars['DateTime']
+}
+
 export type GetApiCatalogueInput = {
   limit?: Maybe<Scalars['Int']>
   cursor?: Maybe<Scalars['String']>
