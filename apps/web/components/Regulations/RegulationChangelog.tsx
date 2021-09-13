@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react'
 import * as s from './RegulationsSidebarBox.treat'
+
+import React, { useEffect, useMemo, useState } from 'react'
 import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
@@ -54,7 +55,7 @@ export const useRegulationEffectPrepper = (
       effects,
       isViewingCurrent,
     }
-  }, [regulation, today])
+  }, [regulation, today, opts.reverse])
 
   const [expanded, setExpanded] = useState(
     () => effects.past.length < CHANGELOG_COLLAPSE_LIMIT,

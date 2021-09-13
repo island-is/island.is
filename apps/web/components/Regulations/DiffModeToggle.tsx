@@ -27,8 +27,11 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
     history,
   } = regulation
 
+  const firstEvent = regulation.history[0]
   const isDiffable =
-    regulation.history.length > 0 && timelineDate !== effectiveDate
+    firstEvent &&
+    firstEvent.effect === 'amend' &&
+    timelineDate !== effectiveDate
 
   if (!isDiffable) {
     return null
