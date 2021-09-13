@@ -3,7 +3,7 @@ import { ActivityIndicator } from 'react-native'
 import styled from 'styled-components/native'
 import agencyLogo from '../../assets/card/agency-logo.png'
 import danger from '../../../../island-ui/src/assets/card/danger.png'
-import success from '../../../../island-ui/src/assets/card/is-verified.png'
+import success from '../../../../island-ui/src/assets/card/checkmark.png'
 import backgroundPink from '../../../../island-ui/src/assets/card/okuskirteini.png'
 import backgroundBlue from '../../../../island-ui/src/assets/card/skotvopnaleyfi.png'
 import { useIntl } from 'react-intl'
@@ -172,9 +172,9 @@ export function ScanResultCard(props: ScanResultCardProps) {
                   style={{ transform: [{ scale: 0.8 }] }}
                 />
               ) : error ? (
-                <SubtitleImage source={danger} />
+                <SubtitleImage source={danger} resizeMode="contain" />
               ) : (
-                <SubtitleImage source={success} />
+                <SubtitleImage source={success} resizeMode="contain" />
               )}
             </SubtitleIcon>
             <SubtitleText>
