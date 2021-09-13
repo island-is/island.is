@@ -1,6 +1,5 @@
 import React from 'react'
-import { Text, Box, UploadFile } from '@island.is/island-ui/core'
-
+import { Text, Box, UploadFile, Button } from '@island.is/island-ui/core'
 import * as styles from './FileList.treat'
 import cn from 'classnames'
 import {
@@ -8,6 +7,17 @@ import {
   getFileSizeInKilo,
   getFileType,
 } from '@island.is/financial-aid/shared/lib'
+
+import { gql, useLazyQuery } from '@apollo/client'
+
+export const GetSignedUrlQuery = gql`
+  query GetSignedUrlQuery($input: GetSignedUrlForIdInput!) {
+    getSignedUrlForId(input: $input) {
+      url
+      key
+    }
+  }
+`
 
 interface Props {
   className?: string
@@ -18,18 +28,28 @@ const FileList = ({ className, files }: Props) => {
   if (files === undefined || files.length === 0) {
     return null
   }
+
+  const [openFile] = useLazyQuery(GetSignedUrlQuery, {
+    fetchPolicy: 'no-cache',
+    onCompleted: (data) => {
+      console.log(data)
+    },
+    onError: (error) => {
+      console.log(error)
+    },
+  })
+
   return (
     <Box className={cn({ [`${className}`]: true })} marginBottom={2}>
       <>
         {files.map((item, index) => {
           return (
-            <a
+            <Button
               key={'file-' + index}
-              href={item.name}
-              target="_blank"
-              rel="noreferrer noopener"
-              className={styles.filesLink}
-              download
+              onClick={() => {
+                console.log(item)
+                openFile({ variables: { input: { id: item.id } } })
+              }}
             >
               <div className={styles.container}>
                 <div className={styles.type}>
@@ -47,7 +67,7 @@ const FileList = ({ className, files }: Props) => {
                   <Text variant="small"> {`${item.created}`}</Text>
                 )}
               </div>
-            </a>
+            </Button>
           )
         })}
       </>

@@ -10,9 +10,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 
 import { ApplicationModel } from '../../application'
-import { FileType } from '@island.is/financial-aid/shared/lib'
-
-import { ApplicationFile } from '@island.is/financial-aid/shared'
+import { FileType, ApplicationFile } from '@island.is/financial-aid/shared/lib'
 
 @Table({
   tableName: 'application_files',
