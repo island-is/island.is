@@ -15,6 +15,7 @@ import type { User } from '@island.is/judicial-system/types'
 import { LoggingModule } from '@island.is/logging'
 
 import { Case, CaseService } from '../case'
+import { CourtService } from '../court'
 import { AwsS3Service } from './awsS3.service'
 import { CaseFile } from './models'
 import { FileService } from './file.service'
@@ -28,6 +29,7 @@ describe('FileController', () => {
     update: jest.Mock
   }
   let caseService: CaseService
+  let courtService: CourtService
   let awsS3Service: AwsS3Service
   let fileController: FileController
 
@@ -51,6 +53,13 @@ describe('FileController', () => {
           })),
         },
         {
+          provide: CourtService,
+          useClass: jest.fn(() => ({
+            uploadStream: jest.fn(),
+            createDocument: jest.fn(),
+          })),
+        },
+        {
           provide: AwsS3Service,
           useClass: jest.fn(() => ({
             createPresignedPost: (key: string) =>
@@ -69,8 +78,9 @@ describe('FileController', () => {
                 },
               }),
             deleteObject: () => Promise.resolve(true),
-            getSignedUrl: () => Promise.resolve({}),
+            getSignedUrl: jest.fn(),
             objectExists: () => Promise.resolve(true),
+            getObject: () => jest.fn(),
           })),
         },
         {
@@ -82,6 +92,7 @@ describe('FileController', () => {
     }).compile()
 
     caseService = fileModule.get<CaseService>(CaseService)
+    courtService = fileModule.get<CourtService>(CourtService)
     awsS3Service = fileModule.get<AwsS3Service>(AwsS3Service)
     fileController = fileModule.get<FileController>(FileController)
   })
@@ -600,6 +611,8 @@ describe('FileController', () => {
       'given a $state case and a permitted $role user',
       ({ state, role }) => {
         const caseId = uuid()
+        const courtId = uuid()
+        const courtCaseNumber = uuid()
         const user = { id: uuid(), role } as User
 
         beforeEach(() => {
@@ -608,16 +621,20 @@ describe('FileController', () => {
             Promise.resolve({
               id,
               state,
+              courtId,
+              courtCaseNumber,
             } as Case),
           )
         })
 
         describe('given a case file', () => {
           const fileId = uuid()
-          const key = `${caseId}/${fileId}/test.txt`
+          const fileName = 'test.txt'
+          const key = `${caseId}/${fileId}/${fileName}`
           const mockFile = {
             id: fileId,
             caseId,
+            name: fileName,
             key,
           }
 
@@ -626,14 +643,54 @@ describe('FileController', () => {
           })
 
           it('should upload a case file to court', async () => {
+            const mockBuffer = Buffer.from(uuid())
+            const mockGetObject = jest.spyOn(awsS3Service, 'getObject')
+            mockGetObject.mockResolvedValueOnce(mockBuffer)
+
+            const mockStreamId = uuid()
+            const mockUploadStream = jest.spyOn(courtService, 'uploadStream')
+            mockUploadStream.mockResolvedValueOnce(mockStreamId)
+
+            const mockDocumentId = uuid()
+            const mockCreateDocument = jest.spyOn(
+              courtService,
+              'createDocument',
+            )
+            mockCreateDocument.mockResolvedValueOnce(mockDocumentId)
+
             const { success } = await fileController.uploadCaseFileToCourt(
               caseId,
               fileId,
               user,
             )
 
-            // TODO: implement mock verification and update signed url tests
-            // Should we delete from S3 after upload? What about prosecutors?
+            expect(fileModel.findOne).toHaveBeenCalledWith({
+              where: {
+                id: fileId,
+                caseId,
+                state: { [Op.not]: CaseFileState.DELETED },
+              },
+            })
+
+            expect(mockGetObject).toHaveBeenCalledWith(key)
+
+            expect(mockUploadStream).toHaveBeenCalledWith(courtId, mockBuffer)
+
+            expect(mockCreateDocument).toHaveBeenCalledWith(
+              courtId,
+              courtCaseNumber,
+              mockStreamId,
+              fileName,
+              fileName,
+            )
+
+            expect(fileModel.update).toHaveBeenCalledWith(
+              {
+                state: CaseFileState.STORED_IN_COURT,
+                courtKey: mockDocumentId,
+              },
+              { where: { id: fileId } },
+            )
 
             expect(success).toBe(false)
           })

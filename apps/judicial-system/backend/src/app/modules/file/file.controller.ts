@@ -277,6 +277,11 @@ export class FileController {
       )
     }
 
-    return this.fileService.uploadCaseFileToCourt(existingCase.id, file)
+    return this.fileService.uploadCaseFileToCourt(
+      existingCase.id,
+      existingCase.courtId,
+      existingCase.courtCaseNumber,
+      file,
+    )
   }
 }

@@ -32,5 +32,5 @@ export class CaseFile implements TCaseFile {
   readonly size!: number
 
   @Field({ nullable: true })
-  readonly court_key?: string
+  readonly courtKey?: string
 }

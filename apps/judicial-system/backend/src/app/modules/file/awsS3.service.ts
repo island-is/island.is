@@ -87,4 +87,23 @@ export class AwsS3Service {
         },
       )
   }
+
+  getObject(key: string): Promise<Buffer> {
+    return new Promise((resolve, reject) =>
+      this.s3.getObject(
+        {
+          Bucket: environment.files.bucket,
+          Key: key,
+        },
+        (err, data) => {
+          if (err) {
+            reject(err)
+          } else {
+            console.log(data)
+            resolve(data.Body as Buffer)
+          }
+        },
+      ),
+    )
+  }
 }

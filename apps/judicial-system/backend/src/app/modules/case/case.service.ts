@@ -106,6 +106,7 @@ export class CaseService {
           existingCase.courtCaseNumber,
           streamId,
           'Rannsóknargögn',
+          'Rannsóknargögn.pdf',
         )
       }
     } catch (error) {

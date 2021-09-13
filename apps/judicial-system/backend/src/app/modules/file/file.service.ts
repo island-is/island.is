@@ -14,6 +14,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { CaseFileState } from '@island.is/judicial-system/types'
 
+import { CourtService } from '../court'
 import { AwsS3Service } from './awsS3.service'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
 import {
@@ -29,6 +30,7 @@ export class FileService {
   constructor(
     @InjectModel(CaseFile)
     private readonly fileModel: typeof CaseFile,
+    private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -157,6 +159,8 @@ export class FileService {
 
   async uploadCaseFileToCourt(
     caseId: string,
+    courtId: string | undefined,
+    courtCaseNumber: string | undefined,
     file: CaseFile,
   ): Promise<UploadFileToCourtResponse> {
     this.logger.debug(`Uploading file ${file.id} of case ${caseId} to court`)
@@ -184,6 +188,23 @@ export class FileService {
         `File ${file.id} of case ${caseId} does not exists in AWS S3`,
       )
     }
+
+    const content = await this.awsS3Service.getObject(file.key)
+
+    const streamId = await this.courtService.uploadStream(courtId, content)
+
+    const documentId = await this.courtService.createDocument(
+      courtId,
+      courtCaseNumber,
+      streamId,
+      file.name,
+      file.name,
+    )
+
+    await this.fileModel.update(
+      { state: CaseFileState.STORED_IN_COURT, courtKey: documentId },
+      { where: { id: file.id } },
+    )
 
     return { success: false }
   }

@@ -25,11 +25,12 @@ export class CourtService {
     courtCaseNumber: string | undefined,
     streamId: string,
     subject: string,
+    fileName: string,
   ): Promise<string> {
     return this.courtClientService.createDocument(courtId ?? '', {
       caseNumber: courtCaseNumber ?? '',
       subject,
-      fileName: `${subject}.pdf`,
+      fileName,
       streamID: streamId,
       caseFolder: 'Gögn málsins',
     })
@@ -39,7 +40,7 @@ export class CourtService {
     courtId: string | undefined,
     courtCaseNumber: string | undefined,
     streamId: string,
-  ) {
+  ): Promise<string> {
     return this.courtClientService.createThingbok(courtId ?? '', {
       caseNumber: courtCaseNumber ?? '',
       subject: 'Þingbók og úrskurður',
