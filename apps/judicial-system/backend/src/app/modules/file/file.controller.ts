@@ -258,7 +258,7 @@ export class FileController {
     const existingCase = await this.caseService.findByIdAndUser(
       caseId,
       user,
-      false,
+      true,
     )
 
     if (
