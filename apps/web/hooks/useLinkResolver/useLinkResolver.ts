@@ -157,6 +157,18 @@ export const routesTemplate = {
     is: '/[slug]',
     en: '/en/[slug]',
   },
+  helpdesk: {
+    is: '/thjonustuvefur',
+    en: '/en/helpdesk',
+  },
+  helpdeskcategory: {
+    is: '/thjonustuvefur/[organizationSlug]/[categorySlug]',
+    en: '/en/helpdesk/[organizationSlug]/[categorySlug]',
+  },
+  helpdesksearch: {
+    is: '/thjonustuvefur/leit',
+    en: '/en/helpdesk/search',
+  },
   homepage: {
     is: '/',
     en: '/en',
