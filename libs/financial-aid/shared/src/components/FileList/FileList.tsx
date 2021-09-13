@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box, UploadFile, Button } from '@island.is/island-ui/core'
+import { Text, Box, UploadFile } from '@island.is/island-ui/core'
 import * as styles from './FileList.treat'
 import cn from 'classnames'
 import {
@@ -31,10 +31,11 @@ const FileList = ({ className, files }: Props) => {
 
   const [openFile] = useLazyQuery(GetSignedUrlQuery, {
     fetchPolicy: 'no-cache',
-    onCompleted: (data) => {
-      console.log(data)
+    onCompleted: (data: { getSignedUrlForId: { url: string } }) => {
+      window.open(data.getSignedUrlForId.url, '_blank')
     },
     onError: (error) => {
+      // TODO: What should happen here?
       console.log(error)
     },
   })
@@ -44,10 +45,10 @@ const FileList = ({ className, files }: Props) => {
       <>
         {files.map((item, index) => {
           return (
-            <Button
+            <Box
+              className={styles.filesLink}
               key={'file-' + index}
               onClick={() => {
-                console.log(item)
                 openFile({ variables: { input: { id: item.id } } })
               }}
             >
@@ -67,7 +68,7 @@ const FileList = ({ className, files }: Props) => {
                   <Text variant="small"> {`${item.created}`}</Text>
                 )}
               </div>
-            </Button>
+            </Box>
           )
         })}
       </>
