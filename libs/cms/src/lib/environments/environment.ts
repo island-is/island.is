@@ -15,6 +15,7 @@ export default {
     'groupedMenu',
     'organizationPage',
     'organizationSubpage',
+    'supportQNA',
     'frontpage',
   ],
   nestedContentTypes: [
