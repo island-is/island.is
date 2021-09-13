@@ -10,7 +10,6 @@ import {
 
 import {
   formatProsecutorCourtDateEmailNotification,
-  formatCourtDateNotificationCondition,
   formatCustodyProvisions,
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
@@ -759,27 +758,9 @@ describe('formatDefenderCourtDateEmailNotification', () => {
   })
 })
 
-describe('formatCourtDateNotificationCondition', () => {
-  test('should format prison court date notification', () => {
-    // Arrange
-    const courtDate = new Date('2020-12-20T13:32')
-    const defenderEmail = 'defender@defenders.is'
-
-    // Act
-    const res = formatCourtDateNotificationCondition(courtDate, defenderEmail)
-
-    // Assert
-    expect(res).toBe(
-      'courtDate=20.12.2020 13:32,defenderEmail=defender@defenders.is',
-    )
-  })
-})
-
 describe('formatPrisonRulingEmailNotification', () => {
   test('should format prison ruling notification', () => {
     // Arrange
-    const accusedNationalId = '2411018760'
-    const accusedName = 'Biggi Börgler'
     const accusedGender = CaseGender.MALE
     const court = 'Héraðsdómur Vesturlands'
     const prosecutorName = 'Siggi Sakó'
@@ -802,8 +783,6 @@ describe('formatPrisonRulingEmailNotification', () => {
 
     // Act
     const res = formatPrisonRulingEmailNotification(
-      accusedNationalId,
-      accusedName,
       accusedGender,
       court,
       prosecutorName,
@@ -829,8 +808,6 @@ describe('formatPrisonRulingEmailNotification', () => {
 
   test('should format prison ruling notification for a rejected case', () => {
     // Arrange
-    const accusedNationalId = '2411018760'
-    const accusedName = 'Biggi Börgler'
     const accusedGender = CaseGender.MALE
     const court = 'Héraðsdómur Vesturlands'
     const prosecutorName = 'Siggi Sakó'
@@ -852,8 +829,6 @@ describe('formatPrisonRulingEmailNotification', () => {
 
     // Act
     const res = formatPrisonRulingEmailNotification(
-      accusedNationalId,
-      accusedName,
       accusedGender,
       court,
       prosecutorName,
@@ -878,8 +853,6 @@ describe('formatPrisonRulingEmailNotification', () => {
 
   test('should format prison ruling notification when a defender has not been set', () => {
     // Arrange
-    const accusedNationalId = '2411018760'
-    const accusedName = 'Biggi Börgler'
     const accusedGender = CaseGender.MALE
     const court = 'Héraðsdómur Vesturlands'
     const prosecutorName = 'Siggi Sakó'
@@ -900,8 +873,6 @@ describe('formatPrisonRulingEmailNotification', () => {
 
     // Act
     const res = formatPrisonRulingEmailNotification(
-      accusedNationalId,
-      accusedName,
       accusedGender,
       court,
       prosecutorName,
@@ -1082,7 +1053,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 })
 
 describe('stripHtmlTags', () => {
-  test('should format court date notification condition', () => {
+  test('should strip html tags', () => {
     // Arrange
     const html = 'bla<strong>blab</strong>la<br /><br />blabla'
 

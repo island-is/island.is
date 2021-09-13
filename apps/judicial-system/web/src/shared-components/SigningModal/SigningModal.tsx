@@ -120,7 +120,11 @@ const SigningModal: React.FC<SigningModalProps> = ({
 
   const renderSuccessText = (caseType: CaseType) => {
     return caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
-      ? formatMessage(rcConfirmation.modal.text)
+      ? formatMessage(
+          caseType === CaseType.CUSTODY
+            ? rcConfirmation.modal.custodyCases.text
+            : rcConfirmation.modal.travelBanCases.text,
+        )
       : formatMessage(icConfirmation.modal.text)
   }
 

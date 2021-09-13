@@ -9,9 +9,9 @@ import {
   HomeCircumstances,
   Municipality,
   months,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 import { useQuery } from '@apollo/client'
-import { GetMunicipalityQuery } from '@island.is/financial-aid-web/oskgraphql'
+import { GetMunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql'
 
 import format from 'date-fns/format'
 

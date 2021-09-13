@@ -1,7 +1,4 @@
-import * as s from './RegulationsSidebarBox.treat'
-
 import React from 'react'
-import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationsSidebarBox } from './RegulationsSidebarBox'
 import { RegulationPageTexts } from './RegulationTexts.types'
@@ -13,8 +10,7 @@ export type RegulationTimelineProps = {
 }
 
 export const RegulationTimeline = (props: RegulationTimelineProps) => {
-  const { regulation, texts } = props
-  const txt = useNamespace(texts)
+  const { regulation } = props
 
   const {
     boxTitle,

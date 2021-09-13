@@ -15,6 +15,6 @@ const argv = yargs(process.argv.slice(2)).options({
 const env = argv.argv.env as OpsEnv
 const chart = argv.argv.chart as ChartName
 
-console.log(
+process.stdout.write(
   dumpYaml(generateYamlForEnv(new UberChart(Envs[env]), ...charts[chart][env])),
 )

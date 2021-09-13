@@ -246,4 +246,3 @@ judicial-system-xrd-api:
     name: judicial-system-xrd-api
   strategy:
     type: Recreate
-

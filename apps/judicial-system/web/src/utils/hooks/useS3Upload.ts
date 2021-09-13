@@ -40,7 +40,12 @@ export const useS3Upload = (workingCase?: Case) => {
     filename: string,
   ): Promise<PresignedPost> => {
     const { data: presignedPostData } = await createPresignedPostMutation({
-      variables: { input: { caseId: workingCase?.id, fileName: filename } },
+      variables: {
+        input: {
+          caseId: workingCase?.id,
+          fileName: filename.normalize(),
+        },
+      },
     })
 
     return presignedPostData?.createPresignedPost

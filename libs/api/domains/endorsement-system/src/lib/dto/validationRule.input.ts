@@ -1,7 +1,11 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import { IsEnum, IsOptional } from 'class-validator'
-import { ValidationRuleDtoTypeEnum } from '../../../gen/fetch'
 import graphqlTypeJson from 'graphql-type-json'
+import { ValidationRuleDtoTypeEnum } from '../../../gen/fetch'
+
+registerEnumType(ValidationRuleDtoTypeEnum, {
+  name: 'ValidationRuleDtoTypeEnum',
+})
 
 @InputType()
 export class ValidationRuleInput {

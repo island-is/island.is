@@ -1,8 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import { useRouter } from 'next/router'
 import { Link } from '@island.is/island-ui/core'
-import { getLocaleFromPath } from '@island.is/web/i18n/withLocale'
-import { defaultLanguage } from '@island.is/shared/constants'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface ContentLinkProps {
@@ -14,20 +11,10 @@ interface ContentLinkProps {
 
 export const ContentLink: FC<ContentLinkProps> = ({
   pageData = null,
-  href = '[slug]',
   fallbackLink,
   children,
 }) => {
-  const Router = useRouter()
   const { linkResolver } = useLinkResolver()
-
-  const { asPath } = Router
-
-  let locale = defaultLanguage
-
-  if (asPath) {
-    locale = getLocaleFromPath(asPath)
-  }
 
   const data = pageData && JSON.parse(pageData)
 

@@ -174,8 +174,6 @@ export const serviceSetup = (services: {
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
       DOCUMENT_PROVIDER_ADMINS:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS',
-      FINANCE_PASS: '/k8s/service-portal/FINANCE_PASS',
-      FINANCE_USER: '/k8s/service-portal/FINANCE_USER',
       XROAD_FINANCES_PATH: '/k8s/service-portal/XROAD_FINANCES_PATH',
       PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
       PKPASS_API_URL: '/k8s/api/PKPASS_API_URL',

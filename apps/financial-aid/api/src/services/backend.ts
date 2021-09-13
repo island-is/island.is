@@ -13,7 +13,7 @@ import {
   CreateApplicationEvent,
   ApplicationFilters,
   CreateFilesResponse,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'

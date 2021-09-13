@@ -14,8 +14,8 @@ import {
   Tag,
   Hidden,
 } from '@island.is/island-ui/core'
-import SvgLogin from '../../components/Login/svgLogin'
-import { LoginPageTexts } from '../../components/Login/LoginTexts.types'
+import { SvgLogin } from '@island.is/web/components'
+import { LoginPageTexts } from '@island.is/web/components'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
