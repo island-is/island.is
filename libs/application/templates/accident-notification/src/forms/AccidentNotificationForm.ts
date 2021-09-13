@@ -63,6 +63,7 @@ import {
 } from '../types'
 import {
   getAccidentTypeOptions,
+  hideLocationAndPurpose,
   isAboardShip,
   isAgricultureAccident,
   isFishermanAccident,
@@ -484,7 +485,7 @@ export const AccidentNotificationForm: Form = buildForm({
             buildMultiField({
               id: 'powerOfAttorney',
               title: powerOfAttorney.upload.heading,
-              description: powerOfAttorney.upload.uploadDescription,
+              description: powerOfAttorney.upload.description,
               children: [
                 buildFileUploadField({
                   id: 'attachments.powerOfAttorneyFile',
@@ -492,6 +493,7 @@ export const AccidentNotificationForm: Form = buildForm({
                   introduction: '',
                   uploadAccept: UPLOAD_ACCEPT,
                   uploadHeader: powerOfAttorney.upload.uploadHeader,
+                  uploadDescription: powerOfAttorney.upload.uploadDescription,
                   uploadButtonLabel: powerOfAttorney.upload.uploadButtonLabel,
                 }),
               ],
@@ -791,11 +793,6 @@ export const AccidentNotificationForm: Form = buildForm({
                         accidentLocation.studiesAccidentLocation.atTheSchool,
                     },
                     {
-                      value: StudiesAccidentLocationEnum.DURINGSTUDIES,
-                      label:
-                        accidentLocation.studiesAccidentLocation.duringStudies,
-                    },
-                    {
                       value: StudiesAccidentLocationEnum.OTHER,
                       label: accidentLocation.studiesAccidentLocation.other,
                     },
@@ -963,7 +960,9 @@ export const AccidentNotificationForm: Form = buildForm({
         buildMultiField({
           title: locationAndPurpose.general.title,
           description: locationAndPurpose.general.description,
-          condition: (formValue) => !isFishermanAccident(formValue),
+          condition: (formValue) =>
+            !isFishermanAccident(formValue) &&
+            !hideLocationAndPurpose(formValue),
           children: [
             buildTextField({
               id: 'locationAndPurpose.location',
@@ -1157,7 +1156,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'attachments.injuryCertificateFile',
               title: attachments.general.uploadHeader,
               uploadAccept: UPLOAD_ACCEPT,
-              uploadHeader: attachments.general.uploadHeader,
+              uploadHeader: injuredPersonInformation.upload.uploadHeader,
               uploadDescription: attachments.general.uploadDescription,
               uploadButtonLabel: attachments.general.uploadButtonLabel,
               introduction: attachments.general.uploadIntroduction,

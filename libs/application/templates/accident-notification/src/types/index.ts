@@ -97,7 +97,6 @@ export enum StudiesAccidentTypeEnum {
 
 export enum StudiesAccidentLocationEnum {
   ATTHESCHOOL = 'atTheSchool',
-  DURINGSTUDIES = 'duringStudies',
   OTHER = 'studiesLocation.other',
 }
 
