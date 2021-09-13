@@ -162,12 +162,6 @@ export const accidentLocation = {
       defaultMessage: 'Í kennslustofu eða skólahúsnæði',
       description: 'Label for at the school location',
     },
-    duringStudies: {
-      id:
-        'an.application:accidentLocation.studiesAccidentLocation.duringStudies',
-      defaultMessage: 'Á meðan verið var að sinna námi',
-      description: 'Label for at the during studies location',
-    },
     other: {
       id: 'an.application:accidentLocation.studiesAccidentLocation.other',
       defaultMessage: 'Annars staðar á vegum skólans',
