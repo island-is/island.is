@@ -20,17 +20,5 @@ export const fishingLocationAndPurpose = {
       defaultMessage: 'Staðsetning / póstfang',
       description: `Location / email`,
     },
-    purpose: {
-      id: 'an.application:locationAndPurpose.labels.purpose',
-      defaultMessage: 'Í hvaða tilgangi varstu þar?',
-      description: 'What purpose were you there for?',
-    },
-  }),
-  placeholder: defineMessages({
-    purpose: {
-      id: 'an.application:locationAndPurpose.placeholder.purpose',
-      defaultMessage: 'Stutt lýsing',
-      description: `Short description`,
-    },
   }),
 }
