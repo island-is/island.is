@@ -14,7 +14,7 @@ import {
   StudiesAccidentLocationEnum,
   StudiesAccidentTypeEnum,
   WhoIsTheNotificationForEnum,
-  WorkAccidentTypeEnum,
+  WorkAccidentTypeEnum
 } from '../types'
 import { isValid24HFormatTime } from '../utils'
 import { error } from './messages/error'
@@ -34,7 +34,6 @@ const CompanyInfoSchema = z.object({
   nationalRegistrationId: z
     .string()
     .refine((x) => (x ? kennitala.isCompany(x) : false)),
-  companyName: z.string().min(1),
   name: z.string().min(1),
   email: z.string().email(),
   phoneNumber: z.string().optional(),

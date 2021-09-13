@@ -2,7 +2,6 @@ import { NO, YES } from './../constants'
 
 export type CompanyInfo = {
   nationalRegistrationId: string
-  companyName: string
   name: string
   email: string
   phoneNumber: string
