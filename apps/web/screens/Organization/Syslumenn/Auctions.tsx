@@ -140,7 +140,7 @@ const OFFICE_LOCATIONS: OfficeLocation[] = [
   },
   {
     filterLabel: ' - Blönduós',
-    slugValue: 'syslumadurinn-a-nordurlandi-vestra-bolnduos',
+    slugValue: 'syslumadurinn-a-nordurlandi-vestra-blonduos',
     office: 'Sýslumaðurinn á Norðurlandi vestra',
     location: 'Blönduós',
   },
