@@ -25,6 +25,13 @@ import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/useApplication'
 
+import {
+  Employment,
+  getEmploymentStatus,
+  getHomeCircumstances,
+  HomeCircumstances,
+} from '@island.is/financial-aid/shared/lib'
+
 const SummaryForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
@@ -40,6 +47,42 @@ const SummaryForm = () => {
 
   const { createApplication } = useApplication()
 
+  const formInfoOverview = [
+    {
+      id: 'homeCircumstances',
+      label: 'Búseta',
+      url: 'buseta',
+      info:
+        form?.homeCircumstances === HomeCircumstances.OTHER
+          ? form?.homeCircumstancesCustom
+          : getHomeCircumstances[form?.homeCircumstances as HomeCircumstances],
+    },
+    {
+      id: 'hasIncome',
+      label: 'Tekjur',
+      url: 'tekjur',
+      info:
+        form?.hasIncome &&
+        'Ég hef ' +
+          (form?.hasIncome ? '' : 'ekki') +
+          'fengið tekjur í þessum mánuði eða síðasta',
+    },
+    {
+      id: 'employmentCustom',
+      label: 'Staða',
+      url: 'atvinna',
+      info: form?.employmentCustom
+        ? form?.employmentCustom
+        : getEmploymentStatus[form?.employment as Employment],
+    },
+    {
+      id: 'emailAddress',
+      label: 'Netfang',
+      url: 'samskipti',
+      info: form?.emailAddress,
+    },
+  ]
+
   const handleNextButtonClick = async () => {
     if (!form || !user) {
       return
@@ -52,12 +95,23 @@ const SummaryForm = () => {
         }
       })
       .catch((e) => {
-        // console.log(e.networkError.result.errors)
-
         setFormError({
           status: true,
-          message: 'Vantar upplýsingar í rauðu reitunum',
+          message: 'Obbobbob einhvað fór úrskeiðis',
         })
+
+        if (e.networkError.statusCode === 400) {
+          const findErrorInFormInfo = formInfoOverview.find(
+            (el) => el.info === undefined,
+          )
+
+          if (findErrorInFormInfo) {
+            var element = document.getElementById(findErrorInFormInfo.id)
+            element?.scrollIntoView({
+              behavior: 'smooth',
+            })
+          }
+        }
       })
   }
 
@@ -96,7 +150,7 @@ const SummaryForm = () => {
 
         <UserInfo />
 
-        <FormInfo error={formError.status} />
+        <FormInfo info={formInfoOverview} error={formError.status} />
 
         <Divider />
 

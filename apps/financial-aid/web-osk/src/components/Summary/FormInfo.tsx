@@ -1,64 +1,29 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Box, Button, Divider, Icon, Text } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
-import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import {
-  Employment,
-  getEmploymentStatus,
-  getHomeCircumstances,
-  HomeCircumstances,
-} from '@island.is/financial-aid/shared/lib'
+interface InfoProps {
+  id: string
+  label: string
+  url: string
+  info?: string
+}
 
 interface Props {
+  info: InfoProps[]
   error: boolean
 }
 
-const FormInfo = ({ error }: Props) => {
+const FormInfo = ({ info, error }: Props) => {
   const router = useRouter()
-
-  const { form } = useContext(FormContext)
-
-  const overview = [
-    {
-      label: 'Búseta',
-      url: 'buseta',
-      info:
-        form?.homeCircumstances === HomeCircumstances.OTHER
-          ? form?.homeCircumstancesCustom
-          : getHomeCircumstances[form?.homeCircumstances as HomeCircumstances],
-      formError: Boolean(!form?.homeCircumstances) && error,
-    },
-    {
-      label: 'Tekjur',
-      url: 'tekjur',
-      info:
-        'Ég hef ' +
-        (form?.incomeFiles ? '' : 'ekki') +
-        'fengið tekjur í þessum mánuði eða síðasta',
-    },
-    {
-      label: 'Staða',
-      url: 'atvinna',
-      info: form?.employmentCustom
-        ? form?.employmentCustom
-        : getEmploymentStatus[form?.employment as Employment],
-      formError: Boolean(!form?.employment) && error,
-    },
-    {
-      label: 'Netfang',
-      url: 'samskipti',
-      info: form?.emailAddress,
-      formError: Boolean(!form?.emailAddress) && error,
-    },
-  ]
 
   return (
     <>
       {' '}
-      {overview.map((item, index) => {
+      {info.map((item, index) => {
+        const err = error && item.info === undefined
         return (
-          <span key={'overview-' + index}>
+          <span key={'overview-' + index} id={item.id}>
             <Divider />
 
             <Box
@@ -68,11 +33,8 @@ const FormInfo = ({ error }: Props) => {
               paddingY={[4, 4, 5]}
             >
               <Box marginRight={3}>
-                <Text
-                  fontWeight="semiBold"
-                  color={item.formError ? 'red600' : 'dark400'}
-                >
-                  {item.label} {item.formError ? '*' : ''}
+                <Text fontWeight="semiBold" color={err ? 'red600' : 'dark400'}>
+                  {item.label} {err ? '*' : ''}
                 </Text>
                 <Text>{item.info}</Text>
               </Box>
