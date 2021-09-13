@@ -63,12 +63,14 @@ interface UploadedFileProps {
   onRemoveClick: (file: UploadFile) => void
   onRetryClick?: (file: UploadFile) => void
   defaultBackgroundColor?: Colors
+  doneIcon?: IconTypes
 }
 
 export const UploadedFile = ({
   file,
   showFileSize,
   defaultBackgroundColor,
+  doneIcon,
   onRemoveClick,
   onRetryClick,
 }: UploadedFileProps) => {
@@ -88,7 +90,7 @@ export const UploadedFile = ({
       case 'error':
         return 'close'
       case 'done':
-        return 'close'
+        return doneIcon ?? 'close'
       default:
         return 'reload'
     }
@@ -181,6 +183,7 @@ export interface InputFileUploadProps {
   onChange?: (files: File[]) => void
   errorMessage?: string
   defaultFileBackgroundColor?: Colors
+  doneIcon?: IconTypes
 }
 
 export const InputFileUpload = ({
@@ -260,6 +263,7 @@ export const InputFileUpload = ({
             file={file}
             showFileSize={showFileSize}
             defaultBackgroundColor={defaultFileBackgroundColor}
+            doneIcon={doneIcon}
             onRemoveClick={onRemove}
             onRetryClick={onRetry}
           />
