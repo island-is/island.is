@@ -113,10 +113,6 @@ export const routesTemplate = {
     is: '/s/[organization]/frett',
     en: '/en/o/[organization]/news',
   },
-  auction: {
-    is: '/s/syslumenn/uppbod/[id]',
-    en: '',
-  },
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',
     en: '/en/covid-operations/[slug]',
