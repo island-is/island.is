@@ -7,7 +7,6 @@ import {
   Button,
   Logo,
   FocusableBox,
-  Inline,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.treat'
 import { ServicePortalPath } from '@island.is/service-portal/core'
@@ -53,18 +52,20 @@ export const Header: FC<{}> = () => {
                   <BetaTag />
                 </FocusableBox>
               </Link>
-              <Inline space={2} alignY="center" flexWrap="nowrap">
+              <Box display="flex" alignItems="center" flexWrap="nowrap">
                 <UserMenu />
                 <Hidden above="md">
-                  <Button
-                    variant="utility"
-                    icon={mobileMenuState === 'open' ? 'close' : 'menu'}
-                    onClick={handleMobileMenuTriggerClick}
-                  >
-                    {formatMessage(m.menu)}
-                  </Button>
+                  <Box marginLeft={2}>
+                    <Button
+                      variant="utility"
+                      icon={mobileMenuState === 'open' ? 'close' : 'menu'}
+                      onClick={handleMobileMenuTriggerClick}
+                    >
+                      {formatMessage(m.menu)}
+                    </Button>
+                  </Box>
                 </Hidden>
-              </Inline>
+              </Box>
             </Box>
           </ContentBlock>
         </Box>
