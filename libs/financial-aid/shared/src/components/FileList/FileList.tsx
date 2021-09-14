@@ -46,10 +46,15 @@ const FileList = ({ className, files }: Props) => {
         {files.map((item, index) => {
           return (
             <Box
-              // TODO: disable hover when in Osk
-              className={styles.filesLink}
+              className={cn({
+                [styles.filesLink]: true,
+                [styles.hoverState]: item.id,
+              })}
               key={'file-' + index}
               onClick={() => {
+                if (item.id === undefined) {
+                  return
+                }
                 openFile({ variables: { input: { id: item.id } } })
               }}
             >
