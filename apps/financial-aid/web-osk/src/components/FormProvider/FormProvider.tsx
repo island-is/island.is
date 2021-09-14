@@ -42,7 +42,7 @@ export const initialState = {
 interface FormProvider {
   form: Form
   updateForm?: any
-  emptyFormProvider?: any
+  initializeFormProvider?: any
 }
 
 interface Props {
@@ -70,7 +70,7 @@ const FormProvider = ({ children }: Props) => {
     sessionStorage.setItem(storageKey, JSON.stringify(form))
   }, [form])
 
-  const emptyFormProvider = () => {
+  const initializeFormProvider = () => {
     updateForm({
       submitted: false,
       incomeFiles: [],
@@ -80,7 +80,7 @@ const FormProvider = ({ children }: Props) => {
   }
 
   return (
-    <FormContext.Provider value={{ form, updateForm, emptyFormProvider }}>
+    <FormContext.Provider value={{ form, updateForm, initializeFormProvider }}>
       {children}
     </FormContext.Provider>
   )
