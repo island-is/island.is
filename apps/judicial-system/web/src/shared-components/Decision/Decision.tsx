@@ -94,13 +94,13 @@ const Decision: React.FC<Props> = (props) => {
       <Box marginTop={2}>
         <RadioButton
           name="case-decision"
-          id="case-decision-dismiss"
+          id="case-decision-dismissing"
           label={dismissLabelText}
-          checked={workingCase.decision === CaseDecision.DISMISS}
+          checked={workingCase.decision === CaseDecision.DISMISSING}
           onChange={() => {
             setAndSendToServer(
               'decision',
-              CaseDecision.DISMISS,
+              CaseDecision.DISMISSING,
               workingCase,
               setWorkingCase,
               updateCase,

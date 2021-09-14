@@ -27,6 +27,7 @@ export enum CaseState {
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
   DELETED = 'DELETED',
+  DISMISSED = 'DISMISSED',
 }
 
 export enum CaseTransition {
@@ -80,7 +81,7 @@ export enum CaseDecision {
   REJECTING = 'REJECTING',
   ACCEPTING_ALTERNATIVE_TRAVEL_BAN = 'ACCEPTING_ALTERNATIVE_TRAVEL_BAN',
   ACCEPTING_PARTIALLY = 'ACCEPTING_PARTIALLY',
-  DISMISS = 'DISMISS',
+  DISMISSING = 'DISMISSING',
 }
 
 export enum AccusedPleaDecision {
