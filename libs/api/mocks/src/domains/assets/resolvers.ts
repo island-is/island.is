@@ -11,9 +11,10 @@ export const resolvers: Resolvers = {
   Query: {
     getRealEstates: () => store.getFasteignir,
     getRealEstateDetail: (_, { input }) => {
-      const idMatch =
-        store.getSingleRealEstateAsset.fasteignanr === input.assetId
-      return idMatch ? store.getSingleRealEstateAsset : null
+      const match = store.detailRealEstateAssets.find(
+        (item) => item.fasteignanr === input.assetId,
+      )
+      return match ? match : null
     },
   },
 }
