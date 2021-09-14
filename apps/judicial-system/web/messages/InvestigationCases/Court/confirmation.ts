@@ -15,9 +15,10 @@ export const icConfirmation = {
   },
   modal: defineMessages({
     text: {
-      id: 'judicial.system.investigation_cases:confirmation.modal.text',
+      id:
+        'judicial.system.investigation_cases:confirmation.modal.text#markdown',
       defaultMessage:
-        'Úrskurður hefur verið sendur á ákæranda, dómritara og dómara sem kvað upp úrskurð. Úrskurðir eru eingöngu sendir á verjanda eða talsmann varnaraðila séu þeir viðstaddir þinghald. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
+        'Úrskurður hefur verið sendur á ákæranda, dómritara og dómara sem kvað upp úrskurð. Úrskurðir eru eingöngu sendir á verjanda eða talsmann varnaraðila séu þeir viðstaddir þinghald.<br/><br/>Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
       description:
         'Notaður sem texti í úrskurðar tilkynningaglugganum á staðfesingar skrefi í rannsóknarheimildum',
     },

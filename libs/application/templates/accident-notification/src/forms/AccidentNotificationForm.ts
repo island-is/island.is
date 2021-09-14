@@ -56,6 +56,7 @@ import {
   GeneralWorkplaceAccidentLocationEnum,
   PowerOfAttorneyUploadEnum,
   ProfessionalAthleteAccidentLocationEnum,
+  RescueWorkAccidentLocationEnum,
   StudiesAccidentLocationEnum,
   StudiesAccidentTypeEnum,
   WhoIsTheNotificationForEnum,
@@ -672,7 +673,6 @@ export const AccidentNotificationForm: Form = buildForm({
     // Location and purpose of the injured when the accident occured, relevant to all cases except home activites
     buildSection({
       title: locationAndPurpose.general.title,
-      condition: (formValue) => !isHomeActivitiesAccident(formValue),
       children: [
         // Sports club employee hindrance
         buildSubSection({
@@ -709,6 +709,45 @@ export const AccidentNotificationForm: Form = buildForm({
           id: 'accidentLocation',
           title: accidentLocation.general.sectionTitle,
           children: [
+            // location of home related accident
+            buildMultiField({
+              id: 'accidentLocation.homeAccident',
+              title: accidentLocation.homeAccidentLocation.title,
+              description: accidentLocation.homeAccidentLocation.description,
+              condition: (formValue) => isHomeActivitiesAccident(formValue),
+              children: [
+                buildTextField({
+                  id: 'homeAccident.address',
+                  title: accidentLocation.homeAccidentLocation.address,
+                  backgroundColor: 'blue',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'homeAccident.postalCode',
+                  title: accidentLocation.homeAccidentLocation.postalCode,
+                  backgroundColor: 'blue',
+                  width: 'half',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'homeAccident.community',
+                  title: accidentLocation.homeAccidentLocation.community,
+                  backgroundColor: 'blue',
+                  width: 'half',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'homeAccident.moreDetails',
+                  title: accidentLocation.homeAccidentLocation.moreDetails,
+                  placeholder:
+                    accidentLocation.homeAccidentLocation
+                      .moreDetailsPlaceholder,
+                  backgroundColor: 'blue',
+                  rows: 4,
+                  variant: 'textarea',
+                }),
+              ],
+            }),
             // location of general work related accident
             buildMultiField({
               id: 'accidentLocation.generalWorkAccident',
@@ -755,21 +794,16 @@ export const AccidentNotificationForm: Form = buildForm({
                   title: '',
                   options: [
                     {
-                      value:
-                        GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
-                      label:
-                        accidentLocation.generalWorkAccident.atTheWorkplace,
+                      value: RescueWorkAccidentLocationEnum.DURINGRESCUE,
+                      label: accidentLocation.rescueWorkAccident.duringRescue,
                     },
                     {
-                      value:
-                        GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
-                      label:
-                        accidentLocation.generalWorkAccident
-                          .toOrFromTheWorkplace,
+                      value: RescueWorkAccidentLocationEnum.TOORFROMRESCUE,
+                      label: accidentLocation.rescueWorkAccident.toOrFromRescue,
                     },
                     {
-                      value: GeneralWorkplaceAccidentLocationEnum.OTHER,
-                      label: accidentLocation.generalWorkAccident.other,
+                      value: RescueWorkAccidentLocationEnum.OTHER,
+                      label: accidentLocation.rescueWorkAccident.other,
                     },
                   ],
                 }),
@@ -956,7 +990,8 @@ export const AccidentNotificationForm: Form = buildForm({
           description: locationAndPurpose.general.description,
           condition: (formValue) =>
             !isFishermanAccident(formValue) &&
-            !hideLocationAndPurpose(formValue),
+            !hideLocationAndPurpose(formValue) &&
+            !isHomeActivitiesAccident(formValue),
           children: [
             buildTextField({
               id: 'locationAndPurpose.location',
