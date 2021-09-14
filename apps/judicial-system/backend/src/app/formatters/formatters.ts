@@ -55,13 +55,20 @@ function custodyProvisionsCompare(
 
 export function formatCustodyProvisions(
   custodyProvisions?: CaseCustodyProvisions[],
+  legalBasis?: string,
 ): string {
-  return (
-    custodyProvisions
-      ?.sort((p1, p2) => custodyProvisionsCompare(p1, p2))
-      .reduce((s, l) => `${s}${laws[l]}\n`, '')
-      .slice(0, -1) ?? 'Lagaákvæði ekki skráð'
-  )
+  const list = custodyProvisions
+    ?.sort((p1, p2) => custodyProvisionsCompare(p1, p2))
+    .reduce((s, l) => `${s}${laws[l]}\n`, '')
+    .slice(0, -1)
+
+  return list
+    ? legalBasis
+      ? `${list}\n${legalBasis}`
+      : list
+    : legalBasis
+    ? legalBasis
+    : 'Lagaákvæði ekki skráð'
 }
 
 export function formatAppeal(
