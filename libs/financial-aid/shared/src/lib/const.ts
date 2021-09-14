@@ -13,6 +13,7 @@ export const AllowedFakeUsers = [
 ]
 
 export const Routes = {
+  application: '/umsokn',
   status: '/stada',
   statusPage: (id: string) => `/stada/${id}`,
   statusFileUpload: (id: string) => `/stada/${id}/gogn`,
