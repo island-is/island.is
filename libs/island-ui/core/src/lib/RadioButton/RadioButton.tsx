@@ -84,7 +84,6 @@ export const RadioButton = ({
       />
       <label
         className={cn(styles.label, {
-          [styles.labelWithError]: hasError,
           [styles.radioButtonLabelDisabled]: disabled,
           [styles.largeLabel]: large,
         })}
