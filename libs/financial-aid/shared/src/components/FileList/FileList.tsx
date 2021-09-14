@@ -45,7 +45,7 @@ const FileList = ({ className, files }: Props) => {
       <>
         {files.map((item, index) => {
           return (
-            <Box
+            <button
               className={cn({
                 [styles.filesLink]: true,
                 [styles.hoverState]: item.id,
@@ -74,7 +74,7 @@ const FileList = ({ className, files }: Props) => {
                   <Text variant="small"> {`${item.created}`}</Text>
                 )}
               </div>
-            </Box>
+            </button>
           )
         })}
       </>
