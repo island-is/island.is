@@ -12,6 +12,10 @@ export class CreateFileInput implements CreateFile {
 
   @Allow()
   @Field()
+  readonly type!: string
+
+  @Allow()
+  @Field()
   readonly key!: string
 
   @Allow()
