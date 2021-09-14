@@ -1,6 +1,8 @@
 import chunk from 'lodash/chunk'
 import { format as formatKennitala } from 'kennitala'
+import { useLocale } from '@island.is/localization'
 import amountFormat from './amountFormat'
+import { messages } from '../messages'
 
 import { Fasteign, Notkunareining } from '../types/RealEstateAssets.types'
 
@@ -11,7 +13,7 @@ const ownersArray = (data: Fasteign) => {
       formatKennitala(owner.kennitala) || '',
       owner.heimild || '',
       owner.display || '',
-      'NOT AVAILABLE',
+      '-',
     ]
   })
   return ownerArray && ownerArray.length > 0 ? ownerArray : [[]]
@@ -19,33 +21,36 @@ const ownersArray = (data: Fasteign) => {
 
 const unitsArray = (data: Fasteign) =>
   data?.notkunareiningar?.data?.map((unit: Notkunareining) => {
+    const { formatMessage } = useLocale()
     return {
       header: {
-        title: 'Notkunareiningar',
+        title: formatMessage(messages.legalOwners),
         value: unit.stadfang.display || '',
       },
       rows: chunk(
         [
           {
-            title: 'Notkunareiningarnúmer',
+            title: formatMessage(messages.unitsOfUse),
             value: unit.notkunareininganr || '',
           },
           {
-            title: 'Gildandi fasteignamat',
+            title: formatMessage(messages.currentAppraisal),
             value: amountFormat(unit.fasteignamat.gildandi) || '',
           },
           {
-            title: 'Staðfang',
+            title: formatMessage(messages.location),
             value: unit.stadfang.displayShort || '',
           },
           {
-            title: 'Fyrirhugað fasteignamat 2022',
+            title: `${formatMessage(messages.futureAppraisal)} ${
+              unit.fasteignamat.fyrirhugadAr
+            }`,
             value: unit.fasteignamat.fyrirhugad
               ? amountFormat(unit.fasteignamat.fyrirhugad)
               : '',
           },
           {
-            title: 'Merking',
+            title: formatMessage(messages.marking),
             value: unit.merking || '',
           },
           // {
@@ -53,23 +58,23 @@ const unitsArray = (data: Fasteign) =>
           //   value: unit.husmat?! || '',
           // },
           {
-            title: 'Sveitarfélag',
+            title: formatMessage(messages.municipality),
             value: unit.stadfang.sveitarfelag || '',
           },
           {
-            title: 'Lóðarmat',
+            title: formatMessage(messages.siteAssessment),
             value: unit.lodarmat ? amountFormat(unit.lodarmat) : '',
           },
           {
-            title: 'Notkun',
+            title: formatMessage(messages.usage),
             value: unit.notkun || '',
           },
           {
-            title: 'Brunabótamat',
+            title: formatMessage(messages.fireCompAssessment),
             value: unit.brunabotamat ? amountFormat(unit.brunabotamat) : '',
           },
           {
-            title: 'Starfsemi',
+            title: formatMessage(messages.operation),
             value: unit.starfsemi || '',
           },
         ],

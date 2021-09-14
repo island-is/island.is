@@ -1,24 +1,17 @@
 import React from 'react'
+import { useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
-
-// Get disclaimer.
+import { messages } from '../../messages'
 
 const AssetDisclaimer = () => {
+  const { formatMessage } = useLocale()
   return (
     <Box>
       <p style={{ marginTop: 32, fontWeight: 100 }}>
-        22. gr. laga nr. 6/2001 um skráningu og mat fasteigna segir að skráður
-        eigandi fasteignar sé sá sem hefur þinglýsta eignarheimild hverju sinni
-        og skal eigendaskráning Þjóðskrár Íslands þar af leiðandi byggja á
-        þinglýstum heimildum. Það athugist því ef misræmi er á eigendaskráningu
-        í fasteignaskrá annars vegar og þinglýsingabók hins vegar gildir
-        skráning þinglýsingabókar.
+        {formatMessage(messages.disclaimerA)}
       </p>
       <p style={{ marginTop: 24, fontWeight: 100 }}>
-        Þjóðskrá Íslands hefur umsjón með fasteignaskrá. Í skránni er að finna
-        grunnupplýsingar um lönd og lóðir auk mannvirkja sem á þeim standa. Þar
-        er meðal annars að finna upplýsingar um fasteigna- og brunabótamat,
-        stærðir, byggingarár, byggingarefni, notkun og auðkennisnúmer eigna.
+        {formatMessage(messages.disclaimerB)}
       </p>
     </Box>
   )

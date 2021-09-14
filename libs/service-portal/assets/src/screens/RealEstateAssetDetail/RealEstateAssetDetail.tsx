@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import { useNamespaces } from '@island.is/localization'
-import { Box, SkeletonLoader } from '@island.is/island-ui/core'
+import { useNamespaces, useLocale } from '@island.is/localization'
+import { Box } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
   IntroHeader,
@@ -17,6 +17,7 @@ import AssetDisclaimer from '../../components/AssetDisclaimer'
 import { Fasteign } from '../../types/RealEstateAssets.types'
 import amountFormat from '../../utils/amountFormat'
 import { ownersArray, unitsArray } from '../../utils/createUnits'
+import { messages } from '../../messages'
 
 const GetSingleRealEstateQuery = gql`
   query GetSingleRealEstateQuery($input: GetRealEstateInput!) {
@@ -26,6 +27,7 @@ const GetSingleRealEstateQuery = gql`
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
+  const { formatMessage } = useLocale()
   const { id }: { id: string | undefined } = useParams()
 
   const { loading, error, data } = useQuery<Query>(GetSingleRealEstateQuery, {
@@ -76,18 +78,22 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
           tables={[
             {
               header: [
-                'Þinglýstir eigendur',
-                'Kennitala',
-                'Heimild',
-                'Eignarhlutfall',
-                'Staða',
+                formatMessage(messages.legalOwners),
+                formatMessage(messages.ssn),
+                formatMessage(messages.authorization),
+                formatMessage(messages.holdings),
+                formatMessage(messages.status),
               ],
               rows: owners,
             },
             {
               header: [
-                `Gildandi fasteignamat ${assetData.fasteignamat?.gildandiAr}`,
-                `Gildandi fasteignamat ${assetData.fasteignamat?.fyrirhugadAr}`,
+                `${formatMessage(messages.currentAppraisal)} ${
+                  assetData.fasteignamat?.gildandiAr
+                }`,
+                `${formatMessage(messages.currentAppraisal)} ${
+                  assetData.fasteignamat?.fyrirhugadAr
+                }`,
               ],
               rows: [
                 [
@@ -105,7 +111,10 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
       </Box>
       <Box marginTop={7}>
         {units && units?.length > 0 ? (
-          <AssetGrid title="Notkunareiningar" tables={units} />
+          <AssetGrid
+            title={formatMessage(messages.unitsOfUse)}
+            tables={units}
+          />
         ) : null}
       </Box>
       <Box marginTop={8}>

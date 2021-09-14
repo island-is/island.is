@@ -18,7 +18,7 @@ export const assetsModule: ServicePortalModule = {
           lazy(() => import('./screens/AssetsOverview/AssetsOverview')),
       },
       {
-        name: m.realEstate + ' detail',
+        name: m.detailInfo,
         path: ServicePortalPath.AssetsRealEstateDetail,
         render: () =>
           lazy(() =>
