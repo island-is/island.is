@@ -24,7 +24,8 @@ module.exports = {
           'type',
           {
             type: Sequelize.STRING,
-            allowNull: true,
+            allowNull: false,
+            defaultValue: 'application/pdf',
           },
           { transaction: t },
         ),

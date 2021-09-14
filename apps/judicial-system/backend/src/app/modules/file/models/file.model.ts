@@ -53,10 +53,10 @@ export class CaseFile extends Model<CaseFile> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: true,
+    allowNull: false,
   })
   @ApiProperty()
-  court_ke!: string
+  type!: string
 
   @Column({
     type: DataType.ENUM,

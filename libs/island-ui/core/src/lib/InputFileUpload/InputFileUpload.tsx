@@ -14,6 +14,7 @@ export type UploadFileStatus = 'error' | 'done' | 'uploading'
 
 export interface UploadFile {
   name: string
+  type: string
   id?: string
   key?: string
   status?: UploadFileStatus
@@ -29,6 +30,7 @@ export const fileToObject = (
 ): UploadFile => {
   return {
     name: file.name,
+    type: file.type,
     percent: 0,
     originalFileObj: file,
     status: status || 'done',

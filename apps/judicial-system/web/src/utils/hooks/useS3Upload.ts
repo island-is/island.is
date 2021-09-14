@@ -155,6 +155,7 @@ export const useS3Upload = (workingCase?: Case) => {
         variables: {
           input: {
             caseId: workingCase.id,
+            type: file.type,
             key: file.key,
             size: file.size,
           },
