@@ -302,7 +302,7 @@ export const ComplaintForm: Form = buildForm({
                 buildTextField({
                   id: 'applicant.name',
                   title: info.labels.name,
-                  backgroundColor: 'blue',
+                  backgroundColor: 'white',
                   disabled: true,
                   required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
@@ -313,7 +313,7 @@ export const ComplaintForm: Form = buildForm({
                   title: info.labels.nationalId,
                   format: '######-####',
                   width: 'half',
-                  backgroundColor: 'blue',
+                  backgroundColor: 'white',
                   disabled: true,
                   required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
