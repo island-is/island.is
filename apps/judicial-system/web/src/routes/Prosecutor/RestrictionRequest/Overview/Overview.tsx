@@ -251,8 +251,8 @@ export const Overview: React.FC = () => {
                         )
                       },
                     )}
-                  {workingCase.additionalCustodyProvisions && (
-                    <Text>{workingCase.additionalCustodyProvisions}</Text>
+                  {workingCase.legalBasis && (
+                    <Text>{workingCase.legalBasis}</Text>
                   )}
                 </AccordionItem>
                 <AccordionItem

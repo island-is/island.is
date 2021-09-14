@@ -190,19 +190,18 @@ const StepThreeForm: React.FC<Props> = (props) => {
               />
             </Box>
             <Input
-              data-testid="additionalCustodyProvisions"
-              name="additionalCustodyProvisions"
+              data-testid="legalBasis"
+              name="legalBasis"
               label={formatMessage(
-                rcDemands.sections.legalBasis.additionalCustodyProvisionsLabel,
+                rcDemands.sections.legalBasis.legalBasisLabel,
               )}
               placeholder={formatMessage(
-                rcDemands.sections.legalBasis
-                  .additionalCustodyProvisionsPlaceholder,
+                rcDemands.sections.legalBasis.legalBasisPlaceholder,
               )}
-              defaultValue={workingCase?.additionalCustodyProvisions}
+              defaultValue={workingCase?.legalBasis}
               onChange={(event) =>
                 removeTabsValidateAndSet(
-                  'additionalCustodyProvisions',
+                  'legalBasis',
                   event,
                   [],
                   workingCase,
@@ -211,7 +210,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
               }
               onBlur={(event) =>
                 validateAndSendToServer(
-                  'additionalCustodyProvisions',
+                  'legalBasis',
                   event.target.value,
                   [],
                   workingCase,
@@ -337,8 +336,9 @@ const StepThreeForm: React.FC<Props> = (props) => {
           nextIsDisabled={
             !validate(workingCase.lawsBroken ?? '', 'empty').isValid ||
             !requestedValidToDateIsValid ||
-            !workingCase.custodyProvisions ||
-            workingCase.custodyProvisions?.length === 0
+            ((!workingCase.custodyProvisions ||
+              workingCase.custodyProvisions?.length === 0) &&
+              !workingCase.legalBasis)
           }
         />
       </FormContentContainer>
