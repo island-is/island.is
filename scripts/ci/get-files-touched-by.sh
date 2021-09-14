@@ -3,7 +3,11 @@ set -e
 
 DIR="$(git rev-parse --show-toplevel)"
 marker=$(mktemp)
-touch "$marker" -r "${BASH_SOURCE[0]}"
+
+newest_file_modified=$(find "$DIR"/apps "$DIR"/libs -type f -print0 | xargs -0 stat --format '%Y :%y %n' | sort -nr | cut -d: -f2- | cut -d" " -f4 | head -n1)
+>&2 echo "Newest file modified: $newest_file_modified"
+
+touch "$marker" -r "$newest_file_modified"
 
 CMD=$1
 shift
