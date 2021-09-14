@@ -56,6 +56,7 @@ import {
   GeneralWorkplaceAccidentLocationEnum,
   PowerOfAttorneyUploadEnum,
   ProfessionalAthleteAccidentLocationEnum,
+  RescueWorkAccidentLocationEnum,
   StudiesAccidentLocationEnum,
   StudiesAccidentTypeEnum,
   WhoIsTheNotificationForEnum,
@@ -793,21 +794,16 @@ export const AccidentNotificationForm: Form = buildForm({
                   title: '',
                   options: [
                     {
-                      value:
-                        GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
-                      label:
-                        accidentLocation.generalWorkAccident.atTheWorkplace,
+                      value: RescueWorkAccidentLocationEnum.DURINGRESCUE,
+                      label: accidentLocation.rescueWorkAccident.duringRescue,
                     },
                     {
-                      value:
-                        GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
-                      label:
-                        accidentLocation.generalWorkAccident
-                          .toOrFromTheWorkplace,
+                      value: RescueWorkAccidentLocationEnum.TOORFROMRESCUE,
+                      label: accidentLocation.rescueWorkAccident.toOrFromRescue,
                     },
                     {
-                      value: GeneralWorkplaceAccidentLocationEnum.OTHER,
-                      label: accidentLocation.generalWorkAccident.other,
+                      value: RescueWorkAccidentLocationEnum.OTHER,
+                      label: accidentLocation.rescueWorkAccident.other,
                     },
                   ],
                 }),
