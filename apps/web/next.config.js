@@ -96,6 +96,12 @@ module.exports = withTreat(
         disableOrganizationChatbot: DISABLE_ORGANIZATION_CHATBOT,
       },
 
+      i18n: {
+        localeDetection: true,
+        locales: ['is', 'en'],
+        defaultLocale: 'is',
+      },
+
       env: {
         API_MOCKS: process.env.API_MOCKS || '',
       },
