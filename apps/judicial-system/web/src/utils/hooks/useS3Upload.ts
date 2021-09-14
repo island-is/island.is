@@ -38,12 +38,14 @@ export const useS3Upload = (workingCase?: Case) => {
   // File upload spesific functions
   const createPresignedPost = async (
     filename: string,
+    type: string,
   ): Promise<PresignedPost> => {
     const { data: presignedPostData } = await createPresignedPostMutation({
       variables: {
         input: {
           caseId: workingCase?.id,
           fileName: filename,
+          type,
         },
       },
     })
@@ -188,6 +190,7 @@ export const useS3Upload = (workingCase?: Case) => {
     newUploadFiles.forEach(async (file) => {
       const presignedPost = await createPresignedPost(
         file.name.normalize(),
+        file.type,
       ).catch(() =>
         setUploadErrorMessage(
           'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',

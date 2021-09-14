@@ -119,11 +119,12 @@ describe('FileController', () => {
 
       it('should create a presigned post', async () => {
         const fileName = 'test.txt'
+        const type = 'text/plain'
 
         const presignedPost = await fileController.createCasePresignedPost(
           caseId,
           prosecutor,
-          { fileName },
+          { fileName, type },
         )
 
         expect(presignedPost).toStrictEqual({
@@ -149,8 +150,9 @@ describe('FileController', () => {
       it('should create a case file', async () => {
         const id = uuid()
         const timeStamp = new Date()
-        const size = 99999
         const fileName = 'test.txt'
+        const type = 'text/plain'
+        const size = 99999
 
         fileModel.create.mockImplementation(
           (values: {
@@ -170,10 +172,11 @@ describe('FileController', () => {
         const presignedPost = await fileController.createCasePresignedPost(
           caseId,
           prosecutor,
-          { fileName },
+          { fileName, type },
         )
 
         const file = await fileController.createCaseFile(caseId, prosecutor, {
+          type,
           key: presignedPost.fields.key,
           size,
         })
@@ -184,6 +187,7 @@ describe('FileController', () => {
           modified: timeStamp,
           caseId,
           name: fileName,
+          type,
           key: presignedPost.fields.key,
           size,
         })
@@ -206,20 +210,24 @@ describe('FileController', () => {
 
       it('should throw when creating a presigned post', async () => {
         const fileName = 'test.txt'
+        const type = 'text/plain'
 
         await expect(
           fileController.createCasePresignedPost(caseId, prosecutor, {
             fileName,
+            type,
           }),
         ).rejects.toThrow(ForbiddenException)
       })
 
       it('should throw when creating a case file', async () => {
-        const size = 99999
+        const type = 'text/plain'
         const key = `${caseId}/${uuid()}/test.txt`
+        const size = 99999
 
         await expect(
           fileController.createCaseFile(caseId, prosecutor, {
+            type,
             key,
             size,
           }),
@@ -237,20 +245,24 @@ describe('FileController', () => {
 
       it('should throw when creating a presigned url', async () => {
         const fileName = 'test.txt'
+        const type = 'text/plain'
 
         await expect(
           fileController.createCasePresignedPost(caseId, prosecutor, {
             fileName,
+            type,
           }),
         ).rejects.toThrow('Some error')
       })
 
       it('should throw when creating a case file', async () => {
-        const size = 99999
+        const type = 'text/plain'
         const key = `${caseId}/${uuid()}/test.txt`
+        const size = 99999
 
         await expect(
           fileController.createCaseFile(caseId, prosecutor, {
+            type,
             key,
             size,
           }),

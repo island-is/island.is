@@ -13,7 +13,7 @@ export class AwsS3Service {
     this.s3 = new S3({ region: environment.files.region })
   }
 
-  createPresignedPost(key: string): Promise<PresignedPost> {
+  createPresignedPost(key: string, type: string): Promise<PresignedPost> {
     return new Promise((resolve, reject) => {
       this.s3.createPresignedPost(
         {
@@ -21,7 +21,7 @@ export class AwsS3Service {
           Expires: +environment.files.timeToLivePost, // convert to number with +
           Fields: {
             key,
-            'content-type': '',
+            'content-type': type,
             'Content-Disposition': 'inline',
           },
         },

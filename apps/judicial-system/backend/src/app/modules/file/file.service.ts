@@ -74,8 +74,11 @@ export class FileService {
   ): Promise<PresignedPost> {
     this.logger.debug(`Creating a presigned post for case ${caseId}`)
 
+    const { fileName, type } = createPresignedPost
+
     return this.awsS3Service.createPresignedPost(
-      `${caseId}/${uuid()}/${createPresignedPost.fileName}`,
+      `${caseId}/${uuid()}/${fileName}`,
+      type,
     )
   }
 
