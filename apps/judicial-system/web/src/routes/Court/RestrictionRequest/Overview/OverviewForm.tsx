@@ -171,9 +171,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                 )
               },
             )}
-            {workingCase.additionalCustodyProvisions && (
-              <Text>{workingCase.additionalCustodyProvisions}</Text>
-            )}
+            {workingCase.legalBasis && <Text>{workingCase.legalBasis}</Text>}
           </Box>
         </div>
         <div className={styles.infoSection} data-testid="custodyRestrictions">

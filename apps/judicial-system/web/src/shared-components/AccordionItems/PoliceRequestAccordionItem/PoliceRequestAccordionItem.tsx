@@ -94,9 +94,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
                 )
               },
             ),
-          workingCase.additionalCustodyProvisions && (
-            <Text>{workingCase.additionalCustodyProvisions}</Text>
-          ))
+          workingCase.legalBasis && <Text>{workingCase.legalBasis}</Text>)
         ) : (
           <Text>{workingCase.legalBasis}</Text>
         )}
