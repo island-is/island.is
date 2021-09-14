@@ -48,8 +48,8 @@ import {
 import {
   capitalize,
   formatAccusedByGender,
-  formatConclusion,
   formatDate,
+  formatNationalId,
   NounCases,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
@@ -86,7 +86,11 @@ export const RulingStepTwo: React.FC = () => {
 
   useEffect(() => {
     if (id && !workingCase && data?.case) {
-      const theCase = data.case
+      const theCase: Case = data.case
+      const isolationEndsBeforeValidToDate =
+        theCase.validToDate &&
+        theCase.isolationToDate &&
+        new Date(theCase.validToDate) > new Date(theCase.isolationToDate)
 
       // Normally we always autofill if the target has a "falsy" value.
       // However, if the target is optional, then it should not be autofilled after
@@ -104,28 +108,81 @@ export const RulingStepTwo: React.FC = () => {
 
       autofill(
         'conclusion',
-        formatConclusion(
-          theCase.type,
-          theCase.accusedNationalId,
-          theCase.accusedName,
-          theCase.accusedGender,
-          theCase.decision,
-          new Date(theCase.validToDate),
-          theCase.custodyRestrictions?.includes(
-            CaseCustodyRestrictions.ISOLATION,
-          ),
-          theCase.parentCase !== undefined,
-          theCase.parentCase?.decision,
-          theCase.isolationToDate
-            ? new Date(theCase.isolationToDate)
-            : undefined,
-        ),
+        theCase.decision === CaseDecision.REJECTING
+          ? formatMessage(
+              rcRulingStepTwo.sections.conclusion.rejectingAutofill,
+              {
+                genderedAccused: formatAccusedByGender(theCase.accusedGender),
+                accusedName: theCase.accusedName,
+                accusedNationalId: formatNationalId(theCase.accusedNationalId),
+                extensionSuffix:
+                  theCase.parentCase !== undefined &&
+                  theCase.parentCase?.decision === CaseDecision.ACCEPTING
+                    ? ' áframhaldandi'
+                    : '',
+                caseType:
+                  theCase.type === CaseType.CUSTODY
+                    ? 'gæsluvarðhaldi'
+                    : 'farbanni',
+              },
+            )
+          : formatMessage(
+              rcRulingStepTwo.sections.conclusion.acceptingAutofill,
+              {
+                genderedAccused: capitalize(
+                  formatAccusedByGender(theCase.accusedGender),
+                ),
+                accusedName: theCase.accusedName,
+                accusedNationalId: formatNationalId(theCase.accusedNationalId),
+                caseTypeAndExtensionSuffix:
+                  theCase.decision === CaseDecision.ACCEPTING
+                    ? `${
+                        theCase.parentCase !== undefined &&
+                        theCase.parentCase?.decision === CaseDecision.ACCEPTING
+                          ? 'áframhaldandi '
+                          : ''
+                      }${
+                        theCase.type === CaseType.CUSTODY
+                          ? 'gæsluvarðhaldi'
+                          : 'farbanni'
+                      }`
+                    : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                      `${
+                        theCase.parentCase !== undefined &&
+                        theCase.parentCase?.decision ===
+                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                          ? 'áframhaldandi '
+                          : ''
+                      }farbanni`,
+                validToDate: `${formatDate(theCase.validToDate, 'PPPPp')
+                  ?.replace('dagur,', 'dagsins')
+                  ?.replace(' kl.', ', kl.')}`,
+                isolationSuffix:
+                  theCase.decision === CaseDecision.ACCEPTING &&
+                  theCase.custodyRestrictions?.includes(
+                    CaseCustodyRestrictions.ISOLATION,
+                  )
+                    ? ` ${capitalize(
+                        formatAccusedByGender(theCase.accusedGender),
+                      )} skal sæta einangrun ${
+                        isolationEndsBeforeValidToDate
+                          ? `ekki lengur en til ${formatDate(
+                              theCase.isolationToDate,
+                              'PPPPp',
+                            )
+                              ?.replace('dagur,', 'dagsins')
+                              ?.replace(' kl.', ', kl.')}.`
+                          : 'á meðan á gæsluvarðhaldinu stendur.'
+                      }`
+                    : '',
+              },
+            ),
         theCase,
       )
 
       setWorkingCase(theCase)
     }
-  }, [id, workingCase, setWorkingCase, data, autofill])
+  }, [id, workingCase, setWorkingCase, data, autofill, formatMessage])
 
   return (
     <PageLayout

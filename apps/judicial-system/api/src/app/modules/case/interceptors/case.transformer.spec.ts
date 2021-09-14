@@ -106,41 +106,6 @@ describe('transformCase', () => {
     })
   })
 
-  describe('isAccusedAbsent', () => {
-    it('should set undefined to false', () => {
-      // Arrange
-      const theCase = {} as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isAccusedAbsent).toBe(false)
-    })
-
-    it('should leave false unchanged', () => {
-      // Arrange
-      const theCase = { isAccusedAbsent: false } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isAccusedAbsent).toBe(false)
-    })
-
-    it('should leave true unchanged', () => {
-      // Arrange
-      const theCase = { isAccusedAbsent: true } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isAccusedAbsent).toBe(true)
-    })
-  })
-
   describe('isValidToDateInThePast', () => {
     it('should not set custody end date in the past if no custody end date', () => {
       // Arrange
