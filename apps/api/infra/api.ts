@@ -56,7 +56,7 @@ export const serviceSetup = (services: {
         prod:
           'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/',
       },
-
+      GQL_PLAYGROUND_ENABLED: 'true',
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',
