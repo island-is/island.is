@@ -64,7 +64,7 @@ export class EducationService {
     })
   }
 
-  private isChild(familyMember: ISLFjolskyldan): boolean {
+  public isChild(familyMember: ISLFjolskyldan): boolean {
     return (
       !['1', '2', '7'].includes(familyMember.Kyn) &&
       kennitala.info(familyMember.Kennitala).age < ADULT_AGE_LIMIT

@@ -54,7 +54,7 @@ describe('EducationService', () => {
     })
   })
 
-  describe('MyFamily for an adult', () => {
+  describe('getFamily() for an adult', () => {
     let family: ISLFjolskyldan[]
     beforeEach(async () => {
       family = await service.getFamily('0910819979')
@@ -81,7 +81,7 @@ describe('EducationService', () => {
     })
   })
 
-  describe('MyFamily for a child', () => {
+  describe('getFamily() for a child', () => {
     let family: ISLFjolskyldan[]
     beforeEach(async () => {
       family = await service.getFamily('2407134110')
@@ -95,6 +95,18 @@ describe('EducationService', () => {
       expect(
         family.find(({ Kennitala }) => Kennitala === '2407134110'),
       ).not.toBeUndefined()
+    })
+  })
+
+  describe('isChild()', () => {
+    it('recognizes children as children', async () => {
+      const person = (await service.getFamily('2407134110'))[0]
+      expect(await service.isChild(person)).toStrictEqual(true)
+    })
+
+    it("doesn't recognize adults as children", async () => {
+      const person = (await service.getFamily('0910819979'))[0]
+      expect(await service.isChild(person)).toStrictEqual(false)
     })
   })
 })
