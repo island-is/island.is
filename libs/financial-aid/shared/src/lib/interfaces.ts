@@ -166,3 +166,7 @@ export interface Application {
   comment?: string
   rejection?: string
 }
+
+export interface GetSignedUrlForId {
+  id: string
+}
