@@ -4,7 +4,6 @@ import { Inject, UseGuards } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  AllowedFakeUsers,
   ApplicationState,
   CurrentApplication,
   HomeCircumstances,

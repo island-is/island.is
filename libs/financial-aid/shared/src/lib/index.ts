@@ -13,5 +13,6 @@ export type {
   KeyMapping,
   GetSignedUrl,
   SignedUrl,
+  GetSignedUrlForId,
 } from './types'
 export * from './utils'
