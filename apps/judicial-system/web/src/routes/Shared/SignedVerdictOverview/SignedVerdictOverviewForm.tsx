@@ -26,7 +26,6 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
-  hasCaseBeenAppealed,
   InstitutionType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -154,10 +153,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
       user.institution?.id === workingCase.prosecutor?.institution?.id
 
     const isCourtRoleWithAccess =
-      (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR) &&
-      (user?.institution?.id === workingCase.court?.id ||
-        user.institution?.type === InstitutionType.HIGH_COURT) &&
-      hasCaseBeenAppealed(workingCase)
+      user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
 
     if (
       !isAppealGracePeriodExpired &&
