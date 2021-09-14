@@ -51,11 +51,12 @@ export const DriverLicenseScanResult = ({ data, onLoad }: any) => {
           )
           setLoading(false)
         } else {
-          const { data, valid } = res.data.verifyPkPass
+          const { data, valid, error } = res.data.verifyPkPass
           if (!valid) {
             setError(true)
+
             setErrorMessage(
-              intl.formatMessage({ id: 'licenseScanDetail.errorTryToRefresh' }),
+              intl.formatMessage({ id: 'licenseScanDetail.errorCodeMessage' }, { errorCode: error?.code }),
             )
             setLoading(false)
           } else {

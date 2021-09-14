@@ -163,7 +163,15 @@ export const is = {
   // license scan detail
   'licenseScanDetail.errorUnknown': 'Óþekkt villa',
   'licenseScanDetail.errorNetwork': 'Net villa',
-  'licenseScanDetail.errorTryToRefresh': 'Villa við að sannreyna ökuskírteinið. Uppfærið skírteinið og reynið aftur.',
+  'licenseScanDetail.errorCodeMessage': `{
+    errorCode,
+    select,
+    ERR_1 {Skilríki í lagi}
+    ERR_2 {Skilríkja strikamerki útrunnið. Uppfærið skírteinið og reynið aftur.}
+    ERR_3 {Engar upplýsingar um skilríki fundust}
+    ERR_4 {Fyrirspurn inniheldur villur í reitum}
+    other {Óþekkt villa}
+  }`,
 
    // license scan results
    'licenseScannerResult.loading': 'Hleð upplýsingum',
