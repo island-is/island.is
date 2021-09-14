@@ -8,7 +8,7 @@ import {
   calulateTaxOfAmount,
   HomeCircumstances,
   Municipality,
-  months,
+  getMonth,
 } from '@island.is/financial-aid/shared/lib'
 import { useQuery } from '@apollo/client'
 import { GetMunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql'
@@ -31,7 +31,7 @@ const Estimation = ({
   usePersonalTaxCredit,
 }: Props) => {
   const currentYear = format(new Date(), 'yyyy')
-  const nextMonth = months[new Date().getMonth() + 1].toLowerCase()
+  const nextMonth = getMonth(new Date().getMonth() + 1)
 
   const { data, loading } = useQuery<MunicipalityData>(GetMunicipalityQuery, {
     variables: { input: { id: 'hfj' } },

@@ -7,7 +7,7 @@ import format from 'date-fns/format'
 import {
   ApplicationState,
   CurrentApplication,
-  months,
+  getMonth,
   getState,
   Routes,
 } from '@island.is/financial-aid/shared/lib'
@@ -22,7 +22,7 @@ interface Props {
 const InProgress = ({ currentApplication }: Props) => {
   const router = useRouter()
 
-  const currentMont = months[new Date().getMonth()].toLowerCase()
+  const currentMont = getMonth(new Date().getMonth())
   const currentYear = format(new Date(), 'yyyy')
 
   return (

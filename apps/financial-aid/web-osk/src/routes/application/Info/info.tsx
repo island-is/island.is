@@ -12,10 +12,7 @@ import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import {
-  getNextMonth,
-  NavigationProps,
-} from '@island.is/financial-aid/shared/lib'
+import { getMonth, NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
@@ -25,7 +22,7 @@ const ApplicationInfo = () => {
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
 
-  const nextMonth = getNextMonth(new Date()).toLowerCase()
+  const nextMonth = getMonth(new Date().getMonth() + 1)
 
   const logOut = useLogOut()
 
