@@ -251,6 +251,9 @@ export const Overview: React.FC = () => {
                         )
                       },
                     )}
+                  {workingCase.additionalCustodyProvisions && (
+                    <Text>{workingCase.additionalCustodyProvisions}</Text>
+                  )}
                 </AccordionItem>
                 <AccordionItem
                   labelVariant="h3"

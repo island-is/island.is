@@ -170,22 +170,56 @@ const StepThreeForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <BlueBox>
-            <CheckboxList
-              checkboxes={
-                workingCase.type === CaseType.CUSTODY
-                  ? custodyProvisions
-                  : travelBanProvisions
-              }
-              selected={workingCase.custodyProvisions}
-              onChange={(id) =>
-                setCheckboxAndSendToServer(
-                  'custodyProvisions',
-                  id,
+            <Box marginBottom={2}>
+              <CheckboxList
+                checkboxes={
+                  workingCase.type === CaseType.CUSTODY
+                    ? custodyProvisions
+                    : travelBanProvisions
+                }
+                selected={workingCase.custodyProvisions}
+                onChange={(id) =>
+                  setCheckboxAndSendToServer(
+                    'custodyProvisions',
+                    id,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+              />
+            </Box>
+            <Input
+              data-testid="additionalCustodyProvisions"
+              name="additionalCustodyProvisions"
+              label={formatMessage(
+                rcDemands.sections.legalBasis.additionalCustodyProvisionsLabel,
+              )}
+              placeholder={formatMessage(
+                rcDemands.sections.legalBasis
+                  .additionalCustodyProvisionsPlaceholder,
+              )}
+              defaultValue={workingCase?.additionalCustodyProvisions}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'additionalCustodyProvisions',
+                  event,
+                  [],
                   workingCase,
                   setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'additionalCustodyProvisions',
+                  event.target.value,
+                  [],
+                  workingCase,
                   updateCase,
                 )
               }
+              textarea
+              rows={7}
             />
           </BlueBox>
         </Box>
