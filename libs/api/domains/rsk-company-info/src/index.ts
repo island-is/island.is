@@ -1,1 +1,1 @@
-export * from './lib/api-domains-rsk-company-info'
+export * from './lib/rsk-company-info-module'

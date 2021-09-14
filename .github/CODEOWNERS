@@ -116,6 +116,8 @@
 /libs/application/template-api-modules/src/lib/modules/templates/health-insurance/            @island-is/sendiradid
 /libs/api/domains/health-insurance/                                                           @island-is/sendiradid
 /libs/application/templates/health-insurance/                                                 @island-is/sendiradid
+/libs/clients/rsk-company-info/                                                               @island-is/sendiradid
+/libs/api/domains/rsk-company-info/                                                           @island-is/sendiradid
 
 /apps/services/search-indexer/                                                                @island-is/stefna @island-is/kosmos-kaos
 /apps/web/screens/Organization/                                                               @island-is/stefna

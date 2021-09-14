@@ -1,1 +1,2 @@
-export * from './lib/clients-rsk-company-info'
+export * from './lib/rsk-company-info'
+export * from './lib/types'

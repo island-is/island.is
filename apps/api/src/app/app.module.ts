@@ -36,6 +36,7 @@ import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-r
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { AuditModule } from '@island.is/nest/audit'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
+import { RskCompanyInfoModule } from '@island.is/api/domains/rsk-company-info'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 
@@ -240,6 +241,12 @@ const autoSchemaFile = environment.production
       xRoadClientId: environment.xroad.clientId,
       password: environment.paymentSchedule.password,
       username: environment.paymentSchedule.username,
+    }),
+    RskCompanyInfoModule.register({
+      xRoadProviderId: environment.rskCompanyInfo.xRoadProviderId,
+      xRoadBaseUrl: environment.rskCompanyInfo.xRoadBaseUrl,
+      apiPath: environment.rskCompanyInfo.apiPath,
+      xRoadClientId: environment.rskCompanyInfo.xRoadClientId,
     }),
   ],
 })

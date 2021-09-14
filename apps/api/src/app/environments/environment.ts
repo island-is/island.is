@@ -84,15 +84,14 @@ const devConfig = {
     url: 'https://thjonusta-s.rsk.is/api',
     password: process.env.RSK_API_PASSWORD,
   },
-  rskCompanyRegistry: {
-    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+  rskCompanyInfo: {
+    xRoadBaseUrl: 'http://localhost:8080',
     xRoadProviderId:
       process.env.COMPANY_REGISTRY_XROAD_PROVIDER_ID ??
-      'IS-DEV/GOV/10006/Skatturinn-Public',
-    xRoadClientId: process.env.XROAD_CLIENT_ID,
+      'IS-DEV/GOV/10006/Skatturinn-Public/ftskra-v1',
+    xRoadClientId: 'IS-DEV/GOV/10000/island-is-client',
     apiPath:
-      process.env.COMPANY_REGISTRY_XROAD_API_PATH ??
-      '/ftskra-v1/v1/fyrirtaekjaskra',
+      process.env.COMPANY_REGISTRY_XROAD_API_PATH ?? 'v1/fyrirtaekjaskra',
   },
   icelandicNamesRegistry: {
     backendUrl: 'http://localhost:4239',
@@ -236,7 +235,7 @@ const prodConfig = {
     password: process.env.RSK_API_PASSWORD,
     url: process.env.RSK_API_URL,
   },
-  rskCompanyRegistry: {
+  rskCompanyInfo: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     xRoadProviderId: process.env.COMPANY_REGISTRY_XROAD_PROVIDER_ID,
     xRoadClientId: process.env.XROAD_CLIENT_ID,
