@@ -24,3 +24,18 @@ export const Routes = {
     id ? `/api/auth/login?applicationId=${id}` : '/api/auth/login',
   filesPage: '/gogn',
 }
+
+export const months = [
+  'Janúar',
+  'Febrúar',
+  'Mars',
+  'Apríl',
+  'Maí',
+  'Júní',
+  'Júlí',
+  'Ágúst',
+  'September',
+  'Október',
+  'Nóvember',
+  'Desember',
+]

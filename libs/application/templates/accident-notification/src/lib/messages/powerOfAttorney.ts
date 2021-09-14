@@ -44,6 +44,12 @@ export const powerOfAttorney = {
       defaultMessage: 'Fylgiskjöl',
       description: 'Heading of upload section',
     },
+    description: {
+      id: 'an.application:powerOfAttorney.upload.description',
+      defaultMessage:
+        '<p>Athugaðu að það er hægt að tilkynna slys án þess að öll nauðsynleg skjöl eru til staðar.... blabla</p><br/><p>Þú getur sótt umboðsskjal hér til útfyllingar umboð.docx</p>',
+      description: 'Description of upload section',
+    },
     sectionTitle: {
       id: 'an.application:powerOfAttorney.upload.sectionTitle',
       defaultMessage: 'Hlaða upp skjali',
@@ -56,12 +62,12 @@ export const powerOfAttorney = {
     },
     uploadHeader: {
       id: 'an.application:powerOfAttorney.upload.uploadHeader',
-      defaultMessage: 'Dragðu viðhengi hingað til að hlaða upp',
+      defaultMessage: 'Dragðu umboðsskjal hingað til að hlaða upp',
       description: 'Definition of upload header',
     },
     uploadButtonLabel: {
       id: 'an.application:powerOfAttorney.upload.uploadButtonLabel',
-      defaultMessage: 'Velja viðhengi til að hlaða upp',
+      defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Definition of upload button label',
     },
   }),

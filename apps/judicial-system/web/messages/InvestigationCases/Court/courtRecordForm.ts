@@ -36,5 +36,15 @@ export const icCourtRecord = {
           'Notaður sem skýritexti í "afstaða kærða" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
     }),
+    litigationPresentations: defineMessages({
+      autofill: {
+        id:
+          'judicial.system.investigation_cases:court_record.litigation_presentations.autofill',
+        defaultMessage:
+          'Málflutningur var skriflegur og gögn send dómara rafrænt.',
+        description:
+          'Notaður sem sjálfgefinn texti í "Málflutningur" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+      },
+    }),
   },
 }

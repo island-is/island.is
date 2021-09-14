@@ -9,7 +9,10 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  SessionArrangements,
+} from '@island.is/judicial-system/types'
 import type { Case, User } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -97,9 +100,12 @@ const Confirmation: React.FC<Props> = (props) => {
                 : `Enginn dómari skráður`}
             </Text>
           </Box>
-          <Text>
-            Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
-          </Text>
+          {workingCase.sessionArrangements !==
+            SessionArrangements.REMOTE_SESSION && (
+            <Text>
+              Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
+            </Text>
+          )}
         </Box>
         <Box component="section" marginBottom={7}>
           <Box marginBottom={1}>
