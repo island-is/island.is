@@ -4,8 +4,8 @@ import amountFormat from './amountFormat'
 
 import { Fasteign, Notkunareining } from '../types/RealEstateAssets.types'
 
-const ownersArray = (data: Fasteign) =>
-  data?.thinglystirEigendur?.map((owner) => {
+const ownersArray = (data: Fasteign) => {
+  const ownerArray = data?.thinglystirEigendur?.map((owner) => {
     return [
       owner.nafn || '',
       formatKennitala(owner.kennitala) || '',
@@ -14,6 +14,8 @@ const ownersArray = (data: Fasteign) =>
       'NOT AVAILABLE',
     ]
   })
+  return ownerArray && ownerArray.length > 0 ? ownerArray : [[]]
+}
 
 const unitsArray = (data: Fasteign) =>
   data?.notkunareiningar?.data?.map((unit: Notkunareining) => {

@@ -12,6 +12,7 @@ import {
 import AssetListCards from '../../components/AssetListCards'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
 import { FasteignirResponse } from '../../types/RealEstateAssets.types'
+import { AssetCardLoader } from '../../components/AssetCardLoader'
 
 const GetRealEstateQuery = gql`
   query GetRealEstateQuery {
@@ -42,7 +43,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
           img="./assets/images/educationGrades.svg"
         />
       </Box>
-      {loading && <span>Loading...</span>}
+      {loading && <AssetCardLoader />}
       {data && <AssetListCards assets={assetData.fasteignir} />}
       {error && (
         <Box>
