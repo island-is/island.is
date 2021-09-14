@@ -340,51 +340,51 @@ export class GenericDrivingLicenseApi
   }
 
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
-    const result = await this.pkpassClient.verifyPkpassByPdf417(data)
+    // const result = await this.pkpassClient.verifyPkpassByPdf417(data)
 
-    if (!result) {
-      this.logger.warn('Missing pkpass verify from client', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
+    // if (!result) {
+    //   this.logger.warn('Missing pkpass verify from client', {
+    //     category: LOG_CATEGORY,
+    //   })
+    //   return null
+    // }
 
-    let error: PkPassVerificationError | undefined
+    // let error: PkPassVerificationError | undefined
 
-    if (result.error) {
-      let data = ''
+    // if (result.error) {
+    //   let data = ''
 
-      try {
-        data = JSON.stringify(result.error.serviceError?.data)
-      } catch {
-        // noop
-      }
+    //   try {
+    //     data = JSON.stringify(result.error.serviceError?.data)
+    //   } catch {
+    //     // noop
+    //   }
 
-      // Is there a status code from the service?
-      const serviceErrorStatus = result.error.serviceError?.status
+    // Is there a status code from the service?
+    //   const serviceErrorStatus = result.error.serviceError?.status
 
-      // Use status code, or http status code from serivce, or "0" for unknown
-      const status = serviceErrorStatus ?? (result.error.statusCode || 0)
+    //   // Use status code, or http status code from serivce, or "0" for unknown
+    //   const status = serviceErrorStatus ?? (result.error.statusCode || 0)
 
-      error = {
-        status: status.toString(),
-        message: result.error.serviceError?.message || 'Unknown error',
-        data,
-      }
+    //  error = {
+    //    status: status.toString(),
+    //    message: result.error.serviceError?.message || 'Unknown error',
+    //    data,
+    //  }
 
-      return {
-        valid: false,
-        data: undefined,
-        error,
-      }
-    }
+    //  return {
+    //    valid: false,
+    //    data: undefined,
+    //    error,
+    //  }
+    //}
 
     let response:
       | Record<string, string | null | GenericDrivingLicenseResponse['mynd']>
       | undefined = undefined
 
-    if (result.nationalId) {
-      const nationalId = result.nationalId.replace('-', '')
+    if (data) {
+      const nationalId = data.replace('-', '')
       const licenses = await this.requestFromXroadApi(nationalId)
 
       if (!licenses) {
@@ -405,7 +405,7 @@ export class GenericDrivingLicenseApi
       const rawData = licenses?.[0] ? JSON.stringify(licenses?.[0]) : undefined
 
       response = {
-        nationalId: licenseNationalId,
+        nationalId: data,
         name,
         photo,
         rawData,
@@ -413,9 +413,8 @@ export class GenericDrivingLicenseApi
     }
 
     return {
-      valid: result.valid,
+      valid: true,
       data: response ? JSON.stringify(response) : undefined,
-      error,
     }
   }
 }
