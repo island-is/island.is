@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
+import cn from 'classnames'
 
 import * as styles from './InputFileUpload.treat'
 
@@ -9,7 +10,6 @@ import { Button } from '../Button/Button'
 import { theme, Colors } from '@island.is/island-ui/theme'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconTypes } from '../IconRC/iconMap'
-import { Tag } from '../..'
 
 export type UploadFileStatus = 'error' | 'done' | 'uploading'
 
@@ -106,6 +106,8 @@ export const UploadedFile = ({
   const isUploading =
     file.percent && file.percent < 100 && file.status === 'uploading'
 
+  console.log(onOpenFile)
+
   return (
     <Box
       display="flex"
@@ -120,14 +122,30 @@ export const UploadedFile = ({
       width="full"
       position="relative"
       title={file.name}
-      className={styles.uploadedFile}
-      onClick={(e) => e.stopPropagation()}
+      aria-labelledBy={onOpenFile ? `Opna ${file.name}` : undefined}
+      className={cn(styles.uploadedFile, {
+        [styles.canOpenFiles]: onOpenFile,
+      })}
+      onClick={(e) => {
+        e.stopPropagation()
+
+        if (onOpenFile) {
+          onOpenFile(file)
+        }
+      }}
     >
       <Text truncate fontWeight="semiBold">
-        {file.name}
-        {showFileSize && file.size && (
-          <Text as="span">{` (${kb(file.size)}KB)`}</Text>
-        )}
+        <Box className={{ [styles.fileName]: onOpenFile }}>
+          {file.name}
+          {showFileSize && file.size && (
+            <Text as="span">{` (${kb(file.size)}KB)`}</Text>
+          )}
+          {onOpenFile && (
+            <Box component="span" marginLeft={1}>
+              <Icon icon="open" type="outline" size="small" />
+            </Box>
+          )}
+        </Box>
       </Text>
       <Box display="flex">
         {isUploading ? (
@@ -164,15 +182,7 @@ export const UploadedFile = ({
             <Icon color="blue400" icon={statusIcon(file.status)} />
           </button>
         )}
-        {onOpenFile && (
-          <Box marginLeft={2}>
-            <Tag variant="darkerBlue" onClick={() => onOpenFile(file)}>
-              Opna
-            </Tag>
-          </Box>
-        )}
       </Box>
-
       <UploadingIndicator percent={file.percent} />
     </Box>
   )
