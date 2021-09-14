@@ -54,6 +54,7 @@ export interface CaseFile {
 }
 
 export interface CreateFile {
+  type: string
   key: string
   size: number
 }

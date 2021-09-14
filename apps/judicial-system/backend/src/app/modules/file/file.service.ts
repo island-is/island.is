@@ -129,7 +129,8 @@ export class FileService {
     const exists = await this.awsS3Service.objectExists(file.key)
 
     if (!exists) {
-      await this.fileModel.update(
+      // Fire and forget, no need to wait for the result
+      this.fileModel.update(
         { state: CaseFileState.BOKEN_LINK },
         { where: { id: file.id } },
       )
@@ -180,7 +181,8 @@ export class FileService {
     const exists = await this.awsS3Service.objectExists(file.key)
 
     if (!exists) {
-      await this.fileModel.update(
+      // Fire and forget, no need to wait for the result
+      this.fileModel.update(
         { state: CaseFileState.BOKEN_LINK },
         { where: { id: file.id } },
       )
@@ -201,11 +203,20 @@ export class FileService {
       file.name,
     )
 
-    await this.fileModel.update(
+    const s3Key = file.key
+
+    const [nrOfRowsUpdated] = await this.fileModel.update(
       { state: CaseFileState.STORED_IN_COURT, key: documentId },
       { where: { id: file.id } },
     )
 
-    return { success: false }
+    const success = nrOfRowsUpdated > 0
+
+    if (success) {
+      // Fire and forget, no need to wait for the result
+      this.tryDeleteFileFromS3(s3Key)
+    }
+
+    return { success }
   }
 }

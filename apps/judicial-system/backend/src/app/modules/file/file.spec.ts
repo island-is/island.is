@@ -658,6 +658,9 @@ describe('FileController', () => {
             )
             mockCreateDocument.mockResolvedValueOnce(mockDocumentId)
 
+            fileModel.update.mockResolvedValueOnce([1])
+            const mockDeleteObject = jest.spyOn(awsS3Service, 'deleteObject')
+
             const { success } = await fileController.uploadCaseFileToCourt(
               caseId,
               fileId,
@@ -692,7 +695,9 @@ describe('FileController', () => {
               { where: { id: fileId } },
             )
 
-            expect(success).toBe(false)
+            expect(mockDeleteObject).toHaveBeenCalledWith(key)
+
+            expect(success).toBe(true)
           })
 
           it('should throw when uploading a case file to court and the file does not exist in AWS S3', async () => {
