@@ -47,10 +47,10 @@ export interface CaseFile {
   modified: string
   caseId: string
   name: string
+  type: string
   state: CaseFileState
   key: string
   size: number
-  court_key?: string
 }
 
 export interface CreateFile {

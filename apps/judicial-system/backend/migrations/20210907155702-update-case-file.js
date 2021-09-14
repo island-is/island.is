@@ -21,7 +21,7 @@ module.exports = {
         ),
         queryInterface.addColumn(
           'case_file',
-          'court_key',
+          'type',
           {
             type: Sequelize.STRING,
             allowNull: true,
@@ -45,7 +45,7 @@ module.exports = {
               { transaction: t },
             ),
           ),
-        queryInterface.removeColumn('case_file', 'court_key', {
+        queryInterface.removeColumn('case_file', 'type', {
           transaction: t,
         }),
       ]),

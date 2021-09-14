@@ -52,6 +52,13 @@ export class CaseFile extends Model<CaseFile> {
   name!: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  court_ke!: string
+
+  @Column({
     type: DataType.ENUM,
     allowNull: false,
     values: Object.values(CaseFileState),
@@ -73,11 +80,4 @@ export class CaseFile extends Model<CaseFile> {
   })
   @ApiProperty()
   size!: number
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  court_key?: string
 }

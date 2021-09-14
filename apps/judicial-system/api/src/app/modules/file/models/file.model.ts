@@ -22,6 +22,9 @@ export class CaseFile implements TCaseFile {
   @Field()
   readonly name!: string
 
+  @Field({ nullable: true })
+  readonly type!: string
+
   @Field(() => String)
   readonly state!: CaseFileState
 
@@ -30,7 +33,4 @@ export class CaseFile implements TCaseFile {
 
   @Field()
   readonly size!: number
-
-  @Field({ nullable: true })
-  readonly courtKey?: string
 }

@@ -202,7 +202,7 @@ export class FileService {
     )
 
     await this.fileModel.update(
-      { state: CaseFileState.STORED_IN_COURT, courtKey: documentId },
+      { state: CaseFileState.STORED_IN_COURT, key: documentId },
       { where: { id: file.id } },
     )
 

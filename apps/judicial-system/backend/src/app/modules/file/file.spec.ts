@@ -687,7 +687,7 @@ describe('FileController', () => {
             expect(fileModel.update).toHaveBeenCalledWith(
               {
                 state: CaseFileState.STORED_IN_COURT,
-                courtKey: mockDocumentId,
+                key: mockDocumentId,
               },
               { where: { id: fileId } },
             )
