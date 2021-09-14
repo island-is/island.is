@@ -130,13 +130,13 @@ export const accidentLocation = {
     },
     toOrFromRescue: {
       id: 'an.application:accidentLocation.rescueWorkAccident.toOrFromRescue',
-      defaultMessage: 'Á leið til eða frá vinnustað',
+      defaultMessage: 'Á leið til eða frá björgunaraðgerðum',
       description:
         'Label for the to or from the rescue in rescue work accident location',
     },
     other: {
       id: 'an.application:accidentLocation.rescueWorkAccident.other',
-      defaultMessage: 'Annars staðar',
+      defaultMessage: 'Annarsstaðar í vinnu fyrir björgunaraðgerðir',
       description: 'Label for the other in rescue work accident location',
     },
     description: {
