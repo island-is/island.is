@@ -6,5 +6,5 @@ export class StaffQueryInput {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly id!: string
+  readonly nationalId!: string
 }

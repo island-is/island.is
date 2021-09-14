@@ -12,14 +12,15 @@ export class StaffService {
     private readonly staffModel: typeof StaffModel,
   ) {}
 
-  findById(id: string): Promise<Staff> {
+  findByNationalId(nationalId: string): Promise<Staff> {
     const mockStaff: Staff = {
-      id: id,
+      id: '1',
       name: 'Klára Línudóttir',
-      nationalId: '0000000002',
+      nationalId: nationalId,
       municipalityId: 'hfj',
-      role: 'worker',
+      role: 'employee',
       active: true,
+      phoneNumber: '0001111',
     }
     return Promise.resolve(mockStaff)
   }

@@ -29,6 +29,7 @@ export interface Staff {
   municipalityId: string
   role: StaffRole
   active: boolean
+  phoneNumber: string
 }
 
 export interface MunicipalitySettings {
@@ -78,8 +79,6 @@ export interface ApplicationEvent {
 
 export interface Municipality {
   id: string
-  // created: string
-  // modified: string
   name: string
   settings: MunicipalitySettings
 }
