@@ -7,11 +7,11 @@ import { FormContext } from '@island.is/financial-aid-web/osk/src/components/For
 const FileUploadSuccess = () => {
   const router = useRouter()
 
-  const { emptyformProvider } = useContext(FormContext)
+  const { emptyFormProvider } = useContext(FormContext)
 
   useEffect(() => {
     router.events.on('routeChangeComplete', () => {
-      emptyformProvider()
+      emptyFormProvider()
     })
   }, [])
 

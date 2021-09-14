@@ -18,7 +18,7 @@ const FileUploadComment = ({ comment }: Props) => {
       marginBottom={[3, 3, 5]}
     >
       <Text variant="eyebrow" marginBottom={1}>
-        Athugasemd með gögnum{' '}
+        Athugasemd með gögnum
       </Text>
       <Text>{comment}</Text>
     </Box>

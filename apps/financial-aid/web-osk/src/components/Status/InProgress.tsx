@@ -22,9 +22,7 @@ interface Props {
 const InProgress = ({ currentApplication }: Props) => {
   const router = useRouter()
 
-  const nextMonthFromCreated = parseInt(
-    format(new Date(currentApplication.created), 'MM'),
-  )
+  const nextMonthFromCreated = new Date(currentApplication.created).getMonth()
   const currentYear = format(new Date(), 'yyyy')
 
   return (

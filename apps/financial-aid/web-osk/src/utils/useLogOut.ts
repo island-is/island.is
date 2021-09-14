@@ -6,12 +6,12 @@ import { FormContext } from '@island.is/financial-aid-web/osk/src/components/For
 
 export const useLogOut = () => {
   const { setUser } = useContext(UserContext)
-  const { emptyformProvider } = useContext(FormContext)
+  const { emptyFormProvider } = useContext(FormContext)
 
   const logOut = () => {
     api.logOut()
     setUser && setUser(undefined)
-    emptyformProvider()
+    emptyFormProvider()
   }
   return logOut
 }

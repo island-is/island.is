@@ -93,7 +93,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     return signedUrl
   }
 
-  const uploadingFiles = async (applicationId: string, type: FileType) => {
+  const uploadFiles = async (applicationId: string, type: FileType) => {
     const formatFiles = files.map((f) => {
       return {
         applicationId: applicationId,
@@ -214,5 +214,6 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     onChange,
     onRemove,
     onRetry,
+    uploadFiles,
   }
 }
