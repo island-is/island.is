@@ -642,11 +642,13 @@ describe('FileController', () => {
         describe('given a case file', () => {
           const fileId = uuid()
           const fileName = 'test.txt'
+          const type = 'text/plain'
           const key = `${caseId}/${fileId}/${fileName}`
           const mockFile = {
             id: fileId,
             caseId,
             name: fileName,
+            type,
             key,
           }
 
@@ -689,14 +691,19 @@ describe('FileController', () => {
 
             expect(mockGetObject).toHaveBeenCalledWith(key)
 
-            expect(mockUploadStream).toHaveBeenCalledWith(courtId, mockBuffer)
+            expect(mockUploadStream).toHaveBeenCalledWith(
+              courtId,
+              fileName,
+              type,
+              mockBuffer,
+            )
 
             expect(mockCreateDocument).toHaveBeenCalledWith(
               courtId,
               courtCaseNumber,
+              fileName,
+              fileName,
               mockStreamId,
-              fileName,
-              fileName,
             )
 
             expect(fileModel.update).toHaveBeenCalledWith(

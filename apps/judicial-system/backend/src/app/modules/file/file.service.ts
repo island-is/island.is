@@ -196,14 +196,19 @@ export class FileService {
 
     const content = await this.awsS3Service.getObject(file.key)
 
-    const streamId = await this.courtService.uploadStream(courtId, content)
+    const streamId = await this.courtService.uploadStream(
+      courtId,
+      file.name,
+      file.type,
+      content,
+    )
 
     const documentId = await this.courtService.createDocument(
       courtId,
       courtCaseNumber,
+      file.name,
+      file.name,
       streamId,
-      file.name,
-      file.name,
     )
 
     const s3Key = file.key

@@ -99,14 +99,16 @@ export class CaseService {
 
         const streamId = await this.courtService.uploadStream(
           existingCase.courtId,
+          'Rannsóknargögn.pdf',
+          'application/pdf',
           buffer,
         )
         await this.courtService.createDocument(
           existingCase.courtId,
           existingCase.courtCaseNumber,
-          streamId,
           'Rannsóknargögn',
           'Rannsóknargögn.pdf',
+          streamId,
         )
       }
     } catch (error) {
@@ -126,6 +128,8 @@ export class CaseService {
     try {
       const streamId = await this.courtService.uploadStream(
         existingCase.courtId,
+        'Þingbók og úrskurður.pdf',
+        'application/pdf',
         buffer,
       )
       await this.courtService.createThingbok(
@@ -464,11 +468,15 @@ export class CaseService {
     try {
       const streamId = await this.courtService.uploadStream(
         existingCase.courtId,
+        'Krafa.pdf',
+        'application/pdf',
         pdf,
       )
       await this.courtService.createRequest(
         existingCase.courtId,
         existingCase.courtCaseNumber,
+        'Krafa',
+        'Krafa.pdf',
         streamId,
       )
     } catch (error) {
