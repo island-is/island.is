@@ -27,36 +27,32 @@ const AllFiles = () => {
       <Box marginRight={3}>
         <Text fontWeight="semiBold">Gögn</Text>
         <Box>
-          {allFiles && (
-            <>
-              {allFiles.map((file, index) => {
-                return (
-                  <>
-                    {file && (
-                      <a
-                        href={file.name}
-                        key={`file-` + index}
-                        className={styles.filesButtons}
-                        target="_blank"
-                        download
-                      >
-                        <Box marginRight={1} display="flex" alignItems="center">
-                          <Icon
-                            color="blue400"
-                            icon="document"
-                            size="small"
-                            type="outline"
-                          />
-                        </Box>
+          {allFiles.map((file, index) => {
+            return (
+              <>
+                {file && (
+                  <a
+                    href={file.name}
+                    key={`file-` + index}
+                    className={styles.filesButtons}
+                    target="_blank"
+                    download
+                  >
+                    <Box marginRight={1} display="flex" alignItems="center">
+                      <Icon
+                        color="blue400"
+                        icon="document"
+                        size="small"
+                        type="outline"
+                      />
+                    </Box>
 
-                        <Text>{file.name}</Text>
-                      </a>
-                    )}
-                  </>
-                )
-              })}
-            </>
-          )}
+                    <Text>{file.name}</Text>
+                  </a>
+                )}
+              </>
+            )
+          })}
         </Box>
       </Box>
 
