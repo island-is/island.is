@@ -26,8 +26,7 @@ export const sportsClubInfo = {
     },
     title: {
       id: 'an.application:sportsClubInfo.employee.title',
-      defaultMessage:
-        'Ert þú launþegi hjá íþróttafélaginu sem þú slasaðist hjá?',
+      defaultMessage: 'Þiggur þú greiðslur frá íþróttafélaginu?',
       description: `Title of sports club employee section.`,
     },
   }),
@@ -41,11 +40,6 @@ export const sportsClubInfo = {
       id: 'an.application:sportsClubInfo.labels.nationalId',
       defaultMessage: 'Kennitala íþróttafélags',
       description: 'National ID of sports club',
-    },
-    companyName: {
-      id: 'an.application:sportsClubInfo.labels.companyName',
-      defaultMessage: 'Nafn íþróttafélags',
-      description: `Name of sports club`,
     },
     name: {
       id: 'an.application:sportsClubInfo.labels.name',
