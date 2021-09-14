@@ -116,7 +116,8 @@ const FileUpload = () => {
         <Box marginBottom={[4, 4, 10]}>
           <Input
             label="Athugasemd"
-            name="comment"
+            name="fileUploadComment"
+            value={form.fileUploadComment}
             placeholder="Skrifaðu hér"
             rows={7}
             textarea

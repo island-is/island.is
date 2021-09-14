@@ -17,12 +17,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   const requests: { [Key: string]: XMLHttpRequest } = {}
 
   useEffect(() => {
-    if (
-      files &&
-      formFiles &&
-      formFiles.length > 0 &&
-      files.length < formFiles.length
-    ) {
+    if (files && formFiles && files.length < formFiles.length) {
       setFiles(formFiles)
     }
   }, [formFiles])
