@@ -17,6 +17,9 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
+// Validation on optional field: https://github.com/colinhacks/zod/issues/310
+const optionalEmail = z.string().email().optional().or(z.literal(''))
+
 export const DataProtectionComplaintSchema = z.object({
   externalData: z.object({
     nationalRegistry: z.object({
@@ -70,21 +73,25 @@ export const DataProtectionComplaintSchema = z.object({
     ]),
   }),
   applicant: z.object({
-    name: z.string().nonempty(error.required.defaultMessage),
-    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    address: z.string().nonempty(error.required.defaultMessage),
-    postalCode: z.string().nonempty(error.required.defaultMessage),
-    city: z.string().nonempty(error.required.defaultMessage),
-    email: z.string().email().optional(),
+    name: z.string().refine((x) => !!x, { params: error.required }),
+    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false), {
+      params: error.nationalId,
+    }),
+    address: z.string().refine((x) => !!x, { params: error.required }),
+    postalCode: z.string().refine((x) => !!x, { params: error.required }),
+    city: z.string().refine((x) => !!x, { params: error.required }),
+    email: optionalEmail,
     phoneNumber: z.string().optional(),
   }),
   organizationOrInstitution: z.object({
-    name: z.string().nonempty(error.required.defaultMessage),
-    nationalId: z.string().refine((x) => (x ? kennitala.isCompany(x) : false)),
-    address: z.string().nonempty(error.required.defaultMessage),
-    postalCode: z.string().nonempty(error.required.defaultMessage),
-    city: z.string().nonempty(error.required.defaultMessage),
-    email: z.string().email().optional(),
+    name: z.string().refine((x) => !!x, { params: error.required }),
+    nationalId: z.string().refine((x) => (x ? kennitala.isCompany(x) : false), {
+      params: error.nationalId,
+    }),
+    address: z.string().refine((x) => !!x, { params: error.required }),
+    postalCode: z.string().refine((x) => !!x, { params: error.required }),
+    city: z.string().refine((x) => !!x, { params: error.required }),
+    email: optionalEmail,
     phoneNumber: z.string().optional(),
   }),
   commissions: z.object({
@@ -92,7 +99,7 @@ export const DataProtectionComplaintSchema = z.object({
     persons: z
       .array(
         z.object({
-          name: z.string().nonempty(error.required.defaultMessage),
+          name: z.string().refine((x) => !!x, { params: error.required }),
           nationalId: z
             .string()
             .refine((x) => (x ? kennitala.isPerson(x) : false)),
@@ -102,12 +109,14 @@ export const DataProtectionComplaintSchema = z.object({
   }),
   complainees: z.array(
     z.object({
-      name: z.string().nonempty(error.required.defaultMessage),
-      address: z.string().nonempty(error.required.defaultMessage),
+      name: z.string().refine((x) => !!x, { params: error.required }),
+      address: z.string().refine((x) => !!x, { params: error.required }),
       nationalId: z
         .string()
-        .refine((x) => (x ? kennitala.isValid(x) : false))
-        .optional(),
+        .nonempty(error.required.defaultMessage)
+        .refine((x) => (x ? kennitala.isValid(x) : false), {
+          params: error.nationalId,
+        }),
       operatesWithinEurope: z.enum([YES, NO]),
       countryOfOperation: z.string().optional(),
     }),
