@@ -23,35 +23,37 @@ const ApplicationsTable = ({ applications, headers, className }: PageProps) => {
 
   if (applications && applications.length > 0) {
     return (
-      <table
-        className={cn({
-          [`${styles.tableContainer}`]: true,
-          [`${className}`]: true,
-        })}
-        key={router.pathname}
-      >
-        <thead>
-          <tr>
-            {headers.map((item, index) => (
-              <TableHeaders
-                header={item}
+      <div className={styles.wrapper}>
+        <table
+          className={cn({
+            [`${styles.tableContainer}`]: true,
+            [`${className}`]: true,
+          })}
+          key={router.pathname}
+        >
+          <thead>
+            <tr>
+              {headers.map((item, index) => (
+                <TableHeaders
+                  header={item}
+                  index={index}
+                  key={'tableHeaders-' + index}
+                />
+              ))}
+            </tr>
+          </thead>
+
+          <tbody className={styles.tableBody}>
+            {applications.map((item: Application, index: number) => (
+              <TableBody
+                application={item}
                 index={index}
-                key={'tableHeaders-' + index}
+                key={'tableBody-' + index}
               />
             ))}
-          </tr>
-        </thead>
-
-        <tbody className={styles.tableBody}>
-          {applications.map((item: Application, index: number) => (
-            <TableBody
-              application={item}
-              index={index}
-              key={'tableBody-' + index}
-            />
-          ))}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     )
   }
 

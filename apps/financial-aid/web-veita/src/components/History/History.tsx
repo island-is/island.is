@@ -47,6 +47,9 @@ const History = ({ className }: Props) => {
           </Text>
 
           {data?.applicationEvents.map((item, index) => {
+            if (!getEventType[item.eventType]) {
+              return null
+            }
             return (
               <Box
                 key={'timeline-' + index}
