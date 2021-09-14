@@ -73,7 +73,7 @@ if (environment.sentryDsn) {
   })
 }
 
-const Layout: NextComponentType<
+export const Layout: NextComponentType<
   GetInitialPropsContext<NextPageContext>,
   LayoutProps,
   LayoutProps

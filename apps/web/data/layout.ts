@@ -1,7 +1,6 @@
 import { Locale } from '@island.is/shared/types'
 import {
   QueryGetArticleCategoriesArgs,
-  ContentLanguage,
   QueryGetAlertBannerArgs,
   QueryGetNamespaceArgs,
   QueryGetGroupedMenuArgs,
@@ -36,7 +35,9 @@ const absoluteUrl = (req: IncomingMessage, setLocalhost: string) => {
   let protocol = 'https:'
   let host = req
     ? req.headers['x-forwarded-host'] || req.headers['host']
-    : window.location.host
+    : typeof window === 'object'
+    ? window.location.host
+    : setLocalhost
   if (host.indexOf('localhost') > -1) {
     if (setLocalhost) host = setLocalhost
     protocol = 'http:'
@@ -50,8 +51,8 @@ const absoluteUrl = (req: IncomingMessage, setLocalhost: string) => {
 
 export const getMainLayoutData = async (
   locale: Locale = 'is',
-  req: IncomingMessage,
-  existingClient: ApolloClient<NormalizedCacheObject>,
+  req?: IncomingMessage,
+  existingClient?: ApolloClient<NormalizedCacheObject>,
 ) => {
   const apolloClient = existingClient ?? initApollo({}, locale as Locale)
 
@@ -71,7 +72,7 @@ export const getMainLayoutData = async (
         query: GET_CATEGORIES_QUERY,
         variables: {
           input: {
-            lang: locale as ContentLanguage,
+            lang: locale,
           },
         },
       })

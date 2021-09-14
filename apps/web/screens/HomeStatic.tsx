@@ -32,12 +32,14 @@ import {
 import initApollo from '../graphql/client'
 import I18n from '../i18n/I18n'
 import { ApolloProvider } from '@apollo/client'
-import { getHomeData } from '../data'
+import { getHomeData, getMainLayoutData } from '../data'
+import { Layout, LayoutProps } from '../layouts/main'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
   news: GetNewsQuery['getNews']['items']
   page: GetFrontpageQuery['getFrontpage']
+  layoutProps: LayoutProps
   locale: Locale
 }
 
@@ -45,6 +47,7 @@ export const HomeStatic: Screen<HomeProps> = ({
   categories,
   news,
   page,
+  layoutProps,
   locale = 'is',
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const namespace = JSON.parse(page.namespace.fields)
@@ -68,17 +71,15 @@ export const HomeStatic: Screen<HomeProps> = ({
     <Box display="flex" flexDirection="column" width="full">
       <Stack space={4}>
         <Box display="inlineFlex" alignItems="center" width="full">
-          <ApolloProvider client={initApollo({}, locale)}>
-            <SearchInput
-              id="search_input_home"
-              openOnFocus
-              size="medium"
-              colored={false}
-              activeLocale={'is'}
-              quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
-              placeholder={n('heroSearchPlaceholder')}
-            />
-          </ApolloProvider>
+          <SearchInput
+            id="search_input_home"
+            openOnFocus
+            size="medium"
+            colored={false}
+            activeLocale={'is'}
+            quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
+            placeholder={n('heroSearchPlaceholder')}
+          />
         </Box>
         <Inline space={2}>
           {page.featured.map(({ title, attention, thing }) => {
@@ -110,62 +111,70 @@ export const HomeStatic: Screen<HomeProps> = ({
       </Stack>
     </Box>
   )
+
   return (
-    <I18n locale={'is'} translations={{ FOO: 'bar' }}>
-      <div id="main-content" style={{ overflow: 'hidden' }}>
-        <Section aria-label={'carousel-title'}>
-          <FrontpageSlider
-            slides={page.slides as FrontpageSliderType[]}
-            searchContent={searchContent}
-          />
-        </Section>
-        <Section
-          aria-labelledby="lifeEventsTitle"
-          backgroundBleed={{
-            bleedAmount: 150,
-            bleedDirection: 'bottom',
-            fromColor: 'white',
-            toColor: 'purple100',
-          }}
-        >
-          <LifeEventsCardsSection
-            title={n('lifeEventsTitle')}
-            linkTitle={n('seeAllLifeEvents', 'Sjá alla lífsviðburði')}
-            lifeEvents={page.lifeEvents}
-          />
-        </Section>
-        <Section
-          paddingTop={[8, 8, 6]}
-          paddingBottom={[8, 8, 6]}
-          background="purple100"
-          aria-labelledby="serviceCategoriesTitle"
-        >
-          <Categories
-            title={n('articlesTitle')}
-            titleId="serviceCategoriesTitle"
-            cards={cards}
-          />
-        </Section>
-        <Section paddingTop={[8, 8, 6]} aria-labelledby="latestNewsTitle">
-          <LatestNewsSectionSlider
-            label={gn('newsAndAnnouncements')}
-            readMoreText={gn('seeMore')}
-            items={news}
-          />
-        </Section>
-        <Section paddingY={[8, 8, 8, 10, 15]} aria-labelledby="ourGoalsTitle">
-          <IntroductionSection
-            subtitle={n('ourGoalsSubTitle')}
-            title={n('ourGoalsTitle')}
-            titleId="ourGoalsTitle"
-            introText={n('ourGoalsIntro')}
-            text={n('ourGoalsText')}
-            linkText={n('ourGoalsButtonText')}
-            linkUrl={{ href: n('ourGoalsLink') }}
-          />
-        </Section>
-      </div>
-    </I18n>
+    <ApolloProvider client={initApollo({}, locale)}>
+      <I18n locale={'is'} translations={{ FOO: 'bar' }}>
+        <Layout {...layoutProps}>
+          <div id="main-content" style={{ overflow: 'hidden' }}>
+            <Section aria-label={'carousel-title'}>
+              <FrontpageSlider
+                slides={page.slides as FrontpageSliderType[]}
+                searchContent={searchContent}
+              />
+            </Section>
+            <Section
+              aria-labelledby="lifeEventsTitle"
+              backgroundBleed={{
+                bleedAmount: 150,
+                bleedDirection: 'bottom',
+                fromColor: 'white',
+                toColor: 'purple100',
+              }}
+            >
+              <LifeEventsCardsSection
+                title={n('lifeEventsTitle')}
+                linkTitle={n('seeAllLifeEvents', 'Sjá alla lífsviðburði')}
+                lifeEvents={page.lifeEvents}
+              />
+            </Section>
+            <Section
+              paddingTop={[8, 8, 6]}
+              paddingBottom={[8, 8, 6]}
+              background="purple100"
+              aria-labelledby="serviceCategoriesTitle"
+            >
+              <Categories
+                title={n('articlesTitle')}
+                titleId="serviceCategoriesTitle"
+                cards={cards}
+              />
+            </Section>
+            <Section paddingTop={[8, 8, 6]} aria-labelledby="latestNewsTitle">
+              <LatestNewsSectionSlider
+                label={gn('newsAndAnnouncements')}
+                readMoreText={gn('seeMore')}
+                items={news}
+              />
+            </Section>
+            <Section
+              paddingY={[8, 8, 8, 10, 15]}
+              aria-labelledby="ourGoalsTitle"
+            >
+              <IntroductionSection
+                subtitle={n('ourGoalsSubTitle')}
+                title={n('ourGoalsTitle')}
+                titleId="ourGoalsTitle"
+                introText={n('ourGoalsIntro')}
+                text={n('ourGoalsText')}
+                linkText={n('ourGoalsButtonText')}
+                linkUrl={{ href: n('ourGoalsLink') }}
+              />
+            </Section>
+          </div>
+        </Layout>
+      </I18n>
+    </ApolloProvider>
   )
 }
 
@@ -181,11 +190,17 @@ export const getStaticProps: GetStaticProps = async (
 ): Promise<GetStaticPropsResult<HomeProps>> => {
   console.log('getStaticProps context', context)
   const { locale } = context
-  const homeData = await getHomeData(locale)
+  const [homeData, layoutData] = await Promise.all([
+    getHomeData(locale as Locale),
+    getMainLayoutData(locale as Locale),
+  ])
+
+  console.log('layoutData,', layoutData)
 
   return {
     props: {
       ...homeData,
+      layoutProps: layoutData,
       locale: locale as Locale,
     },
     revalidate: 3,
