@@ -36,6 +36,7 @@ export enum CaseTransition {
   RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
+  DISMISS = 'DISMISS',
   DELETE = 'DELETE',
 }
 
