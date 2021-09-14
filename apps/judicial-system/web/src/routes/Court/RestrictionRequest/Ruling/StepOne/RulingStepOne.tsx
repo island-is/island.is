@@ -301,6 +301,11 @@ export const RulingStepOne: React.FC = () => {
                       : 'farbann'
                   } hafnað`}
                   partiallyAcceptedLabelText="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
+                  dismissLabelText={`Kröfu um ${
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhald'
+                      : 'farbann'
+                  } vísað frá`}
                 />
               </Box>
             </Box>

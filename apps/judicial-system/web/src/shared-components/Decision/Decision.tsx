@@ -12,6 +12,7 @@ interface Props {
   acceptedLabelText: string
   rejectedLabelText: string
   partiallyAcceptedLabelText: string
+  dismissLabelText: string
 }
 
 const Decision: React.FC<Props> = (props) => {
@@ -21,6 +22,7 @@ const Decision: React.FC<Props> = (props) => {
     acceptedLabelText,
     rejectedLabelText,
     partiallyAcceptedLabelText,
+    dismissLabelText,
   } = props
   const { updateCase } = useCase()
 
@@ -89,6 +91,25 @@ const Decision: React.FC<Props> = (props) => {
           />
         </Box>
       )}
+      <Box marginTop={2}>
+        <RadioButton
+          name="case-decision"
+          id="case-decision-dismiss"
+          label={dismissLabelText}
+          checked={workingCase.decision === CaseDecision.DISMISS}
+          onChange={() => {
+            setAndSendToServer(
+              'decision',
+              CaseDecision.DISMISS,
+              workingCase,
+              setWorkingCase,
+              updateCase,
+            )
+          }}
+          large
+          backgroundColor="white"
+        />
+      </Box>
     </BlueBox>
   )
 }
