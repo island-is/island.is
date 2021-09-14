@@ -6,7 +6,7 @@ interface InfoProps {
   id: string
   label: string
   url: string
-  info?: string
+  info: string | undefined
 }
 
 interface Props {
@@ -33,7 +33,7 @@ const FormInfo = ({ info, error }: Props) => {
             >
               <Box marginRight={3}>
                 <Text fontWeight="semiBold" color={err ? 'red600' : 'dark400'}>
-                  {item.label} {err ? '*' : ''}
+                  {item.label} {err && '*'}
                 </Text>
                 <Text>{item.info}</Text>
               </Box>
