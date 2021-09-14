@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
   ContentContainer,
   StatusLayout,
@@ -9,6 +9,7 @@ import { FileList } from '@island.is/financial-aid/shared/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { Box, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
+import { useRouter } from 'next/router'
 
 interface Props {
   subtitle: string
@@ -25,7 +26,15 @@ const FileUploadResults = ({
   nextButtonAction,
   children,
 }: Props) => {
-  const { form } = useContext(FormContext)
+  const router = useRouter()
+
+  const { form, emptyFormProvider } = useContext(FormContext)
+
+  useEffect(() => {
+    router.events.on('routeChangeComplete', () => {
+      emptyFormProvider()
+    })
+  }, [])
 
   return (
     <StatusLayout>
