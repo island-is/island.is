@@ -14,6 +14,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { CaseFileState } from '@island.is/judicial-system/types'
 
+import { environment } from '../../../environments'
+import { writeFile } from '../../formatters'
 import { CourtService } from '../court'
 import { AwsS3Service } from './awsS3.service'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
@@ -195,6 +197,10 @@ export class FileService {
     }
 
     const content = await this.awsS3Service.getObject(file.key)
+
+    if (!environment.production) {
+      writeFile(`${file.name}`, content)
+    }
 
     const streamId = await this.courtService.uploadStream(
       courtId,

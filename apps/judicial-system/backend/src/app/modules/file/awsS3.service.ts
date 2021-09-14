@@ -99,7 +99,6 @@ export class AwsS3Service {
           if (err) {
             reject(err)
           } else {
-            console.log(data)
             resolve(data.Body as Buffer)
           }
         },
