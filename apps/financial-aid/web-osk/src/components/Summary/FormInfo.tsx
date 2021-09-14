@@ -38,18 +38,16 @@ const FormInfo = ({ info, error }: Props) => {
                 <Text>{item.info}</Text>
               </Box>
 
-              {item.url && (
-                <Button
-                  icon="pencil"
-                  iconType="filled"
-                  variant="utility"
-                  onClick={() => {
-                    router.push(item.url)
-                  }}
-                >
-                  Breyta
-                </Button>
-              )}
+              <Button
+                icon="pencil"
+                iconType="filled"
+                variant="utility"
+                onClick={() => {
+                  router.push(item.url)
+                }}
+              >
+                Breyta
+              </Button>
             </Box>
           </span>
         )
