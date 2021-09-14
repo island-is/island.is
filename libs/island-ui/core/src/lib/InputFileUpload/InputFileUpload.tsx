@@ -14,7 +14,7 @@ export type UploadFileStatus = 'error' | 'done' | 'uploading'
 
 export interface UploadFile {
   name: string
-  type: string
+  type?: string
   id?: string
   key?: string
   status?: UploadFileStatus

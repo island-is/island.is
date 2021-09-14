@@ -190,7 +190,7 @@ export const useS3Upload = (workingCase?: Case) => {
     newUploadFiles.forEach(async (file) => {
       const presignedPost = await createPresignedPost(
         file.name.normalize(),
-        file.type,
+        file.type ?? '',
       ).catch(() =>
         setUploadErrorMessage(
           'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
