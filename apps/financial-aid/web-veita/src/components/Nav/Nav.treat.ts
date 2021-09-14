@@ -19,6 +19,9 @@ export const container = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       display: 'grid',
+      paddingLeft: theme.spacing[3],
+    },
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       paddingLeft: theme.spacing[6],
     },
     [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
