@@ -192,6 +192,10 @@ export interface GetSignedUrl {
   fileName: string
 }
 
+export interface GetSignedUrlForId {
+  id: string
+}
+
 export interface SignedUrl {
   url: string
   key: string

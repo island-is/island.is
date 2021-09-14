@@ -50,7 +50,7 @@ export class ApplicationService {
 
     const files = await this.fileService.getAllApplicationFiles(id)
 
-    application.setDataValue('files', files)
+    application?.setDataValue('files', files)
 
     return application
   }
