@@ -1,6 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { IGraphCard } from '../generated/contentfulTypes'
-import { Graph, mapGraph } from './graph.model'
 import { Image, mapImage } from './image.model'
 
 @ObjectType()
@@ -14,8 +13,8 @@ export class GraphCard {
   @Field({ nullable: true })
   organization?: string
 
-  @Field(() => Graph)
-  graph?: Graph | null
+  @Field({ nullable: true })
+  graph?: null
 
   @Field()
   data!: string
@@ -38,7 +37,7 @@ export const mapGraphCard = ({ fields }: IGraphCard): GraphCard => {
     graphTitle: fields?.graphTitle ?? '',
     graphDescription: fields?.graphDescription ?? '',
     organization: fields?.organization ?? '',
-    graph: fields.graph ? mapGraph(fields.graph) : null,
+    graph: null,
     data: fields.data ? JSON.stringify(fields.data) : '',
     datakeys: fields.datakeys ? JSON.stringify(fields.datakeys) : '',
     type: fields?.type ?? '',
