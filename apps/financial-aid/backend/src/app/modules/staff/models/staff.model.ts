@@ -29,4 +29,7 @@ export class StaffModel extends Model<Staff> {
 
   @ApiProperty()
   active: boolean
+
+  @ApiProperty()
+  phoneNumber: string
 }
