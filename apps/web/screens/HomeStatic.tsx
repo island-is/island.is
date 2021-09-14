@@ -181,14 +181,12 @@ export const HomeStatic: Screen<HomeProps> = ({
 export const getStaticPaths: GetStaticPaths = async (
   context: GetStaticPathsContext,
 ): Promise<GetStaticPathsResult> => {
-  console.log('getStaticPaths context', context)
   return { paths: [], fallback: 'blocking' }
 }
 
 export const getStaticProps: GetStaticProps = async (
   context: GetStaticPropsContext,
 ): Promise<GetStaticPropsResult<HomeProps>> => {
-  console.log('getStaticProps context', context)
   const { locale } = context
   const [homeData, layoutData] = await Promise.all([
     getHomeData(locale as Locale),
@@ -203,7 +201,7 @@ export const getStaticProps: GetStaticProps = async (
       layoutProps: layoutData,
       locale: locale as Locale,
     },
-    revalidate: 3,
+    revalidate: 300,
   }
 }
 
