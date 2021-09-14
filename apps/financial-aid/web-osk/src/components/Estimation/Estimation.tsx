@@ -31,7 +31,7 @@ const Estimation = ({
   usePersonalTaxCredit,
 }: Props) => {
   const currentYear = format(new Date(), 'yyyy')
-  const currentMonth = parseInt(format(new Date(), 'MM'))
+  const nextMonth = months[new Date().getMonth() + 1].toLowerCase()
 
   const { data, loading } = useQuery<MunicipalityData>(GetMunicipalityQuery, {
     variables: { input: { id: 'hfj' } },
@@ -89,9 +89,7 @@ const Estimation = ({
           </Text>
         </Box>
 
-        <Text variant="small">
-          (til útgreiðslu í byrjun {months[currentMonth].toLowerCase()})
-        </Text>
+        <Text variant="small">(til útgreiðslu í byrjun {nextMonth})</Text>
       </Box>
 
       {aboutText}
