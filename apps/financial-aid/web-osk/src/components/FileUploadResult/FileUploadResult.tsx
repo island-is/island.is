@@ -28,11 +28,11 @@ const FileUploadResult = ({
 }: Props) => {
   const router = useRouter()
 
-  const { form, emptyFormProvider } = useContext(FormContext)
+  const { form, updateForm } = useContext(FormContext)
 
   useEffect(() => {
     router.events.on('routeChangeComplete', () => {
-      emptyFormProvider()
+      updateForm({ ...form, otherFiles: [], fileUploadComment: undefined })
     })
   }, [])
 
