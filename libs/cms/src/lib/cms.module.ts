@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ElasticService } from '@island.is/content-search-toolkit'
 import { TerminusModule } from '@nestjs/terminus'
+import { HttpModule } from '@nestjs/axios'
 import {
   CmsResolver,
   ArticleResolver,
@@ -12,7 +13,7 @@ import { CmsElasticsearchService } from './cms.elasticsearch.service'
 import { CmsHealthIndicator } from './cms.health'
 
 @Module({
-  imports: [TerminusModule],
+  imports: [TerminusModule, HttpModule],
   providers: [
     CmsResolver,
     ArticleResolver,
