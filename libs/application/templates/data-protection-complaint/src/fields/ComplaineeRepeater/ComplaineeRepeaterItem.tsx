@@ -82,6 +82,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
           error={errors && getErrorViaPath(errors, nameField)}
           required
           backgroundColor="blue"
+          defaultValue=""
         />
         <InputController
           id={addressField}
@@ -94,6 +95,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
           error={errors && getErrorViaPath(errors, addressField)}
           required
           backgroundColor="blue"
+          defaultValue=""
         />
         <InputController
           id={nationalIdField}
@@ -107,6 +109,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
           error={errors && getErrorViaPath(errors, nationalIdField)}
           required
           backgroundColor="blue"
+          defaultValue=""
         />
       </Stack>
       <Text variant="h5" marginTop={4} marginBottom={2}>
@@ -125,7 +128,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
         onSelect={handleOnSelect}
       />
       {isOpen && (
-        <Box padding={3} background="blue100">
+        <Box padding={3} background="blue100" borderRadius="large">
           <Box marginBottom={2}>
             <InputController
               id={countryOfOperationField}
@@ -136,6 +139,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
                 formatMessage,
               )}
               error={errors && getErrorViaPath(errors, countryOfOperationField)}
+              defaultValue=""
             />
           </Box>
           <AlertMessage
