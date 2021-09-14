@@ -43,7 +43,6 @@ export const statusOptions = style({
       fontWeight: 'bold',
     },
   },
-  // padd: theme.spacing[3],
 })
 
 export const activeState = style({
