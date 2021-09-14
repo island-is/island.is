@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { StaffModel } from './models'
 
-import { Staff } from '@island.is/financial-aid/shared/lib'
+import type { Staff } from '@island.is/financial-aid/shared/lib'
 
 @Injectable()
 export class StaffService {

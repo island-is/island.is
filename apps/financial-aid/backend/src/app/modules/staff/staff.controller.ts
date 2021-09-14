@@ -35,7 +35,7 @@ export class StaffController {
     const staff = await this.staffService.findById(id)
 
     if (!staff) {
-      throw new NotFoundException(`municipality ${id} not found`)
+      throw new NotFoundException(`Staff with id ${id} not found`)
     }
 
     return staff
