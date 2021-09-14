@@ -12,7 +12,10 @@ import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import { getMonth, NavigationProps } from '@island.is/financial-aid/shared/lib'
+import {
+  getNextPeriod,
+  NavigationProps,
+} from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
@@ -21,8 +24,6 @@ const ApplicationInfo = () => {
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
-
-  const nextMonth = getMonth(new Date().getMonth() + 1)
 
   const logOut = useLogOut()
 
@@ -64,7 +65,7 @@ const ApplicationInfo = () => {
         <Text marginBottom={2}>
           Við þurfum að fá þig til að renna yfir nokkur atriði og gefa
           upplýsingar um búsetu og laun yfir síðustu 2 mánuði, ef einhver, til
-          að reikna út aðstoð til útgreiðslu í byrjun {nextMonth}.
+          að reikna út aðstoð til útgreiðslu í byrjun {getNextPeriod.month}.
         </Text>
         <Text marginBottom={3}>
           Í lokin velurðu að senda inn umsóknina eða eyða henni og öllum tengdum

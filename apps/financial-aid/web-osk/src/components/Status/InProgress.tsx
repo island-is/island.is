@@ -7,7 +7,7 @@ import format from 'date-fns/format'
 import {
   ApplicationState,
   CurrentApplication,
-  getMonth,
+  getNextPeriod,
   getState,
   Routes,
 } from '@island.is/financial-aid/shared/lib'
@@ -22,14 +22,11 @@ interface Props {
 const InProgress = ({ currentApplication }: Props) => {
   const router = useRouter()
 
-  const currentMont = getMonth(new Date().getMonth())
-  const currentYear = format(new Date(), 'yyyy')
-
   return (
     <>
       <Text as="h2" variant="h3" color="blue400" marginBottom={[4, 4, 5]}>
         Umsókn {getState[currentApplication.state].toLowerCase()} til útgreiðslu
-        í {currentMont} {` `} {currentYear}
+        í {getNextPeriod.month} {` `} {getNextPeriod.year}
       </Text>
 
       {currentApplication.state === ApplicationState.DATANEEDED && (
