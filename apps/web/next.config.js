@@ -97,7 +97,7 @@ module.exports = withTreat(
       },
 
       i18n: {
-        localeDetection: true,
+        localeDetection: false,
         locales: ['is', 'en'],
         defaultLocale: 'is',
       },
