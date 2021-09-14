@@ -42,7 +42,7 @@ const AssetGrid: FC<Props> = ({ tables, title }) => {
               <T.Row key={`row-${ii}`}>
                 {row.map((rowitem, iii) => (
                   <T.Data key={`rowitem-${iii}`} colSpan={2}>
-                    <Columns>
+                    <Columns collapseBelow="md" space={2}>
                       <Column>
                         <Text variant="eyebrow" as="span">
                           {rowitem.title}
