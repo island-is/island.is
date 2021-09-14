@@ -7,7 +7,8 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/financial-aid/auth'
-import { RolesRule, User } from '@island.is/financial-aid/shared/lib'
+import { RolesRule } from '@island.is/financial-aid/shared/lib'
+import type { User } from '@island.is/financial-aid/shared/lib'
 
 import { GetSignedUrlDto, CreateFilesDto } from './dto'
 import { CreateFilesModel, SignedUrlModel } from './models'
