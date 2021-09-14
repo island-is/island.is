@@ -1,8 +1,13 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
-import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
-import type { User } from '@island.is/financial-aid/shared/lib'
+import {
+  CurrentHttpUser,
+  JwtAuthGuard,
+  RolesGuard,
+  RolesRules,
+} from '@island.is/financial-aid/auth'
+import { RolesRule, User } from '@island.is/financial-aid/shared/lib'
 
 import { GetSignedUrlDto, CreateFilesDto } from './dto'
 import { CreateFilesModel, SignedUrlModel } from './models'
@@ -15,6 +20,8 @@ export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   @Post('url')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(RolesRule.OSK)
   @ApiCreatedResponse({
     type: SignedUrlModel,
     description: 'Creates a new signed url',
@@ -26,8 +33,9 @@ export class FileController {
     return this.fileService.createSignedUrl(user.folder, getSignedUrl.fileName)
   }
 
-  // TODO Only accessable to veita users.
   @Get('url/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(RolesRule.VEITA)
   @ApiCreatedResponse({
     type: SignedUrlModel,
     description: 'Creates a new signed url',
@@ -37,6 +45,8 @@ export class FileController {
   }
 
   @Post('')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(RolesRule.OSK)
   @ApiCreatedResponse({
     type: CreateFilesModel,
     description: 'Uploads files',
