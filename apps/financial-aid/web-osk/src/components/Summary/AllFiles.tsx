@@ -37,6 +37,7 @@ const AllFiles = () => {
                     className={styles.filesButtons}
                     target="_blank"
                     download
+                    rel="noreferrer noopener"
                   >
                     <Box marginRight={1} display="flex" alignItems="center">
                       <Icon
