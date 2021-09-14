@@ -21,10 +21,7 @@ const FileUploadFailure = () => {
     >
       <Text marginTop={5}>
         Þú getur reynt aftur síðar eða sent gögnin með tölvupósti á{' '}
-        <a
-          href="mailto: felagsthjonusta@hafnarfjordur.is"
-          className={styles.link}
-        >
+        <a href="mailto: felagsthjonusta@hafnarfjordur.is">
           <span className={styles.link}>felagsthjonusta@hafnarfjordur.is</span>
         </a>
         . Gættu þess að láta kennitölu þína fylgja með gögnunum ef þú sendir þau

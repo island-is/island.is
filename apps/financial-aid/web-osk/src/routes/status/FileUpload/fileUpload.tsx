@@ -40,7 +40,7 @@ const FileUpload = () => {
     CreateApplicationEventQuery,
   )
 
-  const sendingFiles = async () => {
+  const sendFiles = async () => {
     if (form?.otherFiles.length <= 0 || router.query.id === undefined) {
       return
     }
@@ -65,18 +65,20 @@ const FileUpload = () => {
           })
 
           router.push(
-            `${Routes.statusFileUpload(router.query.id as string)}/send`,
+            `${Routes.statusFileUploadSuccess(router.query.id as string)}`,
           )
         },
       )
     } catch (e) {
-      router.push(`${Routes.statusFileUpload(router.query.id as string)}/villa`)
+      router.push(
+        `${Routes.statusFileUploadFailure(router.query.id as string)}`,
+      )
     }
 
     setIsLoading(false)
   }
 
-  const sendingUserComment = async () => {
+  const sendUserComment = async () => {
     try {
       await createApplicationEventMutation({
         variables: {
@@ -88,7 +90,9 @@ const FileUpload = () => {
         },
       })
     } catch (e) {
-      router.push(`${Routes.statusFileUpload(router.query.id as string)}/villa`)
+      router.push(
+        `${Routes.statusFileUploadFailure(router.query.id as string)}`,
+      )
     }
   }
 
@@ -132,7 +136,7 @@ const FileUpload = () => {
         nextButtonText={'Senda gögn'}
         nextIsLoading={isLoading}
         onNextButtonClick={() => {
-          Promise.all([sendingFiles(), sendingUserComment()])
+          Promise.all([sendFiles(), sendUserComment()])
         }}
       />
     </StatusLayout>

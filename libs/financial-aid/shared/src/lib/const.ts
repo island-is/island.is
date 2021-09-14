@@ -17,6 +17,8 @@ export const Routes = {
   status: '/stada',
   statusPage: (id: string) => `/stada/${id}`,
   statusFileUpload: (id: string) => `/stada/${id}/gogn`,
+  statusFileUploadSuccess: (id: string) => `/stada/${id}/gogn/send`,
+  statusFileUploadFailure: (id: string) => `/stada/${id}/gogn/villa`,
   apiLoginRouteForFake: (id: string) =>
     id
       ? `/api/auth/login?applicationId=${id}&nationalId=`

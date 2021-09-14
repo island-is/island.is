@@ -22,10 +22,10 @@ interface ApplicationEventData {
 
 interface Props {
   className?: string
-  applicantsName?: string
+  applicantName?: string
 }
 
-const History = ({ className, applicantsName }: Props) => {
+const History = ({ className, applicantName }: Props) => {
   const router = useRouter()
 
   const { data } = useQuery<ApplicationEventData>(GetApplicationEventQuery, {
@@ -67,7 +67,7 @@ const History = ({ className, applicantsName }: Props) => {
                     {' '}
                     {getEventType[item.eventType].isStaff
                       ? 'Starfsmaður'
-                      : `Umsækjandi ${applicantsName}`}{' '}
+                      : `Umsækjandi ${applicantName}`}{' '}
                     <strong>{getEventType[item.eventType].text} </strong>
                   </Text>
 
