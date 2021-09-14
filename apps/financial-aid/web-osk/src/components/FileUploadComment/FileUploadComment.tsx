@@ -5,10 +5,14 @@ import { Box, Text } from '@island.is/island-ui/core'
 import * as styles from './FileUploadComment.treat'
 
 interface Props {
-  comment: string
+  comment?: string
 }
 
 const FileUploadComment = ({ comment }: Props) => {
+  if (!comment) {
+    return null
+  }
+
   return (
     <Box
       background="purple100"

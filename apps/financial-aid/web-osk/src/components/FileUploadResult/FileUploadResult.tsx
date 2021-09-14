@@ -19,7 +19,7 @@ interface Props {
   children?: React.ReactNode
 }
 
-const FileUploadResults = ({
+const FileUploadResult = ({
   subtitle,
   subtitleColor,
   nextButtonText,
@@ -49,9 +49,7 @@ const FileUploadResults = ({
           <FileList files={form.otherFiles} className={`contentUp delay-125`} />
         </Box>
 
-        {form.fileUploadComment && (
-          <FileUploadComment comment={form.fileUploadComment} />
-        )}
+        <FileUploadComment comment={form.fileUploadComment} />
 
         {children}
       </ContentContainer>
@@ -64,4 +62,4 @@ const FileUploadResults = ({
   )
 }
 
-export default FileUploadResults
+export default FileUploadResult
