@@ -88,6 +88,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   const camera = useRef<Camera>()
   const [layout, setLayout] = useState<LayoutRectangle>()
   const [ratio, setRatio] = useState<string>()
+  const [padding, setPadding] = useState(0);
 
   const invalidTimeout = useRef<NodeJS.Timeout>()
   const intl = useIntl()
@@ -150,34 +151,27 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
 
   const prepareRatio = async () => {
     if (Platform.OS === 'android') {
-      let desiredRatio = '4:3'
-      const screenRatio = layout!.height / layout!.width
+      const screenRatio = layout!.height / layout!.width;
       const ratios = await camera.current!.getSupportedRatiosAsync()
-      let distances: { [key: string]: number } = {}
-      let realRatios: { [key: string]: number } = {}
-      let minDistance = null
-      for (const r of ratios) {
-        const parts = r.split(':')
-        const realRatio = parseInt(parts[0], 10) / parseInt(parts[1], 10)
-        realRatios[r] = realRatio
-        const distance = screenRatio - realRatio
-        distances[r] = realRatio
-        if (minDistance == null) {
-          minDistance = r
-        } else {
-          if (distance >= 0 && distance < distances[minDistance]) {
-            minDistance = r
-          }
-        }
-      }
-      desiredRatio = minDistance || '4:3'
-      setRatio(desiredRatio)
+      // find ratio closest to screen ratio
+      const closest = ratios.map(aspect => {
+        const [h,w] = aspect.split(':').map(parseFloat);
+        return { ratio: h/w, aspect };
+      }).sort((a, b) => {
+        return Math.abs(a.ratio-screenRatio) > Math.abs(b.ratio -screenRatio) ? 1 : -1;
+      })
+      .shift();
+      const cameraRatio = closest!.ratio;
+      const overlap = layout!.width - ((screenRatio / cameraRatio) * layout!.width);
+      setPadding(overlap / 2);
+      setRatio(closest!.aspect);
     }
   }
 
   const onCameraReady = () => {
     prepareRatio()
   }
+
   return (
     <View style={{ flex: 1, backgroundColor: '#000' }} onLayout={e => setLayout(e.nativeEvent.layout)}>
       {hasPermission === true && active && (
@@ -191,10 +185,6 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
               ? Camera.Constants.FlashMode.torch
               : Camera.Constants.FlashMode.off
           }
-          // barCodeScannerSettings={{
-          //   barCodeTypes: [BarCodeScanner.Constants.BarCodeType.pdf417],
-          // }}
-          // useCamera2Api={true}
           ref={(ref) => {
             if (ref) {
               camera.current = ref
@@ -202,7 +192,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
           }}
           ratio={ratio}
           onCameraReady={onCameraReady}
-          style={[StyleSheet.absoluteFillObject]}
+          style={[StyleSheet.absoluteFillObject, { marginHorizontal: padding }]}
         />
       )}
       <View
