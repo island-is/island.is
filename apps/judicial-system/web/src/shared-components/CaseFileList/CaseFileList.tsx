@@ -1,7 +1,7 @@
 import React from 'react'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Text, UploadedFile, UploadFile } from '@island.is/island-ui/core'
 import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
-import { CaseFile, Modal } from '..'
+import { Modal } from '..'
 import { useFileList } from '../../utils/hooks'
 import { AnimatePresence } from 'framer-motion'
 
@@ -22,13 +22,21 @@ const CaseFileList: React.FC<Props> = (props) => {
     <>
       {files.map((file, index) => (
         <Box marginBottom={index !== files.length - 1 ? 3 : 0} key={index}>
-          <CaseFile
-            fileId={file.id}
-            name={`${index + 1}. ${file.name}`}
-            size={file.size}
-            uploadedAt={file.created}
-            canOpenFiles={canOpenFiles}
-            onOpen={handleOpenFile}
+          <UploadedFile
+            file={file}
+            showFileSize={true}
+            defaultBackgroundColor="blue100"
+            doneIcon="checkmark"
+            onOpenFile={
+              canOpenFiles
+                ? (file: UploadFile) => {
+                    if (file.id) {
+                      handleOpenFile(file.id)
+                    }
+                  }
+                : undefined
+            }
+            onRemoveClick={() => null}
           />
         </Box>
       ))}
