@@ -39,3 +39,7 @@ export const months = [
   'Nóvember',
   'Desember',
 ]
+
+export const getNextMonth = (date: Date) => {
+  return months[date.getMonth() + 1]
+}
