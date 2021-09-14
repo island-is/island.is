@@ -8,6 +8,8 @@ import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/useFil
 
 import { UploadFileType } from '@island.is/financial-aid/shared/lib'
 
+import { stringifyFile } from '@island.is/financial-aid/shared/lib'
+
 interface Props {
   header: string
   uploadFiles: UploadFile[]
@@ -24,16 +26,6 @@ const Files = ({ header, uploadFiles, fileKey }: Props) => {
     onRemove,
     onRetry,
   } = useFileUpload(uploadFiles)
-
-  const stringifyFile = (file: UploadFile) => {
-    return {
-      key: file.key,
-      name: file.name,
-      size: file.size,
-      status: file.status,
-      percent: file?.percent,
-    }
-  }
 
   useEffect(() => {
     const formFiles = files
