@@ -13,6 +13,7 @@ import { UserContext } from '@island.is/financial-aid-web/osk/src/components/Use
 const UserInfo = () => {
   const { user } = useContext(UserContext)
 
+  // TODO when þjóðskrá is up and running
   return (
     <Box
       display="flex"

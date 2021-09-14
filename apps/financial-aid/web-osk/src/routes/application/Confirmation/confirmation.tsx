@@ -95,15 +95,17 @@ const Confirmation = () => {
               iconType="outline"
               preTextIconType="filled"
               size="small"
+              onClick={() => {
+                // TODO when there more muncipality
+                window.open(
+                  'https://www.hafnarfjordur.is/ibuar/felagsleg-adstod/fjarhagsadstod/"',
+                  '_ blank',
+                )
+              }}
               type="button"
               variant="text"
             >
-              <a
-                href="https://www.hafnarfjordur.is/ibuar/felagsleg-adstod/fjarhagsadstod/"
-                target="_blank"
-              >
-                Upplýsingar um fjárhagsaðstoð
-              </a>
+              Upplýsingar um fjárhagsaðstoð
             </Button>
           </Box>
         </Box>
