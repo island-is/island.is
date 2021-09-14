@@ -71,13 +71,13 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   const createSignedUrl = async (
     filename: string,
   ): Promise<SignedUrl | undefined> => {
-    const validFileName = filename.replace(/ +/g, '_')
+    const validEncodedFileName = encodeURI(filename.replace(/ +/g, '_'))
 
     let signedUrl: SignedUrl | undefined = undefined
 
     try {
       const { data: presignedUrlData } = await createSignedUrlMutation({
-        variables: { input: { fileName: validFileName } },
+        variables: { input: { fileName: validEncodedFileName } },
       })
 
       signedUrl = presignedUrlData?.getSignedUrl
