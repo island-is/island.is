@@ -71,6 +71,19 @@ export class EducationService {
     )
   }
 
+  public canView(
+    viewer: ISLFjolskyldan,
+    familyMember: ISLFjolskyldan,
+  ): boolean {
+    if (familyMember.Kennitala === viewer.Kennitala) {
+      return true
+    }
+
+    const viewerIsAnAdult = !this.isChild(viewer)
+
+    return this.isChild(familyMember) && viewerIsAnAdult
+  }
+
   async getFamily(nationalId: string): Promise<ISLFjolskyldan[]> {
     const family = await this.nationalRegistryApi.getMyFamily(nationalId)
     const myself = family.find(({ Kennitala }) => Kennitala === nationalId)
@@ -87,19 +100,13 @@ export class EducationService {
     // unique from the point of view of each viewer.
 
     return family
-      .filter(
-        (familyMember) =>
-          familyMember === myself ||
-          (this.isChild(familyMember) && !this.isChild(myself)),
-      )
+      .filter((familyMember) => this.canView(myself, familyMember))
       .sort((a, b) => {
         const nameDiff = a.Nafn.localeCompare(b.Nafn)
 
-        if (nameDiff === 0) {
-          return a.Kennitala.localeCompare(b.Kennitala)
-        }
-
-        return nameDiff
+        return nameDiff === 0
+          ? a.Kennitala.localeCompare(b.Kennitala)
+          : nameDiff
       })
   }
 

@@ -2,7 +2,13 @@ import { Test } from '@nestjs/testing'
 import { EducationService } from './education.service'
 import { LoggingModule } from '@island.is/logging'
 import type { Config } from './education.module'
-import { MyFamilyMock } from './mock-data/my-family'
+import {
+  MyFamilyMock,
+  ADULT1,
+  ADULT2,
+  CHILD1,
+  CHILD2,
+} from './mock-data/my-family'
 import {
   ISLFjolskyldan,
   NationalRegistryApi,
@@ -54,29 +60,35 @@ describe('EducationService', () => {
     })
   })
 
+  describe('Test', () => {
+    it('should contain unique family members for each test subject', () => {
+      expect([ADULT1, CHILD2, CHILD1, ADULT2]).toStrictEqual(MyFamilyMock)
+    })
+  })
+
   describe('getFamily() for an adult', () => {
     let family: ISLFjolskyldan[]
     beforeEach(async () => {
-      family = await service.getFamily('0910819979')
+      family = await service.getFamily(ADULT1.Kennitala)
     })
 
     it('should not return the spouse', async () => {
       expect(
-        family.find(({ Kennitala }) => Kennitala === '1809789929'),
+        family.find(({ Kennitala }) => Kennitala === ADULT2.Kennitala),
       ).toBeUndefined()
     })
 
     it('should return yourself', async () => {
       expect(
-        family.find(({ Kennitala }) => Kennitala === '0910819979'),
+        family.find(({ Kennitala }) => Kennitala === ADULT1.Kennitala),
       ).not.toBeUndefined()
     })
 
     it('should return consistantly ordered results', async () => {
       expect(family.map(({ Kennitala }) => Kennitala)).toStrictEqual([
-        '0910819979',
-        '2407134110',
-        '3108168330',
+        ADULT1.Kennitala,
+        CHILD1.Kennitala,
+        CHILD2.Kennitala,
       ])
     })
   })
@@ -84,7 +96,7 @@ describe('EducationService', () => {
   describe('getFamily() for a child', () => {
     let family: ISLFjolskyldan[]
     beforeEach(async () => {
-      family = await service.getFamily('2407134110')
+      family = await service.getFamily(CHILD1.Kennitala)
     })
 
     it('should not return other family members', async () => {
@@ -93,20 +105,45 @@ describe('EducationService', () => {
 
     it('should return yourself', async () => {
       expect(
-        family.find(({ Kennitala }) => Kennitala === '2407134110'),
+        family.find(({ Kennitala }) => Kennitala === CHILD1.Kennitala),
       ).not.toBeUndefined()
+    })
+  })
+
+  describe('canView()', () => {
+    it('everybody can view themselves', async () => {
+      expect(service.canView(ADULT1, { ...ADULT1 })).toStrictEqual(true)
+      expect(service.canView(ADULT2, { ...ADULT2 })).toStrictEqual(true)
+      expect(service.canView(CHILD1, { ...CHILD1 })).toStrictEqual(true)
+      expect(service.canView(CHILD2, { ...CHILD2 })).toStrictEqual(true)
+    })
+
+    it('an adult can view their children', async () => {
+      expect(service.canView(ADULT1, CHILD1)).toStrictEqual(true)
+      expect(service.canView(ADULT1, CHILD2)).toStrictEqual(true)
+    })
+
+    it('an adult can not view their spouse', async () => {
+      expect(service.canView(ADULT1, ADULT2)).toStrictEqual(false)
+      expect(service.canView(ADULT2, ADULT1)).toStrictEqual(false)
+    })
+
+    it('a child can not view anybody else in the family', async () => {
+      expect(service.canView(CHILD1, ADULT1)).toStrictEqual(false)
+      expect(service.canView(CHILD1, ADULT2)).toStrictEqual(false)
+      expect(service.canView(CHILD1, CHILD2)).toStrictEqual(false)
     })
   })
 
   describe('isChild()', () => {
     it('recognizes children as children', async () => {
-      const person = (await service.getFamily('2407134110'))[0]
-      expect(await service.isChild(person)).toStrictEqual(true)
+      expect(await service.isChild(CHILD1)).toStrictEqual(true)
+      expect(await service.isChild(CHILD2)).toStrictEqual(true)
     })
 
     it("doesn't recognize adults as children", async () => {
-      const person = (await service.getFamily('0910819979'))[0]
-      expect(await service.isChild(person)).toStrictEqual(false)
+      expect(await service.isChild(ADULT1)).toStrictEqual(false)
+      expect(await service.isChild(ADULT2)).toStrictEqual(false)
     })
   })
 })

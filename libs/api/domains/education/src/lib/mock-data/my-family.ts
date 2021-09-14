@@ -61,3 +61,17 @@ export const MyFamilyMock = [
     MakiBarn: '',
   },
 ] as ISLFjolskyldan[]
+
+const byNationalId = (nationalId: string): ISLFjolskyldan => {
+  const f = MyFamilyMock.find(({ Kennitala }) => nationalId === Kennitala)
+  if (!f) {
+    throw new Error('mock is broken')
+  }
+
+  return f
+}
+
+export const ADULT1 = byNationalId('0910819979')
+export const ADULT2 = byNationalId('1809789929')
+export const CHILD1 = byNationalId('2407134110')
+export const CHILD2 = byNationalId('3108168330')
