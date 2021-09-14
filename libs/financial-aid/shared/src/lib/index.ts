@@ -13,5 +13,7 @@ export type {
   KeyMapping,
   GetSignedUrl,
   SignedUrl,
+  Staff,
 } from './types'
 export * from './utils'
+export * from './enums'

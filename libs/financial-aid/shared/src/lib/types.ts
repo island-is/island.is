@@ -1,54 +1,16 @@
-export enum HomeCircumstances {
-  UNKNOWN = 'Unknown',
-  WITHPARENTS = 'WithParents',
-  WITHOTHERS = 'WithOthers',
-  OWNPLACE = 'OwnPlace',
-  REGISTEREDLEASE = 'RegisteredLease',
-  OTHER = 'Other',
-}
-
-export enum Employment {
-  WORKING = 'Working',
-  UNEMPLOYED = 'Unemployed',
-  CANNOTWORK = 'CannotWork',
-  OTHER = 'Other',
-}
-
-export enum ApplicationState {
-  NEW = 'New',
-  INPROGRESS = 'InProgress',
-  DATANEEDED = 'DataNeeded',
-  REJECTED = 'Rejected',
-  APPROVED = 'Approved',
-}
-
-export enum ApplicationEventType {
-  NEW = 'New',
-  INPROGRESS = 'InProgress',
-  DATANEEDED = 'DataNeeded',
-  REJECTED = 'Rejected',
-  APPROVED = 'Approved',
-  STAFFCOMMENT = 'StaffComment',
-}
-
-export enum RolesRule {
-  OSK = 'osk',
-  VEITA = 'veita',
-}
-
-export enum ReturnUrl {
-  APPLICATION = '/umsokn',
-  MYPAGE = '/stada',
-  ADMIN = '/nymal',
-}
-
-export enum FileType {
-  TAXRETURN = 'TaxReturn',
-  INCOME = 'Income',
-  OTHER = 'Other',
-}
+import {
+  HomeCircumstances,
+  ApplicationState,
+  FileType,
+  Employment,
+  ApplicationEventType,
+  RolesRule,
+  ReturnUrl,
+} from './enums'
 
 export type UploadFileType = 'otherFiles' | 'incomeFiles' | 'taxReturnFiles'
+
+export type StaffRole = 'admin' | 'worker'
 
 export interface ApplicationFilters {
   New: number
@@ -201,12 +163,11 @@ export interface CreateFilesResponse {
   success: boolean
 }
 
-// export type HomeCircumstances =
-//   | 'Unknown'
-//   | 'WithParents'
-//   | 'WithOthers'
-//   | 'OwnPlace'
-//   | 'RegisteredLease'
-//   | 'Other'
-
-// export type Employment = 'Working' | 'Unemployed' | 'CannotWork' | 'Other'
+export interface Staff {
+  id: string
+  nationalId: string
+  name: string
+  municipalityId: string
+  role: StaffRole
+  active: boolean
+}
