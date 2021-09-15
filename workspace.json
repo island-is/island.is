@@ -7468,6 +7468,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
+              "kubectl -n socat port-forward svc/socat-xroad 8081:80 &", 
               "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
               "yarn start services-party-letter-registry-api &",
               "yarn start services-temporary-voter-registry-api &",

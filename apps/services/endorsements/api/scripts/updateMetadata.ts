@@ -10,6 +10,7 @@ import { EndorsementMetaField } from '../src/app/modules/endorsementMetadata/typ
 import { AppModule } from '../src/app/app.module'
 import { EndorsementMetadata } from '../src/app/modules/endorsementMetadata/endorsementMetadata.model'
 import { logger } from '@island.is/logging'
+import { Auth } from '@island.is/auth-nest-tools'
 
 interface EndorsementListFieldMap {
   [key: string]: EndorsementMetaField[]
@@ -69,10 +70,13 @@ const getEndorsementMetadata = async (
       meta: {
         ...endorsement.meta,
         // we get only updated fields from this function
-        ...(await endorsementMetadataService.getMetadata({
-          nationalId: endorsement.endorser,
-          fields: fieldsToUpdate,
-        })),
+        ...(await endorsementMetadataService.getMetadata(
+          {
+            nationalId: endorsement.endorser,
+            fields: fieldsToUpdate,
+          },
+          ('' as unknown) as Auth, // TODO: Add auth here
+        )),
       },
       id: endorsement.id,
     }

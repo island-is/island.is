@@ -1,14 +1,10 @@
 import { Module } from '@nestjs/common'
 import fetch from 'isomorphic-fetch'
-import { EndorsementMetadataService } from './endorsementMetadata.service'
-import {
-  NationalRegistryApi,
-  NationalRegistryConfig,
-} from '@island.is/clients/national-registry-v1'
-import { NationalRegistryUserService } from './providers/nationalRegistry/nationalRegistryUser.service'
-import { environment } from '../../../environments'
-import { NationalRegistryApiMock } from './providers/nationalRegistry/mock/nationalRegistryApiMock'
+import { NationalRegistryModule } from '@island.is/clients/national-registry-v2'
 import { SequelizeModule } from '@nestjs/sequelize'
+import { EndorsementMetadataService } from './endorsementMetadata.service'
+import { NationalRegistryUserService } from './providers/nationalRegistry/nationalRegistry.service'
+import { environment } from '../../../environments'
 import { Endorsement } from '../endorsement/models/endorsement.model'
 import { EndorsementSystemSignedListsService } from './providers/endorsementSystem/endorsementSystemSignedLists.service'
 import {
@@ -19,23 +15,18 @@ import { TemporaryVoterRegistryService } from './providers/temporaryVoterRegistr
 import { TemporaryVoterRegistryApiMock } from './providers/temporaryVoterRegistry/mock/temporaryVoterRegistryApiMock'
 
 @Module({
-  imports: [SequelizeModule.forFeature([Endorsement])],
+  imports: [
+    SequelizeModule.forFeature([Endorsement]),
+    NationalRegistryModule.register({
+      xRoadPath: environment.metadataProvider.nationalRegistry.xRoadPath,
+      xRoadClient: environment.metadataProvider.nationalRegistry.xRoadClient,
+    }),
+  ],
   providers: [
     NationalRegistryUserService,
     EndorsementSystemSignedListsService,
     EndorsementMetadataService,
     TemporaryVoterRegistryService,
-    {
-      provide: NationalRegistryApi,
-      useFactory: async () =>
-        await NationalRegistryApi.instanciateClass(
-          environment.metadataProvider
-            .nationalRegistry as NationalRegistryConfig,
-        ),
-      ...(environment.apiMock
-        ? { useValue: new NationalRegistryApiMock() }
-        : {}),
-    },
     {
       provide: TemporaryVoterRegistryApi,
       useFactory: async () =>
