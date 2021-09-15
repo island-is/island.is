@@ -102,8 +102,10 @@ export type GenericUserLicense = {
 }
 
 export type PkPassVerificationError = {
-  // Generic placeholder for a status code, could be the HTTP status code, code
-  // from API, or empty string. Semantics need to be defined per license type
+  /**
+   * Generic placeholder for a status code, could be the HTTP status code, code
+   * from API, or empty string. Semantics need to be defined per license type
+   */
   status: string
 
   /**
