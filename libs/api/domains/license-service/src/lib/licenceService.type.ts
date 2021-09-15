@@ -106,8 +106,10 @@ export type PkPassVerificationError = {
   // from API, or empty string. Semantics need to be defined per license type
   status: string
 
-  // Generic placeholder for a status message, from API, or empty "Unknown error".
-  // Semantics need to be defined per license type
+  /**
+   * Generic placeholder for a status message, from API, or empty "Unknown error".
+   * Semantics need to be defined per license type
+   */
   message: string
 
   /**
