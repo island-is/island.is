@@ -8,6 +8,9 @@ export const filesLink = style({
   backgroundColor: theme.color.purple100,
   marginBottom: theme.spacing[2],
   transition: 'background-color ease 250ms',
+})
+
+export const hoverState = style({
   selectors: {
     '&:hover': {
       cursor: 'pointer',

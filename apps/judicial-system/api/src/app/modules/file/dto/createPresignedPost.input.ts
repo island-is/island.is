@@ -13,4 +13,8 @@ export class CreatePresignedPostInput implements CreatePresignedPost {
   @Allow()
   @Field()
   readonly fileName!: string
+
+  @Allow()
+  @Field()
+  readonly type!: string
 }

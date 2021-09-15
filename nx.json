@@ -637,6 +637,9 @@
     "shared-babel": {
       "tags": []
     },
+    "shared-components": {
+      "tags": []
+    },
     "shared-connected": {
       "tags": []
     },
@@ -647,6 +650,9 @@
       "tags": []
     },
     "shared-mocking": {
+      "tags": []
+    },
+    "shared-translations": {
       "tags": []
     },
     "shared-types": {

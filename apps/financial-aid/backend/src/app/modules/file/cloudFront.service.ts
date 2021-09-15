@@ -3,7 +3,6 @@ import { CloudFront } from 'aws-sdk'
 import { Injectable } from '@nestjs/common'
 
 import { environment } from '../../../environments'
-import { SignedUrlModel } from './models'
 
 @Injectable()
 export class CloudFrontService {

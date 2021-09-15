@@ -4,7 +4,6 @@ import { Inject, UseGuards } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  AllowedFakeUsers,
   ApplicationState,
   CurrentApplication,
   HomeCircumstances,
@@ -37,12 +36,14 @@ export class UserResolver {
       state: ApplicationState.INPROGRESS,
       homeCircumstances: HomeCircumstances.OWNPLACE,
       usePersonalTaxCredit: true,
+      created: '2021-09-11 18:11:17.103+00',
     },
     '0000000003': {
       id: '5ebdb6ca-edcb-4391-bda7-f5999d2b6b08',
       state: ApplicationState.DATANEEDED,
       homeCircumstances: HomeCircumstances.OWNPLACE,
       usePersonalTaxCredit: true,
+      created: '2021-09-12 18:11:17.103+00',
     },
   }
 
