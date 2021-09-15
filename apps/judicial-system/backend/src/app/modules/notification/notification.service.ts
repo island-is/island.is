@@ -207,11 +207,15 @@ export class NotificationService {
     try {
       const streamId = await this.courtService.uploadStream(
         existingCase.courtId,
+        'Krafa.pdf',
+        'application/pdf',
         requestPdf,
       )
       await this.courtService.createRequest(
         existingCase.courtId,
         existingCase.courtCaseNumber,
+        'Krafa',
+        'Krafa.pdf',
         streamId,
       )
     } catch (error) {

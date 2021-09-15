@@ -26,16 +26,28 @@ export const Routes = {
 }
 
 export const months = [
-  'Janúar',
-  'Febrúar',
-  'Mars',
-  'Apríl',
-  'Maí',
-  'Júní',
-  'Júlí',
-  'Ágúst',
-  'September',
-  'Október',
-  'Nóvember',
-  'Desember',
+  'janúar',
+  'febrúar',
+  'mars',
+  'apríl',
+  'maí',
+  'júní',
+  'júlí',
+  'ágúst',
+  'september',
+  'október',
+  'nóvember',
+  'desember',
 ]
+
+export const getMonth = (month: number) => {
+  return months[month]
+}
+
+export const nextMonth = (new Date().getMonth() + 1) % 12
+
+export const getNextPeriod = {
+  month: getMonth(nextMonth),
+  year:
+    nextMonth === 0 ? new Date().getFullYear() + 1 : new Date().getFullYear(),
+}
