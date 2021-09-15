@@ -233,6 +233,12 @@ export const complaint = {
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Complaint Documents Button Label',
     },
+    complaintDocumentsInfoAlertMessageTitle: {
+      id:
+        'dpac.application:section.complaint.labels.complaintDocumentsInfoAlertMessageTitle',
+      defaultMessage: 'Athugið',
+      description: 'Title of alert message in complaint screen',
+    },
     complaintDocumentsInfoLabel: {
       id:
         'dpac.application:section.complaint.labels.complaintDocumentsInfoLabel',
