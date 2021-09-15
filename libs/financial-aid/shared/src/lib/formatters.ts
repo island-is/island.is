@@ -1,10 +1,10 @@
 import {
   HomeCircumstances,
-  Employment,
-  KeyMapping,
   ApplicationState,
+  Employment,
   ApplicationEventType,
-} from './types'
+} from './enums'
+import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
   Unknown: 'Óþekkt',
