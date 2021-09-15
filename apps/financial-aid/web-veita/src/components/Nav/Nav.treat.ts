@@ -7,7 +7,7 @@ export const container = style({
   bottom: 0,
   top: 0,
   paddingLeft: theme.spacing[3],
-  paddingRight: theme.spacing[6],
+  paddingRight: theme.spacing[3],
   backgroundColor: theme.color.purple100,
   width: '250px',
   minHeight: '100%',
@@ -21,12 +21,12 @@ export const container = style({
   alignItems: 'center',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      paddingLeft: theme.spacing[3],
       transform: 'translate3d(0%, 0, 0)',
       width: '25.4%',
     },
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       paddingLeft: theme.spacing[6],
+      paddingRight: theme.spacing[6],
     },
     [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
       paddingLeft: 'calc((100vw - 1440px)/2 + 48px)',
