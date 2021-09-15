@@ -1,6 +1,6 @@
 import { dump, load } from 'js-yaml'
 import { postgresIdentifier, serializeService } from './map-to-values'
-import { PostgresInfo, Service } from './types/input-types'
+import { OpsEnv, PostgresInfo, Service } from './types/input-types'
 import { UberChart } from './uber-chart'
 import { ValueFile, FeatureKubeJob, Services } from './types/output-types'
 

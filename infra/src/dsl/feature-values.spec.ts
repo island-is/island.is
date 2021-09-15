@@ -46,6 +46,7 @@ describe('Feature-deployment support', () => {
 
   const chart = new UberChart(Dev)
   const values = generateYamlForFeature(
+    'dev',
     chart,
     [apiService, dependencyA, dependencyB],
     [dependencyA, dependencyC],
