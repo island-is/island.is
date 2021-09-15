@@ -12,7 +12,7 @@ export const widthFull = style({
   gridColumn: '1/-1',
 })
 
-export const widtAlmostFull = style({
+export const widthAlmostFull = style({
   gridColumn: '1/-1',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
@@ -63,7 +63,6 @@ export const statusOptions = style({
       fontWeight: 'bold',
     },
   },
-  // padd: theme.spacing[3],
 })
 
 export const activeState = style({

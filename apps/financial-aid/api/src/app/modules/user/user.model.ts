@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { User, RolesRule, ReturnUrl } from '@island.is/financial-aid/shared'
+import { User, RolesRule, ReturnUrl } from '@island.is/financial-aid/shared/lib'
+
 import { CurrentApplicationModel } from '../application'
 
 @ObjectType()

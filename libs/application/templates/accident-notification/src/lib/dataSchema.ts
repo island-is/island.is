@@ -34,7 +34,6 @@ const CompanyInfoSchema = z.object({
   nationalRegistrationId: z
     .string()
     .refine((x) => (x ? kennitala.isCompany(x) : false)),
-  companyName: z.string().min(1),
   name: z.string().min(1),
   email: z.string().email(),
   phoneNumber: z.string().optional(),
@@ -121,9 +120,14 @@ export const AccidentNotificationSchema = z.object({
   fishingCompanyInfo: CompanyInfoSchema,
   sportsClubInfo: CompanyInfoSchema,
   rescueSquadInfo: CompanyInfoSchema,
+  fishingShipInfo: z.object({
+    shipName: z.string().min(1),
+    shipCharacters: z.string().min(1),
+    homePort: z.string().min(1),
+    shipRegisterNumber: z.string().min(1),
+  }),
   locationAndPurpose: z.object({
     location: z.string().min(1),
-    purpose: z.string().min(1),
   }),
   accidentLocation: z.object({
     answer: z.enum([
@@ -142,9 +146,14 @@ export const AccidentNotificationSchema = z.object({
       RescueWorkAccidentLocationEnum.DURINGRESCUE,
       RescueWorkAccidentLocationEnum.OTHER,
       StudiesAccidentLocationEnum.ATTHESCHOOL,
-      StudiesAccidentLocationEnum.DURINGSTUDIES,
       StudiesAccidentLocationEnum.OTHER,
     ]),
+  }),
+  homeAccident: z.object({
+    address: z.string().min(1),
+    postalCode: z.string().min(1),
+    community: z.string().min(1),
+    moreDetails: z.string().optional(),
   }),
   fishermanLocation: z.object({
     answer: z.enum([
@@ -154,7 +163,6 @@ export const AccidentNotificationSchema = z.object({
     ]),
     locationAndPurpose: z.object({
       location: z.string().min(1),
-      purpose: z.string().min(1),
     }),
   }),
   workMachineRadio: z.enum([YES, NO]),

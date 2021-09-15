@@ -15,7 +15,7 @@ import * as styles from './personalTaxCreditForm.treat'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import cn from 'classnames'
 
-import { NavigationProps } from '@island.is/financial-aid/shared'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 const PersonalTaxCreditForm = () => {
   const router = useRouter()

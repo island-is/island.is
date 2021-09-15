@@ -26,7 +26,7 @@ import {
   ReturnUrl,
   AllowedFakeUsers,
   RolesRule,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 import { SharedAuthService } from '@island.is/financial-aid/auth'
 
@@ -175,9 +175,13 @@ export class AuthController {
     return res.json({ logout: true })
   }
 
-  getReturnUrl = (service: RolesRule, applicationId: string | undefined) => {
+  getReturnUrl = (
+    returnUrl: ReturnUrl,
+    service: RolesRule,
+    applicationId: string | undefined,
+  ) => {
     switch (true) {
-      case service === RolesRule.OSK && applicationId !== undefined:
+      case returnUrl === ReturnUrl.APPLICATION && applicationId !== undefined:
         return `${ReturnUrl.MYPAGE}/${applicationId}`
       case service === RolesRule.VEITA:
         return ReturnUrl.ADMIN
@@ -192,6 +196,7 @@ export class AuthController {
     const jwtToken = this.sharedAuthService.signJwt(user, csrfToken)
 
     const returnUrl = this.getReturnUrl(
+      user.returnUrl as ReturnUrl,
       res.req?.query.service as RolesRule,
       res.req?.query.applicationId as string,
     )

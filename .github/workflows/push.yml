@@ -151,7 +151,7 @@ jobs:
       - name: Generate docker image tag
         id: docker_tags
         run: |
-          export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH} | tr "/." "-" )
+          export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH:0:45} | tr "/." "-" )
           SHA="${{ github.event.pull_request.head.sha }}"
           echo "SHA='$SHA' retrieved from event"
           if [[ "$SHA" == "" ]]; then

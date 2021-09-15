@@ -1,5 +1,4 @@
 import React from 'react'
-import Illustration from './TempIllustration'
 import {
   GridContainer,
   GridRow,
@@ -9,6 +8,7 @@ import {
   Link,
   Button,
 } from '@island.is/island-ui/core'
+import illustrationSvg from '../../assets/svg/illustration.svg'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 // TODO:
@@ -59,7 +59,7 @@ export const IntroductionSection = ({
             alignItems="center"
             justifyContent="center"
           >
-            <Illustration width="100%" aria-hidden="true" />
+            <img src={illustrationSvg} alt="" role="presentation" />
           </Box>
         </GridColumn>
         <GridColumn

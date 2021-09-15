@@ -7,7 +7,7 @@ import * as styles from './login.treat'
 
 const Login = () => {
   useEffect(() => {
-    document.title = 'Sveita • Innskráning'
+    document.title = 'Veita • Innskráning'
   }, [])
   return (
     <div className={` wrapper ${styles.gridWrapper}`}>
@@ -23,7 +23,7 @@ const Login = () => {
 
         <Box paddingLeft={2} marginLeft={2} className={`headLine`}>
           <Text as="h1" lineHeight="sm">
-            <strong>Sveita</strong> • Umsóknir um <br /> fjárhagsaðstoð
+            <strong>Veita</strong> • Umsóknir um <br /> fjárhagsaðstoð
           </Text>
         </Box>
       </Box>

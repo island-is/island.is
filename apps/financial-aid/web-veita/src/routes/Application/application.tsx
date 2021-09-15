@@ -27,11 +27,11 @@ import {
   getState,
   Municipality,
   aidCalculator,
-  months,
+  getMonth,
   calculateAidFinalAmount,
   formatPhoneNumber,
   FileType,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
 
@@ -47,12 +47,12 @@ import {
   GeneratedProfile,
   GenerateName,
   Profile,
-  Files,
   AdminLayout,
   StateModal,
   AidAmountModal,
   History,
   CommentSection,
+  FilesListWithHeader,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
@@ -121,7 +121,7 @@ const ApplicationProfile = () => {
       {
         title: 'Tímabil',
         content:
-          months[parseInt(format(new Date(application.created), 'M'))] +
+          getMonth(new Date(application.created).getMonth()) +
           format(new Date(application.created), ' y'),
       },
       {
@@ -216,10 +216,6 @@ const ApplicationProfile = () => {
         content: '??',
       },
       {
-        title: 'Fjöldi barna',
-        content: '??',
-      },
-      {
         title: 'Búsetuform',
         content:
           getHomeCircumstances[
@@ -254,7 +250,7 @@ const ApplicationProfile = () => {
           marginBottom={15}
           className={`${styles.applicantWrapper}`}
         >
-          <Box className={`contentUp   ${styles.widtAlmostFull} `}>
+          <Box className={`contentUp   ${styles.widthAlmostFull} `}>
             <Box
               marginBottom={3}
               display="flex"
@@ -354,37 +350,34 @@ const ApplicationProfile = () => {
           <>
             <Box
               marginBottom={[2, 2, 3]}
-              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+              className={`contentUp delay-125 ${styles.widthAlmostFull}`}
             >
               <Text as="h2" variant="h3" color="dark300">
                 Gögn frá umsækjanda
               </Text>
             </Box>
-            <Files
+            <FilesListWithHeader
               heading="Skattframtal"
-              filesArray={application.files?.filter(
+              files={application.files?.filter(
                 (f) => f.type === FileType.TAXRETURN,
               )}
-              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
             />
-            <Files
+            <FilesListWithHeader
               heading="Tekjugögn"
-              filesArray={application.files?.filter(
+              files={application.files?.filter(
                 (f) => f.type === FileType.INCOME,
               )}
-              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
             />
-            <Files
+            <FilesListWithHeader
               heading="Innsend gögn"
-              filesArray={application.files?.filter(
+              files={application.files?.filter(
                 (f) => f.type === FileType.OTHER,
               )}
-              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
             />
           </>
 
           <CommentSection
-            className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+            className={`contentUp delay-125 ${styles.widthAlmostFull}`}
           />
 
           <History />

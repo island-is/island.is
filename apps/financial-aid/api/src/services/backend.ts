@@ -13,7 +13,7 @@ import {
   CreateApplicationEvent,
   ApplicationFilters,
   CreateFilesResponse,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
@@ -58,6 +58,10 @@ class BackendAPI extends RESTDataSource {
 
   getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
     return this.post('/file/url', getSignedUrl)
+  }
+
+  getSignedUrlForId(id: string): Promise<SignedUrl> {
+    return this.get(`/file/url/${id}`)
   }
 
   getApplicationEvents(id: string): Promise<ApplicationEvent[]> {

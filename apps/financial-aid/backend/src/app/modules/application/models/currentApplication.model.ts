@@ -5,7 +5,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
   HomeCircumstances,
   ApplicationState,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 @Table({
   tableName: 'applications',

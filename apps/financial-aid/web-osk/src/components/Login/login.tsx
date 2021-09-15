@@ -3,7 +3,7 @@ import { GridContainer, Button, Text, Box } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 import * as styles from './login.treat'
-import { Routes } from '@island.is/financial-aid/shared'
+import { Routes } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   headline?: string

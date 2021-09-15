@@ -5,7 +5,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { SECRET_TOKEN } from './guards'
 import { JwtStrategy } from './jwt.strategy'
 import { SharedAuthService } from './auth.service'
-import { COOKIE_EXPIRES_IN_SECONDS } from '@island.is/financial-aid/shared'
+import { COOKIE_EXPIRES_IN_SECONDS } from '@island.is/financial-aid/shared/lib'
 
 export interface SharedAuthModuleOptions {
   jwtSecret: string

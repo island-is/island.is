@@ -25,9 +25,12 @@ import {
   RolesRules,
 } from '@island.is/financial-aid/auth'
 
-import type { User } from '@island.is/financial-aid/shared'
+import type { User } from '@island.is/financial-aid/shared/lib'
 
-import { ApplicationFilters, RolesRule } from '@island.is/financial-aid/shared'
+import {
+  ApplicationFilters,
+  RolesRule,
+} from '@island.is/financial-aid/shared/lib'
 
 @Controller('api')
 @ApiTags('applications')
