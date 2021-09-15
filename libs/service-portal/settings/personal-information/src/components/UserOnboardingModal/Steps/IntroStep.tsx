@@ -49,7 +49,7 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
           <Text variant="h5" as="h5" color="roseTinted400" marginBottom={1}>
             {formatMessage(
               {
-                id: 'global:welcome',
+                id: 'sp.settings:welcome',
                 defaultMessage: 'Hæ, {name}!',
                 description: 'Welcome message',
               },

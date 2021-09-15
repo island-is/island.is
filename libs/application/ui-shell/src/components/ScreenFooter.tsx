@@ -26,9 +26,7 @@ interface FooterProps {
   renderLastScreenBackButton?: boolean
 }
 
-interface SubmitButton {
-  colorScheme: ButtonTypes['colorScheme']
-  variant: ButtonTypes['variant']
+type SubmitButton = Omit<ButtonTypes, 'circle'> & {
   icon?: 'checkmark' | 'close' | 'pencil'
 }
 
@@ -105,7 +103,7 @@ export const ScreenFooter: FC<FooterProps> = ({
               <Button
                 type="submit"
                 loading={!canProceed || loading}
-                colorScheme={buttonConfig.colorScheme}
+                colorScheme={buttonConfig.colorScheme as any}
                 id={typeof event === 'object' ? event.type : event}
                 variant={buttonConfig.variant}
                 icon={buttonConfig.icon}
