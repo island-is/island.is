@@ -39,3 +39,15 @@ export const uploadingIndicator = style({
 })
 
 export const errorMessage = style(inputErrorMessage)
+
+export const canOpenFiles = style({
+  cursor: 'pointer',
+})
+
+export const fileName = style({
+  selectors: {
+    '&:hover': {
+      textDecoration: 'underline',
+    },
+  },
+})
