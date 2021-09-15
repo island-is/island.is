@@ -64,6 +64,8 @@ export const regulationContentStyling = (wrapper: string) => {
   })
 
   styleRegulation(' *', {
+    fontWeight: typography.light,
+
     '@media': {
       print: {
         fontFamily: 'inherit',
