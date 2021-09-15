@@ -1,5 +1,5 @@
+import type { UploadFile } from '@island.is/island-ui/core'
 import { months } from './const'
-import { UploadFile } from '@island.is/island-ui/core'
 
 export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)
