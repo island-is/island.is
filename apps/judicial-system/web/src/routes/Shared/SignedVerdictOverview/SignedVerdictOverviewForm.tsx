@@ -43,6 +43,9 @@ import AppealSection from './Components/AppealSection/AppealSection'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { formatMessage } from '@formatjs/intl'
+import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import { useIntl } from 'react-intl'
 
 interface Props {
   workingCase: Case
@@ -72,6 +75,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   } = props
   const router = useRouter()
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
   const { prosecutorsOffices } = useInstitution()
 
   /**
@@ -317,7 +321,13 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               caseId={workingCase.id}
               files={workingCase.files ?? []}
               canOpenFiles={canCaseFilesBeOpened()}
+              showIcons
             />
+            <Box display="flex" justifyContent="flexEnd">
+              <Button size="small">
+                {formatMessage(signedVerdictOverview.uploadToAudurButtonText)}
+              </Button>
+            </Box>
           </AccordionItem>
         </Accordion>
       </Box>

@@ -8,11 +8,12 @@ import { AnimatePresence } from 'framer-motion'
 interface Props {
   caseId: string
   files: TCaseFile[]
+  showIcons?: boolean
   canOpenFiles?: boolean
 }
 
 const CaseFileList: React.FC<Props> = (props) => {
-  const { caseId, files, canOpenFiles = true } = props
+  const { caseId, files, showIcons = false, canOpenFiles = true } = props
 
   const { handleOpenFile, fileNotFound, dismissFileNotFound } = useFileList({
     caseId,
@@ -27,7 +28,7 @@ const CaseFileList: React.FC<Props> = (props) => {
             showFileSize={true}
             defaultBackgroundColor="blue100"
             doneIcon="checkmark"
-            showIcons={false}
+            showIcons={showIcons}
             onOpenFile={
               canOpenFiles
                 ? (file: UploadFile) => {

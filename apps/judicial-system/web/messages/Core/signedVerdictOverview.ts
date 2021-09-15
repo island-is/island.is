@@ -16,4 +16,11 @@ export const signedVerdictOverview = defineMessages({
     description:
       'Notaður sem upplýsingatexti sem útskýrir að sækjandi kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
   },
+  uploadToAudurButtonText: {
+    id:
+      'judicial.system.core:signed_verdict_overview.upload_to_audur_button_text',
+    defaultMessage: 'Vista gögn í Auði',
+    description:
+      'Notaður sem texti í "Hlaða upp gögnum í Auði" takkanum á yfirlitsskjá afgreiddra mála.',
+  },
 })
