@@ -74,6 +74,14 @@ module.exports = withTreat(
           scheduler: path.resolve(modules, 'scheduler'),
         }
 
+        // Fixes npm packages that depend on `fs` module
+        if (!isServer) {
+          config.node = {
+            fs: 'empty',
+            dns: 'empty',
+          }
+        }
+
         return config
       },
 
