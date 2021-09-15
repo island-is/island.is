@@ -1,4 +1,4 @@
-import { UploadFile } from '../../../../island-ui/core/src'
+import { UploadFile } from '../../../../island-ui/core/src/lib/InputFileUpload/InputFileUpload'
 import { months } from './const'
 
 export const getFileType = (fileName: string) => {
