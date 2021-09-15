@@ -32,8 +32,6 @@ function custodyProvisionsOrder(p: CaseCustodyProvisions) {
       return 3
     case CaseCustodyProvisions._95_2:
       return 4
-    case CaseCustodyProvisions._98_2:
-      return 5
     case CaseCustodyProvisions._99_1_B:
       return 6
     case CaseCustodyProvisions._100_1:
