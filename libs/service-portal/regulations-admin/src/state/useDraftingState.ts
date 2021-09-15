@@ -366,7 +366,6 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
                 const basicsRequired = [
                   'title',
                   'text',
-                  'idealPublishDate',
                 ] as RegDraftFormSimpleProps[]
 
                 const errorFields = getInputFieldsWithErrors(
@@ -398,7 +397,6 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
                   'ministry',
                   'type',
                   'signatureDate',
-                  'effectiveDate',
                 ] as RegDraftFormSimpleProps[]
 
                 const errorFields = getInputFieldsWithErrors(
