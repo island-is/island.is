@@ -9,12 +9,14 @@ export class CourtService {
   createRequest(
     courtId: string | undefined,
     courtCaseNumber: string | undefined,
+    subject: string,
+    fileName: string,
     streamId: string,
   ): Promise<string> {
     return this.courtClientService.createDocument(courtId ?? '', {
       caseNumber: courtCaseNumber ?? '',
-      subject: 'Krafa',
-      fileName: 'Krafa.pdf',
+      subject,
+      fileName,
       streamID: streamId,
       caseFolder: 'Krafa og greinargerð',
     })
@@ -23,13 +25,14 @@ export class CourtService {
   createDocument(
     courtId: string | undefined,
     courtCaseNumber: string | undefined,
-    streamId: string,
     subject: string,
+    fileName: string,
+    streamId: string,
   ): Promise<string> {
     return this.courtClientService.createDocument(courtId ?? '', {
       caseNumber: courtCaseNumber ?? '',
       subject,
-      fileName: `${subject}.pdf`,
+      fileName,
       streamID: streamId,
       caseFolder: 'Gögn málsins',
     })
@@ -39,7 +42,7 @@ export class CourtService {
     courtId: string | undefined,
     courtCaseNumber: string | undefined,
     streamId: string,
-  ) {
+  ): Promise<string> {
     return this.courtClientService.createThingbok(courtId ?? '', {
       caseNumber: courtCaseNumber ?? '',
       subject: 'Þingbók og úrskurður',
@@ -48,10 +51,15 @@ export class CourtService {
     })
   }
 
-  uploadStream(courtId: string | undefined, pdf: Buffer): Promise<string> {
+  uploadStream(
+    courtId: string | undefined,
+    filename: string,
+    contentType: string,
+    content: Buffer,
+  ): Promise<string> {
     return this.courtClientService.uploadStream(courtId ?? '', {
-      value: pdf,
-      options: { filename: 'upload.pdf', contentType: 'application/pdf' },
+      value: content,
+      options: { filename, contentType },
     })
   }
 }

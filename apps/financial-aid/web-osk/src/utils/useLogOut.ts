@@ -11,7 +11,12 @@ export const useLogOut = () => {
   const logOut = () => {
     api.logOut()
     setUser && setUser(undefined)
-    updateForm({ submitted: false, incomeFiles: [] })
+    updateForm({
+      submitted: false,
+      incomeFiles: [],
+      taxReturnFiles: [],
+      otherFiles: [],
+    })
   }
 
   //TODO
