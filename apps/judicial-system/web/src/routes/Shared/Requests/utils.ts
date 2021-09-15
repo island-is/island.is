@@ -36,6 +36,11 @@ export const mapCaseStateToTagVariant = (
         color: 'rose',
         text: 'Hafnað',
       }
+    case CaseState.DISMISSED:
+      return {
+        color: 'white',
+        text: 'Vísað frá',
+      }
     default:
       return { color: 'white', text: 'Óþekkt' }
   }
