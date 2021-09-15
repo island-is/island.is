@@ -1,31 +1,23 @@
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import React, { useMemo } from 'react'
 import {
   Box,
-  Option,
+  Button,
+  Column,
+  Columns,
   DatePicker,
-  Input,
+  Option,
   Select,
-  Text,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { StepComponent } from '../state/useDraftingState'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import { RegulationMinistry } from '@island.is/regulations/web'
-import { editorMsgs as msg } from '../messages'
 import {
-  emptyOption,
-  findValueOption,
-  findSignatureInText,
-  findRegulationType,
-} from '../utils'
+  RegulationLawChapter,
+  RegulationMinistry,
+} from '@island.is/regulations/web'
+import { editorMsgs as msg } from '../messages'
+import { emptyOption, findValueOption } from '../utils'
 import { regulationTypes } from '../utils/constants'
 import {
   MinistrySlug,
@@ -33,11 +25,6 @@ import {
   RegulationType,
 } from '@island.is/regulations'
 import { LawChaptersSelect } from './LawChaptersSelect'
-
-type WrapProps = {
-  legend?: string
-  children: ReactNode
-}
 
 const MinistriesQuery = gql`
   query DraftRegulationMinistriesQuery {
@@ -51,142 +38,137 @@ const LawChaptersQuery = gql`
   }
 `
 
-const Wrap = (props: WrapProps) => (
-  <Box marginBottom={2} aria-label={props.legend}>
-    {props.legend && (
-      <Text
-        variant="small"
-        as="h4"
-        color="blue400"
-        fontWeight="medium"
-        marginBottom={1}
-      >
-        {props.legend}
-      </Text>
-    )}
-    {props.children}
-  </Box>
-)
+// ---------------------------------------------------------------------------
 
 export const EditMeta: StepComponent = (props) => {
   const t = useIntl().formatMessage
   const { draft, actions } = props
+  const { updateState, updateLawChapterProp } = actions
   // const textRef = useRef(() => draft.text)
 
-  const {
-    data: getDraftRegulationsMinistriesData,
-    loading: getDraftRegulationsMinistriesLoading,
-  } = useQuery<Query>(MinistriesQuery)
-  const { getDraftRegulationsMinistries: ministries } =
-    getDraftRegulationsMinistriesData || {}
+  // FIXME: Remove the any typing on these...
+  const ministryQuery = useQuery<Query>(MinistriesQuery)
+  const lawChapterQuery = useQuery<Query>(LawChaptersQuery)
 
-  const {
-    data: getDraftRegulationsLawChaptersData,
-    loading: getDraftRegulationsLawChaptersLoading,
-  } = useQuery<Query>(LawChaptersQuery)
-  const { getDraftRegulationsLawChapters: lawChapters } =
-    getDraftRegulationsLawChaptersData || {}
+  const ministries = ministryQuery.data
+    ?.getDraftRegulationsMinistries as RegulationMinistry[]
+  const lawChapters = lawChapterQuery.data
+    ?.getDraftRegulationsLawChapters as RegulationLawChapter[]
 
-  const ministryOptions = useMemo(() => {
-    return [emptyOption(t(msg.chooseMinistry))].concat(
-      ministries?.map(
-        (m: RegulationMinistry): Option => ({
-          value: m.slug,
-          label: m.name,
-        }),
-      ) ?? [],
-    ) as ReadonlyArray<Option>
+  const ministryOptions = useMemo((): ReadonlyArray<Option> => {
+    return [
+      emptyOption(t(msg.ministryPlaceholder)),
+      ...(ministries || []).map((m) => ({
+        value: m.slug,
+        label: m.name,
+      })),
+    ]
   }, [ministries, t])
 
   return (
     <>
-      <Wrap>
-        <Select
-          name="rn"
-          isSearchable
-          label={t(msg.ministry)}
-          placeholder={t(msg.ministry)}
-          value={findValueOption(ministryOptions, draft.ministry.value)}
-          options={ministryOptions}
-          required
-          errorMessage={t(msg.requiredFieldError)}
-          hasError={!!draft.ministry?.error}
-          onChange={(option) =>
-            actions.updateState({
-              name: 'ministry',
-              value: (option as Option).value as MinistrySlug,
-            })
-          }
-          size="sm"
-        />
-      </Wrap>
-      <Wrap>
+      <Columns space={3} collapseBelow="lg">
+        <Column>
+          <Box marginBottom={3}>
+            <Select
+              label={t(msg.ministry)}
+              name="rn"
+              isSearchable
+              placeholder={t(msg.ministry)}
+              value={findValueOption(ministryOptions, draft.ministry.value)}
+              options={ministryOptions}
+              required
+              errorMessage={t(msg.requiredFieldError)}
+              hasError={!!draft.ministry.error}
+              onChange={(option) =>
+                updateState(
+                  'ministry',
+                  (option as Option).value as MinistrySlug,
+                )
+              }
+              size="sm"
+            />
+          </Box>
+        </Column>
+        <Column>
+          <Box marginBottom={3}>
+            <Select
+              name="type-select"
+              placeholder={t(msg.type)}
+              size="sm"
+              isSearchable={false}
+              label={t(msg.type)}
+              options={regulationTypes}
+              value={findValueOption(regulationTypes, draft.type.value)}
+              required
+              errorMessage={t(msg.requiredFieldError)}
+              hasError={!!draft.type.error}
+              onChange={(typeOption) =>
+                updateState(
+                  'type',
+                  (typeOption as Option).value as RegulationType,
+                )
+              }
+            />
+          </Box>
+        </Column>
+      </Columns>
+
+      <Columns space={3} collapseBelow="lg">
+        <Column>
+          <Box marginBottom={3}>
+            <DatePicker
+              label={t(msg.signatureDate)}
+              size="sm"
+              placeholderText={t(msg.signatureDate)}
+              selected={draft.signatureDate.value}
+              required
+              errorMessage={t(msg.requiredFieldError)}
+              hasError={!!draft.signatureDate.error}
+              handleChange={(date: Date) => updateState('signatureDate', date)}
+            />
+          </Box>
+        </Column>
+        <Column>
+          <Box marginBottom={3}>
+            <DatePicker
+              size="sm"
+              label={t(msg.effectiveDate)}
+              placeholderText={t(msg.effectiveDate_default)}
+              minDate={draft.idealPublishDate.value || null}
+              selected={draft.effectiveDate.value}
+              handleChange={(date: Date) => updateState('effectiveDate', date)}
+              hasError={!!draft.effectiveDate.error}
+              errorMessage={t(msg.requiredFieldError)}
+            />
+            {!!draft.effectiveDate.value && (
+              <Button
+                size="small"
+                variant="text"
+                preTextIcon="close"
+                onClick={() => {
+                  updateState('effectiveDate', undefined)
+                }}
+              >
+                {t(msg.effectiveDate_default)}
+              </Button>
+            )}
+          </Box>
+        </Column>
+      </Columns>
+
+      <Box>
         <LawChaptersSelect
           lawChapters={lawChapters}
           activeChapters={draft.lawChapters.value}
-          addChapter={(chapter: LawChapterSlug) =>
-            actions.updateLawChapterProp({ action: 'add', value: chapter })
+          addChapter={(slug: LawChapterSlug) =>
+            updateLawChapterProp('add', slug)
           }
-          removeChapter={(chapter: LawChapterSlug) =>
-            actions.updateLawChapterProp({ action: 'delete', value: chapter })
-          }
-        />
-      </Wrap>
-      <Wrap>
-        <Select
-          name="type-select"
-          placeholder={t(msg.type)}
-          size="sm"
-          isSearchable={false}
-          label={t(msg.type)}
-          options={regulationTypes}
-          value={findValueOption(regulationTypes, draft.type.value)}
-          required
-          errorMessage={t(msg.requiredFieldError)}
-          hasError={!!draft.type.error}
-          onChange={(typeOption) =>
-            actions.updateState({
-              name: 'type',
-              value: (typeOption as Option).value as RegulationType,
-            })
+          removeChapter={(slug: LawChapterSlug) =>
+            updateLawChapterProp('delete', slug)
           }
         />
-      </Wrap>
-      <Wrap>
-        <DatePicker
-          label={t(msg.signatureDate)}
-          size="sm"
-          placeholderText={t(msg.signatureDate)}
-          selected={draft.signatureDate?.value}
-          required
-          errorMessage={t(msg.requiredFieldError)}
-          hasError={!!draft.signatureDate?.error}
-          handleChange={(date: Date) =>
-            actions.updateState({
-              name: 'signatureDate',
-              value: date,
-            })
-          }
-        />
-      </Wrap>
-      <Wrap>
-        <DatePicker
-          label={t(msg.effectiveDate)}
-          size="sm"
-          placeholderText={t(msg.effectiveDate)}
-          selected={draft.effectiveDate?.value}
-          minDate={draft.idealPublishDate?.value || null}
-          required
-          errorMessage={t(msg.requiredFieldError)}
-          hasError={!!draft.effectiveDate.error}
-          handleChange={(date: Date) =>
-            actions.updateState({
-              name: 'effectiveDate',
-              value: date,
-            })
-          }
-        />
-      </Wrap>
+      </Box>
     </>
   )
 }

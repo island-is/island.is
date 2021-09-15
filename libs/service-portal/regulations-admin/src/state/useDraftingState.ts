@@ -26,6 +26,8 @@ import {
   ActionName,
 } from './types'
 import { uuid } from 'uuidv4'
+import { useIntl } from 'react-intl'
+import { buttonsMsgs } from '../messages'
 
 export const CREATE_DRAFT_REGULATION_MUTATION = gql`
   mutation CreateDraftRegulationMutation($input: CreateDraftRegulationInput!) {
@@ -39,19 +41,33 @@ export const UPDATE_DRAFT_REGULATION_MUTATION = gql`
   }
 `
 
+export const DELETE_DRAFT_REGULATION_MUTATION = gql`
+  mutation DeleteDraftRegulationMutation($input: DeleteDraftRegulationInput!) {
+    deleteDraftRegulation(input: $input) {
+      id
+    }
+  }
+`
+
+// ---------------------------------------------------------------------------
+
 export const steps: Record<Step, StepNav> = {
   basics: {
+    name: 'basics',
     next: 'meta',
   },
   meta: {
+    name: 'meta',
     prev: 'basics',
     next: 'impacts',
   },
   impacts: {
+    name: 'impacts',
     prev: 'meta',
     next: 'review',
   },
   review: {
+    name: 'review',
     prev: 'impacts',
   },
 }
@@ -78,12 +94,12 @@ const makeDraftForm = (
     idealPublishDate: f(
       draft.idealPublishDate && new Date(draft.idealPublishDate),
     ),
-    fastTrack: draft.fastTrack,
+    fastTrack: f(draft.fastTrack || false),
 
     signatureDate: f(draft.signatureDate && new Date(draft.signatureDate)),
     effectiveDate: f(draft.effectiveDate && new Date(draft.effectiveDate)),
 
-    lawChapters: f(draft.lawChapters?.map((chapter) => chapter.slug)),
+    lawChapters: f((draft.lawChapters || []).map((chapter) => chapter.slug)),
     ministry: f(draft.ministry?.slug),
     type: f(draft.type),
 
@@ -211,15 +227,17 @@ const actionHandlers: {
     if (!state.draft) {
       return
     }
-    const prop = state.draft.lawChapters
-    if (prop.value && value) {
-      let newLawChapterArray = [...prop.value]
-      if (action === 'add') {
-        newLawChapterArray.push(value)
-      } else {
-        newLawChapterArray = newLawChapterArray.filter((item) => item !== value)
+    const lawChaptersField = state.draft.lawChapters
+    const lawChapters = lawChaptersField.value
+    const includesValue = lawChapters.includes(value)
+    if (action === 'add') {
+      if (!includesValue) {
+        lawChaptersField.value = lawChapters.concat(value).sort()
       }
-      prop.value = newLawChapterArray
+    } else {
+      if (includesValue) {
+        lawChaptersField.value = lawChapters.filter((slug) => slug !== value)
+      }
     }
   },
 
@@ -283,6 +301,8 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     throw new Error()
   }
 
+  const t = useIntl().formatMessage
+
   const [state, dispatch] = useReducer(
     draftingStateReducer,
     { draftId, stepName, isEditor },
@@ -293,6 +313,10 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
   const { draft, loading, error } = useRegulationDraftQuery(
     isNew && !state.error,
     draftId,
+  )
+
+  const [deleteDraftRegulationMutation] = useMutation(
+    DELETE_DRAFT_REGULATION_MUTATION,
   )
 
   useEffect(() => {
@@ -317,7 +341,6 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
 
   const stepNav = steps[stepName]
 
-  console.log('state', state)
   const actions = useMemo(() => {
     const isNew = draftId === 'new'
 
@@ -339,7 +362,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
         (isEditor || stepNav.next !== 'review')
           ? () => {
               // BASICS
-              if (stepName === 'basics') {
+              if (stepNav.name === 'basics') {
                 const basicsRequired = [
                   'title',
                   'text',
@@ -370,7 +393,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
               }
 
               // META
-              if (stepName === 'meta') {
+              if (stepNav.name === 'meta') {
                 const metaRequired = [
                   'ministry',
                   'type',
@@ -402,29 +425,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
           : undefined,
       saveStatus: draft
         ? () => {
-            mockSave(draft).then(() => {
-              console.log('draft saveStatus', state)
-              history.push(ServicePortalPath.RegulationsAdminRoot)
-            })
-          }
-        : () => undefined,
-      // FIXME: rename to updateProp??
-      updateState: <Prop extends RegDraftFormSimpleProps>(data: {
-        name: Prop
-        value: RegDraftForm[Prop]['value']
-      }) => {
-        // @ts-expect-error  (FML! FIXME: make this nicer)
-        dispatch({ type: 'UPDATE_PROP', ...data })
-      },
-      updateLawChapterProp: (data: {
-        action: 'add' | 'delete'
-        value: LawChapterSlug | undefined
-      }) => {
-        dispatch({ type: 'UPDATE_LAWCHAPTER_PROP', ...data })
-      },
-      createDraft:
-        isNew && state.draft
-          ? () => {
+            if (isNew) {
               createDraftRegulation({
                 variables: {
                   input: {
@@ -451,32 +452,73 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
                   )
                 }
               })
-            }
-          : () => undefined,
-      updateDraft: state.draft
-        ? () => {
-            updateDraftRegulationById({
-              variables: {
-                input: {
-                  id: state.draft?.id,
-                  body: {
-                    title: state.draft?.title?.value,
-                    text: state.draft?.text?.value, // (text + appendix + comments)
-                    ministry_id: state.draft?.ministry?.value,
-                    drafting_notes: state.draft?.draftingNotes.value,
-                    ideal_publish_date: state.draft?.idealPublishDate?.value,
-                    law_chapters: state.draft?.lawChapters?.value,
-                    signature_date: state.draft?.signatureDate?.value,
-                    effective_date: state.draft?.effectiveDate?.value,
-                    type: state.draft?.type?.value,
+            } else {
+              updateDraftRegulationById({
+                variables: {
+                  input: {
+                    id: state.draft?.id,
+                    body: {
+                      title: state.draft?.title?.value,
+                      text: state.draft?.text?.value, // (text + appendix + comments)
+                      ministry_id: state.draft?.ministry?.value,
+                      drafting_notes: state.draft?.draftingNotes.value,
+                      ideal_publish_date: state.draft?.idealPublishDate?.value,
+                      law_chapters: state.draft?.lawChapters?.value,
+                      signature_date: state.draft?.signatureDate?.value,
+                      effective_date: state.draft?.effectiveDate?.value,
+                      type: state.draft?.type?.value,
+                    },
                   },
                 },
-              },
-            }).then((res) => {
-              console.log('!!DRAFT UPDATED!! ', res)
-            })
+              }).then((res) => {
+                console.log('!!DRAFT UPDATED!! ', res)
+              })
+            }
           }
         : () => undefined,
+
+      // FIXME: rename to updateProp??
+      updateState: <Prop extends RegDraftFormSimpleProps>(
+        name: Prop,
+        value: RegDraftForm[Prop]['value'],
+      ) => {
+        // @ts-expect-error  (FML! FIXME: make this nicer)
+        dispatch({ type: 'UPDATE_PROP', name, value })
+      },
+
+      deleteDraft: async () => {
+        if (
+          isNew ||
+          // eslint-disable-next-line no-restricted-globals
+          !confirm(t(buttonsMsgs.confirmDelete))
+        ) {
+          return
+        }
+        // TODO: Dialog opens to CONFIRM the deletion by user?
+        try {
+          await deleteDraftRegulationMutation({
+            variables: {
+              input: {
+                draftId,
+              },
+            },
+          }).then(() => {
+            // TODO: Láta notanda vita að færslu hefur verið eytt út?
+            history.push(ServicePortalPath.RegulationsAdminRoot)
+          })
+        } catch (e) {
+          console.error('delete draft regulation error: ', e)
+          return
+        }
+      },
+
+      updateLawChapterProp: (
+        action: 'add' | 'delete',
+        value: LawChapterSlug,
+      ) => {
+        dispatch({ type: 'UPDATE_LAWCHAPTER_PROP', action, value })
+      },
+
       propose:
         draft && !isEditor
           ? () => {
@@ -497,6 +539,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     history, // NOTE: Should be immutable
     createDraftRegulation, // NOTE: Should be immutable
     updateDraftRegulationById, // NOTE: Should be immutable
+    t,
   ])
 
   return {

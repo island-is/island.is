@@ -44,11 +44,11 @@ export const ShippedRegulations = () => {
   }
 
   return (
-    <Box marginTop={[4, 4, 6]}>
-      <Text variant="h2" as="h2" marginBottom={2}>
+    <Box marginTop={[4, 4, 8]}>
+      <Text variant="h3" as="h2" marginBottom={[2, 2, 3]}>
         {formatMessage(msg.shippedTitle)}
       </Text>
-      <Stack space={1}>
+      <Stack space={2}>
         {getShippedRegulations.map((shipped) => (
           <TopicCard
             key={shipped.id}

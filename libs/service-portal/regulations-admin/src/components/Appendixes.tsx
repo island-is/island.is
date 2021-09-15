@@ -1,13 +1,19 @@
-// import s from './Appendixes.module.scss'
+import * as s from './Appendixes.treat'
 
 import { EditorInput } from './EditorInput'
-import React, { MutableRefObject, useState } from 'react'
-import { useIsBrowserSide } from '../utils/hooks'
+import React, { MutableRefObject, useMemo } from 'react'
 import { MiniDiff } from './MiniDiff'
 import { useIntl } from 'react-intl'
 import { editorMsgs as msg } from '../messages'
 import { domid, HTMLText, PlainText } from '@island.is/regulations'
 import { RegulationDraft } from '@island.is/regulations/admin'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Button,
+} from '@island.is/island-ui/core'
+import { MagicTextarea } from './MagicTextarea'
 
 const NEW_PREFIX = 'new---'
 
@@ -16,15 +22,15 @@ const NEW_PREFIX = 'new---'
 type AppendixProps = {
   appendix: AppendixStateItem
   idx: number
-  defaultOpen: boolean
   buttons: boolean
   isImpact?: boolean
 } & Pick<AppendixesProps, 'onTextChange' | 'onChange' | 'draftId'>
 
 const Appendix = (props: AppendixProps) => {
-  const { appendix, defaultOpen, idx, buttons, onChange, onTextChange } = props
+  const { appendix, idx, buttons, onChange, onTextChange } = props
+  const { title, baseTitle, valueRef, baseText, elmRef } = appendix
+
   const t = useIntl().formatMessage
-  const [isOpen, setIsOpen] = useState(defaultOpen)
 
   const isRemovable = appendix.key.startsWith(NEW_PREFIX)
 
@@ -66,74 +72,90 @@ const Appendix = (props: AppendixProps) => {
     })
   }
 
+  const isChanged = useMemo(
+    () => !!baseText && baseText !== valueRef.current(),
+    [],
+  )
+
   const labelShiftUp = t(msg.appendix_shiftup, { idx: idx + 1 })
   const labelRemove = t(msg.appendix_remove, { idx: idx + 1 })
 
+  // DECIDE: Should we disallow editing pre-existing titles? when
+  // `isImpact === true`
   return (
-    <section>
-      <h2>
-        {t(msg.appendix_legend, { idx: idx + 1 })}
-        <button onClick={() => setIsOpen(!isOpen)}>
-          {t(isOpen ? msg.appendix_close : msg.appendix_open)}
-        </button>
-      </h2>
-      {isOpen && (
-        <>
-          <div>
-            <textarea
-              onChange={(e) => {
-                changeAppendixTitle(idx, e.currentTarget.value)
-                onTextChange && onTextChange(idx)
-              }}
-              value={appendix.title}
-              aria-label={t(msg.appendix_title)}
-              placeholder={t(msg.appendix_title)}
-            />
-            {props.isImpact && appendix.title !== appendix.baseTitle && (
-              <MiniDiff older={appendix.baseTitle} newer={appendix.title} />
-            )}
-          </div>
-          <EditorInput
-            label={t(msg.appendix_text)}
-            initialText={appendix.initialText}
-            baseText={appendix.baseText}
-            valueRef={appendix.valueRef}
-            elmRef={appendix.elmRef}
-            onChange={onTextChange ? () => onTextChange(idx) : undefined}
-            draftId={props.draftId}
-            isImpact={props.isImpact}
-          />
-          {(buttons || isRemovable) && (
-            <div>
-              {idx > 0 && (
-                <button
-                  onClick={() => moveAppendixUp(idx)}
-                  title={labelShiftUp}
-                >
-                  {labelShiftUp}
-                </button>
-              )}{' '}
-              {isRemovable && (
-                <button onClick={() => removeAppendix(idx)} title={labelRemove}>
-                  {labelRemove}
-                </button>
-              )}
-            </div>
+    <div className={s.appendix}>
+      <Box marginBottom={3}>
+        <MagicTextarea
+          label={t(msg.appendix_title)}
+          name="title"
+          value={title}
+          onChange={(value) => {
+            changeAppendixTitle(idx, value)
+            onTextChange && onTextChange(idx)
+          }}
+          required
+          errorMessage={'' && t(msg.requiredFieldError)}
+          // hasError={!!draft.title?.error}
+        />
+        {props.isImpact && baseTitle != null && title !== baseTitle && (
+          <MiniDiff older={baseTitle || ''} newer={title} />
+        )}
+      </Box>
+
+      <Box marginBottom={4}>
+        <EditorInput
+          label={t(msg.appendix_text)}
+          baseText={baseText}
+          valueRef={valueRef}
+          elmRef={elmRef}
+          onChange={onTextChange ? () => onTextChange(idx) : undefined}
+          draftId={props.draftId}
+          isImpact={props.isImpact}
+        />
+      </Box>
+
+      {(buttons || isRemovable) && (
+        <div className={s.appendixTools}>
+          {idx > 0 && (
+            <Button
+              size="small"
+              variant="text"
+              preTextIcon="arrowUp"
+              // circle
+              // variant="ghost"
+              // icon="arrowUp"
+              onClick={() => moveAppendixUp(idx)}
+              title={labelShiftUp}
+            >
+              {t(msg.appendix_shiftup_short)}
+            </Button>
           )}{' '}
-        </>
+          {isRemovable && (
+            <Button
+              size="small"
+              variant="text"
+              preTextIcon="trash"
+              // circle
+              // variant="ghost"
+              // icon="trash"
+              onClick={() => removeAppendix(idx)}
+              title={labelRemove}
+            >
+              {t(msg.appendix_remove_short)}
+            </Button>
+          )}
+        </div>
       )}
-    </section>
+    </div>
   )
 }
 
-// ---------------------------------------------------------------------------
+// ===========================================================================
 
 export type AppendixStateItem = {
   key: string
   title: PlainText
-  initialTitle?: PlainText
-  baseTitle: PlainText
-  initialText?: HTMLText
+  baseTitle?: PlainText
   baseText?: HTMLText
   valueRef: MutableRefObject<() => HTMLText>
   elmRef?: MutableRefObject<HTMLElement | null>
@@ -161,31 +183,54 @@ export const Appendixes = (props: AppendixesProps) => {
       appendixes.concat({
         key: NEW_PREFIX + domid(),
         title: '',
-        baseTitle: '',
         valueRef: { current: () => '' as HTMLText },
         elmRef: { current: null },
       }),
     )
   }
 
-  const isBrowser = useIsBrowserSide()
-
   return (
-    <section>
-      {props.appendixes.map((appendix, i) => (
-        <Appendix
-          key={appendix.key}
-          appendix={appendix}
-          idx={i}
-          defaultOpen={!props.defaultClosed || !!isBrowser}
-          buttons={!props.appendOnly}
-          onChange={props.onChange}
-          onTextChange={props.onTextChange}
-          draftId={props.draftId}
-          isImpact={props.isImpact}
-        />
-      ))}
-      <button onClick={addAppendix}>{t(msg.appendix_add)}</button>
-    </section>
+    <>
+      {props.appendixes.length > 0 && (
+        <Accordion singleExpand={false} dividerOnTop={false}>
+          {props.appendixes.map((appendix, i) => {
+            const startExpanded = !props.defaultClosed || !appendix.title
+
+            return (
+              <AccordionItem
+                key={appendix.key}
+                startExpanded={startExpanded}
+                id={props.draftId + '-appendix-' + i}
+                label={
+                  appendix.baseTitle ||
+                  appendix.title ||
+                  t(msg.appendix_legend, { idx: i + 1 })
+                }
+              >
+                <Appendix
+                  appendix={appendix}
+                  idx={i}
+                  buttons={!props.appendOnly}
+                  onChange={props.onChange}
+                  onTextChange={props.onTextChange}
+                  draftId={props.draftId}
+                  isImpact={props.isImpact}
+                />
+              </AccordionItem>
+            )
+          })}
+        </Accordion>
+      )}{' '}
+      <Box marginTop={2}>
+        <Button
+          variant="text"
+          preTextIcon="add"
+          // size="large"
+          onClick={addAppendix}
+        >
+          {t(msg.appendix_add)}
+        </Button>
+      </Box>
+    </>
   )
 }

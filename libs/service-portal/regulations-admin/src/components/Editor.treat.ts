@@ -1,6 +1,10 @@
 import type { EditorClasses } from '@hugsmidjan/regulations-editor/Editor'
 import { style, globalStyle, Style } from 'treat'
-import { spacing, theme } from '@island.is/island-ui/theme'
+import {
+  SERVICE_PORTAL_HEADER_HEIGHT_SM,
+  SERVICE_PORTAL_HEADER_HEIGHT_LG,
+} from '@island.is/service-portal/constants'
+import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
 import {
   diffStyling,
   regulationContentStyling,
@@ -71,6 +75,7 @@ const addWarning = ($legend: Parameters<typeof addLegened>[0]) =>
 export const classes: EditorClasses = {
   wrapper: style({
     position: 'relative',
+    zIndex: 0,
     display: 'flex',
     flexFlow: 'row nowrap',
   }),
@@ -87,12 +92,18 @@ export const classes: EditorClasses = {
 
   toolbar: style({
     position: 'sticky',
-    top: 0,
-    zIndex: 998,
+    top: SERVICE_PORTAL_HEADER_HEIGHT_SM - 1,
+    zIndex: 1,
 
     margin: 0,
     padding: '0 3px',
     boxShadow: '0 10px 10px -10px rgba(0,0,0, 0.25)',
+
+    ...themeUtils.responsiveStyle({
+      md: {
+        top: SERVICE_PORTAL_HEADER_HEIGHT_LG - 1,
+      },
+    }),
   }),
 
   editor: style({
@@ -434,7 +445,16 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     marginTop: '2.25rem',
   })
 
-  global('.section__title, .chapter__title, .article__title', {
+  global('.section__title', {
+    marginTop: '3rem',
+    marginBottom: '.333rem',
+    fontSize: '1.25em',
+    fontWeight: typography.headingsFontWeight,
+    fontStyle: 'normal',
+    textAlign: 'center',
+    backgroundColor: 'rgba(153,0,153, 0.07)',
+  })
+  global('.chapter__title', {
     marginTop: '3rem',
     marginBottom: '.333rem',
     fontSize: '1.2em',
@@ -443,14 +463,13 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     textAlign: 'center',
     backgroundColor: 'rgba(51,0,255, 0.07)',
   })
-  global('.section__title', {
-    fontSize: '1.25em',
-    backgroundColor: 'rgba(153,0,153, 0.07)',
-  })
   global('.article__title', {
     marginTop: '0',
     marginBottom: '.75rem',
     fontSize: '1.1em',
+    fontWeight: typography.headingsFontWeight,
+    fontStyle: 'normal',
+    textAlign: 'center',
     backgroundColor: 'rgba(0,102,255, 0.07)',
   })
   global('.section__title::before', {

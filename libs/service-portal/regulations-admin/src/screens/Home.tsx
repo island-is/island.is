@@ -1,3 +1,5 @@
+import * as s from './Home.treat'
+
 import React from 'react'
 import { useIntl } from 'react-intl'
 
@@ -22,24 +24,26 @@ const Home = () => {
         img="./assets/images/educationLicense.svg"
       />
 
-      <TaskList />
+      <div className={s.newButtonBox}>
+        <Button
+          colorScheme="default"
+          iconType="filled"
+          preTextIconType="filled"
+          size="small"
+          variant="primary"
+          onClick={() =>
+            history.push(
+              generatePath(ServicePortalPath.RegulationsAdminEdit, {
+                id: 'new',
+              }),
+            )
+          }
+        >
+          {t(msg.createRegulation)}
+        </Button>
+      </div>
 
-      <Button
-        colorScheme="default"
-        iconType="filled"
-        preTextIconType="filled"
-        size="small"
-        variant="primary"
-        onClick={() =>
-          history.push(
-            generatePath(ServicePortalPath.RegulationsAdminEdit, {
-              id: 'new',
-            }),
-          )
-        }
-      >
-        {t(msg.createRegulation)}
-      </Button>
+      <TaskList />
 
       <ShippedRegulations />
     </Box>

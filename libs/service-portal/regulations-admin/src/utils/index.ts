@@ -5,8 +5,10 @@ import {
   toISODate,
   HTMLText,
   MinistrySlug,
+  RegulationType,
+  PlainText,
+  RegName,
 } from '@island.is/regulations'
-import startOfTomorrow from 'date-fns/startOfTomorrow'
 import { startOfDay, addDays, set } from 'date-fns/esm'
 import { OptionTypeBase, ValueType } from 'react-select'
 import { RegDraftFormSimpleProps, RegDraftForm } from '../state/types'
@@ -51,11 +53,16 @@ export const isWorkday = (date: Date): boolean => {
   return holidays[toISODate(date)] !== true
 }
 
-export const getMinDate = () => {
-  // Returns today unless the time is 15:00 or later.
-  const d = new Date()
-  const setMinDate = d.getHours() > 15 ? startOfTomorrow() : new Date()
-  return setMinDate
+export const getMinPublishDate = (fastTrack?: boolean) => {
+  let d = new Date()
+  // Shift forward one day if the time is 14:00 or later.
+  if (d.getHours() > 14) {
+    d = addDays(d, 1)
+  }
+  if (!fastTrack) {
+    d = getNextWorkday(addDays(d, 1))
+  }
+  return startOfDay(d)
 }
 
 export const getNextWorkday = (date: Date) => {
@@ -118,7 +125,7 @@ export const findValueOption = (
   if (!value) {
     return null
   }
-  const opt = options.find((opt) => opt.value === value || opt.label === value)
+  const opt = options.find((opt) => value === opt.value || value === opt.label)
   return (
     (opt && {
       value: opt.value,
@@ -128,9 +135,26 @@ export const findValueOption = (
   )
 }
 
-export const findSignatureInText = (textString: HTMLText) => {
+// ---------------------------------------------------------------------------
+
+export const findAffectedRegulationsInText = (
+  title: PlainText,
+  text: HTMLText,
+): Array<RegName> => {
+  const regs: Array<RegName> = []
+  if (findRegulationType(title) === 'amending') {
+    // TODO: actually search the title
+    regs.push('1270/2016' as RegName)
+  }
+  // TODO: search text
+  return regs
+}
+
+export const findSignatureInText = (html: HTMLText) => {
   const htmlDiv = document.createElement('div')
-  htmlDiv.innerHTML = textString
+  htmlDiv.innerHTML = html
+  // FIXME: .Dags elements are not always present.
+  // Instead loop through the last N paragraphs.
   const innertext = htmlDiv.querySelectorAll('.Dags')[0]
 
   const threeLetterMonths = [
@@ -171,12 +195,14 @@ export const findSignatureInText = (textString: HTMLText) => {
   return { ministryName, signatureDate }
 }
 
-export const findRegulationType = (textString: string) => {
-  const undirskrRe = /(?=.*breytingu á reglugerð nr)^Reglugerð um/
-  const m = textString?.match(undirskrRe)
-  const regType = m ? 'amending' : 'base'
-  return regType as 'amending' | 'base'
-}
+//
+// NOTE: Let's not rabbit-hole into guessing the effectiveDate
+//
+
+export const findRegulationType = (title: PlainText): RegulationType =>
+  /^Reglugerð um (?:\((\d+\.)\) )?breytingu á reglugerð /i.test(title)
+    ? 'amending'
+    : 'base'
 
 export const getAllGuessableValues = (text: HTMLText, title: string) => {
   const { ministryName, signatureDate } = findSignatureInText(text)
@@ -197,6 +223,8 @@ export const getAllGuessableValues = (text: HTMLText, title: string) => {
     },
   }
 }
+
+// ---------------------------------------------------------------------------
 
 export const getInputFieldsWithErrors = (
   inputs: RegDraftFormSimpleProps[],

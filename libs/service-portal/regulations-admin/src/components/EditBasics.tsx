@@ -1,87 +1,114 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import {
   Box,
   Button,
   DatePicker,
-  Input,
   Checkbox,
+  Accordion,
+  AccordionItem,
+  Inline,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { HTMLText } from '@island.is/regulations'
 import { StepComponent } from '../state/useDraftingState'
-import { RegDraftFormSimpleProps } from '../state/types'
-import { getMinDate, getNextWorkday } from '../utils'
+import { getMinPublishDate } from '../utils'
 import { Appendixes, AppendixStateItem } from './Appendixes'
+import { MagicTextarea } from './MagicTextarea'
 
 export const EditBasics: StepComponent = (props) => {
   const t = useIntl().formatMessage
   const { draft, actions } = props
+  const { updateState } = actions
 
-  const [fastTrack, setFastTrack] = useState(false)
   const [appendixes, setAppendixes] = useState(
     [] as readonly AppendixStateItem[],
   )
 
   const textRef = useRef(() => draft.text.value)
-  const notesRef = useRef(() => draft.draftingNotes?.value)
-
-  const onAnyInputChange = useCallback(
-    (data: { name: RegDraftFormSimpleProps; value: string | Date }) => {
-      actions.updateState({ ...data })
-    },
-    [actions],
-  )
+  const notesRef = useRef(() => draft.draftingNotes.value)
 
   const [showDraftingNotes, setShowDraftingNotes] = useState(
     !!draft.draftingNotes.value,
   )
 
-  const fastTrackDate = fastTrack ? getNextWorkday(new Date()) : null
-  const selectedDate = draft.idealPublishDate?.value
-    ? new Date(draft.idealPublishDate.value)
-    : null
-
-  console.log('appendixes', appendixes)
   return (
     <>
       <Box marginBottom={3}>
-        <Input
+        <MagicTextarea
           label={t(msg.title)}
           name="title"
-          value={draft.title?.value}
-          onChange={(e) =>
-            onAnyInputChange({
-              name: 'title',
-              value: e.target.value,
-            })
-          }
-          required
+          value={draft.title.value}
+          onChange={(value) => {
+            updateState('title', value)
+          }}
           errorMessage={t(msg.requiredFieldError)}
           hasError={!!draft.title?.error}
         />
       </Box>
 
+      <Box>
+        <Inline space="gutter" alignY="center">
+          <DatePicker
+            size="sm"
+            label={t(msg.idealPublishDate)}
+            placeholderText={t(msg.idealPublishDate_default)}
+            minDate={getMinPublishDate(draft.fastTrack.value)}
+            selected={draft.idealPublishDate.value}
+            handleChange={(date: Date) => updateState('idealPublishDate', date)}
+            hasError={!!draft.idealPublishDate.error}
+            errorMessage={t(msg.requiredFieldError)}
+            // excludeDates={[]} --> Do we want to exclude holidays and weekends from the calendar?
+          />
+          <Checkbox
+            label={t(msg.applyForFastTrack)}
+            labelVariant="default"
+            checked={draft.fastTrack.value}
+            onChange={() => {
+              updateState('fastTrack', !draft.fastTrack.value)
+            }}
+          />
+        </Inline>
+      </Box>
       <Box marginBottom={6}>
-        <EditorInput
-          label={t(msg.text)}
-          baseText={'' as HTMLText}
-          initialText={draft.text.value}
-          isImpact={false}
-          draftId={draft.id}
-          valueRef={textRef}
-          error={!!draft.text?.error}
-          onChange={() =>
-            onAnyInputChange({
-              name: 'text',
-              value: textRef.current(),
-            })
-          }
-        />
+        {!!draft.idealPublishDate.value && (
+          <Button
+            size="small"
+            variant="text"
+            preTextIcon="close"
+            onClick={() => {
+              updateState('idealPublishDate', undefined)
+            }}
+          >
+            {t(msg.idealPublishDate_default)}
+          </Button>
+        )}
       </Box>
 
-      <Box marginBottom={6}>
+      <Box marginTop={6} marginBottom={[6, 6, 8]}>
+        <Accordion>
+          <AccordionItem
+            id={draft.id}
+            label={t(msg.text)}
+            startExpanded={!draft.text.value || !!draft.text.error}
+          >
+            <Box marginBottom={[4, 4, 8]}>
+              <EditorInput
+                label={t(msg.text)}
+                baseText={'' as HTMLText}
+                isImpact={false}
+                draftId={draft.id}
+                valueRef={textRef}
+                error={!!draft.text.error}
+                onBlur={() => {
+                  updateState('text', textRef.current())
+                }}
+              />
+            </Box>
+          </AccordionItem>
+        </Accordion>
+
         <Appendixes
           appendixes={appendixes}
           onChange={(appendixCallback) =>
@@ -91,68 +118,44 @@ export const EditBasics: StepComponent = (props) => {
         />
       </Box>
 
-      <Box marginBottom={6}>
-        <DatePicker
-          label={t(msg.idealPublishDate)}
-          placeholderText={t(msg.idealPublishDate_soon)}
-          minDate={getMinDate()}
-          selected={fastTrackDate || selectedDate}
-          handleChange={(date: Date) =>
-            onAnyInputChange({
-              name: 'idealPublishDate',
-              value: getNextWorkday(date),
-            })
-          } // Auto selects next workday (Excludes weekends and holidays).
-          required
-          hasError={!!draft.idealPublishDate?.error && !fastTrackDate}
-          errorMessage={t(msg.requiredFieldError)}
-          // excludeDates={[]} --> Do we want to exclude holidays and weekends from the calendar?
-        />
-        {/*
-          TODO: Add fast track toggler, but only make it shift the minDate to today
-          Then let the up-stream state reducer decide if the selected date is indeed a fastTrack request
-
-          draft.fastTrack should alaways be a derived value, based on idealPublishDate
-          ...and **POSSIBLY** only when the draftingStatus is "draft" ??? Needs customer input... Not important to resolve right away.
-        */}
-        <Box marginTop={1}>
-          <Checkbox
-            label={t(msg.applyForFastTrack)}
-            labelVariant="default"
-            checked={fastTrack}
-            onChange={(e) => setFastTrack(e.target.checked)}
-          />
-        </Box>
-      </Box>
-
-      <Box marginBottom={6}>
-        {showDraftingNotes ? (
+      <Box>
+        {showDraftingNotes && (
           <EditorInput
             label={t(msg.draftingNotes)}
-            initialText={draft.draftingNotes.value}
             isImpact={false}
             draftId={`${draft.id}-notes`}
             valueRef={notesRef}
-            onChange={() =>
-              onAnyInputChange({
-                name: 'draftingNotes',
-                value: notesRef
+            onBlur={() =>
+              updateState(
+                'draftingNotes',
+                notesRef
                   .current()
-                  .replace(/(<(?!\/)[^>]+>)+(<\/[^>]+>)+/, ''), // Replaces empty HTML with empty string ('')
-              })
+                  // Replace empty HTML with empty string ('')
+                  .replace(/(<(?!\/)[^>]+>)+(<\/[^>]+>)+/, '') as HTMLText,
+              )
             }
           />
-        ) : (
+        )}
+        {!showDraftingNotes ? (
           <Button
             variant="text"
             preTextIcon="add"
             // size="large"
-            onClick={() => {
-              setShowDraftingNotes(true)
-            }}
+            onClick={() => setShowDraftingNotes(true)}
           >
             {t(msg.draftingNotes)}
           </Button>
+        ) : (
+          !draft.draftingNotes.value && (
+            <Button
+              variant="text"
+              preTextIcon="remove"
+              size="small"
+              onClick={() => setShowDraftingNotes(false)}
+            >
+              {t(msg.draftingNotes_hide)}
+            </Button>
+          )
         )}
       </Box>
     </>

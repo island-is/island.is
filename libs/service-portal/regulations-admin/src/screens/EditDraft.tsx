@@ -7,9 +7,12 @@ import { RegulationDraftId } from '@island.is/regulations/admin'
 import { isUuid } from 'uuidv4'
 import { EditBasics } from '../components/EditBasics'
 import { EditMeta } from '../components/EditMeta'
+import { EditImpacts } from '../components/EditImpacts'
+import { EditReview } from '../components/EditReview'
 import { editorMsgs } from '../messages'
 import { Step } from '../types'
 import { ButtonBar } from '../components/ButtonBar'
+import { SaveDeleteButtons } from '../components/SaveDeleteButtons'
 import {
   useDraftingState,
   steps,
@@ -17,19 +20,8 @@ import {
 } from '../state/useDraftingState'
 import { DraftIdFromParam } from '../state/types'
 import { MessageDescriptor } from 'react-intl'
-// import { gql, useQuery } from '@apollo/client'
-// import { Query } from '@island.is/api/schema'
 
-// const RegulationDraftQuery = gql`
-//   query regulationDraft {
-//     regulationDraft {
-//       id
-//       school
-//       programme
-//       date
-//     }
-//   }
-// `
+// ---------------------------------------------------------------------------
 
 const stepData: Record<
   Step,
@@ -49,11 +41,11 @@ const stepData: Record<
   },
   impacts: {
     title: editorMsgs.step3Headline,
-    Component: () => <p>Skref 3</p>,
+    Component: EditImpacts,
   },
   review: {
     title: editorMsgs.step4Headline,
-    Component: () => <p>Skref 4</p>,
+    Component: EditReview,
   },
 }
 
@@ -81,7 +73,7 @@ const assertDraftId = (maybeId: string): DraftIdFromParam => {
 
 // ---------------------------------------------------------------------------
 
-const Edit = () => {
+const EditDraft = () => {
   useNamespaces('ap.regulations-admin')
   const t = useLocale().formatMessage
   const params = useParams<{ id: string; step?: string }>()
@@ -89,7 +81,7 @@ const Edit = () => {
   const stepName = assertStep(params.step)
 
   const { state, stepNav, actions } = useDraftingState(id, stepName)
-  const { loading, error, savingStatus, draft } = state
+  const { loading, draft } = state
 
   const step = stepData[stepName]
 
@@ -110,10 +102,12 @@ const Edit = () => {
         )}
       </Box>
 
+      <SaveDeleteButtons id={id} actions={actions} wrap />
+
       {draft ? (
         <step.Component actions={actions} new={id === 'new'} draft={draft} />
       ) : (
-        <SkeletonLoader height={120} />
+        <SkeletonLoader height={120} repeat={2} space={3} />
       )}
 
       <ButtonBar id={id} stepNav={stepNav} actions={actions} />
@@ -121,4 +115,4 @@ const Edit = () => {
   )
 }
 
-export default Edit
+export default EditDraft

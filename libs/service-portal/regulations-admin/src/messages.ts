@@ -12,7 +12,7 @@ export const editorMsgs = defineMessages({
   },
   step3Headline: {
     id: 'ap.regulations-admin:draft-step3-headline',
-    defaultMessage: 'Breytingar og brottfellingar (áhrifafærslur)',
+    defaultMessage: 'Breytingar / brottfellingar',
   },
   step4Headline: {
     id: 'ap.regulations-admin:draft-step4-headline',
@@ -62,13 +62,21 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-btn-appendix-remove',
     defaultMessage: 'Eyða viðauka {idx}',
   },
+  appendix_remove_short: {
+    id: 'ap.regulations-admin:draft-btn-appendix-remove-short',
+    defaultMessage: 'Eyða',
+  },
   appendix_remove_confirm: {
     id: 'ap.regulations-admin:draft-appendix-remove-confirm',
     defaultMessage: 'Eyða endanlega viðauka {idx}?',
   },
   appendix_shiftup: {
     id: 'ap.regulations-admin:draft-btn-appendix-shiftup',
-    defaultMessage: 'Færa viðauka framar {idx}',
+    defaultMessage: 'Færa viðauka {idx} framar í röðinni',
+  },
+  appendix_shiftup_short: {
+    id: 'ap.regulations-admin:draft-btn-appendix-shiftup-short',
+    defaultMessage: 'Færa upp',
   },
 
   comments: {
@@ -106,12 +114,17 @@ export const editorMsgs = defineMessages({
     defaultMessage: 'Minnispunktar / Ábendingar',
   },
 
+  draftingNotes_hide: {
+    id: 'ap.regulations-admin:draft-labels-draftingnotes-hide',
+    defaultMessage: 'Fela minnispunkta',
+  },
+
   idealPublishDate: {
     id: 'ap.regulations-admin:draft-labels-idealpublishdate',
     defaultMessage: 'Ósk um útgáfudag',
   },
-  idealPublishDate_soon: {
-    id: 'ap.regulations-admin:draft-opts-idealpublishdate-soon',
+  idealPublishDate_default: {
+    id: 'ap.regulations-admin:draft-opts-idealpublishdate-default',
     defaultMessage: 'Við fyrsta tækifæri',
   },
   idealPublishDate_fastTrack: {
@@ -127,18 +140,18 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-labels-ministry',
     defaultMessage: 'Ráðuneyti',
   },
-  chooseMinistry: {
+  ministryPlaceholder: {
     id: 'ap.regulations-admin:draft-labels-choose-ministry',
     defaultMessage: 'Veldu ráðuneyti',
-  },
-  legacyMinistry: {
-    id: 'ap.regulations-admin:draft-labels-legacy-ministry',
-    defaultMessage: '(fyrrverandi ráðuneyti)',
   },
 
   lawChapter: {
     id: 'ap.regulations-admin:draft-labels-lawchapter',
-    defaultMessage: 'Kalar í lagasasfni',
+    defaultMessage: 'Kaflar í lagasasfni',
+  },
+  lawChapterPlaceholder: {
+    id: 'ap.regulations-admin:draft-labels-choose-ministry',
+    defaultMessage: 'Veldu lagakafla',
   },
   lawChapter_add: {
     id: 'ap.regulations-admin:draft-btn-lawchapter-add',
@@ -160,7 +173,7 @@ export const editorMsgs = defineMessages({
   },
   effectiveDate_default: {
     id: 'ap.regulations-admin:draft-opts-effectivedate-default',
-    defaultMessage: 'Á útgáfudegi',
+    defaultMessage: 'Tekur þegar gildi', // 'Á útgáfudegi'
   },
 
   type: {
@@ -183,6 +196,32 @@ export const editorMsgs = defineMessages({
   change_add: {
     id: 'ap.regulations-admin:draft-btn-change-add',
     defaultMessage: 'Ný texta-/ákvæðabreyting',
+  },
+
+  impactRegSelect: {
+    id: 'ap.regulations-admin:draft-label-impactedreg',
+    defaultMessage: 'Reglugerð sem breytist',
+  },
+  impactRegSelect_placeholder: {
+    id: 'ap.regulations-admin:draft-opts-impactedreg_placeholder',
+    defaultMessage: 'Veldu reglugerð',
+  },
+
+  chooseImpactType: {
+    id: 'ap.regulations-admin:draft-legend-impacttype',
+    defaultMessage: 'Hvað viltu gera við reglugerðina?',
+  },
+  chooseImpactType_cancel: {
+    id: 'ap.regulations-admin:draft-legend-impacttype-cancel',
+    defaultMessage: 'Fella hana brott',
+  },
+  chooseImpactType_change: {
+    id: 'ap.regulations-admin:draft-legend-impacttype-change',
+    defaultMessage: 'Gera textabreytingar',
+  },
+  chooseImpactType_or: {
+    id: 'ap.regulations-admin:draft-legend-impacttype-or',
+    defaultMessage: 'eða',
   },
 
   cancallation_save: {
@@ -253,11 +292,11 @@ export const homeMessages = defineMessages({
 
   taskListTitle: {
     id: 'ap.regulations-admin:tasklist-title',
-    defaultMessage: 'Í vinnslu',
+    defaultMessage: 'Reglugerðir í vinnslu',
   },
   shippedTitle: {
     id: 'ap.regulations-admin:shipped-title',
-    defaultMessage: 'Bíður formlegrar birtingar',
+    defaultMessage: 'Reglugerðir sem bíða formlegrar birtingar',
   },
   createRegulation: {
     id: 'ap.regulations-admin:create-regulation-cta',
@@ -269,7 +308,7 @@ export const homeMessages = defineMessages({
     defaultMessage: 'Halda áfram',
   },
 
-  publishSoon: editorMsgs.idealPublishDate_soon,
+  publishSoon: editorMsgs.idealPublishDate_default,
   publishFastTrack: editorMsgs.idealPublishDate_fastTrack,
   publishToday: {
     id: 'ap.regulations-admin:idealpublishdate-today',
@@ -338,5 +377,9 @@ export const buttonsMsgs = defineMessages({
   delete: {
     id: 'ap.regulations-admin:btn-delete',
     defaultMessage: 'Eyða færslu',
+  },
+  confirmDelete: {
+    id: 'ap.regulations-admin:btn-delete-confirm',
+    defaultMessage: 'Þessu uppkasti að reglugerð verður eytt varanlega!',
   },
 })

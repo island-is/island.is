@@ -1,25 +1,19 @@
 import * as s from './EditorInput.treat'
 import { classes } from './Editor.treat'
 
-import React, { MutableRefObject, useState } from 'react'
+import React, { useState } from 'react'
 import { Box } from '@island.is/island-ui/core'
 import {
   Editor as RegulationsEditor,
   EditorProps,
 } from '@hugsmidjan/regulations-editor/Editor'
-import { HTMLText } from '@island.is/regulations'
 import cn from 'classnames'
 
-type EditorInputProps = Omit<EditorProps, 'valueRef' | 'name'> & {
+type EditorInputProps = Omit<EditorProps, 'name'> & {
   label: string
   // make EditorProps more strict with branded types
-  baseText?: HTMLText
   error?: boolean
-  initialText?: HTMLText
-  valueRef: MutableRefObject<() => HTMLText>
   draftId: string
-  onFocus?: () => void
-  onBlur?: () => void
 }
 
 export const EditorInput = (props: EditorInputProps) => {
@@ -30,7 +24,7 @@ export const EditorInput = (props: EditorInputProps) => {
   const errorId = hasError && draftId + '-error'
 
   return (
-    <div>
+    <>
       <Box
         background="white"
         className={cn(s.container, {
@@ -60,14 +54,14 @@ export const EditorInput = (props: EditorInputProps) => {
       </Box>
       {hasError && (
         <div
-          id={errorId}
           className={s.errorMessage}
+          id={errorId}
           aria-live="assertive"
           data-testid="inputErrorMessage"
         >
           {error}
         </div>
       )}
-    </div>
+    </>
   )
 }

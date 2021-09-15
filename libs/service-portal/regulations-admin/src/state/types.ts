@@ -17,6 +17,7 @@ import { Step } from '../types'
 export type DraftIdFromParam = 'new' | RegulationDraftId
 
 export type StepNav = {
+  name: Step
   prev?: Step
   next?: Step
 }
@@ -60,7 +61,7 @@ export type RegDraftForm = BodyDraftFields & {
   idealPublishDate: DraftField<Date | undefined>
   signatureDate: DraftField<Date | undefined>
   effectiveDate: DraftField<Date | undefined>
-  lawChapters: DraftField<ReadonlyArray<LawChapterSlug> | undefined>
+  lawChapters: DraftField<ReadonlyArray<LawChapterSlug>>
   ministry: DraftField<MinistrySlug | undefined>
   type: DraftField<RegulationType | undefined>
 
@@ -71,7 +72,7 @@ export type RegDraftForm = BodyDraftFields & {
   authors: DraftField<ReadonlyArray<Kennitala>>
 
   id: RegulationDraft['id']
-  fastTrack: RegulationDraft['fastTrack']
+  fastTrack: DraftField<boolean>
 }
 
 export type DraftingState = {
@@ -96,6 +97,7 @@ export type RegDraftFormSimpleProps =
   | 'title'
   | 'text'
   | 'idealPublishDate' // This prop needs its own action that checks for working days and updates the `fastTrack` flag accordingly
+  | 'fastTrack'
   | 'signatureDate' // Need to be checked and must never be **after* `idealPublishDate`
   | 'effectiveDate' // Need to be checked and must never be **before** `idealPublishDate`
   // | 'lawChapters'
@@ -114,7 +116,7 @@ export type Action =
   | {
       type: 'UPDATE_LAWCHAPTER_PROP'
       action?: 'add' | 'delete'
-      value: LawChapterSlug | undefined
+      value: LawChapterSlug
     }
   | {
       type: 'UPDATE_MULTIPLE_PROPS'

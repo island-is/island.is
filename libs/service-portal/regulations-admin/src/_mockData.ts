@@ -182,4 +182,10 @@ export const mockRegulationOptions: RegulationList = [
     title: 'Reglugerð um eitthvað gamalt og gott.',
     migrated: false,
   },
+  {
+    name: '1270/2016' as RegName,
+    title:
+      'Reglugerð um ákvörðun framlaga úr sveitarsjóði til sjálfstætt rekinna grunnskóla.',
+    migrated: true,
+  },
 ]

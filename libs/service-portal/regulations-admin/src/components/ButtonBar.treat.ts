@@ -1,4 +1,4 @@
-import { globalStyle, style } from 'treat'
+import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 const { border, spacing } = theme
 
@@ -8,8 +8,7 @@ export const wrapper = style({
   display: 'flex',
   flexFlow: 'row wrap',
   justifyContent: 'center',
-  borderTopWidth: border.width.standard,
-  borderTopColor: border.color.standard,
+  alignItems: 'center',
   marginLeft: -halfGap,
   marginRight: -halfGap,
 })
@@ -22,10 +21,13 @@ export const forward = style({
   order: 1,
   marginLeft: 'auto',
 })
-export const save = style({
+
+export const deleteDraft = style({
   marginLeft: halfGap,
   marginRight: halfGap,
 })
+export const saveDraft = deleteDraft
+
 export const propose = style({
   marginLeft: halfGap,
   marginRight: halfGap,

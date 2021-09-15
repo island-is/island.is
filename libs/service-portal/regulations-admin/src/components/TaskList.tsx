@@ -33,8 +33,8 @@ export const TaskList = () => {
 
   if (loading) {
     return (
-      <Box marginBottom={[4, 4, 6]}>
-        <SkeletonLoader height={80} repeat={3} space={1} />
+      <Box marginBottom={[4, 4, 8]}>
+        <SkeletonLoader height={80} repeat={3} space={3} />
       </Box>
     )
   }
@@ -68,11 +68,11 @@ export const TaskList = () => {
   }
 
   return (
-    <Box marginBottom={[4, 4, 6]}>
-      <Text variant="h2" as="h2" marginBottom={2}>
+    <Box marginBottom={[4, 4, 8]}>
+      <Text variant="h3" as="h2" paddingY={[1, 1]} marginBottom={[2, 2, 3]}>
         {formatMessage(msg.taskListTitle)}
       </Text>
-      <Stack space={2}>
+      <Stack space={3}>
         {getDraftRegulations.map((item: RegulationDraft) => {
           const { id, title, idealPublishDate, draftingStatus, authors } = item
           // const statusLabel = formatMessage(statusMsgs[draftingStatus])
@@ -87,7 +87,7 @@ export const TaskList = () => {
                 label: formatMessage(
                   statusMsgs[draftingStatus as DraftingStatus],
                 ),
-                outlined: true,
+                outlined: false,
                 variant: draftingStatus === 'proposal' ? 'blueberry' : 'red',
               }}
               // text={authors?.map(({ name }) => name).join(', ')}
@@ -95,9 +95,9 @@ export const TaskList = () => {
                 ?.map((item) => item.name || item.authorId)
                 .join(', ')}
               cta={{
-                // icon: 'arrowForward',
+                icon: 'arrowForward',
                 label: formatMessage(msg.cta),
-                // variant: draftingStatus === 'draft' ? 'ghost' : undefined,
+                variant: 'ghost',
                 onClick: () => {
                   history.push(
                     generatePath(ServicePortalPath.RegulationsAdminEdit, {
