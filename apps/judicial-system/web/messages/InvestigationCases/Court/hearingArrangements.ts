@@ -87,6 +87,29 @@ export const icHearingArrangements = {
       description:
         'Notaður sem titill fyrir tilkynningagluggan á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
     },
+    allPresentText: {
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.modal.all_present_text',
+      defaultMessage:
+        'Tilkynning um fyrirtöku verður send á saksóknara og verjanda, hafi verjandi verið skráður.',
+      description:
+        'Notaður sem texti í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fulltrúi ákæruvalds og verjandi mæta.',
+    },
+    allPresentSpokespersonText: {
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.modal.all_present_spokesperson_text',
+      defaultMessage:
+        'Tilkynning um fyrirtöku verður send á saksóknara og talsmann, hafi talsmaður verið skráður.',
+      description:
+        'Notaður sem texti í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fulltrúi ákæruvalds mætir og dómari kallar til talsmann.',
+    },
+    prosecutorPresentText: {
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.modal.prosecutor_present_text',
+      defaultMessage: 'Tilkynning um fyrirtöku verður send á saksóknara.',
+      description:
+        'Notaður sem texti í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fulltrúi ákæruvalds mætir.',
+    },
     remoteSessionText: {
       id:
         'judicial.system.investigation_cases:hearing_arrangements.modal.remote_session_text',
@@ -94,13 +117,6 @@ export const icHearingArrangements = {
         'Ekki er sjálfkrafa gert ráð fyrir boðun eða mætingu af hálfu málsaðila eða málflytjenda í þinghaldið.',
       description:
         'Notaður sem texti fyrir tilkynningagluggan á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
-    },
-    text: {
-      id: 'judicial.system.investigation_cases:hearing_arrangements.modal.text',
-      defaultMessage:
-        'Tilkynning um fyrirtöku hefur verið send á saksóknara{announcementSuffix}',
-      description:
-        'Notaður sem texti í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum.',
     },
     secondaryButtonText: {
       id:
