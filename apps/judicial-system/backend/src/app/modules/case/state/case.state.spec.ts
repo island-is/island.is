@@ -53,6 +53,14 @@ describe('Transition Case', () => {
     expect(act).toThrow(ForbiddenException)
   })
 
+  it('should not open a dismissed case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.OPEN, CaseState.DISMISSED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
   it('should not open a deleted case', () => {
     // Arrange
     const act = () => transitionCase(CaseTransition.OPEN, CaseState.DELETED)
@@ -104,6 +112,14 @@ describe('Transition Case', () => {
   it('should not submit a rejected case', () => {
     // Arrange
     const act = () => transitionCase(CaseTransition.SUBMIT, CaseState.REJECTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not submit a dismissed case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.SUBMIT, CaseState.DISMISSED)
 
     // Act and assert
     expect(act).toThrow(ForbiddenException)
@@ -165,6 +181,15 @@ describe('Transition Case', () => {
     expect(act).toThrow(ForbiddenException)
   })
 
+  it('should not receive a dismissed case', () => {
+    // Arrange
+    const act = () =>
+      transitionCase(CaseTransition.RECEIVE, CaseState.DISMISSED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
   it('should not receive a deleted case', () => {
     // Arrange
     const act = () => transitionCase(CaseTransition.RECEIVE, CaseState.DELETED)
@@ -216,6 +241,14 @@ describe('Transition Case', () => {
   it('should not accept a rejected case', () => {
     // Arrange
     const act = () => transitionCase(CaseTransition.ACCEPT, CaseState.REJECTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not accept a dismissed case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.ACCEPT, CaseState.DISMISSED)
 
     // Act and assert
     expect(act).toThrow(ForbiddenException)
@@ -277,6 +310,14 @@ describe('Transition Case', () => {
     expect(act).toThrow(ForbiddenException)
   })
 
+  it('should not reject a dismissed case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.REJECT, CaseState.DISMISSED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
   it('should not reject a deleted case', () => {
     // Arrange
     const act = () => transitionCase(CaseTransition.REJECT, CaseState.DELETED)
@@ -285,7 +326,73 @@ describe('Transition Case', () => {
     expect(act).toThrow(ForbiddenException)
   })
 
-  it('should delete a new caes', () => {
+  it('should not dismiss a new case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.DISMISS, CaseState.NEW)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not dismiss an opened case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.DISMISS, CaseState.DRAFT)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not dismiss a submitted case', () => {
+    // Arrange
+    const act = () =>
+      transitionCase(CaseTransition.DISMISS, CaseState.SUBMITTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should dismiss a received case', () => {
+    // Act
+    const res = transitionCase(CaseTransition.DISMISS, CaseState.RECEIVED)
+
+    // Assert
+    expect(res).toStrictEqual(CaseState.DISMISSED)
+  })
+
+  it('should not dismiss an accepted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.DISMISS, CaseState.ACCEPTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not dismiss a rejected case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.DISMISS, CaseState.REJECTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not dismiss a dismissed case', () => {
+    // Arrange
+    const act = () =>
+      transitionCase(CaseTransition.DISMISS, CaseState.DISMISSED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not dismiss a deleted case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.DISMISS, CaseState.DELETED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should delete a new case', () => {
     // Act
     const res = transitionCase(CaseTransition.DELETE, CaseState.NEW)
 
@@ -293,7 +400,7 @@ describe('Transition Case', () => {
     expect(res).toStrictEqual(CaseState.DELETED)
   })
 
-  it('should delete an opened caes', () => {
+  it('should delete an opened case', () => {
     // Act
     const res = transitionCase(CaseTransition.DELETE, CaseState.DRAFT)
 
@@ -328,6 +435,14 @@ describe('Transition Case', () => {
   it('should not delete a rejected case', () => {
     // Arrange
     const act = () => transitionCase(CaseTransition.DELETE, CaseState.REJECTED)
+
+    // Act and assert
+    expect(act).toThrow(ForbiddenException)
+  })
+
+  it('should not delete a dismissed case', () => {
+    // Arrange
+    const act = () => transitionCase(CaseTransition.DELETE, CaseState.DISMISSED)
 
     // Act and assert
     expect(act).toThrow(ForbiddenException)
