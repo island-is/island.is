@@ -4,6 +4,7 @@ import { Nav } from '@island.is/financial-aid-web/veita/src/components/Nav'
 
 import * as styles from './AdminLayout.treat'
 import cn from 'classnames'
+import { useRouter } from 'next/router'
 
 interface PageProps {
   children: ReactNode
@@ -15,7 +16,16 @@ const AdminLayout = ({ children, className }: PageProps) => {
     document.title = 'Veita • Umsóknir um fjárhagsaðstoð'
   }, [])
 
+  const router = useRouter()
   const [showNavMobile, setShowNavMobile] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (showNavMobile) {
+      router.events.on('routeChangeComplete', () => {
+        setShowNavMobile(false)
+      })
+    }
+  }, [showNavMobile])
 
   return (
     <>
