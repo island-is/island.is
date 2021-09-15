@@ -27,7 +27,11 @@ const Nav = () => {
   const { admin } = useContext(AdminContext)
 
   return (
-    <nav className={styles.container}>
+    <nav
+      className={cn({
+        [`${styles.container}`]: true,
+      })}
+    >
       <header>
         <div className={`${styles.logoContainer} logoContainer`}>
           <Logo />
