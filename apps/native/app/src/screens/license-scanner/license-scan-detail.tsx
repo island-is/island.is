@@ -36,7 +36,7 @@ const TimerCounter = styled.Text`
 `
 const Actions = styled.View``
 
-const VIEW_TIMEOUT = 10
+const VIEW_TIMEOUT = 60
 
 export const LicenseScanDetailScreen: NavigationFunctionComponent<BarCodeEvent> = ({
   data,
