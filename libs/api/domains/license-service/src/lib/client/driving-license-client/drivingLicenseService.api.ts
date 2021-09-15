@@ -397,6 +397,7 @@ export class GenericDrivingLicenseApi
     if (!res.ok) {
       const responseErrors: PkPassServiceErrorResponse = {}
       try {
+        // Service returns 400 for invalid data with details in the body
         const json = await res.json()
         responseErrors.message = json?.message ?? undefined
         responseErrors.status = json?.status ?? undefined
@@ -405,14 +406,22 @@ export class GenericDrivingLicenseApi
         // noop
       }
 
-      this.logger.warn(
-        'Expected 200 status for pkpass verify drivers license service',
-        {
+      // If we don't have a status in the body and a non-200 response, log it
+      if (!responseErrors.status) {
+        let message =
+          'Expected 200 status or 400 status with info in message for pkpass verify drivers license service'
+
+        if (res.status === 400) {
+          message =
+            'Expected 400 status with info in message for pkpass verify drivers license service'
+        }
+
+        this.logger.warn(message, {
           status: res.status,
           statusText: res.statusText,
           ...responseErrors,
-        },
-      )
+        })
+      }
 
       return {
         valid: false,
