@@ -25,8 +25,22 @@ const Files = ({ header, uploadFiles, fileKey }: Props) => {
     onRetry,
   } = useFileUpload(uploadFiles)
 
+  const stringifyFile = (file: UploadFile) => {
+    return {
+      key: file.key,
+      name: file.name,
+      size: file.size,
+      status: file.status,
+      percent: file?.percent,
+    }
+  }
+
   useEffect(() => {
-    const formFiles = files.filter((f) => f.status === 'done')
+    const formFiles = files
+      .filter((f) => f.status === 'done')
+      .map((f) => {
+        return stringifyFile(f)
+      })
 
     updateForm({ ...form, [fileKey]: formFiles })
   }, [files])

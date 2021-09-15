@@ -252,7 +252,7 @@ const ApplicationProfile = () => {
             className={`contentUp delay-125 ${styles.widthAlmostFull}`}
           />
 
-          <History />
+          <History applicantName={application.name} />
         </Box>
 
         {application.state && (
