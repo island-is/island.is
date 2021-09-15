@@ -13,9 +13,6 @@ export class GraphCard {
   @Field({ nullable: true })
   organization?: string
 
-  @Field({ nullable: true })
-  graph?: null
-
   @Field()
   data!: string
 
@@ -37,7 +34,6 @@ export const mapGraphCard = ({ fields }: IGraphCard): GraphCard => {
     graphTitle: fields?.graphTitle ?? '',
     graphDescription: fields?.graphDescription ?? '',
     organization: fields?.organization ?? '',
-    graph: null,
     data: fields.data ? JSON.stringify(fields.data) : '',
     datakeys: fields.datakeys ? JSON.stringify(fields.datakeys) : '',
     type: fields?.type ?? '',
