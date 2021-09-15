@@ -8,7 +8,7 @@ import {
   ADULT2,
   CHILD1,
   CHILD2,
-} from './mock-data/my-family'
+} from './__mock-data__/my-family'
 import {
   ISLFjolskyldan,
   NationalRegistryApi,
@@ -16,6 +16,20 @@ import {
 import { MMSApi } from '@island.is/clients/mms'
 import { S3Service } from './s3.service'
 import Soap from 'soap'
+import * as kennitala from 'kennitala'
+
+jest.mock('kennitala')
+
+interface IKennitalaMock extends jest.Mock<typeof kennitala> {
+  __setAge: (nationalId: string, age: number) => void
+}
+
+const kennitalaMock = <IKennitalaMock>(kennitala as unknown)
+
+kennitalaMock.__setAge(ADULT1.Kennitala, 39)
+kennitalaMock.__setAge(ADULT2.Kennitala, 42)
+kennitalaMock.__setAge(CHILD1.Kennitala, 8)
+kennitalaMock.__setAge(CHILD2.Kennitala, 5)
 
 const config = {
   fileDownloadBucket: '',
@@ -84,12 +98,13 @@ describe('EducationService', () => {
       ).not.toBeUndefined()
     })
 
+    it('should return your children', async () => {
+      expect(family).toContainEqual(CHILD1)
+      expect(family).toContainEqual(CHILD2)
+    })
+
     it('should return consistantly ordered results', async () => {
-      expect(family.map(({ Kennitala }) => Kennitala)).toStrictEqual([
-        ADULT1.Kennitala,
-        CHILD1.Kennitala,
-        CHILD2.Kennitala,
-      ])
+      expect(family).toStrictEqual([ADULT1, CHILD1, CHILD2])
     })
   })
 
@@ -112,15 +127,17 @@ describe('EducationService', () => {
 
   describe('canView()', () => {
     it('everybody can view themselves', async () => {
-      expect(service.canView(ADULT1, { ...ADULT1 })).toStrictEqual(true)
-      expect(service.canView(ADULT2, { ...ADULT2 })).toStrictEqual(true)
-      expect(service.canView(CHILD1, { ...CHILD1 })).toStrictEqual(true)
-      expect(service.canView(CHILD2, { ...CHILD2 })).toStrictEqual(true)
+      expect(service.canView(ADULT1, ADULT1)).toStrictEqual(true)
+      expect(service.canView(ADULT2, ADULT2)).toStrictEqual(true)
+      expect(service.canView(CHILD1, CHILD1)).toStrictEqual(true)
+      expect(service.canView(CHILD2, CHILD2)).toStrictEqual(true)
     })
 
     it('an adult can view their children', async () => {
       expect(service.canView(ADULT1, CHILD1)).toStrictEqual(true)
       expect(service.canView(ADULT1, CHILD2)).toStrictEqual(true)
+      expect(service.canView(ADULT2, CHILD1)).toStrictEqual(true)
+      expect(service.canView(ADULT2, CHILD2)).toStrictEqual(true)
     })
 
     it('an adult can not view their spouse', async () => {
