@@ -18,7 +18,7 @@ const Host = styled.View`
 const Header = styled.View`
   flex-direction: row;
   align-items: center;
-  padding: 24px;
+  padding: 24px 24px 14px 24px;
 `
 
 const Subtitle = styled.View`
@@ -74,6 +74,21 @@ const Content = styled.View`
   padding-top: 0px;
 `
 
+const ErrorContent = styled.View`
+  flex-direction: row;
+  padding: 16px 24px;
+  padding-top: 20px;
+`;
+
+const Splitter = styled.View`
+  height: 1px;
+  margin-right: 24px;
+  margin-left: 24px;
+  margin-bottom: 20px;
+  background-color: rgba(98, 80, 88, 1);
+  opacity: 0.1;
+`;
+
 const Label = styled.Text`
   ${font({
     fontSize: 12,
@@ -99,7 +114,8 @@ const Photo = styled.Image`
   width: 79px;
   height: 109px;
   background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
+  border-radius: 6px;
+  margin-right: 32px;
 `
 
 const Left = styled.View`
@@ -189,7 +205,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
         <Logo source={agencyLogo} />
       </Header>
       {error ? (
-        <Content>
+        <ErrorContent>
           <Left>
             <LabelGroup>
               <Label>
@@ -200,47 +216,53 @@ export function ScanResultCard(props: ScanResultCardProps) {
               <Value>{errorMessage}</Value>
             </LabelGroup>
           </Left>
-        </Content>
+        </ErrorContent>
       ) : (
-        <Content>
-          <Left>
-            <LabelGroup>
-              <Label>
-                {intl.formatMessage({ id: 'licenseScannerResult.name' })}
-              </Label>
-              {loading ? (
-                <Placeholder style={{ width: 120 }} />
-              ) : (
-                <Value>{name}</Value>
-              )}
-            </LabelGroup>
-            <LabelGroup>
-              <Label>
-                {intl.formatMessage({ id: 'licenseScannerResult.birthDate' })}
-              </Label>
-              {loading ? (
-                <Placeholder style={{ width: 120 }} />
-              ) : (
-                <Value>{birthDate ?? `---`}</Value>
-              )}
-            </LabelGroup>
-            {data?.map(({ key, value }) => {
-              return (
-                <LabelGroup key={key}>
-                  <Label>{key}</Label>
-                  {loading ? (
-                    <Placeholder style={{ width: 120 }} />
-                  ) : (
-                    <Value>{value}</Value>
-                  )}
-                </LabelGroup>
-              )
-            })}
-          </Left>
-          {photo && (
-            <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
-          )}
-        </Content>
+        <>
+          <Splitter />
+
+          <Content>
+            {loading ? (
+              <Placeholder style={{ width: 79, height: 109, marginRight: 32 }} />
+            ) : photo && (
+              <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
+            )}
+            <Left>
+              <LabelGroup>
+                <Label>
+                  {intl.formatMessage({ id: 'licenseScannerResult.name' })}
+                </Label>
+                {loading ? (
+                  <Placeholder style={{ width: 120 }} />
+                ) : (
+                  <Value>{name}</Value>
+                )}
+              </LabelGroup>
+              <LabelGroup>
+                <Label>
+                  {intl.formatMessage({ id: 'licenseScannerResult.birthDate' })}
+                </Label>
+                {loading ? (
+                  <Placeholder style={{ width: 120 }} />
+                ) : (
+                  <Value>{birthDate ?? `---`}</Value>
+                )}
+              </LabelGroup>
+              {data?.map(({ key, value }) => {
+                return (
+                  <LabelGroup key={key}>
+                    <Label>{key}</Label>
+                    {loading ? (
+                      <Placeholder style={{ width: 120 }} />
+                    ) : (
+                      <Value>{value}</Value>
+                    )}
+                  </LabelGroup>
+                )
+              })}
+            </Left>
+          </Content>
+        </>
       )}
     </Host>
   )
