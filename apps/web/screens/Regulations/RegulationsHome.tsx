@@ -1,4 +1,3 @@
-import { Year, getParams, prettyName } from '@island.is/regulations'
 import {
   Year,
   getParams,
