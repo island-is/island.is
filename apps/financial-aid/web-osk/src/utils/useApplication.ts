@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 
 import { CreateApplicationQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'

@@ -3,7 +3,6 @@ import { ActionCard, Box, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Status.treat'
 
-import format from 'date-fns/format'
 import {
   ApplicationState,
   CurrentApplication,

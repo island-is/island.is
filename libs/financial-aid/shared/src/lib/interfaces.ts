@@ -88,6 +88,7 @@ export interface CurrentApplication {
   homeCircumstances: HomeCircumstances
   usePersonalTaxCredit: boolean
   state: ApplicationState
+  created: string
 }
 
 export interface ApplicationFile {

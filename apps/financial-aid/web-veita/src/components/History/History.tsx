@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, Icon } from '@island.is/island-ui/core'
 
 import * as styles from './History.treat'
 import cn from 'classnames'
@@ -22,9 +22,10 @@ interface ApplicationEventData {
 
 interface Props {
   className?: string
+  applicantName?: string
 }
 
-const History = ({ className }: Props) => {
+const History = ({ className, applicantName }: Props) => {
   const router = useRouter()
 
   const { data } = useQuery<ApplicationEventData>(GetApplicationEventQuery, {
@@ -64,7 +65,10 @@ const History = ({ className }: Props) => {
                   </Text>
                   <Text marginBottom={2}>
                     {' '}
-                    XXX <strong>{getEventType[item.eventType].text} </strong>
+                    {getEventType[item.eventType].isStaff
+                      ? 'Starfsmaður'
+                      : `Umsækjandi ${applicantName}`}{' '}
+                    <strong>{getEventType[item.eventType].text} </strong>
                   </Text>
 
                   {item.eventType === ApplicationEventType.STAFFCOMMENT && (
@@ -73,24 +77,26 @@ const History = ({ className }: Props) => {
                     </Box>
                   )}
 
-                  {/* TODO: if sent meessage */}
-                  {/* <Box
-                    paddingLeft={3}
-                    marginBottom={2}
-                    className={styles.timelineMessages}
-                  >
-                 
-                    <Icon icon="chatbubble" type="outline" />{' '}
-                    <Text marginBottom={2}>
-                      „Hæhæ hér koma gögnin, afsakið þennan misskilning!
-                      Endilega heyrið í mér ef það vantar eitthvað fleira.“` “
-                    </Text>
-               
-                    <Icon icon="checkmark" />{' '}
-                    <Text fontWeight="semiBold">
-                      Skilaboð send á umsækjanda
-                    </Text>
-                  </Box> */}
+                  {item.eventType === ApplicationEventType.FILEUPLOAD && (
+                    <Box
+                      paddingLeft={3}
+                      marginBottom={2}
+                      className={styles.timelineMessages}
+                    >
+                      {item.comment && (
+                        <>
+                          <Icon icon="chatbubble" type="outline" />{' '}
+                          <Text marginBottom={2}>„{item.comment}“</Text>
+                        </>
+                      )}
+                    </Box>
+                  )}
+
+                  {/* TODO if staff sents comment to applicant */}
+                  {/* <Icon icon="checkmark" />{' '}
+                      <Text fontWeight="semiBold">
+                        Skilaboð send á umsækjanda
+                      </Text> */}
 
                   <Text variant="small" color="dark300" marginBottom={5}>
                     {format(new Date(item.created), 'dd/MM/yyyy HH:MM')}
