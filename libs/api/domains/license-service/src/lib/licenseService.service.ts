@@ -276,6 +276,9 @@ export class LicenseServiceService {
     licenseType: GenericLicenseType,
     data: string,
   ): Promise<PkPassVerification> {
+    if (nationalId !== process.env.HI_I_AM_DAVID) {
+      throw new Error('Not Davíð')
+    }
     let verification: PkPassVerification | null = null
 
     const licenseService = await this.genericLicenseFactory(
