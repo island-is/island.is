@@ -2,7 +2,8 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const wrapper = style({
-  marginBottom: theme.spacing[12],
+  paddingBottom: theme.spacing[6],
+  marginBottom: theme.spacing[6],
   overflowX: 'auto',
 })
 

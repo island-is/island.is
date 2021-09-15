@@ -23,7 +23,7 @@ const ApplicationsTable = ({ applications, headers, className }: PageProps) => {
 
   if (applications && applications.length > 0) {
     return (
-      <div className={styles.wrapper}>
+      <div className={`${styles.wrapper} hideScrollBar`}>
         <table
           className={cn({
             [`${styles.tableContainer}`]: true,
