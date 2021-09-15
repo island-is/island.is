@@ -8,12 +8,15 @@ import {
 } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
+import { Scopes } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { IsBoolean, IsArray, IsOptional } from 'class-validator'
+
+import { LicenseScope } from '@island.is/auth/scopes'
 import type { Locale } from '@island.is/shared/types'
 
 import { LicenseServiceService } from '../licenseService.service'
@@ -76,6 +79,7 @@ export class VerifyPkPassInput {
 export class MainResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
 
+  @Scopes(LicenseScope.read)
   @Query(() => [GenericUserLicense])
   async genericLicenses(
     @CurrentUser() user: User,
@@ -96,6 +100,7 @@ export class MainResolver {
     return licenses
   }
 
+  @Scopes(LicenseScope.read)
   @Query(() => GenericUserLicense)
   async genericLicense(
     @CurrentUser() user: User,
@@ -112,6 +117,7 @@ export class MainResolver {
     return license
   }
 
+  @Scopes(LicenseScope.generate)
   @Mutation(() => GenericPkPass)
   async generatePkPass(
     @CurrentUser() user: User,
@@ -130,6 +136,7 @@ export class MainResolver {
     }
   }
 
+  @Scopes(LicenseScope.verify)
   @Mutation(() => GenericPkPassVerification)
   async verifyPkPass(
     @CurrentUser() user: User,
