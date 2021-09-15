@@ -1,4 +1,3 @@
-import { UploadFile } from '../../../../island-ui/core/src/lib/InputFileUpload/InputFileUpload'
 import { months } from './const'
 
 export const getFileType = (fileName: string) => {
@@ -26,13 +25,3 @@ export const formatPhoneNumber = (phoneNumber: string) => {
 
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
-
-export const stringifyFile = (file: UploadFile) => {
-  return {
-    key: file.key,
-    name: file.name,
-    size: file.size,
-    status: file.status,
-    percent: file?.percent,
-  }
-}
