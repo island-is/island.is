@@ -17,7 +17,7 @@ import AssetDisclaimer from '../../components/AssetDisclaimer'
 import { Fasteign } from '../../types/RealEstateAssets.types'
 import amountFormat from '../../utils/amountFormat'
 import { ownersArray, unitsArray } from '../../utils/createUnits'
-import { messages } from '../../messages'
+import { messages } from '../../lib/messages'
 
 const GetSingleRealEstateQuery = gql`
   query GetSingleRealEstateQuery($input: GetRealEstateInput!) {

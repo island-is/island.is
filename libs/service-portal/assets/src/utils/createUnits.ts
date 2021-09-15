@@ -1,7 +1,7 @@
 import chunk from 'lodash/chunk'
 import { format as formatKennitala } from 'kennitala'
 import amountFormat from './amountFormat'
-import { messages } from '../messages'
+import { messages } from '../lib/messages'
 import { FormatMessage } from '@island.is/application/core'
 
 import { Fasteign, Notkunareining } from '../types/RealEstateAssets.types'
@@ -23,8 +23,8 @@ const unitsArray = (data: Fasteign, formatMessage: FormatMessage) =>
   data?.notkunareiningar?.data?.map((unit: Notkunareining) => {
     return {
       header: {
-        title: formatMessage(messages.legalOwners),
-        value: unit.stadfang.display || '',
+        title: formatMessage(messages.housing),
+        value: unit.stadfang?.display || '',
       },
       rows: chunk(
         [
@@ -34,11 +34,13 @@ const unitsArray = (data: Fasteign, formatMessage: FormatMessage) =>
           },
           {
             title: formatMessage(messages.currentAppraisal),
-            value: amountFormat(unit.fasteignamat.gildandi) || '',
+            value: unit.fasteignamat?.gildandi
+              ? amountFormat(unit.fasteignamat.gildandi)
+              : '',
           },
           {
             title: formatMessage(messages.location),
-            value: unit.stadfang.displayShort || '',
+            value: unit.stadfang?.displayShort || '',
           },
           {
             title: `${formatMessage(messages.futureAppraisal)} ${
@@ -58,7 +60,7 @@ const unitsArray = (data: Fasteign, formatMessage: FormatMessage) =>
           // },
           {
             title: formatMessage(messages.municipality),
-            value: unit.stadfang.sveitarfelag || '',
+            value: unit.stadfang?.sveitarfelag || '',
           },
           {
             title: formatMessage(messages.siteAssessment),

@@ -25,6 +25,10 @@ export const messages = defineMessages({
     id: 'sp.assets:location',
     defaultMessage: 'Staðfang',
   },
+  housing: {
+    id: 'sp.assets:housing',
+    defaultMessage: 'Íbúðarhúsnæði',
+  },
   currentAppraisal: {
     id: 'sp.assets:current-appraisal',
     defaultMessage: 'Gildandi fasteignamat',

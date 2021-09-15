@@ -31,9 +31,9 @@ export type Notkunareining = {
   fasteignanr: string | number
   notkunareininganr: string | number
 
-  stadfang: Stadfang
+  stadfang?: Stadfang
   // OR
-  Stadfong: Array<Stadfang>
+  Stadfong?: Array<Stadfang>
 
   merking: string
 
@@ -74,7 +74,8 @@ export type Villa = {
 // paging = null gefur það til kynna að aðeins þau gögn sem skilað sé, séu til
 export type Paging = {
   page: number
-  perPage: number // Eða limit
+  pageSize: number // Eða limit (perPage)
+  totalPages: number
   offset: number
   total: number
   hasPreviousPage: boolean

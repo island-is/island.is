@@ -1,7 +1,7 @@
 import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
-import { messages } from '../../messages'
+import { messages } from '../../lib/messages'
 
 const AssetDisclaimer = () => {
   const { formatMessage } = useLocale()
