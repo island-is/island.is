@@ -2,7 +2,8 @@ import { Column, DataType, Model, Table } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { Staff, StaffRole } from '@island.is/financial-aid/shared/lib'
+import { Staff } from '@island.is/financial-aid/shared/lib'
+import type { StaffRole } from '@island.is/financial-aid/shared/lib'
 
 @Table
 export class StaffModel extends Model<Staff> {
