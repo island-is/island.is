@@ -8,7 +8,7 @@ import cn from 'classnames'
 import {
   Application,
   getState,
-  months,
+  getMonth,
 } from '@island.is/financial-aid/shared/lib'
 import format from 'date-fns/format'
 
@@ -69,7 +69,7 @@ const TableBody = ({ application, index }: PageProps) => {
             [`${styles.tablePadding} `]: true,
           })}
         >
-          <Text>{months[new Date(application.created).getMonth()]}</Text>
+          <Text>{getMonth(new Date(application.created).getMonth())}</Text>
         </td>
       </tr>
     </Link>
