@@ -116,9 +116,8 @@ export type PkPassVerificationError = {
 
   /**
    * data is used to pass along the error from originator, e.g. SmartSolution
-   * eslint-disable-next-line @typescript-eslint/no-explicit-any
    */
-  data?: unknown
+  data?: string
 }
 
 export type PkPassVerification = {
