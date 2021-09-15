@@ -12,7 +12,7 @@ Sentry.init({
   dsn: environment.sentry.dsn,
   integrations: [new Integrations.BrowserTracing()],
   environment: 'frontend',
-  enabled: process?.env?.NODE_ENV !== 'development',
+  enabled: process.env.NODE_ENV !== 'development',
   tracesSampleRate: 0.01,
 })
 

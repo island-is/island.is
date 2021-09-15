@@ -12,7 +12,6 @@ module.exports = (config) => {
   return {
     ...config,
     node: {
-      process: true,
       global: true,
     },
   }

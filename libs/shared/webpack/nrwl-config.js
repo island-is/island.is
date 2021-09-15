@@ -1,6 +1,7 @@
 const DefinePlugin = require('webpack/lib/DefinePlugin')
 const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin')
 const nrwlConfig = require('@nrwl/react/plugins/webpack.js')
+const webpack = require('webpack')
 
 /**
  * This file is based on how @nrwl/web does it's env config
@@ -63,6 +64,45 @@ const fixPostcss = (config) => {
 }
 
 /**
+ * This method adds the polyfills that webpack4 previously added
+ * but was removed in webpack 5. NextJS does this for the Next apps
+ * @param {*} config Webpack config object
+ */
+const addNodeModulesPolyfill = (config) => {
+  config.resolve.fallback = {
+    assert: require.resolve('assert'),
+    buffer: require.resolve('buffer'),
+    console: require.resolve('console-browserify'),
+    constants: require.resolve('constants-browserify'),
+    crypto: require.resolve('crypto-browserify'),
+    domain: require.resolve('domain-browser'),
+    events: require.resolve('events'),
+    http: require.resolve('stream-http'),
+    https: require.resolve('https-browserify'),
+    os: require.resolve('os-browserify/browser'),
+    path: require.resolve('path-browserify'),
+    punycode: require.resolve('punycode'),
+    process: require.resolve('process/browser'),
+    querystring: require.resolve('querystring-es3'),
+    stream: require.resolve('stream-browserify'),
+    string_decoder: require.resolve('string_decoder'),
+    sys: require.resolve('util'),
+    timers: require.resolve('timers-browserify'),
+    tty: require.resolve('tty-browserify'),
+    url: require.resolve('url'),
+    util: require.resolve('util'),
+    vm: require.resolve('vm-browserify'),
+    zlib: require.resolve('browserify-zlib'),
+  }
+
+  config.plugins.push(
+    new webpack.ProvidePlugin({
+      process: [require.resolve('process')],
+    }),
+  )
+}
+
+/**
  * Adds common web related configs to webpack
  * @param {*} config
  */
@@ -71,6 +111,7 @@ module.exports = function (config) {
   nrwlConfig(config)
 
   setApiMocks(config)
+  addNodeModulesPolyfill(config)
 
   fixPostcss(config)
 

@@ -11,7 +11,7 @@ import App from './app/App'
 Sentry.init({
   dsn: environment.sentry.dsn,
   integrations: [new Integrations.BrowserTracing()],
-  enabled: process?.env?.NODE_ENV !== 'development',
+  enabled: process.env.NODE_ENV !== 'development',
   environment: 'frontend',
   tracesSampleRate: 0.01,
 })
