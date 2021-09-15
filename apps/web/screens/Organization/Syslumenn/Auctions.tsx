@@ -650,13 +650,14 @@ const Auctions: Screen<AuctionsProps> = ({
         )}
         {!loading &&
           !error &&
-          filteredAuctions.slice(0, showCount).map((auction) => {
+          filteredAuctions.slice(0, showCount).map((auction, index) => {
             const auctionDate = new Date(auction.auctionDate)
             const auctionPetitioners = auction.petitioners?.split(',')
             const auctionRespondents = auction.respondent?.split(',')
 
             return (
               <Box
+                key={`auction-${index}`}
                 borderWidth="standard"
                 borderColor="standard"
                 borderRadius="standard"
