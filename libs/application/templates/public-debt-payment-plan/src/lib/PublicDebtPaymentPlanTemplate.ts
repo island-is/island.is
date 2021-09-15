@@ -1,13 +1,13 @@
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
+  Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  Application,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
   DefaultStateLifeCycle,
-  ApplicationConfigurations,
 } from '@island.is/application/core'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application } from './messages'
@@ -15,11 +15,13 @@ import { application } from './messages'
 const States = {
   draft: 'draft',
   submitted: 'submitted',
+  closed: 'closed',
 }
 
 type PublicDebtPaymentPlanEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.ABORT }
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -67,6 +69,9 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
           SUBMIT: {
             target: States.submitted,
           },
+          ABORT: {
+            target: States.closed,
+          },
         },
       },
       [States.submitted]: {
@@ -89,6 +94,21 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
               write: 'all',
             },
           ],
+        },
+      },
+      [States.closed]: {
+        meta: {
+          name: States.closed,
+          actionCard: {
+            title: application.name,
+            description: application.description,
+          },
+          progress: 1,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 1,
+          },
         },
       },
     },

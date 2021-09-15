@@ -76,6 +76,7 @@ const prosecutorUpdateRule = {
     'leadInvestigator',
     'arrestDate',
     'requestedCourtDate',
+    'translator',
     'requestedValidToDate',
     'demands',
     'lawsBroken',

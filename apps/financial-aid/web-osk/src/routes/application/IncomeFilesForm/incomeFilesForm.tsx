@@ -1,29 +1,23 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useContext } from 'react'
 
 import {
   Footer,
   FormLayout,
   Files,
+  ContentContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
+import { Text } from '@island.is/island-ui/core'
+
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import { NavigationProps } from '@island.is/financial-aid/shared'
-import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFileUpload'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 const IncomeFilesForm = () => {
   const router = useRouter()
 
-  const { form, updateForm } = useContext(FormContext)
-
-  const { files } = useFileUpload(form.incomeFiles)
-
-  useEffect(() => {
-    const formFiles = files.filter((f) => f.status === 'done')
-
-    updateForm({ ...form, incomeFiles: formFiles })
-  }, [files])
+  const { form } = useContext(FormContext)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -40,17 +34,26 @@ const IncomeFilesForm = () => {
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
-      <Files
-        headline="Tekjugögn"
-        about="Við þurfum að sjá gögn um tekjur í þessum og síðasta mánuði. Þú getur
-        smellt mynd af launaseðlum eða öðrum tekjugögnum, nálgast gögn í
-        heimabankanum eða hjá þeirri stofnun sem þú fékkst tekjur frá."
-      />
+      <ContentContainer>
+        <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
+          Tekjugögn
+        </Text>
+        <Text marginBottom={[3, 3, 5]}>
+          Við þurfum að sjá gögn um tekjur í þessum og síðasta mánuði. Þú getur
+          smellt mynd af launaseðlum eða öðrum tekjugögnum, nálgast gögn í
+          heimabankanum eða hjá þeirri stofnun sem þú fékkst tekjur frá.
+        </Text>
+        <Files
+          header="Dragðu gögn hingað"
+          fileKey="incomeFiles"
+          uploadFiles={form.incomeFiles}
+        />
+      </ContentContainer>
 
       <Footer
         previousUrl={navigation?.prevUrl}
         nextButtonText={
-          files.length > 0 ? 'Halda áfram' : 'Skila gögnum seinna'
+          form.incomeFiles.length > 0 ? 'Halda áfram' : 'Skila gögnum seinna'
         }
         onNextButtonClick={() => errorCheck()}
       />

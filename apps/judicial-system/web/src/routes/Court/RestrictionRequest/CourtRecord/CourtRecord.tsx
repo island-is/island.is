@@ -12,7 +12,6 @@ import {
   FormContentContainer,
   DateTime,
   HideableText,
-  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -21,11 +20,7 @@ import {
   formatAccusedByGender,
   NounCases,
 } from '@island.is/judicial-system/formatters'
-import {
-  AccusedPleaDecision,
-  CaseType,
-  NotificationType,
-} from '@island.is/judicial-system/types'
+import { AccusedPleaDecision, CaseType } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
@@ -44,12 +39,10 @@ import { validate } from '../../../../utils/validate'
 import {
   accusedRights,
   rcCourtRecord,
-  rcHearingArrangements,
 } from '@island.is/judicial-system-web/messages'
 import * as styles from './CourtRecord.treat'
 
 export const CourtRecord: React.FC = () => {
-  const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [
     courtRecordStartDateIsValid,
@@ -69,7 +62,7 @@ export const CourtRecord: React.FC = () => {
   ] = useState('')
 
   const router = useRouter()
-  const { updateCase, sendNotification, autofill } = useCase()
+  const { updateCase, autofill } = useCase()
   const { formatMessage } = useIntl()
 
   const id = router.query.id
@@ -103,6 +96,10 @@ export const CourtRecord: React.FC = () => {
           wc?.accusedGender,
           NounCases.GENITIVE,
         )}`
+      }
+
+      if (wc.translator) {
+        attendees += `\n${wc.translator} túlkur`
       }
 
       return attendees
@@ -139,25 +136,6 @@ export const CourtRecord: React.FC = () => {
       setWorkingCase(theCase)
     }
   }, [workingCase, updateCase, setWorkingCase, data, autofill])
-
-  useEffect(() => {
-    const notifyCourtDate = async (id: string) => {
-      const notificationSent = await sendNotification(
-        id,
-        NotificationType.COURT_DATE,
-      )
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (notificationSent && !window.Cypress) {
-        setModalVisible(true)
-      }
-    }
-
-    if (workingCase?.id) {
-      notifyCourtDate(workingCase.id)
-    }
-  }, [sendNotification, workingCase?.courtDate, workingCase?.id])
 
   return (
     <PageLayout
@@ -487,16 +465,6 @@ export const CourtRecord: React.FC = () => {
               }
             />
           </FormContentContainer>
-          {modalVisible && (
-            <Modal
-              title={formatMessage(rcHearingArrangements.modal.heading)}
-              text={formatMessage(rcHearingArrangements.modal.text)}
-              handlePrimaryButtonClick={() => {
-                setModalVisible(false)
-              }}
-              primaryButtonText="Loka glugga"
-            />
-          )}
         </>
       ) : null}
     </PageLayout>

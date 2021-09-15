@@ -104,7 +104,7 @@ function GrantAccess() {
   const onSubmit = handleSubmit(async ({ toNationalId }) => {
     try {
       const { data } = await createAuthDelegation({
-        variables: { input: { name, toNationalId } },
+        variables: { input: { toNationalId } },
       })
       if (data) {
         history.push(
@@ -154,6 +154,7 @@ function GrantAccess() {
                 <Input
                   name="name"
                   value={name}
+                  aria-live="assertive"
                   label={formatMessage({
                     id:
                       'service.portal.settings.accessControl:grant-form-access-holder',
@@ -162,7 +163,7 @@ function GrantAccess() {
                   disabled
                 />
               )}
-              <Box display={name ? 'none' : 'block'}>
+              <Box display={name ? 'none' : 'block'} aria-live="assertive">
                 <InputController
                   control={control}
                   id="toNationalId"

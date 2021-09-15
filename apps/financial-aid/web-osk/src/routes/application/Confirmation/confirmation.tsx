@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
   Text,
   Box,
@@ -11,34 +11,29 @@ import {
 import {
   ContentContainer,
   FormLayout,
+  Footer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
-import { NavigationProps } from '@island.is/financial-aid/shared'
+import { NavigationProps, Routes } from '@island.is/financial-aid/shared/lib'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
 const Confirmation = () => {
   const router = useRouter()
+  const { form } = useContext(FormContext)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
   ) as NavigationProps
 
+  const logOut = useLogOut()
+
   const nextSteps = [
     'Fjölskylduþjónusta Hafnarfjarðar vinnur úr umsókninni. Afgreiðsla umsóknarinnar tekur 1–3 virka daga.',
     'Staðfesting verður send á þig í tölvupósti',
     'Ef þörf er á frekari upplýsingum eða gögnum mun fjölskylduþjónusta Hafnarfjarðar hafa samband.',
-  ]
-
-  const otherOptions = [
-    {
-      text: 'Upplýsingar um fjárhagsaðstoð',
-      url: '/',
-    },
-    {
-      text: 'Hafðu samband',
-      url: '/',
-    },
   ]
 
   useEffect(() => {
@@ -74,27 +69,53 @@ const Confirmation = () => {
           Frekari aðgerðir í boði
         </Text>
         <Box marginBottom={[4, 4, 5]}>
-          <BulletList type={'ul'} space={2}>
-            {otherOptions.map((item, index) => {
-              return (
-                <Bullet key={'options-' + index}>
-                  <Button
-                    colorScheme="default"
-                    iconType="filled"
-                    onClick={() => router.push(item.url)}
-                    preTextIconType="filled"
-                    size="default"
-                    type="button"
-                    variant="text"
-                  >
-                    {item.text}
-                  </Button>
-                </Bullet>
-              )
-            })}
-          </BulletList>
+          {form.applicationId && (
+            <Box marginBottom={3}>
+              <Button
+                icon="open"
+                colorScheme="default"
+                iconType="outline"
+                onClick={() =>
+                  router.push(Routes.statusPage(form?.applicationId as string))
+                }
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+              >
+                Sjá stöðu umsóknar
+              </Button>
+            </Box>
+          )}
+
+          <Box marginBottom={3}>
+            <Button
+              icon="open"
+              colorScheme="default"
+              iconType="outline"
+              preTextIconType="filled"
+              size="small"
+              onClick={() => {
+                // TODO when there more muncipality
+                window.open(
+                  'https://www.hafnarfjordur.is/ibuar/felagsleg-adstod/fjarhagsadstod/"',
+                  '_ blank',
+                )
+              }}
+              type="button"
+              variant="text"
+            >
+              Upplýsingar um fjárhagsaðstoð
+            </Button>
+          </Box>
         </Box>
       </ContentContainer>
+      <Footer
+        hidePreviousButton={true}
+        nextButtonText={'Loka'}
+        nextButtonIcon={'close'}
+        onNextButtonClick={() => logOut()}
+      />
     </FormLayout>
   )
 }

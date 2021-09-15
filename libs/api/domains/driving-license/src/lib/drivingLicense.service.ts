@@ -17,12 +17,13 @@ import {
   DrivingLicenseCategory,
   NeedsHealhCertificate,
   QualityPhotoResult,
-  NeedsQualityPhoto,
+  StudentAssessment,
 } from './drivingLicense.type'
 import {
   AkstursmatDto,
   EmbaettiDto,
   HefurLokidOkugerdiDto,
+  Okuskirteini,
   OkuskirteiniApi,
   Rettindi,
   TegSviptingaDto,
@@ -81,20 +82,20 @@ export class DrivingLicenseService {
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
-    const drivingLicense = await this.getLicense(nationalId)
+    const drivingLicense = await this.drivingLicenseApi.apiOkuskirteiniKennitalaAllGet(
+      {
+        kennitala: nationalId,
+      },
+    )
 
-    if (!drivingLicense) {
-      return null
-    }
+    const licenseWithName = drivingLicense.find(({ nafn }) => !!nafn)
 
-    const expiryDate = drivingLicense.expires
-
-    if (!expiryDate || expiryDate < new Date()) {
+    if (!licenseWithName) {
       return null
     }
 
     return {
-      name: drivingLicense.name,
+      name: licenseWithName.nafn as string,
     }
   }
 
@@ -331,6 +332,32 @@ export class DrivingLicenseService {
       success: result > 0,
       qualityPhoto: image,
       errorMessage: null,
+    }
+  }
+
+  async getDrivingAssessment(
+    nationalId: string,
+  ): Promise<StudentAssessment | null> {
+    const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
+
+    if (!assessmentResult) {
+      return null
+    }
+
+    let teacherName: string | null
+    if (assessmentResult.kennitalaOkukennara) {
+      const teacherLicense = await this.getLicense(
+        assessmentResult.kennitalaOkukennara,
+      )
+      teacherName = teacherLicense?.name || null
+    } else {
+      teacherName = null
+    }
+
+    return {
+      studentNationalId: assessmentResult.kennitala ?? null,
+      teacherNationalId: assessmentResult.kennitalaOkukennara ?? null,
+      teacherName,
     }
   }
 }

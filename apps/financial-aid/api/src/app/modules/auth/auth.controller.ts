@@ -23,8 +23,10 @@ import {
   ACCESS_TOKEN_COOKIE_NAME,
   COOKIE_EXPIRES_IN_MILLISECONDS,
   CSRF_COOKIE_NAME,
+  ReturnUrl,
   AllowedFakeUsers,
-} from '@island.is/financial-aid/shared'
+  RolesRule,
+} from '@island.is/financial-aid/shared/lib'
 
 import { SharedAuthService } from '@island.is/financial-aid/auth'
 
@@ -157,6 +159,7 @@ export class AuthController {
       phoneNumber: islandUser.mobile,
       folder: uuid(),
       service: service,
+      returnUrl: ReturnUrl.APPLICATION,
     }
 
     return this.logInUser(user, res)
@@ -172,12 +175,31 @@ export class AuthController {
     return res.json({ logout: true })
   }
 
+  getReturnUrl = (
+    returnUrl: ReturnUrl,
+    service: RolesRule,
+    applicationId: string | undefined,
+  ) => {
+    switch (true) {
+      case returnUrl === ReturnUrl.APPLICATION && applicationId !== undefined:
+        return `${ReturnUrl.MYPAGE}/${applicationId}`
+      case service === RolesRule.VEITA:
+        return ReturnUrl.ADMIN
+      default:
+        return ReturnUrl.APPLICATION
+    }
+  }
+
   private logInUser(user: User, res: Response) {
     const csrfToken = new Entropy({ bits: 128 }).string()
 
     const jwtToken = this.sharedAuthService.signJwt(user, csrfToken)
 
-    const returnUrl = user.service === 'osk' ? '/umsokn' : '/nymal'
+    const returnUrl = this.getReturnUrl(
+      user.returnUrl as ReturnUrl,
+      res.req?.query.service as RolesRule,
+      res.req?.query.applicationId as string,
+    )
 
     res
       .cookie(CSRF_COOKIE.name, csrfToken, {

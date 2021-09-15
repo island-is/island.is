@@ -24,6 +24,7 @@ import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
 import { QualityPhotoData } from '../utils'
+import { StudentAssessment } from '@island.is/api/schema'
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
@@ -67,10 +68,14 @@ export const application: Form = buildForm({
               subTitle: m.confirmationStatusOfEligability,
             }),
             buildDataProviderItem({
+              id: 'studentAssessment',
+              type: 'DrivingAssessmentProvider',
+              title: '',
+            }),
+            buildDataProviderItem({
               id: 'juristictions',
               type: 'JuristictionProvider',
               title: '',
-              subTitle: '',
             }),
             buildDataProviderItem({
               id: 'payment',
@@ -409,7 +414,9 @@ export const application: Form = buildForm({
             buildDividerField({}),
             buildKeyValueField({
               label: m.overviewTeacher,
-              value: ({ answers: { teacher } }) => teacher as string,
+              width: 'half',
+              value: ({ externalData: { studentAssessment } }) =>
+                (studentAssessment.data as StudentAssessment).teacherName,
             }),
             buildDividerField({
               condition: (answers) => {

@@ -19,7 +19,6 @@ import {
 import { environment } from '../../../environments'
 import {
   formatProsecutorCourtDateEmailNotification,
-  formatCourtDateNotificationCondition,
   formatCourtHeadsUpSmsNotification,
   formatPrisonCourtDateEmailNotification,
   formatCourtReadyForCourtSmsNotification,
@@ -178,12 +177,10 @@ export class NotificationService {
     caseId: string,
     type: NotificationType,
     recipients: Recipient[],
-    condition?: string,
   ): Promise<SendNotificationResponse> {
     const notification = await this.notificationModel.create({
       caseId,
       type,
-      condition,
       recipients: JSON.stringify(recipients),
     })
 
@@ -210,11 +207,15 @@ export class NotificationService {
     try {
       const streamId = await this.courtService.uploadStream(
         existingCase.courtId,
+        'Krafa.pdf',
+        'application/pdf',
         requestPdf,
       )
       await this.courtService.createRequest(
         existingCase.courtId,
         existingCase.courtCaseNumber,
+        'Krafa',
+        'Krafa.pdf',
         streamId,
       )
     } catch (error) {
@@ -464,26 +465,6 @@ export class NotificationService {
   private async sendCourtDateNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
-    const condition = formatCourtDateNotificationCondition(
-      existingCase.courtDate,
-      existingCase.defenderEmail,
-    )
-
-    const notifications = await this.notificationModel.findAll({
-      where: {
-        caseId: existingCase.id,
-        type: NotificationType.COURT_DATE,
-      },
-      order: [['created', 'DESC']],
-    })
-
-    if (notifications?.length > 0 && notifications[0].condition === condition) {
-      return {
-        notificationSent: false,
-        notification: notifications[0],
-      }
-    }
-
     const promises: Promise<Recipient>[] = [
       this.sendCourtDateEmailNotificationToProsecutor(existingCase),
     ]
@@ -507,7 +488,6 @@ export class NotificationService {
       existingCase.id,
       NotificationType.COURT_DATE,
       recipients,
-      condition,
     )
 
     if (result.notificationSent) {

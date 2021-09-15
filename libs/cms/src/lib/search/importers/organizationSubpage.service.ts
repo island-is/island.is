@@ -5,6 +5,7 @@ import { Entry } from 'contentful'
 import { IOrganizationSubpage } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapOrganizationSubpage } from '../../models/organizationSubpage.model'
+import { extractStringsFromObject } from './utils'
 
 @Injectable()
 export class OrganizationSubpageSyncService
@@ -24,9 +25,12 @@ export class OrganizationSubpageSyncService
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapOrganizationSubpage(entry)
+          const content = extractStringsFromObject(mapped.description ?? [])
           return {
             _id: mapped.id,
             title: mapped.title,
+            content,
+            contentWordCount: content.split(/\s+/).length,
             type: 'webOrganizationSubpage',
             response: JSON.stringify({
               ...mapped,

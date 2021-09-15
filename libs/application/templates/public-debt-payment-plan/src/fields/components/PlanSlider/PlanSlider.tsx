@@ -1,10 +1,10 @@
-import { Controller, useFormContext } from 'react-hook-form'
-import { Box, Text } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
-import { useLocale } from '@island.is/localization'
-import Slider from '../Slider/Slider'
-import { theme } from '@island.is/island-ui/theme'
 import { MessageDescriptor } from '@formatjs/intl'
+import { Box, Text } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
+import React, { useState } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+import Slider from '../Slider/Slider'
 
 interface Props {
   id: string
@@ -39,7 +39,7 @@ export const PlanSlider = ({
   return (
     <Box
       marginBottom={4}
-      marginTop={4}
+      marginTop={1}
       paddingTop={6}
       paddingX={3}
       paddingBottom={3}

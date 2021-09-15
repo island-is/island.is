@@ -11,7 +11,7 @@ import {
   ApplicationFilters,
   ApplicationState,
   User,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import { ApplicationEventService } from '../applicationEvent'
 
@@ -50,7 +50,7 @@ export class ApplicationService {
 
     const files = await this.fileService.getAllApplicationFiles(id)
 
-    application.setDataValue('files', files)
+    application?.setDataValue('files', files)
 
     return application
   }

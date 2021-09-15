@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client'
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
-import { ApplicationFilters } from '@island.is/financial-aid/shared'
+import { ApplicationFilters } from '@island.is/financial-aid/shared/lib'
 
 import { GetApplicationFiltersQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 

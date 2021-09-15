@@ -1,5 +1,5 @@
 import { setContext } from '@apollo/client/link/context'
-import { CSRF_COOKIE_NAME } from '@island.is/financial-aid/shared'
+import { CSRF_COOKIE_NAME } from '@island.is/financial-aid/shared/lib'
 import Cookie from 'js-cookie'
 
 export default setContext((_, { headers }) => {

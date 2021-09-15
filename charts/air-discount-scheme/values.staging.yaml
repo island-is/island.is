@@ -171,4 +171,3 @@ global:
   initContainer:
     env:
       AWS_REGION: eu-west-1
-

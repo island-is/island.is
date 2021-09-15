@@ -90,6 +90,7 @@ export enum AccusedPleaDecision {
 
 export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
+  ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
   REMOTE_SESSION = 'REMOTE_SESSION',
 }
@@ -115,6 +116,7 @@ export interface Case {
   leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
+  translator?: string
   requestedValidToDate?: string
   demands?: string
   lawsBroken?: string
@@ -203,6 +205,7 @@ export interface UpdateCase {
   leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
+  translator?: string
   requestedValidToDate?: string
   demands?: string
   lawsBroken?: string

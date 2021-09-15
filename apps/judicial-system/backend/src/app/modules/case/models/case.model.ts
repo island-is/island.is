@@ -243,6 +243,16 @@ export class Case extends Model<Case> {
   requestedCourtDate?: Date
 
   /**********
+   * The translator assigned to the case
+   **********/
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  translator?: string
+
+  /**********
    * The prosecutor's requested ruling expiration date and time - example: the end of custody
    * in custody cases - optional for some case types
    **********/

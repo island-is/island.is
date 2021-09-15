@@ -9,9 +9,9 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Endorsement } from '../endorsement/models/endorsement.model'
-import { EndorsementMetaField } from '../endorsementMetadata/types'
 import { ValidationRuleDto } from './dto/validationRule.dto'
 import { EndorsementTag } from './constants'
+import { EndorsementMetadataDto } from './dto/endorsementMetadata.dto'
 
 @Table({
   tableName: 'endorsement_list',
@@ -50,11 +50,12 @@ export class EndorsementList extends Model<EndorsementList> {
   })
   closedDate!: Date | null
 
-  @ApiProperty({ enum: EndorsementMetaField, isArray: true })
+  @ApiProperty({ type: [EndorsementMetadataDto] })
   @Column({
-    type: DataType.ARRAY(DataType.STRING),
+    type: DataType.JSONB,
+    defaultValue: '[]',
   })
-  endorsementMeta!: EndorsementMetaField[]
+  endorsementMetadata!: EndorsementMetadataDto[]
 
   @ApiProperty({ enum: EndorsementTag, isArray: true })
   @Column({

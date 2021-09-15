@@ -476,15 +476,15 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@octokit/action@^3.15.2":
-  version "3.15.2"
-  resolved "https://registry.yarnpkg.com/@octokit/action/-/action-3.15.2.tgz#cbe5b6f391d1450239550871623b92456a1bb019"
-  integrity sha512-bEPPfCCOsMAaOnm3hc1o8DYU3aOcbiIVj51HfSM23IDJNRZmV1m/cRWhm+V017InS96UyadWPiwCcCHX4Ph86Q==
+"@octokit/action@^3.15.4":
+  version "3.15.4"
+  resolved "https://registry.yarnpkg.com/@octokit/action/-/action-3.15.4.tgz#b7bf36e34082c046231927d12537dfd08f6f1d5a"
+  integrity sha512-MQRdhjl03FefgJiHRQhyHVsAOIZWUwrZi9m6Kw0tS3/QWM3P64s4Nfs7rd+Vk8KvFyZE5x8c/sb/90pBVrqFPw==
   dependencies:
     "@octokit/auth-action" "^1.2.0"
     "@octokit/core" "^3.0.0"
     "@octokit/plugin-paginate-rest" "^2.2.4"
-    "@octokit/plugin-rest-endpoint-methods" "5.10.0"
+    "@octokit/plugin-rest-endpoint-methods" "5.10.1"
     "@octokit/types" "^6.16.1"
     https-proxy-agent "^5.0.0"
 
@@ -546,10 +546,10 @@
   dependencies:
     "@octokit/types" "^6.11.0"
 
-"@octokit/plugin-rest-endpoint-methods@5.10.0":
-  version "5.10.0"
-  resolved "https://registry.yarnpkg.com/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-5.10.0.tgz#8058acf408d518defa2dc59a46777adbcd7ee8e8"
-  integrity sha512-HiUZliq5wNg15cevJlTo9zDnPXAD0BMRhLxbRNPnq9J3HELKesDTOiou56ax2jC/rECUkK/uJTugrizYKSo/jg==
+"@octokit/plugin-rest-endpoint-methods@5.10.1":
+  version "5.10.1"
+  resolved "https://registry.yarnpkg.com/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-5.10.1.tgz#9683c4cf476fb6c80f668c4b468919e69c71f66a"
+  integrity sha512-Rf1iMl40I0dIxjh1g32qZ6Ym/uT8QWZMm2vYGG5Vi8SX1MwZvbuxEGXYgmzTUWSD3PYWSLilE2+4L8kmdLGTMg==
   dependencies:
     "@octokit/types" "^6.27.0"
     deprecation "^2.3.1"

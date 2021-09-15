@@ -2466,6 +2466,7 @@
           "options": {
             "commands": [
               "yarn nx run application-system-api:dev-services",
+              "echo \"Waiting for databases to start...\" && sleep 2",
               "yarn nx run application-system-api:migrate",
               "yarn nx run services-party-letter-registry-api:migrate",
               "yarn nx run services-temporary-voter-registry-api:migrate",
@@ -7372,6 +7373,11 @@
             "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
             "assets": [
               {
+                "glob": "updateMetadata.js",
+                "input": "apps/services/endorsements/api/script-entrypoints",
+                "output": "./"
+              },
+              {
                 "glob": "*",
                 "input": "apps/services/endorsements/api/migrations",
                 "output": "./migrations"
@@ -7421,6 +7427,31 @@
           "options": {
             "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
             "cwd": "apps/services/endorsements/api"
+          }
+        },
+        "dev/init": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run services-endorsements-api:dev-services",
+              "echo \"Waiting for databases to start...\" && sleep 2",
+              "yarn nx run services-party-letter-registry-api:migrate",
+              "yarn nx run services-temporary-voter-registry-api:migrate",
+              "yarn nx run services-endorsements-api:migrate"
+            ],
+            "parallel": false
+          }
+        },
+        "dev": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
+              "yarn start services-party-letter-registry-api &",
+              "yarn start services-temporary-voter-registry-api &",
+              "yarn start services-endorsements-api &"
+            ],
+            "parallel": true
           }
         },
         "schemas/external-openapi-generator": {
@@ -7643,8 +7674,8 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/migrateElastic.ts",
-              "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/migrateKibana.ts"
+              "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/migrateElastic.ts --run-migrations",
+              "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/migrateKibana.ts --run-migrations"
             ],
             "cwd": "apps/services/search-indexer",
             "parallel": false

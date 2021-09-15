@@ -1,10 +1,16 @@
 import { defineMessages } from 'react-intl'
 
 export const errorModal = defineMessages({
-  maxDebt: {
-    id: `pdpp.application:application.errorModal.maxDebt`,
-    defaultMessage: 'Skuldar of mikið',
-    description: 'Owes to much',
+  maxDebtTitle: {
+    id: `pdpp.application:application.errorModal.maxDebtTitle`,
+    defaultMessage: 'Skuld yfir hámarki',
+    description: 'Owes to much title',
+  },
+  maxDebtDescription: {
+    id: `pdpp.application:application.errorModal.maxDebtDescription`,
+    defaultMessage:
+      'Ekki er hægt að gera greiðsluáætlun um þessa skuld með rafrænum hætti þar sem hún er hærri en {maxDebtAmount} Vinsamlegast hafðu samband við innheimtumann í þínu umdæmi.',
+    description: 'Owes to much description',
   },
   taxReturns: {
     id: `pdpp.application:application.errorModal.taxReturns`,
@@ -35,5 +41,15 @@ export const errorModal = defineMessages({
     id: `pdpp.application:application.errorModal.wageReturns`,
     defaultMessage: 'Laun skilar sér',
     description: 'Wage returns',
+  },
+  closeModal: {
+    id: `pdpp.application:application.errorModal.closeModal`,
+    defaultMessage: 'Loka umsókn',
+    description: 'Close modal button',
+  },
+  moreInformation: {
+    id: `pdpp.application:application.errorModal.moreInformation`,
+    defaultMessage: 'Frekari upplýsingar',
+    description: 'More information button',
   },
 })

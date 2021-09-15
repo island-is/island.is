@@ -9,9 +9,9 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { Municipality } from '@island.is/financial-aid/shared'
+import { Municipality } from '@island.is/financial-aid/shared/lib'
 
-import type { MunicipalitySettings } from '@island.is/financial-aid/shared'
+import type { MunicipalitySettings } from '@island.is/financial-aid/shared/lib'
 
 // @Table({
 //   tableName: 'municipality',

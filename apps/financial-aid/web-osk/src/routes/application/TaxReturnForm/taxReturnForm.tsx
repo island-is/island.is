@@ -1,43 +1,23 @@
-import React, { useEffect, useContext } from 'react'
-import {
-  Text,
-  InputFileUpload,
-  Box,
-  LinkContext,
-} from '@island.is/island-ui/core'
+import React, { useContext } from 'react'
+import { Text, LinkContext } from '@island.is/island-ui/core'
 
 import {
-  FileUploadContainer,
   ContentContainer,
   Footer,
   FormLayout,
+  Files,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import { NavigationProps } from '@island.is/financial-aid/shared'
-import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFileUpload'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 const TaxReturnForm = () => {
   const router = useRouter()
 
-  const { form, updateForm } = useContext(FormContext)
-
-  const {
-    files,
-    uploadErrorMessage,
-    onChange,
-    onRemove,
-    onRetry,
-  } = useFileUpload(form.taxReturnFiles)
-
-  useEffect(() => {
-    const formFiles = files.filter((f) => f.status === 'done')
-
-    updateForm({ ...form, taxReturnFiles: formFiles })
-  }, [files])
+  const { form } = useContext(FormContext)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -94,20 +74,11 @@ const TaxReturnForm = () => {
             um hvernig sækja má staðfest afrit skattframtals.
           </Text>
         </LinkContext.Provider>
-
-        <FileUploadContainer>
-          <InputFileUpload
-            fileList={files}
-            header="Dragðu skattframtalið hingað"
-            description="Tekið er við öllum hefðbundnum skráargerðum"
-            buttonLabel="Bættu við gögnum"
-            showFileSize={true}
-            errorMessage={uploadErrorMessage}
-            onChange={onChange}
-            onRemove={onRemove}
-            onRetry={onRetry}
-          />
-        </FileUploadContainer>
+        <Files
+          header="Dragðu skattframtalið hingað"
+          fileKey="taxReturnFiles"
+          uploadFiles={form.taxReturnFiles}
+        />
       </ContentContainer>
 
       <Footer

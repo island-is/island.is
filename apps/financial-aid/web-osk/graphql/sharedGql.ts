@@ -59,6 +59,19 @@ export const CurrentUserQuery = gql`
   }
 `
 
+export const GetApplicationQuery = gql`
+  query GetApplicationQuery($input: ApplicationInput!) {
+    application(input: $input) {
+      id
+      homeCircumstances
+      usePersonalTaxCredit
+      state
+      amount
+      rejection
+    }
+  }
+`
+
 export const UpdateApplicationMutation = gql`
   mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
     updateApplication(input: $input) {

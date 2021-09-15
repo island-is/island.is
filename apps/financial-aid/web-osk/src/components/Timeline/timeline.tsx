@@ -4,7 +4,7 @@ import { Text, FormStepper, Box } from '@island.is/island-ui/core'
 import {
   ApplicationState,
   getActiveSectionForTimeline,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   state: ApplicationState

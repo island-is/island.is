@@ -182,7 +182,9 @@ export function formatProsecutorCourtDateEmailNotification(
   const courtRoomText =
     sessionArrangements === SessionArrangements.REMOTE_SESSION
       ? 'Úrskurðað verður um kröfuna án mætingar af hálfu málsaðila'
-      : `Dómsalur: ${courtRoom}`
+      : courtRoom
+      ? `Dómsalur: ${courtRoom}`
+      : 'Dómsalur hefur ekki verið skráður'
   const judgeText = judgeName
     ? `Dómari: ${judgeName}`
     : 'Dómari hefur ekki verið skráður'
@@ -255,17 +257,9 @@ export function formatDefenderCourtDateEmailNotification(
     ?.replace(
       ' kl.',
       ', kl.',
-    )}.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />Dómsalur: ${courtRoom}.`
-}
-
-export function formatCourtDateNotificationCondition(
-  courtDate?: Date,
-  defenderEmail?: string,
-): string {
-  return `courtDate=${formatDate(
-    courtDate,
-    'Pp',
-  )},defenderEmail=${defenderEmail}`
+    )}.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />${
+    courtRoom ? `Dómsalur: ${courtRoom}` : 'Dómsalur hefur ekki verið skráður'
+  }.`
 }
 
 // This function is only intended for case type CUSTODY

@@ -500,6 +500,12 @@ export const m: MessageDir = {
         'Þú ert ekki með skráða búsetu í þessu kjördæmi ertu viss um að vilja halda áfram?',
       description: 'Alert message if signaturee is in the wrong constituency',
     },
+    toastMessage: {
+      id: 'pa.application:endorsement.alert.descrtipion.toast.message',
+      defaultMessage:
+        'Ekki tókst að ná sambandi við vefþjónustu. Vinsamlegast reyndu aftur síðar',
+      description: 'Toast message on error',
+    },
   }),
   endorsementApproved: defineMessages({
     title: {
@@ -651,7 +657,7 @@ export const m: MessageDir = {
     },
     rejectButton: {
       id: 'pa.application:supreme.court.reject.button',
-      defaultMessage: 'Hafna',
+      defaultMessage: 'Opna á ný',
       description: 'Reject button',
     },
     approveButton: {

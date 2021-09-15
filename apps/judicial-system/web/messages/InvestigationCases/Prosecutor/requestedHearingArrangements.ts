@@ -8,6 +8,31 @@ export const icRequestedHearingArrangements = {
     description:
       'Notaður sem titill á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
   }),
+  sections: {
+    translator: defineMessages({
+      heading: {
+        id:
+          'judicial.system.investigation_cases:requested_hearing_arrangements.translator.heading',
+        defaultMessage: 'Túlkur',
+        description:
+          'Notaður sem titill fyrir "Túlkur" hlutann á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      label: {
+        id:
+          'judicial.system.investigation_cases:requested_hearing_arrangements.translator.label',
+        defaultMessage: 'Nafn túlks',
+        description:
+          'Notaður sem titill í textaboxi fyrir "Túlkur" á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      placeholder: {
+        id:
+          'judicial.system.investigation_cases:requested_hearing_arrangements.translator.placeholder',
+        defaultMessage: 'Fullt nafn',
+        description:
+          'Notaður sem skýritexti í textaboxi fyrir "Túlkur" á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+    }),
+  },
   modal: defineMessages({
     heading: {
       id:

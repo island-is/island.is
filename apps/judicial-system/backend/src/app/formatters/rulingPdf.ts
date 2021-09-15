@@ -6,6 +6,7 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
   capitalize,
@@ -15,6 +16,7 @@ import {
   NounCases,
   formatAccusedByGender,
   caseTypes,
+  areAccusedRightsHidden,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -505,8 +507,12 @@ function constructInvestigationRulingPdf(
       paragraphGap: 4,
     }),
   )
-
-  if (!existingCase.isAccusedAbsent) {
+  if (
+    !areAccusedRightsHidden(
+      existingCase.isAccusedAbsent,
+      existingCase.sessionArrangements,
+    )
+  ) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
@@ -638,11 +644,15 @@ function constructInvestigationRulingPdf(
       },
     )
     .text(' ')
-    .font('Helvetica')
-    .text('Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.', {
-      lineGap: 6,
-      paragraphGap: 0,
-    })
+  if (existingCase.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
+    doc
+      .font('Helvetica')
+      .text('Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.', {
+        lineGap: 6,
+        paragraphGap: 0,
+      })
+  }
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)

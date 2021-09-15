@@ -356,6 +356,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.requestedCourtDate ?? null).toBe(
     caseTwo.requestedCourtDate ?? null,
   )
+  expect(caseOne.translator ?? null).toBe(caseTwo.translator ?? null)
   expect(caseOne.requestedValidToDate ?? null).toBe(
     caseTwo.requestedValidToDate ?? null,
   )
@@ -1040,7 +1041,6 @@ describe('Notification', () => {
         expect(apiSendNotificationResponse.notification?.type).toBe(
           NotificationType.HEADS_UP,
         )
-        expect(apiSendNotificationResponse.notification?.condition).toBeNull()
         expect(apiSendNotificationResponse.notification?.recipients).toBe(
           `[{"success":true}]`,
         )
@@ -1056,9 +1056,6 @@ describe('Notification', () => {
           apiSendNotificationResponse.notification?.created,
         )
         expect(value?.type).toBe(apiSendNotificationResponse.notification?.type)
-        expect(value?.condition).toBe(
-          apiSendNotificationResponse.notification?.condition,
-        )
         expect(value?.recipients).toBe(
           apiSendNotificationResponse.notification?.recipients,
         )

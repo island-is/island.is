@@ -1,12 +1,5 @@
 import React, { useState, useContext } from 'react'
-import {
-  Text,
-  Divider,
-  Box,
-  Button,
-  Input,
-  Icon,
-} from '@island.is/island-ui/core'
+import { Text, Divider, Box } from '@island.is/island-ui/core'
 
 import {
   ContentContainer,
@@ -14,6 +7,10 @@ import {
   FormLayout,
   CancelModal,
   Estimation,
+  UserInfo,
+  AllFiles,
+  FormInfo,
+  FormComment,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
@@ -24,17 +21,16 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import {
-  NavigationProps,
-  getHomeCircumstances,
-  HomeCircumstances,
-  Employment,
-  getEmploymentStatus,
-  formatPhoneNumber,
-  formatNationalId,
-} from '@island.is/financial-aid/shared'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/useApplication'
+
+import {
+  Employment,
+  getEmploymentStatus,
+  getHomeCircumstances,
+  HomeCircumstances,
+} from '@island.is/financial-aid/shared/lib'
 
 const SummaryForm = () => {
   const router = useRouter()
@@ -51,34 +47,9 @@ const SummaryForm = () => {
 
   const { createApplication } = useApplication()
 
-  const allFiles = form.incomeFiles
-    .concat(form.taxReturnFiles)
-    .concat(form.otherFiles)
-
-  const handleNextButtonClick = async () => {
-    if (!form || !user) {
-      return
-    }
-    try {
-      await createApplication(form, user).then(() => {
-        if (navigation?.nextUrl) {
-          router.push(navigation.nextUrl)
-        }
-      })
-    } catch (e) {
-      setFormError({
-        status: true,
-        message: 'Obobb einhvað fór úrskeiðis',
-      })
-    }
-  }
-
-  const navigation: NavigationProps = useFormNavigation(
-    router.pathname,
-  ) as NavigationProps
-
-  const overview = [
+  const formInfoOverview = [
     {
+      id: 'homeCircumstances',
       label: 'Búseta',
       url: 'buseta',
       info:
@@ -87,14 +58,18 @@ const SummaryForm = () => {
           : getHomeCircumstances[form?.homeCircumstances as HomeCircumstances],
     },
     {
+      id: 'hasIncome',
       label: 'Tekjur',
       url: 'tekjur',
       info:
-        'Ég hef ' +
-        (form?.incomeFiles ? '' : 'ekki') +
-        'fengið tekjur í þessum mánuði eða síðasta',
+        form?.hasIncome === undefined
+          ? undefined
+          : 'Ég hef ' +
+            (form?.hasIncome ? '' : 'ekki') +
+            'fengið tekjur í þessum mánuði eða síðasta',
     },
     {
+      id: 'employmentCustom',
       label: 'Staða',
       url: 'atvinna',
       info: form?.employmentCustom
@@ -102,11 +77,48 @@ const SummaryForm = () => {
         : getEmploymentStatus[form?.employment as Employment],
     },
     {
+      id: 'emailAddress',
       label: 'Netfang',
       url: 'samskipti',
       info: form?.emailAddress,
     },
   ]
+
+  const handleNextButtonClick = async () => {
+    if (!form || !user) {
+      return
+    }
+
+    await createApplication(form, user, updateForm)
+      .then((res) => {
+        if (navigation?.nextUrl) {
+          router.push(navigation.nextUrl)
+        }
+      })
+      .catch((e) => {
+        setFormError({
+          status: true,
+          message: 'Obbobbob einhvað fór úrskeiðis',
+        })
+
+        if (e.networkError.statusCode === 400) {
+          const findErrorInFormInfo = formInfoOverview.find(
+            (el) => el.info === undefined,
+          )
+
+          if (findErrorInFormInfo) {
+            var element = document.getElementById(findErrorInFormInfo.id)
+            element?.scrollIntoView({
+              behavior: 'smooth',
+            })
+          }
+        }
+      })
+  }
+
+  const navigation: NavigationProps = useFormNavigation(
+    router.pathname,
+  ) as NavigationProps
 
   return (
     <FormLayout
@@ -137,139 +149,15 @@ const SummaryForm = () => {
           <Divider />
         </Box>
 
-        <Box
-          display="flex"
-          alignItems="flexStart"
-          paddingY={[4, 4, 5]}
-          className={cn({
-            [`${styles.userInfoContainer}`]: true,
-          })}
-        >
-          <Box className={styles.mainInfo}>
-            <Text fontWeight="semiBold">Nafn</Text>
-            <Text marginBottom={3}>{user?.name}</Text>
+        <UserInfo />
 
-            <Text fontWeight="semiBold">Kennitala</Text>
-            {user?.nationalId && (
-              <Text>{formatNationalId(user.nationalId)}</Text>
-            )}
-          </Box>
+        <FormInfo info={formInfoOverview} error={formError.status} />
 
-          <Box className={styles.contactInfo}>
-            <Text fontWeight="semiBold">Sími</Text>
-            {user?.phoneNumber && (
-              <Text marginBottom={3}>
-                {formatPhoneNumber(user.phoneNumber)}
-              </Text>
-            )}
-
-            <Text fontWeight="semiBold">Heimili</Text>
-            <Text>Hafnargata 3, 220 Hafnarfjörður</Text>
-          </Box>
-        </Box>
-        {overview.map((item, index) => {
-          return (
-            <span key={'overview-' + index}>
-              <Divider />
-
-              <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                alignItems="flexStart"
-                paddingY={[4, 4, 5]}
-              >
-                <Box marginRight={3}>
-                  <Text fontWeight="semiBold">{item.label}</Text>
-                  <Text>{item.info}</Text>
-                </Box>
-
-                {item.url && (
-                  <Button
-                    icon="pencil"
-                    iconType="filled"
-                    variant="utility"
-                    onClick={() => {
-                      router.push(item.url)
-                    }}
-                  >
-                    Breyta
-                  </Button>
-                )}
-              </Box>
-            </span>
-          )
-        })}
         <Divider />
 
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="flexStart"
-          paddingY={[4, 4, 5]}
-          marginBottom={[2, 2, 5]}
-        >
-          <Box marginRight={3}>
-            <Text fontWeight="semiBold">Gögn</Text>
-            <Box>
-              {allFiles && (
-                <>
-                  {allFiles.map((file, index) => {
-                    return (
-                      <a
-                        href={file.name}
-                        key={`file-` + index}
-                        className={styles.filesButtons}
-                        target="_blank"
-                        download
-                      >
-                        <Box marginRight={1} display="flex" alignItems="center">
-                          <Icon
-                            color="blue400"
-                            icon="document"
-                            size="small"
-                            type="outline"
-                          />
-                        </Box>
+        <AllFiles />
 
-                        <Text>{file.name}</Text>
-                      </a>
-                    )
-                  })}
-                </>
-              )}
-            </Box>
-          </Box>
-
-          <Button
-            icon="pencil"
-            iconType="filled"
-            variant="utility"
-            onClick={() => {
-              router.push('gogn')
-            }}
-          >
-            Breyta
-          </Button>
-        </Box>
-
-        <Box marginBottom={[3, 3, 4]}>
-          <Text variant="h3">Annað sem þú vilt koma á framfæri?</Text>
-        </Box>
-
-        <Box marginBottom={[4, 4, 10]}>
-          <Input
-            backgroundColor={'blue'}
-            label="Athugasemd"
-            name="formComment"
-            placeholder="Skrifaðu hér"
-            rows={8}
-            textarea
-            value={form?.formComment}
-            onChange={(event) => {
-              updateForm({ ...form, formComment: event.target.value })
-            }}
-          />
-        </Box>
+        <FormComment />
 
         <div
           className={cn({

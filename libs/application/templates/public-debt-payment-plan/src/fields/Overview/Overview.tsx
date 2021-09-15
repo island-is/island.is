@@ -4,7 +4,13 @@ import {
 } from '@island.is/api/schema'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
-import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  GridColumn,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React from 'react'
 import { overview } from '../../lib/messages'
@@ -81,33 +87,35 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </ReviewGroup>
-      <ReviewGroup
-        isEditable
-        editAction={() => editAction('employerMultiField')}
-      >
-        <GridRow>
-          {employer?.isCorrectInfo === YES && (
-            <GridColumn span={['6/12', '5/12']}>
-              <Box>
-                <Label>{formatMessage(overview.employer)}</Label>
-                <Text>{employerInfo.name}</Text>
-              </Box>
-            </GridColumn>
-          )}
-          {employerInfo?.nationalId && (
-            <GridColumn span={['6/12', '5/12']}>
-              <Box>
-                <Label>{formatMessage(overview.employerSsn)}</Label>
-                <Text>
-                  {employer?.isCorrectInfo === YES
-                    ? employerInfo?.nationalId
-                    : employer?.correctedNationalId}
-                </Text>
-              </Box>
-            </GridColumn>
-          )}
-        </GridRow>
-      </ReviewGroup>
+      {employer?.isCorrectInfo === YES && employerInfo?.nationalId && (
+        <ReviewGroup
+          isEditable
+          editAction={() => editAction('employerMultiField')}
+        >
+          <GridRow>
+            {employer?.isCorrectInfo === YES && (
+              <GridColumn span={['6/12', '5/12']}>
+                <Box>
+                  <Label>{formatMessage(overview.employer)}</Label>
+                  <Text>{employerInfo.name}</Text>
+                </Box>
+              </GridColumn>
+            )}
+            {employerInfo?.nationalId && (
+              <GridColumn span={['6/12', '5/12']}>
+                <Box>
+                  <Label>{formatMessage(overview.employerSsn)}</Label>
+                  <Text>
+                    {employer?.isCorrectInfo === YES
+                      ? employerInfo?.nationalId
+                      : employer?.correctedNationalId}
+                  </Text>
+                </Box>
+              </GridColumn>
+            )}
+          </GridRow>
+        </ReviewGroup>
+      )}
       {debts?.map((payment, index) => {
         const paymentIndex = paymentPlanIndexKeyMapper[
           index as PaymentPlanBuildIndex
@@ -131,6 +139,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
             isEditable
             editAction={() => editAction(`paymentPlans.${paymentIndex}`)}
             key={index}
+            isLast={true}
           >
             <Box paddingBottom={[2, 4]}>
               <Label>{payment.paymentSchedule}</Label>
@@ -145,6 +154,13 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
           </ReviewGroup>
         )
       })}
+      <Box marginTop={1}>
+        <AlertMessage
+          type="info"
+          title={formatMessage(overview.infoBoxTitle)}
+          message={formatMessage(overview.infoBoxSummary)}
+        />
+      </Box>
     </>
   )
 }

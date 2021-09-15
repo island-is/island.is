@@ -11,3 +11,43 @@ export const AllowedFakeUsers = [
   '0000000002', // Veita user
   '0000000003', // User with an application which needs data
 ]
+
+export const Routes = {
+  status: '/stada',
+  statusPage: (id: string) => `/stada/${id}`,
+  statusFileUpload: (id: string) => `/stada/${id}/gogn`,
+  apiLoginRouteForFake: (id: string) =>
+    id
+      ? `/api/auth/login?applicationId=${id}&nationalId=`
+      : '/api/auth/login?nationalId=',
+  apiLoginRouteForRealUsers: (id: string) =>
+    id ? `/api/auth/login?applicationId=${id}` : '/api/auth/login',
+  filesPage: '/gogn',
+}
+
+export const months = [
+  'janúar',
+  'febrúar',
+  'mars',
+  'apríl',
+  'maí',
+  'júní',
+  'júlí',
+  'ágúst',
+  'september',
+  'október',
+  'nóvember',
+  'desember',
+]
+
+export const getMonth = (month: number) => {
+  return months[month]
+}
+
+export const nextMonth = (new Date().getMonth() + 1) % 12
+
+export const getNextPeriod = {
+  month: getMonth(nextMonth),
+  year:
+    nextMonth === 0 ? new Date().getFullYear() + 1 : new Date().getFullYear(),
+}

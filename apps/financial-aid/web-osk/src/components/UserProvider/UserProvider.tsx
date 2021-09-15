@@ -1,6 +1,6 @@
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
-import { CSRF_COOKIE_NAME, User } from '@island.is/financial-aid/shared'
+import { CSRF_COOKIE_NAME, User } from '@island.is/financial-aid/shared/lib'
 import Cookies from 'js-cookie'
 
 import { CurrentUserQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
@@ -23,7 +23,6 @@ const UserProvider = ({ children }: Props) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(Cookies.get(CSRF_COOKIE_NAME)),
   )
-
   const { data } = useQuery(CurrentUserQuery, {
     fetchPolicy: 'no-cache',
   })

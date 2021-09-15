@@ -481,7 +481,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const employerNationalRegistryId = getValueViaPath(
     answers,
-    'employer.nationalRegistryId',
+    'employerNationalRegistryId',
   ) as string
 
   const shareInformationWithOtherParent = getValueViaPath(

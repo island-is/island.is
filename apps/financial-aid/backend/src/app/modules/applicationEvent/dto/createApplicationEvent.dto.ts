@@ -2,7 +2,7 @@ import { IsNotEmpty, IsString, IsOptional } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { ApplicationEventType } from '@island.is/financial-aid/shared'
+import { ApplicationEventType } from '@island.is/financial-aid/shared/lib'
 
 export class CreateApplicationEventDto {
   @IsNotEmpty()

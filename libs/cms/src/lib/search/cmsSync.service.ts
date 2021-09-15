@@ -24,6 +24,7 @@ import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import { OrganizationPageSyncService } from './importers/organizationPage.service'
 import { OrganizationSubpageSyncService } from './importers/organizationSubpage.service'
 import { FrontpageSyncService } from './importers/frontpage.service'
+import { SupportQNASyncService } from './importers/supportQNA.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -59,6 +60,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly organizationPageSyncService: OrganizationPageSyncService,
     private readonly organizationSubpageSyncService: OrganizationSubpageSyncService,
     private readonly frontpageSyncService: FrontpageSyncService,
+    private readonly supportQNASyncService: SupportQNASyncService,
     private readonly elasticService: ElasticService,
   ) {
     this.contentSyncProviders = [
@@ -74,6 +76,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.organizationPageSyncService,
       this.organizationSubpageSyncService,
       this.frontpageSyncService,
+      this.supportQNASyncService,
     ]
   }
 

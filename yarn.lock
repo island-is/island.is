@@ -3835,10 +3835,10 @@
   resolved "https://registry.yarnpkg.com/@hugsmidjan/qj/-/qj-4.7.0.tgz#ef2793bf1f349bc01b2118dc2d20d6f22163fa84"
   integrity sha512-/kIAN1WvMTlzmtKXgIRl57KbTpAd9UmNgPfcO0NtZNllwhfKDRVOrN9c6ZeBxnrfWsYBP6/BFldYur1aBDBO2g==
 
-"@hugsmidjan/regulations-editor@0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.3.2.tgz#ba475b83fe516c895b06075e7e32999811b05e4b"
-  integrity sha512-Ooz1eYOkqn5RwJi0JcJo6R3xDXOr9JlHFUqloEFmBkiXJav5uWRHPnYswjkoPmvEKOek1gMci1wbLJvz0p9DGA==
+"@hugsmidjan/regulations-editor@0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.3.6.tgz#fbb8c4a8b623d86e69cc195e6a7d6cd1acd675d6"
+  integrity sha512-jzXSxqwT7ZKlPH0mhO6jWfN0GjeeToj2dg9STOreapCqGiPhmYzSHKGl8gxpNQafDAfFbPnaoXnUWycifVem8Q==
   dependencies:
     "@hugsmidjan/qj" "^4.7.0"
     "@tinymce/tinymce-react" "^3.8.4"
@@ -11902,10 +11902,10 @@ crypto-browserify@3.12.0, crypto-browserify@^3.11.0:
     randombytes "^2.0.0"
     randomfill "^1.0.3"
 
-crypto-js@4.0.0, crypto-js@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.0.0.tgz#2904ab2677a9d042856a2ea2ef80de92e4a36dcc"
-  integrity sha512-bzHZN8Pn+gS7DQA6n+iUmBfl0hO5DJq++QP3U6uTucDtk/0iGpXd/Gg7CGR0p8tJhofJyaKoWBuJI4eAO00BBg==
+crypto-js@4.1.1, crypto-js@^4.0.0:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.1.1.tgz#9e485bcf03521041bd85844786b83fb7619736cf"
+  integrity sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==
 
 crypto-js@^3.1.9-1:
   version "3.3.0"
@@ -12270,10 +12270,10 @@ csv-parse@4.16.0:
   resolved "https://registry.yarnpkg.com/csv-parse/-/csv-parse-4.16.0.tgz#b4c875e288a41f7ff917cb0d7d45880d563034f6"
   integrity sha512-Zb4tGPANH4SW0LgC9+s9Mnequs9aqn7N3/pCqNbVjs2XhEF6yWNU2Vm4OGl1v2Go9nw8rXt87Cm2QN/o6Vpqgg==
 
-csv-stringify@5.5.1:
-  version "5.5.1"
-  resolved "https://registry.yarnpkg.com/csv-stringify/-/csv-stringify-5.5.1.tgz#f42cdd379b0f7f142933a11f674b1a91ebd0fcd0"
-  integrity sha512-HM0/86Ks8OwFbaYLd495tqTs1NhscZL52dC4ieKYumy8+nawQYC0xZ63w1NqLf0M148T2YLYqowoImc1giPn0g==
+csv-stringify@5.6.5:
+  version "5.6.5"
+  resolved "https://registry.yarnpkg.com/csv-stringify/-/csv-stringify-5.6.5.tgz#c6d74badda4b49a79bf4e72f91cce1e33b94de00"
+  integrity sha512-PjiQ659aQ+fUTQqSrd1XEDnOr52jh30RBurfzkscaE2tPaFsDH5wOAHJiw8XAHphRknCwMUE9KRayc4K/NbO8A==
 
 currently-unhandled@^0.4.1:
   version "0.4.1"
@@ -18246,10 +18246,10 @@ js-yaml@^3.10.0, js-yaml@^3.12.1, js-yaml@^3.13.1, js-yaml@^3.14.0, js-yaml@^3.9
     argparse "^1.0.7"
     esprima "^4.0.0"
 
-jsbarcode@3.11.0:
-  version "3.11.0"
-  resolved "https://registry.yarnpkg.com/jsbarcode/-/jsbarcode-3.11.0.tgz#20623e008b101ef45d0cce9c8022cdf49be28547"
-  integrity sha512-/ozCd7wsa+VIHo9sUc03HneVEQrH7cVWfJolUT/WOW1m8mJ2e3iYZje6C9X3LFHdczlesqFHRpxLtbVsNtjyow==
+jsbarcode@3.11.5:
+  version "3.11.5"
+  resolved "https://registry.yarnpkg.com/jsbarcode/-/jsbarcode-3.11.5.tgz#390b3efd0271f35b9d68c7b8af6e972445969014"
+  integrity sha512-zv3KsH51zD00I/LrFzFSM6dst7rDn0vIMzaiZFL7qusTjPZiPtxg3zxetp0RR7obmjTw4f6NyGgbdkBCgZUIrA==
 
 jsbn@~0.1.0:
   version "0.1.1"

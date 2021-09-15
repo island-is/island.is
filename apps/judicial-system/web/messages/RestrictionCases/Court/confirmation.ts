@@ -23,13 +23,26 @@ export const rcConfirmation = {
       },
     }),
   },
-  modal: defineMessages({
-    text: {
-      id: 'judicial.system.restriction_cases:confirmation.modal.text',
-      defaultMessage:
-        'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
-      description:
-        'Notaður sem texti í úrskurðar tilkynningaglugganum á staðfesingar skrefi í gæsluvarðhalds- og farbannsmálum.',
-    },
-  }),
+  modal: {
+    custodyCases: defineMessages({
+      text: {
+        id:
+          'judicial.system.restriction_cases:confirmation.modal.custody_cases.text#markdown',
+        defaultMessage:
+          'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.<br/><br/>Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
+        description:
+          'Notaður sem texti í úrskurðar tilkynningaglugganum á staðfesingar skrefi í gæsluvarðhaldsmálum.',
+      },
+    }),
+    travelBanCases: defineMessages({
+      text: {
+        id:
+          'judicial.system.restriction_cases:confirmation.modal.travel_ban_cases.text#markdown',
+        defaultMessage:
+          'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð.<br/><br/>Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
+        description:
+          'Notaður sem texti í úrskurðar tilkynningaglugganum á staðfesingar skrefi í farbannsmálum.',
+      },
+    }),
+  },
 }

@@ -9,7 +9,7 @@ import {
   TableHeaders,
   TableBody,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { Application } from '@island.is/financial-aid/shared'
+import { Application } from '@island.is/financial-aid/shared/lib'
 import { TableHeadersProps } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
 interface PageProps {

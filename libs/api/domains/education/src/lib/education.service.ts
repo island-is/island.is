@@ -65,13 +65,25 @@ export class EducationService {
     })
   }
 
-  async getFamily(nationalId: string) {
+  private isChild(familyMember: ISLFjolskyldan): boolean {
+    return (
+      !['1', '2', '7'].includes(familyMember.Kyn) &&
+      kennitala.info(familyMember.Kennitala).age < ADULT_AGE_LIMIT
+    )
+  }
+
+  async getFamily(nationalId: string): Promise<ISLFjolskyldan[]> {
     const family = await this.nationalRegistryApi.getMyFamily(nationalId)
+    const myself = family.find(({ Kennitala }) => Kennitala === nationalId)
+
+    if (!myself) {
+      return []
+    }
+
     return family.filter(
       (familyMember) =>
-        nationalId === familyMember.Kennitala ||
-        (!['1', '2', '7'].includes(familyMember.Kyn) &&
-          kennitala.info(familyMember.Kennitala).age < ADULT_AGE_LIMIT),
+        familyMember === myself ||
+        (this.isChild(familyMember) && !this.isChild(myself)),
     )
   }
 
