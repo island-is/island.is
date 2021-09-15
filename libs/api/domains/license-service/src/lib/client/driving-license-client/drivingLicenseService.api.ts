@@ -498,7 +498,7 @@ export class GenericDrivingLicenseApi
 
       error = {
         status: status.toString(),
-        message: result.error.serviceError?.message ?? 'Unknown error',
+        message: result.error.serviceError?.message || 'Unknown error',
         data,
       }
     }
