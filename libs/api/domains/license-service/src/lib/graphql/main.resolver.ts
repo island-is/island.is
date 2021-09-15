@@ -16,7 +16,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { IsBoolean, IsArray, IsOptional } from 'class-validator'
 
-import { LicenseScope } from '@island.is/auth/scopes'
+import { GenericScope, LicenseScope } from '@island.is/auth/scopes'
 import type { Locale } from '@island.is/shared/types'
 
 import { LicenseServiceService } from '../licenseService.service'
@@ -79,7 +79,7 @@ export class VerifyPkPassInput {
 export class MainResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
 
-  @Scopes(LicenseScope.read)
+  @Scopes(GenericScope.internal)
   @Query(() => [GenericUserLicense])
   async genericLicenses(
     @CurrentUser() user: User,
@@ -100,7 +100,7 @@ export class MainResolver {
     return licenses
   }
 
-  @Scopes(LicenseScope.read)
+  @Scopes(GenericScope.internal)
   @Query(() => GenericUserLicense)
   async genericLicense(
     @CurrentUser() user: User,
@@ -117,7 +117,7 @@ export class MainResolver {
     return license
   }
 
-  @Scopes(LicenseScope.generate)
+  @Scopes(GenericScope.internal)
   @Mutation(() => GenericPkPass)
   async generatePkPass(
     @CurrentUser() user: User,
