@@ -100,19 +100,21 @@ export const GetMunicipalityQuery = gql`
   }
 `
 
-export const GetCurrentUserQuery = gql`
-  query currentUserQuery {
-    currentUser {
-      name
-    }
-  }
-`
 export const CurrentUserQuery = gql`
   query CurrentUserQuery {
     currentUser {
       nationalId
       name
       phoneNumber
+      staff {
+        id
+        nationalId
+        name
+        municipalityId
+        phoneNumber
+        role
+        active
+      }
     }
   }
 `
@@ -125,20 +127,6 @@ export const GetApplicationEventQuery = gql`
       eventType
       comment
       created
-    }
-  }
-`
-
-export const CurrentStaffQuery = gql`
-  query CurrentStaffQuery($input: StaffQueryInput!) {
-    currentStaff(input: $input) {
-      id
-      nationalId
-      name
-      municipalityId
-      phoneNumber
-      role
-      active
     }
   }
 `

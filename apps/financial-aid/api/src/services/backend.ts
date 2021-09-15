@@ -13,7 +13,6 @@ import {
   CreateApplicationEvent,
   ApplicationFilters,
   CreateFilesResponse,
-  Staff,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -58,11 +57,11 @@ class BackendAPI extends RESTDataSource {
   }
 
   getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
-    return this.post('/file/url', getSignedUrl)
+    return this.post('file/url', getSignedUrl)
   }
 
   getSignedUrlForId(id: string): Promise<SignedUrl> {
-    return this.get(`/file/url/${id}`)
+    return this.get(`file/url/${id}`)
   }
 
   getApplicationEvents(id: string): Promise<ApplicationEvent[]> {
@@ -78,11 +77,7 @@ class BackendAPI extends RESTDataSource {
   createApplicationFiles(
     createApplicationFiles: CreateApplicationFilesInput,
   ): Promise<CreateFilesResponse> {
-    return this.post('/file', createApplicationFiles)
-  }
-
-  getStaff(nationalId: string): Promise<Staff> {
-    return this.get(`staff/${nationalId}`)
+    return this.post('file', createApplicationFiles)
   }
 }
 

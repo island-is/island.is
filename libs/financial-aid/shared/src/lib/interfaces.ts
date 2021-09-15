@@ -55,6 +55,7 @@ export interface User {
   service: RolesRule
   currentApplication?: CurrentApplication
   returnUrl: ReturnUrl
+  staff?: Staff
 }
 
 export interface UpdateApplication {

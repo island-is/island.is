@@ -19,6 +19,7 @@ import { UserService } from './user.service'
 
 import { CurrentApplicationModel } from '../application'
 import { environment } from '../../../environments'
+import { StaffModel } from '../staff/models'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => UserModel)
@@ -59,9 +60,18 @@ export class UserResolver {
     @Parent() user: User,
   ): Promise<CurrentApplicationModel | null> {
     // Local development
+    this.logger.debug(
+      `Getting current application for nationalId: ${user.nationalId}`,
+    )
     if (environment.auth.allowFakeUsers && user.nationalId in this.fakeUsers) {
       return this.fakeUsers[user.nationalId]
     }
     return await this.userService.getCurrentApplication(user.nationalId)
+  }
+
+  @ResolveField('staff', () => StaffModel)
+  async staff(@Parent() user: User): Promise<StaffModel> {
+    this.logger.debug(`Getting staff for nationalId: ${user.nationalId}`)
+    return await this.userService.getStaff(user.nationalId)
   }
 }
