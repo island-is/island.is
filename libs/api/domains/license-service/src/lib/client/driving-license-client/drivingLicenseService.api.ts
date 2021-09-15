@@ -481,8 +481,14 @@ export class GenericDrivingLicenseApi
         // noop
       }
 
+      // Is there a status code from the service?
+      const serviceErrorStatus = result.error.serviceError?.status
+
+      // Use status code, or http status code from serivce, or "0" for unknown
+      const status = serviceErrorStatus ?? (result.error.statusCode || 0)
+
       error = {
-        status: (result.error.statusCode || 0).toString(),
+        status: status.toString(),
         message: result.error.serviceError?.message ?? 'Unknown error',
         data,
       }
