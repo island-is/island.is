@@ -3,6 +3,7 @@ import cn from 'classnames'
 import { Text } from '../Text/Text'
 
 import * as styles from './Tag.treat'
+import { Icon } from '../IconRC/Icon'
 
 export type TagVariant =
   | 'blue'
@@ -26,6 +27,12 @@ export interface TagProps {
   children: string | ReactNode
   truncate?: boolean
   CustomLink?: FC
+  /** Renders a small "x" icon to indicate that invoking the
+   * `onClick` handler will (likely) remove/delete  the tag.
+   *
+   * Only appears on `<button>`s with an `onClick` handler defined
+   */
+  removable?: boolean
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -36,6 +43,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       children,
       href,
       onClick,
+      removable,
       variant = 'blue',
       active,
       disabled,
@@ -65,9 +73,12 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       ref,
     }
 
+    const renderCloseIcon = removable && !!onClick && !href
+
     const content = (
       <Text variant="eyebrow" as="span" truncate={truncate}>
         {children}
+        {renderCloseIcon && <Icon icon="close" className={styles.closeIcon} />}
       </Text>
     )
 
