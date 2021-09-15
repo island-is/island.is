@@ -157,3 +157,49 @@ input[type='number'] {
 .logOutButtonHover:hover > svg {
   transform: translate3d(5px, 0px, 0px);
 }
+
+.burgerMenu > span {
+  display: block;
+  width: 33px;
+  height: 4px;
+  margin-bottom: 5px;
+  position: relative;
+
+  background: #0061ff;
+  border-radius: 3px;
+
+  z-index: 1;
+
+  transform-origin: 4px 0px;
+
+  transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1),
+    background 0.5s cubic-bezier(0.77, 0.2, 0.05, 1), opacity 0.55s ease;
+}
+
+.burgerMenu:hover > span {
+  background: #4649d0;
+}
+
+.burgerMenu > span:first-child {
+  transform-origin: 0% 0%;
+}
+
+.burgerMenu > span:last-child {
+  transform-origin: 0% 100%;
+}
+
+.openBurgerMenu > span {
+  opacity: 1;
+  transform: rotate(45deg) translate(-3px, -2px);
+  background: #4649d0;
+}
+
+.openBurgerMenu > span:nth-child(2) {
+  opacity: 0;
+  transform: rotate(0deg) scale(0.2, 0.2);
+}
+
+.openBurgerMenu span:last-child {
+  background: #4649d0;
+  transform: rotate(-45deg) translate(-1px, -1px);
+}

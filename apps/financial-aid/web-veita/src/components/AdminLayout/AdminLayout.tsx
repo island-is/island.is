@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 
 import { Nav } from '@island.is/financial-aid-web/veita/src/components/Nav'
 
@@ -15,10 +15,25 @@ const AdminLayout = ({ children, className }: PageProps) => {
     document.title = 'Veita • Umsóknir um fjárhagsaðstoð'
   }, [])
 
+  const [showNavMobile, setShowNavMobile] = useState<boolean>(false)
+
   return (
     <>
-      <Nav />
+      <Nav showInMobile={showNavMobile} />
       <div className={` wrapper ${styles.gridWrapper} `}>
+        <button
+          className={cn({
+            [`${styles.burgerMenu} burgerMenu`]: true,
+            [`openBurgerMenu`]: showNavMobile,
+          })}
+          onClick={() => {
+            setShowNavMobile(!showNavMobile)
+          }}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
         <div
           className={cn({
             [`${styles.childContainer}`]: true,

@@ -9,17 +9,21 @@ export const container = style({
   paddingLeft: theme.spacing[3],
   paddingRight: theme.spacing[6],
   backgroundColor: theme.color.purple100,
-  width: '25.4%',
+  width: '250px',
   minHeight: '100%',
   paddingTop: theme.spacing[5],
   paddingBottom: theme.spacing[7],
-  display: 'none',
+  display: 'grid',
+  zIndex: 10,
+  transform: 'translate3d(-120%, 0, 0)',
+  transition: 'transform 250ms ease',
   gridTemplateRows: 'max-content auto max-content',
   alignItems: 'center',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      display: 'grid',
       paddingLeft: theme.spacing[3],
+      transform: 'translate3d(0%, 0, 0)',
+      width: '25.4%',
     },
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       paddingLeft: theme.spacing[6],
@@ -27,6 +31,14 @@ export const container = style({
     [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
       paddingLeft: 'calc((100vw - 1440px)/2 + 48px)',
       width: 'calc((100vw - 1440px)/2 + (0.254 * 1440px))',
+    },
+  },
+})
+
+export const showNavInMobile = style({
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+      transform: 'translate3d(0%, 0, 0)',
     },
   },
 })

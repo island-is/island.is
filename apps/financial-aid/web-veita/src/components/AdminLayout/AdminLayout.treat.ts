@@ -24,3 +24,16 @@ export const childContainer = style({
     },
   },
 })
+
+export const burgerMenu = style({
+  position: 'absolute',
+  right: '0',
+  top: '0',
+  display: 'block',
+  padding: theme.spacing[3],
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      display: 'none',
+    },
+  },
+})
