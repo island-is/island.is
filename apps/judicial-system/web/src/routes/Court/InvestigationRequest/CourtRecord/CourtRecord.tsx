@@ -40,29 +40,36 @@ const CourtRecord = () => {
         attendees += `${wc.registrar.name} ${wc.registrar.title}\n`
       }
 
-      if (wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
-        if (wc.prosecutor) {
-          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
-        }
+      if (
+        wc.prosecutor &&
+        wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
+      ) {
+        attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
+      }
 
-        if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-          if (wc.accusedName) {
-            attendees += `${wc.accusedName} varnaraðili`
-          }
-        } else {
-          attendees +=
-            'Varnaraðili var ekki viðstaddur sbr. 104. gr. laga 88/2008 um meðferð sakamála.'
+      if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+        if (wc.accusedName) {
+          attendees += `${wc.accusedName} varnaraðili`
         }
+      } else {
+        attendees +=
+          'Varnaraðili var ekki viðstaddur sbr. 104. gr. laga 88/2008 um meðferð sakamála.'
+      }
 
-        if (wc.defenderName) {
-          attendees += `\n${wc.defenderName} skipaður ${
-            wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-          } varnaraðila`
-        }
+      if (
+        wc.defenderName &&
+        wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
+      ) {
+        attendees += `\n${wc.defenderName} skipaður ${
+          wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+        } varnaraðila`
+      }
 
-        if (wc.translator) {
-          attendees += `\n${wc.translator} túlkur`
-        }
+      if (
+        wc.translator &&
+        wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
+      ) {
+        attendees += `\n${wc.translator} túlkur`
       }
 
       return attendees

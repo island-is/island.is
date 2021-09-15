@@ -552,21 +552,17 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
               ? icHearingArrangements.modal.remoteSessionHeading
               : icHearingArrangements.modal.heading,
           )}
-          text={
-            workingCase.sessionArrangements ===
-            SessionArrangements.REMOTE_SESSION
-              ? ''
-              : formatMessage(icHearingArrangements.modal.text, {
-                  announcementSuffix:
-                    workingCase.sessionArrangements !==
-                      SessionArrangements.ALL_PRESENT ||
-                    !workingCase.defenderEmail
-                      ? '.'
-                      : workingCase.defenderIsSpokesperson
-                      ? ` og talsmann.`
-                      : ` og verjanda.`,
-                })
-          }
+          text={formatMessage(
+            workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+              ? icHearingArrangements.modal.allPresentText
+              : workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+              ? icHearingArrangements.modal.allPresentSpokespersonText
+              : workingCase.sessionArrangements ===
+                SessionArrangements.PROSECUTOR_PRESENT
+              ? icHearingArrangements.modal.prosecutorPresentText
+              : icHearingArrangements.modal.remoteSessionText,
+          )}
           handlePrimaryButtonClick={async () => {
             if (
               workingCase.sessionArrangements ===
