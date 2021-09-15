@@ -667,7 +667,12 @@ const Auctions: Screen<AuctionsProps> = ({
                 <Box
                   alignItems="flexStart"
                   display="flex"
-                  flexDirection={['columnReverse', 'columnReverse', 'row']}
+                  flexDirection={[
+                    'columnReverse',
+                    'columnReverse',
+                    'columnReverse',
+                    'row',
+                  ]}
                   justifyContent="spaceBetween"
                 >
                   <Text variant="eyebrow" color="purple400" paddingTop={1}>
@@ -677,7 +682,7 @@ const Auctions: Screen<AuctionsProps> = ({
                       KNOWN_LOCATIONS.includes(auction.location) &&
                       ' - ' + auction.location}
                   </Text>
-                  <Box marginBottom={[2, 2, 0]}>
+                  <Box marginBottom={[2, 2, 2, 0]}>
                     <Tag disabled>{auction.office}</Tag>
                   </Box>
                 </Box>
