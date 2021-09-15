@@ -13,6 +13,7 @@ import {
   CreateApplicationEvent,
   ApplicationFilters,
   CreateFilesResponse,
+  Staff,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -78,6 +79,10 @@ class BackendAPI extends RESTDataSource {
     createApplicationFiles: CreateApplicationFilesInput,
   ): Promise<CreateFilesResponse> {
     return this.post('/file', createApplicationFiles)
+  }
+
+  getStaff(nationalId: string): Promise<Staff> {
+    return this.get(`staff/${nationalId}`)
   }
 }
 
