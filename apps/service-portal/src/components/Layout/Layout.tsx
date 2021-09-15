@@ -9,6 +9,8 @@ import {
   Footer,
   ContentBlock,
   ToastContainer,
+  GridContainer,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import * as styles from './Layout.treat'
@@ -47,7 +49,7 @@ const Layout: FC = ({ children }) => {
         </Hidden>
       </RemoveScroll>
       <Box className={styles.layoutWrapper}>
-        <ContentBlock>
+        {/*<ContentBlock>
           <Box paddingX={[2, 2, 4, 4, 6]} paddingY={[2, 2, 2, 7]}>
             <Columns space={[0, 0, 0, 3, 5]} collapseBelow="lg">
               <Column width="content">
@@ -56,6 +58,7 @@ const Layout: FC = ({ children }) => {
                 </Hidden>
               </Column>
               <Column>
+              <Column >
                 <Box as="main">
                   <ContentBreadcrumbs />
                   <div>{children}</div>
@@ -64,9 +67,22 @@ const Layout: FC = ({ children }) => {
             </Columns>
           </Box>
         </ContentBlock>
-        <Hidden print={true}>
+         <Hidden print={true}>
           <Footer {...footerProps} />
-        </Hidden>
+        </Hidden> */}
+        <GridContainer>
+          <GridColumn>
+            <GridColumn
+              span={['1/1', '1/1', '1/1', '8/12']}
+              offset={['0', '0', '0', '2/12']}
+            >
+              <Box as="main">
+                <ContentBreadcrumbs />
+                <div>{children}</div>
+              </Box>
+            </GridColumn>
+          </GridColumn>
+        </GridContainer>
       </Box>
     </>
   )
