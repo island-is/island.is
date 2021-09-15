@@ -40,7 +40,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
   const assetData: Fasteign = data?.getRealEstateDetail || {}
 
   const owners = ownersArray(assetData)
-  const units = unitsArray(assetData)
+  const units = unitsArray(assetData, formatMessage)
 
   if (loading) {
     return <AssetLoader />

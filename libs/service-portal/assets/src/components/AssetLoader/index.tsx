@@ -9,9 +9,9 @@ const AssetLoader = () => {
           <h1>
             <SkeletonLoader space={2} />
           </h1>
-          <p>
+          <div>
             <SkeletonLoader repeat={2} space={2} />
-          </p>
+          </div>
         </Column>
         <Column width="content">
           <SkeletonLoader display="block" height={120} width={120} />

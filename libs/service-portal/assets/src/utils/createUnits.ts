@@ -1,8 +1,8 @@
 import chunk from 'lodash/chunk'
 import { format as formatKennitala } from 'kennitala'
-import { useLocale } from '@island.is/localization'
 import amountFormat from './amountFormat'
 import { messages } from '../messages'
+import { FormatMessage } from '@island.is/application/core'
 
 import { Fasteign, Notkunareining } from '../types/RealEstateAssets.types'
 
@@ -19,9 +19,8 @@ const ownersArray = (data: Fasteign) => {
   return ownerArray && ownerArray.length > 0 ? ownerArray : [[]]
 }
 
-const unitsArray = (data: Fasteign) =>
+const unitsArray = (data: Fasteign, formatMessage: FormatMessage) =>
   data?.notkunareiningar?.data?.map((unit: Notkunareining) => {
-    const { formatMessage } = useLocale()
     return {
       header: {
         title: formatMessage(messages.legalOwners),
