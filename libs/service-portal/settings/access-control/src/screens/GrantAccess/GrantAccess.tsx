@@ -103,7 +103,7 @@ function GrantAccess() {
   const onSubmit = handleSubmit(async ({ toNationalId }) => {
     try {
       const { data } = await createAuthDelegation({
-        variables: { input: { name, toNationalId } },
+        variables: { input: { toNationalId } },
       })
       if (data) {
         history.push(
