@@ -16,7 +16,7 @@ export class StaffResolver {
     private readonly logger: Logger,
   ) {}
   @Query(() => StaffModel, { nullable: false })
-  municipality(
+  getStaff(
     @Args('input', { type: () => StaffQueryInput })
     input: StaffQueryInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },

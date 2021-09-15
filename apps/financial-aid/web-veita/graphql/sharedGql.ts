@@ -128,3 +128,17 @@ export const GetApplicationEventQuery = gql`
     }
   }
 `
+
+export const CurrentStaffQuery = gql`
+  query CurrentStaffQuery($input: StaffQueryInput!) {
+    currentStaff(input: $input) {
+      id
+      nationalId
+      name
+      municipalityId
+      phoneNumber
+      role
+      active
+    }
+  }
+`
