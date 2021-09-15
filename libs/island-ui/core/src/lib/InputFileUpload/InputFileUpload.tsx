@@ -68,6 +68,7 @@ interface UploadedFileProps {
   onOpenFile?: (file: UploadFile) => void
   defaultBackgroundColor?: Colors
   doneIcon?: IconTypes
+  showIcons?: boolean
 }
 
 export const UploadedFile = ({
@@ -78,6 +79,7 @@ export const UploadedFile = ({
   onRemoveClick,
   onRetryClick,
   onOpenFile,
+  showIcons,
 }: UploadedFileProps) => {
   const statusColor = (status?: UploadFileStatus): Colors => {
     switch (status) {
@@ -148,40 +150,42 @@ export const UploadedFile = ({
         </Box>
       </Text>
       <Box display="flex">
-        {isUploading ? (
-          <div
-            className={styles.progressIconAnimation}
-            aria-label="Hleð upp skrá"
-          >
-            <Icon color="blue400" icon={statusIcon(file.status)} />
-          </div>
-        ) : file.status === 'error' && onRetryClick ? (
-          <button
-            type={'button'}
-            onClick={(e) => {
-              e.stopPropagation()
-              if (!isUploading) {
-                onRetryClick(file)
-              }
-            }}
-            aria-label="Reyna aftur"
-          >
-            <Icon color="blue400" icon="reload" />
-          </button>
-        ) : (
-          <button
-            type={'button'}
-            onClick={(e) => {
-              e.stopPropagation()
-              if (!isUploading) {
-                onRemoveClick(file)
-              }
-            }}
-            aria-label="Fjarlægja skrá"
-          >
-            <Icon color="blue400" icon={statusIcon(file.status)} />
-          </button>
-        )}
+        {showIcons ? (
+          isUploading ? (
+            <div
+              className={styles.progressIconAnimation}
+              aria-label="Hleð upp skrá"
+            >
+              <Icon color="blue400" icon={statusIcon(file.status)} />
+            </div>
+          ) : file.status === 'error' && onRetryClick ? (
+            <button
+              type={'button'}
+              onClick={(e) => {
+                e.stopPropagation()
+                if (!isUploading) {
+                  onRetryClick(file)
+                }
+              }}
+              aria-label="Reyna aftur"
+            >
+              <Icon color="blue400" icon="reload" />
+            </button>
+          ) : (
+            <button
+              type={'button'}
+              onClick={(e) => {
+                e.stopPropagation()
+                if (!isUploading) {
+                  onRemoveClick(file)
+                }
+              }}
+              aria-label="Fjarlægja skrá"
+            >
+              <Icon color="blue400" icon={statusIcon(file.status)} />
+            </button>
+          )
+        ) : null}
       </Box>
       <UploadingIndicator percent={file.percent} />
     </Box>
