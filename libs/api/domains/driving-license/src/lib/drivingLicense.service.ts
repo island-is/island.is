@@ -82,9 +82,11 @@ export class DrivingLicenseService {
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
-    const drivingLicense = await this.drivingLicenseApi.apiOkuskirteiniKennitalaAllGet({
-      kennitala: nationalId
-    })
+    const drivingLicense = await this.drivingLicenseApi.apiOkuskirteiniKennitalaAllGet(
+      {
+        kennitala: nationalId,
+      },
+    )
 
     const licenseWithName = drivingLicense.find(({ nafn }) => !!nafn)
 
