@@ -41,3 +41,5 @@ export interface UpdateUser {
   institutionId?: string
   active?: boolean
 }
+
+export const courtRoles = [UserRole.JUDGE, UserRole.REGISTRAR]
