@@ -6,13 +6,19 @@ import { RskCompanyVat } from './models/rskCompanyVat.model'
 import { RskCompanyAddress } from './models/rskCompanyAddress.model'
 import { RskCompanyRelatedParty } from './models/rskCompanyRelatedParty.model'
 import { RskCompanyClassification } from './models/rskCompanyClassification.model'
+import { SearchCompanyItem } from 'libs/clients/rsk-company-info/src/lib/gen/fetch'
+import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
+import { RskCompanyLink } from './models/rskCompanyLink.model'
+import { RskCompanySearchItem } from './models/rskCompanySearchItem.model'
 
 @Injectable()
 export class RskCompanyInfoService {
   constructor(private rskCompanyInfoApi: RskCompanyInfoAPI) {}
 
-  async getCompanyInfo(nationalId: string): Promise<RskCompany> {
-    const company = await this.rskCompanyInfoApi.getCompanyInfo(nationalId)
+  async getCompanyInformation(nationalId: string): Promise<RskCompany> {
+    const company = await this.rskCompanyInfoApi.getCompanyInformation(
+      nationalId,
+    )
     return {
       nationalIdCompany: company.kennitala,
       name: company.nafn,
@@ -65,6 +71,39 @@ export class RskCompanyInfoService {
       ),
       lastUpdated: company.sidastUppfaert,
       link: company.link,
+    }
+  }
+
+  async companyInformationSearch(
+    searchTerm: string,
+  ): Promise<RskCompanySearchItems> {
+    const searchResults = await this.rskCompanyInfoApi.searchCompanyInformation(
+      searchTerm,
+    )
+    return {
+      items: searchResults.items?.map(
+        (item) =>
+          ({
+            nationalIdCompany: item.kennitala,
+            name: item.nafn,
+            dateOfRegistration: item.skrad,
+            status: item.stada,
+            vat: item.vskNumer,
+            lastUpdated: item.sidastUppfaert,
+            links: item.links?.map(
+              (link) =>
+                ({
+                  rel: link.rel,
+                  href: link.href,
+                } as RskCompanyLink),
+            ),
+          } as RskCompanySearchItem),
+      ),
+      hasMore: searchResults.hasMore,
+      limit: searchResults.limit,
+      offset: searchResults.offset,
+      count: searchResults.count,
+      links: searchResults.links,
     }
   }
 }

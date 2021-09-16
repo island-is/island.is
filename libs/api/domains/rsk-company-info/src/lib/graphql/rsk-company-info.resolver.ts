@@ -5,6 +5,8 @@ import { Audit } from '@island.is/nest/audit'
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { RskCompanyInfoService } from './rsk-company-info.service'
 import { GetRskCompanyInfoInput } from './dto/getRskCompanyInfoInput'
+import { GetRskCompanyInfoSearchInput } from './dto/getRskCompanyInfoSearchInput'
+import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -16,10 +18,26 @@ export class RskCompanyInfoResolver {
     nullable: true,
   })
   @Audit()
-  async conditions(
+  async companyInformation(
     @Args('input', { type: () => GetRskCompanyInfoInput })
     input: GetRskCompanyInfoInput,
   ): Promise<RskCompany> {
-    return await this.rskCompanyInfoService.getCompanyInfo(input.nationalId)
+    return await this.rskCompanyInfoService.getCompanyInformation(
+      input.nationalId,
+    )
+  }
+
+  @Query(() => RskCompanySearchItems, {
+    name: 'rskCompanyInfoSearch',
+    nullable: true,
+  })
+  @Audit()
+  async companyInformationSearch(
+    @Args('input', { type: () => GetRskCompanyInfoSearchInput })
+    input: GetRskCompanyInfoSearchInput,
+  ): Promise<RskCompanySearchItems> {
+    return await this.rskCompanyInfoService.companyInformationSearch(
+      input.searchTerm,
+    )
   }
 }
