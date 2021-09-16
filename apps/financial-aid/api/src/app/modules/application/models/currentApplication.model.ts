@@ -17,6 +17,9 @@ export class CurrentApplicationModel implements CurrentApplication {
   @Field()
   readonly usePersonalTaxCredit!: boolean
 
+  @Field()
+  readonly created!: string
+
   @Field(() => String)
   readonly state!: ApplicationState
 }
