@@ -1,4 +1,4 @@
-# api-domains-rsk-company-info
+# API Domains Rsk Company Info
 
 This library was generated with [Nx](https://nx.dev).
 
