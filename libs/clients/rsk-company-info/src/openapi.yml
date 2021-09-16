@@ -1,0 +1,298 @@
+openapi: 3.0.1
+info:
+  title: Company registry
+  description: Iceland Company Registry - XRoad - REST API
+  version: 1.0.0
+servers:
+  - url: https://juno.skattur.is/ords/stg
+    description: Ríkisskattstjóri - Company Registry v1.00
+paths:
+  /v1/fyrirtaekjaskra/search/{search_string}:
+    get:
+      description: >-
+        Search Company Registry with search string. If left null then shows 100
+        newest entries.
+      parameters:
+        - name: search_string
+          in: path
+          required: true
+          description: The social security id for company being searched for
+          schema:
+            type: string
+            default: Miracle%20ehf
+      responses:
+        '200':
+          description: Search company registry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/search_company_items'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /v1/fyrirtaekjaskra/{ssid}:
+    get:
+      description: Information about company
+      parameters:
+        - name: ssid
+          in: path
+          required: true
+          description: The social security id for company being searched for
+          schema:
+            type: string
+            default: '4710032980'
+      responses:
+        '200':
+          description: Display company information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/company_item'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /v1/fyrirtaekjaskra/:
+    get:
+      description: Service Information.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/serviceinfo'
+components:
+  schemas:
+    resultlinks:
+      type: array
+      items:
+        $ref: '#/components/schemas/link'
+    link:
+      type: object
+      required:
+        - rel
+        - href
+      properties:
+        rel:
+          type: string
+        href:
+          type: string
+    search_company_item:
+      type: object
+      properties:
+        kennitala:
+          type: string
+        nafn:
+          type: string
+        skrad:
+          type: string
+        stada:
+          type: string
+        vsk_numer:
+          type: string
+        sidast_uppfaert:
+          type: string
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+    search_company_items:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/search_company_item'
+        hasMore:
+          type: boolean
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+    rekstrarform:
+      type: object
+      required:
+        - tegund
+        - heiti
+        - vidskeyti
+      properties:
+        tegund:
+          type: string
+        heiti:
+          type: string
+        vidskeyti:
+          type: string
+    flokkun:
+      type: object
+      required:
+        - gerd
+        - flokkunarkerfi
+        - numer
+        - heiti
+      properties:
+        gerd:
+          type: string
+        flokkunarkerfi:
+          type: string
+        numer:
+          type: string
+        heiti:
+          type: string
+    virdisaukaskattur_item:
+      type: object
+      required:
+        - vsk_numer
+        - skrad
+        - stada
+        - afskraning
+      properties:
+        vsk_numer:
+          type: string
+        skrad:
+          type: string
+        stada:
+          type: string
+        afskraning:
+          type: string
+        flokkun:
+          type: array
+          items:
+            $ref: '#/components/schemas/flokkun'
+    heimilisfang_item:
+      type: object
+      required:
+        - heimilisfang1
+        - heimilisfang2
+        - postnumer
+        - sveitarfelag
+        - sveitarfelagsnumer
+        - land
+      properties:
+        heimilisfang1:
+          type: string
+        heimilisfang2:
+          type: string
+        postnumer:
+          type: string
+        sveitarfelag:
+          type: string
+        sveitarfelagsnumer:
+          type: string
+        land:
+          type: string
+    tengduradili_item:
+      type: object
+      required:
+        - tegund
+        - kennitala
+        - nafn
+      properties:
+        tegund:
+          type: string
+        kennitala:
+          type: string
+        nafn:
+          type: string
+    company_item:
+      type: object
+      required:
+        - kennitala
+        - nafn
+        - skrad
+        - stada
+      properties:
+        kennitala:
+          type: string
+        nafn:
+          type: string
+        skrad:
+          type: string
+        stada:
+          type: string
+        rekstrarform:
+          type: array
+          items:
+            $ref: '#/components/schemas/rekstrarform'
+        virdisaukaskattur:
+          type: array
+          items:
+            $ref: '#/components/schemas/virdisaukaskattur_item'
+        heimilisfang:
+          type: array
+          items:
+            $ref: '#/components/schemas/heimilisfang_item'
+        tengdir_adilar:
+          type: array
+          items:
+            $ref: '#/components/schemas/tengduradili_item'
+        sidast_uppfaert:
+          type: string
+        link:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+    serviceinfo:
+      type: object
+      discriminator:
+        propertyName: serviceinfoType
+      required:
+        - service
+        - version
+        - publisher
+        - publisher_website
+        - publisher_email
+      properties:
+        service:
+          type: string
+        version:
+          type: string
+        publisher:
+          type: string
+        publisher_website:
+          type: string
+        publisher_email:
+          type: string
+    error:
+      type: object
+      required:
+        - code
+        - message
+        - type
+        - instance
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        type:
+          type: string
+        instance:
+          type: string
