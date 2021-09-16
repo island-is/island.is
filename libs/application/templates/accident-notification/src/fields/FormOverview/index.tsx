@@ -21,6 +21,7 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 import React, { FC } from 'react'
+import { AttachmentsEnum, messages } from '../..'
 import { States, YES } from '../../constants'
 import { AccidentNotification } from '../../lib/dataSchema'
 import {
@@ -80,6 +81,14 @@ export const FormOverview: FC<FieldBaseProps> = ({
       : []),
     ...(answers.attachments.powerOfAttorneyFile
       ? answers.attachments.powerOfAttorneyFile
+      : []),
+    ...(answers.attachments.injuryCertificate ===
+    AttachmentsEnum.HOSPITALSENDSCERTIFICATE
+      ? [
+          {
+            name: formatMessage(overview.labels.hospitalSendsCertificate),
+          },
+        ]
       : []),
   ]
 
