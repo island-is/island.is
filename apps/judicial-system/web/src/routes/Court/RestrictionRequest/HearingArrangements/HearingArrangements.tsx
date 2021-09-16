@@ -184,7 +184,7 @@ export const HearingArrangements: React.FC = () => {
         (notification) => notification.type === NotificationType.COURT_DATE,
       )
     ) {
-      router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+      router.push(`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
     } else {
       setModalVisible(true)
     }
