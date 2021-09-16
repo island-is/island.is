@@ -4,7 +4,6 @@ import React, {
   ReactNode,
   forwardRef,
   useEffect,
-  useCallback,
 } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
@@ -107,28 +106,15 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       }
     }
 
-    const handleClose = () => {
-      expanded = false
-      setHeight(0)
-
-      if (expandedProp === undefined) {
-        setExpandedFallback(false)
-      }
-
-      if (typeof onToggle === 'function') {
-        onToggle(false)
-      }
-    }
-
-    const onHandleOpen = useCallback(handleToggle, [])
-
-    useEffect(() => {
-      if (startExpanded) {
-        onHandleOpen()
-      } else {
-        handleClose()
-      }
-    }, [onHandleOpen, startExpanded])
+    useEffect(
+      () => {
+        if (startExpanded && expandedProp == null) {
+          handleToggle()
+        }
+      },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [], // Only run when component mounts!
+    )
 
     return (
       <Box>
