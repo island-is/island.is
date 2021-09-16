@@ -48,14 +48,6 @@ export const largeLabel = style({
     },
   },
 })
-export const labelWithError = style({
-  padding: `${theme.spacing[3]}px ${theme.spacing[2]}px 0 ${theme.spacing[3]}px`,
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
-      padding: `${theme.spacing[3]}px ${theme.spacing[3]}px 0 ${theme.spacing[3]}px`,
-    },
-  },
-})
 export const radioButtonDisabled = style({
   background: 'transparent',
   borderColor: theme.color.blue200,

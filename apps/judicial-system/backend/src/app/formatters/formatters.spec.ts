@@ -32,7 +32,15 @@ describe('formatCustodyProvisions', () => {
     const res = formatCustodyProvisions(custodyProvisions)
 
     // Assert
-    expect(res).toBe('')
+    expect(res).toBe('Lagaákvæði ekki skráð')
+  })
+
+  test('should format custody provisions when provisions not defined', () => {
+    // Act
+    const res = formatCustodyProvisions()
+
+    // Assert
+    expect(res).toBe('Lagaákvæði ekki skráð')
   })
 
   test('should format custody provisions when some provisions are selected', () => {
@@ -75,6 +83,39 @@ describe('formatCustodyProvisions', () => {
     expect(res).toBe(
       'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.',
     )
+  })
+
+  test('should format custody provisions when some provisions are selected and additional freetext provided', () => {
+    // Arrange
+    const custodyProvisions = [
+      CaseCustodyProvisions._95_1_A,
+      CaseCustodyProvisions._95_1_B,
+      CaseCustodyProvisions._95_1_C,
+      CaseCustodyProvisions._95_1_D,
+      CaseCustodyProvisions._95_2,
+      CaseCustodyProvisions._99_1_B,
+      CaseCustodyProvisions._100_1,
+    ]
+    const legalBasis = 'some lið mgr. gr.'
+
+    // Act
+    const res = formatCustodyProvisions(custodyProvisions, legalBasis)
+
+    // Assert
+    expect(res).toBe(
+      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.\nsome lið mgr. gr.',
+    )
+  })
+
+  test('should format custody provisions only freetext provided', () => {
+    // Arrange
+    const legalBasis = 'some lið mgr. gr.'
+
+    // Act
+    const res = formatCustodyProvisions(undefined, legalBasis)
+
+    // Assert
+    expect(res).toBe('some lið mgr. gr.')
   })
 })
 

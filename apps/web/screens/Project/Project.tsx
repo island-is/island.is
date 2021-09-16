@@ -22,6 +22,7 @@ import {
   Stepper,
   EntryProjectHeader,
   HeadWithSocialSharing,
+  ElectionProjectHeader,
 } from '@island.is/web/components'
 import {
   GridColumn,
@@ -37,7 +38,7 @@ import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
 
-const lightThemes = ['traveling-to-iceland']
+const lightThemes = ['traveling-to-iceland', 'election']
 
 interface ProjectWrapperProps {
   withSidebar?: boolean
@@ -77,6 +78,8 @@ const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
   switch (projectPage.theme) {
     case 'traveling-to-iceland':
       return <EntryProjectHeader projectPage={projectPage} />
+    case 'election':
+      return <ElectionProjectHeader projectPage={projectPage} />
     default:
       return <DefaultProjectHeader projectPage={projectPage} />
   }
