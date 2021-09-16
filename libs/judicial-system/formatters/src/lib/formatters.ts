@@ -61,11 +61,8 @@ export const laws = {
   _95_1_C: 'c-lið 1. mgr. 95. gr.',
   _95_1_D: 'd-lið 1. mgr. 95. gr.',
   _95_2: '2. mgr. 95. gr.',
-  _97_3: '3. mgr. 97. gr.',
-  _98_2: '2. mgr. 98. gr.',
   _99_1_B: 'b-lið 1. mgr. 99. gr.',
   _100_1: '1. mgr. 100. gr. sml.',
-  _115_1: '1. mgr. 115. gr. útll.',
 }
 
 export const caseTypes = {

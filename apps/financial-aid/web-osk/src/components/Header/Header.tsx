@@ -7,13 +7,13 @@ import {
   GridContainer,
   DropdownMenu,
 } from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
 import Link from 'next/link'
 
 import * as styles from './Header.treat'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
+import { Routes } from '@island.is/financial-aid/shared/lib'
 
 const Header = () => {
   const { isAuthenticated, user } = useContext(UserContext)
@@ -24,7 +24,14 @@ const Header = () => {
     <GridContainer>
       <header className={`${styles.header}`}>
         <Box display="flex" height="full" alignItems="center">
-          <Link href="/" data-testid="link-to-home">
+          <Link
+            href={
+              user?.currentApplication
+                ? Routes.statusPage(user?.currentApplication?.id as string)
+                : Routes.application
+            }
+            data-testid="link-to-home"
+          >
             <Box
               display="flex"
               alignItems="center"
