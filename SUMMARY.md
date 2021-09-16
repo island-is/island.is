@@ -218,9 +218,11 @@
   - [Service Portal Wip](libs/service-portal/wip/README.md)
 - [Shared](libs/shared/README.md)
   - [Babel](libs/shared/babel/README.md)
+  - [Shared Components](libs/shared/components/README.md)
   - [Constants](libs/shared/constants/README.md)
   - [Form Fields](libs/shared/form-fields/README.md)
   - [Mocking](libs/shared/mocking/README.md)
+  - [Shared Translations](libs/shared/translations/README.md)
   - [Types](libs/shared/types/README.md)
   - [Utils](libs/shared/utils/README.md)
 
