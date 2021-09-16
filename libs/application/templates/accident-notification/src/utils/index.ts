@@ -1,6 +1,7 @@
 import { MessageFormatter } from '@island.is/application/core'
 import {
   AttachmentsEnum,
+  FileType,
   PowerOfAttorneyUploadEnum,
   WhoIsTheNotificationForEnum,
 } from '..'
@@ -17,6 +18,27 @@ export const isValid24HFormatTime = (value: string) => {
   return true
 }
 
+const hasAttachment = (attachment: FileType[] | undefined) =>
+  attachment && attachment.length > 0
+
+export const getAttachmentTitles = (answers: AccidentNotification) => {
+  const {
+    deathCertificateFile,
+    injuryCertificateFile,
+    powerOfAttorneyFile,
+  } = answers.attachments
+  const files = []
+
+  if (hasAttachment(deathCertificateFile))
+    files.push(attachments.documentNames.deathCertificate)
+  if (hasAttachment(injuryCertificateFile))
+    files.push(attachments.documentNames.injuryCertificate)
+  if (hasAttachment(powerOfAttorneyFile))
+    files.push(attachments.documentNames.powerOfAttorneyDocument)
+
+  return files
+}
+
 export const returnMissingDocumentsList = (
   answers: AccidentNotification,
   formatMessage: MessageFormatter,
@@ -29,7 +51,7 @@ export const returnMissingDocumentsList = (
 
   if (
     injuryCertificate === AttachmentsEnum.SENDCERTIFICATELATER &&
-    !answers.attachments.injuryCertificateFile
+    !hasAttachment(answers.attachments.injuryCertificateFile)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.injuryCertificate),
@@ -39,8 +61,7 @@ export const returnMissingDocumentsList = (
   if (
     whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
     powerOfAttorneyType !== PowerOfAttorneyUploadEnum.FORCHILDINCUSTODY &&
-    (!answers.attachments.powerOfAttorneyFile ||
-      answers.attachments.powerOfAttorneyFile?.length === 0)
+    !hasAttachment(answers.attachments.powerOfAttorneyFile)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.powerOfAttorneyDocument),
@@ -49,7 +70,7 @@ export const returnMissingDocumentsList = (
 
   if (
     wasTheAccidentFatal === YES &&
-    !answers.attachments.deathCertificateFile
+    !hasAttachment(answers.attachments.deathCertificateFile)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.deathCertificate),

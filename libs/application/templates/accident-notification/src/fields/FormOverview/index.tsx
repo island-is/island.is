@@ -37,6 +37,7 @@ import {
   sportsClubInfo,
 } from '../../lib/messages'
 import {
+  getAttachmentTitles,
   getWorkplaceData,
   isMachineRelatedAccident,
   isProfessionalAthleteAccident,
@@ -63,25 +64,13 @@ export const FormOverview: FC<FieldBaseProps> = ({
     },
   )
 
+  const files = getAttachmentTitles(answers)
   const missingDocuments = returnMissingDocumentsList(answers, formatMessage)
+  const workplaceData = getWorkplaceData(application.answers)
 
   const { timeOfAccident, dateOfAccident } = answers.accidentDetails
   const time = `${timeOfAccident.slice(0, 2)}:${timeOfAccident.slice(2, 4)}`
   const date = format(parseISO(dateOfAccident), 'dd.MM.yy', { locale: is })
-
-  const workplaceData = getWorkplaceData(application.answers)
-
-  const attachments = [
-    ...(answers.attachments.deathCertificateFile
-      ? answers.attachments.deathCertificateFile
-      : []),
-    ...(answers.attachments.injuryCertificateFile
-      ? answers.attachments.injuryCertificateFile
-      : []),
-    ...(answers.attachments.powerOfAttorneyFile
-      ? answers.attachments.powerOfAttorneyFile
-      : []),
-  ]
 
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
@@ -412,10 +401,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '12/12']}>
-            <FileValueLine
-              label={overview.labels.attachments}
-              files={attachments}
-            />
+            <FileValueLine label={overview.labels.attachments} files={files} />
             {missingDocuments.length !== 0 && (
               <Box marginBottom={4}>
                 <AlertMessage
