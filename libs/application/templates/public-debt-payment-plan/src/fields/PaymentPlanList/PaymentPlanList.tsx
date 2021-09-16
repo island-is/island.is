@@ -13,9 +13,8 @@ export const PaymentPlanList = ({
   goToScreen,
 }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const paymentScheduleDebts = (
-    application.externalData as PaymentPlanExternalData
-  ).paymentPlanPrerequisites?.data?.debts as PaymentScheduleDebts[]
+  const paymentScheduleDebts = (application.externalData as PaymentPlanExternalData)
+    .paymentPlanPrerequisites?.data?.debts as PaymentScheduleDebts[]
   const answers = application.answers as PublicDebtPaymentPlan
 
   const handleEditPaymentPlan = (id: string) => {

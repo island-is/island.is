@@ -55,10 +55,12 @@ function GrantAccess() {
   const { handleSubmit, control, errors, watch, reset } = useForm({
     mode: 'onChange',
   })
-  const [createAuthDelegation, { loading: mutationLoading }] =
-    useMutation<Mutation>(CreateAuthDelegationMutation, {
-      refetchQueries: [{ query: AuthDelegationsQuery }],
-    })
+  const [
+    createAuthDelegation,
+    { loading: mutationLoading },
+  ] = useMutation<Mutation>(CreateAuthDelegationMutation, {
+    refetchQueries: [{ query: AuthDelegationsQuery }],
+  })
   const [getIdentity, { data, loading: queryLoading }] = useLazyQuery<Query>(
     IdentityQuery,
     {
@@ -154,7 +156,8 @@ function GrantAccess() {
                   value={name}
                   aria-live="assertive"
                   label={formatMessage({
-                    id: 'service.portal.settings.accessControl:grant-form-access-holder',
+                    id:
+                      'service.portal.settings.accessControl:grant-form-access-holder',
                     defaultMessage: 'Aðgangshafi',
                   })}
                   disabled
@@ -171,7 +174,8 @@ function GrantAccess() {
                       required: {
                         value: true,
                         message: formatMessage({
-                          id: 'service.portal.settings.accessControl:grant-required-ssn',
+                          id:
+                            'service.portal.settings.accessControl:grant-required-ssn',
                           defaultMessage: 'Skylda er að fylla út kennitölu',
                         }),
                       },
@@ -182,7 +186,8 @@ function GrantAccess() {
                             !kennitala.isValid(value)
                           ) {
                             return formatMessage({
-                              id: 'service.portal.settings.accessControl:grant-invalid-ssn',
+                              id:
+                                'service.portal.settings.accessControl:grant-invalid-ssn',
                               defaultMessage:
                                 'Kennitalan er ekki gild kennitala',
                             })

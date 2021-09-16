@@ -131,7 +131,9 @@ export class DelegationsService {
   ): Promise<DelegationDTO[]> {
     try {
       const response: CompaniesResponse = await this.rskApi.apicompanyregistrymembersKennitalacompaniesGET1(
-        { kennitala: toNationalId },
+        {
+          kennitala: toNationalId,
+        },
       )
 
       if (response?.memberCompanies) {

@@ -280,11 +280,12 @@ const Category: Screen<CategoryProps> = ({
       return a.localeCompare(b)
     })
 
-  const sortedGroups = Object.values(groups).sort(
-    (a: ArticleGroup, b: ArticleGroup) =>
-      a.importance > b.importance
-        ? -1
-        : a.importance === b.importance && a.title.localeCompare(b.title, 'is'),
+  const sortedGroups = Object.values(
+    groups,
+  ).sort((a: ArticleGroup, b: ArticleGroup) =>
+    a.importance > b.importance
+      ? -1
+      : a.importance === b.importance && a.title.localeCompare(b.title, 'is'),
   )
 
   return (

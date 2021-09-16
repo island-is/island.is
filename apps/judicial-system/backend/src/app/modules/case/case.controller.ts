@@ -358,7 +358,7 @@ export class CaseController {
     const resCase = await this.caseService.findById(updatedCase.id)
 
     this.eventService.postEvent(
-      transition.transition as unknown as CaseEvent,
+      (transition.transition as unknown) as CaseEvent,
       resCase as Case,
     )
 

@@ -131,15 +131,14 @@ interface ResponsiveStyle {
 }
 
 export const makeThemeUtils = (tokens: RequiredTokens) => {
-  const makeMediaQuery =
-    (breakpoint: keyof RequiredTokens['breakpoints']) =>
-    (styles: StyleWithoutMediaQueries) =>
-      !styles || Object.keys(styles).length === 0
-        ? {}
-        : {
-            [`screen and (min-width: ${tokens.breakpoints[breakpoint]}px)`]:
-              styles,
-          }
+  const makeMediaQuery = (breakpoint: keyof RequiredTokens['breakpoints']) => (
+    styles: StyleWithoutMediaQueries,
+  ) =>
+    !styles || Object.keys(styles).length === 0
+      ? {}
+      : {
+          [`screen and (min-width: ${tokens.breakpoints[breakpoint]}px)`]: styles,
+        }
 
   const mediaQuery = {
     sm: makeMediaQuery('sm'),

@@ -141,8 +141,9 @@ export const IcelandicNamesSearcher = () => {
 
   const isBusy = searchLoading || searchByInitialLetterloading
 
-  const [filteredNamesList, setFilteredNamesList] =
-    useState<NameType[]>(tableData)
+  const [filteredNamesList, setFilteredNamesList] = useState<NameType[]>(
+    tableData,
+  )
   const [filters, dispatch] = useReducer(
     toggledFiltersReducer,
     initialToggledFiltersState,
@@ -211,9 +212,8 @@ export const IcelandicNamesSearcher = () => {
     filters.approved || filters.denied || filters.pending
   const typeFilterSelected =
     filters.females || filters.males || filters.middleNames || filters.neutral
-  const someFilterSelected = Object.keys(filters).filter(
-    (key) => filters[key],
-  ).length
+  const someFilterSelected = Object.keys(filters).filter((key) => filters[key])
+    .length
 
   return (
     <Box marginBottom={[3, 3, 3, 10, 20]} className={styles.container}>

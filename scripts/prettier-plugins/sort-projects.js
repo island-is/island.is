@@ -76,8 +76,8 @@ exports.parsers = {
     ...javascriptParser,
     preprocess(text, options) {
       switch (options.filepath) {
-        case 'jest.config.js':
-          return sortJestConfig(text)
+        // Removed parsing of 'jest.config.js' in the root of the repo
+        // as Nx now includes getJestProjects() function and no need to sort the array.
 
         default:
           return text

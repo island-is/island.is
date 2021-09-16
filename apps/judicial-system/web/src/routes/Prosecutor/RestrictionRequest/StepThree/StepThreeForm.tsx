@@ -48,8 +48,9 @@ const StepThreeForm: React.FC<Props> = (props) => {
     requestedValidToDateIsValid,
     setRequestedValidToDateIsValid,
   } = props
-  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] =
-    useState<string>('')
+  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
+    '',
+  )
 
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()

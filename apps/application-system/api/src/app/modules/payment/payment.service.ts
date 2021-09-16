@@ -69,7 +69,7 @@ export class PaymentService {
 
     try {
       const parsedDefinition = JSON.parse(
-        payment.definition as unknown as string,
+        (payment.definition as unknown) as string,
       )
       const charge: Charge = {
         // TODO: this needs to be unique, but can only handle 22 or 23 chars

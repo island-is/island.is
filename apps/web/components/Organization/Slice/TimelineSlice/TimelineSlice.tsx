@@ -517,7 +517,7 @@ const EventModal = ({ event, onClose }: EventModalProps) => {
             </Inline>
           )}
           {Boolean(event.body) &&
-            renderSlices([event.body as unknown as SliceType])}
+            renderSlices([(event.body as unknown) as SliceType])}
           {event.link && (
             <Link href={event.link}>
               <Button variant="text" icon="arrowForward">

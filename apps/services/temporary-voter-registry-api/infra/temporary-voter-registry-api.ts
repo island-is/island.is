@@ -6,22 +6,21 @@ const postgresInfo: PostgresInfo = {
   name: 'services_temporary_voter_registry_api',
   username: 'services_temporary_voter_registry_api',
 }
-export const serviceSetup =
-  (): ServiceBuilder<'temporary-voter-registry-api'> =>
-    service('temporary-voter-registry-api')
-      .image('services-temporary-voter-registry-api')
-      .namespace('temporary-voter-registry')
-      .postgres(postgresInfo)
-      .initContainer({
-        containers: [
-          {
-            name: 'migrations',
-            command: 'npx',
-            args: ['sequelize-cli', 'db:migrate'],
-          },
-        ],
-        postgres: postgresInfo,
-      })
-      .grantNamespaces('islandis', 'endorsement-system')
-      .liveness('/liveness')
-      .readiness('/liveness')
+export const serviceSetup = (): ServiceBuilder<'temporary-voter-registry-api'> =>
+  service('temporary-voter-registry-api')
+    .image('services-temporary-voter-registry-api')
+    .namespace('temporary-voter-registry')
+    .postgres(postgresInfo)
+    .initContainer({
+      containers: [
+        {
+          name: 'migrations',
+          command: 'npx',
+          args: ['sequelize-cli', 'db:migrate'],
+        },
+      ],
+      postgres: postgresInfo,
+    })
+    .grantNamespaces('islandis', 'endorsement-system')
+    .liveness('/liveness')
+    .readiness('/liveness')

@@ -5,7 +5,7 @@ import { BaseContext } from 'next/dist/shared/lib/utils'
 export const withApollo = <
   C extends BaseContext = NextPageContext,
   IP = {},
-  P = {},
+  P = {}
 >(
   Component: NextComponentType<C, IP, P>,
 ): NextComponentType<C, IP> => {

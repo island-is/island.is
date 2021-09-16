@@ -148,12 +148,7 @@ const useEligibility = (
 const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
   const { eligibility, loading, error } = useEligibility(application.answers)
 
-<<<<<<< HEAD
   const { setValue } = useFormContext()
-=======
-  const eligibility = eligibilityData as unknown as ApplicationEligibility
-  const steps = extractReasons(eligibility)
->>>>>>> 79cfc6f92 (yarn format)
 
   useEffect(() => {
     setValue('requirementsMet', eligibility?.isEligible || false)

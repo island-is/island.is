@@ -226,10 +226,13 @@ export const RegulationsSearchSection = (
   )
   const filterHasValues = !!filterValue || hasAdvancedValues
 
-  const [showAdvancedSearch, setShowAdvancedSearch] =
-    useState(hasAdvancedValues)
-  const [advancedSearchTransitioning, setAdvancedSearchTransitioning] =
-    useShortState<boolean>(undefined, 600)
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(
+    hasAdvancedValues,
+  )
+  const [
+    advancedSearchTransitioning,
+    setAdvancedSearchTransitioning,
+  ] = useShortState<boolean>(undefined, 600)
 
   return (
     <GridContainer>

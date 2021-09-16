@@ -39,8 +39,10 @@ export const StepFour: React.FC = () => {
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
-  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
-    useState<string>('')
+  const [
+    legalArgumentsErrorMessage,
+    setLegalArgumentsErrorMessage,
+  ] = useState<string>('')
 
   const { formatMessage } = useIntl()
   const router = useRouter()

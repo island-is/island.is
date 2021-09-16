@@ -55,15 +55,21 @@ export const HearingArrangements: React.FC = () => {
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [modalVisible, setModalVisible] = useState(false)
   const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState('')
-  const [defenderPhoneNumberErrorMessage, setDefenderPhoneNumberErrorMessage] =
-    useState('')
+  const [
+    defenderPhoneNumberErrorMessage,
+    setDefenderPhoneNumberErrorMessage,
+  ] = useState('')
   const [courtDateIsValid, setCourtDateIsValid] = useState(true)
 
   const router = useRouter()
   const id = router.query.id
 
-  const { updateCase, autofill, sendNotification, isSendingNotification } =
-    useCase()
+  const {
+    updateCase,
+    autofill,
+    sendNotification,
+    isSendingNotification,
+  } = useCase()
   const { formatMessage } = useIntl()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {

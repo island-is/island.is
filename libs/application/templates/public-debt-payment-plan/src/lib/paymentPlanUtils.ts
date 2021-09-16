@@ -41,8 +41,10 @@ export const useDistributionTable = ({
   const getDistribution = useLazyDistribution()
 
   const [isLoading, setIsLoading] = useState(false)
-  const [distributionData, setDistributionData] =
-    useState<PaymentScheduleDistribution | null>(null)
+  const [
+    distributionData,
+    setDistributionData,
+  ] = useState<PaymentScheduleDistribution | null>(null)
 
   const getDistributionCallback = useCallback(
     async ({
