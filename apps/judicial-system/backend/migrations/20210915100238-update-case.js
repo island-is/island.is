@@ -1,5 +1,11 @@
 'use strict'
 
+const laws = {
+  _97_3: '3. mgr. 97. gr.',
+  _98_2: '2. mgr. 98. gr.',
+  _115_1: '1. mgr. 115. gr. útll.',
+}
+
 function formatLegalBases(custodyProvisions, legal_basis) {
   if (!custodyProvisions?.length > 0) {
     return legal_basis ?? ''
@@ -9,8 +15,8 @@ function formatLegalBases(custodyProvisions, legal_basis) {
     (acc, p) =>
       ['_97_3', '_98_2', '_115_1'].includes(p)
         ? acc
-          ? `${acc}\n${p}`
-          : p
+          ? `${acc}\n${laws[p]}`
+          : laws[p]
         : acc,
     legal_basis ?? '',
   )
@@ -47,7 +53,7 @@ module.exports = {
           queryInterface.sequelize.query(
             `SELECT id, custody_provisions_old, legal_basis
              FROM "case"
-             WHERE type = 'CUSTODY'`,
+             WHERE type in ('CUSTODY', 'TRAVEL_BAN')`,
             {
               transaction: t,
             },
