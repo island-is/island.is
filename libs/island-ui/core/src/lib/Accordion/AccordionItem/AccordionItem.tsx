@@ -90,7 +90,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       }
     }
 
-    const handleOpen = () => {
+    const handleToggle = () => {
       const newValue = !expanded
       if (typeof setToggledId === 'function' && newValue) {
         setToggledId(id)
@@ -120,7 +120,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       }
     }
 
-    const onHandleOpen = useCallback(handleOpen, [])
+    const onHandleOpen = useCallback(handleToggle, [])
 
     useEffect(() => {
       if (startExpanded) {
@@ -146,7 +146,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
             aria-expanded={expanded}
             onFocus={onFocus}
             onBlur={onBlur}
-            onClick={onClick ? onClick : handleOpen}
+            onClick={onClick ? onClick : handleToggle}
           >
             <Columns space={2} alignY="center">
               <Column>
