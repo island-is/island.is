@@ -25,8 +25,18 @@ export const childContainer = style({
   },
 })
 
+export const mobileMenuOpen = style({
+  transition: 'opacity 250ms ease',
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+      opacity: 0.5,
+    },
+  },
+})
+
 export const burgerMenu = style({
   position: 'absolute',
+  zIndex: 100,
   right: '0',
   top: '0',
   display: 'block',

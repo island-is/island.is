@@ -47,6 +47,7 @@ const AdminLayout = ({ children, className }: PageProps) => {
         <div
           className={cn({
             [`${styles.childContainer}`]: true,
+            [`${styles.mobileMenuOpen}`]: showNavMobile,
             [`${className}`]: true,
           })}
         >
