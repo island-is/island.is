@@ -15,3 +15,7 @@ find . -type f \(\
 find . -type d \(\
   -path "*/gen/fetch" \
 \) -exec rm -rf '{}' +
+
+find . -type f \(\
+  -path "*/gen/graphql.ts" \
+\) -exec rm -rf '{}' +
