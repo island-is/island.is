@@ -78,7 +78,7 @@ const ErrorContent = styled.View`
   flex-direction: row;
   padding: 16px 24px;
   padding-top: 20px;
-`;
+`
 
 const Splitter = styled.View`
   height: 1px;
@@ -87,7 +87,7 @@ const Splitter = styled.View`
   margin-bottom: 20px;
   background-color: rgba(98, 80, 88, 1);
   opacity: 0.1;
-`;
+`
 
 const Label = styled.Text`
   ${font({
@@ -142,10 +142,25 @@ const Background = styled.Image`
   background-color: #e2c4d1;
 `
 
+const Bold = styled.Text`
+  font-family: 'IBMPlexSans-SemiBold';
+`
+const Normal = styled.Text``
+
+const Copy = styled.Text`
+  ${font({
+    fontSize: 14,
+    lineHeight: 18,
+    fontWeight: '300',
+  })}
+  margin-bottom: 8px;
+`
+
 interface ScanResultCardProps {
   loading: boolean
   error?: boolean
   valid?: boolean
+  isExpired?: boolean
   errorMessage?: string
   nationalId?: string
   name?: string
@@ -160,6 +175,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
     error,
     errorMessage,
     valid,
+    isExpired,
     loading,
     nationalId,
     name,
@@ -170,6 +186,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
   const intl = useIntl()
   const background =
     backgroundColor === 'pink' ? backgroundPink : backgroundBlue
+
   return (
     <Host>
       <Background source={background} resizeMode="stretch" />
@@ -213,7 +230,30 @@ export function ScanResultCard(props: ScanResultCardProps) {
                   id: 'licenseScannerResult.errorMessage',
                 })}
               </Label>
-              <Value>{errorMessage}</Value>
+              {isExpired ? (
+                <>
+                  <Value style={{marginBottom: 16}}>{errorMessage}</Value>
+                  <Copy>
+                    <Bold>Android</Bold>
+                    {'  '}
+                    <Normal>
+                      Smellið á hnapp neðan við skírteini til þess að fá uppfært
+                      strikamerki.
+                    </Normal>
+                  </Copy>
+                  <Copy>
+                    <Bold>iOS</Bold>
+                    {'  '}
+                    <Normal>
+                      Smellið á hnapp með þremur punktum fyrir neðan skírteinið.
+                      Dragið því næst niður með fingur á miðjum skjánum til þess
+                      að uppfæra strikamerkið.
+                    </Normal>
+                  </Copy>
+                </>
+              ) : (
+                <Value>{errorMessage}</Value>
+              )}
             </LabelGroup>
           </Left>
         </ErrorContent>
@@ -223,9 +263,13 @@ export function ScanResultCard(props: ScanResultCardProps) {
 
           <Content>
             {loading ? (
-              <Placeholder style={{ width: 79, height: 109, marginRight: 32 }} />
-            ) : photo && (
-              <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
+              <Placeholder
+                style={{ width: 79, height: 109, marginRight: 32 }}
+              />
+            ) : (
+              photo && (
+                <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
+              )
             )}
             <Left>
               <LabelGroup>
@@ -240,7 +284,9 @@ export function ScanResultCard(props: ScanResultCardProps) {
               </LabelGroup>
               <LabelGroup>
                 <Label>
-                  {intl.formatMessage({ id: 'licenseScannerResult.nationalId' })}
+                  {intl.formatMessage({
+                    id: 'licenseScannerResult.nationalId',
+                  })}
                 </Label>
                 {loading ? (
                   <Placeholder style={{ width: 120 }} />

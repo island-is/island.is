@@ -88,7 +88,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   const camera = useRef<Camera>()
   const [layout, setLayout] = useState<LayoutRectangle>()
   const [ratio, setRatio] = useState<string>()
-  const [padding, setPadding] = useState(0);
+  const [padding, setPadding] = useState(0)
 
   const invalidTimeout = useRef<NodeJS.Timeout>()
   const intl = useIntl()
@@ -104,15 +104,28 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   }, [])
 
   const onBarCodeScanned = useCallback(({ type, data }: BarCodeEvent) => {
+    let isExpired;
     if (invalidTimeout.current) {
       clearTimeout(invalidTimeout.current)
     }
 
     if (!data.includes('TGLJZW')) {
       invalidTimeout.current = setTimeout(() => {
-        setInvalid(false);
-      }, 2000);
+        setInvalid(false)
+      }, 2000)
       return setInvalid(true)
+    }
+
+    if (data.includes('expires')) {
+      try {
+        const { expires } = JSON.parse(data)
+        const startDate = new Date(expires)
+        const seconds = (Date.now() - startDate.getTime()) / 1000
+        isExpired = seconds > 0
+
+      } catch (error) {
+        // noop
+      }
     }
 
     impactAsync(ImpactFeedbackStyle.Heavy)
@@ -124,7 +137,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
           {
             component: {
               name: ComponentRegistry.LicenseScanDetailScreen,
-              passProps: { type, data },
+              passProps: { type, data, isExpired },
               options: {
                 topBar: {
                   visible: true,
@@ -151,20 +164,26 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
 
   const prepareRatio = async () => {
     if (Platform.OS === 'android') {
-      const screenRatio = layout!.height / layout!.width;
+      const screenRatio = layout!.height / layout!.width
       const ratios = await camera.current!.getSupportedRatiosAsync()
       // find ratio closest to screen ratio
-      const closest = ratios.map(aspect => {
-        const [h,w] = aspect.split(':').map(parseFloat);
-        return { ratio: h/w, aspect };
-      }).sort((a, b) => {
-        return Math.abs(a.ratio-screenRatio) > Math.abs(b.ratio -screenRatio) ? 1 : -1;
-      })
-      .shift();
-      const cameraRatio = closest!.ratio;
-      const overlap = layout!.width - ((screenRatio / cameraRatio) * layout!.width);
-      setPadding(overlap / 2);
-      setRatio(closest!.aspect);
+      const closest = ratios
+        .map((aspect) => {
+          const [h, w] = aspect.split(':').map(parseFloat)
+          return { ratio: h / w, aspect }
+        })
+        .sort((a, b) => {
+          return Math.abs(a.ratio - screenRatio) >
+            Math.abs(b.ratio - screenRatio)
+            ? 1
+            : -1
+        })
+        .shift()
+      const cameraRatio = closest!.ratio
+      const overlap =
+        layout!.width - (screenRatio / cameraRatio) * layout!.width
+      setPadding(overlap / 2)
+      setRatio(closest!.aspect)
     }
   }
 
@@ -173,7 +192,10 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#000' }} onLayout={e => setLayout(e.nativeEvent.layout)}>
+    <View
+      style={{ flex: 1, backgroundColor: '#000' }}
+      onLayout={(e) => setLayout(e.nativeEvent.layout)}
+    >
       {hasPermission === true && active && (
         <Camera
           onBarCodeScanned={active ? onBarCodeScanned : undefined}

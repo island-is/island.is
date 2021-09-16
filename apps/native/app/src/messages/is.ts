@@ -164,6 +164,7 @@ export const is = {
   'licenseScanDetail.errorUnknown': 'Óþekkt villa',
   'licenseScanDetail.errorNetwork': 'Net villa',
   'licenseScanDetail.errorTryToRefresh': 'Villa við að sannreyna ökuskírteinið. Uppfærið skírteinið og reynið aftur.',
+  'licenseScanDetail.barcodeExpired': 'Útrunnið strikamerki. Uppfærið skírteinið og reynið aftur.',
 
    // license scan results
    'licenseScannerResult.loading': 'Hleð upplýsingum',
