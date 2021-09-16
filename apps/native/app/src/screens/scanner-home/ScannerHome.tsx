@@ -81,14 +81,14 @@ export const ScannerHomeScreen: NavigationFunctionComponent = ({
             <Bold>Android</Bold>
             {'  '}
             <Normal>
-              Smellið á refresh íkonið til þess að fá uppfært strikamerki.
+              Smellið á hnapp neðan við skírteini til þess að fá uppfært strikamerki.
             </Normal>
           </Copy>
           <Copy>
             <Bold>iOS</Bold>
             {'  '}
             <Normal>
-              Ítið á hnappinn með þremur punktum fyrir neðan skilríkið. Dragið
+              Smellið á hnapp með þremur punktum fyrir neðan skírteinið. Dragið
               því næst niður með fingur á miðjum skjánum til þess að uppfæra
               strikamerkið.
             </Normal>

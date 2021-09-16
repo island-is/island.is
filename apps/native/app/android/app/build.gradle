@@ -151,7 +151,7 @@ android {
         applicationId "is.island.scanner" // project.config.get("BUNDLE_ID_ANDROID")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 18
+        versionCode 20
         versionName "1.0.0"
         manifestPlaceholders = [
             appAuthRedirectScheme: "is.island.scanner" // project.config.get("BUNDLE_ID_ANDROID")

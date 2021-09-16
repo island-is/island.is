@@ -147,7 +147,7 @@ interface ScanResultCardProps {
   error?: boolean
   valid?: boolean
   errorMessage?: string
-  birthDate?: string
+  nationalId?: string
   name?: string
   licenseNumber?: string
   photo?: string
@@ -161,7 +161,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
     errorMessage,
     valid,
     loading,
-    birthDate,
+    nationalId,
     name,
     photo,
     data,
@@ -240,12 +240,12 @@ export function ScanResultCard(props: ScanResultCardProps) {
               </LabelGroup>
               <LabelGroup>
                 <Label>
-                  {intl.formatMessage({ id: 'licenseScannerResult.birthDate' })}
+                  {intl.formatMessage({ id: 'licenseScannerResult.nationalId' })}
                 </Label>
                 {loading ? (
                   <Placeholder style={{ width: 120 }} />
                 ) : (
-                  <Value>{birthDate ?? `---`}</Value>
+                  <Value>{nationalId ?? `---`}</Value>
                 )}
               </LabelGroup>
               {data?.map(({ key, value }) => {

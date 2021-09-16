@@ -173,6 +173,7 @@ export const is = {
    'licenseScannerResult.errorMessage': 'Villuskilaboð',
    'licenseScannerResult.name': 'Nafn',
    'licenseScannerResult.birthDate': 'Fæðingardagur',
+   'licenseScannerResult.nationalId': 'Kennitala',
    'licenseScannerResult.driverLicenseNumber': 'Númer ökuskírteinis',
 
   // notifications
