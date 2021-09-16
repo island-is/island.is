@@ -7,7 +7,7 @@ import {
 } from '..'
 import { YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
-import { attachments } from '../lib/messages'
+import { attachments, overview } from '../lib/messages'
 
 export const isValid24HFormatTime = (value: string) => {
   if (value.length !== 4) return false
@@ -26,6 +26,7 @@ export const getAttachmentTitles = (answers: AccidentNotification) => {
     deathCertificateFile,
     injuryCertificateFile,
     powerOfAttorneyFile,
+    injuryCertificate,
   } = answers.attachments
   const files = []
 
@@ -35,6 +36,8 @@ export const getAttachmentTitles = (answers: AccidentNotification) => {
     files.push(attachments.documentNames.injuryCertificate)
   if (hasAttachment(powerOfAttorneyFile))
     files.push(attachments.documentNames.powerOfAttorneyDocument)
+  if (injuryCertificate === AttachmentsEnum.HOSPITALSENDSCERTIFICATE)
+    files.push(overview.labels.hospitalSendsCertificate)
 
   return files
 }
