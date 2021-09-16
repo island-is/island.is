@@ -285,7 +285,8 @@ export class Case extends Model<Case> {
   lawsBroken?: string
 
   /**********
-   * The laws on which the demands are based - not used for custody and travel ban cases
+   * The laws on which the demands are based. Used as additional custody
+   * provisions in custody and travel ban cases.
    **********/
   @Column({
     type: DataType.STRING,
