@@ -6,14 +6,12 @@ import sortBy from 'lodash/sortBy'
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
 import { ContentSlug, mapContentSlug } from './models/contentSlug.model'
-import { AboutPage, mapAboutPage } from './models/aboutPage.model'
 import { GenericPage, mapGenericPage } from './models/genericPage.model'
 import {
   GenericOverviewPage,
   mapGenericOverviewPage,
 } from './models/genericOverviewPage.model'
 import { News, mapNews } from './models/news.model'
-import { Pagination } from './models/pagination.model'
 import {
   AdgerdirFrontpage,
   mapAdgerdirFrontpage,
@@ -21,7 +19,6 @@ import {
 import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirPage, mapAdgerdirPage } from './models/adgerdirPage.model'
 import { GetContentSlugInput } from './dto/getContentSlug.input'
-import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { Namespace, mapNamespace } from './models/namespace.model'
@@ -75,17 +72,6 @@ import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.in
 import { GetSupportFormInOrganizationInput } from './dto/getSupportFormInOrganization.input'
 import { mapSupportForm, SupportForm } from './models/supportForm.model'
 import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
-
-const makePage = (
-  page: number,
-  perPage: number,
-  totalResults: number,
-): Pagination => ({
-  page,
-  perPage,
-  totalResults,
-  totalPages: Math.ceil(totalResults / perPage),
-})
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -407,20 +393,6 @@ export class CmsContentfulService {
       .catch(errorHandler('getNews'))
 
     return (result.items as types.INews[]).map(mapNews)[0] ?? null
-  }
-
-  async getAboutPage({ lang }: GetAboutPageInput): Promise<AboutPage | null> {
-    const params = {
-      ['content_type']: 'page',
-      include: 10,
-      order: '-sys.createdAt',
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IPageFields>(lang, params)
-      .catch(errorHandler('getAboutPage'))
-
-    return (result.items as types.IPage[]).map(mapAboutPage)[0] ?? null
   }
 
   async getAboutSubPage({

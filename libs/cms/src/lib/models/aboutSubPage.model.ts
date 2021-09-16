@@ -7,8 +7,6 @@ import {
   safelyMapSliceUnion,
   SliceUnion,
 } from '../unions/slice.union'
-import { AboutPage } from './aboutPage.model'
-import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 @ObjectType()
 export class AboutSubPage {
@@ -39,8 +37,8 @@ export class AboutSubPage {
   @Field(() => [SliceUnion])
   bottomSlices: Array<typeof SliceUnion | null> = [] // safelyMapSliceUnion can return null
 
-  @Field(() => AboutPage, { nullable: true })
-  parent?: { lang: ElasticsearchIndexLocale; id: string } | null
+  @Field(() => String, { nullable: true })
+  parent?: null
 }
 
 export const mapAboutSubPage = ({
@@ -61,13 +59,5 @@ export const mapAboutSubPage = ({
   bottomSlices: (fields.belowContent ?? [])
     .map(safelyMapSliceUnion)
     .filter(Boolean),
-  parent: fields.parent
-    ? {
-        lang:
-          sys.locale === 'is-IS'
-            ? 'is'
-            : (sys.locale as ElasticsearchIndexLocale),
-        id: fields.parent.sys.id,
-      }
-    : null,
+  parent: null,
 })
