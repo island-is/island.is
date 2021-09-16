@@ -36,8 +36,8 @@ export enum CaseTransition {
   RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
-  DISMISS = 'DISMISS',
   DELETE = 'DELETE',
+  DISMISS = 'DISMISS',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
