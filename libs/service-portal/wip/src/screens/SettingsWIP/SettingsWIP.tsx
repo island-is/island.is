@@ -8,16 +8,16 @@ import { defineMessage } from 'react-intl'
 import { useNamespaces } from '@island.is/localization'
 
 export const SettingsWIP: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.family')
+  useNamespaces('sp.wip')
 
   return (
     <InfoScreen
       title={defineMessage({
-        id: 'sp.family:settings-title',
+        id: 'sp.wip:settings-title',
         defaultMessage: 'Stillingar',
       })}
       intro={defineMessage({
-        id: 'sp.family:settings-intro',
+        id: 'sp.wip:settings-intro',
         defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir
         stillingar á næstunni.`,
       })}
@@ -25,23 +25,22 @@ export const SettingsWIP: ServicePortalModuleComponent = () => {
         title: m.incoming,
         items: [
           defineMessage({
-            id: 'sp.family:settings-inc-1',
-            defaultMessage:
-              'Yfirlit og hægt verður að greiða öll opinber gjöld',
+            id: 'sp.wip:settings-inc-1',
+            defaultMessage: 'Umboðs og aðgangsstýringarkerfi',
           }),
           defineMessage({
-            id: 'sp.family:settings-inc-2',
-            defaultMessage: 'Ganga frá skattskýrsla og sjá eldi skattskýrslur',
+            id: 'sp.wip:settings-inc-2',
+            defaultMessage: 'Stillingar fyrir tilkynningar',
           }),
           defineMessage({
-            id: 'sp.family:settings-inc-3',
-            defaultMessage: 'Sjá yfirlit og ráðstafa séreignarsparnaði',
+            id: 'sp.wip:settings-inc-3',
+            defaultMessage: 'Bankaupplýsingar',
           }),
         ],
       }}
       externalHref="https://minarsidur.island.is/minar-sidur/minn-adgangur/stillingar/"
       externalLinkTitle={defineMessage({
-        id: 'sp.family:settings-external-link-title',
+        id: 'sp.wip:settings-external-link-title',
         defaultMessage: 'Fara í stillingar',
       })}
       figure="./assets/images/working.jpg"

@@ -1,8 +1,8 @@
-import * as z from 'zod'
-import { YES, NO } from '../shared'
-import { error } from './messages/error'
-import * as kennitala from 'kennitala'
 import { DefaultEvents } from '@island.is/application/core'
+import * as kennitala from 'kennitala'
+import * as z from 'zod'
+import { NO, YES } from '../shared'
+import { error } from './messages/error'
 
 export enum OnBehalf {
   MYSELF = 'myself',
@@ -129,10 +129,11 @@ export const DataProtectionComplaintSchema = z.object({
     description: z
       .string()
       .nonempty(error.required.defaultMessage)
-      .refine(
-        (x) => x?.split(' ').length <= 500,
-        error.wordCountReached.defaultMessage,
-      ),
+      .refine((x) => !!x, { params: error.required })
+      .refine((x) => x?.split(' ').filter((item) => item).length <= 500, {
+        params: error.wordCountReached,
+      }),
+
     documents: z.array(FileSchema),
   }),
   overview: z.object({

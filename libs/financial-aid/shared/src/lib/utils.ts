@@ -1,7 +1,7 @@
 import { months } from './const'
 
 export const getFileType = (fileName: string) => {
-  return fileName.substring(fileName.lastIndexOf('.') + 1)
+  return fileName?.substring(fileName.lastIndexOf('.') + 1)
 }
 
 export const getFileSizeInKilo = (file: { size?: number }) => {

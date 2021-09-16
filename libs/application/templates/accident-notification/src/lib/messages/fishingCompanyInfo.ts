@@ -18,6 +18,18 @@ export const fishingCompanyInfo = {
         'Vinsamlegast fylltu út upplýsingar um útgerð sem slasaði starfaði hjá þegar slysið átti sér stað.',
       description: `Please fill in the details of the fishing company with whom the injured person was working at the time of the accident.`,
     },
+    informationAboutShipTitle: {
+      id: 'an.application:fishingCompanyInfo.general.informationAboutShipTitle',
+      defaultMessage: 'Upplýsingar um skip',
+      description: 'Information about ship',
+    },
+    informationAboutShipDescription: {
+      id:
+        'an.application:fishingCompanyInfo.general.informationAboutShipDescription',
+      defaultMessage:
+        'Vinsamlegast fylltu út upplýsingar um skipið sem slysa aðili starfaði á þegar slysið átti sér stað.',
+      description: 'Information about description',
+    },
   }),
   labels: defineMessages({
     descriptionField: {
@@ -51,6 +63,26 @@ export const fishingCompanyInfo = {
         'Ég er forsvarsmaður hjá útgerð þar sem slysið átti sér stað.',
       description:
         'I am a representative of the fishing company where the accident took place.',
+    },
+    shipName: {
+      id: 'an.application:fishingCompanyInfo.labels.shipName',
+      defaultMessage: 'Nafn skips',
+      description: 'Name of ship',
+    },
+    shipCharacters: {
+      id: 'an.application:fishingCompanyInfo.labels.shipCharacters',
+      defaultMessage: 'Einkennisstafir',
+      description: 'Characters written on ship',
+    },
+    homePort: {
+      id: 'an.application:fishingCompanyInfo.labels.homePort',
+      defaultMessage: 'Heimahöfn',
+      description: 'Name of home port',
+    },
+    shipRegisterNumber: {
+      id: 'an.application:fishingCompanyInfo.labels.shipRegisterNumber',
+      defaultMessage: 'Skipaskrárnúmer',
+      description: 'Ship register number',
     },
   }),
 }
