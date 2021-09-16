@@ -9,6 +9,7 @@ import {
   Tag,
   Text,
   Tooltip,
+  UploadFile,
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -43,7 +44,6 @@ import AppealSection from './Components/AppealSection/AppealSection'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { formatMessage } from '@formatjs/intl'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { useIntl } from 'react-intl'
 
@@ -60,6 +60,7 @@ interface Props {
   setSelectedSharingInstitutionId: React.Dispatch<
     React.SetStateAction<ValueType<ReactSelectOption>>
   >
+  onUploadFileToCourtButtonClick: (files?: UploadFile[]) => Promise<void>
 }
 
 const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
@@ -72,6 +73,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     shareCaseWithAnotherInstitution,
     selectedSharingInstitutionId,
     setSelectedSharingInstitutionId,
+    onUploadFileToCourtButtonClick,
   } = props
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -324,7 +326,12 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               showIcons
             />
             <Box display="flex" justifyContent="flexEnd">
-              <Button size="small">
+              <Button
+                size="small"
+                onClick={() =>
+                  onUploadFileToCourtButtonClick(workingCase.files)
+                }
+              >
                 {formatMessage(signedVerdictOverview.uploadToAudurButtonText)}
               </Button>
             </Box>

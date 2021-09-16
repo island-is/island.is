@@ -157,3 +157,11 @@ export const GetSignedUrlQuery = gql`
     }
   }
 `
+
+export const UploadFileToCourtMutation = gql`
+  mutation UploadFileToCourtMutation($input: UploadFileToCourtInput!) {
+    uploadFileToCourt(input: $input) {
+      success
+    }
+  }
+`

@@ -7,7 +7,10 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import React, { ReactNode, useContext, useEffect, useState } from 'react'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
+import {
+  CaseQuery,
+  UploadFileToCourtMutation,
+} from '@island.is/judicial-system-web/graphql'
 import {
   FormFooter,
   PageLayout,
@@ -30,7 +33,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { ValueType } from 'react-select/src/types'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
-import { Text } from '@island.is/island-ui/core'
+import { Text, UploadFile } from '@island.is/island-ui/core'
 
 export const SignedVerdictOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -57,6 +60,8 @@ export const SignedVerdictOverview: React.FC = () => {
   const [extendCaseMutation, { loading: isCreatingExtension }] = useMutation(
     ExtendCaseMutation,
   )
+
+  const [uploadFileToCourtMutation] = useMutation(UploadFileToCourtMutation)
 
   useEffect(() => {
     document.title = 'Yfirlit staðfestrar kröfu - Réttarvörslugátt'
@@ -99,6 +104,22 @@ export const SignedVerdictOverview: React.FC = () => {
           }
         }
       }
+    }
+  }
+
+  const handleUploadFileToCourtButtonClick = async (files?: UploadFile[]) => {
+    if (files && workingCase) {
+      files.forEach(async (file) => {
+        const { data } = await uploadFileToCourtMutation({
+          variables: {
+            input: {
+              id: file.id,
+              caseId: workingCase.id,
+            },
+          },
+        })
+        console.log(data)
+      })
     }
   }
 
@@ -287,6 +308,7 @@ export const SignedVerdictOverview: React.FC = () => {
             shareCaseWithAnotherInstitution={shareCaseWithAnotherInstitution}
             selectedSharingInstitutionId={selectedSharingInstitutionId}
             setSelectedSharingInstitutionId={setSelectedSharingInstitutionId}
+            onUploadFileToCourtButtonClick={handleUploadFileToCourtButtonClick}
           />
           <FormContentContainer isFooter>
             <FormFooter
