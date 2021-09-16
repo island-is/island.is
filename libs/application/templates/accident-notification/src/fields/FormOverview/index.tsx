@@ -86,7 +86,9 @@ export const FormOverview: FC<FieldBaseProps> = ({
     AttachmentsEnum.HOSPITALSENDSCERTIFICATE
       ? [
           {
+            url: '#',
             name: formatMessage(overview.labels.hospitalSendsCertificate),
+            key: overview.labels.hospitalSendsCertificate.id,
           },
         ]
       : []),
