@@ -8,6 +8,7 @@ import {
   Put,
   NotFoundException,
   Query,
+  ForbiddenException,
 } from '@nestjs/common'
 
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
@@ -37,6 +38,27 @@ import {
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
+  private async validateAssignedUser(
+    assignedUserNationalId: string,
+    assignedUserService: RolesRule,
+    applicationId: string,
+  ) {
+    if (assignedUserService === 'veita') {
+      return
+    }
+
+    const hasUserAccess = await this.applicationService.hasAccessToApplication(
+      assignedUserNationalId,
+      applicationId,
+    )
+
+    if (!hasUserAccess) {
+      throw new ForbiddenException(
+        `User ${assignedUserNationalId} does not have acces to application with id ${applicationId}}`,
+      )
+    }
+  }
+
   @UseGuards(TokenGuard)
   @Get('getCurrentApplication')
   @ApiOkResponse({
@@ -65,8 +87,12 @@ export class ApplicationController {
     type: ApplicationModel,
     description: 'Get application',
   })
-  async getById(@Param('id') id: string) {
+  async getById(@Param('id') id: string, @CurrentHttpUser() user: User) {
     const application = await this.applicationService.findById(id)
+
+    await this.validateAssignedUser(user.nationalId, user.service, id)
+
+    //Should error be here same as application or in validateAssign user like now?
 
     if (!application) {
       throw new NotFoundException(`application ${id} not found`)
