@@ -13,7 +13,6 @@ import AnimateHeight from 'react-animate-height'
 import { Box } from '../../Box/Box'
 import { Column } from '../../Column/Column'
 import { Columns } from '../../Columns/Columns'
-import { AllOrNone } from '../../private/AllOrNone'
 import { useVirtualTouchable } from '../../private/touchable/useVirtualTouchable'
 import { hideFocusRingsClassName } from '../../private/hideFocusRings/hideFocusRings'
 import { Overlay } from '../../private/Overlay/Overlay'
@@ -43,10 +42,17 @@ export type AccordionItemBaseProps = {
   onFocus?: () => void
 }
 
-export type AccordionItemStateProps = AllOrNone<{
-  expanded?: boolean
-  onToggle: (expanded: boolean) => void
-}>
+export type AccordionItemStateProps =
+  | {
+      expanded: boolean
+      onToggle: (expanded: boolean) => void
+      onClick?: never
+      startExpanded?: never
+    }
+  | {
+      expanded?: never
+      onToggle?: never
+    }
 
 export type AccordionItemProps = AccordionItemBaseProps &
   AccordionItemStateProps
