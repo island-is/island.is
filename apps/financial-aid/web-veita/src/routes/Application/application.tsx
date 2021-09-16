@@ -27,7 +27,7 @@ import {
   getState,
   Municipality,
   aidCalculator,
-  months,
+  getMonth,
   calculateAidFinalAmount,
   formatPhoneNumber,
   FileType,
@@ -121,7 +121,7 @@ const ApplicationProfile = () => {
       {
         title: 'Tímabil',
         content:
-          months[new Date(application.created).getMonth()] +
+          getMonth(new Date(application.created).getMonth()) +
           format(new Date(application.created), ' y'),
       },
       {
@@ -380,7 +380,7 @@ const ApplicationProfile = () => {
             className={`contentUp delay-125 ${styles.widthAlmostFull}`}
           />
 
-          <History />
+          <History applicantName={application.name} />
         </Box>
 
         {application.state && (

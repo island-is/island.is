@@ -120,6 +120,12 @@ export const AccidentNotificationSchema = z.object({
   fishingCompanyInfo: CompanyInfoSchema,
   sportsClubInfo: CompanyInfoSchema,
   rescueSquadInfo: CompanyInfoSchema,
+  fishingShipInfo: z.object({
+    shipName: z.string().min(1),
+    shipCharacters: z.string().min(1),
+    homePort: z.string().min(1),
+    shipRegisterNumber: z.string().min(1),
+  }),
   locationAndPurpose: z.object({
     location: z.string().min(1),
   }),
@@ -142,6 +148,12 @@ export const AccidentNotificationSchema = z.object({
       StudiesAccidentLocationEnum.ATTHESCHOOL,
       StudiesAccidentLocationEnum.OTHER,
     ]),
+  }),
+  homeAccident: z.object({
+    address: z.string().min(1),
+    postalCode: z.string().min(1),
+    community: z.string().min(1),
+    moreDetails: z.string().optional(),
   }),
   fishermanLocation: z.object({
     answer: z.enum([

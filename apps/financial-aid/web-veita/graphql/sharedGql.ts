@@ -22,6 +22,7 @@ export const GetApplicationQuery = gql`
       employmentCustom
       homeCircumstancesCustom
       files {
+        id
         applicationId
         name
         size

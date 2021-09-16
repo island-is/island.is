@@ -3,6 +3,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { Box, Button, Input } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
+import { sharedMessages } from '@island.is/shared/translations'
 
 export interface PhoneFormData {
   tel: string
@@ -70,14 +71,8 @@ export const FormStep: FC<Props> = ({
           defaultValue={tel}
           render={({ onChange, value, name }) => (
             <Input
-              label={formatMessage({
-                id: 'global:telephone',
-                defaultMessage: 'Símanúmer',
-              })}
-              placeholder={formatMessage({
-                id: 'global:telephone',
-                defaultMessage: 'Símanúmer',
-              })}
+              label={formatMessage(sharedMessages.phoneNumber)}
+              placeholder={formatMessage(sharedMessages.phoneNumber)}
               name={name}
               value={value}
               hasError={errors.tel}

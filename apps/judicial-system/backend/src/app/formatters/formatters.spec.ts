@@ -32,7 +32,15 @@ describe('formatCustodyProvisions', () => {
     const res = formatCustodyProvisions(custodyProvisions)
 
     // Assert
-    expect(res).toBe('')
+    expect(res).toBe('Lagaákvæði ekki skráð')
+  })
+
+  test('should format custody provisions when provisions not defined', () => {
+    // Act
+    const res = formatCustodyProvisions()
+
+    // Assert
+    expect(res).toBe('Lagaákvæði ekki skráð')
   })
 
   test('should format custody provisions when some provisions are selected', () => {
@@ -75,6 +83,39 @@ describe('formatCustodyProvisions', () => {
     expect(res).toBe(
       'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.',
     )
+  })
+
+  test('should format custody provisions when some provisions are selected and additional freetext provided', () => {
+    // Arrange
+    const custodyProvisions = [
+      CaseCustodyProvisions._95_1_A,
+      CaseCustodyProvisions._95_1_B,
+      CaseCustodyProvisions._95_1_C,
+      CaseCustodyProvisions._95_1_D,
+      CaseCustodyProvisions._95_2,
+      CaseCustodyProvisions._99_1_B,
+      CaseCustodyProvisions._100_1,
+    ]
+    const legalBasis = 'some lið mgr. gr.'
+
+    // Act
+    const res = formatCustodyProvisions(custodyProvisions, legalBasis)
+
+    // Assert
+    expect(res).toBe(
+      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.\nsome lið mgr. gr.',
+    )
+  })
+
+  test('should format custody provisions only freetext provided', () => {
+    // Arrange
+    const legalBasis = 'some lið mgr. gr.'
+
+    // Act
+    const res = formatCustodyProvisions(undefined, legalBasis)
+
+    // Assert
+    expect(res).toBe('some lið mgr. gr.')
   })
 })
 
@@ -547,6 +588,33 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Úrskurðað verður um kröfuna án mætingar af hálfu málsaðila.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Talsmaður sakbornings: Tinni Talsmaður.',
     )
   })
+
+  test('should format court date notification when courtroom is not set', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtDate = new Date('2020-12-24T18:00')
+    const courtRoom = undefined
+    const judgeName = 'Dóra Dómari'
+    const registrarName = 'Dalli Dómritari'
+    const defenderName = 'Valdi Verjandi'
+
+    // Act
+    const res = formatProsecutorCourtDateEmailNotification(
+      type,
+      court,
+      courtDate,
+      courtRoom,
+      judgeName,
+      registrarName,
+      defenderName,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+    )
+  })
 })
 
 describe('formatPrisonCourtDateEmailNotification', () => {
@@ -754,6 +822,27 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem talsmann sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.',
+    )
+  })
+
+  test('should format defender court date notification when courtroom is not set', () => {
+    // Arrange
+    const court = 'Héraðsdómur Norðurlands'
+    const courtCaseNumber = 'R-77/2021'
+    const courtDate = new Date('2020-12-19T10:19')
+    const courtRoom = undefined
+
+    // Act
+    const res = formatDefenderCourtDateEmailNotification(
+      court,
+      courtCaseNumber,
+      courtDate,
+      courtRoom,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur hefur ekki verið skráður.',
     )
   })
 })

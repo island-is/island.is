@@ -44,7 +44,7 @@ const CheckboxList: React.FC<Props> = ({
                 data-testid="checkbox"
                 marginBottom={
                   // Do not add margins to the last two items
-                  index < checkboxes.length - 2 ? 3 : 0
+                  index < checkboxes.length - 2 ? 2 : 0
                 }
               >
                 <Checkbox
