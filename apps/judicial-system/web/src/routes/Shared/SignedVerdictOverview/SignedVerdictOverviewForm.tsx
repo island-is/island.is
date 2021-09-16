@@ -25,6 +25,7 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseState,
   CaseType,
   InstitutionType,
   UserRole,
@@ -43,6 +44,8 @@ import AppealSection from './Components/AppealSection/AppealSection'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import { useIntl } from 'react-intl'
 
 interface Props {
   workingCase: Case
@@ -72,6 +75,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   } = props
   const router = useRouter()
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
   const { prosecutorsOffices } = useInstitution()
 
   /**
@@ -93,12 +97,16 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     const isInvestigationCase =
       theCase.type !== CaseType.CUSTODY && theCase.type !== CaseType.TRAVEL_BAN
 
-    if (theCase.decision === CaseDecision.REJECTING) {
+    if (theCase.state === CaseState.REJECTED) {
       if (isInvestigationCase) {
         return 'Kröfu um rannsóknarheimild hafnað'
       } else {
         return 'Kröfu hafnað'
       }
+    }
+
+    if (theCase.state === CaseState.DISMISSED) {
+      return formatMessage(signedVerdictOverview.dismissedTitle)
     }
 
     if (theCase.isValidToDateInThePast) {

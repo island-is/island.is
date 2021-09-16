@@ -38,7 +38,7 @@ export const mapCaseStateToTagVariant = (
       }
     case CaseState.DISMISSED:
       return {
-        color: 'white',
+        color: 'dark',
         text: 'Vísað frá',
       }
     default:
