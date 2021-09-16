@@ -10,7 +10,7 @@ import { useLocale } from '@island.is/localization'
 import { Features, useFeatureFlag } from '@island.is/feature-flags'
 import { userMessages } from '@island.is/shared/translations'
 import * as styles from './UserMenu.treat'
-import { useActorDelegationsQuery } from '../../graphql'
+import { useActorDelegationsQuery } from '../../schema'
 
 interface UserDelegationsProps {
   user: User
