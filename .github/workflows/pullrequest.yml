@@ -7,7 +7,7 @@ on:
 jobs:
   prepare:
     runs-on: self-hosted
-    timeout-minutes: 25
+    timeout-minutes: 30
 
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
