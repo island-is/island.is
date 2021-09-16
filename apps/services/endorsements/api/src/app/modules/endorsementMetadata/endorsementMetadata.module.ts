@@ -12,7 +12,6 @@ import {
   TemporaryVoterRegistryApi,
 } from './providers/temporaryVoterRegistry/gen/fetch'
 import { TemporaryVoterRegistryService } from './providers/temporaryVoterRegistry/temporaryVoterRegistry.service'
-import { TemporaryVoterRegistryApiMock } from './providers/temporaryVoterRegistry/mock/temporaryVoterRegistryApiMock'
 
 @Module({
   imports: [
@@ -37,9 +36,6 @@ import { TemporaryVoterRegistryApiMock } from './providers/temporaryVoterRegistr
               .baseApiUrl as string,
           }),
         ),
-      ...(environment.apiMock
-        ? { useValue: new TemporaryVoterRegistryApiMock() }
-        : {}),
     },
   ],
   exports: [EndorsementMetadataService],

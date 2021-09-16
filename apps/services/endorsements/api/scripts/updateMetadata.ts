@@ -2,6 +2,9 @@ import 'reflect-metadata'
 import { NestFactory } from '@nestjs/core/nest-factory'
 import { Sequelize } from 'sequelize-typescript'
 import Bottleneck from 'bottleneck'
+import { logger } from '@island.is/logging'
+import { Auth } from '@island.is/auth-nest-tools'
+import { EndorsementsScope } from '@island.is/auth/scopes'
 import * as sequelizeConfig from '../sequelize.config'
 import { Endorsement } from '../src/app/modules/endorsement/models/endorsement.model'
 import { EndorsementList } from '../src/app/modules/endorsementList/endorsementList.model'
@@ -9,8 +12,7 @@ import { EndorsementMetadataService } from '../src/app/modules/endorsementMetada
 import { EndorsementMetaField } from '../src/app/modules/endorsementMetadata/types'
 import { AppModule } from '../src/app/app.module'
 import { EndorsementMetadata } from '../src/app/modules/endorsementMetadata/endorsementMetadata.model'
-import { logger } from '@island.is/logging'
-import { Auth } from '@island.is/auth-nest-tools'
+import { environment } from '../src/environments'
 
 interface EndorsementListFieldMap {
   [key: string]: EndorsementMetaField[]
@@ -22,8 +24,7 @@ interface EndorsementMetadataResponse {
 }
 
 // lets init sequelize client with config from the api app
-const production = process.env.NODE_ENV === 'production'
-const sequelizeConfigKey = production ? 'production' : 'development'
+const sequelizeConfigKey = environment.production ? 'production' : 'development'
 new Sequelize({
   ...sequelizeConfig[sequelizeConfigKey],
   models: [Endorsement, EndorsementList],
@@ -36,6 +37,29 @@ const limiter = new Bottleneck({
   minTime: Number(process.env.MIN_TIME) || 100, // 100 ms between requests (10 req/sec)
   maxConcurrent: Number(process.env.MAX_CONCURRENT) || 10,
 })
+
+const acquireAuthToken = async (): Promise<string> => {
+  const response = await fetch(`${environment.auth.issuer}/connect/token`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      client_id: environment.auth.clientId,
+      grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
+      scope: EndorsementsScope.main,
+      client_secret: environment.auth.clientSecret,
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to acquire access token')
+  }
+
+  const result = await response.json()
+
+  return result.access_token
+}
 
 const createEndorsementListFieldMap = (
   endorsementLists: EndorsementList[],
@@ -160,7 +184,7 @@ const processEndorsementLists = async (cb: () => void, index = 0) => {
 }
 
 export default async () => {
-  if (!production) {
+  if (!environment.production) {
     // Lets make sure it is clear in logs if this is running in dev mode
     logger.warn('>>>RUNNING IN DEV MODE!!!<<<')
   }

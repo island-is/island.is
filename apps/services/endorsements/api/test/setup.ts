@@ -5,6 +5,8 @@ import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { handlers as temporaryVoterRegistryHandlers } from '../src/app/modules/endorsementMetadata/providers/temporaryVoterRegistry/mock/temporaryVoterRegistryMock'
+import { handlers as nationalRegistryHandlers } from '../src/app/modules/endorsementMetadata/providers/nationalRegistry/mock/nationalRegistryMock'
 
 export let app: INestApplication
 let sequelize: Sequelize
@@ -62,9 +64,23 @@ export const getAuthenticatedApp = ({
     },
   })
 
+// https://github.com/webpack/webpack/issues/8826
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { setupServer } = eval('require')('msw/node')
+const mockServer = setupServer(
+  ...nationalRegistryHandlers,
+  ...temporaryVoterRegistryHandlers,
+)
+
+beforeAll(() => {
+  // Enable mocking.
+  mockServer.listen()
+})
+
 afterAll(async () => {
   if (app && sequelize) {
     await app.close()
     await sequelize.close()
+    await mockServer.close()
   }
 })
