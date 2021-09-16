@@ -61,6 +61,21 @@ export const rcDemands = {
         description:
           'Notaður sem titill fyrir "lagaákvæði sem krafan er byggð á" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      legalBasisLabel: {
+        id:
+          'judicial.system.restriction_cases:police_demands.legal_basis.legal_basis_label',
+        defaultMessage: 'Önnur lagaákvæði sem krafan er byggð á',
+        description:
+          'Notaður sem titill í "önnur lagaákvæði..." textaboxi á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhaldsmálum.',
+      },
+      legalBasisPlaceholder: {
+        id:
+          'judicial.system.restriction_cases:police_demands.legal_basis.legal_basis_placeholder',
+        defaultMessage:
+          'Ef krafan byggir á öðrum lagaákvæðum er hægt að skrá þau hér.',
+        description:
+          'Notaður sem skýritexti í "önnur lagaákvæði..." textaboxi á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhaldsmálum.',
+      },
     }),
     custodyRestrictions: defineMessages({
       heading: {
