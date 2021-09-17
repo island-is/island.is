@@ -20,7 +20,7 @@ judicial-system-api:
     AUTH_AUDIENCE: rettarvorslugatt.island.is
     BACKEND_URL: http://web-judicial-system-backend
     CONTENTFUL_HOST: cdn.contentful.com
-    HIDDEN_FEATURES: R_CASES
+    HIDDEN_FEATURES: ''
     SAML_ENTRY_POINT: https://innskraning.island.is/?id=rettarvorslugatt.prod
     XROAD_BASE_PATH_WITH_ENV: https://securityserver.island.is/r1/IS
     XROAD_CLIENT_ID: IS/GOV/5804170510/Rettarvorslugatt-Client
