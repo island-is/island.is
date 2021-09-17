@@ -82,7 +82,6 @@ module.exports = {
         { party_letter, ...partyLetterData },
         partyLetterData,
         { party_letter },
-        queryInterface.sequelize.define(),
         { transaction },
       )
     })
