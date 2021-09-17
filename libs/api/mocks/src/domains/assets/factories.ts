@@ -24,10 +24,10 @@ export const stadfang = factory<types.Stadfang>({
   stadvisir: () => faker.random.arrayElement(streetArray),
   stadgreinir: () => faker.random.number(99).toString(),
   landeignarnr: () => faker.helpers.replaceSymbolWithNumber('L????', '?'),
-  display() {
+  birting() {
     return `${this.stadvisir} ${this.stadgreinir}, ${this.sveitarfelag}`
   },
-  displayShort() {
+  birtingStutt() {
     return `${this.stadvisir} ${this.stadgreinir}`
   },
 })
@@ -79,15 +79,15 @@ export const assetDetail = factory<types.Fasteign>({
   ...fasteign(),
   fasteignamat: () => fasteignamat(),
   thinglystirEigendur: {
-    data: eigandi.list(2),
+    data: eigandi.list(7),
     paging: {
-      page: 2,
+      page: 1,
       pageSize: 5,
-      total: 20,
-      totalPages: 4,
-      offset: 10,
-      hasPreviousPage: true,
-      hasNextPage: false,
+      total: 7,
+      totalPages: 2,
+      offset: 0,
+      hasPreviousPage: false,
+      hasNextPage: true,
     },
   },
   notkunareiningar: {
@@ -103,3 +103,19 @@ export const assetDetail = factory<types.Fasteign>({
     },
   },
 })
+
+// Test.
+export const pagedThinglystirEigendur = factory<types.ThinglystirEigendurResponse>(
+  {
+    data: eigandi.list(2),
+    paging: {
+      page: 2,
+      pageSize: 2,
+      total: 7,
+      totalPages: 2,
+      offset: 1,
+      hasPreviousPage: true,
+      hasNextPage: false,
+    },
+  },
+)

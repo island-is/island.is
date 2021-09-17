@@ -24,6 +24,7 @@ paths:
     get:
       tags:
         - Fasteignir
+      summary: Sækir fasteignir skráðar á kennitölu.
       operationId: Fasteignir_GetFasteignir
       parameters:
         - name: kennitala
@@ -82,6 +83,7 @@ paths:
     get:
       tags:
         - Fasteignir
+      summary: Sækir fasteign eftir fasteignarnúmeri.
       operationId: Fasteignir_GetFasteign
       parameters:
         - name: fasteignanumer
@@ -94,14 +96,10 @@ paths:
       responses:
         '200':
           description: OK
-          # content:
-          #   application/json:
-          #     schema:
-          #       $ref: '#/components/schemas/FasteignSimpleWrapper'
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/Fasteign'
         '401':
           description: Unauthorized
           content:
@@ -122,10 +120,11 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
         - auth: []
-  /api/v1/fasteignir/{fasteignanumer}/thinglystireigendur:
+  /api/v1/fasteignir/{fasteignanumer}/thinglystir-eigendur:
     get:
       tags:
         - Fasteignir
+      summary: Sækir eigendur fasteignar.
       operationId: Fasteignir_GetFasteignEigendur
       parameters:
         - name: fasteignanumer
@@ -154,7 +153,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FasteignSimpleWrapper'
+                $ref: '#/components/schemas/ThinglysturEigandiWrapper'
         '401':
           description: Unauthorized
           content:
@@ -179,6 +178,7 @@ paths:
     get:
       tags:
         - Fasteignir
+      summary: Sækir notkunareiningar fasteignar.
       operationId: Fasteignir_GetFasteignNotkunareiningar
       parameters:
         - name: fasteignanumer
@@ -207,7 +207,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FasteignSimpleWrapper'
+                $ref: '#/components/schemas/NotkunareiningWrapper'
         '401':
           description: Unauthorized
           content:
@@ -310,33 +310,175 @@ components:
       properties:
         code:
           type: integer
+          description: HTTP status code
           format: int32
         message:
           type: string
+          description: Message describing the error
         errors:
           type: array
+          description: Detailed information of errors
           nullable: true
           items:
             $ref: '#/components/schemas/ErrorDetails'
     ErrorDetails:
       type: object
+      description: Detailed error message
       additionalProperties: false
       properties:
         code:
           type: integer
+          description: HTTP status code
           format: int32
         message:
           type: string
+          description: Message describing the error
           nullable: true
         help:
           type: string
+          description: URL to a page explaining the error and possible solutions
           nullable: true
         trackingId:
           type: string
+          description: Identifier for mapping failures to service internal codes
           nullable: true
         param:
           type: string
+          description: Name of the parameter which was incorrect
           nullable: true
+    Fasteign:
+      allOf:
+        - $ref: '#/components/schemas/FasteignSimple'
+        - type: object
+          additionalProperties: false
+          properties:
+            fasteignamat:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/Fasteignamat'
+            thinglystirEigendur:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/ThinglysturEigandiWrapper'
+            notkunareiningar:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/NotkunareiningWrapper'
+    Fasteignamat:
+      type: object
+      additionalProperties: false
+      properties:
+        gildandiFasteignamat:
+          type: integer
+          format: int64
+        fyrirhugadFasteignamat:
+          type: integer
+          format: int64
+          nullable: true
+        gildandiMannvirkjamat:
+          type: integer
+          format: int64
+        fyrirhugadMannvirkjamat:
+          type: integer
+          format: int64
+          nullable: true
+        gildandiLodarhlutamat:
+          type: integer
+          format: int64
+        fyrirhugadLodarhlutamat:
+          type: integer
+          format: int64
+          nullable: true
+        gildandiAr:
+          type: integer
+          format: int32
+        fyrirhugadAr:
+          type: integer
+          format: int32
+    ThinglysturEigandiWrapper:
+      type: object
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/ThinglysturEigandi'
+        paging:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Pagination'
+    ThinglysturEigandi:
+      type: object
+      additionalProperties: false
+      properties:
+        nafn:
+          type: string
+          nullable: true
+        kennitala:
+          type: string
+          nullable: true
+        eignarhlutfall:
+          type: number
+          format: decimal
+        kaupdagur:
+          type: string
+          format: date
+        heimildBirting:
+          type: string
+          nullable: true
+    NotkunareiningWrapper:
+      type: object
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Notkunareining'
+        paging:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Pagination'
+    Notkunareining:
+      type: object
+      additionalProperties: false
+      properties:
+        birtStaerdMaelieining:
+          type: string
+          nullable: true
+        notkunareininganumer:
+          type: string
+          nullable: true
+        fasteignanumer:
+          type: string
+          nullable: true
+        stadfang:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Stadfang'
+        merking:
+          type: string
+          nullable: true
+        notkunBirting:
+          type: string
+          nullable: true
+        skyring:
+          type: string
+          nullable: true
+        byggingararBirting:
+          type: string
+          nullable: true
+        birtStaerd:
+          type: number
+          format: double
+        fasteignamat:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Fasteignamat'
+        brunabotamat:
+          type: integer
+          format: int64
   securitySchemes:
     auth:
       type: apiKey

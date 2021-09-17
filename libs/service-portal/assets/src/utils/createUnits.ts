@@ -24,7 +24,7 @@ const unitsArray = (data: Fasteign, formatMessage: FormatMessage) =>
     return {
       header: {
         title: formatMessage(messages.housing),
-        value: unit.stadfang?.display || '',
+        value: unit.stadfang?.birting || '',
       },
       rows: chunk(
         [
@@ -40,7 +40,7 @@ const unitsArray = (data: Fasteign, formatMessage: FormatMessage) =>
           },
           {
             title: formatMessage(messages.location),
-            value: unit.stadfang?.displayShort || '',
+            value: unit.stadfang?.birtingStutt || '',
           },
           {
             title: `${formatMessage(messages.futureAppraisal)} ${

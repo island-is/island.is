@@ -7,8 +7,6 @@ export type Stadfang = {
   landeignarnr: string // ID sem hægt væri að fletta upp/vísa í seinna
 
   birting?: string
-  display?: string // Tilbúið til birtingar í viðmóti, t.d. Snorrabraut 56, Reykjavík
-  displayShort?: string
   birtingStutt?: string // T.d. Snorrabraut 56
 }
 
@@ -16,8 +14,8 @@ export type ThinglysturEigandi = {
   nafn: string
   kennitala: string
   eignarhlutfall?: number
-  kaupdagur: Date
-  heimild: string
+  kaupdagur: Date | string
+  heimild?: string // PROBABLY NOT
 
   display?: string // Birting á hlutfalli, tilbúið fyrir viðmót, t.d. "50.12%"
   heimildBirting?: string // Birting á heimild
