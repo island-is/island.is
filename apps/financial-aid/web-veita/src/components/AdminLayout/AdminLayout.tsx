@@ -22,7 +22,7 @@ const AdminLayout = ({ children, className }: PageProps) => {
   useEffect(() => {
     if (showNavMobile) {
       router.events.on('routeChangeComplete', () => {
-        setShowNavMobile(false)
+        setShowNavMobile((showNavMobile) => !showNavMobile)
       })
     }
   }, [showNavMobile])
@@ -40,14 +40,29 @@ const AdminLayout = ({ children, className }: PageProps) => {
             setShowNavMobile(!showNavMobile)
           }}
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <span
+            className={cn({
+              [`${styles.burgerLines} ${styles.burgerMenuFirstChild}`]: true,
+              [`${styles.openBurgerLines} ${styles.openBurgerLineFirstChild}`]: showNavMobile,
+            })}
+          ></span>
+          <span
+            className={cn({
+              [`${styles.burgerLines} `]: true,
+              [`${styles.dissapearLine}`]: showNavMobile,
+            })}
+          ></span>
+          <span
+            className={cn({
+              [`${styles.burgerLines} ${styles.burgerMenuLastChilde}`]: true,
+              [`${styles.openBurgerLines}  ${styles.openBurgerLineLastChild}`]: showNavMobile,
+            })}
+          ></span>
         </button>
         <div
           className={cn({
             [`${styles.childContainer}`]: true,
-            [`${styles.mobileMenuOpen}`]: showNavMobile,
+            [`${styles.mobileMenuOpen} `]: showNavMobile,
             [`${className}`]: true,
           })}
         >
