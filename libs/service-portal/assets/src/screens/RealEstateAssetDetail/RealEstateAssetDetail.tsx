@@ -74,7 +74,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
       </Box>
       <Box>
         <TableUnits
-          title={`${assetData?.sjalfgefidStadfang?.displayShort} - ${assetData?.fasteignanr}`}
+          title={`${assetData?.sjalfgefidStadfang?.birtingStutt} - ${assetData?.fasteignanumer}`}
           tables={[
             {
               header: [
@@ -97,11 +97,13 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
               ],
               rows: [
                 [
-                  assetData.fasteignamat?.gildandi
-                    ? amountFormat(assetData.fasteignamat?.gildandi)
+                  assetData.fasteignamat?.gildandiFasteignamat
+                    ? amountFormat(assetData.fasteignamat?.gildandiFasteignamat)
                     : '',
-                  assetData.fasteignamat?.fyrirhugad
-                    ? amountFormat(assetData.fasteignamat?.fyrirhugad)
+                  assetData.fasteignamat?.fyrirhugadFasteignamat
+                    ? amountFormat(
+                        assetData.fasteignamat?.fyrirhugadFasteignamat,
+                      )
                     : '',
                 ],
               ],

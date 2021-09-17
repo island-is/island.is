@@ -18,7 +18,7 @@ export const store = createStore(() => {
   }
 
   const detailRealEstateAssets = fasteignir.map((eign) => ({
-    ...assetDetail({ fasteignanr: eign.fasteignanr }),
+    ...assetDetail({ fasteignanumer: eign.fasteignanumer }),
     ...eign,
   }))
 

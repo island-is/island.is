@@ -4,7 +4,7 @@ import { Text, Table as T } from '@island.is/island-ui/core'
 interface Props {
   tables?: {
     header: string[]
-    rows: string[][]
+    rows: (string | number)[][]
   }[]
   title?: string
 }

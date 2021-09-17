@@ -6,8 +6,10 @@ export type Stadfang = {
   sveitarfelag: string
   landeignarnr: string // ID sem hægt væri að fletta upp/vísa í seinna
 
-  display: string // Tilbúið til birtingar í viðmóti, t.d. Snorrabraut 56, Reykjavík
-  displayShort: string // T.d. Snorrabraut 56
+  birting?: string
+  display?: string // Tilbúið til birtingar í viðmóti, t.d. Snorrabraut 56, Reykjavík
+  displayShort?: string
+  birtingStutt?: string // T.d. Snorrabraut 56
 }
 
 export type ThinglysturEigandi = {
@@ -18,18 +20,19 @@ export type ThinglysturEigandi = {
   heimild: string
 
   display?: string // Birting á hlutfalli, tilbúið fyrir viðmót, t.d. "50.12%"
+  heimildBirting?: string // Birting á heimild
 }
 
 export type Fasteignamat = {
-  gildandi: number
+  gildandiFasteignamat: number
   gildandiAr: string // Í staðinn fyrir að viðmót þurfi að reikna, t.d. "2022"
-  fyrirhugad?: number | null
+  fyrirhugadFasteignamat?: number | null
   fyrirhugadAr?: string | null
 }
 
 export type Notkunareining = {
-  fasteignanr: string | number
-  notkunareininganr: string | number
+  fasteignanumer: string | number
+  notkunareininganumer: string | number
 
   stadfang?: Stadfang
   // OR
@@ -38,7 +41,8 @@ export type Notkunareining = {
   merking: string
 
   // Munur á þessu þrennu? Notkun+starfsemi í vefuppfletti, lysing á skra.is
-  notkun: string // Á að vera inni
+  notkun?: string // Á að vera inni
+  notkunBirting: string
   starfsemi: string // Ný í stað notkun, bara fyrir, birta? óstaðfest
   lysing: string // Sama og skyring. Frjáls texti, yfirleitt notkun, birta? óstaðfest
   // notkunBirting // ?
@@ -52,14 +56,14 @@ export type Notkunareining = {
 }
 
 export type Fasteign = {
-  fasteignanr: string | number
+  fasteignanumer: string | number
   sjalfgefidStadfang: Stadfang
 
   // Allt hér fyrir neðan er optional
   fasteignamat?: Fasteignamat
 
   // Flækjum svar til að geta meðhöndlað mjög marga eigendur
-  thinglystirEigendur?: Array<ThinglysturEigandi>
+  thinglystirEigendur?: ThinglystirEigendurResponse
 
   // Flækjum svar til að geta meðhöndlað mjög margar notkunareiningar
   notkunareiningar?: NotkunareiningarResponse
@@ -90,4 +94,9 @@ export type FasteignirResponse = {
 export type NotkunareiningarResponse = {
   paging: Paging | null
   data: Array<Notkunareining>
+}
+
+export type ThinglystirEigendurResponse = {
+  paging: Paging | null
+  data: Array<ThinglysturEigandi>
 }

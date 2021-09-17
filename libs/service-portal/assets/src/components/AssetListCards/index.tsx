@@ -13,10 +13,10 @@ const AssetListCards: FC<Props> = ({ assets }) => {
   return (
     <Box>
       {assets?.map((asset, i) => (
-        <Box key={asset.fasteignanr} marginTop={i > 0 ? 4 : undefined}>
+        <Box key={asset.fasteignanumer} marginTop={i > 0 ? 4 : undefined}>
           <ActionCard
-            heading={asset.sjalfgefidStadfang.display}
-            text={asset.fasteignanr as string}
+            heading={asset.sjalfgefidStadfang.birting}
+            text={asset.fasteignanumer as string}
             cta={{
               label: 'Skoða nánar',
               variant: 'text',
@@ -24,7 +24,7 @@ const AssetListCards: FC<Props> = ({ assets }) => {
                 history.push(
                   ServicePortalPath.AssetsRealEstateDetail.replace(
                     ':id',
-                    asset.fasteignanr as string,
+                    asset.fasteignanumer as string,
                   ),
                 ),
             }}

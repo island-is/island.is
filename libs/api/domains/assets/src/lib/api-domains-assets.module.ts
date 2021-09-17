@@ -1,24 +1,42 @@
 import { DynamicModule, Module } from '@nestjs/common'
+import fetch from 'isomorphic-fetch'
+import { AuthModule } from '@island.is/auth-nest-tools'
+import { AssetsClientModule } from '@island.is/clients/assets'
+import { FasteignirApi, Configuration } from '@island.is/clients/assets'
 import {
-  AssetService,
-  AssetServiceOptions,
-  ASSET_OPTIONS,
-} from '@island.is/clients/assets'
-import { AssetsResolver } from './api-domains-assets.resolver'
+  createXRoadAPIPath,
+  XRoadMemberClass,
+} from '@island.is/shared/utils/server'
+
+import { AssetsXRoadResolver } from './api-domains-assets.resolver'
+import { AssetsXRoadService } from './api-domains-assets.service'
+
+export interface AssetsXRoadConfig {
+  xRoadBasePathWithEnv: string
+  xRoadTjodskraMemberCode: string
+  xRoadTjodskraApiPath: string
+  xRoadClientId: string
+}
 
 @Module({})
 export class AssetsModule {
-  static register(config: AssetServiceOptions): DynamicModule {
+  static register(config: AssetsXRoadConfig): DynamicModule {
     return {
       module: AssetsModule,
-      providers: [
-        AssetsResolver,
-        {
-          provide: ASSET_OPTIONS,
-          useValue: config,
-        },
-        AssetService,
+      providers: [AssetsXRoadResolver, AssetsXRoadService],
+      imports: [
+        AssetsClientModule.register({
+          // xRoadPath: createXRoadAPIPath(
+          //   config.xRoadBasePathWithEnv,
+          //   XRoadMemberClass.GovernmentInstitution,
+          //   config.xRoadTjodskraMemberCode,
+          //   config.xRoadTjodskraApiPath,
+          // ),
+          xRoadClient: config.xRoadClientId,
+        }),
+        AuthModule,
       ],
+      exports: [AssetsXRoadService],
     }
   }
 }

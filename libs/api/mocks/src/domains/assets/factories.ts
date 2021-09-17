@@ -33,15 +33,16 @@ export const stadfang = factory<types.Stadfang>({
 })
 
 export const fasteign = factory<types.Fasteign>({
-  fasteignanr: () => faker.helpers.replaceSymbolWithNumber('F?????', '?'),
+  fasteignanumer: () => faker.helpers.replaceSymbolWithNumber('F?????', '?'),
   sjalfgefidStadfang: () => stadfang(),
 })
 
 export const fasteignamat = factory<types.Fasteignamat>({
-  gildandi: () => faker.random.number({ min: 20000000, max: 50000000 }),
+  gildandiFasteignamat: () =>
+    faker.random.number({ min: 20000000, max: 50000000 }),
   gildandiAr: new Date().getFullYear().toString(),
-  fyrirhugad() {
-    return this.gildandi + 1500000 // Optional
+  fyrirhugadFasteignamat() {
+    return this.gildandiFasteignamat + 1500000 // Optional
   },
   fyrirhugadAr: (new Date().getFullYear() + 1).toString(), // Optional
 })
@@ -56,11 +57,12 @@ export const eigandi = factory<types.ThinglysturEigandi>({
 })
 
 export const notkunareining = factory<types.Notkunareining>({
-  notkunareininganr: () => faker.helpers.replaceSymbolWithNumber('N?', '?'),
-  fasteignanr: () => faker.helpers.replaceSymbolWithNumber('F?????', '?'),
+  notkunareininganumer: () => faker.helpers.replaceSymbolWithNumber('N?', '?'),
+  fasteignanumer: () => faker.helpers.replaceSymbolWithNumber('F?????', '?'),
   stadfang: () => stadfang(),
   merking: () => faker.helpers.replaceSymbolWithNumber('Íbúð ?', '?'),
   notkun: () => faker.helpers.replaceSymbolWithNumber('Notkun ?', '?'),
+  notkunBirting: () => faker.helpers.replaceSymbolWithNumber('Notkun ?', '?'),
   starfsemi: () => faker.helpers.replaceSymbolWithNumber('Starfsemi ?', '?'),
   lysing: () => faker.helpers.replaceSymbolWithNumber('Lýsing ?', '?'),
   byggingarAr: 2008,
@@ -76,7 +78,18 @@ export const notkunareining = factory<types.Notkunareining>({
 export const assetDetail = factory<types.Fasteign>({
   ...fasteign(),
   fasteignamat: () => fasteignamat(),
-  thinglystirEigendur: eigandi.list(2),
+  thinglystirEigendur: {
+    data: eigandi.list(2),
+    paging: {
+      page: 2,
+      pageSize: 5,
+      total: 20,
+      totalPages: 4,
+      offset: 10,
+      hasPreviousPage: true,
+      hasNextPage: false,
+    },
+  },
   notkunareiningar: {
     data: notkunareining.list(2),
     paging: {

@@ -204,7 +204,10 @@ const autoSchemaFile = environment.production
       xroadClientId: environment.xroad.clientId,
     }),
     AssetsModule.register({
-      ttl: environment.fjarmalDomain.ttl,
+      xRoadBasePathWithEnv: '',
+      xRoadTjodskraMemberCode: '',
+      xRoadTjodskraApiPath: '',
+      xRoadClientId: '',
     }),
     NationalRegistryXRoadModule.register({
       xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,

@@ -1,0 +1,345 @@
+x-generator: NSwag v13.11.3.0 (NJsonSchema v10.4.4.0 (Newtonsoft.Json v13.0.0.0))
+openapi: 3.0.0
+info:
+  title: Fasteignir-Xroad
+  description: Uppfletting í fasteignaskrá.
+  contact:
+    name: Skra.is
+    url: https://www.skra.is/
+    email: skra@skra.is
+  version: v1
+  x-category:
+    - personal
+    - official
+  x-pricing:
+    - free
+    - paid
+  x-links:
+    documentation: https://www.skra.is/um-okkur/utgafur-og-skjol/taknmal-thjodskrar/
+    responsibleParty: https://www.skra.is/um-okkur
+servers:
+  - url: https://api-staging.skra.is/business/fasteignir-xroad
+paths:
+  /api/v1/fasteignir:
+    get:
+      tags:
+        - Fasteignir
+      operationId: Fasteignir_GetFasteignir
+      parameters:
+        - name: kennitala
+          in: query
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: cursor
+          in: query
+          schema:
+            type: string
+            nullable: true
+          x-position: 2
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            format: int32
+            nullable: true
+          x-position: 3
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FasteignSimpleWrapper'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - auth: []
+  /api/v1/fasteignir/{fasteignanumer}:
+    get:
+      tags:
+        - Fasteignir
+      operationId: Fasteignir_GetFasteign
+      parameters:
+        - name: fasteignanumer
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      responses:
+        '200':
+          description: OK
+          # content:
+          #   application/json:
+          #     schema:
+          #       $ref: '#/components/schemas/FasteignSimpleWrapper'
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - auth: []
+  /api/v1/fasteignir/{fasteignanumer}/thinglystireigendur:
+    get:
+      tags:
+        - Fasteignir
+      operationId: Fasteignir_GetFasteignEigendur
+      parameters:
+        - name: fasteignanumer
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: cursor
+          in: query
+          schema:
+            type: string
+            nullable: true
+          x-position: 2
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            format: int32
+            nullable: true
+          x-position: 3
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FasteignSimpleWrapper'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - auth: []
+  /api/v1/fasteignir/{fasteignanumer}/notkunareiningar:
+    get:
+      tags:
+        - Fasteignir
+      operationId: Fasteignir_GetFasteignNotkunareiningar
+      parameters:
+        - name: fasteignanumer
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: cursor
+          in: query
+          schema:
+            type: string
+            nullable: true
+          x-position: 2
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            format: int32
+            nullable: true
+          x-position: 3
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FasteignSimpleWrapper'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - auth: []
+components:
+  schemas:
+    FasteignSimpleWrapper:
+      type: object
+      additionalProperties: false
+      properties:
+        fasteignir:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/FasteignSimple'
+        paging:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Pagination'
+    FasteignSimple:
+      type: object
+      additionalProperties: false
+      properties:
+        fasteignanumer:
+          type: string
+          nullable: true
+        sjalfgefidStadfang:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Stadfang'
+    Stadfang:
+      type: object
+      additionalProperties: false
+      properties:
+        stadfanganumer:
+          type: integer
+          format: int64
+          nullable: true
+        landeignarnumer:
+          type: integer
+          format: int64
+        postnumer:
+          type: integer
+          format: int32
+          nullable: true
+        sveitarfelagBirting:
+          type: string
+          nullable: true
+        birting:
+          type: string
+          nullable: true
+        birtingStutt:
+          type: string
+          nullable: true
+    Pagination:
+      type: object
+      additionalProperties: false
+      properties:
+        page:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        total:
+          type: integer
+          format: int32
+        totalPages:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+        hasPreviousPage:
+          type: boolean
+        hasNextPage:
+          type: boolean
+    Error:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        errors:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/ErrorDetails'
+    ErrorDetails:
+      type: object
+      additionalProperties: false
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          nullable: true
+        help:
+          type: string
+          nullable: true
+        trackingId:
+          type: string
+          nullable: true
+        param:
+          type: string
+          nullable: true
+  securitySchemes:
+    auth:
+      type: apiKey
+      description: Copy 'Bearer ' + valid JWT token into field
+      name: Authorization
+      in: header

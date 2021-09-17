@@ -12,7 +12,7 @@ export const resolvers: Resolvers = {
     getRealEstates: () => store.getFasteignir,
     getRealEstateDetail: (_, { input }) => {
       const match = store.detailRealEstateAssets.find(
-        (item) => item.fasteignanr === input.assetId,
+        (item) => item.fasteignanumer === input.assetId,
       )
       return match ? match : null
     },

@@ -1,31 +1,41 @@
-import { Query, Resolver, Args } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import {
+  Resolver,
+  Query,
+  ResolveField,
+  Parent,
+  Context,
+  Args,
+} from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
-import { AssetService } from '@island.is/clients/assets'
 import type { User } from '@island.is/auth-nest-tools'
 import {
+  CurrentUser,
+  IdsAuthGuard,
   IdsUserGuard,
   ScopesGuard,
-  CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { GetRealEstateInput } from '../dto/getRealEstateInput.input'
+import { AssetsXRoadService } from './api-domains-assets.service'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
-@Resolver()
+@UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/assets' })
-export class AssetsResolver {
-  constructor(private AssetService: AssetService) {}
+export class AssetsXRoadResolver {
+  constructor(private assetsXRoadService: AssetsXRoadService) {}
 
   @Query(() => graphqlTypeJson)
   @Audit()
   async getRealEstates(@CurrentUser() user: User) {
-    return this.AssetService.getRealEstates()
+    return this.assetsXRoadService.getRealEstates(user)
   }
 
   @Query(() => graphqlTypeJson)
   @Audit()
-  async getRealEstateDetail(@Args('input') input: GetRealEstateInput) {
-    return this.AssetService.getRealEstateDetail(input.assetId)
+  async getRealEstateDetail(
+    @Args('input') input: GetRealEstateInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.assetsXRoadService.getRealEstateDetail(input.assetId, user)
   }
 }

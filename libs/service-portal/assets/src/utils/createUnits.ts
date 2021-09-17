@@ -7,12 +7,12 @@ import { FormatMessage } from '@island.is/application/core'
 import { Fasteign, Notkunareining } from '../types/RealEstateAssets.types'
 
 const ownersArray = (data: Fasteign) => {
-  const ownerArray = data?.thinglystirEigendur?.map((owner) => {
+  const ownerArray = data?.thinglystirEigendur?.data?.map((owner) => {
     return [
       owner.nafn || '',
       formatKennitala(owner.kennitala) || '',
-      owner.heimild || '',
-      owner.display || '',
+      owner.heimildBirting || '',
+      owner.eignarhlutfall || '',
       '-',
     ]
   })
@@ -30,12 +30,12 @@ const unitsArray = (data: Fasteign, formatMessage: FormatMessage) =>
         [
           {
             title: formatMessage(messages.unitsOfUse),
-            value: unit.notkunareininganr || '',
+            value: unit.notkunareininganumer || '',
           },
           {
             title: formatMessage(messages.currentAppraisal),
-            value: unit.fasteignamat?.gildandi
-              ? amountFormat(unit.fasteignamat.gildandi)
+            value: unit.fasteignamat?.gildandiFasteignamat
+              ? amountFormat(unit.fasteignamat.gildandiFasteignamat)
               : '',
           },
           {
@@ -46,8 +46,8 @@ const unitsArray = (data: Fasteign, formatMessage: FormatMessage) =>
             title: `${formatMessage(messages.futureAppraisal)} ${
               unit.fasteignamat.fyrirhugadAr
             }`,
-            value: unit.fasteignamat.fyrirhugad
-              ? amountFormat(unit.fasteignamat.fyrirhugad)
+            value: unit.fasteignamat.fyrirhugadFasteignamat
+              ? amountFormat(unit.fasteignamat.fyrirhugadFasteignamat)
               : '',
           },
           {
@@ -68,7 +68,7 @@ const unitsArray = (data: Fasteign, formatMessage: FormatMessage) =>
           },
           {
             title: formatMessage(messages.usage),
-            value: unit.notkun || '',
+            value: unit.notkunBirting || '',
           },
           {
             title: formatMessage(messages.fireCompAssessment),
