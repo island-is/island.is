@@ -27,6 +27,11 @@ import {
 } from '../../licenceService.type'
 import { Config } from '../../licenseService.module'
 
+const CACHE_KEY = 'smartsolution:apitoken'
+
+// Set TTL to less than given expiry from service
+const CACHE_TOKEN_EXPIRY_DELTA_IN_MS = 2000
+
 // PkPass service wants dates in DD-MM-YYYY format
 const dateToPkpassDate = (date: string): string => {
   if (!date) {
@@ -55,7 +60,7 @@ export class GenericDrivingLicenseApi
   constructor(
     @Inject(CONFIG_PROVIDER) private config: Config,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @Inject(CACHE_MANAGER) private cacheManager: CacheManager | null,
+    @Inject(CACHE_MANAGER) private cacheManager?: CacheManager | null,
   ) {
     this.xroadApiUrl = config.xroad.baseUrl
     this.xroadClientId = config.xroad.clientId
@@ -158,8 +163,50 @@ export class GenericDrivingLicenseApi
     return licenses
   }
 
+  private async getCachedGetPkPassToken(): Promise<string | null> {
+    if (!this.cacheManager) {
+      return null
+    }
+
+    const cached = await this.cacheManager.get(CACHE_KEY)
+
+    if (cached && typeof cached === 'string') {
+      return cached
+    }
+
+    return null
+  }
+
+  private parseTtlFromTokenExpiry(expiry?: string | null): number | null {
+    if (!expiry) {
+      return null
+    }
+
+    try {
+      const parsed: number =
+        Date.parse(expiry) - Date.now() - CACHE_TOKEN_EXPIRY_DELTA_IN_MS
+
+      if (parsed > 0) {
+        return parsed
+      }
+    } catch (e) {
+      this.logger.verbose('unable to parse datetime from token', {
+        exception: e,
+      })
+    }
+
+    return null
+  }
+
   private async getPkPassToken(): Promise<string | null> {
     let res: Response | null = null
+
+    const cachedToken = await this.getCachedGetPkPassToken()
+
+    if (cachedToken) {
+      this.logger.verbose('using cached token for pkpass service')
+      return cachedToken
+    }
 
     try {
       res = await fetch(`${this.pkpassApiUrl}/getDriversLicenseAccessToken`, {
@@ -193,8 +240,19 @@ export class GenericDrivingLicenseApi
 
     const response = json as PkPassServiceTokenResponse
 
-    if (response.status === 1 && response.data?.ACCESS_TOKEN) {
-      return response.data?.ACCESS_TOKEN
+    const token = response.data?.ACCESS_TOKEN
+    if (response.status === 1 && token) {
+      const ttl = this.parseTtlFromTokenExpiry()
+
+      if (this.cacheManager && ttl) {
+        try {
+          await this.cacheManager.set(CACHE_KEY, token, { ttl })
+        } catch (e) {
+          this.logger.warn('Unable to cache token for pkpass service')
+        }
+      }
+
+      return token
     }
 
     this.logger.warn('pkpass service response does not include access token', {
