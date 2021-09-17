@@ -37,6 +37,7 @@ import {
   sportsClubInfo,
 } from '../../lib/messages'
 import {
+  getAttachmentTitles,
   getWorkplaceData,
   isMachineRelatedAccident,
   isProfessionalAthleteAccident,
@@ -63,25 +64,13 @@ export const FormOverview: FC<FieldBaseProps> = ({
     },
   )
 
+  const files = getAttachmentTitles(answers)
   const missingDocuments = returnMissingDocumentsList(answers, formatMessage)
+  const workplaceData = getWorkplaceData(application.answers)
 
   const { timeOfAccident, dateOfAccident } = answers.accidentDetails
   const time = `${timeOfAccident.slice(0, 2)}:${timeOfAccident.slice(2, 4)}`
   const date = format(parseISO(dateOfAccident), 'dd.MM.yy', { locale: is })
-
-  const workplaceData = getWorkplaceData(application.answers)
-
-  const attachments = [
-    ...(answers.attachments.deathCertificateFile
-      ? answers.attachments.deathCertificateFile
-      : []),
-    ...(answers.attachments.injuryCertificateFile
-      ? answers.attachments.injuryCertificateFile
-      : []),
-    ...(answers.attachments.powerOfAttorneyFile
-      ? answers.attachments.powerOfAttorneyFile
-      : []),
-  ]
 
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
@@ -100,7 +89,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           formatMessage,
         )}
       </Text>
-      <ReviewGroup isLast editAction={() => null}>
+      <ReviewGroup isLast editAction={() => changeScreens('applicant')}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
@@ -154,7 +143,10 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('injuredPersonInformation')}
+          >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -174,12 +166,14 @@ export const FormOverview: FC<FieldBaseProps> = ({
                   value={answers.injuredPersonInformation.email}
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine
-                  label={injuredPersonInformation.labels.tel}
-                  value={answers.injuredPersonInformation.phoneNumber ?? ''}
-                />
-              </GridColumn>
+              {answers.injuredPersonInformation.phoneNumber && (
+                <GridColumn span={['12/12', '12/12', '6/12']}>
+                  <ValueLine
+                    label={injuredPersonInformation.labels.tel}
+                    value={answers.injuredPersonInformation.phoneNumber}
+                  />
+                </GridColumn>
+              )}
             </GridRow>
           </ReviewGroup>
         </>
@@ -194,7 +188,10 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('childInCustody.fields')}
+          >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -238,7 +235,10 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('juridicalPerson.company')}
+          >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -266,7 +266,10 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('locationAndPurpose')}
+          >
             <GridRow>
               <GridColumn span="12/12">
                 <ValueLine
@@ -288,7 +291,10 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens(workplaceData.screenId)}
+          >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -321,7 +327,10 @@ export const FormOverview: FC<FieldBaseProps> = ({
                   formatMessage,
                 )}
               </Text>
-              <ReviewGroup isLast editAction={() => null}>
+              <ReviewGroup
+                isLast
+                editAction={() => changeScreens(workplaceData.screenId)}
+              >
                 <GridRow>
                   <GridColumn span="12/12">
                     <ValueLine
@@ -335,12 +344,14 @@ export const FormOverview: FC<FieldBaseProps> = ({
                       value={workplaceData.info.email}
                     />
                   </GridColumn>
-                  <GridColumn span={['12/12', '12/12', '6/12']}>
-                    <ValueLine
-                      label={workplaceData.labels.tel}
-                      value={workplaceData.info.phoneNumber}
-                    />
-                  </GridColumn>
+                  {workplaceData.info.phoneNumber && (
+                    <GridColumn span={['12/12', '12/12', '6/12']}>
+                      <ValueLine
+                        label={workplaceData.labels.tel}
+                        value={workplaceData.info.phoneNumber}
+                      />
+                    </GridColumn>
+                  )}
                 </GridRow>
               </ReviewGroup>
             </>
@@ -355,7 +366,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           formatMessage,
         )}
       </Text>
-      <ReviewGroup isLast editAction={() => null}>
+      <ReviewGroup isLast editAction={() => changeScreens('accidentDetails')}>
         <GridRow>
           <GridColumn span="12/12">
             <ValueLine
@@ -390,10 +401,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '12/12']}>
-            <FileValueLine
-              label={overview.labels.attachments}
-              files={attachments}
-            />
+            <FileValueLine label={overview.labels.attachments} files={files} />
             {missingDocuments.length !== 0 && (
               <Box marginBottom={4}>
                 <AlertMessage

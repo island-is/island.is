@@ -1,4 +1,4 @@
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { CSRF_COOKIE_NAME, User } from '@island.is/financial-aid/shared/lib'
 import Cookies from 'js-cookie'
