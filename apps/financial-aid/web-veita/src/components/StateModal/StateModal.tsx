@@ -11,10 +11,6 @@ import {
   OptionsModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
-import { UpdateApplicationMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
-
-import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/src/components/ApplicationFiltersProvider/ApplicationFiltersProvider'
-
 import {
   Application,
   ApplicationState,
@@ -48,7 +44,7 @@ const StateModal = ({
     type: undefined,
   })
 
-  const save = useApplicationState()
+  const changeApplicationState = useApplicationState()
 
   const saveStateApplication = async (
     application: Application,
@@ -56,7 +52,7 @@ const StateModal = ({
     amount?: number,
     rejection?: string,
   ) => {
-    save(application, state, amount, rejection)
+    changeApplicationState(application, state, amount, rejection)
     onVisibilityChange((isVisible) => !isVisible)
     onStateChange(state)
   }

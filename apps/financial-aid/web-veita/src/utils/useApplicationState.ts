@@ -6,6 +6,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { UpdateApplicationMutation } from '../../graphql'
 import { ApplicationFiltersContext } from '../components/ApplicationFiltersProvider/ApplicationFiltersProvider'
+import { AdminContext } from '../components/AdminProvider/AdminProvider'
 
 interface SaveData {
   application: Application
@@ -20,8 +21,9 @@ export const useApplicationState = () => {
   const { applicationFilters, setApplicationFilters } = useContext(
     ApplicationFiltersContext,
   )
+  const { admin } = useContext(AdminContext)
 
-  const save = async (
+  const changeApplicationState = async (
     application: Application,
     state: ApplicationState,
     amount?: number,
@@ -34,9 +36,10 @@ export const useApplicationState = () => {
         variables: {
           input: {
             id: application.id,
-            state: state,
-            amount: amount,
-            rejection: rejection,
+            state,
+            amount,
+            rejection,
+            staffId: admin?.staff?.id,
           },
         },
       })
@@ -51,5 +54,5 @@ export const useApplicationState = () => {
     }
   }
 
-  return save
+  return changeApplicationState
 }

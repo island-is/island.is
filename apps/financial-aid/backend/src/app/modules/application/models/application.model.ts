@@ -184,4 +184,11 @@ export class ApplicationModel extends Model<Application> {
   })
   @ApiProperty()
   rejection: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  staffId: string
 }

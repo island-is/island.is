@@ -62,6 +62,7 @@ export interface UpdateApplication {
   state: ApplicationState
   amount?: number
   rejection?: string
+  staffId?: string
 }
 
 export interface CreateApplicationEvent {

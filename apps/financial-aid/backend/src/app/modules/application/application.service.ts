@@ -118,6 +118,9 @@ export class ApplicationService {
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
   }> {
+    if (update.state === ApplicationState.NEW) {
+      update.staffId = null
+    }
     const [
       numberOfAffectedRows,
       [updatedApplication],
