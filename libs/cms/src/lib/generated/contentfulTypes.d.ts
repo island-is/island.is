@@ -29,7 +29,7 @@ export interface IAboutSubPageFields {
   belowContent?: ILocation[] | undefined
 
   /** Parent */
-  parent?: IPage | undefined
+  parent?: Entry<{ [fieldId: string]: unknown }> | undefined
 }
 
 /** sub-page of the about-page */
@@ -56,7 +56,7 @@ export interface IAccordionSliceFields {
   title?: string | undefined
 
   /** Type */
-  type: 'accordion' | 'CTA'
+  type: 'accordion' | 'accordion_minimal' | 'CTA'
 
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
@@ -106,7 +106,6 @@ export interface IAlertBannerFields {
     | ILifeEventPage
     | ILinkUrl
     | INews
-    | IPage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
     | undefined
@@ -197,7 +196,7 @@ export interface IArticleFields {
   containsApplicationForm?: boolean | undefined
 
   /** Category (Main) */
-  category?: IArticleCategory | undefined
+  category: IArticleCategory
 
   /** Group (Main) */
   group?: IArticleGroup | undefined
@@ -356,7 +355,7 @@ export interface IAuctionFields {
   date?: string | undefined
 
   /** Type */
-  type: 'first' | 'continued' | 'vehicles'
+  type: 'first' | 'continued' | 'vehicles' | 'ship' | 'cash'
 
   /** Content */
   content?: Document | undefined
@@ -716,6 +715,12 @@ export interface IFeaturedArticlesFields {
 
   /** Application Label */
   applicationLabel: string
+
+  /** Organization */
+  organization?: IOrganization | undefined
+
+  /** Article Count */
+  articleCount?: number | undefined
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
@@ -820,10 +825,9 @@ export interface IFrontpageSliderFields {
   link?:
     | IArticle
     | IArticleCategory
-    | ILandingPage
     | INews
     | IOrganization
-    | IPage
+    | IOrganizationPage
     | IVidspyrnaFrontpage
     | undefined
 
@@ -852,34 +856,6 @@ export interface IFrontpageSlider extends Entry<IFrontpageSliderFields> {
     contentType: {
       sys: {
         id: 'frontpageSlider'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IFrontpageSliderListFields {
-  /** Titill */
-  titill: string
-
-  /** items */
-  items: IFrontpageSlider[]
-}
-
-/** Á heima inni í 'Frontpage' núna */
-
-export interface IFrontpageSliderList
-  extends Entry<IFrontpageSliderListFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'frontpageSliderList'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -988,64 +964,6 @@ export interface IGenericTag extends Entry<IGenericTagFields> {
   }
 }
 
-export interface IGroupedMenuFields {
-  /** Title */
-  title: string
-
-  /** Menus  */
-  menus?: IMenu[] | undefined
-}
-
-/** Includes multiple menu groups for complex menu structures such as footers or mega menu */
-
-export interface IGroupedMenu extends Entry<IGroupedMenuFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'groupedMenu'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IGraphFields {
-  /** Title */
-  title?: string | undefined
-
-  /** Data */
-  data: Record<string, any>
-
-  /** Datakeys */
-  datakeys: Record<string, any>
-  /** Type */
-  type?: 'Bar' | 'Line' | 'Mixed' | 'Pie' | undefined
-}
-
-/** Graphs for visualisation, */
-
-export interface IGraph extends Entry<IGraphFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'graph'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
 export interface IGraphCardFields {
   /** Graph Title */
   graphTitle: string
@@ -1057,26 +975,18 @@ export interface IGraphCardFields {
   organization?: string | undefined
 
   /** Organization Logo */
-
   organizationLogo?: Asset | undefined
 
-  /** Graph */
-  graph?: IGraph | undefined
-
   /** Type */
-
-  type?: 'Mixed' | 'Bar' | 'Line' | 'Pie' | undefined
+  type: 'Mixed' | 'Bar' | 'Line' | 'Pie'
 
   /** Data */
-
   data: Record<string, any>
 
   /** Datakeys */
-
   datakeys: Record<string, any>
 
-  /** DiaplyAsCard */
-
+  /** DisplayAsCard */
   displayAsCard: boolean
 }
 
@@ -1097,15 +1007,17 @@ export interface IGraphCard extends Entry<IGraphCardFields> {
   }
 }
 
-export interface IHomepageFields {
+export interface IGroupedMenuFields {
   /** Title */
-  title?: string | undefined
+  title: string
 
-  /** Featured */
-  featured?: IFeatured[] | undefined
+  /** Menus  */
+  menus?: IMenu[] | undefined
 }
 
-export interface IHomepage extends Entry<IHomepageFields> {
+/** Includes multiple menu groups for complex menu structures such as footers or mega menu */
+
+export interface IGroupedMenu extends Entry<IGroupedMenuFields> {
   sys: {
     id: string
     type: string
@@ -1114,7 +1026,7 @@ export interface IHomepage extends Entry<IHomepageFields> {
     locale: string
     contentType: {
       sys: {
-        id: 'homepage'
+        id: 'groupedMenu'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1181,7 +1093,6 @@ export interface IIntroLinkImageFields {
     | ILifeEventPage
     | ILinkUrl
     | INews
-    | IPage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
 }
@@ -1196,55 +1107,6 @@ export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
     contentType: {
       sys: {
         id: 'introLinkImage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface ILandingPageFields {
-  /** Content status */
-  contentStatus:
-    | 'Undefined'
-    | 'Needs work'
-    | 'In review'
-    | 'Needs translation'
-    | 'In translation'
-    | 'Done'
-
-  /** Title */
-  title: string
-
-  /** Slug */
-  slug: string
-
-  /** Introduction */
-  introduction: string
-
-  /** Image */
-  image: Asset
-
-  /** Action button */
-  actionButton?: ILink | undefined
-
-  /** Links */
-  links?: ILinkList | undefined
-
-  /** Content */
-  content?: Document | undefined
-}
-
-export interface ILandingPage extends Entry<ILandingPageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'landingPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1333,13 +1195,7 @@ export interface ILinkFields {
   linkedPage?: ILinkedPage | undefined
 
   /** Link reference */
-  linkReference?:
-    | IArticle
-    | IArticleCategory
-    | ILinkUrl
-    | INews
-    | IPage
-    | undefined
+  linkReference?: IArticle | IArticleCategory | ILinkUrl | INews | undefined
 }
 
 export interface ILink extends Entry<ILinkFields> {
@@ -1364,7 +1220,7 @@ export interface ILinkedPageFields {
   title: string
 
   /** page */
-  page: IArticle | IArticleCategory | INews | IPage
+  page: IArticle | IArticleCategory | INews
 }
 
 export interface ILinkedPage extends Entry<ILinkedPageFields> {
@@ -1616,7 +1472,8 @@ export interface IMenuLinkFields {
     | ILifeEventPage
     | ILinkUrl
     | INews
-    | IPage
+    | IOrganizationPage
+    | IOrganizationSubpage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
     | undefined
@@ -1654,7 +1511,8 @@ export interface IMenuLinkWithChildrenFields {
     | ILifeEventPage
     | ILinkUrl
     | INews
-    | IPage
+    | IOrganizationPage
+    | IOrganizationSubpage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
     | undefined
@@ -1744,37 +1602,6 @@ export interface INamespace extends Entry<INamespaceFields> {
   }
 }
 
-export interface INamespaceJeremyDevFields {
-  /** namespace */
-  namespace?: string | undefined
-
-  /** strings */
-  strings?: Record<string, any> | undefined
-
-  /** defaults */
-  defaults?: Record<string, any> | undefined
-
-  /** fallback */
-  fallback?: Record<string, any> | undefined
-}
-
-export interface INamespaceJeremyDev extends Entry<INamespaceJeremyDevFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'namespaceJeremyDev'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface INewsFields {
   /** Content status */
   contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
@@ -1790,6 +1617,9 @@ export interface INewsFields {
 
   /** Date */
   date: string
+
+  /** Author (deprecated) */
+  author?: Entry<{ [fieldId: string]: unknown }> | undefined
 
   /** Introduction */
   intro: string
@@ -1910,6 +1740,9 @@ export interface IOpenDataPageFields {
   /** Page title */
   pageTitle: string
 
+  /** Slug */
+  slug: string
+
   /** Page Description */
   pageDescription?: string | undefined
 
@@ -1922,6 +1755,9 @@ export interface IOpenDataPageFields {
   /** Link Title */
   linkTitle?: string | undefined
 
+  /** Statistics Cards Section */
+  statisticsCardsSection?: IStatisticsCard[] | undefined
+
   /** Chart Section Title */
   chartSectionTitle?: string | undefined
 
@@ -1930,9 +1766,6 @@ export interface IOpenDataPageFields {
 
   /** External Link Card Selection */
   externalLinkCardSelection?: ICardSection | undefined
-
-  /** Statistics Cards Section */
-  statisticsCardsSection?: IStatisticsCard[] | undefined
 
   /** External Link Section Title */
   externalLinkSectionTitle?: string | undefined
@@ -1980,7 +1813,6 @@ export interface IOpenDataSubpageFields {
   fundDescription?: string | undefined
 
   /** Organization Logo */
-
   organizationLogo?: Asset | undefined
 }
 
@@ -2046,46 +1878,6 @@ export interface IOrganization extends Entry<IOrganizationFields> {
   }
 }
 
-export interface IOrganizationOfficeFields {
-  /** Name */
-  name: string
-
-  /** City */
-  city?: string | undefined
-
-  /** Address */
-  address?: string | undefined
-
-  /** Email */
-  email?: string | undefined
-
-  /** Phone Number */
-  phoneNumber?: string | undefined
-
-  /** Opening Hours */
-  openingHours?: string | undefined
-
-  /** Content */
-  content?: Document | undefined
-}
-
-export interface IOrganizationOffice extends Entry<IOrganizationOfficeFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'organizationOffice'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IOrganizationPageFields {
   /** Title */
   title: string
@@ -2093,11 +1885,20 @@ export interface IOrganizationPageFields {
   /** Slug */
   slug: string
 
+  /** Intro */
+  intro?: string | undefined
+
   /** Description */
   description?: string | undefined
 
   /** Theme */
-  theme: 'default' | 'syslumenn' | 'digital_iceland'
+  theme:
+    | 'default'
+    | 'default_with_image'
+    | 'utlendingastofnun'
+    | 'sjukratryggingar'
+    | 'syslumenn'
+    | 'digital_iceland'
 
   /** Slices */
   slices?:
@@ -2112,6 +1913,7 @@ export interface IOrganizationPageFields {
         | ILogoListSlice
         | IMultipleStatistics
         | IOneColumnText
+        | IOverviewLinks
         | IStorySection
         | ITabSection
         | ITimeline
@@ -2127,11 +1929,17 @@ export interface IOrganizationPageFields {
   /** News tag */
   newsTag?: IGenericTag | undefined
 
-  /** Menu Links (DEPRECATED - DELETE AFTER 01-06-2021) */
+  /** Menu Links */
   menuLinks?: ILinkGroup[] | undefined
 
   /** Secondary Menu */
   secondaryMenu?: ILinkGroup | undefined
+
+  /** Menu Items */
+  menuItems?: IMenuLinkWithChildren[] | undefined
+
+  /** Secondary Menu Items */
+  secondaryMenuItems?: IMenuLink[] | undefined
 
   /** Organization */
   organization: IOrganization
@@ -2186,6 +1994,7 @@ export interface IOrganizationSubpageFields {
   slices?:
     | (
         | IAccordionSlice
+        | IBigBulletList
         | IContactUs
         | IDistricts
         | IMailingListSignup
@@ -2193,6 +2002,7 @@ export interface IOrganizationSubpageFields {
         | ILatestNewsSlice
         | IMultipleStatistics
         | IOneColumnText
+        | IOverviewLinks
         | ITabSection
         | ITeamList
         | ITellUsAStory
@@ -2281,64 +2091,6 @@ export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
   }
 }
 
-export interface IPageFields {
-  /** Content status */
-  contentStatus:
-    | 'Undefined'
-    | 'Needs work'
-    | 'In review'
-    | 'Needs translation'
-    | 'In translation'
-    | 'Done'
-
-  /** Page title */
-  title: string
-
-  /** Slug */
-  slug: string
-
-  /** SEO Page description */
-  seoDescription?: string | undefined
-
-  /** theme */
-  theme?: 'nautral' | 'red' | 'blue' | 'gradient' | undefined
-
-  /** header */
-  header: IPageHeader
-
-  /** Slices */
-  slices: (
-    | IBigBulletList
-    | IMailingListSignup
-    | ISectionHeading
-    | ILatestNewsSlice
-    | ICardSection
-    | ILogoListSlice
-    | IStorySection
-    | ITabSection
-    | ITimeline
-  )[]
-}
-
-/** Generic page with content defined in contentful */
-
-export interface IPage extends Entry<IPageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'page'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IPageHeaderFields {
   /** Title */
   title?: string | undefined
@@ -2366,148 +2118,6 @@ export interface IPageHeader extends Entry<IPageHeaderFields> {
     contentType: {
       sys: {
         id: 'pageHeader'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IPageLevel1Fields {
-  /** Title */
-  title?: string | undefined
-
-  /** Content */
-  content?: string | undefined
-
-  /** subPages */
-  subPages?: IPageLevel2[] | undefined
-}
-
-/** A first level page. */
-
-export interface IPageLevel1 extends Entry<IPageLevel1Fields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'pageLevel1'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IPageLevel2Fields {
-  /** Title */
-  title?: string | undefined
-
-  /** Content */
-  content?: string | undefined
-
-  /** subPages */
-  subPages?: IPageLevel3[] | undefined
-}
-
-/** A second level page. */
-
-export interface IPageLevel2 extends Entry<IPageLevel2Fields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'pageLevel2'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IPageLevel3Fields {
-  /** Title */
-  title?: string | undefined
-
-  /** Content */
-  content?: string | undefined
-}
-
-/** A third level page. */
-
-export interface IPageLevel3 extends Entry<IPageLevel3Fields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'pageLevel3'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IPageRootFields {
-  /** Title */
-  title?: string | undefined
-
-  /** Content */
-  content?: string | undefined
-
-  /** subPages */
-  subPages?: IPageLevel1[] | undefined
-}
-
-/** A root level page. */
-
-export interface IPageRoot extends Entry<IPageRootFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'pageRoot'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IParentPluginTestFields {
-  /** Slug */
-  slug?: string | undefined
-
-  /** Parent */
-  parent?: IArticle | IParentPluginTest | undefined
-}
-
-export interface IParentPluginTest extends Entry<IParentPluginTestFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'parentPluginTest'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2562,7 +2172,7 @@ export interface IProjectPageFields {
   slug?: string | undefined
 
   /** Theme */
-  theme: 'default'
+  theme: 'default' | 'traveling-to-iceland'
 
   /** Sidebar */
   sidebar: boolean
@@ -2778,10 +2388,8 @@ export interface ISideMenuFields {
     | IArticle
     | IArticleCategory
     | IGenericPage
-    | ILandingPage
     | ILifeEventPage
     | IOrganization
-    | IPage
   )[]
 
   /** Title */
@@ -2814,6 +2422,7 @@ export interface ISliceConnectedComponentFields {
     | 'None'
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
+    | 'Undirskriftalistar/PetitionLists'
     | undefined
 
   /** JSON */
@@ -2831,6 +2440,39 @@ export interface ISliceConnectedComponent
     contentType: {
       sys: {
         id: 'sliceConnectedComponent'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IStaticLinkFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Page */
+  page?:
+    | 'organizationServices'
+    | 'organizationNews'
+    | 'auctions'
+    | 'homestays'
+    | undefined
+
+  /** Slug */
+  slug?: string | undefined
+}
+
+export interface IStaticLink extends Entry<IStaticLinkFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'staticLink'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3065,9 +2707,6 @@ export interface ISubArticleFields {
   /** Title */
   title: string
 
-  /** Slug */
-  slug: string
-
   /** Content */
   content: Document
 
@@ -3079,6 +2718,9 @@ export interface ISubArticleFields {
 
   /** Parent */
   parent: IArticle
+
+  /** Slug(old) */
+  slug?: string | undefined
 }
 
 /** A sub article that's a part of another main article */
@@ -3144,7 +2786,7 @@ export interface ISupportCategoryFields {
   /** slug */
   slug: string
 
-  /** organization */
+  /** Organization */
   organization: IOrganization
 }
 
@@ -3168,11 +2810,11 @@ export interface ISupportCategory extends Entry<ISupportCategoryFields> {
 }
 
 export interface ISupportFormFields {
-  /** Organization */
-  organization: IOrganization
-
   /** Category */
   category: string
+
+  /** Organization */
+  organization: IOrganization
 
   /** Form */
   form?: Record<string, any> | undefined
@@ -3492,40 +3134,6 @@ export interface ITellUsAStory extends Entry<ITellUsAStoryFields> {
   }
 }
 
-export interface ITestHomepageFields {
-  /** Title */
-  title?: string | undefined
-
-  /** Featured */
-  featured?: IFeatured[] | undefined
-
-  /** Slides */
-  slides?: IFrontpageSlider[] | undefined
-
-  /** Namespace */
-  namespace?: IUiConfiguration | undefined
-
-  /** Life Events */
-  lifeEvents?: ILifeEventPage[] | undefined
-}
-
-export interface ITestHomepage extends Entry<ITestHomepageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'testHomepage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface ITimelineFields {
   /** Title */
   title?: string | undefined
@@ -3676,7 +3284,6 @@ export interface IUrlFields {
     | IArticleCategory
     | ILifeEventPage
     | INews
-    | IPage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
 
@@ -3768,46 +3375,6 @@ export interface IVidspyrnaInlineImage
     contentType: {
       sys: {
         id: 'vidspyrna-inline-image'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IVidspyrnaProcessEntryFields {
-  /** Title */
-  title: string
-
-  /** Subtitle */
-  subtitle?: string | undefined
-
-  /** Details */
-  details?: Document | undefined
-
-  /** Button text */
-  buttonText?: string | undefined
-
-  /** Button description */
-  processDescription?: string | undefined
-
-  /** Button link */
-  processLink?: string | undefined
-}
-
-/** PLEASE DELETE THIS WHEN POSSIBLE */
-
-export interface IVidspyrnaProcessEntry
-  extends Entry<IVidspyrnaProcessEntryFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrna-process-entry'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3973,17 +3540,13 @@ export type CONTENT_TYPE =
   | 'footerItem'
   | 'frontpage'
   | 'frontpageSlider'
-  | 'frontpageSliderList'
   | 'genericOverviewPage'
   | 'genericPage'
   | 'genericTag'
-  | 'graph'
   | 'graphCard'
   | 'groupedMenu'
-  | 'homepage'
   | 'iconBullet'
   | 'introLinkImage'
-  | 'landingPage'
   | 'latestNewsSlice'
   | 'lifeEventPage'
   | 'link'
@@ -3999,7 +3562,6 @@ export type CONTENT_TYPE =
   | 'menuLinkWithChildren'
   | 'multipleStatistics'
   | 'namespace'
-  | 'namespaceJeremyDev'
   | 'news'
   | 'numberBullet'
   | 'numberBulletSection'
@@ -4010,23 +3572,23 @@ export type CONTENT_TYPE =
   | 'organizationPage'
   | 'organizationSubpage'
   | 'organizationTag'
-  | 'page'
+  | 'overviewLinks'
   | 'pageHeader'
-  | 'pageLevel1'
-  | 'pageLevel2'
-  | 'pageLevel3'
-  | 'pageRoot'
-  | 'parentPluginTest'
   | 'processEntry'
+  | 'projectPage'
+  | 'projectSubpage'
   | 'questionAndAnswer'
   | 'sectionHeading'
   | 'sectionWithImage'
   | 'sidebarCard'
   | 'sideMenu'
   | 'sliceConnectedComponent'
+  | 'staticLink'
   | 'statistic'
   | 'statistics'
   | 'statisticsCard'
+  | 'step'
+  | 'stepper'
   | 'story'
   | 'storySection'
   | 'subArticle'
@@ -4040,7 +3602,6 @@ export type CONTENT_TYPE =
   | 'teamList'
   | 'teamMember'
   | 'tellUsAStory'
-  | 'testHomepage'
   | 'timeline'
   | 'timelineEvent'
   | 'twoColumnText'
@@ -4048,7 +3609,6 @@ export type CONTENT_TYPE =
   | 'url'
   | 'vidspyrna-frontpage'
   | 'vidspyrna-inline-image'
-  | 'vidspyrna-process-entry'
   | 'vidspyrnaFeaturedNews'
   | 'vidspyrnaFlokkur'
   | 'vidspyrnaPage'
