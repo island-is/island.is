@@ -198,6 +198,7 @@ describe('FileController', () => {
       state
       ${CaseState.ACCEPTED}
       ${CaseState.REJECTED}
+      ${CaseState.DISMISSED}
     `.describe('given a completed $state case', ({ state }) => {
       const caseId = uuid()
 
@@ -395,6 +396,7 @@ describe('FileController', () => {
       state
       ${CaseState.ACCEPTED}
       ${CaseState.REJECTED}
+      ${CaseState.DISMISSED}
     `.describe('given a completed $state case', ({ state }) => {
       const caseId = uuid()
 
@@ -450,6 +452,9 @@ describe('FileController', () => {
       ${CaseState.REJECTED}  | ${UserRole.PROSECUTOR} | ${false}
       ${CaseState.REJECTED}  | ${UserRole.REGISTRAR}  | ${false}
       ${CaseState.REJECTED}  | ${UserRole.JUDGE}      | ${false}
+      ${CaseState.DISMISSED} | ${UserRole.PROSECUTOR} | ${false}
+      ${CaseState.DISMISSED} | ${UserRole.REGISTRAR}  | ${false}
+      ${CaseState.DISMISSED} | ${UserRole.JUDGE}      | ${false}
     `.describe(
       'given a $state case and a permitted $role user',
       ({ state, role, userIsAssignedJudge }) => {
@@ -614,11 +619,13 @@ describe('FileController', () => {
     // this test.
 
     each`
-      state                 | role
-      ${CaseState.ACCEPTED} | ${UserRole.REGISTRAR}
-      ${CaseState.ACCEPTED} | ${UserRole.JUDGE}
-      ${CaseState.REJECTED} | ${UserRole.REGISTRAR}
-      ${CaseState.REJECTED} | ${UserRole.JUDGE}
+      state                  | role
+      ${CaseState.ACCEPTED}  | ${UserRole.REGISTRAR}
+      ${CaseState.ACCEPTED}  | ${UserRole.JUDGE}
+      ${CaseState.REJECTED}  | ${UserRole.REGISTRAR}
+      ${CaseState.REJECTED}  | ${UserRole.JUDGE}
+      ${CaseState.DISMISSED} | ${UserRole.REGISTRAR}
+      ${CaseState.DISMISSED} | ${UserRole.JUDGE}
     `.describe(
       'given a $state case and a permitted $role user',
       ({ state, role }) => {

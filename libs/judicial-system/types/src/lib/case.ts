@@ -275,7 +275,11 @@ export interface CreateCourtCase {
   isExtension: boolean
 }
 
-export const completedCaseStates = [CaseState.ACCEPTED, CaseState.REJECTED]
+export const completedCaseStates = [
+  CaseState.ACCEPTED,
+  CaseState.REJECTED,
+  CaseState.DISMISSED,
+]
 
 export function hasCaseBeenAppealed(theCase: Case): boolean {
   return (
