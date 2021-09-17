@@ -23,6 +23,7 @@ import {
   AkstursmatDto,
   EmbaettiDto,
   HefurLokidOkugerdiDto,
+  Okuskirteini,
   OkuskirteiniApi,
   Rettindi,
   TegSviptingaDto,
@@ -35,6 +36,7 @@ import {
   DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE,
   LICENSE_RESPONSE_API_VERSION,
 } from './util/constants'
+import { NeedsQualityPhoto } from '..'
 
 @Injectable()
 export class DrivingLicenseService {
@@ -81,20 +83,20 @@ export class DrivingLicenseService {
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
-    const drivingLicense = await this.getLicense(nationalId)
+    const drivingLicense = await this.drivingLicenseApi.apiOkuskirteiniKennitalaAllGet(
+      {
+        kennitala: nationalId,
+      },
+    )
 
-    if (!drivingLicense) {
-      return null
-    }
+    const licenseWithName = drivingLicense.find(({ nafn }) => !!nafn)
 
-    const expiryDate = drivingLicense.expires
-
-    if (!expiryDate || expiryDate < new Date()) {
+    if (!licenseWithName) {
       return null
     }
 
     return {
-      name: drivingLicense.name,
+      name: licenseWithName.nafn as string,
     }
   }
 
@@ -278,10 +280,6 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
     input: NewDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
-    // TODO: insert the following into body
-    // needsToPresentQualityPhoto: input.needsToPresentQualityPhoto
-    // ? NeedsQualityPhoto.TRUE
-    // : NeedsQualityPhoto.FALSE,
     const response: unknown = await this.drivingLicenseApi.apiOkuskirteiniApplicationsNewCategoryPost(
       {
         category: DrivingLicenseCategory.B,
@@ -291,6 +289,11 @@ export class DrivingLicenseService {
             ? NeedsHealhCertificate.TRUE
             : NeedsHealhCertificate.FALSE,
           personIdNumber: nationalId,
+          bringsNewPhoto: input.needsToPresentQualityPhoto
+            ? NeedsQualityPhoto.TRUE
+            : NeedsQualityPhoto.FALSE,
+          sendLicenseInMail: 0,
+          sendToAddress: '',
         },
       },
     )

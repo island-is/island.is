@@ -3,6 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { User, RolesRule, ReturnUrl } from '@island.is/financial-aid/shared/lib'
 
 import { CurrentApplicationModel } from '../application'
+import { StaffModel } from '../staff'
 
 @ObjectType()
 export class UserModel implements User {
@@ -26,4 +27,7 @@ export class UserModel implements User {
 
   @Field(() => String)
   readonly returnUrl!: ReturnUrl
+
+  @Field(() => StaffModel, { nullable: true })
+  readonly staff?: StaffModel
 }

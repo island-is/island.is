@@ -53,7 +53,7 @@ export const dataSchema = z.object({
   usePrivatePensionFund: z.enum([YES, NO]),
   employerNationalRegistryId: z
     .string()
-    .refine((n) => n && kennitala.isValid(n) && kennitala.isPerson(n), {
+    .refine((n) => n && kennitala.isValid(n), {
       params: errorMessages.employerNationalRegistryId,
     }),
   requestRights: z.object({

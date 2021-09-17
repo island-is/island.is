@@ -224,16 +224,8 @@ export const PaymentPlanForm: Form = buildForm({
           condition: (_formValue, externalData) => {
             const debts = (externalData as PaymentPlanExternalData)
               ?.paymentPlanPrerequisites?.data?.debts
-            const employer = (externalData as PaymentPlanExternalData)
-              ?.paymentPlanPrerequisites?.data?.employer
 
-            return !!(
-              debts?.find((x) => x.type === 'OverpaidBenefits') !== undefined ||
-              (employer?.name &&
-                employer?.name.length > 0 &&
-                employer?.nationalId &&
-                employer?.nationalId.length > 0)
-            )
+            return debts?.find((x) => x.type === 'Wagedection') !== undefined
           },
           children: [
             buildCustomField({

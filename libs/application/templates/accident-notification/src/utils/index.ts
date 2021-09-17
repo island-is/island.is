@@ -1,12 +1,13 @@
 import { MessageFormatter } from '@island.is/application/core'
 import {
   AttachmentsEnum,
+  FileType,
   PowerOfAttorneyUploadEnum,
   WhoIsTheNotificationForEnum,
 } from '..'
 import { YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
-import { attachments } from '../lib/messages'
+import { attachments, overview } from '../lib/messages'
 
 export const isValid24HFormatTime = (value: string) => {
   if (value.length !== 4) return false
@@ -15,6 +16,30 @@ export const isValid24HFormatTime = (value: string) => {
   if (hours > 23) return false
   if (minutes > 59) return false
   return true
+}
+
+const hasAttachment = (attachment: FileType[] | undefined) =>
+  attachment && attachment.length > 0
+
+export const getAttachmentTitles = (answers: AccidentNotification) => {
+  const {
+    deathCertificateFile,
+    injuryCertificateFile,
+    powerOfAttorneyFile,
+    injuryCertificate,
+  } = answers.attachments
+  const files = []
+
+  if (hasAttachment(deathCertificateFile))
+    files.push(attachments.documentNames.deathCertificate)
+  if (hasAttachment(injuryCertificateFile))
+    files.push(attachments.documentNames.injuryCertificate)
+  if (hasAttachment(powerOfAttorneyFile))
+    files.push(attachments.documentNames.powerOfAttorneyDocument)
+  if (injuryCertificate === AttachmentsEnum.HOSPITALSENDSCERTIFICATE)
+    files.push(overview.labels.hospitalSendsCertificate)
+
+  return files
 }
 
 export const returnMissingDocumentsList = (
@@ -29,7 +54,7 @@ export const returnMissingDocumentsList = (
 
   if (
     injuryCertificate === AttachmentsEnum.SENDCERTIFICATELATER &&
-    !answers.attachments.injuryCertificateFile
+    !hasAttachment(answers.attachments.injuryCertificateFile)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.injuryCertificate),
@@ -39,8 +64,7 @@ export const returnMissingDocumentsList = (
   if (
     whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
     powerOfAttorneyType !== PowerOfAttorneyUploadEnum.FORCHILDINCUSTODY &&
-    (!answers.attachments.powerOfAttorneyFile ||
-      answers.attachments.powerOfAttorneyFile?.length === 0)
+    !hasAttachment(answers.attachments.powerOfAttorneyFile)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.powerOfAttorneyDocument),
@@ -49,7 +73,7 @@ export const returnMissingDocumentsList = (
 
   if (
     wasTheAccidentFatal === YES &&
-    !answers.attachments.deathCertificateFile
+    !hasAttachment(answers.attachments.deathCertificateFile)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.deathCertificate),

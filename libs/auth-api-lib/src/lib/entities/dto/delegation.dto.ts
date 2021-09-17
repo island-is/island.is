@@ -61,18 +61,9 @@ export class DelegationDTO {
 }
 
 export class UpdateDelegationDTO {
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  fromName?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  toName?: string
-
   @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
   @Type(() => UpdateDelegationScopeDTO)
+  @ValidateNested({ each: true })
   @IsArray()
   scopes!: UpdateDelegationScopeDTO[]
 }
@@ -82,11 +73,8 @@ export class CreateDelegationDTO {
   @ApiProperty()
   toNationalId!: string
 
-  @IsString()
-  @ApiProperty()
-  toName!: string
-
   @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
+  @Type(() => UpdateDelegationScopeDTO)
   @ValidateNested({ each: true })
   @IsOptional()
   @IsArray()

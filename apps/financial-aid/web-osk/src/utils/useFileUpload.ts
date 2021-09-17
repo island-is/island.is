@@ -17,7 +17,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   const requests: { [Key: string]: XMLHttpRequest } = {}
 
   useEffect(() => {
-    if (files && files.length === 0 && formFiles && formFiles.length > 0) {
+    if (files && formFiles && files.length < formFiles.length) {
       setFiles(formFiles)
     }
   }, [formFiles])
@@ -71,13 +71,13 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   const createSignedUrl = async (
     filename: string,
   ): Promise<SignedUrl | undefined> => {
-    const validFileName = filename.replace(/ +/g, '_')
+    const validEncodedFileName = encodeURI(filename.replace(/ +/g, '_'))
 
     let signedUrl: SignedUrl | undefined = undefined
 
     try {
       const { data: presignedUrlData } = await createSignedUrlMutation({
-        variables: { input: { fileName: validFileName } },
+        variables: { input: { fileName: validEncodedFileName } },
       })
 
       signedUrl = presignedUrlData?.getSignedUrl
@@ -124,15 +124,15 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     })
 
     request.upload.addEventListener('error', (evt) => {
+      file.percent = 0
+      file.status = 'error'
+      setUploadErrorMessage('Næ ekki að hlaða upp')
+
       if (file.key) {
         delete requests[file.key]
       }
 
       if (evt.lengthComputable) {
-        file.percent = 0
-        file.status = 'error'
-        setUploadErrorMessage('Næ ekki að hlaða upp')
-
         updateFile(file)
       }
     })
@@ -165,11 +165,9 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
 
   const updateFile = (file: UploadFile) => {
     const newFiles = [...filesRef.current]
-
     const updatedFiles = newFiles.map((newFile) => {
       return newFile.key === file.key ? file : newFile
     })
-
     setFiles(updatedFiles)
   }
 
@@ -205,5 +203,12 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     onChange([file as File], true)
   }
 
-  return { files, uploadErrorMessage, onChange, onRemove, onRetry, uploadFiles }
+  return {
+    files,
+    uploadErrorMessage,
+    onChange,
+    onRemove,
+    onRetry,
+    uploadFiles,
+  }
 }

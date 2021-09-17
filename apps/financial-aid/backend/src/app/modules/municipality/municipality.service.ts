@@ -5,8 +5,6 @@ import { MunicipalityModel } from './models'
 
 import { Municipality } from '@island.is/financial-aid/shared/lib'
 
-import { MunicipalityQueryInput } from './dto'
-
 @Injectable()
 export class MunicipalityService {
   constructor(

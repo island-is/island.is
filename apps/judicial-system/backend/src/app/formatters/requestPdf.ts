@@ -115,10 +115,16 @@ function constructRestrictionRequestPdf(
     .text('Lagaákvæði sem krafan er byggð á')
     .font('Helvetica')
     .fontSize(12)
-    .text(formatCustodyProvisions(existingCase.custodyProvisions), {
-      lineGap: 6,
-      paragraphGap: 0,
-    })
+    .text(
+      formatCustodyProvisions(
+        existingCase.custodyProvisions,
+        existingCase.legalBasis,
+      ),
+      {
+        lineGap: 6,
+        paragraphGap: 0,
+      },
+    )
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)

@@ -46,6 +46,12 @@ export const overview = {
       defaultMessage: 'Bæta við skjölum',
       description: 'Label for missing documents button in overview',
     },
+    hospitalSendsCertificate: {
+      id: 'an.application:overview.labels.hospitalSendsCertificate',
+      defaultMessage:
+        'Samskiptaseðill - Ég mun óska eftir því að Landspítalinn sendi samskiptaseðill til Sjúkratrygginga Íslands',
+      description: 'Label for hospital sends certificate in document list',
+    },
   }),
   alertMessage: defineMessages({
     title: {

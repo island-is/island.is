@@ -22,6 +22,7 @@ export const getWorkplaceData = (answers: FormValue) => {
       general: companyInfo.general,
       labels: companyInfo.labels,
       type: AccidentTypeEnum.WORK,
+      screenId: 'companyInfo',
     }
 
   if (isStudiesAccident(answers))
@@ -30,6 +31,7 @@ export const getWorkplaceData = (answers: FormValue) => {
       general: schoolInfo.general,
       labels: schoolInfo.labels,
       type: AccidentTypeEnum.STUDIES,
+      screenId: 'schoolInfo',
     }
 
   if (isFishermanAccident(answers))
@@ -38,6 +40,7 @@ export const getWorkplaceData = (answers: FormValue) => {
       general: fishingCompanyInfo.general,
       labels: fishingCompanyInfo.labels,
       type: WorkAccidentTypeEnum.FISHERMAN,
+      screenId: 'fishingCompanyInfo',
     }
 
   if (isProfessionalAthleteAccident(answers))
@@ -46,6 +49,7 @@ export const getWorkplaceData = (answers: FormValue) => {
       general: sportsClubInfo.general,
       labels: sportsClubInfo.labels,
       type: AccidentTypeEnum.SPORTS,
+      screenId: 'sportsClubInfo',
     }
 
   if (isRescueWorkAccident(answers))
@@ -54,5 +58,6 @@ export const getWorkplaceData = (answers: FormValue) => {
       general: rescueSquadInfo.general,
       labels: rescueSquadInfo.labels,
       type: AccidentTypeEnum.RESCUEWORK,
+      screenId: 'rescueSquad',
     }
 }

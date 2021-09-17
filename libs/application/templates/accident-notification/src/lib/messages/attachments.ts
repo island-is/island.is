@@ -108,7 +108,7 @@ export const attachments = {
     },
     powerOfAttorneyDocument: {
       id: 'an.application:attachments.documentNames.powerOfAttorney',
-      defaultMessage: 'Umboðsskjal',
+      defaultMessage: 'Umboð',
       description: 'Name of power of attorney document for in review',
     },
   }),
