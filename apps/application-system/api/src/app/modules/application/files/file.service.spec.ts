@@ -316,16 +316,4 @@ describe('FileService', () => {
       'Application type is not supported in file service.',
     )
   })
-
-  it('should have an application type that is valid for getPresignedUrl', async () => {
-    const application = createApplication()
-
-    const act = async () =>
-      await service.getPresignedUrl(
-        application,
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-      )
-
-    await expect(act).resolves.toBe('url')
-  })
 })
