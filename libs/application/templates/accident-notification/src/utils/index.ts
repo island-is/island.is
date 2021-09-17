@@ -29,7 +29,8 @@ export const returnMissingDocumentsList = (
 
   if (
     injuryCertificate === AttachmentsEnum.SENDCERTIFICATELATER &&
-    !answers.attachments.injuryCertificateFile
+    (!answers.attachments.injuryCertificateFile ||
+      answers.attachments.injuryCertificateFile?.length === 0)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.injuryCertificate),
