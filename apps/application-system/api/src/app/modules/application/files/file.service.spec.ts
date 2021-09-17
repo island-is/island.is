@@ -162,7 +162,7 @@ describe('FileService', () => {
 
     expect(awsService.getPresignedUrl).toHaveBeenCalledWith(bucket, fileName)
 
-    expect(response).toEqual('url')
+    await expect(response).toEqual('url')
   })
   it('should request file signature for children residence transfer then return controlCode and documentToken', async () => {
     const application = createApplication()
@@ -212,7 +212,7 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    expect(act).rejects.toThrowError(NotFoundException)
+    await expect(act).rejects.toThrowError(NotFoundException)
 
     expect(awsService.getFile).toHaveBeenCalledWith(
       bucket,
@@ -235,7 +235,7 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    expect(act).rejects.toThrowError(NotFoundException)
+    await expect(act).rejects.toThrowError(NotFoundException)
 
     expect(awsService.getFile).toHaveBeenCalledWith(
       bucket,
@@ -251,7 +251,7 @@ describe('FileService', () => {
     const act = async () =>
       await service.generatePdf(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
 
-    expect(act).rejects.toEqual(BadRequestException)
+    await expect(act).rejects.toEqual(BadRequestException)
   })
 
   it('should have an application type that is valid for generatePdf', async () => {
@@ -285,7 +285,7 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    expect(act).rejects.toEqual(BadRequestException)
+    await expect(act).rejects.toEqual(BadRequestException)
   })
 
   it('should have an application type that is valid for uploadSignedFile', async () => {
@@ -310,7 +310,7 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    expect(act).rejects.toEqual(BadRequestException)
+    await expect(act).rejects.toEqual(BadRequestException)
   })
 
   it('should have an application type that is valid for requestFileSignature', async () => {
@@ -334,7 +334,7 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    expect(act).rejects.toEqual(BadRequestException)
+    await expect(act).rejects.toEqual(BadRequestException)
   })
 
   it('should have an application type that is valid for getPresignedUrl', async () => {
@@ -346,6 +346,6 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    expect(act).rejects.toEqual(BadRequestException)
+    await expect(act).rejects.toEqual(BadRequestException)
   })
 })
