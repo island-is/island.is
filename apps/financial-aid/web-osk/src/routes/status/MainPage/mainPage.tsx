@@ -76,21 +76,10 @@ const MainPage = () => {
           </>
         )}
         {error && (
-          <>
-            {error?.message.includes('403') ? (
-              <Text color="red400">
-                Aðgang hafnað! <br />
-                Þú hefur ekki aðgang að þessari umsókn
-                <br /> Ertu örugglega á réttri slóð?
-              </Text>
-            ) : (
-              <Text>
-                {' '}
-                Umsókn ekki fundin eða einhvað fór úrskeiðis <br />
-                vinsamlegast reyndu síðar
-              </Text>
-            )}
-          </>
+          <Text>
+            Umsókn ekki fundin eða einhvað fór úrskeiðis <br />
+            vinsamlegast reyndu síðar
+          </Text>
         )}
         {loading && <LoadingDots />}
 

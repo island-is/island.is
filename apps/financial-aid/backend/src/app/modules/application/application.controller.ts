@@ -26,6 +26,8 @@ import {
   RolesRules,
 } from '@island.is/financial-aid/auth'
 
+import { ApplicationGuard } from '../../guards/application.guard'
+
 import type { User } from '@island.is/financial-aid/shared/lib'
 
 import {
@@ -37,27 +39,6 @@ import {
 @ApiTags('applications')
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
-
-  private async validateAssignedUser(
-    assignedUserNationalId: string,
-    assignedUserService: RolesRule,
-    applicationId: string,
-  ) {
-    if (assignedUserService === RolesRule.VEITA) {
-      return
-    }
-
-    const hasUserAccess = await this.applicationService.hasAccessToApplication(
-      assignedUserNationalId,
-      applicationId,
-    )
-
-    if (!hasUserAccess) {
-      throw new ForbiddenException(
-        `User ${assignedUserNationalId} does not have acces to application with id ${applicationId}}`,
-      )
-    }
-  }
 
   @UseGuards(TokenGuard)
   @Get('getCurrentApplication')
@@ -81,15 +62,13 @@ export class ApplicationController {
     return this.applicationService.getAll()
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, ApplicationGuard)
   @Get('applications/:id')
   @ApiOkResponse({
     type: ApplicationModel,
     description: 'Get application',
   })
-  async getById(@Param('id') id: string, @CurrentHttpUser() user: User) {
-    await this.validateAssignedUser(user.nationalId, user.service, id)
-
+  async getById(@Param('id') id: string) {
     const application = await this.applicationService.findById(id)
 
     if (!application) {
