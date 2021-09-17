@@ -38,6 +38,7 @@ export function getDefaultOptions(
       style: theme.isDark ? 'light' : 'dark',
     } : undefined,
     window: {
+
       backgroundColor:
         Platform.OS === 'android'
           ? theme.shade.background
@@ -53,6 +54,7 @@ export function getDefaultOptions(
             componentBackgroundColor: theme.shade.background,
             fitSystemWindows: true,
             topMargin: 0,
+            orientation: ['portrait'],
           }
         : {},
     bottomTabs: {

@@ -1,6 +1,7 @@
-import { Button, font } from '@island.is/island-ui-native'
+import { Button, font, ScanResultCard } from '@island.is/island-ui-native'
 import { BarCodeEvent, Constants } from 'expo-barcode-scanner'
 import React, { useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { View } from 'react-native'
 import {
   Navigation,
@@ -36,17 +37,16 @@ const TimerCounter = styled.Text`
 `
 const Actions = styled.View``
 
-const VIEW_TIMEOUT = 10
+const VIEW_TIMEOUT = 60
 
-export const LicenseScanDetailScreen: NavigationFunctionComponent<BarCodeEvent> = ({
-  data,
-  type,
-  componentId,
-}) => {
+export const LicenseScanDetailScreen: NavigationFunctionComponent<
+  BarCodeEvent & { isExpired: boolean }
+> = ({ data, type, isExpired, componentId }) => {
   const [loaded, setLoaded] = useState(false)
   const [timer, setTimer] = useState<number>(VIEW_TIMEOUT)
   const [scanResult, setScanResult] = useState<ScanResult>()
   const interval = useRef<NodeJS.Timeout>()
+  const intl = useIntl()
 
   useEffect(() => {
     try {
@@ -67,14 +67,18 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<BarCodeEvent> 
 
   useEffect(() => {
     if (loaded) {
+      const timeStamp = Date.now()
       interval.current = setInterval(() => {
         setTimer((t) => {
-          if (t < 1) {
+          const remaining =
+            Math.floor(Date.now() / 1000) - Math.floor(timeStamp / 1000)
+
+          if (remaining > VIEW_TIMEOUT) {
             interval.current && clearInterval(interval.current)
             Navigation.dismissAllModals()
             return 0
           }
-          return t - 1
+          return VIEW_TIMEOUT - remaining
         })
       }, 1000)
     }
@@ -85,16 +89,29 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<BarCodeEvent> 
 
   return (
     <View style={{ flex: 1, padding: 16 }}>
-      {scanResult === ScanResult.DRIVER_LICENSE && (
-        <DriverLicenseScanResult data={data} onLoad={setLoaded} />
+      {isExpired === true ? (
+        <ScanResultCard
+          loading={false}
+          isExpired={isExpired}
+          error={true}
+          errorMessage={intl.formatMessage({
+            id: 'licenseScanDetail.barcodeExpired',
+          })}
+        />
+      ) : (
+        <>
+          {scanResult === ScanResult.DRIVER_LICENSE && (
+            <DriverLicenseScanResult data={data} onLoad={setLoaded} />
+          )}
+          {scanResult === ScanResult.COVID_CERTIFICATE && (
+            <CovidCertificateScanResult data={data} onLoad={setLoaded} />
+          )}
+          <Timer>
+            <TimerTitle>Rennur út eftir</TimerTitle>
+            <TimerCounter>{timer} sekúndur</TimerCounter>
+          </Timer>
+        </>
       )}
-      {scanResult === ScanResult.COVID_CERTIFICATE && (
-        <CovidCertificateScanResult data={data} onLoad={setLoaded} />
-      )}
-      <Timer>
-        <TimerTitle>Rennur út eftir</TimerTitle>
-        <TimerCounter>{timer} sekúndur</TimerCounter>
-      </Timer>
       <Actions>
         <Button
           title="Skanna aftur"

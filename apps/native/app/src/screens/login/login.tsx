@@ -1,9 +1,4 @@
-import {
-  Button,
-  dynamicColor,
-  font,
-  Illustration,
-} from '@island.is/island-ui-native'
+import { Button, dynamicColor, font } from '@island.is/island-ui-native'
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
@@ -14,17 +9,18 @@ import {
   Platform,
   SafeAreaView,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native'
-import { Navigation, NavigationFunctionComponent } from 'react-native-navigation'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
 import styled from 'styled-components/native'
 import logo from '../../assets/logo/logo-64w.png'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { openBrowser } from '../../lib/rn-island'
 import { useAuthStore } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
-// import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
 import { getMainRoot } from '../../utils/get-main-root'
 
@@ -41,20 +37,6 @@ const Title = styled.Text`
   })}
   text-align: center;
   margin-top: 32px;
-`
-
-const BottomRow = styled.View`
-  width: 100%;
-  justify-content: space-between;
-  flex-direction: row;
-  padding: 32px;
-`
-
-const LightButtonText = styled.Text`
-  ${font({
-    fontWeight: '600',
-    color: (props) => props.theme.color.blue400,
-  })}
 `
 
 function getChromeVersion(): Promise<number> {
@@ -152,16 +134,6 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
     setIsLoggingIn(false)
   }
 
-  const onLanguagePress = () => {
-    const { locale, setLocale } = preferencesStore.getState()
-    setLocale(locale === 'en-US' ? 'is-IS' : 'en-US')
-  }
-
-  const onNeedHelpPress = () => {
-    const helpDeskUrl = 'https://island.is/flokkur/thjonusta-island-is'
-    openBrowser(helpDeskUrl, componentId)
-  }
-
   return (
     <Host testID={testIDs.SCREEN_LOGIN}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -170,7 +142,7 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
-            paddingTop: 32,
+            paddingBottom: 52,
           }}
         >
           <Image
@@ -197,18 +169,6 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
             style={{ width: 213 }}
           />
         </View>
-        <BottomRow>
-          <TouchableOpacity onPress={onLanguagePress}>
-            <LightButtonText>
-              <FormattedMessage id="login.languageButtonText" />
-            </LightButtonText>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onNeedHelpPress}>
-            <LightButtonText>
-              <FormattedMessage id="login.needHelpButtonText" />
-            </LightButtonText>
-          </TouchableOpacity>
-        </BottomRow>
       </SafeAreaView>
     </Host>
   )

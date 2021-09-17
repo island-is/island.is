@@ -179,6 +179,7 @@ export const en: TranslatedMessages = {
   'licenseScannerResult.errorMessage': 'Error message',
   'licenseScannerResult.name': 'Name',
   'licenseScannerResult.birthDate': 'Birthdate',
+  'licenseScannerResult.nationalId': 'National Id',
   'licenseScannerResult.driverLicenseNumber': 'Driver license number',
 
   // notifications

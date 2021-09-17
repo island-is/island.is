@@ -166,12 +166,14 @@ export const is = {
   'licenseScanDetail.errorCodeMessage': `{
     errorCode,
     select,
-    ERR_1 {Skilríki í lagi}
-    ERR_2 {Skilríkja strikamerki útrunnið. Uppfærið skírteinið og reynið aftur.}
-    ERR_3 {Engar upplýsingar um skilríki fundust}
-    ERR_4 {Fyrirspurn inniheldur villur í reitum}
+    1 {Skilríki í lagi}
+    2 {Útrunnið strikamerki. Uppfærið skírteinið og reynið aftur.}
+    3 {Engar upplýsingar um skilríki fundust}
+    4 {Fyrirspurn inniheldur villur í reitum}
     other {Óþekkt villa}
   }`,
+  'licenseScanDetail.errorTryToRefresh': 'Villa við að sannreyna ökuskírteinið. Uppfærið skírteinið og reynið aftur.',
+  'licenseScanDetail.barcodeExpired': 'Útrunnið strikamerki. Uppfærið skírteinið og reynið aftur.',
 
    // license scan results
    'licenseScannerResult.loading': 'Hleð upplýsingum',
@@ -181,6 +183,7 @@ export const is = {
    'licenseScannerResult.errorMessage': 'Villuskilaboð',
    'licenseScannerResult.name': 'Nafn',
    'licenseScannerResult.birthDate': 'Fæðingardagur',
+   'licenseScannerResult.nationalId': 'Kennitala',
    'licenseScannerResult.driverLicenseNumber': 'Númer ökuskírteinis',
 
   // notifications
