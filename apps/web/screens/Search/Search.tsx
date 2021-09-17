@@ -195,16 +195,14 @@ const Search: Screen<CategoryProps> = ({
     return labels
   }
 
-  const searchResultsItems = (
-    searchResults.items as Array<
-      Article &
-        LifeEventPage &
-        News &
-        AdgerdirPage &
-        SubArticle &
-        OrganizationSubpage
-    >
-  ).map((item) => ({
+  const searchResultsItems = (searchResults.items as Array<
+    Article &
+      LifeEventPage &
+      News &
+      AdgerdirPage &
+      SubArticle &
+      OrganizationSubpage
+  >).map((item) => ({
     title: item.title,
     parentTitle: item.parent?.title,
     description: item.intro ?? item.description ?? item.parent?.intro,
