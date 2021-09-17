@@ -3,7 +3,10 @@ import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
-import { EndorsementListApi } from './gen/fetch/endorsements'
+import {
+  EndorsementListApi,
+  EndorsementMetadataDtoFieldEnum,
+} from './gen/fetch/endorsements'
 
 const CREATE_ENDORSEMENT_LIST_QUERY = `
   mutation EndorsementSystemCreatePartyLetterEndorsementList($input: CreateEndorsementListDto!) {
@@ -76,8 +79,10 @@ export class GeneralPetitionService {
         input: {
           title: application.answers.listName,
           description: application.answers.aboutList,
-          //endorsementMeta: ['fullName', 'address', 'signedTags'],
-          tags: ['generalPetition'],
+          endorsementMetadata: [
+            { field: EndorsementMetadataDtoFieldEnum.address },
+          ],
+          tags: ['partyLetter2021'],
           validationRules: [
             {
               type: 'minAge',

@@ -108,25 +108,23 @@ const PetitionView = () => {
               </GridColumn>
             </GridRow>
             <GridRow>
-              <GridColumn span={['6/12', '6/12', '6/12']}>
+              <GridColumn span={['12/12', '4/12', '4/12']}>
                 <Text variant="h4">Undirskriftalistinn er opinn:</Text>
                 <Text variant="default">{list.til}</Text>
-                <Text variant="h4" marginTop={3}>
-                  Ábyrgðarmaður:
-                </Text>
+              </GridColumn>
+              <GridColumn span={['12/12', '4/12', '4/12']}>
+                <Text variant="h4">Ábyrgðarmaður:</Text>
                 <Text variant="default">{list.owner}</Text>
               </GridColumn>
-              <GridColumn span={['6/12', '6/12', '6/12']}>
-                <Text variant="h4" marginTop={3}>
-                  Á pappir:
-                </Text>
-                <Text variant="default">{list.onPaper}</Text>
+              <GridColumn span={['12/12', '4/12', '4/12']}>
+                <Text variant="h4">Fjöldi skráðir:</Text>
+                <Text variant="default">{list.signedPetitions.length}</Text>
               </GridColumn>
             </GridRow>
             <GridRow marginTop={5}>
-              <GridColumn span={['6/12', '6/12', '6/12']}>
+              <GridColumn span={['12/12', '4/12', '4/12']}>
                 <Button
-                  variant="text"
+                  variant="primary"
                   icon="arrowForward"
                   onClick={() =>
                     window.open(
@@ -137,11 +135,6 @@ const PetitionView = () => {
                 >
                   Setja nafn mitt á þennan lista
                 </Button>
-              </GridColumn>
-              <GridColumn span={['6/12', '6/12', '6/12']}>
-                <Text variant="h4">
-                  {list.signedPetitions.length} hafa skráð sig á listann
-                </Text>
               </GridColumn>
             </GridRow>
             <GridRow marginTop={5} marginBottom={5}>

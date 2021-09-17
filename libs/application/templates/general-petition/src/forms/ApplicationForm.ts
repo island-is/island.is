@@ -3,15 +3,12 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
-  buildRadioField,
-  buildDescriptionField,
   buildCustomField,
   buildSubmitField,
   Form,
   FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
-  Application,
   buildDateField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
@@ -44,74 +41,6 @@ export const LetterApplicationForm: Form = buildForm({
         }),
       ],
     }),
-    /*buildSection({
-      id: 'applicant',
-      title: m.selectNationalId.title,
-      children: [
-        buildRadioField({
-          id: 'ssn',
-          title: m.selectNationalId.title,
-          largeButtons: true,
-          width: 'half',
-          options: (application: Application) => {
-            const nationalRegistry = application.externalData.nationalRegistry
-              .data as User
-
-            return [
-              {
-                label: nationalRegistry.fullName,
-                subLabel: format(application.applicant),
-                value: application.applicant,
-              },
-            ]
-          },
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'email',
-      title: m.email.titleSidebar,
-      children: [
-        buildMultiField({
-          id: 'confirmation',
-          title: m.email.title,
-          children: [
-            buildTextField({
-              id: 'email',
-              title: m.email.email,
-              placeholder: m.email.email,
-              variant: 'email',
-              backgroundColor: 'white',
-              width: 'half',
-              defaultValue: () => '',
-            }),
-            buildTextField({
-              id: 'emailCopy',
-              title: m.email.emailRepeated,
-              placeholder: m.email.email,
-              variant: 'email',
-              backgroundColor: 'white',
-              width: 'half',
-              defaultValue: () => '',
-            }),
-            buildDescriptionField({
-              id: 'confirmationCodeDescription',
-              title: ' ',
-              space: 'containerGutter',
-              titleVariant: 'h5',
-              description: m.email.confirmationCodeDescription,
-            }),
-            buildTextField({
-              id: 'confirmationCode',
-              title: m.email.confirmationCode,
-              backgroundColor: 'white',
-              width: 'half',
-              defaultValue: () => '',
-            }),
-          ],
-        }),
-      ],
-    }),*/
     buildSection({
       id: 'information',
       title: m.information.titleSidebar,
@@ -154,25 +83,6 @@ export const LetterApplicationForm: Form = buildForm({
         }),
       ],
     }),
-    /*buildSection({
-      id: 'participants',
-      title: m.participants.titleSidebar,
-      children: [
-        buildMultiField({
-          id: 'party',
-          title: m.participants.title,
-          children: [
-            buildDescriptionField({
-              id: 'participantsInfo',
-              title: 'TODO!',
-              space: 'containerGutter',
-              titleVariant: 'h3',
-              description: '',
-            }),
-          ],
-        }),
-      ],
-    }),*/
     buildSection({
       id: 'reviewApplication',
       title: m.overview.title,
@@ -187,18 +97,18 @@ export const LetterApplicationForm: Form = buildForm({
               title: '',
               component: 'Overview',
             }),
-            /*buildSubmitField({
+            buildSubmitField({
               id: 'submit',
               title: '',
               placement: 'footer',
               actions: [
                 {
                   event: 'SUBMIT',
-                  name: m.overviewSection.submitApplication,
+                  name: 'Submit',
                   type: 'primary',
                 },
               ],
-            }),*/
+            }),
           ],
         }),
       ],

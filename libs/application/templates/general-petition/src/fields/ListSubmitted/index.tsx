@@ -3,6 +3,7 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, Bullet, BulletList, Link } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Approved } from '@island.is/application/ui-components'
+import { CopyLink } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 
 const ListSubmited: FC<FieldBaseProps> = () => {
@@ -14,6 +15,15 @@ const ListSubmited: FC<FieldBaseProps> = () => {
         title={formatMessage(m.listSubmitted.approvedTitle)}
         subtitle={formatMessage(m.listSubmitted.approvedSubtitle)}
       />
+      <Text marginBottom={2} variant="h3">
+        {'Hlekkur á lista'}
+      </Text>
+      <Box marginBottom={2}>
+        <CopyLink
+          linkUrl={'https://listar.island.is/Application/Lists'}
+          buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
+        />
+      </Box>
       <Text marginBottom={2} variant="h3">
         {formatMessage(m.listSubmitted.bulletListTitle)}
       </Text>
