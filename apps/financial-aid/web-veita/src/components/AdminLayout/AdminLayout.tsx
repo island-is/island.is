@@ -25,7 +25,7 @@ const AdminLayout = ({ children, className }: PageProps) => {
   useEffect(() => {
     if (showNavMobile) {
       router.events.on('routeChangeComplete', () => {
-        setShowNavMobile((showNavMobile) => !showNavMobile)
+        setShowNavMobile(false)
       })
     }
   }, [showNavMobile])
