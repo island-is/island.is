@@ -36,6 +36,7 @@ import {
   DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE,
   LICENSE_RESPONSE_API_VERSION,
 } from './util/constants'
+import { NeedsQualityPhoto } from '..'
 
 @Injectable()
 export class DrivingLicenseService {
@@ -279,10 +280,6 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
     input: NewDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
-    // TODO: insert the following into body
-    // needsToPresentQualityPhoto: input.needsToPresentQualityPhoto
-    // ? NeedsQualityPhoto.TRUE
-    // : NeedsQualityPhoto.FALSE,
     const response: unknown = await this.drivingLicenseApi.apiOkuskirteiniApplicationsNewCategoryPost(
       {
         category: DrivingLicenseCategory.B,
@@ -292,6 +289,11 @@ export class DrivingLicenseService {
             ? NeedsHealhCertificate.TRUE
             : NeedsHealhCertificate.FALSE,
           personIdNumber: nationalId,
+          bringsNewPhoto: input.needsToPresentQualityPhoto
+            ? NeedsQualityPhoto.TRUE
+            : NeedsQualityPhoto.FALSE,
+          sendLicenseInMail: 0,
+          sendToAddress: '',
         },
       },
     )
