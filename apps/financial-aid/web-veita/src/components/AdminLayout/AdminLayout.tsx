@@ -1,6 +1,9 @@
 import React, { ReactNode, useEffect, useState } from 'react'
 
-import { Nav } from '@island.is/financial-aid-web/veita/src/components/Nav'
+import {
+  Nav,
+  MobileMenuButton,
+} from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './AdminLayout.treat'
 import cn from 'classnames'
@@ -31,34 +34,13 @@ const AdminLayout = ({ children, className }: PageProps) => {
     <>
       <Nav showInMobile={showNavMobile} />
       <div className={` wrapper ${styles.gridWrapper} `}>
-        <button
-          className={cn({
-            [`${styles.burgerMenu} burgerMenu`]: true,
-            [`openBurgerMenu`]: showNavMobile,
-          })}
+        <MobileMenuButton
+          showNav={showNavMobile}
           onClick={() => {
             setShowNavMobile(!showNavMobile)
           }}
-        >
-          <span
-            className={cn({
-              [`${styles.burgerLines} ${styles.burgerMenuFirstChild}`]: true,
-              [`${styles.openBurgerLines} ${styles.openBurgerLineFirstChild}`]: showNavMobile,
-            })}
-          ></span>
-          <span
-            className={cn({
-              [`${styles.burgerLines} `]: true,
-              [`${styles.dissapearLine}`]: showNavMobile,
-            })}
-          ></span>
-          <span
-            className={cn({
-              [`${styles.burgerLines} ${styles.burgerMenuLastChilde}`]: true,
-              [`${styles.openBurgerLines}  ${styles.openBurgerLineLastChild}`]: showNavMobile,
-            })}
-          ></span>
-        </button>
+        />
+
         <div
           className={cn({
             [`${styles.childContainer}`]: true,
