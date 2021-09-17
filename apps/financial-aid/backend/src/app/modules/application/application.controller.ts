@@ -43,7 +43,7 @@ export class ApplicationController {
     assignedUserService: RolesRule,
     applicationId: string,
   ) {
-    if (assignedUserService === 'veita') {
+    if (assignedUserService === RolesRule.VEITA) {
       return
     }
 
@@ -88,11 +88,9 @@ export class ApplicationController {
     description: 'Get application',
   })
   async getById(@Param('id') id: string, @CurrentHttpUser() user: User) {
-    const application = await this.applicationService.findById(id)
-
     await this.validateAssignedUser(user.nationalId, user.service, id)
 
-    //Should error be here same as application or in validateAssign user like now?
+    const application = await this.applicationService.findById(id)
 
     if (!application) {
       throw new NotFoundException(`application ${id} not found`)

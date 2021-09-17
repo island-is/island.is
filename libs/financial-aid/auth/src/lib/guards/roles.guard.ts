@@ -2,10 +2,14 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 
 import { User, RolesRule } from '@island.is/financial-aid/shared/lib'
+// import { ApplicationService } from '../../../../../../apps/financial-aid/backend/src/app/modules/application/application.service'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(
+    private reflector: Reflector,
+  ) // private readonly applicationService: ApplicationService,
+  {}
 
   canActivate(context: ExecutionContext): boolean {
     const rolesRules = this.reflector.get<RolesRule[]>(
