@@ -37,7 +37,7 @@ const AdminLayout = ({ children, className }: PageProps) => {
         <MobileMenuButton
           showNav={showNavMobile}
           onClick={() => {
-            setShowNavMobile(!showNavMobile)
+            setShowNavMobile((showNavMobile) => !showNavMobile)
           }}
         />
 
