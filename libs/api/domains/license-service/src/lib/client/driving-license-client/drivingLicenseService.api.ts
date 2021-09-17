@@ -242,7 +242,6 @@ export class GenericDrivingLicenseApi
 
     const token = response.data?.ACCESS_TOKEN
     if (response.status === 1 && token) {
-
       const ttl = this.parseTtlFromTokenExpiry()
 
       if (this.cacheManager && ttl) {
