@@ -162,7 +162,7 @@ describe('FileService', () => {
 
     expect(awsService.getPresignedUrl).toHaveBeenCalledWith(bucket, fileName)
 
-    await expect(response).toEqual('url')
+    expect(response).toEqual('url')
   })
   it('should request file signature for children residence transfer then return controlCode and documentToken', async () => {
     const application = createApplication()
@@ -194,34 +194,6 @@ describe('FileService', () => {
     )
   })
 
-  it('should throw error for request file signature since phone number is missing', async () => {
-    const application = createApplication({
-      useMocks: 'no',
-      selectedChildren: [child.nationalId],
-      parentA: {},
-      parentB: {
-        email: parentBWithContactInfo.email,
-        phoneNumber: parentBWithContactInfo.phoneNumber,
-      },
-      expiry: 'permanent',
-    })
-
-    const act = async () =>
-      await service.requestFileSignature(
-        application,
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-      )
-
-    await expect(act).rejects.toThrowError(NotFoundException)
-
-    expect(awsService.getFile).toHaveBeenCalledWith(
-      bucket,
-      `children-residence-change/${applicationId}.pdf`,
-    )
-
-    expect(signingService.requestSignature).not.toHaveBeenCalled()
-  })
-
   it('should throw error for request file signature since file content is missing', async () => {
     const application = createApplication()
 
@@ -251,7 +223,9 @@ describe('FileService', () => {
     const act = async () =>
       await service.generatePdf(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
 
-    await expect(act).rejects.toEqual(BadRequestException)
+    await expect(act).rejects.toEqual(
+      'Error: Application type is not supported in file service.',
+    )
   })
 
   it('should have an application type that is valid for generatePdf', async () => {
@@ -285,7 +259,9 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    await expect(act).rejects.toEqual(BadRequestException)
+    await expect(act).rejects.toEqual(
+      'Error: Application type is not supported in file service.]',
+    )
   })
 
   it('should have an application type that is valid for uploadSignedFile', async () => {
@@ -310,7 +286,9 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    await expect(act).rejects.toEqual(BadRequestException)
+    await expect(act).rejects.toEqual(
+      'Error: Application type is not supported in file service.]',
+    )
   })
 
   it('should have an application type that is valid for requestFileSignature', async () => {
@@ -334,7 +312,9 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    await expect(act).rejects.toEqual(BadRequestException)
+    await expect(act).rejects.toEqual(
+      'Error: Application type is not supported in file service.]',
+    )
   })
 
   it('should have an application type that is valid for getPresignedUrl', async () => {
@@ -346,6 +326,6 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    await expect(act).rejects.toEqual(BadRequestException)
+    expect(act).resolves.toEqual('url')
   })
 })
