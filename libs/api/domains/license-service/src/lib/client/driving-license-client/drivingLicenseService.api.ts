@@ -168,10 +168,10 @@ export class GenericDrivingLicenseApi
       return null
     }
 
-    const cached = await this.cacheManager?.get(CACHE_KEY)
+    const cached = await this.cacheManager.get(CACHE_KEY)
 
-    if (cached && typeof cached === 'string' && cached.length > 0) {
-      return cached as string
+    if (cached && typeof cached === 'string') {
+      return cached
     }
 
     return null
@@ -186,7 +186,7 @@ export class GenericDrivingLicenseApi
       const parsed: number =
         Date.parse(expiry) - Date.now() - CACHE_TOKEN_EXPIRY_DELTA_IN_MS
 
-      if (!isNaN(parsed) && parsed > 0) {
+      if (parsed > 0) {
         return parsed
       }
     } catch (e) {
@@ -240,8 +240,8 @@ export class GenericDrivingLicenseApi
 
     const response = json as PkPassServiceTokenResponse
 
-    if (response.status === 1 && response.data?.ACCESS_TOKEN) {
-      const token = response.data?.ACCESS_TOKEN
+    const token = response.data?.ACCESS_TOKEN
+    if (response.status === 1 && token) {
 
       const ttl = this.parseTtlFromTokenExpiry()
 
