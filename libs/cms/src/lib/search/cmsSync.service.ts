@@ -14,7 +14,6 @@ import { ContentfulService } from './contentful.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
-import { AboutPageSyncService } from './importers/aboutPage.service'
 import { Entry } from 'contentful'
 import { ElasticService } from '@island.is/content-search-toolkit'
 import { AdgerdirPageSyncService } from './importers/adgerdirPage'
@@ -47,7 +46,6 @@ export interface CmsSyncProvider<T, ProcessOutput = any> {
 export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
   private contentSyncProviders: CmsSyncProvider<any>[]
   constructor(
-    private readonly aboutPageSyncService: AboutPageSyncService,
     private readonly newsSyncService: NewsSyncService,
     private readonly articleCategorySyncService: ArticleCategorySyncService,
     private readonly articleSyncService: ArticleSyncService,
@@ -69,7 +67,6 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.lifeEventsPageSyncService,
       this.articleCategorySyncService,
       this.newsSyncService,
-      this.aboutPageSyncService,
       this.adgerdirPageSyncService,
       this.menuSyncService,
       this.groupedMenuSyncService,
