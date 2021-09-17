@@ -164,7 +164,10 @@ export interface GenericLicenseClient<LicenseType> {
     data?: LicenseType,
   ) => Promise<string | null>
 
-  verifyPkPass: (data: string) => Promise<PkPassVerification | null>
+  verifyPkPass: (
+    data: string,
+    nationalId: string,
+  ) => Promise<PkPassVerification | null>
 }
 
 export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'

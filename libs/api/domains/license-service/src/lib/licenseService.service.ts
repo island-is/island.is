@@ -275,6 +275,7 @@ export class LicenseServiceService {
     locale: Locale,
     licenseType: GenericLicenseType,
     data: string,
+    nationalIdInput: string,
   ): Promise<PkPassVerification> {
     if (nationalId !== process.env.HI_I_AM_DAVID) {
       throw new Error('Not Davíð')
@@ -287,7 +288,7 @@ export class LicenseServiceService {
     )
 
     if (licenseService) {
-      verification = await licenseService.verifyPkPass(data)
+      verification = await licenseService.verifyPkPass(data, nationalIdInput)
     } else {
       throw new Error(`${licenseType} not supported`)
     }
