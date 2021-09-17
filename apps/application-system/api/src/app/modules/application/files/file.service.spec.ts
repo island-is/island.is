@@ -326,6 +326,6 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    await expect(act).resolves.toEqual('url')
+    await expect(act).resolves.toBe('url')
   })
 })
