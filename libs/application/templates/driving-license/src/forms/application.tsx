@@ -11,6 +11,7 @@ import {
   buildSelectField,
   buildDividerField,
   buildRadioField,
+  buildTextField,
   Form,
   FormModes,
   DefaultEvents,
@@ -20,7 +21,7 @@ import {
   buildDataProviderItem,
   FormValue,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile } from '../types/schema'
+import { NationalRegistryUser, Teacher, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
@@ -178,6 +179,97 @@ export const application: Form = buildForm({
               type: 'PaymentCatalogProvider',
               title: '',
             }),
+            buildDataProviderItem({
+              id: 'teachers',
+              type: 'TeachersProvider',
+              title: '',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'infoStep',
+      title: m.informationTitle,
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: m.informationTitle,
+          space: 1,
+          children: [
+            buildKeyValueField({
+              label: m.drivingLicenseTypeRequested,
+              value: 'Almenn ökuréttindi - B flokkur (Fólksbifreið)',
+            }),
+            buildDividerField({
+              title: '',
+              color: 'dark400',
+            }),
+            buildKeyValueField({
+              label: m.informationApplicant,
+              value: ({ externalData: { nationalRegistry } }) =>
+                (nationalRegistry.data as NationalRegistryUser).fullName,
+              width: 'half',
+            }),
+            buildKeyValueField({
+              label: m.informationStreetAddress,
+              value: ({ externalData: { nationalRegistry } }) => {
+                const address = (nationalRegistry.data as NationalRegistryUser)
+                  .address
+
+                if (!address) {
+                  return ''
+                }
+
+                const { streetAddress, city } = address
+
+                return `${streetAddress}${city ? ', ' + city : ''}`
+              },
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'email',
+              title: m.informationYourEmail,
+              placeholder: 'Netfang',
+            }),
+            buildDividerField({
+              title: '',
+              color: 'dark400',
+            }),
+            buildDescriptionField({
+              id: 'drivingInstructorTitle',
+              title: m.drivingInstructor,
+              titleVariant: 'h4',
+              description: m.chooseDrivingInstructor,
+            }),
+            buildSelectField({
+              id: 'drivingInstructor',
+              title: m.drivingInstructor,
+              disabled: false,
+              options: ({
+                externalData: {
+                  teachers: { data },
+                },
+              }) => {
+                return (data as Teacher[]).map(({ name }) => ({
+                  value: name,
+                  label: name,
+                }))
+              },
+            }),
+            buildCheckboxField({
+              id: 'noDrivingLicenseInOtherCountry',
+              backgroundColor: 'white',
+              title: '',
+              options: [
+                {
+                  value: 'no',
+                  label: m.noDrivingLicenseInOtherCountryTitle,
+                  subLabel:
+                    m.noDrivingLicenseInOtherCountryDescription.defaultMessage,
+                },
+              ],
+            }),
           ],
         }),
       ],
@@ -275,7 +367,6 @@ export const application: Form = buildForm({
         }),
       ],
     }),
-
     buildSection({
       id: 'user',
       title: m.informationSectionTitle,

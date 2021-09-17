@@ -70,7 +70,6 @@ const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
         display={['block', 'block', 'block', 'flex']}
         justifyContent="spaceBetween"
       ></Box>
-
       <Box marginTop={7} marginBottom={8}>
         {steps.map((step, i) => {
           return (

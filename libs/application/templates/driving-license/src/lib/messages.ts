@@ -635,4 +635,47 @@ export const m = defineMessages({
     description:
       'Text that shows up when an error occurs while submitting the application',
   },
+  informationTitle: {
+    id: 'dl.application:informationTitle',
+    defaultMessage: 'Upplýsingar',
+    description: 'Title for information section',
+  },
+  chooseDrivingInstructor: {
+    id: 'dl.application:chooseDrivingInstructor',
+    defaultMessage: 'Finndu og veldu nafn ökukennara þíns úr listanum',
+    description:
+      'Find and select the name of your driving instructor from the list',
+  },
+  drivingLicenseTypeRequested: {
+    id: 'dl.application:drivingLicenseTypeRequested',
+    defaultMessage: 'Réttindi sem sótt er um',
+    description: 'Driving license type that is requested',
+  },
+  informationStreetAddress: {
+    id: 'dl.application:informationStreetAddress',
+    defaultMessage: 'Heimilisfang',
+    description: 'Street address',
+  },
+  informationYourEmail: {
+    id: 'dl.application:informationYourEmail',
+    defaultMessage: 'Netfangið þitt',
+    description: 'Your email',
+  },
+  drivingInstructor: {
+    id: 'dl.application:drivingInstructor',
+    defaultMessage: 'Ökukennari',
+    description: 'Driving instructor',
+  },
+  noDrivingLicenseInOtherCountryTitle: {
+    id: 'dl.application:noDrivingLicenseInOtherCountryTitle',
+    defaultMessage: 'Ég er ekki með ökuskírteini í öðru landi',
+    description: 'I do not have a drivering license in another country',
+  },
+  noDrivingLicenseInOtherCountryDescription: {
+    id: 'dl.application:noDrivingLicenseInOtherCountryDescription',
+    defaultMessage:
+      'Staðfesting að umsækjandi hafi ekki undir höndum ökuskírteini gefið út af öðru ríki sem er aðili að Evrópska efnahagssvæðinu né hafi sætt takmörkunum á ökurétti eða verið svipt(ur) ökuréttindum í þeim ríkjum',
+    description:
+      'Confirmation that the applicant does not hold a driving license issued by another country that is part of The European Economic Area, nor is he subject to a driving license restriction or has been deprived of his driving license in that countries',
+  },
 })
