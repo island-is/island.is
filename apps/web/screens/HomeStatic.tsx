@@ -3,8 +3,6 @@ import { Box, Stack, Inline, Tag, Link } from '@island.is/island-ui/core'
 import { Screen } from '@island.is/web/types'
 import { Locale } from '@island.is/shared/types'
 import { useNamespace } from '@island.is/web/hooks'
-import fs from 'fs'
-import util from 'util'
 import {
   GetArticleCategoriesQuery,
   GetFrontpageQuery,
@@ -23,11 +21,7 @@ import {
 import { GlobalContext } from '@island.is/web/context'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 import {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  GetServerSidePropsResult,
   GetStaticPaths,
-  GetStaticPathsContext,
   GetStaticPathsResult,
   GetStaticProps,
   GetStaticPropsContext,
@@ -183,73 +177,30 @@ export const HomeStatic: Screen<HomeProps> = ({
   )
 }
 
-export const getStaticPaths: GetStaticPaths = async (
-  context: GetStaticPathsContext,
-): Promise<GetStaticPathsResult> => {
+export const getStaticPaths: GetStaticPaths = async (): Promise<GetStaticPathsResult> => {
   return {
-    paths: [
-      {
-        params: {
-          foo: 'bar',
-        },
-        locale: 'is',
-      },
-    ],
+    paths: [],
     fallback: 'blocking',
   }
 }
 
-// export const getServerSideProps: GetServerSideProps = async (
-//   context: GetServerSidePropsContext,
-// ): Promise<GetServerSidePropsResult<HomeProps>> => {
-//   const { locale } = context
-//   const [homeData, layoutData] = await Promise.all([
-//     getHomeData(locale as Locale),
-//     getMainLayoutData(locale as Locale),
-//   ])
-
-//   return {
-//     props: {
-//       ...homeData,
-//       layoutProps: layoutData,
-//       locale: locale as Locale,
-//     },
-//   }
-// }
-
 export const getStaticProps: GetStaticProps = async (
   context: GetStaticPropsContext,
 ): Promise<GetStaticPropsResult<HomeProps>> => {
-  // const { locale } = context
-  // const [homeData, layoutData] = await Promise.all([
-  //   getHomeData(locale as Locale),
-  //   getMainLayoutData(locale as Locale),
-  // ])
+  const { locale } = context
+  const [homeData, layoutData] = await Promise.all([
+    getHomeData(locale as Locale),
+    getMainLayoutData(locale as Locale),
+  ])
 
-  // const data = {
-  //   ...homeData,
-  //   layoutProps: layoutData,
-  //   locale: locale as Locale,
-  // }
-
-  // const writeFile = util.promisify(fs.writeFile)
-
-  // const jsonContent = JSON.stringify(data)
-  // console.log('jsonContent:', jsonContent)
-
-  // const fn = async () => {
-  //   await writeFile('homestatic.json', jsonContent)
-  // }
-
-  // fn()
-
-  const readFile = util.promisify(fs.readFile)
-
-  const json = await readFile(process.cwd() + '/homestatic.json', 'utf8')
+  const data = {
+    ...homeData,
+    layoutProps: layoutData,
+    locale: locale as Locale,
+  }
 
   return {
-    props: JSON.parse(json),
-    // props: data,
+    props: data,
     revalidate: 300,
   }
 }
