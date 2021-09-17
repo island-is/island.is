@@ -48,6 +48,10 @@ export const variants = styleMap({
     color: theme.color.blueberry400,
     backgroundColor: theme.color.blueberry100,
   },
+  dark: {
+    color: theme.color.dark400,
+    backgroundColor: theme.color.dark200,
+  },
   label: {},
 })
 
@@ -81,6 +85,10 @@ export const outlined = style({
     [`&${variants.blueberry}`]: {
       borderColor: theme.color.blueberry200,
       color: theme.color.blueberry400,
+    },
+    [`&${variants.dark}`]: {
+      borderColor: theme.color.dark200,
+      color: theme.color.dark400,
     },
   },
 })

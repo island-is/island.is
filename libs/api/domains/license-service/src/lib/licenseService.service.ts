@@ -37,6 +37,7 @@ export class LicenseServiceService {
     @Inject(GENERIC_LICENSE_FACTORY)
     private genericLicenseFactory: (
       type: GenericLicenseType,
+      cacheManager?: CacheManager,
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -94,7 +95,6 @@ export class LicenseServiceService {
     }
 
     try {
-      dataWithFetch
       await this.cacheManager.set(cacheKey, JSON.stringify(data), { ttl })
     } catch (e) {
       this.logger.warn('Unable to cache data for license', {
