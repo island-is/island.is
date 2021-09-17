@@ -226,7 +226,9 @@ const ApplicationProfile = () => {
           <ApplicationHeader
             application={application}
             onClickApplicationState={() => {
-              setStateModalVisible(!isStateModalVisible)
+              setStateModalVisible(
+                (isStateModalVisible) => !isStateModalVisible,
+              )
             }}
           />
 

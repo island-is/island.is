@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, Button } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
 import * as styles from './TableBody.treat'
@@ -10,7 +10,6 @@ import {
   getState,
   getMonth,
 } from '@island.is/financial-aid/shared/lib'
-import format from 'date-fns/format'
 
 import {
   GeneratedProfile,
@@ -24,10 +23,9 @@ import {
 
 interface PageProps {
   application: Application
-  index: number
 }
 
-const TableBody = ({ application, index }: PageProps) => {
+const TableBody = ({ application }: PageProps) => {
   return (
     <Link href={'application/' + application.id}>
       <tr className={styles.link}>
@@ -70,6 +68,19 @@ const TableBody = ({ application, index }: PageProps) => {
           })}
         >
           <Text>{getMonth(new Date(application.created).getMonth())}</Text>
+        </td>
+        <td
+          className={cn({
+            [`${styles.tablePadding} `]: true,
+          })}
+        >
+          {true ? (
+            <Button variant="text" onClick={() => console.log('bla')}>
+              Sjá um
+            </Button>
+          ) : (
+            <Text>Starfsmannanafn</Text>
+          )}
         </td>
       </tr>
     </Link>

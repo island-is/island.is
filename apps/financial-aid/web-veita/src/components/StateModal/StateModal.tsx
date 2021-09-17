@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo } from 'react'
+import React, { useContext, useState } from 'react'
 import { ModalBase, Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './StateModal.treat'
@@ -19,10 +19,11 @@ import {
   Application,
   ApplicationState,
 } from '@island.is/financial-aid/shared/lib'
+import { useApplicationState } from '../../utils/useApplicationState'
 
 interface Props {
   isVisible: boolean
-  onVisiblityChange: React.Dispatch<React.SetStateAction<boolean>>
+  onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
   onStateChange: (applicationState: ApplicationState) => void
   application: Application
 }
@@ -38,7 +39,7 @@ interface InputType {
 
 const StateModal = ({
   isVisible,
-  onVisiblityChange,
+  onVisibilityChange,
   onStateChange,
   application,
 }: Props) => {
@@ -47,14 +48,7 @@ const StateModal = ({
     type: undefined,
   })
 
-  const { applicationFilters, setApplicationFilters } = useContext(
-    ApplicationFiltersContext,
-  )
-
-  const [
-    updateApplicationMutation,
-    { loading: saveLoading },
-  ] = useMutation<SaveData>(UpdateApplicationMutation)
+  const save = useApplicationState()
 
   const saveStateApplication = async (
     application: Application,
@@ -62,36 +56,14 @@ const StateModal = ({
     amount?: number,
     rejection?: string,
   ) => {
-    const prevState = application.state
-
-    if (saveLoading === false && application) {
-      await updateApplicationMutation({
-        variables: {
-          input: {
-            id: application.id,
-            state: state,
-            amount: amount,
-            rejection: rejection,
-          },
-        },
-      })
-    }
-
-    onVisiblityChange(!isVisible)
+    save(application, state, amount, rejection)
+    onVisibilityChange((isVisible) => !isVisible)
     onStateChange(state)
-
-    if (applicationFilters && setApplicationFilters) {
-      setApplicationFilters((preState) => ({
-        ...preState,
-        [prevState]: applicationFilters[prevState] - 1,
-        [state]: applicationFilters[state] + 1,
-      }))
-    }
   }
 
   const closeModal = (): void => {
     if (!inputType.show) {
-      onVisiblityChange(false)
+      onVisibilityChange(false)
     }
   }
 
@@ -113,7 +85,7 @@ const StateModal = ({
       isVisible={isVisible}
       onVisibilityChange={(visibility) => {
         if (visibility !== isVisible) {
-          onVisiblityChange(visibility)
+          onVisibilityChange(visibility)
         }
       }}
       className={styles.modalBase}
