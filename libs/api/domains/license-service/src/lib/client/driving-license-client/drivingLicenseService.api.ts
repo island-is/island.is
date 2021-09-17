@@ -60,7 +60,7 @@ export class GenericDrivingLicenseApi
   constructor(
     @Inject(CONFIG_PROVIDER) private config: Config,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @Inject(CACHE_MANAGER) private cacheManager?: CacheManager | null,
+    private cacheManager?: CacheManager | null,
   ) {
     this.xroadApiUrl = config.xroad.baseUrl
     this.xroadClientId = config.xroad.clientId
@@ -241,9 +241,9 @@ export class GenericDrivingLicenseApi
     const response = json as PkPassServiceTokenResponse
 
     const token = response.data?.ACCESS_TOKEN
-    if (response.status === 1 && token) {
-      const ttl = this.parseTtlFromTokenExpiry()
 
+    if (response.status === 1 && token) {
+      const ttl = this.parseTtlFromTokenExpiry(response.data?.EXPIRED_ON)
       if (this.cacheManager && ttl) {
         try {
           await this.cacheManager.set(CACHE_KEY, token, { ttl })
