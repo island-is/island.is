@@ -8,29 +8,22 @@ import {
   AccordionItem,
   Inline,
 } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { HTMLText } from '@island.is/regulations'
 import { StepComponent } from '../state/useDraftingState'
-import { getMinPublishDate } from '../utils'
+import { getMinPublishDate, useLocale } from '../utils'
 import { Appendixes, AppendixStateItem } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
 
 export const EditBasics: StepComponent = (props) => {
-  const t = useIntl().formatMessage
   const { draft, actions } = props
   const { updateState } = actions
 
+  const t = useLocale().formatMessage
+  const textRef = useRef(() => draft.text.value)
   const [appendixes, setAppendixes] = useState(
     [] as readonly AppendixStateItem[],
-  )
-
-  const textRef = useRef(() => draft.text.value)
-  const notesRef = useRef(() => draft.draftingNotes.value)
-
-  const [showDraftingNotes, setShowDraftingNotes] = useState(
-    !!draft.draftingNotes.value,
   )
 
   return (
@@ -54,7 +47,10 @@ export const EditBasics: StepComponent = (props) => {
             size="sm"
             label={t(msg.idealPublishDate)}
             placeholderText={t(msg.idealPublishDate_default)}
-            minDate={getMinPublishDate(draft.fastTrack.value)}
+            minDate={getMinPublishDate(
+              draft.fastTrack.value,
+              draft.signatureDate.value,
+            )}
             selected={draft.idealPublishDate.value}
             handleChange={(date: Date) => updateState('idealPublishDate', date)}
             hasError={!!draft.idealPublishDate.error}
@@ -91,7 +87,7 @@ export const EditBasics: StepComponent = (props) => {
           <AccordionItem
             id={draft.id}
             label={t(msg.text)}
-            startExpanded={!draft.text.value || !!draft.text.error}
+            // startExpanded={!draft.text.value || !!draft.text.error}
           >
             <Box marginBottom={[4, 4, 8]}>
               <EditorInput
@@ -114,49 +110,9 @@ export const EditBasics: StepComponent = (props) => {
           onChange={(appendixCallback) =>
             setAppendixes(appendixCallback(appendixes))
           }
+          defaultClosed
           draftId={draft.id}
         />
-      </Box>
-
-      <Box>
-        {showDraftingNotes && (
-          <EditorInput
-            label={t(msg.draftingNotes)}
-            isImpact={false}
-            draftId={`${draft.id}-notes`}
-            valueRef={notesRef}
-            onBlur={() =>
-              updateState(
-                'draftingNotes',
-                notesRef
-                  .current()
-                  // Replace empty HTML with empty string ('')
-                  .replace(/(<(?!\/)[^>]+>)+(<\/[^>]+>)+/, '') as HTMLText,
-              )
-            }
-          />
-        )}
-        {!showDraftingNotes ? (
-          <Button
-            variant="text"
-            preTextIcon="add"
-            // size="large"
-            onClick={() => setShowDraftingNotes(true)}
-          >
-            {t(msg.draftingNotes)}
-          </Button>
-        ) : (
-          !draft.draftingNotes.value && (
-            <Button
-              variant="text"
-              preTextIcon="remove"
-              size="small"
-              onClick={() => setShowDraftingNotes(false)}
-            >
-              {t(msg.draftingNotes_hide)}
-            </Button>
-          )
-        )}
       </Box>
     </>
   )

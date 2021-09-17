@@ -1,8 +1,8 @@
 import * as s from './SaveDeleteButtons.treat'
 import { Box, Button } from '@island.is/island-ui/core'
 import React from 'react'
-import { useIntl } from 'react-intl'
 import { buttonsMsgs as msg } from '../messages'
+import { useLocale } from '../utils'
 
 // ===========================================================================
 
@@ -25,7 +25,7 @@ export type SaveDeleteButtonsProps = {
 
 export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
   const { id, actions, wrap, classes = s } = props
-  const t = useIntl().formatMessage
+  const t = useLocale().formatMessage
 
   const newDraft = id === 'new'
 

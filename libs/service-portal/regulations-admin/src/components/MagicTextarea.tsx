@@ -19,9 +19,11 @@ const setAutoHeight = (textarea: HTMLTextAreaElement | null) => {
 
 export type MagicTextareaProps = {
   label: string
-  value: PlainText
+  value?: PlainText
+  defaultValue?: PlainText
   name?: string
-  onChange: (value: PlainText) => void
+  onBlur?: (value: PlainText) => void
+  onChange?: (value: PlainText) => void
   errorMessage?: string
   hasError?: boolean
   rows?: number
@@ -33,6 +35,8 @@ export const MagicTextarea = (props: MagicTextareaProps) => {
     label,
     name,
     value,
+    defaultValue,
+    onBlur,
     onChange,
     errorMessage,
     hasError,
@@ -52,11 +56,12 @@ export const MagicTextarea = (props: MagicTextareaProps) => {
     <Input
       label={label}
       name={name || ''}
+      defaultValue={defaultValue}
       value={value}
       onFocus={() => setAutoHeight(elmRef.current)}
+      onBlur={onBlur && ((e) => onBlur(e.currentTarget.value))}
       onChange={(e) => {
-        const target = e.currentTarget as HTMLTextAreaElement
-        onChange && onChange(target.value)
+        onChange && onChange(e.currentTarget.value)
         setAutoHeightDebounced()
       }}
       errorMessage={errorMessage}

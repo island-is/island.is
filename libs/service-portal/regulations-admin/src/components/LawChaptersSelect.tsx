@@ -1,12 +1,11 @@
 import React, { useMemo } from 'react'
 
 import { Box, Inline, Option, Select, Tag } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
 import { editorMsgs as msg } from '../messages'
 
 import { LawChapterSlug } from '@island.is/regulations'
 import { RegulationLawChapter } from '@island.is/regulations/web'
-import { emptyOption } from '../utils'
+import { emptyOption, useLocale } from '../utils'
 
 type LawChaptersSelectProps = {
   lawChapters?: RegulationLawChapter[]
@@ -16,7 +15,7 @@ type LawChaptersSelectProps = {
 }
 
 export const LawChaptersSelect = (props: LawChaptersSelectProps) => {
-  const t = useIntl().formatMessage
+  const t = useLocale().formatMessage
   const { lawChapters = [], activeChapters, addChapter, removeChapter } = props
 
   const chaptersBySlug = useMemo(

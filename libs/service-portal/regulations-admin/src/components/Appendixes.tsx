@@ -3,7 +3,6 @@ import * as s from './Appendixes.treat'
 import { EditorInput } from './EditorInput'
 import React, { MutableRefObject, useMemo } from 'react'
 import { MiniDiff } from './MiniDiff'
-import { useIntl } from 'react-intl'
 import { editorMsgs as msg } from '../messages'
 import { domid, HTMLText, PlainText } from '@island.is/regulations'
 import { RegulationDraft } from '@island.is/regulations/admin'
@@ -14,6 +13,7 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { MagicTextarea } from './MagicTextarea'
+import { useLocale } from '../utils'
 
 const NEW_PREFIX = 'new---'
 
@@ -30,7 +30,7 @@ const Appendix = (props: AppendixProps) => {
   const { appendix, idx, buttons, onChange, onTextChange } = props
   const { title, baseTitle, valueRef, baseText, elmRef } = appendix
 
-  const t = useIntl().formatMessage
+  const t = useLocale().formatMessage
 
   const isRemovable = appendix.key.startsWith(NEW_PREFIX)
 
@@ -176,7 +176,7 @@ type AppendixesProps = {
 }
 
 export const Appendixes = (props: AppendixesProps) => {
-  const t = useIntl().formatMessage
+  const t = useLocale().formatMessage
 
   const addAppendix = () => {
     props.onChange((appendixes) =>
@@ -199,7 +199,7 @@ export const Appendixes = (props: AppendixesProps) => {
             return (
               <AccordionItem
                 key={appendix.key}
-                startExpanded={startExpanded}
+                // startExpanded={startExpanded}
                 id={props.draftId + '-appendix-' + i}
                 label={
                   appendix.baseTitle ||

@@ -536,6 +536,20 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
 
   global(
     `
+    .section__title em + br[data-mce-bogus="1"],
+    .section__title i + br[data-mce-bogus="1"],
+    .chapter__title em + br[data-mce-bogus="1"],
+    .chapter__title i + br[data-mce-bogus="1"],
+    .article__title em + br[data-mce-bogus="1"],
+    .article__title i + br[data-mce-bogus="1"]
+    `,
+    {
+      display: 'none',
+    },
+  )
+
+  global(
+    `
     p.doc__title,
     .Dags,
     .FHUndirskr,

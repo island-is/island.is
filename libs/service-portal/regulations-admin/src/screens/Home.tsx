@@ -1,7 +1,6 @@
 import * as s from './Home.treat'
 
 import React from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box, Button } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
@@ -10,11 +9,12 @@ import { TaskList } from '../components/TaskList'
 import { ShippedRegulations } from '../components/ShippedRegulations'
 import { useHistory, generatePath } from 'react-router-dom'
 import { homeMessages as msg } from '../messages'
+import { useLocale } from '../utils'
 
 const Home = () => {
   useNamespaces('ap.regulations-admin')
   const history = useHistory()
-  const t = useIntl().formatMessage
+  const t = useLocale().formatMessage
 
   return (
     <Box marginBottom={[6, 6, 10]}>

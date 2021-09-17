@@ -14,6 +14,7 @@ import { OptionTypeBase, ValueType } from 'react-select'
 import { RegDraftFormSimpleProps, RegDraftForm } from '../state/types'
 
 import { Option } from '@island.is/island-ui/core'
+import { RegulationMinistry } from '@island.is/regulations/web'
 
 type DateFormatter = ReturnType<typeof _useLocale>['formatDateFns']
 
@@ -53,16 +54,23 @@ export const isWorkday = (date: Date): boolean => {
   return holidays[toISODate(date)] !== true
 }
 
-export const getMinPublishDate = (fastTrack?: boolean) => {
+export const getMinPublishDate = (fastTrack: boolean, signatureDate?: Date) => {
   let d = new Date()
   // Shift forward one day if the time is 14:00 or later.
   if (d.getHours() > 14) {
     d = addDays(d, 1)
   }
+  // only fastTracked regulations may request today and/or a holiday
   if (!fastTrack) {
     d = getNextWorkday(addDays(d, 1))
   }
-  return startOfDay(d)
+  const minDate = startOfDay(d)
+
+  // Signature date sets a hard lower boundry on publication date.
+  if (signatureDate && signatureDate > minDate) {
+    return signatureDate
+  }
+  return minDate
 }
 
 export const getNextWorkday = (date: Date) => {
@@ -137,25 +145,49 @@ export const findValueOption = (
 
 // ---------------------------------------------------------------------------
 
+export const asDiv = (html: HTMLText): HTMLDivElement => {
+  const div = document.createElement('div')
+  div.innerHTML = html
+  return div
+}
+
+// ---------------------------------------------------------------------------
+
+const getSpacedTextContent = (html: HTMLText): PlainText => {
+  const blockElms = 'p,h2,h3,h4,h5,h6,td,th,caption,li,blockquote'
+  const textDiv = asDiv(html)
+  textDiv.querySelectorAll(blockElms).forEach((elm) => {
+    // inject spaces after each block level element to
+    // ensure .textContent returns legible text for grepping
+    elm.after(' ')
+  })
+  return textDiv.textContent as PlainText
+}
+
 export const findAffectedRegulationsInText = (
   title: PlainText,
   text: HTMLText,
-): Array<RegName> => {
-  const regs: Array<RegName> = []
-  if (findRegulationType(title) === 'amending') {
-    // TODO: actually search the title
-    regs.push('1270/2016' as RegName)
+): Array<string> => {
+  const totalString = title + ' ' + getSpacedTextContent(text)
+  const maybeRegNames: Record<string, true> = {}
+
+  const nameMatchRe = /(?<!(?:lög|lögum|laga)\s+(?:nr.|númer)\s*)[\s(]\d{1,4}\/(?:19|20)\d{2}[\s,.;)]/gi
+
+  let m: RegExpExecArray | null
+  while ((m = nameMatchRe.exec(totalString))) {
+    const maybeName = m[0].replace(/^[\s(]/, '').replace(/[\s,.;)]$/, '')
+    maybeRegNames[maybeName] = true
   }
-  // TODO: search text
-  return regs
+  return Object.keys(maybeRegNames)
 }
 
-export const findSignatureInText = (html: HTMLText) => {
-  const htmlDiv = document.createElement('div')
-  htmlDiv.innerHTML = html
-  // FIXME: .Dags elements are not always present.
-  // Instead loop through the last N paragraphs.
-  const innertext = htmlDiv.querySelectorAll('.Dags')[0]
+// ---------------------------------------------------------------------------
+
+export const findSignatureInText = (
+  html: HTMLText,
+  ministries: ReadonlyArray<RegulationMinistry>,
+) => {
+  const paragraphs = Array.from(asDiv(html).querySelectorAll('p')).slice(-40)
 
   const threeLetterMonths = [
     'jan',
@@ -171,28 +203,46 @@ export const findSignatureInText = (html: HTMLText) => {
     'nóv',
     'des',
   ]
+  const undirskrRe = /^(.+?ráðuneyti)(?:ð|nu),? (\d{1,2})\.? (jan|feb|mar|apr|maí|jún|júl|ágú|sep|okt|nóv|des)(?:\.|[a-záðéíóúýþæö]+)? (2\d{3}).?$/i
 
-  const undirskrRe = /^(.+?ráðuneyti)(?:ð|nu),? (\d{1,2})\.? (jan|feb|mar|apr|maí|jún|júl|ágú|sep|okt|nóv|des)(?:\.|\w+)? (2\d{3}).?$/i
-  const text = innertext?.textContent?.trim().replace(/\s+/g, ' ')
-  const m = text?.match(undirskrRe)
+  let match: RegExpMatchArray | false | null = false
 
-  const ministryName = m?.[1]
-  const dayOfMonth = m?.[2]
-  const monthIndex = m?.[3]
-    ? threeLetterMonths.indexOf(m[3].toLowerCase())
-    : undefined
-  const year = m?.[4]
+  // Side-effect `Array#find` to perform one-pass search and assign to `_match`.
+  paragraphs.reverse().find((elm) => {
+    const textContent = elm.textContent || ''
+    if (!/ráðuneyti/i.test(textContent)) {
+      return false
+    }
+    match = textContent.trim().replace(/\s+/g, ' ').match(undirskrRe)
+    console.log('FOOBAR BB-2', {
+      cleanText: textContent.trim().replace(/\s+/g, ' '),
+      match,
+    })
+    return !!match
+  })
 
-  const signatureDate =
-    monthIndex && year && dayOfMonth
-      ? set(new Date(), {
-          year: parseInt(year, 10),
-          month: monthIndex,
-          date: parseInt(dayOfMonth, 10),
-        })
-      : undefined
+  if (!match) {
+    return {}
+  }
+  const [
+    _,
+    ministryName,
+    dayOfMonth,
+    monthName,
+    year,
+  ] = match as RegExpMatchArray
 
-  return { ministryName, signatureDate }
+  const signatureDate = set(new Date(), {
+    date: parseInt(dayOfMonth),
+    month: threeLetterMonths.indexOf(monthName.toLowerCase()),
+    year: parseInt(year),
+  })
+  const ministrySlug = ministries.find((m) => m.name === ministryName)?.slug
+
+  return {
+    ministrySlug,
+    signatureDate,
+  }
 }
 
 //
@@ -203,26 +253,6 @@ export const findRegulationType = (title: PlainText): RegulationType =>
   /^Reglugerð um (?:\((\d+\.)\) )?breytingu á reglugerð /i.test(title)
     ? 'amending'
     : 'base'
-
-export const getAllGuessableValues = (text: HTMLText, title: string) => {
-  const { ministryName, signatureDate } = findSignatureInText(text)
-  const regulationTypeValue = findRegulationType(title)
-
-  return {
-    ministry: {
-      value: ministryName as MinistrySlug,
-      guessed: true,
-    },
-    signatureDate: {
-      value: signatureDate,
-      guessed: true,
-    },
-    type: {
-      value: regulationTypeValue,
-      guessed: true,
-    },
-  }
-}
 
 // ---------------------------------------------------------------------------
 

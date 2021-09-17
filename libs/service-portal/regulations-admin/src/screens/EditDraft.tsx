@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useNamespaces } from '@island.is/localization'
 import { RegulationDraftId } from '@island.is/regulations/admin'
 import { isUuid } from 'uuidv4'
 import { EditBasics } from '../components/EditBasics'
@@ -20,6 +20,8 @@ import {
 } from '../state/useDraftingState'
 import { DraftIdFromParam } from '../state/types'
 import { MessageDescriptor } from 'react-intl'
+import { DraftingNotes } from '../components/DraftingNotes'
+import { useLocale } from '../utils'
 
 // ---------------------------------------------------------------------------
 
@@ -109,6 +111,8 @@ const EditDraft = () => {
       ) : (
         <SkeletonLoader height={120} repeat={2} space={3} />
       )}
+
+      {draft && <DraftingNotes draft={draft} actions={actions} />}
 
       <ButtonBar id={id} stepNav={stepNav} actions={actions} />
     </Fragment>

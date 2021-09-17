@@ -1,36 +1,24 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import {
   Box,
   Button,
   Column,
   Columns,
   DatePicker,
+  Input,
   Option,
   Select,
 } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
 import { StepComponent } from '../state/useDraftingState'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import {
-  RegulationLawChapter,
-  RegulationMinistry,
-} from '@island.is/regulations/web'
+import { RegulationLawChapter } from '@island.is/regulations/web'
 import { editorMsgs as msg } from '../messages'
-import { emptyOption, findValueOption } from '../utils'
+import { findValueOption, useLocale } from '../utils'
 import { regulationTypes } from '../utils/constants'
-import {
-  MinistrySlug,
-  LawChapterSlug,
-  RegulationType,
-} from '@island.is/regulations'
+import { LawChapterSlug, RegulationType } from '@island.is/regulations'
 import { LawChaptersSelect } from './LawChaptersSelect'
-
-const MinistriesQuery = gql`
-  query DraftRegulationMinistriesQuery {
-    getDraftRegulationsMinistries
-  }
-`
+import { useMinistriesQuery } from '@island.is/service-portal/graphql'
 
 const LawChaptersQuery = gql`
   query DraftRegulationsLawChaptersQuery {
@@ -41,55 +29,36 @@ const LawChaptersQuery = gql`
 // ---------------------------------------------------------------------------
 
 export const EditMeta: StepComponent = (props) => {
-  const t = useIntl().formatMessage
+  const { formatMessage: t, formatDateFns } = useLocale()
   const { draft, actions } = props
   const { updateState, updateLawChapterProp } = actions
-  // const textRef = useRef(() => draft.text)
 
-  // FIXME: Remove the any typing on these...
-  const ministryQuery = useQuery<Query>(MinistriesQuery)
   const lawChapterQuery = useQuery<Query>(LawChaptersQuery)
-
-  const ministries = ministryQuery.data
-    ?.getDraftRegulationsMinistries as RegulationMinistry[]
   const lawChapters = lawChapterQuery.data
     ?.getDraftRegulationsLawChapters as RegulationLawChapter[]
 
-  const ministryOptions = useMemo((): ReadonlyArray<Option> => {
-    return [
-      emptyOption(t(msg.ministryPlaceholder)),
-      ...(ministries || []).map((m) => ({
-        value: m.slug,
-        label: m.name,
-      })),
-    ]
-  }, [ministries, t])
+  const { ministries } = useMinistriesQuery()
+  const ministryName = (ministries || []).find(
+    (m) => m.slug === draft.ministry.value,
+  )?.name
 
   return (
     <>
       <Columns space={3} collapseBelow="lg">
         <Column>
           <Box marginBottom={3}>
-            <Select
+            <Input
               label={t(msg.ministry)}
-              name="rn"
-              isSearchable
-              placeholder={t(msg.ministry)}
-              value={findValueOption(ministryOptions, draft.ministry.value)}
-              options={ministryOptions}
-              required
-              errorMessage={t(msg.requiredFieldError)}
-              hasError={!!draft.ministry.error}
-              onChange={(option) =>
-                updateState(
-                  'ministry',
-                  (option as Option).value as MinistrySlug,
-                )
-              }
+              value={ministryName || draft.ministry.value}
+              placeholder={t(msg.ministryPlaceholder)}
+              name="_rn"
               size="sm"
+              backgroundColor="blue"
+              readOnly
             />
           </Box>
         </Column>
+
         <Column>
           <Box marginBottom={3}>
             <Select
@@ -117,18 +86,21 @@ export const EditMeta: StepComponent = (props) => {
       <Columns space={3} collapseBelow="lg">
         <Column>
           <Box marginBottom={3}>
-            <DatePicker
+            <Input
               label={t(msg.signatureDate)}
+              value={
+                draft.signatureDate.value &&
+                formatDateFns(draft.signatureDate.value, 'dd/mm/yyyy')
+              }
+              placeholder={t(msg.signatureDatePlaceholder)}
+              name="_signatureDate"
               size="sm"
-              placeholderText={t(msg.signatureDate)}
-              selected={draft.signatureDate.value}
-              required
-              errorMessage={t(msg.requiredFieldError)}
-              hasError={!!draft.signatureDate.error}
-              handleChange={(date: Date) => updateState('signatureDate', date)}
+              backgroundColor="blue"
+              readOnly
             />
           </Box>
         </Column>
+
         <Column>
           <Box marginBottom={3}>
             <DatePicker

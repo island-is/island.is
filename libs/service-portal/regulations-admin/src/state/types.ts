@@ -13,6 +13,7 @@ import {
 } from '@island.is/regulations'
 import { Kennitala, RegulationType } from '@island.is/regulations'
 import { Step } from '../types'
+import { RegulationMinistry } from '@island.is/regulations/web'
 
 export type DraftIdFromParam = 'new' | RegulationDraftId
 
@@ -82,16 +83,17 @@ export type DraftingState = {
   loading?: boolean
   error?: Error
   draft?: RegDraftForm
+  ministries: ReadonlyArray<RegulationMinistry>
 }
 
 // -----------------------------
 
-export type NameValuePair<O extends Record<string, any>> = {
-  [Key in keyof O]: {
+export type NameValuePair = {
+  [Key in RegDraftFormSimpleProps]: {
     name: Key
-    value: O[Key]
+    value: RegDraftForm[Key]['value']
   }
-}[keyof O]
+}[RegDraftFormSimpleProps]
 
 export type RegDraftFormSimpleProps =
   | 'title'
@@ -107,12 +109,32 @@ export type RegDraftFormSimpleProps =
   | 'authors'
 
 export type Action =
-  | { type: 'CHANGE_STEP'; stepName: Step }
-  | { type: 'LOADING_DRAFT' }
-  | { type: 'LOADING_DRAFT_SUCCESS'; draft: RegulationDraft }
-  | { type: 'LOADING_DRAFT_ERROR'; error: Error }
-  | { type: 'SAVING_STATUS' }
-  | { type: 'SAVING_STATUS_DONE'; error?: Error }
+  | {
+      type: 'CHANGE_STEP'
+      stepName: Step
+    }
+  | {
+      type: 'LOADING_DRAFT'
+    }
+  | {
+      type: 'LOADING_DRAFT_ERROR'
+      error: Error
+    }
+  | {
+      type: 'LOADING_DRAFT_SUCCESS'
+      draft: RegulationDraft
+    }
+  | {
+      type: 'MINISTRIES_LOADED'
+      ministries: ReadonlyArray<RegulationMinistry>
+    }
+  | {
+      type: 'SAVING_STATUS'
+    }
+  | {
+      type: 'SAVING_STATUS_DONE'
+      error?: Error
+    }
   | {
       type: 'UPDATE_LAWCHAPTER_PROP'
       action?: 'add' | 'delete'
@@ -122,10 +144,12 @@ export type Action =
       type: 'UPDATE_MULTIPLE_PROPS'
       multiData: Partial<RegDraftForm>
     }
-  | ({ type: 'UPDATE_PROP' } & NameValuePair<
-      Pick<RegDraftForm, RegDraftFormSimpleProps>
-    >)
-  | { type: 'SHIP' }
+  | ({
+      type: 'UPDATE_PROP'
+    } & NameValuePair)
+  | {
+      type: 'SHIP'
+    }
 
 export type ActionName = Action['type']
 

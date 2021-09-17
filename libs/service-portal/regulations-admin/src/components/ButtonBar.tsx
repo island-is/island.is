@@ -2,9 +2,9 @@ import * as s from './ButtonBar.treat'
 
 import React from 'react'
 import { Box, Button } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
 import { buttonsMsgs as msg } from '../messages'
 import { StepNav } from '../state/types'
+import { useLocale } from '../utils'
 // import { SaveDeleteButtons } from './SaveDeleteButtons'
 
 export type ButtonBarProps = {
@@ -21,7 +21,7 @@ export type ButtonBarProps = {
 
 export const ButtonBar = (props: ButtonBarProps) => {
   const { stepNav, actions } = props
-  const t = useIntl().formatMessage
+  const t = useLocale().formatMessage
 
   return (
     <Box className={s.wrapper} marginTop={[4, 4, 6]} paddingTop={3}>
@@ -50,7 +50,9 @@ export const ButtonBar = (props: ButtonBarProps) => {
         </Box>
       )}
 
-      {/* <SaveDeleteButtons id={props.id} actions={actions} classes={s} /> */}
+      {/*
+      <SaveDeleteButtons id={props.id} actions={actions} classes={s} />
+      */}
 
       {actions.propose && (
         <Box className={s.propose}>

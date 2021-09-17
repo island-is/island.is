@@ -9,7 +9,6 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
 import { StepComponent } from '../state/useDraftingState'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -18,6 +17,7 @@ import {
   emptyOption,
   findAffectedRegulationsInText,
   findValueOption,
+  useLocale,
 } from '../utils'
 import { RegName } from '@island.is/regulations'
 
@@ -34,7 +34,7 @@ import { mockRegulationOptions, useMockQuery } from '../_mockData'
 export const EditReview: StepComponent = (props) => {
   const { draft, actions } = props
   // const { ... } = actions
-  const t = useIntl().formatMessage
+  const t = useLocale().formatMessage
 
   return (
     <Box marginY={[4, 4, 8]}>

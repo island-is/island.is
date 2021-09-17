@@ -141,8 +141,8 @@ export const editorMsgs = defineMessages({
     defaultMessage: 'Ráðuneyti',
   },
   ministryPlaceholder: {
-    id: 'ap.regulations-admin:draft-labels-choose-ministry',
-    defaultMessage: 'Veldu ráðuneyti',
+    id: 'ap.regulations-admin:draft-placeholder-ministry',
+    defaultMessage: 'Lesið úr undirritun reglugerðar',
   },
 
   lawChapter: {
@@ -165,6 +165,10 @@ export const editorMsgs = defineMessages({
   signatureDate: {
     id: 'ap.regulations-admin:draft-labels-signaturedate',
     defaultMessage: 'Undirritunardagur',
+  },
+  signatureDatePlaceholder: {
+    id: 'ap.regulations-admin:draft-placeholder-signaturedate',
+    defaultMessage: 'Lesin úr undirritun reglugerðar',
   },
 
   effectiveDate: {

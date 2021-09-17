@@ -9,7 +9,6 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
 import { StepComponent } from '../state/useDraftingState'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -18,6 +17,7 @@ import {
   emptyOption,
   findAffectedRegulationsInText,
   findValueOption,
+  useLocale,
 } from '../utils'
 import { RegName } from '@island.is/regulations'
 
@@ -34,7 +34,7 @@ import { mockRegulationOptions, useMockQuery } from '../_mockData'
 export const EditImpacts: StepComponent = (props) => {
   const { draft, actions } = props
   // const { ... } = actions
-  const t = useIntl().formatMessage
+  const t = useLocale().formatMessage
   // const textRef = useRef(() => draft.text)
 
   const regTitle = draft.title.value
@@ -69,7 +69,7 @@ export const EditImpacts: StepComponent = (props) => {
 
   return (
     <>
-      {JSON.stringify(mentionRegNames)}
+      <pre>{JSON.stringify(mentionRegNames, null, 2)}</pre>
 
       <Box marginBottom={3}>
         <Select

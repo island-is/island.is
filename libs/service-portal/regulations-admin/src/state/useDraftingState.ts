@@ -1,13 +1,21 @@
 import { useMutation, gql } from '@apollo/client'
 import { HTMLText, LawChapterSlug, PlainText } from '@island.is/regulations'
-import { useRegulationDraftQuery } from '@island.is/service-portal/graphql'
+import {
+  useMinistriesQuery,
+  useRegulationDraftQuery,
+} from '@island.is/service-portal/graphql'
 import { useAuth } from '@island.is/auth/react'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { FC, Reducer, useEffect, useMemo, useReducer } from 'react'
 import { produce, setAutoFreeze } from 'immer'
 import { useHistory, generatePath } from 'react-router-dom'
 import { Step } from '../types'
-import { getAllGuessableValues, getInputFieldsWithErrors } from '../utils'
+import {
+  findRegulationType,
+  findSignatureInText,
+  getInputFieldsWithErrors,
+  useLocale,
+} from '../utils'
 import { mockSave } from '../_mockData'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
 import {
@@ -24,9 +32,9 @@ import {
   RegDraftFormSimpleProps,
   Action,
   ActionName,
+  NameValuePair,
 } from './types'
 import { uuid } from 'uuidv4'
-import { useIntl } from 'react-intl'
 import { buttonsMsgs } from '../messages'
 
 export const CREATE_DRAFT_REGULATION_MUTATION = gql`
@@ -165,6 +173,41 @@ const getEmptyDraft = (): RegulationDraft => ({
 
 // ---------------------------------------------------------------------------
 
+const guessFromTitle = (state: DraftingState, newTitle?: PlainText) => {
+  if (!state.draft) return
+  const draft = state.draft
+  const type = draft.type
+  if (newTitle !== draft.title.value && (!type.value || type.guessed)) {
+    type.value = findRegulationType(newTitle ?? draft.title.value)
+    type.guessed = true
+  }
+}
+
+const specialUpdates: {
+  [Prop in RegDraftFormSimpleProps]?: (
+    state: DraftingState,
+    newValue: RegDraftForm[Prop]['value'],
+  ) => RegDraftForm[Prop]['value'] | null | void
+} = {
+  title: guessFromTitle,
+
+  text: (state, newValue) => {
+    if (!state.draft) return
+    const draft = state.draft
+    const text = draft.text
+    if (newValue !== text.value) {
+      const { ministrySlug, signatureDate } = findSignatureInText(
+        newValue,
+        state.ministries,
+      )
+      draft.ministry.value = ministrySlug
+      draft.signatureDate.value = signatureDate
+    }
+  },
+}
+
+// ---------------------------------------------------------------------------
+
 /* eslint-disable @typescript-eslint/naming-convention */
 const actionHandlers: {
   [Type in ActionName]: (
@@ -181,12 +224,17 @@ const actionHandlers: {
     return
   },
 
+  MINISTRIES_LOADED: (state, { ministries }) => {
+    state.ministries = ministries
+  },
+
   LOADING_DRAFT: (state) => {
     state.loading = true
   },
   LOADING_DRAFT_SUCCESS: (state, { draft }) => {
     state.loading = false
     state.draft = makeDraftForm(draft)
+    guessFromTitle(state)
   },
   LOADING_DRAFT_ERROR: (state, { error }) => {
     state.loading = false
@@ -207,8 +255,20 @@ const actionHandlers: {
       return
     }
     const prop = state.draft[name]
-    // @ts-expect-error  (FML! type matching of name and value is guaranteed, but TS can't tell)
+
+    const specialUpdater = specialUpdates[name]
+    specialUpdater &&
+      specialUpdater(
+        state,
+        // @ts-expect-error  (Pretty sure I'm holding this correctly,
+        // and TS is in the weird here.
+        // Name and value are intrinsically linked both in this action's
+        // arguments and in the `specialUpdaters` signature.)
+        value,
+      )
+
     prop.value = value
+    prop.guessed = false
     prop.error = !prop.value ? 'empty' : undefined
   },
 
@@ -281,12 +341,14 @@ const getInitialState = (args: {
       stepName,
       loading: false,
       draft: makeDraftForm(getEmptyDraft()),
+      ministries: [],
     }
   }
   return {
     isEditor,
     stepName,
     loading: true,
+    ministries: [],
   }
 }
 
@@ -301,7 +363,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     throw new Error()
   }
 
-  const t = useIntl().formatMessage
+  const t = useLocale().formatMessage
 
   const [state, dispatch] = useReducer(
     draftingStateReducer,
@@ -314,6 +376,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     isNew && !state.error,
     draftId,
   )
+  const { ministries } = useMinistriesQuery()
 
   const [deleteDraftRegulationMutation] = useMutation(
     DELETE_DRAFT_REGULATION_MUTATION,
@@ -324,15 +387,17 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
   }, [stepName])
 
   useEffect(() => {
+    if (ministries) {
+      dispatch({ type: 'MINISTRIES_LOADED', ministries })
+    }
     if (loading) {
       dispatch({ type: 'LOADING_DRAFT' })
-      return
     } else if (error) {
       dispatch({ type: 'LOADING_DRAFT_ERROR', error })
-    } else if (draft) {
+    } else if (draft && ministries) {
       dispatch({ type: 'LOADING_DRAFT_SUCCESS', draft })
     }
-  }, [loading, error, draft])
+  }, [loading, error, draft, ministries])
 
   const [createDraftRegulation] = useMutation(CREATE_DRAFT_REGULATION_MUTATION)
   const [updateDraftRegulationById] = useMutation(
@@ -379,15 +444,6 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
                     multiData: errorFields,
                   })
                   return // Prevent the user going forward
-                } else {
-                  const guessableValues = getAllGuessableValues(
-                    state.draft?.text.value as HTMLText,
-                    state.draft?.title.value as PlainText,
-                  )
-                  dispatch({
-                    type: 'UPDATE_MULTIPLE_PROPS',
-                    multiData: guessableValues,
-                  })
                 }
               }
 
@@ -508,6 +564,10 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
           console.error('delete draft regulation error: ', e)
           return
         }
+      },
+
+      updateDraftingNotes: (value: HTMLText) => {
+        dispatch({ type: 'UPDATE_PROP', name: 'draftingNotes', value })
       },
 
       updateLawChapterProp: (
