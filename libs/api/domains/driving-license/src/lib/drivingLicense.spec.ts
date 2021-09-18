@@ -133,9 +133,7 @@ describe('DrivingLicenseService', () => {
 
   describe('getDrivingAssessmentResult', () => {
     it('should return a valid assessment when applicable', async () => {
-      const response = await service.getDrivingAssessment(
-        MOCK_NATIONAL_ID,
-      )
+      const response = await service.getDrivingAssessment(MOCK_NATIONAL_ID)
 
       expect(response).toStrictEqual({
         studentNationalId: MOCK_NATIONAL_ID,
