@@ -5,12 +5,6 @@ import { UberChart } from './uber-chart'
 import { ValueFile, FeatureKubeJob } from './types/output-types'
 
 const MAX_LEVEL_DEPENDENCIES = 20
-const dumpOpts = {
-  sortKeys: true,
-  noRefs: true,
-  schema: DEFAULT_FULL_SCHEMA,
-  forceQuotes: true,
-}
 
 const renderValueFile = (
   uberChart: UberChart,
@@ -52,7 +46,11 @@ const renderValueFile = (
 
 export const reformatYaml = (content: string): string => {
   const obj = safeLoad(content, { json: true })
-  return dump(obj, dumpOpts)
+  return dump(obj, {
+    sortKeys: true,
+    noRefs: true,
+    schema: DEFAULT_FULL_SCHEMA,
+  })
 }
 
 export const generateYamlForEnv = (
@@ -63,7 +61,11 @@ export const generateYamlForEnv = (
 }
 
 export const dumpYaml = (valueFile: ValueFile | FeatureKubeJob) =>
-  dump(valueFile, dumpOpts)
+  dump(valueFile, {
+    sortKeys: true,
+    noRefs: true,
+    schema: DEFAULT_FULL_SCHEMA,
+  })
 
 const findDependencies = (
   uberChart: UberChart,
