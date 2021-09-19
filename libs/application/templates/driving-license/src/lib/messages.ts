@@ -607,11 +607,13 @@ export const m = defineMessages({
   actionCardDraft: {
     id: 'dl.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',
-    description: 'Description of application state/status when the application is in progress',
+    description:
+      'Description of application state/status when the application is in progress',
   },
   actionCardPayment: {
     id: 'dl.application:actionCardPayment',
     defaultMessage: 'Greiðslu vantar',
-    description: 'Description of application state/status when payment is pending',
+    description:
+      'Description of application state/status when payment is pending',
   },
 })

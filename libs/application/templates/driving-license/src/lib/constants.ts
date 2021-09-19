@@ -1,4 +1,4 @@
-import { DefaultEvents } from "@island.is/application/core";
+import { DefaultEvents } from '@island.is/application/core'
 
 export type Events =
   | { type: DefaultEvents.SUBMIT }

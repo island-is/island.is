@@ -12,9 +12,11 @@ import DrivingLicenseTemplate from './drivingLicenseTemplate'
 
 const MOCK_APPLICANT_NATIONAL_ID = '1234567890'
 
-function buildApplication(data: {
-  state?: string
-} = {}): Application {
+function buildApplication(
+  data: {
+    state?: string
+  } = {},
+): Application {
   const { state = States.DRAFT } = data
 
   return {
@@ -49,7 +51,7 @@ describe('Driving License Application Template', () => {
     it('should transition from payment to done', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
-          state: States.PAYMENT
+          state: States.PAYMENT,
         }),
         DrivingLicenseTemplate,
       )
