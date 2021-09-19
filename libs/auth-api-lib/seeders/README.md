@@ -2,16 +2,20 @@
 
 You can define clients and scopes for production using seed migrations in the `seeders/data` folder.
 
-These are generally for "island.is" clients and scopes that need to be deployed to our dev, staging and prod environments. Other organisations will eventually get access to a self-service interface and should not need to manage their data in all IDS environments.
+These are generally "island.is" clients and scopes that need to be deployed to our dev, staging and prod environments. Other organisations will eventually get access to a self-service interface and should not need to manage their data in all IDS environments.
 
 ## Defining seed migrations
 
 First, create a TypeScript module with a file name describing your new client or scope, prefixed with `client-` or `scope-` respectively. E.g. `scooe-finance.ts`.
 
 {% hint style="info" %}
-The filename is important in that Sequelize uses the filename to deduplicate seed migrations. Each seed migration is run only once in each environment.
+The filename is important in that Sequelize uses the filename to deduplicate seed migrations. Each seed migration runs only once in each environment. This means you should avoid renaming migrations after they've run in some environments.
+{% endhint %}
 
-Also, the seed migrations run in alphabetized order based on file names. Generally we need to seed `clients` before seeding `scopes` which is the reason for these filename prefixes.
+{% hint style="info" %}
+Seed migrations run in alphabetized order based on file names, which means that `client-*.ts` migrations are run before `scope-*.ts` migrations.
+
+If you're creating data that is connected and migrated in the same release, make sure that one (e.g. the client) is created first and then connect them when creating the other one (e.g. the `addToClients` option on the scope).
 {% endhint %}
 
 {% hint style="warning" %}
@@ -124,15 +128,25 @@ export const up = compose(
     name: '@island.is/test',
     displayName: 'Test',
     description: 'Bla',
-    addToClients: ['@island.is/clients/national-registry'],
+    addToClients: ['@island.is/test'],
   }),
   createScope({
     name: '@island.is/test2',
     displayName: 'Test 2',
     description: 'Bla',
-    addToClients: ['@island.is/clients/national-registry'],
+    addToClients: ['@island.is/test'],
   }),
 )
 ```
 
 Please keep in mind the order of filenames if there are dependencies between seed migrations in the same release.
+
+## Error handling and create/update logic
+
+These helpers will generally catch and log database errors that correspond to unique index conflicts.
+
+This means that it's generally safe to define the same data in a seed migration as well as in the IDS admin. The migration will ignore any data that already exists.
+
+It works on a row by row basis. The migration will not update any existing data, but it will add new rows/relations when they don't exist.
+
+> Let's say you specify a client X in a seed migration that is allowed to use scopes A and B. If client X is already defined in `dev` with scope A when the migration runs, it will only add scope B as an allowed scope for client X. The seed migration may still create client X on `staging` and `prod` if it doesn't exist already.

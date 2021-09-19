@@ -160,7 +160,7 @@
   - [@island.is/auth/react](libs/auth/react/README.md)
   - [Auth Scopes](libs/auth/scopes/README.md)
 - [Auth API Lib](libs/auth-api-lib/README.md)
-  - [Migrating Data in the IDS](libs/auth-api-lib/seeders/data/README.md)
+  - [Migrating Data in the IDS](libs/auth-api-lib/seeders/README.md)
 - [Auth Nest Tools](libs/auth-nest-tools/README.md)
 - [Clients](libs/clients/README.md)
   - [Auth Public API Client](libs/clients/auth-public-api/README.md)
