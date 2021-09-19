@@ -100,6 +100,14 @@ export const GetMunicipalityQuery = gql`
   }
 `
 
+export const GetMunicipalityIdQuery = gql`
+  query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
+    municipality(input: $input) {
+      id
+    }
+  }
+`
+
 export const CurrentUserQuery = gql`
   query CurrentUserQuery {
     currentUser {
