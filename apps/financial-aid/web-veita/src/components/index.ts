@@ -1,7 +1,7 @@
 export { default as Nav } from './Nav/Nav'
 export { default as Profile } from './Profile/Profile'
 export { default as AdminLayout } from './AdminLayout/AdminLayout'
-export { default as LogoHfj } from './LogoHfj/index'
+export { default as LogoMuni } from './LogoMuni/index'
 export { default as ApplicationsTable } from './ApplicationsTable/ApplicationsTable'
 export { default as GeneratedProfile } from './Generator/GeneratedProfile'
 export { default as GenerateName } from './Generator/GenerateName'
