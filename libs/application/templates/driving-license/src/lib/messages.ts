@@ -604,4 +604,14 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar úr ökuskírteinaskrá',
     description: 'Information from driving license registry',
   },
+  actionCardDraft: {
+    id: 'dl.application:actionCardDraft',
+    defaultMessage: 'Í vinnslu',
+    description: 'Description of application state/status when the application is in progress',
+  },
+  actionCardPayment: {
+    id: 'dl.application:actionCardPayment',
+    defaultMessage: 'Greiðslu vantar',
+    description: 'Description of application state/status when payment is pending',
+  },
 })
