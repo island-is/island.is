@@ -14,7 +14,7 @@ import { MockedAuthenticator, MockUser } from '@island.is/auth/react'
 import { Features, MockedFeatureFlagProvider } from '@island.is/feature-flags'
 import { UserMenu } from './UserMenu'
 import { ACTOR_DELEGATIONS } from './actorDelegations.graphql'
-import { ActorDelegationsQuery } from '../../graphql'
+import { ActorDelegationsQuery } from '../../../gen/graphql'
 
 const delegation = {
   name: 'Phil',
