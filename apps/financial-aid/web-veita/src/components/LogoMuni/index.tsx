@@ -5,10 +5,14 @@ import LogoSvg from './LogoSvg'
 import { useQuery } from '@apollo/client'
 import { GetMunicipalityIdQuery } from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
+import { LoadingDots } from '@island.is/island-ui/core'
 
 interface MunicipalityData {
   municipality: {
     id: string
+    settings: {
+      web: string
+    }
   }
 }
 
@@ -33,14 +37,18 @@ const LogoHfj = ({ className }: LogoProps) => {
     errorPolicy: 'all',
   })
 
+  if (!data) {
+    return <LoadingDots />
+  }
+
   return (
     <a
-      href="https://www.hafnarfjordur.is/"
+      href={data?.municipality.settings.web}
       target="_blank"
       rel="noopener noreferrer"
       className={cn({ [`${className}`]: true })}
     >
-      {data && <LogoSvg name={data.municipality.id} />}
+      <LogoSvg name={data?.municipality.id} />
     </a>
   )
 }

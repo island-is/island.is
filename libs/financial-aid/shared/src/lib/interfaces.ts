@@ -33,6 +33,7 @@ export interface Staff {
 }
 
 export interface MunicipalitySettings {
+  web: string
   aid: {
     ownApartmentOrLease: number
     withOthersOrUnknow: number
