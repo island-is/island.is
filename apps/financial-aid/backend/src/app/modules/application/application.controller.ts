@@ -8,7 +8,6 @@ import {
   Put,
   NotFoundException,
   Query,
-  ForbiddenException,
 } from '@nestjs/common'
 
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
