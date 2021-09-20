@@ -1,21 +1,14 @@
 import fetch, { Response } from 'node-fetch'
-import FormData from 'form-data'
+
 import * as kennitala from 'kennitala'
 import format from 'date-fns/format'
 import { Cache as CacheManager } from 'cache-manager'
-import { Injectable, Inject, CACHE_MANAGER } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 
-import {
-  GenericDrivingLicenseResponse,
-  PkPassServiceDriversLicenseResponse,
-  PkPassServiceErrorResponse,
-  PkPassServiceTokenResponse,
-  PkPassServiceVerifyDriversLicenseResponse,
-  PkPassVerifyResult,
-} from './genericDrivingLicense.type'
+import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
 import { parseDrivingLicensePayload } from './drivingLicenseMappers'
 import {
   CONFIG_PROVIDER,
@@ -26,11 +19,11 @@ import {
   PkPassVerificationError,
 } from '../../licenceService.type'
 import { Config } from '../../licenseService.module'
+import { PkPassClient } from './pkpass.client'
+import { PkPassPayload } from './pkpass.type'
 
-const CACHE_KEY = 'smartsolution:apitoken'
-
-// Set TTL to less than given expiry from service
-const CACHE_TOKEN_EXPIRY_DELTA_IN_MS = 2000
+/** Category to attach each log message to */
+const LOG_CATEGORY = 'drivinglicense-service'
 
 // PkPass service wants dates in DD-MM-YYYY format
 const dateToPkpassDate = (date: string): string => {
@@ -53,26 +46,24 @@ export class GenericDrivingLicenseApi
   private readonly xroadPath: string
   private readonly xroadSecret: string
 
-  private readonly pkpassApiKey: string
-  private readonly pkpassSecretKey: string
-  private readonly pkpassApiUrl: string
+  private pkpassClient: PkPassClient
 
   constructor(
     @Inject(CONFIG_PROVIDER) private config: Config,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private cacheManager?: CacheManager | null,
   ) {
+    // TODO inject the actual RLS x-road client
     this.xroadApiUrl = config.xroad.baseUrl
     this.xroadClientId = config.xroad.clientId
     this.xroadPath = config.xroad.path
     this.xroadSecret = config.xroad.secret
 
-    this.pkpassApiKey = config.pkpass.apiKey
-    this.pkpassSecretKey = config.pkpass.secretKey
-    this.pkpassApiUrl = config.pkpass.apiUrl
-
     this.logger = logger
     this.cacheManager = cacheManager
+
+    // TODO this should be injected by nest
+    this.pkpassClient = new PkPassClient(config, logger, cacheManager)
   }
 
   private headers() {
@@ -100,6 +91,7 @@ export class GenericDrivingLicenseApi
       this.logger.error('Unable to query for drivers licence', {
         exception: e,
         url,
+        category: LOG_CATEGORY,
       })
       return null
     }
@@ -111,6 +103,7 @@ export class GenericDrivingLicenseApi
       this.logger.error('Unable to parse JSON for drivers licence', {
         exception: e,
         url,
+        category: LOG_CATEGORY,
       })
       return null
     }
@@ -126,12 +119,16 @@ export class GenericDrivingLicenseApi
     )
 
     if (!response) {
-      logger.warn('Falsy result from drivers license response', {})
+      logger.warn('Falsy result from drivers license response', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
     if (!Array.isArray(response)) {
-      logger.warn('Expected drivers license response to be an array')
+      logger.warn('Expected drivers license response to be an array', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
@@ -163,109 +160,9 @@ export class GenericDrivingLicenseApi
     return licenses
   }
 
-  private async getCachedGetPkPassToken(): Promise<string | null> {
-    if (!this.cacheManager) {
-      return null
-    }
-
-    const cached = await this.cacheManager.get(CACHE_KEY)
-
-    if (cached && typeof cached === 'string') {
-      return cached
-    }
-
-    return null
-  }
-
-  private parseTtlFromTokenExpiry(expiry?: string | null): number | null {
-    if (!expiry) {
-      return null
-    }
-
-    try {
-      const parsed: number =
-        Date.parse(expiry) - Date.now() - CACHE_TOKEN_EXPIRY_DELTA_IN_MS
-
-      if (parsed > 0) {
-        return parsed
-      }
-    } catch (e) {
-      this.logger.verbose('unable to parse datetime from token', {
-        exception: e,
-      })
-    }
-
-    return null
-  }
-
-  private async getPkPassToken(): Promise<string | null> {
-    let res: Response | null = null
-
-    const cachedToken = await this.getCachedGetPkPassToken()
-
-    if (cachedToken) {
-      this.logger.verbose('using cached token for pkpass service')
-      return cachedToken
-    }
-
-    try {
-      res = await fetch(`${this.pkpassApiUrl}/getDriversLicenseAccessToken`, {
-        headers: {
-          apiKey: this.pkpassApiKey,
-          secretKey: this.pkpassSecretKey,
-        },
-      })
-
-      if (!res.ok) {
-        throw new Error(
-          `Expected 200 status for pkpass token service, got ${res.status}`,
-        )
-      }
-    } catch (e) {
-      this.logger.warn('Unable to get pkpass access token', {
-        exception: e,
-      })
-      return null
-    }
-
-    let json: unknown
-    try {
-      json = await res.json()
-    } catch (e) {
-      this.logger.warn('Unable to parse JSON for pkpass token service', {
-        exception: e,
-      })
-      return null
-    }
-
-    const response = json as PkPassServiceTokenResponse
-
-    const token = response.data?.ACCESS_TOKEN
-
-    if (response.status === 1 && token) {
-      const ttl = this.parseTtlFromTokenExpiry(response.data?.EXPIRED_ON)
-      if (this.cacheManager && ttl) {
-        try {
-          await this.cacheManager.set(CACHE_KEY, token, { ttl })
-        } catch (e) {
-          this.logger.warn('Unable to cache token for pkpass service')
-        }
-      }
-
-      return token
-    }
-
-    this.logger.warn('pkpass service response does not include access token', {
-      serviceStatus: response.status,
-      serviceMessage: response.message,
-    })
-
-    return null
-  }
-
   private drivingLicenseToPkpassPayload(
     license: GenericDrivingLicenseResponse,
-  ) {
+  ): PkPassPayload {
     return {
       nafn: license.nafn,
       gildirTil: dateToPkpassDate(license.gildirTil ?? ''),
@@ -298,20 +195,13 @@ export class GenericDrivingLicenseApi
     }
   }
 
-  async getPkPassUrl(nationalId: User['nationalId']): Promise<string | null> {
-    return this.getPkPassUrlByNationalId(nationalId)
-  }
-
   async getPkPassUrlByNationalId(nationalId: string): Promise<string | null> {
-    const accessToken = await this.getPkPassToken()
-
-    if (!accessToken) {
-      return null
-    }
-
     const licenses = await this.requestFromXroadApi(nationalId)
 
     if (!licenses) {
+      this.logger.warn('Missing licenses, null from x-road', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
@@ -320,75 +210,18 @@ export class GenericDrivingLicenseApi
     if (!license) {
       this.logger.warn(
         'Missing license, unable to generate pkpass for drivers license',
+        { category: LOG_CATEGORY },
       )
       return null
     }
-
-    let res: Response | null = null
 
     const payload = this.drivingLicenseToPkpassPayload(license)
 
-    try {
-      res = await fetch(`${this.pkpassApiUrl}/v2/driversLicense`, {
-        method: 'POST',
-        headers: {
-          apiKey: this.pkpassApiKey,
-          accessToken: `smart ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      })
-    } catch (e) {
-      this.logger.warn('Unable to get pkpass drivers license ', {
-        exception: e,
-      })
-      return null
-    }
+    return this.pkpassClient.getPkPassUrl(payload)
+  }
 
-    if (!res.ok) {
-      const responseErrors: PkPassServiceErrorResponse = {}
-      try {
-        const json = await res.json()
-        responseErrors.message = json?.message ?? undefined
-        responseErrors.status = json?.status ?? undefined
-        responseErrors.data = json?.data ?? undefined
-      } catch {
-        // noop
-      }
-
-      this.logger.warn(
-        'Expected 200 status for pkpass drivers license service',
-        {
-          status: res.status,
-          statusText: res.statusText,
-          ...responseErrors,
-        },
-      )
-      return null
-    }
-
-    let json: unknown
-    try {
-      json = await res.json()
-    } catch (e) {
-      this.logger.warn('Unable to parse JSON for pkpass service', {
-        exception: e,
-      })
-      return null
-    }
-
-    const response = json as PkPassServiceDriversLicenseResponse
-
-    if (response.status === 1 && response.data?.pass_url) {
-      return response.data.pass_url
-    }
-
-    this.logger.warn('pkpass service response does not include pass_url', {
-      serviceStatus: response.status,
-      serviceMessage: response.message,
-    })
-
-    return null
+  async getPkPassUrl(nationalId: User['nationalId']): Promise<string | null> {
+    return this.getPkPassUrlByNationalId(nationalId)
   }
 
   /**
@@ -403,6 +236,9 @@ export class GenericDrivingLicenseApi
     const licenses = await this.requestFromXroadApi(nationalId)
 
     if (!licenses) {
+      this.logger.warn('Missing licenses, null from x-road', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
@@ -420,120 +256,13 @@ export class GenericDrivingLicenseApi
     return this.getLicense(nationalId)
   }
 
-  async verifyPkpassByPdf417(
-    pdf417Text: string,
-  ): Promise<PkPassVerifyResult | null> {
-    const accessToken = await this.getPkPassToken()
-
-    if (!accessToken) {
-      return null
-    }
-
-    let res: Response | null = null
-
-    try {
-      const formData = new FormData()
-      formData.append('pdf417Text', pdf417Text)
-
-      const authHeaders = {
-        apiKey: this.pkpassApiKey,
-        accessToken: `smart ${accessToken}`,
-      }
-
-      res = await fetch(`${this.pkpassApiUrl}/verifyDriversLicense`, {
-        method: 'POST',
-        headers: { ...authHeaders, ...formData.getHeaders() },
-        body: formData.getBuffer().toString(),
-      })
-    } catch (e) {
-      this.logger.warn('Unable to verify pkpass drivers license', {
-        exception: e,
-      })
-      return null
-    }
-
-    if (!res.ok) {
-      const responseErrors: PkPassServiceErrorResponse = {}
-      try {
-        // Service returns 400 for invalid data with details in the body
-        const json = await res.json()
-        responseErrors.message = json?.message ?? undefined
-        responseErrors.status = json?.status ?? undefined
-        responseErrors.data = json?.data ?? undefined
-      } catch {
-        // noop
-      }
-
-      // If we don't have a status in the body and a non-200 response, log it
-      if (!responseErrors.status) {
-        let message =
-          'Expected 200 status or 400 status with info in message for pkpass verify drivers license service'
-
-        if (res.status === 400) {
-          message =
-            'Expected 400 status with info in message for pkpass verify drivers license service'
-        }
-
-        this.logger.warn(message, {
-          status: res.status,
-          statusText: res.statusText,
-          ...responseErrors,
-        })
-      }
-
-      return {
-        valid: false,
-        error: {
-          statusCode: res.status,
-          serviceError: responseErrors,
-        },
-      }
-    }
-
-    let json: unknown
-    try {
-      json = await res.json()
-    } catch (e) {
-      this.logger.warn('Unable to parse JSON for verify pkpass service', {
-        exception: e,
-      })
-      return null
-    }
-
-    const response = json as PkPassServiceVerifyDriversLicenseResponse
-
-    if (response.status !== 1) {
-      this.logger.warn('verify pkpass service response status is not "1"', {
-        serviceStatus: response.status,
-        serviceMessage: response.message,
-      })
-      return null
-    }
-
-    if (!response.data?.kennitala) {
-      this.logger.warn(
-        'verify pkpass service response does not include "kennitala" but returned status "1"',
-        {
-          serviceStatus: response.status,
-          serviceMessage: response.message,
-        },
-      )
-
-      return {
-        valid: true,
-      }
-    }
-
-    return {
-      valid: true,
-      nationalId: response.data.kennitala,
-    }
-  }
-
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
-    const result = await this.verifyPkpassByPdf417(data)
+    const result = await this.pkpassClient.verifyPkpassByPdf417(data)
 
     if (!result) {
+      this.logger.warn('Missing pkpass verify from client', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
@@ -559,6 +288,12 @@ export class GenericDrivingLicenseApi
         message: result.error.serviceError?.message || 'Unknown error',
         data,
       }
+
+      return {
+        valid: false,
+        data: undefined,
+        error,
+      }
     }
 
     let response:
@@ -569,14 +304,28 @@ export class GenericDrivingLicenseApi
       const nationalId = result.nationalId.replace('-', '')
       const licenses = await this.requestFromXroadApi(nationalId)
 
+      if (!licenses) {
+        this.logger.warn(
+          'Missing licenses from x-road, unable to return license info for pkpass verify',
+          { category: LOG_CATEGORY },
+        )
+        error = {
+          status: '0',
+          message: 'missing licenses',
+        }
+      }
+
+      const licenseNationalId = licenses?.[0]?.kennitala ?? null
       const name = licenses?.[0]?.nafn ?? null
       const photo = licenses?.[0]?.mynd ?? null
 
+      const rawData = licenses?.[0] ? JSON.stringify(licenses?.[0]) : undefined
+
       response = {
-        nationalId: result.nationalId,
+        nationalId: licenseNationalId,
         name,
         photo,
-        rawData: JSON.stringify(licenses?.[0]),
+        rawData,
       }
     }
 
