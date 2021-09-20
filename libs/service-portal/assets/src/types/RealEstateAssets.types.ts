@@ -47,6 +47,7 @@ export type Notkunareining = {
 
   byggingarAr: string | number
   birtStaerd: string | number
+  byggingararBirting: string
 
   fasteignamat: Fasteignamat
   lodarmat: number | null

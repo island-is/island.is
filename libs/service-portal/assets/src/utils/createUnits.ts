@@ -78,6 +78,14 @@ const unitsArray = (data: Fasteign, formatMessage: FormatMessage) =>
             title: formatMessage(messages.operation),
             value: unit.starfsemi || '',
           },
+          {
+            title: 'Stærð',
+            value: `${unit.birtStaerd} m²` || '',
+          },
+          {
+            title: 'Byggingarár',
+            value: unit.byggingararBirting || '',
+          },
         ],
         2,
       ),
