@@ -15,8 +15,7 @@ export const payment: Form = buildForm({
   id: 'DrivingLicenseApplicationPaymentForm',
   title: '',
   mode: FormModes.APPLYING,
-  renderLastScreenButton:
-    true && !!window.document.location.href.match(/\?done$/),
+  renderLastScreenButton: false,
   children: [
     buildSection({
       id: 'awaitingPayment',
@@ -59,19 +58,6 @@ export const payment: Form = buildForm({
               component: 'ExamplePaymentPendingField',
               id: 'paymentPendingField',
               title: '',
-            }),
-            buildSubmitField({
-              id: 'submitAlreadyPaid',
-              placement: 'footer',
-              title: '',
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: m.continue,
-                  type: 'primary',
-                },
-              ],
             }),
           ],
         }),

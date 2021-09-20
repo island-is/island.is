@@ -1,3 +1,4 @@
+import { Cache as CacheManager } from 'cache-manager'
 import { Module, DynamicModule, CacheModule } from '@nestjs/common'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -62,10 +63,15 @@ export class LicenseServiceModule {
           provide: GENERIC_LICENSE_FACTORY,
           useFactory: () => async (
             type: GenericLicenseType,
+            cacheManager: CacheManager,
           ): Promise<GenericLicenseClient<unknown> | null> => {
             switch (type) {
               case GenericLicenseType.DriversLicense:
-                return new GenericDrivingLicenseApi(config, logger, null)
+                return new GenericDrivingLicenseApi(
+                  config,
+                  logger,
+                  cacheManager,
+                )
               default:
                 return null
             }
