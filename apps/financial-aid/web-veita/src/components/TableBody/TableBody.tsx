@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import { Text, Box, Button } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
@@ -9,6 +9,7 @@ import {
   Application,
   getState,
   getMonth,
+  ApplicationState,
 } from '@island.is/financial-aid/shared/lib'
 
 import {
@@ -20,12 +21,20 @@ import {
   calcDifferenceInDate,
   getTagByState,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
+import { useApplicationState } from '../../utils/useApplicationState'
+import { AdminContext } from '../AdminProvider/AdminProvider'
 
 interface PageProps {
   application: Application
 }
 
 const TableBody = ({ application }: PageProps) => {
+  const changeApplicationState = useApplicationState()
+
+  // TODO: Remove state and context when we reload the page when we change the state of application
+  const [staffName, setStaffName] = useState(application.staff?.name)
+  const { admin } = useContext(AdminContext)
+
   return (
     <Link href={'application/' + application.id}>
       <tr className={styles.link}>
@@ -74,10 +83,17 @@ const TableBody = ({ application }: PageProps) => {
             [`${styles.tablePadding} `]: true,
           })}
         >
-          {application.staff?.name ? (
-            <Text>{application.staff?.name}</Text>
+          {staffName ? (
+            <Text>{staffName}</Text>
           ) : (
-            <Button variant="text" onClick={() => console.log('bla')}>
+            <Button
+              variant="text"
+              onClick={(ev) => {
+                ev.stopPropagation()
+                changeApplicationState(application, ApplicationState.INPROGRESS)
+                setStaffName(admin?.name)
+              }}
+            >
               Sjá um
             </Button>
           )}
