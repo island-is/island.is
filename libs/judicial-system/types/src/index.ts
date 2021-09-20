@@ -10,7 +10,8 @@ export type {
   SendNotificationResponse,
 } from './lib/notification'
 
-export { CaseFileState } from './lib/file'
+export { CaseFileState, UploadState } from './lib/file'
+
 export type {
   PresignedPost,
   CreatePresignedPost,
@@ -22,6 +23,7 @@ export type {
   UploadFileToCourtResponse,
   CaseFile,
   CreateFile,
+  CaseFileStatus,
 } from './lib/file'
 
 export { UserRole, courtRoles } from './lib/user'

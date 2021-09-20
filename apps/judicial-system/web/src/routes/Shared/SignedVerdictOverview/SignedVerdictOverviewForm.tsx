@@ -9,7 +9,6 @@ import {
   Tag,
   Text,
   Tooltip,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -28,6 +27,7 @@ import {
   CaseDecision,
   CaseType,
   InstitutionType,
+  UploadState,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -46,9 +46,11 @@ import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { useIntl } from 'react-intl'
+import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 
 interface Props {
   workingCase: Case
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   setAccusedAppealDate: () => void
   setProsecutorAppealDate: () => void
   withdrawAccusedAppealDate: () => void
@@ -60,12 +62,12 @@ interface Props {
   setSelectedSharingInstitutionId: React.Dispatch<
     React.SetStateAction<ValueType<ReactSelectOption>>
   >
-  onUploadFileToCourtButtonClick: (files?: UploadFile[]) => Promise<void>
 }
 
 const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   const {
     workingCase,
+    setWorkingCase,
     setAccusedAppealDate,
     setProsecutorAppealDate,
     withdrawAccusedAppealDate,
@@ -73,12 +75,15 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     shareCaseWithAnotherInstitution,
     selectedSharingInstitutionId,
     setSelectedSharingInstitutionId,
-    onUploadFileToCourtButtonClick,
   } = props
   const router = useRouter()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { prosecutorsOffices } = useInstitution()
+  const { handleUploadFileToCourtButtonClick, uploadState } = useCourtUpload(
+    workingCase,
+    setWorkingCase,
+  )
 
   /**
    * If the case is not rejected it must be accepted because
@@ -328,9 +333,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             <Box display="flex" justifyContent="flexEnd">
               <Button
                 size="small"
-                onClick={() =>
-                  onUploadFileToCourtButtonClick(workingCase.files)
-                }
+                onClick={() => handleUploadFileToCourtButtonClick()}
+                loading={uploadState === UploadState.UPLOADING}
+                disabled={uploadState === UploadState.UPLOADING}
               >
                 {formatMessage(signedVerdictOverview.uploadToAudurButtonText)}
               </Button>
