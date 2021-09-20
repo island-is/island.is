@@ -204,7 +204,7 @@ export class DrivingLicenseService {
         },
       )
     } catch (e) {
-      if (e.status === 404) {
+      if (e?.status === 404) {
         return null
       }
 
