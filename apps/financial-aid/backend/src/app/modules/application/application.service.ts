@@ -50,6 +50,7 @@ export class ApplicationService {
   async findById(id: string): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
+      include: [{ model: StaffModel, as: 'staff' }],
     })
 
     const files = await this.fileService.getAllApplicationFiles(id)

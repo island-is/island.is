@@ -34,6 +34,9 @@ export const GetApplicationQuery = gql`
       studentCustom
       amount
       rejection
+      staff {
+        name
+      }
     }
   }
 `
