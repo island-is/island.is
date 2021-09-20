@@ -1,4 +1,4 @@
-import { DEFAULT_FULL_SCHEMA, dump, safeLoad, safeLoadAll } from 'js-yaml'
+import { DEFAULT_FULL_SCHEMA, dump, load } from 'js-yaml'
 import { postgresIdentifier, serializeService } from './map-to-values'
 import { PostgresInfo, Service } from './types/input-types'
 import { UberChart } from './uber-chart'
@@ -51,7 +51,7 @@ const renderValueFile = (
 }
 
 export const reformatYaml = (content: string): string => {
-  const obj = safeLoad(content, { json: true })
+  const obj = load(content, { json: true })
   return dump(obj, dumpOpts)
 }
 
