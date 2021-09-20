@@ -110,6 +110,7 @@
 
 - [API](libs/api/README.md)
   - [Domains](libs/api/domains/README.md)
+    - [API Domains Assets](libs/api/domains/assets/README.md)
     - [Document Provider API](libs/api/domains/document-provider/README.md)
     - [API Domains Driving License](libs/api/domains/driving-license/README.md)
     - [API Domains Education](libs/api/domains/education/README.md)
@@ -162,6 +163,7 @@
 - [Auth API Lib](libs/auth-api-lib/README.md)
 - [Auth Nest Tools](libs/auth-nest-tools/README.md)
 - [Clients](libs/clients/README.md)
+  - [Clients Assets](libs/clients/assets/README.md)
   - [Auth Public API Client](libs/clients/auth-public-api/README.md)
   - [Clients Document Provider](libs/clients/document-provider/README.md)
   - [Documents (Pósthólf)](libs/clients/documents/README.md)
