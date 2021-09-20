@@ -42,6 +42,103 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
         return {
           fixture: 'confirmingCaseJudge',
         }
+      } else if (
+        graphqlRequest.body.variables.input.id === 'conclusion_rejected'
+      ) {
+        return {
+          fixture: 'conclusion/rejected',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id ===
+        'conclusion_accepted_without_isolation'
+      ) {
+        return {
+          fixture: 'conclusion/acceptedWithoutIsolation',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id ===
+        'conclusion_accepted_with_isolation'
+      ) {
+        return {
+          fixture: 'conclusion/acceptedWithIsolation',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id ===
+        'conclusion_accepted_with_isolation_isolation_ends_before_custody'
+      ) {
+        return {
+          fixture: 'conclusion/acceptedWithIsolationIsolationEndsBeforeCustody',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id ===
+        'conclusion_rejected_with_alternative_travel_ban'
+      ) {
+        return {
+          fixture: 'conclusion/rejectedWithAlternativeTravelBan',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id ===
+        'conclusion_rejected_extension'
+      ) {
+        return {
+          fixture: 'conclusion/rejectedExtension',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id ===
+        'conclusion_rejected_extension_previous_decision_travel_ban'
+      ) {
+        return {
+          fixture: 'conclusion/rejectedExtensionPreviousDecisionTravelBan',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id ===
+        'conclusion_accepted_extension'
+      ) {
+        return {
+          fixture: 'conclusion/acceptedExtension',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id ===
+        'conclusion_accepted_extension_previous_decision_travel_ban'
+      ) {
+        return {
+          fixture: 'conclusion/acceptedExtensionPreviousDecisionTravelBan',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id ===
+        'conclusion_rejected_extension_accepted_alternative_travel_ban'
+      ) {
+        return {
+          fixture: 'conclusion/rejectedExtensionAcceptedAlternativeTravelBan',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id ===
+        'conclusion_rejected_extension_accepted_alternative_travel_ban_previous_decision_travel_ban'
+      ) {
+        return {
+          fixture:
+            'conclusion/rejectedExtensionAcceptedAlternativeTravelBanPreviousDecisionTravelBan',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id ===
+        'conclusion_rejected_travel_ban'
+      ) {
+        return {
+          fixture: 'conclusion/rejectedTravelBan',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id ===
+        'conclusion_accepted_travel_ban'
+      ) {
+        return {
+          fixture: 'conclusion/acceptedTravelBan',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id === 'test_id_without_decision'
+      ) {
+        return {
+          fixture: 'withoutDecision',
+        }
       }
     } else if (graphqlRequest.body.query.includes('TransitionCaseMutation')) {
       return {

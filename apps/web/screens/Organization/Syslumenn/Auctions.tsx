@@ -140,7 +140,7 @@ const OFFICE_LOCATIONS: OfficeLocation[] = [
   },
   {
     filterLabel: ' - Blönduós',
-    slugValue: 'syslumadurinn-a-nordurlandi-vestra-bolnduos',
+    slugValue: 'syslumadurinn-a-nordurlandi-vestra-blonduos',
     office: 'Sýslumaðurinn á Norðurlandi vestra',
     location: 'Blönduós',
   },
@@ -542,8 +542,8 @@ const Auctions: Screen<AuctionsProps> = ({
         <GridRow>
           <GridColumn
             paddingTop={[0, 0, 0]}
-            paddingBottom={[4, 4, 2]}
-            span="4/12"
+            paddingBottom={2}
+            span={['12/12', '12/12', '12/12', '12/12', '4/12']}
           >
             <Select
               backgroundColor="white"
@@ -567,9 +567,8 @@ const Auctions: Screen<AuctionsProps> = ({
             />
           </GridColumn>
           <GridColumn
-            paddingTop={[2, 2, 0]}
-            paddingBottom={[4, 4, 2]}
-            span="4/12"
+            paddingBottom={2}
+            span={['12/12', '12/12', '12/12', '6/12', '4/12']}
           >
             <Select
               backgroundColor="white"
@@ -593,9 +592,8 @@ const Auctions: Screen<AuctionsProps> = ({
             />
           </GridColumn>
           <GridColumn
-            paddingTop={[2, 2, 0]}
-            paddingBottom={[4, 4, 2]}
-            span="4/12"
+            paddingBottom={2}
+            span={['12/12', '12/12', '12/12', '6/12', '4/12']}
           >
             <DatePicker
               label={n('auctionFilterDateLabel', 'Dagsetning')}
@@ -608,11 +606,7 @@ const Auctions: Screen<AuctionsProps> = ({
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn
-            paddingTop={[2, 2, 0]}
-            paddingBottom={[1, 1, 1]}
-            span="12/12"
-          >
+          <GridColumn paddingBottom={[1, 1, 1]} span={'12/12'}>
             <Input
               name="homestaySearchInput"
               placeholder={n('auctionFilterSearch', 'Leita eftir uppboði')}
@@ -629,10 +623,11 @@ const Auctions: Screen<AuctionsProps> = ({
         display="flex"
         alignItems="flexEnd"
         flexDirection="column"
+        paddingTop={2}
         paddingBottom={3}
       >
         <Text variant="small">
-          Gögn sótt: {format(auctionDataFetched, "d. MMM yyyy 'kl.' hh:mm")}
+          Gögn sótt: {format(auctionDataFetched, "d. MMM yyyy 'kl.' HH:mm")}
         </Text>
       </Box>
       <Box
@@ -655,13 +650,14 @@ const Auctions: Screen<AuctionsProps> = ({
         )}
         {!loading &&
           !error &&
-          filteredAuctions.slice(0, showCount).map((auction) => {
+          filteredAuctions.slice(0, showCount).map((auction, index) => {
             const auctionDate = new Date(auction.auctionDate)
             const auctionPetitioners = auction.petitioners?.split(',')
             const auctionRespondents = auction.respondent?.split(',')
 
             return (
               <Box
+                key={`auction-${index}`}
                 borderWidth="standard"
                 borderColor="standard"
                 borderRadius="standard"
@@ -672,7 +668,12 @@ const Auctions: Screen<AuctionsProps> = ({
                 <Box
                   alignItems="flexStart"
                   display="flex"
-                  flexDirection="row"
+                  flexDirection={[
+                    'columnReverse',
+                    'columnReverse',
+                    'columnReverse',
+                    'row',
+                  ]}
                   justifyContent="spaceBetween"
                 >
                   <Text variant="eyebrow" color="purple400" paddingTop={1}>
@@ -682,7 +683,9 @@ const Auctions: Screen<AuctionsProps> = ({
                       KNOWN_LOCATIONS.includes(auction.location) &&
                       ' - ' + auction.location}
                   </Text>
-                  <Tag disabled>{auction.office}</Tag>
+                  <Box marginBottom={[2, 2, 2, 0]}>
+                    <Tag disabled>{auction.office}</Tag>
+                  </Box>
                 </Box>
                 <Box>
                   <Text variant="h3">{auction.lotName}</Text>

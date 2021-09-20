@@ -48,4 +48,11 @@ export const injuredPersonInformation = {
       description: 'Telephone number',
     },
   }),
+  upload: defineMessages({
+    uploadHeader: {
+      id: 'an.application:powerOfAttorney.upload.uploadHeader',
+      defaultMessage: 'Dragðu áverkavottorð hingað til að hlaða upp',
+      description: 'Definition of upload header',
+    },
+  }),
 }

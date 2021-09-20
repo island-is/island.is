@@ -3,9 +3,9 @@ import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-r
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
 import {
   CaseCustodyRestrictions,
-  CaseDecision,
   CaseGender,
   CaseType,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -61,11 +61,8 @@ export const laws = {
   _95_1_C: 'c-lið 1. mgr. 95. gr.',
   _95_1_D: 'd-lið 1. mgr. 95. gr.',
   _95_2: '2. mgr. 95. gr.',
-  _97_3: '3. mgr. 97. gr.',
-  _98_2: '2. mgr. 98. gr.',
   _99_1_B: 'b-lið 1. mgr. 99. gr.',
   _100_1: '1. mgr. 100. gr. sml.',
-  _115_1: '1. mgr. 115. gr. útll.',
 }
 
 export const caseTypes = {
@@ -324,65 +321,6 @@ export const formatRequestedCustodyRestrictions = (
   return `${requestedCustodyRestrictionsText}${paragraphBreak}${requestedOtherRestrictionsText}`
 }
 
-// This function is always called with case type CUSTODY or TRAVEL_BAN
-export function formatConclusion(
-  type: CaseType,
-  accusedNationalId: string,
-  accusedName?: string,
-  accusedGender?: CaseGender,
-  decision?: CaseDecision,
-  validToDate?: Date,
-  isolation?: boolean,
-  isExtension?: boolean,
-  previousDecision?: CaseDecision,
-  isolationToDate?: Date,
-): string {
-  const isolationEndsBeforeValidToDate =
-    validToDate && isolationToDate && validToDate > isolationToDate
-
-  return decision === CaseDecision.REJECTING
-    ? `Kröfu um að ${formatAccusedByGender(
-        accusedGender,
-      )}, ${accusedName}, kt. ${formatNationalId(accusedNationalId)}, sæti${
-        isExtension && previousDecision === CaseDecision.ACCEPTING
-          ? ' áframhaldandi'
-          : ''
-      } ${type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'} er hafnað.`
-    : `${capitalize(
-        formatAccusedByGender(accusedGender),
-      )}, ${accusedName}, kt. ${formatNationalId(
-        accusedNationalId,
-      )}, skal sæta ${
-        decision === CaseDecision.ACCEPTING
-          ? `${
-              isExtension && previousDecision === CaseDecision.ACCEPTING
-                ? 'áframhaldandi '
-                : ''
-            }${type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'}`
-          : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            `${
-              isExtension &&
-              previousDecision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                ? 'áframhaldandi '
-                : ''
-            }farbanni`
-      }, þó ekki lengur en til ${formatDate(validToDate, 'PPPPp')
-        ?.replace('dagur,', 'dagsins')
-        ?.replace(' kl.', ', kl.')}.${
-        decision === CaseDecision.ACCEPTING && isolation
-          ? ` ${capitalize(
-              formatAccusedByGender(accusedGender),
-            )} skal sæta einangrun ${
-              isolationEndsBeforeValidToDate
-                ? `ekki lengur en til ${formatDate(isolationToDate, 'PPPPp')
-                    ?.replace('dagur,', 'dagsins')
-                    ?.replace(' kl.', ', kl.')}.`
-                : 'á meðan á gæsluvarðhaldinu stendur.'
-            }`
-          : ''
-      }`
-}
-
 export function formatGender(gender?: CaseGender): string {
   switch (gender) {
     case CaseGender.MALE:
@@ -393,4 +331,15 @@ export function formatGender(gender?: CaseGender): string {
     default:
       return 'Kynsegin/Annað'
   }
+}
+
+export const areAccusedRightsHidden = (
+  isAccusedAbsent?: boolean,
+  sessionArrangements?: SessionArrangements,
+): boolean => {
+  return isAccusedAbsent
+    ? isAccusedAbsent
+    : sessionArrangements === SessionArrangements.ALL_PRESENT
+    ? false
+    : true
 }

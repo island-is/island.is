@@ -8,7 +8,7 @@ import { defineMessage } from 'react-intl'
 import { useNamespaces } from '@island.is/localization'
 
 export const AssetsVehicles: ServicePortalModuleComponent = () => {
-  useNamespaces(['sp.assets'])
+  useNamespaces('sp.assets')
 
   return (
     <InfoScreen
@@ -26,16 +26,15 @@ export const AssetsVehicles: ServicePortalModuleComponent = () => {
         items: [
           defineMessage({
             id: 'sp.assets:vehicles-inc-1',
-            defaultMessage:
-              'Yfirlit og hægt verður að greiða öll opinber gjöld',
+            defaultMessage: 'Ökutækin mín',
           }),
           defineMessage({
             id: 'sp.assets:vehicles-inc-2',
-            defaultMessage: 'Ganga frá skattskýrsla og sjá eldi skattskýrslur',
+            defaultMessage: 'Eignastöðuvottorð',
           }),
           defineMessage({
             id: 'sp.assets:vehicles-inc-3',
-            defaultMessage: 'Sjá yfirlit og ráðstafa séreignarsparnaði',
+            defaultMessage: 'Ökutækjaferill',
           }),
         ],
       }}

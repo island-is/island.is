@@ -30,11 +30,6 @@ export const companyInfo = {
       defaultMessage: 'Kennitala atvinnurekanda',
       description: 'National ID of employer',
     },
-    companyName: {
-      id: 'an.application:companyInfo.labels.companyName',
-      defaultMessage: 'Nafn atvinnurekanda',
-      description: 'Name of employer',
-    },
     name: {
       id: 'an.application:companyInfo.labels.name',
       defaultMessage: 'Fullt nafn',

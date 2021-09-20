@@ -23,12 +23,10 @@ import { GetOrganizationInput } from './dto/getOrganization.input'
 import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
 import { GetErrorPageInput } from './dto/getErrorPage.input'
 import { Namespace } from './models/namespace.model'
-import { AboutPage } from './models/aboutPage.model'
 import { AlertBanner } from './models/alertBanner.model'
 import { GenericPage } from './models/genericPage.model'
 import { GenericOverviewPage } from './models/genericOverviewPage.model'
 import { GetNamespaceInput } from './dto/getNamespace.input'
-import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
@@ -80,6 +78,15 @@ import { OpenDataSubpage } from './models/openDataSubpage.model'
 import { GetOpenDataSubpageInput } from './dto/getOpenDataSubpage.input'
 import { ProjectPage } from './models/projectPage.model'
 import { GetProjectPageInput } from './dto/getProjectPage.input'
+import { SupportQNA } from './models/supportQNA.model'
+import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
+import { SupportCategory } from './models/supportCategory.model'
+import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
+import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
+import { SupportForm } from './models/supportForm.model'
+import { GetSupportFormInOrganizationInput } from './dto/getSupportFormInOrganization.input'
+import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
+import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
 
 const { cacheTime } = environment
 
@@ -102,14 +109,6 @@ export class CmsResolver {
       input?.namespace ?? '',
       input?.lang ?? 'is-IS',
     )
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => AboutPage)
-  getAboutPage(
-    @Args('input') input: GetAboutPageInput,
-  ): Promise<AboutPage | null> {
-    return this.cmsContentfulService.getAboutPage(input)
   }
 
   @Directive(cacheControlDirective())
@@ -432,6 +431,54 @@ export class CmsResolver {
   ): Promise<SubpageHeader | null> {
     return this.cmsContentfulService.getSubpageHeader(input)
   }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [SupportQNA])
+  getSupportQNAs(
+    @Args('input') input: GetSupportQNAsInput,
+  ): Promise<SupportQNA[]> {
+    return this.cmsContentfulService.getSupportQNAs(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [SupportQNA])
+  getSupportQNAsInCategory(
+    @Args('input') input: GetSupportQNAsInCategoryInput,
+  ): Promise<SupportQNA[]> {
+    return this.cmsContentfulService.getSupportQNAsInCategory(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => SupportCategory)
+  getSupportCategory(
+    @Args('input') input: GetSupportCategoryInput,
+  ): Promise<SupportCategory> {
+    return this.cmsContentfulService.getSupportCategory(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [SupportCategory])
+  getSupportCategories(
+    @Args('input') input: GetSupportCategoriesInput,
+  ): Promise<SupportCategory[]> {
+    return this.cmsContentfulService.getSupportCategories(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [SupportCategory])
+  getSupportCategoriesInOrganization(
+    @Args('input') input: GetSupportCategoriesInOrganizationInput,
+  ): Promise<SupportCategory[]> {
+    return this.cmsContentfulService.getSupportCategoriesInOrganization(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [SupportForm])
+  getSupportFormInOrganization(
+    @Args('input') input: GetSupportFormInOrganizationInput,
+  ): Promise<SupportForm[]> {
+    return this.cmsContentfulService.getSupportFormInOrganization(input)
+  }
 }
 
 @Resolver(() => LatestNewsSlice)
@@ -459,25 +506,5 @@ export class ArticleResolver {
   @ResolveField(() => [Article])
   async relatedArticles(@Parent() article: Article) {
     return this.cmsContentfulService.getRelatedArticles(article.slug, 'is')
-  }
-}
-
-@Resolver(() => AboutSubPage)
-@Directive(cacheControlDirective())
-export class AboutSubPageResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
-
-  @Directive(cacheControlDirective())
-  @ResolveField(() => AboutPage)
-  async parent(@Parent() { parent }: AboutSubPage) {
-    if (parent) {
-      const { lang, id } = parent
-      return this.cmsElasticsearchService.getSingleAboutPage(
-        getElasticsearchIndex(lang),
-        id,
-      )
-    } else {
-      return null
-    }
   }
 }

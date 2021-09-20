@@ -1,8 +1,7 @@
-import { AlertMessage, Button, Inline, Link } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
-import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
-import { Box } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Link } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import React, { FC } from 'react'
 
 type FieldAlertMessageProps = {
   field: {

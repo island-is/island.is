@@ -420,6 +420,7 @@ export const flexWrapXl = styleMap(
 
 const flexShrinkRules = {
   0: 0,
+  1: 1,
 }
 export const flexShrink = styleMap(
   mapToStyleProperty(flexShrinkRules, 'flexShrink'),

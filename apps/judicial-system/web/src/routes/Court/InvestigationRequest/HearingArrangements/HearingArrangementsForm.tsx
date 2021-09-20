@@ -58,7 +58,6 @@ interface Props {
 const HearingArrangementsForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, users } = props
   const [modalVisible, setModalVisible] = useState(false)
-  const [courtroomEM, setCourtroomEM] = useState('')
   const [defenderEmailEM, setDefenderEmailEM] = useState('')
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
   const [courtDateIsValid, setCourtDateIsValid] = useState(true)
@@ -71,9 +70,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
     registrar: {
-      validations: ['empty'],
-    },
-    courtRoom: {
       validations: ['empty'],
     },
   }
@@ -260,6 +256,31 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             </Box>
             <Box marginBottom={2}>
               <RadioButton
+                name="session-arrangements-all-present_spokesperson"
+                id="session-arrangements-all-present_spokesperson"
+                label={formatMessage(
+                  icHearingArrangements.sections.sessionArrangements.options
+                    .allPresentSpokesperson,
+                )}
+                checked={
+                  workingCase.sessionArrangements ===
+                  SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                }
+                onChange={() => {
+                  setAndSendToServer(
+                    'sessionArrangements',
+                    SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <RadioButton
                 name="session-arrangements-prosecutor-present"
                 id="session-arrangements-prosecutor-present"
                 label={formatMessage(
@@ -351,26 +372,20 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   removeTabsValidateAndSet(
                     'courtRoom',
                     event,
-                    ['empty'],
+                    [],
                     workingCase,
                     setWorkingCase,
-                    courtroomEM,
-                    setCourtroomEM,
                   )
                 }
                 onBlur={(event) =>
                   validateAndSendToServer(
                     'courtRoom',
                     event.target.value,
-                    ['empty'],
+                    [],
                     workingCase,
                     updateCase,
-                    setCourtroomEM,
                   )
                 }
-                errorMessage={courtroomEM}
-                hasError={courtroomEM !== ''}
-                required
               />
             </BlueBox>
           </Box>
@@ -531,37 +546,59 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       {modalVisible && (
         <Modal
-          title={formatMessage(icHearingArrangements.modal.heading)}
-          text={formatMessage(icHearingArrangements.modal.text, {
-            announcementSuffix:
-              workingCase.sessionArrangements !==
-                SessionArrangements.ALL_PRESENT || !workingCase.defenderEmail
-                ? '.'
-                : workingCase.defenderIsSpokesperson
-                ? ` og talsmann.`
-                : ` og verjanda.`,
-          })}
+          title={formatMessage(
+            workingCase.sessionArrangements ===
+              SessionArrangements.REMOTE_SESSION
+              ? icHearingArrangements.modal.remoteSessionHeading
+              : icHearingArrangements.modal.heading,
+          )}
+          text={formatMessage(
+            workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+              ? icHearingArrangements.modal.allPresentText
+              : workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+              ? icHearingArrangements.modal.allPresentSpokespersonText
+              : workingCase.sessionArrangements ===
+                SessionArrangements.PROSECUTOR_PRESENT
+              ? icHearingArrangements.modal.prosecutorPresentText
+              : icHearingArrangements.modal.remoteSessionText,
+          )}
           handlePrimaryButtonClick={async () => {
-            const notificationSent = await sendNotification(
-              workingCase.id,
-              NotificationType.COURT_DATE,
-            )
-
-            if (notificationSent) {
+            if (
+              workingCase.sessionArrangements ===
+              SessionArrangements.REMOTE_SESSION
+            ) {
               router.push(
                 `${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
               )
+            } else {
+              const notificationSent = await sendNotification(
+                workingCase.id,
+                NotificationType.COURT_DATE,
+              )
+
+              if (notificationSent) {
+                router.push(
+                  `${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
+                )
+              }
             }
           }}
           handleSecondaryButtonClick={() => {
             router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
           }}
           primaryButtonText={formatMessage(
-            icHearingArrangements.modal.primaryButtonText,
+            workingCase.sessionArrangements ===
+              SessionArrangements.REMOTE_SESSION
+              ? icHearingArrangements.modal.primaryButtonRemoteSessionText
+              : icHearingArrangements.modal.primaryButtonText,
           )}
-          secondaryButtonText={formatMessage(
-            icHearingArrangements.modal.secondaryButtonText,
-          )}
+          secondaryButtonText={
+            workingCase.sessionArrangements ===
+            SessionArrangements.REMOTE_SESSION
+              ? undefined
+              : formatMessage(icHearingArrangements.modal.secondaryButtonText)
+          }
           isPrimaryButtonLoading={isSendingNotification}
         />
       )}

@@ -1,5 +1,5 @@
-import { style } from 'treat'
-import { theme, spacing } from '@island.is/island-ui/theme'
+import { style, globalStyle } from 'treat'
+import { spacing } from '@island.is/island-ui/theme'
 
 export const printText = style({
   '@media': {
@@ -7,9 +7,15 @@ export const printText = style({
       display: 'none !important',
     },
     print: {
-      display: 'block !important',
+      float: 'right',
+      fontSize: 14,
+      paddingTop: 2,
+      marginLeft: spacing[2],
     },
   },
+})
+globalStyle(`${printText} > p`, {
+  fontSize: 'inherit',
 })
 
 export const metaDate = style({

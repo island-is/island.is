@@ -56,7 +56,6 @@ export const HearingArrangements: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [modalVisible, setModalVisible] = useState(false)
-  const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
   const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState('')
   const [
     defenderPhoneNumberErrorMessage,
@@ -135,10 +134,6 @@ export const HearingArrangements: React.FC = () => {
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
       {
-        value: workingCase?.courtRoom ?? '',
-        validations: ['empty'],
-      },
-      {
         value: workingCase?.defenderEmail ?? '',
         validations: ['email-format'],
       },
@@ -189,7 +184,7 @@ export const HearingArrangements: React.FC = () => {
         (notification) => notification.type === NotificationType.COURT_DATE,
       )
     ) {
-      router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+      router.push(`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
     } else {
       setModalVisible(true)
     }
@@ -321,26 +316,20 @@ export const HearingArrangements: React.FC = () => {
                       removeTabsValidateAndSet(
                         'courtRoom',
                         event,
-                        ['empty'],
+                        [],
                         workingCase,
                         setWorkingCase,
-                        courtroomErrorMessage,
-                        setCourtroomErrorMessage,
                       )
                     }
                     onBlur={(event) =>
                       validateAndSendToServer(
                         'courtRoom',
                         event.target.value,
-                        ['empty'],
+                        [],
                         workingCase,
                         updateCase,
-                        setCourtroomErrorMessage,
                       )
                     }
-                    errorMessage={courtroomErrorMessage}
-                    hasError={courtroomErrorMessage !== ''}
-                    required
                   />
                 </BlueBox>
               </Box>
