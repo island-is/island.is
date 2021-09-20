@@ -67,6 +67,7 @@ module.exports = {
     '<rootDir>/libs/api/mocks',
     '<rootDir>/libs/api/domains/api-catalogue',
     '<rootDir>/libs/api/domains/application',
+    '<rootDir>/libs/api/domains/assets',
     '<rootDir>/libs/api/domains/auth',
     '<rootDir>/libs/api/domains/communications',
     '<rootDir>/libs/api/domains/content-search',
@@ -112,6 +113,7 @@ module.exports = {
     '<rootDir>/libs/application/templates/reference-template',
     '<rootDir>/libs/auth/react',
     '<rootDir>/libs/auth/scopes',
+    '<rootDir>/libs/clients/assets',
     '<rootDir>/libs/clients/auth-public-api',
     '<rootDir>/libs/clients/document-provider',
     '<rootDir>/libs/clients/documents',
@@ -173,7 +175,5 @@ module.exports = {
     '<rootDir>/libs/shared/types',
     '<rootDir>/libs/skilavottord/consts',
     '<rootDir>/libs/skilavottord/types',
-    '<rootDir>/libs/api/domains/assets',
-    '<rootDir>/libs/clients/assets',
   ],
 }
