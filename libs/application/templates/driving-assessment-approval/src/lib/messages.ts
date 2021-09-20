@@ -272,7 +272,8 @@ export const m = defineMessages({
   },
   finalAssessmentDescription: {
     id: 'dla.application:finalAssessmentDescription',
-    defaultMessage: 'Tölvupóstur hefur verið sendur á nemanda og honum tilkynnt að ökukennari hafi staðfest að akstursmat hafi farið fram. Nemandi getur nú sótt um fullnaðarskírteini.',
+    defaultMessage:
+      'Tölvupóstur hefur verið sendur á nemanda og honum tilkynnt að ökukennari hafi staðfest að akstursmat hafi farið fram. Nemandi getur nú sótt um fullnaðarskírteini.',
     description: 'Driving assessment received description.',
   },
 })
