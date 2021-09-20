@@ -12,7 +12,7 @@ const ownersArray = (data: Fasteign) => {
       owner.nafn || '',
       formatKennitala(owner.kennitala) || '',
       owner.heimildBirting || '',
-      owner.eignarhlutfall || '',
+      owner.eignarhlutfall ? `${owner.eignarhlutfall * 100}%` : '',
       '-',
     ]
   })
