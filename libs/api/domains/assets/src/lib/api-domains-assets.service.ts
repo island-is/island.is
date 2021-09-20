@@ -46,9 +46,9 @@ export class AssetsXRoadService {
   }
 
   async getRealEstateDetail(assetId: string, auth: User): Promise<any | null> {
-    const singleFasteignResponse = (await this.getRealEstatesWithAuth(
+    const singleFasteignResponse = await this.getRealEstatesWithAuth(
       auth,
-    ).fasteignirGetFasteign({ fasteignanumer: getAssetString(assetId) })) as any
+    ).fasteignirGetFasteign({ fasteignanumer: getAssetString(assetId) })
 
     if (singleFasteignResponse) {
       return singleFasteignResponse
@@ -63,13 +63,13 @@ export class AssetsXRoadService {
     cursor?: string | null,
     limit?: number | null,
   ): Promise<any | null> {
-    const singleFasteignResponse = (await this.getRealEstatesWithAuth(
+    const singleFasteignResponse = await this.getRealEstatesWithAuth(
       auth,
     ).fasteignirGetFasteignEigendur({
       fasteignanumer: assetId,
       cursor: cursor,
       limit: limit,
-    })) as any
+    })
 
     if (singleFasteignResponse) {
       return singleFasteignResponse

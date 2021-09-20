@@ -205,8 +205,8 @@ const autoSchemaFile = environment.production
     }),
     AssetsModule.register({
       xRoadBasePathWithEnv: '',
-      xRoadTjodskraMemberCode: '',
-      xRoadTjodskraApiPath: '',
+      xRoadAssetsMemberCode: '',
+      xRoadAssetsApiPath: '',
       xRoadClientId: '',
     }),
     NationalRegistryXRoadModule.register({

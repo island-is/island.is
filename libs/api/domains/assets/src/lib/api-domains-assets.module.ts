@@ -13,8 +13,8 @@ import { AssetsXRoadService } from './api-domains-assets.service'
 
 export interface AssetsXRoadConfig {
   xRoadBasePathWithEnv: string
-  xRoadTjodskraMemberCode: string
-  xRoadTjodskraApiPath: string
+  xRoadAssetsMemberCode: string
+  xRoadAssetsApiPath: string
   xRoadClientId: string
 }
 
@@ -26,12 +26,6 @@ export class AssetsModule {
       providers: [AssetsXRoadResolver, AssetsXRoadService],
       imports: [
         AssetsClientModule.register({
-          // xRoadPath: createXRoadAPIPath(
-          //   config.xRoadBasePathWithEnv,
-          //   XRoadMemberClass.GovernmentInstitution,
-          //   config.xRoadTjodskraMemberCode,
-          //   config.xRoadTjodskraApiPath,
-          // ),
           xRoadClient: config.xRoadClientId,
         }),
         AuthModule,
