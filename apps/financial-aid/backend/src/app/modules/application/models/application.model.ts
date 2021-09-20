@@ -2,6 +2,7 @@ import {
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   Model,
   Table,
   UpdatedAt,
@@ -17,6 +18,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import { ApplicationFileModel } from '../../file/models'
+import { StaffModel } from '../../staff'
 
 @Table({
   tableName: 'applications',
@@ -185,8 +187,9 @@ export class ApplicationModel extends Model<Application> {
   @ApiProperty()
   rejection: string
 
+  @ForeignKey(() => StaffModel)
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     allowNull: true,
   })
   @ApiProperty()
