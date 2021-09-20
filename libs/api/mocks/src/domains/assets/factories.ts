@@ -66,6 +66,7 @@ export const notkunareining = factory<types.Notkunareining>({
   starfsemi: () => faker.helpers.replaceSymbolWithNumber('Starfsemi ?', '?'),
   lysing: () => faker.helpers.replaceSymbolWithNumber('Lýsing ?', '?'),
   byggingarAr: 2008,
+  byggingararBirting: '2008',
   birtStaerd: () => faker.finance.amount(100, 250, 1),
   fasteignamat: () => fasteignamat(),
   lodarmat: () => faker.random.number({ min: 1000000, max: 5000000 }),
