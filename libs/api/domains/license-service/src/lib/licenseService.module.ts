@@ -63,7 +63,7 @@ export class LicenseServiceModule {
           provide: GENERIC_LICENSE_FACTORY,
           useFactory: () => async (
             type: GenericLicenseType,
-            cacheManager?: CacheManager,
+            cacheManager: CacheManager,
           ): Promise<GenericLicenseClient<unknown> | null> => {
             switch (type) {
               case GenericLicenseType.DriversLicense:

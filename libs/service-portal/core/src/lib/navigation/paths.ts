@@ -54,7 +54,7 @@ export enum ServicePortalPath {
   EducationRoot = '/menntun',
   EducationDegree = '/menntun/profgradur',
   EducationCareer = '/menntun/namsferill',
-  EducationStudentAssessment = '/menntun/namsferill/:nationalId/samraemd-prof',
+  EducationStudentAssessment = '/menntun/namsferill/:familyIndex/samraemd-prof',
   EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
 
   // Education License
