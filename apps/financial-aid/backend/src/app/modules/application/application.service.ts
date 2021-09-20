@@ -25,6 +25,17 @@ export class ApplicationService {
     private readonly applicationEventService: ApplicationEventService,
   ) {}
 
+  async hasAccessToApplication(
+    nationalId: string,
+    id: string,
+  ): Promise<boolean> {
+    const hasApplication = await this.applicationModel.findOne({
+      where: { id, nationalId },
+    })
+
+    return Boolean(hasApplication)
+  }
+
   async getCurrentApplication(
     nationalId: string,
   ): Promise<CurrentApplicationModel | null> {
