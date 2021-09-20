@@ -25,6 +25,8 @@ import {
   RolesRules,
 } from '@island.is/financial-aid/auth'
 
+import { ApplicationGuard } from '../../guards/application.guard'
+
 import type { User } from '@island.is/financial-aid/shared/lib'
 
 import {
@@ -59,7 +61,7 @@ export class ApplicationController {
     return this.applicationService.getAll()
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, ApplicationGuard)
   @Get('applications/:id')
   @ApiOkResponse({
     type: ApplicationModel,
