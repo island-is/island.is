@@ -266,6 +266,7 @@
   },
   "devDependencies": {
     "@anatine/esbuild-decorators": "^0.2.4",
+    "@anatine/esbuildnx": "0.1.18",
     "@babel/core": "7.15.5",
     "@babel/plugin-transform-runtime": "7.15.0",
     "@babel/preset-env": "7.15.6",
@@ -279,7 +280,6 @@
     "@graphql-codegen/typescript-operations": "1.17.15",
     "@graphql-codegen/typescript-react-apollo": "1.17.7",
     "@graphql-codegen/typescript-resolvers": "1.17.9",
-    "@irdnis/esbuildnx": "0.0.4-rc8",
     "@jeremybarbet/contentful-extension-scripts": "0.22.7",
     "@nestjs/schematics": "8.0.3",
     "@nestjs/testing": "8.0.6",
