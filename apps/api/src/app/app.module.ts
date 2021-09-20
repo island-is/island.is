@@ -239,6 +239,9 @@ const autoSchemaFile = environment.production
         apiKey: environment.pkpass.apiKey,
         apiUrl: environment.pkpass.apiUrl,
         secretKey: environment.pkpass.secretKey,
+        cacheKey: environment.pkpass.cacheKey,
+        cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta,
+        authRetries: environment.pkpass.authRetries,
       },
     }),
     PaymentScheduleModule.register({
