@@ -15,15 +15,43 @@ import { RegDraftFormSimpleProps, RegDraftForm } from '../state/types'
 
 import { Option } from '@island.is/island-ui/core'
 import { RegulationMinistry } from '@island.is/regulations/web'
+import { MessageDescriptor, useIntl } from 'react-intl'
 
-type DateFormatter = ReturnType<typeof _useLocale>['formatDateFns']
+type FormatMessageValues = Parameters<
+  ReturnType<typeof useIntl>['formatMessage']
+>[1]
 
 export const useLocale = () => {
-  const data = _useLocale()
+  const data = _useLocale() as Omit<
+    ReturnType<typeof _useLocale>,
+    'formatMessage'
+  > & {
+    formatMessage: typeof formatMessage
+  }
+
   const _formatDateFns = data.formatDateFns
-  const formatDateFns: DateFormatter = (date, format = 'PP') =>
-    _formatDateFns(date, format)
-  data.formatDateFns = formatDateFns
+  data.formatDateFns = (date, format = 'PP') => _formatDateFns(date, format)
+
+  const _formatMessage = data.formatMessage
+
+  function formatMessage(descriptor: undefined): undefined
+  function formatMessage(
+    descriptor: MessageDescriptor | string,
+    values?: FormatMessageValues,
+  ): string
+  function formatMessage(
+    descriptor: MessageDescriptor | string | undefined,
+    values?: FormatMessageValues,
+  ): string | undefined
+
+  function formatMessage(
+    descriptor: MessageDescriptor | string | undefined,
+    values?: FormatMessageValues,
+  ): string | undefined {
+    if (!descriptor) return descriptor
+    return _formatMessage(descriptor, values)
+  }
+  data.formatMessage = formatMessage
 
   return data
 }

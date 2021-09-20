@@ -92,7 +92,7 @@ export const EditImpacts: StepComponent = (props) => {
           selected={effectiveDate}
           handleChange={setEffectiveDate}
           hasError={!!draft.effectiveDate.error}
-          errorMessage={t(msg.requiredFieldError)}
+          errorMessage={t(draft.effectiveDate.error)}
         />
         {!!draft.effectiveDate.value && (
           <Button

@@ -24,8 +24,7 @@ export type MagicTextareaProps = {
   name?: string
   onBlur?: (value: PlainText) => void
   onChange?: (value: PlainText) => void
-  errorMessage?: string
-  hasError?: boolean
+  error?: string
   rows?: number
   required?: boolean
 }
@@ -38,8 +37,7 @@ export const MagicTextarea = (props: MagicTextareaProps) => {
     defaultValue,
     onBlur,
     onChange,
-    errorMessage,
-    hasError,
+    error,
     rows,
     required,
   } = props
@@ -64,8 +62,8 @@ export const MagicTextarea = (props: MagicTextareaProps) => {
         onChange && onChange(e.currentTarget.value)
         setAutoHeightDebounced()
       }}
-      errorMessage={errorMessage}
-      hasError={hasError}
+      hasError={!!error}
+      errorMessage={error}
       required={required}
       textarea
       rows={rows || 1}

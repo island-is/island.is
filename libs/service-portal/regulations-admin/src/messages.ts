@@ -270,15 +270,15 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-legend-changedtitle',
     defaultMessage: 'Uppfærður texti reglugerðar',
   },
-  requiredFieldError: {
-    id: 'ap.regulations-admin:required-field-missing-error',
-    defaultMessage: 'Þessi reitur má ekki vera tómur',
-  },
 })
 
-export const warningMessages = defineMessages({
+export const errorMsgs = defineMessages({
+  fieldRequired: {
+    id: 'ap.regulations-admin:error-field-required',
+    defaultMessage: 'Þessi reitur má ekki vera tómur',
+  },
   impactMissing: {
-    id: 'ap.regulations-admin:warning-impactmissing',
+    id: 'ap.regulations-admin:error-impactmissing',
     defaultMessage:
       'Breytingareglugerð verður að fella einhverja reglugerð úr gildi eða breyta ákvæðum hennar.',
   },

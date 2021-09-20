@@ -12,7 +12,7 @@ import cn from 'classnames'
 type EditorInputProps = Omit<EditorProps, 'name'> & {
   label: string
   // make EditorProps more strict with branded types
-  error?: boolean
+  error?: string
   draftId: string
 }
 

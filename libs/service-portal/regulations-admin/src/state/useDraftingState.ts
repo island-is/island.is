@@ -32,10 +32,9 @@ import {
   RegDraftFormSimpleProps,
   Action,
   ActionName,
-  NameValuePair,
 } from './types'
 import { uuid } from 'uuidv4'
-import { buttonsMsgs } from '../messages'
+import { buttonsMsgs, errorMsgs } from '../messages'
 
 export const CREATE_DRAFT_REGULATION_MUTATION = gql`
   mutation CreateDraftRegulationMutation($input: CreateDraftRegulationInput!) {
@@ -84,18 +83,27 @@ export const steps: Record<Step, StepNav> = {
 
 const makeDraftForm = (
   draft: RegulationDraft,
-  dirty?: boolean,
+  /** Default initial `dirty` state for all fields */
+  dirty?: boolean, //
 ): RegDraftForm => {
-  const f = <T>(value: T): DraftField<T> => ({ value, dirty })
-  const fHtml = (value: HTMLText): HtmlDraftField => ({ value, dirty })
+  const f = <T>(value: T, required?: true): DraftField<T> => ({
+    value,
+    dirty,
+    required,
+  })
+  const fHtml = (value: HTMLText, required?: true): HtmlDraftField => ({
+    value,
+    dirty,
+    required,
+  })
 
   const form: RegDraftForm = {
     id: draft.id,
-    title: f(draft.title),
-    text: fHtml(draft.text),
-    appendixes: draft.appendixes?.map((appendix) => ({
-      title: f(appendix.title),
-      text: fHtml(appendix.text),
+    title: f(draft.title, true),
+    text: fHtml(draft.text, true),
+    appendixes: draft.appendixes.map((appendix) => ({
+      title: f(appendix.title, true),
+      text: fHtml(appendix.text, true),
     })),
     comments: fHtml(draft.comments),
 
@@ -104,26 +112,29 @@ const makeDraftForm = (
     ),
     fastTrack: f(draft.fastTrack || false),
 
-    signatureDate: f(draft.signatureDate && new Date(draft.signatureDate)),
+    signatureDate: f(
+      draft.signatureDate && new Date(draft.signatureDate),
+      true,
+    ),
     effectiveDate: f(draft.effectiveDate && new Date(draft.effectiveDate)),
 
     lawChapters: f((draft.lawChapters || []).map((chapter) => chapter.slug)),
-    ministry: f(draft.ministry?.slug),
-    type: f(draft.type),
+    ministry: f(draft.ministry?.slug, true),
+    type: f(draft.type, true),
 
-    impacts: draft.impacts?.map((impact) =>
+    impacts: draft.impacts.map((impact) =>
       impact.type === 'amend'
         ? {
             id: impact.id,
             type: impact.type,
             name: impact.name,
-            date: f(new Date(impact.date)),
+            date: f(new Date(impact.date), true),
             ...{
-              title: f(impact.title),
-              text: fHtml(impact.text),
+              title: f(impact.title, true),
+              text: fHtml(impact.text, true),
               appendixes: impact.appendixes.map((appendix) => ({
-                title: f(appendix.title),
-                text: fHtml(appendix.text),
+                title: f(appendix.title, true),
+                text: fHtml(appendix.text, true),
               })),
               comments: fHtml(impact.comments),
             },
@@ -138,7 +149,7 @@ const makeDraftForm = (
 
     draftingNotes: fHtml(draft.draftingNotes),
     draftingStatus: draft.draftingStatus,
-    authors: f(draft.authors?.map((author) => author.authorId)),
+    authors: f(draft.authors.map((author) => author.authorId)),
   }
   return form
 }
@@ -269,7 +280,8 @@ const actionHandlers: {
 
     prop.value = value
     prop.guessed = false
-    prop.error = !prop.value ? 'empty' : undefined
+    prop.dirty = true
+    prop.error = !prop.value ? errorMsgs.fieldRequired : undefined
   },
 
   UPDATE_MULTIPLE_PROPS: (state, { multiData }) => {

@@ -3,7 +3,7 @@ import * as s from './Appendixes.treat'
 import { EditorInput } from './EditorInput'
 import React, { MutableRefObject, useMemo } from 'react'
 import { MiniDiff } from './MiniDiff'
-import { editorMsgs as msg } from '../messages'
+import { editorMsgs as msg, errorMsgs } from '../messages'
 import { domid, HTMLText, PlainText } from '@island.is/regulations'
 import { RegulationDraft } from '@island.is/regulations/admin'
 import {
@@ -94,7 +94,7 @@ const Appendix = (props: AppendixProps) => {
             onTextChange && onTextChange(idx)
           }}
           required
-          errorMessage={'' && t(msg.requiredFieldError)}
+          error={'' && t(errorMsgs.fieldRequired)}
           // hasError={!!draft.title?.error}
         />
         {props.isImpact && baseTitle != null && title !== baseTitle && (

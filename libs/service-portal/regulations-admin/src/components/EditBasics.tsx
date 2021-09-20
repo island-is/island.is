@@ -36,8 +36,7 @@ export const EditBasics: StepComponent = (props) => {
           onChange={(value) => {
             updateState('title', value)
           }}
-          errorMessage={t(msg.requiredFieldError)}
-          hasError={!!draft.title?.error}
+          error={t(draft.title.error)}
         />
       </Box>
 
@@ -54,8 +53,7 @@ export const EditBasics: StepComponent = (props) => {
             selected={draft.idealPublishDate.value}
             handleChange={(date: Date) => updateState('idealPublishDate', date)}
             hasError={!!draft.idealPublishDate.error}
-            errorMessage={t(msg.requiredFieldError)}
-            // excludeDates={[]} --> Do we want to exclude holidays and weekends from the calendar?
+            errorMessage={t(draft.idealPublishDate.error)}
           />
           <Checkbox
             label={t(msg.applyForFastTrack)}
@@ -96,7 +94,7 @@ export const EditBasics: StepComponent = (props) => {
                 isImpact={false}
                 draftId={draft.id}
                 valueRef={textRef}
-                error={!!draft.text.error}
+                error={t(draft.text.error)}
                 onBlur={() => {
                   updateState('text', textRef.current())
                 }}

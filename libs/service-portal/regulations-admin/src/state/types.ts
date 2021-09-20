@@ -14,6 +14,7 @@ import {
 import { Kennitala, RegulationType } from '@island.is/regulations'
 import { Step } from '../types'
 import { RegulationMinistry } from '@island.is/regulations/web'
+import { MessageDescriptor } from 'react-intl'
 
 export type DraftIdFromParam = 'new' | RegulationDraftId
 
@@ -23,17 +24,13 @@ export type StepNav = {
   next?: Step
 }
 
-export type DraftFieldExtras = {
-  min: Date
-  max: Date
-}
-
-export type DraftField<Type, Extras extends keyof DraftFieldExtras = never> = {
+export type DraftField<Type> = {
   value: Type
+  required?: boolean
   dirty?: boolean
   guessed?: boolean
-  error?: string
-} & Pick<DraftFieldExtras, Extras>
+  error?: MessageDescriptor
+}
 
 // TODO: Figure out how the Editor components lazy valueRef.current() getter fits into this
 export type HtmlDraftField = DraftField<HTMLText>
@@ -88,7 +85,7 @@ export type DraftingState = {
 
 // -----------------------------
 
-export type NameValuePair = {
+export type FieldNameValuePair = {
   [Key in RegDraftFormSimpleProps]: {
     name: Key
     value: RegDraftForm[Key]['value']
@@ -146,7 +143,7 @@ export type Action =
     }
   | ({
       type: 'UPDATE_PROP'
-    } & NameValuePair)
+    } & FieldNameValuePair)
   | {
       type: 'SHIP'
     }

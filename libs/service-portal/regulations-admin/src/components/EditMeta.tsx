@@ -70,7 +70,7 @@ export const EditMeta: StepComponent = (props) => {
               options={regulationTypes}
               value={findValueOption(regulationTypes, draft.type.value)}
               required
-              errorMessage={t(msg.requiredFieldError)}
+              errorMessage={t(draft.type.error)}
               hasError={!!draft.type.error}
               onChange={(typeOption) =>
                 updateState(
@@ -111,7 +111,7 @@ export const EditMeta: StepComponent = (props) => {
               selected={draft.effectiveDate.value}
               handleChange={(date: Date) => updateState('effectiveDate', date)}
               hasError={!!draft.effectiveDate.error}
-              errorMessage={t(msg.requiredFieldError)}
+              errorMessage={t(draft.effectiveDate.error)}
             />
             {!!draft.effectiveDate.value && (
               <Button
