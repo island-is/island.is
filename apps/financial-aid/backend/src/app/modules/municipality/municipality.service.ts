@@ -22,7 +22,7 @@ export class MunicipalityService {
           withOthersOrUnknow: 157760,
           withParents: 98600,
         },
-        web: 'https://www.hafnarfjordur.is/',
+        homePage: 'https://www.hafnarfjordur.is/',
       },
     }
     return Promise.resolve(mockApplication)

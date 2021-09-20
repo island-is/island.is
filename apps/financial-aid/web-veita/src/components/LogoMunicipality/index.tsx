@@ -11,7 +11,7 @@ interface MunicipalityData {
   municipality: {
     id: string
     settings: {
-      web: string
+      homePage: string
     }
   }
 }
@@ -43,7 +43,7 @@ const LogoMunicipalitycipality = ({ className }: LogoProps) => {
 
   return (
     <a
-      href={data?.municipality.settings.web}
+      href={data?.municipality.settings.homePage}
       target="_blank"
       rel="noopener noreferrer"
       className={cn({ [`${className}`]: true })}
