@@ -76,7 +76,7 @@ export class DelegationsService {
     ])
 
     return uniqBy([...wards, ...companies, ...custom], 'fromNationalId').filter(
-      (delegation) => delegation.fromNationalId === user.nationalId,
+      (delegation) => delegation.fromNationalId !== user.nationalId,
     )
   }
 
@@ -233,6 +233,10 @@ export class DelegationsService {
     authMiddlewareOptions: AuthMiddlewareOptions,
     delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
+    if (delegation.toNationalId === user.nationalId) {
+      throw new BadRequestException(`Can not create delegation to self.`)
+    }
+
     const [fromDisplayName, toName] = await Promise.all([
       this.getUserName(user),
       this.getPersonName(
