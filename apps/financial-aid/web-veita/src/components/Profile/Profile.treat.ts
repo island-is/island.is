@@ -8,7 +8,9 @@ export const container = style({
   width: '100%',
   columnGap: theme.spacing[3],
   rowGap: theme.spacing[4],
-  marginBottom: theme.spacing[7],
+  paddingBottom: theme.spacing[4],
+  marginBottom: theme.spacing[3],
+  overflowX: 'scroll',
 })
 
 export const headings = style({
