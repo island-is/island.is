@@ -74,12 +74,12 @@ const TableBody = ({ application }: PageProps) => {
             [`${styles.tablePadding} `]: true,
           })}
         >
-          {true ? (
+          {application.staff?.name ? (
+            <Text>{application.staff?.name}</Text>
+          ) : (
             <Button variant="text" onClick={() => console.log('bla')}>
               Sjá um
             </Button>
-          ) : (
-            <Text>Starfsmannanafn</Text>
           )}
         </td>
       </tr>

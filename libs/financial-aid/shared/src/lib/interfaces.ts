@@ -167,6 +167,7 @@ export interface Application {
   amount?: number
   comment?: string
   rejection?: string
+  staff?: Staff
 }
 
 export interface GetSignedUrlForId {

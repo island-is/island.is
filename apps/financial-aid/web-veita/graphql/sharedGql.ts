@@ -58,6 +58,9 @@ export const GetApplicationsQuery = gql`
       modified
       created
       state
+      staff {
+        name
+      }
     }
   }
 `

@@ -1,4 +1,5 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -194,4 +195,8 @@ export class ApplicationModel extends Model<Application> {
   })
   @ApiProperty()
   staffId: string
+
+  @BelongsTo(() => StaffModel, 'staffId')
+  @ApiProperty({ type: StaffModel })
+  staff?: StaffModel
 }
