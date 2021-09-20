@@ -45,6 +45,7 @@ const MainPage = () => {
       errorPolicy: 'all',
     },
   )
+
   const currentApplication = useMemo(() => {
     if (data?.application) {
       return data.application
@@ -76,9 +77,8 @@ const MainPage = () => {
         )}
         {error && (
           <Text>
-            {' '}
-            Umsókn ekki fundin eða einhvað fór úrskeiðis, ertu viss þú hefur
-            sótt um?{' '}
+            Umsókn ekki fundin eða einhvað fór úrskeiðis <br />
+            vinsamlegast reyndu síðar
           </Text>
         )}
         {loading && <LoadingDots />}
