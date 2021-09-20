@@ -7,6 +7,9 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+const getAssetString = (str: string) =>
+  str.charAt(0).toLowerCase() === 'f' ? str.substring(1) : str
+
 @Injectable()
 export class AssetsXRoadService {
   constructor(
@@ -45,7 +48,28 @@ export class AssetsXRoadService {
   async getRealEstateDetail(assetId: string, auth: User): Promise<any | null> {
     const singleFasteignResponse = (await this.getRealEstatesWithAuth(
       auth,
-    ).fasteignirGetFasteign({ fasteignanumer: '2084803' })) as any
+    ).fasteignirGetFasteign({ fasteignanumer: getAssetString(assetId) })) as any
+
+    if (singleFasteignResponse) {
+      return singleFasteignResponse
+    }
+
+    throw new Error('Could not fetch fasteignir')
+  }
+
+  async getThinglystirEigendur(
+    assetId: string,
+    auth: User,
+    cursor?: string | null,
+    limit?: number | null,
+  ): Promise<any | null> {
+    const singleFasteignResponse = (await this.getRealEstatesWithAuth(
+      auth,
+    ).fasteignirGetFasteignEigendur({
+      fasteignanumer: assetId,
+      cursor: cursor,
+      limit: limit,
+    })) as any
 
     if (singleFasteignResponse) {
       return singleFasteignResponse

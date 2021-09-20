@@ -21,10 +21,8 @@ export class AssetsClientModule {
       //   basePath: config.xRoadPath,
     })
 
-    console.log('providerConfiguration', providerConfiguration)
     const exportedApis = [FasteignirApi]
 
-    console.log('exportedApis', exportedApis)
     return {
       module: AssetsClientModule,
       providers: exportedApis.map((Api) => ({

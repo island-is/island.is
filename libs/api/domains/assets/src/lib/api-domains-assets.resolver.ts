@@ -16,7 +16,10 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { GetRealEstateInput } from '../dto/getRealEstateInput.input'
+import {
+  GetRealEstateInput,
+  GetPagingTypes,
+} from '../dto/getRealEstateInput.input'
 import { AssetsXRoadService } from './api-domains-assets.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
@@ -37,5 +40,19 @@ export class AssetsXRoadResolver {
     @CurrentUser() user: User,
   ) {
     return this.assetsXRoadService.getRealEstateDetail(input.assetId, user)
+  }
+
+  @Query(() => graphqlTypeJson)
+  @Audit()
+  async getThinglystirEigendur(
+    @Args('input') input: GetPagingTypes,
+    @CurrentUser() user: User,
+  ) {
+    return this.assetsXRoadService.getThinglystirEigendur(
+      input.assetId,
+      user,
+      input.cursor,
+      input.limit,
+    )
   }
 }

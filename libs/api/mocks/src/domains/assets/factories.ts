@@ -79,7 +79,7 @@ export const assetDetail = factory<types.Fasteign>({
   ...fasteign(),
   fasteignamat: () => fasteignamat(),
   thinglystirEigendur: {
-    data: eigandi.list(7),
+    data: eigandi.list(5),
     paging: {
       page: 1,
       pageSize: 5,
@@ -104,7 +104,7 @@ export const assetDetail = factory<types.Fasteign>({
   },
 })
 
-// Test.
+// wip.
 export const pagedThinglystirEigendur = factory<types.ThinglystirEigendurResponse>(
   {
     data: eigandi.list(2),

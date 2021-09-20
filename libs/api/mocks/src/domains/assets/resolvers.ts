@@ -10,6 +10,7 @@ export const resolvers: Resolvers = {
 
   Query: {
     getRealEstates: () => store.getFasteignir,
+    getThinglystirEigendur: () => store.pagedThinglystirEigendur,
     getRealEstateDetail: (_, { input }) => {
       const match = store.detailRealEstateAssets.find(
         (item) => item.fasteignanumer === input.assetId,

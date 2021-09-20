@@ -7,3 +7,20 @@ export class GetRealEstateInput {
   @IsString()
   assetId!: string
 }
+
+@InputType()
+export class GetPagingTypes {
+  @Field()
+  @IsString()
+  assetId!: string
+
+  @Field()
+  @IsString()
+  @Field({ nullable: true })
+  cursor?: string | null
+
+  @Field()
+  @IsString()
+  @Field({ nullable: true })
+  limit?: number | null
+}
