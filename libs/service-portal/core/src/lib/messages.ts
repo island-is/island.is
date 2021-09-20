@@ -289,10 +289,6 @@ export const m = defineMessages({
     id: 'service.portal:loadingData',
     defaultMessage: `Sæki gögn`,
   },
-  userDelegationList: {
-    id: 'service.portal:user-delegation-list',
-    defaultMessage: `Aðgangar/umboð`,
-  },
   info: {
     id: 'service.portal:info',
     defaultMessage: 'Upplýsingar',

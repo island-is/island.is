@@ -1,10 +1,13 @@
 import { createUnionType } from '@nestjs/graphql'
 import { Article, mapArticle } from '../models/article.model'
-import { AboutPage, mapAboutPage } from '../models/aboutPage.model'
 import { AboutSubPage, mapAboutSubPage } from '../models/aboutSubPage.model'
 import { mapSubArticle, SubArticle } from '../models/subArticle.model'
 import { LifeEventPage, mapLifeEventPage } from '../models/lifeEventPage.model'
 import { AdgerdirPage, mapAdgerdirPage } from '../models/adgerdirPage.model'
+import {
+  mapOrganizationPage,
+  OrganizationPage,
+} from '../models/organizationPage.model'
 import {
   AdgerdirFrontpage,
   mapAdgerdirFrontpage,
@@ -15,7 +18,8 @@ import {
   IArticleCategory,
   ILifeEventPage,
   INews,
-  IPage,
+  IOrganizationPage,
+  IOrganizationSubpage,
   ISubArticle,
   IVidspyrnaFrontpage,
   IVidspyrnaPage,
@@ -26,30 +30,33 @@ import {
   ArticleCategory,
   mapArticleCategory,
 } from '../models/articleCategory.model'
+import { mapOrganizationSubpage, OrganizationSubpage } from '@island.is/cms'
 
 export type PageTypes =
   | IArticle
   | ISubArticle
-  | IPage
   | IAboutSubPage
   | ILifeEventPage
   | IVidspyrnaPage
   | IVidspyrnaFrontpage
   | INews
   | IArticleCategory
+  | IOrganizationPage
+  | IOrganizationSubpage
 
 export const PageUnion = createUnionType({
   name: 'Page',
   types: () => [
     Article,
     SubArticle,
-    AboutPage,
     AboutSubPage,
     LifeEventPage,
     AdgerdirPage,
     AdgerdirFrontpage,
     News,
     ArticleCategory,
+    OrganizationPage,
+    OrganizationSubpage,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -62,9 +69,6 @@ export const mapPageUnion = (page: PageTypes): typeof PageUnion => {
     }
     case 'subArticle': {
       return mapSubArticle(page as ISubArticle)
-    }
-    case 'page': {
-      return mapAboutPage(page as IPage)
     }
     case 'aboutSubPage': {
       return mapAboutSubPage(page as IAboutSubPage)
@@ -83,6 +87,12 @@ export const mapPageUnion = (page: PageTypes): typeof PageUnion => {
     }
     case 'articleCategory': {
       return mapArticleCategory(page as IArticleCategory)
+    }
+    case 'organizationPage': {
+      return mapOrganizationPage(page as IOrganizationPage)
+    }
+    case 'organizationSubpage': {
+      return mapOrganizationSubpage(page as IOrganizationSubpage)
     }
     default: {
       throw new ApolloError(`Can not map to page union: ${contentType}`)

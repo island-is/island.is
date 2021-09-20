@@ -2,7 +2,6 @@ import {
   buildCheckboxField,
   buildCustomField,
   buildDataProviderItem,
-  buildDateField,
   buildDescriptionField,
   buildExternalDataProvider,
   buildFileUploadField,
@@ -18,6 +17,7 @@ import {
   FormModes,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
+import { WorkTypeIllustration } from '../assets/WorkTypeIllustration'
 import { NO, UPLOAD_ACCEPT, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import {
@@ -56,6 +56,7 @@ import {
   GeneralWorkplaceAccidentLocationEnum,
   PowerOfAttorneyUploadEnum,
   ProfessionalAthleteAccidentLocationEnum,
+  RescueWorkAccidentLocationEnum,
   StudiesAccidentLocationEnum,
   StudiesAccidentTypeEnum,
   WhoIsTheNotificationForEnum,
@@ -63,9 +64,9 @@ import {
 } from '../types'
 import {
   getAccidentTypeOptions,
+  hideLocationAndPurpose,
   isAboardShip,
   isAgricultureAccident,
-  isDateOlderThanAYear,
   isFishermanAccident,
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
@@ -82,7 +83,6 @@ import {
 import { isHealthInsured } from '../utils/isHealthInsured'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
-import { WorkTypeIllustration } from '../assets/WorkTypeIllustration'
 
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
@@ -357,7 +357,6 @@ export const AccidentNotificationForm: Form = buildForm({
                   format: '###-####',
                   width: 'half',
                   variant: 'tel',
-                  required: true,
                 }),
               ],
             }),
@@ -486,7 +485,7 @@ export const AccidentNotificationForm: Form = buildForm({
             buildMultiField({
               id: 'powerOfAttorney',
               title: powerOfAttorney.upload.heading,
-              description: powerOfAttorney.upload.uploadDescription,
+              description: powerOfAttorney.upload.description,
               children: [
                 buildFileUploadField({
                   id: 'attachments.powerOfAttorneyFile',
@@ -494,6 +493,7 @@ export const AccidentNotificationForm: Form = buildForm({
                   introduction: '',
                   uploadAccept: UPLOAD_ACCEPT,
                   uploadHeader: powerOfAttorney.upload.uploadHeader,
+                  uploadDescription: powerOfAttorney.upload.uploadDescription,
                   uploadButtonLabel: powerOfAttorney.upload.uploadButtonLabel,
                 }),
               ],
@@ -673,7 +673,6 @@ export const AccidentNotificationForm: Form = buildForm({
     // Location and purpose of the injured when the accident occured, relevant to all cases except home activites
     buildSection({
       title: locationAndPurpose.general.title,
-      condition: (formValue) => !isHomeActivitiesAccident(formValue),
       children: [
         // Sports club employee hindrance
         buildSubSection({
@@ -710,6 +709,45 @@ export const AccidentNotificationForm: Form = buildForm({
           id: 'accidentLocation',
           title: accidentLocation.general.sectionTitle,
           children: [
+            // location of home related accident
+            buildMultiField({
+              id: 'accidentLocation.homeAccident',
+              title: accidentLocation.homeAccidentLocation.title,
+              description: accidentLocation.homeAccidentLocation.description,
+              condition: (formValue) => isHomeActivitiesAccident(formValue),
+              children: [
+                buildTextField({
+                  id: 'homeAccident.address',
+                  title: accidentLocation.homeAccidentLocation.address,
+                  backgroundColor: 'blue',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'homeAccident.postalCode',
+                  title: accidentLocation.homeAccidentLocation.postalCode,
+                  backgroundColor: 'blue',
+                  width: 'half',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'homeAccident.community',
+                  title: accidentLocation.homeAccidentLocation.community,
+                  backgroundColor: 'blue',
+                  width: 'half',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'homeAccident.moreDetails',
+                  title: accidentLocation.homeAccidentLocation.moreDetails,
+                  placeholder:
+                    accidentLocation.homeAccidentLocation
+                      .moreDetailsPlaceholder,
+                  backgroundColor: 'blue',
+                  rows: 4,
+                  variant: 'textarea',
+                }),
+              ],
+            }),
             // location of general work related accident
             buildMultiField({
               id: 'accidentLocation.generalWorkAccident',
@@ -756,21 +794,16 @@ export const AccidentNotificationForm: Form = buildForm({
                   title: '',
                   options: [
                     {
-                      value:
-                        GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
-                      label:
-                        accidentLocation.generalWorkAccident.atTheWorkplace,
+                      value: RescueWorkAccidentLocationEnum.DURINGRESCUE,
+                      label: accidentLocation.rescueWorkAccident.duringRescue,
                     },
                     {
-                      value:
-                        GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
-                      label:
-                        accidentLocation.generalWorkAccident
-                          .toOrFromTheWorkplace,
+                      value: RescueWorkAccidentLocationEnum.TOORFROMRESCUE,
+                      label: accidentLocation.rescueWorkAccident.toOrFromRescue,
                     },
                     {
-                      value: GeneralWorkplaceAccidentLocationEnum.OTHER,
-                      label: accidentLocation.generalWorkAccident.other,
+                      value: RescueWorkAccidentLocationEnum.OTHER,
+                      label: accidentLocation.rescueWorkAccident.other,
                     },
                   ],
                 }),
@@ -791,11 +824,6 @@ export const AccidentNotificationForm: Form = buildForm({
                       value: StudiesAccidentLocationEnum.ATTHESCHOOL,
                       label:
                         accidentLocation.studiesAccidentLocation.atTheSchool,
-                    },
-                    {
-                      value: StudiesAccidentLocationEnum.DURINGSTUDIES,
-                      label:
-                        accidentLocation.studiesAccidentLocation.duringStudies,
                     },
                     {
                       value: StudiesAccidentLocationEnum.OTHER,
@@ -949,23 +977,22 @@ export const AccidentNotificationForm: Form = buildForm({
                   id: 'fishermanLocation.locationAndPurpose.location',
                   title: fishingLocationAndPurpose.labels.location,
                   backgroundColor: 'blue',
-                }),
-                buildTextField({
-                  id: 'fishermanLocation.locationAndPurpose.purpose',
-                  title: fishingLocationAndPurpose.labels.purpose,
-                  backgroundColor: 'blue',
-                  rows: 6,
                   variant: 'textarea',
-                  placeholder: fishingLocationAndPurpose.placeholder.purpose,
+                  required: true,
+                  rows: 4,
                 }),
               ],
             }),
           ],
         }),
         buildMultiField({
+          id: 'locationAndPurpose',
           title: locationAndPurpose.general.title,
           description: locationAndPurpose.general.description,
-          condition: (formValue) => !isFishermanAccident(formValue),
+          condition: (formValue) =>
+            !isFishermanAccident(formValue) &&
+            !hideLocationAndPurpose(formValue) &&
+            !isHomeActivitiesAccident(formValue),
           children: [
             buildTextField({
               id: 'locationAndPurpose.location',
@@ -974,14 +1001,6 @@ export const AccidentNotificationForm: Form = buildForm({
               variant: 'textarea',
               required: true,
               rows: 4,
-            }),
-            buildTextField({
-              id: 'locationAndPurpose.purpose',
-              title: locationAndPurpose.labels.purpose,
-              backgroundColor: 'blue',
-              variant: 'textarea',
-              required: true,
-              rows: 6,
             }),
           ],
         }),
@@ -1054,6 +1073,7 @@ export const AccidentNotificationForm: Form = buildForm({
               title: accidentDetails.labels.time,
               placeholder: accidentDetails.placeholder.time,
               backgroundColor: 'blue',
+              required: true,
               width: 'half',
               format: '##:##',
             }),
@@ -1073,6 +1093,7 @@ export const AccidentNotificationForm: Form = buildForm({
               title: accidentDetails.labels.description,
               placeholder: accidentDetails.placeholder.description,
               backgroundColor: 'blue',
+              required: true,
               rows: 10,
               variant: 'textarea',
             }),
@@ -1159,7 +1180,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'attachments.injuryCertificateFile',
               title: attachments.general.uploadHeader,
               uploadAccept: UPLOAD_ACCEPT,
-              uploadHeader: attachments.general.uploadHeader,
+              uploadHeader: injuredPersonInformation.upload.uploadHeader,
               uploadDescription: attachments.general.uploadDescription,
               uploadButtonLabel: attachments.general.uploadButtonLabel,
               introduction: attachments.general.uploadIntroduction,
@@ -1181,6 +1202,7 @@ export const AccidentNotificationForm: Form = buildForm({
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
+          id: 'companyInfo',
           title: companyInfo.general.title,
           description: companyInfo.general.description,
           children: [
@@ -1189,14 +1211,6 @@ export const AccidentNotificationForm: Form = buildForm({
               title: companyInfo.labels.nationalId,
               backgroundColor: 'blue',
               format: '######-####',
-              width: 'half',
-              required: true,
-            }),
-            buildTextField({
-              id: 'companyInfo.companyName',
-              title: companyInfo.labels.companyName,
-              backgroundColor: 'blue',
-              width: 'half',
               required: true,
             }),
             buildCheckboxField({
@@ -1225,6 +1239,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'companyInfo.name',
               title: companyInfo.labels.name,
               backgroundColor: 'blue',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1232,7 +1247,9 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'companyInfo.email',
               title: companyInfo.labels.email,
               backgroundColor: 'blue',
+              variant: 'email',
               width: 'half',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1240,6 +1257,8 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'companyInfo.phoneNumber',
               title: companyInfo.labels.tel,
               backgroundColor: 'blue',
+              format: '###-####',
+              variant: 'tel',
               width: 'half',
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
@@ -1256,6 +1275,7 @@ export const AccidentNotificationForm: Form = buildForm({
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
+          id: 'schoolInfo',
           title: schoolInfo.general.title,
           description: schoolInfo.general.description,
           children: [
@@ -1264,14 +1284,6 @@ export const AccidentNotificationForm: Form = buildForm({
               title: schoolInfo.labels.nationalId,
               backgroundColor: 'blue',
               format: '######-####',
-              width: 'half',
-              required: true,
-            }),
-            buildTextField({
-              id: 'schoolInfo.companyName',
-              title: schoolInfo.labels.companyName,
-              backgroundColor: 'blue',
-              width: 'half',
               required: true,
             }),
             buildCheckboxField({
@@ -1300,6 +1312,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'schoolInfo.name',
               title: schoolInfo.labels.name,
               backgroundColor: 'blue',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1307,7 +1320,9 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'schoolInfo.email',
               title: schoolInfo.labels.email,
               backgroundColor: 'blue',
+              variant: 'email',
               width: 'half',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1315,6 +1330,8 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'schoolInfo.phoneNumber',
               title: schoolInfo.labels.tel,
               backgroundColor: 'blue',
+              format: '###-####',
+              variant: 'tel',
               width: 'half',
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
@@ -1325,11 +1342,46 @@ export const AccidentNotificationForm: Form = buildForm({
     }),
     // fishery information if fisherman
     buildSection({
+      id: 'fishingCompanyInfo',
       title: fishingCompanyInfo.general.title,
-      condition: (formValue) =>
-        isFishermanAccident(formValue) &&
-        !isReportingOnBehalfOfEmployee(formValue),
+      condition: (formValue) => isFishermanAccident(formValue),
       children: [
+        buildMultiField({
+          id: 'fishingCompanyInfo',
+          title: fishingCompanyInfo.general.informationAboutShipTitle,
+          description:
+            fishingCompanyInfo.general.informationAboutShipDescription,
+          children: [
+            buildTextField({
+              id: 'fishingShipInfo.shipName',
+              title: fishingCompanyInfo.labels.shipName,
+              backgroundColor: 'blue',
+              width: 'half',
+              required: true,
+            }),
+            buildTextField({
+              id: 'fishingShipInfo.shipCharacters',
+              title: fishingCompanyInfo.labels.shipCharacters,
+              backgroundColor: 'blue',
+              width: 'half',
+              required: true,
+            }),
+            buildTextField({
+              id: 'fishingShipInfo.homePort',
+              title: fishingCompanyInfo.labels.homePort,
+              backgroundColor: 'blue',
+              width: 'half',
+              required: true,
+            }),
+            buildTextField({
+              id: 'fishingShipInfo.shipRegisterNumber',
+              title: fishingCompanyInfo.labels.shipRegisterNumber,
+              backgroundColor: 'blue',
+              width: 'half',
+              required: true,
+            }),
+          ],
+        }),
         buildMultiField({
           title: fishingCompanyInfo.general.title,
           description: fishingCompanyInfo.general.description,
@@ -1339,14 +1391,6 @@ export const AccidentNotificationForm: Form = buildForm({
               title: fishingCompanyInfo.labels.nationalId,
               backgroundColor: 'blue',
               format: '######-####',
-              width: 'half',
-              required: true,
-            }),
-            buildTextField({
-              id: 'fishingCompanyInfo.companyName',
-              title: fishingCompanyInfo.labels.companyName,
-              backgroundColor: 'blue',
-              width: 'half',
               required: true,
             }),
             buildCheckboxField({
@@ -1375,6 +1419,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'fishingCompanyInfo.name',
               title: fishingCompanyInfo.labels.name,
               backgroundColor: 'blue',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1383,6 +1428,8 @@ export const AccidentNotificationForm: Form = buildForm({
               title: fishingCompanyInfo.labels.email,
               backgroundColor: 'blue',
               width: 'half',
+              variant: 'email',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1391,6 +1438,8 @@ export const AccidentNotificationForm: Form = buildForm({
               title: fishingCompanyInfo.labels.tel,
               backgroundColor: 'blue',
               width: 'half',
+              format: '###-####',
+              variant: 'tel',
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1406,6 +1455,7 @@ export const AccidentNotificationForm: Form = buildForm({
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
+          id: 'sportsClubInfo',
           title: sportsClubInfo.general.title,
           description: sportsClubInfo.general.description,
           children: [
@@ -1414,14 +1464,6 @@ export const AccidentNotificationForm: Form = buildForm({
               title: sportsClubInfo.labels.nationalId,
               backgroundColor: 'blue',
               format: '######-####',
-              width: 'half',
-              required: true,
-            }),
-            buildTextField({
-              id: 'sportsClubInfo.companyName',
-              title: sportsClubInfo.labels.companyName,
-              backgroundColor: 'blue',
-              width: 'half',
               required: true,
             }),
             buildCheckboxField({
@@ -1450,6 +1492,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'sportsClubInfo.name',
               title: sportsClubInfo.labels.name,
               backgroundColor: 'blue',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1458,6 +1501,8 @@ export const AccidentNotificationForm: Form = buildForm({
               title: sportsClubInfo.labels.email,
               backgroundColor: 'blue',
               width: 'half',
+              variant: 'email',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1466,6 +1511,8 @@ export const AccidentNotificationForm: Form = buildForm({
               title: sportsClubInfo.labels.tel,
               backgroundColor: 'blue',
               width: 'half',
+              format: '###-####',
+              variant: 'tel',
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1481,6 +1528,7 @@ export const AccidentNotificationForm: Form = buildForm({
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
+          id: 'rescueSquad',
           title: rescueSquadInfo.general.title,
           description: rescueSquadInfo.general.description,
           children: [
@@ -1488,15 +1536,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'rescueSquadInfo.nationalRegistrationId',
               title: rescueSquadInfo.labels.nationalId,
               backgroundColor: 'blue',
-              width: 'half',
               format: '######-####',
-              required: true,
-            }),
-            buildTextField({
-              id: 'rescueSquadInfo.companyName',
-              title: rescueSquadInfo.labels.companyName,
-              backgroundColor: 'blue',
-              width: 'half',
               required: true,
             }),
             buildCheckboxField({
@@ -1523,6 +1563,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'rescueSquadInfo.name',
               title: rescueSquadInfo.labels.name,
               backgroundColor: 'blue',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1531,6 +1572,8 @@ export const AccidentNotificationForm: Form = buildForm({
               title: rescueSquadInfo.labels.email,
               backgroundColor: 'blue',
               width: 'half',
+              variant: 'email',
+              required: true,
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
@@ -1539,6 +1582,8 @@ export const AccidentNotificationForm: Form = buildForm({
               title: rescueSquadInfo.labels.tel,
               backgroundColor: 'blue',
               width: 'half',
+              format: '###-####',
+              variant: 'tel',
               condition: (formValue) =>
                 !isRepresentativeOfCompanyOrInstitute(formValue),
             }),

@@ -2,6 +2,7 @@ import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 
 import {
+  areAccusedRightsHidden,
   capitalize,
   caseTypes,
   formatAccusedByGender,
@@ -87,7 +88,10 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           })}
         </Text>
       </AccordionListItem>
-      {!workingCase.isAccusedAbsent && (
+      {!areAccusedRightsHidden(
+        workingCase.isAccusedAbsent,
+        workingCase.sessionArrangements,
+      ) && (
         <AccordionListItem
           title={`Réttindi ${
             workingCase.type === CaseType.CUSTODY ||

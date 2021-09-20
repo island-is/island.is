@@ -32,8 +32,6 @@ function custodyProvisionsOrder(p: CaseCustodyProvisions) {
       return 3
     case CaseCustodyProvisions._95_2:
       return 4
-    case CaseCustodyProvisions._98_2:
-      return 5
     case CaseCustodyProvisions._99_1_B:
       return 6
     case CaseCustodyProvisions._100_1:
@@ -55,13 +53,20 @@ function custodyProvisionsCompare(
 
 export function formatCustodyProvisions(
   custodyProvisions?: CaseCustodyProvisions[],
+  legalBasis?: string,
 ): string {
-  return (
-    custodyProvisions
-      ?.sort((p1, p2) => custodyProvisionsCompare(p1, p2))
-      .reduce((s, l) => `${s}${laws[l]}\n`, '')
-      .slice(0, -1) ?? 'Lagaákvæði ekki skráð'
-  )
+  const list = custodyProvisions
+    ?.sort((p1, p2) => custodyProvisionsCompare(p1, p2))
+    .reduce((s, l) => `${s}${laws[l]}\n`, '')
+    .slice(0, -1)
+
+  return list
+    ? legalBasis
+      ? `${list}\n${legalBasis}`
+      : list
+    : legalBasis
+    ? legalBasis
+    : 'Lagaákvæði ekki skráð'
 }
 
 export function formatAppeal(
@@ -182,7 +187,9 @@ export function formatProsecutorCourtDateEmailNotification(
   const courtRoomText =
     sessionArrangements === SessionArrangements.REMOTE_SESSION
       ? 'Úrskurðað verður um kröfuna án mætingar af hálfu málsaðila'
-      : `Dómsalur: ${courtRoom}`
+      : courtRoom
+      ? `Dómsalur: ${courtRoom}`
+      : 'Dómsalur hefur ekki verið skráður'
   const judgeText = judgeName
     ? `Dómari: ${judgeName}`
     : 'Dómari hefur ekki verið skráður'
@@ -255,7 +262,9 @@ export function formatDefenderCourtDateEmailNotification(
     ?.replace(
       ' kl.',
       ', kl.',
-    )}.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />Dómsalur: ${courtRoom}.`
+    )}.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />${
+    courtRoom ? `Dómsalur: ${courtRoom}` : 'Dómsalur hefur ekki verið skráður'
+  }.`
 }
 
 // This function is only intended for case type CUSTODY

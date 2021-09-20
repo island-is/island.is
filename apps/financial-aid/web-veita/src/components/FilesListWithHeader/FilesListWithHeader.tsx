@@ -11,6 +11,9 @@ interface Props {
 }
 
 const FilesListWithHeader = ({ heading, files }: Props) => {
+  if (files === undefined || files.length === 0) {
+    return null
+  }
   return (
     <Box
       className={cn({

@@ -28,7 +28,7 @@ export class RolesGuard implements CanActivate {
 
     // Pick the first matching rule
     const rule = rolesRules.find((rule) => {
-      return rule == user.service
+      return rule === user.service
     })
 
     return Boolean(rule)

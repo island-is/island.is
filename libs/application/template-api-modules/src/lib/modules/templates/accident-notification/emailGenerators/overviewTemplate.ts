@@ -1,13 +1,13 @@
 import { Application, FormValue } from '@island.is/application/core'
 import {
-  messages,
-  utils,
   AccidentNotificationAnswers,
   CompanyInfo,
+  messages,
+  utils,
 } from '@island.is/application/templates/accident-notification'
 import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
+import parseISO from 'date-fns/parseISO'
 import { dedent } from 'ts-dedent'
 
 const YES = 'yes'
@@ -100,10 +100,6 @@ export const overviewTemplate = (application: Application): string => {
       !utils.isReportingOnBehalfOfEmployee(answers as FormValue)
         ? `
         <h3>${workplaceData.general.title.defaultMessage}</h3>
-        <p>
-          <b>${workplaceData.labels.companyName.defaultMessage}</b>
-          ${workplaceData.info.companyName}
-        </p>
         <p>
           <b>${workplaceData.labels.nationalId.defaultMessage}</b>
           ${workplaceData.info.nationalRegistrationId}

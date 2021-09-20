@@ -26,7 +26,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
 export const initializeClient = (baseApiUrl: string) => {
   const httpLink = new HttpLink({
-    uri: `${baseApiUrl}/api/graphql`,
+    uri: ({ operationName }) => `${baseApiUrl}/api/graphql?op=${operationName}`,
     fetch,
   })
 

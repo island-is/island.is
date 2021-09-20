@@ -24,7 +24,7 @@ export const ValueLine: FC<ValueLineProps> = ({ label, value, color }) => {
 
 interface FileValueLineProps {
   label: string | MessageDescriptor
-  files: FileType[] | undefined
+  files: MessageDescriptor[] | undefined
 }
 
 export const FileValueLine: FC<FileValueLineProps> = ({ label, files }) => {
@@ -38,7 +38,7 @@ export const FileValueLine: FC<FileValueLineProps> = ({ label, files }) => {
       {!files || files.length === 0 ? null : (
         <BulletList space={1} type="ul">
           {files?.map((file, index) => (
-            <Bullet key={`${file.name}-${index}`}>{file.name}</Bullet>
+            <Bullet key={`${file.id}-${index}`}>{formatMessage(file)}</Bullet>
           ))}
         </BulletList>
       )}

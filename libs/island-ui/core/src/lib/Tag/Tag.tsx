@@ -13,6 +13,7 @@ export type TagVariant =
   | 'red'
   | 'rose'
   | 'blueberry'
+  | 'dark'
 
 export interface TagProps {
   onClick?: () => void

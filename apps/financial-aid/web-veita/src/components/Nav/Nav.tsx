@@ -18,7 +18,11 @@ import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes
 
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
-const Nav = () => {
+interface Props {
+  showInMobile: boolean
+}
+
+const Nav = ({ showInMobile }: Props) => {
   const router = useRouter()
 
   const logOut = useLogOut()
@@ -27,7 +31,12 @@ const Nav = () => {
   const { admin } = useContext(AdminContext)
 
   return (
-    <nav className={styles.container}>
+    <nav
+      className={cn({
+        [`${styles.container}`]: true,
+        [`${styles.showNavInMobile}`]: showInMobile,
+      })}
+    >
       <header>
         <div className={`${styles.logoContainer} logoContainer`}>
           <Logo />

@@ -1,8 +1,8 @@
-import * as z from 'zod'
-import { YES, NO } from '../shared'
-import { error } from './messages/error'
-import * as kennitala from 'kennitala'
 import { DefaultEvents } from '@island.is/application/core'
+import * as kennitala from 'kennitala'
+import * as z from 'zod'
+import { NO, YES } from '../shared'
+import { error } from './messages/error'
 
 export enum OnBehalf {
   MYSELF = 'myself',
@@ -16,6 +16,9 @@ const FileSchema = z.object({
   key: z.string(),
   url: z.string().optional(),
 })
+
+// Validation on optional field: https://github.com/colinhacks/zod/issues/310
+const optionalEmail = z.string().email().optional().or(z.literal(''))
 
 export const DataProtectionComplaintSchema = z.object({
   externalData: z.object({
@@ -70,21 +73,25 @@ export const DataProtectionComplaintSchema = z.object({
     ]),
   }),
   applicant: z.object({
-    name: z.string().nonempty(error.required.defaultMessage),
-    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    address: z.string().nonempty(error.required.defaultMessage),
-    postalCode: z.string().nonempty(error.required.defaultMessage),
-    city: z.string().nonempty(error.required.defaultMessage),
-    email: z.string().email().optional(),
+    name: z.string().refine((x) => !!x, { params: error.required }),
+    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false), {
+      params: error.nationalId,
+    }),
+    address: z.string().refine((x) => !!x, { params: error.required }),
+    postalCode: z.string().refine((x) => !!x, { params: error.required }),
+    city: z.string().refine((x) => !!x, { params: error.required }),
+    email: optionalEmail,
     phoneNumber: z.string().optional(),
   }),
   organizationOrInstitution: z.object({
-    name: z.string().nonempty(error.required.defaultMessage),
-    nationalId: z.string().refine((x) => (x ? kennitala.isCompany(x) : false)),
-    address: z.string().nonempty(error.required.defaultMessage),
-    postalCode: z.string().nonempty(error.required.defaultMessage),
-    city: z.string().nonempty(error.required.defaultMessage),
-    email: z.string().email().optional(),
+    name: z.string().refine((x) => !!x, { params: error.required }),
+    nationalId: z.string().refine((x) => (x ? kennitala.isCompany(x) : false), {
+      params: error.nationalId,
+    }),
+    address: z.string().refine((x) => !!x, { params: error.required }),
+    postalCode: z.string().refine((x) => !!x, { params: error.required }),
+    city: z.string().refine((x) => !!x, { params: error.required }),
+    email: optionalEmail,
     phoneNumber: z.string().optional(),
   }),
   commissions: z.object({
@@ -92,7 +99,7 @@ export const DataProtectionComplaintSchema = z.object({
     persons: z
       .array(
         z.object({
-          name: z.string().nonempty(error.required.defaultMessage),
+          name: z.string().refine((x) => !!x, { params: error.required }),
           nationalId: z
             .string()
             .refine((x) => (x ? kennitala.isPerson(x) : false)),
@@ -102,12 +109,14 @@ export const DataProtectionComplaintSchema = z.object({
   }),
   complainees: z.array(
     z.object({
-      name: z.string().nonempty(error.required.defaultMessage),
-      address: z.string().nonempty(error.required.defaultMessage),
+      name: z.string().refine((x) => !!x, { params: error.required }),
+      address: z.string().refine((x) => !!x, { params: error.required }),
       nationalId: z
         .string()
-        .refine((x) => (x ? kennitala.isValid(x) : false))
-        .optional(),
+        .nonempty(error.required.defaultMessage)
+        .refine((x) => (x ? kennitala.isValid(x) : false), {
+          params: error.nationalId,
+        }),
       operatesWithinEurope: z.enum([YES, NO]),
       countryOfOperation: z.string().optional(),
     }),
@@ -120,10 +129,11 @@ export const DataProtectionComplaintSchema = z.object({
     description: z
       .string()
       .nonempty(error.required.defaultMessage)
-      .refine(
-        (x) => x?.split(' ').length <= 500,
-        error.wordCountReached.defaultMessage,
-      ),
+      .refine((x) => !!x, { params: error.required })
+      .refine((x) => x?.split(' ').filter((item) => item).length <= 500, {
+        params: error.wordCountReached,
+      }),
+
     documents: z.array(FileSchema),
   }),
   overview: z.object({
