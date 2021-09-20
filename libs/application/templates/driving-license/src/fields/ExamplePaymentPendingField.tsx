@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useQuery, gql, useMutation } from '@apollo/client'
 import {
   CustomField,
@@ -6,7 +6,7 @@ import {
   formatText,
   DefaultEvents,
 } from '@island.is/application/core'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
@@ -34,11 +34,14 @@ export const ExamplePaymentPendingField: FC<Props> = ({
 }) => {
   const applicationId = application.id
   const { formatMessage } = useLocale()
+  const [continuePolling, setContinuePolling] = useState(true)
+  const [submitError, setSubmitError] = useState(false)
 
   const { data, error: queryError } = useQuery(QUERY, {
     variables: {
       applicationId,
     },
+    skip: !continuePolling,
     pollInterval: 4000,
   })
 
@@ -50,29 +53,72 @@ export const ExamplePaymentPendingField: FC<Props> = ({
     fulfilled: false,
   }
 
-  if (queryError) {
-    return <Text>{m.examplePaymentPendingFieldError}</Text>
-  }
+  // automatically go to done state if payment has been fulfilled
+  useEffect(() => {
+    if (!paymentStatus.fulfilled) {
+      return
+    }
 
-  const onSubmit = async () => {
-    const res = await submitApplication({
+    setContinuePolling(false)
+
+    submitApplication({
       variables: {
         input: {
-          id: application.id,
+          id: applicationId,
           event: DefaultEvents.SUBMIT,
           answers: application.answers,
         },
       },
     })
-    if (res?.data) {
-      // Takes them to the next state (which loads the relevant form)
-      refetch?.()
-    }
+      .then(({ data, errors } = {}) => {
+        if (data && !errors?.length) {
+          // Takes them to the next state (which loads the relevant form)
+          refetch?.()
+        } else {
+          return Promise.reject()
+        }
+      })
+      .catch(() => {
+        setSubmitError(true)
+      })
+  }, [
+    paymentStatus.fulfilled,
+    applicationId,
+    application.answers,
+    refetch,
+    submitApplication,
+  ])
+
+  if (queryError) {
+    return (
+      <Text>
+        {formatText(
+          m.examplePaymentPendingFieldError,
+          application,
+          formatMessage,
+        )}
+      </Text>
+    )
   }
 
-  // automatically go to done state if payment has benn fulfilled
-  if (paymentStatus.fulfilled) {
-    onSubmit()
+  if (submitError) {
+    return (
+      <Box>
+        <Text variant="h3">
+          {formatText(m.submitErrorTitle, application, formatMessage)}
+        </Text>
+        <Text marginBottom='p2'>
+          {formatText(
+            m.submitErrorMessage,
+            application,
+            formatMessage,
+          )}
+        </Text>
+        <Button onClick={() => refetch?.()}>
+          {formatText(m.submitErrorButtonCaption, application, formatMessage)}
+        </Button>
+      </Box>
+    )
   }
 
   return (
