@@ -39,14 +39,14 @@ export function getErrorViaPath(obj: RecordObject, path: string): string {
   return get(obj, path) as string
 }
 
-export function getValueViaPath(
+export function getValueViaPath<T = unknown>(
   obj: RecordObject,
   path: string,
-  defaultValue: unknown = undefined,
-): unknown | undefined {
+  defaultValue?: T,
+): T | undefined {
   // Errors from dataSchema with array of object looks like e.g. `{ 'periods[1].startDate': 'error message' }`
   if (path.match(/.\[\d\]\../g) && !containsArray(obj)) {
-    return obj?.[path] ?? defaultValue
+    return (obj?.[path] ?? defaultValue) as T
   }
 
   // For the rest of the case, we are into e.g. `personalAllowance.usePersonalAllowance`
@@ -64,7 +64,7 @@ export function getValueViaPath(
 
     const result = travel(/[,[\]]+?/) || travel(/[,[\].]+?/)
 
-    return result === undefined || result === obj ? defaultValue : result
+    return result === undefined || result === obj ? defaultValue : (result as T)
   } catch (e) {
     return undefined
   }
