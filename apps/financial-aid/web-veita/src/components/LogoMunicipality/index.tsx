@@ -20,7 +20,7 @@ interface LogoProps {
   className?: string
 }
 
-const LogoHfj = ({ className }: LogoProps) => {
+const LogoMunicipalitycipality = ({ className }: LogoProps) => {
   const router = useRouter()
 
   const municipaliyId = router.query.sveitarfelag
@@ -53,4 +53,4 @@ const LogoHfj = ({ className }: LogoProps) => {
   )
 }
 
-export default LogoHfj
+export default LogoMunicipalitycipality
