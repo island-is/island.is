@@ -6,8 +6,8 @@ import {
   ApplicationEventType,
   RolesRule,
   ReturnUrl,
+  StaffRole,
 } from './enums'
-import type { StaffRole } from './types'
 
 export interface GetSignedUrl {
   fileName: string

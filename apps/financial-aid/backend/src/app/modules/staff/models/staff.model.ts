@@ -9,8 +9,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { Staff } from '@island.is/financial-aid/shared/lib'
-import type { StaffRole } from '@island.is/financial-aid/shared/lib'
+import { Staff, StaffRole } from '@island.is/financial-aid/shared/lib'
 
 @Table({
   tableName: 'staff',
@@ -48,8 +47,9 @@ export class StaffModel extends Model<Staff> {
   municipalityId: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: false,
+    values: Object.values(StaffRole),
   })
   @ApiProperty()
   role: StaffRole

@@ -33,7 +33,6 @@ module.exports = {
           },
           { transaction: t },
         ),
-        ,
         queryInterface.renameColumn(
           'staff',
           'municipality_id',
