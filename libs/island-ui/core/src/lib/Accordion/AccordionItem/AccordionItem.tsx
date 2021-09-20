@@ -3,9 +3,7 @@ import React, {
   useState,
   ReactNode,
   forwardRef,
-  FC,
   useEffect,
-  useCallback,
 } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
@@ -13,7 +11,6 @@ import AnimateHeight from 'react-animate-height'
 import { Box } from '../../Box/Box'
 import { Column } from '../../Column/Column'
 import { Columns } from '../../Columns/Columns'
-import { AllOrNone } from '../../private/AllOrNone'
 import { useVirtualTouchable } from '../../private/touchable/useVirtualTouchable'
 import { hideFocusRingsClassName } from '../../private/hideFocusRings/hideFocusRings'
 import { Overlay } from '../../private/Overlay/Overlay'
@@ -28,7 +25,7 @@ type IconVariantTypes = 'default' | 'small' | 'sidebar'
 
 export type AccordionItemLabelTags = 'p' | 'h2' | 'h3' | 'h4' | 'h5'
 
-export type AccordionItemBaseProps = {
+type BaseProps = {
   id: string
   label: ReactNode
   labelVariant?: TextVariants
@@ -43,13 +40,21 @@ export type AccordionItemBaseProps = {
   onFocus?: () => void
 }
 
-export type AccordionItemStateProps = AllOrNone<{
-  expanded?: boolean
-  onToggle: (expanded: boolean) => void
-}>
+type StateProps =
+  | {
+      expanded: boolean
+      onToggle: (expanded: boolean) => void
+      onClick?: never
+      startExpanded?: never
+    }
+  | {
+      expanded?: never
+      onToggle?: never
+    }
 
-export type AccordionItemProps = AccordionItemBaseProps &
-  AccordionItemStateProps
+// ---------------------------------------------------------------------------
+
+export type AccordionItemProps = BaseProps & StateProps
 
 export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
   (
@@ -84,7 +89,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       }
     }
 
-    const handleOpen = () => {
+    const handleToggle = () => {
       const newValue = !expanded
       if (typeof setToggledId === 'function' && newValue) {
         setToggledId(id)
@@ -101,28 +106,15 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       }
     }
 
-    const handleClose = () => {
-      expanded = false
-      setHeight(0)
-
-      if (expandedProp === undefined) {
-        setExpandedFallback(false)
-      }
-
-      if (typeof onToggle === 'function') {
-        onToggle(false)
-      }
-    }
-
-    const onHandleOpen = useCallback(handleOpen, [])
-
-    useEffect(() => {
-      if (startExpanded) {
-        onHandleOpen()
-      } else {
-        handleClose()
-      }
-    }, [onHandleOpen, startExpanded])
+    useEffect(
+      () => {
+        if (startExpanded && expandedProp == null) {
+          handleToggle()
+        }
+      },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [], // Only run when component mounts!
+    )
 
     return (
       <Box>
@@ -140,7 +132,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
             aria-expanded={expanded}
             onFocus={onFocus}
             onBlur={onBlur}
-            onClick={onClick ? onClick : handleOpen}
+            onClick={onClick ? onClick : handleToggle}
           >
             <Columns space={2} alignY="center">
               <Column>
@@ -205,7 +197,11 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
   },
 )
 
-export const AccordionCard: FC<AccordionItemBaseProps> = (props) => {
+// ---------------------------------------------------------------------------
+
+export type AccordionCardProps = BaseProps
+
+export const AccordionCard = (props: AccordionCardProps) => {
   const [isFocused, setIsFocused] = useState<boolean>(false)
 
   const handleFocus = () => setIsFocused(true)
@@ -226,9 +222,14 @@ export const AccordionCard: FC<AccordionItemBaseProps> = (props) => {
   )
 }
 
-export const SidebarAccordion: FC<
-  Omit<AccordionItemBaseProps, 'labelVariant' | 'iconVariant'>
-> = (props) => {
+// ---------------------------------------------------------------------------
+
+export type SidebarAccordionProps = Omit<
+  BaseProps,
+  'labelVariant' | 'iconVariant'
+>
+
+export const SidebarAccordion = (props: SidebarAccordionProps) => {
   return (
     <AccordionItem {...props} labelVariant="default" iconVariant="sidebar">
       {props.children}
