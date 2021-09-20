@@ -8,7 +8,7 @@ export default gql`
   }
 
   type GiftDetail {
-    packageId: String!
+    packageId: String
     from: String
     greeting: Greeting
     personalMessage: String

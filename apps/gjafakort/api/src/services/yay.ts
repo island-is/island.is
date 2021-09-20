@@ -14,7 +14,7 @@ interface GiftCard {
   statusId: number
   indentifier: string
   giftDetail: {
-    packageId: string
+    packageId: string | null
     from: string
     greeting: {
       greetingType: number
