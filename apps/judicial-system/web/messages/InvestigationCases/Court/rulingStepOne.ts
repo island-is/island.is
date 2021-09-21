@@ -22,5 +22,14 @@ export const icRulingStepOne = {
           'Notaður sem upplýsingatexti í upplýsingasvæði við "greinargerð um lagarök" titlinn á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
+    decision: defineMessages({
+      dismissLabel: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.decision.dismiss_label',
+        defaultMessage: 'Kröfu vísað frá',
+        description:
+          'Notaður sem texti við radio takka með vali um að vísa máli frá',
+      },
+    }),
   },
 }
