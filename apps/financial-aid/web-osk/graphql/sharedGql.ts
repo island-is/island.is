@@ -29,7 +29,10 @@ export const GetMunicipalityQuery = gql`
     municipality(input: $input) {
       id
       name
-      settings
+      settings {
+        web
+        aid
+      }
     }
   }
 `
