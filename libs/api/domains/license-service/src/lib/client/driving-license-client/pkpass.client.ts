@@ -155,7 +155,7 @@ export class PkPassClient {
       this.logger.info(`401 from service, retry number ${count}`, {
         category: LOG_CATEGORY,
       })
-    } while (count < actualRetries)
+    } while (count <= actualRetries)
 
     this.logger.info(`Exceeded retries (${actualRetries}), returning null`, {
       category: LOG_CATEGORY,
