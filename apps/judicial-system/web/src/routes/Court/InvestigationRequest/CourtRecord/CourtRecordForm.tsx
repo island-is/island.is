@@ -30,6 +30,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import {
   accusedRights,
+  closedCourt,
   icCourtRecord,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -110,6 +111,22 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 )
               }}
               required
+            />
+          </Box>
+          <Box marginBottom={3}>
+            <HideableText
+              text={formatMessage(closedCourt.text)}
+              isHidden={workingCase.isClosedCourtHidden}
+              onToggleVisibility={(isVisible: boolean) =>
+                setAndSendToServer(
+                  'isClosedCourtHidden',
+                  isVisible,
+                  workingCase,
+                  setWorkingCase,
+                  updateCase,
+                )
+              }
+              tooltip={formatMessage(closedCourt.tooltip)}
             />
           </Box>
           <Box marginBottom={3}>
@@ -202,12 +219,12 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             <HideableText
               text={formatMessage(accusedRights.text)}
               isHidden={areAccusedRightsHidden(
-                workingCase.isAccusedAbsent,
+                workingCase.isAccusedRightsHidden,
                 workingCase.sessionArrangements,
               )}
               onToggleVisibility={(isVisible: boolean) =>
                 setAndSendToServer(
-                  'isAccusedAbsent',
+                  'isAccusedRightsHidden',
                   isVisible,
                   workingCase,
                   setWorkingCase,

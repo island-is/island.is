@@ -88,6 +88,17 @@ function constructRestrictionRulingPdf(
       },
     )
 
+  if (!existingCase.isClosedCourtHidden) {
+    doc
+      .text(' ')
+      .text(
+        'Þinghaldið er háð fyrir luktum dyrum sbr. f-lið 10. gr. laga um meðferð sakamála nr. 88/2008.',
+        {
+          paragraphGap: 1,
+        },
+      )
+  }
+
   if (existingCase.courtAttendees) {
     doc
       .text(' ')
@@ -127,7 +138,7 @@ function constructRestrictionRulingPdf(
     }),
   )
 
-  if (!existingCase.isAccusedAbsent) {
+  if (!existingCase.isAccusedRightsHidden) {
     doc
       .text(' ')
       .text(
@@ -412,6 +423,17 @@ function constructInvestigationRulingPdf(
       },
     )
 
+  if (!existingCase.isClosedCourtHidden) {
+    doc
+      .text(' ')
+      .text(
+        'Þinghaldið er háð fyrir luktum dyrum sbr. f-lið 10. gr. laga um meðferð sakamála nr. 88/2008.',
+        {
+          paragraphGap: 1,
+        },
+      )
+  }
+
   if (existingCase.courtAttendees) {
     doc
       .text(' ')
@@ -454,7 +476,7 @@ function constructInvestigationRulingPdf(
 
   if (
     !areAccusedRightsHidden(
-      existingCase.isAccusedAbsent,
+      existingCase.isAccusedRightsHidden,
       existingCase.sessionArrangements,
     )
   ) {

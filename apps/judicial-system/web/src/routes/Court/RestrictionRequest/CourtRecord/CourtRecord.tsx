@@ -39,6 +39,7 @@ import { validate } from '../../../../utils/validate'
 import {
   accusedRights,
   rcCourtRecord,
+  closedCourt,
 } from '@island.is/judicial-system-web/messages'
 import * as styles from './CourtRecord.treat'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -184,6 +185,22 @@ export const CourtRecord: React.FC = () => {
                 />
               </Box>
               <Box marginBottom={3}>
+                <HideableText
+                  text={formatMessage(closedCourt.text)}
+                  isHidden={workingCase.isClosedCourtHidden}
+                  onToggleVisibility={(isVisible: boolean) =>
+                    setAndSendToServer(
+                      'isClosedCourtHidden',
+                      isVisible,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
+                  tooltip={formatMessage(closedCourt.tooltip)}
+                />
+              </Box>
+              <Box marginBottom={3}>
                 <Input
                   data-testid="courtAttendees"
                   name="courtAttendees"
@@ -278,10 +295,10 @@ export const CourtRecord: React.FC = () => {
               <Box marginBottom={2}>
                 <HideableText
                   text={formatMessage(accusedRights.text)}
-                  isHidden={workingCase.isAccusedAbsent}
+                  isHidden={workingCase.isAccusedRightsHidden}
                   onToggleVisibility={(isVisible: boolean) =>
                     setAndSendToServer(
-                      'isAccusedAbsent',
+                      'isAccusedRightsHidden',
                       isVisible,
                       workingCase,
                       setWorkingCase,

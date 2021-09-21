@@ -293,11 +293,11 @@ export function formatGender(gender?: CaseGender): string {
 }
 
 export const areAccusedRightsHidden = (
-  isAccusedAbsent?: boolean,
+  isAccusedRightsHidden?: boolean,
   sessionArrangements?: SessionArrangements,
 ): boolean => {
-  return isAccusedAbsent
-    ? isAccusedAbsent
+  return isAccusedRightsHidden
+    ? isAccusedRightsHidden
     : sessionArrangements === SessionArrangements.ALL_PRESENT
     ? false
     : true
