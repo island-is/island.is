@@ -141,6 +141,15 @@ function constructRestrictionRulingPdf(
   doc
     .text(' ')
     .text(
+      `${capitalize(
+        formatAccusedByGender(existingCase.accusedGender, NounCases.DATIVE),
+      )} er kynnt krafa á dómskjali nr. 1.`,
+      {
+        paragraphGap: 1,
+      },
+    )
+    .text(' ')
+    .text(
       `${
         existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
           ? `${capitalize(
@@ -462,6 +471,15 @@ function constructInvestigationRulingPdf(
   // Only show accused plea if applicable
   if (existingCase.accusedPleaDecision !== AccusedPleaDecision.NOT_APPLICABLE) {
     doc
+      .text(' ')
+      .text(
+        `${capitalize(
+          formatAccusedByGender(existingCase.accusedGender, NounCases.DATIVE),
+        )} er kynnt krafa á dómskjali nr. 1.`,
+        {
+          paragraphGap: 1,
+        },
+      )
       .text(' ')
       .text(
         `${
