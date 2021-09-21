@@ -3,8 +3,8 @@ import { Text, Box, Button } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
 import * as styles from './TableBody.treat'
-
 import cn from 'classnames'
+
 import {
   Application,
   getState,
@@ -16,13 +16,13 @@ import {
   GeneratedProfile,
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
-
 import {
   calcDifferenceInDate,
   getTagByState,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
-import { useApplicationState } from '../../utils/useApplicationState'
-import { AdminContext } from '../AdminProvider/AdminProvider'
+
+import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface PageProps {
   application: Application
