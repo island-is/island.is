@@ -328,7 +328,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               caseId={workingCase.id}
               files={workingCase.files ?? []}
               canOpenFiles={canCaseFilesBeOpened()}
-              showIcons
+              showIcons={uploadState !== undefined}
             />
             <Box display="flex" justifyContent="flexEnd">
               <Button
