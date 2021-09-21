@@ -317,7 +317,7 @@ describe('User profile API', () => {
       // Act
       await request(app.getHttpServer())
         .post(`/emailVerification/${mockProfile.nationalId}`)
-        .expect(201)
+        .expect(204)
       const newVerification = await EmailVerification.findOne({
         where: { nationalId: mockProfile.nationalId },
         order: [['created', 'DESC']],
@@ -422,7 +422,7 @@ describe('User profile API', () => {
           nationalId: mockProfile.nationalId,
           mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         })
-        .expect(201)
+        .expect(204)
       expect(spy).toHaveBeenCalled()
       const verification = await SmsVerification.findOne({
         where: { nationalId: mockProfile.nationalId },
@@ -443,7 +443,7 @@ describe('User profile API', () => {
           nationalId: mockProfile.nationalId,
           mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         })
-        .expect(201)
+        .expect(204)
       const verification = await SmsVerification.findOne({
         where: { nationalId: mockProfile.nationalId },
       })
@@ -472,7 +472,7 @@ describe('User profile API', () => {
           nationalId: mockProfile.nationalId,
           mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         })
-        .expect(201)
+        .expect(204)
       const verification = await SmsVerification.findOne({
         where: { nationalId: mockProfile.nationalId },
       })
@@ -513,7 +513,7 @@ describe('User profile API', () => {
           nationalId: mockProfile.nationalId,
           mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         })
-        .expect(201)
+        .expect(204)
       const verification = await SmsVerification.findOne({
         where: { nationalId: mockProfile.nationalId },
       })
@@ -542,7 +542,7 @@ describe('User profile API', () => {
           nationalId: mockProfile.nationalId,
           mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         })
-        .expect(201)
+        .expect(204)
       const verification = await SmsVerification.findOne({
         where: { nationalId: mockProfile.nationalId },
       })
@@ -581,7 +581,7 @@ describe('User profile API', () => {
           nationalId: mockProfile.nationalId,
           mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         })
-        .expect(201)
+        .expect(204)
 
       // Tried too many times.
       for (let i = 0; i < SMS_VERIFICATION_MAX_TRIES; i++) {
@@ -600,7 +600,7 @@ describe('User profile API', () => {
           nationalId: mockProfile.nationalId,
           mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         })
-        .expect(201)
+        .expect(204)
       const verification = await SmsVerification.findOne({
         where: { nationalId: mockProfile.nationalId },
       })

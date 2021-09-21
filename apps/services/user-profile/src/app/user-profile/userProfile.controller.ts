@@ -219,6 +219,7 @@ export class UserProfileController {
     description: 'The national id of the user for email verification.',
     allowEmptyValue: false,
   })
+  @HttpCode(204)
   @ApiNoContentResponse()
   @Audit()
   async recreateVerification(
@@ -313,6 +314,7 @@ export class UserProfileController {
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
   @Post('smsVerification/')
+  @HttpCode(204)
   @ApiNoContentResponse()
   @Audit()
   async createSmsVerification(
