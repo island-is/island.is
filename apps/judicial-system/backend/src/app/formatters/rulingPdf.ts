@@ -274,19 +274,20 @@ function constructRestrictionRulingPdf(
     existingCase.type === CaseType.CUSTODY &&
     existingCase.decision === CaseDecision.ACCEPTING
   ) {
+    const custodyRestrictions = formatCustodyRestrictions(
+      existingCase.accusedGender,
+      existingCase.custodyRestrictions,
+      existingCase.validToDate,
+      existingCase.isolationToDate,
+    )
+
+    if (custodyRestrictions) {
+      doc.text(' ').text(custodyRestrictions, {
+        paragraphGap: 1,
+      })
+    }
+
     doc
-      .text(' ')
-      .text(
-        formatCustodyRestrictions(
-          existingCase.accusedGender,
-          existingCase.custodyRestrictions,
-          existingCase.validToDate,
-          existingCase.isolationToDate,
-        ),
-        {
-          paragraphGap: 1,
-        },
-      )
       .text(' ')
       .text(
         'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
@@ -303,18 +304,19 @@ function constructRestrictionRulingPdf(
     (existingCase.type === CaseType.TRAVEL_BAN &&
       existingCase.decision === CaseDecision.ACCEPTING)
   ) {
+    const alternativeTravelBanRestrictions = formatAlternativeTravelBanRestrictions(
+      existingCase.accusedGender,
+      existingCase.custodyRestrictions,
+      existingCase.otherRestrictions,
+    )
+
+    if (alternativeTravelBanRestrictions) {
+      doc.text(' ').text(alternativeTravelBanRestrictions, {
+        paragraphGap: 1,
+      })
+    }
+
     doc
-      .text(' ')
-      .text(
-        formatAlternativeTravelBanRestrictions(
-          existingCase.accusedGender,
-          existingCase.custodyRestrictions,
-          existingCase.otherRestrictions,
-        ),
-        {
-          paragraphGap: 1,
-        },
-      )
       .text(' ')
       .text(
         'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd farbannsins undir dómara.',
