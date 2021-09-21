@@ -4,7 +4,6 @@ import { ApolloError } from 'apollo-server-express'
 import {
   ConfirmationDtoResponse,
   CreateUserProfileDto,
-  EmailVerification,
   UpdateUserProfileDto,
   UserProfileApi,
   UserProfileControllerCreateRequest,
@@ -94,8 +93,8 @@ export class UserProfileService {
       .catch(handleError)
   }
 
-  async resendEmailVerification(user: User): Promise<EmailVerification> {
-    return await this.userProfileApiWithAuth(user)
+  async resendEmailVerification(user: User): Promise<void> {
+    await this.userProfileApiWithAuth(user)
       .userProfileControllerRecreateVerification({
         nationalId: user.nationalId,
       })

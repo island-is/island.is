@@ -1,7 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import { Staff } from '@island.is/financial-aid/shared/lib'
-import type { StaffRole } from '@island.is/financial-aid/shared/lib'
+import { Staff, StaffRole } from '@island.is/financial-aid/shared/lib'
 
 @ObjectType()
 export class StaffModel implements Staff {
