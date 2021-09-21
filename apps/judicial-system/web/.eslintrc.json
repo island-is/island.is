@@ -13,9 +13,7 @@
       "parserOptions": {
         "project": ["apps/judicial-system/web/tsconfig.*?.json"]
       },
-      "rules": {
-        "@nrwl/nx/enforce-module-boundaries": "off"
-      }
+      "rules": {}
     },
     {
       "files": ["*.spec.ts", "*.spec.tsx"],

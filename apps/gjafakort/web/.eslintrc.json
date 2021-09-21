@@ -8,9 +8,7 @@
       "parserOptions": {
         "project": ["apps/gjafakort/web/tsconfig.json"]
       },
-      "rules": {
-        "@nrwl/nx/enforce-module-boundaries": "off"
-      }
+      "rules": {}
     }
   ]
 }

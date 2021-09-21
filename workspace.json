@@ -525,7 +525,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/api-catalogue/consts/.eslintrc",
             "tsConfig": [
               "libs/api-catalogue/consts/tsconfig.lib.json",
               "libs/api-catalogue/consts/tsconfig.spec.json"
@@ -553,7 +552,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/api-catalogue/elastic/.eslintrc",
             "tsConfig": [
               "libs/api-catalogue/elastic/tsconfig.lib.json",
               "libs/api-catalogue/elastic/tsconfig.spec.json"
@@ -581,7 +579,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/api-catalogue/services/.eslintrc",
             "tsConfig": [
               "libs/api-catalogue/services/tsconfig.lib.json",
               "libs/api-catalogue/services/tsconfig.spec.json"
@@ -619,7 +616,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/api-catalogue/types/.eslintrc",
             "tsConfig": [
               "libs/api-catalogue/types/tsconfig.lib.json",
               "libs/api-catalogue/types/tsconfig.spec.json"
@@ -647,7 +643,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/api/domains/api-catalogue/.eslintrc",
             "tsConfig": [
               "libs/api/domains/api-catalogue/tsconfig.lib.json",
               "libs/api/domains/api-catalogue/tsconfig.spec.json"
@@ -864,7 +859,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/service-portal/graphql/.eslintrc",
             "tsConfig": [
               "libs/api/domains/documents/tsconfig.lib.json",
               "libs/api/domains/documents/tsconfig.spec.json"
@@ -1097,7 +1091,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/api/domains/icelandic-names-registry/.eslintrc",
             "tsConfig": [
               "libs/api/domains/icelandic-names-registry/tsconfig.lib.json",
               "libs/api/domains/icelandic-names-registry/tsconfig.spec.json"
@@ -3092,7 +3085,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/auth-api-lib/.eslintrc",
             "tsConfig": [
               "libs/auth-api-lib/tsconfig.lib.json",
               "libs/auth-api-lib/tsconfig.spec.json"
@@ -7324,7 +7316,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/services/auth-admin-api/.eslintrc",
             "tsConfig": [
               "apps/services/auth-admin-api/tsconfig.app.json",
               "apps/services/auth-admin-api/tsconfig.spec.json"
@@ -7403,7 +7394,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/services/auth-api/.eslintrc",
             "tsConfig": [
               "apps/services/auth-api/tsconfig.app.json",
               "apps/services/auth-api/tsconfig.spec.json"
@@ -8219,7 +8209,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/services/xroad-collector/.eslintrc",
             "tsConfig": [
               "apps/services/xroad-collector/tsconfig.app.json",
               "apps/services/xroad-collector/tsconfig.spec.json"

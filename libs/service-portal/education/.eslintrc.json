@@ -8,15 +8,14 @@
       "parserOptions": {
         "project": ["libs/service-portal/education/tsconfig.*?.json"]
       },
-      "rules": {}
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "rules": {}
+      "rules": {
+        "@nrwl/nx/enforce-module-boundaries": [
+          "error",
+          {
+            "allow": ["../../education-career/src/screens/EducationCareer/EducationCareer"]
+          }
+        ]
+      }
     }
   ]
 }

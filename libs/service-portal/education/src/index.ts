@@ -14,6 +14,7 @@ export const educationModule: ServicePortalModule = {
       render: () =>
         lazy(() =>
           import(
+            // TODO: This should reference './screens/EducationOverview/EducationOverivew in the future
             '../../education-career/src/screens/EducationCareer/EducationCareer'
           ),
         ),

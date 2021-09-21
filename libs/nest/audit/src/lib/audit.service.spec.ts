@@ -1,13 +1,12 @@
 import { mock } from 'jest-mock-extended'
-
 import { Test, TestingModule } from '@nestjs/testing'
 
-import type { Logger } from '@island.is/logging'
+import type { User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 import { AuditService } from './audit.service'
-import { AUDIT_OPTIONS, AuditOptions } from '@island.is/nest/audit'
-import type { User } from '@island.is/auth-nest-tools'
+import { AUDIT_OPTIONS } from './audit.options'
 import SpyInstance = jest.SpyInstance
 
 jest.mock('@island.is/logging', () => {
