@@ -36,12 +36,12 @@ export class AuthService {
         returnUrl: ReturnUrl.APPLICATION,
       },
       '0000000004': {
-        nationalId: '0000000000',
+        nationalId: '0000000004',
         name: 'Lárus Rikkason',
         phoneNumber: '9999999',
         folder: uuid(),
         service: RolesRule.OSK,
-        postalCode: 203,
+        postalCode: 102,
         returnUrl: ReturnUrl.APPLICATION,
       },
       '0000000001': {

@@ -7,6 +7,7 @@ import {
   LogoHfj,
   Login,
   HasApplied,
+  ServiceCenter,
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
@@ -24,8 +25,6 @@ interface Props {
 const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
   const { isAuthenticated, user } = useContext(UserContext)
 
-  console.log(user, serviceCenters)
-
   const { form } = useContext(FormContext)
   const sections = useNavigationTree(Boolean(form?.hasIncome))
 
@@ -35,8 +34,6 @@ const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
         serviceCenter.postalCodes.includes(Number(user.postalCode)),
       )
     : undefined
-
-  console.log(suggestedServiceCenters)
 
   useEffect(() => {
     if (activeSection !== undefined) {
@@ -59,7 +56,40 @@ const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
       background="purple100"
       className={styles.processContainer}
     >
-      {user.currentApplication ? (
+      <GridContainer className={styles.gridContainer}>
+        <div className={styles.gridRowContainer}>
+          <Box
+            background="white"
+            borderColor="white"
+            borderRadius="large"
+            className={styles.formContainer}
+          >
+            {suggestedServiceCenters &&
+              suggestedServiceCenters.map((serviceCenter) => (
+                <ServiceCenter
+                  key={serviceCenter.name}
+                  serviceCenter={serviceCenter}
+                />
+              ))}
+            {children}
+          </Box>
+          <Box className={styles.sidebarContent}>
+            <Box paddingLeft={[0, 0, 0, 3]}>
+              {activeSection != undefined && (
+                <FormStepper
+                  sections={sections}
+                  activeSection={activeSection}
+                  activeSubSection={activeSubSection}
+                />
+              )}
+            </Box>
+
+            <LogoHfj className={styles.logo} />
+          </Box>
+        </div>
+      </GridContainer>
+
+      {/* {user.currentApplication ? (
         <HasApplied />
       ) : (
         <GridContainer className={styles.gridContainer}>
@@ -87,7 +117,7 @@ const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
             </Box>
           </div>
         </GridContainer>
-      )}
+      )} */}
     </Box>
   )
 }
