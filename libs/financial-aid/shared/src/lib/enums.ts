@@ -49,3 +49,8 @@ export enum FileType {
   INCOME = 'Income',
   OTHER = 'Other',
 }
+
+export enum StaffRole {
+  ADMIN = 'Admin',
+  EMPLOYEE = 'Employee',
+}
