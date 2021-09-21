@@ -411,8 +411,8 @@ jobs:
         if: "!needs.prepare.outputs.IMAGES || needs.pre-checks.outputs.PRE_CHECK != 'push'"
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
       - name: Retag unaffected Helm config Docker image
         if: "!startsWith(env.GIT_BRANCH_DEPLOY, 'feature/') && (!needs.prepare.outputs.IMAGES || needs.pre-checks.outputs.PRE_CHECK != 'push')"
