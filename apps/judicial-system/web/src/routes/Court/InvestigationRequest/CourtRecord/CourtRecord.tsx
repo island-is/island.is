@@ -36,10 +36,6 @@ const CourtRecord = () => {
     const defaultCourtAttendees = (wc: Case): string => {
       let attendees = ''
 
-      if (wc.registrar) {
-        attendees += `${wc.registrar.name} ${wc.registrar.title}\n`
-      }
-
       if (
         wc.prosecutor &&
         wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
