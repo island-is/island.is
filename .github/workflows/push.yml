@@ -416,7 +416,7 @@ jobs:
           aws-region: eu-west-1
       - name: Retag unaffected Helm config Docker image
         if: "!startsWith(env.GIT_BRANCH_DEPLOY, 'feature/') && (!needs.prepare.outputs.IMAGES || needs.pre-checks.outputs.PRE_CHECK != 'push')"
-        run: ./scripts/ci/retag-unaffected.sh helm-config
+        run: ./scripts/ci/retag-unaffected.sh ' helm-config'
 
   deploy:
     runs-on: ubuntu-20.04
