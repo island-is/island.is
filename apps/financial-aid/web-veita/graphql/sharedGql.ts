@@ -34,6 +34,9 @@ export const GetApplicationQuery = gql`
       studentCustom
       amount
       rejection
+      staff {
+        name
+      }
     }
   }
 `
@@ -58,6 +61,9 @@ export const GetApplicationsQuery = gql`
       modified
       created
       state
+      staff {
+        name
+      }
     }
   }
 `

@@ -6,8 +6,8 @@ import {
   ApplicationEventType,
   RolesRule,
   ReturnUrl,
+  StaffRole,
 } from './enums'
-import type { StaffRole } from './types'
 
 export interface GetSignedUrl {
   fileName: string
@@ -65,6 +65,7 @@ export interface UpdateApplication {
   state: ApplicationState
   amount?: number
   rejection?: string
+  staffId?: string
 }
 
 export interface CreateApplicationEvent {
@@ -169,6 +170,7 @@ export interface Application {
   amount?: number
   comment?: string
   rejection?: string
+  staff?: Staff
 }
 
 export interface GetSignedUrlForId {

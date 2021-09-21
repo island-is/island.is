@@ -53,10 +53,8 @@ export class UserProfileResolver {
 
   @Mutation(() => Response, { nullable: true })
   async resendEmailVerification(@CurrentUser() user: User): Promise<Response> {
-    const response = await this.userUserProfileService.resendEmailVerification(
-      user,
-    )
-    return Promise.resolve({ created: !!response })
+    await this.userUserProfileService.resendEmailVerification(user)
+    return Promise.resolve({ created: true })
   }
 
   @Mutation(() => ConfirmResponse, { nullable: true })

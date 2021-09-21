@@ -8,6 +8,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import { ApplicationFileModel } from '../../file'
+import { StaffModel } from '../../staff'
 
 @ObjectType()
 export class ApplicationModel implements Application {
@@ -82,4 +83,7 @@ export class ApplicationModel implements Application {
 
   @Field({ nullable: true })
   readonly rejection?: string
+
+  @Field({ nullable: true })
+  readonly staff?: StaffModel
 }

@@ -52,7 +52,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     }
 
     newUploadFiles.forEach(async (file) => {
-      const signedUrl = await createSignedUrl(file.name)
+      const signedUrl = await createSignedUrl(file.name.normalize())
 
       if (signedUrl) {
         file.key = signedUrl.key
@@ -157,10 +157,11 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     const formData = new FormData()
 
     formData.append('file', file as File)
-
     request.setRequestHeader('x-amz-acl', 'bucket-owner-full-control')
 
-    request.send(formData)
+    formData.forEach((el) => {
+      request.send(el)
+    })
   }
 
   const updateFile = (file: UploadFile) => {
