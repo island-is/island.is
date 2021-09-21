@@ -226,7 +226,9 @@ const ApplicationProfile = () => {
           <ApplicationHeader
             application={application}
             onClickApplicationState={() => {
-              setStateModalVisible(!isStateModalVisible)
+              setStateModalVisible(
+                (isStateModalVisible) => !isStateModalVisible,
+              )
             }}
           />
 
@@ -258,7 +260,7 @@ const ApplicationProfile = () => {
         {application.state && (
           <StateModal
             isVisible={isStateModalVisible}
-            onVisiblityChange={(isVisibleBoolean) => {
+            onVisibilityChange={(isVisibleBoolean) => {
               setStateModalVisible(isVisibleBoolean)
             }}
             onStateChange={(applicationState: ApplicationState) => {
