@@ -13,6 +13,8 @@ import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNav
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
+import { serviceCenters } from '@island.is/financial-aid/shared/data'
+
 interface Props {
   children: ReactNode
   activeSection?: number
@@ -22,8 +24,19 @@ interface Props {
 const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
   const { isAuthenticated, user } = useContext(UserContext)
 
+  console.log(user, serviceCenters)
+
   const { form } = useContext(FormContext)
   const sections = useNavigationTree(Boolean(form?.hasIncome))
+
+  //TODO when þjóðskrá
+  const suggestedServiceCenters = user?.postalCode
+    ? serviceCenters.filter((serviceCenter) =>
+        serviceCenter.postalCodes.includes(Number(user.postalCode)),
+      )
+    : undefined
+
+  console.log(suggestedServiceCenters)
 
   useEffect(() => {
     if (activeSection !== undefined) {

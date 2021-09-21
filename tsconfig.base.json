@@ -281,6 +281,9 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
+      "@island.is/financial-aid/shared/data": [
+        "libs/financial-aid/shared/src/data/index.ts"
+      ],
       "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],
       "@island.is/gjafakort/application/*": [
         "apps/gjafakort/application/src/*"

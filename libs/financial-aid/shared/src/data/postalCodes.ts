@@ -1,4 +1,4 @@
-const postalCodes: number[] = [
+export const postalCodes: number[] = [
   101,
   102,
   103,

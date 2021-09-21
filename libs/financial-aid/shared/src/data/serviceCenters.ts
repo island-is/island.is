@@ -11,7 +11,7 @@ export interface ServiceCenter {
 // Compiled from https://www.samband.is/sveitarfelogin/ list and
 // https://is.wikipedia.org/wiki/Íslensk_sveitarfélög_eftir_sveitarfélagsnúmerum
 
-const serviceCenters: ServiceCenter[] = [
+export const serviceCenters: ServiceCenter[] = [
   {
     name: 'Þjónustumiðstöð Vesturbæjar, Miðborgar og Hlíða',
     number: 0,
@@ -19,7 +19,8 @@ const serviceCenters: ServiceCenter[] = [
     address: 'Laugavegi 77',
     addressPostalCode: '101 Reykjavík',
     postalCodes: [101, 102, 105, 107],
-    link: 'https://reykjavik.is/stadir/thjonustumidstod-vesturbaejar-midborgar-og-hlida',
+    link:
+      'https://reykjavik.is/stadir/thjonustumidstod-vesturbaejar-midborgar-og-hlida',
   },
   {
     name: 'Þjónustumiðstöð Laugardals og Háaleitis',
@@ -28,7 +29,8 @@ const serviceCenters: ServiceCenter[] = [
     address: 'Efstaleiti 1',
     addressPostalCode: '103 Reykjavík',
     postalCodes: [103, 104, 105, 108],
-    link: 'https://reykjavik.is/stadir/thjonustumidstod-laugardals-og-haaleitis',
+    link:
+      'https://reykjavik.is/stadir/thjonustumidstod-laugardals-og-haaleitis',
   },
   {
     name: 'Þjónustumiðstöð Árbæjar og Grafarholts',
@@ -37,7 +39,8 @@ const serviceCenters: ServiceCenter[] = [
     address: 'Hraunbær 115',
     addressPostalCode: '110 Reykjavík',
     postalCodes: [110, 113],
-    link: 'https://reykjavik.is/stadir/thjonustumidstod-arbaejar-og-grafarholts',
+    link:
+      'https://reykjavik.is/stadir/thjonustumidstod-arbaejar-og-grafarholts',
   },
   {
     name: 'Þjónustumiðstöð Breiðholts',
