@@ -166,9 +166,9 @@ export const is = {
   'licenseScanDetail.errorCodeMessage': `{
     errorCode,
     select,
-    1 {Skilríki í lagi}
-    2 {Skilríkið er útrunnið}
-    3 {Strikamerki óþekkt eða útrunnið, prófið að endurhlaða skilríkið og skanna aftur}
+    1 {Skírteini í gildi}
+    2 {Skírteini ekki í gildi}
+    3 {Strikamerki óþekkt eða útrunnið, prófið að endurhlaða skírteini og skanna aftur}
     4 {Strikamerki ógilt}
     other {Óþekkt villa}
   }`,
