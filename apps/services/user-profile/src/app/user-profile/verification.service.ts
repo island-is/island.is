@@ -172,7 +172,7 @@ export class VerificationService {
     }
 
     if (confirmSmsDto.code !== verification.smsCode) {
-      await verification.increment({tries: 1})
+      await verification.increment({ tries: 1 })
       const remaining = SMS_VERIFICATION_MAX_TRIES - verification.tries
       return {
         message: `SMS code is not a match. ${remaining} tries remaining.`,
