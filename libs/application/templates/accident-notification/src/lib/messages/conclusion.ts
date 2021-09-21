@@ -4,7 +4,7 @@ export const conclusion = {
   general: defineMessages({
     title: {
       id: 'an.application:conclusion.general.title',
-      defaultMessage: 'Umsókn móttekin!',
+      defaultMessage: 'Tilknning móttekin!',
       description: 'Title of conclusion screen',
     },
     alertTitle: {
