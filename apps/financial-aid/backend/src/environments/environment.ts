@@ -29,6 +29,18 @@ const prodConfig = {
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
   },
+  email: {
+    fromEmail: process.env.EMAIL_FROM ?? '',
+    fromName: process.env.EMAIL_FROM_NAME ?? '',
+    replyToEmail: process.env.EMAIL_REPLY_TO ?? '',
+    replyToName: process.env.EMAIL_REPLY_TO_NAME ?? '',
+  },
+  emailOptions: {
+    useTestAccount: false,
+    options: {
+      region: process.env.EMAIL_REGION ?? '',
+    },
+  },
 }
 
 const devConfig = {
@@ -43,6 +55,18 @@ const devConfig = {
     fileBaseUrl: 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
+  },
+  email: {
+    fromEmail: 'margret@kolibri.is',
+    fromName: 'MaggaMixx',
+    replyToEmail: 'margret@kolibri.is',
+    replyToName: 'Margrét',
+  },
+  emailOptions: {
+    useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
+    options: {
+      region: process.env.EMAIL_REGION ?? '',
+    },
   },
 }
 

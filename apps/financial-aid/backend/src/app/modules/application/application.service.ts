@@ -16,6 +16,14 @@ import { FileService } from '../file'
 import { ApplicationEventService } from '../applicationEvent'
 import { StaffModel } from '../staff'
 
+import { EmailService } from '@island.is/email-service'
+import { environment } from '../../../environments'
+
+interface Recipient {
+  name: string
+  address: string
+}
+
 @Injectable()
 export class ApplicationService {
   constructor(
@@ -23,6 +31,7 @@ export class ApplicationService {
     private readonly applicationModel: typeof ApplicationModel,
     private readonly fileService: FileService,
     private readonly applicationEventService: ApplicationEventService,
+    private readonly emailService: EmailService,
   ) {}
 
   async hasAccessToApplication(
@@ -124,6 +133,15 @@ export class ApplicationService {
       await Promise.all(promises)
     }
 
+    await this.sendEmail(
+      {
+        name: user.name,
+        address: application.email,
+      },
+      appModel.id,
+      `Umsókn þín er móttekin og er nú í vinnslu.`,
+    )
+
     return appModel
   }
 
@@ -153,5 +171,30 @@ export class ApplicationService {
     })
 
     return { numberOfAffectedRows, updatedApplication }
+  }
+
+  private async sendEmail(
+    to: Recipient | Recipient[],
+    applicationId: string | undefined,
+    body: string,
+  ) {
+    try {
+      await this.emailService.sendEmail({
+        from: {
+          name: environment.email.fromName,
+          address: environment.email.fromEmail,
+        },
+        replyTo: {
+          name: environment.email.replyToName,
+          address: environment.email.replyToEmail,
+        },
+        to,
+        subject: `Umsókn fyrir fjárhagsaðstoð móttekin ~ ${applicationId}`,
+        text: body,
+        html: body,
+      })
+    } catch (error) {
+      console.log('failed to send email', error)
+    }
   }
 }
