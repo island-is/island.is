@@ -30,7 +30,7 @@ export const GetMunicipalityQuery = gql`
       id
       name
       settings {
-        web
+        homePage
         aid
       }
     }
