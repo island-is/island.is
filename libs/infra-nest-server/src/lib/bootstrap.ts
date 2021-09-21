@@ -117,7 +117,7 @@ function setupOpenApi(
 
 function generateSchema(filePath: string, document: OpenAPIObject) {
   logger.info('Generating OpenAPI schema.', { context: 'Bootstrap' })
-  fs.writeFileSync(filePath, yaml.safeDump(document, { noRefs: true }))
+  fs.writeFileSync(filePath, yaml.dump(document, { noRefs: true }))
 }
 
 export const bootstrap = async (options: RunServerOptions) => {
