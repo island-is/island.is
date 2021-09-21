@@ -44,8 +44,8 @@ const ApplicationsTable = ({ applications, headers, className }: PageProps) => {
           </thead>
 
           <tbody className={styles.tableBody}>
-            {applications.map((item: Application, index: number) => (
-              <TableBody application={item} key={'tableBody-' + index} />
+            {applications.map((item: Application) => (
+              <TableBody application={item} key={'tableBody-' + item.id} />
             ))}
           </tbody>
         </table>

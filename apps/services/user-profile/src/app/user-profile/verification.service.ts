@@ -3,7 +3,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { EmailVerification } from './emailVerification.model'
-import * as CryptoJS from 'crypto-js'
+import { randomInt, randomBytes } from 'crypto'
+import addMilliseconds from 'date-fns/addMilliseconds'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { UserProfile } from '../user-profile/userProfile.model'
 import { UserProfileService } from '../user-profile/userProfile.service'
@@ -15,6 +16,10 @@ import environment from '../../environments/environment'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
+
+export const SMS_VERIFICATION_MAX_AGE = 5 * 60 * 1000
+export const SMS_VERIFICATION_MAX_TRIES = 5
+
 /**
   *- Email verification procedure
     *- New User
@@ -60,8 +65,7 @@ export class VerificationService {
     nationalId: string,
     email: string,
   ): Promise<EmailVerification | null> {
-    const hash = CryptoJS.MD5(nationalId + email)
-    const hashString = hash.toString(CryptoJS.enc.Hex)
+    const hashString = randomBytes(16).toString('hex')
 
     const [record] = await this.emailVerificationModel.upsert(
       { nationalId, email, hash: hashString },
@@ -79,8 +83,13 @@ export class VerificationService {
   async createSmsVerification(
     createSmsVerification: CreateSmsVerificationDto,
   ): Promise<SmsVerification | null> {
-    const code = Math.floor(100000 + Math.random() * 900000).toString()
-    const verification = { ...createSmsVerification, smsCode: code }
+    const code = randomInt(0, 999999).toString().padStart(6, '0')
+    const verification = {
+      ...createSmsVerification,
+      tries: 0,
+      smsCode: code,
+      created: new Date(),
+    }
 
     const [record] = await this.smsVerificationModel.upsert(verification, {
       returning: true,
@@ -143,9 +152,33 @@ export class VerificationService {
       }
     }
 
-    if (confirmSmsDto.code !== verification.smsCode) {
+    const expiration = addMilliseconds(
+      verification.created,
+      SMS_VERIFICATION_MAX_AGE,
+    )
+    if (expiration < new Date()) {
       return {
-        message: 'SMS code is not a match',
+        message: 'SMS verification is expired',
+        confirmed: false,
+      }
+    }
+
+    if (verification.tries >= SMS_VERIFICATION_MAX_TRIES) {
+      return {
+        message:
+          'Too many failed SMS verifications. Please restart verification.',
+        confirmed: false,
+      }
+    }
+
+    if (confirmSmsDto.code !== verification.smsCode) {
+      const updatedVerification = await this.smsVerificationModel.increment(
+        { tries: 1 },
+        { where: { nationalId } },
+      )
+      const remaining = SMS_VERIFICATION_MAX_TRIES - updatedVerification.tries
+      return {
+        message: `SMS code is not a match. ${remaining} tries remaining.`,
         confirmed: false,
       }
     }
