@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react'
+import React, { createContext, useState, useEffect, ReactNode } from 'react'
 import { IntlProvider } from 'react-intl'
 import { useApolloClient } from '@apollo/client/react'
 import gql from 'graphql-tag'
@@ -27,9 +27,10 @@ interface LocaleContextType {
 }
 
 interface LocaleProviderProps {
-  locale: Locale
-  messages: MessagesDict
-  children: React.ReactElement
+  locale?: Locale
+  messages?: MessagesDict
+  skipPolyfills?: boolean
+  children: ReactNode
 }
 
 type Query = {
@@ -51,12 +52,25 @@ const GET_TRANSLATIONS = gql`
   }
 `
 
+const errorHandler = (error: Error) => {
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    process.env.NODE_ENV !== 'test'
+  ) {
+    console.error(error)
+  }
+}
+
+// Needs to be a constant to avoid endless state updates.
+const emptyMessages = {}
+
 export const LocaleProvider = ({
   children,
   locale = defaultLanguage,
-  messages = {},
+  messages = emptyMessages,
+  skipPolyfills = false,
 }: LocaleProviderProps) => {
-  const [ready, setReady] = useState<boolean>(false)
+  const [ready, setReady] = useState<boolean>(skipPolyfills)
   const [activeLocale, setActiveLocale] = useState<Locale>(
     locale || defaultLanguage,
   )
@@ -98,21 +112,25 @@ export const LocaleProvider = ({
 
   async function changeLanguage(lang: Locale) {
     setLoadingMessages(true)
-    await polyfill(lang)
+    if (!skipPolyfills) {
+      await polyfill(lang)
+    }
     setActiveLocale(lang)
 
-    const { data } = await apolloClient.query<Query>({
-      query: GET_TRANSLATIONS,
-      variables: {
-        input: {
-          namespaces: loadedNamespaces,
-          lang,
+    if (loadedNamespaces.length > 0) {
+      const { data } = await apolloClient.query<Query>({
+        query: GET_TRANSLATIONS,
+        variables: {
+          input: {
+            namespaces: loadedNamespaces,
+            lang,
+          },
         },
-      },
-    })
+      })
+      setMessagesDict((old) => Object.assign({}, old, data?.getTranslations))
+    }
 
     setLoadingMessages(false)
-    setMessagesDict((old) => Object.assign({}, old, data?.getTranslations))
   }
 
   const loadMessages = async (namespaces: string | string[]) => {
@@ -155,6 +173,7 @@ export const LocaleProvider = ({
           locale={activeLocale}
           messages={messagesDict}
           defaultLocale={defaultLanguage}
+          onError={errorHandler}
         >
           {children}
         </IntlProvider>

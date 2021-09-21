@@ -11,9 +11,9 @@ import {
 import * as styles from './Header.treat'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
+import { UserMenu } from '@island.is/shared/components'
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
-import UserMenuTrigger from '../UserMenuTrigger/UserMenuTrigger'
 import { BetaTag } from '../Logo/BetaTag'
 import { m } from '@island.is/service-portal/core'
 
@@ -53,11 +53,9 @@ export const Header: FC<{}> = () => {
                 </FocusableBox>
               </Link>
               <Box display="flex" alignItems="center" flexWrap="nowrap">
-                <Hidden below="lg">
-                  <UserMenuTrigger />
-                </Hidden>
+                <UserMenu />
                 <Hidden above="md">
-                  <Box marginLeft={[1, 1, 1, 2]}>
+                  <Box marginLeft={2}>
                     <Button
                       variant="utility"
                       icon={mobileMenuState === 'open' ? 'close' : 'menu'}

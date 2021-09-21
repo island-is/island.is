@@ -1,7 +1,9 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   Model,
   Table,
   UpdatedAt,
@@ -13,14 +15,17 @@ import {
   HomeCircumstances,
   Employment,
   ApplicationState,
+  Application,
 } from '@island.is/financial-aid/shared/lib'
+
 import { ApplicationFileModel } from '../../file/models'
+import { StaffModel } from '../../staff'
 
 @Table({
   tableName: 'applications',
   timestamps: true,
 })
-export class ApplicationModel extends Model<ApplicationModel> {
+export class ApplicationModel extends Model<Application> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -182,4 +187,16 @@ export class ApplicationModel extends Model<ApplicationModel> {
   })
   @ApiProperty()
   rejection: string
+
+  @ForeignKey(() => StaffModel)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  staffId: string
+
+  @BelongsTo(() => StaffModel, 'staffId')
+  @ApiProperty({ type: StaffModel })
+  staff?: StaffModel
 }

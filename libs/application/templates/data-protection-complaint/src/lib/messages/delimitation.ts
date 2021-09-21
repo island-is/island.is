@@ -64,7 +64,7 @@ export const delimitation = {
         óskað eftir frekari upplýsingumeða gögnum frá öllum aðilum.
         Aðilum máls er sent afrit allra bréfa. Hafi allir þættir
         málsins verið upplýstir og málið ekki til lykta leitt með
-        öðrum hætti úrskurðarPersónuvernd um lögmæti þeirrar
+        öðrum hætti úrskurðar Persónuvernd um lögmæti þeirrar
         vinnslu sem kvartað er yfir.
         `,
       description: 'Agreement description bullet Two',

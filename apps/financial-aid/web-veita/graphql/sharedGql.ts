@@ -22,6 +22,7 @@ export const GetApplicationQuery = gql`
       employmentCustom
       homeCircumstancesCustom
       files {
+        id
         applicationId
         name
         size
@@ -33,6 +34,9 @@ export const GetApplicationQuery = gql`
       studentCustom
       amount
       rejection
+      staff {
+        name
+      }
     }
   }
 `
@@ -57,6 +61,9 @@ export const GetApplicationsQuery = gql`
       modified
       created
       state
+      staff {
+        name
+      }
     }
   }
 `
@@ -99,19 +106,21 @@ export const GetMunicipalityQuery = gql`
   }
 `
 
-export const GetCurrentUserQuery = gql`
-  query currentUserQuery {
-    currentUser {
-      name
-    }
-  }
-`
 export const CurrentUserQuery = gql`
   query CurrentUserQuery {
     currentUser {
       nationalId
       name
       phoneNumber
+      staff {
+        id
+        nationalId
+        name
+        municipalityId
+        phoneNumber
+        role
+        active
+      }
     }
   }
 `

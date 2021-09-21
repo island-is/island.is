@@ -7104,6 +7104,25 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "dist/apps/services/auth-api",
+            "commands": [
+              "nx esbuild services-auth-api",
+              "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
+            ],
+            "parallel": false
+          },
+          "configurations": {
+            "production": {
+              "commands": [
+                "nx esbuild services-auth-api --prod",
+                "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
+              ]
+            }
+          }
+        },
+        "esbuild": {
           "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/services/auth-api",
@@ -7146,7 +7165,7 @@
         "serve": {
           "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "services-auth-api:build"
+            "buildTarget": "services-auth-api:esbuild"
           }
         },
         "lint": {
@@ -7201,7 +7220,10 @@
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["sequelize-cli db:seed:all"],
+            "commands": [
+              "sequelize-cli db:seed:all --seeders-path ./seeders/local",
+              "sequelize-cli db:seed:all"
+            ],
             "cwd": "libs/auth-api-lib"
           }
         }
@@ -8002,6 +8024,34 @@
         }
       }
     },
+    "shared-components": {
+      "root": "libs/shared/components",
+      "sourceRoot": "libs/shared/components/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/components/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/components"],
+          "options": {
+            "jestConfig": "libs/shared/components/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "command": "graphql-codegen --config libs/shared/components/codegen.yml"
+          }
+        }
+      }
+    },
     "shared-connected": {
       "root": "libs/shared/connected",
       "sourceRoot": "libs/shared/connected/src",
@@ -8101,6 +8151,33 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/shared/mocking"]
+        }
+      }
+    },
+    "shared-translations": {
+      "root": "libs/shared/translations",
+      "sourceRoot": "libs/shared/translations/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/translations/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/translations"],
+          "options": {
+            "jestConfig": "libs/shared/translations/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/shared/translations/src/lib/*.ts'"
+          }
         }
       }
     },

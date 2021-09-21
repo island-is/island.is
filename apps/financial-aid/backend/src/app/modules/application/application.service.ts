@@ -14,6 +14,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import { ApplicationEventService } from '../applicationEvent'
+import { StaffModel } from '../staff'
 
 @Injectable()
 export class ApplicationService {
@@ -23,6 +24,17 @@ export class ApplicationService {
     private readonly fileService: FileService,
     private readonly applicationEventService: ApplicationEventService,
   ) {}
+
+  async hasAccessToApplication(
+    nationalId: string,
+    id: string,
+  ): Promise<boolean> {
+    const hasApplication = await this.applicationModel.findOne({
+      where: { id, nationalId },
+    })
+
+    return Boolean(hasApplication)
+  }
 
   async getCurrentApplication(
     nationalId: string,
@@ -40,17 +52,21 @@ export class ApplicationService {
   }
 
   async getAll(): Promise<ApplicationModel[]> {
-    return this.applicationModel.findAll({ order: [['modified', 'DESC']] })
+    return this.applicationModel.findAll({
+      order: [['modified', 'DESC']],
+      include: [{ model: StaffModel, as: 'staff' }],
+    })
   }
 
   async findById(id: string): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
+      include: [{ model: StaffModel, as: 'staff' }],
     })
 
     const files = await this.fileService.getAllApplicationFiles(id)
 
-    application.setDataValue('files', files)
+    application?.setDataValue('files', files)
 
     return application
   }
@@ -118,6 +134,9 @@ export class ApplicationService {
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
   }> {
+    if (update.state === ApplicationState.NEW) {
+      update.staffId = null
+    }
     const [
       numberOfAffectedRows,
       [updatedApplication],
