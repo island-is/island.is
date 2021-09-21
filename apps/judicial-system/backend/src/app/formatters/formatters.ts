@@ -72,21 +72,14 @@ export function formatCustodyProvisions(
 export function formatAppeal(
   appealDecision: CaseAppealDecision | undefined,
   stakeholder: string,
-  includeBullet = true,
 ): string {
   switch (appealDecision) {
     case CaseAppealDecision.APPEAL:
-      return `${
-        includeBullet ? '  \u2022  ' : ''
-      }${stakeholder} kærir úrskurðinn.`
+      return `${stakeholder} lýsir því yfir að hann kæri úrskurðinn til Landsréttar.`
     case CaseAppealDecision.ACCEPT:
-      return `${
-        includeBullet ? '  \u2022  ' : ''
-      }${stakeholder} unir úrskurðinum.`
+      return `${stakeholder} unir úrskurðinum.`
     case CaseAppealDecision.POSTPONE:
-      return `${
-        includeBullet ? '  \u2022  ' : ''
-      }${stakeholder} tekur sér lögboðinn frest.`
+      return `${stakeholder} lýsir því yfir að hann taki sér lögbundinn kærufrest.`
     default:
       return ''
   }
@@ -300,10 +293,9 @@ export function formatPrisonRulingEmailNotification(
       ? defenderEmail
       : 'Hefur ekki verið skráður'
   }.<br /><br /><strong>Úrskurðarorð</strong><br /><br />${conclusion}<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
-    accusedAppealDecision,
-    capitalize(formatAccusedByGender(accusedGender)),
-    false,
-  )}<br />${formatAppeal(prosecutorAppealDecision, 'Sækjandi', false)}${
+    prosecutorAppealDecision,
+    'Sækjandi',
+  )}<br />${formatAppeal(accusedAppealDecision, 'Varnaraðili')}${
     decision === CaseDecision.ACCEPTING
       ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatCustodyRestrictions(
           accusedGender,

@@ -24,6 +24,7 @@ import { Case } from '../modules/case/models'
 import { formatAppeal } from './formatters'
 import { setPageNumbers } from './pdfHelpers'
 import { writeFile } from './writeFile'
+import { skjaldarmerki } from './skjaldarmerki'
 
 function constructRestrictionRulingPdf(
   existingCase: Case,
@@ -31,10 +32,10 @@ function constructRestrictionRulingPdf(
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
-      top: 40,
-      bottom: 60,
-      left: 50,
-      right: 50,
+      top: 70,
+      bottom: 70,
+      left: 70,
+      right: 70,
     },
     bufferPages: true,
   })
@@ -45,22 +46,37 @@ function constructRestrictionRulingPdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
+  doc.translate(270, 70).scale(0.5)
+
+  skjaldarmerki(doc)
+
   doc
-    .font('Helvetica-Bold')
-    .fontSize(26)
-    .lineGap(8)
-    .text('Þingbók', { align: 'center' })
-    .font('Helvetica')
+    .fillColor('black')
+    .scale(2)
+    .translate(-270, -70)
+    .text(' ')
+    .text(' ')
+    .text(' ')
+    .text(' ')
+    .text(' ')
+
+  doc
+    .font('Times-Roman')
     .fontSize(18)
+    .lineGap(4)
     .text(existingCase.court?.name ?? 'Dómstóll ekki skráður', {
       align: 'center',
     })
-    .fontSize(12)
+    .fontSize(14)
+    .lineGap(2)
+    .text('Þingbók og úrskurður', { align: 'center' })
     .lineGap(30)
     .text(
       `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
       { align: 'center' },
     )
+    .fontSize(11)
+    .lineGap(1)
     .text(
       `Þann ${formatDate(existingCase.courtStartDate, 'PPP')} heldur ${
         existingCase.judge?.name ?? '?'
@@ -68,92 +84,62 @@ function constructRestrictionRulingPdf(
         existingCase.courtCaseNumber
       }. Þinghald hefst kl. ${formatDate(existingCase.courtStartDate, 'p')}.`,
       {
-        lineGap: 6,
-        paragraphGap: 0,
+        paragraphGap: 1,
       },
     )
-    .lineGap(8)
+
+  if (existingCase.courtAttendees) {
+    doc
+      .text(' ')
+      .font('Times-Bold')
+      .text('Mættir eru:')
+      .text(' ')
+      .font('Times-Roman')
+      .text(existingCase.courtAttendees, {
+        paragraphGap: 1,
+      })
+  }
+
+  doc
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Viðstaddir')
-    .font('Helvetica')
-    .fontSize(12)
-    .text(existingCase.courtAttendees ?? 'Vistaddir ekki skráðir', {
-      lineGap: 6,
-      paragraphGap: 0,
+    .font('Times-Bold')
+    .text('Krafa:')
+    .text(' ')
+    .font('Times-Roman')
+    .text(existingCase.prosecutorDemands ?? 'Krafa ekki skráð.', {
+      paragraphGap: 1,
     })
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Krafa')
-    .font('Helvetica')
-    .fontSize(12)
-    .text(existingCase.prosecutorDemands ?? 'Krafa ekki skráð', {
-      lineGap: 6,
-      paragraphGap: 0,
-    })
+    .font('Times-Bold')
+    .text('Lagt er fram:')
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Dómskjöl')
-    .font('Helvetica')
-    .fontSize(12)
+    .font('Times-Roman')
     .text(`Krafa um ${caseTypes[existingCase.type]} þingmerkt nr. 1.`, {
-      lineGap: 6,
-      paragraphGap: 0,
+      paragraphGap: 1,
     })
     .text('Rannsóknargögn málsins liggja frammi.', {
-      lineGap: 6,
-      paragraphGap: 4,
+      paragraphGap: 1,
     })
 
   existingCase.courtDocuments?.forEach((courttDocument, index) =>
     doc.text(`${courttDocument} þingmerkt nr. ${index + 2}.`, {
-      lineGap: 6,
-      paragraphGap: 4,
+      paragraphGap: 1,
     }),
   )
 
   if (!existingCase.isAccusedAbsent) {
     doc
       .text(' ')
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text(
-        `Réttindi ${formatAccusedByGender(
-          existingCase.accusedGender,
-          NounCases.GENITIVE,
-        )}`,
-      )
-      .font('Helvetica')
-      .fontSize(12)
       .text(
         'Sakborningi er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
         {
-          lineGap: 6,
-          paragraphGap: 0,
+          paragraphGap: 1,
         },
       )
   }
 
   doc
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text(
-      `Afstaða ${formatAccusedByGender(
-        existingCase.accusedGender,
-        NounCases.GENITIVE,
-      )}`,
-    )
-    .font('Helvetica')
-    .fontSize(12)
     .text(
       `${
         existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
@@ -167,167 +153,113 @@ function constructRestrictionRulingPdf(
           : ''
       }${existingCase.accusedPleaAnnouncement ?? ''}`,
       {
-        lineGap: 6,
-        paragraphGap: 0,
+        paragraphGap: 1,
       },
     )
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Málflutningur')
-    .font('Helvetica')
-    .fontSize(12)
     .text(
-      existingCase.litigationPresentations ?? 'Málflutningur ekki skráður',
+      existingCase.litigationPresentations ?? 'Málflutningur ekki skráður.',
       {
-        lineGap: 6,
-        paragraphGap: 0,
+        paragraphGap: 1,
       },
     )
-    .lineGap(40)
+    .lineGap(3)
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(26)
+    .text(' ')
+    .fontSize(14)
     .lineGap(16)
     .text('Úrskurður', { align: 'center' })
-    .fontSize(14)
-    .lineGap(8)
+    .fontSize(11)
+    .lineGap(1)
+    .font('Times-Bold')
     .text('Krafa')
-    .font('Helvetica')
-    .fontSize(12)
-    .text(existingCase.demands ?? 'Krafa ekki skráð', {
-      lineGap: 6,
-      paragraphGap: 0,
+    .text(' ')
+    .font('Times-Roman')
+    .text(existingCase.demands ?? 'Krafa ekki skráð.', {
+      paragraphGap: 1,
     })
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Málsatvik')
-    .font('Helvetica')
-    .fontSize(12)
-    .text(existingCase.courtCaseFacts ?? 'Málsatvik ekki skráð', {
-      lineGap: 6,
-      paragraphGap: 0,
+    .font('Times-Bold')
+    .text('Greinargerð um málsatvik')
+    .text(' ')
+    .font('Times-Roman')
+    .text(existingCase.courtCaseFacts ?? 'Málsatvik ekki skráð.', {
+      paragraphGap: 1,
     })
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Lagarök')
-    .font('Helvetica')
-    .fontSize(12)
-    .text(existingCase.courtLegalArguments ?? 'Lagarök ekki skráð', {
-      lineGap: 6,
-      paragraphGap: 0,
+    .font('Times-Bold')
+    .text('Greinargerð um lagarök')
+    .text(' ')
+    .font('Times-Roman')
+    .text(existingCase.courtLegalArguments ?? 'Lagarök ekki skráð.', {
+      paragraphGap: 1,
     })
     .text(' ')
-
-  doc
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
+    .font('Times-Bold')
     .text('Niðurstaða')
-    .font('Helvetica')
-    .fontSize(12)
-    .text(existingCase.ruling ?? 'Niðurstaða ekki skráð', {
-      lineGap: 6,
-      paragraphGap: 0,
-    })
-    .lineGap(40)
     .text(' ')
-    .font('Helvetica-Bold')
+    .font('Times-Roman')
+    .text(existingCase.ruling ?? 'Niðurstaða ekki skráð.', {
+      paragraphGap: 1,
+    })
+    .lineGap(3)
+    .text(' ')
+    .text(' ')
     .fontSize(14)
-    .lineGap(8)
+    .lineGap(16)
     .text('Úrskurðarorð', { align: 'center' })
-    .font('Helvetica')
-    .fontSize(12)
-    .text(existingCase.conclusion ?? 'Úrskurðarorð ekki skráð', {
-      lineGap: 6,
-      paragraphGap: 0,
+    .fontSize(11)
+    .lineGap(1)
+    .text(existingCase.conclusion ?? 'Úrskurðarorð ekki skráð.', {
+      align: 'center',
+      paragraphGap: 1,
     })
     .text(' ')
-    .font('Helvetica-Bold')
+    .font('Times-Bold')
     .text(
       `${existingCase.judge?.name ?? 'Dómari hefur ekki verið skráður'} ${
         existingCase.judge?.title ?? ''
       }`,
       {
         align: 'center',
-        paragraphGap: 0,
+        paragraphGap: 1,
       },
     )
     .text(' ')
-    .font('Helvetica')
+    .text(' ')
+    .font('Times-Roman')
     .text('Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.', {
-      lineGap: 6,
-      paragraphGap: 0,
+      paragraphGap: 1,
     })
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Ákvörðun um kæru')
-    .font('Helvetica')
-    .fontSize(12)
     .text(
       'Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa.',
       {
-        lineGap: 6,
-        paragraphGap: 4,
+        paragraphGap: 1,
       },
     )
-    .font('Helvetica-Bold')
-    .lineGap(6)
+    .text(' ')
     .text(
-      formatAppeal(
-        existingCase.accusedAppealDecision,
-        capitalize(formatAccusedByGender(existingCase.accusedGender)),
-      ),
+      `${formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi')} ${
+        existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
+          ? existingCase.prosecutorAppealAnnouncement ?? ''
+          : ''
+      }`,
+      {
+        paragraphGap: 1,
+      },
     )
-    .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
-
-  if (
-    existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL &&
-    existingCase.accusedAppealAnnouncement
-  ) {
-    doc
-      .text(' ')
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text(
-        `Yfirlýsing um kæru ${formatAccusedByGender(
-          existingCase.accusedGender,
-          NounCases.GENITIVE,
-        )}`,
-      )
-      .font('Helvetica')
-      .fontSize(12)
-      .text(existingCase.accusedAppealAnnouncement ?? '', {
-        lineGap: 6,
-        paragraphGap: 0,
-      })
-  }
-
-  if (
-    existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL &&
-    existingCase.prosecutorAppealAnnouncement
-  ) {
-    doc
-      .text(' ')
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text('Yfirlýsing um kæru sækjanda')
-      .font('Helvetica')
-      .fontSize(12)
-      .text(existingCase.prosecutorAppealAnnouncement ?? '', {
-        lineGap: 6,
-        paragraphGap: 0,
-      })
-  }
+    .text(' ')
+    .text(
+      `${formatAppeal(existingCase.accusedAppealDecision, 'Varnaraðili')} ${
+        existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+          ? existingCase.accusedAppealAnnouncement ?? ''
+          : ''
+      }`,
+      {
+        paragraphGap: 1,
+      },
+    )
 
   if (
     existingCase.type === CaseType.CUSTODY &&
@@ -335,12 +267,6 @@ function constructRestrictionRulingPdf(
   ) {
     doc
       .text(' ')
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text('Tilhögun gæsluvarðhalds')
-      .font('Helvetica')
-      .fontSize(12)
       .text(
         formatCustodyRestrictions(
           existingCase.accusedGender,
@@ -349,16 +275,14 @@ function constructRestrictionRulingPdf(
           existingCase.isolationToDate,
         ),
         {
-          lineGap: 6,
-          paragraphGap: 0,
+          paragraphGap: 1,
         },
       )
       .text(' ')
       .text(
         'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
         {
-          lineGap: 6,
-          paragraphGap: 0,
+          paragraphGap: 1,
         },
       )
   }
@@ -372,12 +296,6 @@ function constructRestrictionRulingPdf(
   ) {
     doc
       .text(' ')
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text('Tilhögun farbanns')
-      .font('Helvetica')
-      .fontSize(12)
       .text(
         formatAlternativeTravelBanRestrictions(
           existingCase.accusedGender,
@@ -385,26 +303,34 @@ function constructRestrictionRulingPdf(
           existingCase.otherRestrictions,
         ),
         {
-          lineGap: 6,
-          paragraphGap: 0,
+          paragraphGap: 1,
         },
       )
       .text(' ')
       .text(
         'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd farbannsins undir dómara.',
         {
-          lineGap: 6,
-          paragraphGap: 0,
+          paragraphGap: 1,
         },
       )
   }
 
   doc
-    .lineGap(20)
+    .text(' ')
+    .text(
+      `Vottur að þinghaldi er ${
+        existingCase.registrar?.name ?? '(dómritari hefur ekki verið skráður)'
+      } ${existingCase.registrar?.title ?? ''}.`,
+      {
+        paragraphGap: 1,
+      },
+    )
+
+  doc
     .text(' ')
     .text(
       existingCase.courtEndTime
-        ? `Þinghaldi lauk kl. ${formatDate(existingCase.courtEndTime, 'p')}.`
+        ? `Þinghaldi lýkur kl. ${formatDate(existingCase.courtEndTime, 'p')}.`
         : 'Þinghaldi er ekki lokið.',
     )
 
@@ -421,10 +347,10 @@ function constructInvestigationRulingPdf(
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
-      top: 40,
-      bottom: 60,
-      left: 50,
-      right: 50,
+      top: 70,
+      bottom: 70,
+      left: 70,
+      right: 70,
     },
     bufferPages: true,
   })
@@ -435,22 +361,37 @@ function constructInvestigationRulingPdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
+  doc.translate(270, 70).scale(0.5)
+
+  skjaldarmerki(doc)
+
   doc
-    .font('Helvetica-Bold')
-    .fontSize(26)
-    .lineGap(8)
-    .text('Þingbók', { align: 'center' })
-    .font('Helvetica')
+    .fillColor('black')
+    .scale(2)
+    .translate(-270, -70)
+    .text(' ')
+    .text(' ')
+    .text(' ')
+    .text(' ')
+    .text(' ')
+
+  doc
+    .font('Times-Roman')
     .fontSize(18)
+    .lineGap(4)
     .text(existingCase.court?.name ?? 'Dómstóll ekki skráður', {
       align: 'center',
     })
-    .fontSize(12)
+    .fontSize(14)
+    .lineGap(2)
+    .text('Þingbók og úrskurður', { align: 'center' })
     .lineGap(30)
     .text(
       `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
       { align: 'center' },
     )
+    .fontSize(11)
+    .lineGap(1)
     .text(
       `Þann ${formatDate(existingCase.courtStartDate, 'PPP')} heldur ${
         existingCase.judge?.name ?? '?'
@@ -458,55 +399,50 @@ function constructInvestigationRulingPdf(
         existingCase.courtCaseNumber
       }. Þinghald hefst kl. ${formatDate(existingCase.courtStartDate, 'p')}.`,
       {
-        lineGap: 6,
-        paragraphGap: 0,
+        paragraphGap: 1,
       },
     )
-    .lineGap(8)
+
+  if (existingCase.courtAttendees) {
+    doc
+      .text(' ')
+      .font('Times-Bold')
+      .text('Mættir eru:')
+      .text(' ')
+      .font('Times-Roman')
+      .text(existingCase.courtAttendees, {
+        paragraphGap: 1,
+      })
+  }
+
+  doc
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Viðstaddir')
-    .font('Helvetica')
+    .font('Times-Bold')
+    .text('Krafa:')
+    .text(' ')
+    .font('Times-Roman')
     .fontSize(12)
-    .text(existingCase.courtAttendees ?? 'Viðstaddir ekki skráðir', {
-      lineGap: 6,
-      paragraphGap: 0,
+    .text(existingCase.prosecutorDemands ?? 'Krafa ekki skráð.', {
+      paragraphGap: 1,
     })
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Krafa')
-    .font('Helvetica')
-    .fontSize(12)
-    .text(existingCase.prosecutorDemands ?? 'Krafa ekki skráð', {
-      lineGap: 6,
-      paragraphGap: 0,
-    })
+    .font('Times-Bold')
+    .text('Lagt er fram:')
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Dómskjöl')
-    .font('Helvetica')
-    .fontSize(12)
+    .font('Times-Roman')
     .text(`Krafa um ${caseTypes[existingCase.type]} þingmerkt nr. 1.`, {
-      lineGap: 6,
-      paragraphGap: 0,
+      paragraphGap: 1,
     })
     .text('Rannsóknargögn málsins liggja frammi.', {
-      lineGap: 6,
-      paragraphGap: 4,
+      paragraphGap: 1,
     })
 
   existingCase.courtDocuments?.forEach((courttDocument, index) =>
     doc.text(`${courttDocument} þingmerkt nr. ${index + 2}.`, {
-      lineGap: 6,
-      paragraphGap: 4,
+      paragraphGap: 1,
     }),
   )
+
   if (
     !areAccusedRightsHidden(
       existingCase.isAccusedAbsent,
@@ -515,17 +451,10 @@ function constructInvestigationRulingPdf(
   ) {
     doc
       .text(' ')
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text('Réttindi varnaraðila')
-      .font('Helvetica')
-      .fontSize(12)
       .text(
         'Sakborningi er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
         {
-          lineGap: 6,
-          paragraphGap: 0,
+          paragraphGap: 1,
         },
       )
   }
@@ -534,12 +463,6 @@ function constructInvestigationRulingPdf(
   if (existingCase.accusedPleaDecision !== AccusedPleaDecision.NOT_APPLICABLE) {
     doc
       .text(' ')
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text('Afstaða varnaraðila')
-      .font('Helvetica')
-      .fontSize(12)
       .text(
         `${
           existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
@@ -549,178 +472,148 @@ function constructInvestigationRulingPdf(
             : ''
         }${existingCase.accusedPleaAnnouncement ?? ''}`,
         {
-          lineGap: 6,
-          paragraphGap: 0,
+          paragraphGap: 1,
         },
       )
   }
 
   doc
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Málflutningur')
-    .font('Helvetica')
-    .fontSize(12)
     .text(
-      existingCase.litigationPresentations ?? 'Málflutningur ekki skráður',
+      existingCase.litigationPresentations ?? 'Málflutningur ekki skráður.',
       {
-        lineGap: 6,
-        paragraphGap: 0,
+        paragraphGap: 1,
       },
     )
-    .lineGap(40)
+    .lineGap(3)
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(26)
+    .text(' ')
+    .fontSize(14)
     .lineGap(16)
     .text('Úrskurður', { align: 'center' })
-    .fontSize(14)
-    .lineGap(8)
+    .fontSize(11)
+    .lineGap(1)
+    .font('Times-Bold')
     .text('Krafa')
-    .font('Helvetica')
-    .fontSize(12)
-    .text(existingCase.demands ?? 'krafa ekki skráð', {
-      lineGap: 6,
-      paragraphGap: 0,
+    .text(' ')
+    .font('Times-Roman')
+    .text(existingCase.demands ?? 'Krafa ekki skráð', {
+      paragraphGap: 1,
     })
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Málsatvik')
-    .font('Helvetica')
-    .fontSize(12)
-    .text(existingCase.courtCaseFacts ?? 'Málsatvik ekki skráð', {
-      lineGap: 6,
-      paragraphGap: 0,
+    .font('Times-Bold')
+    .text('Greinargerð um málsatvik')
+    .text(' ')
+    .font('Times-Roman')
+    .text(existingCase.courtCaseFacts ?? 'Málsatvik ekki skráð.', {
+      paragraphGap: 1,
     })
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Lagarök')
-    .font('Helvetica')
-    .fontSize(12)
-    .text(existingCase.courtLegalArguments ?? 'lagarök ekki skráð', {
-      lineGap: 6,
-      paragraphGap: 0,
+    .font('Times-Bold')
+    .text('Greinargerð um lagarök')
+    .text(' ')
+    .font('Times-Roman')
+    .text(existingCase.courtLegalArguments ?? 'lagarök ekki skráð.', {
+      paragraphGap: 1,
     })
     .text(' ')
-
-  doc
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
+    .font('Times-Bold')
     .text('Niðurstaða')
-    .font('Helvetica')
-    .fontSize(12)
-    .text(existingCase.ruling ?? 'Niðurstaða ekki skráð', {
-      lineGap: 6,
-      paragraphGap: 0,
-    })
-    .lineGap(40)
     .text(' ')
-    .font('Helvetica-Bold')
+    .font('Times-Roman')
+    .text(existingCase.ruling ?? 'Niðurstaða ekki skráð.', {
+      paragraphGap: 1,
+    })
+    .lineGap(3)
+    .text(' ')
+    .text(' ')
     .fontSize(14)
-    .lineGap(8)
+    .lineGap(16)
     .text('Úrskurðarorð', { align: 'center' })
-    .font('Helvetica')
-    .fontSize(12)
-    .text(existingCase.conclusion ?? 'Úrskurðarorð ekki skráð', {
-      lineGap: 6,
-      paragraphGap: 0,
+    .fontSize(11)
+    .lineGap(1)
+    .text(existingCase.conclusion ?? 'Úrskurðarorð ekki skráð.', {
+      align: 'center',
+      paragraphGap: 1,
     })
     .text(' ')
-    .font('Helvetica-Bold')
+    .font('Times-Bold')
     .text(
       `${existingCase.judge?.name ?? 'Dómari hefur ekki verið skráður'} ${
         existingCase.judge?.title ?? ''
       }`,
       {
         align: 'center',
-        paragraphGap: 0,
+        paragraphGap: 1,
       },
     )
     .text(' ')
+
   if (existingCase.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
     doc
-      .font('Helvetica')
+      .text(' ')
+      .font('Times-Roman')
       .text('Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.', {
-        lineGap: 6,
-        paragraphGap: 0,
+        paragraphGap: 1,
       })
   }
+
   doc
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Ákvörðun um kæru')
-    .font('Helvetica')
-    .fontSize(12)
     .text(
       'Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa.',
       {
-        lineGap: 6,
-        paragraphGap: 4,
+        paragraphGap: 1,
       },
     )
-    .font('Helvetica-Bold')
-    .lineGap(6)
+    .text(' ')
+    .text(
+      `${formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi')} ${
+        existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
+          ? existingCase.prosecutorAppealAnnouncement ?? ''
+          : ''
+      }`,
+      {
+        paragraphGap: 1,
+      },
+    )
 
   // Only show accused appeal decision if applicable
   if (
     existingCase.accusedAppealDecision !== CaseAppealDecision.NOT_APPLICABLE
   ) {
-    doc.text(formatAppeal(existingCase.accusedAppealDecision, 'Varnaraðili'))
-  }
-
-  doc.text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
-
-  if (
-    existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL &&
-    existingCase.accusedAppealAnnouncement
-  ) {
     doc
       .text(' ')
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text('Yfirlýsing um kæru varnaraðila')
-      .font('Helvetica')
-      .fontSize(12)
-      .text(existingCase.accusedAppealAnnouncement ?? '', {
-        lineGap: 6,
-        paragraphGap: 0,
-      })
+      .text(
+        `${formatAppeal(existingCase.accusedAppealDecision, 'Varnaraðili')} ${
+          existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+            ? existingCase.accusedAppealAnnouncement ?? ''
+            : ''
+        }`,
+        {
+          paragraphGap: 1,
+        },
+      )
   }
 
-  if (
-    existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL &&
-    existingCase.prosecutorAppealAnnouncement
-  ) {
+  if (existingCase.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
     doc
       .text(' ')
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text('Yfirlýsing um kæru sækjanda')
-      .font('Helvetica')
-      .fontSize(12)
-      .text(existingCase.prosecutorAppealAnnouncement ?? '', {
-        lineGap: 6,
-        paragraphGap: 0,
-      })
+      .text(
+        `Vottur að þinghaldi er ${
+          existingCase.registrar?.name ?? '(dómritari hefur ekki verið skráður)'
+        } ${existingCase.registrar?.title ?? ''}.`,
+        {
+          paragraphGap: 1,
+        },
+      )
   }
 
   doc
-    .lineGap(20)
     .text(' ')
     .text(
       existingCase.courtEndTime
-        ? `Þinghaldi lauk kl. ${formatDate(existingCase.courtEndTime, 'p')}.`
+        ? `Þinghaldi lýkur kl. ${formatDate(existingCase.courtEndTime, 'p')}.`
         : 'Þinghaldi er ekki lokið.',
     )
 
