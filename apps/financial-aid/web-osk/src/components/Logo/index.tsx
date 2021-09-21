@@ -9,7 +9,7 @@ interface LogoProps {
   customLogo?: boolean
 }
 
-const LogoHfj = ({ className, customLogo }: LogoProps) => {
+const Logo = ({ className, customLogo }: LogoProps) => {
   return (
     <>
       {customLogo ? (
@@ -33,4 +33,4 @@ const LogoHfj = ({ className, customLogo }: LogoProps) => {
   )
 }
 
-export default LogoHfj
+export default Logo
