@@ -33,23 +33,22 @@ export class EndorsementListService {
     const limit = parseInt(query.limit) || 5;
     const after = query.after || null;
     const before = query.before || null;
-    const primaryKeyField = 'id'
-    const orderOption = [['id', 'ASC']]
+    const primaryKeyField = 'pk'
+    const orderOption = [['pk', 'ASC']]
     const where = {
       tags: { [Op.overlap]: tags },
     } 
-    // const where = null
     
     
-    return await paginate(
-      this.endorsementListModel,
-      primaryKeyField,
-      orderOption,
-      where,
+    return await paginate({
+      Model: this.endorsementListModel,
+      limit,
       after,
       before,
-      limit
-    );
+      primaryKeyField,
+      orderOption,
+      where
+    });
     
     // return this.endorsementListModel.findAll({
     //   where: {
@@ -85,20 +84,27 @@ export class EndorsementListService {
     const limit = parseInt(query.limit) || 5;
     const after = query.after || null;
     const before = query.before || null;
-    const primaryKeyField = 'id'
-    const orderOption = [['id', 'ASC']]
-    const where = { endorser: nationalId } 
+    const primaryKeyField = 'pk'
+    const orderOption = [['pk', 'ASC']]
+    const where= { endorser: nationalId }
+    const include= [
+      {
+        model: EndorsementList,
+        attributes: ['id', 'title', 'description', 'tags', 'closedDate'],
+      },
+    ]
 
     
-    return await paginate(
-      this.endorsementModel,
+    return await paginate({
+      Model: this.endorsementModel,
+      limit,
+      after,
+      before,
       primaryKeyField,
       orderOption,
       where,
-      after,
-      before,
-      limit
-    );
+      include
+    });
     // return this.endorsementModel.findAll({
     //   where: { endorser: nationalId },
     //   include: [

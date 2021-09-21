@@ -183,23 +183,23 @@ export class EndorsementService {
     const limit = parseInt(query.limit) || 5;
     const after = query.after || null;
     const before = query.before || null;
-    const primaryKeyField = 'id'
-    const orderOption = [['id', 'ASC']]
+    const primaryKeyField = 'pk'
+    const orderOption = [['pk', 'ASC']]
     const where = { endorsementListId: listId } 
 
     
-    return await paginate(
-      this.endorsementModel,
+    return await paginate({
+      Model: this.endorsementModel,
+      limit,
+      after,
+      before,
       primaryKeyField,
       orderOption,
       where,
-      after,
-      before,
-      limit
-    );
-    return await this.endorsementModel.findAll({
-      where: { endorsementListId: listId },
-    })
+    });
+    // return await this.endorsementModel.findAll({
+    //   where: { endorsementListId: listId },
+    // })
   }
 
   async findSingleUserEndorsement({

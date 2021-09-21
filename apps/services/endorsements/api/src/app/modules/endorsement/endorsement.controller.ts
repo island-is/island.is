@@ -19,6 +19,7 @@ import {
   ApiNoContentResponse,
   ApiOAuth2,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiTags,
   ApiExtraModels,
@@ -79,10 +80,7 @@ export class EndorsementController {
     private readonly auditService: AuditService,
   ) {}
 
-  @ApiOkResponse({
-    description: 'Finds all endorsements in a given list',
-    type: [Endorsement],
-  })
+  @ApiOperation({ summary: 'Finds all endorsements in a given list' })
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)
   @Get()
@@ -91,6 +89,7 @@ export class EndorsementController {
   //   resources: (endorsement) => endorsement.map((e) => e.id),
   //   meta: (endorsement) => ({ count: endorsement.length }),
   // })
+  @ApiPaginatedResponse(Endorsement)
   async findAll(
     @Param(
       'listId',
@@ -106,6 +105,7 @@ export class EndorsementController {
     query)
   }
 
+  @ApiOperation({ summary: 'Find any existing endorsement in a given list by national Id' })
   @ApiOkResponse({
     description:
       'Uses current authenticated users national id to find any existing endorsement in a given list',
@@ -132,6 +132,7 @@ export class EndorsementController {
     })
   }
 
+  @ApiOperation({ summary: 'Uses the authenticated users national id to create an endorsement' })
   @ApiCreatedResponse({
     description:
       'Uses the authenticated users national id to create an endorsement',
@@ -161,6 +162,7 @@ export class EndorsementController {
     )
   }
 
+  @ApiOperation({ summary: 'Creates multiple endorsements given an array of national ids' })
   @ApiCreatedResponse({
     description: 'Creates multiple endorsements given an array of national ids',
     type: EndorsementBulkCreate,
@@ -195,6 +197,7 @@ export class EndorsementController {
     )
   }
 
+  @ApiOperation({ summary: 'Uses the authenticated users national id to remove endorsement form a given list' })
   @ApiNoContentResponse({
     description:
       'Uses the authenticated users national id to remove endorsement form a given list',

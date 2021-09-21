@@ -1,7 +1,8 @@
+// SEQUELIZE CURSOR PAGINATION
+// taken from here https://github.com/Kaltsoon/sequelize-cursor-pagination
+
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-
-// taken from here https://github.com/Kaltsoon/sequelize-cursor-pagination
 
 const parseCursor = (cursor: string | null) => {
   if (!cursor) {
@@ -106,18 +107,27 @@ const getPaginationQuery = (order: any[], cursor: any) => {
   return recursivelyGetPaginationQuery(order, cursor);
 };
 
-
-
-export async function paginate(
+export interface PaginateInput {
   Model:any,
-  primaryKeyField: any = 'id',
+  primaryKeyField:string,
   orderOption: any,
-  where: any,
-  after: string,
-  before: string,
-  limit: number,
-  ...queryArgs: any[]
-): Promise<any> {
+  where:any,
+  after:string,
+  before:string,
+  limit:number,
+  [key:string]:any
+}
+
+export async function paginate({
+  Model,
+  primaryKeyField,
+  orderOption,
+  where,
+  after,
+  before,
+  limit = 10,
+  ...queryArgs
+}: PaginateInput): Promise<any> {
   let order = normalizeOrder(orderOption, primaryKeyField);
 
   order = before ? reverseOrder(order) : order;

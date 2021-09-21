@@ -1,15 +1,23 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiOperation, ApiProperty } from '@nestjs/swagger';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { Max, Min } from 'sequelize-typescript';
 
 export class QueryDto {
-  @ApiProperty()
-  limit: number | undefined;
+  @IsOptional()
+  @IsNumber()
+  // @Min(1)
+  // @Max(50)
+  @ApiProperty({required:false})
+  limit?: number;
 
-  @ApiProperty()
-  before: string | undefined;
+  @IsOptional()
+  @ApiProperty({required:false})
+  @IsString()
+  before?: string;
 
-  @ApiProperty()
-  after: string | undefined;
+  @IsOptional()
+  @ApiProperty({required:false})
+  @IsString()
+  after?: string;
 
-
-  
 }

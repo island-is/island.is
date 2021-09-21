@@ -1,16 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class PageInfoDto {
-  @ApiProperty()
-  hasNextPage: boolean | undefined;
+  @ApiProperty({ example: true})
+  hasNextPage?: boolean;
 
-  @ApiProperty()
-  hasPreviousPage: boolean | undefined;
+  @ApiProperty({ example: true})
+  hasPreviousPage?: boolean;
 
-  @ApiProperty()
-  startCursor: string | undefined;
+  @ApiProperty({ example: "abcd"})
+  startCursor?: string;
 
-  @ApiProperty()
-  endCursor: string | undefined;
+  @ApiProperty({ example: "dcba"})
+  endCursor?: string;
   
 }

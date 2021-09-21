@@ -19,7 +19,8 @@ import {
   ApiParam,
   ApiTags,
   ApiExtraModels,
-  getSchemaPath
+  getSchemaPath,
+  ApiOperation
 } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { EndorsementList } from './endorsementList.model'
@@ -76,10 +77,13 @@ export class EndorsementListController {
     private readonly endorsementListService: EndorsementListService,
   ) {}
 
-  @ApiOkResponse({
-    description: 'Finds all endorsement lists belonging to given tags',
-    type: [EndorsementList],
-  })
+  // @ApiOkResponse({
+  //   description: 'Finds all endorsement lists belonging to given tags',
+  //   type: [EndorsementList],
+  // })
+  @ApiOperation({ summary: 'Finds all endorsement lists belonging to given tags' })
+
+  @ApiPaginatedResponse(EndorsementListDto)
   @Get()
   async findByTags(
     @Query() { tags }: FindEndorsementListByTagsDto,
@@ -96,12 +100,13 @@ export class EndorsementListController {
   /**
    * This exists so we can return all endorsements for user across all lists
    */
-  @ApiOkResponse({
-    description: 'Finds all endorsements for the currently authenticated user',
-    type: [Endorsement],
-  })
+  // @ApiOkResponse({
+  //   description: 'Finds all endorsements for the currently authenticated user',
+  //   type: [Endorsement],
+  // })
   @Scopes(EndorsementsScope.main)
-  
+  @ApiPaginatedResponse(Endorsement)
+  @ApiOperation({ summary: 'Finds all endorsements for the currently authenticated user' })
   @Get('/endorsements')
   // @Audit<Endorsement[]>({
   //   resources: (endorsement) => endorsement.map((e) => e.id),
@@ -122,6 +127,7 @@ export class EndorsementListController {
     description: 'Finds a single endorsements list by id',
     type: EndorsementList,
   })
+  @ApiOperation({ summary: 'Finds a single endorsements list by id' })
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
   @Get(':listId')
@@ -138,7 +144,7 @@ export class EndorsementListController {
   ): Promise<EndorsementList> {
     return endorsementList
   }
-
+  @ApiOperation({ summary: 'Close a single endorsements list by id' })
   @ApiOkResponse({
     description: 'Close a single endorsements list by id',
     type: EndorsementList,
@@ -161,6 +167,7 @@ export class EndorsementListController {
     return await this.endorsementListService.close(endorsementList)
   }
 
+  @ApiOperation({ summary: 'Open a single endorsements list by id' })
   @ApiOkResponse({
     description: 'Open a single endorsements list by id',
     type: EndorsementList,
@@ -182,7 +189,7 @@ export class EndorsementListController {
   ): Promise<EndorsementList> {
     return await this.endorsementListService.open(endorsementList)
   }
-
+  @ApiOperation({ summary: 'Create an endorsements list' })
   @ApiOkResponse({
     description: 'Create an endorsements list',
     type: EndorsementList,
