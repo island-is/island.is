@@ -14,7 +14,7 @@ export class StaffService {
   async findByNationalId(nationalId: string): Promise<StaffModel> {
     return await this.staffModel.findOne({
       where: {
-        national_id: nationalId,
+        nationalId,
       },
     })
   }

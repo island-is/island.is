@@ -20,12 +20,12 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: false,
           },
-          municipalityId: {
-            type: Sequelize.UUID,
+          municipality_id: {
+            type: Sequelize.STRING,
             allowNull: false,
           },
           role: {
-            type: Sequelize.ENUM('employee', 'admin'),
+            type: Sequelize.ENUM('Employee', 'Admin', 'SuperAdmin'),
             allowNull: false,
           },
           active: {
@@ -35,6 +35,16 @@ module.exports = {
           phone_number: {
             type: Sequelize.STRING,
             allowNull: false,
+          },
+          created: {
+              type: 'TIMESTAMP WITH TIME ZONE',
+              defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+              allowNull: false,
+          },
+          modified: {
+              type: 'TIMESTAMP WITH TIME ZONE',
+              defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+              allowNull: false,
           },
         },
         { transaction: t },
