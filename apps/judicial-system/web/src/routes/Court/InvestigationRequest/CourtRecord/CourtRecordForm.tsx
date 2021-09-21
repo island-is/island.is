@@ -34,6 +34,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './CourtRecord.treat'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 interface Props {
   workingCase: Case
@@ -47,7 +48,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
     courtRecordStartDateIsValid,
     setCourtRecordStartDateIsValid,
   ] = useState(true)
-  const [courtAttendeesEM, setCourtAttendeesEM] = useState('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
   const [
     accusedPleaAnnouncementErrorMessage,
@@ -60,9 +60,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
 
   const { updateCase } = useCase()
   const validations: FormSettings = {
-    courtAttendees: {
-      validations: ['empty'],
-    },
     prosecutorDemands: {
       validations: ['empty'],
     },
@@ -119,35 +116,26 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             <Input
               data-testid="courtAttendees"
               name="courtAttendees"
-              label="Viðstaddir og hlutverk þeirra"
+              label="Mættir eru"
               defaultValue={workingCase.courtAttendees}
               placeholder="Skrifa hér..."
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtAttendees',
                   event,
-                  ['empty'],
+                  [],
                   workingCase,
                   setWorkingCase,
-                  courtAttendeesEM,
-                  setCourtAttendeesEM,
                 )
               }
               onBlur={(event) =>
-                validateAndSendToServer(
-                  'courtAttendees',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCourtAttendeesEM,
+                updateCase(
+                  workingCase.id,
+                  parseString('courtAttendees', event.target.value),
                 )
               }
-              errorMessage={courtAttendeesEM}
-              hasError={courtAttendeesEM !== ''}
               textarea
               rows={7}
-              required
             />
           </Box>
           <Input

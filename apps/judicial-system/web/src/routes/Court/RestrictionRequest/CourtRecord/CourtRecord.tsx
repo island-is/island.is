@@ -41,6 +41,7 @@ import {
   rcCourtRecord,
 } from '@island.is/judicial-system-web/messages'
 import * as styles from './CourtRecord.treat'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -48,7 +49,6 @@ export const CourtRecord: React.FC = () => {
     courtRecordStartDateIsValid,
     setCourtRecordStartDateIsValid,
   ] = useState(true)
-  const [courtAttendeesErrorMessage, setCourtAttendeesMessage] = useState('')
   const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] = useState(
     '',
   )
@@ -187,7 +187,7 @@ export const CourtRecord: React.FC = () => {
                 <Input
                   data-testid="courtAttendees"
                   name="courtAttendees"
-                  label="Viðstaddir og hlutverk þeirra"
+                  label="Mættir eru"
                   defaultValue={workingCase.courtAttendees}
                   placeholder="Skrifa hér..."
                   onChange={(event) =>
@@ -197,25 +197,16 @@ export const CourtRecord: React.FC = () => {
                       ['empty'],
                       workingCase,
                       setWorkingCase,
-                      courtAttendeesErrorMessage,
-                      setCourtAttendeesMessage,
                     )
                   }
                   onBlur={(event) =>
-                    validateAndSendToServer(
-                      'courtAttendees',
-                      event.target.value,
-                      ['empty'],
-                      workingCase,
-                      updateCase,
-                      setCourtAttendeesMessage,
+                    updateCase(
+                      workingCase.id,
+                      parseString('courtAttendees', event.target.value),
                     )
                   }
-                  errorMessage={courtAttendeesErrorMessage}
-                  hasError={courtAttendeesErrorMessage !== ''}
                   textarea
                   rows={7}
-                  required
                 />
               </Box>
               <Input
@@ -452,7 +443,6 @@ export const CourtRecord: React.FC = () => {
               nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
               nextIsDisabled={
                 !courtRecordStartDateIsValid ||
-                !validate(workingCase.courtAttendees ?? '', 'empty').isValid ||
                 !validate(workingCase.prosecutorDemands ?? '', 'empty')
                   .isValid ||
                 !validate(workingCase.litigationPresentations ?? '', 'empty')
