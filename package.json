@@ -157,7 +157,7 @@
     "glob": "7.1.6",
     "graphql": "15.3.0",
     "graphql-middleware-sentry": "3.2.1",
-    "graphql-tag": "2.10.3",
+    "graphql-tag": "2.12.5",
     "graphql-type-json": "0.3.2",
     "handlebars": "4.7.7",
     "http-proxy-middleware": "0.19.1",
