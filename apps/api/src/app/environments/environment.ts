@@ -148,6 +148,12 @@ const devConfig = {
     username: process.env.PAYMENT_SCHEDULE_USER,
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
   },
+  metrics: {
+    path: process.env.METRICS_PATH,
+    port: process.env.METRICS_PORT,
+    protocol: process.env.METRICS_PROTOCOL,
+    prefix: 'islandis',
+  },
 }
 
 const prodConfig = {
@@ -284,6 +290,12 @@ const prodConfig = {
     xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_SCHEDULE_USER,
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
+  },
+  metrics: {
+    path: process.env.METRICS_PATH,
+    port: process.env.METRICS_PORT,
+    protocol: process.env.METRICS_PROTOCOL,
+    prefix: 'islandis',
   },
 }
 

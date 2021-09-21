@@ -510,6 +510,9 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-metrics": {
+      "tags": []
+    },
     "nest-validators": {
       "tags": []
     },

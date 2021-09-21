@@ -160,6 +160,7 @@
     "graphql-tag": "2.10.3",
     "graphql-type-json": "0.3.2",
     "handlebars": "4.7.7",
+    "hot-shots": "8.5.1",
     "http-proxy-middleware": "0.19.1",
     "hypher": "0.2.5",
     "identicon.js": "2.3.3",

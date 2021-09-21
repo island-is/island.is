@@ -5859,6 +5859,27 @@
         }
       }
     },
+    "nest-metrics": {
+      "root": "libs/nest/metrics",
+      "sourceRoot": "libs/nest/metrics/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/metrics/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/metrics"],
+          "options": {
+            "jestConfig": "libs/nest/metrics/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-validators": {
       "root": "libs/nest/validators",
       "sourceRoot": "libs/nest/validators/src",

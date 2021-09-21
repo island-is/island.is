@@ -22,7 +22,9 @@ import {
 import { Locale } from '@island.is/shared/types'
 
 import { AVAILABLE_LICENSES } from './licenseService.module'
+import { MetricsService } from '@island.is/nest/metrics'
 
+const METRICS_PREFIX = 'licenseservice'
 const CACHE_KEY = 'licenseService'
 
 export type GetGenericLicenseOptions = {
@@ -34,6 +36,7 @@ export type GetGenericLicenseOptions = {
 @Injectable()
 export class LicenseServiceService {
   constructor(
+    private readonly metricsService: MetricsService,
     @Inject(GENERIC_LICENSE_FACTORY)
     private genericLicenseFactory: (
       type: GenericLicenseType,
@@ -117,6 +120,8 @@ export class LicenseServiceService {
   ): Promise<GenericUserLicense[]> {
     const licenses: GenericUserLicense[] = []
 
+    this.metricsService.increment(`${METRICS_PREFIX}.licenses.list`)
+
     for (const license of AVAILABLE_LICENSES) {
       if (excludedTypes && excludedTypes.indexOf(license.type) >= 0) {
         continue
@@ -192,6 +197,7 @@ export class LicenseServiceService {
     )
 
     if (license && licenseService) {
+      this.metricsService.increment(`${METRICS_PREFIX}.${licenseType}.get`)
       licenseUserdata = await licenseService.getLicenseDetail(nationalId)
     } else {
       throw new Error(`${licenseType} not supported`)
@@ -226,17 +232,24 @@ export class LicenseServiceService {
     )
 
     if (licenseService) {
+      this.metricsService.increment(`${METRICS_PREFIX}.${licenseType}.generate`)
       pkPassUrl = await licenseService.getPkPassUrl(nationalId)
     } else {
       throw new Error(`${licenseType} not supported`)
     }
 
     if (!pkPassUrl) {
+      this.metricsService.increment(
+        `${METRICS_PREFIX}.${licenseType}.generate.failure`,
+      )
       throw new Error(
         `Unable to get pkpass for ${licenseType} for nationalId ${nationalId}`,
       )
     }
 
+    this.metricsService.increment(
+      `${METRICS_PREFIX}.${licenseType}.generate.success`,
+    )
     return pkPassUrl
   }
 
@@ -254,7 +267,18 @@ export class LicenseServiceService {
     )
 
     if (licenseService) {
+      this.metricsService.increment(`${METRICS_PREFIX}.${licenseType}.verify`)
       verification = await licenseService.verifyPkPass(data)
+
+      if (verification?.valid) {
+        this.metricsService.increment(
+          `${METRICS_PREFIX}.${licenseType}.verify.success`,
+        )
+      } else {
+        this.metricsService.increment(
+          `${METRICS_PREFIX}.${licenseType}.verify.failure`,
+        )
+      }
     } else {
       throw new Error(`${licenseType} not supported`)
     }

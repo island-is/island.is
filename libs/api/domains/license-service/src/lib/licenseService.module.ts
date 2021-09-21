@@ -1,6 +1,7 @@
 import { Cache as CacheManager } from 'cache-manager'
 import { Module, DynamicModule, CacheModule } from '@nestjs/common'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { MetricsModule } from '@island.is/nest/metrics'
 
 import { LicenseServiceService } from './licenseService.service'
 
@@ -50,7 +51,7 @@ export class LicenseServiceModule {
   static register(config: Config): DynamicModule {
     return {
       module: LicenseServiceModule,
-      imports: [CacheModule.register()],
+      imports: [CacheModule.register(), MetricsModule.forRoot()],
       providers: [
         MainResolver,
         LicenseServiceService,

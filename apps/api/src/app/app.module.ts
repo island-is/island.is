@@ -36,6 +36,7 @@ import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-r
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { AuditModule } from '@island.is/nest/audit'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
+import { MetricsModule, MetricsOptions } from '@island.is/nest/metrics'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 
@@ -81,6 +82,7 @@ const autoSchemaFile = environment.production
       authPublicApi: environment.authPublicApi,
     }),
     AuditModule.forRoot(environment.audit),
+    MetricsModule.forRoot(environment.metrics),
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
