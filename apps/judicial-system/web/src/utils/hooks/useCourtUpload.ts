@@ -48,7 +48,7 @@ export const useCourtUpload = (
         status: status,
         state: state ?? file.state,
       }
-
+      console.log(workingCase.files)
       setWorkingCase({ ...workingCase })
     }
   }

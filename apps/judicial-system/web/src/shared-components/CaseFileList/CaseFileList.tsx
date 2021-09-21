@@ -1,9 +1,14 @@
 import React from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { Box, Text, UploadedFile, UploadFile } from '@island.is/island-ui/core'
-import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
+import {
+  CaseFile,
+  CaseFile as TCaseFile,
+  CaseFileState,
+  CaseFileStatus,
+} from '@island.is/judicial-system/types'
 import { Modal } from '..'
 import { useFileList } from '../../utils/hooks'
-import { AnimatePresence } from 'framer-motion'
 
 interface Props {
   caseId: string
@@ -28,28 +33,30 @@ const CaseFileList: React.FC<Props> = (props) => {
 
   return files.length > 0 ? (
     <>
-      {files.map((file, index) => (
-        <Box marginBottom={index !== files.length - 1 ? 3 : 0} key={index}>
-          <UploadedFile
-            file={file}
-            showFileSize={true}
-            defaultBackgroundColor="blue100"
-            doneIcon="checkmark"
-            showIcons={showIcons}
-            onOpenFile={
-              canOpenFiles
-                ? (file: UploadFile) => {
-                    if (file.id) {
-                      handleOpenFile(file.id)
+      {files.map((file, index) => {
+        return (
+          <Box marginBottom={index !== files.length - 1 ? 3 : 0} key={index}>
+            <UploadedFile
+              file={file}
+              showFileSize={true}
+              defaultBackgroundColor="blue100"
+              doneIcon="checkmark"
+              showIcons={showIcons}
+              onOpenFile={
+                canOpenFiles
+                  ? (file: UploadFile) => {
+                      if (file.id) {
+                        handleOpenFile(file.id)
+                      }
                     }
-                  }
-                : undefined
-            }
-            onRemoveClick={() => null}
-            onRetryClick={() => handleRetryClick && handleRetryClick(file.id)}
-          />
-        </Box>
-      ))}
+                  : undefined
+              }
+              onRemoveClick={() => null}
+              onRetryClick={() => handleRetryClick && handleRetryClick(file.id)}
+            />
+          </Box>
+        )
+      })}
       <AnimatePresence>
         {fileNotFound && (
           <Modal

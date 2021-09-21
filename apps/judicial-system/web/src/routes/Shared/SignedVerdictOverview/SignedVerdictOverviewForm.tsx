@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
 import {
   Accordion,
@@ -47,6 +48,7 @@ import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { useIntl } from 'react-intl'
 import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+import { UploadStateMessage } from './Components/UploadStateMessage'
 
 interface Props {
   workingCase: Case
@@ -175,6 +177,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
       return false
     }
   }
+
+  console.log(uploadState)
 
   return (
     <FormContentContainer>
@@ -319,16 +323,40 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           <RulingAccordionItem workingCase={workingCase} />
           <AccordionItem
             id="id_4"
-            label={`Rannsóknargögn (${
-              workingCase.files ? workingCase.files.length : 0
-            })`}
+            label={
+              <Box display="flex" alignItems="center" overflow="hidden">
+                {`Rannsóknargögn (${
+                  workingCase.files ? workingCase.files.length : 0
+                })`}
+
+                <AnimatePresence>
+                  {uploadState === UploadState.SOME_UPLOADED && (
+                    <UploadStateMessage
+                      icon="warning"
+                      iconColor="red600"
+                      message={formatMessage(
+                        signedVerdictOverview.someFilesUploadedToCourtText,
+                      )}
+                    />
+                  )}
+                  {uploadState === UploadState.ALL_UPLOADED && (
+                    <UploadStateMessage
+                      icon="checkmark"
+                      iconColor="blue400"
+                      message={formatMessage(
+                        signedVerdictOverview.allFilesUploadedToCourtText,
+                      )}
+                    />
+                  )}
+                </AnimatePresence>
+              </Box>
+            }
             labelVariant="h3"
           >
             <CaseFileList
               caseId={workingCase.id}
               files={workingCase.files ?? []}
               canOpenFiles={canCaseFilesBeOpened()}
-              showIcons={uploadState !== undefined}
               handleRetryClick={(id: string) =>
                 workingCase.files &&
                 uploadFilesToCourt([
@@ -343,9 +371,16 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 size="small"
                 onClick={() => uploadFilesToCourt(workingCase.files)}
                 loading={uploadState === UploadState.UPLOADING}
-                disabled={uploadState === UploadState.UPLOADING}
+                disabled={
+                  uploadState === UploadState.UPLOADING ||
+                  uploadState === UploadState.ALL_UPLOADED
+                }
               >
-                {formatMessage(signedVerdictOverview.uploadToAudurButtonText)}
+                {formatMessage(
+                  uploadState === UploadState.SOME_UPLOADED
+                    ? signedVerdictOverview.retryUploadToCourtButtonText
+                    : signedVerdictOverview.uploadToCourtButtonText,
+                )}
               </Button>
             </Box>
           </AccordionItem>
