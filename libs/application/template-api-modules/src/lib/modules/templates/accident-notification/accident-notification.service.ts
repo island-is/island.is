@@ -1,20 +1,20 @@
-import { Injectable, Inject } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
-import {
-  generateAssignReviewerEmail,
-  generateConfirmationEmail,
-} from './emailGenerators'
-import type { AccidentNotificationConfig } from './config'
-import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
-import { FileStorageService } from '@island.is/file-storage'
-import { Attachment } from 'nodemailer/lib/mailer'
 import {
   Application,
   FormValue,
   getValueViaPath,
 } from '@island.is/application/core'
 import { utils } from '@island.is/application/templates/accident-notification'
+import { FileStorageService } from '@island.is/file-storage'
+import { Inject, Injectable } from '@nestjs/common'
+import { Attachment } from 'nodemailer/lib/mailer'
+import { TemplateApiModuleActionProps } from '../../../types'
+import { SharedTemplateApiService } from '../../shared'
+import type { AccidentNotificationConfig } from './config'
+import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
+import {
+  generateAssignReviewerEmail,
+  generateConfirmationEmail,
+} from './emailGenerators'
 
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 

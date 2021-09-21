@@ -10,6 +10,7 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { States } from '../constants'
+import { ApiActions } from '../shared'
 import { application } from './messages'
 // import { AccidentNotificationSchema } from './dataSchema'
 
@@ -25,6 +26,7 @@ type AccidentNotificationEvent =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.EDIT }
   | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.ASSIGN }
   | { type: 'COMMENT' }
 
 const AccidentNotificationTemplate: ApplicationTemplate<
@@ -51,9 +53,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 3600 * 1000,
           },
-          /* onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          }, */
           roles: [
             {
               id: Roles.APPLICANT,
@@ -83,6 +82,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 3600 * 1000,
           },
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -96,6 +98,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           ],
         },
         on: {
+          [DefaultEvents.ASSIGN]: { target: States.NEEDS_REVIEW },
           [DefaultEvents.EDIT]: {
             target: States.ADD_DOCUMENTS,
           },
