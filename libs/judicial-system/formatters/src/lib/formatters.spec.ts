@@ -145,14 +145,9 @@ describe('formatCustodyRestrictions', () => {
     // Arrange
     const accusedGender = CaseGender.MALE
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
-    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe('')
@@ -162,16 +157,9 @@ describe('formatCustodyRestrictions', () => {
     // Arrange
     const accusedGender = CaseGender.MALE
     const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
-    const validToDate = new Date('2021-07-22T11:23')
-    const isolationToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-      isolationToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe('')
@@ -184,16 +172,9 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ]
-    const validToDate = new Date('2021-07-22T11:23')
-    const isolationToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-      isolationToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
@@ -209,14 +190,9 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.MEDIA,
       CaseCustodyRestrictions.VISITAION,
     ]
-    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
@@ -232,14 +208,9 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.VISITAION,
       CaseCustodyRestrictions.COMMUNICATION,
     ]
-    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(

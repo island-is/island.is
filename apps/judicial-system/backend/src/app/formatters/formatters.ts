@@ -269,15 +269,18 @@ export function formatPrisonRulingEmailNotification(
   defenderName?: string,
   defenderEmail?: string,
   decision?: CaseDecision,
-  validToDate?: Date,
   custodyRestrictions?: CaseCustodyRestrictions[],
   accusedAppealDecision?: CaseAppealDecision,
   prosecutorAppealDecision?: CaseAppealDecision,
   judgeName?: string,
   judgeTitle?: string,
   conclusion?: string,
-  isolationToDate?: Date,
 ): string {
+  const custodyRestrictionsText = formatCustodyRestrictions(
+    accusedGender,
+    custodyRestrictions,
+  )
+
   return `<strong>Úrskurður um gæsluvarðhald</strong><br /><br />${court}, ${formatDate(
     courtEndTime,
     'PPP',
@@ -296,13 +299,8 @@ export function formatPrisonRulingEmailNotification(
     prosecutorAppealDecision,
     'Sækjandi',
   )}<br />${formatAppeal(accusedAppealDecision, 'Varnaraðili')}${
-    decision === CaseDecision.ACCEPTING
-      ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatCustodyRestrictions(
-          accusedGender,
-          custodyRestrictions,
-          validToDate,
-          isolationToDate,
-        )}`
+    decision === CaseDecision.ACCEPTING && custodyRestrictions
+      ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${custodyRestrictionsText}`
       : ''
   }<br /><br />${judgeName} ${judgeTitle}`
 }

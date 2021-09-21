@@ -147,8 +147,6 @@ export function formatAccusedByGender(
 export function formatCustodyRestrictions(
   accusedGender?: CaseGender,
   custodyRestrictions?: CaseCustodyRestrictions[],
-  validToDate?: Date | string | undefined,
-  isolationToDate?: Date | string | undefined,
 ): string {
   const relevantCustodyRestrictions = custodyRestrictions
     ?.filter((restriction) =>
