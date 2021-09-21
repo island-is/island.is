@@ -19,6 +19,10 @@ import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
 import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 
+
+import { paginate } from '../pagination/paginate';
+
+
 interface FindEndorsementInput {
   listId: string
   nationalId: string
@@ -167,9 +171,32 @@ export class EndorsementService {
     }
   }
 
-  async findEndorsements({ listId }: FindEndorsementsInput) {
+  async findEndorsements(
+    { listId }: FindEndorsementsInput,
+    query: any
+    ) {
     this.logger.debug(`Finding endorsements by list id "${listId}"`)
 
+    console.log(query)
+
+    // pagination setup defaults
+    const limit = parseInt(query.limit) || 5;
+    const after = query.after || null;
+    const before = query.before || null;
+    const primaryKeyField = 'id'
+    const orderOption = [['id', 'ASC']]
+    const where = { endorsementListId: listId } 
+
+    
+    return await paginate(
+      this.endorsementModel,
+      primaryKeyField,
+      orderOption,
+      where,
+      after,
+      before,
+      limit
+    );
     return await this.endorsementModel.findAll({
       where: { endorsementListId: listId },
     })

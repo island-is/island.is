@@ -9,6 +9,9 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  applyDecorators,
+  Query,
+  Type
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -18,6 +21,8 @@ import {
   ApiOkResponse,
   ApiParam,
   ApiTags,
+  ApiExtraModels,
+  getSchemaPath
 } from '@nestjs/swagger'
 import { environment } from '../../../environments'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
@@ -31,12 +36,42 @@ import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
 
+
+import { PaginatedDto } from '../pagination/dto/paginated.dto';
+import { PageInfoDto } from '../pagination/dto/pageinfo.dto'
+import { QueryDto } from '../pagination/dto/query.dto'
+
+export const ApiPaginatedResponse = <TModel extends Type<any>>(
+  model: TModel,
+) => {
+  return applyDecorators(
+    ApiExtraModels(model),
+    ApiOkResponse({
+      schema: {
+        allOf: [
+          { $ref: getSchemaPath(PaginatedDto) },
+          {
+            properties: {
+              data: {
+                type: 'array',
+                items: { $ref: getSchemaPath(model) },
+              },
+            },
+          },
+        ],
+      },
+    }),
+  );
+};
+
+
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @Audit({
   namespace: auditNamespace,
 })
 @ApiTags('endorsement')
 @ApiOAuth2([])
+@ApiExtraModels(PaginatedDto,PageInfoDto,QueryDto)
 @Controller('endorsement-list/:listId/endorsement')
 export class EndorsementController {
   constructor(
@@ -52,10 +87,10 @@ export class EndorsementController {
   @Scopes(EndorsementsScope.main)
   @Get()
   @HasAccessGroup(AccessGroup.Owner, AccessGroup.DMR)
-  @Audit<Endorsement[]>({
-    resources: (endorsement) => endorsement.map((e) => e.id),
-    meta: (endorsement) => ({ count: endorsement.length }),
-  })
+  // @Audit<Endorsement[]>({
+  //   resources: (endorsement) => endorsement.map((e) => e.id),
+  //   meta: (endorsement) => ({ count: endorsement.length }),
+  // })
   async findAll(
     @Param(
       'listId',
@@ -63,10 +98,12 @@ export class EndorsementController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
+    @Query() query: QueryDto
   ): Promise<Endorsement[]> {
     return await this.endorsementService.findEndorsements({
-      listId: endorsementList.id,
-    })
+      listId: endorsementList.id
+    },
+    query)
   }
 
   @ApiOkResponse({

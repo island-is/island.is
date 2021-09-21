@@ -6,14 +6,20 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  applyDecorators,
   Query,
+  Type
 } from '@nestjs/common'
 import {
   ApiBody,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiOAuth2,
   ApiOkResponse,
   ApiParam,
   ApiTags,
+  ApiExtraModels,
+  getSchemaPath
 } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { EndorsementList } from './endorsementList.model'
@@ -29,12 +35,42 @@ import type { User } from '@island.is/auth-nest-tools'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
 
+
+import { PaginatedDto } from '../pagination/dto/paginated.dto';
+import { PageInfoDto } from '../pagination/dto/pageinfo.dto'
+import { QueryDto } from '../pagination/dto/query.dto'
+
+export const ApiPaginatedResponse = <TModel extends Type<any>>(
+  model: TModel,
+) => {
+  return applyDecorators(
+    ApiExtraModels(model),
+    ApiOkResponse({
+      schema: {
+        allOf: [
+          { $ref: getSchemaPath(PaginatedDto) },
+          {
+            properties: {
+              data: {
+                type: 'array',
+                items: { $ref: getSchemaPath(model) },
+              },
+            },
+          },
+        ],
+      },
+    }),
+  );
+};
+
+
 @Audit({
   namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
 })
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
 @ApiOAuth2([])
+@ApiExtraModels(PaginatedDto,PageInfoDto,QueryDto)
 export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
@@ -45,13 +81,15 @@ export class EndorsementListController {
     type: [EndorsementList],
   })
   @Get()
-  @BypassAuth()
   async findByTags(
     @Query() { tags }: FindEndorsementListByTagsDto,
+    @Query() query: QueryDto
   ): Promise<EndorsementList[]> {
     // TODO: Add pagination
     return await this.endorsementListService.findListsByTags(
-      !Array.isArray(tags) ? [tags] : tags, // query parameters of length one are not arrays, we normalize all tags input to arrays here
+      // query parameters of length one are not arrays, we normalize all tags input to arrays here
+      !Array.isArray(tags) ? [tags] : tags,
+      query 
     )
   }
 
@@ -63,15 +101,20 @@ export class EndorsementListController {
     type: [Endorsement],
   })
   @Scopes(EndorsementsScope.main)
+  
   @Get('/endorsements')
-  @Audit<Endorsement[]>({
-    resources: (endorsement) => endorsement.map((e) => e.id),
-    meta: (endorsement) => ({ count: endorsement.length }),
-  })
-  async findEndorsements(@CurrentUser() user: User): Promise<Endorsement[]> {
+  // @Audit<Endorsement[]>({
+  //   resources: (endorsement) => endorsement.map((e) => e.id),
+  //   meta: (endorsement) => ({ count: endorsement.length }),
+  // })
+  async findEndorsements(
+    @CurrentUser() user: User,
+    @Query() query: QueryDto
+    ): Promise<Endorsement[]> {
     // TODO: Add pagination
     return await this.endorsementListService.findAllEndorsementsByNationalId(
       user.nationalId,
+      query
     )
   }
 
