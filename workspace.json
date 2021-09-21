@@ -7112,6 +7112,14 @@
               "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
             ],
             "parallel": false
+          },
+          "configurations": {
+            "production": {
+              "commands": [
+                "nx esbuild services-auth-api --prod",
+                "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
+              ]
+            }
           }
         },
         "esbuild": {
