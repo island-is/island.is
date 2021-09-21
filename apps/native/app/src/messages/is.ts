@@ -167,9 +167,9 @@ export const is = {
     errorCode,
     select,
     1 {Skilríki í lagi}
-    2 {Útrunnið strikamerki. Uppfærið skírteinið og reynið aftur.}
-    3 {Engar upplýsingar um skilríki fundust}
-    4 {Fyrirspurn inniheldur villur í reitum}
+    2 {Skilríkið er útrunnið}
+    3 {Strikamerki óþekkt eða útrunnið, prófið að endurhlaða skilríkið og skanna aftur}
+    4 {Strikamerki ógilt}
     other {Óþekkt villa}
   }`,
   'licenseScanDetail.errorTryToRefresh': 'Villa við að sannreyna ökuskírteinið. Uppfærið skírteinið og reynið aftur.',

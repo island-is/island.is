@@ -14,7 +14,7 @@ export const DriverLicenseScanResult = ({ data, onLoad, isExpired }: any) => {
   const intl = useIntl()
 
   useEffect(() => {
-    onLoad(!loading);
+    onLoad(!loading)
   }, [loading])
 
   useEffect(() => {
@@ -36,19 +36,22 @@ export const DriverLicenseScanResult = ({ data, onLoad, isExpired }: any) => {
           )
           setLoading(false)
         } else {
-          const { data, valid, error } = res.data.verifyPkPass
-          if (!valid) {
+          const { data, valid, error: smartError } = res.data.verifyPkPass
+          if (!valid && smartError) {
             setError(true)
 
             setErrorMessage(
-              intl.formatMessage({ id: 'licenseScanDetail.errorCodeMessage' }, { errorCode: error?.code }),
+              intl.formatMessage(
+                { id: 'licenseScanDetail.errorCodeMessage' },
+                { errorCode: smartError?.status },
+              ),
             )
             setLoading(false)
           } else {
             try {
               const { name, nationalId, photo } = JSON.parse(data)
               setError(false)
-              setErrorMessage(undefined);
+              setErrorMessage(undefined)
               setNationalId(nationalId)
               setName(name)
               setPhoto(photo.mynd)
