@@ -80,7 +80,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { prosecutorsOffices } = useInstitution()
-  const { handleUploadFileToCourtButtonClick, uploadState } = useCourtUpload(
+  const { uploadFilesToCourt, uploadState } = useCourtUpload(
     workingCase,
     setWorkingCase,
   )
@@ -329,11 +329,19 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               files={workingCase.files ?? []}
               canOpenFiles={canCaseFilesBeOpened()}
               showIcons={uploadState !== undefined}
+              handleRetryClick={(id: string) =>
+                workingCase.files &&
+                uploadFilesToCourt([
+                  workingCase.files[
+                    workingCase.files.findIndex((file) => file.id === id)
+                  ],
+                ])
+              }
             />
             <Box display="flex" justifyContent="flexEnd">
               <Button
                 size="small"
-                onClick={() => handleUploadFileToCourtButtonClick()}
+                onClick={() => uploadFilesToCourt(workingCase.files)}
                 loading={uploadState === UploadState.UPLOADING}
                 disabled={uploadState === UploadState.UPLOADING}
               >

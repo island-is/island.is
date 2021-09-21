@@ -49,14 +49,13 @@ export const useCourtUpload = (
         state: state ?? file.state,
       }
 
-      console.log(workingCase.files[fileIndexToUpdate])
       setWorkingCase({ ...workingCase })
     }
   }
 
-  const handleUploadFileToCourtButtonClick = async () => {
-    if (workingCase.files) {
-      workingCase.files.forEach(async (file) => {
+  const uploadFilesToCourt = async (files?: CaseFile[]) => {
+    if (files) {
+      files.forEach(async (file) => {
         try {
           if (
             workingCase.files &&
@@ -83,7 +82,7 @@ export const useCourtUpload = (
   }
 
   return {
-    handleUploadFileToCourtButtonClick,
+    uploadFilesToCourt,
     uploadState,
   }
 }

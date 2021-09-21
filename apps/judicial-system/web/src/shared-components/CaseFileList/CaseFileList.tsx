@@ -10,10 +10,17 @@ interface Props {
   files: TCaseFile[]
   showIcons?: boolean
   canOpenFiles?: boolean
+  handleRetryClick?: (id: string) => void
 }
 
 const CaseFileList: React.FC<Props> = (props) => {
-  const { caseId, files, showIcons = false, canOpenFiles = true } = props
+  const {
+    caseId,
+    files,
+    showIcons = false,
+    canOpenFiles = true,
+    handleRetryClick,
+  } = props
 
   const { handleOpenFile, fileNotFound, dismissFileNotFound } = useFileList({
     caseId,
@@ -39,6 +46,7 @@ const CaseFileList: React.FC<Props> = (props) => {
                 : undefined
             }
             onRemoveClick={() => null}
+            onRetryClick={() => handleRetryClick && handleRetryClick(file.id)}
           />
         </Box>
       ))}
