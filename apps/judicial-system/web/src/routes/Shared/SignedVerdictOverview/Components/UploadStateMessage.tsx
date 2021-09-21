@@ -18,11 +18,13 @@ export const UploadStateMessage = (props: Props) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 30 }}
     >
-      <Box display="flex" alignItems="center" marginLeft={2}>
+      <Box display="flex" alignItems="center" marginLeft={4}>
         <Box display="flex" marginRight={1}>
           <Icon icon={icon} type="outline" color={iconColor} />
         </Box>
-        <Text as="span">{message}</Text>
+        <Text as="span" variant="h5">
+          {message}
+        </Text>
       </Box>
     </motion.span>
   )

@@ -365,23 +365,25 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               }
               showIcons
             />
-            <Box display="flex" justifyContent="flexEnd">
-              <Button
-                size="small"
-                onClick={() => uploadFilesToCourt(workingCase.files)}
-                loading={uploadState === UploadState.UPLOADING}
-                disabled={
-                  uploadState === UploadState.UPLOADING ||
-                  uploadState === UploadState.ALL_UPLOADED
-                }
-              >
-                {formatMessage(
-                  uploadState === UploadState.SOME_UPLOADED
-                    ? signedVerdictOverview.retryUploadToCourtButtonText
-                    : signedVerdictOverview.uploadToCourtButtonText,
-                )}
-              </Button>
-            </Box>
+            {user && [UserRole.JUDGE, UserRole.REGISTRAR].includes(user?.role) && (
+              <Box display="flex" justifyContent="flexEnd">
+                <Button
+                  size="small"
+                  onClick={() => uploadFilesToCourt(workingCase.files)}
+                  loading={uploadState === UploadState.UPLOADING}
+                  disabled={
+                    uploadState === UploadState.UPLOADING ||
+                    uploadState === UploadState.ALL_UPLOADED
+                  }
+                >
+                  {formatMessage(
+                    uploadState === UploadState.SOME_UPLOADED
+                      ? signedVerdictOverview.retryUploadToCourtButtonText
+                      : signedVerdictOverview.uploadToCourtButtonText,
+                  )}
+                </Button>
+              </Box>
+            )}
           </AccordionItem>
         </Accordion>
       </Box>

@@ -58,7 +58,9 @@ const CaseFileList: React.FC<Props> = (props) => {
                     }
                   : undefined
               }
-              onRemoveClick={() => null}
+              onRemoveClick={() =>
+                canOpenFiles ? handleOpenFile(file.id) : null
+              }
               onRetryClick={() => handleRetryClick && handleRetryClick(file.id)}
             />
           </Box>
