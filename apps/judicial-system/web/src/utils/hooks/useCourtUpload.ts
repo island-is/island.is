@@ -17,6 +17,15 @@ export const useCourtUpload = (
   const [uploadFileToCourtMutation] = useMutation(UploadFileToCourtMutation)
 
   useEffect(() => {
+    workingCase.files?.forEach((file) => {
+      if (
+        file.state === CaseFileState.STORED_IN_COURT &&
+        file.status !== 'done'
+      ) {
+        setFileUploadStatus(file, 'done')
+      }
+    })
+
     setUploadState(
       workingCase.files?.some((file) => file.status === 'uploading')
         ? UploadState.UPLOADING

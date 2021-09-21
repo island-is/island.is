@@ -41,7 +41,14 @@ const CaseFileList: React.FC<Props> = (props) => {
               showFileSize={true}
               defaultBackgroundColor="blue100"
               doneIcon="checkmark"
-              showIcons={showIcons}
+              showIcons={
+                showIcons &&
+                [
+                  CaseFileState.FAILED_TO_UPLOAD,
+                  CaseFileState.STORED_IN_COURT,
+                  CaseFileState.STORED_IN_RVG,
+                ].includes(file.state)
+              }
               onOpenFile={
                 canOpenFiles
                   ? (file: UploadFile) => {

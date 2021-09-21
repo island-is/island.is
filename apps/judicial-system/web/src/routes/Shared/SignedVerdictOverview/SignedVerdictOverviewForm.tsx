@@ -178,8 +178,6 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     }
   }
 
-  console.log(uploadState)
-
   return (
     <FormContentContainer>
       <Box marginBottom={5}>
@@ -365,6 +363,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   ],
                 ])
               }
+              showIcons
             />
             <Box display="flex" justifyContent="flexEnd">
               <Button
