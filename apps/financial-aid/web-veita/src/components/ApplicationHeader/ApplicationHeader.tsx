@@ -113,6 +113,19 @@ const ApplicationHeader = ({
       <Divider />
 
       <Box display="flex" marginBottom={8} marginTop={4}>
+        {application.staff?.name && (
+          <Box display="flex" marginRight={1}>
+            <Box marginRight={1}>
+              <Text variant="small" fontWeight="semiBold" color="dark300">
+                Umsjá
+              </Text>
+            </Box>
+            <Box marginRight={1}>
+              <Text variant="small">{application.staff.name}</Text>
+            </Box>
+            <Text variant="small">·</Text>
+          </Box>
+        )}
         <Box marginRight={1}>
           <Text variant="small" fontWeight="semiBold" color="dark300">
             Aldur umsóknar
