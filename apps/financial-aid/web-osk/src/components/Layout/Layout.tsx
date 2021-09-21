@@ -10,7 +10,7 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
-
+import cn from 'classnames'
 interface Props {
   children: ReactNode
 }
@@ -35,7 +35,11 @@ const Layout = ({ children }: Props) => {
       background="purple100"
       className={styles.processContainer}
     >
-      <GridContainer className={styles.gridContainer}>
+      <GridContainer
+        className={cn({
+          [`${styles.gridContainer}`]: !user.currentApplication,
+        })}
+      >
         {user.currentApplication ? (
           <HasApplied />
         ) : (
