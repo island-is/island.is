@@ -1,6 +1,4 @@
 import {
-  capitalize,
-  formatAccusedByGender,
   formatDate,
   formatNationalId,
   formatCustodyRestrictions,
