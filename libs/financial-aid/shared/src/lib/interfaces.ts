@@ -33,7 +33,7 @@ export interface Staff {
 }
 
 export interface MunicipalitySettings {
-  homePage: string
+  homePage?: string
   aid: MunicipalityAid
 }
 

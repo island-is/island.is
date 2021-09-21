@@ -102,7 +102,11 @@ export const GetMunicipalityQuery = gql`
       id
       name
       settings {
-        aid
+        aid {
+          ownApartmentOrLease
+          withOthersOrUnknow
+          withParents
+        }
       }
     }
   }

@@ -31,7 +31,11 @@ export const GetMunicipalityQuery = gql`
       name
       settings {
         homePage
-        aid
+        aid {
+          ownApartmentOrLease
+          withOthersOrUnknow
+          withParents
+        }
       }
     }
   }

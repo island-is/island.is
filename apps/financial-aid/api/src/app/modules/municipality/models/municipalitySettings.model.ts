@@ -1,15 +1,14 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType, ID, Float } from '@nestjs/graphql'
 
-import type {
-  MunicipalitySettings,
-  MunicipalityAid,
-} from '@island.is/financial-aid/shared/lib'
+import type { MunicipalitySettings } from '@island.is/financial-aid/shared/lib'
+
+import { MunicipalityAidModal } from './municipalityAid.model'
 
 @ObjectType()
 export class MunicipalitySettingsModal implements MunicipalitySettings {
   @Field()
-  readonly homePage!: string
+  readonly homePage?: string
 
-  @Field(() => Number)
-  readonly aid!: MunicipalityAid
+  @Field()
+  readonly aid!: MunicipalityAidModal
 }
