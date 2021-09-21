@@ -10,6 +10,7 @@ export const navigationItems = [
       { title: 'Staða' },
       { title: 'Tími án umsjár' },
       { title: 'Tímabil' },
+      { title: 'Umsjá' },
     ],
   },
   {
@@ -24,6 +25,7 @@ export const navigationItems = [
       { title: 'Staða' },
       { title: 'Síðast uppfært' },
       { title: 'Tímabil' },
+      { title: 'Unnið af' },
     ],
   },
   {
@@ -35,6 +37,7 @@ export const navigationItems = [
       { title: 'Staða' },
       { title: 'Úrlausnartími' },
       { title: 'Tímabil' },
+      { title: 'Unnið af' },
     ],
   },
 ]

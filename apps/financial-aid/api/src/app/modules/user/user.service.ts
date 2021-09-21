@@ -39,17 +39,21 @@ export class UserService {
   }
 
   async getStaff(nationalId: string): Promise<StaffModel> {
-    return await this.fetchRequest(`staff/${nationalId}`)
+    const res = await this.fetchRequest(`staff/${nationalId}`)
       .then(async (res) => {
         if (!res.ok) {
           throw new Error(
             `Failed to get staff ${res.status}, ${res.statusText}`,
           )
         }
-        return await res.json()
+        return res
       })
       .catch(() => {
         throw new Error('Failed to get staff')
       })
+
+    return await res.json().catch(() => {
+      return null
+    })
   }
 }
