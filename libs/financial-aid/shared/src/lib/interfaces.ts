@@ -34,11 +34,13 @@ export interface Staff {
 
 export interface MunicipalitySettings {
   homePage: string
-  aid: {
-    ownApartmentOrLease: number
-    withOthersOrUnknow: number
-    withParents: number
-  }
+  aid: MunicipalityAid
+}
+
+export interface MunicipalityAid {
+  ownApartmentOrLease: number
+  withOthersOrUnknow: number
+  withParents: number
 }
 
 export interface NavigationProps {

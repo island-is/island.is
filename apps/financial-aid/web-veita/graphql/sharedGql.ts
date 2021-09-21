@@ -104,7 +104,9 @@ export const GetMunicipalityIdQuery = gql`
   query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
     municipality(input: $input) {
       id
-      settings
+      settings {
+        homePage
+      }
     }
   }
 `
