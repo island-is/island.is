@@ -178,6 +178,9 @@ export const serviceSetup = (services: {
       PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
       PKPASS_API_URL: '/k8s/api/PKPASS_API_URL',
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
+      PKPASS_CACHE_KEY: '/k8s/api/PKPASS_CACHE_KEY',
+      PKPASS_CACHE_TOKEN_EXPIRY_DELTA: '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA',
+      PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES',
       PAYMENT_XROAD_PROVIDER_ID:
         '/k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID',
       PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER',
