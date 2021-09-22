@@ -76,7 +76,7 @@ const ApplicationProfile = () => {
     if (application && dataMunicipality && application.homeCircumstances) {
       return aidCalculator(
         application.homeCircumstances,
-        dataMunicipality?.municipality.settings.aid,
+        dataMunicipality?.municipality.aid,
       )
     }
   }, [application, dataMunicipality])

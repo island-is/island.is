@@ -40,7 +40,7 @@ const Estimation = ({
 
   const aidAmount = useMemo(() => {
     if (data && homeCircumstances) {
-      return aidCalculator(homeCircumstances, data?.municipality.settings.aid)
+      return aidCalculator(homeCircumstances, data?.municipality.aid)
     }
   }, [data])
 
