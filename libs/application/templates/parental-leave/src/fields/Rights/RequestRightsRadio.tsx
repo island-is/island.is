@@ -9,14 +9,12 @@ import {
   RadioField,
 } from '@island.is/application/core'
 import { RadioFormField } from '@island.is/application/ui-fields'
-import {
-  NO,
-  YES,
-  YesOrNo,
-  getApplicationAnswers,
-} from '@island.is/application/templates/parental-leave'
+
+import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { maxDaysToGiveOrReceive } from '../../config'
+import { NO, YES } from '../../constants'
+import { YesOrNo } from '../../types'
 
 interface RequestRightsRadioProps extends FieldBaseProps {
   field: RadioField
