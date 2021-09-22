@@ -349,7 +349,6 @@ jobs:
     needs:
       - prepare
       - pre-checks
-      - docker-build
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
     runs-on: ubuntu-20.04
     timeout-minutes: 5
