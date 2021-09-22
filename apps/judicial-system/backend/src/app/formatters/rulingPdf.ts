@@ -1,6 +1,7 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
+import { FormatMessage } from '@island.is/cms-translations'
 import {
   AccusedPleaDecision,
   CaseAppealDecision,
@@ -21,6 +22,7 @@ import {
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
+import { core, ruling } from '../messages'
 import { formatAppeal } from './formatters'
 import { setPageNumbers } from './pdfHelpers'
 import { writeFile } from './writeFile'
@@ -28,6 +30,7 @@ import { skjaldarmerki } from './skjaldarmerki'
 
 function constructRestrictionRulingPdf(
   existingCase: Case,
+  formatMessage: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -64,12 +67,12 @@ function constructRestrictionRulingPdf(
     .font('Times-Roman')
     .fontSize(18)
     .lineGap(4)
-    .text(existingCase.court?.name ?? 'Dómstóll ekki skráður', {
+    .text(existingCase.court?.name ?? formatMessage(core.missing.court), {
       align: 'center',
     })
     .fontSize(14)
     .lineGap(2)
-    .text('Þingbók og úrskurður', { align: 'center' })
+    .text(formatMessage(ruling.heading), { align: 'center' })
     .lineGap(30)
     .text(
       `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
@@ -78,32 +81,30 @@ function constructRestrictionRulingPdf(
     .fontSize(11)
     .lineGap(1)
     .text(
-      `Þann ${formatDate(existingCase.courtStartDate, 'PPP')} heldur ${
-        existingCase.judge?.name ?? '?'
-      } ${existingCase.judge?.title ?? '?'} dómþing. Fyrir er tekið mál nr. ${
-        existingCase.courtCaseNumber
-      }. Þinghald hefst kl. ${formatDate(existingCase.courtStartDate, 'p')}.`,
+      formatMessage(ruling.intro, {
+        courtDate: formatDate(existingCase.courtStartDate, 'PPP'),
+        judgeNameAndTitle: `${existingCase.judge?.name ?? '?'} ${
+          existingCase.judge?.title ?? '?'
+        }`,
+        caseNumber: existingCase.courtCaseNumber,
+        startTime: formatDate(existingCase.courtStartDate, 'p'),
+      }),
       {
         paragraphGap: 1,
       },
     )
 
   if (!existingCase.isClosedCourtHidden) {
-    doc
-      .text(' ')
-      .text(
-        'Þinghaldið er háð fyrir luktum dyrum sbr. f-lið 10. gr. laga um meðferð sakamála nr. 88/2008.',
-        {
-          paragraphGap: 1,
-        },
-      )
+    doc.text(' ').text(formatMessage(ruling.closedCourtAnnouncement), {
+      paragraphGap: 1,
+    })
   }
 
   if (existingCase.courtAttendees) {
     doc
       .text(' ')
       .font('Times-Bold')
-      .text('Mættir eru:')
+      .text(formatMessage(ruling.attendeesHeading))
       .text(' ')
       .font('Times-Roman')
       .text(existingCase.courtAttendees, {
@@ -114,12 +115,15 @@ function constructRestrictionRulingPdf(
   doc
     .text(' ')
     .font('Times-Bold')
-    .text('Krafa:')
+    .text(formatMessage(ruling.requestheading))
     .text(' ')
     .font('Times-Roman')
-    .text(existingCase.prosecutorDemands ?? 'Krafa ekki skráð.', {
-      paragraphGap: 1,
-    })
+    .text(
+      existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
+      {
+        paragraphGap: 1,
+      },
+    )
     .text(' ')
     .font('Times-Bold')
     .text('Lagt er fram:')
@@ -363,6 +367,7 @@ function constructRestrictionRulingPdf(
 
 function constructInvestigationRulingPdf(
   existingCase: Case,
+  formatMessage: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -399,12 +404,12 @@ function constructInvestigationRulingPdf(
     .font('Times-Roman')
     .fontSize(18)
     .lineGap(4)
-    .text(existingCase.court?.name ?? 'Dómstóll ekki skráður', {
+    .text(existingCase.court?.name ?? formatMessage(core.missing.court), {
       align: 'center',
     })
     .fontSize(14)
     .lineGap(2)
-    .text('Þingbók og úrskurður', { align: 'center' })
+    .text(formatMessage(ruling.heading), { align: 'center' })
     .lineGap(30)
     .text(
       `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
@@ -413,32 +418,30 @@ function constructInvestigationRulingPdf(
     .fontSize(11)
     .lineGap(1)
     .text(
-      `Þann ${formatDate(existingCase.courtStartDate, 'PPP')} heldur ${
-        existingCase.judge?.name ?? '?'
-      } ${existingCase.judge?.title ?? '?'} dómþing. Fyrir er tekið mál nr. ${
-        existingCase.courtCaseNumber
-      }. Þinghald hefst kl. ${formatDate(existingCase.courtStartDate, 'p')}.`,
+      formatMessage(ruling.intro, {
+        courtDate: formatDate(existingCase.courtStartDate, 'PPP'),
+        judgeNameAndTitle: `${existingCase.judge?.name ?? '?'} ${
+          existingCase.judge?.title ?? '?'
+        }`,
+        caseNumber: existingCase.courtCaseNumber,
+        startTime: formatDate(existingCase.courtStartDate, 'p'),
+      }),
       {
         paragraphGap: 1,
       },
     )
 
   if (!existingCase.isClosedCourtHidden) {
-    doc
-      .text(' ')
-      .text(
-        'Þinghaldið er háð fyrir luktum dyrum sbr. f-lið 10. gr. laga um meðferð sakamála nr. 88/2008.',
-        {
-          paragraphGap: 1,
-        },
-      )
+    doc.text(' ').text(formatMessage(ruling.closedCourtAnnouncement), {
+      paragraphGap: 1,
+    })
   }
 
   if (existingCase.courtAttendees) {
     doc
       .text(' ')
       .font('Times-Bold')
-      .text('Mættir eru:')
+      .text(formatMessage(ruling.attendeesHeading))
       .text(' ')
       .font('Times-Roman')
       .text(existingCase.courtAttendees, {
@@ -449,13 +452,16 @@ function constructInvestigationRulingPdf(
   doc
     .text(' ')
     .font('Times-Bold')
-    .text('Krafa:')
+    .text(formatMessage(ruling.requestheading))
     .text(' ')
     .font('Times-Roman')
     .fontSize(12)
-    .text(existingCase.prosecutorDemands ?? 'Krafa ekki skráð.', {
-      paragraphGap: 1,
-    })
+    .text(
+      existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
+      {
+        paragraphGap: 1,
+      },
+    )
     .text(' ')
     .font('Times-Bold')
     .text('Lagt er fram:')
@@ -666,17 +672,19 @@ function constructInvestigationRulingPdf(
 
 function constructRulingPdf(
   existingCase: Case,
+  formatMessage: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
   return existingCase.type === CaseType.CUSTODY ||
     existingCase.type === CaseType.TRAVEL_BAN
-    ? constructRestrictionRulingPdf(existingCase)
-    : constructInvestigationRulingPdf(existingCase)
+    ? constructRestrictionRulingPdf(existingCase, formatMessage)
+    : constructInvestigationRulingPdf(existingCase, formatMessage)
 }
 
 export async function getRulingPdfAsString(
   existingCase: Case,
+  formatMessage: FormatMessage,
 ): Promise<string> {
-  const stream = constructRulingPdf(existingCase)
+  const stream = constructRulingPdf(existingCase, formatMessage)
 
   // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {

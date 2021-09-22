@@ -341,22 +341,29 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
-  getRulingPdf(existingCase: Case): Promise<string> {
+  async getRulingPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
       `Getting the ruling for case ${existingCase.id} as a pdf document`,
     )
 
-    return getRulingPdfAsString(existingCase)
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    return getRulingPdfAsString(existingCase, intl.formatMessage)
   }
 
   async getRequestPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
       `Getting the request for case ${existingCase.id} as a pdf document`,
     )
+
     const intl = await this.intlService.useIntl(
       ['judicial.system.backend'],
       'is',
     )
+
     return getRequestPdfAsString(existingCase, intl.formatMessage)
   }
 
@@ -365,7 +372,12 @@ export class CaseService {
       `Requesting signature of ruling for case ${existingCase.id}`,
     )
 
-    const pdf = await getRulingPdfAsString(existingCase)
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    const pdf = await getRulingPdfAsString(existingCase, intl.formatMessage)
 
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
