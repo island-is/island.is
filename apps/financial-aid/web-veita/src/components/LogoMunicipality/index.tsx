@@ -23,6 +23,7 @@ interface LogoProps {
 const LogoMunicipality = ({ className }: LogoProps) => {
   const router = useRouter()
 
+  //TODO when more muncipalities have been added to system
   const municipaliyId = router.query.sveitarfelag
     ? (router.query.sveitarfelag as string)
     : 'hfj'

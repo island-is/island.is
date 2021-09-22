@@ -1,6 +1,5 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
-import { height } from 'libs/island-ui/core/src/lib/Box/useBoxStyles.treat'
 
 export const container = style({
   position: 'fixed',
