@@ -22,11 +22,8 @@ const Layout = ({ children }: Props) => {
     document.title = 'Umsókn um fjárhagsaðstoð'
   }, [])
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !user) {
     return <Login headline="Skráðu þig inn" />
-  }
-  if (!user) {
-    return null
   }
 
   return (

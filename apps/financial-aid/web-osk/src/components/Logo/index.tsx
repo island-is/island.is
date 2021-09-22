@@ -10,26 +10,26 @@ interface LogoProps {
 }
 
 const Logo = ({ className, customLogo }: LogoProps) => {
+  if (!customLogo) {
+    return (
+      <a
+        href="https://www.samband.is/"
+        target="_blank"
+        className={cn({ [`${className}`]: true })}
+      >
+        <LogoSIS />
+      </a>
+    )
+  }
+
   return (
-    <>
-      {customLogo ? (
-        <a
-          href="https://www.hafnarfjordur.is/"
-          target="_blank"
-          className={cn({ [`${className}`]: true })}
-        >
-          <LogoSvg />
-        </a>
-      ) : (
-        <a
-          href="https://www.samband.is/"
-          target="_blank"
-          className={cn({ [`${className}`]: true })}
-        >
-          <LogoSIS />
-        </a>
-      )}
-    </>
+    <a
+      href="https://www.hafnarfjordur.is/"
+      target="_blank"
+      className={cn({ [`${className}`]: true })}
+    >
+      <LogoSvg />
+    </a>
   )
 }
 
