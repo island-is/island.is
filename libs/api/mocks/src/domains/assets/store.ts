@@ -3,7 +3,7 @@ import {
   fasteign,
   assetDetail,
   paginatedThinglystirEigendur,
-  paginatedThinglystirEigendur2,
+  paginatedUnitsOfUse,
 } from './factories'
 
 export const store = createStore(() => {
@@ -27,13 +27,16 @@ export const store = createStore(() => {
     ...eign,
   }))
 
-  const pagedThinglystirEigendur = paginatedThinglystirEigendur()
-  const pagedThinglystirEigendur2 = paginatedThinglystirEigendur2()
+  const pagedThinglystirEigendur = (hasNextPage?: boolean) =>
+    paginatedThinglystirEigendur(hasNextPage)
+
+  const pagedUnitsOfUse = (hasNextPage?: boolean) =>
+    paginatedUnitsOfUse(hasNextPage)
 
   return {
     getFasteignir,
     detailRealEstateAssets,
     pagedThinglystirEigendur,
-    pagedThinglystirEigendur2,
+    pagedUnitsOfUse,
   }
 })

@@ -23,8 +23,11 @@ const ownersArray = (data: ThinglysturEigandi[] | undefined) => {
   return ownerArray && ownerArray.length > 0 ? ownerArray : [[]]
 }
 
-const unitsArray = (data: Fasteign, formatMessage: FormatMessage) =>
-  data?.notkunareiningar?.data?.map((unit: Notkunareining) => {
+const unitsArray = (
+  data: Notkunareining[] | undefined,
+  formatMessage: FormatMessage,
+) =>
+  data?.map((unit: Notkunareining) => {
     return {
       header: {
         title: formatMessage(messages.housing),

@@ -14,6 +14,7 @@ import {
   GetPagingTypes,
 } from '../dto/getRealEstateInput.input'
 import { PropertyOwnersModel } from '../models/propertyOwners.model'
+import { UnitsOfUseModel } from '../models/propertyUnitsOfUse.model'
 import { AssetsXRoadService } from './api-domains-assets.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
@@ -43,6 +44,20 @@ export class AssetsXRoadResolver {
     @CurrentUser() user: User,
   ) {
     return this.assetsXRoadService.getThinglystirEigendur(
+      input.assetId,
+      user,
+      input.cursor,
+      input.limit,
+    )
+  }
+
+  @Query(() => UnitsOfUseModel, { nullable: true })
+  @Audit()
+  async getNotkunareiningar(
+    @Args('input') input: GetPagingTypes,
+    @CurrentUser() user: User,
+  ) {
+    return this.assetsXRoadService.getUnitsOfUse(
       input.assetId,
       user,
       input.cursor,

@@ -6,6 +6,52 @@ export const GET_SINGLE_PROPERTY_QUERY = gql`
   }
 `
 
+export const GET_UNITS_OF_USE_QUERY = gql`
+  query GetNotkunareiningar($input: GetPagingTypes!) {
+    getNotkunareiningar(input: $input) {
+      paging {
+        page
+        pageSize
+        totalPages
+        offset
+        total
+        hasPreviousPage
+        hasNextPage
+      }
+      data {
+        fasteignanumer
+        notkunareininganumer
+        merking
+        notkun
+        notkunBirting
+        starfsemi
+        lysing
+        byggingarAr
+        birtStaerd
+        byggingararBirting
+        lodarmat
+        brunabotamat
+        fasteignamat {
+          gildandiFasteignamat
+          gildandiAr
+          fyrirhugadFasteignamat
+          fyrirhugadAr
+        }
+        stadfang {
+          stadfanganr
+          stadvisir
+          stadgreinir
+          postnr
+          sveitarfelag
+          landeignarnr
+          birting
+          birtingStutt
+        }
+      }
+    }
+  }
+`
+
 export const GET_PROPERTY_OWNERS_QUERY = gql`
   query GetThinglystirEigendurQuery($input: GetPagingTypes!) {
     getThinglystirEigendur(input: $input) {

@@ -1,5 +1,17 @@
 import React, { FC } from 'react'
-import { Text, Table as T, Column, Columns } from '@island.is/island-ui/core'
+import { useLazyQuery } from '@apollo/client'
+import { useLocale } from '@island.is/localization'
+import {
+  Text,
+  Table as T,
+  Column,
+  Columns,
+  Box,
+  Button,
+} from '@island.is/island-ui/core'
+import { unitsArray } from '../../utils/createUnits'
+import { GET_UNITS_OF_USE_QUERY } from '../../lib/queries'
+import { NotkunareiningarResponse } from '../../types/RealEstateAssets.types'
 
 interface GridItem {
   title: string
@@ -7,14 +19,57 @@ interface GridItem {
 }
 
 interface Props {
-  tables?: {
-    header: GridItem
-    rows: GridItem[][]
-  }[]
+  units: NotkunareiningarResponse | undefined
   title?: string
 }
 
-const AssetGrid: FC<Props> = ({ tables, title }) => {
+const AssetGrid: FC<Props> = ({ title, units }) => {
+  const { formatMessage } = useLocale()
+  const [
+    getUnitsOfUseQuery,
+    { loading, error, fetchMore, data },
+  ] = useLazyQuery(GET_UNITS_OF_USE_QUERY)
+  const eigendurPaginationData: NotkunareiningarResponse =
+    data?.getNotkunareiningar
+
+  const paginateData = eigendurPaginationData?.data || []
+  const paginate = () => {
+    const paginateData = eigendurPaginationData?.data || []
+    const variableObject = {
+      variables: {
+        input: {
+          assetId: '82936',
+          cursor: Math.ceil(paginateData.length / 10).toString(),
+        },
+      },
+    }
+
+    if (fetchMore) {
+      fetchMore({
+        ...variableObject,
+        updateQuery: (prevResult, { fetchMoreResult }) => {
+          fetchMoreResult.getNotkunareiningar.data = [
+            ...prevResult.getNotkunareiningar.data,
+            ...fetchMoreResult.getNotkunareiningar.data,
+          ]
+          return fetchMoreResult
+        },
+      })
+    } else {
+      getUnitsOfUseQuery(variableObject)
+    }
+  }
+
+  console.log('eigendurPaginationData', paginateData)
+
+  console.log('unitsunitsunitsunits', units)
+  const unitData = units?.data || []
+  const tableArray = [...unitData, ...paginateData]
+  const tables = unitsArray(tableArray, formatMessage)
+
+  const loadMoreButton =
+    data?.getNotkunareiningar.paging?.hasNextPage ||
+    (units?.paging?.hasNextPage && !data?.getNotkunareiningar?.paging)
   return (
     <>
       <Text variant="h3" as="h2" marginBottom={4}>
@@ -57,6 +112,18 @@ const AssetGrid: FC<Props> = ({ tables, title }) => {
           </T.Body>
         </T.Table>
       ))}
+      {loadMoreButton && (
+        <Box
+          marginTop={3}
+          alignItems="center"
+          justifyContent="center"
+          display="flex"
+        >
+          <Button size="small" variant="text" onClick={paginate}>
+            Sækja meira
+          </Button>
+        </Box>
+      )}
     </>
   )
 }

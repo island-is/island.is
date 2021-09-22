@@ -17,6 +17,24 @@ const streetArray = [
   'Eldfjallagata',
 ]
 
+const pagingData = ({
+  page = 1,
+  pageSize = 10,
+  total = 10,
+  totalPages = 1,
+  offset = 0,
+  hasPreviousPage = false,
+  hasNextPage = false,
+}) => ({
+  page,
+  pageSize,
+  total,
+  totalPages,
+  offset,
+  hasPreviousPage,
+  hasNextPage,
+})
+
 export const stadfang = factory<types.Stadfang>({
   stadfanganr: () => faker.helpers.replaceSymbolWithNumber('s???', '?'),
   sveitarfelag: () => faker.random.arrayElement(townArray),
@@ -66,9 +84,9 @@ export const notkunareining = factory<types.Notkunareining>({
   notkunBirting: () => faker.helpers.replaceSymbolWithNumber('Notkun ?', '?'),
   starfsemi: () => faker.helpers.replaceSymbolWithNumber('Starfsemi ?', '?'),
   lysing: () => faker.helpers.replaceSymbolWithNumber('Lýsing ?', '?'),
-  byggingarAr: 2008,
+  // byggingarAr: 2008,
   byggingararBirting: '2008',
-  birtStaerd: () => faker.finance.amount(100, 250, 1),
+  birtStaerd: () => faker.random.number({ min: 100, max: 300 }),
   fasteignamat: () => fasteignamat(),
   lodarmat: () => faker.random.number({ min: 1000000, max: 5000000 }),
   brunabotamat: faker.random.number({
@@ -82,56 +100,22 @@ export const assetDetail = factory<types.Fasteign>({
   fasteignamat: () => fasteignamat(),
   thinglystirEigendur: {
     data: eigandi.list(10),
-    paging: {
-      page: 1,
-      pageSize: 10,
-      total: 26,
-      totalPages: 3,
-      offset: 0,
-      hasPreviousPage: false,
-      hasNextPage: true,
-    },
+    paging: pagingData({ hasNextPage: true }),
   },
   notkunareiningar: {
     data: notkunareining.list(2),
-    paging: {
-      page: 2,
-      pageSize: 5,
-      total: 20,
-      totalPages: 4,
-      offset: 10,
-      hasPreviousPage: true,
-      hasNextPage: false,
-    },
+    paging: pagingData({ hasNextPage: true }),
   },
 })
 
-export const paginatedThinglystirEigendur = factory<types.ThinglystirEigendurResponse>(
-  {
+export const paginatedThinglystirEigendur = (hasNextPage = true) =>
+  factory<types.ThinglystirEigendurResponse>({
     data: eigandi.list(10),
-    paging: {
-      page: 2,
-      pageSize: 10,
-      total: 26,
-      totalPages: 3,
-      offset: 1,
-      hasPreviousPage: true,
-      hasNextPage: true,
-    },
-  },
-)
+    paging: pagingData({ hasNextPage }),
+  })()
 
-export const paginatedThinglystirEigendur2 = factory<types.ThinglystirEigendurResponse>(
-  {
-    data: eigandi.list(6),
-    paging: {
-      page: 3,
-      pageSize: 6,
-      total: 26,
-      totalPages: 3,
-      offset: 2,
-      hasPreviousPage: true,
-      hasNextPage: false,
-    },
-  },
-)
+export const paginatedUnitsOfUse = (hasNextPage = true) =>
+  factory<types.NotkunareiningarResponse>({
+    data: notkunareining.list(10),
+    paging: pagingData({ hasNextPage }),
+  })()

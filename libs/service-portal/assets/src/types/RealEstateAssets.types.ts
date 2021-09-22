@@ -2,7 +2,7 @@ export type Stadfang = {
   stadfanganr: string
   stadvisir: string // Tæknilega rétt hugtak—oftast gotuheiti
   stadgreinir: string // Tæknilega rétt hugtak—oftast húsnúmer
-  postnr: string | number
+  postnr: number
   sveitarfelag: string
   landeignarnr: string // ID sem hægt væri að fletta upp/vísa í seinna
 
@@ -29,12 +29,10 @@ export type Fasteignamat = {
 }
 
 export type Notkunareining = {
-  fasteignanumer: string | number
-  notkunareininganumer: string | number
+  fasteignanumer: string
+  notkunareininganumer: string
 
   stadfang?: Stadfang
-  // OR
-  Stadfong?: Array<Stadfang>
 
   merking: string
 
@@ -45,8 +43,8 @@ export type Notkunareining = {
   lysing: string // Sama og skyring. Frjáls texti, yfirleitt notkun, birta? óstaðfest
   // notkunBirting // ?
 
-  byggingarAr: string | number
-  birtStaerd: string | number
+  byggingarAr?: string
+  birtStaerd: number
   byggingararBirting: string
 
   fasteignamat: Fasteignamat

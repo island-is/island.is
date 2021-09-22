@@ -13,14 +13,20 @@ export const resolvers: Resolvers = {
     getThinglystirEigendur: (_, { input }) => {
       const cursor = input.cursor ? parseInt(input.cursor, 10) : 0
       return cursor && cursor > 0
-        ? store.pagedThinglystirEigendur2
-        : store.pagedThinglystirEigendur
+        ? store.pagedThinglystirEigendur(false)
+        : store.pagedThinglystirEigendur()
+    },
+    getNotkunareiningar: (_, { input }) => {
+      const cursor = input.cursor ? parseInt(input.cursor, 10) : 0
+      return cursor && cursor > 0
+        ? store.pagedUnitsOfUse(false)
+        : store.pagedUnitsOfUse()
     },
     getRealEstateDetail: (_, { input }) => {
       const match = store.detailRealEstateAssets.find(
         (item) => item.fasteignanumer === input.assetId,
       )
-      return match ? match : null
+      return match || null
     },
   },
 }

@@ -24,6 +24,7 @@ import { messages } from '../../lib/messages'
 import {
   GET_SINGLE_PROPERTY_QUERY,
   GET_PROPERTY_OWNERS_QUERY,
+  GET_UNITS_OF_USE_QUERY,
 } from '../../lib/queries'
 import DetailHeader from '../../components/DetailHeader'
 
@@ -39,13 +40,12 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
       },
     },
   })
+  const assetData: Fasteign = data?.getRealEstateDetail || {}
 
   const [
     getEigendurQuery,
     { loading: ownerLoading, error: ownerError, fetchMore, ...eigendurQuery },
   ] = useLazyQuery(GET_PROPERTY_OWNERS_QUERY)
-  const assetData: Fasteign = data?.getRealEstateDetail || {}
-
   const eigendurPaginationData: ThinglysturEigandi[] =
     eigendurQuery?.data?.getThinglystirEigendur.data || []
 
@@ -55,7 +55,6 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
   const combinedOwnerArray = [...assetOwners, ...eigendurPaginationData]
 
   const owners = ownersArray(combinedOwnerArray)
-  const units = unitsArray(assetData, formatMessage)
 
   const paginate = () => {
     const variableObject = {
@@ -163,10 +162,11 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         />
       </Box>
       <Box marginTop={7}>
-        {units && units?.length > 0 ? (
+        {assetData?.notkunareiningar?.data &&
+        assetData?.notkunareiningar?.data?.length > 0 ? (
           <AssetGrid
             title={formatMessage(messages.unitsOfUse)}
-            tables={units}
+            units={assetData?.notkunareiningar}
           />
         ) : null}
       </Box>

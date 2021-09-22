@@ -77,4 +77,25 @@ export class AssetsXRoadService {
 
     throw new Error('Could not fetch fasteignir')
   }
+
+  async getUnitsOfUse(
+    assetId: string,
+    auth: User,
+    cursor?: string | null,
+    limit?: number | null,
+  ): Promise<any | null> {
+    const unitsOfUseResponse = await this.getRealEstatesWithAuth(
+      auth,
+    ).fasteignirGetFasteignNotkunareiningar({
+      fasteignanumer: getAssetString(assetId),
+      cursor: cursor,
+      limit: limit,
+    })
+
+    if (unitsOfUseResponse) {
+      return unitsOfUseResponse
+    }
+
+    throw new Error('Could not fetch fasteignir')
+  }
 }

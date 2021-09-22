@@ -12,7 +12,7 @@ interface Props {
 }
 
 const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
-  const setThePage = () => {
+  const getMoreItems = () => {
     if (paginateCallback) {
       paginateCallback()
     }
@@ -58,7 +58,7 @@ const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
                     <Button
                       size="small"
                       variant="text"
-                      onClick={() => setThePage()}
+                      onClick={() => getMoreItems()}
                     >
                       Sækja meira
                     </Button>
