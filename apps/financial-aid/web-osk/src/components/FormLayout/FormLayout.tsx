@@ -46,7 +46,7 @@ const FormLayout = ({ children }: Props) => {
       </Box>
       <Box className={styles.sidebarContent}>
         <Box paddingLeft={[0, 0, 0, 3]}>
-          {activeSection != undefined && (
+          {activeSection !== undefined && (
             <FormStepper
               sections={sections}
               activeSection={activeSection}
