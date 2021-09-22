@@ -34,7 +34,6 @@ const ApplicationInfo = () => {
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
-  const { setMuncipality } = useContext(UserContext)
 
   const logOut = useLogOut()
 

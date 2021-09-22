@@ -29,10 +29,10 @@ const MunicipalityProvider = ({ children }: Props) => {
   })
 
   useEffect(() => {
-    if (data) {
+    if (data && municipality === undefined) {
       setMunicipality(data.municipality)
     }
-  }, [data])
+  }, [data, municipality])
 
   return (
     <MunicipalityContext.Provider value={{ setMunicipality, municipality }}>

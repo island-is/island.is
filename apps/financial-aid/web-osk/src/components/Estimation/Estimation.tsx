@@ -1,5 +1,5 @@
 import React, { ReactNode, useContext, useMemo } from 'react'
-import { Text, Box, LoadingDots, Divider } from '@island.is/island-ui/core'
+import { Text, Box, Divider } from '@island.is/island-ui/core'
 
 import {
   aidCalculator,
@@ -7,17 +7,11 @@ import {
   calulatePersonalTaxAllowanceUsed,
   calulateTaxOfAmount,
   HomeCircumstances,
-  Municipality,
   getNextPeriod,
 } from '@island.is/financial-aid/shared/lib'
-import { useQuery } from '@apollo/client'
 import { MunicipalityContext } from '@island.is/financial-aid-web/osk/src/components/MunicipalityProvider/MunicipalityProvider'
 
 import format from 'date-fns/format'
-
-interface MunicipalityData {
-  municipality: Municipality
-}
 
 interface Props {
   aboutText: ReactNode

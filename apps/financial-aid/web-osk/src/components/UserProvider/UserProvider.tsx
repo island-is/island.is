@@ -13,8 +13,6 @@ interface UserProvider {
   isAuthenticated?: boolean
   user?: User
   setUser?: React.Dispatch<React.SetStateAction<User | undefined>>
-  muncipality?: Municipality
-  setMuncipality?: any
 }
 
 interface Props {
@@ -30,8 +28,6 @@ const UserProvider = ({ children }: Props) => {
     Boolean(Cookies.get(CSRF_COOKIE_NAME)),
   )
 
-  const [muncipality, setMuncipality] = useState<Municipality>()
-
   const { data } = useQuery(CurrentUserQuery, {
     fetchPolicy: 'no-cache',
   })
@@ -46,9 +42,7 @@ const UserProvider = ({ children }: Props) => {
   }, [setUser, loggedInUser, user])
 
   return (
-    <UserContext.Provider
-      value={{ isAuthenticated, user, setUser, setMuncipality, muncipality }}
-    >
+    <UserContext.Provider value={{ isAuthenticated, user, setUser }}>
       {children}
     </UserContext.Provider>
   )
