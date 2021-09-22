@@ -263,7 +263,7 @@ jobs:
         id: deploy_map
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         env:
-          BASE: 'main'
+          BASE: 'origin/main'
         run: |
           CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress)
           echo "CHUNKS: '$CHUNKS'"
