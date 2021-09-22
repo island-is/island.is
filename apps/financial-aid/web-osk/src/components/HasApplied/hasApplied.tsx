@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Text, GridContainer, Button } from '@island.is/island-ui/core'
+import { Text, Button } from '@island.is/island-ui/core'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
