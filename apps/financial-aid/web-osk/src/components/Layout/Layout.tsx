@@ -11,6 +11,7 @@ import {
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import cn from 'classnames'
+
 interface Props {
   children: ReactNode
 }
@@ -22,8 +23,11 @@ const Layout = ({ children }: Props) => {
     document.title = 'Umsókn um fjárhagsaðstoð'
   }, [])
 
-  if (!isAuthenticated || !user) {
+  if (!isAuthenticated) {
     return <Login headline="Skráðu þig inn" />
+  }
+  if (!user) {
+    return null
   }
 
   return (

@@ -1,6 +1,10 @@
 import { useQuery } from '@apollo/client'
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
-import { CSRF_COOKIE_NAME, User } from '@island.is/financial-aid/shared/lib'
+import {
+  CSRF_COOKIE_NAME,
+  Municipality,
+  User,
+} from '@island.is/financial-aid/shared/lib'
 import Cookies from 'js-cookie'
 
 import { CurrentUserQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
@@ -9,6 +13,8 @@ interface UserProvider {
   isAuthenticated?: boolean
   user?: User
   setUser?: React.Dispatch<React.SetStateAction<User | undefined>>
+  muncipality?: Municipality
+  setMuncipality?: any
 }
 
 interface Props {
@@ -23,6 +29,9 @@ const UserProvider = ({ children }: Props) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(Cookies.get(CSRF_COOKIE_NAME)),
   )
+
+  const [muncipality, setMuncipality] = useState<Municipality>()
+
   const { data } = useQuery(CurrentUserQuery, {
     fetchPolicy: 'no-cache',
   })
@@ -37,7 +46,9 @@ const UserProvider = ({ children }: Props) => {
   }, [setUser, loggedInUser, user])
 
   return (
-    <UserContext.Provider value={{ isAuthenticated, user, setUser }}>
+    <UserContext.Provider
+      value={{ isAuthenticated, user, setUser, setMuncipality, muncipality }}
+    >
       {children}
     </UserContext.Provider>
   )

@@ -1,6 +1,7 @@
 export { default as Header } from './Header/Header'
 export { default as FormProvider } from './FormProvider/FormProvider'
 export { default as UserProvider } from './UserProvider/UserProvider'
+export { default as MunicipalityProvider } from './MunicipalityProvider/MunicipalityProvider'
 export { default as FormLayout } from './FormLayout/FormLayout'
 export { default as Layout } from './Layout/Layout'
 export { default as StatusLayout } from './StatusLayout/StatusLayout'

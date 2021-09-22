@@ -55,10 +55,7 @@ const FormLayout = ({ children }: Props) => {
           )}
         </Box>
 
-        <Logo
-          className={styles.logo}
-          customLogo={router.pathname !== '/umsokn'}
-        />
+        <Logo className={styles.logo} />
       </Box>
     </div>
   )

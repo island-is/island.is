@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Text, Icon, Box, Checkbox } from '@island.is/island-ui/core'
 
 import {
@@ -14,16 +14,27 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFor
 
 import {
   getNextPeriod,
+  Municipality,
   NavigationProps,
 } from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
+import { GetMunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql'
+import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
+
+import { useMutation, useQuery } from '@apollo/client'
+import { setUser } from '@sentry/minimal'
+
+interface MunicipalityData {
+  municipality: Municipality
+}
 
 const ApplicationInfo = () => {
   const router = useRouter()
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
+  const { setMuncipality } = useContext(UserContext)
 
   const logOut = useLogOut()
 
@@ -108,7 +119,7 @@ const ApplicationInfo = () => {
           justifyContent="center"
           marginBottom={5}
         >
-          <Logo className={styles.logo} customLogo={false} />
+          <Logo className={styles.logo} />
         </Box>
       </ContentContainer>
 
@@ -118,7 +129,7 @@ const ApplicationInfo = () => {
         prevButtonText="Hætta við"
         nextButtonText="Staðfesta"
         nextButtonIcon="checkmark"
-        onNextButtonClick={() => errorCheck()}
+        onNextButtonClick={errorCheck}
       />
     </Layout>
   )

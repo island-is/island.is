@@ -1,34 +1,24 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import cn from 'classnames'
 
 import LogoSvg from './LogoSvg'
-import LogoSIS from './LogoSIS'
+
+import { MunicipalityContext } from '@island.is/financial-aid-web/osk/src/components/MunicipalityProvider/MunicipalityProvider'
 
 interface LogoProps {
   className?: string
-  customLogo?: boolean
 }
 
-const Logo = ({ className, customLogo }: LogoProps) => {
-  if (!customLogo) {
-    return (
-      <a
-        href="https://www.samband.is/"
-        target="_blank"
-        className={cn({ [`${className}`]: true })}
-      >
-        <LogoSIS />
-      </a>
-    )
-  }
+const Logo = ({ className }: LogoProps) => {
+  const { municipality } = useContext(MunicipalityContext)
 
   return (
     <a
-      href="https://www.hafnarfjordur.is/"
+      href={municipality ? municipality.homePage : 'https://www.samband.is/'}
       target="_blank"
       className={cn({ [`${className}`]: true })}
     >
-      <LogoSvg />
+      <LogoSvg name={municipality ? municipality.id : 'sis'} />
     </a>
   )
 }
