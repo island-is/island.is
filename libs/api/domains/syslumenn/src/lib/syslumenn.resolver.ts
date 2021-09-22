@@ -1,9 +1,10 @@
 import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
 import { GetHomestaysInput } from './dto/getHomestays.input'
+import { GetOperatingLicensesInput } from './dto/getOperatingLicenses.input'
 import { Homestay } from './models/homestay'
 import { SyslumennAuction } from './models/syslumennAuction'
 import { SyslumennService } from './syslumenn.service'
-import { OperatingLicense } from './models/operatingLicense'
+import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -26,8 +27,14 @@ export class SyslumennResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => [OperatingLicense])
-  getOperatingLicenses(): Promise<OperatingLicense[]> {
-    return this.syslumennService.getOperatingLicenses()
+  @Query(() => PaginatedOperatingLicenses)
+  getOperatingLicenses(
+    @Args('input') input: GetOperatingLicensesInput,
+  ): Promise<PaginatedOperatingLicenses> {
+    return this.syslumennService.getOperatingLicenses(
+      input.searchBy,
+      input.pageNumber,
+      input.pageSize,
+    )
   }
 }

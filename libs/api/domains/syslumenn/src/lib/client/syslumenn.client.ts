@@ -4,6 +4,7 @@ import { ISyslumennAuction } from './models/syslumennAuction'
 import { ILogin } from './models/login'
 import { Person, Attachment, DataUploadResponse } from '../models/dataUpload'
 import { constructUploadDataObject } from './models/dataUpload'
+import { IPaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
 import { IOperatingLicense } from './models/operatingLicense'
 
 export const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
@@ -70,14 +71,39 @@ export class SyslumennClient {
     return response.data
   }
 
-  async getOperatingLicenses(): Promise<IOperatingLicense[] | null> {
+  async getOperatingLicenses(
+    searchQuery?: string,
+    pageNumber?: number,
+    pageSize?: number,
+  ): Promise<IPaginatedOperatingLicenses> {
     await this.login()
 
-    return (
-      await this.httpService
-        .get(`${this.clientConfig.url}/api/VirkLeyfi/${this.id}`)
-        .toPromise()
-    ).data
+    const params = new URLSearchParams()
+    if (searchQuery) {
+      params.append('SearchBy', searchQuery)
+    }
+    if (pageNumber) {
+      params.append('PageNumber', pageNumber.toString())
+    }
+    if (pageSize) {
+      params.append('PageSize', pageSize.toString())
+    }
+
+    const response: {
+      data: IOperatingLicense[]
+      headers: { [key: string]: string }
+    } = await this.httpService
+      .get(`${this.clientConfig.url}/api/VirkLeyfi/${this.id}`, {
+        params: params,
+      })
+      .toPromise()
+
+    const paginatedOperatingLicenses: IPaginatedOperatingLicenses = {
+      paginationInfo: JSON.parse(response.headers['x-pagination']),
+      results: response.data,
+    }
+
+    return paginatedOperatingLicenses
   }
 
   async uploadData(

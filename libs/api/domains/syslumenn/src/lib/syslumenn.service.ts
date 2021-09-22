@@ -7,9 +7,9 @@ import {
 import { Injectable } from '@nestjs/common'
 import { Person, Attachment, DataUploadResponse } from './models/dataUpload'
 import {
-  OperatingLicense,
-  mapOperatingLicense,
-} from './models/operatingLicense'
+  PaginatedOperatingLicenses,
+  mapPaginatedOperatingLicenses,
+} from './models/paginatedOperatingLicenses'
 
 @Injectable()
 export class SyslumennService {
@@ -27,10 +27,18 @@ export class SyslumennService {
     return (syslumennAuctions ?? []).map(mapSyslumennAuction)
   }
 
-  async getOperatingLicenses(): Promise<OperatingLicense[]> {
-    const operatingLicenses = await this.syslumennClient.getOperatingLicenses()
+  async getOperatingLicenses(
+    searchQuery?: string,
+    pageNumber?: number,
+    pageSize?: number,
+  ): Promise<PaginatedOperatingLicenses> {
+    const paginatedOperatingLicenses = await this.syslumennClient.getOperatingLicenses(
+      searchQuery,
+      pageNumber,
+      pageSize,
+    )
 
-    return (operatingLicenses ?? []).map(mapOperatingLicense)
+    return mapPaginatedOperatingLicenses(paginatedOperatingLicenses)
   }
 
   async uploadData(

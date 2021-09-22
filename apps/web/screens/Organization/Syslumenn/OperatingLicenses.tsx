@@ -13,7 +13,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   Query,
-  QueryGetHomestaysArgs,
+  QueryGetOperatingLicensesArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
   QueryGetOrganizationSubpageArgs,
@@ -39,6 +39,8 @@ interface OperatingLicensesProps {
   operatingLicenses: Query['getOperatingLicenses']
   namespace: Query['getNamespace']
 }
+
+const PAGE_SIZE = 30
 
 const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   organizationPage,
@@ -74,7 +76,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
 
   const setQuery = (query: string) => _setQuery(query.toLowerCase())
 
-  const filteredItems = operatingLicenses
+  const filteredItems = operatingLicenses.results
     .filter(
       (homestay) =>
         homestay.name?.toLowerCase().includes(query) ||
@@ -212,8 +214,14 @@ OperatingLicenses.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetHomestaysArgs>({
+    apolloClient.query<Query, QueryGetOperatingLicensesArgs>({
       query: GET_OPERATING_LICENSES_QUERY,
+      variables: {
+        input: {
+          pageNumber: 1,
+          pageSize: PAGE_SIZE,
+        },
+      },
     }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
