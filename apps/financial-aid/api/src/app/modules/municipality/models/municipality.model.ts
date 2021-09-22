@@ -3,7 +3,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import type { MunicipalitySettings } from '@island.is/financial-aid/shared/lib'
 
 import { Municipality } from '@island.is/financial-aid/shared/lib'
-import { MunicipalitySettingsModal } from './municipalitySettings.model'
+import { MunicipalitySettingsModel } from './municipalitySettings.model'
 
 @ObjectType()
 export class MunicipalityModel implements Municipality {
@@ -19,6 +19,6 @@ export class MunicipalityModel implements Municipality {
   @Field()
   readonly name!: string
 
-  @Field(() => MunicipalitySettingsModal, { nullable: false })
+  @Field(() => MunicipalitySettingsModel, { nullable: false })
   readonly settings!: MunicipalitySettings
 }

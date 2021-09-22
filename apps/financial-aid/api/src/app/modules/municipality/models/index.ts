@@ -1,3 +1,3 @@
 export { MunicipalityModel } from './municipality.model'
-export { MunicipalitySettingsModal } from './municipalitySettings.model'
-export { MunicipalityAidModal } from './municipalityAid.model'
+export { MunicipalitySettingsModel } from './municipalitySettings.model'
+export { MunicipalityAidModel } from './municipalityAid.model'

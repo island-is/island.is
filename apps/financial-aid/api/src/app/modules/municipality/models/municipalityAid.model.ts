@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import type { MunicipalityAid } from '@island.is/financial-aid/shared/lib'
 
 @ObjectType()
-export class MunicipalityAidModal implements MunicipalityAid {
+export class MunicipalityAidModel implements MunicipalityAid {
   @Field()
   readonly ownApartmentOrLease!: number
 

@@ -38,11 +38,11 @@ const Nav = ({ showInMobile }: Props) => {
       })}
     >
       <header>
-        <div className={`${styles.logoContainer} logoContainer`}>
+        <div className={styles.logoContainer}>
           <Logo />
         </div>
-        <div className={styles.logoHfjContainer}>
-          <Box className={`logoHfj`}>
+        <div className={styles.logoMunicipalityContainer}>
+          <Box className={styles.logoMunicipality}>
             <LogoMunicipality />
           </Box>
 
