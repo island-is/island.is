@@ -53,6 +53,7 @@ export const eigandi = factory<types.ThinglysturEigandi>({
   eignarhlutfall: 0.5,
   kaupdagur: () => faker.date.past(),
   heimild: 'xyz',
+  heimildBirting: 'A+',
   display: '50.00%',
 })
 
@@ -80,12 +81,12 @@ export const assetDetail = factory<types.Fasteign>({
   ...fasteign(),
   fasteignamat: () => fasteignamat(),
   thinglystirEigendur: {
-    data: eigandi.list(5),
+    data: eigandi.list(10),
     paging: {
       page: 1,
-      pageSize: 5,
-      total: 7,
-      totalPages: 2,
+      pageSize: 10,
+      total: 26,
+      totalPages: 3,
       offset: 0,
       hasPreviousPage: false,
       hasNextPage: true,
@@ -105,16 +106,30 @@ export const assetDetail = factory<types.Fasteign>({
   },
 })
 
-// wip.
-export const pagedThinglystirEigendur = factory<types.ThinglystirEigendurResponse>(
+export const paginatedThinglystirEigendur = factory<types.ThinglystirEigendurResponse>(
   {
-    data: eigandi.list(2),
+    data: eigandi.list(10),
     paging: {
       page: 2,
-      pageSize: 2,
-      total: 7,
-      totalPages: 2,
+      pageSize: 10,
+      total: 26,
+      totalPages: 3,
       offset: 1,
+      hasPreviousPage: true,
+      hasNextPage: true,
+    },
+  },
+)
+
+export const paginatedThinglystirEigendur2 = factory<types.ThinglystirEigendurResponse>(
+  {
+    data: eigandi.list(6),
+    paging: {
+      page: 3,
+      pageSize: 6,
+      total: 26,
+      totalPages: 3,
+      offset: 2,
       hasPreviousPage: true,
       hasNextPage: false,
     },

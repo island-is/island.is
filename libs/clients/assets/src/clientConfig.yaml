@@ -120,7 +120,8 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
         - auth: []
-  /api/v1/fasteignir/{fasteignanumer}/thinglystir-eigendur:
+  # /api/v1/fasteignir/{fasteignanumer}/thinglystir-eigendur:
+  /api/v1/fasteignir/{fasteignanumer}/thinglystireigendur:
     get:
       tags:
         - Fasteignir

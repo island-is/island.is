@@ -4,10 +4,14 @@ import amountFormat from './amountFormat'
 import { messages } from '../lib/messages'
 import { FormatMessage } from '@island.is/application/core'
 
-import { Fasteign, Notkunareining } from '../types/RealEstateAssets.types'
+import {
+  Fasteign,
+  Notkunareining,
+  ThinglysturEigandi,
+} from '../types/RealEstateAssets.types'
 
-const ownersArray = (data: Fasteign) => {
-  const ownerArray = data?.thinglystirEigendur?.data?.map((owner) => {
+const ownersArray = (data: ThinglysturEigandi[] | undefined) => {
+  const ownerArray = data?.map((owner) => {
     return [
       owner.nafn || '',
       formatKennitala(owner.kennitala) || '',
@@ -54,10 +58,6 @@ const unitsArray = (data: Fasteign, formatMessage: FormatMessage) =>
             title: formatMessage(messages.marking),
             value: unit.merking || '',
           },
-          // {
-          //   title: 'Húsmat',
-          //   value: unit.husmat?! || '',
-          // },
           {
             title: formatMessage(messages.municipality),
             value: unit.stadfang?.sveitarfelag || '',

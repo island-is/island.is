@@ -1,5 +1,10 @@
 import { createStore } from '@island.is/shared/mocking'
-import { fasteign, assetDetail, pagedThinglystirEigendur } from './factories'
+import {
+  fasteign,
+  assetDetail,
+  paginatedThinglystirEigendur,
+  paginatedThinglystirEigendur2,
+} from './factories'
 
 export const store = createStore(() => {
   const fasteignir = fasteign.list(5)
@@ -22,9 +27,13 @@ export const store = createStore(() => {
     ...eign,
   }))
 
+  const pagedThinglystirEigendur = paginatedThinglystirEigendur()
+  const pagedThinglystirEigendur2 = paginatedThinglystirEigendur2()
+
   return {
     getFasteignir,
     detailRealEstateAssets,
     pagedThinglystirEigendur,
+    pagedThinglystirEigendur2,
   }
 })

@@ -66,7 +66,7 @@ export class AssetsXRoadService {
     const singleFasteignResponse = await this.getRealEstatesWithAuth(
       auth,
     ).fasteignirGetFasteignEigendur({
-      fasteignanumer: assetId,
+      fasteignanumer: getAssetString(assetId),
       cursor: cursor,
       limit: limit,
     })

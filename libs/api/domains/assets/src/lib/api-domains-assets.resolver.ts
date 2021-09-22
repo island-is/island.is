@@ -1,12 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import {
-  Resolver,
-  Query,
-  ResolveField,
-  Parent,
-  Context,
-  Args,
-} from '@nestjs/graphql'
+import { Query, Args } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -20,6 +13,7 @@ import {
   GetRealEstateInput,
   GetPagingTypes,
 } from '../dto/getRealEstateInput.input'
+import { PropertyOwnersModel } from '../models/propertyOwners.model'
 import { AssetsXRoadService } from './api-domains-assets.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
@@ -42,7 +36,7 @@ export class AssetsXRoadResolver {
     return this.assetsXRoadService.getRealEstateDetail(input.assetId, user)
   }
 
-  @Query(() => graphqlTypeJson)
+  @Query(() => PropertyOwnersModel, { nullable: true })
   @Audit()
   async getThinglystirEigendur(
     @Args('input') input: GetPagingTypes,

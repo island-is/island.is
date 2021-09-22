@@ -1,20 +1,30 @@
 import React, { FC } from 'react'
-import { Text, Table as T } from '@island.is/island-ui/core'
+import { Text, Box, Button, Table as T } from '@island.is/island-ui/core'
 
 interface Props {
   tables?: {
     header: string[]
     rows: (string | number)[][]
+    paginate?: any
   }[]
   title?: string
+  paginateCallback?: () => void
 }
 
-const TableUnits: FC<Props> = ({ tables, title }) => {
+const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
+  const setThePage = () => {
+    if (paginateCallback) {
+      paginateCallback()
+    }
+  }
+
   return (
     <>
-      <Text variant="h3" as="h2" marginBottom={4}>
-        {title}
-      </Text>
+      {title ? (
+        <Text variant="h3" as="h2" marginBottom={4}>
+          {title}
+        </Text>
+      ) : null}
       {tables?.map((table, i) => (
         <T.Table
           key={`table-unit-${i}`}
@@ -37,6 +47,25 @@ const TableUnits: FC<Props> = ({ tables, title }) => {
                 ))}
               </T.Row>
             ))}
+            {table.paginate ? (
+              <T.Row>
+                <T.Data borderColor="white" colSpan={5}>
+                  <Box
+                    alignItems="center"
+                    justifyContent="center"
+                    display="flex"
+                  >
+                    <Button
+                      size="small"
+                      variant="text"
+                      onClick={() => setThePage()}
+                    >
+                      Sækja meira
+                    </Button>
+                  </Box>
+                </T.Data>
+              </T.Row>
+            ) : null}
           </T.Body>
         </T.Table>
       ))}

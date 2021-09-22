@@ -14,7 +14,7 @@ export type ThinglysturEigandi = {
   nafn: string
   kennitala: string
   eignarhlutfall?: number
-  kaupdagur: Date | string
+  kaupdagur: Date
   heimild?: string // PROBABLY NOT
 
   display?: string // Birting á hlutfalli, tilbúið fyrir viðmót, t.d. "50.12%"

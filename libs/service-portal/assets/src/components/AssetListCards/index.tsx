@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { Box, ActionCard, Table as T } from '@island.is/island-ui/core'
+import { Box, ActionCard } from '@island.is/island-ui/core'
 import { Fasteign } from '../../types/RealEstateAssets.types'
 
 interface Props {
@@ -20,6 +20,8 @@ const AssetListCards: FC<Props> = ({ assets }) => {
             cta={{
               label: 'Skoða nánar',
               variant: 'text',
+              size: 'large',
+              icon: 'arrowForward',
               onClick: () =>
                 history.push(
                   ServicePortalPath.AssetsRealEstateDetail.replace(
