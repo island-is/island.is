@@ -205,7 +205,7 @@ export class CaseService {
         },
         existingCase.courtCaseNumber,
         signedRulingPdf,
-        'Sjá viðhengi',
+        `${existingCase.court?.name} hefur sent þér endurrit úr þingbók í máli ${existingCase.courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.`,
       ),
     ]
 
@@ -243,7 +243,7 @@ export class CaseService {
           },
           existingCase.courtCaseNumber,
           signedRulingPdf,
-          'Sjá viðhengi',
+          `${existingCase.court?.name} hefur sent þér endurrit úr þingbók í máli ${existingCase.courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.`,
         ),
       )
     }
