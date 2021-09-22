@@ -630,7 +630,8 @@ export const m = defineMessages({
   },
   submitErrorMessage: {
     id: 'dl.application:submitErrorMessage',
-    defaultMessage: 'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
+    defaultMessage:
+      'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
     description:
       'Text that shows up when an error occurs while submitting the application',
   },

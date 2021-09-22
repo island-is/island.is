@@ -107,12 +107,8 @@ export const ExamplePaymentPendingField: FC<Props> = ({
         <Text variant="h3">
           {formatText(m.submitErrorTitle, application, formatMessage)}
         </Text>
-        <Text marginBottom='p2'>
-          {formatText(
-            m.submitErrorMessage,
-            application,
-            formatMessage,
-          )}
+        <Text marginBottom="p2">
+          {formatText(m.submitErrorMessage, application, formatMessage)}
         </Text>
         <Button onClick={() => refetch?.()}>
           {formatText(m.submitErrorButtonCaption, application, formatMessage)}
