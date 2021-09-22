@@ -2,10 +2,8 @@ import React from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { Box, Text, UploadedFile, UploadFile } from '@island.is/island-ui/core'
 import {
-  CaseFile,
   CaseFile as TCaseFile,
   CaseFileState,
-  CaseFileStatus,
 } from '@island.is/judicial-system/types'
 import { Modal } from '..'
 import { useFileList } from '../../utils/hooks'
@@ -13,7 +11,7 @@ import { useFileList } from '../../utils/hooks'
 interface Props {
   caseId: string
   files: TCaseFile[]
-  showIcons?: boolean
+  hideIcons?: boolean
   canOpenFiles?: boolean
   handleRetryClick?: (id: string) => void
 }
@@ -22,7 +20,7 @@ const CaseFileList: React.FC<Props> = (props) => {
   const {
     caseId,
     files,
-    showIcons = false,
+    hideIcons = true,
     canOpenFiles = true,
     handleRetryClick,
   } = props
@@ -30,7 +28,6 @@ const CaseFileList: React.FC<Props> = (props) => {
   const { handleOpenFile, fileNotFound, dismissFileNotFound } = useFileList({
     caseId,
   })
-
   return files.length > 0 ? (
     <>
       {files.map((file, index) => {
@@ -41,11 +38,11 @@ const CaseFileList: React.FC<Props> = (props) => {
               showFileSize={true}
               defaultBackgroundColor="blue100"
               doneIcon="checkmark"
-              showIcons={
-                showIcons &&
+              hideIcons={
+                hideIcons ||
                 [
-                  CaseFileState.FAILED_TO_UPLOAD,
-                  CaseFileState.STORED_IN_COURT,
+                  CaseFileState.BOKEN_LINK,
+                  CaseFileState.DELETED,
                   CaseFileState.STORED_IN_RVG,
                 ].includes(file.state)
               }

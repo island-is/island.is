@@ -358,10 +358,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               caseId={workingCase.id}
               files={workingCase.files ?? []}
               canOpenFiles={canCaseFilesBeOpened()}
-              showIcons={
-                user?.role === UserRole.JUDGE ||
-                user?.role === UserRole.REGISTRAR
-              }
+              hideIcons={user?.role === UserRole.PROSECUTOR}
               handleRetryClick={(id: string) =>
                 workingCase.files &&
                 uploadFilesToCourt([
