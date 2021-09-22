@@ -127,6 +127,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
 
     if (
       theCase.decision === CaseDecision.REJECTING ||
+      theCase.decision === CaseDecision.DISMISSING ||
       (theCase.type !== CaseType.CUSTODY &&
         theCase.type !== CaseType.TRAVEL_BAN)
     ) {
