@@ -1,10 +1,10 @@
 import { defineMessage, defineMessages } from '@formatjs/intl'
 
 export const ruling = {
-  heading: defineMessage({
-    id: 'judicial.system.backend:pdf.ruling.heading',
+  proceedingsHeading: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.proceedings_heading',
     defaultMessage: 'Þingbók og úrskurður',
-    description: 'Notaður sem titill í þingbókar og úrskurðar PDF',
+    description: 'Notaður sem fyrirsögn á þingbók.',
   }),
   intro: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.into',
@@ -24,8 +24,8 @@ export const ruling = {
     defaultMessage: 'Mættir eru:',
     description: 'Notaður sem fyrirsögn á lista yfir viðstadda.',
   }),
-  requestheading: defineMessage({
-    id: 'judicial.system.backend:pdf.ruling.request_heading',
+  demandsHeading: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.demands_heading',
     defaultMessage: 'Krafa:',
     description: 'Notaður sem fyrirsögn á kröfu.',
   }),
@@ -54,4 +54,107 @@ export const ruling = {
         'Notaður sem heiti á öðrum þingmerktum skjölum þar sem {documentName} er nafn skjals og {documentNumber} er númer skjals og er sjálfkrafa bætt við í kóða.',
     },
   }),
+  accusedRights: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.accused_rights',
+    defaultMessage:
+      'Sakborningi er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
+    description: 'Notaður sem fyrirsögn réttindi hins kærða.',
+  }),
+  accusedDemandsIntro: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.accused_demands_into',
+    defaultMessage: '{accused} er kynnt krafa á dómskjali nr. 1.',
+    description:
+      'Notaður sem tilkynning um að kærða hafi verið kynnt krafa þar sem {accused} er ávarp til kærða í réttu kyni og er sjálfkrafa bætt við í kóða.',
+  }),
+  accusedPlea: defineMessages({
+    accept: {
+      id: 'judicial.system.backend:pdf.ruling.accused_plea.accept',
+      defaultMessage: '{accused} samþykkir kröfuna.',
+      description:
+        'Notaður fyrir samþykki kærða á kröfunni þar sem {accused} er ávarp til kærða í réttu kyni og er sjálfkrafa bætt við í kóða.',
+    },
+    reject: {
+      id: 'judicial.system.backend:pdf.ruling.accused_plea.reject',
+      defaultMessage: '{accused} hafnar kröfunni.',
+      description:
+        'Notaður fyrir höfnun kærða á kröfunni þar sem {accused} er ávarp til kærða í réttu kyni og er sjálfkrafa bætt við í kóða.',
+    },
+  }),
+  rulingHeading: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.ruling_heading',
+    defaultMessage: 'Úrskurður',
+    description: 'Notaður sem fyrirsögn á úrskurð.',
+  }),
+  courtDemandsHeading: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.court_demands_heading',
+    defaultMessage: 'Krafa',
+    description:
+      'Notaður sem fyrirsögn á kröfu eins og hún er umorðuð af dómstól.',
+  }),
+  courtCaseFactsHeading: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.court_case_facts_heading',
+    defaultMessage: 'Greinargerð um málsatvik',
+    description:
+      'Notaður sem fyrirsögn á greinargerð um málsatvika eins og þau eru umorðuð af dómstól.',
+  }),
+  courtLegalArgumentsHeading: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.court_legal_arguments_heading',
+    defaultMessage: 'Greinargerð um lagarök',
+    description:
+      'Notaður sem fyrirsögn á greinargerða um lagarök eins og þau eru umorðuð af dómstól.',
+  }),
+  conclusionHeading: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.conclusion_heading',
+    defaultMessage: 'Niðurstaða',
+    description: 'Notaður sem fyrirsögn á niðurstöðu.',
+  }),
+  rulingTextHeading: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.ruling_text_heading',
+    defaultMessage: 'Úrskurðarorð',
+    description: 'Notaður sem fyrirsögn á úrskurðarorð.',
+  }),
+  rulingTextIntro: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.ruling_text_into',
+    defaultMessage:
+      'Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.',
+    description:
+      'Notaður sem tilkynning um að úrskurðarorðið hafi verið lesið upp.',
+  }),
+  appealDirections: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.appeal_directions',
+    defaultMessage:
+      'Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa.',
+    description: 'Notaður fyrir leiðeiningar dómara um rétt til kæru.',
+  }),
+  accusedCustodyDirections: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.accused_custody_directions',
+    defaultMessage:
+      'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
+    description:
+      'Notaður fyrir ábendingu dómara um heimild kærða til að bera framkvæmd gæsluvarðhalds undir hann.',
+  }),
+  accusedTravelBanDirections: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.accused_travel_ban_directions',
+    defaultMessage:
+      'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd farbannsins undir dómara.',
+    description:
+      'Notaður fyrir ábendingu dómara um heimild kærða til að bera framkvæmd farbanns undir hann.',
+  }),
+  registratWitness: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.registrar_witness',
+    defaultMessage: 'Vottur að þinghaldi er {registrarNameAndTitle}.',
+    description:
+      'Notaður sem staðfesting á því að dómritari hafi verið vitni að þinghaldi þar sem {registrarNameAndTitle} er nafn og titill dómritara og er sjálfkrafa bætt við í kóða.',
+  }),
+  signOff: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.sign_off',
+    defaultMessage: 'Þinghaldi lýkur kl. {endTime}.',
+    description:
+      'Notaður sem lokaorð þar sem {endTime} er lokatími þinghalds og er sjálfkrafa bætt við í kóða.',
+  }),
+  inSession: {
+    id: 'judicial.system.backend:pdf.ruling.in_session',
+    defaultMessage: 'Þinghaldi er ekki lokið.',
+    description: 'Notaður sem lokaorð þegar þinghaldi er ekki lokið.',
+  },
 }
