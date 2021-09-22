@@ -266,8 +266,14 @@ export const m = defineMessages({
     description: 'I confirm that the student has passed the driving assessment',
   },
   finalAssessmentTitle: {
-    id: 'dla.application:',
-    defaultMessage: 'Akstursmat hefur verið staðfest',
+    id: 'dla.application:finalAssessmentTitle',
+    defaultMessage: 'Akstursmat móttekið',
     description: 'Driving assessment received.',
+  },
+  finalAssessmentDescription: {
+    id: 'dla.application:finalAssessmentDescription',
+    defaultMessage:
+      'Tölvupóstur hefur verið sendur á nemanda og honum tilkynnt að ökukennari hafi staðfest að akstursmat hafi farið fram. Nemandi getur nú sótt um fullnaðarskírteini.',
+    description: 'Driving assessment received description.',
   },
 })
