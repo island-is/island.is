@@ -1,9 +1,19 @@
 import { PaymentScheduleDebts } from '@island.is/api/schema'
-import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Divider,
+  GridColumn,
+  GridRow,
+  Hidden,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { paymentPlan } from '../../../lib/messages/paymentPlan'
+import * as styles from './PaymentPlanCard.treat'
 
 interface Props {
   payment: PaymentScheduleDebts
@@ -18,14 +28,16 @@ const ValueLine = ({
   label: string
   value: string | number
 }) => (
-  <Text lineHeight="lg">
-    <b>{label}: </b>
-    <span>
-      {typeof value === 'number'
-        ? `${value.toLocaleString('is-IS')} kr.`
-        : value}
-    </span>
-  </Text>
+  <Box display="flex" flexDirection={['row', 'row', 'row', 'column']}>
+    <Text variant="eyebrow">{label}:</Text>
+    <Box className={styles.valueLine}>
+      <Text variant="small">
+        {typeof value === 'number'
+          ? `${value.toLocaleString('is-IS')} kr.`
+          : value}
+      </Text>
+    </Box>
+  </Box>
 )
 
 // TODO: Arrow down icon missing
@@ -45,9 +57,11 @@ export const PaymentPlanCard = ({ payment, isAnswered }: Props) => {
     >
       <Box display="flex" justifyContent="spaceBetween">
         <Text variant="h3">{payment.paymentSchedule}</Text>
-        <Tag variant="purple" disabled>
-          {formatMessage(payment.explanation)}
-        </Tag>
+        <Hidden below="lg">
+          <Tag variant="purple" disabled>
+            {formatMessage(payment.explanation)}
+          </Tag>
+        </Hidden>
       </Box>
 
       <Text lineHeight="lg">
@@ -65,26 +79,42 @@ export const PaymentPlanCard = ({ payment, isAnswered }: Props) => {
               background="blue100"
               borderRadius="large"
             >
-              <ValueLine
-                label={formatMessage(paymentPlan.labels.feeCategory)}
-                value={chargeType.name}
-              />
-              <ValueLine
-                label={formatMessage(paymentPlan.labels.principal)}
-                value={chargeType.principal}
-              />
-              <ValueLine
-                label={formatMessage(paymentPlan.labels.interest)}
-                value={chargeType.intrest}
-              />
-              <ValueLine
-                label={formatMessage(paymentPlan.labels.expense)}
-                value={chargeType.expenses}
-              />
-              <ValueLine
-                label={formatMessage(paymentPlan.labels.totalAmount)}
-                value={chargeType.total}
-              />
+              <Box marginBottom={1}>
+                <Text variant="default">
+                  <b>{formatMessage(paymentPlan.labels.feeCategory)}: </b>
+                  <span>{chargeType.name}</span>
+                </Text>
+              </Box>
+              <Divider />
+              <GridRow
+                marginTop={2}
+                direction={['column', 'column', 'column', 'row']}
+              >
+                <GridColumn span={['1/1', '1/1', '1/1', '1/4']}>
+                  <ValueLine
+                    label={formatMessage(paymentPlan.labels.principal)}
+                    value={chargeType.principal}
+                  />
+                </GridColumn>
+                <GridColumn span={['1/1', '1/1', '1/1', '1/4']}>
+                  <ValueLine
+                    label={formatMessage(paymentPlan.labels.interest)}
+                    value={chargeType.intrest}
+                  />
+                </GridColumn>
+                <GridColumn span={['1/1', '1/1', '1/1', '1/4']}>
+                  <ValueLine
+                    label={formatMessage(paymentPlan.labels.expense)}
+                    value={chargeType.expenses}
+                  />
+                </GridColumn>
+                <GridColumn span={['1/1', '1/1', '1/1', '1/4']}>
+                  <ValueLine
+                    label={formatMessage(paymentPlan.labels.totalAmount)}
+                    value={chargeType.total}
+                  />
+                </GridColumn>
+              </GridRow>
             </Box>
           ))}
         </Box>
@@ -106,6 +136,13 @@ export const PaymentPlanCard = ({ payment, isAnswered }: Props) => {
           </Button>
         </div>
       </Box>
+      <Hidden above="md">
+        <Box marginTop={3}>
+          <Tag variant="purple" disabled>
+            {formatMessage(payment.explanation)}
+          </Tag>
+        </Box>
+      </Hidden>
     </Box>
   )
 }
