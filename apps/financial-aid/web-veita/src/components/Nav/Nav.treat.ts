@@ -45,13 +45,20 @@ export const showNavInMobile = style({
 
 export const logoContainer = style({
   marginBottom: theme.spacing[8],
+  maxWidth: '160px',
+  display: 'flex',
 })
 
-export const logoHfjContainer = style({
+export const logoMunicipalityContainer = style({
   display: 'grid',
   gridTemplateColumns: 'max-content auto',
   alignItems: 'center',
   columnGap: theme.spacing[2],
+})
+
+export const logoMunicipality = style({
+  width: theme.spacing[4],
+  height: theme.spacing[6],
 })
 
 export const otherItems = style({})
