@@ -49,16 +49,6 @@ input[type='number'] {
   margin: 0 auto;
 }
 
-.logoHfj {
-  width: 32px;
-  height: 48px;
-}
-
-.logoContainer {
-  max-width: 160px;
-  display: flex;
-}
-
 .headLine {
   position: relative;
 }
