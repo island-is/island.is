@@ -68,7 +68,7 @@ interface UploadedFileProps {
   onOpenFile?: (file: UploadFile) => void
   defaultBackgroundColor?: Colors
   doneIcon?: IconTypes
-  showIcons?: boolean
+  hideIcons?: boolean
 }
 
 export const UploadedFile = ({
@@ -79,7 +79,7 @@ export const UploadedFile = ({
   onRemoveClick,
   onRetryClick,
   onOpenFile,
-  showIcons,
+  hideIcons = false,
 }: UploadedFileProps) => {
   const statusColor = (status?: UploadFileStatus): Colors => {
     switch (status) {
@@ -124,7 +124,7 @@ export const UploadedFile = ({
       width="full"
       position="relative"
       title={file.name}
-      aria-labelledBy={onOpenFile ? `Opna ${file.name}` : undefined}
+      aria-label={onOpenFile ? `Opna ${file.name}` : undefined}
       className={cn(styles.uploadedFile, {
         [styles.canOpenFiles]: onOpenFile,
       })}
@@ -149,9 +149,9 @@ export const UploadedFile = ({
           )}
         </Box>
       </Text>
-      <Box display="flex">
-        {showIcons ? (
-          isUploading ? (
+      {!hideIcons && (
+        <Box display="flex">
+          {isUploading ? (
             <div
               className={styles.progressIconAnimation}
               aria-label="Hleð upp skrá"
@@ -184,9 +184,9 @@ export const UploadedFile = ({
             >
               <Icon color="blue400" icon={statusIcon(file.status)} />
             </button>
-          )
-        ) : null}
-      </Box>
+          )}
+        </Box>
+      )}
       <UploadingIndicator percent={file.percent} />
     </Box>
   )
@@ -210,6 +210,7 @@ export interface InputFileUploadProps {
   errorMessage?: string
   defaultFileBackgroundColor?: Colors
   doneIcon?: IconTypes
+  hideIcons?: boolean
 }
 
 export const InputFileUpload = ({
@@ -230,6 +231,7 @@ export const InputFileUpload = ({
   errorMessage,
   defaultFileBackgroundColor,
   doneIcon,
+  hideIcons = false,
 }: InputFileUploadProps) => {
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0 || !onChange) return
@@ -293,6 +295,7 @@ export const InputFileUpload = ({
             doneIcon={doneIcon}
             onRemoveClick={onRemove}
             onRetryClick={onRetry}
+            hideIcons={hideIcons}
           />
         ))}
       </Box>
