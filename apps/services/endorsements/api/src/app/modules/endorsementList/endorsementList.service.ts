@@ -33,8 +33,8 @@ export class EndorsementListService {
     const limit = parseInt(query.limit) || 5;
     const after = query.after || null;
     const before = query.before || null;
-    const primaryKeyField = 'pk'
-    const orderOption = [['pk', 'ASC']]
+    const primaryKeyField = 'counter' // oxymoron not pk
+    const orderOption = [['counter', 'ASC']]
     const where = {
       tags: { [Op.overlap]: tags },
     } 

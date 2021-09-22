@@ -37,32 +37,13 @@ import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
 
 
-import { PaginatedDto } from '../pagination/dto/paginated.dto';
-import { PageInfoDto } from '../pagination/dto/pageinfo.dto'
-import { QueryDto } from '../pagination/dto/query.dto'
 
-export const ApiPaginatedResponse = <TModel extends Type<any>>(
-  model: TModel,
-) => {
-  return applyDecorators(
-    ApiExtraModels(model),
-    ApiOkResponse({
-      schema: {
-        allOf: [
-          { $ref: getSchemaPath(PaginatedDto) },
-          {
-            properties: {
-              data: {
-                type: 'array',
-                items: { $ref: getSchemaPath(model) },
-              },
-            },
-          },
-        ],
-      },
-    }),
-  );
-};
+import { QueryDto } from '../pagination/dto/query.dto'
+import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
+import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
+
+
+
 
 
 @Audit({
@@ -71,7 +52,7 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
 @ApiOAuth2([])
-@ApiExtraModels(PaginatedDto,PageInfoDto,QueryDto)
+@ApiExtraModels(QueryDto,PaginatedEndorsementListDto)
 export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
@@ -83,12 +64,11 @@ export class EndorsementListController {
   // })
   @ApiOperation({ summary: 'Finds all endorsement lists belonging to given tags' })
 
-  @ApiPaginatedResponse(EndorsementListDto)
   @Get()
   async findByTags(
     @Query() { tags }: FindEndorsementListByTagsDto,
     @Query() query: QueryDto
-  ): Promise<EndorsementList[]> {
+  ): Promise<PaginatedEndorsementListDto> {
     // TODO: Add pagination
     return await this.endorsementListService.findListsByTags(
       // query parameters of length one are not arrays, we normalize all tags input to arrays here
@@ -105,13 +85,13 @@ export class EndorsementListController {
   //   type: [Endorsement],
   // })
   @Scopes(EndorsementsScope.main)
-  @ApiPaginatedResponse(Endorsement)
+  // @ApiPaginatedResponse(Endorsement)
   @ApiOperation({ summary: 'Finds all endorsements for the currently authenticated user' })
   @Get('/endorsements')
-  // @Audit<Endorsement[]>({
-  //   resources: (endorsement) => endorsement.map((e) => e.id),
-  //   meta: (endorsement) => ({ count: endorsement.length }),
-  // })
+  @Audit<PaginatedEndorsementDto>({
+    resources: ({data: endorsement}) => endorsement.map((e) => e.id),
+    meta: ({data: endorsement}) => ({ count: endorsement.length }),
+  })
   async findEndorsements(
     @CurrentUser() user: User,
     @Query() query: QueryDto
