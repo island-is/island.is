@@ -14,6 +14,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import { ApplicationEventService } from '../applicationEvent'
+import { StaffModel } from '../staff'
 
 @Injectable()
 export class ApplicationService {
@@ -51,12 +52,16 @@ export class ApplicationService {
   }
 
   async getAll(): Promise<ApplicationModel[]> {
-    return this.applicationModel.findAll({ order: [['modified', 'DESC']] })
+    return this.applicationModel.findAll({
+      order: [['modified', 'DESC']],
+      include: [{ model: StaffModel, as: 'staff' }],
+    })
   }
 
   async findById(id: string): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
+      include: [{ model: StaffModel, as: 'staff' }],
     })
 
     const files = await this.fileService.getAllApplicationFiles(id)
@@ -129,6 +134,9 @@ export class ApplicationService {
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
   }> {
+    if (update.state === ApplicationState.NEW) {
+      update.staffId = null
+    }
     const [
       numberOfAffectedRows,
       [updatedApplication],

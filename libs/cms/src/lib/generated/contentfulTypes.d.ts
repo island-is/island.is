@@ -2172,7 +2172,7 @@ export interface IProjectPageFields {
   slug?: string | undefined
 
   /** Theme */
-  theme: 'default' | 'traveling-to-iceland'
+  theme: 'default' | 'traveling-to-iceland' | 'election'
 
   /** Sidebar */
   sidebar: boolean
@@ -3356,32 +3356,6 @@ export interface IVidspyrnaFrontpage extends Entry<IVidspyrnaFrontpageFields> {
   }
 }
 
-export interface IVidspyrnaInlineImageFields {
-  /** Title */
-  title?: string | undefined
-
-  /** Image */
-  image: Asset
-}
-
-export interface IVidspyrnaInlineImage
-  extends Entry<IVidspyrnaInlineImageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrna-inline-image'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IVidspyrnaFeaturedNewsFields {
   /** Title */
   title?: string | undefined
@@ -3608,7 +3582,6 @@ export type CONTENT_TYPE =
   | 'uiConfiguration'
   | 'url'
   | 'vidspyrna-frontpage'
-  | 'vidspyrna-inline-image'
   | 'vidspyrnaFeaturedNews'
   | 'vidspyrnaFlokkur'
   | 'vidspyrnaPage'
