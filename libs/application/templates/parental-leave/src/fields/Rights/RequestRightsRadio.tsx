@@ -5,14 +5,18 @@ import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
+  getErrorViaPath,
   RadioField,
 } from '@island.is/application/core'
 import { RadioFormField } from '@island.is/application/ui-fields'
-
+import {
+  NO,
+  YES,
+  YesOrNo,
+  getApplicationAnswers,
+} from '@island.is/application/templates/parental-leave'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { NO, YES } from '../../constants'
 import { maxDaysToGiveOrReceive } from '../../config'
-import { YesOrNo } from '../../types'
 
 interface RequestRightsRadioProps extends FieldBaseProps {
   field: RadioField
@@ -21,9 +25,13 @@ interface RequestRightsRadioProps extends FieldBaseProps {
 const RequestRightsRadio = ({
   field,
   application,
+  errors,
 }: RequestRightsRadioProps) => {
+  const { isRequestingRights } = getApplicationAnswers(application.answers)
   const { register } = useFormContext()
-  const [radio, setRadio] = useState<YesOrNo | undefined>(undefined)
+  const [radio, setRadio] = useState<YesOrNo | undefined>(
+    isRequestingRights ?? undefined,
+  )
 
   return (
     <>
@@ -49,6 +57,9 @@ const RequestRightsRadio = ({
             },
           ],
         }}
+        error={
+          errors && getErrorViaPath(errors, `${field.id}.isRequestingRights`)
+        }
       />
 
       <input
