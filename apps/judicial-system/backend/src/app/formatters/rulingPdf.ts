@@ -72,7 +72,7 @@ function constructRestrictionRulingPdf(
     })
     .fontSize(14)
     .lineGap(2)
-    .text(formatMessage(ruling.heading), { align: 'center' })
+    .text(formatMessage(ruling.proceedingsHeading), { align: 'center' })
     .lineGap(30)
     .text(
       `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
@@ -357,15 +357,13 @@ function constructRestrictionRulingPdf(
     },
   )
 
-  doc
-    .text(' ')
-    .text(
-      existingCase.courtEndTime
-        ? formatMessage(ruling.signOff, {
-            endTime: formatDate(existingCase.courtEndTime, 'p'),
-          })
-        : formatMessage(ruling.inSession),
-    )
+  doc.text(' ').text(
+    existingCase.courtEndTime
+      ? formatMessage(ruling.signOff, {
+          endTime: formatDate(existingCase.courtEndTime, 'p'),
+        })
+      : formatMessage(ruling.inSession),
+  )
 
   setPageNumbers(doc)
 
@@ -418,7 +416,7 @@ function constructInvestigationRulingPdf(
     })
     .fontSize(14)
     .lineGap(2)
-    .text(formatMessage(ruling.heading), { align: 'center' })
+    .text(formatMessage(ruling.proceedingsHeading), { align: 'center' })
     .lineGap(30)
     .text(
       `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
@@ -681,15 +679,13 @@ function constructInvestigationRulingPdf(
     )
   }
 
-  doc
-    .text(' ')
-    .text(
-      existingCase.courtEndTime
-        ? formatMessage(ruling.signOff, {
-            endTime: formatDate(existingCase.courtEndTime, 'p'),
-          })
-        : formatMessage(ruling.inSession),
-    )
+  doc.text(' ').text(
+    existingCase.courtEndTime
+      ? formatMessage(ruling.signOff, {
+          endTime: formatDate(existingCase.courtEndTime, 'p'),
+        })
+      : formatMessage(ruling.inSession),
+  )
 
   setPageNumbers(doc)
 
