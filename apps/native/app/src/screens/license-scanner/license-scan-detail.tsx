@@ -115,6 +115,7 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
       <Actions>
         <Button
           title="Skanna aftur"
+          disabled={!loaded && !isExpired}
           onPress={() => {
             Navigation.dismissModal(componentId)
           }}
