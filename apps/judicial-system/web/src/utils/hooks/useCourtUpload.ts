@@ -4,7 +4,6 @@ import {
   Case,
   CaseFile as TCaseFile,
   CaseFileState,
-  CaseFileStatus,
   UploadState,
 } from '@island.is/judicial-system/types'
 import { useEffect, useState } from 'react'
