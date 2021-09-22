@@ -327,26 +327,29 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   workingCase.files ? workingCase.files.length : 0
                 })`}
 
-                <AnimatePresence>
-                  {uploadState === UploadState.SOME_UPLOADED && (
-                    <UploadStateMessage
-                      icon="warning"
-                      iconColor="red600"
-                      message={formatMessage(
-                        signedVerdictOverview.someFilesUploadedToCourtText,
+                {user &&
+                  [UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role) && (
+                    <AnimatePresence>
+                      {uploadState === UploadState.SOME_UPLOADED && (
+                        <UploadStateMessage
+                          icon="warning"
+                          iconColor="red600"
+                          message={formatMessage(
+                            signedVerdictOverview.someFilesUploadedToCourtText,
+                          )}
+                        />
                       )}
-                    />
-                  )}
-                  {uploadState === UploadState.ALL_UPLOADED && (
-                    <UploadStateMessage
-                      icon="checkmark"
-                      iconColor="blue400"
-                      message={formatMessage(
-                        signedVerdictOverview.allFilesUploadedToCourtText,
+                      {uploadState === UploadState.ALL_UPLOADED && (
+                        <UploadStateMessage
+                          icon="checkmark"
+                          iconColor="blue400"
+                          message={formatMessage(
+                            signedVerdictOverview.allFilesUploadedToCourtText,
+                          )}
+                        />
                       )}
-                    />
+                    </AnimatePresence>
                   )}
-                </AnimatePresence>
               </Box>
             }
             labelVariant="h3"
@@ -355,6 +358,10 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               caseId={workingCase.id}
               files={workingCase.files ?? []}
               canOpenFiles={canCaseFilesBeOpened()}
+              showIcons={
+                user?.role === UserRole.JUDGE ||
+                user?.role === UserRole.REGISTRAR
+              }
               handleRetryClick={(id: string) =>
                 workingCase.files &&
                 uploadFilesToCourt([
@@ -363,7 +370,6 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   ],
                 ])
               }
-              showIcons
             />
             {user && [UserRole.JUDGE, UserRole.REGISTRAR].includes(user?.role) && (
               <Box display="flex" justifyContent="flexEnd">
