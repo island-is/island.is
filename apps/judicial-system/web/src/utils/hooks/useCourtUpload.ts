@@ -2,12 +2,18 @@ import { useMutation } from '@apollo/client'
 import { UploadFileToCourtMutation } from '@island.is/judicial-system-web/graphql'
 import {
   Case,
-  CaseFile,
+  CaseFile as TCaseFile,
   CaseFileState,
   CaseFileStatus,
   UploadState,
 } from '@island.is/judicial-system/types'
 import { useEffect, useState } from 'react'
+
+export type CaseFileStatus = 'error' | 'done' | 'uploading'
+
+export interface CaseFile extends TCaseFile {
+  status: CaseFileStatus
+}
 
 export const useCourtUpload = (
   workingCase: Case,
@@ -17,7 +23,9 @@ export const useCourtUpload = (
   const [uploadFileToCourtMutation] = useMutation(UploadFileToCourtMutation)
 
   useEffect(() => {
-    workingCase.files?.forEach((file) => {
+    const files = workingCase.files as CaseFile[]
+
+    files?.forEach((file) => {
       if (
         file.state === CaseFileState.STORED_IN_COURT &&
         file.status !== 'done'
@@ -27,17 +35,13 @@ export const useCourtUpload = (
     })
 
     setUploadState(
-      workingCase.files?.some((file) => file.status === 'uploading')
+      files?.some((file) => file.status === 'uploading')
         ? UploadState.UPLOADING
-        : workingCase.files?.every(
-            (file) => file.state === CaseFileState.STORED_IN_COURT,
-          )
+        : files?.every((file) => file.state === CaseFileState.STORED_IN_COURT)
         ? UploadState.ALL_UPLOADED
-        : workingCase.files?.every(
-            (file) => file.state === CaseFileState.STORED_IN_RVG,
-          )
+        : files?.every((file) => file.state === CaseFileState.STORED_IN_RVG)
         ? UploadState.NONE_UPLOADED
-        : workingCase.files?.some((file) => file.status === 'error')
+        : files?.some((file) => file.status === 'error')
         ? UploadState.SOME_UPLOADED
         : undefined,
     )
@@ -48,13 +52,13 @@ export const useCourtUpload = (
     status: CaseFileStatus,
     state?: CaseFileState,
   ) => {
-    if (workingCase.files) {
-      const fileIndexToUpdate = workingCase.files.findIndex(
-        (f) => f.id === file.id,
-      )
-      workingCase.files[fileIndexToUpdate] = {
+    const files = workingCase.files as CaseFile[]
+
+    if (files) {
+      const fileIndexToUpdate = files.findIndex((f) => f.id === file.id)
+      files[fileIndexToUpdate] = {
         ...file,
-        status: status,
+        status,
         state: state ?? file.state,
       }
 

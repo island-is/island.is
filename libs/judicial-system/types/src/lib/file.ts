@@ -50,8 +50,6 @@ export enum UploadState {
   UPLOADING = 'UPLOADING',
 }
 
-export type CaseFileStatus = 'error' | 'done' | 'uploading'
-
 export interface CaseFile {
   id: string
   created: string
@@ -60,7 +58,6 @@ export interface CaseFile {
   name: string
   type: string
   state: CaseFileState
-  status: CaseFileStatus
   key: string
   size: number
 }
