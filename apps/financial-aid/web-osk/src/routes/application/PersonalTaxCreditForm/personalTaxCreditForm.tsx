@@ -4,7 +4,7 @@ import { Text } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
+  Layout,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 
@@ -50,10 +50,7 @@ const PersonalTaxCreditForm = () => {
   }
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <Layout>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Viltu nota persónuafslátt?
@@ -112,7 +109,7 @@ const PersonalTaxCreditForm = () => {
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
-    </FormLayout>
+    </Layout>
   )
 }
 
