@@ -16,14 +16,12 @@ export class MunicipalityService {
     const mockApplication: Municipality = {
       id: id,
       name: 'Hafnarfjörður',
-      settings: {
-        aid: {
-          ownApartmentOrLease: 197200,
-          withOthersOrUnknow: 157760,
-          withParents: 98600,
-        },
-        homePage: 'https://www.hafnarfjordur.is/',
+      aid: {
+        ownApartmentOrLease: 197200,
+        withOthersOrUnknow: 157760,
+        withParents: 98600,
       },
+      homePage: 'https://www.hafnarfjordur.is/',
     }
     return Promise.resolve(mockApplication)
   }

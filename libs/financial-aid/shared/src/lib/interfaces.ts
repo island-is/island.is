@@ -85,7 +85,8 @@ export interface ApplicationEvent {
 export interface Municipality {
   id: string
   name: string
-  settings: MunicipalitySettings
+  homePage?: string
+  aid: MunicipalityAid
 }
 
 export interface CurrentApplication {
