@@ -65,9 +65,9 @@ export const useCourtUpload = (
     }
   }
 
-  const uploadFilesToCourt = async (files?: CaseFile[]) => {
+  const uploadFilesToCourt = async (files?: TCaseFile[]) => {
     if (files) {
-      files.forEach(async (file) => {
+      ;(files as CaseFile[]).forEach(async (file) => {
         try {
           if (
             workingCase.files &&
