@@ -16,20 +16,31 @@ export const GeneralPetitionSchema = z.object({
   ssd: z.string().refine((p) => {
     return p.trim().length > 0
   }, m.validationMessages.ssd.defaultMessage as string),
-  partyLetter: z.string().refine((p) => {
-    return p.trim().length === 1
-  }, m.validationMessages.partyLetterSingle.defaultMessage as string),
-  partyName: z
+  documents: z.array(FileSchema).optional(),
+  listName: z
     .string()
     .refine(
       (p) => p.trim().length > 0,
       m.validationMessages.partyName.defaultMessage as string,
     ),
-  includePapers: z.array(z.string()).optional(),
-  email: z
+  aboutList: z
     .string()
-    .email(m.validationMessages.emailInvalid.defaultMessage as string),
-  documents: z.array(FileSchema).optional(),
+    .refine(
+      (p) => p.trim().length > 0,
+      m.validationMessages.partyName.defaultMessage as string,
+    ),
+  dateTil: z
+    .string()
+    .refine(
+      (p) => p.trim().length > 0,
+      m.validationMessages.partyName.defaultMessage as string,
+    ),
+  dateFrom: z
+    .string()
+    .refine(
+      (p) => p.trim().length > 0,
+      m.validationMessages.partyName.defaultMessage as string,
+    ),
 })
 
 export type File = z.TypeOf<typeof FileSchema>

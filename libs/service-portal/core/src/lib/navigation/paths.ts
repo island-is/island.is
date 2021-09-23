@@ -30,6 +30,7 @@ export enum ServicePortalPath {
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
   Petitions = '/min-gogn/undirskriftalistar',
+  PetitionList = '/min-gogn/undirskriftalistar/:listId',
 
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 

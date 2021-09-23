@@ -19,5 +19,10 @@ export const endorsementsModule: ServicePortalModule = {
       path: ServicePortalPath.Petitions,
       render: () => lazy(() => import('./screens/Petitions')),
     },
+    {
+      name: m.endorsements,
+      path: ServicePortalPath.PetitionList,
+      render: () => lazy(() => import('./screens/ViewPetition')),
+    },
   ],
 }

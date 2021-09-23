@@ -38,6 +38,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
+      // Endorsements
+      {
+        name: m.petitions,
+        path: ServicePortalPath.Petitions,
+        icon: {
+          type: 'outline',
+          icon: 'document',
+        },
+      },
+
       // Min Gogn
       {
         heading: m.myInfo,
@@ -63,11 +73,11 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.endorsements,
             path: ServicePortalPath.Endorsements,
           },
-          {
+          /*{
             // Medmaeli
             name: 'Undirskriftalistar',
             path: ServicePortalPath.Petitions,
-          },
+          }*/
         ],
       },
 

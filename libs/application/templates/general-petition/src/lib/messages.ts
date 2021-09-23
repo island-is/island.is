@@ -500,6 +500,12 @@ export const m: MessageDir = {
       defaultMessage: 'Ég hef kynnt mér framangreint',
       description: 'Label for terms and conditions',
     },
+    allowNameLabel: {
+      id: 'gpt.application:endorsement.form.allow.name.label',
+      defaultMessage: 'Ekki birta nafn mitt á lista',
+      description:
+        'Label for allowing your name to be shown in public petition list',
+    },
     isClosedMessage: {
       id: 'gpt.application:endorsement.form.isClosed.message',
       defaultMessage: 'Meðmælendalista hefur verið lokað',
@@ -548,12 +554,12 @@ export const m: MessageDir = {
     },
     cardTitle: {
       id: 'gpt.application:endorsement.approved.card.title',
-      defaultMessage: 'Þú hefur verið skráður sem meðmælandi',
+      defaultMessage: 'Þú hefur sett nafn þitt á listann',
       description: 'Approved card title',
     },
     cardSubtitle: {
       id: 'gpt.application:endorsement.approved.card.subtitle',
-      defaultMessage: 'Hægt er að skoða virka lista undir ',
+      defaultMessage: 'Yfirlit yfir öll meðmæli má finna á Minum Síðum',
       description: 'Approved card subtitle',
     },
     myPagesButton: {

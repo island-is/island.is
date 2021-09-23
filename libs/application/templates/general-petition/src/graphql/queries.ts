@@ -13,7 +13,9 @@ export const GetSingleEndorsementList = gql`
     $input: FindEndorsementListInput!
   ) {
     endorsementSystemGetSingleEndorsementList(input: $input) {
-      closedDate
+      meta
+      title
+      description
     }
   }
 `

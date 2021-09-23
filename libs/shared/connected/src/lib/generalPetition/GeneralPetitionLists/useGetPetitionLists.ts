@@ -1,17 +1,8 @@
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
-import {
-  EndorsementList,
-  EndorsementListOpenTagsEnum,
-} from '../../types/schema'
-
-export type RegionsPetitionList = Pick<
-  EndorsementList,
-  'id' | 'title' | 'description' | 'meta' | 'closedDate'
-> & { tags: EndorsementListOpenTagsEnum[] }
 
 interface PetitionListResponse {
-  endorsementSystemFindEndorsementLists: RegionsPetitionList[]
+  endorsementSystemFindEndorsementLists: any
 }
 
 const GET_REGION_ENDORSEMENTS = gql`

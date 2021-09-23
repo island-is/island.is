@@ -1,13 +1,10 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Text, Box, Button, Input } from '@island.is/island-ui/core'
+import { Text, Box, Button, Input, toast } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { GeneralPetition } from '../../lib/dataSchema'
-import {
-  CheckboxController,
-  FieldDescription,
-} from '@island.is/shared/form-fields'
+import { CheckboxController } from '@island.is/shared/form-fields'
 import { useMutation, useQuery } from '@apollo/client'
 import EndorsementApproved from '../EndorsementApproved'
 import { useHasEndorsed } from '../../hooks/useHasEndorsed'
@@ -16,18 +13,24 @@ import { EndorseList } from '../../graphql/mutations'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 
 const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
+  const { formatMessage } = useLocale()
+
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
-  const { formatMessage } = useLocale()
+  
   const [agreed, setAgreed] = useState(false)
+  const [allowName, setAllowName] = useState(false)
   const [hasEndorsed, setHasEndorsed] = useState(false)
-  const isClosed = useIsClosed(endorsementListId)
 
-  const answers = application.answers as GeneralPetition
   const endorsedBefore = useHasEndorsed(endorsementListId)
-
+  const isClosed = useIsClosed(endorsementListId)
   const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
   const { data: userData } = useQuery(GetFullName)
+
+  const answers = application.answers as GeneralPetition
+  const listOwner = (application.externalData.nationalRegistry?.data as {
+    fullName?: string
+  })?.fullName
 
   const onEndorse = async () => {
     const success = await createEndorsement({
@@ -36,7 +39,10 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
           listId: endorsementListId,
         },
       },
+    }).catch(() => {
+      toast.error('error! semja texta hér')
     })
+
     if (success) {
       setHasEndorsed(true)
     }
@@ -49,40 +55,49 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
       ) : (
         <Box>
           <Box marginBottom={2}>
-            <Text variant="h2">
-              {formatMessage(m.endorsementForm.title)}
-              <strong>{` ${answers.partyLetter}`}</strong>
-            </Text>
+            <Text variant="h2">{answers.listName}</Text>
+            <Text>{answers.aboutList}</Text>
           </Box>
-          <Box marginBottom={5}>
-            <Text>
-              {formatMessage(m.endorsementDisclaimer.part1)}
-              <strong>{` ${answers.partyName} `}</strong>
-              {formatMessage(m.endorsementDisclaimer.part2)}
-              <strong>{` ${answers.partyLetter}`}</strong>.
-            </Text>
+          <Box marginBottom={3}>
+            <Text variant="h4">Undirskriftalistinn er opinn:</Text>
+            <Text variant="default">{answers.dateTil}</Text>
           </Box>
-          <Box width="half" marginBottom={4}>
-            <Input
-              label={formatMessage(m.endorsementForm.nameInput)}
-              name={formatMessage(m.endorsementForm.nameInput)}
-              value={userData?.nationalRegistryUser?.fullName}
-              backgroundColor="blue"
-            />
+          <Box marginBottom={3}>
+            <Text variant="h4">Ábyrgðarmaður:</Text>
+            <Text variant="default">{listOwner}</Text>
           </Box>
-          <Box marginBottom={4}>
-            <FieldDescription
-              description={formatMessage(m.endorsementForm.descriptionPt1)}
-            />
+          <Box marginBottom={3}>
+            <Text variant="h4">Fjöldi skráðir:</Text>
+            <Text variant="default">{'//:TODO'}</Text>
           </Box>
-          <Box marginBottom={5}>
-            <FieldDescription
-              description={formatMessage(m.endorsementForm.descriptionPt2)}
-            />
+          <Box display="flex" marginBottom={10}>
+            <Box width="half">
+              <Input
+                label={formatMessage(m.endorsementForm.nameInput)}
+                name={formatMessage(m.endorsementForm.nameInput)}
+                value={userData?.nationalRegistryUser?.fullName}
+                backgroundColor="blue"
+              />
+            </Box>
+            <Box marginTop={3} marginLeft={4}>
+              <CheckboxController
+                id="allowName"
+                name="allowName"
+                large={false}
+                defaultValue={[]}
+                onSelect={() => setAllowName(!allowName)}
+                options={[
+                  {
+                    value: 'allow',
+                    label: formatMessage(m.endorsementForm.allowNameLabel),
+                  },
+                ]}
+              />
+            </Box>
           </Box>
           <CheckboxController
             id="terms"
-            name="tere"
+            name="terms"
             large={true}
             backgroundColor="blue"
             defaultValue={[]}

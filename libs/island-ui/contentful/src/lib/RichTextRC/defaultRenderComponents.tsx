@@ -1,5 +1,9 @@
 import React from 'react'
-import { CompanyList, CompanyListConnected } from '@island.is/shared/connected'
+import {
+  CompanyList,
+  CompanyListConnected,
+  GeneralPetitionLists,
+} from '@island.is/shared/connected'
 import { Image } from '../Image/Image'
 import FaqList from '../FaqList/FaqList'
 import { Statistics } from '../Statistics/Statistics'
@@ -11,7 +15,6 @@ import { SectionWithImage } from '../SectionWithImage/SectionWithImage'
 import { TeamList } from '../TeamList/TeamList'
 import { ContactUs } from '../ContactUs/ContactUs'
 import { Location } from '../Location/Location'
-import GeneralPetitionLists from '../GeneralPetitionLists/GeneralPetitionLists'
 
 const renderConnectedComponent = (slice) => {
   const data = slice.json
