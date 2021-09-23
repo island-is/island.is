@@ -1,13 +1,17 @@
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseDecision,
+  CaseState,
   CaseType,
   InstitutionType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import React, { ReactNode, useContext, useEffect, useState } from 'react'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
+import {
+  CaseQuery,
+  UploadFileToCourtMutation,
+} from '@island.is/judicial-system-web/graphql'
 import {
   FormFooter,
   PageLayout,
@@ -106,14 +110,19 @@ export const SignedVerdictOverview: React.FC = () => {
     if (user?.role !== UserRole.PROSECUTOR) {
       // Only prosecutors should see the explanation.
       return undefined
-    } else if (workingCase.decision === CaseDecision.REJECTING) {
+    } else if (
+      workingCase.state === CaseState.REJECTED ||
+      workingCase.state === CaseState.DISMISSED
+    ) {
       return `Ekki hægt að framlengja ${
         workingCase.type === CaseType.CUSTODY
           ? 'gæsluvarðhald'
           : workingCase.type === CaseType.TRAVEL_BAN
           ? 'farbann'
           : 'heimild'
-      } sem var hafnað.`
+      } sem var ${
+        workingCase.state === CaseState.REJECTED ? 'hafnað' : 'vísað frá'
+      }.`
     } else if (
       workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
     ) {
@@ -280,6 +289,7 @@ export const SignedVerdictOverview: React.FC = () => {
         <>
           <SignedVerdictOverviewForm
             workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
             setAccusedAppealDate={setAccusedAppealDate}
             setProsecutorAppealDate={setProsecutorAppealDate}
             withdrawAccusedAppealDate={withdrawAccusedAppealDate}
@@ -295,7 +305,8 @@ export const SignedVerdictOverview: React.FC = () => {
                 user?.role !== UserRole.PROSECUTOR ||
                 workingCase.decision ===
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-                workingCase.decision === CaseDecision.REJECTING ||
+                workingCase.state === CaseState.REJECTED ||
+                workingCase.state === CaseState.DISMISSED ||
                 workingCase.isValidToDateInThePast ||
                 Boolean(workingCase.childCase)
               }
