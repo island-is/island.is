@@ -8,18 +8,25 @@ import { Login, SideBar } from '@island.is/financial-aid-web/osk/src/components'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import cn from 'classnames'
-import HasApplied from '../HasApplied/hasApplied'
+import { useRouter } from 'next/router'
 
 interface Props {
   children: ReactNode
 }
 
 const AppLayout = ({ children }: Props) => {
+  const router = useRouter()
   const { isAuthenticated, user } = useContext(UserContext)
-  //React helmet, nextjs head
+
   useEffect(() => {
-    document.title = 'Umsókn um fjárhagsaðstoð'
+    document.title = 'Fjárhagsaðstoð'
   }, [])
+
+  useEffect(() => {
+    if (user && user.currentApplication) {
+      router.push(`/stada/${user.currentApplication.id}`)
+    }
+  }, [user])
 
   if (!isAuthenticated) {
     return <Login headline="Skráðu þig inn" />
