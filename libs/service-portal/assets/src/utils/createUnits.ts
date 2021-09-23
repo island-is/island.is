@@ -4,17 +4,13 @@ import amountFormat from './amountFormat'
 import { messages } from '../lib/messages'
 import { FormatMessage } from '@island.is/application/core'
 
-import {
-  Fasteign,
-  Notkunareining,
-  ThinglysturEigandi,
-} from '../types/RealEstateAssets.types'
+import { Notkunareining, ThinglysturEigandi } from '@island.is/clients/assets'
 
 const ownersArray = (data: ThinglysturEigandi[] | undefined) => {
   const ownerArray = data?.map((owner) => {
     return [
       owner.nafn || '',
-      formatKennitala(owner.kennitala) || '',
+      owner.kennitala ? formatKennitala(owner.kennitala) : '',
       owner.heimildBirting || '',
       owner.eignarhlutfall ? `${owner.eignarhlutfall * 100}%` : '',
       '-',
@@ -51,9 +47,9 @@ const unitsArray = (
           },
           {
             title: `${formatMessage(messages.futureAppraisal)} ${
-              unit.fasteignamat.fyrirhugadAr
+              unit?.fasteignamat?.fyrirhugadAr
             }`,
-            value: unit.fasteignamat.fyrirhugadFasteignamat
+            value: unit?.fasteignamat?.fyrirhugadFasteignamat
               ? amountFormat(unit.fasteignamat.fyrirhugadFasteignamat)
               : '',
           },
@@ -63,12 +59,12 @@ const unitsArray = (
           },
           {
             title: formatMessage(messages.municipality),
-            value: unit.stadfang?.sveitarfelag || '',
+            value: unit.stadfang?.sveitarfelagBirting || '',
           },
-          {
-            title: formatMessage(messages.siteAssessment),
-            value: unit.lodarmat ? amountFormat(unit.lodarmat) : '',
-          },
+          // {
+          //   title: formatMessage(messages.siteAssessment),
+          //   value: unit.lodarmat ? amountFormat(unit.lodarmat) : '',
+          // },
           {
             title: formatMessage(messages.usage),
             value: unit.notkunBirting || '',
@@ -77,10 +73,10 @@ const unitsArray = (
             title: formatMessage(messages.fireCompAssessment),
             value: unit.brunabotamat ? amountFormat(unit.brunabotamat) : '',
           },
-          {
-            title: formatMessage(messages.operation),
-            value: unit.starfsemi || '',
-          },
+          // {
+          //   title: formatMessage(messages.operation),
+          //   value: unit.starfsemi || '',
+          // },
           {
             title: 'Stærð',
             value: `${unit.birtStaerd} m²` || '',

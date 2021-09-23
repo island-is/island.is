@@ -14,10 +14,7 @@ import TableUnits from '../../components/TableUnits'
 import AssetGrid from '../../components/AssetGrid'
 import AssetLoader from '../../components/AssetLoader'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
-import {
-  Fasteign,
-  ThinglysturEigandi,
-} from '../../types/RealEstateAssets.types'
+import { Fasteign, ThinglysturEigandi } from '@island.is/clients/assets'
 import amountFormat from '../../utils/amountFormat'
 import { ownersArray } from '../../utils/createUnits'
 import { messages } from '../../lib/messages'
@@ -169,6 +166,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
           <AssetGrid
             title={formatMessage(messages.unitsOfUse)}
             units={assetData?.notkunareiningar}
+            assetId={assetData?.fasteignanumer}
           />
         ) : null}
       </Box>

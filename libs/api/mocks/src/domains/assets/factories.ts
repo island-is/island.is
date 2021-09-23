@@ -1,5 +1,6 @@
 import { factory, faker } from '@island.is/shared/mocking'
 import { types } from '@island.is/service-portal/assets'
+// import { Stadfang, Fasteign, Fasteignamat, ThinglysturEigandi, Notkunareining, ThinglysturEigandiWrapper, NotkunareiningWrapper } from '@island.is/clients/assets'
 
 const townArray = [
   'Reykjavík',

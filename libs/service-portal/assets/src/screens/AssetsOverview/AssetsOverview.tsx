@@ -4,6 +4,7 @@ import { useNamespaces, useLocale } from '@island.is/localization'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { Box, AlertBanner } from '@island.is/island-ui/core'
+import { FasteignSimpleWrapper } from '@island.is/clients/assets'
 import {
   ServicePortalModuleComponent,
   IntroHeader,
@@ -11,7 +12,6 @@ import {
 } from '@island.is/service-portal/core'
 import AssetListCards from '../../components/AssetListCards'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
-import { FasteignirResponse } from '../../types/RealEstateAssets.types'
 import { AssetCardLoader } from '../../components/AssetCardLoader'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
@@ -31,7 +31,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
       variables: { input: { cursor: '0' } },
     },
   )
-  const assetData: FasteignirResponse = data?.getRealEstates || {}
+  const assetData: FasteignSimpleWrapper = data?.getRealEstates || {}
 
   const paginate = () => {
     const fasteignirArray = assetData?.fasteignir || []

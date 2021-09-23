@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
+import { NotkunareiningWrapper } from '@island.is/clients/assets'
 import {
   Text,
   Table as T,
@@ -11,26 +12,21 @@ import {
 } from '@island.is/island-ui/core'
 import { unitsArray } from '../../utils/createUnits'
 import { GET_UNITS_OF_USE_QUERY } from '../../lib/queries'
-import { NotkunareiningarResponse } from '../../types/RealEstateAssets.types'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
-interface GridItem {
-  title: string
-  value: string | number
-}
-
 interface Props {
-  units: NotkunareiningarResponse | undefined
+  units: NotkunareiningWrapper | undefined
   title?: string
+  assetId?: string | number | null
 }
 
-const AssetGrid: FC<Props> = ({ title, units }) => {
+const AssetGrid: FC<Props> = ({ title, units, assetId }) => {
   const { formatMessage } = useLocale()
   const [
     getUnitsOfUseQuery,
     { loading, error, fetchMore, data },
   ] = useLazyQuery(GET_UNITS_OF_USE_QUERY)
-  const eigendurPaginationData: NotkunareiningarResponse =
+  const eigendurPaginationData: NotkunareiningWrapper =
     data?.getNotkunareiningar
 
   const paginateData = eigendurPaginationData?.data || []
@@ -39,7 +35,7 @@ const AssetGrid: FC<Props> = ({ title, units }) => {
     const variableObject = {
       variables: {
         input: {
-          assetId: '82936',
+          assetId: assetId,
           cursor: Math.ceil(
             paginateData.length / DEFAULT_PAGING_ITEMS,
           ).toString(),
