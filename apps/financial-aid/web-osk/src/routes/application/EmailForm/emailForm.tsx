@@ -4,7 +4,6 @@ import { Text, Input, Box } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  Layout,
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
@@ -44,7 +43,7 @@ const EmailForm = () => {
   }
 
   return (
-    <Layout>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Samskipti
@@ -79,7 +78,7 @@ const EmailForm = () => {
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
-    </Layout>
+    </>
   )
 }
 

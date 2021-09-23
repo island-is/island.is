@@ -13,7 +13,7 @@ const LogoSvg = ({ name, className }: LogoSvgProps) => {
         [`${className}`]: className,
       })}
     >
-      <img src={`./../svg/${name}.svg`} alt="" />
+      <img src={`../../../svg/${name}.svg`} alt="" />
     </div>
   )
 }

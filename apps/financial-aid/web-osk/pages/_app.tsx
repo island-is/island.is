@@ -10,6 +10,10 @@ import {
   MunicipalityProvider,
 } from '../src/components'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
+import {
+  Logo,
+  AppLayout,
+} from '@island.is/financial-aid-web/osk/src/components'
 
 import '../src/styles.css'
 
@@ -23,7 +27,10 @@ class FinancialAidApplication extends App<AppProps> {
           <UserProvider>
             <MunicipalityProvider>
               <Header />
-              <Component {...pageProps} />
+              <AppLayout>
+                <Component {...pageProps} />
+              </AppLayout>
+
               <style jsx global>{`
                 @font-face {
                   font-family: 'IBM Plex Sans';
