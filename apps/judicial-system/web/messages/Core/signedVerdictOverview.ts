@@ -44,4 +44,10 @@ export const signedVerdictOverview = defineMessages({
     description:
       'Notaður sem texti í "Hlaða upp gögnum í Auði" takkanum á yfirlitsskjá afgreiddra mála ef ekki tókst að hlaða upp öllum skjölunum.',
   },
+  dismissedTitle: {
+    id: 'judicial.system.core:signed_verdict_overview.dismissed_title',
+    defaultMessage: 'Kröfu vísað frá',
+    description:
+      'Notaður sem titill á yfirlitsskjá afgreiddra mála þegar máli er vísað frá.',
+  },
 })

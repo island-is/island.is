@@ -26,6 +26,7 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseState,
   CaseType,
   InstitutionType,
   UploadState,
@@ -106,12 +107,16 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     const isInvestigationCase =
       theCase.type !== CaseType.CUSTODY && theCase.type !== CaseType.TRAVEL_BAN
 
-    if (theCase.decision === CaseDecision.REJECTING) {
+    if (theCase.state === CaseState.REJECTED) {
       if (isInvestigationCase) {
         return 'Kröfu um rannsóknarheimild hafnað'
       } else {
         return 'Kröfu hafnað'
       }
+    }
+
+    if (theCase.state === CaseState.DISMISSED) {
+      return formatMessage(signedVerdictOverview.dismissedTitle)
     }
 
     if (theCase.isValidToDateInThePast) {
@@ -132,6 +137,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
 
     if (
       theCase.decision === CaseDecision.REJECTING ||
+      theCase.decision === CaseDecision.DISMISSING ||
       (theCase.type !== CaseType.CUSTODY &&
         theCase.type !== CaseType.TRAVEL_BAN)
     ) {
