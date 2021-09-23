@@ -563,6 +563,7 @@ export const aboutTheAccidentSection = buildSection({
           ],
         }),
         buildMultiField({
+          id: 'locationAndPurpose',
           title: locationAndPurpose.general.title,
           description: locationAndPurpose.general.description,
           condition: (formValue) =>
@@ -768,6 +769,7 @@ export const aboutTheAccidentSection = buildSection({
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
+          id: 'companyInfo',
           title: companyInfo.general.title,
           description: companyInfo.general.description,
           children: [
@@ -840,6 +842,7 @@ export const aboutTheAccidentSection = buildSection({
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
+          id: 'schoolInfo',
           title: schoolInfo.general.title,
           description: schoolInfo.general.description,
           children: [
@@ -907,13 +910,49 @@ export const aboutTheAccidentSection = buildSection({
     // fishery information if fisherman
     buildSubSection({
       title: fishingCompanyInfo.general.title,
-      condition: (formValue) =>
-        isFishermanAccident(formValue) &&
-        !isReportingOnBehalfOfEmployee(formValue),
+      condition: (formValue) => isFishermanAccident(formValue),
       children: [
         buildMultiField({
+          id: 'fishingShipInfo',
+          title: fishingCompanyInfo.general.informationAboutShipTitle,
+          description:
+            fishingCompanyInfo.general.informationAboutShipDescription,
+          children: [
+            buildTextField({
+              id: 'fishingShipInfo.shipName',
+              title: fishingCompanyInfo.labels.shipName,
+              backgroundColor: 'blue',
+              width: 'half',
+              required: true,
+            }),
+            buildTextField({
+              id: 'fishingShipInfo.shipCharacters',
+              title: fishingCompanyInfo.labels.shipCharacters,
+              backgroundColor: 'blue',
+              width: 'half',
+              required: true,
+            }),
+            buildTextField({
+              id: 'fishingShipInfo.homePort',
+              title: fishingCompanyInfo.labels.homePort,
+              backgroundColor: 'blue',
+              width: 'half',
+              required: true,
+            }),
+            buildTextField({
+              id: 'fishingShipInfo.shipRegisterNumber',
+              title: fishingCompanyInfo.labels.shipRegisterNumber,
+              backgroundColor: 'blue',
+              width: 'half',
+              required: true,
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'fishingCompanyInfo',
           title: fishingCompanyInfo.general.title,
           description: fishingCompanyInfo.general.description,
+          condition: (formValue) => !isReportingOnBehalfOfEmployee(formValue),
           children: [
             buildTextField({
               id: 'fishingCompanyInfo.nationalRegistrationId',
@@ -984,6 +1023,7 @@ export const aboutTheAccidentSection = buildSection({
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
+          id: 'sportsClubInfo',
           title: sportsClubInfo.general.title,
           description: sportsClubInfo.general.description,
           children: [
@@ -1056,6 +1096,7 @@ export const aboutTheAccidentSection = buildSection({
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
+          id: 'rescueSquad',
           title: rescueSquadInfo.general.title,
           description: rescueSquadInfo.general.description,
           children: [
