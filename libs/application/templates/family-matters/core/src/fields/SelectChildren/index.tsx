@@ -2,12 +2,9 @@ import React, { useState } from 'react'
 import { MessageDescriptor, useIntl, IntlFormatters } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box, Text } from '@island.is/island-ui/core'
-import { Child } from '@island.is/application/templates/family-matters-core/types'
-import {
-  DescriptionText,
-  InfoBanner,
-} from '@island.is/application/templates/family-matters-core/components'
-import { sortChildrenByAge } from '@island.is/application/templates/family-matters-core/utils'
+import { Child } from '../../types'
+import { DescriptionText, InfoBanner } from '../../components'
+import { sortChildrenByAge } from '../../utils'
 
 const shouldBeDisabled = (
   children: Child[],

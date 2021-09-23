@@ -28,7 +28,10 @@ import {
   ArticleCategory,
   mapArticleCategory,
 } from '../models/articleCategory.model'
-import { mapOrganizationSubpage, OrganizationSubpage } from '@island.is/cms'
+import {
+  mapOrganizationSubpage,
+  OrganizationSubpage,
+} from '../models/organizationSubpage.model'
 
 export type PageTypes =
   | IArticle

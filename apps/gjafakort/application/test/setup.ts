@@ -1,4 +1,4 @@
-import { sequelize } from '@island.is/gjafakort/application/extensions'
+import { sequelize } from '../src/extensions'
 
 export const truncate = async () =>
   await Promise.all(

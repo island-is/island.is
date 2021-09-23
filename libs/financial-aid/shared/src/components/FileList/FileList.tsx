@@ -2,11 +2,7 @@ import React from 'react'
 import { Text, Box, UploadFile } from '@island.is/island-ui/core'
 import * as styles from './FileList.css'
 import cn from 'classnames'
-import {
-  ApplicationFile,
-  getFileSizeInKilo,
-  getFileType,
-} from '@island.is/financial-aid/shared/lib'
+import { ApplicationFile, getFileSizeInKilo, getFileType } from '../../lib'
 
 import { gql, useLazyQuery } from '@apollo/client'
 

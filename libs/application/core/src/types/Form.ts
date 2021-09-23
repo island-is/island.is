@@ -4,10 +4,10 @@ import { ZodObject } from 'zod'
 import { MessageDescriptor } from 'react-intl'
 
 import type { BoxProps } from '@island.is/island-ui/core/types'
-import { Field, RecordObject } from '@island.is/application/core'
 
 import { Condition } from './Condition'
 import { Application } from './Application'
+import { Field, RecordObject } from './Fields'
 
 export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
 

@@ -14,7 +14,7 @@ import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { servicePortalOutboundLink } from '@island.is/plausible'
-import { m } from '@island.is/service-portal/core'
+import { m } from '../../lib/messages'
 
 interface Props {
   title: MessageDescriptor

@@ -7,7 +7,8 @@ import {
   Accordion,
   AccordionItem,
 } from '@island.is/island-ui/core'
-import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
+import { Slice as SliceType } from '../richTextRendering'
+import { richText } from '../RichTextRC/RichText'
 export interface FaqListProps {
   title: string
   questions: {

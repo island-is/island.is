@@ -19,11 +19,6 @@ import type {
   EinstaklingarGetForsjaRequest,
   EinstaklingarGetEinstaklingurRequest,
 } from '@island.is/clients/national-registry-v2'
-import {
-  DelegationScope,
-  ApiScope,
-  IdentityResource,
-} from '@island.is/auth-api-lib'
 import { createEnhancedFetch, FetchAPI } from '@island.is/clients/middlewares'
 import type { Auth, AuthConfig, User } from '@island.is/auth-nest-tools'
 import {
@@ -40,6 +35,9 @@ import {
 } from '../entities/dto/delegation.dto'
 import { Delegation } from '../entities/models/delegation.model'
 import { DelegationScopeService } from './delegation-scope.service'
+import { DelegationScope } from '../entities/models/delegation-scope.model'
+import { ApiScope } from '../entities/models/api-scope.model'
+import { IdentityResource } from '../entities/models/identity-resource.model'
 
 export const DELEGATIONS_AUTH_CONFIG = 'DELEGATIONS_AUTH_CONFIG'
 

@@ -5,7 +5,24 @@
     "../../../.eslintrc.json"
   ],
   "ignorePatterns": ["!**/*"],
-  "rules": {},
+  "rules": {
+    "@nrwl/nx/enforce-module-boundaries": [
+      "error",
+      {
+        "enforceBuildableLibDependency": true,
+        "allowCircularSelfDependency": true,
+        "allow": [],
+        "depConstraints": [
+          {
+            "sourceTag": "*",
+            "onlyDependOnLibsWithTags": [
+              "*"
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "plugins": ["jsx-a11y"],
   "overrides": [
     {

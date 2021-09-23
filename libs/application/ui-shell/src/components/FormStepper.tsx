@@ -13,7 +13,7 @@ import {
 } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { FormScreen } from '@island.is/application/ui-shell'
+import { FormScreen } from '../types'
 
 interface FormStepperProps {
   application: Application
