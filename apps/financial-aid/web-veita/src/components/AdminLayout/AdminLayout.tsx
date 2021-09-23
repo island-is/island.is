@@ -3,6 +3,7 @@ import React, { ReactNode, useContext, useEffect, useState } from 'react'
 import {
   Nav,
   MobileMenuButton,
+  Login,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './AdminLayout.treat'
@@ -35,7 +36,7 @@ const AdminLayout = ({ children, className }: PageProps) => {
   }, [showNavMobile])
 
   if (!admin) {
-    return <>{children}</>
+    return <Login />
   }
 
   return (
