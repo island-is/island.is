@@ -4,7 +4,7 @@ import { Text, LinkContext } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
+  Layout,
   Files,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
@@ -30,10 +30,7 @@ const TaxReturnForm = () => {
   }
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <Layout>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Skattframtal
@@ -86,7 +83,7 @@ const TaxReturnForm = () => {
         nextButtonText="Halda áfram"
         onNextButtonClick={() => errorCheck()}
       />
-    </FormLayout>
+    </Layout>
   )
 }
 

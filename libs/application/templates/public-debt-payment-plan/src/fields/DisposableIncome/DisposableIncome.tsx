@@ -8,11 +8,12 @@ import { PaymentPlanExternalData } from '../../types'
 const InfoBox = ({ title, text }: { title: string | number; text: string }) => (
   <Box
     display="flex"
-    alignItems="center"
+    alignItems={['flexStart', 'flexStart', 'flexStart', 'center']}
     background="blue100"
     borderRadius="large"
     paddingY={2}
     paddingX={3}
+    flexDirection={['column', 'column', 'column', 'row']}
   >
     <Box marginRight={1}>
       <Text variant="h3" color="blue400">
@@ -32,7 +33,7 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
       <Text marginBottom={3}>
         {formatMessage(employer.general.pageDescription)}
       </Text>
-      <Box marginBottom={8}>
+      <Box marginBottom={[4, 4, 8]}>
         {/* TODO: Handle null values? */}
         <InfoBox
           title={`${
