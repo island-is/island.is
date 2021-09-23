@@ -67,8 +67,7 @@ export const RadioFormField: FC<Props> = ({
           name={id}
           defaultValue={
             (getValueViaPath(application.answers, id) as string[]) ??
-            getDefaultValue(field, application) ??
-            ''
+            getDefaultValue(field, application)
           }
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,

@@ -18,7 +18,10 @@ import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
 import Slider from '../components/Slider'
-import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
+import {
+  getExpectedDateOfBirth,
+  getApplicationAnswers,
+} from '../../lib/parentalLeaveUtils'
 import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
 import { StartDateOptions } from '../../constants'
@@ -40,43 +43,25 @@ export const Duration: FC<FieldBaseProps> = ({
   const { register, setError, clearErrors } = useFormContext()
   const { formatMessage, formatDateFns } = useLocale()
   const { answers } = application
+  const { rawPeriods } = getApplicationAnswers(answers)
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
-  const currentRepeaterIndex = extractRepeaterIndexFromField(field)
-  const currentIndex = currentRepeaterIndex === -1 ? 0 : currentRepeaterIndex
+  const currentIndex = rawPeriods.length - 1
   const currentStartDateAnswer = getValueViaPath(
     answers,
     `periods[${currentIndex}].startDate`,
     expectedDateOfBirth,
   ) as string
-  const currentEndDateAnswer = getValueViaPath(
-    answers,
-    id,
-    formatISO(
-      addMonths(parseISO(currentStartDateAnswer), DEFAULT_PERIOD_LENGTH),
-    ),
-  ) as string
 
-  // Use the duration already persisted if available
-  const monthsToUse = getValueViaPath(
-    answers,
-    `periods[${currentIndex}].duration`,
-    DEFAULT_PERIOD_LENGTH,
-  ) as number
-
-  const percentageForPeriod = getValueViaPath(
-    answers,
-    `periods[${currentIndex}].percentage`,
-    DEFAULT_PERIOD_PERCENTAGE,
-  ) as number
-
-  const [chosenEndDate, setChosenEndDate] = useState<string>(
-    currentEndDateAnswer,
+  const [chosenEndDate, setChosenEndDate] = useState<string | undefined>(
+    undefined,
   )
-  const [chosenDuration, setChosenDuration] = useState<number>(monthsToUse)
-  const [durationInDays, setDurationInDays] = useState<number>(
-    monthsToDays(monthsToUse),
+  const [chosenDuration, setChosenDuration] = useState<number | undefined>(
+    undefined,
   )
-  const [percent, setPercent] = useState<number>(percentageForPeriod)
+  const [durationInDays, setDurationInDays] = useState<number | undefined>(
+    undefined,
+  )
+  const [percent, setPercent] = useState<number | undefined>(undefined)
   const { getEndDate, loading } = useGetOrRequestEndDates(application)
   const errorMessage = (errors?.component as RecordObject<string>)?.message
 
@@ -188,7 +173,7 @@ export const Duration: FC<FieldBaseProps> = ({
                     }
                   : undefined
               }
-              currentIndex={chosenDuration}
+              currentIndex={chosenDuration ?? 0.5}
               onChange={(months: number) => handleChange(months)}
               onChangeEnd={(months: number) =>
                 handleChangeEnd(months, onChange)
@@ -207,6 +192,13 @@ export const Duration: FC<FieldBaseProps> = ({
           {errorMessage}
         </Box>
       )}
+
+      <input
+        ref={register}
+        type="hidden"
+        value={chosenEndDate}
+        name={`periods[${currentIndex}].endDate`}
+      />
 
       <input
         ref={register}

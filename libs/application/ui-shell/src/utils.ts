@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/core'
 import { FormScreen } from './types'
 import pick from 'lodash/pick'
+import get from 'lodash/get'
 
 export function verifyExternalData(
   externalData: ExternalData,
@@ -55,6 +56,11 @@ export function extractAnswersToSubmitFromScreen(
 
     // We always submit the whole array for the repeater answers
     const repeaterId = baseId.split('[')[0] ?? ''
+    const dataBeingSubmittedByScreen = get(data, baseId)
+
+    if (dataBeingSubmittedByScreen === undefined) {
+      throw new Error(JSON.stringify({ [repeaterId]: 'Svar vantar' }))
+    }
 
     return pick(data, [repeaterId])
   }
@@ -78,9 +84,7 @@ export function extractAnswersToSubmitFromScreen(
       )
 
     case FormItemTypes.EXTERNAL_DATA_PROVIDER:
-    case FormItemTypes.REPEATER:
       return {}
-
     default:
       return pick(data, [screenId])
   }

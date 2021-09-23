@@ -142,17 +142,28 @@ const Screen: FC<ScreenProps> = ({
   )
   const { handleSubmit, errors, reset } = hookFormData
   const submitField = useMemo(() => findSubmitField(screen), [screen])
-  const dataSchemaOrApiErrors = isJSONObject(error?.message)
-    ? parseMessage(error?.message)
-    : errors ?? {}
 
+  const [beforeSubmitError, setBeforeSubmitError] = useState({})
   const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
+  const [
+    beforeSubmitCallbackScreenIndex,
+    setBeforeSubmitCallbackScreenIndex,
+  ] = useState<null | number>(null)
   const setBeforeSubmitCallback = useCallback(
     (callback: BeforeSubmitCallback | null) => {
       beforeSubmitCallback.current = callback
+      if (callback === null) {
+        setBeforeSubmitCallbackScreenIndex(null)
+      } else {
+        setBeforeSubmitCallbackScreenIndex(activeScreenIndex)
+      }
     },
-    [beforeSubmitCallback],
+    [beforeSubmitCallback, activeScreenIndex],
   )
+
+  const dataSchemaOrApiErrors = isJSONObject(error?.message)
+    ? parseMessage(error?.message)
+    : beforeSubmitError || (errors ?? beforeSubmitError)
 
   const goBack = useCallback(() => {
     // using deepmerge to prevent some weird react-hook-form read-only bugs
@@ -165,13 +176,18 @@ const Screen: FC<ScreenProps> = ({
     let response
 
     setIsSubmitting(true)
+    setBeforeSubmitError('')
 
     if (typeof beforeSubmitCallback.current === 'function') {
-      const [canContinue] = await beforeSubmitCallback.current()
+      const [canContinue, possibleError] = await beforeSubmitCallback.current()
 
       if (!canContinue) {
         setIsSubmitting(false)
-        // TODO set error message
+
+        if (typeof possibleError === 'string') {
+          setBeforeSubmitError({ [screen?.id || '']: possibleError })
+        }
+
         return
       }
     }
@@ -210,18 +226,24 @@ const Screen: FC<ScreenProps> = ({
         }
       }
     } else {
-      response = await updateApplication({
-        variables: {
-          input: {
-            id: applicationId,
-            answers: extractAnswersToSubmitFromScreen(
-              mergeAnswers(formValue, data),
-              screen,
-            ),
+      try {
+        const extractedAnswers = extractAnswersToSubmitFromScreen(
+          mergeAnswers(formValue, data),
+          screen,
+        )
+
+        response = await updateApplication({
+          variables: {
+            input: {
+              id: applicationId,
+              answers: extractedAnswers,
+            },
+            locale,
           },
-          locale,
-        },
-      })
+        })
+      } catch (e) {
+        handleError((e as Error).message, formatMessage)
+      }
     }
 
     if (response?.data) {
@@ -246,7 +268,19 @@ const Screen: FC<ScreenProps> = ({
   useEffect(() => {
     const target = isMobile ? headerHeight : 0
     window.scrollTo(0, target)
-  }, [activeScreenIndex, isMobile])
+
+    if (
+      beforeSubmitCallback.current !== null &&
+      activeScreenIndex !== beforeSubmitCallbackScreenIndex
+    ) {
+      setBeforeSubmitCallback(null)
+    }
+  }, [
+    activeScreenIndex,
+    isMobile,
+    setBeforeSubmitCallback,
+    beforeSubmitCallbackScreenIndex,
+  ])
 
   const isLoadingOrPending =
     fieldLoadingState || loading || loadingSubmit || isSubmitting
@@ -275,6 +309,8 @@ const Screen: FC<ScreenProps> = ({
                 application={application}
                 errors={dataSchemaOrApiErrors}
                 expandRepeater={expandRepeater}
+                setBeforeSubmitCallback={setBeforeSubmitCallback}
+                setFieldLoadingState={setFieldLoadingState}
                 repeater={screen}
                 onRemoveRepeaterItem={async (newRepeaterItems) => {
                   const newData = await updateApplication({
@@ -286,7 +322,7 @@ const Screen: FC<ScreenProps> = ({
                       locale,
                     },
                   })
-                  if (!newData.errors) {
+                  if (!!newData && !newData.errors) {
                     answerQuestions(newData.data.updateApplication.answers)
                   }
                 }}

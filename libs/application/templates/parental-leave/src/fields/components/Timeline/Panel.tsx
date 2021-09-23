@@ -53,7 +53,7 @@ export const Panel: FC<{
           {p.canDelete && editable && onDeletePeriod && (
             <Box
               className={styles.deleteIcon}
-              onClick={() => onDeletePeriod(index)}
+              onClick={() => onDeletePeriod(p.rawIndex)}
             >
               <Icon
                 color="dark200"

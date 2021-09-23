@@ -14,7 +14,7 @@ import { DateFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 
 import {
-  getAvailablePersonalRightsInDays,
+  getAvailableRightsInDays,
   getExpectedDateOfBirth,
   getPeriodIndex,
 } from '../../lib/parentalLeaveUtils'
@@ -40,7 +40,7 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { id, title, props } = field
-  const rights = getAvailablePersonalRightsInDays(application)
+  const rights = getAvailableRightsInDays(application)
   const daysAlreadyUsed = useDaysAlreadyUsed(application)
   const { answers } = application
   const { getLength, loading } = useGetOrRequestLength(application)
@@ -103,7 +103,7 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
 
   useEffect(() => {
     setFieldLoadingState?.(loading)
-  }, [loading])
+  }, [setFieldLoadingState, loading])
 
   if (currentIndex < 0) {
     return null
@@ -123,8 +123,9 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
           excludeDates: props.excludeDates,
           children: undefined,
           placeholder: parentalLeaveFormMessages.endDate.placeholder,
-          onChange: handleChange,
+          onChange: (date) => handleChange(date),
           backgroundColor: 'blue',
+          defaultValue: null,
         }}
       />
 

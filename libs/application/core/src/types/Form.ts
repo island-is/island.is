@@ -145,4 +145,6 @@ export type RepeaterProps = {
   error?: string
   repeater: Repeater
   removeRepeaterItem: (index: number) => void
+  setBeforeSubmitCallback?: SetBeforeSubmitCallback
+  setFieldLoadingState?: SetFieldLoadingState
 }

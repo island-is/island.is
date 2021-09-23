@@ -70,14 +70,14 @@ export function formatPeriods(
   application: Application,
   formatMessage: FormatMessage,
 ): TimelinePeriod[] {
-  const { periods } = getApplicationAnswers(application.answers)
+  const { periods, firstPeriodStart } = getApplicationAnswers(
+    application.answers,
+  )
   const timelinePeriods: TimelinePeriod[] = []
 
   periods?.forEach((period, index) => {
     const isActualDob =
-      index === 0 &&
-      application.answers.firstPeriodStart ===
-        StartDateOptions.ACTUAL_DATE_OF_BIRTH
+      index === 0 && firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
 
     if (isActualDob) {
       timelinePeriods.push({
@@ -91,6 +91,7 @@ export function formatPeriods(
           index: index + 1,
           ratio: period.ratio,
         }),
+        rawIndex: period.rawIndex ?? index,
       })
     }
 
@@ -105,6 +106,7 @@ export function formatPeriods(
           index: index + 1,
           ratio: period.ratio,
         }),
+        rawIndex: period.rawIndex ?? index,
       })
     }
   })
@@ -304,18 +306,21 @@ export const isEligibleForParentalLeave = (
 export const calculateDaysToPercentage = (
   application: Application,
   days: number,
+  alreadySpent = 0,
 ) => {
   const numberOfDaysInRights = getAvailableRightsInDays(application)
 
-  if (days <= numberOfDaysInRights) {
+  if (days + alreadySpent <= numberOfDaysInRights) {
     return 100
   }
+
+  const nextPeriodMaximum = (numberOfDaysInRights - alreadySpent) / days
 
   return Math.min(
     100,
     // We don't want to over estimate the percentage and end up with
     // invalid period length
-    Math.floor((numberOfDaysInRights / days) * 100),
+    Math.floor(nextPeriodMaximum * 100),
   )
 }
 
@@ -337,10 +342,10 @@ export const getPeriodPercentage = (
   answers: Application['answers'],
   field: Field,
 ) => {
-  const { periods } = getApplicationAnswers(answers)
-  const index = getPeriodIndex(field)
+  const { rawPeriods } = getApplicationAnswers(answers)
 
-  return periods?.[index]?.percentage ?? '100'
+
+  return rawPeriods?.[rawPeriods.length - 1]?.percentage ?? '100'
 }
 
 const getOrFallback = (
@@ -520,12 +525,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'applicant.phoneNumber',
   ) as string
 
-  const periods = getValueViaPath(answers, 'periods') as Period[]
+  const rawPeriods = getValueViaPath(answers, 'periods', []) as Period[]
+  const periods = filterValidPeriods(rawPeriods)
 
-  const firstPeriodStart = getValueViaPath(
-    answers,
-    'firstPeriodStart',
-  ) as SchemaFormValues['firstPeriodStart']
+  const firstPeriodStart =
+    periods.length > 0 ? periods[0].firstPeriodStart : undefined
 
   return {
     otherParent,
@@ -557,6 +561,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     applicantEmail,
     applicantPhoneNumber,
     periods,
+    rawPeriods,
     firstPeriodStart,
   }
 }
@@ -634,4 +639,29 @@ export const getOtherParentId = (application: Application): string | null => {
   }
 
   return otherParentId
+}
+
+interface IncompletePeriod {
+  startDate?: string
+  endDate?: string
+  ratio?: string
+}
+
+export const filterValidPeriods = (
+  periods: (IncompletePeriod | Period)[],
+): Period[] => {
+  const filtered = periods
+    .map((period, index) => ({
+      ...period,
+      rawIndex: index,
+    }))
+    .filter((period) => {
+      const hasStartDate = !!period?.startDate
+      const hasEndDate = !!period?.endDate
+      const hasRatio = !!period?.ratio
+
+      return hasStartDate && hasEndDate && hasRatio
+    })
+
+  return filtered as Period[]
 }

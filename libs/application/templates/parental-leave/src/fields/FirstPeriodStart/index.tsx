@@ -9,7 +9,10 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
-import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
+import {
+  getExpectedDateOfBirth,
+  getApplicationAnswers,
+} from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { StartDateOptions } from '../../constants'
 
@@ -21,21 +24,10 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   application,
 }) => {
   const { register } = useFormContext()
+  const { rawPeriods } = getApplicationAnswers(application.answers)
   const { formatMessage } = useLocale()
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
-  const currentAnswer = getValueViaPath(
-    application.answers,
-    field.id,
-    undefined,
-  ) as ValidAnswers
-  const currentStartDateAnswer = getValueViaPath(
-    application.answers,
-    'periods[0].startDate',
-    expectedDateOfBirth,
-  ) as string
-  const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
-    currentAnswer,
-  )
+  const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>()
 
   return (
     <Box marginY={3} key={field.id}>
@@ -86,10 +78,10 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
             statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
             statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH
               ? expectedDateOfBirth
-              : currentStartDateAnswer
+              : undefined
           }
           ref={register}
-          name="periods[0].startDate"
+          name={`periods[${rawPeriods.length}].startDate`}
         />
       </Box>
     </Box>

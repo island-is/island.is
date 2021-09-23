@@ -4,6 +4,8 @@ import {
   getValueViaPath,
   Application,
   RecordObject,
+  SetBeforeSubmitCallback,
+  SetFieldLoadingState,
 } from '@island.is/application/core'
 
 import { useFields } from '../context/FieldContext'
@@ -15,11 +17,15 @@ const FormRepeater: FC<{
   application: Application
   repeater: RepeaterScreen
   errors: RecordObject
+  setBeforeSubmitCallback: SetBeforeSubmitCallback
+  setFieldLoadingState: SetFieldLoadingState
   expandRepeater: () => void
   onRemoveRepeaterItem: (newRepeaterItems: RepeaterItems) => Promise<unknown>
 }> = ({
   application,
   errors,
+  setBeforeSubmitCallback,
+  setFieldLoadingState,
   expandRepeater,
   onRemoveRepeaterItem,
   repeater,
@@ -55,6 +61,8 @@ const FormRepeater: FC<{
     repeater,
     application,
     removeRepeaterItem,
+    setBeforeSubmitCallback,
+    setFieldLoadingState,
   }
   const Component = allFields[repeater.component] as
     | FC<RepeaterProps>

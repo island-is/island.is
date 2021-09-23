@@ -4,6 +4,7 @@ import { Application } from '@island.is/application/core'
 
 import { calculateDaysToPercentage } from '../lib/parentalLeaveUtils'
 import { useLazyParentalLeavePeriodLength } from './useLazyParentalLeavePeriodLength'
+import { useDaysAlreadyUsed } from './useDaysAlreadyUsed'
 
 export const useGetOrRequestLength = (application: Application) => {
   const lazyGetLength = useLazyParentalLeavePeriodLength()
@@ -11,6 +12,7 @@ export const useGetOrRequestLength = (application: Application) => {
   const [loadedLengths, setLoadedLengths] = useState<
     Map<string, { length: number; percentage: number }>
   >(new Map())
+  const daysAlreadyUsed = useDaysAlreadyUsed(application)
 
   /**
    * We call the API multiple times, because we don't know the final value at first, we start with temporary values before able to request with final parameters
@@ -51,6 +53,7 @@ export const useGetOrRequestLength = (application: Application) => {
       const computedPercentage = calculateDaysToPercentage(
         application,
         startToEndDatesLength,
+        daysAlreadyUsed,
       )
 
       const { data: lengthData } = await lazyGetLength({

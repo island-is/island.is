@@ -26,10 +26,11 @@ import {
   getApplicationAnswers,
   getExpectedDateOfBirth,
 } from './parentalLeaveUtils'
+import { filterValidPeriods } from '..'
 
 const EMPLOYER = 'employer'
 const FIRST_PERIOD_START = 'firstPeriodStart'
-const PERIODS = 'periods'
+const PERIODS = 'periodsValidator'
 
 export const answerValidators: Record<string, AnswerValidator> = {
   [EMPLOYER]: (newAnswer: unknown, application: Application) => {
@@ -79,6 +80,14 @@ export const answerValidators: Record<string, AnswerValidator> = {
   },
   [PERIODS]: (newAnswer: unknown, application: Application) => {
     const periods = newAnswer as Period[]
+
+    if (periods.length === 0) {
+      return {
+        path: 'periods',
+        message: 'Þú þarft að velja tímabil',
+      }
+    }
+
     const newPeriodIndex = periods.length - 1
     const period = periods[newPeriodIndex]
     const buildError = buildValidationError(PERIODS, newPeriodIndex)
