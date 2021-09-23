@@ -111,6 +111,18 @@ export const CourtRecord: React.FC = () => {
 
       autofill('courtStartDate', new Date().toString(), theCase)
 
+      if (theCase.court) {
+        autofill(
+          'courtLocation',
+          `í ${
+            theCase.court.name.indexOf('dómur') > -1
+              ? theCase.court.name.replace('dómur', 'dómi')
+              : theCase.court.name
+          }`,
+          theCase,
+        )
+      }
+
       autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
 
       if (theCase.demands) {

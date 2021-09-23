@@ -17,6 +17,7 @@ import {
   formatAccusedByGender,
   caseTypes,
   areAccusedRightsHidden,
+  lowercase,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -64,7 +65,9 @@ function constructRestrictionRulingPdf(
     .text(
       `Þann ${formatDate(existingCase.courtStartDate, 'PPP')} heldur ${
         existingCase.judge?.name ?? '?'
-      } ${existingCase.judge?.title ?? '?'} dómþing. Fyrir er tekið mál nr. ${
+      } ${existingCase.judge?.title ?? '?'} dómþing ${lowercase(
+        existingCase.courtLocation?.replace('.', ''),
+      )}. Fyrir er tekið mál nr. ${
         existingCase.courtCaseNumber
       }. Þinghald hefst kl. ${formatDate(existingCase.courtStartDate, 'p')}.`,
       {
@@ -454,7 +457,9 @@ function constructInvestigationRulingPdf(
     .text(
       `Þann ${formatDate(existingCase.courtStartDate, 'PPP')} heldur ${
         existingCase.judge?.name ?? '?'
-      } ${existingCase.judge?.title ?? '?'} dómþing. Fyrir er tekið mál nr. ${
+      } ${existingCase.judge?.title ?? '?'} dómþing ${lowercase(
+        existingCase.courtLocation?.replace('.', ''),
+      )}. Fyrir er tekið mál nr. ${
         existingCase.courtCaseNumber
       }. Þinghald hefst kl. ${formatDate(existingCase.courtStartDate, 'p')}.`,
       {
