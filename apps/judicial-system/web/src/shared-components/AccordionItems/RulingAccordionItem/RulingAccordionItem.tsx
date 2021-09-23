@@ -36,6 +36,22 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             Úrskurður Héraðsdóms
           </Text>
         </Box>
+        <Box marginBottom={1}>
+          <Text variant="eyebrow" color="blue400">
+            Greinargerð um málsatvik
+          </Text>
+        </Box>
+        <Box marginBottom={2}>
+          <Text>{workingCase.courtCaseFacts}</Text>
+        </Box>
+        <Box marginBottom={1}>
+          <Text variant="eyebrow" color="blue400">
+            Greinargerð um lagarök
+          </Text>
+        </Box>
+        <Box marginBottom={2}>
+          <Text>{workingCase.courtLegalArguments}</Text>
+        </Box>
         <Box marginBottom={7}>
           <Text variant="eyebrow" color="blue400">
             Niðurstaða

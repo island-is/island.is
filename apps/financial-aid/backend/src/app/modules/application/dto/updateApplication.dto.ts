@@ -19,4 +19,9 @@ export class UpdateApplicationDto {
   @IsString()
   @ApiProperty()
   readonly rejection: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  staffId: string
 }

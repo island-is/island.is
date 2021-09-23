@@ -3,7 +3,7 @@ import { Box, GridContainer, Text } from '@island.is/island-ui/core'
 
 import * as styles from './StatusLayout.treat'
 
-import { LogoHfj, Login } from '@island.is/financial-aid-web/osk/src/components'
+import { Logo, Login } from '@island.is/financial-aid-web/osk/src/components'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import { getState } from '@island.is/financial-aid/shared/lib'
@@ -53,7 +53,7 @@ const StatusLayout = ({ children }: Props) => {
                 Umsókn um fjárhagsaðstoð hjá Hafnarfjarðarbæ
               </Text>
             </Box>
-            <LogoHfj className={styles.logo} />
+            <Logo className={styles.logo} />
           </Box>
         </div>
       </GridContainer>

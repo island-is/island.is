@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import { Logo, Text, Box, Link } from '@island.is/island-ui/core'
 
-import { LogoHfj } from '@island.is/financial-aid-web/veita/src/components'
+import { LogoMunicipality } from '@island.is/financial-aid-web/veita/src/components'
 
-import * as styles from './login.treat'
+import * as styles from './Login.treat'
 
 const Login = () => {
   useEffect(() => {
@@ -18,7 +18,7 @@ const Login = () => {
       </div>
       <Box display="flex" className={`${styles.logoHfjContainer} `}>
         <Box className={`logoHfj`}>
-          <LogoHfj />
+          <LogoMunicipality />
         </Box>
 
         <Box paddingLeft={2} marginLeft={2} className={`headLine`}>

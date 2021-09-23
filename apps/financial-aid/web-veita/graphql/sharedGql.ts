@@ -34,6 +34,9 @@ export const GetApplicationQuery = gql`
       studentCustom
       amount
       rejection
+      staff {
+        name
+      }
     }
   }
 `
@@ -58,6 +61,9 @@ export const GetApplicationsQuery = gql`
       modified
       created
       state
+      staff {
+        name
+      }
     }
   }
 `
@@ -95,7 +101,20 @@ export const GetMunicipalityQuery = gql`
     municipality(input: $input) {
       id
       name
-      settings
+      aid {
+        ownApartmentOrLease
+        withOthersOrUnknow
+        withParents
+      }
+    }
+  }
+`
+
+export const GetMunacipalityHomePageQuery = gql`
+  query GetMunacipalityHomePageQuery($input: MunicipalityQueryInput!) {
+    municipality(input: $input) {
+      id
+      homePage
     }
   }
 `

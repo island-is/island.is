@@ -5,7 +5,6 @@ import {
   Form,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
-import { States } from '../constants'
 import { inReview } from '../lib/messages'
 
 export const InReview: Form = buildForm({
@@ -15,17 +14,11 @@ export const InReview: Form = buildForm({
   children: [
     buildSection({
       id: 'review',
-      title: (application) =>
-        application.state === States.APPROVED
-          ? inReview.general.titleApproved
-          : inReview.general.titleInReview,
+      title: '',
       children: [
         buildCustomField({
           id: 'InReviewSteps.one',
-          title: (application) =>
-            application.state === States.APPROVED
-              ? inReview.general.titleApproved
-              : inReview.general.titleInReview,
+          title: inReview.general.title,
           component: 'InReviewSteps',
         }),
       ],
