@@ -29,5 +29,22 @@ export const rcCourtRecord = {
           'Notaður sem skýritexti í "afstaða kærða" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
+    courtLocation: defineMessages({
+      label: {
+        id:
+          'judicial.system.restriction_cases:court_record.court_location.label',
+        defaultMessage: 'Hvar var dómþing haldið?',
+        description:
+          'Notaður sem titill í "Hvar var dómþing haldið?" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      placeholder: {
+        id:
+          'judicial.system.restriction_cases:court_record.court_location.placeholder',
+        defaultMessage:
+          'Sláðu inn staðsetningu þinghalds, t.d. "í Héraðsdómi Reykjavíkur"',
+        description:
+          'Notaður sem skýritexti í "Hvar var dómþing haldið?" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
   },
 }

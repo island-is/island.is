@@ -49,6 +49,7 @@ export const CourtRecord: React.FC = () => {
     setCourtRecordStartDateIsValid,
   ] = useState(true)
   const [courtAttendeesErrorMessage, setCourtAttendeesMessage] = useState('')
+  const [courtLocationErrorMessage, setCourtLocationMessage] = useState('')
   const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] = useState(
     '',
   )
@@ -184,6 +185,43 @@ export const CourtRecord: React.FC = () => {
                       updateCase,
                     )
                   }}
+                  required
+                />
+              </Box>
+              <Box marginBottom={3}>
+                <Input
+                  data-testid="courtLocation"
+                  name="courtLocation"
+                  label={formatMessage(
+                    rcCourtRecord.sections.courtLocation.label,
+                  )}
+                  defaultValue={workingCase.courtLocation}
+                  placeholder={formatMessage(
+                    rcCourtRecord.sections.courtLocation.placeholder,
+                  )}
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'courtLocation',
+                      event,
+                      ['empty'],
+                      workingCase,
+                      setWorkingCase,
+                      courtLocationErrorMessage,
+                      setCourtLocationMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'courtLocation',
+                      event.target.value,
+                      ['empty'],
+                      workingCase,
+                      updateCase,
+                      setCourtLocationMessage,
+                    )
+                  }
+                  errorMessage={courtLocationErrorMessage}
+                  hasError={courtLocationErrorMessage !== ''}
                   required
                 />
               </Box>
