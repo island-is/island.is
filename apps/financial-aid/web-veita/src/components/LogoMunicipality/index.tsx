@@ -10,9 +10,7 @@ import { LoadingDots } from '@island.is/island-ui/core'
 interface MunicipalityData {
   municipality: {
     id: string
-    settings: {
-      homePage: string
-    }
+    homePage: string
   }
 }
 
@@ -44,7 +42,7 @@ const LogoMunicipality = ({ className }: LogoProps) => {
 
   return (
     <a
-      href={data.municipality.settings.homePage}
+      href={data.municipality.homePage}
       target="_blank"
       rel="noopener noreferrer"
       className={cn({ [`${className}`]: true })}
