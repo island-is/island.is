@@ -42,7 +42,6 @@ const CaseFileList: React.FC<Props> = (props) => {
                 hideIcons ||
                 [
                   CaseFileState.BOKEN_LINK,
-                  CaseFileState.DELETED,
                   CaseFileState.STORED_IN_RVG,
                 ].includes(file.state)
               }
