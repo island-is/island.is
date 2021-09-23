@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 
 interface LogoSvgProps {

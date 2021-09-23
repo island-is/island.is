@@ -12,6 +12,10 @@ const graphqlPath = '/api/graphql'
 module.exports = withTreat(
   withHealthcheckConfig({
     webpack: (config, options) => {
+      config.module.rules.push({
+        test: /\.svg$/,
+        use: ["@svgr/webpack"]
+      });
       // if (!options.isServer) {
       //   config.resolve.alias['@sentry/node'] = '@sentry/browser'
       // }
