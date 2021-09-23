@@ -1,81 +1,63 @@
 import React, { ReactNode, useContext, useEffect } from 'react'
-import { Box, GridContainer, FormStepper } from '@island.is/island-ui/core'
+import { Box, FormStepper } from '@island.is/island-ui/core'
 
 import * as styles from './FormLayout.treat'
 
-import {
-  LogoHfj,
-  Login,
-  HasApplied,
-} from '@island.is/financial-aid-web/osk/src/components'
+import { Logo } from '@island.is/financial-aid-web/osk/src/components'
+import { useRouter } from 'next/router'
 
 import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   children: ReactNode
-  activeSection?: number
-  activeSubSection?: number
 }
 
-const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
-  const { isAuthenticated, user } = useContext(UserContext)
+const FormLayout = ({ children }: Props) => {
+  const router = useRouter()
 
   const { form } = useContext(FormContext)
   const sections = useNavigationTree(Boolean(form?.hasIncome))
 
+  const navigation: NavigationProps = useFormNavigation(
+    router.pathname,
+  ) as NavigationProps
+
+  const activeSection = navigation?.activeSectionIndex
+
   useEffect(() => {
     if (activeSection !== undefined) {
       document.title = 'Umsókn - ' + sections[activeSection].name ?? ''
-    } else {
-      document.title = 'Umsókn um fjárhagsaðstoð'
     }
   }, [activeSection])
 
-  if (!isAuthenticated) {
-    return <Login headline="Skráðu þig inn" />
-  }
-  if (!user) {
-    return null
-  }
-
   return (
-    <Box
-      paddingY={[3, 3, 3, 6]}
-      background="purple100"
-      className={styles.processContainer}
-    >
-      {user.currentApplication ? (
-        <HasApplied />
-      ) : (
-        <GridContainer className={styles.gridContainer}>
-          <div className={styles.gridRowContainer}>
-            <Box
-              background="white"
-              borderColor="white"
-              borderRadius="large"
-              className={styles.formContainer}
-            >
-              {children}
-            </Box>
-            <Box className={styles.sidebarContent}>
-              <Box paddingLeft={[0, 0, 0, 3]}>
-                {activeSection != undefined && (
-                  <FormStepper
-                    sections={sections}
-                    activeSection={activeSection}
-                    activeSubSection={activeSubSection}
-                  />
-                )}
-              </Box>
+    <div className={styles.gridRowContainer}>
+      <Box
+        background="white"
+        borderColor="white"
+        borderRadius="large"
+        className={styles.formContainer}
+      >
+        {children}
+      </Box>
+      <Box className={styles.sidebarContent}>
+        <Box paddingLeft={[0, 0, 0, 3]}>
+          {activeSection !== undefined && (
+            <FormStepper
+              sections={sections}
+              activeSection={activeSection}
+              activeSubSection={navigation?.activeSubSectionIndex}
+            />
+          )}
+        </Box>
 
-              <LogoHfj className={styles.logo} />
-            </Box>
-          </div>
-        </GridContainer>
-      )}
-    </Box>
+        <Logo className={styles.logo} />
+      </Box>
+    </div>
   )
 }
 
