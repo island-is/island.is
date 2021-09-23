@@ -85,7 +85,9 @@ export const returnMissingDocumentsList = (
 
 export * from './fishermanUtils'
 export * from './getAccidentTypeOptions'
+export * from './getInjuredPersonInformation'
 export * from './getWorkplaceData'
+export * from './hasMissingDocuments'
 export * from './hideLocationAndPurpose'
 export * from './isAgricultureAccident'
 export * from './isDateOlderThanAYear'

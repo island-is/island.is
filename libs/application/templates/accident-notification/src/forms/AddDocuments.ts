@@ -10,9 +10,13 @@ import {
   Form,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
-import { UPLOAD_ACCEPT, YES } from '../constants'
+import { UPLOAD_ACCEPT } from '../constants'
 import { addDocuments, overview } from '../lib/messages'
-import { WhoIsTheNotificationForEnum } from '../types'
+import {
+  hasMissingDeathCertificate,
+  hasMissingInjuryCertificate,
+  hasMissingPowerOfAttorneyFile,
+} from '../utils'
 
 export const AddDocuments: Form = buildForm({
   id: 'ParentalLeaveAddDocuments',
@@ -31,6 +35,7 @@ export const AddDocuments: Form = buildForm({
             buildFileUploadField({
               id: 'attachments.injuryCertificateFile',
               title: addDocuments.general.uploadTitle,
+              condition: (formValue) => hasMissingInjuryCertificate(formValue),
               introduction: addDocuments.injuryCertificate.uploadIntroduction,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: addDocuments.injuryCertificate.uploadHeader,
@@ -40,7 +45,7 @@ export const AddDocuments: Form = buildForm({
             buildFileUploadField({
               id: 'attachments.deathCertificateFile',
               title: addDocuments.general.uploadTitle,
-              condition: (formValue) => formValue.wasTheAccidentFatal === YES,
+              condition: (formValue) => hasMissingDeathCertificate(formValue),
               introduction: addDocuments.deathCertificate.uploadIntroduction,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: addDocuments.deathCertificate.uploadHeader,
@@ -51,8 +56,7 @@ export const AddDocuments: Form = buildForm({
               id: 'attachments.powerOfAttorneyFile',
               title: addDocuments.general.uploadTitle,
               condition: (formValue) =>
-                formValue.whoIsTheNotificationFor ===
-                WhoIsTheNotificationForEnum.POWEROFATTORNEY,
+                hasMissingPowerOfAttorneyFile(formValue),
               introduction: addDocuments.powerOfAttorney.uploadIntroduction,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: addDocuments.powerOfAttorney.uploadHeader,

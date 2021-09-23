@@ -25,6 +25,7 @@ type ReviewSectionProps = {
   hasActionMessage: boolean
   refetch?: () => void
   action?: ActionProps
+  visible?: boolean
 }
 
 const ReviewSection: FC<ReviewSectionProps> = ({
@@ -35,6 +36,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
   hasActionMessage,
   action,
   refetch,
+  visible = true,
 }) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
@@ -42,6 +44,8 @@ const ReviewSection: FC<ReviewSectionProps> = ({
       onError: (e) => console.error(e.message),
     },
   )
+
+  if (!visible) return null
 
   return (
     <Box

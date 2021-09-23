@@ -11,8 +11,13 @@ import {
 import * as z from 'zod'
 import { States } from '../constants'
 import { ApiActions } from '../shared'
+import {
+  isHomeActivitiesAccident,
+  isRepresentativeOfCompanyOrInstitute,
+} from '../utils'
+import { hasMissingDocuments } from '../utils/hasMissingDocuments'
+import { isReportingOnBehalfSelf } from '../utils/isReportingBehalfOfSelf'
 import { application } from './messages'
-// import { AccidentNotificationSchema } from './dataSchema'
 
 const AccidentNotificationSchema = z.object({})
 
@@ -68,14 +73,32 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: States.NEEDS_DOCUMENT_AND_REVIEW,
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.WAITING_TO_ASSIGN,
+              cond: (context) =>
+                !isHomeActivitiesAccident(context.application.answers) ||
+                !(
+                  isReportingOnBehalfSelf(context.application.answers) &&
+                  isRepresentativeOfCompanyOrInstitute(
+                    context.application.answers,
+                  )
+                ),
+            },
+            {
+              target: States.NEEDS_DOCUMENT,
+              cond: (context) =>
+                hasMissingDocuments(context.application.answers),
+            },
+            {
+              target: States.IN_FINAL_REVIEW,
+            },
+          ],
         },
       },
-      [States.NEEDS_DOCUMENT_AND_REVIEW]: {
+      [States.WAITING_TO_ASSIGN]: {
         meta: {
-          name: States.NEEDS_DOCUMENT_AND_REVIEW,
+          name: States.WAITING_TO_ASSIGN,
           progress: 0.4,
           lifecycle: {
             shouldBeListed: true,
@@ -98,7 +121,78 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.ASSIGN]: { target: States.NEEDS_REVIEW },
+          [DefaultEvents.ASSIGN]: [
+            {
+              target: States.NEEDS_DOCUMENT_AND_REVIEW,
+              cond: (context) =>
+                hasMissingDocuments(context.application.answers) &&
+                (!isHomeActivitiesAccident(context.application.answers) ||
+                  !(
+                    isReportingOnBehalfSelf(context.application.answers) &&
+                    isRepresentativeOfCompanyOrInstitute(
+                      context.application.answers,
+                    )
+                  )),
+            },
+            {
+              target: States.NEEDS_DOCUMENT,
+              cond: (context) =>
+                hasMissingDocuments(context.application.answers),
+            },
+            {
+              target: States.NEEDS_REVIEW,
+              cond: (context) =>
+                !hasMissingDocuments(context.application.answers) &&
+                (!isHomeActivitiesAccident(context.application.answers) ||
+                  !(
+                    isReportingOnBehalfSelf(context.application.answers) &&
+                    isRepresentativeOfCompanyOrInstitute(
+                      context.application.answers,
+                    )
+                  )),
+            },
+            {
+              target: States.IN_FINAL_REVIEW,
+            },
+          ],
+          [DefaultEvents.EDIT]: {
+            target: States.ADD_DOCUMENTS,
+          },
+          [DefaultEvents.SUBMIT]: {
+            target: States.OVERVIEW,
+          },
+        },
+      },
+      [States.NEEDS_DOCUMENT_AND_REVIEW]: {
+        meta: {
+          name: States.NEEDS_DOCUMENT_AND_REVIEW,
+          progress: 0.4,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/AssigneeInReview').then((val) =>
+                  Promise.resolve(val.AssigneeInReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        on: {
           [DefaultEvents.EDIT]: {
             target: States.ADD_DOCUMENTS,
           },
@@ -122,6 +216,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/AssigneeInReview').then((val) =>
+                  Promise.resolve(val.AssigneeInReview),
                 ),
               read: 'all',
             },
@@ -151,6 +253,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/AssigneeInReview').then((val) =>
+                  Promise.resolve(val.AssigneeInReview),
                 ),
               read: 'all',
             },
@@ -184,12 +294,53 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              // May need special documents form?
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/AddDocuments').then((val) =>
+                  Promise.resolve(val.AddDocuments),
+                ),
+              read: 'all',
+              write: 'all',
+            },
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.NEEDS_REVIEW,
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.NEEDS_DOCUMENT_AND_REVIEW,
+              cond: (context) =>
+                hasMissingDocuments(context.application.answers) &&
+                (!isHomeActivitiesAccident(context.application.answers) ||
+                  !(
+                    isReportingOnBehalfSelf(context.application.answers) &&
+                    isRepresentativeOfCompanyOrInstitute(
+                      context.application.answers,
+                    )
+                  )),
+            },
+            {
+              target: States.NEEDS_DOCUMENT,
+              cond: (context) =>
+                hasMissingDocuments(context.application.answers),
+            },
+            {
+              target: States.NEEDS_REVIEW,
+              cond: (context) =>
+                !hasMissingDocuments(context.application.answers) &&
+                (!isHomeActivitiesAccident(context.application.answers) ||
+                  !(
+                    isReportingOnBehalfSelf(context.application.answers) &&
+                    isRepresentativeOfCompanyOrInstitute(
+                      context.application.answers,
+                    )
+                  )),
+            },
+            {
+              target: States.IN_FINAL_REVIEW,
+            },
+          ],
         },
       },
       [States.THIRD_PARTY_COMMENT]: {
@@ -205,8 +356,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ThirdPartyComment').then((val) =>
-                  Promise.resolve(val.ThirdPartyComment),
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
                 ),
               read: 'all',
               write: 'all',
@@ -229,13 +380,27 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           COMMENT: {
             target: States.THIRD_PARTY_COMMENT,
           },
-          // TODO: Add rejected review state
-          [DefaultEvents.REJECT]: {
-            target: States.NEEDS_REVIEW,
-          },
-          [DefaultEvents.APPROVE]: {
-            target: States.IN_FINAL_REVIEW,
-          },
+          [DefaultEvents.REJECT]: [
+            {
+              target: States.NEEDS_DOCUMENT,
+              cond: (context) =>
+                hasMissingDocuments(context.application.answers),
+            },
+            {
+              // TODO: Add rejected review state, also what is suppose to happen?
+              target: States.IN_FINAL_REVIEW,
+            },
+          ],
+          [DefaultEvents.APPROVE]: [
+            {
+              target: States.NEEDS_DOCUMENT,
+              cond: (context) =>
+                hasMissingDocuments(context.application.answers),
+            },
+            {
+              target: States.IN_FINAL_REVIEW,
+            },
+          ],
         },
       },
       [States.OVERVIEW]: {
@@ -267,22 +432,69 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.NEEDS_REVIEW,
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              // TODO: Need to check if assignee has already reviewed.
+              target: States.NEEDS_DOCUMENT_AND_REVIEW,
+              cond: (context) =>
+                hasMissingDocuments(context.application.answers) &&
+                (!isHomeActivitiesAccident(context.application.answers) ||
+                  !(
+                    isReportingOnBehalfSelf(context.application.answers) &&
+                    isRepresentativeOfCompanyOrInstitute(
+                      context.application.answers,
+                    )
+                  )),
+            },
+            {
+              target: States.NEEDS_DOCUMENT,
+              cond: (context) =>
+                hasMissingDocuments(context.application.answers),
+            },
+            {
+              // TODO: Need to check if assignee has already reviewed.
+              target: States.NEEDS_REVIEW,
+              cond: (context) =>
+                !hasMissingDocuments(context.application.answers) &&
+                (!isHomeActivitiesAccident(context.application.answers) ||
+                  !(
+                    isReportingOnBehalfSelf(context.application.answers) &&
+                    isRepresentativeOfCompanyOrInstitute(
+                      context.application.answers,
+                    )
+                  )),
+            },
+            {
+              target: States.IN_FINAL_REVIEW,
+            },
+          ],
           [DefaultEvents.EDIT]: {
             target: States.ADD_DOCUMENTS,
           },
           COMMENT: {
             target: States.THIRD_PARTY_COMMENT,
           },
-          // TODO: Add rejected review state
-          [DefaultEvents.REJECT]: {
-            target: States.NEEDS_REVIEW,
-          },
-          [DefaultEvents.APPROVE]: {
-            target: States.IN_FINAL_REVIEW,
-          },
+          [DefaultEvents.REJECT]: [
+            {
+              target: States.NEEDS_DOCUMENT,
+              cond: (context) =>
+                hasMissingDocuments(context.application.answers),
+            },
+            {
+              // TODO: Add rejected review state, also what is suppose to happen?
+              target: States.IN_FINAL_REVIEW,
+            },
+          ],
+          [DefaultEvents.APPROVE]: [
+            {
+              target: States.NEEDS_DOCUMENT,
+              cond: (context) =>
+                hasMissingDocuments(context.application.answers),
+            },
+            {
+              target: States.IN_FINAL_REVIEW,
+            },
+          ],
         },
       },
       [States.IN_FINAL_REVIEW]: {
@@ -297,6 +509,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),

@@ -1,5 +1,9 @@
 import { useMutation } from '@apollo/client'
-import { DefaultEvents, FieldBaseProps } from '@island.is/application/core'
+import {
+  DefaultEvents,
+  FieldBaseProps,
+  FormValue,
+} from '@island.is/application/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -8,7 +12,13 @@ import { States } from '../../constants'
 import { AccidentNotification } from '../../lib/dataSchema'
 import { inReview } from '../../lib/messages'
 import { ReviewSectionState } from '../../types'
-import { returnMissingDocumentsList } from '../../utils'
+import {
+  hasMissingDocuments,
+  isHomeActivitiesAccident,
+  isReportingOnBehalfOfInjured,
+  isRepresentativeOfCompanyOrInstitute,
+  returnMissingDocumentsList,
+} from '../../utils'
 import ReviewSection from './ReviewSection'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
@@ -43,8 +53,24 @@ const statesMap: StatesMap = {
   },
 }
 
-export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
+type InReviewStepsProps = {
+  field: {
+    props: {
+      isAssignee?: boolean
+    }
+  }
+}
+
+export const InReviewSteps: FC<FieldBaseProps & InReviewStepsProps> = ({
+  application,
+  refetch,
+  field,
+}) => {
   const { formatMessage } = useLocale()
+
+  console.log(application)
+  const isAssignee = field.props.isAssignee || false
+  console.log(isAssignee)
 
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
@@ -52,6 +78,17 @@ export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
       onError: (e) => console.error(e.message),
     },
   )
+
+  const showMissingDocumentsMessage = (answers: FormValue) => {
+    if (
+      hasMissingDocuments(answers) &&
+      ((isReportingOnBehalfOfInjured(answers) && isAssignee) ||
+        (!isReportingOnBehalfOfInjured(answers) && !isAssignee))
+    ) {
+      return true
+    }
+    return false
+  }
 
   const answers = application.answers as AccidentNotification
 
@@ -66,9 +103,7 @@ export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
       state: statesMap['documents'][application.state],
       title: formatMessage(inReview.documents.title),
       description: formatMessage(inReview.documents.summary),
-      hasActionMessage:
-        application.state === States.NEEDS_DOCUMENT_AND_REVIEW ||
-        application.state === States.NEEDS_DOCUMENT,
+      hasActionMessage: showMissingDocumentsMessage(application.answers),
       action: {
         title: formatMessage(inReview.action.documents.title),
         description: formatMessage(inReview.action.documents.description),
@@ -80,6 +115,7 @@ export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
         showAlways: true,
       },
     },
+    // If this was a home activity accident than we don't want the user to see this step
     {
       state: statesMap['representative'][application.state],
       title: formatMessage(inReview.representative.title),
@@ -94,6 +130,9 @@ export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
           inReview.action.representative.actionButtonTitle,
         ),
       },
+      visible:
+        !isHomeActivitiesAccident(application.answers) ||
+        !isRepresentativeOfCompanyOrInstitute(application.answers),
     },
     {
       state: statesMap['sjukratrygging'][application.state],

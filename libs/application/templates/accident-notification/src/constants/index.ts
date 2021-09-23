@@ -17,6 +17,8 @@ export enum States {
   NEEDS_DOCUMENT_AND_REVIEW = 'needsDocumentAndReview',
   IN_FINAL_REVIEW = 'inFinalReview',
 
+  WAITING_TO_ASSIGN = 'waitingToAssign',
+
   ADD_DOCUMENTS = 'addDocuments',
   OVERVIEW = 'overview',
   THIRD_PARTY_COMMENT = 'thirdPartyComment',
