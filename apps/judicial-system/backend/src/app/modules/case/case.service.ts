@@ -372,15 +372,15 @@ export class CaseService {
       `Requesting signature of ruling for case ${existingCase.id}`,
     )
 
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    const pdf = await getRulingPdfAsString(existingCase, intl.formatMessage)
-
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
+      const intl = await this.intlService.useIntl(
+        ['judicial.system.backend'],
+        'is',
+      )
+
+      const pdf = await getRulingPdfAsString(existingCase, intl.formatMessage)
+
       return this.signingService.requestSignature(
         existingCase.judge?.mobileNumber ?? '',
         'Undirrita skjal - Öryggistala',
