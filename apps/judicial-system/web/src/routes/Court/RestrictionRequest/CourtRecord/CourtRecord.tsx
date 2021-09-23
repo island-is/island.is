@@ -222,6 +222,7 @@ export const CourtRecord: React.FC = () => {
                   }
                   errorMessage={courtLocationErrorMessage}
                   hasError={courtLocationErrorMessage !== ''}
+                  autoComplete="off"
                   required
                 />
               </Box>

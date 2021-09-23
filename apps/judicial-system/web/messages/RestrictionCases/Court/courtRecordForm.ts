@@ -41,7 +41,7 @@ export const rcCourtRecord = {
         id:
           'judicial.system.restriction_cases:court_record.court_location.placeholder',
         defaultMessage:
-          'Sláðu inn staðsetningu þinghalds, t.d. "í Héraðsdómi Reykjavíkur"',
+          'Staðsetning þinghalds, t.d. "í Héraðsdómi Reykjavíkur"',
         description:
           'Notaður sem skýritexti í "Hvar var dómþing haldið?" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },

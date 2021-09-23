@@ -103,6 +103,7 @@ const courtFields = [
   'courtCaseNumber',
   'sessionArrangements',
   'courtDate',
+  'courtLocation',
   'courtRoom',
   'courtStartDate',
   'courtEndTime',

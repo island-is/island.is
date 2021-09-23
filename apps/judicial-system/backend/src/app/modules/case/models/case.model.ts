@@ -460,6 +460,16 @@ export class Case extends Model<Case> {
   courtDate?: Date
 
   /**********
+   * The location of the court session
+   **********/
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtLocation?: string
+
+  /**********
    * The assigned court room for the court session
    **********/
   @Column({

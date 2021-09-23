@@ -138,6 +138,9 @@ export class Case implements TCase {
   readonly courtDate?: string
 
   @Field({ nullable: true })
+  readonly courtLocation?: string
+
+  @Field({ nullable: true })
   readonly courtRoom?: string
 
   @Field({ nullable: true })

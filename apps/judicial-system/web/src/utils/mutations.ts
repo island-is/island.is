@@ -91,6 +91,7 @@ export const ExtendCaseMutation = gql`
       courtCaseNumber
       sessionArrangements
       courtDate
+      courtLocation
       courtRoom
       courtStartDate
       courtEndTime

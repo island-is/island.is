@@ -58,6 +58,7 @@ export const CaseQuery = gql`
       courtCaseNumber
       sessionArrangements
       courtDate
+      courtLocation
       courtRoom
       courtStartDate
       courtEndTime
