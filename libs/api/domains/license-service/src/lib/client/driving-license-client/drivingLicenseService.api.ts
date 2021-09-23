@@ -387,31 +387,31 @@ export class GenericDrivingLicenseApi
       | undefined = undefined
 
     if (data) {
-      const trimmedNationalId = nationalId.replace('-', '')
-      const licenses = await this.requestFromXroadApi(trimmedNationalId)
+      // const trimmedNationalId = nationalId.replace('-', '')
+      // const licenses = await this.requestFromXroadApi(trimmedNationalId)
 
-      if (!licenses) {
-        this.logger.warn(
-          'Missing licenses from x-road, unable to return license info for pkpass verify',
-          { category: LOG_CATEGORY },
-        )
-        error = {
-          status: '0',
-          message: 'missing licenses',
-        }
-      }
+      // if (!licenses) {
+      //   this.logger.warn(
+      //     'Missing licenses from x-road, unable to return license info for pkpass verify',
+      //     { category: LOG_CATEGORY },
+      //   )
+      //   error = {
+      //     status: '0',
+      //     message: 'missing licenses',
+      //   }
+      // }
 
-      const licenseNationalId = licenses?.[0]?.kennitala ?? null
-      const name = licenses?.[0]?.nafn ?? null
-      const photo = licenses?.[0]?.mynd ?? null
+      // const licenseNationalId = licenses?.[0]?.kennitala ?? null
+      // const name = licenses?.[0]?.nafn ?? null
+      // const photo = licenses?.[0]?.mynd ?? null
 
-      const rawData = licenses?.[0] ? JSON.stringify(licenses?.[0]) : undefined
+      // const rawData = licenses?.[0] ? JSON.stringify(licenses?.[0]) : undefined
 
       response = {
         nationalId: data,
-        name,
-        photo,
-        rawData,
+        name: 'Dave',
+        photo: 'my photo',
+        rawData: 'raw data',
       }
     }
 
