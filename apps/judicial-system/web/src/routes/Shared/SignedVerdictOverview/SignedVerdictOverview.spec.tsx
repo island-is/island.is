@@ -140,6 +140,130 @@ describe('Signed Verdict Overview route', () => {
     })
   })
 
+  describe('Dismissed case', () => {
+    test('should have the correct title', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_12' },
+      }))
+
+      render(
+        <MockedProvider
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
+          addTypename={false}
+        >
+          <UserProvider>
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
+          </UserProvider>
+        </MockedProvider>,
+      )
+
+      expect(
+        await screen.findByText('Kröfu vísað frá', { selector: 'h1' }),
+      ).toBeInTheDocument()
+    })
+
+    test('should have the correct subtitle', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_12' },
+      }))
+
+      render(
+        <MockedProvider
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
+          addTypename={false}
+        >
+          <UserProvider>
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
+          </UserProvider>
+        </MockedProvider>,
+      )
+
+      expect(
+        await screen.findByText('Úrskurðað 16. september 2020 kl. 19:51'),
+      ).toBeInTheDocument()
+    })
+
+    test('should not show restrictions tag event though there are restrictions', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_12' },
+      }))
+
+      render(
+        <MockedProvider
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
+          addTypename={false}
+        >
+          <UserProvider>
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
+          </UserProvider>
+        </MockedProvider>,
+      )
+
+      expect(
+        await waitFor(() =>
+          screen.queryByText('Heimsóknarbann', { selector: 'span' }),
+        ),
+      ).not.toBeInTheDocument()
+    })
+
+    test('should not show a button for extension', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_12' },
+      }))
+
+      render(
+        <MockedProvider
+          mocks={[
+            ...mockCaseQueries,
+            ...mockProsecutorQuery,
+            ...mockInstitutionsQuery,
+          ]}
+          addTypename={false}
+        >
+          <UserProvider authenticated={true}>
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
+          </UserProvider>
+        </MockedProvider>,
+      )
+
+      expect(
+        await waitFor(() =>
+          screen.queryByRole('button', { name: 'Framlengja gæslu' }),
+        ),
+      ).not.toBeInTheDocument()
+
+      expect(
+        await screen.findByText(
+          'Ekki hægt að framlengja gæsluvarðhald sem var vísað frá.',
+        ),
+      ).toBeInTheDocument()
+    })
+  })
+
   describe('Accepted case with active custody', () => {
     test('should have the correct title', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')

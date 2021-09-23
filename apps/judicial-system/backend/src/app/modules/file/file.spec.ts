@@ -198,6 +198,7 @@ describe('FileController', () => {
       state
       ${CaseState.ACCEPTED}
       ${CaseState.REJECTED}
+      ${CaseState.DISMISSED}
     `.describe('given a completed $state case', ({ state }) => {
       const caseId = uuid()
 
@@ -395,6 +396,7 @@ describe('FileController', () => {
       state
       ${CaseState.ACCEPTED}
       ${CaseState.REJECTED}
+      ${CaseState.DISMISSED}
     `.describe('given a completed $state case', ({ state }) => {
       const caseId = uuid()
 
@@ -438,18 +440,21 @@ describe('FileController', () => {
     // this test.
 
     each`
-      state | role | userIsAssignedJudge
-      ${CaseState.NEW} | ${UserRole.PROSECUTOR} | ${false}
-      ${CaseState.DRAFT} | ${UserRole.PROSECUTOR} | ${false}
+      state                  | role                   | userIsAssignedJudge
+      ${CaseState.NEW}       | ${UserRole.PROSECUTOR} | ${false}
+      ${CaseState.DRAFT}     | ${UserRole.PROSECUTOR} | ${false}
       ${CaseState.SUBMITTED} | ${UserRole.PROSECUTOR} | ${false}
-      ${CaseState.RECEIVED} | ${UserRole.PROSECUTOR} | ${false}
-      ${CaseState.RECEIVED} | ${UserRole.JUDGE} | ${true}
-      ${CaseState.ACCEPTED} | ${UserRole.PROSECUTOR} | ${false}
-      ${CaseState.ACCEPTED} | ${UserRole.REGISTRAR} | ${false}
-      ${CaseState.ACCEPTED} | ${UserRole.JUDGE} | ${false}
-      ${CaseState.REJECTED} | ${UserRole.PROSECUTOR} | ${false}
-      ${CaseState.REJECTED} | ${UserRole.REGISTRAR} | ${false}
-      ${CaseState.REJECTED} | ${UserRole.JUDGE} | ${false}
+      ${CaseState.RECEIVED}  | ${UserRole.PROSECUTOR} | ${false}
+      ${CaseState.RECEIVED}  | ${UserRole.JUDGE}      | ${true}
+      ${CaseState.ACCEPTED}  | ${UserRole.PROSECUTOR} | ${false}
+      ${CaseState.ACCEPTED}  | ${UserRole.REGISTRAR}  | ${false}
+      ${CaseState.ACCEPTED}  | ${UserRole.JUDGE}      | ${false}
+      ${CaseState.REJECTED}  | ${UserRole.PROSECUTOR} | ${false}
+      ${CaseState.REJECTED}  | ${UserRole.REGISTRAR}  | ${false}
+      ${CaseState.REJECTED}  | ${UserRole.JUDGE}      | ${false}
+      ${CaseState.DISMISSED} | ${UserRole.PROSECUTOR} | ${false}
+      ${CaseState.DISMISSED} | ${UserRole.REGISTRAR}  | ${false}
+      ${CaseState.DISMISSED} | ${UserRole.JUDGE}      | ${false}
     `.describe(
       'given a $state case and a permitted $role user',
       ({ state, role, userIsAssignedJudge }) => {
@@ -557,15 +562,15 @@ describe('FileController', () => {
     )
 
     each`
-      state | role
-      ${CaseState.NEW} | ${UserRole.REGISTRAR}
-      ${CaseState.NEW} | ${UserRole.JUDGE}
-      ${CaseState.DRAFT} | ${UserRole.REGISTRAR}
-      ${CaseState.DRAFT} | ${UserRole.JUDGE}
+      state                  | role
+      ${CaseState.NEW}       | ${UserRole.REGISTRAR}
+      ${CaseState.NEW}       | ${UserRole.JUDGE}
+      ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}
+      ${CaseState.DRAFT}     | ${UserRole.JUDGE}
       ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}
       ${CaseState.SUBMITTED} | ${UserRole.JUDGE}
-      ${CaseState.RECEIVED} | ${UserRole.REGISTRAR}
-      ${CaseState.RECEIVED} | ${UserRole.JUDGE}
+      ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}
+      ${CaseState.RECEIVED}  | ${UserRole.JUDGE}
     `.describe(
       'given a $state case and a blocked $role user',
       ({ state, role }) => {
@@ -614,11 +619,13 @@ describe('FileController', () => {
     // this test.
 
     each`
-      state | role
-      ${CaseState.ACCEPTED} | ${UserRole.REGISTRAR}
-      ${CaseState.ACCEPTED} | ${UserRole.JUDGE}
-      ${CaseState.REJECTED} | ${UserRole.REGISTRAR}
-      ${CaseState.REJECTED} | ${UserRole.JUDGE}
+      state                  | role
+      ${CaseState.ACCEPTED}  | ${UserRole.REGISTRAR}
+      ${CaseState.ACCEPTED}  | ${UserRole.JUDGE}
+      ${CaseState.REJECTED}  | ${UserRole.REGISTRAR}
+      ${CaseState.REJECTED}  | ${UserRole.JUDGE}
+      ${CaseState.DISMISSED} | ${UserRole.REGISTRAR}
+      ${CaseState.DISMISSED} | ${UserRole.JUDGE}
     `.describe(
       'given a $state case and a permitted $role user',
       ({ state, role }) => {
@@ -793,15 +800,15 @@ describe('FileController', () => {
     )
 
     each`
-      state | role
-      ${CaseState.NEW} | ${UserRole.REGISTRAR}
-      ${CaseState.NEW} | ${UserRole.JUDGE}
-      ${CaseState.DRAFT} | ${UserRole.REGISTRAR}
-      ${CaseState.DRAFT} | ${UserRole.JUDGE}
+      state                  | role
+      ${CaseState.NEW}       | ${UserRole.REGISTRAR}
+      ${CaseState.NEW}       | ${UserRole.JUDGE}
+      ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}
+      ${CaseState.DRAFT}     | ${UserRole.JUDGE}
       ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}
       ${CaseState.SUBMITTED} | ${UserRole.JUDGE}
-      ${CaseState.RECEIVED} | ${UserRole.REGISTRAR}
-      ${CaseState.RECEIVED} | ${UserRole.JUDGE}
+      ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}
+      ${CaseState.RECEIVED}  | ${UserRole.JUDGE}
     `.describe(
       'given a $state case and a blocked $role user',
       ({ state, role }) => {
