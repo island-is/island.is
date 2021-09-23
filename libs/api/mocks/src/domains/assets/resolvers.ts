@@ -9,7 +9,6 @@ export const resolvers: Resolvers = {
   },
 
   Query: {
-    getRealEstates: () => store.getFasteignir,
     getThinglystirEigendur: (_, { input }) => {
       const cursor = input.cursor ? parseInt(input.cursor, 10) : 0
       return cursor && cursor > 0
@@ -27,6 +26,12 @@ export const resolvers: Resolvers = {
         (item) => item.fasteignanumer === input.assetId,
       )
       return match || null
+    },
+    getRealEstates: (_, { input }) => {
+      const cursor = input.cursor ? parseInt(input.cursor, 10) : 0
+      return cursor && cursor > 0
+        ? store.getFasteignir(false)
+        : store.getFasteignir()
     },
   },
 }

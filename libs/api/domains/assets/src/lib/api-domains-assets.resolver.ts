@@ -12,6 +12,7 @@ import { Audit } from '@island.is/nest/audit'
 import {
   GetRealEstateInput,
   GetPagingTypes,
+  GetMultiPropertyInput,
 } from '../dto/getRealEstateInput.input'
 import { PropertyOwnersModel } from '../models/propertyOwners.model'
 import { UnitsOfUseModel } from '../models/propertyUnitsOfUse.model'
@@ -24,8 +25,15 @@ export class AssetsXRoadResolver {
 
   @Query(() => graphqlTypeJson)
   @Audit()
-  async getRealEstates(@CurrentUser() user: User) {
-    return this.assetsXRoadService.getRealEstates(user)
+  async getRealEstates(
+    @Args('input') input: GetMultiPropertyInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.assetsXRoadService.getRealEstates(
+      user,
+      input.cursor,
+      input.limit,
+    )
   }
 
   @Query(() => graphqlTypeJson)

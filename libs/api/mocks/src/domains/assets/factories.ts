@@ -17,7 +17,7 @@ const streetArray = [
   'Eldfjallagata',
 ]
 
-const pagingData = ({
+export const pagingData = ({
   page = 1,
   pageSize = 10,
   total = 10,
@@ -84,7 +84,6 @@ export const notkunareining = factory<types.Notkunareining>({
   notkunBirting: () => faker.helpers.replaceSymbolWithNumber('Notkun ?', '?'),
   starfsemi: () => faker.helpers.replaceSymbolWithNumber('Starfsemi ?', '?'),
   lysing: () => faker.helpers.replaceSymbolWithNumber('Lýsing ?', '?'),
-  // byggingarAr: 2008,
   byggingararBirting: '2008',
   birtStaerd: () => faker.random.number({ min: 100, max: 300 }),
   fasteignamat: () => fasteignamat(),

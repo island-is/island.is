@@ -13,10 +13,11 @@ import AssetListCards from '../../components/AssetListCards'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
 import { FasteignirResponse } from '../../types/RealEstateAssets.types'
 import { AssetCardLoader } from '../../components/AssetCardLoader'
+import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
 const GetRealEstateQuery = gql`
-  query GetRealEstateQuery {
-    getRealEstates
+  query GetRealEstateQuery($input: GetMultiPropertyInput!) {
+    getRealEstates(input: $input)
   }
 `
 
@@ -24,8 +25,37 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
   const { formatMessage } = useLocale()
 
-  const { loading, error, data } = useQuery<Query>(GetRealEstateQuery)
+  const { loading, error, data, fetchMore } = useQuery<Query>(
+    GetRealEstateQuery,
+    {
+      variables: { input: { cursor: '0' } },
+    },
+  )
   const assetData: FasteignirResponse = data?.getRealEstates || {}
+
+  const paginate = () => {
+    const fasteignirArray = assetData?.fasteignir || []
+    if (fetchMore) {
+      fetchMore({
+        variables: {
+          input: {
+            cursor: Math.ceil(
+              fasteignirArray.length / DEFAULT_PAGING_ITEMS,
+            ).toString(),
+          },
+        },
+        updateQuery: (prevResult, { fetchMoreResult }) => {
+          if (fetchMoreResult) {
+            fetchMoreResult.getRealEstates.fasteignir = [
+              ...prevResult.getRealEstates.fasteignir,
+              ...fetchMoreResult.getRealEstates.fasteignir,
+            ]
+          }
+          return fetchMoreResult || prevResult
+        },
+      })
+    }
+  }
 
   return (
     <>
@@ -44,7 +74,9 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         />
       </Box>
       {loading && <AssetCardLoader />}
-      {data && <AssetListCards assets={assetData.fasteignir} />}
+      {data && (
+        <AssetListCards paginateCallback={paginate} assets={assetData} />
+      )}
       {error && (
         <Box>
           <AlertBanner

@@ -19,14 +19,14 @@ import {
   ThinglysturEigandi,
 } from '../../types/RealEstateAssets.types'
 import amountFormat from '../../utils/amountFormat'
-import { ownersArray, unitsArray } from '../../utils/createUnits'
+import { ownersArray } from '../../utils/createUnits'
 import { messages } from '../../lib/messages'
 import {
   GET_SINGLE_PROPERTY_QUERY,
   GET_PROPERTY_OWNERS_QUERY,
-  GET_UNITS_OF_USE_QUERY,
 } from '../../lib/queries'
 import DetailHeader from '../../components/DetailHeader'
+import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
@@ -61,7 +61,9 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
       variables: {
         input: {
           assetId: assetData?.fasteignanumer,
-          cursor: Math.ceil(eigendurPaginationData.length / 10).toString(),
+          cursor: Math.ceil(
+            eigendurPaginationData.length / DEFAULT_PAGING_ITEMS,
+          ).toString(),
         },
       },
     }

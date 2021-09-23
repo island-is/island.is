@@ -33,10 +33,18 @@ export class AssetsXRoadService {
     return this.FasteignirApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getRealEstates(auth: User): Promise<any> {
+  async getRealEstates(
+    auth: User,
+    cursor?: string | null,
+    limit?: number | null,
+  ): Promise<any | null> {
     const fasteignirResponse = await this.getRealEstatesWithAuth(
       auth,
-    ).fasteignirGetFasteignir({ kennitala: auth.nationalId })
+    ).fasteignirGetFasteignir({
+      kennitala: auth.nationalId,
+      cursor: cursor,
+      limit: limit,
+    })
 
     if (fasteignirResponse) {
       return fasteignirResponse

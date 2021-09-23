@@ -1,18 +1,26 @@
 import React, { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { Box, ActionCard } from '@island.is/island-ui/core'
-import { Fasteign } from '../../types/RealEstateAssets.types'
+import { Box, ActionCard, Button } from '@island.is/island-ui/core'
+import { FasteignirResponse } from '../../types/RealEstateAssets.types'
 
 interface Props {
-  assets?: Fasteign[]
+  assets?: FasteignirResponse
+  paginate?: boolean
+  paginateCallback?: () => void
 }
 
-const AssetListCards: FC<Props> = ({ assets }) => {
+const AssetListCards: FC<Props> = ({ assets, paginateCallback }) => {
   const history = useHistory()
+  const getMoreItems = () => {
+    if (paginateCallback) {
+      paginateCallback()
+    }
+  }
+
   return (
     <Box>
-      {assets?.map((asset, i) => (
+      {assets?.fasteignir?.map((asset, i) => (
         <Box key={asset.fasteignanumer} marginTop={i > 0 ? 4 : undefined}>
           <ActionCard
             heading={asset.sjalfgefidStadfang.birting}
@@ -33,6 +41,18 @@ const AssetListCards: FC<Props> = ({ assets }) => {
           />
         </Box>
       ))}
+      {assets?.paging?.hasNextPage && (
+        <Box
+          marginTop={3}
+          alignItems="center"
+          justifyContent="center"
+          display="flex"
+        >
+          <Button size="small" variant="text" onClick={getMoreItems}>
+            Sækja meira
+          </Button>
+        </Box>
+      )}
     </Box>
   )
 }

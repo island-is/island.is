@@ -12,6 +12,7 @@ import {
 import { unitsArray } from '../../utils/createUnits'
 import { GET_UNITS_OF_USE_QUERY } from '../../lib/queries'
 import { NotkunareiningarResponse } from '../../types/RealEstateAssets.types'
+import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
 interface GridItem {
   title: string
@@ -39,7 +40,9 @@ const AssetGrid: FC<Props> = ({ title, units }) => {
       variables: {
         input: {
           assetId: '82936',
-          cursor: Math.ceil(paginateData.length / 10).toString(),
+          cursor: Math.ceil(
+            paginateData.length / DEFAULT_PAGING_ITEMS,
+          ).toString(),
         },
       },
     }
