@@ -428,9 +428,6 @@ const Category: Screen<CategoryProps> = ({
                   labelVariant="h3"
                   startExpanded={expanded}
                   visibleContent={description}
-                  onClick={() => {
-                    handleAccordionClick(groupSlug)
-                  }}
                 >
                   <Box paddingTop={2}>
                     {sortedSubgroupKeys.map((subgroup, index) => {
