@@ -6,6 +6,7 @@ import * as Sentry from '@sentry/react'
 import {
   FieldBaseProps,
   FieldComponents,
+  CustomField,
   FieldTypes,
   getValueViaPath,
   MaybeWithApplicationAndField,
@@ -22,6 +23,8 @@ import { useGetOrRequestLength } from '../../hooks/useGetOrRequestLength'
 import { daysToMonths } from '../../lib/directorateOfLabour.utils'
 import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
+import { Box } from '@island.is/island-ui/core'
+import { FieldDescription } from '@island.is/shared/form-fields'
 
 type FieldPeriodEndDateProps = {
   field: {
@@ -32,12 +35,9 @@ type FieldPeriodEndDateProps = {
   }
 }
 
-export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
-  field,
-  application,
-  errors,
-  setFieldLoadingState,
-}) => {
+export const PeriodEndDate: FC<
+  FieldBaseProps & CustomField & FieldPeriodEndDateProps
+> = ({ field, application, errors, setFieldLoadingState, description }) => {
   const { formatMessage } = useLocale()
   const { id, title, props } = field
   const rights = getAvailableRightsInDays(application)
@@ -52,7 +52,7 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
     `periods[${currentIndex}].startDate`,
     expectedDateOfBirth,
   ) as string
-  const [percent, setPercent] = useState<number | undefined>(undefined)
+  const [percent, setPercent] = useState<number>(100)
   const [duration, setDuration] = useState<number>(0)
   const [days, setDays] = useState<number>(0)
   const error =
@@ -111,6 +111,13 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
 
   return (
     <>
+      <Box>
+        <FieldDescription
+          description={formatMessage(
+            parentalLeaveFormMessages.endDate.description,
+          )}
+        />
+      </Box>
       <DateFormField
         application={application}
         error={error}
@@ -123,13 +130,14 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
           excludeDates: props.excludeDates,
           children: undefined,
           placeholder: parentalLeaveFormMessages.endDate.placeholder,
-          onChange: (date) => handleChange(date),
+          onChange: handleChange,
           backgroundColor: 'blue',
           defaultValue: null,
         }}
       />
 
       <input
+        readOnly
         ref={register}
         type="hidden"
         value={duration}
@@ -137,6 +145,7 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
       />
 
       <input
+        readOnly
         ref={register}
         type="hidden"
         value={days}
@@ -144,6 +153,7 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
       />
 
       <input
+        readOnly
         ref={register}
         type="hidden"
         value={percent}

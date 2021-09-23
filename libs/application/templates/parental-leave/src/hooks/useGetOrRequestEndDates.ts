@@ -7,13 +7,19 @@ import { useLazyParentalLeavePeriodLength } from './useLazyParentalLeavePeriodLe
 import { useDaysAlreadyUsed } from './useDaysAlreadyUsed'
 import { calculateDaysToPercentage } from '../lib/parentalLeaveUtils'
 
+const loadedEndDates = new Map<
+  string,
+  {
+    date: number
+    percentage: number
+    days: number
+  }
+>()
+
 export const useGetOrRequestEndDates = (application: Application) => {
   const lazyGetEndDate = useLazyParentalLeavePeriodEndDate()
   const lazyGetLength = useLazyParentalLeavePeriodLength()
   const [loading, setLoading] = useState(false)
-  const [loadedEndDates, setLoadedEndDates] = useState<
-    Map<string, { date: number; percentage: number; days: number }>
-  >(new Map())
   const daysAlreadyUsed = useDaysAlreadyUsed(application)
 
   /**
@@ -28,7 +34,7 @@ export const useGetOrRequestEndDates = (application: Application) => {
       if (loadedEndDates.has(id)) {
         setLoading(false)
 
-        return loadedEndDates.get(id)!
+        return loadedEndDates.get(id)
       }
 
       const temporaryPercentage = '100'
@@ -100,13 +106,11 @@ export const useGetOrRequestEndDates = (application: Application) => {
         )
       }
 
-      setLoadedEndDates(
-        loadedEndDates.set(id, {
-          date: lazyEndDate,
-          percentage: computedPercentage,
-          days: startToEndDatesLength,
-        }),
-      )
+      loadedEndDates.set(id, {
+        date: lazyEndDate,
+        percentage: computedPercentage,
+        days: startToEndDatesLength,
+      })
       setLoading(false)
 
       return {
@@ -115,7 +119,7 @@ export const useGetOrRequestEndDates = (application: Application) => {
         days: startToEndDatesLength,
       }
     },
-    [],
+    [application, daysAlreadyUsed, lazyGetEndDate, lazyGetLength],
   )
 
   return {

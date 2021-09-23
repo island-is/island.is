@@ -38,6 +38,12 @@ export const findCurrentScreen = (
   let currentAnswerIndex = 0
 
   screens.forEach((screen, index) => {
+    if (screen.isPartOfRepeater) {
+      // TODO: while we cannot edit individual repeater screens we should always
+      // fall back to the main repeater when rehydrating the application
+      return
+    }
+
     if (screen.type === FormItemTypes.MULTI_FIELD) {
       let numberOfAnsweredQuestionsInScreen = 0
 
@@ -344,12 +350,14 @@ function convertFormNodeToScreens(
             : findSubSectionIndex(subSections, child as SubSection)
       }
 
+      const shouldBeVisible = shouldShowFormItem(child, answers, externalData)
+
       newScreens = convertFormNodeToScreens(
         child,
         answers,
         externalData,
         form,
-        isParentNavigable && shouldShowFormItem(child, answers, externalData),
+        isParentNavigable && shouldBeVisible,
         sectionIndex,
         subSectionIndex,
       )

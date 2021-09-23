@@ -38,13 +38,6 @@ type FieldProps = FieldBaseProps & {
 }
 type ScreenProps = RepeaterProps & FieldProps
 
-const filterPeriods = (periods: any[]) => {
-  if (!periods) {
-    return []
-  }
-  return periods
-}
-
 const PeriodsRepeater: FC<ScreenProps> = ({
   removeRepeaterItem,
   application,

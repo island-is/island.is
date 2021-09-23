@@ -344,7 +344,6 @@ export const getPeriodPercentage = (
 ) => {
   const { rawPeriods } = getApplicationAnswers(answers)
 
-
   return rawPeriods?.[rawPeriods.length - 1]?.percentage ?? '100'
 }
 

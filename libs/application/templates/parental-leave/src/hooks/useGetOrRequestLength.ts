@@ -6,12 +6,11 @@ import { calculateDaysToPercentage } from '../lib/parentalLeaveUtils'
 import { useLazyParentalLeavePeriodLength } from './useLazyParentalLeavePeriodLength'
 import { useDaysAlreadyUsed } from './useDaysAlreadyUsed'
 
+const loadedLengths = new Map<string, { length: number; percentage: number }>()
+
 export const useGetOrRequestLength = (application: Application) => {
   const lazyGetLength = useLazyParentalLeavePeriodLength()
   const [loading, setLoading] = useState(false)
-  const [loadedLengths, setLoadedLengths] = useState<
-    Map<string, { length: number; percentage: number }>
-  >(new Map())
   const daysAlreadyUsed = useDaysAlreadyUsed(application)
 
   /**
@@ -74,12 +73,10 @@ export const useGetOrRequestLength = (application: Application) => {
         )
       }
 
-      setLoadedLengths(
-        loadedLengths.set(id, {
-          length: lazyLength,
-          percentage: computedPercentage,
-        }),
-      )
+      loadedLengths.set(id, {
+        length: lazyLength,
+        percentage: computedPercentage,
+      })
 
       setLoading(false)
 
@@ -88,7 +85,7 @@ export const useGetOrRequestLength = (application: Application) => {
         percentage: computedPercentage,
       }
     },
-    [],
+    [application, daysAlreadyUsed, lazyGetLength],
   )
 
   return {

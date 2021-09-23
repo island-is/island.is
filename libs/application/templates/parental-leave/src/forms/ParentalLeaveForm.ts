@@ -682,100 +682,6 @@ export const ParentalLeaveForm: Form = buildForm({
           title: parentalLeaveFormMessages.shared.periodsImageTitle,
           component: 'PeriodsSectionImage',
         }),
-        // buildSubSection({
-        //   id: 'firstPeriod',
-        //   title: parentalLeaveFormMessages.shared.firstPeriodName,
-        //   children: [
-        //     buildCustomField({
-        //       id: 'firstPeriodStart',
-        //       title: parentalLeaveFormMessages.firstPeriodStart.title,
-        //       component: 'FirstPeriodStart',
-        //     }),
-        //     buildMultiField({
-        //       id: 'startDate',
-        //       condition: (formValue) =>
-        //         formValue.firstPeriodStart === StartDateOptions.SPECIFIC_DATE,
-        //       title: parentalLeaveFormMessages.startDate.title,
-        //       description: parentalLeaveFormMessages.startDate.description,
-        //       children: [
-        //         buildDateField({
-        //           id: 'periods[0].startDate',
-        //           title: parentalLeaveFormMessages.startDate.label,
-        //           placeholder: parentalLeaveFormMessages.startDate.placeholder,
-        //         }),
-        //       ],
-        //     }),
-        //     buildRadioField({
-        //       id: 'confirmLeaveDuration',
-        //       title: parentalLeaveFormMessages.duration.title,
-        //       description: parentalLeaveFormMessages.duration.description,
-        //       options: [
-        //         {
-        //           label: parentalLeaveFormMessages.duration.monthsOption,
-        //           value: 'duration',
-        //         },
-        //         {
-        //           label: parentalLeaveFormMessages.duration.specificDateOption,
-        //           value: 'specificDate',
-        //         },
-        //       ],
-        //     }),
-        //     buildMultiField({
-        //       id: 'endDate',
-        //       condition: (formValue) =>
-        //         formValue.confirmLeaveDuration === 'specificDate',
-        //       title: parentalLeaveFormMessages.endDate.title,
-        //       description: parentalLeaveFormMessages.endDate.description,
-        //       children: [
-        //         buildCustomField({
-        //           id: 'periods',
-        //           title: parentalLeaveFormMessages.endDate.label,
-        //           component: 'PeriodEndDate',
-        //         }),
-        //       ],
-        //     }),
-        //     buildCustomField({
-        //       id: 'periods[0].endDate',
-        //       condition: (formValue) =>
-        //         formValue.confirmLeaveDuration === 'duration',
-        //       title: parentalLeaveFormMessages.duration.title,
-        //       component: 'Duration',
-        //     }),
-        //     buildMultiField({
-        //       id: 'periods[0].ratio',
-        //       title: parentalLeaveFormMessages.ratio.title,
-        //       description: parentalLeaveFormMessages.ratio.description,
-        //       children: [
-        //         buildSelectField({
-        //           id: 'periods[0].ratio',
-        //           title: parentalLeaveFormMessages.ratio.label,
-        //           placeholder: parentalLeaveFormMessages.ratio.placeholder,
-        //           defaultValue: (
-        //             application: Application,
-        //             field: SelectField,
-        //           ) => getPeriodPercentage(application.answers, field),
-        //           options: (application: Application, field: Field) => {
-        //             const percentage = getPeriodPercentage(
-        //               application.answers,
-        //               field,
-        //             )
-        //             const existingOptions = percentOptions.filter(
-        //               (option) => Number(option.value) < Number(percentage),
-        //             )
-
-        //             return [
-        //               {
-        //                 label: `${percentage}%`,
-        //                 value: `${percentage}`,
-        //               },
-        //               ...existingOptions,
-        //             ]
-        //           },
-        //         }),
-        //       ],
-        //     }),
-        //   ],
-        // }),
         buildSubSection({
           id: 'addPeriods',
           title: parentalLeaveFormMessages.leavePlan.subSection,
@@ -795,41 +701,6 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                   component: 'FirstPeriodStart',
                 }),
-                // buildRadioField({
-                //   id: 'firstPeriodStart',
-                //   title: parentalLeaveFormMessages.firstPeriodStart.title,
-                //   description:
-                //     parentalLeaveFormMessages.firstPeriodStart.description,
-                //   largeButtons: true,
-                //   condition: (answers) => {
-                //     const { periods } = getApplicationAnswers(answers)
-
-                //     return periods.length === 0
-                //   },
-                //   options: () => [
-                //     {
-                //       label:
-                //         parentalLeaveFormMessages.firstPeriodStart
-                //           .estimatedDateOfBirthOption,
-                //       value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
-                //     },
-                //     {
-                //       label:
-                //         parentalLeaveFormMessages.firstPeriodStart
-                //           .dateOfBirthOption,
-                //       value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
-                //     },
-                //     {
-                //       label:
-                //         parentalLeaveFormMessages.firstPeriodStart
-                //           .specificDateOption,
-                //       tooltip:
-                //         parentalLeaveFormMessages.firstPeriodStart
-                //           .specificDateOptionTooltip,
-                //       value: StartDateOptions.SPECIFIC_DATE,
-                //     },
-                //   ],
-                // }),
                 buildDateField({
                   id: 'startDate',
                   title: parentalLeaveFormMessages.startDate.title,
@@ -866,15 +737,17 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'useLength',
-                  title: 'Endir tímabils',
-                  options: () => [
+                  title: parentalLeaveFormMessages.duration.title,
+                  description: parentalLeaveFormMessages.duration.description,
+                  options: [
                     {
+                      label: parentalLeaveFormMessages.duration.monthsOption,
                       value: YES,
-                      label: 'Nota lengd',
                     },
                     {
+                      label:
+                        parentalLeaveFormMessages.duration.specificDateOption,
                       value: NO,
-                      label: 'Velja dagsetningu',
                     },
                   ],
                 }),
@@ -888,53 +761,36 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.duration.title,
                   component: 'Duration',
                 }),
-                buildMultiField({
-                  id: 'endDate',
-                  title: parentalLeaveFormMessages.endDate.title,
-                  description: parentalLeaveFormMessages.endDate.description,
-                  condition: (answers) => {
-                    const { rawPeriods } = getApplicationAnswers(answers)
+                buildCustomField(
+                  {
+                    id: 'endDate',
+                    title: parentalLeaveFormMessages.endDate.title,
+                    component: 'PeriodEndDate',
+                    condition: (answers) => {
+                      const { rawPeriods } = getApplicationAnswers(answers)
 
-                    return rawPeriods[rawPeriods.length - 1].useLength === NO
+                      return rawPeriods[rawPeriods.length - 1].useLength === NO
+                    },
                   },
-                  children: [
-                    buildCustomField(
-                      {
-                        id: 'endDate',
-                        title: parentalLeaveFormMessages.endDate.label,
-                        component: 'PeriodEndDate',
-                        condition: (answers) => {
-                          const { rawPeriods } = getApplicationAnswers(answers)
+                  {
+                    minDate: (application: Application) => {
+                      const { rawPeriods } = getApplicationAnswers(
+                        application.answers,
+                      )
+                      const latestStartDate =
+                        rawPeriods[rawPeriods.length - 1].startDate
 
-                          return (
-                            rawPeriods[rawPeriods.length - 1].useLength === NO
-                          )
-                        },
-                      },
-                      {
-                        minDate: (application: Application) => {
-                          const { rawPeriods } = getApplicationAnswers(
-                            application.answers,
-                          )
-                          const latestStartDate =
-                            rawPeriods[rawPeriods.length - 1].startDate
+                      return addDays(new Date(latestStartDate), minPeriodDays)
+                    },
+                    excludeDates: (application: Application) => {
+                      const { periods } = getApplicationAnswers(
+                        application.answers,
+                      )
 
-                          return addDays(
-                            new Date(latestStartDate),
-                            minPeriodDays,
-                          )
-                        },
-                        excludeDates: (application: Application) => {
-                          const { periods } = getApplicationAnswers(
-                            application.answers,
-                          )
-
-                          return getAllPeriodDates(periods)
-                        },
-                      },
-                    ),
-                  ],
-                }),
+                      return getAllPeriodDates(periods)
+                    },
+                  },
+                ),
                 buildMultiField({
                   id: 'ratio',
                   title: parentalLeaveFormMessages.ratio.title,

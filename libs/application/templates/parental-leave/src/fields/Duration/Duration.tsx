@@ -55,13 +55,11 @@ export const Duration: FC<FieldBaseProps> = ({
   const [chosenEndDate, setChosenEndDate] = useState<string | undefined>(
     undefined,
   )
-  const [chosenDuration, setChosenDuration] = useState<number | undefined>(
-    undefined,
+  const [chosenDuration, setChosenDuration] = useState<number>(usageMinMonths)
+  const [durationInDays, setDurationInDays] = useState<number>(
+    usageMinMonths * 30,
   )
-  const [durationInDays, setDurationInDays] = useState<number | undefined>(
-    undefined,
-  )
-  const [percent, setPercent] = useState<number | undefined>(undefined)
+  const [percent, setPercent] = useState<number>(100)
   const { getEndDate, loading } = useGetOrRequestEndDates(application)
   const errorMessage = (errors?.component as RecordObject<string>)?.message
 
@@ -173,7 +171,7 @@ export const Duration: FC<FieldBaseProps> = ({
                     }
                   : undefined
               }
-              currentIndex={chosenDuration ?? 0.5}
+              currentIndex={chosenDuration}
               onChange={(months: number) => handleChange(months)}
               onChangeEnd={(months: number) =>
                 handleChangeEnd(months, onChange)
@@ -194,6 +192,7 @@ export const Duration: FC<FieldBaseProps> = ({
       )}
 
       <input
+        readOnly
         ref={register}
         type="hidden"
         value={chosenEndDate}
@@ -201,6 +200,7 @@ export const Duration: FC<FieldBaseProps> = ({
       />
 
       <input
+        readOnly
         ref={register}
         type="hidden"
         value={chosenDuration}
@@ -208,6 +208,7 @@ export const Duration: FC<FieldBaseProps> = ({
       />
 
       <input
+        readOnly
         ref={register}
         type="hidden"
         value={durationInDays}
@@ -215,6 +216,7 @@ export const Duration: FC<FieldBaseProps> = ({
       />
 
       <input
+        readOnly
         ref={register}
         type="hidden"
         value={percent}

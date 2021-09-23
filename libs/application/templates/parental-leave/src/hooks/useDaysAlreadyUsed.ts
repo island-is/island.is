@@ -9,12 +9,14 @@ export const useDaysAlreadyUsed = (application: Application) => {
 
   return useMemo(
     () =>
-      periods.reduce((total, period) => {
-        const days = period?.days ? Number(period.days) : 0
-        const ratio = (period?.ratio ? Number(period.ratio) : 100) / 100
+      Math.round(
+        periods.reduce((total, period) => {
+          const days = period?.days ? Number(period.days) : 0
+          const ratio = (period?.ratio ? Number(period.ratio) : 100) / 100
 
-        return total + days * ratio
-      }, 0),
+          return total + days * ratio
+        }, 0),
+      ),
     [periods],
   )
 }
