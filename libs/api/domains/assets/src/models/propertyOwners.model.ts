@@ -2,47 +2,41 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class PagingData {
-  @Field()
+  @Field({ nullable: true })
   page?: number
 
-  @Field()
+  @Field({ nullable: true })
   pageSize?: number
 
-  @Field()
+  @Field({ nullable: true })
   totalPages?: number
 
-  @Field()
+  @Field({ nullable: true })
   offset?: number
 
-  @Field()
+  @Field({ nullable: true })
   total?: number
 
-  @Field()
+  @Field({ nullable: true })
   hasPreviousPage?: boolean
 
-  @Field()
+  @Field({ nullable: true })
   hasNextPage?: boolean
 }
 
 @ObjectType()
 export class PropertyOwner {
-  @Field()
-  nafn?: string
+  @Field({ nullable: true })
+  nafn?: string | undefined
 
-  @Field()
-  kennitala?: string
+  @Field({ nullable: true })
+  kennitala?: string | undefined
 
   @Field({ nullable: true })
   eignarhlutfall?: number
 
-  @Field()
-  kaupdagur?: Date
-
   @Field({ nullable: true })
-  heimild?: string
-
-  @Field({ nullable: true })
-  display?: string
+  kaupdagur?: Date | undefined
 
   @Field({ nullable: true })
   heimildBirting?: string
@@ -51,8 +45,8 @@ export class PropertyOwner {
 @ObjectType()
 export class PropertyOwnersModel {
   @Field(() => PagingData, { nullable: true })
-  paging!: PagingData
+  paging?: PagingData
 
-  @Field(() => [PropertyOwner])
-  data!: PropertyOwner[]
+  @Field(() => [PropertyOwner], { nullable: true })
+  data?: PropertyOwner[]
 }

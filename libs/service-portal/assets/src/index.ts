@@ -5,7 +5,6 @@ import {
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
-import * as types from './types/RealEstateAssets.types'
 
 const assetsModule: ServicePortalModule = {
   name: 'Eignir',
@@ -32,4 +31,4 @@ const assetsModule: ServicePortalModule = {
   },
 }
 
-export { types, assetsModule }
+export { assetsModule }

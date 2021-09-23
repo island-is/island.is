@@ -59,9 +59,6 @@ const AssetGrid: FC<Props> = ({ title, units, assetId }) => {
     }
   }
 
-  console.log('eigendurPaginationData', paginateData)
-
-  console.log('unitsunitsunitsunits', units)
   const unitData = units?.data || []
   const tableArray = [...unitData, ...paginateData]
   const tables = unitsArray(tableArray, formatMessage)

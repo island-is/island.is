@@ -4,16 +4,28 @@ import { PagingData } from './propertyOwners.model'
 @ObjectType()
 export class Fasteignamat {
   @Field({ nullable: true })
-  gildandiFasteignamat?: number
-
-  @Field({ nullable: true })
-  gildandiAr?: string
+  gildandiFasteignamat?: number | undefined
 
   @Field({ nullable: true })
   fyrirhugadFasteignamat?: number
 
   @Field({ nullable: true })
-  fyrirhugadAr?: string
+  gildandiMannvirkjamat?: number | undefined
+
+  @Field({ nullable: true })
+  fyrirhugadMannvirkjamat?: number
+
+  @Field({ nullable: true })
+  gildandiLodarhlutamat?: number | undefined
+
+  @Field({ nullable: true })
+  fyrirhugadLodarhlutamat?: number
+
+  @Field({ nullable: true })
+  gildandiAr?: number | undefined
+
+  @Field({ nullable: true })
+  fyrirhugadAr?: number | undefined
 }
 
 @ObjectType()
@@ -91,8 +103,8 @@ export class UnitOfUse {
 @ObjectType()
 export class UnitsOfUseModel {
   @Field(() => PagingData, { nullable: true })
-  paging!: PagingData
+  paging?: PagingData
 
-  @Field(() => [UnitOfUse])
-  data!: UnitOfUse[]
+  @Field(() => [UnitOfUse], { nullable: true })
+  data?: UnitOfUse[]
 }
