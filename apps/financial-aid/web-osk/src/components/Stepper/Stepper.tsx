@@ -1,15 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { FormStepper, FormStepperSection } from '@island.is/island-ui/core'
+import React, { useContext, useEffect } from 'react'
+import { FormStepper } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 
 import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
-import useFormNavigation, {
-  findSectionIndex,
-} from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
-import { NavigationProps } from '@island.is/financial-aid/shared/lib'
+import { findSectionIndex } from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
 const Stepper = () => {
   const router = useRouter()
