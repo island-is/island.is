@@ -204,6 +204,9 @@ export const CourtRecord: React.FC = () => {
                 <Input
                   data-testid="courtLocation"
                   name="courtLocation"
+                  tooltip={formatMessage(
+                    rcCourtRecord.sections.courtLocation.tooltip,
+                  )}
                   label={formatMessage(
                     rcCourtRecord.sections.courtLocation.label,
                   )}
@@ -507,6 +510,7 @@ export const CourtRecord: React.FC = () => {
               nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
               nextIsDisabled={
                 !courtRecordStartDateIsValid ||
+                !validate(workingCase.courtLocation ?? '', 'empty').isValid ||
                 !validate(workingCase.courtAttendees ?? '', 'empty').isValid ||
                 !validate(workingCase.prosecutorDemands ?? '', 'empty')
                   .isValid ||

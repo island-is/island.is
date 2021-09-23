@@ -45,6 +45,14 @@ export const rcCourtRecord = {
         description:
           'Notaður sem skýritexti í "Hvar var dómþing haldið?" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      tooltip: {
+        id:
+          'judicial.system.restriction_cases:court_record.court_location.tooltip',
+        defaultMessage:
+          'Sláðu inn staðsetningu dómþings í þágufalli með forskeyti sem hefst á litlum staf. Dæmi "í Héraðsdómi Reykjavíkur". Staðsetning mun birtast með þeim hætti í upphafi þingbókar.',
+        description:
+          'Notaður sem upplýsingatexti í "Hvar var dómþing haldið?" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
     }),
   },
 }
