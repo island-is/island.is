@@ -16,4 +16,10 @@ export const signedVerdictOverview = defineMessages({
     description:
       'Notaður sem upplýsingatexti sem útskýrir að sækjandi kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
   },
+  dismissedTitle: {
+    id: 'judicial.system.core:signed_verdict_overview.dismissed_title',
+    defaultMessage: 'Kröfu vísað frá',
+    description:
+      'Notaður sem titill á yfirlitsskjá afgreiddra mála þegar máli er vísað frá.',
+  },
 })
