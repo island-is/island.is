@@ -40,6 +40,14 @@ export enum CaseFileState {
   STORED_IN_COURT = 'STORED_IN_COURT',
   BOKEN_LINK = 'BOKEN_LINK',
   DELETED = 'DELETED',
+  FAILED_TO_UPLOAD = 'FAILED_TO_UPLOAD',
+}
+
+export enum UploadState {
+  ALL_UPLOADED = 'ALL_UPLOADED',
+  NONE_UPLOADED = 'NONE_UPLOADED',
+  SOME_UPLOADED = 'SOME_UPLOADED',
+  UPLOADING = 'UPLOADING',
 }
 
 export interface CaseFile {
