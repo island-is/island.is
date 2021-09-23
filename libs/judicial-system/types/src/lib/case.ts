@@ -27,6 +27,7 @@ export enum CaseState {
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
   DELETED = 'DELETED',
+  DISMISSED = 'DISMISSED',
 }
 
 export enum CaseTransition {
@@ -36,6 +37,7 @@ export enum CaseTransition {
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
   DELETE = 'DELETE',
+  DISMISS = 'DISMISS',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -77,6 +79,7 @@ export enum CaseDecision {
   REJECTING = 'REJECTING',
   ACCEPTING_ALTERNATIVE_TRAVEL_BAN = 'ACCEPTING_ALTERNATIVE_TRAVEL_BAN',
   ACCEPTING_PARTIALLY = 'ACCEPTING_PARTIALLY',
+  DISMISSING = 'DISMISSING',
 }
 
 export enum AccusedPleaDecision {
@@ -272,7 +275,11 @@ export interface CreateCourtCase {
   isExtension: boolean
 }
 
-export const completedCaseStates = [CaseState.ACCEPTED, CaseState.REJECTED]
+export const completedCaseStates = [
+  CaseState.ACCEPTED,
+  CaseState.REJECTED,
+  CaseState.DISMISSED,
+]
 
 export function hasCaseBeenAppealed(theCase: Case): boolean {
   return (
