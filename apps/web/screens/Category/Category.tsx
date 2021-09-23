@@ -224,14 +224,16 @@ const Category: Screen<CategoryProps> = ({
     return { articlesBySubgroup }
   }
 
-  const handleAccordionClick = (groupSlug: string) => {
-    const updatedArr = updateHashArray(hashArray, groupSlug)
-    setHashArray(updatedArr)
-    Router.replace({
-      pathname: linkResolver(category.__typename as LinkType, [slug]).href,
-      hash: getHashString(updatedArr),
-    })
-  }
+  // Using this for onClick on AccordionCard breaks it
+  // TODO: Find out what breaks and add this again later
+  // const handleAccordionClick = (groupSlug: string) => {
+  //   const updatedArr = updateHashArray(hashArray, groupSlug)
+  //   setHashArray(updatedArr)
+  //   Router.replace({
+  //     pathname: linkResolver(category.__typename as LinkType, [slug]).href,
+  //     hash: getHashString(updatedArr),
+  //   })
+  // }
 
   const sortArticles = (articles: Articles) => {
     // Sort articles by importance (which defaults to 0).
@@ -428,9 +430,6 @@ const Category: Screen<CategoryProps> = ({
                   labelVariant="h3"
                   startExpanded={expanded}
                   visibleContent={description}
-                  onClick={() => {
-                    handleAccordionClick(groupSlug)
-                  }}
                 >
                   <Box paddingTop={2}>
                     {sortedSubgroupKeys.map((subgroup, index) => {
