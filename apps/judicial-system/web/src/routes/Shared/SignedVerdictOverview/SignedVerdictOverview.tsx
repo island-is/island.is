@@ -8,7 +8,10 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import React, { ReactNode, useContext, useEffect, useState } from 'react'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
+import {
+  CaseQuery,
+  UploadFileToCourtMutation,
+} from '@island.is/judicial-system-web/graphql'
 import {
   FormFooter,
   PageLayout,
@@ -286,6 +289,7 @@ export const SignedVerdictOverview: React.FC = () => {
         <>
           <SignedVerdictOverviewForm
             workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
             setAccusedAppealDate={setAccusedAppealDate}
             setProsecutorAppealDate={setProsecutorAppealDate}
             withdrawAccusedAppealDate={withdrawAccusedAppealDate}

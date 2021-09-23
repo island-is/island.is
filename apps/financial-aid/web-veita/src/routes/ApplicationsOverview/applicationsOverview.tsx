@@ -61,7 +61,7 @@ export const ApplicationsOverview = () => {
 
   if (currentNavigationItem) {
     return (
-      <AdminLayout>
+      <>
         <Box
           className={`contentUp delay-25`}
           marginTop={15}
@@ -88,7 +88,7 @@ export const ApplicationsOverview = () => {
         )}
 
         {loading && <LoadingDots />}
-      </AdminLayout>
+      </>
     )
   }
   return (
