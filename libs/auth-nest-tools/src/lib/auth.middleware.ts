@@ -21,6 +21,7 @@ interface Middleware {
 export interface AuthMiddlewareOptions {
   forwardUserInfo: boolean
   tokenExchangeOptions?: TokenExchangeOptions
+  authID?: boolean
 }
 
 export interface TokenExchangeOptions {
@@ -56,6 +57,9 @@ export class AuthMiddleware implements Middleware {
 
     context.init.headers = Object.assign({}, context.init.headers, {
       authorization: bearerToken,
+      ...(this.options.authID && {
+        ['Authorization-Identity']: this.auth.authorization,
+      }), // TODO: Here for testing.
     })
 
     if (this.options.forwardUserInfo) {

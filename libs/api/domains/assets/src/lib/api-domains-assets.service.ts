@@ -30,7 +30,9 @@ export class AssetsXRoadService {
   }
 
   private getRealEstatesWithAuth(auth: Auth) {
-    return this.FasteignirApi.withMiddleware(new AuthMiddleware(auth))
+    return this.FasteignirApi.withMiddleware(
+      new AuthMiddleware(auth, { authID: true, forwardUserInfo: true }),
+    )
   }
 
   async getRealEstates(
