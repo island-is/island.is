@@ -557,6 +557,9 @@ describe('User profile API', () => {
           confirmed: false,
           message: expect.stringMatching(/SMS code is not a match/),
         })
+        expect(response.body.message).toContain(
+          SMS_VERIFICATION_MAX_TRIES - (i + 1),
+        )
       }
       const response = await request(app.getHttpServer())
         .post(`/confirmSms/${mockProfile.nationalId}`)
