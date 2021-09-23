@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 
 interface LogoSvgProps {
-  name: string
+  name?: string
   className?: string
 }
 
@@ -13,7 +13,7 @@ const LogoSvg = ({ name, className }: LogoSvgProps) => {
         [`${className}`]: className,
       })}
     >
-      <img src={`../../../svg/${name}.svg`} alt="" />
+      <img src={`../../../svg/${name ? name : 'sis'}.svg`} alt="" />
     </div>
   )
 }

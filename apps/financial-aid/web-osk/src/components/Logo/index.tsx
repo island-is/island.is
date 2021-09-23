@@ -19,8 +19,9 @@ const Logo = ({ className }: LogoProps) => {
       }
       target="_blank"
       className={cn({ [`${className}`]: true })}
+      rel="noreferrer noopener"
     >
-      <LogoSvg name={municipality?.id ? municipality.id : 'sis'} />
+      <LogoSvg name={municipality?.id} />
     </a>
   )
 }
