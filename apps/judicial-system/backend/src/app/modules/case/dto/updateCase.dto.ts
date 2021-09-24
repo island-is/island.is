@@ -216,6 +216,11 @@ export class UpdateCaseDto {
   readonly courtEndTime?: Date
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly isClosedCourtHidden?: boolean
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly courtAttendees?: string
@@ -233,7 +238,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
-  readonly isAccusedAbsent?: boolean
+  readonly isAccusedRightsHidden?: boolean
 
   @IsOptional()
   @IsEnum(AccusedPleaDecision)

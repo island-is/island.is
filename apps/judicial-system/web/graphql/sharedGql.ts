@@ -62,10 +62,11 @@ export const CaseQuery = gql`
       courtRoom
       courtStartDate
       courtEndTime
+      isClosedCourtHidden
       courtAttendees
       prosecutorDemands
       courtDocuments
-      isAccusedAbsent
+      isAccusedRightsHidden
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
@@ -114,6 +115,7 @@ export const CaseQuery = gql`
         name
         size
         created
+        state
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
@@ -155,6 +157,14 @@ export const GetSignedUrlQuery = gql`
   query GetSignedUrlQuery($input: GetSignedUrlInput!) {
     getSignedUrl(input: $input) {
       url
+    }
+  }
+`
+
+export const UploadFileToCourtMutation = gql`
+  mutation UploadFileToCourtMutation($input: UploadFileToCourtInput!) {
+    uploadFileToCourt(input: $input) {
+      success
     }
   }
 `

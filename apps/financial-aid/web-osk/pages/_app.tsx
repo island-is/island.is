@@ -1,7 +1,7 @@
 import App, { AppProps } from 'next/app'
 import getConfig from 'next/config'
 import { ApolloProvider } from '@apollo/client'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Header } from '../src/components'
 import { client } from '../graphql'
 import {
@@ -10,6 +10,7 @@ import {
   MunicipalityProvider,
 } from '../src/components'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
+import { AppLayout } from '@island.is/financial-aid-web/osk/src/components'
 
 import '../src/styles.css'
 
@@ -23,7 +24,10 @@ class FinancialAidApplication extends App<AppProps> {
           <UserProvider>
             <MunicipalityProvider>
               <Header />
-              <Component {...pageProps} />
+              <AppLayout>
+                <Component {...pageProps} />
+              </AppLayout>
+
               <style jsx global>{`
                 @font-face {
                   font-family: 'IBM Plex Sans';

@@ -39,8 +39,10 @@ import { validate } from '../../../../utils/validate'
 import {
   accusedRights,
   rcCourtRecord,
+  closedCourt,
 } from '@island.is/judicial-system-web/messages'
 import * as styles from './CourtRecord.treat'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -48,7 +50,6 @@ export const CourtRecord: React.FC = () => {
     courtRecordStartDateIsValid,
     setCourtRecordStartDateIsValid,
   ] = useState(true)
-  const [courtAttendeesErrorMessage, setCourtAttendeesMessage] = useState('')
   const [courtLocationErrorMessage, setCourtLocationMessage] = useState('')
   const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] = useState(
     '',
@@ -79,10 +80,6 @@ export const CourtRecord: React.FC = () => {
   useEffect(() => {
     const defaultCourtAttendees = (wc: Case): string => {
       let attendees = ''
-
-      if (wc.registrar) {
-        attendees += `${wc.registrar.name} ${wc.registrar.title}\n`
-      }
 
       if (wc.prosecutor && wc.accusedName) {
         attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
@@ -201,6 +198,22 @@ export const CourtRecord: React.FC = () => {
                 />
               </Box>
               <Box marginBottom={3}>
+                <HideableText
+                  text={formatMessage(closedCourt.text)}
+                  isHidden={workingCase.isClosedCourtHidden}
+                  onToggleVisibility={(isVisible: boolean) =>
+                    setAndSendToServer(
+                      'isClosedCourtHidden',
+                      isVisible,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
+                  tooltip={formatMessage(closedCourt.tooltip)}
+                />
+              </Box>
+              <Box marginBottom={3}>
                 <Input
                   data-testid="courtLocation"
                   name="courtLocation"
@@ -245,7 +258,7 @@ export const CourtRecord: React.FC = () => {
                 <Input
                   data-testid="courtAttendees"
                   name="courtAttendees"
-                  label="Viðstaddir og hlutverk þeirra"
+                  label="Mættir eru"
                   defaultValue={workingCase.courtAttendees}
                   placeholder="Skrifa hér..."
                   onChange={(event) =>
@@ -255,25 +268,16 @@ export const CourtRecord: React.FC = () => {
                       ['empty'],
                       workingCase,
                       setWorkingCase,
-                      courtAttendeesErrorMessage,
-                      setCourtAttendeesMessage,
                     )
                   }
                   onBlur={(event) =>
-                    validateAndSendToServer(
-                      'courtAttendees',
-                      event.target.value,
-                      ['empty'],
-                      workingCase,
-                      updateCase,
-                      setCourtAttendeesMessage,
+                    updateCase(
+                      workingCase.id,
+                      parseString('courtAttendees', event.target.value),
                     )
                   }
-                  errorMessage={courtAttendeesErrorMessage}
-                  hasError={courtAttendeesErrorMessage !== ''}
                   textarea
                   rows={7}
-                  required
                 />
               </Box>
               <Input
@@ -345,10 +349,10 @@ export const CourtRecord: React.FC = () => {
               <Box marginBottom={2}>
                 <HideableText
                   text={formatMessage(accusedRights.text)}
-                  isHidden={workingCase.isAccusedAbsent}
+                  isHidden={workingCase.isAccusedRightsHidden}
                   onToggleVisibility={(isVisible: boolean) =>
                     setAndSendToServer(
-                      'isAccusedAbsent',
+                      'isAccusedRightsHidden',
                       isVisible,
                       workingCase,
                       setWorkingCase,
@@ -511,7 +515,6 @@ export const CourtRecord: React.FC = () => {
               nextIsDisabled={
                 !courtRecordStartDateIsValid ||
                 !validate(workingCase.courtLocation ?? '', 'empty').isValid ||
-                !validate(workingCase.courtAttendees ?? '', 'empty').isValid ||
                 !validate(workingCase.prosecutorDemands ?? '', 'empty')
                   .isValid ||
                 !validate(workingCase.litigationPresentations ?? '', 'empty')

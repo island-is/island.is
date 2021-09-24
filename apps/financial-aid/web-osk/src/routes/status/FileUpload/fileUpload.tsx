@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 
 import {
   Footer,
-  StatusLayout,
   Files,
   ContentContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
@@ -102,7 +101,7 @@ const FileUpload = () => {
   }
 
   return (
-    <StatusLayout>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
           Senda inn gögn
@@ -159,7 +158,7 @@ const FileUpload = () => {
           Promise.all([sendFiles(), sendUserComment()])
         }}
       />
-    </StatusLayout>
+    </>
   )
 }
 
