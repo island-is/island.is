@@ -15,7 +15,6 @@ import {
   Footer,
   InProgress,
   Rejected,
-  StatusLayout,
   Timeline,
 } from '@island.is/financial-aid-web/osk/src/components'
 
@@ -53,7 +52,7 @@ const MainPage = () => {
   }, [data])
 
   return (
-    <StatusLayout>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
           Aðstoðin þín
@@ -121,7 +120,7 @@ const MainPage = () => {
         previousIsDestructive={true}
         hideNextButton={true}
       />
-    </StatusLayout>
+    </>
   )
 }
 

@@ -4,7 +4,6 @@ import { Text, BulletList, Bullet, Box, Link } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  Layout,
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { useRouter } from 'next/router'
@@ -23,7 +22,7 @@ const AboutForm = () => {
   ) as NavigationProps
 
   return (
-    <Layout>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Varðandi rétt til fjárhagsaðstoðar
@@ -95,7 +94,7 @@ const AboutForm = () => {
       </ContentContainer>
 
       <Footer previousUrl={navigation?.prevUrl} nextUrl={navigation?.nextUrl} />
-    </Layout>
+    </>
   )
 }
 
