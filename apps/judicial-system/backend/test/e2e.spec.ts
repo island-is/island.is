@@ -399,6 +399,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
     caseTwo.sessionArrangements ?? null,
   )
   expect(caseOne.courtDate ?? null).toBe(caseTwo.courtDate ?? null)
+  expect(caseOne.courtLocation ?? null).toBe(caseTwo.courtLocation ?? null)
   expect(caseOne.courtRoom ?? null).toBe(caseTwo.courtRoom ?? null)
   expect(caseOne.courtStartDate ?? null).toBe(caseTwo.courtStartDate ?? null)
   expect(caseOne.courtEndTime ?? null).toBe(caseTwo.courtEndTime ?? null)

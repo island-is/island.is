@@ -47,6 +47,14 @@ export const capitalize = (text: string): string => {
   return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
+export const lowercase = (text?: string): string => {
+  if (!text) {
+    return ''
+  }
+
+  return text.charAt(0).toLowerCase() + text.slice(1)
+}
+
 export const formatNationalId = (nationalId: string): string => {
   if (nationalId?.length === 10) {
     return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
