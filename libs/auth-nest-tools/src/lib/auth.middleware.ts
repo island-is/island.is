@@ -58,7 +58,7 @@ export class AuthMiddleware implements Middleware {
     context.init.headers = Object.assign({}, context.init.headers, {
       authorization: bearerToken,
       ...(this.options.authID && {
-        ['Authorization-Identity']: this.auth.authorization,
+        ['Authorization-Identity']: bearerToken,
       }), // TODO: Here for testing.
     })
 
