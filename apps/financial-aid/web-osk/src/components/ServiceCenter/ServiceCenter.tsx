@@ -30,7 +30,6 @@ const ServiceCenter = ({ serviceCenter }: Props) => {
 
         {serviceCenter && (
           <Text>
-            {' '}
             Athugaðu að {serviceCenter?.name} er ekki orðið hluti af lausnin
             núna
           </Text>

@@ -49,7 +49,8 @@ const AppLayout = ({ children }: Props) => {
             borderRadius="large"
             className={styles.formContainer}
           >
-            {userServiceCenter?.active ? (
+            {/* Todo: þjóðskrá */}
+            {userServiceCenter === undefined || userServiceCenter?.active ? (
               <>{children}</>
             ) : (
               <ServiceCenter serviceCenter={userServiceCenter} />
