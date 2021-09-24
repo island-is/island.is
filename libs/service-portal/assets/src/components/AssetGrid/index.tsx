@@ -22,10 +22,9 @@ interface Props {
 
 const AssetGrid: FC<Props> = ({ title, units, assetId }) => {
   const { formatMessage } = useLocale()
-  const [
-    getUnitsOfUseQuery,
-    { loading, error, fetchMore, data },
-  ] = useLazyQuery(GET_UNITS_OF_USE_QUERY)
+  const [getUnitsOfUseQuery, { fetchMore, data }] = useLazyQuery(
+    GET_UNITS_OF_USE_QUERY,
+  )
   const eigendurPaginationData: NotkunareiningWrapper =
     data?.getNotkunareiningar
 
