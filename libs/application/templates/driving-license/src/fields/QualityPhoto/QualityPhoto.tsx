@@ -28,8 +28,7 @@ const Photo: FC<QualityPhotoData> = ({
     return null
   }
 
-  const src =
-    'data:image/jpg;base64,' + qualityPhoto.substr(1, qualityPhoto.length - 2)
+  const src = qualityPhoto
   return (
     <img
       alt={formatText(m.qualityPhotoAltText, application, formatMessage) || ''}

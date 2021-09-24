@@ -4,7 +4,6 @@ import { Text, Input, Box } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  Layout,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
@@ -65,7 +64,7 @@ const EmploymentForm = () => {
   }
 
   return (
-    <Layout>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Hvað lýsir stöðu þinni best?
@@ -124,7 +123,7 @@ const EmploymentForm = () => {
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
-    </Layout>
+    </>
   )
 }
 
