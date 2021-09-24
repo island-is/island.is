@@ -100,6 +100,7 @@ export class SyslumennClient {
 
     const paginatedOperatingLicenses: IPaginatedOperatingLicenses = {
       paginationInfo: JSON.parse(response.headers['x-pagination']),
+      searchQuery: decodeURIComponent(response.headers['x-searchby']),
       results: response.data,
     }
 

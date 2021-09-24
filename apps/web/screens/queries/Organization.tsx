@@ -222,6 +222,7 @@ export const GET_OPERATING_LICENSES_QUERY = gql`
         hasNext
         hasPrevious
       }
+      searchQuery
       results {
         location
         name
