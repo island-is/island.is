@@ -616,4 +616,23 @@ export const m = defineMessages({
     description:
       'Description of application state/status when payment is pending',
   },
+  submitErrorButtonCaption: {
+    id: 'dl.application:submitErrorButtonCaption',
+    defaultMessage: 'Reyna aftur',
+    description:
+      'Button that shows up when submitting the application fails, allowing you to retry',
+  },
+  submitErrorTitle: {
+    id: 'dl.application:submitErrorTitle',
+    defaultMessage: 'Móttaka umsóknar tókst ekki',
+    description:
+      'title that shows up when an error occurs while submitting the application',
+  },
+  submitErrorMessage: {
+    id: 'dl.application:submitErrorMessage',
+    defaultMessage:
+      'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
+    description:
+      'Text that shows up when an error occurs while submitting the application',
+  },
 })
