@@ -29,9 +29,9 @@ const AssetGrid: FC<Props> = ({ title, units, assetId }) => {
   const eigendurPaginationData: NotkunareiningWrapper =
     data?.getNotkunareiningar
 
-  const paginateData = eigendurPaginationData?.data || []
+  const paginateData = eigendurPaginationData?.notkunareiningar || []
   const paginate = () => {
-    const paginateData = eigendurPaginationData?.data || []
+    const paginateData = eigendurPaginationData?.notkunareiningar || []
     const variableObject = {
       variables: {
         input: {
@@ -59,7 +59,7 @@ const AssetGrid: FC<Props> = ({ title, units, assetId }) => {
     }
   }
 
-  const unitData = units?.data || []
+  const unitData = units?.notkunareiningar || []
   const tableArray = [...unitData, ...paginateData]
   const tables = unitsArray(tableArray, formatMessage)
 

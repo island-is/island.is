@@ -47,7 +47,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     eigendurQuery?.data?.getThinglystirEigendur.data || []
 
   const assetOwners: ThinglysturEigandi[] =
-    assetData.thinglystirEigendur?.data || []
+    assetData.thinglystirEigendur?.thinglystirEigendur || []
 
   const combinedOwnerArray = [...assetOwners, ...eigendurPaginationData]
 
@@ -81,6 +81,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     }
   }
 
+  console.log('assetData', assetData)
   if (loading) {
     return <AssetLoader />
   }
@@ -161,8 +162,8 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         />
       </Box>
       <Box marginTop={7}>
-        {assetData?.notkunareiningar?.data &&
-        assetData?.notkunareiningar?.data?.length > 0 ? (
+        {assetData?.notkunareiningar?.notkunareiningar &&
+        assetData?.notkunareiningar?.notkunareiningar?.length > 0 ? (
           <AssetGrid
             title={formatMessage(messages.unitsOfUse)}
             units={assetData?.notkunareiningar}

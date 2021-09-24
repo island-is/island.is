@@ -120,8 +120,7 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
         - auth: []
-  # /api/v1/fasteignir/{fasteignanumer}/thinglystir-eigendur:
-  /api/v1/fasteignir/{fasteignanumer}/thinglystireigendur:
+  /api/v1/fasteignir/{fasteignanumer}/thinglystir-eigendur:
     get:
       tags:
         - Fasteignir
@@ -400,7 +399,7 @@ components:
       type: object
       additionalProperties: false
       properties:
-        data:
+        thinglystirEigendur:
           type: array
           nullable: true
           items:
@@ -432,7 +431,7 @@ components:
       type: object
       additionalProperties: false
       properties:
-        data:
+        notkunareiningar:
           type: array
           nullable: true
           items:

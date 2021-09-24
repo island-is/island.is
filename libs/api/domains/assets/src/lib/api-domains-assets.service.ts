@@ -45,7 +45,7 @@ export class AssetsXRoadService {
     ).fasteignirGetFasteignir({
       kennitala: auth.nationalId,
       cursor: cursor,
-      limit: limit,
+      // limit: limit,
     })
 
     if (fasteignirResponse) {

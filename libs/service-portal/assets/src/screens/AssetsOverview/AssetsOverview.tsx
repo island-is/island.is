@@ -28,7 +28,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
   const { loading, error, data, fetchMore } = useQuery<Query>(
     GetRealEstateQuery,
     {
-      variables: { input: { cursor: '0' } },
+      variables: { input: { cursor: '1' } },
     },
   )
   const assetData: FasteignSimpleWrapper = data?.getRealEstates || {}

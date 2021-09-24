@@ -32,7 +32,7 @@ export class AssetsXRoadResolver {
     return this.assetsXRoadService.getRealEstates(
       user,
       input.cursor,
-      input.limit,
+      // input.limit,
     )
   }
 

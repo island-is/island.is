@@ -124,23 +124,23 @@ export const assetDetail = factory<Fasteign>({
   ...fasteign(),
   fasteignamat: () => fasteignamat(),
   thinglystirEigendur: {
-    data: eigandi.list(10),
+    thinglystirEigendur: eigandi.list(10),
     paging: pagingData({ hasNextPage: true }),
   },
   notkunareiningar: {
-    data: notkunareining.list(2),
+    notkunareiningar: notkunareining.list(2),
     paging: pagingData({ hasNextPage: true }),
   },
 })
 
 export const paginatedThinglystirEigendur = (hasNextPage = true) =>
   factory<ThinglysturEigandiWrapper>({
-    data: eigandi.list(10),
+    thinglystirEigendur: eigandi.list(10),
     paging: pagingData({ hasNextPage }),
   })()
 
 export const paginatedUnitsOfUse = (hasNextPage = true) =>
   factory<NotkunareiningWrapper>({
-    data: notkunareining.list(10),
+    notkunareiningar: notkunareining.list(10),
     paging: pagingData({ hasNextPage }),
   })()
