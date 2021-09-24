@@ -131,7 +131,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
                 formatMessage(messages.ssn),
                 formatMessage(messages.authorization),
                 formatMessage(messages.holdings),
-                formatMessage(messages.status),
+                formatMessage(messages.purchaseDate),
               ],
               rows: owners,
               paginate: paginateOwners,

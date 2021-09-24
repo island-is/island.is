@@ -5,6 +5,9 @@ import { messages } from '../lib/messages'
 import { FormatMessage } from '@island.is/application/core'
 
 import { Notkunareining, ThinglysturEigandi } from '@island.is/clients/assets'
+import is from 'date-fns/locale/is'
+import format from 'date-fns/format'
+import { isNumber } from 'lodash'
 
 const ownersArray = (data: ThinglysturEigandi[] | undefined) => {
   const ownerArray = data?.map((owner) => {
@@ -12,8 +15,14 @@ const ownersArray = (data: ThinglysturEigandi[] | undefined) => {
       owner.nafn || '',
       owner.kennitala ? formatKennitala(owner.kennitala) : '',
       owner.heimildBirting || '',
-      owner.eignarhlutfall ? `${owner.eignarhlutfall * 100}%` : '',
-      '-',
+      isNumber(owner.eignarhlutfall)
+        ? `${parseFloat((owner.eignarhlutfall * 100).toFixed(2))}%`
+        : '',
+      owner.kaupdagur
+        ? format(new Date(owner.kaupdagur), 'dd.MM.yyyy', {
+            locale: is,
+          })
+        : '',
     ]
   })
   return ownerArray && ownerArray.length > 0 ? ownerArray : [[]]

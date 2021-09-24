@@ -49,6 +49,10 @@ export const messages = defineMessages({
     id: 'sp.assets:municipality',
     defaultMessage: 'Sveitarfélag',
   },
+  purchaseDate: {
+    id: 'sp.assets:purchase-date',
+    defaultMessage: 'Kaupdagur',
+  },
   siteAssessment: {
     id: 'sp.assets:site-assessment',
     defaultMessage: 'Lóðarmat',
