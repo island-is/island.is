@@ -145,38 +145,24 @@ describe('formatCustodyRestrictions', () => {
     // Arrange
     const accusedGender = CaseGender.MALE
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
-    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
-    expect(res).toBe('Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.')
+    expect(res).toBe('')
   })
 
   test('should return formatted restrictions for isolation only', () => {
     // Arrange
     const accusedGender = CaseGender.MALE
     const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
-    const validToDate = new Date('2021-07-22T11:23')
-    const isolationToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-      isolationToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
-    expect(res).toBe(
-      'Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur.',
-    )
+    expect(res).toBe('')
   })
 
   test('should return formatted restrictions for isolation and one other restriction', () => {
@@ -186,20 +172,13 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ]
-    const validToDate = new Date('2021-07-22T11:23')
-    const isolationToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-      isolationToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur og að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
   })
 
@@ -211,14 +190,9 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.MEDIA,
       CaseCustodyRestrictions.VISITAION,
     ]
-    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
@@ -234,39 +208,13 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.VISITAION,
       CaseCustodyRestrictions.COMMUNICATION,
     ]
-    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
       'Sækjandi tekur fram að gæsluvarðhaldið verði með bréfaskoðun og símabanni, fjölmiðlabanni og heimsóknarbanni skv. 99. gr. laga nr. 88/2008.',
-    )
-  })
-
-  test('should return formatted restrictions for isolation shorter than custody', () => {
-    // Arrange
-    const accusedGender = CaseGender.MALE
-    const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
-    const validToDate = new Date('2021-07-22T11:23')
-    const isolationToDate = new Date('2021-06-30T16:00')
-
-    // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-      isolationToDate,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Sækjandi tekur fram að kærði skuli sæta einangrun ekki lengur en til miðvikudagsins 30. júní 2021, kl. 16:00.',
     )
   })
 })
@@ -284,7 +232,7 @@ describe('formatAlternativeTravelBanRestrictions', () => {
     )
 
     // Assert
-    expect(res).toBe('Sækjandi tekur fram að farbannið sé án takmarkana.')
+    expect(res).toBe('')
   })
 
   test('should return formatted restrictions for one restriction', () => {
