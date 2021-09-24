@@ -511,14 +511,12 @@ export class NotificationService {
       existingCase.defenderName,
       existingCase.defenderEmail,
       existingCase.decision,
-      existingCase.validToDate,
       existingCase.custodyRestrictions,
       existingCase.accusedAppealDecision,
       existingCase.prosecutorAppealDecision,
       existingCase.judge?.name,
       existingCase.judge?.title,
       existingCase.conclusion,
-      existingCase.isolationToDate,
     )
 
     let attachments: Attachment[] | undefined
