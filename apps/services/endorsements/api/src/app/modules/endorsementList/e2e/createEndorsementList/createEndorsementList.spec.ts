@@ -1,5 +1,5 @@
 import request from 'supertest'
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
 import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { EndorsementTag } from '../../constants'
@@ -44,7 +44,7 @@ describe('createEndorsementList', () => {
   it(`POST /endorsement-list should return error when list data is invalid`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const validEndorsementList = {
       title: 'Some title',
@@ -101,7 +101,7 @@ describe('createEndorsementList', () => {
   it(`POST /endorsement-list should create new endorsement list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const newEndorsementList = {
       title: 'Some title',

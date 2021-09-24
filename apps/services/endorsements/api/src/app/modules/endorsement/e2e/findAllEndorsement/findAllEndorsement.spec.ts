@@ -3,7 +3,7 @@ import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { Endorsement } from '../../models/endorsement.model'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { authNationalId } from './seed'
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
 
 describe('findAllEndorsement', () => {
   it(`GET /endorsement-list/:listId/endorsement should fail and return 403 error if scope is missing`, async () => {
@@ -24,7 +24,7 @@ describe('findAllEndorsement', () => {
   it(`GET /endorsement-list/:listId/endorsement should return 404 and error if list does not exist`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const response = await request(app.getHttpServer())
       .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba777/endorsement')
@@ -39,7 +39,7 @@ describe('findAllEndorsement', () => {
   it(`GET /endorsement-list/:listId/endorsement should return 200 and a list of endorsements`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const response: { body: Endorsement[] } = await request(app.getHttpServer())
       .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c8/endorsement')

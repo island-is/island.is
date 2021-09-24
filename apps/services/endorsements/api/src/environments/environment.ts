@@ -12,6 +12,10 @@ declare const process: {
 const isProductionEnvironment = process.env.NODE_ENV === 'production'
 const devConfig = {
   production: isProductionEnvironment,
+  auth: {
+    issuer: 'https://identity-server.dev01.devland.is',
+    audience: '@island.is',
+  },
   metadataProvider: {
     nationalRegistry: {
       xRoadPath: createXRoadAPIPath(
@@ -21,27 +25,16 @@ const devConfig = {
         '/SKRA-Protected/Einstaklingar-v1',
       ),
       xRoadClient: 'IS-DEV/GOV/10000/island-is-client',
-    },
-    authMiddlewareOptions: {
-      forwardUserInfo: false,
-      tokenExchangeOptions: {
-        issuer: 'https://identity-server.dev01.devland.is',
-        clientId: '@island.is/clients/national-registry',
-        clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
-        scope: 'openid @skra.is/individuals api_resource.scope',
-        requestActorToken: true,
-      },
+      clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
     },
 
     temporaryVoterRegistry: {
       baseApiUrl: 'http://localhost:4248',
     },
   },
-  auth: {
-    issuer: 'https://identity-server.dev01.devland.is',
-    audience: '@island.is',
-    clientId: '', // for updateMetadata script
-    clientSecret: '', // for updateMetadata script
+  endorsementClient: {
+    clientId: process.env.ENDORSEMENT_CLIENT_ID,
+    clientSecret: process.env.ENDORSEMENT_CLIENT_SECRET,
   },
   apiMock: process.env.API_MOCKS === 'true',
   audit: {
@@ -54,6 +47,10 @@ const devConfig = {
 
 const prodConfig = {
   production: isProductionEnvironment,
+  auth: {
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    audience: '@island.is',
+  },
   metadataProvider: {
     nationalRegistry: {
       xRoadPath: createXRoadAPIPath(
@@ -63,26 +60,15 @@ const prodConfig = {
         process.env.XROAD_NATIONAL_REGISTRY_API_PATH ?? '',
       ),
       xRoadClient: process.env.XROAD_NATIONAL_REGISTRY_CLIENT_ID ?? '',
-    },
-    authMiddlewareOptions: {
-      forwardUserInfo: false,
-      tokenExchangeOptions: {
-        issuer: process.env.IDS_ISSUER,
-        clientId: '@island.is/clients/national-registry',
-        clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
-        scope: 'openid @skra.is/individuals api_resource.scope',
-        requestActorToken: true,
-      },
+      clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
     },
     temporaryVoterRegistry: {
       baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_API_URL,
     },
   },
-  auth: {
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    audience: '@island.is',
-    clientId: '', // for updateMetadata script
-    clientSecret: '', // for updateMetadata script
+  endorsementClient: {
+    clientId: process.env.ENDORSEMENT_CLIENT_ID,
+    clientSecret: process.env.ENDORSEMENT_CLIENT_SECRET,
   },
   apiMock: false,
   audit: {

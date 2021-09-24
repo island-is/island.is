@@ -12,10 +12,7 @@ const nationalRegistryUrl = (path: string) =>
   ).toString()
 
 const authUrl = (path: string) =>
-  new URL(
-    path,
-    environment.metadataProvider.authMiddlewareOptions.tokenExchangeOptions.issuer,
-  ).toString()
+  new URL(path, environment.auth.issuer).toString()
 
 export const handlers = [
   rest.post(authUrl('/connect/token'), (req, res, ctx) => {

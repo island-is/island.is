@@ -1,7 +1,7 @@
 import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import request from 'supertest'
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
 
 describe('CreatePartyLetterRegistry', () => {
   it('POST /party-letter-registry should fail and return 403 error if scope is missing', async () => {
@@ -29,7 +29,7 @@ describe('CreatePartyLetterRegistry', () => {
   })
   it('POST /party-letter-registry should return error when data is invalid', async () => {
     const app = await getAuthenticatedApp({
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
       // eslint-disable-next-line local-rules/disallow-kennitalas
       nationalId: '0101302209',
     })
@@ -53,7 +53,7 @@ describe('CreatePartyLetterRegistry', () => {
     // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101305069'
     const app = await getAuthenticatedApp({
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
       nationalId,
     })
     const requestData = {
@@ -76,7 +76,7 @@ describe('CreatePartyLetterRegistry', () => {
     // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101303019'
     const app = await getAuthenticatedApp({
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
       nationalId,
     })
     const requestData = {

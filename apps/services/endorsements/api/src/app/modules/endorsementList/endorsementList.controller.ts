@@ -24,10 +24,10 @@ import { Endorsement } from '../endorsement/models/endorsement.model'
 import { BypassAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
 import { environment } from '../../../environments'
-import { EndorsementsScope } from '@island.is/auth/scopes'
-import type { User } from '@island.is/auth-nest-tools'
+import { GenericScope } from '@island.is/auth/scopes'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
+import type { User } from '@island.is/auth-nest-tools'
 
 @Audit({
   namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
@@ -62,7 +62,7 @@ export class EndorsementListController {
     description: 'Finds all endorsements for the currently authenticated user',
     type: [Endorsement],
   })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @Get('/endorsements')
   @Audit<Endorsement[]>({
     resources: (endorsement) => endorsement.map((e) => e.id),
@@ -80,7 +80,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @Get(':listId')
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -101,7 +101,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.system)
   @Put(':listId/close')
   @HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementList>({
@@ -123,7 +123,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.system)
   @Put(':listId/open')
   @HasAccessGroup(AccessGroup.DMR)
   @Audit<EndorsementList>({
@@ -145,7 +145,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiBody({ type: EndorsementListDto })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.system)
   @Post()
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,

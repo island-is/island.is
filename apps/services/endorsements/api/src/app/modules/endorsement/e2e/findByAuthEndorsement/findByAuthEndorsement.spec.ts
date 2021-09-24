@@ -1,4 +1,4 @@
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
 import request from 'supertest'
 import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
@@ -26,7 +26,7 @@ describe('findByAuthEndorsement', () => {
   it(`GET /endorsement-list/:listId/endorsement/exists should return 404 and error if list does not exist`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const response = await request(app.getHttpServer())
       .get(
@@ -43,7 +43,7 @@ describe('findByAuthEndorsement', () => {
   it(`GET /endorsement-list/:listId/endorsement/exists should return 404 if no endorsement exists on list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const response = await request(app.getHttpServer())
       .get(
@@ -60,7 +60,7 @@ describe('findByAuthEndorsement', () => {
   it(`GET /endorsement-list/:listId/endorsement/exists should return 200 and a valid endorsement`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const response = await request(app.getHttpServer())
       .get(

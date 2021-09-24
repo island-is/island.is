@@ -4,7 +4,7 @@ import { Sequelize } from 'sequelize-typescript'
 import Bottleneck from 'bottleneck'
 import { logger } from '@island.is/logging'
 import { Auth } from '@island.is/auth-nest-tools'
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
 import * as sequelizeConfig from '../sequelize.config'
 import { Endorsement } from '../src/app/modules/endorsement/models/endorsement.model'
 import { EndorsementList } from '../src/app/modules/endorsementList/endorsementList.model'
@@ -23,7 +23,22 @@ interface EndorsementMetadataResponse {
   meta: EndorsementMetadata
 }
 
-// lets init sequelize client with config from the api app
+// taken from @island.is/auth-nest-tools
+interface JwtPayload {
+  nationalId?: string
+  scope: string | string[]
+  client_id: string
+  act?: {
+    nationalId: string
+    scope?: string | string[]
+  }
+  actor?: {
+    nationalId: string
+    scope?: string | string[]
+  }
+}
+
+// INIT
 const sequelizeConfigKey = environment.production ? 'production' : 'development'
 new Sequelize({
   ...sequelizeConfig[sequelizeConfigKey],
@@ -38,18 +53,20 @@ const limiter = new Bottleneck({
   maxConcurrent: Number(process.env.MAX_CONCURRENT) || 10,
 })
 
+// AUTH
 const acquireAuthToken = async (): Promise<string> => {
+  const tokenOptions = {
+    client_id: environment.endorsementClient.clientId,
+    grant_type: 'client_credentials',
+    scope: GenericScope.system,
+    client_secret: environment.endorsementClient.clientSecret,
+  }
   const response = await fetch(`${environment.auth.issuer}/connect/token`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: new URLSearchParams({
-      client_id: environment.auth.clientId,
-      grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
-      scope: EndorsementsScope.main,
-      client_secret: environment.auth.clientSecret,
-    }),
+    body: new URLSearchParams(tokenOptions),
   })
 
   if (!response.ok) {
@@ -61,6 +78,62 @@ const acquireAuthToken = async (): Promise<string> => {
   return result.access_token
 }
 
+// taken from @island.is/auth-nest-tools
+const parseScopes = (scopes: undefined | string | string[]): string[] => {
+  if (scopes === undefined) {
+    return []
+  }
+  if (typeof scopes === 'string') {
+    return scopes.split(' ')
+  }
+  return scopes
+}
+
+// token is not validated at this point, we expect the underlying services to authenticate the token
+const convertTokenToAuth = (token: string): Auth => {
+  try {
+    const payload = token.split('.')[1]
+    const decodedPayload: JwtPayload = JSON.parse(
+      Buffer.from(payload, 'base64').toString(),
+    )
+
+    return {
+      scope: parseScopes(decodedPayload.scope),
+      client: decodedPayload.client_id,
+      authorization: token,
+    }
+  } catch (e) {
+    logger.error('Failed to convert token to authentication')
+    throw e
+  }
+}
+
+/*
+This script can take long to execute, this ensures auth wont time out
+*/
+let currentAuth: Auth | undefined
+let lastTokenTime = new Date()
+const getClientAuth = async (): Promise<Auth> => {
+  const currentTime = new Date()
+  const refreshTime = new Date(lastTokenTime)
+  const authRefreshHours = 2
+  refreshTime.setHours(lastTokenTime.getHours() + authRefreshHours) // refresh every X hours
+
+  // if refresh time is in the past we refresh the auth
+  if (refreshTime < currentTime || !currentAuth) {
+    const clientAuthToken = await acquireAuthToken()
+
+    // store the auth
+    currentAuth = convertTokenToAuth(clientAuthToken)
+
+    // remember fetched time
+    lastTokenTime = currentTime
+  }
+
+  return currentAuth
+}
+
+// DATA
 const createEndorsementListFieldMap = (
   endorsementLists: EndorsementList[],
 ): EndorsementListFieldMap =>
@@ -99,7 +172,7 @@ const getEndorsementMetadata = async (
             nationalId: endorsement.endorser,
             fields: fieldsToUpdate,
           },
-          ('' as unknown) as Auth, // TODO: Add auth here
+          await getClientAuth(),
         )),
       },
       id: endorsement.id,

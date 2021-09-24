@@ -1,4 +1,4 @@
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
 import request from 'supertest'
 import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
@@ -25,7 +25,7 @@ describe('deleteEndorsement', () => {
   it(`DELETE /endorsement-list/:listId/endorsement should return 404 when supplied with a non existing list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const response = await request(app.getHttpServer())
       .delete(
@@ -42,7 +42,7 @@ describe('deleteEndorsement', () => {
   it(`DELETE /endorsement-list/:listId/endorsement should fail when removing endorsement from closed list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const response = await request(app.getHttpServer())
       .delete(
@@ -59,7 +59,7 @@ describe('deleteEndorsement', () => {
   it(`DELETE /endorsement-list/:listId/endorsement should remove endorsement`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const response = await request(app.getHttpServer())
       .delete(

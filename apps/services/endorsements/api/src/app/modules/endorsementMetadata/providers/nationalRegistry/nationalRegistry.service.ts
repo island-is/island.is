@@ -26,10 +26,17 @@ export class NationalRegistryUserService implements MetadataProvider {
 
   individualApiWithAuth(auth: Auth) {
     return this.individualApi.withMiddleware(
-      new AuthMiddleware(
-        auth,
-        environment.metadataProvider.authMiddlewareOptions,
-      ),
+      new AuthMiddleware(auth, {
+        forwardUserInfo: false,
+        tokenExchangeOptions: {
+          clientId: '@island.is/clients/national-registry',
+          scope: 'openid @skra.is/individuals api_resource.scope',
+          requestActorToken: true,
+          issuer: environment.auth.issuer,
+          clientSecret:
+            environment.metadataProvider.nationalRegistry.clientSecret,
+        },
+      }),
     )
   }
 

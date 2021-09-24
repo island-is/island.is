@@ -25,7 +25,7 @@ import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementLis
 import { BulkEndorsementDto } from './dto/bulkEndorsement.dto'
 import { Endorsement } from './models/endorsement.model'
 import { EndorsementService } from './endorsement.service'
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
 import type { User, Auth } from '@island.is/auth-nest-tools'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
@@ -49,7 +49,7 @@ export class EndorsementController {
     type: [Endorsement],
   })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @Get()
   @HasAccessGroup(AccessGroup.Owner, AccessGroup.DMR)
   @Audit<Endorsement[]>({
@@ -75,7 +75,7 @@ export class EndorsementController {
     type: Endorsement,
   })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @Get('/exists')
   @Audit<Endorsement>({
     resources: (endorsement) => endorsement.id,
@@ -101,7 +101,7 @@ export class EndorsementController {
     type: Endorsement,
   })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @Post()
   @Audit<Endorsement>({
     resources: (endorsement) => endorsement.id,
@@ -132,7 +132,7 @@ export class EndorsementController {
   @ApiBody({
     type: BulkEndorsementDto,
   })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @Post('/bulk')
   @HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementBulkCreate>({
@@ -163,7 +163,7 @@ export class EndorsementController {
       'Uses the authenticated users national id to remove endorsement form a given list',
   })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @Delete()
   @HttpCode(204)
   async delete(

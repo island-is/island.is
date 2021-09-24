@@ -4,7 +4,7 @@ import {
   AuthScope,
   UserProfileScope,
   NationalRegistryScope,
-  EndorsementsScope,
+  GenericScope,
   DocumentsScope,
 } from '@island.is/auth/scopes'
 
@@ -35,7 +35,7 @@ if (userMocked) {
       AuthScope.writeDelegations,
       NationalRegistryScope.individuals,
       DocumentsScope.main,
-      EndorsementsScope.main,
+      GenericScope.internal,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'sp.',
