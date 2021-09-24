@@ -106,10 +106,11 @@ const courtFields = [
   'courtRoom',
   'courtStartDate',
   'courtEndTime',
+  'isClosedCourtHidden',
   'courtAttendees',
   'prosecutorDemands',
   'courtDocuments',
-  'isAccusedAbsent',
+  'isAccusedRightsHidden',
   'accusedPleaDecision',
   'accusedPleaAnnouncement',
   'litigationPresentations',
@@ -167,6 +168,7 @@ const judgeTransitionRule = {
     CaseTransition.RECEIVE,
     CaseTransition.ACCEPT,
     CaseTransition.REJECT,
+    CaseTransition.DISMISS,
   ],
 } as RolesRule
 
@@ -319,7 +321,6 @@ export class CaseController {
     @Body() transition: TransitionCaseDto,
   ): Promise<Case | null> {
     // Use existingCase.modified when client is ready to send last modified timestamp with all updates
-
     const existingCase = await this.caseService.findByIdAndUser(id, user)
 
     const state = transitionCase(transition.transition, existingCase.state)

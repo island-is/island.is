@@ -32,6 +32,39 @@ jest.mock('pdfkit', function () {
     end() {
       return this
     }
+    translate() {
+      return this
+    }
+    scale() {
+      return this
+    }
+    path() {
+      return this
+    }
+    fillColor() {
+      return this
+    }
+    fill() {
+      return this
+    }
+    strokeColor() {
+      return this
+    }
+    lineWidth() {
+      return this
+    }
+    miterLimit() {
+      return this
+    }
+    stroke() {
+      return this
+    }
+    lineJoin() {
+      return this
+    }
+    addPage() {
+      return this
+    }
   }
 
   return MockPDFDocument
