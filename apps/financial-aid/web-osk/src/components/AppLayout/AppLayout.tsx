@@ -4,29 +4,25 @@ import { Box, GridContainer } from '@island.is/island-ui/core'
 import * as styles from './AppLayout.treat'
 import { Logo } from '@island.is/financial-aid-web/osk/src/components'
 
-import { Login, SideBar } from '@island.is/financial-aid-web/osk/src/components'
+import {
+  Login,
+  SideBar,
+  ServiceCenter,
+} from '@island.is/financial-aid-web/osk/src/components'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import cn from 'classnames'
-import { useRouter } from 'next/router'
 
 interface Props {
   children: ReactNode
 }
 
 const AppLayout = ({ children }: Props) => {
-  const router = useRouter()
-  const { isAuthenticated, user } = useContext(UserContext)
+  const { isAuthenticated, user, userServiceCenter } = useContext(UserContext)
 
   useEffect(() => {
     document.title = 'Fjárhagsaðstoð'
   }, [])
-
-  useEffect(() => {
-    if (user && user.currentApplication) {
-      router.push(`/stada/${user.currentApplication.id}`)
-    }
-  }, [user])
 
   if (!isAuthenticated) {
     return <Login headline="Skráðu þig inn" />
@@ -53,7 +49,11 @@ const AppLayout = ({ children }: Props) => {
             borderRadius="large"
             className={styles.formContainer}
           >
-            {children}
+            {userServiceCenter?.active ? (
+              <>{children}</>
+            ) : (
+              <ServiceCenter serviceCenter={userServiceCenter} />
+            )}
           </Box>
 
           <Box className={styles.sidebarContent}>

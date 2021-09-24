@@ -5,6 +5,7 @@ export interface ServiceCenter {
   address: string
   addressPostalCode: string
   postalCodes: number[]
+  active?: boolean
   link?: string
 }
 
@@ -92,6 +93,7 @@ export const serviceCenters: ServiceCenter[] = [
     address: 'Strandgötu 6',
     addressPostalCode: '220 Hafnarfirði',
     postalCodes: [220, 221, 222],
+    active: true,
   },
   {
     name: 'Reykjanesbær',
