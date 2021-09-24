@@ -3,6 +3,7 @@ import { Config as DrivingLicenseApiConfig } from '@island.is/api/domains/drivin
 import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Message } from '@island.is/email-service'
 import { PartyApplicationServiceOptions } from '../modules/templates/party-application/party-application.service'
+import { User } from '@island.is/auth-nest-tools'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -46,7 +47,7 @@ export interface BaseTemplateAPIModuleConfig {
 
 export interface TemplateApiModuleActionProps {
   application: Application
-  authorization: string
+  auth: User
 }
 
 export interface EmailTemplateGeneratorProps {
