@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { SkeletonLoader, Text, Box, Button } from '@island.is/island-ui/core'
+import { Text, Box, Button } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 import * as styles from './application.treat'
