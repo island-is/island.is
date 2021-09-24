@@ -413,7 +413,7 @@ describe('Signed Verdict Overview route', () => {
       ).toBeInTheDocument()
     })
 
-    test('should show a button to open case files if you are a prosecutor that belongs to the prosecutors office that created the case', async () => {
+    test('should allow prosecutor that belongs to the prosecutors office that created the case to open case files', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
@@ -441,8 +441,10 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await screen.findAllByRole('button', { name: 'Opna' }),
-      ).toHaveLength(1)
+        await screen.findByLabelText(
+          'Opna Screen Recording 2021-04-09 at 14.39.51.mov',
+        ),
+      ).toBeInTheDocument()
     })
 
     test('should not allow judges to share case with another institution', async () => {

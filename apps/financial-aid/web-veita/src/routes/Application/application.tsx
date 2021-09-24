@@ -217,7 +217,7 @@ const ApplicationProfile = () => {
     ]
 
     return (
-      <AdminLayout>
+      <>
         <Box
           marginTop={10}
           marginBottom={15}
@@ -283,18 +283,14 @@ const ApplicationProfile = () => {
             }}
           />
         )}
-      </AdminLayout>
+      </>
     )
   }
   if (loading) {
-    return (
-      <AdminLayout>
-        <LoadingDots />
-      </AdminLayout>
-    )
+    return <LoadingDots />
   }
   return (
-    <AdminLayout>
+    <>
       <Box>
         <Button
           colorScheme="default"
@@ -314,7 +310,7 @@ const ApplicationProfile = () => {
       <Text color="red400" fontWeight="semiBold" marginTop={4}>
         Abbabab Notendi ekki fundinn, farðu tilbaka og reyndu vinsamlegast aftur{' '}
       </Text>
-    </AdminLayout>
+    </>
   )
 }
 
