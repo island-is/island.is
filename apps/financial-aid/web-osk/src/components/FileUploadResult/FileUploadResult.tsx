@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import {
   ContentContainer,
-  StatusLayout,
   Footer,
   FileUploadComment,
 } from '@island.is/financial-aid-web/osk/src/components'
@@ -37,7 +36,7 @@ const FileUploadResult = ({
   }, [])
 
   return (
-    <StatusLayout>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
           Senda inn gögn
@@ -58,7 +57,7 @@ const FileUploadResult = ({
         onNextButtonClick={nextButtonAction}
         hidePreviousButton={true}
       />
-    </StatusLayout>
+    </>
   )
 }
 

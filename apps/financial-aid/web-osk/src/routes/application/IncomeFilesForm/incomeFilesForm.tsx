@@ -2,7 +2,6 @@ import React, { useContext } from 'react'
 
 import {
   Footer,
-  Layout,
   Files,
   ContentContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
@@ -30,7 +29,7 @@ const IncomeFilesForm = () => {
   }
 
   return (
-    <Layout>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
           Tekjugögn
@@ -54,7 +53,7 @@ const IncomeFilesForm = () => {
         }
         onNextButtonClick={() => errorCheck()}
       />
-    </Layout>
+    </>
   )
 }
 
