@@ -114,6 +114,17 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
               />
             </Box>
           )}
+          {!loading &&
+            !error &&
+            (financeStatusData?.organizations?.length === 0 ||
+              financeStatusData?.organizations === null) && (
+              <Box paddingY={2}>
+                <AlertBanner
+                  description="Staða þín við ríkissjóð = 0"
+                  variant="info"
+                />
+              </Box>
+            )}
           {financeStatusData?.organizations?.length > 0 ? (
             <>
               <Hidden print={true}>
