@@ -113,6 +113,7 @@ This script can take long to execute, this ensures auth wont time out
 */
 let currentAuth: Auth | undefined
 let lastTokenTime = new Date()
+let fetchingAuth = false
 const getClientAuth = async (): Promise<Auth> => {
   const currentTime = new Date()
   const refreshTime = new Date(lastTokenTime)
@@ -120,7 +121,8 @@ const getClientAuth = async (): Promise<Auth> => {
   refreshTime.setHours(lastTokenTime.getHours() + authRefreshHours) // refresh every X hours
 
   // if refresh time is in the past we refresh the auth
-  if (refreshTime < currentTime || !currentAuth) {
+  if ((refreshTime < currentTime || !currentAuth) && !fetchingAuth) {
+    fetchingAuth = true
     const clientAuthToken = await acquireAuthToken()
 
     // store the auth
@@ -130,7 +132,7 @@ const getClientAuth = async (): Promise<Auth> => {
     lastTokenTime = currentTime
   }
 
-  return currentAuth
+  return currentAuth as Auth // auth is always set at this point
 }
 
 // DATA
@@ -261,6 +263,8 @@ export default async () => {
     // Lets make sure it is clear in logs if this is running in dev mode
     logger.warn('>>>RUNNING IN DEV MODE!!!<<<')
   }
+
+  await getClientAuth() // pre fetch auth
   const app = await NestFactory.create(AppModule)
   endorsementMetadataService = app.get(EndorsementMetadataService)
   processEndorsementLists(() => {
