@@ -50,11 +50,33 @@ export class PartyLetterService {
   ) {}
 
   partyLetterRegistryApiWithAuth(auth: User) {
-    return this.partyLetterRegistryApi.withMiddleware(new AuthMiddleware(auth))
+    return this.partyLetterRegistryApi.withMiddleware(
+      new AuthMiddleware(auth, {
+        forwardUserInfo: false,
+        tokenExchangeOptions: {
+          scope: 'openid @island.is/system',
+          requestActorToken: true,
+          issuer: environment.auth.issuer,
+          clientId: environment.endorsementClient.clientId,
+          clientSecret: environment.endorsementClient.clientSecret,
+        },
+      }),
+    )
   }
 
   endorsementListApiWithAuth(auth: User) {
-    return this.endorsementListApi.withMiddleware(new AuthMiddleware(auth))
+    return this.endorsementListApi.withMiddleware(
+      new AuthMiddleware(auth, {
+        forwardUserInfo: false,
+        tokenExchangeOptions: {
+          scope: 'openid @island.is/system',
+          requestActorToken: true,
+          issuer: environment.auth.issuer,
+          clientId: environment.endorsementClient.clientId,
+          clientSecret: environment.endorsementClient.clientSecret,
+        },
+      }),
+    )
   }
 
   async assignMinistryOfJustice({

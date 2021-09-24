@@ -43,3 +43,4 @@ export class PartyLetterModule {
     }
   }
 }
+// TODO: Add client to config here?

@@ -66,6 +66,7 @@ export class PartyApplicationService {
   ) {}
 
   endorsementListApiWithAuth(auth: User) {
+    // TODO: Add token swap here
     return this.endorsementListApi.withMiddleware(new AuthMiddleware(auth))
   }
 

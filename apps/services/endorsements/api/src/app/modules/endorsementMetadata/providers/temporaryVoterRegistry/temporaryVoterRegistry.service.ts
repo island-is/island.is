@@ -1,4 +1,5 @@
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { GenericScope } from '@island.is/auth/scopes'
 import { Injectable } from '@nestjs/common'
 import { environment } from '../../../../../environments'
 import { MetadataProvider } from '../../types'
@@ -24,7 +25,7 @@ export class TemporaryVoterRegistryService implements MetadataProvider {
       new AuthMiddleware(auth, {
         forwardUserInfo: false,
         tokenExchangeOptions: {
-          scope: '@island.is/system',
+          scope: `openid ${GenericScope.system}`,
           requestActorToken: true,
           issuer: environment.auth.issuer,
           clientId: environment.endorsementClient.clientId,
