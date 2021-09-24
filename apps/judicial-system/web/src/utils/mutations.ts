@@ -94,10 +94,11 @@ export const ExtendCaseMutation = gql`
       courtRoom
       courtStartDate
       courtEndTime
+      isClosedCourtHidden
       courtAttendees
       prosecutorDemands
       courtDocuments
-      isAccusedAbsent
+      isAccusedRightsHidden
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations

@@ -138,10 +138,11 @@ export interface Case {
   courtRoom?: string
   courtStartDate?: string
   courtEndTime?: string
+  isClosedCourtHidden?: boolean
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  isAccusedAbsent?: boolean
+  isAccusedRightsHidden?: boolean
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string

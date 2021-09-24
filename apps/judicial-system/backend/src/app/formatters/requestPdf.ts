@@ -1,6 +1,7 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
+import { FormatMessage } from '@island.is/cms-translations'
 import { CaseType } from '@island.is/judicial-system/types'
 import {
   caseTypes,
@@ -11,12 +12,11 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
+import { restrictionRequest as m } from '../messages'
 import { Case } from '../modules/case/models'
 import { formatCustodyProvisions } from './formatters'
 import { setPageNumbers } from './pdfHelpers'
 import { writeFile } from './writeFile'
-import { FormatMessage } from '@island.is/cms-translations'
-import { restrictionRequest as m } from '../messages/requestPdf'
 
 function constructRestrictionRequestPdf(
   existingCase: Case,
