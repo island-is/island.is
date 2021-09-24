@@ -147,69 +147,28 @@ export function formatAccusedByGender(
 export function formatCustodyRestrictions(
   accusedGender?: CaseGender,
   custodyRestrictions?: CaseCustodyRestrictions[],
-  validToDate?: Date | string | undefined,
-  isolationToDate?: Date | string | undefined,
 ): string {
-  const relevantCustodyRestrictions = custodyRestrictions?.filter(
-    (restriction) =>
+  const relevantCustodyRestrictions = custodyRestrictions
+    ?.filter((restriction) =>
       [
-        CaseCustodyRestrictions.ISOLATION,
         CaseCustodyRestrictions.VISITAION,
         CaseCustodyRestrictions.COMMUNICATION,
         CaseCustodyRestrictions.MEDIA,
       ].includes(restriction),
-  )
+    )
+    .sort()
 
   if (
     !(relevantCustodyRestrictions && relevantCustodyRestrictions.length > 0)
   ) {
-    return 'Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.'
+    return ''
   }
 
-  const formattedValidToDateAndTime = `${formatDate(validToDate, 'PPPPp')
-    ?.replace('dagur,', 'dagsins')
-    ?.replace(' kl.', ', kl.')}`
-
-  const formattedIsolationToDateAndTime = `${formatDate(
-    isolationToDate,
-    'PPPPp',
-  )
-    ?.replace('dagur,', 'dagsins')
-    ?.replace(' kl.', ', kl.')}`
-
-  const isolationIsSameAsValidToDate =
-    validToDate &&
-    isolationToDate &&
-    formattedIsolationToDateAndTime === formattedValidToDateAndTime
-
-  let res = 'Sækjandi tekur fram að '
-
-  if (relevantCustodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION)) {
-    res += `${formatAccusedByGender(accusedGender)} skuli sæta einangrun ${
-      isolationIsSameAsValidToDate
-        ? 'á meðan á gæsluvarðhaldinu stendur'
-        : `ekki lengur en til ${formattedIsolationToDateAndTime}`
-    }`
-
-    if (relevantCustodyRestrictions.length === 1) {
-      return res + '.'
-    }
-
-    res += ' og að '
-  }
-
-  const filteredCustodyRestrictions = relevantCustodyRestrictions
-    .filter(
-      (custodyRestriction) =>
-        custodyRestriction !== CaseCustodyRestrictions.ISOLATION,
-    )
-    .sort()
-
-  const filteredCustodyRestrictionsAsString = filteredCustodyRestrictions.reduce(
+  const filteredCustodyRestrictionsAsString = relevantCustodyRestrictions.reduce(
     (res, custodyRestriction, index) => {
-      const isNextLast = index === filteredCustodyRestrictions.length - 2
-      const isLast = index === filteredCustodyRestrictions.length - 1
-      const isOnly = filteredCustodyRestrictions.length === 1
+      const isNextLast = index === relevantCustodyRestrictions.length - 2
+      const isLast = index === relevantCustodyRestrictions.length - 1
+      const isOnly = relevantCustodyRestrictions.length === 1
 
       return (res +=
         custodyRestriction === CaseCustodyRestrictions.COMMUNICATION
@@ -229,7 +188,7 @@ export function formatCustodyRestrictions(
     '',
   )
 
-  return `${res}gæsluvarðhaldið verði með ${filteredCustodyRestrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
+  return `Sækjandi tekur fram að gæsluvarðhaldið verði með ${filteredCustodyRestrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
 }
 
 // Fromats the restrictions set by the judge when choosing alternative travle ban
@@ -252,7 +211,7 @@ export const formatAlternativeTravelBanRestrictions = (
 
   // No restrictions
   if (!hasTravelBanRestrictions && !hasOtherRestrictions) {
-    return 'Sækjandi tekur fram að farbannið sé án takmarkana.'
+    return ''
   }
 
   const accusedGenderText = formatAccusedByGender(
@@ -334,11 +293,11 @@ export function formatGender(gender?: CaseGender): string {
 }
 
 export const areAccusedRightsHidden = (
-  isAccusedAbsent?: boolean,
+  isAccusedRightsHidden?: boolean,
   sessionArrangements?: SessionArrangements,
 ): boolean => {
-  return isAccusedAbsent
-    ? isAccusedAbsent
+  return isAccusedRightsHidden
+    ? isAccusedRightsHidden
     : sessionArrangements === SessionArrangements.ALL_PRESENT
     ? false
     : true

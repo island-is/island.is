@@ -4,7 +4,6 @@ import { Text, Divider, Box } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
   CancelModal,
   Estimation,
   UserInfo,
@@ -121,10 +120,7 @@ const SummaryForm = () => {
   ) as NavigationProps
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Yfirlit umsóknar
@@ -187,7 +183,7 @@ const SummaryForm = () => {
         nextButtonText="Senda umsókn"
         onNextButtonClick={handleNextButtonClick}
       />
-    </FormLayout>
+    </>
   )
 }
 

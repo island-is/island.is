@@ -174,10 +174,11 @@ function remainingJudgeCaseData() {
     defenderIsSpokesperson: true,
     courtStartDate: '2020-09-29T13:00:00.000Z',
     courtEndTime: '2020-09-29T14:00:00.000Z',
+    isClosedCourtHidden: true,
     courtAttendees: 'Court Attendees',
     prosecutorDemands: 'Police Demands',
     courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
-    isAccusedAbsent: true,
+    isAccusedRightsHidden: true,
     accusedPleaDecision: AccusedPleaDecision.ACCEPT,
     accusedPleaAnnouncement: 'Accused Plea',
     litigationPresentations: 'Litigation Presentations',
@@ -401,6 +402,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.courtRoom ?? null).toBe(caseTwo.courtRoom ?? null)
   expect(caseOne.courtStartDate ?? null).toBe(caseTwo.courtStartDate ?? null)
   expect(caseOne.courtEndTime ?? null).toBe(caseTwo.courtEndTime ?? null)
+  expect(caseOne.isClosedCourtHidden ?? null).toBe(
+    caseTwo.isClosedCourtHidden ?? null,
+  )
   expect(caseOne.courtAttendees ?? null).toBe(caseTwo.courtAttendees ?? null)
   expect(caseOne.prosecutorDemands ?? null).toBe(
     caseTwo.prosecutorDemands ?? null,
@@ -408,7 +412,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.courtDocuments ?? null).toStrictEqual(
     caseTwo.courtDocuments ?? null,
   )
-  expect(caseOne.isAccusedAbsent ?? null).toBe(caseTwo.isAccusedAbsent ?? null)
+  expect(caseOne.isAccusedRightsHidden ?? null).toBe(
+    caseTwo.isAccusedRightsHidden ?? null,
+  )
   expect(caseOne.accusedPleaDecision ?? null).toBe(
     caseTwo.accusedPleaDecision ?? null,
   )
