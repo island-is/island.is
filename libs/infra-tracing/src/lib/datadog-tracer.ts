@@ -10,13 +10,11 @@ if (process.env.NODE_ENV !== 'development') {
         request: (span, req, res) => {
           const url =
             res?.url || `http(s)://${req?.getHeader('host')}${req?.path}`
-          if (url) {
-            const urlRewritten = url
-              .split('/')
-              .map((segm) => (isPerson(segm) ? '--MASKED--' : segm))
-              .join('/')
-            span?.setTag('http.url', urlRewritten)
-          }
+          const urlRewritten = url
+            .split('/')
+            .map((segm) => (isPerson(segm) ? '--MASKED--' : segm))
+            .join('/')
+          span?.setTag('http.url', urlRewritten)
         },
       },
     },
