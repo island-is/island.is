@@ -5,7 +5,7 @@ import LogoSvg from './LogoSvg'
 import { useQuery } from '@apollo/client'
 import { GetMunacipalityHomePageQuery } from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
-import { LoadingDots } from '@island.is/island-ui/core'
+import { Box, LoadingDots, SkeletonLoader } from '@island.is/island-ui/core'
 
 interface MunicipalityData {
   municipality: {
@@ -20,6 +20,9 @@ interface LogoProps {
 
 const LogoMunicipality = ({ className }: LogoProps) => {
   const router = useRouter()
+
+  //According to design
+  const logoSize = 48
 
   //TODO when more muncipalities have been added to system
   const municipaliyId = router.query.sveitarfelag
@@ -37,7 +40,11 @@ const LogoMunicipality = ({ className }: LogoProps) => {
   })
 
   if (!data) {
-    return <LoadingDots />
+    return (
+      <Box>
+        <SkeletonLoader display="block" height={logoSize} width={logoSize} />
+      </Box>
+    )
   }
 
   return (
