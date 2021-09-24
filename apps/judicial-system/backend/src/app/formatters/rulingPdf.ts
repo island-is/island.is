@@ -18,6 +18,7 @@ import {
   formatAccusedByGender,
   caseTypes,
   areAccusedRightsHidden,
+  lowercase,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -86,6 +87,7 @@ function constructRestrictionRulingPdf(
         judgeNameAndTitle: `${existingCase.judge?.name ?? '?'} ${
           existingCase.judge?.title ?? '?'
         }`,
+        courtLocation: lowercase(existingCase.courtLocation?.replace('.', '')),
         caseNumber: existingCase.courtCaseNumber,
         startTime: formatDate(existingCase.courtStartDate, 'p'),
       }),
@@ -430,6 +432,15 @@ function constructInvestigationRulingPdf(
         judgeNameAndTitle: `${existingCase.judge?.name ?? '?'} ${
           existingCase.judge?.title ?? '?'
         }`,
+        courtLocation: existingCase.courtLocation
+          ? ` ${lowercase(
+              existingCase.courtLocation?.slice(
+                existingCase.courtLocation.length - 1,
+              ) === '.'
+                ? existingCase.courtLocation?.slice(0, -1)
+                : existingCase.courtLocation,
+            )}`
+          : '',
         caseNumber: existingCase.courtCaseNumber,
         startTime: formatDate(existingCase.courtStartDate, 'p'),
       }),
