@@ -11,7 +11,9 @@ export class QualityPhotoProvider extends BasicDataProvider {
   type = 'QualityPhotoProvider'
 
   async provide(application: Application) {
-    const fakeData = application.answers.fakeData as DrivingLicenseFakeData | undefined
+    const fakeData = application.answers.fakeData as
+      | DrivingLicenseFakeData
+      | undefined
 
     if (fakeData?.useFakeData === YES) {
       return {

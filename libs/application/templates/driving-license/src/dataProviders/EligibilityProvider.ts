@@ -12,7 +12,9 @@ export class EligibilityProvider extends BasicDataProvider {
   type = 'EligibilityProvider'
 
   async provide(application: Application): Promise<ApplicationEligibility> {
-    const fakeData = application.answers.fakeData as DrivingLicenseFakeData | undefined
+    const fakeData = application.answers.fakeData as
+      | DrivingLicenseFakeData
+      | undefined
 
     if (fakeData?.useFakeData === YES) {
       return {
