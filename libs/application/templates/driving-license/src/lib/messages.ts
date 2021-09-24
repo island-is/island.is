@@ -308,7 +308,7 @@ export const m = defineMessages({
   },
   applicationQualityPhotoTitle: {
     id: 'dl.application:applicationQualityPhotoTitle',
-    defaultMessage: 'Passamynd',
+    defaultMessage: 'Ljósmynd',
     description: 'title for quality photo section',
   },
   qualityPhotoTitle: {
