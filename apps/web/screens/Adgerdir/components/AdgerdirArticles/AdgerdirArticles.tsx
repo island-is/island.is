@@ -104,7 +104,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
     visibleItems.forEach(({ title, description }, index) => {
       const str = `${title} ${description}`.trim()
 
-      const invalid = /[°"§%\(\)()\[\]{}=\\?´`'#<>|,;.:+_-]+/g
+      const invalid = /[°"§%()[\]{}=\\?´`'#<>|,;.:+_-]+/g
       const cleanFilterString = filterString.replace(invalid, '')
 
       if (str.match(new RegExp(cleanFilterString.trim(), 'gi'))) {

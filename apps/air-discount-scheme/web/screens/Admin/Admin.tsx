@@ -55,7 +55,7 @@ const ConfirmInvoiceMutation = gql`
 
 const TODAY = new Date()
 
-const Admin: Screen = ({}) => {
+const Admin: Screen = () => {
   const { user } = useContext(UserContext)
   const [showModal, setModal] = useState(false)
   const [filters, setFilters] = useState<FilterInput>({

@@ -61,7 +61,7 @@ const target = argv.name.replace('-e2e', '')
 const CMD = {
   BUILD: `yarn nx run ${target}:build:production${argv['skip-cache'] ? ' --skip-nx-cache' : ''}`,
   EXTRACT_ENV: `scripts/dockerfile-assets/bash/extract-environment.sh ${argv.dist}`,
-  SERVE_NEXT: [ `${process.cwd()}/${argv.dist}/main.js` ],
+  SERVE_NEXT: [ `main.js` ],
   SERVE_REACT: ['scripts/static-serve.js', '-p', argv.port, '-d', argv.dist, '-b', argv['base-path']],
   TEST: `yarn nx run ${argv.name}:e2e:production --headless --production ${
     argv.ci ? `--record --group=${argv.name}` : ''}${
@@ -105,6 +105,7 @@ const serve = () => {
   // Start static-serve
   let child = spawn('node', CMD[`SERVE_${argv.type.toUpperCase()}`], {
     stdio: 'inherit',
+    cwd: `${process.cwd()}/${argv.type === 'next' ? argv.dist : ''}`,
   })
   console.log(`Serving target project in a child process: ${child.pid}`)
 

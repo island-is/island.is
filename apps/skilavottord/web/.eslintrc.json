@@ -1,7 +1,22 @@
 {
   "extends": ["plugin:@nrwl/nx/react", "../../../.eslintrc.json"],
   "ignorePatterns": ["!**/*", "translation.d.ts"],
-  "rules": {},
+  "rules": {
+    "@nrwl/nx/enforce-module-boundaries": [
+      "error",
+      {
+        "enforceBuildableLibDependency": true,
+        "allowCircularSelfDependency": true,
+        "allow": [],
+        "depConstraints": [
+          {
+            "sourceTag": "*",
+            "onlyDependOnLibsWithTags": ["*"]
+          }
+        ]
+      }
+    ]
+  },
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],

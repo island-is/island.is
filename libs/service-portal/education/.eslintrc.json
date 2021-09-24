@@ -12,7 +12,9 @@
         "@nrwl/nx/enforce-module-boundaries": [
           "error",
           {
-            "allow": ["../../education-career/src/screens/EducationCareer/EducationCareer"]
+            "allow": [
+              "../../education-career/src/screens/EducationCareer/EducationCareer"
+            ]
           }
         ]
       }

@@ -15,9 +15,7 @@
         "depConstraints": [
           {
             "sourceTag": "*",
-            "onlyDependOnLibsWithTags": [
-              "*"
-            ]
+            "onlyDependOnLibsWithTags": ["*"]
           }
         ]
       }

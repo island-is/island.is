@@ -371,7 +371,7 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "apps/air-discount-scheme/web/tsconfig.json",
+              "apps/air-discount-scheme/web/tsconfig.app.json",
               "apps/air-discount-scheme/web/tsconfig.spec.json"
             ],
             "exclude": [
@@ -4349,7 +4349,7 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "apps/financial-aid/web-osk/tsconfig.json",
+              "apps/financial-aid/web-osk/tsconfig.app.json",
               "apps/financial-aid/web-osk/tsconfig.spec.json"
             ],
             "exclude": [
@@ -4443,7 +4443,7 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "apps/financial-aid/web-veita/tsconfig.json",
+              "apps/financial-aid/web-veita/tsconfig.app.json",
               "apps/financial-aid/web-veita/tsconfig.spec.json"
             ],
             "exclude": [
@@ -5801,7 +5801,7 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "apps/judicial-system/web/tsconfig.json",
+              "apps/judicial-system/web/tsconfig.app.json",
               "apps/judicial-system/web/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**", "!apps/judicial-system/web/**/*"]
@@ -6335,7 +6335,7 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "apps/reference-next-app/tsconfig.json",
+              "apps/reference-next-app/tsconfig.app.json",
               "apps/reference-next-app/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**", "!apps/reference-next-app/**/*"]
@@ -6402,7 +6402,8 @@
             "styles": ["apps/service-portal/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/service-portal/webpack.config.js",
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "optimization": true
           },
           "configurations": {
             "production": {
@@ -8606,7 +8607,7 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "apps/skilavottord/web/tsconfig.json",
+              "apps/skilavottord/web/tsconfig.app.json",
               "apps/skilavottord/web/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**", "!apps/skilavottord/web/**/*"]
@@ -8891,7 +8892,7 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "apps/web/tsconfig.json",
+              "apps/web/tsconfig.app.json",
               "apps/web/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**", "!apps/web/**/*"]
