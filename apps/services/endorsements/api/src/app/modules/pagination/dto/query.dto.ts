@@ -8,7 +8,7 @@ export class QueryDto {
   // @Min(1)
   // @Max(50)
   @ApiProperty({required:false})
-  limit?: number;
+  limit?: number | 10;
 
   @IsOptional()
   @ApiProperty({required:false})

@@ -45,6 +45,7 @@ import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
 
 
 
+
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @Audit({
   namespace: auditNamespace,
@@ -68,6 +69,7 @@ export class EndorsementController {
     resources: ({data: endorsement}) => endorsement.map((e) => e.id),
     meta: ({data: endorsement}) => ({ count: endorsement.length }),
   })
+  @ApiOkResponse({type:PaginatedEndorsementDto})
   async findAll(
     @Param(
       'listId',

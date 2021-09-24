@@ -1,15 +1,14 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { PageInfoDto } from '../../pagination/dto/pageinfo.dto';
-import { EndorsementDto } from './endorsement.dto';
+import { ApiProperty } from '@nestjs/swagger'
+import { IsString, IsArray } from 'class-validator'
+import { IsNationalId } from '@island.is/nest/validators'
+import { Endorsement } from '../models/endorsement.model'
+import { PageInfoDto } from '../../pagination/dto/pageinfo.dto'
 
-
-
-  export class PaginatedEndorsementDto {
-    @ApiProperty({ example: 123})
-    totalCount!: number
-    @ApiProperty({type: [EndorsementDto]})
-    data!: EndorsementDto[]
-    @ApiProperty({ type: PageInfoDto})
-    pageInfo!: PageInfoDto
-  
-  }
+export class PaginatedEndorsementDto {
+  @ApiProperty()
+  totalCount!: number
+  @ApiProperty({type: [Endorsement]})
+  data!: Endorsement[]
+  @ApiProperty()
+  pageInfo!: PageInfoDto
+}

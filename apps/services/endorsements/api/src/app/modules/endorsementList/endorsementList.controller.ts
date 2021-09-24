@@ -46,6 +46,7 @@ import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement
 
 
 
+
 @Audit({
   namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
 })
@@ -63,7 +64,7 @@ export class EndorsementListController {
   //   type: [EndorsementList],
   // })
   @ApiOperation({ summary: 'Finds all endorsement lists belonging to given tags' })
-
+  @ApiOkResponse({type:PaginatedEndorsementListDto})
   @Get()
   async findByTags(
     @Query() { tags }: FindEndorsementListByTagsDto,
@@ -87,6 +88,7 @@ export class EndorsementListController {
   @Scopes(EndorsementsScope.main)
   // @ApiPaginatedResponse(Endorsement)
   @ApiOperation({ summary: 'Finds all endorsements for the currently authenticated user' })
+  @ApiOkResponse({type:PaginatedEndorsementDto})
   @Get('/endorsements')
   @Audit<PaginatedEndorsementDto>({
     resources: ({data: endorsement}) => endorsement.map((e) => e.id),
@@ -94,8 +96,8 @@ export class EndorsementListController {
   })
   async findEndorsements(
     @CurrentUser() user: User,
-    @Query() query: QueryDto
-    ): Promise<Endorsement[]> {
+    @Query() query?: QueryDto
+    ): Promise<PaginatedEndorsementDto[]> {
     // TODO: Add pagination
     return await this.endorsementListService.findAllEndorsementsByNationalId(
       user.nationalId,

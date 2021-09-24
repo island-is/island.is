@@ -976,11 +976,11 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "yarn nx run services-endorsements-api:dev/init",
-              "yarn nx run services-endorsements-api:schemas/external-openapi-generator",
-              "yarn nx run services-endorsements-api:schemas/openapi-generator",
-              "yarn nx run services-endorsements-api:schemas/build-openapi",
-              "yarn nx run api-domains-endorsement-system:schemas/openapi-generator"
+              "yarn nx run services-endorsements-api:dev/init $NX_OPTIONS",
+              "yarn nx run services-endorsements-api:schemas/external-openapi-generator $NX_OPTIONS",
+              "yarn nx run services-endorsements-api:schemas/openapi-generator $NX_OPTIONS",
+              "yarn nx run services-endorsements-api:schemas/build-openapi $NX_OPTIONS",
+              "yarn nx run api-domains-endorsement-system:schemas/openapi-generator $NX_OPTIONS"
             ],
             "parallel": false
           }
@@ -989,8 +989,8 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "yarn nx run services-endorsements-api:dev &",
-              "yarn start api &"
+              "yarn nx run services-endorsements-api:dev $NX_OPTIONS &",
+              "yarn start api $NX_OPTIONS &"
             ],
             "parallel": true
           }
@@ -7456,11 +7456,11 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "yarn nx run services-endorsements-api:dev-services",
+              "yarn nx run services-endorsements-api:dev-services $NX_OPTIONS",
               "echo \"Waiting for databases to start...\" && sleep 2",
-              "yarn nx run services-party-letter-registry-api:migrate",
-              "yarn nx run services-temporary-voter-registry-api:migrate",
-              "yarn nx run services-endorsements-api:migrate"
+              "yarn nx run services-party-letter-registry-api:migrate $NX_OPTIONS",
+              "yarn nx run services-temporary-voter-registry-api:migrate $NX_OPTIONS",
+              "yarn nx run services-endorsements-api:migrate $NX_OPTIONS"
             ],
             "parallel": false
           }
@@ -7470,9 +7470,9 @@
           "options": {
             "commands": [
               "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
-              "yarn start services-party-letter-registry-api &",
-              "yarn start services-temporary-voter-registry-api &",
-              "yarn start services-endorsements-api &"
+              "yarn start services-party-letter-registry-api $NX_OPTIONS &",
+              "yarn start services-temporary-voter-registry-api $NX_OPTIONS &",
+              "yarn start services-endorsements-api $NX_OPTIONS &"
             ],
             "parallel": true
           }
