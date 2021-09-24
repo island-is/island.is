@@ -20,7 +20,7 @@ describe('Appeal section component', () => {
     accusedNationalId: '000000-0000',
   }
 
-  test('should say when a case is no longer appealable', async () => {
+  test('should say when a case is no longer appealable if either the prosecutors or judges appeal decision is to postpone', async () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
@@ -29,6 +29,7 @@ describe('Appeal section component', () => {
               ...baseWorkingCase,
               isAppealDeadlineExpired: true,
               rulingDate: '2020-09-16T19:50:00.000Z',
+              accusedAppealDecision: CaseAppealDecision.POSTPONE,
             }}
             setAccusedAppealDate={() => null}
             setProsecutorAppealDate={() => null}
