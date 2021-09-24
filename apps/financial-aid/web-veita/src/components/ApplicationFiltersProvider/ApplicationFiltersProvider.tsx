@@ -13,6 +13,7 @@ interface ApplicationFiltersProvider {
   setApplicationFilters?: React.Dispatch<
     React.SetStateAction<ApplicationFilters>
   >
+  loading?: boolean
 }
 
 export const ApplicationFiltersContext = createContext<ApplicationFiltersProvider>(
@@ -53,7 +54,7 @@ const ApplicationFiltersProvider = ({ children }: PageProps) => {
 
   return (
     <ApplicationFiltersContext.Provider
-      value={{ applicationFilters, setApplicationFilters }}
+      value={{ applicationFilters, setApplicationFilters, loading }}
     >
       {children}
     </ApplicationFiltersContext.Provider>
