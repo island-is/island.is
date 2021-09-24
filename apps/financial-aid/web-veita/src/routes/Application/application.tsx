@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { LoadingDots, Text, Box, Button } from '@island.is/island-ui/core'
+import { SkeletonLoader, Text, Box, Button } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 import * as styles from './application.treat'
@@ -31,13 +31,13 @@ import { calcAge } from '@island.is/financial-aid-web/veita/src/utils/formHelper
 
 import {
   Profile,
-  AdminLayout,
   StateModal,
   AidAmountModal,
   History,
   CommentSection,
   ApplicationHeader,
   FilesListWithHeaderContainer,
+  ApplicationSkeleton,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 interface ApplicantData {
@@ -287,7 +287,7 @@ const ApplicationProfile = () => {
     )
   }
   if (loading) {
-    return <LoadingDots />
+    return <ApplicationSkeleton />
   }
   return (
     <>

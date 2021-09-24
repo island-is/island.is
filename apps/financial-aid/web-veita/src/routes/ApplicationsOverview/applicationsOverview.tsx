@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Text, Box, LoadingDots } from '@island.is/island-ui/core'
+import { Text, Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import {
-  AdminLayout,
+  ApplicationOverviewSkeleton,
   ApplicationsTable,
 } from '@island.is/financial-aid-web/veita/src/components'
 
@@ -87,7 +87,7 @@ export const ApplicationsOverview = () => {
           </div>
         )}
 
-        {loading && <LoadingDots />}
+        {loading && <ApplicationOverviewSkeleton />}
       </>
     )
   }
