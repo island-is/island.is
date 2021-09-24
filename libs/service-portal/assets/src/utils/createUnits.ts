@@ -1,4 +1,5 @@
 import chunk from 'lodash/chunk'
+import isNumber from 'lodash/isNumber'
 import { format as formatKennitala } from 'kennitala'
 import amountFormat from './amountFormat'
 import { messages } from '../lib/messages'
@@ -7,7 +8,6 @@ import { FormatMessage } from '@island.is/application/core'
 import { Notkunareining, ThinglysturEigandi } from '@island.is/clients/assets'
 import is from 'date-fns/locale/is'
 import format from 'date-fns/format'
-import { isNumber } from 'lodash'
 
 const ownersArray = (data: ThinglysturEigandi[] | undefined) => {
   const ownerArray = data?.map((owner) => {
