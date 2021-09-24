@@ -1,10 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import cn from 'classnames'
-
 import LogoSvg from './LogoSvg'
-
-import { MunicipalityContext } from '@island.is/financial-aid-web/osk/src/components/MunicipalityProvider/MunicipalityProvider'
-import { Municipality } from '@island.is/financial-aid/shared/lib'
+import { MunicipalityContext } from '../MunicipalityProvider/MunicipalityProvider'
 
 interface LogoProps {
   className?: string
@@ -15,11 +12,16 @@ const Logo = ({ className }: LogoProps) => {
 
   return (
     <a
-      href={'https://www.samband.is/'}
+      href={
+        municipality?.homePage
+          ? municipality.homePage
+          : 'https://www.samband.is/'
+      }
       target="_blank"
       className={cn({ [`${className}`]: true })}
+      rel="noreferrer noopener"
     >
-      <LogoSvg name={'hfj'} />
+      <LogoSvg name={municipality?.id} />
     </a>
   )
 }

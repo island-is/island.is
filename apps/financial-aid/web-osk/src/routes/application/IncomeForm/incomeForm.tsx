@@ -4,7 +4,6 @@ import { Text, BulletList, Bullet, Box } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  Layout,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 
@@ -47,7 +46,7 @@ const IncomeForm = () => {
   }
 
   return (
-    <Layout>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Hefur þú fengið tekjur í þessum eða síðasta mánuði?
@@ -96,7 +95,7 @@ const IncomeForm = () => {
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
-    </Layout>
+    </>
   )
 }
 
