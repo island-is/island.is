@@ -5,6 +5,7 @@ import Cookies from 'js-cookie'
 
 import { CurrentUserQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 import { useRouter } from 'next/router'
+import { Routes } from '@island.is/financial-aid/shared/lib'
 
 import {
   serviceCenters,
@@ -43,7 +44,9 @@ const UserProvider = ({ children }: Props) => {
   useEffect(() => {
     if (loggedInUser && !user) {
       if (loggedInUser.currentApplication) {
-        router.push(`/stada/${loggedInUser.currentApplication.id}`)
+        router.push(
+          `${Routes.statusPage(loggedInUser.currentApplication.id as string)}`,
+        )
       }
 
       setUser(loggedInUser)
