@@ -455,52 +455,6 @@ endorsement-system-api:
     privileged: false
   strategy:
     type: 'Recreate'
-endorsement-system-scripts-update-metadata:
-  args:
-    - '--tls-min-v1.0'
-    - 'updateMetadata.js'
-  command:
-    - 'node'
-  enabled: true
-  env:
-    DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_endorsements_api'
-    DB_USER: 'services_endorsements_api'
-    SERVERSIDE_FEATURES_ON: ''
-    TEMPORARY_VOTER_REGISTRY_API_URL: 'http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local'
-  grantNamespaces:
-    - 'islandis'
-    - 'application-system'
-  grantNamespacesEnabled: true
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/'
-      timeoutSeconds: 3
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
-  namespace: 'endorsement-system'
-  replicaCount:
-    default: 2
-    max: 3
-    min: 2
-  schedule: '1 */6 * * *'
-  secrets:
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
-    SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL'
-    SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
-    SOFFIA_SOAP_URL: '/k8s/endorsement-system-api/SOFFIA_SOAP_URL'
-    SOFFIA_USER: '/k8s/service-portal/SOFFIA_USER'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
-  strategy:
-    type: 'Recreate'
 global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
