@@ -29,7 +29,7 @@ describe('CreatePartyLetterRegistry', () => {
   })
   it('POST /party-letter-registry should return error when data is invalid', async () => {
     const app = await getAuthenticatedApp({
-      scope: [GenericScope.internal],
+      scope: [GenericScope.system],
       // eslint-disable-next-line local-rules/disallow-kennitalas
       nationalId: '0101302209',
     })
@@ -53,7 +53,7 @@ describe('CreatePartyLetterRegistry', () => {
     // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101305069'
     const app = await getAuthenticatedApp({
-      scope: [GenericScope.internal],
+      scope: [GenericScope.system],
       nationalId,
     })
     const requestData = {
@@ -76,7 +76,7 @@ describe('CreatePartyLetterRegistry', () => {
     // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101303019'
     const app = await getAuthenticatedApp({
-      scope: [GenericScope.internal],
+      scope: [GenericScope.system],
       nationalId,
     })
     const requestData = {
