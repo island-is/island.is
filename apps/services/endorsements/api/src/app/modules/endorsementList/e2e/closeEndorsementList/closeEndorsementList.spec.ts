@@ -23,7 +23,7 @@ describe('closeEndorsementList', () => {
   it(`PUT /endorsement-list/:listId/close should return 404 when closing an non existing list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [GenericScope.internal],
+      scope: [GenericScope.system],
     })
     const response = await request(app.getHttpServer())
       .put('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba777/close')
@@ -38,7 +38,7 @@ describe('closeEndorsementList', () => {
   it(`PUT /endorsement-list/:listId/close should not be able to close endorsement lists for others`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [GenericScope.internal],
+      scope: [GenericScope.system],
     })
     const response = await request(app.getHttpServer())
       .put('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba013/close')
@@ -53,7 +53,7 @@ describe('closeEndorsementList', () => {
   it(`PUT /endorsement-list/:listId/close should close existing endorsement list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [GenericScope.internal],
+      scope: [GenericScope.system],
     })
     const response = await request(app.getHttpServer())
       .put('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba012/close')
