@@ -7,7 +7,6 @@ import { EndorsementSystemService } from './endorsementSystem.service'
 import { FindEndorsementListInput } from './dto/findEndorsementList.input'
 import { EndorsementList } from './models/endorsementList.model'
 import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
-import { CreateEndorsementListDto } from './dto/createEndorsementList.input'
 import { BulkEndorseListInput } from './dto/bulkEndorseList.input'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
 
@@ -103,19 +102,6 @@ export class EndorsementSystemResolver {
     @CurrentUser() user: User,
   ): Promise<Endorsement[]> {
     return await this.endorsementSystemService.endorsementListControllerFindEndorsements(
-      user,
-    )
-  }
-
-  @Mutation(() => EndorsementList)
-  async endorsementSystemCreateEndorsementList(
-    @Args('input') input: CreateEndorsementListDto,
-    @CurrentUser() user: User,
-  ): Promise<EndorsementList> {
-    return await this.endorsementSystemService.endorsementListControllerCreate(
-      {
-        endorsementListDto: input,
-      },
       user,
     )
   }
