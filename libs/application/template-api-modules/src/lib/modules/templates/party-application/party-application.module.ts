@@ -2,6 +2,7 @@ import { DynamicModule } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import {
+  APPLICATION_SYSTEM_CLIENT,
   PartyApplicationService,
   PARTY_APPLICATION_SERVICE_OPTIONS,
 } from './party-application.service'
@@ -30,6 +31,10 @@ export class PartyApplicationModule {
         {
           provide: PARTY_APPLICATION_SERVICE_OPTIONS,
           useFactory: () => config.partyApplication.options,
+        },
+        {
+          provide: APPLICATION_SYSTEM_CLIENT,
+          useFactory: () => config.partyApplication.systemClient,
         },
       ],
       exports: [PartyApplicationService],

@@ -1,7 +1,10 @@
 import { DynamicModule } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
-import { PartyLetterService } from './party-letter.service'
+import {
+  APPLICATION_SYSTEM_CLIENT,
+  PartyLetterService,
+} from './party-letter.service'
 import {
   Configuration as endorsementConfig,
   EndorsementListApi,
@@ -38,9 +41,12 @@ export class PartyLetterModule {
               }),
             ),
         },
+        {
+          provide: APPLICATION_SYSTEM_CLIENT,
+          useFactory: () => config.partyLetter.systemClient,
+        },
       ],
       exports: [PartyLetterService],
     }
   }
 }
-// TODO: Add client to config here?

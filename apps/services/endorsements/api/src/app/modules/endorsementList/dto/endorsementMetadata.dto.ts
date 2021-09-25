@@ -7,7 +7,7 @@ export class EndorsementMetadataDto {
   @IsEnum(EndorsementMetaField)
   field!: EndorsementMetaField
 
-  @ApiProperty({ type: Boolean, nullable: true })
+  @ApiProperty({ type: Boolean, required: false })
   @IsOptional()
-  keepUpToDate: boolean | null = false
+  keepUpToDate?: boolean = false
 }

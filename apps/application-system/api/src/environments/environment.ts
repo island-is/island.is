@@ -1,5 +1,6 @@
 import { Environment } from './environment.interface'
 
+const devAuthIssuer = 'https://identity-server.dev01.devland.is'
 const devConfig = {
   production: false,
   environment: 'local',
@@ -15,7 +16,7 @@ const devConfig = {
     defaultNamespace: '@island.is/applications',
   },
   auth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer: devAuthIssuer,
     audience: '@island.is',
   },
   templateApi: {
@@ -67,6 +68,11 @@ const devConfig = {
     partyLetter: {
       partyLetterRegistryApiBasePath: 'http://localhost:4251',
       endorsementsApiBasePath: 'http://localhost:4246',
+      systemClient: {
+        issuer: devAuthIssuer,
+        clientId: process.env.APPLICATION_CLIENT_ID,
+        clientSecret: process.env.APPLICATION_CLIENT_SECRET,
+      },
     },
     partyApplication: {
       endorsementsApiBasePath: 'http://localhost:4246',
@@ -79,6 +85,11 @@ const devConfig = {
           partyApplicationNorth: 's@kogk.is',
           partyApplicationSouth: 's@kogk.is',
         },
+      },
+      systemClient: {
+        issuer: devAuthIssuer,
+        clientId: process.env.APPLICATION_CLIENT_ID,
+        clientSecret: process.env.APPLICATION_CLIENT_SECRET,
       },
     },
   },
@@ -165,6 +176,11 @@ const prodConfig = {
       partyLetterRegistryApiBasePath:
         process.env.PARTY_LETTER_REGISTRY_API_BASE_PATH,
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
+      systemClient: {
+        issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+        clientId: process.env.APPLICATION_CLIENT_ID,
+        clientSecret: process.env.APPLICATION_CLIENT_SECRET,
+      },
     },
     partyApplication: {
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
@@ -183,6 +199,11 @@ const prodConfig = {
           partyApplicationSouth:
             process.env.PARTY_APPLICATION_SOUTH_ADMIN_EMAIL,
         },
+      },
+      systemClient: {
+        issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+        clientId: process.env.APPLICATION_CLIENT_ID,
+        clientSecret: process.env.APPLICATION_CLIENT_SECRET,
       },
     },
   },

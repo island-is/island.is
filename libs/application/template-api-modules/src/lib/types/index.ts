@@ -5,6 +5,12 @@ import { Message } from '@island.is/email-service'
 import { PartyApplicationServiceOptions } from '../modules/templates/party-application/party-application.service'
 import { User } from '@island.is/auth-nest-tools'
 
+export interface ApplicationSystemClient {
+  issuer: string
+  clientId: string
+  clientSecret: string
+}
+
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
   jwtSecret: string
@@ -38,10 +44,12 @@ export interface BaseTemplateAPIModuleConfig {
   partyLetter: {
     partyLetterRegistryApiBasePath: string
     endorsementsApiBasePath: string
+    systemClient: ApplicationSystemClient
   }
   partyApplication: {
     endorsementsApiBasePath: string
     options: PartyApplicationServiceOptions
+    systemClient: ApplicationSystemClient
   }
 }
 

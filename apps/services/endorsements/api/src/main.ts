@@ -2,9 +2,8 @@ import { bootstrap } from '@island.is/infra-nest-server'
 import { AppModule } from './app/app.module'
 import { environment } from './environments'
 import { openApi } from './openApi'
-import { default as updateMetadata } from '../scripts/updateMetadata'
-updateMetadata()
-/*
+export { default as updateMetadata } from '../scripts/updateMetadata'
+
 if (require.main === module || !environment.production) {
   bootstrap({
     appModule: AppModule,
@@ -15,4 +14,3 @@ if (require.main === module || !environment.production) {
     stripNonClassValidatorInputs: false,
   })
 }
-*/
