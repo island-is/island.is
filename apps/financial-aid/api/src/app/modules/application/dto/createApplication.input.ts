@@ -23,7 +23,7 @@ export class CreateApplicationInput implements CreateApplication {
 
   @Allow()
   @Field()
-  readonly phoneNumber!: string
+  readonly phoneNumber?: string
 
   @Allow()
   @Field()

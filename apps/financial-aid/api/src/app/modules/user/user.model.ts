@@ -13,8 +13,8 @@ export class UserModel implements User {
   @Field()
   readonly name!: string
 
-  @Field()
-  readonly phoneNumber!: string
+  @Field({ nullable: true })
+  readonly phoneNumber?: string
 
   @Field()
   readonly folder!: string

@@ -153,7 +153,7 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Sími',
-        content: formatPhoneNumber(application.phoneNumber),
+        content: formatPhoneNumber(application.phoneNumber ?? ''),
         link: 'tel:' + application.phoneNumber,
       },
       {

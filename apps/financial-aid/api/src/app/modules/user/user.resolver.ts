@@ -7,6 +7,7 @@ import {
   ApplicationState,
   CurrentApplication,
   HomeCircumstances,
+  User,
 } from '@island.is/financial-aid/shared/lib'
 import { CurrentGraphQlUser } from '@island.is/financial-aid/auth'
 
@@ -16,8 +17,7 @@ import { UserService } from './user.service'
 import { CurrentApplicationModel } from '../application'
 import { environment } from '../../../environments'
 import { StaffModel } from '../staff/models'
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => UserModel)
@@ -47,11 +47,11 @@ export class UserResolver {
   }
 
   @Query(() => UserModel, { nullable: true })
-  async currentUser(@CurrentUser() user: User): Promise<UserModel | undefined> {
+  async currentUser(
+    @CurrentGraphQlUser() user: User,
+  ): Promise<UserModel | undefined> {
     this.logger.debug('Getting current user')
-    console.log('user', user)
-
-    return undefined
+    return user as UserModel
   }
 
   @ResolveField('currentApplication', () => CurrentApplicationModel)

@@ -8,7 +8,11 @@ import {
   SessionBase,
 } from 'next-auth/_utils'
 import { uuid } from 'uuidv4'
-import { RolesRule } from '@island.is/financial-aid/shared/lib'
+import {
+  decodeToken,
+  ReturnUrl,
+  RolesRule,
+} from '@island.is/financial-aid/shared/lib'
 
 type AuthUser = User & {
   nationalId: string
@@ -40,7 +44,7 @@ const providers = [
   }),
 ]
 
-let callbacks: Callbacks = {
+const callbacks: Callbacks = {
   signIn: signIn,
   jwt: jwt,
   session: session,
@@ -73,12 +77,11 @@ async function jwt(token: GenericObject, user: AuthUser) {
       isRefreshTokenExpired: false,
       folder: uuid(),
       service: RolesRule.OSK,
+      returnUrl: ReturnUrl.APPLICATION,
     }
   }
 
-  console.log('token', token)
-
-  const decoded = parseJwt(token.accessToken)
+  const decoded = decodeToken(token.accessToken)
   const expires = new Date(decoded.exp * 1000)
   const renewalTime = new Date(expires.setSeconds(expires.getSeconds() - 300))
 
@@ -125,18 +128,10 @@ async function refreshAccessToken(refreshToken: string) {
 async function session(session: AuthSession, user: AuthUser) {
   session.accessToken = user.accessToken
   session.idToken = user.idToken
-  const decoded = parseJwt(session.accessToken)
+  const decoded = decodeToken(session.accessToken)
   session.expires = new Date(decoded.exp * 1000).toString()
   session.scope = decoded.scope
   return session
-}
-
-function parseJwt(token: string): any {
-  let base64Url = token.split('.')[1]
-  let base64 = base64Url.replace('-', '+').replace('_', '/')
-  let decodedData = JSON.parse(Buffer.from(base64, 'base64').toString('binary'))
-
-  return decodedData
 }
 
 const options = { providers, callbacks }

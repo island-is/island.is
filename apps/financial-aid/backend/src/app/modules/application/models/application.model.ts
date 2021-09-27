@@ -59,7 +59,7 @@ export class ApplicationModel extends Model<Application> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty()
   phoneNumber: string
