@@ -1,12 +1,7 @@
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { GenericScope } from '@island.is/auth/scopes'
 import { User, AuthMiddleware } from '@island.is/auth-nest-tools'
-import {
-  ApplicationSystemClient,
-  TemplateApiModuleActionProps,
-} from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import {
   generateAssignMinistryOfJusticeApplicationEmail,
@@ -20,6 +15,11 @@ import {
   EndorsementListDtoTagsEnum,
   ValidationRuleDtoTypeEnum,
 } from './gen/fetch/endorsements'
+import type {
+  ApplicationSystemClient,
+  TemplateApiModuleActionProps,
+} from '../../../types'
+import type { Logger } from '@island.is/logging'
 
 const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
 export const APPLICATION_SYSTEM_CLIENT = 'APPLICATION_SYSTEM_CLIENT'

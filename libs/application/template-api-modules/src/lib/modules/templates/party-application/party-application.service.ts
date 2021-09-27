@@ -1,9 +1,5 @@
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import {
-  ApplicationSystemClient,
-  TemplateApiModuleActionProps,
-} from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import {
   generateAssignSupremeCourtApplicationEmail,
@@ -18,10 +14,13 @@ import {
   EndorsementMetadataDtoFieldEnum,
   ValidationRuleDtoTypeEnum,
 } from './gen/fetch'
-
-import type { Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { GenericScope } from '@island.is/auth/scopes'
+import type {
+  ApplicationSystemClient,
+  TemplateApiModuleActionProps,
+} from '../../../types'
+import type { Logger } from '@island.is/logging'
 
 const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
 
