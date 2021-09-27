@@ -37,27 +37,24 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       <AccordionListItem
         title={formatMessage(m.sections.timeAndLocation.title)}
       >
-        {workingCase.courtEndTime ? (
-          <Text>
-            {`Þinghald frá kl. ${formatDate(
-              workingCase.courtStartDate,
-              TIME_FORMAT,
-            )} til kl. ${formatDate(
-              workingCase.courtEndTime,
-              TIME_FORMAT,
-            )} ${formatDate(workingCase.courtEndTime, 'PP')}`}
-          </Text>
-        ) : (
-          <>
-            <Text>
-              {`Þinghald frá kl. ${formatDate(
-                workingCase.courtStartDate,
-                TIME_FORMAT,
-              )}`}
-            </Text>
-            <Text>Þinghaldi er ekki lokið</Text>
-          </>
-        )}
+        <Text>
+          {workingCase.courtEndTime
+            ? formatMessage(m.sections.timeAndLocation.text, {
+                courtStartTime: formatDate(
+                  workingCase.courtStartDate,
+                  TIME_FORMAT,
+                ),
+                courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
+                courtEndDate: formatDate(workingCase.courtEndTime, 'PP'),
+                courtLocation: workingCase.courtLocation,
+              })
+            : formatMessage(m.sections.timeAndLocation.textOngoing, {
+                courtStartTime: formatDate(
+                  workingCase.courtStartDate,
+                  TIME_FORMAT,
+                ),
+              })}
+        </Text>
         {!workingCase.isClosedCourtHidden && (
           <Box marginBottom={3}>
             <Text>{formatMessage(closedCourt.text)}</Text>
@@ -103,15 +100,16 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         workingCase.sessionArrangements,
       ) && (
         <AccordionListItem
-          title={`Réttindi ${
-            workingCase.type === CaseType.CUSTODY ||
-            workingCase.type === CaseType.TRAVEL_BAN
-              ? formatAccusedByGender(
-                  workingCase.accusedGender,
-                  NounCases.GENITIVE,
-                )
-              : 'varnaraðila'
-          }`}
+          title={formatMessage(m.sections.accusedRights.title, {
+            accusedType:
+              workingCase.type === CaseType.CUSTODY ||
+              workingCase.type === CaseType.TRAVEL_BAN
+                ? formatAccusedByGender(
+                    workingCase.accusedGender,
+                    NounCases.GENITIVE,
+                  )
+                : 'varnaraðila',
+          })}
         >
           <Text>
             Sakborning er bent á að honum sé óskylt að svara spurningum er varða

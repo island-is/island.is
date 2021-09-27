@@ -13,9 +13,18 @@ export const courtRecordAccordion = {
       text: {
         id:
           'judicial.system.core:court_record_accordion.time_and_location.text',
-        defaultMessage: 'TODO',
+        defaultMessage:
+          'Þinghald frá kl. {courtStartTime} til kl. {courtEndTime} {courtEndDate} {courtLocation}.',
         description:
           'Notaður sem texti í "tíma og stað" svæði í þingbókarfellilistanum.',
+      },
+      textOngoing: {
+        id:
+          'judicial.system.core:court_record_accordion.time_and_location.text_ongoing',
+        defaultMessage:
+          'Þinghald frá kl. {courtStartTime}. Þinghaldi er ekki lokið.',
+        description:
+          'Notaður sem texti í "tíma og stað" svæði í þingbókarfellilistanum þegar þinghald er enn í gangi.',
       },
     }),
     courtAttendees: defineMessages({
@@ -29,9 +38,17 @@ export const courtRecordAccordion = {
     courtDocuments: defineMessages({
       title: {
         id: 'judicial.system.core:court_record_accordion.court_documents.title',
-        defaultMessage: ' Lagt er fram',
+        defaultMessage: 'Lagt er fram',
         description:
           'Notaður sem titill í "Lagt er fram" svæði í þingbókarfellilistanum.',
+      },
+    }),
+    accusedRights: defineMessages({
+      title: {
+        id: 'judicial.system.core:court_record_accordion.accused_rights.title',
+        defaultMessage: 'Réttindi {accusedType}',
+        description:
+          'Notaður sem titill í "Réttindi ..." svæði í þingbókarfellilistanum.',
       },
     }),
   },
