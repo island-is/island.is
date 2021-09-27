@@ -116,7 +116,7 @@ jobs:
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
-      IMAGES: ${{ steps.build_map.outputs.IMAGES }}
+      IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
@@ -151,7 +151,7 @@ jobs:
       - name: Generate docker image tag
         id: docker_tags
         run: |
-          export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH} | tr "/." "-" )
+          export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH:0:45} | tr "/." "-" )
           SHA="${{ github.event.pull_request.head.sha }}"
           echo "SHA='$SHA' retrieved from event"
           if [[ "$SHA" == "" ]]; then
@@ -197,8 +197,8 @@ jobs:
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
         run: |
-          export HASH=${{ hashFiles('scripts/schemas.js', 'libs/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'apps/gjafakort/api/src/**.typeDefs.ts', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.enum.ts', 'libs/**/*.enum.ts', 'apps/**/queries/**/*.tsx?', 'apps/**/queries/**/*.ts', 'libs/**/queries/**/*.tsx?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/**/*.dto.ts', 'libs/**/*.dto.ts', 'apps/**/*.input.ts', 'libs/**/*.input.ts', 'apps/**/*.module.ts', 'libs/**/*.module.ts', 'apps/**/*.controller.ts', 'libs/**/*.controller.ts', 'apps/**/*.union.ts', 'libs/**/*.union.ts') }}
-          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-generated-files
+          export HASH=${{ hashFiles('scripts/schemas.js', 'libs/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'apps/gjafakort/api/src/**.typeDefs.ts', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.enum.ts', 'libs/**/*.enum.ts', 'apps/**/queries/**/*.tsx?', 'apps/**/queries/**/*.ts', 'libs/**/queries/**/*.tsx?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/**/*.dto.ts', 'libs/**/*.dto.ts', 'apps/**/*.input.ts', 'libs/**/*.input.ts', 'apps/**/*.module.ts', 'libs/**/*.module.ts', 'apps/**/*.controller.ts', 'libs/**/*.controller.ts', 'apps/**/*.union.ts', 'libs/**/*.union.ts', 'apps/**/*.graphql.ts', 'libs/**/*.graphql.ts') }}
+          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
 
@@ -257,6 +257,17 @@ jobs:
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
+          fi
+
+      - name: Prepare deployment targets
+        id: deploy_map
+        if: needs.pre-checks.outputs.PRE_CHECK != 'push'
+        env:
+          BASE: 'origin/main'
+        run: |
+          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress)
+          echo "CHUNKS: '$CHUNKS'"
+          if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=IMAGES::$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
           fi
 
@@ -334,17 +345,18 @@ jobs:
       - name: Building Docker images
         if: steps.gather.outcome == 'success'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
+
   helm-docker-build:
     needs:
       - prepare
       - pre-checks
-      - docker-build
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
     runs-on: ubuntu-20.04
     timeout-minutes: 5
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
     steps:
       - uses: actions/checkout@v2
 
@@ -353,6 +365,13 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
 
       - name: Docker build image
         working-directory: infra
@@ -363,6 +382,14 @@ jobs:
           echo 'EOF' >> $GITHUB_ENV
         env:
           PUBLISH: 'true'
+
+      - name: Retag as latest
+        if: env.GIT_BRANCH == 'main'
+        env:
+          UNAFFECTED: helm-config
+          LAST_GOOD_BUILD_DOCKER_TAG: ${{ env.DOCKER_TAG }}
+          DOCKER_TAG: latest
+        run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
       - name: Comment on PR
         if: needs.pre-checks.outputs.LABELED_FOR_DEPLOY == 'true'
@@ -420,7 +447,7 @@ jobs:
       GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
-      BUILD_CHUNKS: ${{ needs.prepare.outputs.BUILD_CHUNKS }}
+      IMAGES: ${{ needs.prepare.outputs.IMAGES }}
     strategy:
       matrix:
         service:
@@ -442,7 +469,7 @@ jobs:
             "parameters": {
               "docker_tag": "$DOCKER_TAG",
               "feature_name": "$FEATURE_NAME",
-              "images": "$(echo $BUILD_CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')",
+              "images": "$IMAGES",
               "pull_request_number": "$(echo $GITHUB_REF | cut -d'/' -f3)"
             }
           }

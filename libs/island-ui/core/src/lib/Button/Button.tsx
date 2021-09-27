@@ -102,7 +102,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
         type={as === 'span' ? undefined : type}
         className={cn(
           styles.variants[variant],
-          styles.colors[variant][colorScheme],
+          (styles.colors[variant] as Record<string, string>)[colorScheme],
           {
             [styles.size[size]]:
               variant !== 'utility' &&

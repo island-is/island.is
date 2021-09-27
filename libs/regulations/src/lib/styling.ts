@@ -158,6 +158,12 @@ export const regulationContentStyling = (wrapper: string) => {
     verticalAlign: 'top',
     width: 'auto',
     border: `1px solid ${color.dark300}`,
+
+    '@media': {
+      print: {
+        pageBreakInside: 'avoid',
+      },
+    },
   })
   styleRegulation(
     `
@@ -216,6 +222,15 @@ export const regulationContentStyling = (wrapper: string) => {
   })
   styleRegulation('[align="center"]', {
     textAlign: 'center',
+  })
+
+  styleRegulation('h1,h2,h3,h4,h5,h6', {
+    '@media': {
+      print: {
+        pageBreakAfter: 'avoid',
+        pageBreakInside: 'avoid',
+      },
+    },
   })
 
   styleRegulation('h1, h2,', {

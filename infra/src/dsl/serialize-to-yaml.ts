@@ -1,10 +1,16 @@
-import { DEFAULT_FULL_SCHEMA, dump, safeLoad, safeLoadAll } from 'js-yaml'
+import { DEFAULT_FULL_SCHEMA, dump, load } from 'js-yaml'
 import { postgresIdentifier, serializeService } from './map-to-values'
 import { PostgresInfo, Service } from './types/input-types'
 import { UberChart } from './uber-chart'
 import { ValueFile, FeatureKubeJob } from './types/output-types'
 
 const MAX_LEVEL_DEPENDENCIES = 20
+const dumpOpts = {
+  sortKeys: true,
+  noRefs: true,
+  schema: DEFAULT_FULL_SCHEMA,
+  forceQuotes: true,
+}
 
 const renderValueFile = (
   uberChart: UberChart,
@@ -45,12 +51,8 @@ const renderValueFile = (
 }
 
 export const reformatYaml = (content: string): string => {
-  const obj = safeLoad(content, { json: true })
-  return dump(obj, {
-    sortKeys: true,
-    noRefs: true,
-    schema: DEFAULT_FULL_SCHEMA,
-  })
+  const obj = load(content, { json: true })
+  return dump(obj, dumpOpts)
 }
 
 export const generateYamlForEnv = (
@@ -61,11 +63,7 @@ export const generateYamlForEnv = (
 }
 
 export const dumpYaml = (valueFile: ValueFile | FeatureKubeJob) =>
-  dump(valueFile, {
-    sortKeys: true,
-    noRefs: true,
-    schema: DEFAULT_FULL_SCHEMA,
-  })
+  dump(valueFile, dumpOpts)
 
 const findDependencies = (
   uberChart: UberChart,

@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
 import {
   Accordion,
@@ -25,9 +26,10 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseState,
   CaseType,
-  hasCaseBeenAppealed,
   InstitutionType,
+  UploadState,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -44,9 +46,14 @@ import AppealSection from './Components/AppealSection/AppealSection'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import { useIntl } from 'react-intl'
+import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+import { UploadStateMessage } from './Components/UploadStateMessage'
 
 interface Props {
   workingCase: Case
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   setAccusedAppealDate: () => void
   setProsecutorAppealDate: () => void
   withdrawAccusedAppealDate: () => void
@@ -63,6 +70,7 @@ interface Props {
 const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   const {
     workingCase,
+    setWorkingCase,
     setAccusedAppealDate,
     setProsecutorAppealDate,
     withdrawAccusedAppealDate,
@@ -73,7 +81,12 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   } = props
   const router = useRouter()
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
   const { prosecutorsOffices } = useInstitution()
+  const { uploadFilesToCourt, uploadState } = useCourtUpload(
+    workingCase,
+    setWorkingCase,
+  )
 
   /**
    * If the case is not rejected it must be accepted because
@@ -94,12 +107,16 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     const isInvestigationCase =
       theCase.type !== CaseType.CUSTODY && theCase.type !== CaseType.TRAVEL_BAN
 
-    if (theCase.decision === CaseDecision.REJECTING) {
+    if (theCase.state === CaseState.REJECTED) {
       if (isInvestigationCase) {
         return 'Kröfu um rannsóknarheimild hafnað'
       } else {
         return 'Kröfu hafnað'
       }
+    }
+
+    if (theCase.state === CaseState.DISMISSED) {
+      return formatMessage(signedVerdictOverview.dismissedTitle)
     }
 
     if (theCase.isValidToDateInThePast) {
@@ -120,6 +137,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
 
     if (
       theCase.decision === CaseDecision.REJECTING ||
+      theCase.decision === CaseDecision.DISMISSING ||
       (theCase.type !== CaseType.CUSTODY &&
         theCase.type !== CaseType.TRAVEL_BAN)
     ) {
@@ -154,10 +172,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
       user.institution?.id === workingCase.prosecutor?.institution?.id
 
     const isCourtRoleWithAccess =
-      (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR) &&
-      (user?.institution?.id === workingCase.court?.id ||
-        user.institution?.type === InstitutionType.HIGH_COURT) &&
-      hasCaseBeenAppealed(workingCase)
+      user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
 
     if (
       !isAppealGracePeriodExpired &&
@@ -312,16 +327,72 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           <RulingAccordionItem workingCase={workingCase} />
           <AccordionItem
             id="id_4"
-            label={`Rannsóknargögn (${
-              workingCase.files ? workingCase.files.length : 0
-            })`}
+            label={
+              <Box display="flex" alignItems="center" overflow="hidden">
+                {`Rannsóknargögn (${
+                  workingCase.files ? workingCase.files.length : 0
+                })`}
+
+                {user &&
+                  [UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role) && (
+                    <AnimatePresence>
+                      {uploadState === UploadState.SOME_UPLOADED && (
+                        <UploadStateMessage
+                          icon="warning"
+                          iconColor="red600"
+                          message={formatMessage(
+                            signedVerdictOverview.someFilesUploadedToCourtText,
+                          )}
+                        />
+                      )}
+                      {uploadState === UploadState.ALL_UPLOADED && (
+                        <UploadStateMessage
+                          icon="checkmark"
+                          iconColor="blue400"
+                          message={formatMessage(
+                            signedVerdictOverview.allFilesUploadedToCourtText,
+                          )}
+                        />
+                      )}
+                    </AnimatePresence>
+                  )}
+              </Box>
+            }
             labelVariant="h3"
           >
             <CaseFileList
               caseId={workingCase.id}
               files={workingCase.files ?? []}
               canOpenFiles={canCaseFilesBeOpened()}
+              hideIcons={user?.role === UserRole.PROSECUTOR}
+              handleRetryClick={(id: string) =>
+                workingCase.files &&
+                uploadFilesToCourt([
+                  workingCase.files[
+                    workingCase.files.findIndex((file) => file.id === id)
+                  ],
+                ])
+              }
             />
+            {user && [UserRole.JUDGE, UserRole.REGISTRAR].includes(user?.role) && (
+              <Box display="flex" justifyContent="flexEnd">
+                <Button
+                  size="small"
+                  onClick={() => uploadFilesToCourt(workingCase.files)}
+                  loading={uploadState === UploadState.UPLOADING}
+                  disabled={
+                    uploadState === UploadState.UPLOADING ||
+                    uploadState === UploadState.ALL_UPLOADED
+                  }
+                >
+                  {formatMessage(
+                    uploadState === UploadState.SOME_UPLOADED
+                      ? signedVerdictOverview.retryUploadToCourtButtonText
+                      : signedVerdictOverview.uploadToCourtButtonText,
+                  )}
+                </Button>
+              </Box>
+            )}
           </AccordionItem>
         </Accordion>
       </Box>

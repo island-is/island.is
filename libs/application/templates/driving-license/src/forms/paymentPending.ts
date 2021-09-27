@@ -1,6 +1,5 @@
 import {
   buildForm,
-  buildDescriptionField,
   Form,
   FormModes,
   buildCustomField,

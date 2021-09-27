@@ -1,14 +1,14 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
   ContentContainer,
-  StatusLayout,
   Footer,
+  FileUploadComment,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FileList } from '@island.is/financial-aid/shared/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { Box, Text } from '@island.is/island-ui/core'
-import * as styles from './fileUpload.treat'
 import { Colors } from '@island.is/island-ui/theme'
+import { useRouter } from 'next/router'
 
 interface Props {
   subtitle: string
@@ -18,17 +18,25 @@ interface Props {
   children?: React.ReactNode
 }
 
-const FileUploadSuccess = ({
+const FileUploadResult = ({
   subtitle,
   subtitleColor,
   nextButtonText,
   nextButtonAction,
   children,
 }: Props) => {
-  const { form } = useContext(FormContext)
+  const router = useRouter()
+
+  const { form, updateForm } = useContext(FormContext)
+
+  useEffect(() => {
+    router.events.on('routeChangeComplete', () => {
+      updateForm({ ...form, otherFiles: [], fileUploadComment: undefined })
+    })
+  }, [])
 
   return (
-    <StatusLayout>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
           Senda inn gögn
@@ -37,11 +45,11 @@ const FileUploadSuccess = ({
           {subtitle}
         </Text>
         <Box marginTop={3}>
-          <FileList
-            files={form.otherFiles}
-            className={`contentUp delay-125 ${styles.widthAlmostFull}`}
-          />
+          <FileList files={form.otherFiles} className={`contentUp delay-125`} />
         </Box>
+
+        <FileUploadComment comment={form.fileUploadComment} />
+
         {children}
       </ContentContainer>
       <Footer
@@ -49,8 +57,8 @@ const FileUploadSuccess = ({
         onNextButtonClick={nextButtonAction}
         hidePreviousButton={true}
       />
-    </StatusLayout>
+    </>
   )
 }
 
-export default FileUploadSuccess
+export default FileUploadResult

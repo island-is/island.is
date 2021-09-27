@@ -251,6 +251,9 @@ export const Overview: React.FC = () => {
                         )
                       },
                     )}
+                  {workingCase.legalBasis && (
+                    <Text>{workingCase.legalBasis}</Text>
+                  )}
                 </AccordionItem>
                 <AccordionItem
                   labelVariant="h3"

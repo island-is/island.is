@@ -37,6 +37,7 @@ export class LicenseServiceService {
     @Inject(GENERIC_LICENSE_FACTORY)
     private genericLicenseFactory: (
       type: GenericLicenseType,
+      cacheManager: CacheManager,
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -94,7 +95,6 @@ export class LicenseServiceService {
     }
 
     try {
-      dataWithFetch
       await this.cacheManager.set(cacheKey, JSON.stringify(data), { ttl })
     } catch (e) {
       this.logger.warn('Unable to cache data for license', {
@@ -128,7 +128,10 @@ export class LicenseServiceService {
 
       let licenseDataFromService: GenericLicenseCached | null = null
       if (!onlyList) {
-        const licenseService = await this.genericLicenseFactory(license.type)
+        const licenseService = await this.genericLicenseFactory(
+          license.type,
+          this.cacheManager,
+        )
 
         if (!licenseService) {
           this.logger.warn('No license service from generic license factory', {
@@ -183,7 +186,10 @@ export class LicenseServiceService {
     let licenseUserdata: GenericLicenseUserdataExternal | null = null
 
     const license = AVAILABLE_LICENSES.find((i) => i.type === licenseType)
-    const licenseService = await this.genericLicenseFactory(licenseType)
+    const licenseService = await this.genericLicenseFactory(
+      licenseType,
+      this.cacheManager,
+    )
 
     if (license && licenseService) {
       licenseUserdata = await licenseService.getLicenseDetail(nationalId)
@@ -214,7 +220,10 @@ export class LicenseServiceService {
   ) {
     let pkPassUrl: string | null = null
 
-    const licenseService = await this.genericLicenseFactory(licenseType)
+    const licenseService = await this.genericLicenseFactory(
+      licenseType,
+      this.cacheManager,
+    )
 
     if (licenseService) {
       pkPassUrl = await licenseService.getPkPassUrl(nationalId)
@@ -239,7 +248,10 @@ export class LicenseServiceService {
   ): Promise<PkPassVerification> {
     let verification: PkPassVerification | null = null
 
-    const licenseService = await this.genericLicenseFactory(licenseType)
+    const licenseService = await this.genericLicenseFactory(
+      licenseType,
+      this.cacheManager,
+    )
 
     if (licenseService) {
       verification = await licenseService.verifyPkPass(data)
