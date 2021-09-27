@@ -27,9 +27,8 @@ export class FileService {
   ) {}
 
   async createFile(createFile: CreateFileDto): Promise<ApplicationFileModel> {
-    return await this.fileModel.create(createFile)
+    return this.fileModel.create(createFile)
   }
-
   async createFiles(createFiles: CreateFilesDto): Promise<CreateFilesModel> {
     const promises = createFiles.files.map((file) =>
       this.fileModel.create({
@@ -73,6 +72,21 @@ export class FileService {
 
     return {
       key,
+      url: signedUrl,
+    }
+  }
+
+  async createSignedUrlForFileId(id: string): Promise<SignedUrlModel> {
+    const file = await this.fileModel.findOne({
+      where: { id },
+    })
+
+    const fileUrl = `${environment.files.fileBaseUrl}/${file.key}`
+
+    const signedUrl = this.cloudFrontService.createPresignedPost(fileUrl)
+
+    return {
+      key: file.key,
       url: signedUrl,
     }
   }

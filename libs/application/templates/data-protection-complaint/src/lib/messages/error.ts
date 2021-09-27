@@ -50,6 +50,11 @@ export const error = defineMessages({
     defaultMessage: 'Lýsingin má vera 500 orð að hámarki',
     description: 'Error message when a word count has been reached',
   },
+  nationalId: {
+    id: 'dpac.application:error.nationalId',
+    defaultMessage: 'Kennitala er ekki á réttu sniðmáti',
+    description: 'Error message when a nationalId is incorrect',
+  },
 })
 
 export const errorCards = defineMessages({

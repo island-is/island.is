@@ -33,19 +33,20 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hideScrollBar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hideScrollBar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 .wrapper {
   max-width: 1440px;
   margin: 0 auto;
-}
-
-.logoHfj {
-  width: 32px;
-  height: 48px;
-}
-
-.logoContainer {
-  max-width: 160px;
-  display: flex;
 }
 
 .headLine {

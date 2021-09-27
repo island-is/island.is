@@ -1,5 +1,5 @@
-import React, { ReactNode, useMemo } from 'react'
-import { Text, Box, LoadingDots, Divider } from '@island.is/island-ui/core'
+import React, { ReactNode, useContext, useMemo } from 'react'
+import { Text, Box, Divider } from '@island.is/island-ui/core'
 
 import {
   aidCalculator,
@@ -7,17 +7,11 @@ import {
   calulatePersonalTaxAllowanceUsed,
   calulateTaxOfAmount,
   HomeCircumstances,
-  Municipality,
-  months,
+  getNextPeriod,
 } from '@island.is/financial-aid/shared/lib'
-import { useQuery } from '@apollo/client'
-import { GetMunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql'
+import { MunicipalityContext } from '@island.is/financial-aid-web/osk/src/components/MunicipalityProvider/MunicipalityProvider'
 
 import format from 'date-fns/format'
-
-interface MunicipalityData {
-  municipality: Municipality
-}
 
 interface Props {
   aboutText: ReactNode
@@ -31,19 +25,14 @@ const Estimation = ({
   usePersonalTaxCredit,
 }: Props) => {
   const currentYear = format(new Date(), 'yyyy')
-  const currentMonth = parseInt(format(new Date(), 'MM'))
 
-  const { data, loading } = useQuery<MunicipalityData>(GetMunicipalityQuery, {
-    variables: { input: { id: 'hfj' } },
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+  const { municipality } = useContext(MunicipalityContext)
 
   const aidAmount = useMemo(() => {
-    if (data && homeCircumstances) {
-      return aidCalculator(homeCircumstances, data?.municipality.settings.aid)
+    if (municipality && homeCircumstances) {
+      return aidCalculator(homeCircumstances, municipality.aid)
     }
-  }, [data])
+  }, [municipality])
 
   const calculations = aidAmount
     ? [
@@ -90,13 +79,13 @@ const Estimation = ({
         </Box>
 
         <Text variant="small">
-          (til útgreiðslu í byrjun {months[currentMonth].toLowerCase()})
+          (til útgreiðslu í byrjun {getNextPeriod.month})
         </Text>
       </Box>
 
       {aboutText}
 
-      {data && (
+      {municipality && (
         <>
           {calculations.map((item, index) => {
             return (
@@ -119,16 +108,6 @@ const Estimation = ({
           })}
 
           <Divider />
-
-          {loading && (
-            <Box
-              marginBottom={[4, 4, 5]}
-              display="flex"
-              justifyContent="center"
-            >
-              <LoadingDots large />
-            </Box>
-          )}
         </>
       )}
     </>

@@ -9,7 +9,7 @@ export interface AuthContextType extends AuthReducerState {
   signOut: () => void
 }
 
-export const AuthContext = createContext<AuthContextType>({
+export const defaultAuthContext = {
   ...initialState,
   signIn() {
     // Intentionally empty
@@ -23,6 +23,8 @@ export const AuthContext = createContext<AuthContextType>({
   signOut() {
     // Intentionally empty
   },
-})
+}
+
+export const AuthContext = createContext<AuthContextType>(defaultAuthContext)
 
 export const useAuth: () => AuthContextType = () => useContext(AuthContext)

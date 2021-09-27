@@ -2,6 +2,32 @@ import { defineMessages } from 'react-intl'
 
 export const rcRulingStepTwo = {
   sections: {
+    conclusion: defineMessages({
+      dismissingAutofill: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_two.conclusion.dismissing_autofill',
+        defaultMessage:
+          'Kröfu um að {genderedAccused}, {accusedName}, sæti{extensionSuffix} {caseType} er vísað frá.',
+        description:
+          'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er vísað frá á úrskurðar og kæru skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      rejectingAutofill: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_two.conclusion.rejecting_autofill',
+        defaultMessage:
+          'Kröfu um að {genderedAccused}, {accusedName}, kt. {accusedNationalId}, sæti{extensionSuffix} {caseType} er hafnað.',
+        description:
+          'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er hafnað á úrskurðar og kæru skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      acceptingAutofill: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_two.conclusion.accepting_autofill',
+        defaultMessage:
+          '{genderedAccused}, {accusedName}, kt. {accusedNationalId}, skal sæta {caseTypeAndExtensionSuffix}, þó ekki lengur en til {validToDate}.{isolationSuffix}',
+        description:
+          'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar krafa er samþykkt á úrskurðar og kæru skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
     accusedAppealDecision: defineMessages({
       disclaimer: {
         id:

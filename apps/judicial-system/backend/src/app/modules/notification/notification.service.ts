@@ -207,11 +207,15 @@ export class NotificationService {
     try {
       const streamId = await this.courtService.uploadStream(
         existingCase.courtId,
+        'Krafa.pdf',
+        'application/pdf',
         requestPdf,
       )
       await this.courtService.createRequest(
         existingCase.courtId,
         existingCase.courtCaseNumber,
+        'Krafa',
+        'Krafa.pdf',
         streamId,
       )
     } catch (error) {
@@ -507,14 +511,12 @@ export class NotificationService {
       existingCase.defenderName,
       existingCase.defenderEmail,
       existingCase.decision,
-      existingCase.validToDate,
       existingCase.custodyRestrictions,
       existingCase.accusedAppealDecision,
       existingCase.prosecutorAppealDecision,
       existingCase.judge?.name,
       existingCase.judge?.title,
       existingCase.conclusion,
-      existingCase.isolationToDate,
     )
 
     let attachments: Attachment[] | undefined

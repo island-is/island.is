@@ -6,6 +6,7 @@ import {
   Bullet,
   Button,
   LoadingDots,
+  Link,
 } from '@island.is/island-ui/core'
 
 import {
@@ -14,7 +15,6 @@ import {
   Footer,
   InProgress,
   Rejected,
-  StatusLayout,
   Timeline,
 } from '@island.is/financial-aid-web/osk/src/components'
 
@@ -44,6 +44,7 @@ const MainPage = () => {
       errorPolicy: 'all',
     },
   )
+
   const currentApplication = useMemo(() => {
     if (data?.application) {
       return data.application
@@ -51,7 +52,7 @@ const MainPage = () => {
   }, [data])
 
   return (
-    <StatusLayout>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
           Aðstoðin þín
@@ -75,9 +76,8 @@ const MainPage = () => {
         )}
         {error && (
           <Text>
-            {' '}
-            Umsókn ekki fundin eða einhvað fór úrskeiðis, ertu viss þú hefur
-            sótt um?{' '}
+            Umsókn ekki fundin eða einhvað fór úrskeiðis <br />
+            vinsamlegast reyndu síðar
           </Text>
         )}
         {loading && <LoadingDots />}
@@ -88,34 +88,26 @@ const MainPage = () => {
         <Box marginBottom={[5, 5, 10]}>
           <BulletList type={'ul'} space={2}>
             <Bullet>
-              <Button
-                colorScheme="default"
-                iconType="filled"
-                onClick={() => {
-                  /*TODO on click event */
-                }}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="text"
+              <Link
+                href="https://www.hafnarfjordur.is/ibuar/felagsleg-adstod/fjarhagsadstod/"
+                color="blue400"
+                underline="normal"
+                underlineVisibility="always"
               >
-                Upplýsingar um fjárhagsaðstoð
-              </Button>
+                {/* TODO: different for muncipality */}
+                <b>Upplýsingar um fjárhagsaðstoð</b>
+              </Link>
             </Bullet>
             <Bullet>
-              <Button
-                colorScheme="default"
-                iconType="filled"
-                onClick={() => {
-                  /*TODO on click event */
-                }}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="text"
+              <Link
+                href="mailto: felagsthjonusta@hafnarfjordur.is"
+                color="blue400"
+                underline="normal"
+                underlineVisibility="always"
               >
-                Hafa samband
-              </Button>
+                {/* TODO: different for muncipality */}
+                <b> Hafa samband</b>
+              </Link>
             </Bullet>
           </BulletList>
         </Box>
@@ -128,7 +120,7 @@ const MainPage = () => {
         previousIsDestructive={true}
         hideNextButton={true}
       />
-    </StatusLayout>
+    </>
   )
 }
 

@@ -4,16 +4,15 @@ import { Text } from '@island.is/island-ui/core'
 import {
   ApplicationState,
   getState,
-  months,
+  getMonth,
 } from '@island.is/financial-aid/shared/lib'
-import format from 'date-fns/format'
 
 interface Props {
   state: ApplicationState
 }
 
 const Approved = ({ state }: Props) => {
-  const currentMonth = parseInt(format(new Date(), 'MM')) - 1
+  const currentMonth = getMonth(new Date().getMonth())
 
   return (
     <>
@@ -21,10 +20,9 @@ const Approved = ({ state }: Props) => {
         Umsókn {getState[state].toLowerCase()}
       </Text>
       <Text variant="intro">
-        Umsóknin þín um fjárhagsaðstoð í {months[currentMonth].toLowerCase()} er
-        samþykkt en athugaðu að hún byggir á tekjum og öðrum þáttum sem kunna að
-        koma upp í {months[currentMonth].toLowerCase()} og getur því tekið
-        breytingum.
+        Umsóknin þín um fjárhagsaðstoð í {currentMonth} er samþykkt en athugaðu
+        að hún byggir á tekjum og öðrum þáttum sem kunna að koma upp í{' '}
+        {currentMonth} og getur því tekið breytingum.
       </Text>
       {/* //TODO estimated aid, need approval */}
     </>

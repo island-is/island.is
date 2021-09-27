@@ -2,6 +2,7 @@ import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 
 import {
+  areAccusedRightsHidden,
   capitalize,
   caseTypes,
   formatAccusedByGender,
@@ -16,12 +17,16 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
+import { closedCourt } from '@island.is/judicial-system-web/messages'
+import { useIntl } from 'react-intl'
 
 interface Props {
   workingCase: Case
 }
 
 const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
+  const { formatMessage } = useIntl()
+
   const isRestrictionCase =
     workingCase.type === CaseType.CUSTODY ||
     workingCase.type === CaseType.TRAVEL_BAN
@@ -56,6 +61,11 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </>
         )}
       </Box>
+      {!workingCase.isClosedCourtHidden && (
+        <Box marginBottom={3}>
+          <Text>{formatMessage(closedCourt.text)}</Text>
+        </Box>
+      )}
       <AccordionListItem title="Krafa" breakSpaces>
         <Text>{workingCase.prosecutorDemands}</Text>
       </AccordionListItem>
@@ -87,7 +97,10 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           })}
         </Text>
       </AccordionListItem>
-      {!workingCase.isAccusedAbsent && (
+      {!areAccusedRightsHidden(
+        workingCase.isAccusedRightsHidden,
+        workingCase.sessionArrangements,
+      ) && (
         <AccordionListItem
           title={`Réttindi ${
             workingCase.type === CaseType.CUSTODY ||
