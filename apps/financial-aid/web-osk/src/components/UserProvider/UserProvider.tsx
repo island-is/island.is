@@ -1,13 +1,9 @@
 import { useQuery } from '@apollo/client'
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
-import {
-  CSRF_COOKIE_NAME,
-  Municipality,
-  User,
-} from '@island.is/financial-aid/shared/lib'
-import Cookies from 'js-cookie'
+import { User } from '@island.is/financial-aid/shared/lib'
 
 import { CurrentUserQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { Session, useSession } from 'next-auth/client'
 
 interface UserProvider {
   isAuthenticated?: boolean
@@ -23,9 +19,10 @@ export const UserContext = createContext<UserProvider>({})
 
 const UserProvider = ({ children }: Props) => {
   const [user, setUser] = useState<User>()
+  const [session] = useSession()
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    Boolean(Cookies.get(CSRF_COOKIE_NAME)),
+    Boolean(session?.user),
   )
 
   const { data } = useQuery(CurrentUserQuery, {

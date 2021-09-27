@@ -1,5 +1,26 @@
-import NextAuth from 'next-auth'
+import NextAuth, { Callbacks, User } from 'next-auth'
 import Providers from 'next-auth/providers'
+import axios from 'axios'
+import {
+  GenericObject,
+  NextApiRequest,
+  NextApiResponse,
+  SessionBase,
+} from 'next-auth/_utils'
+import { uuid } from 'uuidv4'
+import { RolesRule } from '@island.is/financial-aid/shared/lib'
+
+type AuthUser = User & {
+  nationalId: string
+  accessToken: string
+  refreshToken: string
+  idToken: string
+}
+
+type AuthSession = SessionBase & {
+  idToken: string
+  scope: string[]
+}
 
 const identityServer = {
   id: 'identity-server',
@@ -14,14 +35,22 @@ const providers = [
     name: identityServer.name,
     scope: identityServer.scope,
     clientId: identityServer.clientId,
-    domain: process.env.IDENTITYSERVER_DOMAIN,
-    clientSecret: process.env.IDENTITYSERVER_SECRET,
+    domain: process.env.IDENTITYSERVER_DOMAIN ?? '',
+    clientSecret: process.env.IDENTITYSERVER_SECRET ?? '',
   }),
 ]
 
-const callbacks = {}
+let callbacks: Callbacks = {
+  signIn: signIn,
+  jwt: jwt,
+  session: session,
+}
 
-callbacks.signIn = async function signIn(user, account, profile) {
+async function signIn(
+  user: AuthUser,
+  account: GenericObject,
+  profile: GenericObject,
+): Promise<boolean> {
   if (account.provider === identityServer.id) {
     user.nationalId = profile.nationalId
     user.accessToken = account.accessToken
@@ -33,7 +62,7 @@ callbacks.signIn = async function signIn(user, account, profile) {
   return false
 }
 
-callbacks.jwt = async function jwt(token, user) {
+async function jwt(token: GenericObject, user: AuthUser) {
   if (user) {
     token = {
       nationalId: user.nationalId,
@@ -42,12 +71,16 @@ callbacks.jwt = async function jwt(token, user) {
       refreshToken: user.refreshToken,
       idToken: user.idToken,
       isRefreshTokenExpired: false,
+      folder: uuid(),
+      service: RolesRule.OSK,
     }
   }
 
+  console.log('token', token)
+
   const decoded = parseJwt(token.accessToken)
   const expires = new Date(decoded.exp * 1000)
-  const renewalTime = expires.setSeconds(expires.getSeconds() - 300)
+  const renewalTime = new Date(expires.setSeconds(expires.getSeconds() - 300))
 
   if (
     decoded?.exp &&
@@ -55,9 +88,11 @@ callbacks.jwt = async function jwt(token, user) {
     !token.isRefreshTokenExpired
   ) {
     try {
-      ;[token.accessToken, token.refreshToken] = await refreshAccessToken(
+      const [accessToken, refreshToken] = await refreshAccessToken(
         token.refreshToken,
       )
+      token.accessToken = accessToken
+      token.refreshToken = refreshToken
     } catch (error) {
       console.warn('Error refreshing access token.', error)
       // We don't know the refresh token lifetime, so we use the error response to check if it had expired
@@ -71,7 +106,7 @@ callbacks.jwt = async function jwt(token, user) {
   return token
 }
 
-async function refreshAccessToken(refreshToken) {
+async function refreshAccessToken(refreshToken: string) {
   const params = `client_id=${identityServer.clientId}&client_secret=${
     process.env.IDENTITYSERVER_SECRET
   }&grant_type=refresh_token&redirect_uri=${encodeURIComponent(
@@ -87,16 +122,16 @@ async function refreshAccessToken(refreshToken) {
   return [response.data.access_token, response.data.refresh_token]
 }
 
-callbacks.session = async function session(session, token) {
-  session.accessToken = token.accessToken
-  session.idToken = token.idToken
+async function session(session: AuthSession, user: AuthUser) {
+  session.accessToken = user.accessToken
+  session.idToken = user.idToken
   const decoded = parseJwt(session.accessToken)
-  session.expires = new Date(decoded.exp * 1000)
+  session.expires = new Date(decoded.exp * 1000).toString()
   session.scope = decoded.scope
   return session
 }
 
-function parseJwt(token) {
+function parseJwt(token: string): any {
   let base64Url = token.split('.')[1]
   let base64 = base64Url.replace('-', '+').replace('_', '/')
   let decodedData = JSON.parse(Buffer.from(base64, 'base64').toString('binary'))
@@ -106,5 +141,5 @@ function parseJwt(token) {
 
 const options = { providers, callbacks }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default (req, res) => NextAuth(req, res, options)
+export default (req: NextApiRequest, res: NextApiResponse) =>
+  NextAuth(req, res, options)
