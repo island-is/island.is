@@ -49,6 +49,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
     courtRecordStartDateIsValid,
     setCourtRecordStartDateIsValid,
   ] = useState(true)
+  const [courtLocationEM, setCourtLocationEM] = useState('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
   const [
     accusedPleaAnnouncementErrorMessage,
@@ -61,6 +62,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
 
   const { updateCase } = useCase()
   const validations: FormSettings = {
+    courtLocation: {
+      validations: ['empty'],
+    },
     prosecutorDemands: {
       validations: ['empty'],
     },
@@ -68,6 +72,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
   }
+
   const { isValid } = useCaseFormHelper(
     workingCase,
     setWorkingCase,
@@ -127,6 +132,45 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 )
               }
               tooltip={formatMessage(closedCourt.tooltip)}
+            />
+          </Box>
+          <Box marginBottom={3}>
+            <Input
+              data-testid="courtLocation"
+              name="courtLocation"
+              tooltip={formatMessage(
+                icCourtRecord.sections.courtLocation.tooltip,
+              )}
+              label={formatMessage(icCourtRecord.sections.courtLocation.label)}
+              defaultValue={workingCase.courtLocation}
+              placeholder={formatMessage(
+                icCourtRecord.sections.courtLocation.placeholder,
+              )}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'courtLocation',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  courtLocationEM,
+                  setCourtLocationEM,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'courtLocation',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setCourtLocationEM,
+                )
+              }
+              errorMessage={courtLocationEM}
+              hasError={courtLocationEM !== ''}
+              autoComplete="off"
+              required
             />
           </Box>
           <Box marginBottom={3}>

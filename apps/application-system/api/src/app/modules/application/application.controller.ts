@@ -361,7 +361,7 @@ export class ApplicationController {
       mergedApplication,
       template,
       DefaultEvents.ASSIGN,
-      user.authorization,
+      user,
     )
 
     if (hasError) {
@@ -571,7 +571,7 @@ export class ApplicationController {
       mergedApplication,
       template,
       updateApplicationStateDto.event,
-      user.authorization,
+      user,
     )
 
     this.auditService.audit({
@@ -598,7 +598,7 @@ export class ApplicationController {
   async performActionOnApplication(
     application: BaseApplication,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
-    authorization: string,
+    auth: User,
     action: ApplicationTemplateAPIAction,
   ): Promise<TemplateAPIModuleActionResult> {
     const {
@@ -613,7 +613,7 @@ export class ApplicationController {
       type: apiModuleAction,
       props: {
         application,
-        authorization,
+        auth,
       },
     })
 
@@ -665,7 +665,7 @@ export class ApplicationController {
     application: BaseApplication,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     event: string,
-    authorization: string,
+    auth: User,
   ): Promise<StateChangeResult> {
     const helper = new ApplicationTemplateHelper(application, template)
     const onExitStateAction = helper.getOnExitStateAPIAction(application.state)
@@ -680,7 +680,7 @@ export class ApplicationController {
       } = await this.performActionOnApplication(
         updatedApplication,
         template,
-        authorization,
+        auth,
         onExitStateAction,
       )
       updatedApplication = withUpdatedExternalData
@@ -730,7 +730,7 @@ export class ApplicationController {
       } = await this.performActionOnApplication(
         updatedApplication,
         template,
-        authorization,
+        auth,
         onEnterStateAction,
       )
       updatedApplication = withUpdatedExternalData
