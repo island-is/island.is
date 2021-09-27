@@ -19,6 +19,7 @@ import type { Case } from '@island.is/judicial-system/types'
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { closedCourt } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
+import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
 
 interface Props {
   workingCase: Case
@@ -33,12 +34,9 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
 
   return (
     <AccordionItem id="id_2" label="Þingbók" labelVariant="h3">
-      <Box marginBottom={2}>
-        <Text variant="h4" as="h4">
-          Upplýsingar
-        </Text>
-      </Box>
-      <Box marginBottom={3}>
+      <AccordionListItem
+        title={formatMessage(m.sections.timeAndLocation.title)}
+      >
         {workingCase.courtEndTime ? (
           <Text>
             {`Þinghald frá kl. ${formatDate(
@@ -60,19 +58,22 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             <Text>Þinghaldi er ekki lokið</Text>
           </>
         )}
-      </Box>
-      {!workingCase.isClosedCourtHidden && (
-        <Box marginBottom={3}>
-          <Text>{formatMessage(closedCourt.text)}</Text>
-        </Box>
-      )}
+        {!workingCase.isClosedCourtHidden && (
+          <Box marginBottom={3}>
+            <Text>{formatMessage(closedCourt.text)}</Text>
+          </Box>
+        )}
+      </AccordionListItem>
       <AccordionListItem title="Krafa" breakSpaces>
         <Text>{workingCase.prosecutorDemands}</Text>
       </AccordionListItem>
-      <AccordionListItem title="Viðstaddir" breakSpaces>
+      <AccordionListItem
+        title={formatMessage(m.sections.courtAttendees.title)}
+        breakSpaces
+      >
         <Text>{workingCase.courtAttendees}</Text>
       </AccordionListItem>
-      <AccordionListItem title="Dómskjöl">
+      <AccordionListItem title={formatMessage(m.sections.courtDocuments.title)}>
         <Text>{`Krafa ${
           isRestrictionCase
             ? `um ${caseTypes[workingCase.type]}`
