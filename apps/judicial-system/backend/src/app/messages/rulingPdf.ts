@@ -75,7 +75,7 @@ export const ruling = {
     },
     reject: {
       id: 'judicial.system.backend:pdf.ruling.accused_plea.reject',
-      defaultMessage: '{accused} hafnar kröfunni.',
+      defaultMessage: '{accused} mótmælir kröfunni.',
       description:
         'Notaður fyrir höfnun kærða á kröfunni þar sem {accused} er ávarp til kærða í réttu kyni og er sjálfkrafa bætt við í kóða.',
     },
