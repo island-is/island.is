@@ -121,46 +121,48 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
         </>
       }
       sidebar={
-        <Sticky>
-          <Stack space={3}>
-            <Hidden print={true}>
-              <Link href={linkResolver('regulationshome').href}>
-                <Button
-                  preTextIcon="arrowBack"
-                  preTextIconType="filled"
-                  size="small"
-                  type="button"
-                  variant="text"
-                >
-                  {txt('goHome')}
-                </Button>
-              </Link>
-            </Hidden>
+        <Sticky constantSticky>
+          <div className={s.sidebarScroller}>
+            <Stack space={3}>
+              <Hidden print={true}>
+                <Link href={linkResolver('regulationshome').href}>
+                  <Button
+                    preTextIcon="arrowBack"
+                    preTextIconType="filled"
+                    size="small"
+                    type="button"
+                    variant="text"
+                  >
+                    {txt('goHome')}
+                  </Button>
+                </Link>
+              </Hidden>
 
-            <RegulationInfoBox regulation={regulation} texts={texts} />
+              <RegulationInfoBox regulation={regulation} texts={texts} />
 
-            <Hidden print={true}>
-              {showTimeline ? (
-                <RegulationTimeline regulation={regulation} texts={texts} />
-              ) : (
-                <RegulationChangelog
-                  key={regulation.name}
-                  regulation={regulation}
-                  texts={texts}
+              <Hidden print={true}>
+                {showTimeline ? (
+                  <RegulationTimeline regulation={regulation} texts={texts} />
+                ) : (
+                  <RegulationChangelog
+                    key={regulation.name}
+                    regulation={regulation}
+                    texts={texts}
+                  />
+                )}
+                <button
+                  onClick={() => setShowTimeline(!showTimeline)}
+                  {...((v) => ({
+                    'aria-label': v,
+                    title: v,
+                  }))(showTimeline ? 'Birta tímalínu' : 'Birta breytinga logg')}
+                  style={{ width: '100%', padding: '1em', cursor: 'pointer' }}
                 />
-              )}
-              <button
-                onClick={() => setShowTimeline(!showTimeline)}
-                {...((v) => ({
-                  'aria-label': v,
-                  title: v,
-                }))(showTimeline ? 'Birta tímalínu' : 'Birta breytinga logg')}
-                style={{ width: '100%', padding: '1em', cursor: 'pointer' }}
-              />
 
-              <RegulationEffectsBox regulation={regulation} texts={texts} />
-            </Hidden>
-          </Stack>
+                <RegulationEffectsBox regulation={regulation} texts={texts} />
+              </Hidden>
+            </Stack>
+          </div>
         </Sticky>
       }
     />

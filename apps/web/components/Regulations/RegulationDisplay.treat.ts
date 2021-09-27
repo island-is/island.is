@@ -5,6 +5,7 @@ import {
   regulationTitleStyling,
 } from '@island.is/regulations/styling'
 import { theme, spacing } from '@island.is/island-ui/theme'
+import { STICKY_NAV_HEIGHT } from '@island.is/web/constants'
 const { color, typography, border, shadows } = theme
 
 export const scrolled = style({})
@@ -87,3 +88,12 @@ export const bodyText = style({})
 regulationContentStyling(bodyText)
 regulationTitleStyling(titleText)
 diffStyling(diffText)
+
+// ---------------------------------------------------------------------------
+
+export const sidebarScroller = style({
+  overflowY: 'auto',
+  // maxHeight: 'calc(100vh - var(--FixedNav-height-spaced))',
+  maxHeight: `calc(100vh - ${STICKY_NAV_HEIGHT + spacing[1]}px)`,
+  paddingBottom: spacing[4],
+})
