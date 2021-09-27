@@ -119,22 +119,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             />
           </Box>
           <Box marginBottom={3}>
-            <HideableText
-              text={formatMessage(closedCourt.text)}
-              isHidden={workingCase.isClosedCourtHidden}
-              onToggleVisibility={(isVisible: boolean) =>
-                setAndSendToServer(
-                  'isClosedCourtHidden',
-                  isVisible,
-                  workingCase,
-                  setWorkingCase,
-                  updateCase,
-                )
-              }
-              tooltip={formatMessage(closedCourt.tooltip)}
-            />
-          </Box>
-          <Box marginBottom={3}>
             <Input
               data-testid="courtLocation"
               name="courtLocation"
@@ -171,6 +155,22 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               hasError={courtLocationEM !== ''}
               autoComplete="off"
               required
+            />
+          </Box>
+          <Box marginBottom={3}>
+            <HideableText
+              text={formatMessage(closedCourt.text)}
+              isHidden={workingCase.isClosedCourtHidden}
+              onToggleVisibility={(isVisible: boolean) =>
+                setAndSendToServer(
+                  'isClosedCourtHidden',
+                  isVisible,
+                  workingCase,
+                  setWorkingCase,
+                  updateCase,
+                )
+              }
+              tooltip={formatMessage(closedCourt.tooltip)}
             />
           </Box>
           <Box marginBottom={3}>
