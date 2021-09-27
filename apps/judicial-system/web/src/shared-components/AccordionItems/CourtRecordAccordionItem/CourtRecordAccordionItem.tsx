@@ -111,7 +111,20 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
                 : 'varnaraðila',
           })}
         >
-          <Text>{formatMessage(m.sections.accusedRights.text)}</Text>
+          <Text>
+            {formatMessage(m.sections.accusedRights.text, {
+              genderedAccused:
+                workingCase.type === CaseType.CUSTODY ||
+                workingCase.type === CaseType.TRAVEL_BAN
+                  ? capitalize(
+                      formatAccusedByGender(
+                        workingCase.accusedGender,
+                        NounCases.GENITIVE,
+                      ),
+                    )
+                  : 'Varnaraðila',
+            })}
+          </Text>
         </AccordionListItem>
       )}
       {workingCase.accusedAppealDecision !==
