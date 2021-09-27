@@ -304,7 +304,7 @@ export const areAccusedRightsHidden = (
   isAccusedRightsHidden?: boolean,
   sessionArrangements?: SessionArrangements,
 ): boolean => {
-  return isAccusedRightsHidden
+  return isAccusedRightsHidden !== undefined
     ? isAccusedRightsHidden
     : sessionArrangements === SessionArrangements.ALL_PRESENT
     ? false
