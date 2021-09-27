@@ -30,10 +30,12 @@ import {
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import {
   accusedRights,
+  closedCourt,
   icCourtRecord,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './CourtRecord.treat'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 interface Props {
   workingCase: Case
@@ -47,7 +49,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
     courtRecordStartDateIsValid,
     setCourtRecordStartDateIsValid,
   ] = useState(true)
-  const [courtAttendeesEM, setCourtAttendeesEM] = useState('')
+  const [courtLocationEM, setCourtLocationEM] = useState('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
   const [
     accusedPleaAnnouncementErrorMessage,
@@ -60,7 +62,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
 
   const { updateCase } = useCase()
   const validations: FormSettings = {
-    courtAttendees: {
+    courtLocation: {
       validations: ['empty'],
     },
     prosecutorDemands: {
@@ -70,6 +72,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
   }
+
   const { isValid } = useCaseFormHelper(
     workingCase,
     setWorkingCase,
@@ -116,38 +119,84 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             />
           </Box>
           <Box marginBottom={3}>
+            <HideableText
+              text={formatMessage(closedCourt.text)}
+              isHidden={workingCase.isClosedCourtHidden}
+              onToggleVisibility={(isVisible: boolean) =>
+                setAndSendToServer(
+                  'isClosedCourtHidden',
+                  isVisible,
+                  workingCase,
+                  setWorkingCase,
+                  updateCase,
+                )
+              }
+              tooltip={formatMessage(closedCourt.tooltip)}
+            />
+          </Box>
+          <Box marginBottom={3}>
+            <Input
+              data-testid="courtLocation"
+              name="courtLocation"
+              tooltip={formatMessage(
+                icCourtRecord.sections.courtLocation.tooltip,
+              )}
+              label={formatMessage(icCourtRecord.sections.courtLocation.label)}
+              defaultValue={workingCase.courtLocation}
+              placeholder={formatMessage(
+                icCourtRecord.sections.courtLocation.placeholder,
+              )}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'courtLocation',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  courtLocationEM,
+                  setCourtLocationEM,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'courtLocation',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setCourtLocationEM,
+                )
+              }
+              errorMessage={courtLocationEM}
+              hasError={courtLocationEM !== ''}
+              autoComplete="off"
+              required
+            />
+          </Box>
+          <Box marginBottom={3}>
             <Input
               data-testid="courtAttendees"
               name="courtAttendees"
-              label="Viðstaddir og hlutverk þeirra"
+              label="Mættir eru"
               defaultValue={workingCase.courtAttendees}
               placeholder="Skrifa hér..."
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtAttendees',
                   event,
-                  ['empty'],
+                  [],
                   workingCase,
                   setWorkingCase,
-                  courtAttendeesEM,
-                  setCourtAttendeesEM,
                 )
               }
               onBlur={(event) =>
-                validateAndSendToServer(
-                  'courtAttendees',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCourtAttendeesEM,
+                updateCase(
+                  workingCase.id,
+                  parseString('courtAttendees', event.target.value),
                 )
               }
-              errorMessage={courtAttendeesEM}
-              hasError={courtAttendeesEM !== ''}
               textarea
               rows={7}
-              required
             />
           </Box>
           <Input
@@ -214,12 +263,12 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             <HideableText
               text={formatMessage(accusedRights.text)}
               isHidden={areAccusedRightsHidden(
-                workingCase.isAccusedAbsent,
+                workingCase.isAccusedRightsHidden,
                 workingCase.sessionArrangements,
               )}
               onToggleVisibility={(isVisible: boolean) =>
                 setAndSendToServer(
-                  'isAccusedAbsent',
+                  'isAccusedRightsHidden',
                   isVisible,
                   workingCase,
                   setWorkingCase,

@@ -28,6 +28,7 @@ TODO
 *.todo
 .env
 .nvmrc
+.node-version
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json

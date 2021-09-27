@@ -135,13 +135,15 @@ export interface Case {
   courtCaseNumber?: string
   sessionArrangements?: SessionArrangements
   courtDate?: string
+  courtLocation?: string
   courtRoom?: string
   courtStartDate?: string
   courtEndTime?: string
+  isClosedCourtHidden?: boolean
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  isAccusedAbsent?: boolean
+  isAccusedRightsHidden?: boolean
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
@@ -224,6 +226,7 @@ export interface UpdateCase {
   courtCaseNumber?: string
   sessionArrangements?: SessionArrangements
   courtDate?: string
+  courtLocation?: string
   courtRoom?: string
   courtStartDate?: string
   courtEndTime?: string

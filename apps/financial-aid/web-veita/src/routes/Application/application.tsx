@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { LoadingDots, Text, Box, Button } from '@island.is/island-ui/core'
+import { Text, Box, Button } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 import * as styles from './application.treat'
@@ -31,13 +31,14 @@ import { calcAge } from '@island.is/financial-aid-web/veita/src/utils/formHelper
 
 import {
   Profile,
-  AdminLayout,
   StateModal,
   AidAmountModal,
   History,
   CommentSection,
   ApplicationHeader,
   FilesListWithHeaderContainer,
+  ApplicationSkeleton,
+  LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 interface ApplicantData {
@@ -217,7 +218,7 @@ const ApplicationProfile = () => {
     ]
 
     return (
-      <AdminLayout>
+      <>
         <Box
           marginTop={10}
           marginBottom={15}
@@ -283,18 +284,12 @@ const ApplicationProfile = () => {
             }}
           />
         )}
-      </AdminLayout>
+      </>
     )
   }
-  if (loading) {
-    return (
-      <AdminLayout>
-        <LoadingDots />
-      </AdminLayout>
-    )
-  }
+
   return (
-    <AdminLayout>
+    <LoadingContainer isLoading={loading} loader={<ApplicationSkeleton />}>
       <Box>
         <Button
           colorScheme="default"
@@ -314,7 +309,7 @@ const ApplicationProfile = () => {
       <Text color="red400" fontWeight="semiBold" marginTop={4}>
         Abbabab Notendi ekki fundinn, farðu tilbaka og reyndu vinsamlegast aftur{' '}
       </Text>
-    </AdminLayout>
+    </LoadingContainer>
   )
 }
 
