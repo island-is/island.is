@@ -4,7 +4,7 @@ export const accidentType = {
   general: defineMessages({
     sectionTitle: {
       id: 'an.application:accidentType.sectionTitle',
-      defaultMessage: 'Aðstæður slys',
+      defaultMessage: 'Upplýsingar um slys',
       description: 'Accident circumstances',
     },
     heading: {
