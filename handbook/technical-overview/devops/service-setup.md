@@ -1,4 +1,4 @@
-# Service configuration
+# Service Configuration
 
 ## Deploying our services
 
