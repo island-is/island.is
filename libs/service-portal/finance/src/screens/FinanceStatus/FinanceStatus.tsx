@@ -29,6 +29,7 @@ import { showAnnualStatusDocument } from '@island.is/service-portal/graphql'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import DisabledItem from '../../components/DropdownExport/DisabledItem'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
+import EmptyStatusImage from '../../components/EmptyStatusImage/EmptyStatusImage'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -119,10 +120,15 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
             (financeStatusData?.organizations?.length === 0 ||
               financeStatusData?.organizations === null) && (
               <Box paddingY={2}>
-                <AlertBanner
-                  description="Staða þín við ríkissjóð = 0"
-                  variant="info"
-                />
+                <Text marginBottom={1} variant="h3">
+                  {formatMessage({
+                    id: 'sp.finance-status:empty-state',
+                    defaultMessage: 'Engar stöðufærslur til að sýna',
+                  })}
+                </Text>
+                <Box marginTop={4}>
+                  <EmptyStatusImage />
+                </Box>
               </Box>
             )}
           {financeStatusData?.organizations?.length > 0 ? (
