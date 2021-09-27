@@ -1,5 +1,3 @@
-import React from 'react'
-
 import {
   buildForm,
   buildDescriptionField,
@@ -7,7 +5,6 @@ import {
   buildSection,
   buildExternalDataProvider,
   buildKeyValueField,
-  buildDataProviderItem,
   buildSubmitField,
   buildCheckboxField,
   buildCustomField,
@@ -18,6 +15,10 @@ import {
   FormModes,
   DefaultEvents,
   StaticText,
+  buildSubSection,
+  getValueViaPath,
+  buildDataProviderItem,
+  FormValue,
 } from '@island.is/application/core'
 import { NationalRegistryUser, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
@@ -25,6 +26,19 @@ import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
 import { QualityPhotoData } from '../utils'
 import { StudentAssessment } from '@island.is/api/schema'
+import { NO, YES } from '../lib/constants'
+
+// const ALLOW_FAKE_DATA = todo: serverside feature flag
+const ALLOW_FAKE_DATA = false
+
+const allowFakeCondition = (result = YES) => (answers: FormValue) =>
+  getValueViaPath(answers, 'fakeData.useFakeData') === result
+
+const needsHealthCertificateCondition = (result = YES) => (
+  answers: FormValue,
+) => {
+  return Object.values(answers?.healthDeclaration || {}).includes(result)
+}
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
@@ -37,6 +51,88 @@ export const application: Form = buildForm({
       id: 'externalData',
       title: m.externalDataSection,
       children: [
+        ...(ALLOW_FAKE_DATA
+          ? [
+              buildSubSection({
+                id: 'fakeData',
+                title: 'Gervigögn',
+                children: [
+                  buildMultiField({
+                    id: 'shouldFake',
+                    title: 'Gervigögn',
+                    children: [
+                      buildDescriptionField({
+                        id: 'gervigognDesc',
+                        title: 'Viltu nota gervigögn?',
+                        titleVariant: 'h5',
+                        // Note: text is rendered by a markdown component.. and when
+                        // it sees the indented spaces it seems to assume this is code
+                        // and so it will wrap the text in a <code> block when the double
+                        // spaces are not removed.
+                        description: `
+                          Ath. gervigögn eru eingöngu notuð í stað þess að sækja
+                          forsendugögn í staging umhverfi (dev x-road) hjá RLS, auk þess
+                          sem hægt er að senda inn umsóknina í "þykjó" - þeas. allt hagar sér
+                          eins nema að RLS tekur ekki við umsókninni.
+
+                          Öll önnur gögn eru ekki gervigögn og er þetta eingöngu gert
+                          til að hægt sé að prófa ferlið án þess að vera með tilheyrandi
+                          ökuréttindi í staging grunni RLS.
+                        `.replace(/\s{2}/g, ''),
+                      }),
+                      buildRadioField({
+                        id: 'fakeData.useFakeData',
+                        title: '',
+                        width: 'half',
+                        options: [
+                          {
+                            value: YES,
+                            label: 'Já',
+                          },
+                          {
+                            value: NO,
+                            label: 'Nei',
+                          },
+                        ],
+                      }),
+                      buildRadioField({
+                        id: 'fakeData.currentLicense',
+                        title: 'Réttindi umsækjanda',
+                        width: 'half',
+                        condition: allowFakeCondition(YES),
+                        options: [
+                          {
+                            value: 'student',
+                            label: 'Nemi',
+                          },
+                          {
+                            value: 'temp',
+                            label: 'Bráðabyrgða',
+                          },
+                        ],
+                      }),
+                      buildRadioField({
+                        id: 'fakeData.qualityPhoto',
+                        title: 'Gervimynd eða enga mynd?',
+                        width: 'half',
+                        condition: allowFakeCondition(YES),
+                        options: [
+                          {
+                            value: 'yes',
+                            label: 'Mynd',
+                          },
+                          {
+                            value: 'no',
+                            label: 'Engin mynd',
+                          },
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ]
+          : []),
         buildExternalDataProvider({
           title: m.externalDataTitle,
           id: 'approveExternalData',
@@ -127,8 +223,8 @@ export const application: Form = buildForm({
               title: '',
               disabled: false,
               options: [
-                { value: 'no', label: m.qualityPhotoNoAcknowledgement },
-                { value: 'yes', label: m.qualityPhotoAcknowledgement },
+                { value: NO, label: m.qualityPhotoNoAcknowledgement },
+                { value: YES, label: m.qualityPhotoAcknowledgement },
               ],
             }),
             buildCustomField({
@@ -137,7 +233,7 @@ export const application: Form = buildForm({
               component: 'Bullets',
               condition: (answers) => {
                 try {
-                  return answers.willBringQualityPhoto === 'yes'
+                  return answers.willBringQualityPhoto === YES
                 } catch (error) {
                   return false
                 }
@@ -170,7 +266,7 @@ export const application: Form = buildForm({
               title: '',
               options: [
                 {
-                  value: 'yes',
+                  value: YES,
                   label: m.qualityPhotoAcknowledgement,
                 },
               ],
@@ -420,14 +516,9 @@ export const application: Form = buildForm({
             }),
             buildDividerField({
               condition: (answers) => {
-                try {
-                  return (
-                    answers.willBringQualityPhoto === 'yes' ||
-                    Object.values(answers?.healthDeclaration).includes('yes')
-                  )
-                } catch (error) {
-                  return false
-                }
+                return Object.values(answers?.healthDeclaration || []).includes(
+                  YES,
+                )
               },
             }),
             buildDescriptionField({
@@ -435,30 +526,7 @@ export const application: Form = buildForm({
               title: m.overviewBringAlongTitle,
               titleVariant: 'h4',
               description: '',
-              condition: (answers) => {
-                try {
-                  return (
-                    answers.willBringQualityPhoto === 'yes' ||
-                    Object.values(answers?.healthDeclaration).includes('yes')
-                  )
-                } catch (error) {
-                  return false
-                }
-              },
-            }),
-            buildCheckboxField({
-              id: 'picture',
-              title: '',
-              defaultValue: [],
-              options: [
-                {
-                  value: 'yes',
-                  label: m.qualityPhotoAcknowledgement,
-                },
-              ],
-              condition: (answers) => {
-                return answers.willBringQualityPhoto === 'yes' ?? false
-              },
+              condition: needsHealthCertificateCondition(YES),
             }),
             buildCheckboxField({
               id: 'certificate',
@@ -466,15 +534,13 @@ export const application: Form = buildForm({
               defaultValue: [],
               options: [
                 {
-                  value: 'yes',
+                  value: YES,
                   label: m.overviewBringCertificateData,
                 },
               ],
               condition: (answers) => {
                 try {
-                  return Object.values(answers?.healthDeclaration).includes(
-                    'yes',
-                  )
+                  return Object.values(answers?.healthDeclaration).includes(YES)
                 } catch (error) {
                   return false
                 }
