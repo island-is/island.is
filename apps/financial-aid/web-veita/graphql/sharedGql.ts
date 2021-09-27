@@ -37,6 +37,13 @@ export const GetApplicationQuery = gql`
       staff {
         name
       }
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
     }
   }
 `
@@ -134,18 +141,6 @@ export const CurrentUserQuery = gql`
         role
         active
       }
-    }
-  }
-`
-
-export const GetApplicationEventQuery = gql`
-  query GetApplicationEventQuery($input: ApplicationEventInput!) {
-    applicationEvents(input: $input) {
-      id
-      applicationId
-      eventType
-      comment
-      created
     }
   }
 `

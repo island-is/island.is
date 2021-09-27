@@ -11,10 +11,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 @Injectable()
 export class ApplicationEventService {
   constructor(
-    @InjectModel(ApplicationEventModel)
-    private readonly applicationEventModel: typeof ApplicationEventModel,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    @InjectModel(ApplicationEventModel)
+    private readonly applicationEventModel: typeof ApplicationEventModel,
   ) {}
 
   async getAll(): Promise<ApplicationEventModel[]> {

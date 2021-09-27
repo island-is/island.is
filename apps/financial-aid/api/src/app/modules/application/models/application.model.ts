@@ -9,6 +9,7 @@ import {
 
 import { ApplicationFileModel } from '../../file'
 import { StaffModel } from '../../staff'
+import { ApplicationEventModel } from '../../applicationEvent'
 
 @ObjectType()
 export class ApplicationModel implements Application {
@@ -86,4 +87,7 @@ export class ApplicationModel implements Application {
 
   @Field({ nullable: true })
   readonly staff?: StaffModel
+
+  @Field(() => [ApplicationEventModel], { nullable: true })
+  readonly applicationEvents?: ApplicationEventModel[]
 }
