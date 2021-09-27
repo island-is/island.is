@@ -119,6 +119,7 @@ export class ApplicationController {
     @CurrentHttpUser() user: User,
     @Body() application: CreateApplicationDto,
   ): Promise<ApplicationModel> {
+    console.log('enhérna?')
     return this.applicationService.create(application, user)
   }
 }

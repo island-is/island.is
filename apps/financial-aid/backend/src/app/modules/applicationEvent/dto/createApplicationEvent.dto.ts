@@ -8,11 +8,6 @@ export class CreateApplicationEventDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly applicationId: string
-
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
   readonly eventType: ApplicationEventType
 
   @IsOptional()

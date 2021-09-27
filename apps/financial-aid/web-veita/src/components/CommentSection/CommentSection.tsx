@@ -12,9 +12,10 @@ import { ApplicationEventType } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   className?: string
+  setApplication: any
 }
 
-const CommentSection = ({ className }: Props) => {
+const CommentSection = ({ className, setApplication }: Props) => {
   const router = useRouter()
 
   const [showInput, setShowInput] = useState<boolean>(false)
@@ -38,6 +39,9 @@ const CommentSection = ({ className }: Props) => {
       })
 
       if (data) {
+        //TOOD: sækja allt data
+        console.log(data)
+
         setComment(undefined)
         setShowInput(false)
       }

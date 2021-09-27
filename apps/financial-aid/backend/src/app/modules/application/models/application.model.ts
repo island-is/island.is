@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -20,6 +21,7 @@ import {
 
 import { ApplicationFileModel } from '../../file/models'
 import { StaffModel } from '../../staff'
+import { ApplicationEventModel } from '../../applicationEvent'
 
 @Table({
   tableName: 'applications',
@@ -174,6 +176,7 @@ export class ApplicationModel extends Model<Application> {
 
   @ApiProperty({ type: [ApplicationFileModel] })
   files: ApplicationFileModel[]
+
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
@@ -199,4 +202,20 @@ export class ApplicationModel extends Model<Application> {
   @BelongsTo(() => StaffModel, 'staffId')
   @ApiProperty({ type: StaffModel })
   staff?: StaffModel
+
+  @ForeignKey(() => ApplicationEventModel)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  applicationEventsId: [string]
+
+  // @BelongsTo(() => ApplicationEventModel, 'applicationEventsId')
+  // @ApiProperty({ type: [ApplicationEventModel] })
+  // applicationEvents?: ApplicationEventModel[]
+
+  @HasMany(() => ApplicationEventModel, 'applicationEventsId')
+  @ApiProperty({ type: ApplicationEventModel, isArray: true })
+  applicationEvents?: ApplicationEventModel[]
 }

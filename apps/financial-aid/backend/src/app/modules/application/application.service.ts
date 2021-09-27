@@ -15,6 +15,7 @@ import {
 import { FileService } from '../file'
 import { ApplicationEventService } from '../applicationEvent'
 import { StaffModel } from '../staff'
+import { ApplicationEventModel } from '../applicationEvent'
 
 @Injectable()
 export class ApplicationService {
@@ -61,7 +62,10 @@ export class ApplicationService {
   async findById(id: string): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
-      include: [{ model: StaffModel, as: 'staff' }],
+      include: [
+        { model: StaffModel, as: 'staff' },
+        { model: ApplicationEventModel, as: 'applicationEvents' },
+      ],
     })
 
     const files = await this.fileService.getAllApplicationFiles(id)
@@ -101,12 +105,14 @@ export class ApplicationService {
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
-    const appModel = await this.applicationModel.create(application)
-
     //Create applicationEvent
-    await this.applicationEventService.create({
-      applicationId: appModel.id,
-      eventType: ApplicationEventType[appModel.state.toUpperCase()],
+    const appEvent = await this.applicationEventService.create({
+      eventType: ApplicationEventType[application.state.toUpperCase()],
+    })
+
+    const appModel = await this.applicationModel.create({
+      ...application,
+      applicationEventsId: [appEvent.id],
     })
 
     //Create file
@@ -134,6 +140,14 @@ export class ApplicationService {
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
   }> {
+    //Create applicationEvent
+    const eventModel = await this.applicationEventService.create({
+      eventType: ApplicationEventType[update.state.toUpperCase()],
+      comment: update?.rejection || update?.amount?.toLocaleString('de-DE'),
+    })
+
+    update.applicationEventsId.push(eventModel.id)
+
     if (update.state === ApplicationState.NEW) {
       update.staffId = null
     }
@@ -143,13 +157,6 @@ export class ApplicationService {
     ] = await this.applicationModel.update(update, {
       where: { id },
       returning: true,
-    })
-
-    //Create applicationEvent
-    const eventModel = await this.applicationEventService.create({
-      applicationId: id,
-      eventType: ApplicationEventType[update.state.toUpperCase()],
-      comment: update?.rejection || update?.amount?.toLocaleString('de-DE'),
     })
 
     return { numberOfAffectedRows, updatedApplication }

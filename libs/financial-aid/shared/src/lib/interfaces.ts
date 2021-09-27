@@ -69,7 +69,6 @@ export interface UpdateApplication {
 }
 
 export interface CreateApplicationEvent {
-  applicationId: string
   eventType: ApplicationEventType
   comment?: string
 }
@@ -77,7 +76,6 @@ export interface CreateApplicationEvent {
 export interface ApplicationEvent {
   id: string
   created: string
-  applicationId: string
   eventType: ApplicationEventType
   comment?: string
 }
@@ -172,6 +170,7 @@ export interface Application {
   comment?: string
   rejection?: string
   staff?: Staff
+  applicationEvents?: ApplicationEvent[]
 }
 
 export interface GetSignedUrlForId {

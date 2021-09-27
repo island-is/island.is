@@ -9,9 +9,9 @@ import {
 
 @InputType()
 export class CreateApplicationEventInput implements CreateApplicationEvent {
-  @Allow()
-  @Field()
-  readonly applicationId!: string
+  // @Allow()
+  // @Field()
+  // readonly applicationId!: string
 
   @Allow()
   @Field({ nullable: true })

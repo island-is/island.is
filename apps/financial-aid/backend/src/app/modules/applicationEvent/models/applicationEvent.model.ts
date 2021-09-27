@@ -5,6 +5,7 @@ import {
   Model,
   Table,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
@@ -34,13 +35,15 @@ export class ApplicationEventModel extends Model<ApplicationEventModel> {
   @ApiProperty()
   created: Date
 
-  @ForeignKey(() => ApplicationModel)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ApiProperty()
-  applicationId: string
+  //Todo
+  // @ForeignKey(() => ApplicationModel)
+  // @Column({
+  //   type: DataType.UUID,
+  //   allowNull: false,
+  // })
+  // @BelongsTo(() => ApplicationModel, 'id')
+  // @ApiProperty({ type: ApplicationModel })
+  // applicationId: string
 
   @Column({
     type: DataType.ENUM,

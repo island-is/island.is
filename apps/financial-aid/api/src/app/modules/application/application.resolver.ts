@@ -53,6 +53,7 @@ export class ApplicationResolver {
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Application> {
     this.logger.debug('Creating application')
+
     return backendApi.createApplication(input)
   }
 

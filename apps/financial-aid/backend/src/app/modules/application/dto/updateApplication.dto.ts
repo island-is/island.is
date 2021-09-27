@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, IsOptional, IsNumber } from 'class-validator'
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsArray,
+} from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -24,4 +30,9 @@ export class UpdateApplicationDto {
   @IsString()
   @ApiProperty()
   staffId: string
+
+  @IsNotEmpty()
+  @IsArray()
+  @ApiProperty()
+  applicationEventsId: [string]
 }

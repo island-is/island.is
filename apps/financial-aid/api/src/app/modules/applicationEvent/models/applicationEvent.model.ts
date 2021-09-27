@@ -13,9 +13,6 @@ export class ApplicationEventModel implements ApplicationEvent {
   @Field()
   readonly created!: string
 
-  @Field()
-  readonly applicationId!: string
-
   @Field({ nullable: true })
   readonly comment?: string
 

@@ -46,6 +46,7 @@ class BackendAPI extends RESTDataSource {
   createApplication(
     createApplication: CreateApplication,
   ): Promise<Application> {
+    console.log('ferdu hingad')
     return this.post('application', createApplication)
   }
 
