@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common'
 import { DataSourceConfig } from 'apollo-datasource'
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-import { CompanyItem, SearchCompanyItem, SearchCompanyItems } from './gen/fetch'
+import { CompanyItem, SearchCompanyItems } from './gen/fetch'
 import { RskCompanyInfoServiceOptions, RSK_COMPANY_INFO_OPTIONS } from './types'
 
 export class RskCompanyInfoAPI extends RESTDataSource {
@@ -10,8 +10,8 @@ export class RskCompanyInfoAPI extends RESTDataSource {
     private readonly options: RskCompanyInfoServiceOptions,
   ) {
     super()
-    const { xRoadBaseUrl, xRoadProviderId, apiPath } = this.options
-    this.baseURL = `${xRoadBaseUrl}/r1/${xRoadProviderId}/${apiPath}/`
+    const { xRoadBaseUrl, xRoadProviderId } = this.options
+    this.baseURL = `${xRoadBaseUrl}/r1/${xRoadProviderId}}`
     this.initialize({} as DataSourceConfig<any>)
   }
 
@@ -25,12 +25,12 @@ export class RskCompanyInfoAPI extends RESTDataSource {
     return response
   }
 
-  async searchCompanyInformation(
-    searchString: string,
-  ): Promise<SearchCompanyItems> {
-    const response = await this.get<SearchCompanyItems>(
-      `/search/${searchString}`,
-    )
-    return response
-  }
+  // async searchCompanyInformation(
+  //   searchString: string,
+  // ): Promise<SearchCompanyItems> {
+  //   const response = await this.get<SearchCompanyItems>(
+  //     `/search/${searchString}`,
+  //   )
+  //   return response
+  // }
 }

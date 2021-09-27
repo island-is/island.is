@@ -6,9 +6,24 @@ import { RskCompanyRelatedParty } from './rskCompanyRelatedParty.model'
 import { RskCompanyVat } from './rskCompanyVat.model'
 
 @ObjectType()
+export class RskCompanyInfo {
+  @Field(() => [RskCompanyFormOfOperation], { nullable: true })
+  formOfOperation?: RskCompanyFormOfOperation[]
+
+  @Field(() => [RskCompanyAddress], { nullable: true })
+  address?: RskCompanyAddress[]
+
+  @Field(() => [RskCompanyRelatedParty], { nullable: true })
+  relatedParty?: RskCompanyRelatedParty[]
+
+  @Field(() => [RskCompanyVat], { nullable: true })
+  vat?: RskCompanyVat[]
+}
+
+@ObjectType()
 export class RskCompany {
   @Field(() => ID)
-  nationalIdCompany!: string
+  nationalId!: string
 
   @Field(() => String)
   name!: string
@@ -19,21 +34,12 @@ export class RskCompany {
   @Field(() => String)
   status!: string
 
-  @Field(() => [RskCompanyFormOfOperation])
-  formOfOperation?: RskCompanyFormOfOperation[]
-
-  @Field(() => [RskCompanyVat])
-  vat?: RskCompanyVat[]
-
-  @Field(() => [RskCompanyAddress])
-  address?: RskCompanyAddress[]
-
-  @Field(() => [RskCompanyRelatedParty])
-  relatedParty?: RskCompanyRelatedParty[]
+  @Field(() => String)
+  vatNumber?: string
 
   @Field(() => String)
   lastUpdated?: string
 
-  @Field(() => [RskCompanyLink])
-  link?: RskCompanyLink[]
+  @Field(() => RskCompanyInfo, { nullable: true })
+  companyInfo?: RskCompanyInfo
 }

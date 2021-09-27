@@ -3,18 +3,18 @@ import { RskCompanyClassification } from './rskCompanyClassification.model'
 
 @ObjectType()
 export class RskCompanyVat {
-  @Field(() => String)
-  vatNumber!: string
+  @Field(() => String, { nullable: true })
+  vatNumber?: string
 
-  @Field(() => String)
-  dateOfRegistration!: string
+  @Field(() => String, { nullable: true })
+  dateOfRegistration?: string
 
-  @Field(() => String)
-  status!: string
+  @Field(() => String, { nullable: true })
+  status?: string
 
-  @Field(() => String)
-  deregistration!: string
+  @Field(() => String, { nullable: true })
+  deregistration?: string
 
-  @Field(() => [RskCompanyClassification])
-  classification!: RskCompanyClassification[]
+  @Field(() => [RskCompanyClassification], { nullable: true })
+  classification?: RskCompanyClassification[]
 }

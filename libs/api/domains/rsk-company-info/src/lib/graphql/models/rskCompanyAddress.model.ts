@@ -2,21 +2,21 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class RskCompanyAddress {
-  @Field(() => String)
-  address!: string
+  @Field(() => String, { nullable: true })
+  streetAddress?: string
 
-  @Field(() => String)
-  address2!: string
+  @Field(() => String, { nullable: true })
+  streetAddress2?: string
 
-  @Field(() => String)
-  postNumber!: string
+  @Field(() => String, { nullable: true })
+  postalCode?: string
 
-  @Field(() => String)
-  municipality!: string
+  @Field(() => String, { nullable: true })
+  city?: string
 
-  @Field(() => String)
-  municipalityNumber!: string
+  @Field(() => String, { nullable: true })
+  cityNumber?: string
 
-  @Field(() => String)
-  country!: string
+  @Field(() => String, { nullable: true })
+  country?: string
 }

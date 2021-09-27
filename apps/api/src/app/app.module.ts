@@ -245,7 +245,6 @@ const autoSchemaFile = environment.production
     RskCompanyInfoModule.register({
       xRoadProviderId: environment.rskCompanyInfo.xRoadProviderId,
       xRoadBaseUrl: environment.rskCompanyInfo.xRoadBaseUrl,
-      apiPath: environment.rskCompanyInfo.apiPath,
       xRoadClientId: environment.rskCompanyInfo.xRoadClientId,
     }),
   ],

@@ -1,24 +1,23 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { RskCompanyLink } from './rskCompanyLink.model'
-import { RskCompanySearchItem } from './rskCompanySearchItem.model'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { RskCompany } from './rskCompany.model'
+
+@ObjectType()
+export class RskCompanyPageInfo {
+  @Field(() => String, { nullable: true })
+  endCursor?: string
+
+  @Field(() => Boolean, { nullable: true })
+  hasNextPage?: boolean
+}
 
 @ObjectType()
 export class RskCompanySearchItems {
-  @Field(() => [RskCompanySearchItem])
-  items?: RskCompanySearchItem[]
+  @Field(() => [RskCompany], { nullable: true })
+  items?: RskCompany[]
 
-  @Field(() => Boolean)
-  hasMore?: boolean
+  @Field(() => RskCompanyPageInfo, { nullable: true })
+  pageInfo?: RskCompanyPageInfo
 
-  @Field(() => Number)
-  limit?: number
-
-  @Field(() => Number)
-  offset?: number
-
-  @Field(() => Number)
+  @Field(() => Int, { nullable: true })
   count?: number
-
-  @Field(() => [RskCompanyLink])
-  links?: RskCompanyLink[]
 }

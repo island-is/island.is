@@ -84,6 +84,7 @@ module.exports = {
     '<rootDir>/libs/api/domains/payment',
     '<rootDir>/libs/api/domains/regulations',
     '<rootDir>/libs/api/domains/rsk',
+    '<rootDir>/libs/api/domains/rsk-company-info',
     '<rootDir>/libs/api/domains/syslumenn',
     '<rootDir>/libs/api/domains/user-profile',
     '<rootDir>/libs/application/core',
@@ -127,6 +128,7 @@ module.exports = {
     '<rootDir>/libs/clients/zendesk',
     '<rootDir>/libs/clients/rsk/v1',
     '<rootDir>/libs/clients/rsk/v2',
+    '<rootDir>/libs/clients/rsk-company-info',
     '<rootDir>/libs/content-search-indexer/types',
     '<rootDir>/libs/contentful-extensions/mideind-translation',
     '<rootDir>/libs/contentful-extensions/parent-slug',
@@ -171,7 +173,5 @@ module.exports = {
     '<rootDir>/libs/shared/types',
     '<rootDir>/libs/skilavottord/consts',
     '<rootDir>/libs/skilavottord/types',
-    '<rootDir>/libs/api/domains/rsk-company-info',
-    '<rootDir>/libs/clients/rsk-company-info',
   ],
 }

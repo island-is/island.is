@@ -90,8 +90,6 @@ const devConfig = {
       process.env.COMPANY_REGISTRY_XROAD_PROVIDER_ID ??
       'IS-DEV/GOV/10006/Skatturinn-Public/ftskra-v1',
     xRoadClientId: 'IS-DEV/GOV/10000/island-is-client',
-    apiPath:
-      process.env.COMPANY_REGISTRY_XROAD_API_PATH ?? 'v1/fyrirtaekjaskra',
   },
   icelandicNamesRegistry: {
     backendUrl: 'http://localhost:4239',
