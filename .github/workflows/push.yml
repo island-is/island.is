@@ -116,7 +116,7 @@ jobs:
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
-      IMAGES: ${{ steps.build_map.outputs.IMAGES }}
+      IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
@@ -257,6 +257,17 @@ jobs:
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
+          fi
+
+      - name: Prepare deployment targets
+        id: deploy_map
+        if: needs.pre-checks.outputs.PRE_CHECK != 'push'
+        env:
+          BASE: 'origin/main'
+        run: |
+          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress)
+          echo "CHUNKS: '$CHUNKS'"
+          if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=IMAGES::$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
           fi
 
@@ -338,7 +349,6 @@ jobs:
     needs:
       - prepare
       - pre-checks
-      - docker-build
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
     runs-on: ubuntu-20.04
     timeout-minutes: 5
@@ -404,9 +414,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
-      - name: Add helm config image to unaffected
-        if: "!needs.prepare.outputs.IMAGES || needs.pre-checks.outputs.PRE_CHECK != 'push'"
-        run: echo "UNAFFECTED=$UNAFFECTED helm-config" >> $GITHUB_ENV
       - name: Retag unaffected Docker images
         if: "!startsWith(env.GIT_BRANCH_DEPLOY, 'feature/')"
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
@@ -423,7 +430,7 @@ jobs:
       GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
-      BUILD_CHUNKS: ${{ needs.prepare.outputs.BUILD_CHUNKS }}
+      IMAGES: ${{ needs.prepare.outputs.IMAGES }}
     strategy:
       matrix:
         service:
@@ -445,7 +452,7 @@ jobs:
             "parameters": {
               "docker_tag": "$DOCKER_TAG",
               "feature_name": "$FEATURE_NAME",
-              "images": "$(echo $BUILD_CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')",
+              "images": "$IMAGES",
               "pull_request_number": "$(echo $GITHUB_REF | cut -d'/' -f3)"
             }
           }

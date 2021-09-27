@@ -3,7 +3,7 @@ import { Logo, Text, Box, Divider, Icon } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-import { LogoHfj } from '@island.is/financial-aid-web/veita/src/components'
+import { LogoMunicipality } from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './Nav.treat'
 import cn from 'classnames'
@@ -38,12 +38,12 @@ const Nav = ({ showInMobile }: Props) => {
       })}
     >
       <header>
-        <div className={`${styles.logoContainer} logoContainer`}>
+        <div className={styles.logoContainer}>
           <Logo />
         </div>
-        <div className={styles.logoHfjContainer}>
-          <Box className={`logoHfj`}>
-            <LogoHfj />
+        <div className={styles.logoMunicipalityContainer}>
+          <Box className={styles.logoMunicipality}>
+            <LogoMunicipality />
           </Box>
 
           <Box paddingLeft={2} className={'headLine'}>

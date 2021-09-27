@@ -121,26 +121,27 @@ export async function getCustodyNoticePdfAsString(
           }`
         : 'Ekki skráður',
     )
-    .text(' ')
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Tilhögun gæsluvarðhalds')
-    .font('Helvetica')
-    .fontSize(12)
-    .text(
-      formatCustodyRestrictions(
-        existingCase.accusedGender,
-        existingCase.custodyRestrictions,
-        existingCase.validToDate,
-        existingCase.isolationToDate,
-      ),
-      {
+
+  const custodyRestrictions = formatCustodyRestrictions(
+    existingCase.accusedGender,
+    existingCase.custodyRestrictions,
+  )
+
+  if (custodyRestrictions) {
+    doc
+      .text(' ')
+      .text(' ')
+      .font('Helvetica-Bold')
+      .fontSize(14)
+      .lineGap(8)
+      .text('Tilhögun gæsluvarðhalds')
+      .font('Helvetica')
+      .fontSize(12)
+      .text(custodyRestrictions, {
         lineGap: 6,
         paragraphGap: 0,
-      },
-    )
+      })
+  }
 
   setPageNumbers(doc)
 

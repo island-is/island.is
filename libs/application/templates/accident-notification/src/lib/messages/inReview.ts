@@ -4,18 +4,13 @@ export const inReview = {
   general: defineMessages({
     formTitle: {
       id: 'an.application:inReview.general.formTitle',
-      defaultMessage: 'Staða umsóknar',
+      defaultMessage: 'Tilkynning um slys',
       description: 'Parental Leave',
     },
-    titleInReview: {
+    title: {
       id: 'an.application:inReview.general.titleInReview',
-      defaultMessage: 'Umsókn þín er í skoðun',
+      defaultMessage: 'Staða tilkynningar',
       description: 'Your application is in review',
-    },
-    titleApproved: {
-      id: 'an.application:inReview.general.titleApproved',
-      defaultMessage: 'Umsókn þín er samþykkt',
-      description: 'Your application is in approved',
     },
     viewApplicationButton: {
       id: 'an.application:inReview.general.viewApplicationButton',
