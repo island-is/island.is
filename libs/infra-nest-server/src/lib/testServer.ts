@@ -1,12 +1,15 @@
+import { Type, ValidationPipe, ExecutionContext } from '@nestjs/common'
+import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
+
 import {
   IdsAuthGuard,
   IdsUserGuard,
   ScopesGuard,
+  getRequest,
+  User,
 } from '@island.is/auth-nest-tools'
-import { Type, ValidationPipe } from '@nestjs/common'
 import { InfraModule } from './infra/infra.module'
-import { Test, TestingModule } from '@nestjs/testing'
-import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
 export type TestServerOptions = {
   /**
@@ -48,7 +51,18 @@ export const testServerActivateAuthGuards = async (
     .overrideGuard(IdsAuthGuard)
     .useValue({ canActivate: () => true })
     .overrideGuard(IdsUserGuard)
-    .useValue({ canActivate: () => true })
+    .useValue({
+      canActivate: (context: ExecutionContext) => {
+        const request = getRequest(context)
+        request.user = {
+          nationalId: '0101303019', // Gervimadur Afrika
+          scope: [],
+          authorization: '',
+          client: '',
+        }
+        return true
+      },
+    })
     .overrideGuard(ScopesGuard)
     .useValue({ canActivate: () => true })
     .compile()
