@@ -102,7 +102,7 @@ function constructRestrictionRulingPdf(
     })
   }
 
-  if (existingCase.courtAttendees) {
+  if (existingCase.courtAttendees?.trim()) {
     doc
       .text(' ')
       .font('Times-Bold')
@@ -455,7 +455,7 @@ function constructInvestigationRulingPdf(
     })
   }
 
-  if (existingCase.courtAttendees) {
+  if (existingCase.courtAttendees?.trim()) {
     doc
       .text(' ')
       .font('Times-Bold')
