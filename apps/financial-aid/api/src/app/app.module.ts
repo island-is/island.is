@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 
-import { SharedAuthModule } from '@island.is/financial-aid/auth'
 import { environment } from '../environments'
 import { BackendAPI } from '../services'
 import {
-  AuthModule,
   UserModule,
   ApplicationModule,
   MunicipalityModule,
@@ -29,11 +27,6 @@ const autoSchemaFile = environment.production
       context: ({ req }) => ({ req }),
       dataSources: () => ({ backendApi: new BackendAPI() }),
     }),
-    SharedAuthModule.register({
-      jwtSecret: environment.auth.jwtSecret,
-      secretToken: environment.auth.secretToken,
-    }),
-    AuthModule,
     UserModule,
     ApplicationModule,
     MunicipalityModule,

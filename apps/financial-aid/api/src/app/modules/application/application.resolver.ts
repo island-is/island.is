@@ -9,7 +9,6 @@ import { BackendAPI } from '../../../services'
 
 import { ApplicationFiltersModel, ApplicationModel } from './models'
 import { CreateApplicationInput, UpdateApplicationInput } from './dto'
-import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
 
 import { ApplicationInput } from './dto'
 
@@ -17,8 +16,9 @@ import {
   Application,
   ApplicationFilters,
 } from '@island.is/financial-aid/shared/lib'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(IdsUserGuard)
 @Resolver(() => ApplicationModel)
 export class ApplicationResolver {
   constructor(

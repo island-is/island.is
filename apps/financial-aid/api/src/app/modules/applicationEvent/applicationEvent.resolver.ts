@@ -9,13 +9,13 @@ import { BackendAPI } from '../../../services'
 
 import { ApplicationEventModel } from './models'
 import { CreateApplicationEventInput } from './dto'
-import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
 
 import { ApplicationEventInput } from './dto'
 
 import { ApplicationEvent } from '@island.is/financial-aid/shared/lib'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(IdsUserGuard)
 @Resolver(() => ApplicationEventModel)
 export class ApplicationEventResolver {
   constructor(

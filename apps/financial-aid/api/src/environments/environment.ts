@@ -39,6 +39,10 @@ const prodConfig = {
     jwtSecret: process.env.AUTH_JWT_SECRET!,
     secretToken: process.env.SECRET_TOKEN!,
   },
+  identityServerAuth: {
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',
+    audience: '@samband.is',
+  },
   backend: {
     url: process.env.BACKEND_URL,
   },
@@ -55,8 +59,12 @@ const devConfig = {
     audienceVeita: 'localhost:4200',
     allowAuthBypass: true,
     allowFakeUsers: true,
-    jwtSecret: 'jwt-secret',
+    jwtSecret: process.env.IDENTITYSERVER_SECRET ?? '',
     secretToken: 'secret-token',
+  },
+  identityServerAuth: {
+    issuer: 'https://identity-server.dev01.devland.is',
+    audience: '@samband.is',
   },
   backend: {
     url: 'http://localhost:3344',

@@ -9,10 +9,7 @@ import {
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
 import type { User } from '@island.is/financial-aid/shared/lib'
-import {
-  CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
-} from '@island.is/financial-aid/auth'
+import { CurrentGraphQlUser } from '@island.is/financial-aid/auth'
 
 import { UserModel } from './user.model'
 import { UserService } from './user.service'
@@ -20,8 +17,9 @@ import { UserService } from './user.service'
 import { CurrentApplicationModel } from '../application'
 import { environment } from '../../../environments'
 import { StaffModel } from '../staff/models'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(IdsUserGuard)
 @Resolver(() => UserModel)
 export class UserResolver {
   constructor(

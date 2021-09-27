@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { GridContainer, Button, Text, Box } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 import * as styles from './login.treat'
 import { Routes } from '@island.is/financial-aid/shared/lib'
+import { signIn, useSession, signOut } from 'next-auth/client'
 
 interface Props {
   headline?: string
@@ -12,6 +13,15 @@ interface Props {
 
 const Login = ({ headline, about }: Props) => {
   const router = useRouter()
+  const [session, loading] = useSession()
+
+  useEffect(() => {
+    const isUserLoggedIn =
+      session && new Date(session.expires) > new Date() && router
+    if (isUserLoggedIn) {
+      router.push('/umsokn')
+    }
+  }, [session, loading])
 
   return (
     <GridContainer>
@@ -24,17 +34,29 @@ const Login = ({ headline, about }: Props) => {
           <Text marginBottom={3}>{about}</Text>
 
           <Button
-            onClick={() => {
-              router.push(
-                Routes.apiLoginRouteForRealUsers(router.query.id as string),
-              )
-            }}
+            onClick={() => signIn('identity-server')}
             data-testid="logout-button"
             preTextIconType="filled"
             type="button"
             variant="primary"
           >
             Innskráning
+          </Button>
+          {/* TODO: REMOVE THIS BUTTON AFTER TESTING AND MOVE TO CORRECT LOGOUT */}
+          <Button
+            onClick={() =>
+              session &&
+              window &&
+              signOut({
+                callbackUrl: `${window.location.origin}/api/auth/logout?id_token=${session.idToken}`,
+              })
+            }
+            data-testid="logout-button"
+            preTextIconType="filled"
+            type="button"
+            variant="primary"
+          >
+            Skrá út
           </Button>
           <Box paddingTop={4}>
             <Button
