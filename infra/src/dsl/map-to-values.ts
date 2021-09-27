@@ -128,7 +128,14 @@ export const serializeService: SerializeMethod = (
     result.secrets = serviceDef.secrets
   }
 
-  addFeaturesConfig(serviceDef.features, uberChart, service, result)
+  const {
+    envs: featureEnvs,
+    errors: featureErrors,
+    secrets: featureSecrets,
+  } = addFeaturesConfig(serviceDef.features, uberChart, service)
+  result.env = { ...result.env, ...featureEnvs }
+  allErrors = allErrors.concat(featureErrors)
+  result.secrets = { ...result.secrets, ...featureSecrets }
 
   // service account
   if (serviceDef.serviceAccountEnabled) {
@@ -186,12 +193,25 @@ export const serializeService: SerializeMethod = (
         allErrors = allErrors.concat(secretErrors)
       }
       if (serviceDef.initContainers.features) {
-        addFeaturesConfig(
+        const {
+          envs: featureEnvs,
+          errors: featureErrors,
+          secrets: featureSecrets,
+        } = addFeaturesConfig(
           serviceDef.initContainers.features!,
           uberChart,
           service,
-          result.initContainer!,
         )
+
+        result.initContainer.env = {
+          ...result.initContainer.env,
+          ...featureEnvs,
+        }
+        allErrors = allErrors.concat(featureErrors)
+        result.initContainer.secrets = {
+          ...result.initContainer.secrets,
+          ...featureSecrets,
+        }
       }
     } else {
       allErrors.push('No containers to run defined in initContainers')
@@ -271,7 +291,6 @@ function addFeaturesConfig(
   serviceDefFeatures: Partial<Features>,
   uberChart: UberChartType,
   service: Service,
-  result: { env: ContainerEnvironmentVariables; secrets: ContainerSecrets },
 ) {
   const activeFeatures = Object.entries(
     serviceDefFeatures,
@@ -279,9 +298,15 @@ function addFeaturesConfig(
     uberChart.env.featuresOn.includes(feature as FeatureNames),
   ) as [FeatureNames, Feature][]
   const featureEnvs = activeFeatures.map(([name, v]) => {
+    const { envs, errors } = serializeEnvironmentVariables(
+      service,
+      uberChart,
+      v.env,
+    )
     return {
       name,
-      vars: serializeEnvironmentVariables(service, uberChart, v.env),
+      envs,
+      errors,
     }
   })
   const featureSecrets = activeFeatures.map(([name, v]) => {
@@ -291,19 +316,18 @@ function addFeaturesConfig(
     }
   })
 
-  result.env = {
-    ...result.env,
-    ...featureEnvs.reduce(
-      (acc, feature) => ({ ...acc, ...feature.vars.envs }),
+  return {
+    envs: featureEnvs.reduce(
+      (acc, feature) => ({ ...acc, ...feature.envs }),
       {} as ContainerEnvironmentVariables,
     ),
-  }
-
-  result.secrets = {
-    ...result.secrets,
-    ...featureSecrets.reduce(
+    secrets: featureSecrets.reduce(
       (acc, toggle) => ({ ...acc, ...toggle.secrets }),
       {} as ContainerSecrets,
+    ),
+    errors: featureEnvs.reduce(
+      (acc, feature) => [...acc, ...feature.errors],
+      [] as string[],
     ),
   }
 }
