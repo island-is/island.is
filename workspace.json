@@ -2469,7 +2469,8 @@
               "echo \"Waiting for databases to start...\" && sleep 2",
               "yarn nx run application-system-api:migrate $NX_OPTIONS",
               "yarn nx run services-party-letter-registry-api:migrate $NX_OPTIONS",
-              "yarn nx run services-endorsements-api:dev/init $NX_OPTIONS",
+              "yarn nx run services-temporary-voter-registry-api:migrate",
+              "yarn nx run services-endorsements-api:migrate",
               "yarn nx run application-templates-party-application:schemas/external-openapi-generator $NX_OPTIONS",
               "yarn nx run application-templates-party-application:schemas/openapi-generator $NX_OPTIONS"
             ],
@@ -2556,7 +2557,8 @@
               "echo \"Waiting for databases to start...\" && sleep 2",
               "yarn nx run application-system-api:migrate $NX_OPTIONS",
               "yarn nx run services-party-letter-registry-api:migrate $NX_OPTIONS",
-              "yarn nx run services-endorsements-api:dev/init $NX_OPTIONS",
+              "yarn nx run services-temporary-voter-registry-api:migrate $NX_OPTIONS",
+              "yarn nx run services-endorsements-api:migrate $NX_OPTIONS",
               "yarn nx run application-templates-party-letter:schemas/external-openapi-generator $NX_OPTIONS",
               "yarn nx run application-templates-party-letter:schemas/openapi-generator $NX_OPTIONS"
             ],

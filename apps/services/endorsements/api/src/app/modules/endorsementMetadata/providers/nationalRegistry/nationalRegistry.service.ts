@@ -1,4 +1,5 @@
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { NationalRegistryScope } from '@island.is/auth/scopes'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { Inject, Injectable } from '@nestjs/common'
 import { environment } from '../../../../../environments'
@@ -30,7 +31,7 @@ export class NationalRegistryUserService implements MetadataProvider {
         forwardUserInfo: false,
         tokenExchangeOptions: {
           clientId: '@island.is/clients/national-registry',
-          scope: 'openid @skra.is/individuals api_resource.scope',
+          scope: `openid ${NationalRegistryScope.individuals} api_resource.scope`,
           requestActorToken: true,
           issuer: environment.auth.issuer,
           clientSecret:
