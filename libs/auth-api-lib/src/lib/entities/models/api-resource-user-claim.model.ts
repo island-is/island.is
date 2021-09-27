@@ -7,17 +7,13 @@ import {
   UpdatedAt,
   ForeignKey,
   PrimaryKey,
+  BelongsTo,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { ApiResource } from './api-resource.model'
 
 @Table({
   tableName: 'api_resource_user_claim',
-  indexes: [
-    {
-      fields: ['api_resource_id', 'claim_name'],
-    },
-  ],
 })
 export class ApiResourceUserClaim extends Model<ApiResourceUserClaim> {
   @PrimaryKey
@@ -28,6 +24,9 @@ export class ApiResourceUserClaim extends Model<ApiResourceUserClaim> {
   @ForeignKey(() => ApiResource)
   @ApiProperty()
   apiResourceName!: string
+
+  @BelongsTo(() => ApiResource)
+  apiResource!: ApiResource
 
   @PrimaryKey
   @Column({
