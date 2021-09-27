@@ -278,6 +278,9 @@
       "@island.is/financial-aid/shared/components": [
         "libs/financial-aid/shared/src/components/index.ts"
       ],
+      "@island.is/financial-aid/shared/data": [
+        "libs/financial-aid/shared/src/data/index.ts"
+      ],
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
