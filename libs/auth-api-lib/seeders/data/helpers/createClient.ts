@@ -73,7 +73,7 @@ const getClientFields = (options: ClientOptions): DbClient => ({
   supports_legal_guardians: options.supportDelegations ?? false,
   supports_procuring_holders: options.supportDelegations ?? false,
   national_id: options.contactNationalId ?? '5501692829',
-  contact_email: options.contactEmail ?? 'hrefna.asgeirsdottir@fjr.is',
+  contact_email: options.contactEmail ?? 'island@island.is',
 
   //defaults
   allow_offline_access: false,

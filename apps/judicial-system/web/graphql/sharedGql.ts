@@ -58,13 +58,15 @@ export const CaseQuery = gql`
       courtCaseNumber
       sessionArrangements
       courtDate
+      courtLocation
       courtRoom
       courtStartDate
       courtEndTime
+      isClosedCourtHidden
       courtAttendees
       prosecutorDemands
       courtDocuments
-      isAccusedAbsent
+      isAccusedRightsHidden
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
