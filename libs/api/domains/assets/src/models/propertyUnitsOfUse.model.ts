@@ -31,7 +31,7 @@ export class Fasteignamat {
 @ObjectType()
 export class Stadfang {
   @Field({ nullable: true })
-  stadfanganr?: string
+  stadfanganumer?: number
 
   @Field({ nullable: true })
   stadvisir?: string
@@ -40,13 +40,13 @@ export class Stadfang {
   stadgreinir?: string
 
   @Field({ nullable: true })
-  postnr?: number
+  postnumer?: number
 
   @Field({ nullable: true })
   sveitarfelag?: string
 
   @Field({ nullable: true })
-  landeignarnr?: string
+  landeignarnumer?: number
 
   @Field({ nullable: true })
   birting?: string
@@ -106,5 +106,5 @@ export class UnitsOfUseModel {
   paging?: PagingData
 
   @Field(() => [UnitOfUse], { nullable: true })
-  data?: UnitOfUse[]
+  notkunareiningar?: UnitOfUse[]
 }

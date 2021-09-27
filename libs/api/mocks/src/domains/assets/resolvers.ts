@@ -10,14 +10,14 @@ export const resolvers: Resolvers = {
 
   Query: {
     getThinglystirEigendur: (_, { input }) => {
-      const cursor = input.cursor ? parseInt(input.cursor, 10) : 0
-      return cursor && cursor > 0
+      const cursor = input.cursor ? parseInt(input.cursor, 20) : 1
+      return cursor && cursor > 1
         ? store.pagedThinglystirEigendur(false)
         : store.pagedThinglystirEigendur()
     },
     getNotkunareiningar: (_, { input }) => {
-      const cursor = input.cursor ? parseInt(input.cursor, 10) : 0
-      return cursor && cursor > 0
+      const cursor = input.cursor ? parseInt(input.cursor, 20) : 1
+      return cursor && cursor > 1
         ? store.pagedUnitsOfUse(false)
         : store.pagedUnitsOfUse()
     },
@@ -28,8 +28,8 @@ export const resolvers: Resolvers = {
       return match || null
     },
     getRealEstates: (_, { input }) => {
-      const cursor = input.cursor ? parseInt(input.cursor, 10) : 0
-      return cursor && cursor > 0
+      const cursor = input.cursor ? parseInt(input.cursor, 20) : 1
+      return cursor && cursor > 1
         ? store.getFasteignir(false)
         : store.getFasteignir()
     },

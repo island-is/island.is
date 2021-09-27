@@ -40,7 +40,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         variables: {
           input: {
             cursor: Math.ceil(
-              fasteignirArray.length / DEFAULT_PAGING_ITEMS,
+              fasteignirArray.length / DEFAULT_PAGING_ITEMS + 1,
             ).toString(),
           },
         },
@@ -57,6 +57,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     }
   }
 
+  console.log('assetData', assetData)
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>

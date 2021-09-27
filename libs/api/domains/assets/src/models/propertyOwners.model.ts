@@ -48,5 +48,5 @@ export class PropertyOwnersModel {
   paging?: PagingData
 
   @Field(() => [PropertyOwner], { nullable: true })
-  data?: PropertyOwner[]
+  thinglystirEigendur?: PropertyOwner[]
 }

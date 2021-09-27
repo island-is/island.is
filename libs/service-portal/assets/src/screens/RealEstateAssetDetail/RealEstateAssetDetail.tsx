@@ -44,7 +44,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     { loading: ownerLoading, error: ownerError, fetchMore, ...eigendurQuery },
   ] = useLazyQuery(GET_PROPERTY_OWNERS_QUERY)
   const eigendurPaginationData: ThinglysturEigandi[] =
-    eigendurQuery?.data?.getThinglystirEigendur.data || []
+    eigendurQuery?.data?.getThinglystirEigendur.thinglystirEigendur || []
 
   const assetOwners: ThinglysturEigandi[] =
     assetData.thinglystirEigendur?.thinglystirEigendur || []
@@ -59,7 +59,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         input: {
           assetId: assetData?.fasteignanumer,
           cursor: Math.ceil(
-            eigendurPaginationData.length / DEFAULT_PAGING_ITEMS,
+            eigendurPaginationData.length / DEFAULT_PAGING_ITEMS + 1,
           ).toString(),
         },
       },
@@ -69,9 +69,9 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
       fetchMore({
         ...variableObject,
         updateQuery: (prevResult, { fetchMoreResult }) => {
-          fetchMoreResult.getThinglystirEigendur.data = [
-            ...prevResult.getThinglystirEigendur.data,
-            ...fetchMoreResult.getThinglystirEigendur.data,
+          fetchMoreResult.getThinglystirEigendur.thinglystirEigendur = [
+            ...prevResult.getThinglystirEigendur.thinglystirEigendur,
+            ...fetchMoreResult.getThinglystirEigendur.thinglystirEigendur,
           ]
           return fetchMoreResult
         },

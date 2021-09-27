@@ -36,7 +36,7 @@ const AssetGrid: FC<Props> = ({ title, units, assetId }) => {
         input: {
           assetId: assetId,
           cursor: Math.ceil(
-            paginateData.length / DEFAULT_PAGING_ITEMS,
+            paginateData.length / DEFAULT_PAGING_ITEMS + 1,
           ).toString(),
         },
       },
@@ -46,9 +46,9 @@ const AssetGrid: FC<Props> = ({ title, units, assetId }) => {
       fetchMore({
         ...variableObject,
         updateQuery: (prevResult, { fetchMoreResult }) => {
-          fetchMoreResult.getNotkunareiningar.data = [
-            ...prevResult.getNotkunareiningar.data,
-            ...fetchMoreResult.getNotkunareiningar.data,
+          fetchMoreResult.getNotkunareiningar.notkunareiningar = [
+            ...prevResult.getNotkunareiningar.notkunareiningar,
+            ...fetchMoreResult.getNotkunareiningar.notkunareiningar,
           ]
           return fetchMoreResult
         },

@@ -33,17 +33,21 @@ export const GET_UNITS_OF_USE_QUERY = gql`
         brunabotamat
         fasteignamat {
           gildandiFasteignamat
-          gildandiAr
           fyrirhugadFasteignamat
+          gildandiMannvirkjamat
+          fyrirhugadMannvirkjamat
+          gildandiLodarhlutamat
+          fyrirhugadLodarhlutamat
+          gildandiAr
           fyrirhugadAr
         }
         stadfang {
-          stadfanganr
+          stadfanganumer
           stadvisir
           stadgreinir
-          postnr
+          postnumer
           sveitarfelag
-          landeignarnr
+          landeignarnumer
           birting
           birtingStutt
         }
@@ -55,13 +59,11 @@ export const GET_UNITS_OF_USE_QUERY = gql`
 export const GET_PROPERTY_OWNERS_QUERY = gql`
   query GetThinglystirEigendurQuery($input: GetPagingTypes!) {
     getThinglystirEigendur(input: $input) {
-      data {
+      thinglystirEigendur {
         nafn
         kennitala
         eignarhlutfall
         kaupdagur
-        heimild
-        display
         heimildBirting
       }
       paging {

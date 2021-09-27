@@ -8,10 +8,10 @@ import {
 } from './factories'
 
 export const store = createStore(() => {
-  const fasteignir = fasteign.list(5)
+  const fasteignir = fasteign.list(20)
 
   const getFasteignir = (hasNextPage = true) => ({
-    fasteignir: hasNextPage ? fasteignir : fasteign.list(5),
+    fasteignir: hasNextPage ? fasteignir : fasteign.list(20),
     paging: pagingData({ hasNextPage }),
   })
 
