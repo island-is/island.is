@@ -345,6 +345,7 @@ jobs:
       - name: Building Docker images
         if: steps.gather.outcome == 'success'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
+
   helm-docker-build:
     needs:
       - prepare
@@ -355,6 +356,7 @@ jobs:
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
     steps:
       - uses: actions/checkout@v2
 
@@ -363,6 +365,13 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
 
       - name: Docker build image
         working-directory: infra
@@ -373,6 +382,14 @@ jobs:
           echo 'EOF' >> $GITHUB_ENV
         env:
           PUBLISH: 'true'
+
+      - name: Retag as latest
+        if: env.GIT_BRANCH == 'main'
+        env:
+          UNAFFECTED: helm-config
+          LAST_GOOD_BUILD_DOCKER_TAG: ${{ env.DOCKER_TAG }}
+          DOCKER_TAG: latest
+        run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
       - name: Comment on PR
         if: needs.pre-checks.outputs.LABELED_FOR_DEPLOY == 'true'
