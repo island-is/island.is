@@ -211,7 +211,7 @@ function constructRestrictionRulingPdf(
     .fontSize(11)
     .lineGap(1)
     .font('Times-Bold')
-    .text(formatMessage(ruling.demandsHeading))
+    .text(formatMessage(ruling.courtDemandsHeading))
     .text(' ')
     .font('Times-Roman')
     .text(existingCase.demands ?? formatMessage(core.missing.demands), {
@@ -571,7 +571,7 @@ function constructInvestigationRulingPdf(
     .fontSize(11)
     .lineGap(1)
     .font('Times-Bold')
-    .text(formatMessage(ruling.demandsHeading))
+    .text(formatMessage(ruling.courtDemandsHeading))
     .text(' ')
     .font('Times-Roman')
     .text(existingCase.demands ?? formatMessage(core.missing.demands), {
@@ -632,14 +632,12 @@ function constructInvestigationRulingPdf(
       },
     )
     .text(' ')
+    .font('Times-Roman')
 
   if (existingCase.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
-    doc
-      .text(' ')
-      .font('Times-Roman')
-      .text(formatMessage(ruling.rulingTextIntro), {
-        paragraphGap: 1,
-      })
+    doc.text(' ').text(formatMessage(ruling.rulingTextIntro), {
+      paragraphGap: 1,
+    })
   }
 
   doc
