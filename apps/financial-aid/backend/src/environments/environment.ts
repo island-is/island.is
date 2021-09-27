@@ -57,10 +57,10 @@ const devConfig = {
     getTimeToLiveMinutes: 5,
   },
   email: {
-    fromEmail: 'margret@kolibri.is',
-    fromName: 'MaggaMixx',
-    replyToEmail: 'margret@kolibri.is',
-    replyToName: 'Margrét',
+    fromEmail: 'rikki@kolibri.is',
+    fromName: 'Rikka',
+    replyToEmail: 'rikki@kolibri.is',
+    replyToName: 'Rikka',
   },
   emailOptions: {
     useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
