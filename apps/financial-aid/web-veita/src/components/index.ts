@@ -24,3 +24,4 @@ export { default as MobileMenuButton } from './MobileMenuButton/MobileMenuButton
 export { default as Login } from './Login/Login'
 export { default as ApplicationSkeleton } from './Skeletons/ApplicationSkeleton'
 export { default as ApplicationOverviewSkeleton } from './Skeletons/ApplicationOverviewSkeleton'
+export { default as LoadingContainer } from './Skeletons/LoadingContainer'

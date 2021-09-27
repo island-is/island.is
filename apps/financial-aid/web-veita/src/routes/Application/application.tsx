@@ -38,6 +38,7 @@ import {
   ApplicationHeader,
   FilesListWithHeaderContainer,
   ApplicationSkeleton,
+  LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 interface ApplicantData {
@@ -286,11 +287,9 @@ const ApplicationProfile = () => {
       </>
     )
   }
-  if (loading) {
-    return <ApplicationSkeleton />
-  }
+
   return (
-    <>
+    <LoadingContainer isLoading={loading} loader={<ApplicationSkeleton />}>
       <Box>
         <Button
           colorScheme="default"
@@ -310,7 +309,7 @@ const ApplicationProfile = () => {
       <Text color="red400" fontWeight="semiBold" marginTop={4}>
         Abbabab Notendi ekki fundinn, farðu tilbaka og reyndu vinsamlegast aftur{' '}
       </Text>
-    </>
+    </LoadingContainer>
   )
 }
 

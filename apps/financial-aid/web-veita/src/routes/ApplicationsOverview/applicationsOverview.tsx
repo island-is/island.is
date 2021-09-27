@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/client'
 import {
   ApplicationOverviewSkeleton,
   ApplicationsTable,
+  LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import {
@@ -61,7 +62,10 @@ export const ApplicationsOverview = () => {
 
   if (currentNavigationItem) {
     return (
-      <>
+      <LoadingContainer
+        isLoading={loading}
+        loader={<ApplicationOverviewSkeleton />}
+      >
         <Box
           className={`contentUp delay-25`}
           marginTop={15}
@@ -74,7 +78,6 @@ export const ApplicationsOverview = () => {
 
         {applications && (
           <ApplicationsTable
-            className={`contentUp delay-50`}
             headers={currentNavigationItem.headers}
             applications={applications}
           />
@@ -86,9 +89,7 @@ export const ApplicationsOverview = () => {
             þessu upplýsingum?{' '}
           </div>
         )}
-
-        {loading && <ApplicationOverviewSkeleton />}
-      </>
+      </LoadingContainer>
     )
   }
   return (

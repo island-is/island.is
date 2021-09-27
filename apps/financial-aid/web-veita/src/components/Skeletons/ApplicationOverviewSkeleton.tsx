@@ -4,7 +4,7 @@ import { SkeletonLoader, Box } from '@island.is/island-ui/core'
 const ApplicationOverviewSkeleton = () => {
   return (
     <>
-      <Box marginTop={15}>
+      <Box marginTop={15} marginBottom={3}>
         <h1>
           <SkeletonLoader />
         </h1>
