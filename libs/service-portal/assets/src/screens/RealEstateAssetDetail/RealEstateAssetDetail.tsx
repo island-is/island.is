@@ -81,7 +81,6 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     }
   }
 
-  console.log('assetData', assetData)
   if (loading) {
     return <AssetLoader />
   }

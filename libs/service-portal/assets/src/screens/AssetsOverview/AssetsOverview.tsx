@@ -57,7 +57,6 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     }
   }
 
-  console.log('assetData', assetData)
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>
