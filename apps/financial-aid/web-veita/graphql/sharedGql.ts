@@ -99,6 +99,7 @@ export const CreateApplicationEventQuery = gql`
   mutation createApplicationEvent($input: CreateApplicationEventInput!) {
     createApplicationEvent(input: $input) {
       id
+      applicationId
     }
   }
 `

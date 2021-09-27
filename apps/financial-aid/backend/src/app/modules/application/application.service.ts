@@ -5,7 +5,11 @@ import { CurrentApplicationModel, ApplicationModel } from './models'
 
 import { Op } from 'sequelize'
 
-import { CreateApplicationDto, UpdateApplicationDto } from './dto'
+import {
+  CreateApplicationDto,
+  CreateApplicationEventDto,
+  UpdateApplicationDto,
+} from './dto'
 import {
   ApplicationEventType,
   ApplicationFilters,
@@ -66,7 +70,12 @@ export class ApplicationService {
       where: { id },
       include: [
         { model: StaffModel, as: 'staff' },
-        { model: ApplicationEventModel, as: 'applicationEvents' },
+        {
+          model: ApplicationEventModel,
+          as: 'applicationEvents',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
       ],
     })
 
@@ -159,5 +168,31 @@ export class ApplicationService {
     })
 
     return { numberOfAffectedRows, updatedApplication }
+  }
+
+  async createEvent(
+    applicationEvent: CreateApplicationEventDto,
+    id: string,
+  ): Promise<ApplicationEventModel> {
+    console.log('Creating a new application event')
+
+    const appEvent = await this.applicationEventService.create(applicationEvent)
+
+    const application = await this.applicationModel.findOne({
+      where: { id },
+      include: [
+        { model: StaffModel, as: 'staff' },
+        {
+          model: ApplicationEventModel,
+          as: 'applicationEvents',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+      ],
+    })
+
+    appEvent?.setDataValue('application', application)
+
+    return appEvent
   }
 }

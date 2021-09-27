@@ -7,8 +7,16 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { BackendAPI } from '../../../services'
 
-import { ApplicationFiltersModel, ApplicationModel } from './models'
-import { CreateApplicationInput, UpdateApplicationInput } from './dto'
+import {
+  ApplicationFiltersModel,
+  ApplicationModel,
+  ApplicationEventModel,
+} from './models'
+import {
+  CreateApplicationInput,
+  UpdateApplicationInput,
+  CreateApplicationEventInput,
+} from './dto'
 import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
 
 import { ApplicationInput } from './dto'
@@ -16,6 +24,7 @@ import { ApplicationInput } from './dto'
 import {
   Application,
   ApplicationFilters,
+  ApplicationEvent,
 } from '@island.is/financial-aid/shared/lib'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -76,5 +85,16 @@ export class ApplicationResolver {
     this.logger.debug('Getting all applications filters')
 
     return backendApi.getApplicationFilters()
+  }
+
+  @Mutation(() => ApplicationEventModel, { nullable: true })
+  async createApplicationEvent(
+    @Args('input', { type: () => CreateApplicationEventInput })
+    input: CreateApplicationEventInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<ApplicationEvent> {
+    this.logger.debug('Creating application event')
+
+    return backendApi.createApplicationEvent(input)
   }
 }

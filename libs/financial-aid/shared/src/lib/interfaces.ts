@@ -78,6 +78,7 @@ export interface ApplicationEvent {
   id: string
   created: string
   applicationId: string
+  application?: Application
   eventType: ApplicationEventType
   comment?: string
 }

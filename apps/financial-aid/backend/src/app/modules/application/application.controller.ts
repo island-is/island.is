@@ -15,7 +15,13 @@ import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 import { ApplicationService } from './application.service'
 import { CurrentApplicationModel, ApplicationModel } from './models'
 
-import { CreateApplicationDto, UpdateApplicationDto } from './dto'
+import { ApplicationEventModel } from '../applicationEvent'
+
+import {
+  CreateApplicationDto,
+  UpdateApplicationDto,
+  CreateApplicationEventDto,
+} from './dto'
 
 import {
   CurrentHttpUser,
@@ -29,6 +35,8 @@ import { ApplicationGuard } from '../../guards/application.guard'
 
 import type { User } from '@island.is/financial-aid/shared/lib'
 
+import { ApplicationEventService } from '../applicationEvent'
+
 import {
   ApplicationFilters,
   RolesRule,
@@ -37,7 +45,10 @@ import {
 @Controller('api')
 @ApiTags('applications')
 export class ApplicationController {
-  constructor(private readonly applicationService: ApplicationService) {}
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly applicationEventService: ApplicationEventService,
+  ) {}
 
   @UseGuards(TokenGuard)
   @Get('getCurrentApplication')
@@ -120,5 +131,21 @@ export class ApplicationController {
     @Body() application: CreateApplicationDto,
   ): Promise<ApplicationModel> {
     return this.applicationService.create(application, user)
+  }
+
+  @Post('applicationEvent')
+  @ApiCreatedResponse({
+    type: ApplicationEventModel,
+    description: 'Creates a new application event',
+  })
+  async createEvent(
+    @Body() applicationEvent: CreateApplicationEventDto,
+  ): Promise<ApplicationEventModel> {
+    const applEvent = await this.applicationService.createEvent(
+      applicationEvent,
+      applicationEvent.applicationId,
+    )
+
+    return applEvent
   }
 }

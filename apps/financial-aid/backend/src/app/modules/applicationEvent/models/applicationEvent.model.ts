@@ -5,19 +5,23 @@ import {
   Model,
   Table,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
 
 import { ApplicationModel } from '../../application'
 
-import { ApplicationEventType } from '@island.is/financial-aid/shared/lib'
+import {
+  ApplicationEventType,
+  ApplicationEvent,
+} from '@island.is/financial-aid/shared/lib'
 
 @Table({
   tableName: 'application_events',
   timestamps: false,
 })
-export class ApplicationEventModel extends Model<ApplicationEventModel> {
+export class ApplicationEventModel extends Model<ApplicationEvent> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -41,6 +45,10 @@ export class ApplicationEventModel extends Model<ApplicationEventModel> {
   })
   @ApiProperty()
   applicationId: string
+
+  @BelongsTo(() => ApplicationModel, 'applicationId')
+  @ApiProperty({ type: ApplicationModel })
+  application?: ApplicationModel
 
   @Column({
     type: DataType.ENUM,
