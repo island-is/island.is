@@ -14,9 +14,45 @@ We already have a method to roll out [feature flags](../feature-flags.md) to use
 - lack of configuration information
 - incomplete implementation
 
-Using these features you can deploy the code all the way to production without having to provide secret or env. variables values for the env where the feature is not turned on.
+Using these features you can deploy the code all the way to production without having to provide secret or environment variables values for the env where the feature is not turned on.
 
-Curretntly the feature-specific configuration that can be specified is environment variables and secrets. For an example please see [this file](../../../infra/src/dsl/toggles.spec.ts).
+Currently the feature-specific configuration that can be specified is environment variables and secrets. For an example please see [this file](../../../infra/src/dsl/toggles.spec.ts).
+
+Here is an example of how to use these:
+
+```
+  const sut = service('api')
+    .namespace('test')
+    .image('test')
+    .env({
+      B: 'A',
+    })
+    .features({
+      'integration-A': {
+        env: {
+          A: {
+            dev: 'B1',
+            staging: 'B',
+            prod: MissingSetting, // this allows us to specify that we still do not know that the value is
+          },
+        },
+        secrets: { KEY: '/k8s/secret' },
+      },
+    })
+    .initContainer({
+      containers: [{ command: 'go' }],
+      features: {
+        'integration-A': {
+          env: {
+            C: 'D',
+          },
+          secrets: {
+            INIT: '/a/b/c',
+          },
+        },
+      },
+    })
+```
 
 ### Turning the features on and off
 
