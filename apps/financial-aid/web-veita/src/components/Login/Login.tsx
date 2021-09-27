@@ -3,7 +3,7 @@ import { Logo, Text, Box, Link } from '@island.is/island-ui/core'
 
 import { LogoMunicipality } from '@island.is/financial-aid-web/veita/src/components'
 
-import * as styles from './login.treat'
+import * as styles from './Login.treat'
 
 const Login = () => {
   useEffect(() => {
