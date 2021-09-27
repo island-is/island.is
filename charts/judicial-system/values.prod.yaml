@@ -76,7 +76,7 @@ judicial-system-backend:
   enabled: true
   env:
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'judicial_system'
     DB_USER: 'judicial_system'
     DOKOBIT_URL: 'https://ws.dokobit.com'
@@ -110,7 +110,7 @@ judicial-system-backend:
         command:
           - 'npx'
     env:
-      DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'judicial_system'
       DB_USER: 'judicial_system'
     secrets:

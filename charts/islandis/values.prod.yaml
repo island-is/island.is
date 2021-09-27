@@ -137,7 +137,7 @@ application-system-api:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-prod-storage-application-system'
     CLIENT_LOCATION_ORIGIN: 'https://island.is/umsoknir'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_USER: 'application_system_api'
     EMAIL_REGION: 'eu-west-1'
@@ -193,7 +193,7 @@ application-system-api:
         command:
           - 'npx'
     env:
-      DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'application_system_api'
       DB_USER: 'application_system_api'
     secrets:
@@ -386,7 +386,7 @@ endorsement-system-api:
     - 'node'
   enabled: true
   env:
-    DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_endorsements_api'
     DB_USER: 'services_endorsements_api'
     TEMPORARY_VOTER_REGISTRY_API_URL: 'http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local'
@@ -414,7 +414,7 @@ endorsement-system-api:
           - 'npx'
         name: 'migrations'
     env:
-      DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_endorsements_api'
       DB_USER: 'services_endorsements_api'
     secrets:
@@ -443,7 +443,7 @@ endorsement-system-scripts-update-metadata:
     - 'node'
   enabled: true
   env:
-    DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_endorsements_api'
     DB_USER: 'services_endorsements_api'
     TEMPORARY_VOTER_REGISTRY_API_URL: 'http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local'
@@ -493,7 +493,7 @@ global:
 icelandic-names-registry-backend:
   enabled: true
   env:
-    DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'icelandic_names_registry_backend'
     DB_USER: 'icelandic_names_registry_backend'
   grantNamespaces:
@@ -525,7 +525,7 @@ icelandic-names-registry-backend:
           - 'npx'
         name: 'seeds'
     env:
-      DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'icelandic_names_registry_backend'
       DB_USER: 'icelandic_names_registry_backend'
     secrets:
@@ -579,7 +579,7 @@ island-ui-storybook:
 party-letter-registry-api:
   enabled: true
   env:
-    DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_party_letter_registry_api'
     DB_USER: 'services_party_letter_registry_api'
   grantNamespaces:
@@ -606,7 +606,7 @@ party-letter-registry-api:
           - 'npx'
         name: 'migrations'
     env:
-      DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_party_letter_registry_api'
       DB_USER: 'services_party_letter_registry_api'
     secrets:
@@ -774,7 +774,7 @@ service-portal:
 service-portal-api:
   enabled: true
   env:
-    DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'service_portal_api'
     DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
@@ -803,7 +803,7 @@ service-portal-api:
         command:
           - 'npx'
     env:
-      DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'service_portal_api'
       DB_USER: 'service_portal_api'
     secrets:
@@ -844,7 +844,7 @@ service-portal-api:
 services-documents:
   enabled: true
   env:
-    DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_documents'
     DB_USER: 'services_documents'
   grantNamespaces:
@@ -870,7 +870,7 @@ services-documents:
         command:
           - 'npx'
     env:
-      DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_documents'
       DB_USER: 'services_documents'
     secrets:
@@ -929,7 +929,7 @@ skilavottord-ws:
   enabled: true
   env:
     AUTH_AUDIENCE: 'island.is'
-    DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'skilavottord'
     DB_USER: 'skilavottord'
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=sv_citizen.prod&qaa=4'
@@ -967,7 +967,7 @@ skilavottord-ws:
         command:
           - 'npx'
     env:
-      DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'skilavottord'
       DB_USER: 'skilavottord'
     secrets:
@@ -998,7 +998,7 @@ skilavottord-ws:
 temporary-voter-registry-api:
   enabled: true
   env:
-    DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_temporary_voter_registry_api'
     DB_USER: 'services_temporary_voter_registry_api'
   grantNamespaces:
@@ -1025,7 +1025,7 @@ temporary-voter-registry-api:
           - 'npx'
         name: 'migrations'
     env:
-      DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_temporary_voter_registry_api'
       DB_USER: 'services_temporary_voter_registry_api'
     secrets:
