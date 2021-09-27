@@ -26,9 +26,10 @@ import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/
 
 interface PageProps {
   application: Application
+  index: number
 }
 
-const TableBody = ({ application }: PageProps) => {
+const TableBody = ({ application, index }: PageProps) => {
   const changeApplicationState = useApplicationState()
 
   // TODO: Remove state and context when we reload the page when we change the state of application
@@ -37,7 +38,10 @@ const TableBody = ({ application }: PageProps) => {
 
   return (
     <Link href={'application/' + application.id}>
-      <tr className={styles.link}>
+      <tr
+        className={`${styles.link} contentUp`}
+        style={{ animationDelay: 55 + 3.5 * index + 'ms' }}
+      >
         <td
           className={cn({
             [`${styles.tablePadding} ${styles.firstChildPadding}`]: true,
