@@ -108,7 +108,7 @@ export const application: Form = buildForm({
                           },
                           {
                             value: 'temp',
-                            label: 'Bráðabyrgða',
+                            label: 'Bráðabirgða',
                           },
                         ],
                       }),
@@ -189,8 +189,26 @@ export const application: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'requirements',
+      title: m.applicationEligibilityTitle,
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: m.eligibilityRequirementTitle,
+          children: [
+            buildCustomField({
+              title: m.eligibilityRequirementTitle,
+              component: 'EligibilitySummary',
+              id: 'eligsummary',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
       id: 'infoStep',
       title: m.informationTitle,
+      condition: () => false,
       children: [
         buildMultiField({
           id: 'info',
@@ -269,23 +287,6 @@ export const application: Form = buildForm({
                     m.noDrivingLicenseInOtherCountryDescription.defaultMessage,
                 },
               ],
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'requirements',
-      title: m.applicationEligibilityTitle,
-      children: [
-        buildMultiField({
-          id: 'info',
-          title: m.eligibilityRequirementTitle,
-          children: [
-            buildCustomField({
-              title: m.eligibilityRequirementTitle,
-              component: 'EligibilitySummary',
-              id: 'eligsummary',
             }),
           ],
         }),
