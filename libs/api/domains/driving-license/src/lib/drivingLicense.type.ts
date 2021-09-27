@@ -1,20 +1,20 @@
 import type {
   OkukennariDto,
   Okuskirteini,
-} from '@island.is/clients/driving-license'
+} from '@island.is/clients/driving-license-v1'
 
 export interface Eligibility {
   id: string
-  issued: Date | undefined
-  expires: Date | undefined
+  issued?: Date | null
+  expires?: Date | null
   comment: string
 }
 
 export interface DrivingLicense {
   id: Okuskirteini['id']
   name: string
-  issued: Date | undefined
-  expires: Date | undefined
+  issued?: Date | null
+  expires?: Date | null
   isProvisional: boolean | undefined
   eligibilities: Eligibility[]
 }

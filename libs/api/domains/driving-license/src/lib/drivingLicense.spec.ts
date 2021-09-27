@@ -1,10 +1,15 @@
 import { Test } from '@nestjs/testing'
 import { DrivingLicenseService } from './drivingLicense.service'
-import type { Config } from './drivingLicense.module'
 import {
   Configuration,
-  OkuskirteiniApi,
-} from '@island.is/clients/driving-license'
+  IDrivingLicenseApiV1,
+  OkuskirteiniApi as OkuskirteiniApiV1,
+} from '@island.is/clients/driving-license-v1'
+import {
+  Configuration as ConfigurationV2,
+  IDrivingLicenseApiV2,
+  OkuskirteiniApi as OkuskirteiniApiV2,
+} from '@island.is/clients/driving-license-v2'
 import {
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_EXPIRED,
@@ -16,10 +21,14 @@ import { startMocking } from '@island.is/shared/mocking'
 
 startMocking(requestHandlers)
 
-const config = {} as Config
-
-const MockOkuskirteiniApi = new OkuskirteiniApi(
+const MockOkuskirteiniApiV1 = new OkuskirteiniApiV1(
   new Configuration({
+    fetchApi: fetch,
+  }),
+)
+
+const MockOkuskirteiniApiV2 = new OkuskirteiniApiV2(
+  new ConfigurationV2({
     fetchApi: fetch,
   }),
 )
@@ -31,11 +40,15 @@ describe('DrivingLicenseService', () => {
     const module = await Test.createTestingModule({
       providers: [
         {
-          provide: OkuskirteiniApi,
-          useValue: MockOkuskirteiniApi,
+          provide: IDrivingLicenseApiV1,
+          useValue: MockOkuskirteiniApiV1,
+        },
+        {
+          provide: IDrivingLicenseApiV2,
+          useValue: MockOkuskirteiniApiV2,
         },
         DrivingLicenseService,
-        { provide: 'CONFIG', useValue: config },
+        { provide: 'CONFIG', useValue: {} },
       ],
     }).compile()
 

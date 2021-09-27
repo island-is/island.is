@@ -9,7 +9,7 @@ import Teachers from './teachers.json'
 import {
   AkstursmatDto,
   PostNewFinalLicense,
-} from '@island.is/clients/driving-license'
+} from '@island.is/clients/driving-license-v1'
 
 export const MOCK_NATIONAL_ID = '0'
 export const MOCK_NATIONAL_ID_EXPIRED = '1'

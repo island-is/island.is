@@ -295,7 +295,10 @@
     "clients-documents": {
       "tags": []
     },
-    "clients-driving-license": {
+    "clients-driving-license-v1": {
+      "tags": []
+    },
+    "clients-driving-license-v2": {
       "tags": []
     },
     "clients-finance": {

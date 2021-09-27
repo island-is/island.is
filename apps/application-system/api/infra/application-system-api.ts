@@ -183,8 +183,10 @@ export const serviceSetup = (services: {
         '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_ADMIN_EMAIL',
       DRIVING_LICENSE_SECRET:
         '/k8s/application-system/api/DRIVING_LICENSE_SECRET',
-      DRIVING_LICENSE_XROAD_PATH:
+      DRIVING_LICENSE_XROAD_PATH_V1:
         '/k8s/application-system/api/DRIVING_LICENSE_XROAD_PATH',
+      DRIVING_LICENSE_XROAD_PATH_V2:
+        '/k8s/application-system/api/DRIVING_LICENSE_XROAD_PATH_V2',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

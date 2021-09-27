@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   DrivingLicense,
@@ -25,17 +25,22 @@ import {
   EmbaettiDto,
   HefurLokidOkugerdiDto,
   OkukennariDto,
-  OkuskirteiniApi,
+  IDrivingLicenseApiV1,
+  OkuskirteiniApi as OkuskirteiniApiV1,
   Rettindi,
   TegSviptingaDto,
   TegundAthugasemdaDto,
   TegundRettindaDto,
-} from '@island.is/clients/driving-license'
+} from '@island.is/clients/driving-license-v1'
+import {
+  DRIVING_LICENSE_API_VERSION_V2,
+  IDrivingLicenseApiV2,
+  OkuskirteiniApi as OkuskirteiniApiV2,
+} from '@island.is/clients/driving-license-v2'
 import {
   BLACKLISTED_JURISTICTION,
   DRIVING_ASSESSMENT_MAX_AGE,
   DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE,
-  LICENSE_RESPONSE_API_VERSION,
 } from './util/constants'
 import sortTeachers from './util/sortTeachers'
 import {
@@ -46,14 +51,19 @@ import {
 
 @Injectable()
 export class DrivingLicenseService {
-  constructor(private readonly drivingLicenseApi: OkuskirteiniApi) {}
+  constructor(
+    @Inject(IDrivingLicenseApiV1)
+    private readonly drivingLicenseApi: OkuskirteiniApiV1,
+    @Inject(IDrivingLicenseApiV2)
+    private readonly drivingLicenseApiV2: OkuskirteiniApiV2,
+  ) {}
 
   private async getLicense(nationalId: string): Promise<DrivingLicense | null> {
-    const drivingLicense = await this.drivingLicenseApi.getCurrentLicense({
+    const drivingLicense = await this.drivingLicenseApiV2.getCurrentLicenseV2({
       kennitala: nationalId,
       // apiVersion header indicates that this method will return a single license, rather
       // than an array
-      apiVersion: LICENSE_RESPONSE_API_VERSION,
+      apiVersion: DRIVING_LICENSE_API_VERSION_V2,
     })
 
     if (!drivingLicense) {
@@ -89,6 +99,7 @@ export class DrivingLicenseService {
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
+    console.log(this.drivingLicenseApiV2, this.drivingLicenseApi)
     const drivingLicense = await this.drivingLicenseApi.apiOkuskirteiniKennitalaAllGet(
       {
         kennitala: nationalId,
@@ -120,9 +131,11 @@ export class DrivingLicenseService {
   }
 
   async getDeprivationTypes(): Promise<DeprevationType[]> {
-    const types = await this.drivingLicenseApi.apiOkuskirteiniTegundirsviptingaGet(
+    // I believe the API is wrong again, and this is still an array of TegSviptingaDto.. however
+    // the openapi doc says that it's a single object now
+    const types = (await this.drivingLicenseApi.apiOkuskirteiniTegundirsviptingaGet(
       {},
-    )
+    )) as TegSviptingaDto[]
 
     return types.map(
       (type: TegSviptingaDto) =>
@@ -134,9 +147,9 @@ export class DrivingLicenseService {
   }
 
   async getDrivingLicenseTypes(): Promise<DrivingLicenseType[]> {
-    const types = await this.drivingLicenseApi.apiOkuskirteiniTegundirrettindaGet(
+    const types = (await this.drivingLicenseApi.apiOkuskirteiniTegundirrettindaGet(
       {},
-    )
+    )) as TegundRettindaDto[]
 
     return types.map(
       (type: TegundRettindaDto) =>
@@ -148,9 +161,9 @@ export class DrivingLicenseService {
   }
 
   async getRemarkTypes(): Promise<RemarkType[]> {
-    const types = await this.drivingLicenseApi.apiOkuskirteiniTegundirathugasemdaGet(
+    const types = (await this.drivingLicenseApi.apiOkuskirteiniTegundirathugasemdaGet(
       {},
-    )
+    )) as TegundAthugasemdaDto[]
 
     return types.map(
       (type: TegundAthugasemdaDto) =>
@@ -223,7 +236,7 @@ export class DrivingLicenseService {
         },
       )
     } catch (e) {
-      if (e?.status === 404) {
+      if ((e as { status: number })?.status === 404) {
         return null
       }
 
@@ -321,7 +334,7 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
     input: NewDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
-    const response: unknown = await this.drivingLicenseApi.apiOkuskirteiniApplicationsNewCategoryPost(
+    const response = await this.drivingLicenseApiV2.apiOkuskirteiniApplicationsNewCategoryPost(
       {
         category: DrivingLicenseCategory.B,
         postNewFinalLicense: {
@@ -336,21 +349,23 @@ export class DrivingLicenseService {
           sendLicenseInMail: 0,
           sendToAddress: '',
         },
+        apiVersion: DRIVING_LICENSE_API_VERSION_V2,
       },
     )
 
-    // Service returns string on error, number on successful/not successful
-    const responseIsString = typeof response === 'string'
-    const success =
-      !responseIsString ||
-      response !== DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE
-    const errorMessage = responseIsString
+    // Service returns empty string on success (actually different but the generated
+    // client forces it to)
+    const success = '' + response === DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE
+
+    const errorMessage = success
+      ? null
+      : typeof response === 'string'
       ? (response as string)
       : 'Result not 1 when creating license'
 
     return {
       success,
-      errorMessage: success ? null : errorMessage,
+      errorMessage,
     }
   }
 

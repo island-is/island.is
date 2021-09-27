@@ -3271,29 +3271,82 @@
         }
       }
     },
-    "clients-driving-license": {
-      "root": "libs/clients/driving-license",
-      "sourceRoot": "libs/clients/driving-license/src",
+    "clients-driving-license-v1": {
+      "root": "libs/clients/driving-license/v1",
+      "sourceRoot": "libs/clients/driving-license/v1/src",
       "projectType": "library",
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/clients/driving-license/**/*.ts"]
+            "lintFilePatterns": ["libs/clients/driving-license/v1/**/*.ts"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/clients/driving-license"],
+          "outputs": ["coverage/libs/clients/driving-license/v1"],
           "options": {
-            "jestConfig": "libs/clients/driving-license/jest.config.js",
+            "jestConfig": "libs/clients/driving-license/v1/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" -H \"SECRET: $DRIVING_LICENSE_SECRET\" http://localhost:8081/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=RafraentOkuskirteini-v1 -H 'Accept: application/json' > src/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "jq '.paths[].post.requestBody.content |= (select(. != null) | with_entries(select(.key == \"application/json\")))' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "yarn format --files src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/driving-license/v1"
           }
         },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn openapi-generator -o libs/clients/driving-license/gen/fetch -i libs/clients/driving-license/src/clientConfig.json"
+            "command": "yarn openapi-generator -o libs/clients/driving-license/v1/gen/fetch -i libs/clients/driving-license/v1/src/clientConfig.json"
+          }
+        }
+      }
+    },
+    "clients-driving-license-v2": {
+      "root": "libs/clients/driving-license/v2",
+      "sourceRoot": "libs/clients/driving-license/v2/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/driving-license/v2/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/driving-license/v2"],
+          "options": {
+            "jestConfig": "libs/clients/driving-license/v2/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" -H \"SECRET: $DRIVING_LICENSE_SECRET\" http://localhost:8081/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=RafraentOkuskirteini-v2 -H 'Accept: application/json' > src/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "jq '.paths[].post.requestBody.content |= (select(. != null) | with_entries(select(.key == \"application/json\")))' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "yarn format --files src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/driving-license/v2"
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/driving-license/v2/gen/fetch -i libs/clients/driving-license/v2/src/clientConfig.json"
           }
         }
       }

@@ -12,7 +12,9 @@
   "paths": {
     "/api/okuskirteini/{kennitala}": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Create medferd for digital licence created",
         "parameters": [
           {
@@ -41,7 +43,9 @@
         }
       },
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get for person driver licence",
         "operationId": "GetCurrentLicense",
         "parameters": [
@@ -94,75 +98,45 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/okuskirteini/new": {
-      "post": {
-        "tags": ["Okuskirteini"],
-        "summary": "Create a new licence",
-        "parameters": [
-          {
-            "name": "api-version",
-            "in": "header",
-            "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Entity to post",
-          "content": {
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostLicence"
-              }
-            },
-            "text/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostLicence"
-              }
-            },
-            "application/*+xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostLicence"
-              }
-            },
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostLicence"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostLicence"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostLicence"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostLicence"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
           }
         }
       }
     },
     "/api/okuskirteini/tegundirsviptinga": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get for types of driver licence deprivations",
         "parameters": [
           {
@@ -181,42 +155,27 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegSviptingaDto"
-                  }
+                  "$ref": "#/components/schemas/TegSviptingaDto"
                 }
               },
               "application/xml": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegSviptingaDto"
-                  }
+                  "$ref": "#/components/schemas/TegSviptingaDto"
                 }
               },
               "text/xml": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegSviptingaDto"
-                  }
+                  "$ref": "#/components/schemas/TegSviptingaDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegSviptingaDto"
-                  }
+                  "$ref": "#/components/schemas/TegSviptingaDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegSviptingaDto"
-                  }
+                  "$ref": "#/components/schemas/TegSviptingaDto"
                 }
               }
             }
@@ -226,7 +185,9 @@
     },
     "/api/okuskirteini/tegundirrettinda": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get types of categories",
         "parameters": [
           {
@@ -245,42 +206,27 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegundRettindaDto"
-                  }
+                  "$ref": "#/components/schemas/TegundRettindaDto"
                 }
               },
               "application/xml": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegundRettindaDto"
-                  }
+                  "$ref": "#/components/schemas/TegundRettindaDto"
                 }
               },
               "text/xml": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegundRettindaDto"
-                  }
+                  "$ref": "#/components/schemas/TegundRettindaDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegundRettindaDto"
-                  }
+                  "$ref": "#/components/schemas/TegundRettindaDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegundRettindaDto"
-                  }
+                  "$ref": "#/components/schemas/TegundRettindaDto"
                 }
               }
             }
@@ -290,7 +236,9 @@
     },
     "/api/okuskirteini/punktastada/{kennitala}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get traffic violation points for person",
         "parameters": [
           {
@@ -348,7 +296,9 @@
     },
     "/api/okuskirteini/tegundirathugasemda": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get types of remarks",
         "parameters": [
           {
@@ -367,42 +317,27 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
-                  }
+                  "$ref": "#/components/schemas/TegundAthugasemdaDto"
                 }
               },
               "application/xml": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
-                  }
+                  "$ref": "#/components/schemas/TegundAthugasemdaDto"
                 }
               },
               "text/xml": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
-                  }
+                  "$ref": "#/components/schemas/TegundAthugasemdaDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
-                  }
+                  "$ref": "#/components/schemas/TegundAthugasemdaDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
-                  }
+                  "$ref": "#/components/schemas/TegundAthugasemdaDto"
                 }
               }
             }
@@ -412,7 +347,9 @@
     },
     "/api/okuskirteini/svipting/{kennitala}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get for current licence revoke",
         "parameters": [
           {
@@ -470,7 +407,9 @@
     },
     "/api/okuskirteini/{kennitala}/all": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get for all persons driver licences",
         "parameters": [
           {
@@ -537,14 +476,46 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
     },
     "/api/okuskirteini/embaetti": {
       "get": {
-        "tags": ["Okuskirteini"],
-        "summary": "Get for all districts!",
+        "tags": [
+          "Okuskirteini"
+        ],
+        "summary": "Get for all districts",
         "parameters": [
           {
             "name": "api-version",
@@ -607,7 +578,9 @@
     },
     "/api/okuskirteini/hasteachingrights/{kennitala}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check if person has rights to be a driving teacher",
         "parameters": [
           {
@@ -670,7 +643,9 @@
     },
     "/api/okuskirteini/{kennitala}/canapplyfor/{category}/full": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check if person can apply for full drivers license for a specific category",
         "parameters": [
           {
@@ -740,9 +715,72 @@
         }
       }
     },
+    "/api/okuskirteini/{kennitala}/canapplyfor/temporary": {
+      "get": {
+        "tags": [
+          "Okuskirteini"
+        ],
+        "summary": "Check if person can apply for temporary B drivers license",
+        "description": "Checks :\r\n - Is in national registry\r\n - Does not have B category license already\r\n - Has a deprivation exeeding next 30 days\r\n - Is at least 16 years of age",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "description": "Person id number",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeturSottUmBBSkirteiniDto"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeturSottUmBBSkirteiniDto"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeturSottUmBBSkirteiniDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeturSottUmBBSkirteiniDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeturSottUmBBSkirteiniDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/okuskirteini/{kennitala}/hasqualityphoto": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check if person has quality marked photo",
         "parameters": [
           {
@@ -805,7 +843,9 @@
     },
     "/api/okuskirteini/{kennitala}/hasqualitysignature": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check if person has quality marked photo",
         "parameters": [
           {
@@ -868,7 +908,9 @@
     },
     "/api/okuskirteini/{kennitala}/getqualityphoto": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get quality marked photo for person",
         "parameters": [
           {
@@ -931,7 +973,9 @@
     },
     "/api/okuskirteini/{kennitala}/getqualitysignature": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get quality marked photo for person",
         "parameters": [
           {
@@ -994,7 +1038,9 @@
     },
     "/api/okuskirteini/applications/new/{category}": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Apply for drivers license for a category",
         "parameters": [
           {
@@ -1023,36 +1069,6 @@
               "schema": {
                 "$ref": "#/components/schemas/PostNewFinalLicense"
               }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewFinalLicense"
-              }
-            },
-            "text/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewFinalLicense"
-              }
-            },
-            "application/*+xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewFinalLicense"
-              }
-            },
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewFinalLicense"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewFinalLicense"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewFinalLicense"
-              }
             }
           }
         },
@@ -1060,12 +1076,6 @@
           "200": {
             "description": "Success",
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
-              },
               "text/plain": {
                 "schema": {
                   "type": "integer",
@@ -1084,10 +1094,142 @@
                   "format": "int32"
                 }
               },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
               "text/json": {
                 "schema": {
                   "type": "integer",
                   "format": "int32"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/okuskirteini/applications/new/temporary": {
+      "post": {
+        "tags": [
+          "Okuskirteini"
+        ],
+        "summary": "Apply for drivers license for a category",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Model of application",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostTemporaryLicense"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1097,7 +1239,9 @@
     },
     "/api/okuskirteini/{kennitala}/finishedokugerdi": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Has person finised \"ökugerði\"",
         "parameters": [
           {
@@ -1154,7 +1298,9 @@
     },
     "/api/okuskirteini/new/drivingassesment": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Create a new driver assessment",
         "parameters": [
           {
@@ -1174,49 +1320,51 @@
               "schema": {
                 "$ref": "#/components/schemas/PostNewDrivingAssessment"
               }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewDrivingAssessment"
-              }
-            },
-            "text/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewDrivingAssessment"
-              }
-            },
-            "application/*+xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewDrivingAssessment"
-              }
-            },
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewDrivingAssessment"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewDrivingAssessment"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewDrivingAssessment"
-              }
             }
           }
         },
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
     },
     "/api/okuskirteini/saekjaakstursmat/{kennitala}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check if person has driving assessment",
         "parameters": [
           {
@@ -1268,13 +1416,45 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
     },
     "/api/okuskirteini/okukennarar": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get driving teacherse",
         "parameters": [
           {
@@ -1410,6 +1590,22 @@
         "additionalProperties": false,
         "description": "Data transfer object for district"
       },
+      "GeturSottUmBBSkirteiniDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "boolean",
+            "description": "Can person apply for full license"
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Error code if can not apply",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for results for person applying for\r\ntemporary license"
+      },
       "HefurLokidOkugerdiDto": {
         "type": "object",
         "properties": {
@@ -1477,6 +1673,12 @@
             "type": "string",
             "description": "Name",
             "nullable": true
+          },
+          "nrOkuskirteinis": {
+            "type": "integer",
+            "description": "Númer ökuskírteinis ökukennara",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -1513,7 +1715,8 @@
           "utgafuDagsetning": {
             "type": "string",
             "description": "Date registerd",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "gildirTil": {
             "type": "string",
@@ -1570,30 +1773,6 @@
         },
         "additionalProperties": false,
         "description": "Licence entity"
-      },
-      "PostLicence": {
-        "required": ["gildirTil", "kennitala", "utgafuDags"],
-        "type": "object",
-        "properties": {
-          "kennitala": {
-            "maxLength": 10,
-            "minLength": 0,
-            "type": "string",
-            "description": "Person Id number"
-          },
-          "utgafuDags": {
-            "type": "string",
-            "description": "Date valid from",
-            "format": "date-time"
-          },
-          "gildirTil": {
-            "type": "string",
-            "description": "Date valid to",
-            "format": "date-time"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Entity for posting a new licence"
       },
       "PostNewDrivingAssessment": {
         "type": "object",
@@ -1654,6 +1833,82 @@
         "additionalProperties": false,
         "description": "Model class to post new final license"
       },
+      "PostTemporaryLicense": {
+        "required": [
+          "embaetti",
+          "kemurMedLaeknisvottord",
+          "kemurMedNyjaMynd",
+          "kennitala",
+          "kennitalaOkukennara",
+          "sendaSkirteiniIPosti"
+        ],
+        "type": "object",
+        "properties": {
+          "kennitala": {
+            "maxLength": 10,
+            "minLength": 0,
+            "type": "string",
+            "description": "Person id number"
+          },
+          "embaetti": {
+            "type": "integer",
+            "description": "Publishing authority",
+            "format": "int32"
+          },
+          "kemurMedLaeknisvottord": {
+            "type": "boolean",
+            "description": "Does person need to present health certificate"
+          },
+          "kemurMedNyjaMynd": {
+            "type": "boolean",
+            "description": "Applicant will bring new photo for license"
+          },
+          "sendaSkirteiniIPosti": {
+            "type": "boolean",
+            "description": "Applicant has asked to send license in mail"
+          },
+          "sendaAHeimilisfang": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string",
+            "description": "Address to send license to",
+            "nullable": true
+          },
+          "kennitalaOkukennara": {
+            "type": "string",
+            "description": "Social security number for driving teachser"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Post new license"
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PunktastadaDto": {
         "type": "object",
         "properties": {
@@ -1681,7 +1936,8 @@
           "utgafuDags": {
             "type": "string",
             "description": "Date published",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "gildirTil": {
             "type": "string",

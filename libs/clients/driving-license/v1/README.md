@@ -1,8 +1,8 @@
-# Clients Driving License
+# Clients Driving License V1
 
 ## About
 
-This library implements a client to use Ríkislögreglustjóri's Driver's license API
+This library implements a client to use Ríkislögreglustjóri's Driver's license API v1
 
 The client is generated from a copy of the openApi document.
 
@@ -29,16 +29,13 @@ client generator altogether, but for now, this is what we are working with.
 ### Regenerating the client:
 
 ```sh
-yarn nx run clients-driving-license:schemas/external-openapi-generator
+yarn nx run clients-driving-license-v1:schemas/external-openapi-generator
 ```
 
 ### Updating the client doc:
 
 ```sh
-curl -H 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' \
-  http://XROADHOST/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=RafraentOkuskirteini-v1 \
-  > libs/clients/driving-license/src/clientConfig.json \
-  && yarn format --files libs/clients/driving-license/src/clientConfig.json
+yarn nx run clients-driving-license-v1:update-openapi-document
 ```
 
 _And then, most importantly: Make sure to maintain the request body types order (see above)_
@@ -48,7 +45,7 @@ _And then, most importantly: Make sure to maintain the request body types order 
 Add the service to your module imports:
 
 ```typescript
-import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
+import { DrivingLicenseApiModule } from '@island.is/clients/driving-license-v1'
 
 @Module({
   imports: [
@@ -62,14 +59,14 @@ import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 })
 ```
 
-Then you'll have access to VMST APIs:
+Then you'll have access to RLS's Okuskirteini APIs:
 
 ```typescript
-import { OkuskirteiniApi } from '@island.is/clients/vmst'
+import { OkuskirteiniV1Api } from '@island.is/clients/driving-license-v1'
 
 @Injectable()
 export class SomeService {
-  constructor(private drivingLicenseApi: OkuskirteiniApi) {}
+  constructor(private drivingLicenseApi: OkuskirteiniV1Api) {}
 
   // etc...
 }

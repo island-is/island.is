@@ -85,10 +85,18 @@ const autoSchemaFile = environment.production
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
-      xroadBaseUrl: environment.xroad.baseUrl,
-      xroadClientId: environment.xroad.clientId,
-      secret: environment.drivingLicense.secret,
-      xroadPath: environment.drivingLicense.xroadPath,
+      v1: {
+        xroadBaseUrl: environment.xroad.baseUrl,
+        xroadClientId: environment.xroad.clientId,
+        secret: environment.drivingLicense.secret,
+        xroadPath: environment.drivingLicense.v1.xroadPath,
+      },
+      v2: {
+        xroadBaseUrl: environment.xroad.baseUrl,
+        xroadClientId: environment.xroad.clientId,
+        secret: environment.drivingLicense.secret,
+        xroadPath: environment.drivingLicense.v2.xroadPath,
+      },
     }),
     EducationModule.register({
       xroad: {
@@ -226,7 +234,7 @@ const autoSchemaFile = environment.production
       xroad: {
         baseUrl: environment.xroad.baseUrl,
         clientId: environment.xroad.clientId,
-        path: environment.drivingLicense.xroadPath,
+        path: environment.drivingLicense.v1.xroadPath,
         secret: environment.drivingLicense.secret,
       },
       pkpass: {
