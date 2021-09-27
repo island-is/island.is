@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Text, Box, LoadingDots } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import {
-  AdminLayout,
+  ApplicationOverviewSkeleton,
   ApplicationsTable,
+  LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import {
@@ -61,7 +62,10 @@ export const ApplicationsOverview = () => {
 
   if (currentNavigationItem) {
     return (
-      <>
+      <LoadingContainer
+        isLoading={loading}
+        loader={<ApplicationOverviewSkeleton />}
+      >
         <Box
           className={`contentUp delay-25`}
           marginTop={15}
@@ -74,7 +78,6 @@ export const ApplicationsOverview = () => {
 
         {applications && (
           <ApplicationsTable
-            className={`contentUp delay-50`}
             headers={currentNavigationItem.headers}
             applications={applications}
           />
@@ -86,9 +89,7 @@ export const ApplicationsOverview = () => {
             þessu upplýsingum?{' '}
           </div>
         )}
-
-        {loading && <LoadingDots />}
-      </>
+      </LoadingContainer>
     )
   }
   return (
