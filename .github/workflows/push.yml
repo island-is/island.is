@@ -393,12 +393,12 @@ jobs:
 
       - name: Comment on PR
         if: needs.pre-checks.outputs.LABELED_FOR_DEPLOY == 'true'
-        uses: actions/github-script@v4.1
+        uses: actions/github-script@v5
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const { COMMENT } = process.env
-            github.issues.createComment({
+            github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
