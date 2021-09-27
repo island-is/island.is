@@ -29,7 +29,7 @@ export const useCourtUpload = (
         file.state === CaseFileState.STORED_IN_COURT &&
         file.status !== 'done'
       ) {
-        setFileUploadStatus(file, 'done')
+        setFileUploadStatus(file, 'done', file.state)
       }
     })
 
@@ -49,7 +49,7 @@ export const useCourtUpload = (
   const setFileUploadStatus = (
     file: CaseFile,
     status: CaseFileStatus,
-    state?: CaseFileState,
+    state: CaseFileState,
   ) => {
     const files = workingCase.files as CaseFile[]
 
@@ -58,7 +58,7 @@ export const useCourtUpload = (
       files[fileIndexToUpdate] = {
         ...file,
         status,
-        state: state ?? file.state,
+        state,
       }
 
       setWorkingCase({ ...workingCase })
@@ -67,12 +67,10 @@ export const useCourtUpload = (
 
   const uploadFilesToCourt = async (files?: TCaseFile[]) => {
     if (files) {
-      ;(files as CaseFile[]).forEach(async (file) => {
+      const xFiles = files as CaseFile[]
+      xFiles.forEach(async (file) => {
         try {
-          if (
-            workingCase.files &&
-            file.state !== CaseFileState.STORED_IN_COURT
-          ) {
+          if (file.state !== CaseFileState.STORED_IN_COURT) {
             setFileUploadStatus(file, 'uploading', CaseFileState.STORED_IN_RVG)
 
             await uploadFileToCourtMutation({
@@ -84,7 +82,7 @@ export const useCourtUpload = (
               },
             })
 
-            setFileUploadStatus(file, 'done')
+            setFileUploadStatus(file, 'done', CaseFileState.STORED_IN_COURT)
           }
         } catch (error) {
           setFileUploadStatus(file, 'error', CaseFileState.FAILED_TO_UPLOAD)
