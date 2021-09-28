@@ -35,7 +35,6 @@ class MockEinstaklingarApi {
 
 describe('DelegationsController with auth', () => {
   let app: INestApplication
-  let einstaklingarApi: EinstaklingarApi
   let currentUser: any
 
   beforeAll(async () => {

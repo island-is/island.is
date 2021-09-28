@@ -68,8 +68,6 @@ export const testServerActivateAuthGuards = async (
     })
     .overrideGuard(ScopesGuard)
     .useValue({ canActivate: () => true })
-    .overrideProvider(CurrentUser)
-    .useValue(user)
 
   if (options.override) {
     options.override(builder)
