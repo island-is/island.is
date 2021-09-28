@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from 'react'
+import { GraphQLError } from 'graphql'
 import { ZodObject } from 'zod'
 import { MessageDescriptor } from 'react-intl'
 
@@ -145,6 +146,9 @@ export type RepeaterProps = {
   error?: string
   repeater: Repeater
   removeRepeaterItem: (index: number) => void
+  setRepeaterItems: (
+    items: unknown[],
+  ) => Promise<{ errors?: ReadonlyArray<GraphQLError> }>
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState
 }

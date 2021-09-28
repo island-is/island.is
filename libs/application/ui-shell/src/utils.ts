@@ -84,6 +84,7 @@ export function extractAnswersToSubmitFromScreen(
       )
 
     case FormItemTypes.EXTERNAL_DATA_PROVIDER:
+    case FormItemTypes.REPEATER:
       return {}
     default:
       return pick(data, [screenId])

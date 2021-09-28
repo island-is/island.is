@@ -25,6 +25,8 @@ import { errorMessages } from './messages'
 import {
   getApplicationAnswers,
   getExpectedDateOfBirth,
+  calculateDaysUsedByPeriods,
+  getAvailableRightsInDays,
 } from './parentalLeaveUtils'
 import { filterValidPeriods } from '..'
 
@@ -96,6 +98,19 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const { periods: answeredPeriods } = getApplicationAnswers(
       application.answers,
     )
+
+    // TODO: best to make requests to VMST to calculate period length again
+    // based on start, end + ratio in the case of a handcrafted update request
+    const daysUsedByPeriods = calculateDaysUsedByPeriods(periods)
+    const rights = getAvailableRightsInDays(application)
+
+    if (daysUsedByPeriods > rights) {
+      return {
+        path: 'periods',
+        message: `Valin tímabil fara yfir réttindi (${daysUsedByPeriods} > ${rights} dagar)`,
+      }
+    }
+
     const lastAnsweredPeriod = answeredPeriods?.[answeredPeriods.length - 1]
 
     if (newPeriodIndex < 0) {

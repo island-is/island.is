@@ -664,3 +664,31 @@ export const filterValidPeriods = (
 
   return filtered as Period[]
 }
+
+export const getLastValidPeriodEndDate = (
+  application: Application,
+): Date | null => {
+  const { periods } = getApplicationAnswers(application.answers)
+
+  if (periods.length === 0) {
+    return null
+  }
+
+  const lastPeriodEndDate = periods[periods.length - 1]?.endDate
+
+  if (!lastPeriodEndDate) {
+    return null
+  }
+
+  return new Date(lastPeriodEndDate)
+}
+
+export const calculateDaysUsedByPeriods = (periods: Period[]) =>
+  Math.round(
+    periods.reduce((total, period) => {
+      const days = period?.days ? Number(period.days) : 0
+      const ratio = (period?.ratio ? Number(period.ratio) : 100) / 100
+
+      return total + days * ratio
+    }, 0),
+  )

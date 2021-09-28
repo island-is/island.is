@@ -27,6 +27,7 @@ import {
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States } from '../../constants'
+import { minPeriodDays } from '../../config'
 import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
 
 type FieldProps = FieldBaseProps & {
@@ -45,6 +46,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   field,
   repeater,
   error,
+  setRepeaterItems,
   setBeforeSubmitCallback,
   setFieldLoadingState,
 }) => {
@@ -63,24 +65,32 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     }
 
     setBeforeSubmitCallback?.(async () => {
-      const updateOptions = {
-        variables: {
-          input: {
-            id: application.id,
-            answers: { periodsValidator: periods },
-          },
-          locale,
-        },
-      }
-
       try {
-        const { errors } = await updateApplication(updateOptions)
-        setFieldLoadingState?.(false)
+        // Run anwer validator on the periods selected by the user
+        const { errors } = await updateApplication({
+          variables: {
+            input: {
+              id: application.id,
+              answers: { periodsValidator: periods },
+            },
+            locale,
+          },
+        })
 
         if (errors) {
+          setFieldLoadingState?.(false)
           return [false, 'Þú þarft að velja tímabil']
         }
 
+        // Overwrite any pending periods with those that are valid
+        const { errors: updateRepeaterErrors } = await setRepeaterItems(periods)
+
+        if (updateRepeaterErrors) {
+          setFieldLoadingState?.(false)
+          return [false, 'Gat ekki uppfært svör']
+        }
+
+        setFieldLoadingState?.(false)
         return [true, null]
       } catch (e: any) {
         setFieldLoadingState?.(false)
@@ -88,12 +98,15 @@ const PeriodsRepeater: FC<ScreenProps> = ({
       }
     })
   }, [
+    application,
     expandRepeater,
-    setFieldLoadingState,
-    setBeforeSubmitCallback,
+    locale,
     periods,
     rawPeriods,
-    locale,
+    setBeforeSubmitCallback,
+    setFieldLoadingState,
+    setRepeaterItems,
+    updateApplication,
   ])
 
   if (!dob) {
@@ -106,11 +119,8 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     application.state === States.EDIT_OR_ADD_PERIODS
 
   const hasAddedPeriods = periods?.length > 0
-
   const remainingDays = rights - daysAlreadyUsed
-
-  // minimum period length using 25% ratio (14 / 0.25 = 56)
-  const canAddAnotherPeriod = remainingDays >= 56
+  const canAddAnotherPeriod = remainingDays >= minPeriodDays
 
   return (
     <Box>

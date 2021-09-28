@@ -312,7 +312,7 @@ const Screen: FC<ScreenProps> = ({
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
                 setFieldLoadingState={setFieldLoadingState}
                 repeater={screen}
-                onRemoveRepeaterItem={async (newRepeaterItems) => {
+                onUpdateRepeater={async (newRepeaterItems) => {
                   const newData = await updateApplication({
                     variables: {
                       input: {
@@ -324,6 +324,10 @@ const Screen: FC<ScreenProps> = ({
                   })
                   if (!!newData && !newData.errors) {
                     answerQuestions(newData.data.updateApplication.answers)
+                  }
+
+                  return {
+                    errors: newData.errors,
                   }
                 }}
               />

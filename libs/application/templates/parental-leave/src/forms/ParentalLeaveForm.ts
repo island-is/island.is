@@ -32,6 +32,7 @@ import {
   getApplicationAnswers,
   allowOtherParent,
   getPeriodPercentage,
+  getLastValidPeriodEndDate,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -47,7 +48,11 @@ import {
   YES,
 } from '../constants'
 import Logo from '../assets/Logo'
-import { defaultMonths, minPeriodDays } from '../config'
+import {
+  defaultMonths,
+  minimumPeriodStartBeforeExpectedDateOfBirth,
+  minPeriodDays,
+} from '../config'
 import {
   GetPensionFundsQuery,
   GetPrivatePensionFundsQuery,
@@ -706,26 +711,30 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.startDate.title,
                   description: parentalLeaveFormMessages.startDate.description,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
-                  defaultValue: null,
                   condition: (answers) => {
                     const { periods } = getApplicationAnswers(answers)
 
                     return periods.length !== 0
                   },
                   minDate: (application: Application) => {
-                    const { periods } = getApplicationAnswers(
-                      application.answers,
+                    const expectedDateOfBirth = getExpectedDateOfBirth(
+                      application,
                     )
 
-                    if (periods.length > 0) {
-                      return new Date(
-                        periods[periods.length - 1].endDate ?? '2021-09-22',
+                    const lastPeriodEndDate = getLastValidPeriodEndDate(
+                      application,
+                    )
+
+                    if (lastPeriodEndDate) {
+                      return lastPeriodEndDate
+                    } else if (expectedDateOfBirth) {
+                      return addDays(
+                        new Date(expectedDateOfBirth),
+                        -minimumPeriodStartBeforeExpectedDateOfBirth,
                       )
                     }
 
-                    return new Date(
-                      getExpectedDateOfBirth(application) || '2021-09-22',
-                    )
+                    return new Date()
                   },
                   excludeDates: (application) => {
                     const { periods } = getApplicationAnswers(

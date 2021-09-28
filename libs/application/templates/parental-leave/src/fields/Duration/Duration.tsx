@@ -72,6 +72,14 @@ export const Duration: FC<FieldBaseProps> = ({
         length: days,
       })
 
+      if (!endDateResult || !endDateResult.date) {
+        setError('component', {
+          type: 'error',
+          message: formatMessage(errorMessages.durationPeriods),
+        })
+        return
+      }
+
       const date = new Date(endDateResult.date)
 
       setChosenEndDate(date.toISOString())
@@ -107,7 +115,7 @@ export const Duration: FC<FieldBaseProps> = ({
 
   useEffect(() => {
     setFieldLoadingState?.(loading)
-  }, [loading])
+  }, [loading, setFieldLoadingState])
 
   useEffect(() => {
     const init = async () => {
