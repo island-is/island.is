@@ -10,13 +10,18 @@ import {
   ExtraValues,
   EnvironmentVariableValue,
   PostgresInfo,
+  Feature,
+  Features,
 } from './types/input-types'
 import {
+  ContainerEnvironmentVariables,
   ContainerRunHelm,
+  ContainerSecrets,
   SerializeMethod,
   ServiceHelm,
 } from './types/output-types'
 import { EnvironmentConfig, UberChartType } from './types/charts'
+import { FeatureNames } from './features'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -45,6 +50,10 @@ export const serializeService: SerializeMethod = (
         serviceDef.image ?? serviceDef.name
       }`,
     },
+    env: {
+      SERVERSIDE_FEATURES_ON: uberChart.env.featuresOn.join(','),
+    },
+    secrets: {},
     healthCheck: {
       liveness: {
         path: serviceDef.liveness.path,
@@ -111,13 +120,22 @@ export const serializeService: SerializeMethod = (
       serviceDef.env,
     )
     allErrors = allErrors.concat(errors)
-    result.env = envs
+    result.env = { ...result.env, ...envs }
   }
 
   // secrets
   if (Object.keys(serviceDef.secrets).length > 0) {
     result.secrets = serviceDef.secrets
   }
+
+  const {
+    envs: featureEnvs,
+    errors: featureErrors,
+    secrets: featureSecrets,
+  } = addFeaturesConfig(serviceDef.features, uberChart, service)
+  result.env = { ...result.env, ...featureEnvs }
+  allErrors = allErrors.concat(featureErrors)
+  result.secrets = { ...result.secrets, ...featureSecrets }
 
   // service account
   if (serviceDef.serviceAccountEnabled) {
@@ -141,6 +159,10 @@ export const serializeService: SerializeMethod = (
         containers: serializeContainerRuns(
           serviceDef.initContainers.containers,
         ),
+        env: {
+          SERVERSIDE_FEATURES_ON: uberChart.env.featuresOn.join(','),
+        },
+        secrets: {},
       }
       if (typeof serviceDef.initContainers.envs !== 'undefined') {
         const { envs, errors } = serializeEnvironmentVariables(
@@ -149,7 +171,7 @@ export const serializeService: SerializeMethod = (
           serviceDef.initContainers.envs,
         )
         allErrors = allErrors.concat(errors)
-        result.initContainer.env = envs
+        result.initContainer.env = { ...result.initContainer.env, ...envs }
       }
       if (typeof serviceDef.initContainers.secrets !== 'undefined') {
         result.initContainer.secrets = serviceDef.initContainers.secrets
@@ -169,6 +191,27 @@ export const serializeService: SerializeMethod = (
         }
         allErrors = allErrors.concat(envErros)
         allErrors = allErrors.concat(secretErrors)
+      }
+      if (serviceDef.initContainers.features) {
+        const {
+          envs: featureEnvs,
+          errors: featureErrors,
+          secrets: featureSecrets,
+        } = addFeaturesConfig(
+          serviceDef.initContainers.features!,
+          uberChart,
+          service,
+        )
+
+        result.initContainer.env = {
+          ...result.initContainer.env,
+          ...featureEnvs,
+        }
+        allErrors = allErrors.concat(featureErrors)
+        result.initContainer.secrets = {
+          ...result.initContainer.secrets,
+          ...featureSecrets,
+        }
       }
     } else {
       allErrors.push('No containers to run defined in initContainers')
@@ -243,6 +286,52 @@ export const resolveDbHost = (
     return uberChart.env.auroraHost
   }
 }
+
+function addFeaturesConfig(
+  serviceDefFeatures: Partial<Features>,
+  uberChart: UberChartType,
+  service: Service,
+) {
+  const activeFeatures = Object.entries(
+    serviceDefFeatures,
+  ).filter(([feature]) =>
+    uberChart.env.featuresOn.includes(feature as FeatureNames),
+  ) as [FeatureNames, Feature][]
+  const featureEnvs = activeFeatures.map(([name, v]) => {
+    const { envs, errors } = serializeEnvironmentVariables(
+      service,
+      uberChart,
+      v.env,
+    )
+    return {
+      name,
+      envs,
+      errors,
+    }
+  })
+  const featureSecrets = activeFeatures.map(([name, v]) => {
+    return {
+      name,
+      secrets: v.secrets,
+    }
+  })
+
+  return {
+    envs: featureEnvs.reduce(
+      (acc, feature) => ({ ...acc, ...feature.envs }),
+      {} as ContainerEnvironmentVariables,
+    ),
+    secrets: featureSecrets.reduce(
+      (acc, toggle) => ({ ...acc, ...toggle.secrets }),
+      {} as ContainerSecrets,
+    ),
+    errors: featureEnvs.reduce(
+      (acc, feature) => [...acc, ...feature.errors],
+      [] as string[],
+    ),
+  }
+}
+
 function serializePostgres(
   serviceDef: ServiceDefinition,
   uberChart: UberChartType,
