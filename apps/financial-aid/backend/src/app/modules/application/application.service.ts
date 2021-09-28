@@ -181,12 +181,12 @@ export class ApplicationService {
     try {
       await this.emailService.sendEmail({
         from: {
-          name: 'rikki@kolibri.is',
-          address: 'Rikka',
+          name: 'no-reply@svg.is',
+          address: 'Samband íslenskra sveitarfélaga',
         },
         replyTo: {
-          name: 'rikki@kolibri.is',
-          address: 'Rikka',
+          name: 'no-reply@svg.is',
+          address: 'Samband íslenskra sveitarfélaga',
         },
         to,
         subject: `Umsókn fyrir fjárhagsaðstoð móttekin ~ ${applicationId}`,

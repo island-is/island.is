@@ -29,12 +29,6 @@ const prodConfig = {
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
   },
-  email: {
-    fromEmail: 'rikki@kolibri.is',
-    fromName: 'Rikka',
-    replyToEmail: 'rikki@kolibri.is',
-    replyToName: 'Rikka',
-  },
   emailOptions: {
     useTestAccount: false,
     options: {
@@ -55,12 +49,6 @@ const devConfig = {
     fileBaseUrl: 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
-  },
-  email: {
-    fromEmail: 'rikki@kolibri.is',
-    fromName: 'Rikka',
-    replyToEmail: 'rikki@kolibri.is',
-    replyToName: 'Rikka',
   },
   emailOptions: {
     useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
