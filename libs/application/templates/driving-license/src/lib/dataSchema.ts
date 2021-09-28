@@ -22,10 +22,9 @@ export const dataSchema = z.object({
     z.array(z.enum(['yes', 'no'])).nonempty(),
     z.enum(['yes', 'no']),
   ]),
-  // requirementsMet: z.boolean().refine((v) => v),
-  bringNewPhoto: z.array(z.enum(['yes', 'no'])).nonempty(),
+  requirementsMet: z.boolean().refine((v) => v),
   certificate: z.array(z.enum(['yes', 'no'])).nonempty(),
-  picture: z.array(z.enum(['yes', 'no'])).nonempty(),
+  confirmBringNewPhoto: z.array(z.enum(['yes', 'no'])).nonempty(),
   email: z.string().email(),
   drivingInstructor: z.string().nonempty(),
 })

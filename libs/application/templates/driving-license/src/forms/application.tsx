@@ -658,7 +658,7 @@ export const application: Form = buildForm({
               condition: needsHealthCertificateCondition(YES),
             }),
             buildCheckboxField({
-              id: 'bringNewPhoto',
+              id: 'confirmBringNewPhoto',
               title: '',
               large: false,
               backgroundColor: 'white',
