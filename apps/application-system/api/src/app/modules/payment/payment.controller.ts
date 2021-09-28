@@ -63,6 +63,10 @@ export class PaymentController {
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
     @Body() payload: CreateChargeInput,
   ): Promise<CreatePaymentResponseDto> {
+    // TODO: This function needs some serious overhaul - it does not do
+    // what was intended and is unreasonably convoluted.
+    // It should only be making sure that it is not creating a malformed
+    // payment object and create it
     if (!isUuid(applicationId)) {
       throw new BadRequestException(`ApplicationId is on wrong format.`)
     }

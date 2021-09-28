@@ -5,6 +5,7 @@ import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
 import type { Item } from '@island.is/clients/payment'
+import { PaymentCatalogItem } from '@island.is/api/schema'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -18,14 +19,18 @@ export class DrivingLicenseSubmissionService {
   ) {}
 
   async createCharge({
-    application: { id, externalData },
+    application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const parsedPaymentData = externalData.payment.data as Item
+    // TODO: this logic should really be shared between the application and
+    // this function right here, one way or another...
+    const applicationFor = answers.applicationFor || 'B-full'
+    const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
+
     return this.sharedTemplateAPIService.createCharge(
       auth.authorization,
       id,
-      parsedPaymentData.chargeItemCode,
+      chargeItemCode,
     )
   }
 
