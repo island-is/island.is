@@ -1,11 +1,12 @@
 import React, { FC, useEffect } from 'react'
 import { m } from '../../lib/messages'
-import type { FieldBaseProps } from '@island.is/application/core'
+import type { Application, FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import ReviewSection, { ReviewSectionState, Step } from './ReviewSection'
 import { ApplicationEligibility, RequirementKey } from '../../types/schema'
 import { useFormContext } from 'react-hook-form'
 import { useQuery, gql } from '@apollo/client'
+import { DrivingLicenseFakeData, YES } from '../../lib/constants'
 
 const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
   return eligibility.requirements.map(({ key, requirementMet }) =>
@@ -66,14 +67,49 @@ interface UseEligibilityResult {
   loading: boolean
 }
 
-const useEligibility = (applicationFor: 'B-full'|'B-temp'): UseEligibilityResult => {
+const fakeEligibility = (): ApplicationEligibility => {
+  return {
+    isEligible: true,
+    requirements: [
+      {
+        key: RequirementKey.DrivingAssessmentMissing,
+        requirementMet: true,
+      },
+      {
+        key: RequirementKey.DrivingSchoolMissing,
+        requirementMet: true,
+      },
+      {
+        key: RequirementKey.DeniedByService,
+        requirementMet: true,
+      },
+    ],
+  }
+}
+
+const useEligibility = (answers: Application['answers']): UseEligibilityResult => {
+  const fakeData = answers.fakeData as
+  | DrivingLicenseFakeData
+  | undefined
+  const usingFakeData = fakeData?.useFakeData === YES
+
+  const applicationFor = answers.applicationFor || 'B-full'
+
   const { data = {}, error, loading } = useQuery(QUERY, {
+    skip: usingFakeData,
     variables: {
       input: {
         applicationFor,
       }
     }
   })
+
+  if (usingFakeData) {
+    return {
+      loading: false,
+      eligibility: fakeEligibility()
+    }
+  }
 
   if (error) {
     console.error(error)
@@ -91,9 +127,7 @@ const useEligibility = (applicationFor: 'B-full'|'B-temp'): UseEligibilityResult
 }
 
 const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
-  const applicationFor = application.answers.applicationFor || 'B-full'
-
-  const { eligibility, loading, error } = useEligibility(applicationFor as ('B-full'|'B-temp'))
+  const { eligibility, loading, error } = useEligibility(application.answers)
 
   const { setValue } = useFormContext()
 
