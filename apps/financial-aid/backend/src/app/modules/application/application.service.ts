@@ -119,7 +119,7 @@ export class ApplicationService {
     })
 
     //Create file
-    if (application.files) {
+    if (appModel.files) {
       const promises = application.files.map((f) => {
         return this.fileService.createFile({
           applicationId: appModel.id,
@@ -136,10 +136,10 @@ export class ApplicationService {
     await this.sendEmail(
       {
         name: user.name,
-        address: application.email,
+        address: appModel.email,
       },
       appModel.id,
-      `Umsókn þín er móttekin og er nú í vinnslu.`,
+      `Umsókn þín er móttekin og er nú í vinnslu. <a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${appModel.id}" target="_blank"> Getur kíkt á stöðu síðuna þína hér</a>`,
     )
 
     return appModel
@@ -181,12 +181,12 @@ export class ApplicationService {
     try {
       await this.emailService.sendEmail({
         from: {
-          name: environment.email.fromName,
-          address: environment.email.fromEmail,
+          name: 'rikki@kolibri.is',
+          address: 'Rikka',
         },
         replyTo: {
-          name: environment.email.replyToName,
-          address: environment.email.replyToEmail,
+          name: 'rikki@kolibri.is',
+          address: 'Rikka',
         },
         to,
         subject: `Umsókn fyrir fjárhagsaðstoð móttekin ~ ${applicationId}`,

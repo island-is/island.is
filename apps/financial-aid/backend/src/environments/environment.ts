@@ -30,10 +30,10 @@ const prodConfig = {
     getTimeToLiveMinutes: 5,
   },
   email: {
-    fromEmail: process.env.EMAIL_FROM ?? '',
-    fromName: process.env.EMAIL_FROM_NAME ?? '',
-    replyToEmail: process.env.EMAIL_REPLY_TO ?? '',
-    replyToName: process.env.EMAIL_REPLY_TO_NAME ?? '',
+    fromEmail: 'rikki@kolibri.is',
+    fromName: 'Rikka',
+    replyToEmail: 'rikki@kolibri.is',
+    replyToName: 'Rikka',
   },
   emailOptions: {
     useTestAccount: false,
