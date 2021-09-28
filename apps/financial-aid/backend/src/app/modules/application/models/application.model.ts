@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -18,6 +19,7 @@ import {
   Application,
 } from '@island.is/financial-aid/shared/lib'
 
+import { ApplicationEventModel } from '../../applicationEvent/models'
 import { ApplicationFileModel } from '../../file/models'
 import { StaffModel } from '../../staff'
 
@@ -199,4 +201,8 @@ export class ApplicationModel extends Model<Application> {
   @BelongsTo(() => StaffModel, 'staffId')
   @ApiProperty({ type: StaffModel })
   staff?: StaffModel
+
+  @HasMany(() => ApplicationEventModel, 'applicationId')
+  @ApiProperty({ type: ApplicationEventModel, isArray: true })
+  applicationEvents?: ApplicationEventModel[]
 }

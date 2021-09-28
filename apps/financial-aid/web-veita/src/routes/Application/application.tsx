@@ -253,9 +253,13 @@ const ApplicationProfile = () => {
 
           <CommentSection
             className={`contentUp delay-125 ${styles.widthAlmostFull}`}
+            setApplication={setApplication}
           />
 
-          <History applicantName={application.name} />
+          <History
+            applicantName={application.name}
+            applicationEvents={application.applicationEvents}
+          />
         </Box>
 
         {application.state && (
