@@ -692,10 +692,14 @@ export const application: Form = buildForm({
             buildDividerField({}),
             buildKeyValueField({
               label: m.overviewPaymentCharge,
-              value: ({ externalData }) => {
-                const str = Object.values(externalData.payment.data as object)
-                // more refactoring
-                return (parseInt(str[1], 10) + ' kr.') as StaticText
+              value: ({ externalData, answers }) => {
+                const items = externalData.payment.data as { priceAmount: number, chargeItemCode: string}[]
+                const targetCode = answers.applicationFor === 'B-temp'
+                  ? 'AY114'
+                  : 'AY110'
+
+                const item = items.find(({ chargeItemCode }) => chargeItemCode === targetCode)
+                return ((item?.priceAmount)?.toLocaleString('de-DE') + ' kr.') as StaticText
               },
               width: 'full',
             }),
