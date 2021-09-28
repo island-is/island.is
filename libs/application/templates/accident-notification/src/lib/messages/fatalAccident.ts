@@ -20,4 +20,19 @@ export const fatalAccident = {
       description: 'Fatal accident label',
     },
   }),
+  alertMessage: defineMessages({
+    title: {
+      id: 'an.application:fatalAccident.alertMessage.title',
+      defaultMessage: 'Athugið',
+      description:
+        'Bold title in alert when uploading required attachment later',
+    },
+    description: {
+      id: 'an.application:fatalAccident.alertMessage.description',
+      defaultMessage:
+        'Það er hægt að bæta við skjölum eftir að umsókn hefur verið send inn. Áður en að Sjúkratryggingar Íslands fer yfir umsókn og tekur afstöðu til bótaskyldu þarf dánarvottorð að vera til staðar.',
+      description:
+        'Description message in Alert when uploading required attachment later',
+    },
+  }),
 }
