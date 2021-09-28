@@ -55,7 +55,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
         },
-        paths: ['/api/swagger', '/api/public'],
+        paths: ['/api/swagger/', '/api/public/'],
       },
     })
     .readiness('/liveness')
