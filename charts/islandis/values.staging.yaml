@@ -136,7 +136,7 @@ application-system-api:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-staging-storage-application-system'
     CLIENT_LOCATION_ORIGIN: 'https://beta.staging01.devland.is/umsoknir'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_USER: 'application_system_api'
     EMAIL_REGION: 'eu-west-1'
@@ -193,7 +193,7 @@ application-system-api:
         command:
           - 'npx'
     env:
-      DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'application_system_api'
       DB_USER: 'application_system_api'
       SERVERSIDE_FEATURES_ON: ''
@@ -392,7 +392,7 @@ endorsement-system-api:
     - 'node'
   enabled: true
   env:
-    DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_endorsements_api'
     DB_USER: 'services_endorsements_api'
     SERVERSIDE_FEATURES_ON: ''
@@ -421,7 +421,7 @@ endorsement-system-api:
           - 'npx'
         name: 'migrations'
     env:
-      DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_endorsements_api'
       DB_USER: 'services_endorsements_api'
       SERVERSIDE_FEATURES_ON: ''
@@ -451,7 +451,7 @@ endorsement-system-scripts-update-metadata:
     - 'node'
   enabled: true
   env:
-    DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_endorsements_api'
     DB_USER: 'services_endorsements_api'
     SERVERSIDE_FEATURES_ON: ''
@@ -502,7 +502,7 @@ global:
 icelandic-names-registry-backend:
   enabled: true
   env:
-    DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'icelandic_names_registry_backend'
     DB_USER: 'icelandic_names_registry_backend'
     SERVERSIDE_FEATURES_ON: ''
@@ -535,7 +535,7 @@ icelandic-names-registry-backend:
           - 'npx'
         name: 'seeds'
     env:
-      DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'icelandic_names_registry_backend'
       DB_USER: 'icelandic_names_registry_backend'
       SERVERSIDE_FEATURES_ON: ''
@@ -593,7 +593,7 @@ island-ui-storybook:
 party-letter-registry-api:
   enabled: true
   env:
-    DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_party_letter_registry_api'
     DB_USER: 'services_party_letter_registry_api'
     SERVERSIDE_FEATURES_ON: ''
@@ -621,7 +621,7 @@ party-letter-registry-api:
           - 'npx'
         name: 'migrations'
     env:
-      DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_party_letter_registry_api'
       DB_USER: 'services_party_letter_registry_api'
       SERVERSIDE_FEATURES_ON: ''
@@ -791,7 +791,7 @@ service-portal:
 service-portal-api:
   enabled: true
   env:
-    DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'service_portal_api'
     DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
@@ -821,7 +821,7 @@ service-portal-api:
         command:
           - 'npx'
     env:
-      DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'service_portal_api'
       DB_USER: 'service_portal_api'
       SERVERSIDE_FEATURES_ON: ''
@@ -863,7 +863,7 @@ service-portal-api:
 services-documents:
   enabled: true
   env:
-    DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_documents'
     DB_USER: 'services_documents'
     SERVERSIDE_FEATURES_ON: ''
@@ -890,7 +890,7 @@ services-documents:
         command:
           - 'npx'
     env:
-      DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_documents'
       DB_USER: 'services_documents'
       SERVERSIDE_FEATURES_ON: ''
@@ -948,7 +948,7 @@ skilavottord-ws:
   enabled: true
   env:
     AUTH_AUDIENCE: 'beta.staging01.devland.is'
-    DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'skilavottord'
     DB_USER: 'skilavottord'
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=sv_citizen.staging&qaa=4'
@@ -984,7 +984,7 @@ skilavottord-ws:
         command:
           - 'npx'
     env:
-      DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'skilavottord'
       DB_USER: 'skilavottord'
       SERVERSIDE_FEATURES_ON: ''
@@ -1016,7 +1016,7 @@ skilavottord-ws:
 temporary-voter-registry-api:
   enabled: true
   env:
-    DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_temporary_voter_registry_api'
     DB_USER: 'services_temporary_voter_registry_api'
     SERVERSIDE_FEATURES_ON: ''
@@ -1044,7 +1044,7 @@ temporary-voter-registry-api:
           - 'npx'
         name: 'migrations'
     env:
-      DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_temporary_voter_registry_api'
       DB_USER: 'services_temporary_voter_registry_api'
       SERVERSIDE_FEATURES_ON: ''
