@@ -106,16 +106,16 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         <Box marginBottom={1}>
           <Text variant="h4">
             {getAppealDecisionText(
-              AppealDecisionRole.ACCUSED,
-              workingCase.accusedAppealDecision,
+              AppealDecisionRole.PROSECUTOR,
+              workingCase.prosecutorAppealDecision,
               workingCase.accusedGender,
             )}
           </Text>
         </Box>
         <Text variant="h4">
           {getAppealDecisionText(
-            AppealDecisionRole.PROSECUTOR,
-            workingCase.prosecutorAppealDecision,
+            AppealDecisionRole.ACCUSED,
+            workingCase.accusedAppealDecision,
             workingCase.accusedGender,
           )}
         </Text>

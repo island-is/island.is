@@ -41,6 +41,7 @@ export {
   SessionArrangements,
   completedCaseStates,
   hasCaseBeenAppealed,
+  isAccusedRightsHidden,
 } from './lib/case'
 export type {
   Case,
