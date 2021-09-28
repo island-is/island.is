@@ -49,41 +49,6 @@ export const application: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     buildSection({
-      id: 'application',
-      title: 'Umsókn',
-      children: [
-        buildMultiField({
-          id: 'info',
-          title: 'Ég er að sækja um:',
-          children: [
-            buildRadioField({
-              id: 'selectedLicense',
-              backgroundColor: 'white',
-              title: '',
-              description: '',
-              space: 0,
-              largeButtons: true,
-              options: [
-                {
-                  label: 'Almenn ökuréttindi',
-                  subLabel:
-                    'Umsókn um almenn ökuréttindi í B flokki (fólksbifreið). Fyrsta ökuskírteinið er bráðabirgðaskírteini sem gildir í 3 ár.',
-                  value: 'temp',
-                },
-                {
-                  label: 'Fullnaðarréttindi',
-                  subLabel:
-                    'Ef ökumaður hefur haft bráðabirgðaskírteini í að minnsta kosti ár og farið í akstursmat með ökukennara getur hann sótt um fullnaðarskírteini.',
-                  value: 'student',
-                  disabled: true,
-                },
-              ],
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
       id: 'externalData',
       title: m.externalDataSection,
       children: [
@@ -218,6 +183,42 @@ export const application: Form = buildForm({
               id: 'teachers',
               type: 'TeachersProvider',
               title: '',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'application',
+      title: m.applicationDrivingLicenseTitle,
+      condition: () => false,
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: m.drivingLicenseApplyingForTitle,
+          children: [
+            buildRadioField({
+              id: 'selectedLicense',
+              backgroundColor: 'white',
+              title: '',
+              description: '',
+              space: 0,
+              largeButtons: true,
+              options: [
+                {
+                  label: 'Almenn ökuréttindi',
+                  subLabel:
+                    'Umsókn um almenn ökuréttindi í B flokki (fólksbifreið). Fyrsta ökuskírteinið er bráðabirgðaskírteini sem gildir í 3 ár.',
+                  value: 'temp',
+                },
+                {
+                  label: 'Fullnaðarréttindi',
+                  subLabel:
+                    'Ef ökumaður hefur haft bráðabirgðaskírteini í að minnsta kosti ár og farið í akstursmat með ökukennara getur hann sótt um fullnaðarskírteini.',
+                  value: 'student',
+                  disabled: true,
+                },
+              ],
             }),
           ],
         }),
@@ -410,6 +411,7 @@ export const application: Form = buildForm({
         buildMultiField({
           id: 'info',
           title: m.pickupLocationTitle,
+          space: 1,
           children: [
             buildKeyValueField({
               label: m.informationApplicant,
@@ -656,8 +658,26 @@ export const application: Form = buildForm({
               condition: needsHealthCertificateCondition(YES),
             }),
             buildCheckboxField({
+              id: 'bringNewPhoto',
+              title: '',
+              large: false,
+              backgroundColor: 'white',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: 'Ég kem með nýja ljósmynd til sýslumanns',
+                },
+              ],
+              condition: (answers) =>
+                answers?.willBringQualityPhoto === YES ||
+                Object.values(answers?.willBringQualityPhoto).includes(YES),
+            }),
+            buildCheckboxField({
               id: 'certificate',
               title: '',
+              large: false,
+              backgroundColor: 'white',
               defaultValue: [],
               options: [
                 {

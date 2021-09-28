@@ -19,10 +19,11 @@ export const dataSchema = z.object({
   }),
   teacher: z.string().nonempty(),
   willBringQualityPhoto: z.union([
-    z.array(z.enum(['yes', 'no'])),
+    z.array(z.enum(['yes', 'no'])).nonempty(),
     z.enum(['yes', 'no']),
   ]),
-  requirementsMet: z.boolean().refine((v) => v),
+  // requirementsMet: z.boolean().refine((v) => v),
+  bringNewPhoto: z.array(z.enum(['yes', 'no'])).nonempty(),
   certificate: z.array(z.enum(['yes', 'no'])).nonempty(),
   picture: z.array(z.enum(['yes', 'no'])).nonempty(),
   email: z.string().email(),

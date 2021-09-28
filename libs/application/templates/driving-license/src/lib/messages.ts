@@ -8,7 +8,7 @@ export const m = defineMessages({
   },
   externalDataTitle: {
     id: 'dl.application:externalData.title',
-    defaultMessage: 'Umsókn um fullnaðarskírteini',
+    defaultMessage: 'Umsókn um ökuskírteini',
     description: 'Title of the application',
   },
   externalDataSubTitle: {
@@ -522,6 +522,16 @@ export const m = defineMessages({
     defaultMessage: 'Skilyrði umsóknar',
     description: 'title for requirement section',
   },
+  applicationDrivingLicenseTitle: {
+    id: 'dl.application:applicationDrivingLicenseTitle',
+    defaultMessage: 'Tegund umsóknar',
+    description: 'Type of application for driving license',
+  },
+  drivingLicenseApplyingForTitle: {
+    id: 'dl.application:drivingLicenseApplyingForTitle',
+    defaultMessage: 'Ég er að sækja um:',
+    description: 'I am applying for:',
+  },
   congratulationsTitleSuccess: {
     id: 'dl.application:congratulationsTitleSuccess',
     defaultMessage:
@@ -595,9 +605,9 @@ export const m = defineMessages({
   confirmationStatusOfEligability: {
     id: 'dl.application:confirmationStatusOfEligability',
     defaultMessage:
-      'Staðfesting akstursmats, punktastaða, sviptingar, ökuréttindi og almennar upplýsingar um skilríki',
+      'Sóttar eru almennar upplýsingar um núverandi réttindi, sviptingar, punktastöðu og akstursmat ef við á.',
     description:
-      'Confirmation driving assessment, penalties, license loss, driving license and general information about identification',
+      'General information about current licenses, license loss, penalties and driving assessment if applicable.',
   },
   infoFromLicenseRegistry: {
     id: 'dl.application:infoFromLicenseRegistry',
@@ -668,7 +678,7 @@ export const m = defineMessages({
   },
   noDrivingLicenseInOtherCountryTitle: {
     id: 'dl.application:noDrivingLicenseInOtherCountryTitle',
-    defaultMessage: 'Ég er ekki með ökuskírteini í öðru landi',
+    defaultMessage: 'Ég er ekki með ökuskírteini né sviptingu í öðru landi',
     description: 'I do not have a drivering license in another country',
   },
   noDrivingLicenseInOtherCountryDescription: {
