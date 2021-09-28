@@ -1,10 +1,8 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { ModalBase, Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './StateModal.treat'
 import cn from 'classnames'
-
-import { useMutation } from '@apollo/client'
 
 import {
   InputModal,
@@ -21,7 +19,7 @@ interface Props {
   isVisible: boolean
   onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
   application: Application
-  setApplication: any
+  setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
 }
 
 interface InputType {
