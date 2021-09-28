@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef, useReducer } from 'react'
+import { useApolloClient } from '@apollo/client/react'
 import {
   Box,
   Button,
@@ -17,6 +18,7 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
   QueryGetOrganizationSubpageArgs,
+  OperatingLicense,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -33,19 +35,141 @@ import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useRouter } from 'next/router'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
+type SearchState = {
+  term: string
+  results: OperatingLicense[]
+  currentPageNumber: number,
+  hasNextPage: boolean,
+  totalCount: number,
+  isLoading: boolean,
+  hasError: boolean,
+}
+
+const SEARCH_REDUCER_ACTION_TYPES = {
+  START_LOADING: 'START_LOADING',
+  SEARCH_SUCCESS_FIRST_PAGE: 'SEARCH_SUCCESS_FIRST_PAGE',
+  SEARCH_SUCCESS_NEXT_PAGE: 'SEARCH_SUCCESS_NEXT_PAGE',
+  SEARCH_ERROR: 'SEARCH_ERROR',
+}
+
+const searchReducer = (state: SearchState, action): SearchState => {
+  switch (action.type) {
+    case SEARCH_REDUCER_ACTION_TYPES.START_LOADING:
+      return { ...state, isLoading: true }
+    case SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_FIRST_PAGE:
+      // TODO: Do Request-Response matching
+      return { ...state,
+        results: action.results,
+        currentPageNumber: 1,
+        hasNextPage: action.hasNextPage,
+        totalCount: action.totalCount,
+        isLoading: false,
+      }
+    case SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_NEXT_PAGE:
+      return { ...state,
+        results: [ ...state.results, ...action.results],
+        currentPageNumber: action.currentPageNumber,
+        hasNextPage: action.hasNextPage,
+        totalCount: action.totalCount,
+        isLoading: false,
+      }
+    case SEARCH_REDUCER_ACTION_TYPES.SEARCH_ERROR:
+      console.error(action.error)
+      return { ...state, hasError: true, isLoading: false }
+    default: {
+      console.error('Unhandled search reducer action type.')
+      return { ...state, hasError: true, isLoading: false }
+    }
+  }
+}
+
+
 interface OperatingLicensesProps {
   organizationPage: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
-  operatingLicenses: Query['getOperatingLicenses']
   namespace: Query['getNamespace']
 }
 
-const PAGE_SIZE = 30
+// TODO: Find an appropriate debounce timer
+const DEBOUNCE_TIMER = 400
+// TODO: Find an appropriate page size.
+const PAGE_SIZE = 10
+
+const useSearch = ( term: string, currentPageNumber: number ): SearchState => {
+  const [state, dispatch] = useReducer(searchReducer, {
+    term: term,
+    results: [],
+    // TODO: Show loading animation in the input field, similar to how it's done on the home screen.
+    currentPageNumber: currentPageNumber,
+    hasNextPage: false,
+    totalCount: 0,
+    isLoading: false,
+    hasError: false,
+  })
+  const client = useApolloClient()
+  const timer = useRef(null)
+
+  useEffect(() => {
+    dispatch({ type: SEARCH_REDUCER_ACTION_TYPES.START_LOADING })
+
+    const thisTimerId = (timer.current = setTimeout(async () => {
+      client
+        .query<Query, QueryGetOperatingLicensesArgs>({
+          query: GET_OPERATING_LICENSES_QUERY,
+          variables: {
+            input: {
+              searchBy: term,
+              pageNumber: currentPageNumber,
+              pageSize: PAGE_SIZE,
+            },
+          },
+        })
+        .then(({ data: { getOperatingLicenses: { results, paginationInfo, searchQuery} }}) => {
+          if (paginationInfo.pageNumber === 1)
+          {
+            // First page
+            dispatch({
+              type: SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_FIRST_PAGE,
+              results,
+              currentPageNumber: paginationInfo.pageNumber,
+              hasNextPage: paginationInfo.hasNext,
+              totalCount: paginationInfo.totalCount,
+              searchQuery,  // TODO: Use for request-response matching
+            })
+          }
+          else
+          {
+            // Next pages
+            dispatch({
+              type: SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_NEXT_PAGE,
+              results,
+              currentPageNumber: paginationInfo.pageNumber,
+              hasNextPage: paginationInfo.hasNext,
+              totalCount: paginationInfo.totalCount,
+              searchQuery,  // TODO: Use for request-response matching
+            })
+          }
+
+        })
+        .catch((error) => {
+          // TODO: Test the error handling by producing an error, e.g. by commenting out the Authenitication call in the client.
+          dispatch({
+            type: SEARCH_REDUCER_ACTION_TYPES.SEARCH_ERROR,
+            error
+          })
+        })
+    }, DEBOUNCE_TIMER))
+
+    return () => clearTimeout(thisTimerId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [client, term, currentPageNumber, dispatch])
+
+  return state
+}
 
 const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   organizationPage,
   subpage,
-  operatingLicenses,
   namespace,
 }) => {
   const n = useNamespace(namespace)
@@ -67,24 +191,25 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
     }),
   )
 
-  const [showCount, setShowCount] = useState(10)
-  const [query, _setQuery] = useState(' ')
+  const [query, setQuery] = useState(' ')
+  const [currentPageNumber, setCurrentPageNumber] = useState(1)
+  const search = useSearch(query, currentPageNumber)
 
   useEffect(() => {
+    // Note: This is a workaround to fix an issue where the search input looses focus after the first keypress.
     setQuery('')
   }, [])
 
-  const setQuery = (query: string) => _setQuery(query.toLowerCase())
+  const onSearch = (query: string) => {
+    setCurrentPageNumber(1)
+    setQuery(query)
+  }
 
-  const filteredItems = operatingLicenses.results
-    .filter(
-      (homestay) =>
-        homestay.name?.toLowerCase().includes(query) ||
-        homestay.location?.toLowerCase().includes(query) ||
-        homestay.licenseHolder?.toLowerCase().includes(query) ||
-        homestay.licenseNumber?.toLowerCase().includes(query),
-    )
-    .sort((a, b) => a.name?.localeCompare(b.name))
+  const onLoadMore = () => {
+    // TODO: Implement some loading animation.
+    setCurrentPageNumber(currentPageNumber + 1)
+  }
+
 
   return (
     <OrganizationWrapper
@@ -121,16 +246,21 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         marginBottom={4}
       >
         <Input
-          name="homestaySearchInput"
+          name="operatingLicenseSearchInput"
           placeholder={n('filterSearch', 'Leita')}
           backgroundColor={['blue', 'blue', 'white']}
           size="sm"
           icon="search"
           iconType="outline"
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => onSearch(event.target.value)}
         />
+        {search.isLoading ? 'LOADING...' : 'DONE'}
+        <br></br>
+        {search.results.length + " / " + search.totalCount}
+        <br></br>
+        {search.hasError && 'ERROR!!!'}
       </Box>
-      {filteredItems.slice(0, showCount).map((homestay, index) => {
+      {search.results.map((operatingLicense, index) => {
         return (
           <Box
             key={index}
@@ -141,26 +271,26 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
             paddingX={4}
           >
             <Text variant="h4" color="blue400" marginBottom={1}>
-              {homestay.name ? homestay.name : homestay.location}
+              {operatingLicense.name ? operatingLicense.name : operatingLicense.location}
             </Text>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12']}>
-                <Text>Leyfisnúmer: {homestay.licenseNumber}</Text>
-                <Text>Staður: {homestay.location}</Text>
-                <Text>Gata: {homestay.street}</Text>
-                {homestay.postalCode && (
-                  <Text>Póstnúmer: {homestay.postalCode}</Text>
+                <Text>Leyfisnúmer: {operatingLicense.licenseNumber}</Text>
+                <Text>Staður: {operatingLicense.location}</Text>
+                <Text>Gata: {operatingLicense.street}</Text>
+                {operatingLicense.postalCode && (
+                  <Text>Póstnúmer: {operatingLicense.postalCode}</Text>
                 )}
-                {homestay.validUntil && (
+                {operatingLicense.validUntil && (
                   <Text>
                     Gildir til{' '}
-                    {format(new Date(homestay.validUntil), 'd. MMMM yyyy')}
+                    {format(new Date(operatingLicense.validUntil), 'd. MMMM yyyy')}
                   </Text>
                 )}
-                <Text>{homestay.type}</Text>
-                <Text>{homestay.category}</Text>
-                <Text>Útgefandi: {homestay.issuedBy}</Text>
-                <Text>Leyfishafi: {homestay.licenseHolder}</Text>
+                <Text>{operatingLicense.type}</Text>
+                <Text>{operatingLicense.category}</Text>
+                <Text>Útgefandi: {operatingLicense.issuedBy}</Text>
+                <Text>Leyfishafi: {operatingLicense.licenseHolder}</Text>
               </GridColumn>
             </GridRow>
           </Box>
@@ -172,9 +302,10 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         marginY={3}
         textAlign="center"
       >
-        {showCount < filteredItems.length && (
-          <Button onClick={() => setShowCount(showCount + 10)}>
-            {n('seeMore', 'Sjá meira')} ({filteredItems.length - showCount})
+        {search.hasNextPage && (
+          <Button onClick={() => onLoadMore()}>
+            {n('seeMore', 'Sjá meira') } (
+            {search.totalCount - search.results.length})
           </Button>
         )}
       </Box>
@@ -189,9 +320,6 @@ OperatingLicenses.getInitialProps = async ({ apolloClient, locale, query }) => {
     },
     {
       data: { getOrganizationSubpage },
-    },
-    {
-      data: { getOperatingLicenses },
     },
     namespace,
   ] = await Promise.all([
@@ -211,15 +339,6 @@ OperatingLicenses.getInitialProps = async ({ apolloClient, locale, query }) => {
           organizationSlug: 'syslumenn',
           slug: 'rekstrarleyfi',
           lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetOperatingLicensesArgs>({
-      query: GET_OPERATING_LICENSES_QUERY,
-      variables: {
-        input: {
-          pageNumber: 1,
-          pageSize: PAGE_SIZE,
         },
       },
     }),
@@ -247,7 +366,6 @@ OperatingLicenses.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
     organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
-    operatingLicenses: getOperatingLicenses,
     namespace,
     showSearchInHeader: false,
   }
