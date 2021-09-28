@@ -801,7 +801,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 ),
                 buildMultiField({
-                  id: 'ratio',
+                  id: 'ratioContainer',
                   title: parentalLeaveFormMessages.ratio.title,
                   description: parentalLeaveFormMessages.ratio.description,
                   children: [

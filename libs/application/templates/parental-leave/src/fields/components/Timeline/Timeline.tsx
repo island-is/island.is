@@ -34,7 +34,7 @@ export const Timeline: FC<TimelineProps> = ({
   editable = true,
   initDate,
   periods,
-  spanInMonths = 18,
+  spanInMonths = 24,
   title,
   titleSmall,
   onDeletePeriod,

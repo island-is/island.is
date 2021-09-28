@@ -61,7 +61,8 @@ export const Duration: FC<FieldBaseProps> = ({
   )
   const [percent, setPercent] = useState<number>(100)
   const { getEndDate, loading } = useGetOrRequestEndDates(application)
-  const errorMessage = (errors?.component as RecordObject<string>)?.message
+  const errorMessage =
+    (errors?.component as RecordObject<string>)?.message || errors[id]
 
   const monthsToEndDate = async (duration: number) => {
     try {

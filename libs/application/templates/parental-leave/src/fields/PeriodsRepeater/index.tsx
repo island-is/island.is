@@ -66,12 +66,16 @@ const PeriodsRepeater: FC<ScreenProps> = ({
 
     setBeforeSubmitCallback?.(async () => {
       try {
+        if (periods.length === 0) {
+          return [false, 'Þú þarft að velja tímabil']
+        }
+
         // Run anwer validator on the periods selected by the user
         const { errors } = await updateApplication({
           variables: {
             input: {
               id: application.id,
-              answers: { periodsValidator: periods },
+              answers: { validatedPeriods: periods },
             },
             locale,
           },
@@ -79,7 +83,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
 
         if (errors) {
           setFieldLoadingState?.(false)
-          return [false, 'Þú þarft að velja tímabil']
+          return [false, 'Ekki tókst að halda áfram']
         }
 
         // Overwrite any pending periods with those that are valid
@@ -92,9 +96,9 @@ const PeriodsRepeater: FC<ScreenProps> = ({
 
         setFieldLoadingState?.(false)
         return [true, null]
-      } catch (e: any) {
+      } catch (e) {
         setFieldLoadingState?.(false)
-        return [false, e.message || 'Villa kom upp']
+        return [false, (e as Error)?.message || 'Villa kom upp']
       }
     })
   }, [

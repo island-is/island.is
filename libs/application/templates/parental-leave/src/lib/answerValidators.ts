@@ -5,6 +5,7 @@ import differenceInMonths from 'date-fns/differenceInMonths'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import subMonths from 'date-fns/subMonths'
 import isEmpty from 'lodash/isEmpty'
+import isArray from 'lodash/isArray'
 import has from 'lodash/has'
 
 import {
@@ -28,11 +29,18 @@ import {
   calculateDaysUsedByPeriods,
   getAvailableRightsInDays,
 } from './parentalLeaveUtils'
-import { filterValidPeriods } from '..'
+import { filterValidPeriods } from '../lib/parentalLeaveUtils'
+import { validatePeriod } from './answerValidator-utils'
 
 const EMPLOYER = 'employer'
 const FIRST_PERIOD_START = 'firstPeriodStart'
-const PERIODS = 'periodsValidator'
+// When attempting to continue from the periods repeater main screen
+// this validator will get called to validate all of the periods
+export const VALIDATE_PERIODS = 'validatedPeriods'
+// When a new entry is added to the periods repeater
+// the repeater sends all the periods saved in 'periods'
+// to this validator, which will validate the latest one
+export const VALIDATE_LATEST_PERIOD = 'periods'
 
 export const answerValidators: Record<string, AnswerValidator> = {
   [EMPLOYER]: (newAnswer: unknown, application: Application) => {
@@ -80,7 +88,74 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     return undefined
   },
-  [PERIODS]: (newAnswer: unknown, application: Application) => {
+  [VALIDATE_LATEST_PERIOD]: (newAnswer: unknown, application: Application) => {
+    const periods = newAnswer as Period[]
+
+    if (!isArray(periods)) {
+      return {
+        path: 'periods',
+        message: 'Svar þarf að vera listi af tímabilum',
+      }
+    }
+
+    if (periods?.length === 0) {
+      // Nothing to validate
+      return undefined
+    }
+
+    const latestPeriodIndex = periods.length - 1
+    const latestPeriod = periods[latestPeriodIndex]
+    const expectedDateOfBirth = getExpectedDateOfBirth(application)
+
+    if (!expectedDateOfBirth) {
+      return {
+        path: 'periods',
+        message: 'Áætlaðan fæðingardag vantar í umsókn',
+      }
+    }
+
+    const { periods: existingPeriods } = getApplicationAnswers(
+      application.answers,
+    )
+
+    const isFirstPeriod = existingPeriods.length === 0
+
+    const buildError = buildValidationError(
+      VALIDATE_LATEST_PERIOD,
+      latestPeriodIndex,
+    )
+
+    const buildFieldError = (
+      field: string | null,
+      message: string,
+      values: Record<string, unknown> | undefined = undefined,
+    ) => {
+      if (field !== null) {
+        return buildError(message, field, values)
+      }
+
+      return {
+        path: VALIDATE_LATEST_PERIOD,
+        message,
+        values,
+      }
+    }
+
+    const validatedField = validatePeriod(
+      latestPeriod,
+      isFirstPeriod,
+      existingPeriods,
+      application,
+      buildFieldError,
+    )
+
+    if (validatedField !== undefined) {
+      return validatedField
+    }
+
+    return undefined
+  },
+  [VALIDATE_PERIODS]: (newAnswer: unknown, application: Application) => {
     const periods = newAnswer as Period[]
 
     if (periods.length === 0) {
@@ -92,7 +167,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     const newPeriodIndex = periods.length - 1
     const period = periods[newPeriodIndex]
-    const buildError = buildValidationError(PERIODS, newPeriodIndex)
+    const buildError = buildValidationError(VALIDATE_PERIODS, newPeriodIndex)
     const expectedDateOfBirth = getExpectedDateOfBirth(application)
     const dob = expectedDateOfBirth as string
     const { periods: answeredPeriods } = getApplicationAnswers(
@@ -108,166 +183,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return {
         path: 'periods',
         message: `Valin tímabil fara yfir réttindi (${daysUsedByPeriods} > ${rights} dagar)`,
-      }
-    }
-
-    const lastAnsweredPeriod = answeredPeriods?.[answeredPeriods.length - 1]
-
-    if (newPeriodIndex < 0) {
-      return
-    }
-
-    if (isEmpty(period)) {
-      let message = errorMessages.periodsStartDateRequired
-      let field = 'startDate'
-
-      if (
-        (!answeredPeriods &&
-          application.answers.firstPeriodStart &&
-          application.answers.firstPeriodStart !== 'specificDate') ||
-        (lastAnsweredPeriod?.startDate !== undefined &&
-          !lastAnsweredPeriod?.endDate)
-      ) {
-        field = 'endDate'
-        message = errorMessages.periodsEndDateRequired
-      }
-
-      if (!lastAnsweredPeriod?.startDate) {
-        return buildError(message, field)
-      }
-    }
-
-    if (period?.startDate !== undefined) {
-      const field = 'startDate'
-      const { startDate } = period
-
-      // We need a valid start date
-      if (typeof startDate !== 'string' || !isValid(parseISO(startDate))) {
-        return buildError(errorMessages.periodsStartDate, field)
-      }
-
-      // Start date can be up to 1 month before the expectedDateOfBirth
-      if (
-        parseISO(startDate).getTime() < subMonths(parseISO(dob), 1).getTime()
-      ) {
-        return buildError(errorMessages.periodsStartDateBeforeDob, field)
-      }
-
-      // We check if the start date is within the allowed period
-      if (
-        differenceInMonths(parseISO(startDate), parseISO(dob)) > usageMaxMonths
-      ) {
-        return buildError(errorMessages.periodsPeriodRange, field, {
-          usageMaxMonths,
-        })
-      }
-
-      // We check if the startDate is within previous periods saved
-      if (
-        periods
-          // We filtering out the new period we are adding
-          .filter((_, index) => index !== newPeriodIndex)
-          .some(
-            (otherPeriod) =>
-              otherPeriod.startDate &&
-              otherPeriod.endDate &&
-              isWithinInterval(parseISO(startDate), {
-                start: parseISO(otherPeriod.startDate),
-                end: parseISO(otherPeriod.endDate),
-              }),
-          )
-      ) {
-        return buildError(errorMessages.periodsStartDateOverlaps, field)
-      }
-    }
-
-    // The user already has already set one or more periods, and is now adding another.
-    // We check if the endDate of the new period is not undefined
-    if (
-      !period?.endDate &&
-      period?.startDate === lastAnsweredPeriod?.startDate &&
-      has(lastAnsweredPeriod, 'startDate') &&
-      !has(lastAnsweredPeriod, 'endDate')
-    ) {
-      const field = 'endDate'
-      return buildError(errorMessages.periodsEndDateRequired, field)
-    }
-
-    if (period?.endDate !== undefined) {
-      const field = 'endDate'
-      const { startDate, endDate } = period
-
-      // We need a valid end date
-      if (typeof endDate !== 'string' || !isValid(parseISO(endDate))) {
-        return buildError(coreErrorMessages.defaultError, field)
-      }
-
-      // If the startDate is using the expected date of birth, we then calculate the minimum period required from the date of birth
-      if (
-        !startDate &&
-        differenceInDays(parseISO(endDate), parseISO(dob)) < minPeriodDays
-      ) {
-        return buildError(errorMessages.periodsEndDate, field, {
-          minPeriodDays,
-        })
-      }
-
-      // We check if endDate is after startDate
-      if (endDate < startDate) {
-        return buildError(errorMessages.periodsEndDateBeforeStartDate, field)
-      }
-
-      // We check if the user selected at least the minimum period required
-      if (
-        differenceInDays(parseISO(endDate), parseISO(startDate)) < minPeriodDays
-      ) {
-        return buildError(errorMessages.periodsEndDateMinimumPeriod, field, {
-          minPeriodDays,
-        })
-      }
-
-      // We check if the start date is within the allowed period
-      if (
-        differenceInMonths(parseISO(endDate), parseISO(dob)) > usageMaxMonths
-      ) {
-        return buildError(errorMessages.periodsPeriodRange, field, {
-          usageMaxMonths,
-        })
-      }
-
-      // We check if the endDate is within previous periods saved
-      if (
-        periods
-          // We filtering out the new period we are adding
-          .filter((_, index) => index !== newPeriodIndex)
-          .some(
-            (otherPeriod) =>
-              otherPeriod.startDate &&
-              otherPeriod.endDate &&
-              isWithinInterval(parseISO(endDate), {
-                start: parseISO(otherPeriod.startDate),
-                end: parseISO(otherPeriod.endDate),
-              }),
-          )
-      ) {
-        return buildError(errorMessages.periodsEndDateOverlapsPeriod, field)
-      }
-    }
-
-    if (period?.ratio !== undefined) {
-      const field = 'ratio'
-      const { startDate, endDate, ratio } = period
-      const diff = differenceInDays(parseISO(endDate), parseISO(startDate))
-      const diffWithRatio = (diff * Number(ratio)) / 100
-
-      // We want to make sure the ratio doesn't affect the minimum number of days selected
-      if (diffWithRatio < minPeriodDays) {
-        return buildError(errorMessages.periodsRatio, field, {
-          minPeriodDays,
-          diff,
-          ratio,
-          diffWithRatio,
-        })
       }
     }
 
