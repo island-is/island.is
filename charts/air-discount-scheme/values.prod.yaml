@@ -79,7 +79,7 @@ air-discount-scheme-backend:
       hosts:
         - host: 'loftbru.island.is'
           paths:
-            - '/api/swagger'
+            - '/api/swagger/'
             - '/api/public'
   initContainer:
     containers:
