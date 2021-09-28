@@ -2,24 +2,24 @@ openapi: 3.0.1
 info:
   title: 'Company registry '
   description: REST API for company registry
-  version: "1.0"
+  version: '1.0'
 servers:
-- url: https://thjonusta-s.rsk.is/
-  description: URL to TEST environment
-- url: https://thjonusta.rsk.is/
-  description: URL to PRODUCTION environment
+  - url: https://thjonusta-s.rsk.is/
+    description: URL to TEST environment
+  - url: https://thjonusta.rsk.is/
+    description: URL to PRODUCTION environment
 paths:
   /{Kennitala}/companies:
     get:
       description: Skilar öllum félögum sem innsend kennitala tilheyrir.
       operationId: apicompanyregistrymembersKennitalacompanies_GET_1
       parameters:
-      - name: Kennitala
-        in: path
-        description: Tíu stafa kennitala, getur verið kennitala einstaklings eða lögaðila.
-        required: true
-        schema:
-          type: string
+        - name: Kennitala
+          in: path
+          description: Tíu stafa kennitala, getur verið kennitala einstaklings eða lögaðila.
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -34,11 +34,11 @@ paths:
     get:
       operationId: apicompanyregistrycompaniesKennitalacertificate_GET_2
       parameters:
-      - name: Kennitala
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: Kennitala
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -53,11 +53,11 @@ paths:
     get:
       operationId: apicompanyregistrycompaniesKennitalaannual_accountsdefaults_GET_3
       parameters:
-      - name: Kennitala
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: Kennitala
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -72,11 +72,11 @@ paths:
     get:
       operationId: apicompanyregistrycompaniesKennitalabeneficial_ownerstatus_GET_4
       parameters:
-      - name: Kennitala
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: Kennitala
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -91,11 +91,11 @@ paths:
     get:
       operationId: apicompanyregistrycompaniesKennitalareturns_GET_5
       parameters:
-      - name: Kennitala
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: Kennitala
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -110,11 +110,11 @@ paths:
     get:
       operationId: apicompanyregistrycompaniesKennitalarevenue_and_expense_GET_6
       parameters:
-      - name: Kennitala
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: Kennitala
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -129,11 +129,11 @@ paths:
     get:
       operationId: apicompanyregistrycompaniesKennitalasalary_GET_7
       parameters:
-      - name: Kennitala
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: Kennitala
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -148,11 +148,11 @@ paths:
     get:
       operationId: apicompanyregistrycompaniesKennitalavatturnover_GET_8
       parameters:
-      - name: Kennitala
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: Kennitala
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -167,11 +167,11 @@ paths:
     get:
       operationId: apicompanyregistrycompaniesKennitalamembersprocurators_GET_9
       parameters:
-      - name: Kennitala
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: Kennitala
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -186,11 +186,11 @@ paths:
     get:
       operationId: apicompanyregistrycompaniesKennitalaprimary_bank_GET_10
       parameters:
-      - name: Kennitala
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: Kennitala
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -205,7 +205,7 @@ components:
   schemas:
     apicompanyregistrycompaniesKennitalaannual_accountsdefaults_GET_response:
       required:
-      - DefaultYears
+        - DefaultYears
       type: object
       properties:
         DefaultYears:
@@ -214,7 +214,7 @@ components:
             type: string
     apicompanyregistrycompaniesKennitalamembersprocurators_GET_response:
       required:
-      - Procurators
+        - Procurators
       type: object
       properties:
         Procurators:
@@ -230,8 +230,8 @@ components:
             $ref: '#/components/schemas/memberCompanies'
     apicompanyregistrycompaniesKennitalaprimary_bank_GET_response:
       required:
-      - Kennitala
-      - Nafn
+        - Kennitala
+        - Nafn
       type: object
       properties:
         Kennitala:
@@ -240,15 +240,15 @@ components:
           type: string
     apicompanyregistrycompaniesKennitalacertificate_GET_response:
       required:
-      - Base64PdfCertificate
+        - Base64PdfCertificate
       type: object
       properties:
         Base64PdfCertificate:
           type: string
     apicompanyregistrycompaniesKennitalavatturnover_GET_response:
       required:
-      - VskVelta2019
-      - VskVelta2020
+        - VskVelta2019
+        - VskVelta2020
       type: object
       properties:
         VskVelta2019:
@@ -257,8 +257,8 @@ components:
           type: string
     apicompanyregistrycompaniesKennitalasalary_GET_response:
       required:
-      - Laun2019
-      - Laun2020
+        - Laun2019
+        - Laun2020
       type: object
       properties:
         Laun2019:
@@ -267,14 +267,14 @@ components:
           type: string
     apicompanyregistrycompaniesKennitalabeneficial_ownerstatus_GET_response:
       required:
-      - HasSubmitted
+        - HasSubmitted
       type: object
       properties:
         HasSubmitted:
           type: string
     apicompanyregistrycompaniesKennitalareturns_GET_response:
       required:
-      - ReturnsPastThreeYears
+        - ReturnsPastThreeYears
       type: object
       properties:
         ReturnsPastThreeYears:
@@ -283,11 +283,11 @@ components:
             $ref: '#/components/schemas/TaxReturnsPast3Years'
     TaxReturnsPast3Years:
       required:
-      - Ar
-      - Gjald
-      - SkattTegund
-      - Timabil
-      - VskNumer
+        - Ar
+        - Gjald
+        - SkattTegund
+        - Timabil
+        - VskNumer
       type: object
       properties:
         Ar:
@@ -302,8 +302,8 @@ components:
           type: string
     apicompanyregistrycompaniesKennitalarevenue_and_expense_GET_response:
       required:
-      - Kostnadur
-      - Tekjur
+        - Kostnadur
+        - Tekjur
       type: object
       properties:
         Kostnadur:
@@ -312,17 +312,18 @@ components:
           type: string
     memberCompanies:
       required:
-      - ErProkuruhafi
-      - ErStjorn
-      - Kennitala
-      - Nafn
-      - Rekstarform
-      - StadaAdila
+        - ErProkuruhafi
+        - ErStjorn
+        - Kennitala
+        - Nafn
+        - Rekstarform
+        - StadaAdila
       type: object
       properties:
         ErStjorn:
           type: string
-          description: Rofi sem segir til um hvort hlutverk innsendrar kennitölu tilheyrir
+          description:
+            Rofi sem segir til um hvort hlutverk innsendrar kennitölu tilheyrir
             stjórn eða ekki. Möguleg gildi eru "0" eða "1".
         Kennitala:
           type: string
@@ -333,11 +334,13 @@ components:
             T.d. "Stjórnarformaður".
         Rekstarform:
           type: string
-          description: Rekstrarform félagsins sem innsend kennitala tilheyrir. T.d.
+          description:
+            Rekstrarform félagsins sem innsend kennitala tilheyrir. T.d.
             "E1".
         ErProkuruhafi:
           type: string
-          description: Rofi sem segir til um hvort hlutverk innsendrar kennitölu prókúruhafi
+          description:
+            Rofi sem segir til um hvort hlutverk innsendrar kennitölu prókúruhafi
             eða ekki. Möguleg gildi eru "0" eða "1".
         Nafn:
           type: string

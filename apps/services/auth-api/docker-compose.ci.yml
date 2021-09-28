@@ -1,5 +1,5 @@
 version: '3.3'
- 
+
 services:
   sut:
     build:
@@ -19,6 +19,6 @@ services:
       - DB_HOST=db_services_auth_api
     volumes:
       - ../../..:/code
-      
+
   db_services_auth_api:
     ports: []
