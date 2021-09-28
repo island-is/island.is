@@ -4,7 +4,7 @@ export const workMachine = {
   general: defineMessages({
     sectionTitle: {
       id: 'an.application:general.sectionTitle',
-      defaultMessage: 'Vinnuvél',
+      defaultMessage: 'Notkun Vinnuvélar',
       description: 'Machinery',
     },
     subSectionTitle: {

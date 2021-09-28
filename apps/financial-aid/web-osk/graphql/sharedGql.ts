@@ -54,6 +54,7 @@ export const CurrentUserQuery = gql`
       nationalId
       name
       phoneNumber
+      postalCode
       currentApplication {
         id
         state
