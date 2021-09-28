@@ -33,7 +33,7 @@ export interface DrivingLicenseType {
   name: string
 }
 
-export type DrivingLicenseApplicationFor = 'B-full'|'B-temp'
+export type DrivingLicenseApplicationFor = 'B-full' | 'B-temp'
 
 export interface RemarkType {
   id: number
@@ -120,7 +120,6 @@ export interface StudentAssessment {
   teacherNationalId: string | null
   teacherName: string | null
 }
-
 
 export interface DrivingSchool {
   hasFinishedSchool: boolean

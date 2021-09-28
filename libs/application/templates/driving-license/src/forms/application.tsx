@@ -45,8 +45,12 @@ const needsHealthCertificateCondition = (result = YES) => (
   return Object.values(answers?.healthDeclaration || {}).includes(result)
 }
 
-const isApplicationForCondition = (result: 'B-full'|'B-temp') => (answers: FormValue) => {
-  const applicationFor: string[] = getValueViaPath(answers, 'applicationFor', ['B-full']) as string[]
+const isApplicationForCondition = (result: 'B-full' | 'B-temp') => (
+  answers: FormValue,
+) => {
+  const applicationFor: string[] = getValueViaPath(answers, 'applicationFor', [
+    'B-full',
+  ]) as string[]
   return applicationFor.includes(result)
 }
 

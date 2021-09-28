@@ -11,7 +11,9 @@ import { Eligibility } from '../types/schema'
 export class CurrentLicenseProvider extends BasicDataProvider {
   type = 'CurrentLicenseProvider'
 
-  async provide(application: Application): Promise<{ currentLicense: Eligibility['id']|null }> {
+  async provide(
+    application: Application,
+  ): Promise<{ currentLicense: Eligibility['id'] | null }> {
     const fakeData = application.answers.fakeData as
       | DrivingLicenseFakeData
       | undefined
@@ -48,7 +50,7 @@ export class CurrentLicenseProvider extends BasicDataProvider {
       return Promise.reject({ error: response.errors })
     }
 
-    const [ currentLicense ] = response.data.drivingLicense.eligibilities
+    const [currentLicense] = response.data.drivingLicense.eligibilities
 
     return {
       currentLicense: currentLicense || null,

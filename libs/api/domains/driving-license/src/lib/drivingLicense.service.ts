@@ -38,7 +38,11 @@ import {
   DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE,
   LICENSE_RESPONSE_API_VERSION,
 } from './util/constants'
-import { DrivingLicenseApplicationFor, DrivingSchool, NeedsQualityPhoto } from '..'
+import {
+  DrivingLicenseApplicationFor,
+  DrivingSchool,
+  NeedsQualityPhoto,
+} from '..'
 
 @Injectable()
 export class DrivingLicenseService {
@@ -241,24 +245,24 @@ export class DrivingLicenseService {
     const requirements = []
 
     if (type === 'B-full') {
-      requirements.push({
-        key: RequirementKey.drivingAssessmentMissing,
-        requirementMet:
-          (assessmentResult?.dagsetningMats ?? 0) >
-          Date.now() - DRIVING_ASSESSMENT_MAX_AGE,
-      },
-      {
-        key: RequirementKey.drivingSchoolMissing,
-        requirementMet: (hasFinishedSchoolResult.hefurLokidOkugerdi ?? 0) > 0,
-      })
+      requirements.push(
+        {
+          key: RequirementKey.drivingAssessmentMissing,
+          requirementMet:
+            (assessmentResult?.dagsetningMats ?? 0) >
+            Date.now() - DRIVING_ASSESSMENT_MAX_AGE,
+        },
+        {
+          key: RequirementKey.drivingSchoolMissing,
+          requirementMet: (hasFinishedSchoolResult.hefurLokidOkugerdi ?? 0) > 0,
+        },
+      )
     }
 
-    requirements.push(
-      {
-        key: RequirementKey.deniedByService,
-        requirementMet: canApply,
-      }
-    )
+    requirements.push({
+      key: RequirementKey.deniedByService,
+      requirementMet: canApply,
+    })
 
     // only eligible if we dont find an unmet requirement
     const isEligible = !requirements.find(
@@ -274,7 +278,7 @@ export class DrivingLicenseService {
   async canApplyFor(nationalId: string, type: DrivingLicenseApplicationFor) {
     let canApplyResult
     if (type === 'B-full') {
-       canApplyResult = (await this.drivingLicenseApi.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
+      canApplyResult = (await this.drivingLicenseApi.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
         {
           kennitala: nationalId,
           category: 'B',
@@ -282,7 +286,7 @@ export class DrivingLicenseService {
       )) as unknown
     } else if (type === 'B-temp') {
       // TODO: API seems to not be there as of yet
-       canApplyResult = '0'
+      canApplyResult = '0'
     }
 
     return parseInt(canApplyResult as string, 10) > 0
@@ -393,9 +397,7 @@ export class DrivingLicenseService {
     }
   }
 
-  async getDrivingSchool(
-    nationalId: string,
-  ): Promise<DrivingSchool | null> {
+  async getDrivingSchool(nationalId: string): Promise<DrivingSchool | null> {
     const result: HefurLokidOkugerdiDto = await this.drivingLicenseApi.apiOkuskirteiniKennitalaFinishedokugerdiGet(
       {
         kennitala: nationalId,

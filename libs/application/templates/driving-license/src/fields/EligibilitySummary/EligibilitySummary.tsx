@@ -87,10 +87,10 @@ const fakeEligibility = (): ApplicationEligibility => {
   }
 }
 
-const useEligibility = (answers: Application['answers']): UseEligibilityResult => {
-  const fakeData = answers.fakeData as
-  | DrivingLicenseFakeData
-  | undefined
+const useEligibility = (
+  answers: Application['answers'],
+): UseEligibilityResult => {
+  const fakeData = answers.fakeData as DrivingLicenseFakeData | undefined
   const usingFakeData = fakeData?.useFakeData === YES
 
   const applicationFor = answers.applicationFor || 'B-full'
@@ -100,14 +100,14 @@ const useEligibility = (answers: Application['answers']): UseEligibilityResult =
     variables: {
       input: {
         applicationFor,
-      }
-    }
+      },
+    },
   })
 
   if (usingFakeData) {
     return {
       loading: false,
-      eligibility: fakeEligibility()
+      eligibility: fakeEligibility(),
     }
   }
 
@@ -116,13 +116,13 @@ const useEligibility = (answers: Application['answers']): UseEligibilityResult =
     // TODO: m.
     return {
       loading: false,
-      error: error
+      error: error,
     }
   }
 
   return {
     loading,
-    eligibility: data.drivingLicenseApplicationEligibility
+    eligibility: data.drivingLicenseApplicationEligibility,
   }
 }
 
