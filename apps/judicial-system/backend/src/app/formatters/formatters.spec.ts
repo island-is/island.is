@@ -21,7 +21,6 @@ import {
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
-  formatAppeal,
 } from './formatters'
 
 describe('formatCustodyProvisions', () => {
@@ -1142,74 +1141,5 @@ describe('stripHtmlTags', () => {
 
     // Assert
     expect(res).toBe('blablabla\n\nblabla')
-  })
-})
-
-describe('formatAppeal', () => {
-  test('should format appeal', () => {
-    // Arrange
-    const appealDecision = CaseAppealDecision.APPEAL
-    const stakeholder = 'Aðili'
-    const stakeholderGender = CaseGender.MALE
-
-    // Act
-    const res = formatAppeal(appealDecision, stakeholder, stakeholderGender)
-
-    // Assert
-    expect(res).toBe(
-      'Aðili lýsir því yfir að hann kæri úrskurðinn til Landsréttar.',
-    )
-  })
-
-  test('should format acceptance', () => {
-    // Arrange
-    const appealDecision = CaseAppealDecision.ACCEPT
-    const stakeholder = 'Aðili'
-    const stakeholderGender = CaseGender.MALE
-
-    // Act
-    const res = formatAppeal(appealDecision, stakeholder, stakeholderGender)
-
-    // Assert
-    expect(res).toBe('Aðili unir úrskurðinum.')
-  })
-
-  test('should format postponement', () => {
-    // Arrange
-    const appealDecision = CaseAppealDecision.POSTPONE
-    const stakeholder = 'Aðili'
-    const stakeholderGender = CaseGender.MALE
-
-    // Act
-    const res = formatAppeal(appealDecision, stakeholder, stakeholderGender)
-
-    // Assert
-    expect(res).toBe(
-      'Aðili lýsir því yfir að hann taki sér lögbundinn kærufrest.',
-    )
-  })
-
-  test('should format stakeholder gender correctly', () => {
-    // Arrange
-    const appealDecision = CaseAppealDecision.POSTPONE
-    const stakeholder = 'Aðili'
-
-    // Act
-    const res = formatAppeal(appealDecision, stakeholder, CaseGender.MALE)
-    const res1 = formatAppeal(appealDecision, stakeholder, CaseGender.FEMALE)
-    const res2 = formatAppeal(appealDecision, stakeholder, CaseGender.OTHER)
-
-    // Assert
-    expect(res).toBe(
-      'Aðili lýsir því yfir að hann taki sér lögbundinn kærufrest.',
-    )
-
-    expect(res1).toBe(
-      'Aðili lýsir því yfir að hún taki sér lögbundinn kærufrest.',
-    )
-
-    expect(res2).toBe(
-      'Aðili lýsir því yfir að hán taki sér lögbundinn kærufrest.',
-    )
   })
 })

@@ -3,6 +3,7 @@ import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-r
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
 
 import {
+  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseGender,
   CaseType,
@@ -297,5 +298,29 @@ export function formatGender(gender?: CaseGender): string {
     case CaseGender.OTHER:
     default:
       return 'Kynsegin/Annað'
+  }
+}
+
+export function formatAppeal(
+  appealDecision: CaseAppealDecision | undefined,
+  stakeholder: string,
+  stakeholderGender?: CaseGender,
+): string {
+  const genderedStakeholder =
+    !stakeholderGender || stakeholderGender === CaseGender.MALE
+      ? 'hann'
+      : stakeholderGender === CaseGender.FEMALE
+      ? 'hún'
+      : 'hán'
+
+  switch (appealDecision) {
+    case CaseAppealDecision.APPEAL:
+      return `${stakeholder} lýsir því yfir að ${genderedStakeholder} kæri úrskurðinn til Landsréttar.`
+    case CaseAppealDecision.ACCEPT:
+      return `${stakeholder} unir úrskurðinum.`
+    case CaseAppealDecision.POSTPONE:
+      return `${stakeholder} lýsir því yfir að ${genderedStakeholder} taki sér lögbundinn kærufrest.`
+    default:
+      return ''
   }
 }
