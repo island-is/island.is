@@ -41,6 +41,7 @@ export const whoIsTheNotificationForSection = buildSection({
         buildRadioField({
           id: 'whoIsTheNotificationFor.answer',
           title: '',
+          width: 'half',
           options: [
             {
               value: WhoIsTheNotificationForEnum.ME,
