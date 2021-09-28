@@ -683,7 +683,7 @@ export const aboutTheAccidentSection = buildSection({
           title: attachments.general.heading,
           children: [
             buildRadioField({
-              id: 'attachments.injuryCertificate',
+              id: 'attachments.injuryCertificate.default',
               title: '',
               description: attachments.general.description,
               condition: (formValue) =>
