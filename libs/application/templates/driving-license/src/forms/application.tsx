@@ -670,8 +670,13 @@ export const application: Form = buildForm({
                 },
               ],
               condition: (answers) =>
-                answers?.willBringQualityPhoto === YES ||
-                Object.values(answers?.willBringQualityPhoto).includes(YES),
+                Boolean(
+                  answers?.willBringQualityPhoto &&
+                    (answers?.willBringQualityPhoto === YES ||
+                      Object.values(answers?.willBringQualityPhoto).includes(
+                        YES,
+                      )),
+                ),
             }),
             buildCheckboxField({
               id: 'certificate',
