@@ -22,6 +22,7 @@ judicial-system-api:
     CONTENTFUL_HOST: 'cdn.contentful.com'
     HIDDEN_FEATURES: ''
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=judicial-system.staging'
+    SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5804170510/Rettarvorslugatt-Client'
     XROAD_COURT_MEMBER_CODE: '4707171140'
@@ -76,7 +77,7 @@ judicial-system-backend:
   enabled: true
   env:
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'judicial_system'
     DB_USER: 'judicial_system'
     DOKOBIT_URL: 'https://developers.dokobit.com'
@@ -85,6 +86,7 @@ judicial-system-backend:
     S3_REGION: 'eu-west-1'
     S3_TIME_TO_LIVE_GET: '5'
     S3_TIME_TO_LIVE_POST: '15'
+    SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5804170510/Rettarvorslugatt-Client'
     XROAD_COURT_MEMBER_CODE: '4707171140'
@@ -110,9 +112,10 @@ judicial-system-backend:
         command:
           - 'npx'
     env:
-      DB_HOST: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'judicial_system'
       DB_USER: 'judicial_system'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
   namespace: 'judicial-system'
@@ -159,6 +162,7 @@ judicial-system-web:
   env:
     API_URL: 'https://judicial-system.staging01.devland.is'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -198,6 +202,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true

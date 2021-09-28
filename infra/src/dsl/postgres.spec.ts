@@ -8,6 +8,7 @@ const Staging: EnvironmentConfig = {
   auroraHost: 'a',
   domain: 'staging01.devland.is',
   type: 'staging',
+  featuresOn: [],
   defaultMaxReplicas: 3,
   releaseName: 'web',
   awsAccountId: '111111',
@@ -28,6 +29,7 @@ describe('Postgres', () => {
         DB_USER: 'service_portal_api',
         DB_NAME: 'service_portal_api',
         DB_HOST: 'a',
+        SERVERSIDE_FEATURES_ON: '',
       })
     })
   })

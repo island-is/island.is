@@ -7,8 +7,10 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
+  isAccusedRightsHidden,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
+import type { Case as TCase } from '@island.is/judicial-system/types'
 import {
   capitalize,
   formatDate,
@@ -17,7 +19,6 @@ import {
   NounCases,
   formatAccusedByGender,
   caseTypes,
-  areAccusedRightsHidden,
   lowercase,
 } from '@island.is/judicial-system/formatters'
 
@@ -87,7 +88,15 @@ function constructRestrictionRulingPdf(
         judgeNameAndTitle: `${existingCase.judge?.name ?? '?'} ${
           existingCase.judge?.title ?? '?'
         }`,
-        courtLocation: lowercase(existingCase.courtLocation?.replace('.', '')),
+        courtLocation: existingCase.courtLocation
+          ? ` ${lowercase(
+              existingCase.courtLocation?.slice(
+                existingCase.courtLocation.length - 1,
+              ) === '.'
+                ? existingCase.courtLocation?.slice(0, -1)
+                : existingCase.courtLocation,
+            )}`
+          : '',
         caseNumber: existingCase.courtCaseNumber,
         startTime: formatDate(existingCase.courtStartDate, 'p'),
       }),
@@ -102,7 +111,7 @@ function constructRestrictionRulingPdf(
     })
   }
 
-  if (existingCase.courtAttendees) {
+  if (existingCase.courtAttendees?.trim()) {
     doc
       .text(' ')
       .font('Times-Bold')
@@ -455,7 +464,7 @@ function constructInvestigationRulingPdf(
     })
   }
 
-  if (existingCase.courtAttendees) {
+  if (existingCase.courtAttendees?.trim()) {
     doc
       .text(' ')
       .font('Times-Bold')
@@ -509,12 +518,7 @@ function constructInvestigationRulingPdf(
     ),
   )
 
-  if (
-    !areAccusedRightsHidden(
-      existingCase.isAccusedRightsHidden,
-      existingCase.sessionArrangements,
-    )
-  ) {
+  if (!isAccusedRightsHidden((existingCase as unknown) as TCase)) {
     doc.text(' ').text(formatMessage(ruling.accusedRights), {
       paragraphGap: 1,
     })

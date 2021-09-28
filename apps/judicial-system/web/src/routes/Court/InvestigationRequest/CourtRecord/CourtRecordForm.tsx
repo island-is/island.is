@@ -19,11 +19,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  areAccusedRightsHidden,
-  capitalize,
-  caseTypes,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
   FormSettings,
   useCaseFormHelper,
@@ -119,22 +115,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             />
           </Box>
           <Box marginBottom={3}>
-            <HideableText
-              text={formatMessage(closedCourt.text)}
-              isHidden={workingCase.isClosedCourtHidden}
-              onToggleVisibility={(isVisible: boolean) =>
-                setAndSendToServer(
-                  'isClosedCourtHidden',
-                  isVisible,
-                  workingCase,
-                  setWorkingCase,
-                  updateCase,
-                )
-              }
-              tooltip={formatMessage(closedCourt.tooltip)}
-            />
-          </Box>
-          <Box marginBottom={3}>
             <Input
               data-testid="courtLocation"
               name="courtLocation"
@@ -171,6 +151,22 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               hasError={courtLocationEM !== ''}
               autoComplete="off"
               required
+            />
+          </Box>
+          <Box marginBottom={3}>
+            <HideableText
+              text={formatMessage(closedCourt.text)}
+              isHidden={workingCase.isClosedCourtHidden}
+              onToggleVisibility={(isVisible: boolean) =>
+                setAndSendToServer(
+                  'isClosedCourtHidden',
+                  isVisible,
+                  workingCase,
+                  setWorkingCase,
+                  updateCase,
+                )
+              }
+              tooltip={formatMessage(closedCourt.tooltip)}
             />
           </Box>
           <Box marginBottom={3}>
@@ -262,10 +258,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           <Box marginBottom={2}>
             <HideableText
               text={formatMessage(accusedRights.text)}
-              isHidden={areAccusedRightsHidden(
-                workingCase.isAccusedRightsHidden,
-                workingCase.sessionArrangements,
-              )}
+              isHidden={workingCase.isAccusedRightsHidden}
               onToggleVisibility={(isVisible: boolean) =>
                 setAndSendToServer(
                   'isAccusedRightsHidden',

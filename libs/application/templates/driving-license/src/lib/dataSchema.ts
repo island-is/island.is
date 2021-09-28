@@ -24,5 +24,4 @@ export const dataSchema = z.object({
   ]),
   requirementsMet: z.boolean().refine((v) => v),
   certificate: z.array(z.enum(['yes', 'no'])).nonempty(),
-  picture: z.array(z.enum(['yes', 'no'])).nonempty(),
 })
