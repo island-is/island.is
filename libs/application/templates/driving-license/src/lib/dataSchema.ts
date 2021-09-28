@@ -25,7 +25,6 @@ export const dataSchema = z.object({
   requirementsMet: z.boolean().refine((v) => v),
   certificate: z.array(z.enum(['yes', 'no'])).nonempty(),
   applicationFor: z.enum(['B-full', 'B-temp']),
-  confirmBringNewPhoto: z.array(z.enum(['yes', 'no'])).nonempty(),
   email: z.string().email(),
   drivingInstructor: z.string().nonempty(),
 })

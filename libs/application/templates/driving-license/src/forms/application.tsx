@@ -373,11 +373,7 @@ export const application: Form = buildForm({
               title: '',
               component: 'Bullets',
               condition: (answers) => {
-                try {
-                  return answers.willBringQualityPhoto === YES
-                } catch (error) {
-                  return false
-                }
+                return answers.willBringQualityPhoto === YES
               },
             }),
           ],
@@ -386,10 +382,6 @@ export const application: Form = buildForm({
           id: 'info',
           title: m.qualityPhotoTitle,
           condition: (answers: FormValue, externalData) => {
-            if (!isApplicationForCondition('B-full')(answers)) {
-              return false
-            }
-
             return (
               (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
               false
@@ -672,22 +664,6 @@ export const application: Form = buildForm({
               titleVariant: 'h4',
               description: '',
               condition: needsHealthCertificateCondition(YES),
-            }),
-            buildCheckboxField({
-              id: 'confirmBringNewPhoto',
-              title: '',
-              large: false,
-              backgroundColor: 'white',
-              defaultValue: [],
-              options: [
-                {
-                  value: YES,
-                  label: 'Ég kem með nýja ljósmynd til sýslumanns',
-                },
-              ],
-              condition: (answers) =>
-                answers?.willBringQualityPhoto === YES ||
-                Object.values(answers?.willBringQualityPhoto).includes(YES),
             }),
             buildCheckboxField({
               id: 'certificate',
