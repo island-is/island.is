@@ -29,7 +29,6 @@ import { showAnnualStatusDocument } from '@island.is/service-portal/graphql'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import DisabledItem from '../../components/DropdownExport/DisabledItem'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
-import EmptyStatusImage from '../../components/EmptyStatusImage/EmptyStatusImage'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -119,16 +118,26 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
             !error &&
             (financeStatusData?.organizations?.length === 0 ||
               financeStatusData?.organizations === null) && (
-              <Box paddingY={2}>
-                <Text marginBottom={1} variant="h3">
-                  {formatMessage({
-                    id: 'sp.finance-status:empty-state',
-                    defaultMessage: 'Engar stöðufærslur til að sýna',
-                  })}
-                </Text>
-                <Box marginTop={4}>
-                  <EmptyStatusImage />
-                </Box>
+              <Box marginTop={2}>
+                <T.Table>
+                  <ExpandHeader
+                    data={[
+                      { value: formatMessage(m.feeCategory) },
+                      { value: formatMessage(m.guardian) },
+                      { value: formatMessage(m.status), align: 'right' },
+                    ]}
+                  />
+                  <T.Body>
+                    <ExpandRow
+                      last
+                      data={[
+                        { value: formatMessage(m.total) },
+                        { value: '' },
+                        { value: getChargeTypeTotal(), align: 'right' },
+                      ]}
+                    />
+                  </T.Body>
+                </T.Table>
               </Box>
             )}
           {financeStatusData?.organizations?.length > 0 ? (
