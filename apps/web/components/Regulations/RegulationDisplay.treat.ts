@@ -13,7 +13,7 @@ export const scrolled = style({})
 export const breadCrumbs = style({
   position: 'sticky',
   top: 0,
-  zIndex: 1,
+  zIndex: 2,
 })
 
 globalStyle(`${scrolled} ${breadCrumbs} nav > div:not(:last-child)`, {
@@ -24,6 +24,7 @@ globalStyle(`${scrolled} ${breadCrumbs} nav > div:not(:last-child)`, {
 
 export const statusHeader = style({
   position: 'sticky',
+  zIndex: 1,
   top: 0,
   marginTop: -spacing[3] - 4,
   paddingTop: spacing[3] + 4,
