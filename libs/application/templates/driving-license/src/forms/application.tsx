@@ -31,13 +31,22 @@ import { NO, YES } from '../lib/constants'
 // const ALLOW_FAKE_DATA = todo: serverside feature flag
 const ALLOW_FAKE_DATA = false
 
+const ALLOW_LICENSE_SELECTION = false
+
 const allowFakeCondition = (result = YES) => (answers: FormValue) =>
   getValueViaPath(answers, 'fakeData.useFakeData') === result
+
+const allowLicenseSelection = () => ALLOW_LICENSE_SELECTION
 
 const needsHealthCertificateCondition = (result = YES) => (
   answers: FormValue,
 ) => {
   return Object.values(answers?.healthDeclaration || {}).includes(result)
+}
+
+const isApplicationForCondition = (result: 'B-full'|'B-temp') => (answers: FormValue) => {
+  const applicationFor: string[] = getValueViaPath(answers, 'applicationFor', ['B-full']) as string[]
+  return applicationFor.includes(result)
 }
 
 export const application: Form = buildForm({
@@ -97,17 +106,17 @@ export const application: Form = buildForm({
                       }),
                       buildRadioField({
                         id: 'fakeData.currentLicense',
-                        title: 'Réttindi umsækjanda',
+                        title: 'Núverandi ökuréttindi umsækjanda',
                         width: 'half',
                         condition: allowFakeCondition(YES),
                         options: [
                           {
                             value: 'student',
-                            label: 'Nemi',
+                            label: 'Engin',
                           },
                           {
                             value: 'temp',
-                            label: 'Bráðabyrgða',
+                            label: 'Bráðabirgðaskírteini',
                           },
                         ],
                       }),
@@ -152,16 +161,16 @@ export const application: Form = buildForm({
               subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
+              id: 'currentLicense',
+              type: 'CurrentLicenseProvider',
+              title: m.infoFromLicenseRegistry,
+              subTitle: m.confirmationStatusOfEligability,
+            }),
+            buildDataProviderItem({
               id: 'qualityPhoto',
               type: 'QualityPhotoProvider',
               title: '',
               subTitle: '',
-            }),
-            buildDataProviderItem({
-              id: 'eligibility',
-              type: 'EligibilityProvider',
-              title: m.infoFromLicenseRegistry,
-              subTitle: m.confirmationStatusOfEligability,
             }),
             buildDataProviderItem({
               id: 'studentAssessment',
@@ -175,8 +184,32 @@ export const application: Form = buildForm({
             }),
             buildDataProviderItem({
               id: 'payment',
-              type: 'PaymentCatalogProvider',
+              type: 'FeeInfoProvider',
               title: '',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'licenseSelection',
+      // TODO: m.
+      title: 'Ökuréttindi',
+      condition: allowLicenseSelection,
+      children: [
+        buildSubSection({
+          id: 'fakeData',
+          title: 'Ökuréttindi',
+          children: [
+            buildRadioField({
+              id: 'applicationFor',
+              title: '',
+              options: [
+                // TODO: m.
+                { value: 'B-full', label: 'Fullnaðar', subLabel: 'hm' },
+                // TODO: m.
+                { value: 'B-temp', label: 'Bráðabirgða', subLabel: 'meehh' },
+              ],
             }),
           ],
         }),
@@ -202,6 +235,7 @@ export const application: Form = buildForm({
     buildSection({
       id: 'photoStep',
       title: m.applicationQualityPhotoTitle,
+      condition: isApplicationForCondition('B-full'),
       children: [
         buildMultiField({
           id: 'info',
@@ -244,7 +278,11 @@ export const application: Form = buildForm({
         buildMultiField({
           id: 'info',
           title: m.qualityPhotoTitle,
-          condition: (_, externalData) => {
+          condition: (answers: FormValue, externalData) => {
+            if (!isApplicationForCondition('B-full')(answers)) {
+              return false
+            }
+
             return (
               (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
               false
@@ -279,6 +317,7 @@ export const application: Form = buildForm({
     buildSection({
       id: 'user',
       title: m.informationSectionTitle,
+      condition: isApplicationForCondition('B-full'),
       children: [
         buildMultiField({
           id: 'info',

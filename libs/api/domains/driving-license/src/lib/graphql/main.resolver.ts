@@ -20,8 +20,11 @@ import {
   DrivingLicenseRemarkType,
   QualityPhoto,
   StudentAssessment,
+  ApplicationEligibilityInput,
 } from './models'
 import { AuditService } from '@island.is/nest/audit'
+import { DrivingSchool } from './models/drivingSchool.model'
+import { DrivingLicenseApplicationFor } from '../drivingLicense.type'
 
 const namespace = '@island.is/api/driving-license'
 
@@ -111,11 +114,11 @@ export class MainResolver {
   @Query(() => ApplicationEligibility)
   drivingLicenseApplicationEligibility(
     @CurrentUser() user: User,
-    @Args('type') type: string,
+    @Args('input') input: ApplicationEligibilityInput,
   ) {
     return this.drivingLicenseService.getApplicationEligibility(
       user.nationalId,
-      type,
+      input.applicationFor,
     )
   }
 
