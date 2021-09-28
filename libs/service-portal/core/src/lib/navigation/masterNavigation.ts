@@ -156,7 +156,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Fjarmal
       {
         name: m.finance,
-        path: ServicePortalPath.FinanceStatus,
+        path: ServicePortalPath.FinanceRoot,
         children: [
           {
             name: m.financeStatus,
@@ -216,7 +216,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Fjármál
       {
         name: m.finance,
-        path: ServicePortalPath.FinanceRoot,
+        path: ServicePortalPath.FinanceWIP,
         systemRoute: true,
         icon: {
           type: 'outline',

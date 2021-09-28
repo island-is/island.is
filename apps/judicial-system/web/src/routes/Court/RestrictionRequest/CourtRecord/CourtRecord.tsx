@@ -120,7 +120,9 @@ export const CourtRecord: React.FC = () => {
         )
       }
 
-      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      if (theCase.courtAttendees !== '') {
+        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      }
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
@@ -198,22 +200,6 @@ export const CourtRecord: React.FC = () => {
                 />
               </Box>
               <Box marginBottom={3}>
-                <HideableText
-                  text={formatMessage(closedCourt.text)}
-                  isHidden={workingCase.isClosedCourtHidden}
-                  onToggleVisibility={(isVisible: boolean) =>
-                    setAndSendToServer(
-                      'isClosedCourtHidden',
-                      isVisible,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
-                  }
-                  tooltip={formatMessage(closedCourt.tooltip)}
-                />
-              </Box>
-              <Box marginBottom={3}>
                 <Input
                   data-testid="courtLocation"
                   name="courtLocation"
@@ -252,6 +238,22 @@ export const CourtRecord: React.FC = () => {
                   hasError={courtLocationErrorMessage !== ''}
                   autoComplete="off"
                   required
+                />
+              </Box>
+              <Box marginBottom={3}>
+                <HideableText
+                  text={formatMessage(closedCourt.text)}
+                  isHidden={workingCase.isClosedCourtHidden}
+                  onToggleVisibility={(isVisible: boolean) =>
+                    setAndSendToServer(
+                      'isClosedCourtHidden',
+                      isVisible,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
+                  tooltip={formatMessage(closedCourt.tooltip)}
                 />
               </Box>
               <Box marginBottom={3}>

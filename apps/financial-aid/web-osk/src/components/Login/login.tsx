@@ -59,6 +59,23 @@ const Login = ({ headline, about }: Props) => {
                 router.push(
                   `${Routes.apiLoginRouteForFake(
                     router.query.id as string,
+                  )}0000000004`,
+                )
+              }}
+              data-testid="logout-button"
+              preTextIconType="filled"
+              type="button"
+              variant="primary"
+            >
+              Plat notandi (Rikkason)
+            </Button>
+          </Box>
+          <Box paddingTop={4}>
+            <Button
+              onClick={() => {
+                router.push(
+                  `${Routes.apiLoginRouteForFake(
+                    router.query.id as string,
                   )}0000000001`,
                 )
               }}
