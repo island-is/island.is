@@ -59,6 +59,7 @@ export interface User {
   currentApplication?: CurrentApplication
   returnUrl: ReturnUrl
   staff?: Staff
+  postalCode?: number
 }
 
 export interface UpdateApplication {
