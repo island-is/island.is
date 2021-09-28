@@ -30,4 +30,7 @@ export class UserModel implements User {
 
   @Field(() => StaffModel, { nullable: true })
   readonly staff?: StaffModel
+
+  @Field({ nullable: true })
+  readonly postalCode?: number
 }
