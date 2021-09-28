@@ -1,11 +1,11 @@
 import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
+
 import {
   CaseCustodyRestrictions,
   CaseGender,
   CaseType,
-  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -298,15 +298,4 @@ export function formatGender(gender?: CaseGender): string {
     default:
       return 'Kynsegin/Annað'
   }
-}
-
-export const areAccusedRightsHidden = (
-  isAccusedRightsHidden?: boolean,
-  sessionArrangements?: SessionArrangements,
-): boolean => {
-  return isAccusedRightsHidden !== undefined
-    ? isAccusedRightsHidden
-    : sessionArrangements === SessionArrangements.ALL_PRESENT
-    ? false
-    : true
 }
