@@ -45,7 +45,14 @@ export const testServer = async (options: TestServerOptions) => {
 export const testServerActivateAuthGuards = async (
   options: TestServerOptions,
 ) => {
-  const moduleFixture = await Test.createTestingModule({
+  const user = {
+    nationalId: '0101303019', // Gervimadur Afrika
+    scope: [],
+    authorization: '',
+    client: '',
+  }
+
+  const builder = Test.createTestingModule({
     imports: [InfraModule.forRoot(options.appModule)],
   })
     .overrideGuard(IdsAuthGuard)
@@ -54,19 +61,21 @@ export const testServerActivateAuthGuards = async (
     .useValue({
       canActivate: (context: ExecutionContext) => {
         const request = getRequest(context)
-        request.user = {
-          nationalId: '0101303019', // Gervimadur Afrika
-          scope: [],
-          authorization: '',
-          client: '',
-        }
+        request.user = user
         return true
       },
+      user,
     })
     .overrideGuard(ScopesGuard)
     .useValue({ canActivate: () => true })
-    .compile()
+    .overrideProvider(CurrentUser)
+    .useValue(user)
 
+  if (options.override) {
+    options.override(builder)
+  }
+
+  const moduleFixture = await builder.compile()
   const app = moduleFixture.createNestApplication()
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
