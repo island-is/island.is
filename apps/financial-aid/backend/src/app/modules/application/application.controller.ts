@@ -15,7 +15,10 @@ import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 import { ApplicationService } from './application.service'
 import { CurrentApplicationModel, ApplicationModel } from './models'
 
-import { ApplicationEventModel } from '../applicationEvent'
+import {
+  ApplicationEventModel,
+  ApplicationEventService,
+} from '../applicationEvent'
 
 import {
   CreateApplicationDto,
@@ -43,7 +46,10 @@ import {
 @Controller('api')
 @ApiTags('applications')
 export class ApplicationController {
-  constructor(private readonly applicationService: ApplicationService) {}
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly applicationEventService: ApplicationEventService,
+  ) {}
 
   @UseGuards(TokenGuard)
   @Get('getCurrentApplication')
@@ -136,7 +142,7 @@ export class ApplicationController {
   async createEvent(
     @Body() applicationEvent: CreateApplicationEventDto,
   ): Promise<ApplicationModel> {
-    const updateApplication = await this.applicationService.createEvent(
+    const createApplicationEvent = await this.applicationEventService.create(
       applicationEvent,
     )
 

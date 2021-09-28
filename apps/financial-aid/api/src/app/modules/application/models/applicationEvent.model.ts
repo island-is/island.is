@@ -4,7 +4,6 @@ import {
   ApplicationEvent,
   ApplicationEventType,
 } from '@island.is/financial-aid/shared/lib'
-import { ApplicationModel } from '.'
 
 @ObjectType()
 export class ApplicationEventModel implements ApplicationEvent {

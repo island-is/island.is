@@ -169,14 +169,4 @@ export class ApplicationService {
 
     return { numberOfAffectedRows, updatedApplication }
   }
-
-  async createEvent(
-    applicationEvent: CreateApplicationEventDto,
-  ): Promise<ApplicationEventModel> {
-    console.log('Creating a new application event')
-
-    const appEvent = await this.applicationEventService.create(applicationEvent)
-
-    return appEvent
-  }
 }

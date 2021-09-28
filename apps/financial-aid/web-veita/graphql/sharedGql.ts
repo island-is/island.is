@@ -1,49 +1,53 @@
 import { gql } from '@apollo/client'
 
+const application = `
+id
+nationalId
+created
+modified
+name
+phoneNumber
+email
+homeCircumstances
+student
+employment
+hasIncome
+usePersonalTaxCredit
+bankNumber
+ledger
+accountNumber
+interview
+employmentCustom
+homeCircumstancesCustom
+files {
+  id
+  applicationId
+  name
+  size
+  created
+  type
+}
+state
+formComment
+studentCustom
+amount
+rejection
+staff {
+  name
+}
+applicationEvents {
+  id
+  applicationId
+  eventType
+  comment
+  created
+}
+`
+
 export const GetApplicationQuery = gql`
   query GetFinancialAidApplicationQuery($input: ApplicationInput!) {
     application(input: $input) {
-      id
-      nationalId
-      created
-      modified
-      name
-      phoneNumber
-      email
-      homeCircumstances
-      student
-      employment
-      hasIncome
-      usePersonalTaxCredit
-      bankNumber
-      ledger
-      accountNumber
-      interview
-      employmentCustom
-      homeCircumstancesCustom
-      files {
-        id
-        applicationId
-        name
-        size
-        created
-        type
-      }
-      state
-      formComment
-      studentCustom
-      amount
-      rejection
-      staff {
-        name
-      }
-      applicationEvents {
-        id
-        applicationId
-        eventType
-        comment
-        created
-      }
+     ${application}
     }
   }
 `
@@ -88,7 +92,7 @@ export const GetApplicationFiltersQuery = gql`
 `
 
 export const CreateApplicationQuery = gql`
-  mutation createApplication($input: CreateApplicationInput!) {
+  mutation CreateApplication($input: CreateApplicationInput!) {
     createApplication(input: $input) {
       id
     }
@@ -96,49 +100,9 @@ export const CreateApplicationQuery = gql`
 `
 
 export const CreateApplicationEventQuery = gql`
-  mutation createApplicationEvent($input: CreateApplicationEventInput!) {
+  mutation CreateApplicationEvent($input: CreateApplicationEventInput!) {
     createApplicationEvent(input: $input) {
-      id
-      nationalId
-      created
-      modified
-      name
-      phoneNumber
-      email
-      homeCircumstances
-      student
-      employment
-      hasIncome
-      usePersonalTaxCredit
-      bankNumber
-      ledger
-      accountNumber
-      interview
-      employmentCustom
-      homeCircumstancesCustom
-      state
-      formComment
-      studentCustom
-      amount
-      rejection
-      files {
-        id
-        applicationId
-        name
-        size
-        created
-        type
-      }
-      staff {
-        name
-      }
-      applicationEvents {
-        id
-        applicationId
-        eventType
-        comment
-        created
-      }
+      ${application}
     }
   }
 `
