@@ -20,10 +20,7 @@ export const attachments = {
     },
     alertMessage: {
       id: 'an.application:attachments.alertMessage',
-      defaultMessage: `Mögulegt er að bæta við fylgiskjölum eftir að tilkynning hefur verið send til Sjúkratrygginga Íslands. 
-      Áður en hægt er að taka afstöðu til tilkynningar og bótaskyldu þurfa áverkavottorð eða tilkynningarseðill frá
-       Landspítala Íslands hins vegar að vera til staðar og bótaskyldu þarf áverkavottorð frá þeim lækni sem sá slasaða fyrst eða samskiptaseðill
-        vegna fyrstu komu frá Landspítala að vera til staðar.`,
+      defaultMessage: `Mögulegt er að bæta við fylgiskjölum eftir að tilkynning hefur verið send til Sjúkratrygginga Íslands. Áður en hægt er að taka afstöðu til tilkynningar og bótaskyldu og þarf áverkavottorð frá þeim lækni sem sá slasaða fyrst eða samskiptaseðill vegna fyrstu komu frá Landspítala að vera til staðar.`,
       description: 'Alert message when send certificate later is selecte',
     },
     uploadSubSectionTitle: {
