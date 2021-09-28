@@ -52,7 +52,13 @@ const StateModal = ({
     amount?: number,
     rejection?: string,
   ) => {
-    changeApplicationState(application, state, amount, rejection)
+    const app = await changeApplicationState(
+      application,
+      state,
+      amount,
+      rejection,
+    )
+    console.log(app)
     onVisibilityChange((isVisible) => !isVisible)
     onStateChange(state)
   }

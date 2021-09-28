@@ -163,6 +163,10 @@ export class ApplicationService {
       returning: true,
     })
 
+    const files = await this.fileService.getAllApplicationFiles(id)
+
+    updatedApplication?.setDataValue('files', files)
+
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({
       applicationId: id,

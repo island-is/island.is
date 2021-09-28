@@ -32,7 +32,7 @@ export const useApplicationState = () => {
     const prevState = application.state
 
     if (saveLoading === false && application) {
-      await updateApplicationMutation({
+      const { data } = await updateApplicationMutation({
         variables: {
           input: {
             id: application.id,
@@ -43,14 +43,18 @@ export const useApplicationState = () => {
           },
         },
       })
-    }
 
-    if (applicationFilters && setApplicationFilters) {
-      setApplicationFilters((preState) => ({
-        ...preState,
-        [prevState]: applicationFilters[prevState] - 1,
-        [state]: applicationFilters[state] + 1,
-      }))
+      if (data) {
+        if (applicationFilters && setApplicationFilters) {
+          setApplicationFilters((preState) => ({
+            ...preState,
+            [prevState]: applicationFilters[prevState] - 1,
+            [state]: applicationFilters[state] + 1,
+          }))
+        }
+
+        return data
+      }
     }
   }
 
