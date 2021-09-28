@@ -2,8 +2,6 @@ import {
   Application,
   ApplicationTemplateHelper,
   ApplicationTypes,
-  ExternalData,
-  FormValue,
   DefaultEvents,
   ApplicationStatus,
 } from '@island.is/application/core'
