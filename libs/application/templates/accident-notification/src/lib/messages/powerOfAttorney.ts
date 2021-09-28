@@ -29,19 +29,19 @@ export const powerOfAttorney = {
     },
     sectionTitle: {
       id: 'an.application:powerOfAttorney.type.sectionTitle',
-      defaultMessage: 'Fylgiskjöl',
+      defaultMessage: 'Umboð',
       description: 'Section title of upload section',
     },
     heading: {
       id: 'an.application:powerOfAttorney.type.heading',
-      defaultMessage: 'Fylgiskjöl',
+      defaultMessage: 'Umboð fyrir tilkynningu',
       description: 'Heading of upload section',
     },
   }),
   upload: defineMessages({
     heading: {
       id: 'an.application:powerOfAttorney.upload.heading',
-      defaultMessage: 'Fylgiskjöl',
+      defaultMessage: 'Hlaða upp umboði',
       description: 'Heading of upload section',
     },
     description: {
@@ -52,7 +52,7 @@ export const powerOfAttorney = {
     },
     sectionTitle: {
       id: 'an.application:powerOfAttorney.upload.sectionTitle',
-      defaultMessage: 'Hlaða upp skjali',
+      defaultMessage: 'Hlaða upp umboði',
       description: 'Section title of upload section',
     },
     uploadDescription: {

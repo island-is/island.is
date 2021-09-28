@@ -16,6 +16,9 @@ const States = {
   submitted: 'submitted',
   closed: 'closed',
 }
+export enum API_MODULE_ACTIONS {
+  sendApplication = 'sendApplication',
+}
 
 type PublicDebtPaymentPlanEvent =
   | { type: DefaultEvents.APPROVE }
@@ -81,6 +84,9 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
           actionCard: {
             title: application.name,
             description: application.description,
+          },
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
           },
           progress: 1,
           lifecycle: {

@@ -18,7 +18,7 @@ interface PageProps {
 }
 
 const AdminLayout = ({ children, className }: PageProps) => {
-  const { admin } = useContext(AdminContext)
+  const { admin, isAuthenticated } = useContext(AdminContext)
 
   useEffect(() => {
     document.title = 'Veita • Umsóknir um fjárhagsaðstoð'
@@ -35,10 +35,12 @@ const AdminLayout = ({ children, className }: PageProps) => {
     }
   }, [showNavMobile])
 
-  if (!admin) {
+  if (!isAuthenticated) {
     return <Login />
   }
-
+  if (!admin) {
+    return null
+  }
   return (
     <>
       <Nav showInMobile={showNavMobile} />

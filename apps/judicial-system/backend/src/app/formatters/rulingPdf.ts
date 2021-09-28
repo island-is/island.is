@@ -87,7 +87,15 @@ function constructRestrictionRulingPdf(
         judgeNameAndTitle: `${existingCase.judge?.name ?? '?'} ${
           existingCase.judge?.title ?? '?'
         }`,
-        courtLocation: lowercase(existingCase.courtLocation?.replace('.', '')),
+        courtLocation: existingCase.courtLocation
+          ? ` ${lowercase(
+              existingCase.courtLocation?.slice(
+                existingCase.courtLocation.length - 1,
+              ) === '.'
+                ? existingCase.courtLocation?.slice(0, -1)
+                : existingCase.courtLocation,
+            )}`
+          : '',
         caseNumber: existingCase.courtCaseNumber,
         startTime: formatDate(existingCase.courtStartDate, 'p'),
       }),
@@ -102,7 +110,7 @@ function constructRestrictionRulingPdf(
     })
   }
 
-  if (existingCase.courtAttendees) {
+  if (existingCase.courtAttendees?.trim()) {
     doc
       .text(' ')
       .font('Times-Bold')
@@ -455,7 +463,7 @@ function constructInvestigationRulingPdf(
     })
   }
 
-  if (existingCase.courtAttendees) {
+  if (existingCase.courtAttendees?.trim()) {
     doc
       .text(' ')
       .font('Times-Bold')

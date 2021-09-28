@@ -114,6 +114,32 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
               />
             </Box>
           )}
+          {!loading &&
+            !error &&
+            (financeStatusData?.organizations?.length === 0 ||
+              financeStatusData?.organizations === null) && (
+              <Box marginTop={2}>
+                <T.Table>
+                  <ExpandHeader
+                    data={[
+                      { value: formatMessage(m.feeCategory) },
+                      { value: formatMessage(m.guardian) },
+                      { value: formatMessage(m.status), align: 'right' },
+                    ]}
+                  />
+                  <T.Body>
+                    <ExpandRow
+                      last
+                      data={[
+                        { value: formatMessage(m.total) },
+                        { value: '' },
+                        { value: getChargeTypeTotal(), align: 'right' },
+                      ]}
+                    />
+                  </T.Body>
+                </T.Table>
+              </Box>
+            )}
           {financeStatusData?.organizations?.length > 0 ? (
             <>
               <Hidden print={true}>
