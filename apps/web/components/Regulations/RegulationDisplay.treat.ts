@@ -92,6 +92,22 @@ diffStyling(diffText)
 
 // ---------------------------------------------------------------------------
 
+export const disclaimer = style({
+  // …
+})
+export const disclaimerParagraph = style({
+  fontSize: 16,
+  lineHeight: typography.baseLineHeight,
+
+  selectors: {
+    '&:not(:first-child)': {
+      marginTop: theme.spacing[2],
+    },
+  },
+})
+
+// ---------------------------------------------------------------------------
+
 export const sidebarScroller = style({
   overflowY: 'auto',
   // maxHeight: 'calc(100vh - var(--FixedNav-height-spaced))',

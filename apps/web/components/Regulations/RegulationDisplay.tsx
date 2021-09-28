@@ -13,6 +13,7 @@ import { RegulationStatus } from './RegulationStatus'
 import { Appendixes } from './Appendixes'
 import { HTMLBox } from '@island.is/regulations/react'
 import { CommentsBox } from './CommentsBox'
+import { Disclaimer } from './Disclaimer'
 import { RegulationInfoBox } from './RegulationInfoBox'
 import { RegulationEffectsBox } from './RegulationEffectsBox'
 import { RegulationChangelog } from './RegulationChangelog'
@@ -99,12 +100,10 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
                 <span className={s.titleText}>{regulation.title}</span>
               )}
             </Text>
-
             <HTMLBox
               className={s.bodyText + ' ' + s.diffText}
               html={regulation.text}
             />
-
             <Appendixes
               key={key}
               legend={txt('appendixesTitle')}
@@ -112,12 +111,15 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
               appendixes={regulation.appendixes}
               diffing={!!regulation.showingDiff}
             />
-
             <CommentsBox
               title={txt('commentsTitle')}
               content={regulation.comments}
             />
           </div>
+          <Disclaimer
+            title={txt('disclaimerTitle')}
+            content={txt('disclaimerMd')}
+          />
         </>
       }
       sidebar={
