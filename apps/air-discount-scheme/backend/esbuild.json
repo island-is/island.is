@@ -13,7 +13,7 @@
     "@nestjs/microservices/microservices-module",
     "apollo-server-fastify",
     "@elastic/elasticsearch",
-    "fastify-swagger",
+    "@nestjs/swagger",
     "@nestjs/mongoose",
     "@nestjs/typeorm",
     "dd-trace",
