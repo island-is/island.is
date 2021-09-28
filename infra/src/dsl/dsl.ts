@@ -10,8 +10,8 @@ import {
   Resources,
   ReplicaCount,
   PostgresInfo,
-  OpsEnv,
   HealthProbe,
+  Features,
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -41,11 +41,17 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
 
+  features(features: Partial<Features>) {
+    this.serviceDef.features = features
+    return this
+  }
+
   constructor(name: string) {
     this.serviceDef = {
       liveness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
       readiness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
       env: {},
+      features: {},
       name: name,
       grantNamespaces: [],
       grantNamespacesEnabled: false,
@@ -209,6 +215,7 @@ const postgresIdentifier = (id: string) => id.replace(/[\W\s]/gi, '_')
 export const ref = (renderer: (env: Context) => string) => {
   return renderer
 }
+
 export const service = <Service extends string>(
   name: Service,
 ): ServiceBuilder<Service> => {
