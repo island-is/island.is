@@ -57,3 +57,5 @@ export const getNextPeriod = {
   year:
     nextMonth === 0 ? new Date().getFullYear() + 1 : new Date().getFullYear(),
 }
+
+export const apiBasePath = 'api'
