@@ -9,7 +9,7 @@ import { ApplicationFiltersContext } from '../components/ApplicationFiltersProvi
 import { AdminContext } from '../components/AdminProvider/AdminProvider'
 
 interface SaveData {
-  application: Application
+  updateApplication: Application
 }
 
 export const useApplicationState = () => {
@@ -53,7 +53,7 @@ export const useApplicationState = () => {
           }))
         }
 
-        return data
+        return data.updateApplication
       }
     }
   }

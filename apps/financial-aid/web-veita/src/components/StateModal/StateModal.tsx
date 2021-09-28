@@ -20,12 +20,8 @@ import { useApplicationState } from '../../utils/useApplicationState'
 interface Props {
   isVisible: boolean
   onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
-  onStateChange: (applicationState: ApplicationState) => void
   application: Application
-}
-
-interface SaveData {
-  application: Application
+  setApplication: any
 }
 
 interface InputType {
@@ -36,8 +32,8 @@ interface InputType {
 const StateModal = ({
   isVisible,
   onVisibilityChange,
-  onStateChange,
   application,
+  setApplication,
 }: Props) => {
   const [inputType, setInputType] = useState<InputType>({
     show: false,
@@ -52,15 +48,15 @@ const StateModal = ({
     amount?: number,
     rejection?: string,
   ) => {
-    const app = await changeApplicationState(
+    const updatedApplication = await changeApplicationState(
       application,
       state,
       amount,
       rejection,
     )
-    console.log(app)
+    setApplication(updatedApplication)
+
     onVisibilityChange((isVisible) => !isVisible)
-    onStateChange(state)
   }
 
   const closeModal = (): void => {
