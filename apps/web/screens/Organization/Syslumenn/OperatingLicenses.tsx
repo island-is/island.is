@@ -2,11 +2,13 @@
 import React, { useEffect, useState, useRef, useReducer } from 'react'
 import { useApolloClient } from '@apollo/client/react'
 import {
+  AlertBanner,
   Box,
   Button,
   GridColumn,
   GridRow,
   Input,
+  LoadingDots,
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
@@ -55,7 +57,10 @@ const SEARCH_REDUCER_ACTION_TYPES = {
 const searchReducer = (state: SearchState, action): SearchState => {
   switch (action.type) {
     case SEARCH_REDUCER_ACTION_TYPES.START_LOADING:
-      return { ...state, isLoading: true }
+      return { ...state,
+        isLoading: true,
+        hasError: false,
+      }
     case SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_FIRST_PAGE:
       // TODO: Do Request-Response matching
       return { ...state,
@@ -64,6 +69,7 @@ const searchReducer = (state: SearchState, action): SearchState => {
         hasNextPage: action.hasNextPage,
         totalCount: action.totalCount,
         isLoading: false,
+        hasError: false,
       }
     case SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_NEXT_PAGE:
       return { ...state,
@@ -72,13 +78,20 @@ const searchReducer = (state: SearchState, action): SearchState => {
         hasNextPage: action.hasNextPage,
         totalCount: action.totalCount,
         isLoading: false,
+        hasError: false,
       }
     case SEARCH_REDUCER_ACTION_TYPES.SEARCH_ERROR:
       console.error(action.error)
-      return { ...state, hasError: true, isLoading: false }
+      return { ...state,
+        hasError: true,
+        isLoading: false
+      }
     default: {
       console.error('Unhandled search reducer action type.')
-      return { ...state, hasError: true, isLoading: false }
+      return { ...state,
+        hasError: true,
+        isLoading: false
+      }
     }
   }
 }
@@ -206,10 +219,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   }
 
   const onLoadMore = () => {
-    // TODO: Implement some loading animation.
     setCurrentPageNumber(currentPageNumber + 1)
   }
-
 
   return (
     <OrganizationWrapper
@@ -236,7 +247,6 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           {subpage.title}
         </Text>
       </Box>
-      {richText(subpage.description as SliceType[])}
       <Box
         background="blue100"
         borderRadius="large"
@@ -247,18 +257,13 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
       >
         <Input
           name="operatingLicenseSearchInput"
-          placeholder={n('filterSearch', 'Leita')}
+          placeholder={n('operatingLicensesFilterSearch', 'Leita')}
           backgroundColor={['blue', 'blue', 'white']}
           size="sm"
           icon="search"
           iconType="outline"
           onChange={(event) => onSearch(event.target.value)}
         />
-        {search.isLoading ? 'LOADING...' : 'DONE'}
-        <br></br>
-        {search.results.length + " / " + search.totalCount}
-        <br></br>
-        {search.hasError && 'ERROR!!!'}
       </Box>
       {search.results.map((operatingLicense, index) => {
         return (
@@ -296,6 +301,25 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           </Box>
         )
       })}
+      {search.hasError &&
+        <AlertBanner
+          title={n('operatingLicensesErrorTitle', 'Villa')}
+          description={n('operatingLicensesErrorDescription', 'Villa kom upp við að sækja rekstrarleyfi.')}
+          variant="error"
+        />
+      }
+      <Box
+        display="flex"
+        justifyContent="center"
+        // TODO: Fix the UI so that id does not shift when pushing the "Load more" button.
+        paddingTop={2}
+        paddingBottom={2}
+        textAlign="center"
+      >
+        {search.isLoading &&
+          <LoadingDots />
+        }
+      </Box>
       <Box
         display="flex"
         justifyContent="center"
@@ -303,8 +327,11 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         textAlign="center"
       >
         {search.hasNextPage && (
-          <Button onClick={() => onLoadMore()}>
-            {n('seeMore', 'Sjá meira') } (
+          <Button
+            onClick={() => onLoadMore()}
+            disabled={search.isLoading}
+          >
+            {n('operatingLicensesSeeMore', 'Sjá fleiri')} (
             {search.totalCount - search.results.length})
           </Button>
         )}
