@@ -50,6 +50,7 @@ export const CourtRecord: React.FC = () => {
     courtRecordStartDateIsValid,
     setCourtRecordStartDateIsValid,
   ] = useState(true)
+  const [courtLocationErrorMessage, setCourtLocationMessage] = useState('')
   const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] = useState(
     '',
   )
@@ -106,6 +107,18 @@ export const CourtRecord: React.FC = () => {
       const theCase = data.case
 
       autofill('courtStartDate', new Date().toString(), theCase)
+
+      if (theCase.court) {
+        autofill(
+          'courtLocation',
+          `í ${
+            theCase.court.name.indexOf('dómur') > -1
+              ? theCase.court.name.replace('dómur', 'dómi')
+              : theCase.court.name
+          }`,
+          theCase,
+        )
+      }
 
       autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
 
@@ -181,6 +194,47 @@ export const CourtRecord: React.FC = () => {
                       updateCase,
                     )
                   }}
+                  required
+                />
+              </Box>
+              <Box marginBottom={3}>
+                <Input
+                  data-testid="courtLocation"
+                  name="courtLocation"
+                  tooltip={formatMessage(
+                    rcCourtRecord.sections.courtLocation.tooltip,
+                  )}
+                  label={formatMessage(
+                    rcCourtRecord.sections.courtLocation.label,
+                  )}
+                  defaultValue={workingCase.courtLocation}
+                  placeholder={formatMessage(
+                    rcCourtRecord.sections.courtLocation.placeholder,
+                  )}
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'courtLocation',
+                      event,
+                      ['empty'],
+                      workingCase,
+                      setWorkingCase,
+                      courtLocationErrorMessage,
+                      setCourtLocationMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'courtLocation',
+                      event.target.value,
+                      ['empty'],
+                      workingCase,
+                      updateCase,
+                      setCourtLocationMessage,
+                    )
+                  }
+                  errorMessage={courtLocationErrorMessage}
+                  hasError={courtLocationErrorMessage !== ''}
+                  autoComplete="off"
                   required
                 />
               </Box>
@@ -460,6 +514,7 @@ export const CourtRecord: React.FC = () => {
               nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
               nextIsDisabled={
                 !courtRecordStartDateIsValid ||
+                !validate(workingCase.courtLocation ?? '', 'empty').isValid ||
                 !validate(workingCase.prosecutorDemands ?? '', 'empty')
                   .isValid ||
                 !validate(workingCase.litigationPresentations ?? '', 'empty')
