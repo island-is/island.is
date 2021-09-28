@@ -155,7 +155,7 @@ describe('DrivingLicenseService', () => {
     it('all checks should pass for applicable students', async () => {
       const response = await service.getApplicationEligibility(
         MOCK_NATIONAL_ID,
-        'B',
+        'B-full',
       )
 
       expect(response).toStrictEqual({
@@ -180,7 +180,7 @@ describe('DrivingLicenseService', () => {
     it('checks should fail for non-applicable students', async () => {
       const response = await service.getApplicationEligibility(
         MOCK_NATIONAL_ID_EXPIRED,
-        'B',
+        'B-full',
       )
 
       expect(response).toStrictEqual({

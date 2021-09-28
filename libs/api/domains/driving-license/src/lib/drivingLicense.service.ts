@@ -263,7 +263,7 @@ export class DrivingLicenseService {
        canApplyResult = (await this.drivingLicenseApi.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
         {
           kennitala: nationalId,
-          category: type,
+          category: 'B',
         },
       )) as unknown
     } else if (type === 'B-temp') {
