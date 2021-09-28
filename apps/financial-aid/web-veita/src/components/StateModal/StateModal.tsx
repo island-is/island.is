@@ -54,7 +54,9 @@ const StateModal = ({
       amount,
       rejection,
     )
-    setApplication(updatedApplication)
+    if (updatedApplication) {
+      setApplication(updatedApplication)
+    }
 
     onVisibilityChange((isVisible) => !isVisible)
   }
