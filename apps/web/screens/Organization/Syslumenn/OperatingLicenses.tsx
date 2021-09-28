@@ -248,12 +248,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         </Text>
       </Box>
       <Box
-        background="blue100"
-        borderRadius="large"
-        paddingX={4}
-        paddingY={3}
-        marginTop={4}
-        marginBottom={4}
+        marginBottom={6}
       >
         <Input
           name="operatingLicenseSearchInput"
