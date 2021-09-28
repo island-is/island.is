@@ -291,7 +291,11 @@ function constructRestrictionRulingPdf(
     })
     .text(' ')
     .text(
-      `${formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi')} ${
+      `${formatAppeal(
+        existingCase.prosecutorAppealDecision,
+        'Sækjandi',
+        existingCase.accusedGender,
+      )} ${
         existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
           ? existingCase.prosecutorAppealAnnouncement ?? ''
           : ''
@@ -302,7 +306,11 @@ function constructRestrictionRulingPdf(
     )
     .text(' ')
     .text(
-      `${formatAppeal(existingCase.accusedAppealDecision, 'Varnaraðili')} ${
+      `${formatAppeal(
+        existingCase.accusedAppealDecision,
+        'Varnaraðili',
+        existingCase.accusedGender,
+      )} ${
         existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
           ? existingCase.accusedAppealAnnouncement ?? ''
           : ''
@@ -655,7 +663,11 @@ function constructInvestigationRulingPdf(
     })
     .text(' ')
     .text(
-      `${formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi')} ${
+      `${formatAppeal(
+        existingCase.prosecutorAppealDecision,
+        'Sækjandi',
+        existingCase.accusedGender,
+      )} ${
         existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
           ? existingCase.prosecutorAppealAnnouncement ?? ''
           : ''
@@ -672,7 +684,11 @@ function constructInvestigationRulingPdf(
     doc
       .text(' ')
       .text(
-        `${formatAppeal(existingCase.accusedAppealDecision, 'Varnaraðili')} ${
+        `${formatAppeal(
+          existingCase.accusedAppealDecision,
+          'Varnaraðili',
+          existingCase.accusedGender,
+        )} ${
           existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
             ? existingCase.accusedAppealAnnouncement ?? ''
             : ''

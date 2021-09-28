@@ -12,11 +12,9 @@ import {
   CaseDecision,
   CaseType,
   SessionArrangements,
-} from '@island.is/judicial-system/types'
-import type {
-  CaseCustodyRestrictions,
   CaseGender,
 } from '@island.is/judicial-system/types'
+import type { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 function custodyProvisionsOrder(p: CaseCustodyProvisions) {
   switch (p) {
@@ -70,14 +68,22 @@ export function formatCustodyProvisions(
 export function formatAppeal(
   appealDecision: CaseAppealDecision | undefined,
   stakeholder: string,
+  stakeholderGender?: CaseGender,
 ): string {
+  const genderedStakeholder =
+    !stakeholderGender || stakeholderGender === CaseGender.MALE
+      ? 'hann'
+      : stakeholderGender === CaseGender.FEMALE
+      ? 'hún'
+      : 'hán'
+
   switch (appealDecision) {
     case CaseAppealDecision.APPEAL:
-      return `${stakeholder} lýsir því yfir að hann kæri úrskurðinn til Landsréttar.`
+      return `${stakeholder} lýsir því yfir að ${genderedStakeholder} kæri úrskurðinn til Landsréttar.`
     case CaseAppealDecision.ACCEPT:
       return `${stakeholder} unir úrskurðinum.`
     case CaseAppealDecision.POSTPONE:
-      return `${stakeholder} lýsir því yfir að hann taki sér lögbundinn kærufrest.`
+      return `${stakeholder} lýsir því yfir að ${genderedStakeholder} taki sér lögbundinn kærufrest.`
     default:
       return ''
   }
