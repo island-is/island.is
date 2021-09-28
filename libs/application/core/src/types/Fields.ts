@@ -38,6 +38,7 @@ export interface Option {
   tooltip?: FormText
   excludeOthers?: boolean
   illustration?: React.FC
+  disabled?: boolean
 }
 
 interface SelectOption {
