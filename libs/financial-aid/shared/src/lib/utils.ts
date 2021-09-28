@@ -1,3 +1,4 @@
+import { User } from '@island.is/shared/types'
 import { months } from './const'
 
 export const getFileType = (fileName: string) => {
@@ -25,3 +26,9 @@ export const formatPhoneNumber = (phoneNumber: string) => {
 
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
+
+export const decodeToken = (token: string) => {
+  const base64Url = token.split('.')[1]
+  const base64 = base64Url.replace('-', '+').replace('_', '/')
+  return JSON.parse(Buffer.from(base64, 'base64').toString('binary'))
+}

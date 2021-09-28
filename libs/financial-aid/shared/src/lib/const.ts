@@ -5,6 +5,9 @@ export const CSRF_COOKIE_NAME = 'financial-aid.csrf'
 
 export const ACCESS_TOKEN_COOKIE_NAME = 'financial-aid.token'
 
+export const IDENTITY_SERVER_SESSION_TOKEN_COOKIE_NAME =
+  'next-auth.session-token'
+
 export const AllowedFakeUsers = [
   '0000000000', // User with no current application
   '0000000001', // User with an application which is in progress

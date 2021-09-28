@@ -29,7 +29,7 @@ export interface Staff {
   municipalityId: string
   role: StaffRole
   active: boolean
-  phoneNumber: string
+  phoneNumber?: string
 }
 
 export interface MunicipalitySettings {
@@ -53,7 +53,7 @@ export interface NavigationProps {
 export interface User {
   nationalId: string
   name: string
-  phoneNumber: string
+  phoneNumber?: string
   folder: string
   service: RolesRule
   currentApplication?: CurrentApplication
@@ -117,7 +117,7 @@ export interface CreateApplicationFile {
 export interface CreateApplication {
   nationalId: string
   name: string
-  phoneNumber: string
+  phoneNumber?: string
   email: string
   homeCircumstances: HomeCircumstances
   student: boolean
@@ -151,7 +151,7 @@ export interface Application {
   modified: string
   nationalId: string
   name: string
-  phoneNumber: string
+  phoneNumber?: string
   email: string
   homeCircumstances: HomeCircumstances
   student: boolean
