@@ -2,8 +2,7 @@ import { EnvironmentConfigs } from './dsl/types/charts'
 
 export const Envs: EnvironmentConfigs = {
   dev: {
-    auroraHost:
-      'dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
+    auroraHost: 'postgres-applications.internal',
     domain: 'dev01.devland.is',
     type: 'dev',
     defaultMaxReplicas: 3,
@@ -33,8 +32,7 @@ export const Envs: EnvironmentConfigs = {
     },
   },
   staging: {
-    auroraHost:
-      'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com',
+    auroraHost: 'postgres-applications.internal',
     domain: 'staging01.devland.is',
     type: 'staging',
     defaultMaxReplicas: 3,
@@ -63,8 +61,7 @@ export const Envs: EnvironmentConfigs = {
     },
   },
   prod: {
-    auroraHost:
-      'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com',
+    auroraHost: 'postgres-applications.internal',
     domain: 'island.is',
     type: 'prod',
     defaultMaxReplicas: 10,
