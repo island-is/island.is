@@ -4,6 +4,7 @@ import {
   Button,
   Link,
   ResponsiveSpace,
+  Text,
 } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
@@ -39,9 +40,11 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
         message={
           <>
             <Box component="span" display="block">
-              {description
-                ? formatText(description, application, formatMessage)
-                : undefined}
+              <Text variant="small">
+                {description
+                  ? formatText(description, application, formatMessage)
+                  : undefined}
+              </Text>
             </Box>
             {links && (
               <Box component="span" display="flex" marginTop={2}>
