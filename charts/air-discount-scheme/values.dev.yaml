@@ -83,12 +83,12 @@ air-discount-scheme-backend:
       hosts:
         - host: 'loftbru.dev01.devland.is'
           paths:
-            - '/api/swagger'
-            - '/api/public'
+            - '/api/swagger/'
+            - '/api/public/'
         - host: 'loftbru-cf.dev01.devland.is'
           paths:
-            - '/api/swagger'
-            - '/api/public'
+            - '/api/swagger/'
+            - '/api/public/'
   initContainer:
     containers:
       - args:
