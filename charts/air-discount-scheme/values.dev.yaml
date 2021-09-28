@@ -57,7 +57,7 @@ air-discount-scheme-api:
 air-discount-scheme-backend:
   enabled: true
   env:
-    DB_HOST: 'dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'air_discount_scheme_backend'
     DB_USER: 'air_discount_scheme_backend'
     ENVIRONMENT: 'dev'
@@ -97,7 +97,7 @@ air-discount-scheme-backend:
         command:
           - 'npx'
     env:
-      DB_HOST: 'dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'air_discount_scheme_backend'
       DB_USER: 'air_discount_scheme_backend'
     secrets:
