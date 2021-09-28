@@ -10,7 +10,6 @@ import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { Bullets } from '../../'
 import * as styles from './WarningSection.treat'
 import { MessageDescriptor } from '@formatjs/intl'
-import { m } from '../../../lib/messages'
 
 export interface Step {
   key: string
@@ -26,7 +25,7 @@ type WarningSectionProps = {
 
 const WarningSection: FC<WarningSectionProps> = ({
   application,
-  step: { key, state, description, title },
+  step: { description, title },
 }) => {
   const { formatMessage } = useLocale()
 
@@ -64,11 +63,6 @@ const WarningSection: FC<WarningSectionProps> = ({
           <Text marginTop={1} variant="default">
             {formatText(description, application, formatMessage)}
           </Text>
-          {key === 'picture' && (
-            <Box marginTop={2}>
-              <Bullets application={application} />{' '}
-            </Box>
-          )}
         </Box>
         <Box pointerEvents="none">
           <Tag variant="red">

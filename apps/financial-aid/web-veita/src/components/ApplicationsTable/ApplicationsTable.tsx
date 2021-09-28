@@ -15,10 +15,9 @@ import { TableHeadersProps } from '@island.is/financial-aid-web/veita/src/routes
 interface PageProps {
   applications: Application[]
   headers: TableHeadersProps[]
-  className?: string
 }
 
-const ApplicationsTable = ({ applications, headers, className }: PageProps) => {
+const ApplicationsTable = ({ applications, headers }: PageProps) => {
   const router = useRouter()
 
   if (applications && applications.length > 0) {
@@ -27,11 +26,10 @@ const ApplicationsTable = ({ applications, headers, className }: PageProps) => {
         <table
           className={cn({
             [`${styles.tableContainer}`]: true,
-            [`${className}`]: true,
           })}
           key={router.pathname}
         >
-          <thead>
+          <thead className={`contentUp delay-50`}>
             <tr>
               {headers.map((item, index) => (
                 <TableHeaders
@@ -44,8 +42,12 @@ const ApplicationsTable = ({ applications, headers, className }: PageProps) => {
           </thead>
 
           <tbody className={styles.tableBody}>
-            {applications.map((item: Application) => (
-              <TableBody application={item} key={'tableBody-' + item.id} />
+            {applications.map((item: Application, index) => (
+              <TableBody
+                application={item}
+                index={index}
+                key={'tableBody-' + item.id}
+              />
             ))}
           </tbody>
         </table>
