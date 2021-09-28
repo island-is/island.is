@@ -47,7 +47,47 @@ applicationEvents {
 export const GetApplicationQuery = gql`
   query GetFinancialAidApplicationQuery($input: ApplicationInput!) {
     application(input: $input) {
-      ${application}
+      id
+      nationalId
+      created
+      modified
+      name
+      phoneNumber
+      email
+      homeCircumstances
+      student
+      employment
+      hasIncome
+      usePersonalTaxCredit
+      bankNumber
+      ledger
+      accountNumber
+      interview
+      employmentCustom
+      homeCircumstancesCustom
+      files {
+        id
+        applicationId
+        name
+        size
+        created
+        type
+      }
+      state
+      formComment
+      studentCustom
+      amount
+      rejection
+      staff {
+        name
+      }
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
     }
   }
 `
@@ -102,7 +142,47 @@ export const CreateApplicationQuery = gql`
 export const CreateApplicationEventQuery = gql`
   mutation CreateApplicationEvent($input: CreateApplicationEventInput!) {
     createApplicationEvent(input: $input) {
-      ${application}
+      id
+      nationalId
+      created
+      modified
+      name
+      phoneNumber
+      email
+      homeCircumstances
+      student
+      employment
+      hasIncome
+      usePersonalTaxCredit
+      bankNumber
+      ledger
+      accountNumber
+      interview
+      employmentCustom
+      homeCircumstancesCustom
+      files {
+        id
+        applicationId
+        name
+        size
+        created
+        type
+      }
+      state
+      formComment
+      studentCustom
+      amount
+      rejection
+      staff {
+        name
+      }
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
     }
   }
 `
