@@ -142,9 +142,7 @@ export class ApplicationController {
   async createEvent(
     @Body() applicationEvent: CreateApplicationEventDto,
   ): Promise<ApplicationModel> {
-    const createApplicationEvent = await this.applicationEventService.create(
-      applicationEvent,
-    )
+    await this.applicationEventService.create(applicationEvent)
 
     const application = await this.applicationService.findById(
       applicationEvent.applicationId,

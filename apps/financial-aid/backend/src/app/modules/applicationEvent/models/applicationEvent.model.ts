@@ -5,7 +5,6 @@ import {
   Model,
   Table,
   ForeignKey,
-  BelongsTo,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
