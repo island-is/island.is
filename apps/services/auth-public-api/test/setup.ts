@@ -9,10 +9,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
 import { logger } from '@island.is/logging'
 
-type Options = {
-  withAuth?: boolean
-  server?: Partial<TestServerOptions>
-}
+type Options = { withAuth?: boolean } & Partial<TestServerOptions>
 
 export let app: INestApplication
 let sequelize: Sequelize
@@ -33,29 +30,30 @@ export const truncate = async () => {
         cascade: true,
         truncate: true,
         force: true,
+        logging: false,
       })
     }),
   )
 }
 
 export const setup = async (
-  { withAuth, server }: Options = { withAuth: true },
+  { withAuth = true, ...options }: Options = { withAuth: true },
 ) => {
   if (withAuth) {
     app = await testServerActivateAuthGuards({
       appModule: AppModule,
-      ...server,
+      ...options,
     })
   } else {
     app = await testServer({
       appModule: AppModule,
-      ...server,
+      ...options,
     })
   }
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
   try {
-    await sequelize.sync()
+    await sequelize.sync({logging: false})
   } catch (err) {
     logger.error('Migration error', err)
   }
