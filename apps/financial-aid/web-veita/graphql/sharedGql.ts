@@ -47,7 +47,7 @@ applicationEvents {
 export const GetApplicationQuery = gql`
   query GetFinancialAidApplicationQuery($input: ApplicationInput!) {
     application(input: $input) {
-     ${application}
+      ${application}
     }
   }
 `
