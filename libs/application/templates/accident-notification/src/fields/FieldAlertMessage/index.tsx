@@ -39,13 +39,13 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
         title={formatText(title, application, formatMessage)}
         message={
           <>
-            <Box component="span" display="block">
-              <Text variant="small">
-                {description
-                  ? formatText(description, application, formatMessage)
-                  : undefined}
-              </Text>
-            </Box>
+            {description && (
+              <Box component="span" display="block">
+                <Text variant="small">
+                  {formatText(description, application, formatMessage)}
+                </Text>
+              </Box>
+            )}
             {links && (
               <Box component="span" display="flex" marginTop={2}>
                 {links.map((link, index) => (
