@@ -7,7 +7,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/financial-aid/auth'
-import { RolesRule } from '@island.is/financial-aid/shared/lib'
+import { apiBasePath, RolesRule } from '@island.is/financial-aid/shared/lib'
 import type { User } from '@island.is/financial-aid/shared/lib'
 
 import { GetSignedUrlDto, CreateFilesDto } from './dto'
@@ -15,7 +15,7 @@ import { CreateFilesModel, SignedUrlModel } from './models'
 import { FileService } from './file.service'
 
 @UseGuards(JwtAuthGuard)
-@Controller('api/file')
+@Controller(`${apiBasePath}/file`)
 @ApiTags('files')
 export class FileController {
   constructor(private readonly fileService: FileService) {}

@@ -13,6 +13,7 @@ import {
   CreateApplicationEvent,
   ApplicationFilters,
   CreateFilesResponse,
+  apiBasePath,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -20,7 +21,7 @@ import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
-  baseURL = `${environment.backend.url}/api`
+  baseURL = `${environment.backend.url}/${apiBasePath}`
 
   willSendRequest(req: RequestOptions) {
     req.headers.set('authorization', this.context.req.headers.authorization)

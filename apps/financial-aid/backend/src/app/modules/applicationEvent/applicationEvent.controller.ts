@@ -17,9 +17,10 @@ import { ApplicationEventModel } from './models'
 import { CreateApplicationEventDto } from './dto'
 
 import { JwtAuthGuard } from '@island.is/financial-aid/auth'
+import { apiBasePath } from '@island.is/financial-aid/shared/lib'
 
 @UseGuards(JwtAuthGuard)
-@Controller('api')
+@Controller(apiBasePath)
 @ApiTags('applicationEvents')
 export class ApplicationEventController {
   constructor(

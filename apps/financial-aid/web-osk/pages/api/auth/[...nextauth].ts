@@ -75,7 +75,7 @@ async function jwt(token: GenericObject, user: AuthUser) {
       refreshToken: user.refreshToken,
       idToken: user.idToken,
       isRefreshTokenExpired: false,
-      folder: uuid(),
+      folder: token.folder ?? uuid(),
       service: RolesRule.OSK,
       returnUrl: ReturnUrl.APPLICATION,
     }
@@ -129,7 +129,7 @@ async function session(session: AuthSession, user: AuthUser) {
   session.accessToken = user.accessToken
   session.idToken = user.idToken
   const decoded = decodeToken(session.accessToken)
-  session.expires = new Date(decoded.exp * 1000).toString()
+  session.expires = JSON.stringify(new Date(decoded.exp * 1000))
   session.scope = decoded.scope
   return session
 }

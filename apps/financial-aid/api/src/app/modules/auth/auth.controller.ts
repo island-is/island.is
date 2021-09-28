@@ -65,6 +65,7 @@ const REDIRECT_COOKIE: Cookie = {
   },
 }
 
+// TODO: REMOVE
 @Controller('api/auth')
 export class AuthController {
   constructor(

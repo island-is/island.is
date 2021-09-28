@@ -59,9 +59,7 @@ export class UserResolver {
     @Parent() user: User,
   ): Promise<CurrentApplicationModel | null> {
     // Local development
-    this.logger.debug(
-      `Getting current application for nationalId: ${user.nationalId}`,
-    )
+    this.logger.debug('Getting current application for nationalId')
     if (environment.auth.allowFakeUsers && user.nationalId in this.fakeUsers) {
       return this.fakeUsers[user.nationalId]
     }
@@ -70,7 +68,7 @@ export class UserResolver {
 
   @ResolveField('staff', () => StaffModel)
   async staff(@Parent() user: User): Promise<StaffModel> {
-    this.logger.debug(`Getting staff for nationalId: ${user.nationalId}`)
+    this.logger.debug('Getting staff for nationalId')
     return await this.userService.getStaff(user.nationalId)
   }
 }

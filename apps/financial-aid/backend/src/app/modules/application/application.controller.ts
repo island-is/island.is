@@ -8,6 +8,7 @@ import {
   Put,
   NotFoundException,
   Query,
+  Inject,
 } from '@nestjs/common'
 
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
@@ -27,17 +28,24 @@ import {
 
 import { ApplicationGuard } from '../../guards/application.guard'
 
-import type { User } from '@island.is/financial-aid/shared/lib'
+import { apiBasePath, User } from '@island.is/financial-aid/shared/lib'
+
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   ApplicationFilters,
   RolesRule,
 } from '@island.is/financial-aid/shared/lib'
 
-@Controller('api')
+@Controller(apiBasePath)
 @ApiTags('applications')
 export class ApplicationController {
-  constructor(private readonly applicationService: ApplicationService) {}
+  constructor(
+    private readonly applicationService: ApplicationService,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
+  ) {}
 
   @UseGuards(TokenGuard)
   @Get('getCurrentApplication')
@@ -46,6 +54,7 @@ export class ApplicationController {
     description: 'Checks if user has a current application for this period',
   })
   async getCurrentApplication(@Query('nationalId') nationalId: string) {
+    this.logger.debug('Application controller: Getting current application')
     return await this.applicationService.getCurrentApplication(nationalId)
   }
 
@@ -58,6 +67,7 @@ export class ApplicationController {
     description: 'Gets all existing applications',
   })
   getAll(): Promise<ApplicationModel[]> {
+    this.logger.debug('Application controller: Getting all applications')
     return this.applicationService.getAll()
   }
 
@@ -68,6 +78,7 @@ export class ApplicationController {
     description: 'Get application',
   })
   async getById(@Param('id') id: string) {
+    this.logger.debug(`Application controller: Getting application by id ${id}`)
     const application = await this.applicationService.findById(id)
 
     if (!application) {
@@ -84,6 +95,7 @@ export class ApplicationController {
     description: 'Gets all existing applications filters',
   })
   getAllFilters(): Promise<ApplicationFilters> {
+    this.logger.debug('Application controller: Getting application filters')
     return this.applicationService.getAllFilters()
   }
 
@@ -97,6 +109,9 @@ export class ApplicationController {
     @Param('id') id: string,
     @Body() applicationToUpdate: UpdateApplicationDto,
   ): Promise<ApplicationModel> {
+    this.logger.debug(
+      `Application controller: Updating application with id ${id}`,
+    )
     const {
       numberOfAffectedRows,
       updatedApplication,
@@ -119,6 +134,7 @@ export class ApplicationController {
     @CurrentHttpUser() user: User,
     @Body() application: CreateApplicationDto,
   ): Promise<ApplicationModel> {
+    this.logger.debug('Application controller: Creating application')
     return this.applicationService.create(application, user)
   }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { GridContainer, Button, Text, Box } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
@@ -13,15 +13,7 @@ interface Props {
 
 const Login = ({ headline, about }: Props) => {
   const router = useRouter()
-  const [session, loading] = useSession()
-
-  useEffect(() => {
-    const isUserLoggedIn =
-      session && new Date(session.expires) > new Date() && router
-    if (isUserLoggedIn) {
-      router.push('/umsokn')
-    }
-  }, [session, loading])
+  const [session] = useSession()
 
   return (
     <GridContainer>

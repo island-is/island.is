@@ -5,8 +5,9 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { StaffService } from './staff.service'
 import { StaffModel } from './models'
 import { TokenGuard } from '@island.is/financial-aid/auth'
+import { apiBasePath } from '@island.is/financial-aid/shared/lib'
 
-@Controller('api/staff')
+@Controller(`${apiBasePath}/staff`)
 @ApiTags('staff')
 export class StaffController {
   constructor(private readonly staffService: StaffService) {}

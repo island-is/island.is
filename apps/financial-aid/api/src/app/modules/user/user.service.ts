@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common'
 import { environment } from '../../../environments'
 import { CurrentApplicationModel } from '../application'
 import { StaffModel } from '../staff'
+import { apiBasePath } from '@island.is/financial-aid/shared/lib'
 
 @Injectable()
 export class UserService {
@@ -33,7 +34,7 @@ export class UserService {
   }
 
   private async fetchRequest(path: string) {
-    return await fetch(`${environment.backend.url}/api/${path}`, {
+    return await fetch(`${environment.backend.url}/${apiBasePath}/${path}`, {
       headers: { authorization: `Bearer ${environment.auth.secretToken}` },
     })
   }

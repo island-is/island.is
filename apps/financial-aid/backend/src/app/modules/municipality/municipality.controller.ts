@@ -13,13 +13,14 @@ import { MunicipalityService } from './municipality.service'
 import { MunicipalityModel } from './models'
 
 import {
+  apiBasePath,
   Municipality,
   MunicipalitySettings,
 } from '@island.is/financial-aid/shared/lib'
 
 import { MunicipalityQueryInput } from './dto'
 
-@Controller('api')
+@Controller(apiBasePath)
 @ApiTags('municipality')
 export class MunicipalityController {
   constructor(private readonly municipalityService: MunicipalityService) {}
