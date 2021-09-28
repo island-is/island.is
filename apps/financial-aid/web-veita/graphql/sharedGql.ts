@@ -99,7 +99,46 @@ export const CreateApplicationEventQuery = gql`
   mutation createApplicationEvent($input: CreateApplicationEventInput!) {
     createApplicationEvent(input: $input) {
       id
-      applicationId
+      nationalId
+      created
+      modified
+      name
+      phoneNumber
+      email
+      homeCircumstances
+      student
+      employment
+      hasIncome
+      usePersonalTaxCredit
+      bankNumber
+      ledger
+      accountNumber
+      interview
+      employmentCustom
+      homeCircumstancesCustom
+      state
+      formComment
+      studentCustom
+      amount
+      rejection
+      files {
+        id
+        applicationId
+        name
+        size
+        created
+        type
+      }
+      staff {
+        name
+      }
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
     }
   }
 `

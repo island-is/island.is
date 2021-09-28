@@ -87,12 +87,12 @@ export class ApplicationResolver {
     return backendApi.getApplicationFilters()
   }
 
-  @Mutation(() => ApplicationEventModel, { nullable: true })
+  @Mutation(() => ApplicationModel, { nullable: true })
   async createApplicationEvent(
     @Args('input', { type: () => CreateApplicationEventInput })
     input: CreateApplicationEventInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApplicationEvent> {
+  ): Promise<Application> {
     this.logger.debug('Creating application event')
 
     return backendApi.createApplicationEvent(input)

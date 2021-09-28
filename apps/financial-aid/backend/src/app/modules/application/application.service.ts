@@ -172,26 +172,10 @@ export class ApplicationService {
 
   async createEvent(
     applicationEvent: CreateApplicationEventDto,
-    id: string,
   ): Promise<ApplicationEventModel> {
     console.log('Creating a new application event')
 
     const appEvent = await this.applicationEventService.create(applicationEvent)
-
-    const application = await this.applicationModel.findOne({
-      where: { id },
-      include: [
-        { model: StaffModel, as: 'staff' },
-        {
-          model: ApplicationEventModel,
-          as: 'applicationEvents',
-          separate: true,
-          order: [['created', 'DESC']],
-        },
-      ],
-    })
-
-    appEvent?.setDataValue('application', application)
 
     return appEvent
   }

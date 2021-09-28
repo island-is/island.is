@@ -140,12 +140,22 @@ export class ApplicationController {
   })
   async createEvent(
     @Body() applicationEvent: CreateApplicationEventDto,
-  ): Promise<ApplicationEventModel> {
-    const applEvent = await this.applicationService.createEvent(
+  ): Promise<ApplicationModel> {
+    //Create event
+    const updateApplication = await this.applicationService.createEvent(
       applicationEvent,
+    )
+
+    const application = await this.applicationService.findById(
       applicationEvent.applicationId,
     )
 
-    return applEvent
+    if (!application) {
+      throw new NotFoundException(
+        `application ${applicationEvent.applicationId} not found`,
+      )
+    }
+
+    return application
   }
 }

@@ -9,7 +9,7 @@ import {
 
 import { ApplicationFileModel } from '../../file'
 import { StaffModel } from '../../staff'
-import { ApplicationEventModel } from './applicationEvent.model'
+import { ApplicationEventModel } from './index'
 
 @ObjectType()
 export class ApplicationModel implements Application {
