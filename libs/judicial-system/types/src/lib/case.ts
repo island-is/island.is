@@ -135,6 +135,7 @@ export interface Case {
   courtCaseNumber?: string
   sessionArrangements?: SessionArrangements
   courtDate?: string
+  courtLocation?: string
   courtRoom?: string
   courtStartDate?: string
   courtEndTime?: string
@@ -225,6 +226,7 @@ export interface UpdateCase {
   courtCaseNumber?: string
   sessionArrangements?: SessionArrangements
   courtDate?: string
+  courtLocation?: string
   courtRoom?: string
   courtStartDate?: string
   courtEndTime?: string

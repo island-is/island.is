@@ -1,4 +1,5 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { Box, Text, UploadedFile, UploadFile } from '@island.is/island-ui/core'
 import {
@@ -7,6 +8,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { Modal } from '..'
 import { useFileList } from '../../utils/hooks'
+import { caseFiles as m } from '@island.is/judicial-system-web/messages/Core/caseFiles'
 
 interface Props {
   caseId: string
@@ -28,6 +30,8 @@ const CaseFileList: React.FC<Props> = (props) => {
   const { handleOpenFile, fileNotFound, dismissFileNotFound } = useFileList({
     caseId,
   })
+  const { formatMessage } = useIntl()
+
   return files.length > 0 ? (
     <>
       {files.map((file, index) => {
@@ -65,8 +69,8 @@ const CaseFileList: React.FC<Props> = (props) => {
       <AnimatePresence>
         {fileNotFound && (
           <Modal
-            title="Skjalið er ekki lengur aðgengilegt í Réttarvörslugátt"
-            text="Rannsóknargögnum er eytt sjálfkrafa að loknum kærufresti."
+            title={formatMessage(m.modal.fileNotFound.title)}
+            text={formatMessage(m.modal.fileNotFound.text)}
             handleClose={() => dismissFileNotFound()}
             handlePrimaryButtonClick={() => dismissFileNotFound()}
             primaryButtonText="Loka glugga"
