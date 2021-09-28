@@ -7,8 +7,10 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
+  isAccusedRightsHidden,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
+import type { Case as TCase } from '@island.is/judicial-system/types'
 import {
   capitalize,
   formatDate,
@@ -17,7 +19,6 @@ import {
   NounCases,
   formatAccusedByGender,
   caseTypes,
-  areAccusedRightsHidden,
   lowercase,
 } from '@island.is/judicial-system/formatters'
 
@@ -517,12 +518,7 @@ function constructInvestigationRulingPdf(
     ),
   )
 
-  if (
-    !areAccusedRightsHidden(
-      existingCase.isAccusedRightsHidden,
-      existingCase.sessionArrangements,
-    )
-  ) {
+  if (!isAccusedRightsHidden((existingCase as unknown) as TCase)) {
     doc.text(' ').text(formatMessage(ruling.accusedRights), {
       paragraphGap: 1,
     })

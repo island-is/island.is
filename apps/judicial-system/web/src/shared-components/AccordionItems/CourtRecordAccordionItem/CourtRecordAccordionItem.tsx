@@ -2,7 +2,6 @@ import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 
 import {
-  areAccusedRightsHidden,
   capitalize,
   caseTypes,
   formatAccusedByGender,
@@ -19,6 +18,7 @@ import type { Case } from '@island.is/judicial-system/types'
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { closedCourt } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
+import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
 
 interface Props {
   workingCase: Case
@@ -33,46 +33,43 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
 
   return (
     <AccordionItem id="id_2" label="Þingbók" labelVariant="h3">
-      <Box marginBottom={2}>
-        <Text variant="h4" as="h4">
-          Upplýsingar
+      <AccordionListItem
+        title={formatMessage(m.sections.timeAndLocation.title)}
+      >
+        <Text>
+          {workingCase.courtEndTime
+            ? formatMessage(m.sections.timeAndLocation.text, {
+                courtStartTime: formatDate(
+                  workingCase.courtStartDate,
+                  TIME_FORMAT,
+                ),
+                courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
+                courtEndDate: formatDate(workingCase.courtEndTime, 'PP'),
+                courtLocation: workingCase.courtLocation,
+              })
+            : formatMessage(m.sections.timeAndLocation.textOngoing, {
+                courtStartTime: formatDate(
+                  workingCase.courtStartDate,
+                  TIME_FORMAT,
+                ),
+              })}
         </Text>
-      </Box>
-      <Box marginBottom={3}>
-        {workingCase.courtEndTime ? (
-          <Text>
-            {`Þinghald frá kl. ${formatDate(
-              workingCase.courtStartDate,
-              TIME_FORMAT,
-            )} til kl. ${formatDate(
-              workingCase.courtEndTime,
-              TIME_FORMAT,
-            )} ${formatDate(workingCase.courtEndTime, 'PP')}`}
-          </Text>
-        ) : (
-          <>
-            <Text>
-              {`Þinghald frá kl. ${formatDate(
-                workingCase.courtStartDate,
-                TIME_FORMAT,
-              )}`}
-            </Text>
-            <Text>Þinghaldi er ekki lokið</Text>
-          </>
+        {!workingCase.isClosedCourtHidden && (
+          <Box marginBottom={3}>
+            <Text>{formatMessage(closedCourt.text)}</Text>
+          </Box>
         )}
-      </Box>
-      {!workingCase.isClosedCourtHidden && (
-        <Box marginBottom={3}>
-          <Text>{formatMessage(closedCourt.text)}</Text>
-        </Box>
-      )}
+      </AccordionListItem>
       <AccordionListItem title="Krafa" breakSpaces>
         <Text>{workingCase.prosecutorDemands}</Text>
       </AccordionListItem>
-      <AccordionListItem title="Viðstaddir" breakSpaces>
+      <AccordionListItem
+        title={formatMessage(m.sections.courtAttendees.title)}
+        breakSpaces
+      >
         <Text>{workingCase.courtAttendees}</Text>
       </AccordionListItem>
-      <AccordionListItem title="Dómskjöl">
+      <AccordionListItem title={formatMessage(m.sections.courtDocuments.title)}>
         <Text>{`Krafa ${
           isRestrictionCase
             ? `um ${caseTypes[workingCase.type]}`
@@ -97,26 +94,32 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           })}
         </Text>
       </AccordionListItem>
-      {!areAccusedRightsHidden(
-        workingCase.isAccusedRightsHidden,
-        workingCase.sessionArrangements,
-      ) && (
+      {!workingCase.isAccusedRightsHidden && (
         <AccordionListItem
-          title={`Réttindi ${
-            workingCase.type === CaseType.CUSTODY ||
-            workingCase.type === CaseType.TRAVEL_BAN
-              ? formatAccusedByGender(
-                  workingCase.accusedGender,
-                  NounCases.GENITIVE,
-                )
-              : 'varnaraðila'
-          }`}
+          title={formatMessage(m.sections.accusedRights.title, {
+            accusedType:
+              workingCase.type === CaseType.CUSTODY ||
+              workingCase.type === CaseType.TRAVEL_BAN
+                ? formatAccusedByGender(
+                    workingCase.accusedGender,
+                    NounCases.GENITIVE,
+                  )
+                : 'varnaraðila',
+          })}
         >
           <Text>
-            Sakborning er bent á að honum sé óskylt að svara spurningum er varða
-            brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr.
-            88/2008. Sakborning er enn fremur áminntur um sannsögli kjósi hann
-            að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.
+            {formatMessage(m.sections.accusedRights.text, {
+              genderedAccused:
+                workingCase.type === CaseType.CUSTODY ||
+                workingCase.type === CaseType.TRAVEL_BAN
+                  ? capitalize(
+                      formatAccusedByGender(
+                        workingCase.accusedGender,
+                        NounCases.GENITIVE,
+                      ),
+                    )
+                  : 'Varnaraðila',
+            })}
           </Text>
         </AccordionListItem>
       )}

@@ -43,6 +43,7 @@ export const whoIsTheNotificationForSection = buildSection({
         buildRadioField({
           id: 'whoIsTheNotificationFor.answer',
           title: '',
+          width: 'half',
           options: [
             {
               value: WhoIsTheNotificationForEnum.ME,
@@ -139,6 +140,8 @@ export const whoIsTheNotificationForSection = buildSection({
             buildCheckboxField({
               id: 'juridicalPerson.companyConfirmation',
               title: '',
+              large: false,
+              backgroundColor: 'white',
               options: [
                 {
                   value: YES,

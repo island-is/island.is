@@ -705,7 +705,7 @@ export const aboutTheAccidentSection = buildSection({
           title: attachments.general.heading,
           children: [
             buildRadioField({
-              id: 'attachments.injuryCertificate',
+              id: 'attachments.injuryCertificate.default',
               title: '',
               description: attachments.general.description,
               condition: (formValue) =>
@@ -806,6 +806,8 @@ export const aboutTheAccidentSection = buildSection({
               id: 'isRepresentativeOfCompanyOrInstitue',
               title: '',
               defaultValue: [],
+              large: false,
+              backgroundColor: 'white',
               options: [
                 {
                   value: YES,
@@ -879,6 +881,8 @@ export const aboutTheAccidentSection = buildSection({
               id: 'isRepresentativeOfCompanyOrInstitue',
               title: '',
               defaultValue: [],
+              large: false,
+              backgroundColor: 'white',
               options: [
                 {
                   value: YES,
@@ -987,6 +991,8 @@ export const aboutTheAccidentSection = buildSection({
               id: 'isRepresentativeOfCompanyOrInstitue',
               title: '',
               defaultValue: [],
+              large: false,
+              backgroundColor: 'white',
               options: [
                 {
                   value: YES,
@@ -1060,6 +1066,8 @@ export const aboutTheAccidentSection = buildSection({
               id: 'isRepresentativeOfCompanyOrInstitue',
               title: '',
               defaultValue: [],
+              large: false,
+              backgroundColor: 'white',
               options: [
                 {
                   value: YES,
@@ -1133,6 +1141,8 @@ export const aboutTheAccidentSection = buildSection({
               id: 'isRepresentativeOfCompanyOrInstitue',
               title: '',
               defaultValue: [],
+              large: false,
+              backgroundColor: 'white',
               options: [
                 {
                   value: YES,
