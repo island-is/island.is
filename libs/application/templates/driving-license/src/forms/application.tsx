@@ -11,6 +11,7 @@ import {
   buildSelectField,
   buildDividerField,
   buildRadioField,
+  buildTextField,
   Form,
   FormModes,
   DefaultEvents,
@@ -20,7 +21,7 @@ import {
   buildDataProviderItem,
   FormValue,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile } from '../types/schema'
+import { NationalRegistryUser, Teacher, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
@@ -187,28 +188,47 @@ export const application: Form = buildForm({
               type: 'FeeInfoProvider',
               title: '',
             }),
+            buildDataProviderItem({
+              id: 'teachers',
+              type: 'TeachersProvider',
+              title: '',
+            }),
           ],
         }),
       ],
     }),
     buildSection({
-      id: 'licenseSelection',
-      // TODO: m.
-      title: 'Ökuréttindi',
+      id: 'application',
+      title: m.applicationDrivingLicenseTitle,
       condition: allowLicenseSelection,
       children: [
-        buildSubSection({
-          id: 'fakeData',
-          title: 'Ökuréttindi',
+        buildMultiField({
+          id: 'info',
+          title: m.drivingLicenseApplyingForTitle,
           children: [
             buildRadioField({
               id: 'applicationFor',
+              backgroundColor: 'white',
               title: '',
+              description: '',
+              space: 0,
+              largeButtons: true,
               options: [
-                // TODO: m.
-                { value: 'B-full', label: 'Fullnaðar', subLabel: 'hm' },
-                // TODO: m.
-                { value: 'B-temp', label: 'Bráðabirgða', subLabel: 'meehh' },
+                {
+                  // TODO: m.
+                  label: 'Almenn ökuréttindi',
+                  subLabel:
+                    'Umsókn um almenn ökuréttindi í B flokki (fólksbifreið). Fyrsta ökuskírteinið er bráðabirgðaskírteini sem gildir í 3 ár.',
+                  value: 'B-temp',
+                },
+                {
+                  // TODO: m.
+                  label: 'Fullnaðarréttindi',
+                  subLabel:
+                    'Ef ökumaður hefur haft bráðabirgðaskírteini í að minnsta kosti ár og farið í akstursmat með ökukennara getur hann sótt um fullnaðarskírteini.',
+                  value: 'B-full',
+                  disabled: true,
+                },
               ],
             }),
           ],
@@ -227,6 +247,93 @@ export const application: Form = buildForm({
               title: m.eligibilityRequirementTitle,
               component: 'EligibilitySummary',
               id: 'eligsummary',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'infoStep',
+      title: m.informationTitle,
+      condition: () => false,
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: m.informationTitle,
+          space: 1,
+          children: [
+            buildKeyValueField({
+              label: m.drivingLicenseTypeRequested,
+              value: 'Almenn ökuréttindi - B flokkur (Fólksbifreið)',
+            }),
+            buildDividerField({
+              title: '',
+              color: 'dark400',
+            }),
+            buildKeyValueField({
+              label: m.informationApplicant,
+              value: ({ externalData: { nationalRegistry } }) =>
+                (nationalRegistry.data as NationalRegistryUser).fullName,
+              width: 'half',
+            }),
+            buildKeyValueField({
+              label: m.informationStreetAddress,
+              value: ({ externalData: { nationalRegistry } }) => {
+                const address = (nationalRegistry.data as NationalRegistryUser)
+                  .address
+
+                if (!address) {
+                  return ''
+                }
+
+                const { streetAddress, city } = address
+
+                return `${streetAddress}${city ? ', ' + city : ''}`
+              },
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'email',
+              title: m.informationYourEmail,
+              placeholder: 'Netfang',
+            }),
+            buildDividerField({
+              title: '',
+              color: 'dark400',
+            }),
+            buildDescriptionField({
+              id: 'drivingInstructorTitle',
+              title: m.drivingInstructor,
+              titleVariant: 'h4',
+              description: m.chooseDrivingInstructor,
+            }),
+            buildSelectField({
+              id: 'drivingInstructor',
+              title: m.drivingInstructor,
+              disabled: false,
+              options: ({
+                externalData: {
+                  teachers: { data },
+                },
+              }) => {
+                return (data as Teacher[]).map(({ name }) => ({
+                  value: name,
+                  label: name,
+                }))
+              },
+            }),
+            buildCheckboxField({
+              id: 'noDrivingLicenseInOtherCountry',
+              backgroundColor: 'white',
+              title: '',
+              options: [
+                {
+                  value: 'no',
+                  label: m.noDrivingLicenseInOtherCountryTitle,
+                  subLabel:
+                    m.noDrivingLicenseInOtherCountryDescription.defaultMessage,
+                },
+              ],
             }),
           ],
         }),
@@ -313,7 +420,6 @@ export const application: Form = buildForm({
         }),
       ],
     }),
-
     buildSection({
       id: 'user',
       title: m.informationSectionTitle,
@@ -322,6 +428,7 @@ export const application: Form = buildForm({
         buildMultiField({
           id: 'info',
           title: m.pickupLocationTitle,
+          space: 1,
           children: [
             buildKeyValueField({
               label: m.informationApplicant,
@@ -568,8 +675,26 @@ export const application: Form = buildForm({
               condition: needsHealthCertificateCondition(YES),
             }),
             buildCheckboxField({
+              id: 'confirmBringNewPhoto',
+              title: '',
+              large: false,
+              backgroundColor: 'white',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: 'Ég kem með nýja ljósmynd til sýslumanns',
+                },
+              ],
+              condition: (answers) =>
+                answers?.willBringQualityPhoto === YES ||
+                Object.values(answers?.willBringQualityPhoto).includes(YES),
+            }),
+            buildCheckboxField({
               id: 'certificate',
               title: '',
+              large: false,
+              backgroundColor: 'white',
               defaultValue: [],
               options: [
                 {

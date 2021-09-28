@@ -21,10 +21,9 @@ import {
   QualityPhoto,
   StudentAssessment,
   ApplicationEligibilityInput,
+  Teacher,
 } from './models'
 import { AuditService } from '@island.is/nest/audit'
-import { DrivingSchool } from './models/drivingSchool.model'
-import { DrivingLicenseApplicationFor } from '../drivingLicense.type'
 
 const namespace = '@island.is/api/driving-license'
 
@@ -47,6 +46,11 @@ export class MainResolver {
       },
       this.drivingLicenseService.getDrivingLicense(user.nationalId),
     )
+  }
+
+  @Query(() => [Teacher])
+  drivingLicenseTeachers() {
+    return this.drivingLicenseService.getTeachers()
   }
 
   @Query(() => [DrivingLicenseDeprevationType])

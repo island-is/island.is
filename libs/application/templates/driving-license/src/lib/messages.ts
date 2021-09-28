@@ -8,7 +8,7 @@ export const m = defineMessages({
   },
   externalDataTitle: {
     id: 'dl.application:externalData.title',
-    defaultMessage: 'Umsókn um fullnaðarskírteini',
+    defaultMessage: 'Umsókn um ökuskírteini',
     description: 'Title of the application',
   },
   externalDataSubTitle: {
@@ -522,6 +522,16 @@ export const m = defineMessages({
     defaultMessage: 'Skilyrði umsóknar',
     description: 'title for requirement section',
   },
+  applicationDrivingLicenseTitle: {
+    id: 'dl.application:applicationDrivingLicenseTitle',
+    defaultMessage: 'Tegund umsóknar',
+    description: 'Type of application for driving license',
+  },
+  drivingLicenseApplyingForTitle: {
+    id: 'dl.application:drivingLicenseApplyingForTitle',
+    defaultMessage: 'Ég er að sækja um:',
+    description: 'I am applying for:',
+  },
   congratulationsTitleSuccess: {
     id: 'dl.application:congratulationsTitleSuccess',
     defaultMessage:
@@ -595,9 +605,9 @@ export const m = defineMessages({
   confirmationStatusOfEligability: {
     id: 'dl.application:confirmationStatusOfEligability',
     defaultMessage:
-      'Staðfesting akstursmats, punktastaða, sviptingar, ökuréttindi og almennar upplýsingar um skilríki',
+      'Sóttar eru almennar upplýsingar um núverandi réttindi, sviptingar, punktastöðu og akstursmat ef við á.',
     description:
-      'Confirmation driving assessment, penalties, license loss, driving license and general information about identification',
+      'General information about current licenses, license loss, penalties and driving assessment if applicable.',
   },
   infoFromLicenseRegistry: {
     id: 'dl.application:infoFromLicenseRegistry',
@@ -634,5 +644,48 @@ export const m = defineMessages({
       'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
     description:
       'Text that shows up when an error occurs while submitting the application',
+  },
+  informationTitle: {
+    id: 'dl.application:informationTitle',
+    defaultMessage: 'Upplýsingar',
+    description: 'Title for information section',
+  },
+  chooseDrivingInstructor: {
+    id: 'dl.application:chooseDrivingInstructor',
+    defaultMessage: 'Finndu og veldu nafn ökukennara þíns úr listanum',
+    description:
+      'Find and select the name of your driving instructor from the list',
+  },
+  drivingLicenseTypeRequested: {
+    id: 'dl.application:drivingLicenseTypeRequested',
+    defaultMessage: 'Réttindi sem sótt er um',
+    description: 'Driving license type that is requested',
+  },
+  informationStreetAddress: {
+    id: 'dl.application:informationStreetAddress',
+    defaultMessage: 'Heimilisfang',
+    description: 'Street address',
+  },
+  informationYourEmail: {
+    id: 'dl.application:informationYourEmail',
+    defaultMessage: 'Netfangið þitt',
+    description: 'Your email',
+  },
+  drivingInstructor: {
+    id: 'dl.application:drivingInstructor',
+    defaultMessage: 'Ökukennari',
+    description: 'Driving instructor',
+  },
+  noDrivingLicenseInOtherCountryTitle: {
+    id: 'dl.application:noDrivingLicenseInOtherCountryTitle',
+    defaultMessage: 'Ég er ekki með ökuskírteini né sviptingu í öðru landi',
+    description: 'I do not have a drivering license in another country',
+  },
+  noDrivingLicenseInOtherCountryDescription: {
+    id: 'dl.application:noDrivingLicenseInOtherCountryDescription',
+    defaultMessage:
+      'Staðfesting að umsækjandi hafi ekki undir höndum ökuskírteini gefið út af öðru ríki sem er aðili að Evrópska efnahagssvæðinu né hafi sætt takmörkunum á ökurétti eða verið svipt(ur) ökuréttindum í þeim ríkjum',
+    description:
+      'Confirmation that the applicant does not hold a driving license issued by another country that is part of The European Economic Area, nor is he subject to a driving license restriction or has been deprived of his driving license in that countries',
   },
 })

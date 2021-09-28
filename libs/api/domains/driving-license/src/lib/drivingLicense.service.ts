@@ -18,11 +18,14 @@ import {
   NeedsHealhCertificate,
   QualityPhotoResult,
   StudentAssessment,
+  Teacher,
 } from './drivingLicense.type'
 import {
   AkstursmatDto,
   EmbaettiDto,
   HefurLokidOkugerdiDto,
+  OkukennariDto,
+  Okuskirteini,
   OkuskirteiniApi,
   Rettindi,
   TegSviptingaDto,
@@ -97,6 +100,17 @@ export class DrivingLicenseService {
     return {
       name: licenseWithName.nafn as string,
     }
+  }
+
+  async getTeachers(): Promise<Teacher[]> {
+    const teachers = await this.drivingLicenseApi.apiOkuskirteiniOkukennararGet(
+      {},
+    )
+
+    return teachers.map(({ nafn, kennitala }: OkukennariDto) => ({
+      name: nafn,
+      nationalId: kennitala,
+    }))
   }
 
   async getDeprivationTypes(): Promise<DeprevationType[]> {

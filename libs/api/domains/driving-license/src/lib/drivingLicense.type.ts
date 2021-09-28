@@ -1,4 +1,7 @@
-import type { Okuskirteini } from '@island.is/clients/driving-license'
+import type {
+  OkukennariDto,
+  Okuskirteini,
+} from '@island.is/clients/driving-license'
 
 export interface Eligibility {
   id: string
@@ -121,4 +124,8 @@ export interface StudentAssessment {
 
 export interface DrivingSchool {
   hasFinishedSchool: boolean
+}
+export interface Teacher {
+  nationalId: OkukennariDto['kennitala']
+  name: OkukennariDto['nafn']
 }
