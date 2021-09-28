@@ -101,8 +101,8 @@ export const regulationContentStyling = (wrapper: string) => {
     },
   )
   styleRegulation('ul,ol,blockquote', {
-    marginLeft: '3em',
-    '@media': { print: { marginBottom: '2em' } },
+    marginLeft: '2em',
+    // '@media': { print: { marginBottom: '2em' } },
   })
   styleRegulation('ul', {
     listStyle: 'disc',
