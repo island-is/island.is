@@ -260,6 +260,13 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           onChange={(event) => onSearch(event.target.value)}
         />
       </Box>
+      {!search.isLoading && !search.hasError && search.results.length === 0 &&
+        <Box display="flex" marginTop={4} justifyContent="center">
+          <Text variant="h3">
+            {n('operatingLicensesNoSearchResults', 'Engin rekstrarleyfi fundust.')}
+          </Text>
+        </Box>
+      }
       {search.results.map((operatingLicense, index) => {
         return (
           <Box
