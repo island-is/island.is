@@ -35,8 +35,6 @@ import { ApplicationGuard } from '../../guards/application.guard'
 
 import type { User } from '@island.is/financial-aid/shared/lib'
 
-import { ApplicationEventService } from '../applicationEvent'
-
 import {
   ApplicationFilters,
   RolesRule,
@@ -45,10 +43,7 @@ import {
 @Controller('api')
 @ApiTags('applications')
 export class ApplicationController {
-  constructor(
-    private readonly applicationService: ApplicationService,
-    private readonly applicationEventService: ApplicationEventService,
-  ) {}
+  constructor(private readonly applicationService: ApplicationService) {}
 
   @UseGuards(TokenGuard)
   @Get('getCurrentApplication')
@@ -141,7 +136,6 @@ export class ApplicationController {
   async createEvent(
     @Body() applicationEvent: CreateApplicationEventDto,
   ): Promise<ApplicationModel> {
-    //Create event
     const updateApplication = await this.applicationService.createEvent(
       applicationEvent,
     )

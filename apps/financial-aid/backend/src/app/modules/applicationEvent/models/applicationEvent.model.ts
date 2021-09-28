@@ -46,10 +46,6 @@ export class ApplicationEventModel extends Model<ApplicationEvent> {
   @ApiProperty()
   applicationId: string
 
-  @BelongsTo(() => ApplicationModel, 'applicationId')
-  @ApiProperty({ type: ApplicationModel })
-  application?: ApplicationModel
-
   @Column({
     type: DataType.ENUM,
     allowNull: false,
