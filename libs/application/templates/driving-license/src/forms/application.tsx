@@ -255,7 +255,7 @@ export const application: Form = buildForm({
     buildSection({
       id: 'infoStep',
       title: m.informationTitle,
-      condition: () => false,
+      condition: isApplicationForCondition('B-temp'),
       children: [
         buildMultiField({
           id: 'info',
@@ -423,7 +423,6 @@ export const application: Form = buildForm({
     buildSection({
       id: 'user',
       title: m.informationSectionTitle,
-      condition: isApplicationForCondition('B-full'),
       children: [
         buildMultiField({
           id: 'info',
