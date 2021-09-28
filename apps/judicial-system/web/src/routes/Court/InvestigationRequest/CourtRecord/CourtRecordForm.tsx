@@ -19,11 +19,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  areAccusedRightsHidden,
-  capitalize,
-  caseTypes,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
   FormSettings,
   useCaseFormHelper,
@@ -262,10 +258,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           <Box marginBottom={2}>
             <HideableText
               text={formatMessage(accusedRights.text)}
-              isHidden={areAccusedRightsHidden(
-                workingCase.isAccusedRightsHidden,
-                workingCase.sessionArrangements,
-              )}
+              isHidden={workingCase.isAccusedRightsHidden}
               onToggleVisibility={(isVisible: boolean) =>
                 setAndSendToServer(
                   'isAccusedRightsHidden',

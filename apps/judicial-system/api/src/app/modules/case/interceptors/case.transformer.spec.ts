@@ -1,3 +1,4 @@
+import { SessionArrangements } from '@island.is/judicial-system/types'
 import each from 'jest-each'
 
 import { Case } from '../models'
@@ -6,7 +7,7 @@ import { transformCase } from './case.transformer'
 describe('transformCase', () => {
   each`
     originalValue | transformedValue
-    ${undefined}   | ${false}
+    ${null}       | ${false}
     ${false}      | ${false}
     ${true}       | ${true}
   `.describe(
@@ -55,10 +56,35 @@ describe('transformCase', () => {
         // Assert
         expect(res.isClosedCourtHidden).toBe(transformedValue)
       })
+    },
+  )
 
-      it(`should transform ${originalValue} isAccusedRightsHidden to ${transformedValue}`, () => {
+  each`
+    originalValue | sessionArrangements                             | transformedValue
+    ${null}       | ${null}                                         | ${false}
+    ${null}       | ${SessionArrangements.ALL_PRESENT}              | ${false}
+    ${null}       | ${SessionArrangements.ALL_PRESENT_SPOKESPERSON} | ${true}
+    ${null}       | ${SessionArrangements.PROSECUTOR_PRESENT}       | ${true}
+    ${null}       | ${SessionArrangements.REMOTE_SESSION}           | ${true}
+    ${false}      | ${null}                                         | ${false}
+    ${false}      | ${SessionArrangements.ALL_PRESENT}              | ${false}
+    ${false}      | ${SessionArrangements.ALL_PRESENT_SPOKESPERSON} | ${false}
+    ${false}      | ${SessionArrangements.PROSECUTOR_PRESENT}       | ${false}
+    ${false}      | ${SessionArrangements.REMOTE_SESSION}           | ${false}
+    ${true}       | ${null}                                         | ${true}
+    ${true}       | ${SessionArrangements.ALL_PRESENT}              | ${true}
+    ${true}       | ${SessionArrangements.ALL_PRESENT_SPOKESPERSON} | ${true}
+    ${true}       | ${SessionArrangements.PROSECUTOR_PRESENT}       | ${true}
+    ${true}       | ${SessionArrangements.REMOTE_SESSION}           | ${true}
+  `.describe(
+    'isAccusedRightsHidden',
+    ({ originalValue, sessionArrangements, transformedValue }) => {
+      it(`should transform isAccusedRightsHidden with original value ${originalValue} and ${sessionArrangements} to ${transformedValue}`, () => {
         // Arrange
-        const theCase = { isAccusedRightsHidden: originalValue } as Case
+        const theCase = {
+          isAccusedRightsHidden: originalValue,
+          sessionArrangements,
+        } as Case
 
         // Act
         const res = transformCase(theCase)
