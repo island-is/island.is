@@ -13,11 +13,8 @@ interface ApplicationFiltersProvider {
   setApplicationFilters?: React.Dispatch<
     React.SetStateAction<ApplicationFilters>
   >
+  loading: boolean
 }
-
-export const ApplicationFiltersContext = createContext<ApplicationFiltersProvider>(
-  {},
-)
 
 export const initialState = {
   New: 0,
@@ -26,6 +23,13 @@ export const initialState = {
   Rejected: 0,
   Approved: 0,
 }
+
+export const ApplicationFiltersContext = createContext<ApplicationFiltersProvider>(
+  {
+    applicationFilters: initialState,
+    loading: true,
+  },
+)
 
 interface PageProps {
   children: ReactNode
@@ -37,7 +41,7 @@ const ApplicationFiltersProvider = ({ children }: PageProps) => {
     setApplicationFilters,
   ] = useState<ApplicationFilters>(initialState)
 
-  const { data, error, loading } = useQuery<ApplicationFiltersData>(
+  const { data, loading } = useQuery<ApplicationFiltersData>(
     GetApplicationFiltersQuery,
     {
       fetchPolicy: 'no-cache',
@@ -53,7 +57,7 @@ const ApplicationFiltersProvider = ({ children }: PageProps) => {
 
   return (
     <ApplicationFiltersContext.Provider
-      value={{ applicationFilters, setApplicationFilters }}
+      value={{ applicationFilters, setApplicationFilters, loading }}
     >
       {children}
     </ApplicationFiltersContext.Provider>
