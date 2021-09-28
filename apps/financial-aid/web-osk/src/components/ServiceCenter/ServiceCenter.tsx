@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text } from '@island.is/island-ui/core'
+import { Text, Button } from '@island.is/island-ui/core'
 
 import {
   ContentContainer,
@@ -20,20 +20,30 @@ const ServiceCenter = ({ serviceCenter }: Props) => {
     <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
-          Fjárhagsaðstoð Hafnarfjarðar
+          Fjárhagsaðstoð hjá þínu sveitarfélagi{' '}
         </Text>
 
         <Text marginBottom={[1, 1, 2]}>
-          Athugaðu að á þessum tímapunkti er þessi umsókn um fjárhagsaðstoð
-          eingöngu ætluð íbúum Hafnarfjarðar.
+          Samkvæmt <b>Þjóðskrá</b> ert þú með lögheimili í{' '}
+          <b>{serviceCenter?.name}</b> .
         </Text>
 
-        {serviceCenter && (
-          <Text>
-            Athugaðu að {serviceCenter?.name} er ekki orðið hluti af lausninni
-            núna
-          </Text>
-        )}
+        <Text marginBottom={[2, 2, 4]}>
+          Þitt sveitarfélag er ekki komið inn í þetta umsóknarferli. Kynntu þér
+          málið eða sæktu um fjárhagsaðstoð á heimasíðu þíns sveitarfélags eða
+          þess sveitarfélags sem sér um fjárhagsaðstoð hjá þínu sveitarfélagi.
+        </Text>
+
+        <Button
+          variant="ghost"
+          icon="open"
+          iconType="outline"
+          onClick={() => {
+            window.open(serviceCenter?.link, '_ blank')
+          }}
+        >
+          Fjárhagsaðstoð {serviceCenter?.name}
+        </Button>
       </ContentContainer>
       <Footer
         onPrevButtonClick={() => logOut()}
