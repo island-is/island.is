@@ -422,14 +422,6 @@ export const getFinanceStatusData = {
   ],
 }
 
-export const getFinanceStatusData2 = {
-  timestamp: '2021-09-29T10:18:28.2',
-  principalTotals: 0,
-  interestTotals: 0,
-  costTotals: 0,
-  statusTotals: 0,
-}
-
 export const getFinanceStatusDetailsData = {
   timestamp: '12345',
   chargeItemSubjects: [
