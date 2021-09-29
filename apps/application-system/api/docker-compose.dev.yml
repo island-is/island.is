@@ -6,5 +6,7 @@ services:
       - 5432:5432
 
   redis_cluster:
+    environment:
+      - IP=0.0.0.0
     ports:
       - '7000-7005:7000-7005'

@@ -12,6 +12,7 @@ services:
       - local
     depends_on:
       - db_application_system
+      - redis_cluster
     environment:
       - TEST_DB_USER=test_db
       - TEST_DB_PASS=test_db
