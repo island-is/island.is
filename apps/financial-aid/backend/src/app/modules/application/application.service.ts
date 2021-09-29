@@ -14,6 +14,8 @@ import {
   ApplicationEventType,
   ApplicationFilters,
   ApplicationState,
+  ApplicationStateUrl,
+  getStateFromUrl,
   User,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
@@ -67,8 +69,11 @@ export class ApplicationService {
     })
   }
 
-  async getAll(): Promise<ApplicationModel[]> {
+  async getAll(stateUrl: ApplicationStateUrl): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
+      where: {
+        state: { [Op.in]: getStateFromUrl[stateUrl] },
+      },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
     })
@@ -174,6 +179,7 @@ export class ApplicationService {
     if (update.state === ApplicationState.NEW) {
       update.staffId = null
     }
+
     const [
       numberOfAffectedRows,
       [updatedApplication],

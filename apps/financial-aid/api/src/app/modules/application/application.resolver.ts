@@ -19,7 +19,7 @@ import {
 } from './dto'
 import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
 
-import { ApplicationInput } from './dto'
+import { ApplicationInput, ApplicationsInput } from './dto'
 
 import {
   Application,
@@ -37,11 +37,13 @@ export class ApplicationResolver {
 
   @Query(() => [ApplicationModel], { nullable: false })
   applications(
+    @Args('input', { type: () => ApplicationsInput })
+    input: ApplicationsInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Application[]> {
     this.logger.debug('Getting all applications')
 
-    return backendApi.getApplications()
+    return backendApi.getApplications(input.stateUrl)
   }
 
   @Query(() => ApplicationModel, { nullable: false })

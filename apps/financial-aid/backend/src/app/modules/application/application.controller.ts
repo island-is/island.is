@@ -36,7 +36,10 @@ import {
 
 import { ApplicationGuard } from '../../guards/application.guard'
 
-import type { User } from '@island.is/financial-aid/shared/lib'
+import type {
+  ApplicationStateUrl,
+  User,
+} from '@island.is/financial-aid/shared/lib'
 
 import {
   ApplicationFilters,
@@ -63,14 +66,16 @@ export class ApplicationController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(RolesRule.VEITA)
-  @Get('applications')
+  @Get('applications/:stateUrl')
   @ApiOkResponse({
     type: ApplicationModel,
     isArray: true,
     description: 'Gets all existing applications',
   })
-  getAll(): Promise<ApplicationModel[]> {
-    return this.applicationService.getAll()
+  getAll(
+    @Param('stateUrl') stateUrl: ApplicationStateUrl,
+  ): Promise<ApplicationModel[]> {
+    return this.applicationService.getAll(stateUrl)
   }
 
   @UseGuards(JwtAuthGuard, ApplicationGuard)
