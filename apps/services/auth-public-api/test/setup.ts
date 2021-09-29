@@ -9,7 +9,10 @@ import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
 import { logger } from '@island.is/logging'
 
-type Options = { withAuth?: boolean } & Partial<TestServerOptions>
+type Options = {
+  withAuth?: boolean
+  sequalizeConfig?: any
+} & Partial<TestServerOptions>
 
 export let app: INestApplication
 let sequelize: Sequelize
@@ -37,7 +40,9 @@ export const truncate = async () => {
 }
 
 export const setup = async (
-  { withAuth = true, ...options }: Options = { withAuth: true },
+  { withAuth = true, sequalizeConfig, ...options }: Options = {
+    withAuth: true,
+  },
 ) => {
   if (withAuth) {
     app = await testServerActivateAuthGuards({
@@ -51,9 +56,15 @@ export const setup = async (
     })
   }
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
+  // sequelize.options.host = sequalizeConfig.host
+  // sequelize.options.username = sequalizeConfig.username
+  // sequelize.options.password = sequalizeConfig.password
+  // sequelize.options.database = sequalizeConfig.database
+  // sequelize.options.port = sequalizeConfig.port
+  // sequelize.options.dialect = sequalizeConfig.dialect
 
   try {
-    await sequelize.sync({logging: false})
+    await sequelize.sync({ logging: false })
   } catch (err) {
     logger.error('Migration error', err)
   }
@@ -66,6 +77,6 @@ beforeEach(truncate)
 afterAll(async () => {
   if (app && sequelize) {
     await app.close()
-    await sequelize.close()
+    // await sequelize.close()
   }
 })

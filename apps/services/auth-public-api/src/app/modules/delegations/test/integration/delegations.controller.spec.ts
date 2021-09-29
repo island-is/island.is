@@ -1,10 +1,18 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import * as uuidv4 from 'uuidv4'
+import {
+  TestContainer,
+  StartedTestContainer,
+  StoppedTestContainer,
+  GenericContainer,
+} from 'testcontainers'
 
 import {
   CreateDelegationDTO,
   DelegationsService,
+  SEQUELIZE_CONFIG,
+  SequalizeConfig,
 } from '@island.is/auth-api-lib'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { IdsUserGuard, User } from '@island.is/auth-nest-tools'
@@ -38,11 +46,33 @@ describe('DelegationsController with auth', () => {
   let currentUser: any
 
   beforeAll(async () => {
+    // const container = await new GenericContainer(
+    //   'public.ecr.aws/bitnami/postgresql:11.12.0',
+    // )
+    //   .withExposedPorts(5432)
+    //   .withEnv('PG_PASSWORD', 'stafraentislandisthebest')
+    //   .start()
+
     app = await setup({
+      // sequalizeConfig: {
+      //   // host: container.getIpAddress,
+      //   // port: container.getMappedPort(5432),
+      //   username: 'postgres',
+      //   password: 'stafraentislandisthebest',
+      //   database: ':memory:',
+      //   dialect: 'sqlite',
+      // },
       override: (builder) => {
         builder
           .overrideProvider(EinstaklingarApi)
           .useValue(new MockEinstaklingarApi())
+          .overrideProvider(SEQUELIZE_CONFIG)
+          .useValue({
+            username: 'postgres',
+            password: 'stafraentislandisthebest',
+            database: ':memory:',
+            dialect: 'sqlite',
+          } as SequalizeConfig)
       },
     })
     currentUser = (app.get<IdsUserGuard>(IdsUserGuard) as IdsUserGuard & {
@@ -50,7 +80,7 @@ describe('DelegationsController with auth', () => {
     }).user
   })
 
-  describe('create', () => {
+  xdescribe('create', () => {
     it('should create a delegation', async () => {
       // Arrange
       const id = '00000000-0000-0000-0000-000000000000'
