@@ -18,9 +18,8 @@ export const useApplicationState = () => {
     { loading: saveLoading },
   ] = useMutation<SaveData>(UpdateApplicationMutation)
 
-  const { applicationFilters, setApplicationFilters } = useContext(
-    ApplicationFiltersContext,
-  )
+  const { setApplicationFilters } = useContext(ApplicationFiltersContext)
+
   const { admin } = useContext(AdminContext)
 
   const changeApplicationState = async (
@@ -29,8 +28,6 @@ export const useApplicationState = () => {
     amount?: number,
     rejection?: string,
   ) => {
-    const prevState = application.state
-
     if (saveLoading === false && application) {
       const { data } = await updateApplicationMutation({
         variables: {
@@ -45,14 +42,10 @@ export const useApplicationState = () => {
       })
 
       if (data) {
-        if (applicationFilters && setApplicationFilters) {
-          setApplicationFilters((preState) => ({
-            ...preState,
-            [prevState]: applicationFilters[prevState] - 1,
-            [state]: applicationFilters[state] + 1,
-          }))
+        if (data.updateApplication.filters) {
+          setApplicationFilters(data.updateApplication.filters)
+          delete data.updateApplication.filters
         }
-
         return data.updateApplication
       }
     }

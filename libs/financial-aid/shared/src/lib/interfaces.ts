@@ -174,6 +174,7 @@ export interface Application {
   rejection?: string
   staff?: Staff
   applicationEvents?: ApplicationEvent[]
+  filters?: ApplicationFilters
 }
 
 export interface GetSignedUrlForId {

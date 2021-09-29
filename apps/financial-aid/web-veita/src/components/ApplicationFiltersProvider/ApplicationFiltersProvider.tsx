@@ -10,9 +10,7 @@ interface ApplicationFiltersData {
 
 interface ApplicationFiltersProvider {
   applicationFilters?: ApplicationFilters
-  setApplicationFilters?: React.Dispatch<
-    React.SetStateAction<ApplicationFilters>
-  >
+  setApplicationFilters?: any
   loading: boolean
 }
 
