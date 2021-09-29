@@ -17,6 +17,7 @@ import {
   Employment,
   ApplicationState,
   Application,
+  ApplicationFilters,
 } from '@island.is/financial-aid/shared/lib'
 
 import { ApplicationEventModel } from '../../applicationEvent/models'
@@ -205,4 +206,7 @@ export class ApplicationModel extends Model<Application> {
   @HasMany(() => ApplicationEventModel, 'applicationId')
   @ApiProperty({ type: ApplicationEventModel, isArray: true })
   applicationEvents?: ApplicationEventModel[]
+
+  @ApiProperty()
+  filters?: ApplicationFilters
 }

@@ -118,6 +118,10 @@ export class ApplicationController {
       throw new NotFoundException(`Application ${id} does not exist`)
     }
 
+    const filters = await this.applicationService.getAllFilters()
+
+    updatedApplication?.setDataValue('filters', filters)
+
     return updatedApplication
   }
 

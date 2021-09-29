@@ -98,6 +98,13 @@ export const UpdateApplicationMutation = gql`
       modified
       state
       amount
+      filters {
+        New
+        InProgress
+        DataNeeded
+        Rejected
+        Approved
+      }
     }
   }
 `
