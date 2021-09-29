@@ -29,7 +29,7 @@ class BackendAPI extends RESTDataSource {
   }
 
   getApplications(stateUrl: ApplicationStateUrl): Promise<Application[]> {
-    return this.get(`applications/${stateUrl}`)
+    return this.get(`allApplications/${stateUrl}`)
   }
 
   getApplication(id: string): Promise<Application> {

@@ -132,7 +132,7 @@ export const UpdateApplicationMutation = gql`
   }
 `
 export const GetApplicationsQuery = gql`
-  query GetApplicationsQuery($input: ApplicationsInput!) {
+  query GetApplicationsQuery($input: AllApplicationInput!) {
     applications(input: $input) {
       id
       nationalId

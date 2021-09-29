@@ -66,7 +66,7 @@ export class ApplicationController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(RolesRule.VEITA)
-  @Get('applications/:stateUrl')
+  @Get('allApplications/:stateUrl')
   @ApiOkResponse({
     type: ApplicationModel,
     isArray: true,
