@@ -15,7 +15,16 @@ import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 import { ApplicationService } from './application.service'
 import { CurrentApplicationModel, ApplicationModel } from './models'
 
-import { CreateApplicationDto, UpdateApplicationDto } from './dto'
+import {
+  ApplicationEventModel,
+  ApplicationEventService,
+} from '../applicationEvent'
+
+import {
+  CreateApplicationDto,
+  UpdateApplicationDto,
+  CreateApplicationEventDto,
+} from './dto'
 
 import {
   CurrentHttpUser,
@@ -37,7 +46,10 @@ import {
 @Controller('api')
 @ApiTags('applications')
 export class ApplicationController {
-  constructor(private readonly applicationService: ApplicationService) {}
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly applicationEventService: ApplicationEventService,
+  ) {}
 
   @UseGuards(TokenGuard)
   @Get('getCurrentApplication')
@@ -120,5 +132,28 @@ export class ApplicationController {
     @Body() application: CreateApplicationDto,
   ): Promise<ApplicationModel> {
     return this.applicationService.create(application, user)
+  }
+
+  @Post('applicationEvent')
+  @ApiCreatedResponse({
+    type: ApplicationEventModel,
+    description: 'Creates a new application event',
+  })
+  async createEvent(
+    @Body() applicationEvent: CreateApplicationEventDto,
+  ): Promise<ApplicationModel> {
+    await this.applicationEventService.create(applicationEvent)
+
+    const application = await this.applicationService.findById(
+      applicationEvent.applicationId,
+    )
+
+    if (!application) {
+      throw new NotFoundException(
+        `application ${applicationEvent.applicationId} not found`,
+      )
+    }
+
+    return application
   }
 }

@@ -19,20 +19,17 @@ export class DrivingLicenseSubmissionService {
 
   async createCharge({
     application: { id, externalData },
-    authorization,
+    auth,
   }: TemplateApiModuleActionProps) {
     const parsedPaymentData = externalData.payment.data as Item
     return this.sharedTemplateAPIService.createCharge(
-      authorization,
+      auth.authorization,
       id,
       parsedPaymentData.chargeItemCode,
     )
   }
 
-  async submitApplication({
-    application,
-    authorization,
-  }: TemplateApiModuleActionProps) {
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { answers } = application
     const nationalId = application.applicant
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
@@ -40,7 +37,7 @@ export class DrivingLicenseSubmissionService {
     const juristictionId = answers.juristiction
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      authorization,
+      auth.authorization,
       application.id,
     )
 

@@ -66,7 +66,8 @@ export const Requests: React.FC = () => {
             isJudge || isRegistrar
             ? c.state !== CaseState.NEW &&
               c.state !== CaseState.ACCEPTED &&
-              c.state !== CaseState.REJECTED
+              c.state !== CaseState.REJECTED &&
+              c.state !== CaseState.DISMISSED
             : null
         }),
       )
@@ -74,7 +75,9 @@ export const Requests: React.FC = () => {
       setPastCases(
         casesWithoutDeleted.filter((c: Case) => {
           return (
-            c.state === CaseState.ACCEPTED || c.state === CaseState.REJECTED
+            c.state === CaseState.ACCEPTED ||
+            c.state === CaseState.REJECTED ||
+            c.state === CaseState.DISMISSED
           )
         }),
       )
@@ -128,7 +131,8 @@ export const Requests: React.FC = () => {
   const openCase = (caseToOpen: Case, role: UserRole) => {
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
-      caseToOpen.state === CaseState.REJECTED
+      caseToOpen.state === CaseState.REJECTED ||
+      caseToOpen.state === CaseState.DISMISSED
     ) {
       router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`)
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {

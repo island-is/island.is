@@ -33,11 +33,14 @@ export interface Staff {
 }
 
 export interface MunicipalitySettings {
-  aid: {
-    ownApartmentOrLease: number
-    withOthersOrUnknow: number
-    withParents: number
-  }
+  homePage?: string
+  aid: MunicipalityAid
+}
+
+export interface MunicipalityAid {
+  ownApartmentOrLease: number
+  withOthersOrUnknow: number
+  withParents: number
 }
 
 export interface NavigationProps {
@@ -56,6 +59,7 @@ export interface User {
   currentApplication?: CurrentApplication
   returnUrl: ReturnUrl
   staff?: Staff
+  postalCode?: number
 }
 
 export interface UpdateApplication {
@@ -82,7 +86,8 @@ export interface ApplicationEvent {
 export interface Municipality {
   id: string
   name: string
-  settings: MunicipalitySettings
+  homePage?: string
+  aid: MunicipalityAid
 }
 
 export interface CurrentApplication {
@@ -168,6 +173,7 @@ export interface Application {
   comment?: string
   rejection?: string
   staff?: Staff
+  applicationEvents?: ApplicationEvent[]
 }
 
 export interface GetSignedUrlForId {
