@@ -54,6 +54,27 @@ const isApplicationForCondition = (result: 'B-full' | 'B-temp') => (
   return applicationFor.includes(result)
 }
 
+const chooseDistrictCommissionerDescription = ({
+  answers,
+}: {
+  answers: FormValue
+}) => {
+  const applicationFor = getValueViaPath(
+    answers,
+    'applicationFor',
+    'B-full',
+  ) as string
+
+  switch (applicationFor) {
+    case 'B-temp':
+      return m.chooseDistrictCommisionerForTempLicense.defaultMessage
+    case 'B-full':
+      return m.chooseDistrictCommisionerForFullLicense.defaultMessage
+    default:
+      return ''
+  }
+}
+
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
   title: m.applicationName,
@@ -434,22 +455,9 @@ export const application: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'afhending',
-              title: 'Sýslumannsembætti',
+              title: m.districtCommisioner,
               titleVariant: 'h4',
-              description: ({ answers }) => {
-                const applicationFor = getValueViaPath(
-                  answers,
-                  'applicationFor',
-                  'B-full',
-                ) as string
-
-                if (applicationFor === 'B-temp') {
-                  return 'Veldu það embætti sýslumanns sem þú hyggst skila inn gæðamerktri ljósmynd'
-                } else {
-                  return 'Veldu það embætti sýslumanns þar sem þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini'
-                }
-              },
-              // description: m.chooseDistrictCommisioner,
+              description: chooseDistrictCommissionerDescription,
             }),
             buildSelectField({
               id: 'juristiction',

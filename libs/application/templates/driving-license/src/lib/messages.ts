@@ -606,12 +606,23 @@ export const m = defineMessages({
     defaultMessage: `Skrautmynd`,
     description: 'Company Image',
   },
-  chooseDistrictCommisioner: {
-    id: 'dl.application:chooseDistrictCommisioner',
+  districtCommisioner: {
+    id: 'dl.application:districtCommisionerTitle',
+    defaultMessage: 'Sýslumannsembætti',
+    description: 'Districit commissioner',
+  },
+  chooseDistrictCommisionerForFullLicense: {
+    id: 'dl.application:chooseDistrictCommisionerForFullLicense',
     defaultMessage:
       'Veldu það embætti sýslumanns þar sem þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini',
     description:
-      'Choose the district jurisdiction where you will return the temporary driving license and receive permanent driving license.',
+      'Choose districit commissioner for returning a temporary license and recieve a new full license',
+  },
+  chooseDistrictCommisionerForTempLicense: {
+    id: 'dl.application:chooseDistrictCommisionerForTempLicense',
+    defaultMessage:
+      'Veldu það embætti sýslumanns sem þú hyggst skila inn gæðamerktri ljósmynd',
+    description: 'Choose districit commissioner for submitting a quality photo',
   },
   confirmationStatusOfEligability: {
     id: 'dl.application:confirmationStatusOfEligability',
