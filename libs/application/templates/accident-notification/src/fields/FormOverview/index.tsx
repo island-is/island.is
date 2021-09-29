@@ -30,6 +30,7 @@ import {
   application as applicationMessages,
   childInCustody,
   fatalAccident,
+  fishingCompanyInfo,
   injuredPersonInformation,
   juridicalPerson,
   locationAndPurpose,
@@ -39,6 +40,7 @@ import {
 import {
   getAttachmentTitles,
   getWorkplaceData,
+  isFishermanAccident,
   isMachineRelatedAccident,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfChild,
@@ -317,6 +319,50 @@ export const FormOverview: FC<FieldBaseProps> = ({
                 )}
             </GridRow>
           </ReviewGroup>
+          {isFishermanAccident(answers) && (
+            <>
+              <Text variant="h4" paddingTop={6} paddingBottom={3}>
+                {formatText(
+                  fishingCompanyInfo.general.informationAboutShipTitle,
+                  application,
+                  formatMessage,
+                )}
+              </Text>
+              <ReviewGroup
+                isLast
+                editAction={() => changeScreens('fishingShipInfo')}
+              >
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.shipName}
+                      value={answers.fishingShipInfo.shipName}
+                    ></ValueLine>
+                  </GridColumn>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.shipCharacters}
+                      value={answers.fishingShipInfo.shipCharacters}
+                    ></ValueLine>
+                  </GridColumn>
+                </GridRow>
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.homePort}
+                      value={answers.fishingShipInfo.homePort}
+                    ></ValueLine>
+                  </GridColumn>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.shipRegisterNumber}
+                      value={answers.fishingShipInfo.shipRegisterNumber}
+                    ></ValueLine>
+                  </GridColumn>
+                </GridRow>
+              </ReviewGroup>
+            </>
+          )}
 
           {answers.isRepresentativeOfCompanyOrInstitue?.toString() !== YES && (
             <>
