@@ -1,5 +1,5 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
-import type { User } from '@island.is/auth-nest-tools'
+import { BypassAuth, User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { Endorsement } from './models/endorsement.model'
@@ -76,14 +76,13 @@ export class EndorsementSystemResolver {
   }
 
   // Endorsement list
+  @BypassAuth()
   @Query(() => [EndorsementList])
   async endorsementSystemFindEndorsementLists(
     @Args('input') input: FindEndorsementListByTagsDto,
-    @CurrentUser() user: User,
   ): Promise<EndorsementList[]> {
     return await this.endorsementSystemService.endorsementListControllerFindLists(
       input,
-      user,
     )
   }
 

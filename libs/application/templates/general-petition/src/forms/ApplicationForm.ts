@@ -14,8 +14,8 @@ import {
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
 
-export const LetterApplicationForm: Form = buildForm({
-  id: 'LetterApplicationDraft',
+export const PetitionApplicationForm: Form = buildForm({
+  id: 'PetitionApplicationForm',
   title: 'Undirskriftarlistar',
   logo: Logo,
   mode: FormModes.APPLYING,

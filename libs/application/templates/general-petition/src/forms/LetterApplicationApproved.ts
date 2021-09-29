@@ -8,7 +8,7 @@ import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
 
 export const LetterApplicationApproved: Form = buildForm({
-  id: 'LetterApplicationApproved',
+  id: 'PetitionApplicationApproved',
   title: m.overview.finalTitle,
   logo: Logo,
   mode: FormModes.APPROVED,
@@ -16,7 +16,7 @@ export const LetterApplicationApproved: Form = buildForm({
     buildCustomField({
       id: 'thankYou',
       title: m.overview.finalTitle,
-      component: 'PartyLetterApplicationApproved',
+      component: 'ListSubmitted',
     }),
   ],
 })

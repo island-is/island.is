@@ -6,7 +6,7 @@ import {
   TemporaryVoterRegistry,
 } from '../types/schema'
 
-import { useQuery, useMutation } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 
 export type RegionsPetitionList = Pick<
   EndorsementList,
@@ -78,9 +78,24 @@ export const GetSinglePetitionList = gql`
     }
   }
 `
-const UNENDORSE_LIST = gql`
+export const UnendorseList = gql`
   mutation unendorseList($input: FindEndorsementListInput!) {
     endorsementSystemUnendorseList(input: $input)
+  }
+`
+
+export const EndorseList = gql`
+  mutation endorsementSystemEndorseList($input: FindEndorsementListInput!) {
+    endorsementSystemEndorseList(input: $input) {
+      id
+      endorser
+      endorsementListId
+      meta {
+        fullName
+      }
+      created
+      modified
+    }
   }
 `
 
@@ -108,10 +123,6 @@ export const useGetUserLists = () => {
     },
   )
   return endorsementResponse?.endorsementSystemUserEndorsements ?? []
-}
-
-export const useUnendorseList = () => {
-  return useMutation<boolean>(UNENDORSE_LIST)
 }
 
 export const useGetSinglePetition = (listId: string) => {

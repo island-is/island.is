@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Text, DatePicker } from '@island.is/island-ui/core'
-import { Box, Button, Table as T, Pagination } from '@island.is/island-ui/core'
+import { Box, Button, Table as T, Pagination, toast, DialogPrompt } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import { ExportAsCSV } from '@island.is/application/ui-components'
-import { useGetSinglePetition, useUnendorseList } from '../queries'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-import { Link } from 'react-router-dom'
+import { useGetSinglePetition, UnendorseList, EndorseList } from '../queries'
 import { pages, PAGE_SIZE, paginate } from './pagination'
+import { useMutation } from '@apollo/client'
 
 export const list = {
   petitions: 256,
@@ -54,8 +53,9 @@ const ViewPetition = () => {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
   const [pagePetitions, setPetitions] = useState(list.signedPetitions)
-  
-  const [unendorseList] = useUnendorseList()
+
+  const [unendorseList, { loading: isLoading }] = useMutation(UnendorseList)
+  const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
   
   const handlePagination = (page: number, petitions: any) => {
     setPage(page)
@@ -66,6 +66,38 @@ const ViewPetition = () => {
   useEffect(() => {
     handlePagination(1, list.signedPetitions)
   }, [])
+
+  const onUnendorse = async () => {
+    const success = await unendorseList({
+      variables: {
+        input: {
+          listId: location.state?.listId ,
+        },
+      },
+    }).catch(() => {
+      toast.error('error! semja texta hér')
+    })
+
+    if (success) {
+      toast.success('DONE')
+    }
+  }
+
+  const onEndorse = async () => {
+    const success = await createEndorsement({
+      variables: {
+        input: {
+          listId: location.state?.listId ,
+        },
+      },
+    }).catch(() => {
+      toast.error('error! semja texta hér')
+    })
+
+    if (success) {
+      toast.success('DONE')
+    }
+  }
 
   return (
     <Box>
@@ -109,52 +141,93 @@ const ViewPetition = () => {
       </Box>
 
       {!viewTypeEdit && (
-        <Box marginBottom={5}>
-          <Link
-            style={{ textDecoration: 'none' }}
-            key={petition?.id}
-            to={ServicePortalPath.Petitions}
-          >
-            <Button
-              variant="primary"
-              icon="close"
-              onClick={() =>
-                unendorseList({
-                  variables: {
-                    input: { listId: location.state?.listId },
-                  },
-                })
+        <>
+          <Box marginBottom={5} width='half'>
+            <DialogPrompt
+              baseId="demo_dialog"
+              title="Ertu viss um að vilja taka nafn þitt af lista?"
+              ariaLabel="modal to confirm that user is willing to close the petition list"
+              disclosureElement={
+                <Button
+                  loading={isLoading}
+                  variant="primary"
+                  icon="close"
+                  //onClick={() => onUnendorse()}
+                >
+                  {/*<Link
+                    style={{ textDecoration: 'none' }}
+                    key={petition?.id}
+                    to={ServicePortalPath.Petitions}
+                  >*/}
+                    Taka nafn mitt af þessum lista
+                  
+                </Button>
               }
+              onConfirm={() => console.log('Confirmed')}
+              onCancel={() => console.log('Cancelled')}
+              buttonTextConfirm="Já"
+              buttonTextCancel="Hætta við"
+            />
+          </Box>
+          <Box marginBottom={5} width='half'>
+            <Button
+              loading={submitLoad}
+              variant="primary"
+              icon="arrowForward"
+              onClick={() => onEndorse()}
             >
-              Taka nafn mitt af þessum lista
+            {/*<Link
+              style={{ textDecoration: 'none' }}
+              key={petition?.id}
+              to={ServicePortalPath.Petitions}
+            >*/}
+              Setja nafn mitt á lista
+            
             </Button>
-          </Link>
-        </Box>
+          </Box>
+        </>
       )}
 
       {location.state.type === 'edit' && (
-        <Box width="half">
-          <DatePicker
-            //handleChange={function noRefCheck(){}}
-            label="Breyta loka dagsetningu"
-            locale="is"
-            placeholderText="Veldu dagsetningu"
-          />
+        <Box>
+          <Box width="half">
+            <DatePicker
+              label="Breyta loka dagsetningu"
+              locale="is"
+              placeholderText="Veldu dagsetningu"
+            />
+          </Box>
           <Box
             display="flex"
-            justifyContent="spaceBetween"
             marginTop={5}
             marginBottom={5}
           >
-            <Button icon="close" iconType="outline" colorScheme="destructive">
-              Loka lista
-            </Button>
-            <ExportAsCSV
-              data={mapToCSVFile(list.signedPetitions) as object[]}
-              filename="Meðmælalisti"
-              title="Sækja lista"
-              variant="ghost"
+            <DialogPrompt
+              baseId="demo_dialog"
+              title="Ertu viss um að vilja loka lista?"
+              ariaLabel="modal to confirm that user is willing to close the petition list"
+              disclosureElement={
+                <Button icon='lockClosed' iconType="outline" colorScheme="destructive">
+                  Loka lista
+                </Button>
+              }
+              onConfirm={() => console.log('Confirmed')}
+              onCancel={() => console.log('Cancelled')}
+              buttonTextConfirm="Já"
+              buttonTextCancel="Hætta við"
             />
+            
+            <Box marginLeft={3} marginRight={3}>
+              <ExportAsCSV
+                data={mapToCSVFile(list.signedPetitions) as object[]}
+                filename="Meðmælalisti"
+                title="Sækja lista"
+                variant="ghost"
+              />
+            </Box>
+            <Button icon='mail' iconType="outline" variant='ghost'>
+              Senda lista
+            </Button>
           </Box>
         </Box>
       )}

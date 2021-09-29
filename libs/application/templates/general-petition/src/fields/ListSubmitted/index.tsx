@@ -20,7 +20,7 @@ const ListSubmited: FC<FieldBaseProps> = () => {
       </Text>
       <Box marginBottom={2}>
         <CopyLink
-          linkUrl={'https://listar.island.is/Application/Lists'}
+          linkUrl={'TODO: link'}
           buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
         />
       </Box>

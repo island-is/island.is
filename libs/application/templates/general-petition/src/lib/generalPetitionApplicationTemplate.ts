@@ -29,14 +29,14 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'draft',
-          progress: 0.25,
+          progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/ApplicationForm').then((module) =>
-                  Promise.resolve(module.LetterApplicationForm),
+                  Promise.resolve(module.PetitionApplicationForm),
                 ),
               actions: [
                 {
@@ -51,14 +51,14 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.COLLECT_ENDORSEMENTS,
+            target: States.APPROVED,
           },
         },
       },
-      [States.COLLECT_ENDORSEMENTS]: {
+      [States.APPROVED]: {
         meta: {
-          name: 'Safna meðmælum',
-          progress: 0.75,
+          name: 'Approved',
+          progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiModuleActions.CreateEndorsementList,
@@ -69,60 +69,15 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/CollectEndorsements').then((val) =>
-                  Promise.resolve(val.CollectEndorsements),
-                ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Submit',
-                  type: 'primary',
-                },
-              ],
-              read: 'all',
-              write: 'all',
-            },
-            {
-              id: Roles.SIGNATUREE,
-              formLoader: () =>
-                import('../forms/EndorsementForm').then((val) =>
-                  Promise.resolve(val.EndorsementForm),
-                ),
-              read: 'all',
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Submit',
-                  type: 'primary',
-                },
-              ],
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.APPROVED,
-          },
-        },
-      },
-      [States.APPROVED]: {
-        meta: {
-          name: 'Approved',
-          progress: 1,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
                 import('../forms/LetterApplicationApproved').then((val) =>
                   Promise.resolve(val.LetterApplicationApproved),
                 ),
               read: 'all',
-            },
+            },  
           ],
         },
         type: 'final' as const,
-      },
+      }
     },
   },
   stateMachineOptions: {
@@ -152,9 +107,6 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
   ): ApplicationRole | undefined {
     if (application.applicant === nationalId) {
       return Roles.APPLICANT
-    } else if (application.state === States.COLLECT_ENDORSEMENTS) {
-      // everyone can be signaturee if they are not the applicant
-      return Roles.SIGNATUREE
     } else {
       return undefined
     }

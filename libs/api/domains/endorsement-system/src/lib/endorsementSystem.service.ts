@@ -94,9 +94,8 @@ export class EndorsementSystemService {
   // Endorsement list endpoints
   async endorsementListControllerFindLists(
     input: EndorsementListControllerFindByTagsRequest,
-    auth: Auth,
   ) {
-    return await this.endorsementListApiWithAuth(auth)
+    return await this.endorsementListApi
       .endorsementListControllerFindByTags(input)
       .catch(this.handleError.bind(this))
   }

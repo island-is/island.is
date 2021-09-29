@@ -497,7 +497,7 @@ export const m: MessageDir = {
     },
     agreeTermsLabel: {
       id: 'gpt.application:endorsement.form.agree.label',
-      defaultMessage: 'Ég hef kynnt mér framangreint',
+      defaultMessage: 'Ég hef kynnt mér ofangreint málefni og samþykki uppflettingu úr Þjóðskrá',
       description: 'Label for terms and conditions',
     },
     allowNameLabel: {

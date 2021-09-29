@@ -333,6 +333,10 @@ export const m = defineMessages({
     id: 'service.portal:endorsements',
     defaultMessage: 'Meðmæli',
   },
+  endorsementsAdmin: {
+    id: 'service.portal:endorsements-admin',
+    defaultMessage: 'Meðmæli Admin',
+  },
   educationLicense: {
     id: 'service.portal:educationLicense',
     defaultMessage: 'Starfsleyfi',

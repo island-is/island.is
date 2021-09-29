@@ -24,5 +24,15 @@ export const endorsementsModule: ServicePortalModule = {
       path: ServicePortalPath.PetitionList,
       render: () => lazy(() => import('./screens/ViewPetition')),
     },
+    {
+      name: m.endorsementsAdmin,
+      path: ServicePortalPath.PetitionsAdminView,
+      render: () => lazy(() => import('./screens/PetitionsAdmin')),
+    },
+    {
+      name: m.endorsementsAdmin,
+      path: ServicePortalPath.PetitionListAdmin,
+      render: () => lazy(() => import('./screens/ViewPetitionAdmin')),
+    },
   ],
 }
