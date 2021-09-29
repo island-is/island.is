@@ -116,88 +116,6 @@ export const aboutTheAccidentSection = buildSection({
             }),
           ],
         }),
-        buildMultiField({
-          id: 'fatalAccident.section',
-          title: fatalAccident.general.sectionTitle,
-          condition: (formValue) => isReportingOnBehalfOfInjured(formValue),
-          children: [
-            buildRadioField({
-              id: 'wasTheAccidentFatal',
-              title: fatalAccident.labels.title,
-              backgroundColor: 'blue',
-              width: 'half',
-              options: [
-                { value: YES, label: application.general.yesOptionLabel },
-                { value: NO, label: application.general.noOptionLabel },
-              ],
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSubSection({
-      id: 'fatalAccidentAttachment.section',
-      title: fatalAccidentAttachment.general.sectionTitle,
-      condition: (formValue) =>
-        isReportingOnBehalfOfInjured(formValue) &&
-        formValue.wasTheAccidentFatal === YES,
-      children: [
-        buildMultiField({
-          id: 'fatalAccidentUploadDeathCertificateNowMulti',
-          title: fatalAccidentAttachment.labels.title,
-          description: fatalAccidentAttachment.labels.description,
-          children: [
-            buildRadioField({
-              id: 'fatalAccidentUploadDeathCertificateNow',
-              title: '',
-              backgroundColor: 'blue',
-              options: [
-                {
-                  value: YES,
-                  label: fatalAccidentAttachment.options.addAttachmentsNow,
-                },
-                {
-                  value: NO,
-                  label: fatalAccidentAttachment.options.addAttachmentsLater,
-                },
-              ],
-            }),
-            buildCustomField(
-              {
-                id: 'attachments.injuryCertificate.alert',
-                title: fatalAccident.alertMessage.title,
-                description: fatalAccident.alertMessage.description,
-                component: 'FieldAlertMessage',
-                condition: (formValue) =>
-                  getValueViaPath(
-                    formValue,
-                    'fatalAccidentUploadDeathCertificateNow',
-                  ) === NO,
-              },
-              { type: 'warning' },
-            ),
-          ],
-        }),
-
-        buildMultiField({
-          id: 'attachments.deathCertificateFile.subSection',
-          title: attachments.general.uploadTitle,
-          children: [
-            buildFileUploadField({
-              id: 'attachments.deathCertificateFile',
-              title: attachments.general.uploadHeader,
-              uploadAccept: UPLOAD_ACCEPT,
-              uploadHeader: attachments.general.uploadHeader,
-              uploadDescription: attachments.general.uploadDescription,
-              uploadButtonLabel: attachments.general.uploadButtonLabel,
-              introduction: attachments.general.uploadIntroduction,
-            }),
-          ],
-          condition: (formValue) =>
-            isReportingOnBehalfOfInjured(formValue) &&
-            formValue.wasTheAccidentFatal === YES &&
-            formValue.fatalAccidentUploadDeathCertificateNow === YES,
-        }),
       ],
     }),
 
@@ -779,6 +697,87 @@ export const aboutTheAccidentSection = buildSection({
                 AttachmentsEnum.INJURYCERTIFICATE,
             }),
           ],
+        }),
+      ],
+    }),
+
+    // Fatal accident section
+    buildSubSection({
+      id: 'fatalAccident.section',
+      title: fatalAccidentAttachment.general.sectionTitle,
+      condition: (formValue) => isReportingOnBehalfOfInjured(formValue),
+      children: [
+        buildMultiField({
+          id: 'fatalAccidentMulti.section',
+          title: fatalAccident.general.sectionTitle,
+          children: [
+            buildRadioField({
+              id: 'wasTheAccidentFatal',
+              title: '',
+              backgroundColor: 'blue',
+              width: 'half',
+              options: [
+                { value: YES, label: application.general.yesOptionLabel },
+                { value: NO, label: application.general.noOptionLabel },
+              ],
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'fatalAccidentUploadDeathCertificateNowMulti',
+          title: fatalAccidentAttachment.labels.title,
+          description: fatalAccidentAttachment.labels.description,
+          condition: (formValue) => formValue.wasTheAccidentFatal === YES,
+          children: [
+            buildRadioField({
+              id: 'fatalAccidentUploadDeathCertificateNow',
+              title: '',
+              backgroundColor: 'blue',
+              options: [
+                {
+                  value: YES,
+                  label: fatalAccidentAttachment.options.addAttachmentsNow,
+                },
+                {
+                  value: NO,
+                  label: fatalAccidentAttachment.options.addAttachmentsLater,
+                },
+              ],
+            }),
+            buildCustomField(
+              {
+                id: 'attachments.injuryCertificate.alert',
+                title: fatalAccident.alertMessage.title,
+                description: fatalAccident.alertMessage.description,
+                component: 'FieldAlertMessage',
+                condition: (formValue) =>
+                  getValueViaPath(
+                    formValue,
+                    'fatalAccidentUploadDeathCertificateNow',
+                  ) === NO,
+              },
+              { type: 'warning' },
+            ),
+          ],
+        }),
+
+        buildMultiField({
+          id: 'attachments.deathCertificateFile.subSection',
+          title: attachments.general.uploadTitle,
+          children: [
+            buildFileUploadField({
+              id: 'attachments.deathCertificateFile',
+              title: attachments.general.uploadHeader,
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: attachments.general.uploadHeader,
+              uploadDescription: attachments.general.uploadDescription,
+              uploadButtonLabel: attachments.general.uploadButtonLabel,
+              introduction: attachments.general.uploadIntroduction,
+            }),
+          ],
+          condition: (formValue) =>
+            formValue.wasTheAccidentFatal === YES &&
+            formValue.fatalAccidentUploadDeathCertificateNow === YES,
         }),
       ],
     }),
