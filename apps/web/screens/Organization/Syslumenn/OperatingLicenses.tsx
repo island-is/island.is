@@ -39,12 +39,12 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 type SearchState = {
   currentTerm: string
   results: OperatingLicense[]
-  currentPageNumber: number,
-  hasNextPage: boolean,
-  totalCount: number,
-  isLoadingFirstPage: boolean,
-  isLoadingNextPage: boolean,
-  hasError: boolean,
+  currentPageNumber: number
+  hasNextPage: boolean
+  totalCount: number
+  isLoadingFirstPage: boolean
+  isLoadingNextPage: boolean
+  hasError: boolean
 }
 
 const SEARCH_REDUCER_ACTION_TYPES = {
@@ -58,14 +58,16 @@ const SEARCH_REDUCER_ACTION_TYPES = {
 const searchReducer = (state: SearchState, action): SearchState => {
   switch (action.type) {
     case SEARCH_REDUCER_ACTION_TYPES.START_LOADING_FIRST_PAGE:
-      return { ...state,
+      return {
+        ...state,
         currentTerm: action.currentTerm,
         currentPageNumber: action.currentPageNumber,
         isLoadingFirstPage: true,
         hasError: false,
       }
     case SEARCH_REDUCER_ACTION_TYPES.START_LOADING_NEXT_PAGE:
-      return { ...state,
+      return {
+        ...state,
         currentTerm: action.currentTerm,
         currentPageNumber: action.currentPageNumber,
         isLoadingNextPage: true,
@@ -73,16 +75,19 @@ const searchReducer = (state: SearchState, action): SearchState => {
       }
     case SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_FIRST_PAGE:
       // Request-Response matching based on current search term and current page number.
-      if (action.searchQuery === state.currentTerm && action.currentPageNumber === state.currentPageNumber) {
-        return { ...state,
+      if (
+        action.searchQuery === state.currentTerm &&
+        action.currentPageNumber === state.currentPageNumber
+      ) {
+        return {
+          ...state,
           results: action.results,
           hasNextPage: action.hasNextPage,
           totalCount: action.totalCount,
           isLoadingFirstPage: false,
           hasError: false,
         }
-      }
-      else {
+      } else {
         // Request-Response mismatch. Ignore outdated action.
         return state
       }
@@ -90,29 +95,34 @@ const searchReducer = (state: SearchState, action): SearchState => {
     case SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_NEXT_PAGE:
       // Request-Response matching, based on current search term and current page.
       // TODO: BUG, trailing space in search string, makes loading hang. (Potentially fixed by trimming the values before comparing for request-response match)
-      if (action.searchQuery === state.currentTerm && action.currentPageNumber === state.currentPageNumber) {
-        return { ...state,
-          results: [ ...state.results, ...action.results],
+      if (
+        action.searchQuery === state.currentTerm &&
+        action.currentPageNumber === state.currentPageNumber
+      ) {
+        return {
+          ...state,
+          results: [...state.results, ...action.results],
           hasNextPage: action.hasNextPage,
           totalCount: action.totalCount,
           isLoadingNextPage: false,
           hasError: false,
         }
-      }
-      else {
+      } else {
         // Request-Response mismatch. Ignore outdated action.
         return state
       }
     case SEARCH_REDUCER_ACTION_TYPES.SEARCH_ERROR:
       console.error(action.error)
-      return { ...state,
+      return {
+        ...state,
         hasError: true,
         isLoadingFirstPage: false,
         isLoadingNextPage: false,
       }
     default: {
       console.error('Unhandled search reducer action type.')
-      return { ...state,
+      return {
+        ...state,
         hasError: true,
         isLoadingFirstPage: false,
         isLoadingNextPage: false,
@@ -120,7 +130,6 @@ const searchReducer = (state: SearchState, action): SearchState => {
     }
   }
 }
-
 
 interface OperatingLicensesProps {
   organizationPage: Query['getOrganizationPage']
@@ -133,7 +142,7 @@ const DEBOUNCE_TIMER = 400
 // TODO: Find an appropriate page size.
 const PAGE_SIZE = 10
 
-const useSearch = ( term: string, currentPageNumber: number ): SearchState => {
+const useSearch = (term: string, currentPageNumber: number): SearchState => {
   const [state, dispatch] = useReducer(searchReducer, {
     currentTerm: term,
     results: [],
@@ -152,18 +161,15 @@ const useSearch = ( term: string, currentPageNumber: number ): SearchState => {
       dispatch({
         type: SEARCH_REDUCER_ACTION_TYPES.START_LOADING_FIRST_PAGE,
         currentTerm: term,
-        currentPageNumber: currentPageNumber
+        currentPageNumber: currentPageNumber,
       })
-    }
-    else
-    {
+    } else {
       dispatch({
         type: SEARCH_REDUCER_ACTION_TYPES.START_LOADING_NEXT_PAGE,
         currentTerm: term,
-        currentPageNumber: currentPageNumber
+        currentPageNumber: currentPageNumber,
       })
     }
-
 
     const thisTimerId = (timer.current = setTimeout(async () => {
       client
@@ -177,37 +183,39 @@ const useSearch = ( term: string, currentPageNumber: number ): SearchState => {
             },
           },
         })
-        .then(({ data: { getOperatingLicenses: { results, paginationInfo, searchQuery} }}) => {
-          if (paginationInfo.pageNumber === 1)
-          {
-            // First page
-            dispatch({
-              type: SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_FIRST_PAGE,
-              results,
-              currentPageNumber: paginationInfo.pageNumber,
-              hasNextPage: paginationInfo.hasNext,
-              totalCount: paginationInfo.totalCount,
-              searchQuery: searchQuery ?? '',
-            })
-          }
-          else
-          {
-            // Next pages
-            dispatch({
-              type: SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_NEXT_PAGE,
-              results,
-              currentPageNumber: paginationInfo.pageNumber,
-              hasNextPage: paginationInfo.hasNext,
-              totalCount: paginationInfo.totalCount,
-              searchQuery: searchQuery ?? '',
-            })
-          }
-
-        })
+        .then(
+          ({
+            data: {
+              getOperatingLicenses: { results, paginationInfo, searchQuery },
+            },
+          }) => {
+            if (paginationInfo.pageNumber === 1) {
+              // First page
+              dispatch({
+                type: SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_FIRST_PAGE,
+                results,
+                currentPageNumber: paginationInfo.pageNumber,
+                hasNextPage: paginationInfo.hasNext,
+                totalCount: paginationInfo.totalCount,
+                searchQuery: searchQuery ?? '',
+              })
+            } else {
+              // Next pages
+              dispatch({
+                type: SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_NEXT_PAGE,
+                results,
+                currentPageNumber: paginationInfo.pageNumber,
+                hasNextPage: paginationInfo.hasNext,
+                totalCount: paginationInfo.totalCount,
+                searchQuery: searchQuery ?? '',
+              })
+            }
+          },
+        )
         .catch((error) => {
           dispatch({
             type: SEARCH_REDUCER_ACTION_TYPES.SEARCH_ERROR,
-            error
+            error,
           })
         })
     }, DEBOUNCE_TIMER))
@@ -286,9 +294,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           {subpage.title}
         </Text>
       </Box>
-      <Box
-        marginBottom={3}
-      >
+      <Box marginBottom={3}>
         <Input
           name="operatingLicenseSearchInput"
           placeholder={n('operatingLicensesFilterSearch', 'Leita')}
@@ -302,19 +308,25 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           paddingTop={1}
           textAlign="center"
           style={{
-            visibility: search.isLoadingFirstPage ? 'visible' : 'hidden'
+            visibility: search.isLoadingFirstPage ? 'visible' : 'hidden',
           }}
         >
-          <LoadingDots/>
+          <LoadingDots />
         </Box>
       </Box>
-      {!search.isLoadingFirstPage && !search.isLoadingNextPage && !search.hasError && search.results.length === 0 &&
-        <Box display="flex" marginTop={4} justifyContent="center">
-          <Text variant="h3">
-            {n('operatingLicensesNoSearchResults', 'Engin rekstrarleyfi fundust.')}
-          </Text>
-        </Box>
-      }
+      {!search.isLoadingFirstPage &&
+        !search.isLoadingNextPage &&
+        !search.hasError &&
+        search.results.length === 0 && (
+          <Box display="flex" marginTop={4} justifyContent="center">
+            <Text variant="h3">
+              {n(
+                'operatingLicensesNoSearchResults',
+                'Engin rekstrarleyfi fundust.',
+              )}
+            </Text>
+          </Box>
+        )}
       {search.results.map((operatingLicense, index) => {
         return (
           <Box
@@ -326,7 +338,9 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
             paddingX={4}
           >
             <Text variant="h4" color="blue400" marginBottom={1}>
-              {operatingLicense.name ? operatingLicense.name : operatingLicense.location}
+              {operatingLicense.name
+                ? operatingLicense.name
+                : operatingLicense.location}
             </Text>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12']}>
@@ -339,7 +353,10 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
                 {operatingLicense.validUntil && (
                   <Text>
                     Gildir til{' '}
-                    {format(new Date(operatingLicense.validUntil), 'd. MMMM yyyy')}
+                    {format(
+                      new Date(operatingLicense.validUntil),
+                      'd. MMMM yyyy',
+                    )}
                   </Text>
                 )}
                 <Text>{operatingLicense.type}</Text>
@@ -351,13 +368,16 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           </Box>
         )
       })}
-      {search.hasError &&
+      {search.hasError && (
         <AlertBanner
           title={n('operatingLicensesErrorTitle', 'Villa')}
-          description={n('operatingLicensesErrorDescription', 'Villa kom upp við að sækja rekstrarleyfi.')}
+          description={n(
+            'operatingLicensesErrorDescription',
+            'Villa kom upp við að sækja rekstrarleyfi.',
+          )}
           variant="error"
         />
-      }
+      )}
       <Box
         display="flex"
         justifyContent="center"
@@ -365,10 +385,10 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         paddingBottom={2}
         textAlign="center"
         style={{
-          visibility: search.isLoadingNextPage ? 'visible' : 'hidden'
+          visibility: search.isLoadingNextPage ? 'visible' : 'hidden',
         }}
       >
-        <LoadingDots/>
+        <LoadingDots />
       </Box>
       <Box
         display="flex"
