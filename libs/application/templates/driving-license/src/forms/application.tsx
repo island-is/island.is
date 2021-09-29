@@ -219,17 +219,15 @@ export const application: Form = buildForm({
               largeButtons: true,
               options: [
                 {
-                  // TODO: m.
-                  label: 'Almenn ökuréttindi',
+                  label: m.applicationForTempLicenseTitle,
                   subLabel:
-                    'Umsókn um almenn ökuréttindi í B flokki (fólksbifreið). Fyrsta ökuskírteinið er bráðabirgðaskírteini sem gildir í 3 ár.',
+                    m.applicationForTempLicenseDescription.defaultMessage,
                   value: 'B-temp',
                 },
                 {
-                  // TODO: m.
-                  label: 'Fullnaðarréttindi',
+                  label: m.applicationForFullLicenseTitle,
                   subLabel:
-                    'Ef ökumaður hefur haft bráðabirgðaskírteini í að minnsta kosti ár og farið í akstursmat með ökukennara getur hann sótt um fullnaðarskírteini.',
+                    m.applicationForFullLicenseDescription.defaultMessage,
                   value: 'B-full',
                   disabled: true,
                 },
@@ -439,14 +437,18 @@ export const application: Form = buildForm({
               title: 'Sýslumannsembætti',
               titleVariant: 'h4',
               description: ({ answers }) => {
-                const applicationFor = getValueViaPath(answers, 'applicationFor', 'B-full') as string
+                const applicationFor = getValueViaPath(
+                  answers,
+                  'applicationFor',
+                  'B-full',
+                ) as string
 
                 if (applicationFor === 'B-temp') {
                   return 'Veldu það embætti sýslumanns sem þú hyggst skila inn gæðamerktri ljósmynd'
                 } else {
                   return 'Veldu það embætti sýslumanns þar sem þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini'
                 }
-              }
+              },
               // description: m.chooseDistrictCommisioner,
             }),
             buildSelectField({
@@ -702,13 +704,18 @@ export const application: Form = buildForm({
             buildKeyValueField({
               label: m.overviewPaymentCharge,
               value: ({ externalData, answers }) => {
-                const items = externalData.payment.data as { priceAmount: number, chargeItemCode: string}[]
-                const targetCode = answers.applicationFor === 'B-temp'
-                  ? 'AY114'
-                  : 'AY110'
+                const items = externalData.payment.data as {
+                  priceAmount: number
+                  chargeItemCode: string
+                }[]
+                const targetCode =
+                  answers.applicationFor === 'B-temp' ? 'AY114' : 'AY110'
 
-                const item = items.find(({ chargeItemCode }) => chargeItemCode === targetCode)
-                return ((item?.priceAmount)?.toLocaleString('de-DE') + ' kr.') as StaticText
+                const item = items.find(
+                  ({ chargeItemCode }) => chargeItemCode === targetCode,
+                )
+                return (item?.priceAmount?.toLocaleString('de-DE') +
+                  ' kr.') as StaticText
               },
               width: 'full',
             }),

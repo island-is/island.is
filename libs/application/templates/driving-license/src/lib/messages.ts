@@ -699,4 +699,29 @@ export const m = defineMessages({
     description:
       'Confirmation that the applicant does not hold a driving license issued by another country that is part of The European Economic Area, nor is he subject to a driving license restriction or has been deprived of his driving license in that countries',
   },
+  applicationForFullLicenseTitle: {
+    id: 'dl.application:applicationForFullLicenseTitle',
+    defaultMessage: 'Fullnaðarréttindi',
+    description: 'Option title for selecting to apply for full driving license',
+  },
+  applicationForFullLicenseDescription: {
+    id: 'dl.application:applicationForFullLicenseDescription',
+    defaultMessage:
+      'Ef ökumaður hefur haft bráðabirgðaskírteini í að minnsta kosti ár og farið í akstursmat með ökukennara getur hann sótt um fullnaðarskírteini.',
+    description:
+      'Option description for selecting to apply for full driving license',
+  },
+  applicationForTempLicenseTitle: {
+    id: 'dl.application:applicationForTempLicenseTitle',
+    defaultMessage: 'Almenn ökuréttindi',
+    description:
+      'Option title for selecting to apply for temporary driving license',
+  },
+  applicationForTempLicenseDescription: {
+    id: 'dl.application:applicationForTempLicenseDescription',
+    defaultMessage:
+      'Umsókn um almenn ökuréttindi í B flokki (fólksbifreið). Fyrsta ökuskírteinið er bráðabirgðaskírteini sem gildir í 3 ár.',
+    description:
+      'Option description for selecting to apply for temporary driving license',
+  },
 })
