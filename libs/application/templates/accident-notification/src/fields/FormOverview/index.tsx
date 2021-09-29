@@ -25,6 +25,7 @@ import { States, YES } from '../../constants'
 import { AccidentNotification } from '../../lib/dataSchema'
 import {
   accidentDetails,
+  accidentLocation,
   accidentType,
   applicantInformation,
   application as applicationMessages,
@@ -41,6 +42,7 @@ import {
   getAttachmentTitles,
   getWorkplaceData,
   isFishermanAccident,
+  isHomeActivitiesAccident,
   isMachineRelatedAccident,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfChild,
@@ -402,6 +404,48 @@ export const FormOverview: FC<FieldBaseProps> = ({
               </ReviewGroup>
             </>
           )}
+        </>
+      )}
+
+      {isHomeActivitiesAccident(answers) && (
+        <>
+          <Text variant="h4" paddingTop={6} paddingBottom={3}>
+            {formatText(
+              accidentLocation.homeAccidentLocation.title,
+              application,
+              formatMessage,
+            )}
+          </Text>
+          <ReviewGroup isLast editAction={() => {}}>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.address}
+                  value={answers.homeAccident.address}
+                ></ValueLine>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.postalCode}
+                  value={answers.homeAccident.postalCode}
+                ></ValueLine>
+              </GridColumn>
+            </GridRow>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.community}
+                  value={answers.homeAccident.community}
+                ></ValueLine>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.moreDetails}
+                  value={answers.homeAccident.moreDetails || ''}
+                ></ValueLine>
+              </GridColumn>
+            </GridRow>
+          </ReviewGroup>
         </>
       )}
 
