@@ -1,3 +1,4 @@
+import { FeatureNames } from '../features'
 import { EnvironmentConfig } from './charts'
 
 export type OpsEnv = 'dev' | 'staging' | 'prod'
@@ -26,14 +27,24 @@ export type HealthProbe = {
   timeoutSeconds: number
 }
 
+export type Secrets = { [name: string]: string }
+
+export type Feature = {
+  env: EnvironmentVariables
+  secrets: Secrets
+}
+
+export type Features = { [name in FeatureNames]: Feature }
+
 export type ServiceDefinition = {
   liveness: HealthProbe
   readiness: HealthProbe
   port?: number
   initContainers?: InitContainers
   env: EnvironmentVariables
-  secrets: { [name: string]: string }
+  secrets: Secrets
   ingress: { [name: string]: Ingress }
+  features: Partial<Features>
   postgres?: PostgresInfo
   namespace: string
   grantNamespaces: string[]
@@ -81,6 +92,7 @@ export type ReplicaCount = {
 export type InitContainers = {
   envs?: EnvironmentVariables
   secrets?: { [key: string]: SecretType }
+  features?: Partial<Features>
   containers: {
     command: string
     args?: string[]

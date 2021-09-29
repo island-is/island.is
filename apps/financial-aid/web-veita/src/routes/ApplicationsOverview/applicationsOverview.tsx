@@ -94,10 +94,13 @@ export const ApplicationsOverview = () => {
   }
   return (
     <div>
-      <Box className={`contentUp delay-25`}>
+      <Box marginTop={15} className={`contentUp delay-25`}>
         <Text as="h1" variant="h1" marginBottom={[2, 2, 4]} marginTop={4}>
-          Enginn umsókn fundinn
+          Hefuru villst?
         </Text>
+        <Link href="/nymal" color="blue600">
+          Kíktu á nýmál
+        </Link>
       </Box>
     </div>
   )

@@ -44,6 +44,14 @@ export const signedVerdictOverview = defineMessages({
     description:
       'Notaður sem texti í "Hlaða upp gögnum í Auði" takkanum á yfirlitsskjá afgreiddra mála ef ekki tókst að hlaða upp öllum skjölunum.',
   },
+  uploadToCourtAllBrokenText: {
+    id:
+      'judicial.system.core:signed_verdict_overview.upload_to_court_all_broken_text',
+    defaultMessage:
+      'Ofangreind rannsóknargögn eru ekki lengur aðgengileg í Réttarvörslugátt.',
+    description:
+      'Notaður sem upplýsingatexti sem útskýrir að rannsóknargögn eru ekki aðgengileg í Réttarvörslugátt.',
+  },
   dismissedTitle: {
     id: 'judicial.system.core:signed_verdict_overview.dismissed_title',
     defaultMessage: 'Kröfu vísað frá',

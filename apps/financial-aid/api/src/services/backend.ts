@@ -70,7 +70,7 @@ class BackendAPI extends RESTDataSource {
 
   createApplicationEvent(
     createApplicationEvent: CreateApplicationEvent,
-  ): Promise<ApplicationEvent> {
+  ): Promise<Application> {
     return this.post('applicationEvent', createApplicationEvent)
   }
 
