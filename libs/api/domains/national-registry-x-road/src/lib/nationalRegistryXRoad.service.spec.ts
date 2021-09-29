@@ -25,7 +25,7 @@ describe('NationalRegistryXRoadService', () => {
 
   describe('computeCountryResidence', () => {
     let now
-    let ymd: { year: number, month: number, day: number }
+    let ymd: { year: number; month: number; day: number }
 
     beforeEach(() => {
       now = new Date('2021-09-18T00:00:00')
@@ -34,18 +34,18 @@ describe('NationalRegistryXRoadService', () => {
         month: now.getMonth(),
         day: now.getDate(),
       }
-
     })
     it('should work', async () => {
       const report = service.computeCountryResidence([
         {
-          address: {}, country: 'IS',
-          dateOfChange: new Date(ymd.year - 2, ymd.month, ymd.day)
-        }
+          address: {},
+          country: 'IS',
+          dateOfChange: new Date(ymd.year - 2, ymd.month, ymd.day),
+        },
       ])
 
       expect(report).toMatchObject({
-        'IS': 365
+        IS: 365,
       })
     })
   })
