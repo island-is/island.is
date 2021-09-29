@@ -120,7 +120,9 @@ export const CourtRecord: React.FC = () => {
         )
       }
 
-      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      if (theCase.courtAttendees !== '') {
+        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      }
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)

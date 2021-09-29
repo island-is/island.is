@@ -32,7 +32,7 @@ export const getAppealDecisionText = (
             ? capitalize(formatAccusedByGender(accusedGender))
             : 'Varnaraðili'
           : 'Sækjandi'
-      } kærir úrskurðinn`
+      } lýsir því yfir að hann kæri úrskurðinn til Landsréttar.`
     }
     case CaseAppealDecision.ACCEPT: {
       return `${
@@ -41,7 +41,7 @@ export const getAppealDecisionText = (
             ? capitalize(formatAccusedByGender(accusedGender))
             : 'Varnaraðili'
           : 'Sækjandi'
-      } unir úrskurðinum`
+      } lýsir því yfir að hann unir úrskurðinum.`
     }
     case CaseAppealDecision.POSTPONE: {
       return `${
@@ -50,7 +50,7 @@ export const getAppealDecisionText = (
             ? capitalize(formatAccusedByGender(accusedGender))
             : 'Varnaraðili'
           : 'Sækjandi'
-      } tekur sér lögboðinn frest`
+      } lýsir því yfir að hann taki sér lögboðinn frest.`
     }
     default: {
       return ''

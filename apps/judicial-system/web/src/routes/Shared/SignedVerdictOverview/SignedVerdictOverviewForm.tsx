@@ -29,7 +29,6 @@ import {
   CaseState,
   CaseType,
   InstitutionType,
-  UploadState,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -48,8 +47,12 @@ import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { useIntl } from 'react-intl'
-import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+import {
+  UploadState,
+  useCourtUpload,
+} from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import { UploadStateMessage } from './Components/UploadStateMessage'
+import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
 
 interface Props {
   workingCase: Case
@@ -336,7 +339,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 {user &&
                   [UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role) && (
                     <AnimatePresence>
-                      {uploadState === UploadState.SOME_UPLOADED && (
+                      {uploadState === UploadState.UPLOAD_ERROR && (
                         <UploadStateMessage
                           icon="warning"
                           iconColor="red600"
@@ -376,21 +379,29 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             />
             {user && [UserRole.JUDGE, UserRole.REGISTRAR].includes(user?.role) && (
               <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  size="small"
-                  onClick={() => uploadFilesToCourt(workingCase.files)}
-                  loading={uploadState === UploadState.UPLOADING}
-                  disabled={
-                    uploadState === UploadState.UPLOADING ||
-                    uploadState === UploadState.ALL_UPLOADED
-                  }
-                >
-                  {formatMessage(
-                    uploadState === UploadState.SOME_UPLOADED
-                      ? signedVerdictOverview.retryUploadToCourtButtonText
-                      : signedVerdictOverview.uploadToCourtButtonText,
-                  )}
-                </Button>
+                {uploadState === UploadState.NONE_CAN_BE_UPLOADED ? (
+                  <InfoBox
+                    text={formatMessage(
+                      signedVerdictOverview.uploadToCourtAllBrokenText,
+                    )}
+                  />
+                ) : (
+                  <Button
+                    size="small"
+                    onClick={() => uploadFilesToCourt(workingCase.files)}
+                    loading={uploadState === UploadState.UPLOADING}
+                    disabled={
+                      uploadState === UploadState.UPLOADING ||
+                      uploadState === UploadState.ALL_UPLOADED
+                    }
+                  >
+                    {formatMessage(
+                      uploadState === UploadState.UPLOAD_ERROR
+                        ? signedVerdictOverview.retryUploadToCourtButtonText
+                        : signedVerdictOverview.uploadToCourtButtonText,
+                    )}
+                  </Button>
+                )}
               </Box>
             )}
           </AccordionItem>
