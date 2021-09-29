@@ -8,6 +8,7 @@ import {
   buildSection,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { WorkTypeIllustration } from '../../assets/WorkTypeIllustration'
 import { NO, UPLOAD_ACCEPT, YES } from '../../constants'
@@ -141,22 +142,43 @@ export const aboutTheAccidentSection = buildSection({
         isReportingOnBehalfOfInjured(formValue) &&
         formValue.wasTheAccidentFatal === YES,
       children: [
-        buildRadioField({
-          id: 'fatalAccidentUploadDeathCertificateNow',
+        buildMultiField({
+          id: 'fatalAccidentUploadDeathCertificateNowMulti',
           title: fatalAccidentAttachment.labels.title,
           description: fatalAccidentAttachment.labels.description,
-          backgroundColor: 'blue',
-          options: [
-            {
-              value: YES,
-              label: fatalAccidentAttachment.options.addAttachmentsNow,
-            },
-            {
-              value: NO,
-              label: fatalAccidentAttachment.options.addAttachmentsLater,
-            },
+          children: [
+            buildRadioField({
+              id: 'fatalAccidentUploadDeathCertificateNow',
+              title: '',
+              backgroundColor: 'blue',
+              options: [
+                {
+                  value: YES,
+                  label: fatalAccidentAttachment.options.addAttachmentsNow,
+                },
+                {
+                  value: NO,
+                  label: fatalAccidentAttachment.options.addAttachmentsLater,
+                },
+              ],
+            }),
+            buildCustomField(
+              {
+                id: 'attachments.injuryCertificate.alert',
+                title: fatalAccident.alertMessage.title,
+                description: fatalAccident.alertMessage.description,
+                component: 'FieldAlertMessage',
+                condition: (formValue) =>
+                  getValueViaPath(
+                    formValue,
+                    'fatalAccidentUploadDeathCertificateNow',
+                  ) === NO,
+              },
+              { type: 'warning' },
+            ),
           ],
         }),
+
         buildMultiField({
           id: 'attachments.deathCertificateFile.subSection',
           title: attachments.general.uploadTitle,
@@ -683,7 +705,7 @@ export const aboutTheAccidentSection = buildSection({
           title: attachments.general.heading,
           children: [
             buildRadioField({
-              id: 'attachments.injuryCertificate',
+              id: 'attachments.injuryCertificate.default',
               title: '',
               description: attachments.general.description,
               condition: (formValue) =>
@@ -784,6 +806,8 @@ export const aboutTheAccidentSection = buildSection({
               id: 'isRepresentativeOfCompanyOrInstitue',
               title: '',
               defaultValue: [],
+              large: false,
+              backgroundColor: 'white',
               options: [
                 {
                   value: YES,
@@ -857,6 +881,8 @@ export const aboutTheAccidentSection = buildSection({
               id: 'isRepresentativeOfCompanyOrInstitue',
               title: '',
               defaultValue: [],
+              large: false,
+              backgroundColor: 'white',
               options: [
                 {
                   value: YES,
@@ -965,6 +991,8 @@ export const aboutTheAccidentSection = buildSection({
               id: 'isRepresentativeOfCompanyOrInstitue',
               title: '',
               defaultValue: [],
+              large: false,
+              backgroundColor: 'white',
               options: [
                 {
                   value: YES,
@@ -1038,6 +1066,8 @@ export const aboutTheAccidentSection = buildSection({
               id: 'isRepresentativeOfCompanyOrInstitue',
               title: '',
               defaultValue: [],
+              large: false,
+              backgroundColor: 'white',
               options: [
                 {
                   value: YES,
@@ -1111,6 +1141,8 @@ export const aboutTheAccidentSection = buildSection({
               id: 'isRepresentativeOfCompanyOrInstitue',
               title: '',
               defaultValue: [],
+              large: false,
+              backgroundColor: 'white',
               options: [
                 {
                   value: YES,
