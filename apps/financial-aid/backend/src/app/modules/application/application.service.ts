@@ -74,6 +74,12 @@ export class ApplicationService {
     })
   }
 
+  async setFilesToApplication(id: string, application: ApplicationModel) {
+    const files = await this.fileService.getAllApplicationFiles(id)
+
+    application?.setDataValue('files', files)
+  }
+
   async findById(id: string): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
@@ -88,9 +94,7 @@ export class ApplicationService {
       ],
     })
 
-    const files = await this.fileService.getAllApplicationFiles(id)
-
-    application?.setDataValue('files', files)
+    await this.setFilesToApplication(id, application)
 
     return application
   }
@@ -177,6 +181,8 @@ export class ApplicationService {
       where: { id },
       returning: true,
     })
+
+    await this.setFilesToApplication(id, updatedApplication)
 
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({
