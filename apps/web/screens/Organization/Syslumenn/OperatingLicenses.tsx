@@ -3,11 +3,11 @@ import React, { useEffect, useState, useRef, useReducer } from 'react'
 import { useApolloClient } from '@apollo/client/react'
 import {
   AlertBanner,
+  AsyncSearchInput,
   Box,
   Button,
   GridColumn,
   GridRow,
-  Input,
   LoadingDots,
   NavigationItem,
   Text,
@@ -33,12 +33,11 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useRouter } from 'next/router'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 type SearchState = {
-  term: string
+  currentTerm: string
   results: OperatingLicense[]
   currentPageNumber: number,
   hasNextPage: boolean,
@@ -55,30 +54,45 @@ const SEARCH_REDUCER_ACTION_TYPES = {
 }
 
 const searchReducer = (state: SearchState, action): SearchState => {
+  // TODO: Refactor this switch statement to if statements, altering the state and returning it in the end.
   switch (action.type) {
     case SEARCH_REDUCER_ACTION_TYPES.START_LOADING:
       return { ...state,
+        currentTerm: action.currentTerm,
+        currentPageNumber: action.currentPageNumber,
         isLoading: true,
         hasError: false,
       }
     case SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_FIRST_PAGE:
-      // TODO: Do Request-Response matching
-      return { ...state,
-        results: action.results,
-        currentPageNumber: 1,
-        hasNextPage: action.hasNextPage,
-        totalCount: action.totalCount,
-        isLoading: false,
-        hasError: false,
+      // Request-Response matching based on current search term and current page number.
+      if (action.searchQuery === state.currentTerm && action.currentPageNumber === state.currentPageNumber) {
+        return { ...state,
+          results: action.results,
+          hasNextPage: action.hasNextPage,
+          totalCount: action.totalCount,
+          isLoading: false,
+          hasError: false,
+        }
       }
+      else {
+        // Request-Response mismatch. Ignore outdated action.
+        return state
+      }
+
     case SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_NEXT_PAGE:
-      return { ...state,
-        results: [ ...state.results, ...action.results],
-        currentPageNumber: action.currentPageNumber,
-        hasNextPage: action.hasNextPage,
-        totalCount: action.totalCount,
-        isLoading: false,
-        hasError: false,
+      // Request-Response matching, based on current search term and current page.
+      if (action.searchQuery === state.currentTerm && action.currentPageNumber === state.currentPageNumber) {
+        return { ...state,
+          results: [ ...state.results, ...action.results],
+          hasNextPage: action.hasNextPage,
+          totalCount: action.totalCount,
+          isLoading: false,
+          hasError: false,
+        }
+      }
+      else {
+        // Request-Response mismatch. Ignore outdated action.
+        return state
       }
     case SEARCH_REDUCER_ACTION_TYPES.SEARCH_ERROR:
       console.error(action.error)
@@ -110,9 +124,10 @@ const PAGE_SIZE = 10
 
 const useSearch = ( term: string, currentPageNumber: number ): SearchState => {
   const [state, dispatch] = useReducer(searchReducer, {
-    term: term,
+    currentTerm: term,
     results: [],
-    // TODO: Show loading animation in the input field, similar to how it's done on the home screen.
+    // TODO: Only show loading dots on initial load and next page load.
+    // TODO: The reload icon in the search bar disappears before the results have been fully loaded. It's not in sync with the loading dots that are shown depending on the same boolean variable.
     currentPageNumber: currentPageNumber,
     hasNextPage: false,
     totalCount: 0,
@@ -123,7 +138,11 @@ const useSearch = ( term: string, currentPageNumber: number ): SearchState => {
   const timer = useRef(null)
 
   useEffect(() => {
-    dispatch({ type: SEARCH_REDUCER_ACTION_TYPES.START_LOADING })
+    dispatch({
+      type: SEARCH_REDUCER_ACTION_TYPES.START_LOADING,
+      currentTerm: term,
+      currentPageNumber: currentPageNumber
+    })
 
     const thisTimerId = (timer.current = setTimeout(async () => {
       client
@@ -147,7 +166,7 @@ const useSearch = ( term: string, currentPageNumber: number ): SearchState => {
               currentPageNumber: paginationInfo.pageNumber,
               hasNextPage: paginationInfo.hasNext,
               totalCount: paginationInfo.totalCount,
-              searchQuery,  // TODO: Use for request-response matching
+              searchQuery: searchQuery ?? '',
             })
           }
           else
@@ -159,7 +178,7 @@ const useSearch = ( term: string, currentPageNumber: number ): SearchState => {
               currentPageNumber: paginationInfo.pageNumber,
               hasNextPage: paginationInfo.hasNext,
               totalCount: paginationInfo.totalCount,
-              searchQuery,  // TODO: Use for request-response matching
+              searchQuery: searchQuery ?? '',
             })
           }
 
@@ -207,6 +226,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   const [query, setQuery] = useState(' ')
   const [currentPageNumber, setCurrentPageNumber] = useState(1)
   const search = useSearch(query, currentPageNumber)
+  const [searchHasFocus, setSearchHasFocus] = useState(false)
 
   useEffect(() => {
     // Note: This is a workaround to fix an issue where the search input looses focus after the first keypress.
@@ -220,6 +240,12 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
 
   const onLoadMore = () => {
     setCurrentPageNumber(currentPageNumber + 1)
+  }
+
+  const onBlur = () => {
+    setTimeout(() => {
+      setSearchHasFocus(false)
+    }, 100)
   }
 
   return (
@@ -250,14 +276,26 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
       <Box
         marginBottom={6}
       >
-        <Input
-          name="operatingLicenseSearchInput"
-          placeholder={n('operatingLicensesFilterSearch', 'Leita')}
-          backgroundColor={['blue', 'blue', 'white']}
-          size="sm"
-          icon="search"
-          iconType="outline"
-          onChange={(event) => onSearch(event.target.value)}
+        <AsyncSearchInput
+          rootProps={{
+            'aria-controls': '-menu',
+          }}
+          hasFocus={searchHasFocus}
+          loading={search.isLoading}
+          menuProps={{
+            comp: 'div',
+          }}
+          buttonProps={{
+            onClick: () => onSearch(query)
+          }}
+          inputProps={{
+            inputSize: 'medium',
+            onFocus: () => setSearchHasFocus(true),
+            onBlur,
+            placeholder: n('operatingLicensesFilterSearch', 'Leita'),
+            value: query,
+            onChange: (event) => onSearch(event.target.value),
+          }}
         />
       </Box>
       {!search.isLoading && !search.hasError && search.results.length === 0 &&
