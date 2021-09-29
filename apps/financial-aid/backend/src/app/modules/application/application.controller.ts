@@ -36,8 +36,7 @@ import {
   ApplicationFilters,
   RolesRule,
 } from '@island.is/financial-aid/shared/lib'
-
-@UseGuards(TokenGuard)
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 @Controller(apiBasePath)
 @ApiTags('applications')
 export class ApplicationController {
@@ -122,6 +121,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
+  @UseGuards(IdsUserGuard)
   @Post('application')
   @ApiCreatedResponse({
     type: ApplicationModel,

@@ -29,6 +29,10 @@ const prodConfig = {
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
   },
+  identityServerAuth: {
+    issuer: 'https://identity-server.dev01.devland.is',
+    audience: '@samband.is',
+  },
 }
 
 const devConfig = {
@@ -43,6 +47,10 @@ const devConfig = {
     fileBaseUrl: 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
+  },
+  identityServerAuth: {
+    issuer: 'https://identity-server.dev01.devland.is',
+    audience: '@samband.is',
   },
 }
 
