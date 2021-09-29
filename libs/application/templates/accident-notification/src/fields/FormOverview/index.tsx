@@ -321,13 +321,11 @@ export const FormOverview: FC<FieldBaseProps> = ({
                 )}
             </GridRow>
           </ReviewGroup>
-          {isFishermanAccident(answers) && (
+          {isFishermanAccident(answers as FormValue) && (
             <>
               <Text variant="h4" paddingTop={6} paddingBottom={3}>
-                {formatText(
+                {formatMessage(
                   fishingCompanyInfo.general.informationAboutShipTitle,
-                  application,
-                  formatMessage,
                 )}
               </Text>
               <ReviewGroup
@@ -407,14 +405,10 @@ export const FormOverview: FC<FieldBaseProps> = ({
         </>
       )}
 
-      {isHomeActivitiesAccident(answers) && (
+      {isHomeActivitiesAccident(answers as FormValue) && (
         <>
           <Text variant="h4" paddingTop={6} paddingBottom={3}>
-            {formatText(
-              accidentLocation.homeAccidentLocation.title,
-              application,
-              formatMessage,
-            )}
+            {formatMessage(accidentLocation.homeAccidentLocation.title)}
           </Text>
           <ReviewGroup
             isLast
@@ -453,11 +447,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
       )}
 
       <Text variant="h4" paddingTop={6} paddingBottom={3}>
-        {formatText(
-          accidentDetails.general.sectionTitle,
-          application,
-          formatMessage,
-        )}
+        {formatMessage(accidentDetails.general.sectionTitle)}
       </Text>
       <ReviewGroup isLast editAction={() => changeScreens('accidentDetails')}>
         <GridRow>
