@@ -1,7 +1,20 @@
 /// <reference path="../../support/index.d.ts" />
+
+import { Case } from '@island.is/judicial-system/types'
+import { makeCase } from '../../fixtures/caseFactory'
+import { intercept } from '../../utils'
+
 describe('/domur/urskurdur/:id', () => {
   beforeEach(() => {
+    const caseData = makeCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      caseFacts: 'lorem ipsum',
+      legalArguments: 'lorem ipsum',
+    }
     cy.stubAPIResponses()
+
+    intercept(caseDataAddition)
   })
 
   it('should require a valid ruling', () => {

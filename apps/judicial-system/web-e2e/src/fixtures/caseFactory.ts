@@ -20,6 +20,7 @@ export const makeCase = (): Case => {
     accusedNationalId: '000000-0000',
     accusedName: 'Donald Duck',
     accusedGender: CaseGender.MALE,
+    accusedAddress: 'Batcave 1337',
   }
 }
 

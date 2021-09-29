@@ -7,12 +7,12 @@ describe('/krafa/stadfesta/:id', () => {
     const caseData = makeCase()
     const caseDataAddition: Case = {
       ...caseData,
-      accusedName: 'Batman Robinsson',
+      accusedName: 'Donald Duck',
       accusedAddress: 'Batcave 1337',
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       arrestDate: '2020-09-16T19:50:08.033Z',
       demands:
-        'Þess er krafist að Batman Robinsson, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+        'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
       court: makeCourt(),
       prosecutor: makeProsecutor(),
     }
@@ -25,7 +25,7 @@ describe('/krafa/stadfesta/:id', () => {
 
   it('should have an overview of the current case', () => {
     cy.getByTestid('infoCard').contains(
-      'Batman Robinsson, kt. 000000-0000, Batcave 1337',
+      'Donald Duck, kt. 000000-0000, Batcave 1337',
     )
     cy.getByTestid('infoCardDataContainer1').contains('Héraðsdómur Reykjavíkur')
     cy.getByTestid('infoCardDataContainer2').contains(
@@ -39,7 +39,7 @@ describe('/krafa/stadfesta/:id', () => {
       'Miðvikud. 16. september 2020 kl. 19:50',
     )
     cy.getByTestid('demands').contains(
-      'Þess er krafist að Batman Robinsson, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+      'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     )
   })
 
