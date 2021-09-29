@@ -4,7 +4,7 @@ export const fatalAccident = {
   general: defineMessages({
     sectionTitle: {
       id: 'an.application:fatalAccident.general.sectionTitle',
-      defaultMessage: 'Banaslys ',
+      defaultMessage: 'Var slysið banaslys?',
       description: 'Fatal accident',
     },
   }),
