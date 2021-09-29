@@ -56,7 +56,6 @@ const SEARCH_REDUCER_ACTION_TYPES = {
 }
 
 const searchReducer = (state: SearchState, action): SearchState => {
-  // TODO: Refactor this switch statement to if statements, altering the state and returning it in the end.
   switch (action.type) {
     case SEARCH_REDUCER_ACTION_TYPES.START_LOADING_FIRST_PAGE:
       return { ...state,
@@ -138,8 +137,6 @@ const useSearch = ( term: string, currentPageNumber: number ): SearchState => {
   const [state, dispatch] = useReducer(searchReducer, {
     currentTerm: term,
     results: [],
-    // TODO: Only show loading dots on initial load and next page load.
-    // TODO: The reload icon in the search bar disappears before the results have been fully loaded. It's not in sync with the loading dots that are shown depending on the same boolean variable.
     currentPageNumber: currentPageNumber,
     hasNextPage: false,
     totalCount: 0,
@@ -208,7 +205,6 @@ const useSearch = ( term: string, currentPageNumber: number ): SearchState => {
 
         })
         .catch((error) => {
-          // TODO: Test the error handling by producing an error, e.g. by commenting out the Authenitication call in the client.
           dispatch({
             type: SEARCH_REDUCER_ACTION_TYPES.SEARCH_ERROR,
             error
