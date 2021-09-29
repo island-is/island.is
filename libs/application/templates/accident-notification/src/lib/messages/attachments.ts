@@ -51,7 +51,7 @@ export const attachments = {
     uploadIntroduction: {
       id: 'an.application:attachments.uploadIntroduction',
       defaultMessage: `Athugaðu að það er hægt að tilkynna slys án þess að öll nauðsynleg skjöl
-       eru til staðar en Sjúkratryggingar Íslands kunna að óska eftir frekari gögnum
+       séu til staðar en Sjúkratryggingar Íslands kunna að óska eftir frekari gögnum
        við afgreiðslu málsins, svo taka megi ákvörðun um bótarétt, fjárhæð og greiðslu bóta.`,
       description: 'Upload introduction',
     },

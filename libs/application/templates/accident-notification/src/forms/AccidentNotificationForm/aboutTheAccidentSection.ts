@@ -197,12 +197,12 @@ export const aboutTheAccidentSection = buildSection({
               title: '',
               options: [
                 {
-                  value: StudiesAccidentTypeEnum.APPRENTICESHIP,
-                  label: accidentType.studiesAccidentType.apprenticeship,
-                },
-                {
                   value: StudiesAccidentTypeEnum.INTERNSHIP,
                   label: accidentType.studiesAccidentType.internship,
+                },
+                {
+                  value: StudiesAccidentTypeEnum.APPRENTICESHIP,
+                  label: accidentType.studiesAccidentType.apprenticeship,
                 },
                 {
                   value: StudiesAccidentTypeEnum.VOCATIONALEDUCATION,
