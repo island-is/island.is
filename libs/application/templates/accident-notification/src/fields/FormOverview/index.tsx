@@ -416,7 +416,10 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => {}}>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('accidentLocation.homeAccident')}
+          >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
