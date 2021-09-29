@@ -6,7 +6,12 @@ import ReviewSection, { ReviewSectionState, Step } from './ReviewSection'
 import { ApplicationEligibility, RequirementKey } from '../../types/schema'
 import { useFormContext } from 'react-hook-form'
 import { useQuery, gql } from '@apollo/client'
-import { DrivingLicenseFakeData, YES } from '../../lib/constants'
+import {
+  DrivingLicenseFakeData,
+  DrivingLicenseApplicationFor,
+  B_FULL,
+  YES,
+} from '../../lib/constants'
 
 const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
   return eligibility.requirements.map(({ key, requirementMet }) =>
@@ -74,12 +79,12 @@ interface UseEligibilityResult {
 }
 
 const fakeEligibility = (
-  applicationFor: 'B-full' | 'B-temp',
+  applicationFor: DrivingLicenseApplicationFor,
 ): ApplicationEligibility => {
   return {
     isEligible: true,
     requirements: [
-      ...(applicationFor === 'B-full'
+      ...(applicationFor === B_FULL
         ? [
             {
               key: RequirementKey.DrivingAssessmentMissing,
@@ -111,7 +116,7 @@ const useEligibility = (
   const usingFakeData = fakeData?.useFakeData === YES
 
   const applicationFor =
-    (answers.applicationFor as 'B-full' | 'B-temp') || 'B-full'
+    (answers.applicationFor as DrivingLicenseApplicationFor) || B_FULL
 
   const { data = {}, error, loading } = useQuery(QUERY, {
     skip: usingFakeData,

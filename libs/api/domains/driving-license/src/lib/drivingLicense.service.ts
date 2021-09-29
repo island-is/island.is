@@ -42,6 +42,8 @@ import {
   DrivingLicenseApplicationFor,
   DrivingSchool,
   NeedsQualityPhoto,
+  B_FULL,
+  B_TEMP,
 } from '..'
 
 @Injectable()
@@ -246,7 +248,7 @@ export class DrivingLicenseService {
 
     const requirements = []
 
-    if (type === 'B-full') {
+    if (type === B_FULL) {
       requirements.push(
         {
           key: RequirementKey.drivingAssessmentMissing,
@@ -284,14 +286,14 @@ export class DrivingLicenseService {
 
   async canApplyFor(nationalId: string, type: DrivingLicenseApplicationFor) {
     let canApplyResult
-    if (type === 'B-full') {
+    if (type === B_FULL) {
       canApplyResult = (await this.drivingLicenseApi.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
         {
           kennitala: nationalId,
           category: 'B',
         },
       )) as unknown
-    } else if (type === 'B-temp') {
+    } else if (type === B_TEMP) {
       // TODO: API seems to not be there as of yet
       canApplyResult = '0'
     }

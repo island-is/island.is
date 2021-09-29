@@ -12,6 +12,7 @@ import {
   MOCK_NATIONAL_ID_TEACHER,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
+import { B_FULL } from '..'
 import { startMocking } from '@island.is/shared/mocking'
 
 startMocking(requestHandlers)
@@ -155,7 +156,7 @@ describe('DrivingLicenseService', () => {
     it('all checks should pass for applicable students', async () => {
       const response = await service.getApplicationEligibility(
         MOCK_NATIONAL_ID,
-        'B-full',
+        B_FULL,
       )
 
       expect(response).toStrictEqual({
@@ -180,7 +181,7 @@ describe('DrivingLicenseService', () => {
     it('checks should fail for non-applicable students', async () => {
       const response = await service.getApplicationEligibility(
         MOCK_NATIONAL_ID_EXPIRED,
-        'B-full',
+        B_FULL,
       )
 
       expect(response).toStrictEqual({
