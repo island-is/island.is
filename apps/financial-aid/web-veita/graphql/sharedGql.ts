@@ -45,7 +45,7 @@ applicationEvents {
 `
 
 export const GetApplicationQuery = gql`
-  query GetFinancialAidApplicationQuery($input: ApplicationInput!) {
+  query GetApplicationQuery($input: ApplicationInput!) {
     application(input: $input) {
       id
       nationalId
@@ -132,8 +132,8 @@ export const UpdateApplicationMutation = gql`
   }
 `
 export const GetApplicationsQuery = gql`
-  query GetApplicationQuery {
-    applications {
+  query GetApplicationsQuery($input: AllApplicationInput!) {
+    applications(input: $input) {
       id
       nationalId
       name
