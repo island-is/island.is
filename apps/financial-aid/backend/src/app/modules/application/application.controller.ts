@@ -122,6 +122,28 @@ export class ApplicationController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Put('applicationsTable/:id')
+  @ApiOkResponse({
+    type: ApplicationModel,
+    description: 'Updates an existing application',
+  })
+  async updateTable(
+    @Param('id') id: string,
+    @Body() applicationToUpdate: UpdateApplicationDto,
+  ): Promise<ApplicationModel[]> {
+    const {
+      numberOfAffectedRows,
+      updatedApplication,
+    } = await this.applicationService.update(id, applicationToUpdate)
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Application ${id} does not exist`)
+    }
+
+    return [updatedApplication]
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('application')
   @ApiCreatedResponse({
     type: ApplicationModel,

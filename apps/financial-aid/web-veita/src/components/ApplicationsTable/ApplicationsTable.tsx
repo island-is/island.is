@@ -9,16 +9,40 @@ import {
   TableHeaders,
   TableBody,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { Application } from '@island.is/financial-aid/shared/lib'
+import {
+  Application,
+  ApplicationState,
+} from '@island.is/financial-aid/shared/lib'
 import { TableHeadersProps } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
+
+import { useAllApplications } from '@island.is/financial-aid-web/veita/src/utils/useAllApplications'
 
 interface PageProps {
   applications: Application[]
+  setApplications: any
   headers: TableHeadersProps[]
 }
 
-const ApplicationsTable = ({ applications, headers }: PageProps) => {
+const ApplicationsTable = ({
+  applications,
+  headers,
+  setApplications,
+}: PageProps) => {
   const router = useRouter()
+
+  const changeApplicationTable = useAllApplications()
+
+  const updateApplicationAndTable = async (
+    applicationId: string,
+    state: ApplicationState,
+    staffId: string,
+  ) => {
+    const updateApplicationTable = await changeApplicationTable(
+      applicationId,
+      state,
+      staffId,
+    )
+  }
 
   if (applications && applications.length > 0) {
     return (
@@ -47,6 +71,7 @@ const ApplicationsTable = ({ applications, headers }: PageProps) => {
                 application={item}
                 index={index}
                 key={'tableBody-' + item.id}
+                onApplicationUpdate={updateApplicationAndTable}
               />
             ))}
           </tbody>

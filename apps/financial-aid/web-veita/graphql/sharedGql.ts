@@ -131,6 +131,25 @@ export const UpdateApplicationMutation = gql`
     }
   }
 `
+
+export const UpdateApplicationTableMutation = gql`
+  mutation UpdateApplicationTableMutation($input: UpdateApplicationInput!) {
+    updateApplicationTable(input: $input) {
+      id
+      nationalId
+      name
+      phoneNumber
+      email
+      modified
+      created
+      state
+      staff {
+        name
+      }
+    }
+  }
+`
+
 export const GetApplicationsQuery = gql`
   query GetApplicationQuery {
     applications {

@@ -78,6 +78,19 @@ export class ApplicationResolver {
     return backendApi.updateApplication(id, updateApplication)
   }
 
+  @Mutation(() => ApplicationModel, { nullable: true })
+  updateApplicationTable(
+    @Args('input', { type: () => UpdateApplicationInput })
+    input: UpdateApplicationInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Application[]> {
+    const { id, ...updateApplication } = input
+
+    this.logger.debug(`updating application ${id}`)
+
+    return backendApi.updateApplication(id, updateApplication)
+  }
+
   @Query(() => ApplicationFiltersModel, { nullable: false })
   applicationFilters(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },

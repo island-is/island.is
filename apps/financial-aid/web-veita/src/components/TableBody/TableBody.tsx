@@ -21,17 +21,15 @@ import {
   getTagByState,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
-import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface PageProps {
   application: Application
   index: number
+  onApplicationUpdate: any
 }
 
-const TableBody = ({ application, index }: PageProps) => {
-  const changeApplicationState = useApplicationState()
-
+const TableBody = ({ application, index, onApplicationUpdate }: PageProps) => {
   // TODO: Remove state and context when we reload the page when we change the state of application
   const [staffName, setStaffName] = useState(application.staff?.name)
   const { admin } = useContext(AdminContext)
@@ -94,8 +92,11 @@ const TableBody = ({ application, index }: PageProps) => {
               variant="text"
               onClick={(ev) => {
                 ev.stopPropagation()
-                changeApplicationState(application, ApplicationState.INPROGRESS)
-                setStaffName(admin?.name)
+                onApplicationUpdate(
+                  application.id,
+                  ApplicationState.NEW,
+                  admin?.name,
+                )
               }}
             >
               Sjá um

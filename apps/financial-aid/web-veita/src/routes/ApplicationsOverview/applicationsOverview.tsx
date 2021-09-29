@@ -80,6 +80,7 @@ export const ApplicationsOverview = () => {
           <ApplicationsTable
             headers={currentNavigationItem.headers}
             applications={applications}
+            setApplications={setApplications}
           />
         )}
 
