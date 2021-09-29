@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import React, { useEffect, useState } from 'react'
+import { Text, Box, Link } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import {
