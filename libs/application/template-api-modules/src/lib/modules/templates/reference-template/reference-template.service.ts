@@ -11,23 +11,6 @@ export class ReferenceTemplateService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  // A test action that can be used in the ReferenceApplicationTemplate to see
-  // what happens when an api action fails
-  async doStuffThatFails() {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    throw new Error('This is the message that caused the failure')
-  }
-
-  async createApplication() {
-    // Pretend to be doing stuff for a short while
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    return {
-      id: 1337,
-    }
-  }
-
   async completeApplication({ application }: TemplateApiModuleActionProps) {
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))

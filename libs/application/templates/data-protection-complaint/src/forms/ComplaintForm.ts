@@ -16,7 +16,6 @@ import {
   FormModes,
   FormValue,
 } from '@island.is/application/core'
-import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
 import {
   application,
   complaint,
@@ -28,7 +27,14 @@ import {
   sharedFields,
 } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
-import { FILE_SIZE_LIMIT, NO, SubjectOfComplaint, YES } from '../shared'
+import {
+  FILE_SIZE_LIMIT,
+  OnBehalf,
+  NO,
+  SubjectOfComplaint,
+  YES,
+} from '../shared'
+import { DataProtectionComplaint } from '../lib/dataSchema'
 
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }
@@ -640,6 +646,19 @@ export const ComplaintForm: Form = buildForm({
                 },
               ],
             }),
+          ],
+        }),
+        buildSubmitField({
+          id: 'submit',
+          placement: 'footer',
+          title: 'Klára stuff',
+
+          actions: [
+            {
+              event: 'SUBMIT',
+              name: 'Klára stuff',
+              type: 'primary',
+            },
           ],
         }),
       ],

@@ -8650,6 +8650,35 @@
           }
         }
       }
+    },
+    "clients-data-protection-complaint": {
+      "root": "libs/clients/data-protection-complaint",
+      "sourceRoot": "libs/clients/data-protection-complaint/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/clients/data-protection-complaint/**/*.ts"
+            ]
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/data-protection-complaint/src/gen/fetch/dev -i libs/clients/data-protection-complaint/src/openapi-dev.yaml"
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/data-protection-complaint"],
+          "options": {
+            "jestConfig": "libs/clients/data-protection-complaint/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }

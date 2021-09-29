@@ -1,0 +1,927 @@
+swagger: '2.0'
+info:
+  version: v1
+  title: GoPro.EIR.Rest
+host: foris.gopro.net
+basePath: /per/services
+schemes:
+  - https
+paths:
+  /Case/CreateCase:
+    post:
+      tags:
+        - Case
+      summary: Create a new case in GoPro with linked contacts and documents attached
+      operationId: CreateCase
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          description: ''
+          required: true
+          schema:
+            $ref: '#/definitions/CreateCaseRequest'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ReferenceResponse'
+  /Case/CreateQuickCase:
+    post:
+      tags:
+        - Case
+      summary: Create a new case in GoPro
+      operationId: CreateQuickCase
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          description: ''
+          required: true
+          schema:
+            $ref: '#/definitions/CreateQuickCaseRequest'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ReferenceResponse'
+  /Case/GetCase:
+    post:
+      tags:
+        - Case
+      summary: Retrieve basic info for specified GoPro case
+      operationId: GetCase
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          description: ''
+          required: true
+          schema:
+            $ref: '#/definitions/GetCaseRequest'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GetCaseResponse'
+  /Case/GetUpdates:
+    post:
+      tags:
+        - Case
+      summary: Returns a list of cases that had been updated since initially uploaded
+      operationId: GetUpdates
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StartingTimeRequest'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/CasesResponse'
+  /Case/LinkContactToCase:
+    post:
+      tags:
+        - Case
+      operationId: LinkContactToCase
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/LinkContactRequest'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ReferenceResponse'
+  /Case/GetFolder:
+    post:
+      tags:
+        - Case
+      summary: Returns information about a folder by specified folder name and parent ID
+      operationId: GetFolder
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          description: ''
+          required: true
+          schema:
+            $ref: '#/definitions/GetFolderRequest'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GetFolderResponse'
+  /Case/CreateFolder:
+    post:
+      tags:
+        - Case
+      summary: Creates a folder under specified case
+      operationId: CreateFolder
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          description: ''
+          required: true
+          schema:
+            $ref: '#/definitions/CreateFolderRequest'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ReferenceResponse'
+  /Clients/CreateCompany:
+    post:
+      tags:
+        - Clients
+      operationId: CreateCompany
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Company'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ReferenceResponse'
+  /Clients/CreateIndividual:
+    post:
+      tags:
+        - Clients
+      operationId: CreateIndividual
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Individual'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ReferenceResponse'
+  /Clients/CreateContact:
+    post:
+      tags:
+        - Clients
+      operationId: CreateContact
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Contact'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ReferenceResponse'
+  /Clients/GetCompany:
+    post:
+      tags:
+        - Clients
+      operationId: GetCompany
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SearchKeyRequest'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GetCompanyResponse'
+  /Clients/GetIndividual:
+    post:
+      tags:
+        - Clients
+      operationId: GetIndividual
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SearchKeyRequest'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GetIndividualResponse'
+  /Clients/GetContact:
+    post:
+      tags:
+        - Clients
+      operationId: GetContact
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SearchKeyRequest'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GetContactResponse'
+  /Documents/CreateDocument:
+    post:
+      tags:
+        - Document
+      operationId: CreateDocument
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateDocumentRequest'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ReferenceResponse'
+  /Memos/CreateMemo:
+    post:
+      tags:
+        - Memo
+      operationId: CreateMemo
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: requestData
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateMemoRequest'
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ReferenceResponse'
+  /Authenticate:
+    get:
+      tags:
+        - Security
+      summary: Authenticate with username and password. Returns authenticationToken that is used when calling other API methods.
+      operationId: Authenticate
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: username
+          in: query
+          description: The username
+          required: true
+          type: string
+        - name: password
+          in: query
+          description: The password
+          required: true
+          type: string
+        - name: Token
+          in: header
+          description: Token returned by Authenticate method.
+          required: false
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+definitions:
+  CreateCaseRequest:
+    type: object
+    properties:
+      contacts:
+        type: array
+        items:
+          $ref: '#/definitions/LinkedContact'
+      documents:
+        type: array
+        items:
+          $ref: '#/definitions/DocumentInfo'
+      template:
+        type: string
+      subject:
+        type: string
+      category:
+        type: string
+      deadline:
+        type: string
+      keywords:
+        type: array
+        items:
+          type: string
+      metadata:
+        type: array
+        items:
+          $ref: '#/definitions/Metadata'
+  LinkedContact:
+    type: object
+    properties:
+      name:
+        type: string
+      idnumber:
+        type: string
+      type:
+        type: string
+      address:
+        type: string
+      email:
+        type: string
+      webPage:
+        type: string
+      phone:
+        type: string
+      postalCode:
+        type: string
+      city:
+        type: string
+      role:
+        type: string
+      primary:
+        type: string
+  DocumentInfo:
+    type: object
+    properties:
+      subject:
+        type: string
+      type:
+        type: string
+      fileName:
+        type: string
+      content:
+        type: string
+  Metadata:
+    type: object
+    properties:
+      definitionID:
+        type: string
+      name:
+        type: string
+      value:
+        type: string
+      valueType:
+        format: int32
+        type: integer
+  ReferenceResponse:
+    type: object
+    properties:
+      succeeded:
+        type: boolean
+      message:
+        type: string
+      identifier:
+        type: string
+      returnCode:
+        format: int32
+        description: HTTP response status code
+        type: integer
+  CreateQuickCaseRequest:
+    type: object
+    properties:
+      template:
+        type: string
+      subject:
+        type: string
+      category:
+        type: string
+      deadline:
+        type: string
+      keywords:
+        type: array
+        items:
+          type: string
+      metadata:
+        type: array
+        items:
+          $ref: '#/definitions/Metadata'
+  GetCaseRequest:
+    type: object
+    properties:
+      caseNumber:
+        type: string
+      caseName:
+        type: string
+      caseTemplate:
+        type: string
+  GetCaseResponse:
+    type: object
+    properties:
+      case:
+        $ref: '#/definitions/Case'
+      succeeded:
+        type: boolean
+      message:
+        type: string
+      returnCode:
+        format: int32
+        description: HTTP response status code
+        type: integer
+  Case:
+    type: object
+    properties:
+      id:
+        type: string
+      caseNumber:
+        type: string
+      subject:
+        type: string
+      archiveNumber:
+        type: string
+      templateName:
+        type: string
+      categoryName:
+        type: string
+      responsibleEmployeeName:
+        type: string
+      responsibleEmployeeID:
+        type: string
+      coResponsibleEmployees:
+        type: array
+        items:
+          type: string
+      priorityName:
+        type: string
+      personalSensitive:
+        type: boolean
+      confidential:
+        type: boolean
+      body:
+        type: string
+      statusName:
+        type: string
+      keywords:
+        type: array
+        items:
+          type: string
+      publishTo:
+        type: array
+        items:
+          type: string
+      creationDate:
+        format: date-time
+        type: string
+      createdByName:
+        type: string
+      modifiedDate:
+        format: date-time
+        type: string
+      modifiedByName:
+        type: string
+      metaDataEntries:
+        type: array
+        items:
+          $ref: '#/definitions/MetaValue'
+  MetaValue:
+    type: object
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+      valueType:
+        format: int32
+        type: integer
+  StartingTimeRequest:
+    type: object
+    properties:
+      startingDate:
+        type: string
+  CasesResponse:
+    type: object
+    properties:
+      cases:
+        type: array
+        items:
+          $ref: '#/definitions/Case'
+      succeeded:
+        type: boolean
+      message:
+        type: string
+      returnCode:
+        format: int32
+        description: HTTP response status code
+        type: integer
+  LinkContactRequest:
+    type: object
+    properties:
+      caseNumber:
+        type: string
+      customerID:
+        type: string
+      role:
+        type: string
+  GetFolderRequest:
+    type: object
+    properties:
+      name:
+        type: string
+      parentID:
+        type: string
+  GetFolderResponse:
+    type: object
+    properties:
+      succeeded:
+        type: boolean
+      message:
+        type: string
+      folder:
+        $ref: '#/definitions/Folder'
+      returnCode:
+        format: int32
+        description: HTTP response status code
+        type: integer
+  Folder:
+    type: object
+    properties:
+      name:
+        type: string
+      journalkey:
+        type: string
+      keywords:
+        type: array
+        items:
+          type: string
+      statusName:
+        type: string
+      body:
+        type: string
+  CreateFolderRequest:
+    type: object
+    properties:
+      caseNumber:
+        type: string
+      subject:
+        type: string
+      body:
+        type: string
+      parentID:
+        type: string
+  Company:
+    type: object
+    properties:
+      name:
+        type: string
+      clientNumber:
+        type: string
+      webPage:
+        type: string
+      isatNumber:
+        type: string
+      isatName:
+        type: string
+      id:
+        type: string
+      idNumber:
+        type: string
+      address:
+        type: string
+      postCode:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+      language:
+        type: string
+      mobilePhone:
+        type: string
+      homePhone:
+        type: string
+      workPhone:
+        type: string
+      faxNumber:
+        type: string
+      email:
+        type: string
+      statusName:
+        type: string
+  Individual:
+    type: object
+    properties:
+      firstName:
+        type: string
+      middleName:
+        type: string
+      lastName:
+        type: string
+      jobTitle:
+        type: string
+      id:
+        type: string
+      idNumber:
+        type: string
+      address:
+        type: string
+      postCode:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+      language:
+        type: string
+      mobilePhone:
+        type: string
+      homePhone:
+        type: string
+      workPhone:
+        type: string
+      faxNumber:
+        type: string
+      email:
+        type: string
+      statusName:
+        type: string
+  Contact:
+    type: object
+    properties:
+      companyID:
+        type: string
+      contactRole:
+        type: string
+      firstName:
+        type: string
+      middleName:
+        type: string
+      lastName:
+        type: string
+      jobTitle:
+        type: string
+      id:
+        type: string
+      idNumber:
+        type: string
+      address:
+        type: string
+      postCode:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+      language:
+        type: string
+      mobilePhone:
+        type: string
+      homePhone:
+        type: string
+      workPhone:
+        type: string
+      faxNumber:
+        type: string
+      email:
+        type: string
+      statusName:
+        type: string
+  SearchKeyRequest:
+    type: object
+    properties:
+      searchText:
+        type: string
+  GetCompanyResponse:
+    type: object
+    properties:
+      company:
+        $ref: '#/definitions/Company'
+      succeeded:
+        type: boolean
+      message:
+        type: string
+      returnCode:
+        format: int32
+        description: HTTP response status code
+        type: integer
+  GetIndividualResponse:
+    type: object
+    properties:
+      individual:
+        $ref: '#/definitions/Individual'
+      succeeded:
+        type: boolean
+      message:
+        type: string
+      returnCode:
+        format: int32
+        description: HTTP response status code
+        type: integer
+  GetContactResponse:
+    type: object
+    properties:
+      contact:
+        $ref: '#/definitions/Contact'
+      succeeded:
+        type: boolean
+      message:
+        type: string
+      returnCode:
+        format: int32
+        description: HTTP response status code
+        type: integer
+  CreateDocumentRequest:
+    type: object
+    properties:
+      caseNumber:
+        type: string
+      subject:
+        type: string
+      fileName:
+        type: string
+      parentID:
+        type: string
+      content:
+        type: string
+  CreateMemoRequest:
+    type: object
+    properties:
+      subject:
+        type: string
+      body:
+        type: string
+      caseNumber:
+        type: string
+      parentID:
+        type: string

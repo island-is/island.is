@@ -1,15 +1,8 @@
 import { DefaultEvents } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 import * as z from 'zod'
-import { NO, YES } from '../shared'
+import { NO, YES, OnBehalf } from '../shared'
 import { error } from './messages/error'
-
-export enum OnBehalf {
-  MYSELF = 'myself',
-  MYSELF_AND_OR_OTHERS = 'myselfAndOrOthers',
-  OTHERS = 'others',
-  ORGANIZATION_OR_INSTITUTION = 'organizationOrInsititution',
-}
 
 const FileSchema = z.object({
   name: z.string(),

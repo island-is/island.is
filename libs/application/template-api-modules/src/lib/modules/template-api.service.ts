@@ -17,6 +17,7 @@ import {
   AccidentNotificationService,
   PublicDebtPaymentPlanTemplateService,
 } from './templates'
+import { DataProtectionComplaintService } from './templates/data-protection-complaint/data-protection-complaint.service'
 
 interface ApplicationApiAction {
   templateId: string
@@ -51,6 +52,7 @@ export class TemplateAPIService {
     private readonly payableDummyTemplateService: PayableDummyTemplateService,
     private readonly accidentNotificationService: AccidentNotificationService,
     private readonly publicDebtPaymentPlanService: PublicDebtPaymentPlanTemplateService,
+    private readonly dataProtectionComplaintService: DataProtectionComplaintService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -68,7 +70,8 @@ export class TemplateAPIService {
       | PartyApplicationService
       | PayableDummyTemplateService
       | AccidentNotificationService
-      | PublicDebtPaymentPlanTemplateService,
+      | PublicDebtPaymentPlanTemplateService
+      | DataProtectionComplaintService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -168,6 +171,11 @@ export class TemplateAPIService {
       case ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN:
         return this.tryRunningActionOnService(
           this.publicDebtPaymentPlanService,
+          action,
+        )
+      case ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT:
+        return this.tryRunningActionOnService(
+          this.dataProtectionComplaintService,
           action,
         )
     }

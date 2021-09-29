@@ -286,6 +286,9 @@
       "implicitDependencies": ["services-auth-public-api"],
       "tags": []
     },
+    "clients-data-protection-complaint": {
+      "tags": []
+    },
     "clients-document-provider": {
       "tags": []
     },

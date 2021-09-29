@@ -220,6 +220,9 @@
       "@island.is/clients/auth-public-api": [
         "libs/clients/auth-public-api/src/index.ts"
       ],
+      "@island.is/clients/data-protection-complaint": [
+        "libs/clients/data-protection-complaint/src/index.ts"
+      ],
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"
       ],

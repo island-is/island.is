@@ -10,12 +10,7 @@ import {
   externalData,
 } from '../../lib/messages'
 import { DataProtectionComplaint } from '../../lib/dataSchema'
-import {
-  SectionHeading,
-  ValueLine,
-  yesNoValueLabelMapper,
-  onBehalfValueLabelMapper,
-} from './Shared'
+import { SectionHeading, ValueLine } from './Shared'
 import {
   Applicant,
   Commissions,
@@ -23,6 +18,7 @@ import {
   Complaint,
   OrganizationOrInstitution,
 } from './Sections'
+import { onBehalfValueLabelMapper, yesNoValueLabelMapper } from '../../shared'
 
 export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
