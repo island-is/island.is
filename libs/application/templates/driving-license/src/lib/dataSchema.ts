@@ -1,4 +1,5 @@
 import * as z from 'zod'
+import { B_FULL, B_TEMP } from './constants'
 
 export const dataSchema = z.object({
   type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
@@ -24,7 +25,7 @@ export const dataSchema = z.object({
   ]),
   requirementsMet: z.boolean().refine((v) => v),
   certificate: z.array(z.enum(['yes', 'no'])).nonempty(),
-  applicationFor: z.enum(['B-full', 'B-temp']),
+  applicationFor: z.enum([B_FULL, B_TEMP]),
   email: z.string().email(),
   drivingInstructor: z.string().nonempty(),
 })

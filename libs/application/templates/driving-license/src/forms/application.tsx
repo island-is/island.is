@@ -27,7 +27,13 @@ import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
 import { QualityPhotoData } from '../utils'
 import { StudentAssessment } from '@island.is/api/schema'
-import { NO, YES } from '../lib/constants'
+import {
+  DrivingLicenseApplicationFor,
+  NO,
+  YES,
+  B_FULL,
+  B_TEMP,
+} from '../lib/constants'
 
 // const ALLOW_FAKE_DATA = todo: serverside feature flag
 const ALLOW_FAKE_DATA = false
@@ -45,11 +51,11 @@ const needsHealthCertificateCondition = (result = YES) => (
   return Object.values(answers?.healthDeclaration || {}).includes(result)
 }
 
-const isApplicationForCondition = (result: 'B-full' | 'B-temp') => (
+const isApplicationForCondition = (result: DrivingLicenseApplicationFor) => (
   answers: FormValue,
 ) => {
   const applicationFor: string[] = getValueViaPath(answers, 'applicationFor', [
-    'B-full',
+    B_FULL,
   ]) as string[]
   return applicationFor.includes(result)
 }
@@ -62,13 +68,13 @@ const chooseDistrictCommissionerDescription = ({
   const applicationFor = getValueViaPath(
     answers,
     'applicationFor',
-    'B-full',
+    B_FULL,
   ) as string
 
   switch (applicationFor) {
-    case 'B-temp':
+    case B_TEMP:
       return m.chooseDistrictCommisionerForTempLicense.defaultMessage
-    case 'B-full':
+    case B_FULL:
       return m.chooseDistrictCommisionerForFullLicense.defaultMessage
     default:
       return ''
@@ -243,13 +249,13 @@ export const application: Form = buildForm({
                   label: m.applicationForTempLicenseTitle,
                   subLabel:
                     m.applicationForTempLicenseDescription.defaultMessage,
-                  value: 'B-temp',
+                  value: B_TEMP,
                 },
                 {
                   label: m.applicationForFullLicenseTitle,
                   subLabel:
                     m.applicationForFullLicenseDescription.defaultMessage,
-                  value: 'B-full',
+                  value: B_FULL,
                   disabled: true,
                 },
               ],
@@ -278,7 +284,7 @@ export const application: Form = buildForm({
     buildSection({
       id: 'infoStep',
       title: m.informationTitle,
-      condition: isApplicationForCondition('B-temp'),
+      condition: isApplicationForCondition(B_TEMP),
       children: [
         buildMultiField({
           id: 'info',
@@ -365,7 +371,7 @@ export const application: Form = buildForm({
     buildSection({
       id: 'photoStep',
       title: m.applicationQualityPhotoTitle,
-      condition: isApplicationForCondition('B-full'),
+      condition: isApplicationForCondition(B_FULL),
       children: [
         buildMultiField({
           id: 'info',
@@ -717,7 +723,7 @@ export const application: Form = buildForm({
                   chargeItemCode: string
                 }[]
                 const targetCode =
-                  answers.applicationFor === 'B-temp' ? 'AY114' : 'AY110'
+                  answers.applicationFor === B_TEMP ? 'AY114' : 'AY110'
 
                 const item = items.find(
                   ({ chargeItemCode }) => chargeItemCode === targetCode,
