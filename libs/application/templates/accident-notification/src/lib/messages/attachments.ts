@@ -65,7 +65,7 @@ export const attachments = {
     hospitalSendsCertificate: {
       id: 'an.application:attachments.hospitalSendsCertificate',
       defaultMessage:
-        'Ég mun óska eftir því að Landspítalinn sendi  samskiptaseðill frá bráðamóttöku',
+        'Ég mun óska eftir því að Landspítalinn sendi samskiptaseðil til Sjúkratrygginga Íslands',
       description: 'Label for hospital sends certificate',
     },
     sendCertificateLater: {
