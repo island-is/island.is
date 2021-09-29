@@ -5,6 +5,7 @@ import {
   Post,
   NotFoundException,
   Param,
+  UseGuards,
 } from '@nestjs/common'
 
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
@@ -18,8 +19,9 @@ import {
   MunicipalitySettings,
 } from '@island.is/financial-aid/shared/lib'
 
-import { MunicipalityQueryInput } from './dto'
+import { TokenGuard } from '@island.is/financial-aid/auth'
 
+@UseGuards(TokenGuard)
 @Controller(apiBasePath)
 @ApiTags('municipality')
 export class MunicipalityController {
@@ -40,19 +42,3 @@ export class MunicipalityController {
     return municipality
   }
 }
-
-// @UseGuards(JwtAuthGuard)
-// @Get('user/:id')
-// @ApiOkResponse({
-//   type: User,
-//   description: 'Gets an existing user',
-// })
-// async getById(@Param('id') id: string) {
-//   const user = await this.userService.findById(id)
-
-//   if (!user) {
-//     throw new NotFoundException(`User ${id} not found`)
-//   }
-
-//   return user
-// }

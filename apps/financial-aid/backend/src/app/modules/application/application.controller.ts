@@ -19,8 +19,7 @@ import { CurrentApplicationModel, ApplicationModel } from './models'
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
 import {
-  CurrentHttpUser,
-  JwtAuthGuard,
+  CurrentUser,
   TokenGuard,
   RolesGuard,
   RolesRules,
@@ -38,6 +37,7 @@ import {
   RolesRule,
 } from '@island.is/financial-aid/shared/lib'
 
+@UseGuards(TokenGuard)
 @Controller(apiBasePath)
 @ApiTags('applications')
 export class ApplicationController {
@@ -47,7 +47,6 @@ export class ApplicationController {
     private readonly logger: Logger,
   ) {}
 
-  @UseGuards(TokenGuard)
   @Get('getCurrentApplication')
   @ApiOkResponse({
     type: CurrentApplicationModel,
@@ -58,7 +57,7 @@ export class ApplicationController {
     return await this.applicationService.getCurrentApplication(nationalId)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @RolesRules(RolesRule.VEITA)
   @Get('applications')
   @ApiOkResponse({
@@ -71,7 +70,7 @@ export class ApplicationController {
     return this.applicationService.getAll()
   }
 
-  @UseGuards(JwtAuthGuard, ApplicationGuard)
+  @UseGuards(ApplicationGuard)
   @Get('applications/:id')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -88,7 +87,7 @@ export class ApplicationController {
     return application
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @RolesRules(RolesRule.VEITA)
   @Get('applicationFilters')
   @ApiOkResponse({
@@ -99,7 +98,6 @@ export class ApplicationController {
     return this.applicationService.getAllFilters()
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put('applications/:id')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -124,14 +122,13 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('application')
   @ApiCreatedResponse({
     type: ApplicationModel,
     description: 'Creates a new application',
   })
   create(
-    @CurrentHttpUser() user: User,
+    @CurrentUser() user: User,
     @Body() application: CreateApplicationDto,
   ): Promise<ApplicationModel> {
     this.logger.debug('Application controller: Creating application')

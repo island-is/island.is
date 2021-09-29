@@ -1,12 +1,17 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 
-import { User, RolesRule } from '@island.is/financial-aid/shared/lib'
+import {
+  User,
+  RolesRule,
+  getUserFromContext,
+} from '@island.is/financial-aid/shared/lib'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
+  // TODO: CHECK IF WE GET COOKIE HERE
   canActivate(context: ExecutionContext): boolean {
     const rolesRules = this.reflector.get<RolesRule[]>(
       'roles-rules',
@@ -18,8 +23,7 @@ export class RolesGuard implements CanActivate {
       return true
     }
 
-    const request = context.switchToHttp().getRequest()
-    const user: User = request.user
+    const user = getUserFromContext(context)
 
     // Deny if no user
     if (!user) {

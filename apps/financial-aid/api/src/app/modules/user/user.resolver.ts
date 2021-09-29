@@ -9,7 +9,7 @@ import {
   HomeCircumstances,
   User,
 } from '@island.is/financial-aid/shared/lib'
-import { CurrentGraphQlUser } from '@island.is/financial-aid/auth'
+import { CurrentUser } from '@island.is/financial-aid/auth'
 
 import { UserModel } from './user.model'
 import { UserService } from './user.service'
@@ -47,9 +47,7 @@ export class UserResolver {
   }
 
   @Query(() => UserModel, { nullable: true })
-  async currentUser(
-    @CurrentGraphQlUser() user: User,
-  ): Promise<UserModel | undefined> {
+  async currentUser(@CurrentUser() user: User): Promise<UserModel | undefined> {
     this.logger.debug('Getting current user')
     return user as UserModel
   }

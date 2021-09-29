@@ -1,5 +1,7 @@
-import { User } from '@island.is/shared/types'
-import { months } from './const'
+import { ExecutionContext } from '@nestjs/common'
+import { GqlExecutionContext } from '@nestjs/graphql'
+import { IDENTITY_SERVER_SESSION_TOKEN_COOKIE_NAME, months } from './const'
+import { User } from './interfaces'
 
 export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)
@@ -31,4 +33,32 @@ export const decodeToken = (token: string) => {
   const base64Url = token.split('.')[1]
   const base64 = base64Url.replace('-', '+').replace('_', '/')
   return JSON.parse(Buffer.from(base64, 'base64').toString('binary'))
+}
+
+export const getUserFromContext = (
+  context: ExecutionContext & { contextType?: string },
+): User | undefined => {
+  const req =
+    context.contextType === 'graphql'
+      ? GqlExecutionContext.create(context).getContext().req
+      : context.switchToHttp().getRequest()
+
+  const cookies = req.cookies
+  const sessionToken = cookies
+    ? cookies[IDENTITY_SERVER_SESSION_TOKEN_COOKIE_NAME]
+    : null
+
+  if (!sessionToken) {
+    return undefined
+  }
+
+  const decodedToken = decodeToken(sessionToken)
+
+  return {
+    name: decodedToken.name,
+    nationalId: decodedToken.nationalId,
+    folder: decodedToken.folder,
+    service: decodedToken.service,
+    returnUrl: decodedToken.returnUrl,
+  }
 }
