@@ -151,7 +151,7 @@ const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
 
   useEffect(() => {
     setValue('requirementsMet', eligibility?.isEligible || false)
-  }, [eligibility, setValue])
+  }, [eligibility?.isEligible, setValue])
 
   if (loading) {
     return <Text>Sæki upplýsingar...</Text>
