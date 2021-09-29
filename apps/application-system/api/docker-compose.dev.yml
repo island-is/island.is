@@ -5,13 +5,6 @@ services:
     ports:
       - 5432:5432
 
-  redis-cluster:
-    container_name: redis_cluster
-    image: grokzen/redis-cluster:5.0.6
-    privileged: true
-    sysctls:
-      net.core.somaxconn: '511'
-    environment:
-      - IP=0.0.0.0
+  redis_cluster:
     ports:
       - '7000-7005:7000-7005'
