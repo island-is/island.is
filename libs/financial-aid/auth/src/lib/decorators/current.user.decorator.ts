@@ -4,7 +4,8 @@ import {
   ExecutionContext,
 } from '@nestjs/common'
 
-import { getUserFromContext, User } from '@island.is/financial-aid/shared/lib'
+import { User } from '@island.is/financial-aid/shared/lib'
+import { getUserFromContext } from '../userContextExtractor'
 
 export const CurrentUser = createParamDecorator(
   (_: unknown, context: ExecutionContext): User => {
