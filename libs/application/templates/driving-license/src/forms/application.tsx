@@ -436,9 +436,18 @@ export const application: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'afhending',
-              title: 'Afhending',
+              title: 'Sýslumannsembætti',
               titleVariant: 'h4',
-              description: m.chooseDistrictCommisioner,
+              description: ({ answers }) => {
+                const applicationFor = getValueViaPath(answers, 'applicationFor', 'B-full') as string
+
+                if (applicationFor === 'B-temp') {
+                  return 'Veldu það embætti sýslumanns sem þú hyggst skila inn gæðamerktri ljósmynd'
+                } else {
+                  return 'Veldu það embætti sýslumanns þar sem þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini'
+                }
+              }
+              // description: m.chooseDistrictCommisioner,
             }),
             buildSelectField({
               id: 'juristiction',

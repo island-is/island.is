@@ -142,7 +142,7 @@ export const m = defineMessages({
   },
   informationSectionTitle: {
     id: 'dl.application:informationSection.title',
-    defaultMessage: 'Afhending',
+    defaultMessage: 'Sýslumannsembætti',
     description: 'Information',
   },
   pickupLocationTitle: {
