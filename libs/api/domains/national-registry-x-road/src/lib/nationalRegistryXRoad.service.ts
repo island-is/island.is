@@ -62,10 +62,11 @@ export class NationalRegistryXRoadService {
 
     const history = historyList.map((heimili: Heimili) => {
       // API says Date, but is string -- fallback in case that changes in the future
-      const date = typeof heimili.breytt === 'string'
-        ? new Date(heimili.breytt)
-        : heimili.breytt
-      return ({
+      const date =
+        typeof heimili.breytt === 'string'
+          ? new Date(heimili.breytt)
+          : heimili.breytt
+      return {
         address: {
           city: heimili.stadur,
           postalCode: heimili.postnumer,
@@ -73,7 +74,7 @@ export class NationalRegistryXRoadService {
         } as NationalRegistryAddress,
         country: heimili.landakodi,
         dateOfChange: date,
-      } as NationalRegistryResidence)
+      } as NationalRegistryResidence
     })
 
     this.computeCountryResidence(history)
@@ -89,10 +90,11 @@ export class NationalRegistryXRoadService {
       return null
     }
 
-    const simplified = history.map(({ dateOfChange, country }) => ({
-      time: dateOfChange.getTime(),
-      country,
-    }))
+    const simplified = history
+      .map(({ dateOfChange, country }) => ({
+        time: dateOfChange.getTime(),
+        country,
+      }))
       .sort(({ time: a }, { time: b }) => {
         // reversed order, make sure we get this right even if the national ID
         // registry is out of order
@@ -103,7 +105,7 @@ export class NationalRegistryXRoadService {
     const yearFromNow = new Date(
       now.getFullYear() - 1,
       now.getMonth(),
-      now.getDate()
+      now.getDate(),
     ).getTime()
 
     let lastTime = now.getTime()

@@ -258,12 +258,10 @@ export class DrivingLicenseService {
         },
       )
     } else {
-      requirements.push(
-        {
-          key: RequirementKey.localResidency,
-          requirementMet: true,
-        },
-      )
+      requirements.push({
+        key: RequirementKey.localResidency,
+        requirementMet: true,
+      })
     }
 
     requirements.push({

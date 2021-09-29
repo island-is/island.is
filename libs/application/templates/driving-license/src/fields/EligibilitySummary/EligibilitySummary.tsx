@@ -73,26 +73,29 @@ interface UseEligibilityResult {
   loading: boolean
 }
 
-const fakeEligibility = (applicationFor: 'B-full'|'B-temp'): ApplicationEligibility => {
+const fakeEligibility = (
+  applicationFor: 'B-full' | 'B-temp',
+): ApplicationEligibility => {
   return {
     isEligible: true,
     requirements: [
       ...(applicationFor === 'B-full'
         ? [
-          {
-            key: RequirementKey.DrivingAssessmentMissing,
-            requirementMet: true,
-          },
-          {
-            key: RequirementKey.DrivingSchoolMissing,
-            requirementMet: true,
-          },
-        ] : [
-          {
-            key: RequirementKey.LocalResidency,
-            requirementMet: true,
-          },
-        ]),
+            {
+              key: RequirementKey.DrivingAssessmentMissing,
+              requirementMet: true,
+            },
+            {
+              key: RequirementKey.DrivingSchoolMissing,
+              requirementMet: true,
+            },
+          ]
+        : [
+            {
+              key: RequirementKey.LocalResidency,
+              requirementMet: true,
+            },
+          ]),
       {
         key: RequirementKey.DeniedByService,
         requirementMet: true,
@@ -107,7 +110,8 @@ const useEligibility = (
   const fakeData = answers.fakeData as DrivingLicenseFakeData | undefined
   const usingFakeData = fakeData?.useFakeData === YES
 
-  const applicationFor = answers.applicationFor as ('B-full'|'B-temp') || 'B-full'
+  const applicationFor =
+    (answers.applicationFor as 'B-full' | 'B-temp') || 'B-full'
 
   const { data = {}, error, loading } = useQuery(QUERY, {
     skip: usingFakeData,
