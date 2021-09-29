@@ -1,3 +1,6 @@
+import { makeCase } from '../../fixtures/caseFactory'
+import { hasOperationName } from '../../utils/graphqlUtils'
+
 describe('/krafa/fyrirtaka/:id', () => {
   beforeEach(() => {
     cy.stubAPIResponses()
@@ -5,6 +8,14 @@ describe('/krafa/fyrirtaka/:id', () => {
   })
 
   it('should require a valid arrest time', () => {
+    const caseData = makeCase()
+
+    cy.intercept('POST', '**/api/graphql', (req) => {
+      if (hasOperationName(req, 'CaseQuery')) {
+        req.reply({ data: { case: caseData } })
+      }
+    })
+
     cy.getByTestid('datepicker').first().type('01.01.2020')
     cy.clickOutside()
     cy.getByTestid('arrestDate-time').type('13:').blur()
