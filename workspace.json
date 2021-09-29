@@ -2292,7 +2292,8 @@
               "yarn start application-system-api &",
               "yarn start application-system-form &",
               "yarn start services-endorsements-api &",
-              "yarn start api &"
+              "yarn start services-temporary-voter-registry-api &",
+              "yarn start services-party-letter-registry-api &"
             ],
             "parallel": true
           }
