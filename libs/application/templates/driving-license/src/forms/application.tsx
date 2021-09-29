@@ -461,13 +461,13 @@ export const application: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'afhending',
-              title: m.districtCommisioner,
+              title: m.districtCommisionerTitle,
               titleVariant: 'h4',
               description: chooseDistrictCommissionerDescription,
             }),
             buildSelectField({
               id: 'juristiction',
-              title: 'Afhending',
+              title: m.districtCommisionerPickup,
               disabled: false,
               options: ({
                 externalData: {

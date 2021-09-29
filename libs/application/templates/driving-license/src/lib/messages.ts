@@ -606,10 +606,15 @@ export const m = defineMessages({
     defaultMessage: `Skrautmynd`,
     description: 'Company Image',
   },
-  districtCommisioner: {
+  districtCommisionerTitle: {
     id: 'dl.application:districtCommisionerTitle',
     defaultMessage: 'Sýslumannsembætti',
-    description: 'Districit commissioner',
+    description: 'Title for districit commissioner',
+  },
+  districtCommisionerPickup: {
+    id: 'dl.application:districtCommisionerPickup',
+    defaultMessage: 'Afhending',
+    description: 'Pickup for districit commissioner',
   },
   chooseDistrictCommisionerForFullLicense: {
     id: 'dl.application:chooseDistrictCommisionerForFullLicense',
