@@ -25,7 +25,6 @@ import {
   EmbaettiDto,
   HefurLokidOkugerdiDto,
   OkukennariDto,
-  Okuskirteini,
   OkuskirteiniApi,
   Rettindi,
   TegSviptingaDto,
@@ -38,6 +37,7 @@ import {
   DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE,
   LICENSE_RESPONSE_API_VERSION,
 } from './util/constants'
+import sortTeachers from './util/sortTeachers'
 import {
   DrivingLicenseApplicationFor,
   DrivingSchool,
@@ -111,10 +111,12 @@ export class DrivingLicenseService {
       {},
     )
 
-    return teachers.map(({ nafn, kennitala }: OkukennariDto) => ({
-      name: nafn,
-      nationalId: kennitala,
-    }))
+    return teachers
+      .sort(sortTeachers)
+      .map(({ nafn, kennitala }: OkukennariDto) => ({
+        name: nafn,
+        nationalId: kennitala,
+      }))
   }
 
   async getDeprivationTypes(): Promise<DeprevationType[]> {
