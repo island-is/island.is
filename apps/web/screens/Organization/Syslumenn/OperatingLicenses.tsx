@@ -3,11 +3,11 @@ import React, { useEffect, useState, useRef, useReducer } from 'react'
 import { useApolloClient } from '@apollo/client/react'
 import {
   AlertBanner,
-  AsyncSearchInput,
   Box,
   Button,
   GridColumn,
   GridRow,
+  Input,
   LoadingDots,
   NavigationItem,
   Text,
@@ -42,12 +42,14 @@ type SearchState = {
   currentPageNumber: number,
   hasNextPage: boolean,
   totalCount: number,
-  isLoading: boolean,
+  isLoadingFirstPage: boolean,
+  isLoadingNextPage: boolean,
   hasError: boolean,
 }
 
 const SEARCH_REDUCER_ACTION_TYPES = {
-  START_LOADING: 'START_LOADING',
+  START_LOADING_FIRST_PAGE: 'START_LOADING_FIRST_PAGE',
+  START_LOADING_NEXT_PAGE: 'START_LOADING_NEXT_PAGE',
   SEARCH_SUCCESS_FIRST_PAGE: 'SEARCH_SUCCESS_FIRST_PAGE',
   SEARCH_SUCCESS_NEXT_PAGE: 'SEARCH_SUCCESS_NEXT_PAGE',
   SEARCH_ERROR: 'SEARCH_ERROR',
@@ -56,11 +58,18 @@ const SEARCH_REDUCER_ACTION_TYPES = {
 const searchReducer = (state: SearchState, action): SearchState => {
   // TODO: Refactor this switch statement to if statements, altering the state and returning it in the end.
   switch (action.type) {
-    case SEARCH_REDUCER_ACTION_TYPES.START_LOADING:
+    case SEARCH_REDUCER_ACTION_TYPES.START_LOADING_FIRST_PAGE:
       return { ...state,
         currentTerm: action.currentTerm,
         currentPageNumber: action.currentPageNumber,
-        isLoading: true,
+        isLoadingFirstPage: true,
+        hasError: false,
+      }
+    case SEARCH_REDUCER_ACTION_TYPES.START_LOADING_NEXT_PAGE:
+      return { ...state,
+        currentTerm: action.currentTerm,
+        currentPageNumber: action.currentPageNumber,
+        isLoadingNextPage: true,
         hasError: false,
       }
     case SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_FIRST_PAGE:
@@ -70,7 +79,7 @@ const searchReducer = (state: SearchState, action): SearchState => {
           results: action.results,
           hasNextPage: action.hasNextPage,
           totalCount: action.totalCount,
-          isLoading: false,
+          isLoadingFirstPage: false,
           hasError: false,
         }
       }
@@ -81,12 +90,13 @@ const searchReducer = (state: SearchState, action): SearchState => {
 
     case SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_NEXT_PAGE:
       // Request-Response matching, based on current search term and current page.
+      // TODO: BUG, trailing space in search string, makes loading hang. (Potentially fixed by trimming the values before comparing for request-response match)
       if (action.searchQuery === state.currentTerm && action.currentPageNumber === state.currentPageNumber) {
         return { ...state,
           results: [ ...state.results, ...action.results],
           hasNextPage: action.hasNextPage,
           totalCount: action.totalCount,
-          isLoading: false,
+          isLoadingNextPage: false,
           hasError: false,
         }
       }
@@ -98,13 +108,15 @@ const searchReducer = (state: SearchState, action): SearchState => {
       console.error(action.error)
       return { ...state,
         hasError: true,
-        isLoading: false
+        isLoadingFirstPage: false,
+        isLoadingNextPage: false,
       }
     default: {
       console.error('Unhandled search reducer action type.')
       return { ...state,
         hasError: true,
-        isLoading: false
+        isLoadingFirstPage: false,
+        isLoadingNextPage: false,
       }
     }
   }
@@ -131,18 +143,30 @@ const useSearch = ( term: string, currentPageNumber: number ): SearchState => {
     currentPageNumber: currentPageNumber,
     hasNextPage: false,
     totalCount: 0,
-    isLoading: false,
+    isLoadingFirstPage: false,
+    isLoadingNextPage: false,
     hasError: false,
   })
   const client = useApolloClient()
   const timer = useRef(null)
 
   useEffect(() => {
-    dispatch({
-      type: SEARCH_REDUCER_ACTION_TYPES.START_LOADING,
-      currentTerm: term,
-      currentPageNumber: currentPageNumber
-    })
+    if (currentPageNumber === 1) {
+      dispatch({
+        type: SEARCH_REDUCER_ACTION_TYPES.START_LOADING_FIRST_PAGE,
+        currentTerm: term,
+        currentPageNumber: currentPageNumber
+      })
+    }
+    else
+    {
+      dispatch({
+        type: SEARCH_REDUCER_ACTION_TYPES.START_LOADING_NEXT_PAGE,
+        currentTerm: term,
+        currentPageNumber: currentPageNumber
+      })
+    }
+
 
     const thisTimerId = (timer.current = setTimeout(async () => {
       client
@@ -226,7 +250,6 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   const [query, setQuery] = useState(' ')
   const [currentPageNumber, setCurrentPageNumber] = useState(1)
   const search = useSearch(query, currentPageNumber)
-  const [searchHasFocus, setSearchHasFocus] = useState(false)
 
   useEffect(() => {
     // Note: This is a workaround to fix an issue where the search input looses focus after the first keypress.
@@ -240,12 +263,6 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
 
   const onLoadMore = () => {
     setCurrentPageNumber(currentPageNumber + 1)
-  }
-
-  const onBlur = () => {
-    setTimeout(() => {
-      setSearchHasFocus(false)
-    }, 100)
   }
 
   return (
@@ -268,37 +285,34 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         items: navList,
       }}
     >
-      <Box paddingBottom={4}>
+      <Box paddingBottom={2}>
         <Text variant="h1" as="h2">
           {subpage.title}
         </Text>
       </Box>
       <Box
-        marginBottom={6}
+        marginBottom={3}
       >
-        <AsyncSearchInput
-          rootProps={{
-            'aria-controls': '-menu',
-          }}
-          hasFocus={searchHasFocus}
-          loading={search.isLoading}
-          menuProps={{
-            comp: 'div',
-          }}
-          buttonProps={{
-            onClick: () => onSearch(query)
-          }}
-          inputProps={{
-            inputSize: 'medium',
-            onFocus: () => setSearchHasFocus(true),
-            onBlur,
-            placeholder: n('operatingLicensesFilterSearch', 'Leita'),
-            value: query,
-            onChange: (event) => onSearch(event.target.value),
-          }}
+        <Input
+          name="operatingLicenseSearchInput"
+          placeholder={n('operatingLicensesFilterSearch', 'Leita')}
+          backgroundColor={['blue', 'blue', 'white']}
+          size="sm"
+          icon="search"
+          iconType="outline"
+          onChange={(event) => onSearch(event.target.value)}
         />
+        <Box
+          paddingTop={1}
+          textAlign="center"
+          style={{
+            visibility: search.isLoadingFirstPage ? 'visible' : 'hidden'
+          }}
+        >
+          <LoadingDots/>
+        </Box>
       </Box>
-      {!search.isLoading && !search.hasError && search.results.length === 0 &&
+      {!search.isLoadingFirstPage && !search.isLoadingNextPage && !search.hasError && search.results.length === 0 &&
         <Box display="flex" marginTop={4} justifyContent="center">
           <Text variant="h3">
             {n('operatingLicensesNoSearchResults', 'Engin rekstrarleyfi fundust.')}
@@ -351,25 +365,25 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
       <Box
         display="flex"
         justifyContent="center"
-        // TODO: Fix the UI so that id does not shift when pushing the "Load more" button.
-        paddingTop={2}
+        paddingTop={1}
         paddingBottom={2}
         textAlign="center"
+        style={{
+          visibility: search.isLoadingNextPage ? 'visible' : 'hidden'
+        }}
       >
-        {search.isLoading &&
-          <LoadingDots />
-        }
+        <LoadingDots/>
       </Box>
       <Box
         display="flex"
         justifyContent="center"
-        marginY={3}
+        marginY={2}
         textAlign="center"
       >
         {search.hasNextPage && (
           <Button
             onClick={() => onLoadMore()}
-            disabled={search.isLoading}
+            disabled={search.isLoadingFirstPage || search.isLoadingNextPage}
           >
             {n('operatingLicensesSeeMore', 'Sjá fleiri')} (
             {search.totalCount - search.results.length})
