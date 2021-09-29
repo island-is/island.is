@@ -43,14 +43,13 @@ export const Duration: FC<FieldBaseProps> = ({
   const { register, setError, clearErrors } = useFormContext()
   const { formatMessage, formatDateFns } = useLocale()
   const { answers } = application
-  const { rawPeriods } = getApplicationAnswers(answers)
+  const { periods, rawPeriods, firstPeriodStart } = getApplicationAnswers(
+    answers,
+  )
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
   const currentIndex = rawPeriods.length - 1
-  const currentStartDateAnswer = getValueViaPath(
-    answers,
-    `periods[${currentIndex}].startDate`,
-    expectedDateOfBirth,
-  ) as string
+  const currentPeriod = rawPeriods[currentIndex]
+  const currentStartDateAnswer = currentPeriod.startDate ?? expectedDateOfBirth
 
   const [chosenEndDate, setChosenEndDate] = useState<string | undefined>(
     undefined,
@@ -62,7 +61,7 @@ export const Duration: FC<FieldBaseProps> = ({
   const [percent, setPercent] = useState<number>(100)
   const { getEndDate, loading } = useGetOrRequestEndDates(application)
   const errorMessage =
-    (errors?.component as RecordObject<string>)?.message || errors[id]
+    (errors?.component as RecordObject<string>)?.message || errors?.[id]
 
   const monthsToEndDate = async (duration: number) => {
     try {
@@ -126,6 +125,24 @@ export const Duration: FC<FieldBaseProps> = ({
     init()
   }, [])
 
+  const rangeDates =
+    currentPeriod.firstPeriodStart !== StartDateOptions.ACTUAL_DATE_OF_BIRTH
+      ? {
+          start: {
+            date: formatDateFns(currentStartDateAnswer),
+            message: formatMessage(
+              parentalLeaveFormMessages.shared.rangeStartDate,
+            ),
+          },
+          end: {
+            date: chosenEndDate ? formatDateFns(chosenEndDate) : '—',
+            message: formatMessage(
+              parentalLeaveFormMessages.shared.rangeEndDate,
+            ),
+          },
+        }
+      : undefined
+
   return (
     <Box>
       <FieldDescription
@@ -158,28 +175,7 @@ export const Duration: FC<FieldBaseProps> = ({
                 singular: formatMessage(parentalLeaveFormMessages.shared.month),
                 plural: formatMessage(parentalLeaveFormMessages.shared.months),
               }}
-              rangeDates={
-                currentIndex === 0 &&
-                answers.firstPeriodStart !==
-                  StartDateOptions.ACTUAL_DATE_OF_BIRTH
-                  ? {
-                      start: {
-                        date: formatDateFns(currentStartDateAnswer),
-                        message: formatMessage(
-                          parentalLeaveFormMessages.shared.rangeStartDate,
-                        ),
-                      },
-                      end: {
-                        date: chosenEndDate
-                          ? formatDateFns(chosenEndDate)
-                          : '—',
-                        message: formatMessage(
-                          parentalLeaveFormMessages.shared.rangeEndDate,
-                        ),
-                      },
-                    }
-                  : undefined
-              }
+              rangeDates={rangeDates}
               currentIndex={chosenDuration}
               onChange={(months: number) => handleChange(months)}
               onChangeEnd={(months: number) =>

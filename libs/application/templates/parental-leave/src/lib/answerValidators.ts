@@ -114,11 +114,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
       }
     }
 
-    const { periods: existingPeriods } = getApplicationAnswers(
-      application.answers,
-    )
+    const otherPeriods = periods.slice(0, latestPeriodIndex)
+    const validOtherPeriods = filterValidPeriods(otherPeriods)
 
-    const isFirstPeriod = existingPeriods.length === 0
+    const isFirstPeriod = validOtherPeriods.length === 0
 
     const buildError = buildValidationError(
       VALIDATE_LATEST_PERIOD,
@@ -144,7 +143,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const validatedField = validatePeriod(
       latestPeriod,
       isFirstPeriod,
-      existingPeriods,
+      validOtherPeriods,
       application,
       buildFieldError,
     )

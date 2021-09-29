@@ -51,6 +51,9 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   setFieldLoadingState,
 }) => {
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const editable =
+    application.state === States.DRAFT ||
+    application.state === States.EDIT_OR_ADD_PERIODS
 
   const showDescription = field?.props?.showDescription ?? true
   const dob = getExpectedDateOfBirth(application)
@@ -60,7 +63,11 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   const { rawPeriods, periods } = getApplicationAnswers(application.answers)
 
   useEffect(() => {
-    if (rawPeriods.length === 0) {
+    if (!editable) {
+      return
+    }
+
+    if ((application.answers.validatedPeriods as unknown[])?.length === 0) {
       expandRepeater()
     }
 
@@ -103,6 +110,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     })
   }, [
     application,
+    editable,
     expandRepeater,
     locale,
     periods,
@@ -118,9 +126,6 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   }
 
   const dobDate = new Date(dob)
-  const editable =
-    application.state === States.DRAFT ||
-    application.state === States.EDIT_OR_ADD_PERIODS
 
   const hasAddedPeriods = periods?.length > 0
   const remainingDays = rights - daysAlreadyUsed

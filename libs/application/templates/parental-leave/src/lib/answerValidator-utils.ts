@@ -13,8 +13,16 @@ import {
 
 import { Period } from '../types'
 
-export const dateIsWithinOtherPeriods = (date: Date, periods: Period[]) => {
+export const dateIsWithinOtherPeriods = (
+  date: Date,
+  periods: Period[],
+  periodIndex?: number,
+) => {
   for (const currentPeriod of periods) {
+    if (currentPeriod.rawIndex === periodIndex) {
+      continue
+    }
+
     if (!currentPeriod.startDate || !currentPeriod.endDate) {
       return false
     }
@@ -50,8 +58,6 @@ export const validatePeriod = (
     values?: object,
   ) => { path: string; message: string; values: object },
 ) => {
-  console.log('Validating period')
-  console.log(period)
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
 
   if (!expectedDateOfBirth) {
@@ -110,7 +116,9 @@ export const validatePeriod = (
       return buildError('startDate', 'Ógild upphafsdagsetning')
     }
 
-    if (dateIsWithinOtherPeriods(startDateValue, existingPeriods)) {
+    if (
+      dateIsWithinOtherPeriods(startDateValue, existingPeriods, period.rawIndex)
+    ) {
       return buildError(
         'startDate',
         'Upphafsdagsetning skarast á við annað tímabil',
@@ -137,7 +145,9 @@ export const validatePeriod = (
 
     const endDateValue = parseISO(endDate)
 
-    if (dateIsWithinOtherPeriods(endDateValue, existingPeriods)) {
+    if (
+      dateIsWithinOtherPeriods(endDateValue, existingPeriods, period.rawIndex)
+    ) {
       return buildError(
         useLength === YES ? 'endDateDuration' : 'endDate',
         'Endadagsetning skarast á við annað tímabil',
@@ -190,5 +200,4 @@ export const validatePeriod = (
       )
     }
   }
-  console.log('\t its valid')
 }
