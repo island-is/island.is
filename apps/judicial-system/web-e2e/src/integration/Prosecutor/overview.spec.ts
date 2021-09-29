@@ -1,7 +1,26 @@
+import { Case } from '@island.is/judicial-system/types'
+import { makeCase, makeCourt, makeProsecutor } from '../../fixtures/caseFactory'
+import { intercept } from '../../utils'
+
 describe('/krafa/stadfesta/:id', () => {
   beforeEach(() => {
+    const caseData = makeCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      accusedName: 'Batman Robinsson',
+      accusedAddress: 'Batcave 1337',
+      requestedCourtDate: '2020-09-16T19:50:08.033Z',
+      arrestDate: '2020-09-16T19:50:08.033Z',
+      demands:
+        'Þess er krafist að Batman Robinsson, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+      court: makeCourt(),
+      prosecutor: makeProsecutor(),
+    }
+
     cy.stubAPIResponses()
     cy.visit('/krafa/stadfesta/test_id_stadfesta')
+
+    intercept(caseDataAddition)
   })
 
   it('should have an overview of the current case', () => {

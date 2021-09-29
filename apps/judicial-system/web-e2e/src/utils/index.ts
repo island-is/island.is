@@ -1,4 +1,17 @@
+import { Case } from '@island.is/judicial-system/types'
 import { CyHttpMessages } from 'cypress/types/net-stubbing'
+
+export const intercept = (res: Case) => {
+  cy.intercept('POST', '**/api/graphql', (req) => {
+    if (hasOperationName(req, 'CaseQuery')) {
+      req.reply({
+        data: {
+          case: res,
+        },
+      })
+    }
+  })
+}
 
 export const hasOperationName = (
   req: CyHttpMessages.IncomingHttpRequest,

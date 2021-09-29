@@ -1,7 +1,14 @@
+import { makeCase } from '../../fixtures/caseFactory'
+import { intercept } from '../../utils'
+
 describe('/krafa/greinagerd/:id', () => {
   beforeEach(() => {
+    const caseData = makeCase()
+
     cy.stubAPIResponses()
     cy.visit('/krafa/greinargerd/test_id')
+
+    intercept(caseData)
   })
 
   it('should require a valid case facts value', () => {
