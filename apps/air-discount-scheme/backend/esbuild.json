@@ -10,10 +10,14 @@
     "@nestjs/websockets/socket-module",
     "class-validator",
     "class-transformer",
+    "@nestjs/platform-express",
     "@nestjs/microservices/microservices-module",
+    "@nestjs/common",
+    "@nestjs/core",
     "apollo-server-fastify",
     "@elastic/elasticsearch",
     "@nestjs/swagger",
+    "reflect-metadata",
     "@nestjs/mongoose",
     "@nestjs/typeorm",
     "dd-trace",
@@ -26,7 +30,8 @@
     "atob",
     "logform",
     "pg-native",
-    "form-data"
+    "form-data",
+    "rxjs"
   ],
   "keepNames": true
 }
