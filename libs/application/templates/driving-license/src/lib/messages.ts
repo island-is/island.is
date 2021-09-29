@@ -457,6 +457,17 @@ export const m = defineMessages({
       'Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: 'requirement unmet api returned false',
   },
+  requirementUnmetLocalResidencyTitle: {
+    id: 'dl.application:requirementunmet.localResidencyTitle',
+    defaultMessage: 'Búseta á Íslandi',
+    description: 'requirement unmet api returned false',
+  },
+  requirementUnmetLocalResidencyDescription: {
+    id: 'dl.application:requirementunmet.localResidencyDescription',
+    defaultMessage:
+      'Þú þarft að hafa búið að minnsta kosti 180 daga af síðustu 365 dögum á Íslandi til að geta sótt um ökuskírteini.',
+    description: 'requirement unmet api returned false',
+  },
   errorDataProvider: {
     id: 'dl.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',

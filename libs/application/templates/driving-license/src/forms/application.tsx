@@ -30,7 +30,7 @@ import { StudentAssessment } from '@island.is/api/schema'
 import { NO, YES } from '../lib/constants'
 
 // const ALLOW_FAKE_DATA = todo: serverside feature flag
-const ALLOW_FAKE_DATA = true
+const ALLOW_FAKE_DATA = false
 
 const ALLOW_LICENSE_SELECTION = false
 

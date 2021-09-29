@@ -257,6 +257,13 @@ export class DrivingLicenseService {
           requirementMet: (hasFinishedSchoolResult.hefurLokidOkugerdi ?? 0) > 0,
         },
       )
+    } else {
+      requirements.push(
+        {
+          key: RequirementKey.localResidency,
+          requirementMet: true,
+        },
+      )
     }
 
     requirements.push({

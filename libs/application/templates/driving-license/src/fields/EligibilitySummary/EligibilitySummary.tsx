@@ -56,6 +56,12 @@ const requirementKeyToStep = (key: string, isRequirementMet: boolean): Step => {
         title: m.requirementUnmetDeniedByServiceTitle,
         description: m.requirementUnmetDeniedByServiceDescription,
       }
+    case RequirementKey.LocalResidency:
+      return {
+        ...step,
+        title: m.requirementUnmetLocalResidencyTitle,
+        description: m.requirementUnmetLocalResidencyDescription,
+      }
     default:
       throw new Error('Unknown requirement reason - should not happen')
   }
@@ -67,18 +73,26 @@ interface UseEligibilityResult {
   loading: boolean
 }
 
-const fakeEligibility = (): ApplicationEligibility => {
+const fakeEligibility = (applicationFor: 'B-full'|'B-temp'): ApplicationEligibility => {
   return {
     isEligible: true,
     requirements: [
-      {
-        key: RequirementKey.DrivingAssessmentMissing,
-        requirementMet: true,
-      },
-      {
-        key: RequirementKey.DrivingSchoolMissing,
-        requirementMet: true,
-      },
+      ...(applicationFor === 'B-full'
+        ? [
+          {
+            key: RequirementKey.DrivingAssessmentMissing,
+            requirementMet: true,
+          },
+          {
+            key: RequirementKey.DrivingSchoolMissing,
+            requirementMet: true,
+          },
+        ] : [
+          {
+            key: RequirementKey.LocalResidency,
+            requirementMet: true,
+          },
+        ]),
       {
         key: RequirementKey.DeniedByService,
         requirementMet: true,
@@ -93,7 +107,7 @@ const useEligibility = (
   const fakeData = answers.fakeData as DrivingLicenseFakeData | undefined
   const usingFakeData = fakeData?.useFakeData === YES
 
-  const applicationFor = answers.applicationFor || 'B-full'
+  const applicationFor = answers.applicationFor as ('B-full'|'B-temp') || 'B-full'
 
   const { data = {}, error, loading } = useQuery(QUERY, {
     skip: usingFakeData,
@@ -107,7 +121,7 @@ const useEligibility = (
   if (usingFakeData) {
     return {
       loading: false,
-      eligibility: fakeEligibility(),
+      eligibility: fakeEligibility(applicationFor),
     }
   }
 

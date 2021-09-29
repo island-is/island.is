@@ -83,6 +83,7 @@ export enum RequirementKey {
   drivingAssessmentMissing = 'DrivingAssessmentMissing',
   drivingSchoolMissing = 'DrivingSchoolMissing',
   deniedByService = 'DeniedByService',
+  localResidency = 'localResidency',
 }
 
 export interface ApplicationEligibilityRequirement {
