@@ -63,7 +63,7 @@ export const bootstrap = async (options: BootstrapOptions) => {
 
   await setupProxy(expressApp, options.proxyConfig, dev)
 
-  const nextConfig = getNextConfig(options.appDir, dev)
+  const nextConfig = await getNextConfig(options.appDir, dev)
   const nextApp = next(nextConfig)
   const handle = nextApp.getRequestHandler()
   expressApp.all('*', (req, res) => handle(req, res))
