@@ -2,8 +2,8 @@ import { ExternalData } from '@island.is/application/core'
 import { Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
 import { NordicCountriesCountryCode } from './shared'
-import EFTA from './assets/EFTA.json'
-import EU from './assets/EU.json'
+import { EU } from './lib/EU'
+import { EFTA } from './lib/EFTA'
 
 const sortApplicationsByDateAscending = (applications: Applications[]) => {
   const sortedApplications = applications
@@ -70,8 +70,10 @@ export const prerequisitesFailed = (externalData: ExternalData) => {
 }
 
 export const isEUCountry = (countryCode: string) => {
-  const isInEFTA = !!EFTA.find((element) => element.alpha2Code === countryCode)
-  const isInEU = !!EU.find((element) => element.alpha2Code === countryCode)
+  const isInEFTA = !!EFTA.find(
+    (element: any) => element.alpha2Code === countryCode,
+  )
+  const isInEU = !!EU.find((element: any) => element.alpha2Code === countryCode)
   return isInEU || isInEFTA
 }
 

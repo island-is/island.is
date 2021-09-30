@@ -24,7 +24,7 @@ import {
   requireConfirmationOfResidency,
   requireWaitingPeriod,
 } from '../healthInsuranceUtils'
-import Countries from '../assets/countries.json'
+import { Countries } from '../lib/countries'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
