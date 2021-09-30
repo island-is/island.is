@@ -1,18 +1,16 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql'
 
-
 @ObjectType()
 export class PageInfoResponse {
   @Field()
-  hasNextPage!: boolean;
+  hasNextPage!: boolean
 
   @Field()
-  hasPreviousPage!: boolean;
+  hasPreviousPage!: boolean
 
   @Field()
-  startCursor!: string;
+  startCursor!: string
 
   @Field()
-  endCursor!: string;
-  
+  endCursor!: string
 }

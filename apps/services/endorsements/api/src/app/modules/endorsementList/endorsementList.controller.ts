@@ -6,21 +6,16 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  applyDecorators,
   Query,
-  Type
 } from '@nestjs/common'
 import {
   ApiBody,
-  ApiCreatedResponse,
-  ApiNoContentResponse,
   ApiOAuth2,
   ApiOkResponse,
   ApiParam,
   ApiTags,
   ApiExtraModels,
-  getSchemaPath,
-  ApiOperation
+  ApiOperation,
 } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { EndorsementList } from './endorsementList.model'
@@ -36,14 +31,9 @@ import type { User } from '@island.is/auth-nest-tools'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
 
-
-
 import { QueryDto } from '../pagination/dto/query.dto'
 import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
-
-
-
 
 
 
@@ -53,55 +43,45 @@ import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
 @ApiOAuth2([])
-@ApiExtraModels(QueryDto,PaginatedEndorsementListDto)
+@ApiExtraModels(QueryDto, PaginatedEndorsementListDto)
 export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
   ) {}
-
-  // @ApiOkResponse({
-  //   description: 'Finds all endorsement lists belonging to given tags',
-  //   type: [EndorsementList],
-  // })
-  @ApiOperation({ summary: 'Finds all endorsement lists belonging to given tags' })
-  @ApiOkResponse({type:PaginatedEndorsementListDto})
+  @ApiOperation({
+    summary: 'Finds all endorsement lists belonging to given tags',
+  })
+  @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get()
+  @BypassAuth()
   async findByTags(
     @Query() { tags }: FindEndorsementListByTagsDto,
-    @Query() query: QueryDto
+    @Query() query: QueryDto,
   ): Promise<PaginatedEndorsementListDto> {
-    // TODO: Add pagination
     return await this.endorsementListService.findListsByTags(
       // query parameters of length one are not arrays, we normalize all tags input to arrays here
       !Array.isArray(tags) ? [tags] : tags,
-      query 
+      query,
     )
   }
 
-  /**
-   * This exists so we can return all endorsements for user across all lists
-   */
-  // @ApiOkResponse({
-  //   description: 'Finds all endorsements for the currently authenticated user',
-  //   type: [Endorsement],
-  // })
   @Scopes(EndorsementsScope.main)
-  // @ApiPaginatedResponse(Endorsement)
-  @ApiOperation({ summary: 'Finds all endorsements for the currently authenticated user' })
-  @ApiOkResponse({type:PaginatedEndorsementDto})
+  @ApiOperation({
+    summary: 'Finds all endorsements for the currently authenticated user',
+  })
+  @ApiOkResponse({ type: PaginatedEndorsementDto })
   @Get('/endorsements')
   @Audit<PaginatedEndorsementDto>({
-    resources: ({data: endorsement}) => endorsement.map((e) => e.id),
-    meta: ({data: endorsement}) => ({ count: endorsement.length }),
+    resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
+    meta: ({ data: endorsement }) => ({ count: endorsement.length }),
   })
   async findEndorsements(
     @CurrentUser() user: User,
-    @Query() query?: QueryDto
-    ): Promise<PaginatedEndorsementDto[]> {
-    // TODO: Add pagination
+    @Query() query: QueryDto,
+  ): Promise<PaginatedEndorsementDto[]> {
     return await this.endorsementListService.findAllEndorsementsByNationalId(
       user.nationalId,
-      query
+      query,
     )
   }
 

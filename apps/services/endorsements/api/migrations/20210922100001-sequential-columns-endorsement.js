@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.addColumn('endorsement', 'counter', {
       type: Sequelize.INTEGER,
       allowNull: false,
-      autoIncrement: true
+      autoIncrement: true,
     })
   },
 

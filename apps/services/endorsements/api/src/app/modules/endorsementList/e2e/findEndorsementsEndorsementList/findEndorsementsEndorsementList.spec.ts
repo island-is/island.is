@@ -12,7 +12,7 @@ describe('findEndorsementsEndorsementList', () => {
     })
 
     const response = await request(app.getHttpServer())
-      .get('/endorsement-list/endorsements')
+      .get('/endorsement-list/endorsements?limit=10')
       .send()
       .expect(403)
 
@@ -28,11 +28,11 @@ describe('findEndorsementsEndorsementList', () => {
     })
 
     const response = await request(app.getHttpServer())
-      .get('/endorsement-list/endorsements')
+      .get('/endorsement-list/endorsements?limit=10')
       .send()
       .expect(200)
 
-    expect(Array.isArray(response.body)).toBeTruthy()
-    expect(response.body).toHaveLength(2)
+    expect(Array.isArray(response.body.data)).toBeTruthy()
+    expect(response.body.data).toHaveLength(2)
   })
 })

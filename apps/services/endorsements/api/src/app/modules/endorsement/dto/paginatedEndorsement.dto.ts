@@ -7,7 +7,7 @@ import { PageInfoDto } from '../../pagination/dto/pageinfo.dto'
 export class PaginatedEndorsementDto {
   @ApiProperty()
   totalCount!: number
-  @ApiProperty({type: [Endorsement]})
+  @ApiProperty({ type: [Endorsement] })
   data!: Endorsement[]
   @ApiProperty()
   pageInfo!: PageInfoDto

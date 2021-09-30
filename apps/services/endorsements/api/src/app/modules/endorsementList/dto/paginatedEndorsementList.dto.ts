@@ -6,7 +6,7 @@ import { EndorsementList } from '../endorsementList.model'
 export class PaginatedEndorsementListDto {
   @ApiProperty()
   totalCount!: number
-  @ApiProperty({type: [EndorsementList]})
+  @ApiProperty({ type: [EndorsementList] })
   data!: EndorsementList[]
   @ApiProperty()
   pageInfo!: PageInfoDto

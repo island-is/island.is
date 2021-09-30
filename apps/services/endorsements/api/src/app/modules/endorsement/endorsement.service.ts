@@ -19,9 +19,7 @@ import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
 import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 
-
-import { paginate } from '../pagination/paginate';
-
+import { paginate } from '../pagination/paginate'
 
 interface FindEndorsementInput {
   listId: string
@@ -171,32 +169,28 @@ export class EndorsementService {
     }
   }
 
-  async findEndorsements(
-    { listId }: FindEndorsementsInput,
-    query: any
-    ) {
+  async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
     this.logger.debug(`Finding endorsements by list id "${listId}"`)
 
     console.log(query)
 
-    // pagination setup defaults
-    const limit = parseInt(query.limit) || 5;
-    const after = query.after || null;
-    const before = query.before || null;
-    const primaryKeyField = 'counter' // oxymoron autoincr
-    const orderOption = [['counter', 'ASC']]
-    const where = { endorsementListId: listId } 
+    // // pagination setup defaults
+    // const limit = query.limit;
+    // const after = query.after;
+    // const before = query.before;
+    // const primaryKeyField = 'counter'
+    // const orderOption = [['counter', 'ASC']]
+    // const where = { endorsementListId: listId }
 
-    
     return await paginate({
       Model: this.endorsementModel,
-      limit,
-      after,
-      before,
-      primaryKeyField,
-      orderOption,
-      where,
-    });
+      limit: query.limit,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'DESC']],
+      where: { endorsementListId: listId },
+    })
     // return await this.endorsementModel.findAll({
     //   where: { endorsementListId: listId },
     // })

@@ -11,7 +11,9 @@ import {
   Post,
   applyDecorators,
   Query,
-  Type
+  Type,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -23,7 +25,8 @@ import {
   ApiParam,
   ApiTags,
   ApiExtraModels,
-  getSchemaPath
+  getSchemaPath,
+  ApiResponse,
 } from '@nestjs/swagger'
 import { environment } from '../../../environments'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
@@ -37,14 +40,8 @@ import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
 
-
-
 import { QueryDto } from '../pagination/dto/query.dto'
 import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
-
-
-
-
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @Audit({
@@ -52,7 +49,7 @@ const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 })
 @ApiTags('endorsement')
 @ApiOAuth2([])
-@ApiExtraModels(QueryDto,PaginatedEndorsementDto)
+@ApiExtraModels(QueryDto, PaginatedEndorsementDto)
 @Controller('endorsement-list/:listId/endorsement')
 export class EndorsementController {
   constructor(
@@ -66,10 +63,14 @@ export class EndorsementController {
   @Get()
   @HasAccessGroup(AccessGroup.Owner, AccessGroup.DMR)
   @Audit<PaginatedEndorsementDto>({
-    resources: ({data: endorsement}) => endorsement.map((e) => e.id),
-    meta: ({data: endorsement}) => ({ count: endorsement.length }),
+    resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
+    meta: ({ data: endorsement }) => ({ count: endorsement.length }),
   })
-  @ApiOkResponse({type:PaginatedEndorsementDto})
+  @ApiOkResponse({ type: PaginatedEndorsementDto })
+  @ApiResponse({
+    status: 200,
+    description: 'The record has been successfully created.',
+  })
   async findAll(
     @Param(
       'listId',
@@ -77,15 +78,19 @@ export class EndorsementController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
-    @Query() query: QueryDto
+    @Query() query: QueryDto,
   ): Promise<PaginatedEndorsementDto> {
-    return await this.endorsementService.findEndorsements({
-      listId: endorsementList.id
-    },
-    query)
+    return await this.endorsementService.findEndorsements(
+      {
+        listId: endorsementList.id,
+      },
+      query,
+    )
   }
 
-  @ApiOperation({ summary: 'Find any existing endorsement in a given list by national Id' })
+  @ApiOperation({
+    summary: 'Find any existing endorsement in a given list by national Id',
+  })
   @ApiOkResponse({
     description:
       'Uses current authenticated users national id to find any existing endorsement in a given list',
@@ -112,7 +117,10 @@ export class EndorsementController {
     })
   }
 
-  @ApiOperation({ summary: 'Uses the authenticated users national id to create an endorsement' })
+  @ApiOperation({
+    summary:
+      'Uses the authenticated users national id to create an endorsement',
+  })
   @ApiCreatedResponse({
     description:
       'Uses the authenticated users national id to create an endorsement',
@@ -142,7 +150,9 @@ export class EndorsementController {
     )
   }
 
-  @ApiOperation({ summary: 'Creates multiple endorsements given an array of national ids' })
+  @ApiOperation({
+    summary: 'Creates multiple endorsements given an array of national ids',
+  })
   @ApiCreatedResponse({
     description: 'Creates multiple endorsements given an array of national ids',
     type: EndorsementBulkCreate,
@@ -177,7 +187,10 @@ export class EndorsementController {
     )
   }
 
-  @ApiOperation({ summary: 'Uses the authenticated users national id to remove endorsement form a given list' })
+  @ApiOperation({
+    summary:
+      'Uses the authenticated users national id to remove endorsement form a given list',
+  })
   @ApiNoContentResponse({
     description:
       'Uses the authenticated users national id to remove endorsement form a given list',

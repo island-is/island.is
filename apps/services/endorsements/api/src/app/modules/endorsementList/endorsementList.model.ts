@@ -17,7 +17,6 @@ import { EndorsementMetadataDto } from './dto/endorsementMetadata.dto'
   tableName: 'endorsement_list',
 })
 export class EndorsementList extends Model<EndorsementList> {
-  
   @ApiProperty()
   @Column({
     type: DataType.UUID,
@@ -25,6 +24,13 @@ export class EndorsementList extends Model<EndorsementList> {
     defaultValue: DataType.UUIDV4,
   })
   id!: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.NUMBER,
+    allowNull: true,
+  })
+  counter!: number
 
   @ApiProperty()
   @Column({

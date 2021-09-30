@@ -7,7 +7,9 @@ import { EndorsementList } from './endorsementList.model'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { Endorsement } from '../endorsement/models/endorsement.model'
 
-import { paginate } from '../pagination/paginate';
+import { paginate } from '../pagination/paginate'
+
+import { QueryDto } from '../pagination/dto/query.dto'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -24,41 +26,22 @@ export class EndorsementListService {
   ) {}
 
   async findListsByTags(tags: string[], query: any) {
-    // this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
+    this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
     // TODO: Add option to get only open endorsement lists
-    
-    console.log(query)
 
-    // pagination setup defaults
-    const limit = parseInt(query.limit) || 5;
-    const after = query.after || null;
-    const before = query.before || null;
-    const primaryKeyField = 'counter' // oxymoron not pk
-    const orderOption = [['counter', 'ASC']]
-    const where = {
-      tags: { [Op.overlap]: tags },
-    } 
-    
-    
     return await paginate({
       Model: this.endorsementListModel,
-      limit,
-      after,
-      before,
-      primaryKeyField,
-      orderOption,
-      where
-    });
-    
-    // return this.endorsementListModel.findAll({
-    //   where: {
-    //     tags: { [Op.overlap]: tags },
-    //   },
-    // })
+      limit: query.limit,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'ASC']],
+      where: {
+        tags: { [Op.overlap]: tags },
+      },
+    })
   }
 
-
-  
   async findSingleList(listId: string) {
     this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
     const result = await this.endorsementListModel.findOne({
@@ -72,48 +55,26 @@ export class EndorsementListService {
     return result
   }
 
-
-
   async findAllEndorsementsByNationalId(nationalId: string, query: any) {
     this.logger.debug(
       `Finding endorsements for single national id ${nationalId}`,
     )
-    console.log(query)
 
-    // pagination setup defaults
-    const limit = parseInt(query.limit) || 5;
-    const after = query.after || null;
-    const before = query.before || null;
-    const primaryKeyField = 'pk'
-    const orderOption = [['pk', 'ASC']]
-    const where= { endorser: nationalId }
-    const include= [
-      {
-        model: EndorsementList,
-        attributes: ['id', 'title', 'description', 'tags', 'closedDate'],
-      },
-    ]
-
-    
     return await paginate({
       Model: this.endorsementModel,
-      limit,
-      after,
-      before,
-      primaryKeyField,
-      orderOption,
-      where,
-      include
-    });
-    // return this.endorsementModel.findAll({
-    //   where: { endorser: nationalId },
-    //   include: [
-    //     {
-    //       model: EndorsementList,
-    //       attributes: ['id', 'title', 'description', 'tags', 'closedDate'],
-    //     },
-    //   ],
-    // })
+      limit: query.limit,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'DESC']],
+      where: { endorser: nationalId },
+      include: [
+        {
+          model: EndorsementList,
+          attributes: ['id', 'title', 'description', 'tags', 'closedDate'],
+        },
+      ],
+    })
   }
 
   async close(endorsementList: EndorsementList): Promise<EndorsementList> {

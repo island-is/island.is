@@ -4,6 +4,7 @@ import { Endorsement } from '../../models/endorsement.model'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { authNationalId } from './seed'
 import { EndorsementsScope } from '@island.is/auth/scopes'
+import { PaginatedEndorsementDto } from '../../dto/paginatedEndorsement.dto'
 
 describe('findAllEndorsement', () => {
   it(`GET /endorsement-list/:listId/endorsement should fail and return 403 error if scope is missing`, async () => {
@@ -41,16 +42,20 @@ describe('findAllEndorsement', () => {
       nationalId: authNationalId,
       scope: [EndorsementsScope.main],
     })
-    const response: { body: Endorsement[] } = await request(app.getHttpServer())
-      .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c8/endorsement')
+    const response: { body: PaginatedEndorsementDto } = await request(
+      app.getHttpServer(),
+    )
+      .get(
+        '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c8/endorsement?limit=10',
+      )
       .send()
       .expect(200)
 
-    for (const endorsementResponse of response.body) {
+    for (const endorsementResponse of response.body.data) {
       const endorsement = new Endorsement(endorsementResponse) // we know we have at least one endorsement
       await expect(endorsement.validate()).resolves.not.toThrow()
     }
 
-    expect(response.body).toHaveLength(2)
+    expect(response.body.data).toHaveLength(2)
   })
 })

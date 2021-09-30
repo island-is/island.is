@@ -1,7 +1,6 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
-import { IsEnum, IsNumber, IsString } from 'class-validator'
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
 import { EndorsementListControllerFindByTagsTagsEnum } from '../../../gen/fetch/apis/EndorsementListApi'
-
 
 registerEnumType(EndorsementListControllerFindByTagsTagsEnum, {
   name: 'EndorsementListControllerFindByTagsTagsEnum',
@@ -15,13 +14,16 @@ export class PaginatedEndorsementListInput {
 
   @Field()
   @IsNumber()
-  limit?: number
+  // @IsOptional()
+  limit!: number
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
+  @IsOptional()
   before?: string
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
+  @IsOptional()
   after?: string
 }
