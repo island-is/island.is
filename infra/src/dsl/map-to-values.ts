@@ -33,6 +33,9 @@ export const serializeService: SerializeMethod = (
   uberChart: UberChartType,
 ) => {
   let allErrors: string[] = []
+  const addToErrors = (errors: string[]) => {
+    allErrors.push(...errors)
+  }
   const serviceDef = service.serviceDef
   const {
     grantNamespaces,
@@ -103,7 +106,7 @@ export const serializeService: SerializeMethod = (
       uberChart,
       serviceDef.extraAttributes,
     )
-    allErrors = allErrors.concat(errors)
+    addToErrors(errors)
     result.extra = envs
   }
 
@@ -119,7 +122,7 @@ export const serializeService: SerializeMethod = (
       uberChart,
       serviceDef.env,
     )
-    allErrors = allErrors.concat(errors)
+    addToErrors(errors)
     result.env = { ...result.env, ...envs }
   }
 
@@ -134,7 +137,7 @@ export const serializeService: SerializeMethod = (
     secrets: featureSecrets,
   } = addFeaturesConfig(serviceDef.features, uberChart, service)
   result.env = { ...result.env, ...featureEnvs }
-  allErrors = allErrors.concat(featureErrors)
+  addToErrors(featureErrors)
   result.secrets = { ...result.secrets, ...featureSecrets }
 
   // service account
@@ -170,7 +173,7 @@ export const serializeService: SerializeMethod = (
           uberChart,
           serviceDef.initContainers.envs,
         )
-        allErrors = allErrors.concat(errors)
+        addToErrors(errors)
         result.initContainer.env = { ...result.initContainer.env, ...envs }
       }
       if (typeof serviceDef.initContainers.secrets !== 'undefined') {
@@ -189,8 +192,8 @@ export const serializeService: SerializeMethod = (
           ...result.initContainer.secrets,
           ...secrets,
         }
-        allErrors = allErrors.concat(envErros)
-        allErrors = allErrors.concat(secretErrors)
+        addToErrors(envErros)
+        addToErrors(secretErrors)
       }
       if (serviceDef.initContainers.features) {
         const {
@@ -207,14 +210,14 @@ export const serializeService: SerializeMethod = (
           ...result.initContainer.env,
           ...featureEnvs,
         }
-        allErrors = allErrors.concat(featureErrors)
+        addToErrors(featureErrors)
         result.initContainer.secrets = {
           ...result.initContainer.secrets,
           ...featureSecrets,
         }
       }
     } else {
-      allErrors.push('No containers to run defined in initContainers')
+      addToErrors(['No containers to run defined in initContainers'])
     }
   }
 
@@ -234,7 +237,7 @@ export const serializeService: SerializeMethod = (
             [`${ingressName}-alb`]: ingress,
           }
         } catch (e) {
-          allErrors.push(e.message)
+          addToErrors([e.message])
           return acc
         }
       },
@@ -252,8 +255,8 @@ export const serializeService: SerializeMethod = (
 
     result.env = { ...result.env, ...env }
     result.secrets = { ...result.secrets, ...secrets }
-    allErrors = allErrors.concat(envErros)
-    allErrors = allErrors.concat(secretErrors)
+    addToErrors(envErros)
+    addToErrors(secretErrors)
   }
 
   return allErrors.length === 0
