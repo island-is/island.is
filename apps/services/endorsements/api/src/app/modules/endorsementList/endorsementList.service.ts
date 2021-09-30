@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException, BadRequestException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import type { Logger } from '@island.is/logging'
@@ -54,7 +54,7 @@ export class EndorsementListService {
       include: [
         {
           model: EndorsementList,
-          attributes: ['id', 'title', 'description', 'tags', 'closedDate'],
+          attributes: ['id', 'title', 'description', 'tags', 'closedDate', 'openedDate'],
         },
       ],
     })
@@ -65,12 +65,22 @@ export class EndorsementListService {
     return await endorsementList.update({ closedDate: new Date() })
   }
 
+  // TODO: change to input date
   async open(endorsementList: EndorsementList): Promise<EndorsementList> {
     this.logger.info(`Opening endorsement list: ${endorsementList.id}`)
     return await endorsementList.update({ closedDate: null })
   }
 
   async create(list: CreateInput) {
+    if(!list.openedDate || !list.closedDate) {
+      throw new BadRequestException(['Body missing openedDate or closedDate value.'])
+    }
+    if(new Date(list.openedDate) >= new Date(list.closedDate)) {
+      throw new BadRequestException(['openedDate can not be bigger than closedDate.'])
+    }
+    if(new Date() >= new Date(list.closedDate)) {
+      throw new BadRequestException(['closedDate can not have already passed on creation of Endorsement List'])
+    }
     this.logger.info(`Creating endorsement list: ${list.title}`)
     return this.endorsementListModel.create(list)
   }

@@ -4,8 +4,8 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.addColumn('endorsement_list', 'opened_date', {
       type: Sequelize.DATE,
-      defaultValue: null,
-      allowNull: true,
+      defaultValue: new Date(),
+      allowNull: false,
     })
   },
 

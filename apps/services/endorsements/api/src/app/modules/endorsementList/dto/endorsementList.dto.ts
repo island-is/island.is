@@ -47,15 +47,15 @@ export class EndorsementListDto {
   @IsObject()
   meta = {}
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({ type: String })
   @IsString()
-  closedDate!: string | null
+  closedDate!: string
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({ type: String })
   @IsString()
-  openedDate!: string | null
+  openedDate!: string
 
   @ApiProperty({ type: Boolean})
   @IsBoolean()
-  adminLock!: false
+  adminLock!: boolean
 }

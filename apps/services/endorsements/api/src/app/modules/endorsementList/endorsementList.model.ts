@@ -43,21 +43,21 @@ export class EndorsementList extends Model<EndorsementList> {
 
   @ApiProperty({
     type: String,
-    nullable: true,
+    nullable: false,
   })
   @Column({
     type: DataType.DATE,
   })
-  openedDate!: Date | null
+  openedDate!: Date
 
   @ApiProperty({
     type: String,
-    nullable: true,
+    nullable: false,
   })
   @Column({
     type: DataType.DATE,
   })
-  closedDate!: Date | null
+  closedDate!: Date
 
   @ApiProperty({ type: [EndorsementMetadataDto] })
   @Column({

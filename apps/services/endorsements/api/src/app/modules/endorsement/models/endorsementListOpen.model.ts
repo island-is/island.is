@@ -21,13 +21,13 @@ export class EndorsementListOpen {
 
   @ApiProperty({
     type: String,
-    nullable: true,
+    nullable: false,
   })
-  closedDate!: Date | null
+  closedDate!: Date
 
   @ApiProperty({
     type: String,
-    nullable: true,
+    nullable: false,
   })
-  openedDate!: Date | null
+  openedDate!: Date
 }
