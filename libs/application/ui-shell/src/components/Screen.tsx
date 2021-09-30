@@ -10,6 +10,7 @@ import React, {
 import { useMutation } from '@apollo/client'
 import {
   Application,
+  Answer,
   ExternalData,
   FormItemTypes,
   FormModes,
@@ -282,6 +283,40 @@ const Screen: FC<ScreenProps> = ({
     beforeSubmitCallbackScreenIndex,
   ])
 
+  const onUpdateRepeater = async (newRepeaterItems: unknown[]) => {
+    if (!screen.id) {
+      return {
+        errors: 'Ekki tókst að uppfæra',
+      }
+    }
+
+    const newData = await updateApplication({
+      variables: {
+        input: {
+          id: applicationId,
+          answers: { [screen.id]: newRepeaterItems },
+        },
+        locale,
+      },
+    })
+    if (!!newData && !newData.errors) {
+      answerQuestions(newData.data.updateApplication.answers)
+      reset(
+        deepmerge(
+          {},
+          {
+            ...formValue,
+            [screen.id]: newRepeaterItems as Answer[],
+          },
+        ),
+      )
+    }
+
+    return {
+      errors: newData.errors,
+    }
+  }
+
   const isLoadingOrPending =
     fieldLoadingState || loading || loadingSubmit || isSubmitting
 
@@ -312,24 +347,7 @@ const Screen: FC<ScreenProps> = ({
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
                 setFieldLoadingState={setFieldLoadingState}
                 repeater={screen}
-                onUpdateRepeater={async (newRepeaterItems) => {
-                  const newData = await updateApplication({
-                    variables: {
-                      input: {
-                        id: applicationId,
-                        answers: { [screen.id]: newRepeaterItems },
-                      },
-                      locale,
-                    },
-                  })
-                  if (!!newData && !newData.errors) {
-                    answerQuestions(newData.data.updateApplication.answers)
-                  }
-
-                  return {
-                    errors: newData.errors,
-                  }
-                }}
+                onUpdateRepeater={onUpdateRepeater}
               />
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField

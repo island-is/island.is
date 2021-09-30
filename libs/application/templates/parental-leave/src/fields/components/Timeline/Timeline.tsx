@@ -27,7 +27,7 @@ interface TimelineProps {
   spanInMonths?: number
   title: string
   titleSmall?: string
-  onDeletePeriod?: (index: number) => void
+  onDeletePeriod?: (startDate: string) => void
 }
 
 export const Timeline: FC<TimelineProps> = ({

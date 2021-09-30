@@ -67,7 +67,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
       return
     }
 
-    if ((application.answers.validatedPeriods as unknown[])?.length === 0) {
+    if (rawPeriods.length === 0) {
       expandRepeater()
     }
 
@@ -77,7 +77,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
           return [false, 'Þú þarft að velja tímabil']
         }
 
-        // Run anwer validator on the periods selected by the user
+        // Run answer validator on the periods selected by the user
         const { errors } = await updateApplication({
           variables: {
             input: {
@@ -121,6 +121,14 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     updateApplication,
   ])
 
+  const onDeletePeriod = async (startDate: string) => {
+    const remainingAfterDelete = periods.filter(
+      (period) => period.startDate !== startDate,
+    )
+
+    const { errors } = await setRepeaterItems(remainingAfterDelete)
+  }
+
   if (!dob) {
     return null
   }
@@ -153,7 +161,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
             parentalLeaveFormMessages.shared.dateOfBirthTitle,
           )}
           periods={formatPeriods(application, formatMessage)}
-          onDeletePeriod={removeRepeaterItem}
+          onDeletePeriod={onDeletePeriod}
           editable={editable}
         />
         {!hasAddedPeriods && (
