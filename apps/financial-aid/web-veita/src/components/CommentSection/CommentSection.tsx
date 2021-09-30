@@ -8,13 +8,17 @@ import cn from 'classnames'
 import * as styles from './CommentSection.treat'
 import { useMutation } from '@apollo/client'
 import { CreateApplicationEventQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
-import { ApplicationEventType } from '@island.is/financial-aid/shared/lib'
+import {
+  Application,
+  ApplicationEventType,
+} from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   className?: string
+  setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
 }
 
-const CommentSection = ({ className }: Props) => {
+const CommentSection = ({ className, setApplication }: Props) => {
   const router = useRouter()
 
   const [showInput, setShowInput] = useState<boolean>(false)
@@ -38,7 +42,8 @@ const CommentSection = ({ className }: Props) => {
       })
 
       if (data) {
-        setComment(undefined)
+        setApplication(data.createApplicationEvent)
+        setComment('')
         setShowInput(false)
       }
     }
@@ -67,6 +72,7 @@ const CommentSection = ({ className }: Props) => {
           backgroundColor="blue"
           label="Athugasemd"
           name="comment"
+          value={comment}
           rows={4}
           textarea
           onChange={(event) => {

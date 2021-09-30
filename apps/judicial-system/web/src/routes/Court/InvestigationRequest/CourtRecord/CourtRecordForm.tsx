@@ -19,11 +19,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  areAccusedRightsHidden,
-  capitalize,
-  caseTypes,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
   FormSettings,
   useCaseFormHelper,
@@ -92,33 +88,34 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
           <CaseNumbers workingCase={workingCase} />
         </Box>
-        <Box component="section" marginBottom={8}>
-          <Box marginBottom={3}>
-            <DateTime
-              name="courtStartDate"
-              datepickerLabel="Dagsetning þinghalds"
-              timeLabel="Þinghald hófst (kk:mm)"
-              maxDate={new Date()}
-              selectedDate={
-                workingCase.courtStartDate
-                  ? new Date(workingCase.courtStartDate)
-                  : new Date()
-              }
-              onChange={(date: Date | undefined, valid: boolean) => {
-                newSetAndSendDateToServer(
-                  'courtStartDate',
-                  date,
-                  valid,
-                  workingCase,
-                  setWorkingCase,
-                  setCourtRecordStartDateIsValid,
-                  updateCase,
-                )
-              }}
-              required
-            />
-          </Box>
-          <Box marginBottom={3}>
+        <Box component="section" marginBottom={3}>
+          <BlueBox>
+            <Box marginBottom={3}>
+              <DateTime
+                name="courtStartDate"
+                datepickerLabel="Dagsetning þinghalds"
+                timeLabel="Þinghald hófst (kk:mm)"
+                maxDate={new Date()}
+                selectedDate={
+                  workingCase.courtStartDate
+                    ? new Date(workingCase.courtStartDate)
+                    : new Date()
+                }
+                onChange={(date: Date | undefined, valid: boolean) => {
+                  newSetAndSendDateToServer(
+                    'courtStartDate',
+                    date,
+                    valid,
+                    workingCase,
+                    setWorkingCase,
+                    setCourtRecordStartDateIsValid,
+                    updateCase,
+                  )
+                }}
+                blueBox={false}
+                required
+              />
+            </Box>
             <Input
               data-testid="courtLocation"
               name="courtLocation"
@@ -156,7 +153,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               autoComplete="off"
               required
             />
-          </Box>
+          </BlueBox>
+        </Box>
+        <Box component="section" marginBottom={8}>
           <Box marginBottom={3}>
             <HideableText
               text={formatMessage(closedCourt.text)}
@@ -262,10 +261,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           <Box marginBottom={2}>
             <HideableText
               text={formatMessage(accusedRights.text)}
-              isHidden={areAccusedRightsHidden(
-                workingCase.isAccusedRightsHidden,
-                workingCase.sessionArrangements,
-              )}
+              isHidden={workingCase.isAccusedRightsHidden}
               onToggleVisibility={(isVisible: boolean) =>
                 setAndSendToServer(
                   'isAccusedRightsHidden',

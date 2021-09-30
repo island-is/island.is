@@ -1,11 +1,13 @@
 import {
   buildCheckboxField,
+  buildCustomField,
   buildFileUploadField,
   buildMultiField,
   buildRadioField,
   buildSection,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 
 import {
@@ -171,11 +173,22 @@ export const whoIsTheNotificationForSection = buildSection({
                 },
                 {
                   value: PowerOfAttorneyUploadEnum.UPLOADLATER,
-                  label:
-                    'Ég vil klára að tilkynna slys og skila inn umboði síðar',
+                  label: powerOfAttorney.labels.uploadLater,
                 },
               ],
             }),
+            buildCustomField(
+              {
+                id: 'attachments.injuryCertificate.alert',
+                title: powerOfAttorney.alertMessage.title,
+                description: powerOfAttorney.alertMessage.description,
+                component: 'FieldAlertMessage',
+                condition: (formValue) =>
+                  getValueViaPath(formValue, 'powerOfAttorney.type') ===
+                  PowerOfAttorneyUploadEnum.UPLOADLATER,
+              },
+              { type: 'warning' },
+            ),
           ],
         }),
       ],
@@ -250,3 +263,6 @@ export const whoIsTheNotificationForSection = buildSection({
     }),
   ],
 })
+function getFieldValue(fo: any): boolean {
+  throw new Error('Function not implemented.')
+}

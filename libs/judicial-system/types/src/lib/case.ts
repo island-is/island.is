@@ -293,3 +293,11 @@ export function hasCaseBeenAppealed(theCase: Case): boolean {
       Boolean(theCase.prosecutorPostponedAppealDate))
   )
 }
+
+export function isAccusedRightsHidden(theCase: Case): boolean {
+  return theCase.isAccusedRightsHidden == null
+    ? theCase.sessionArrangements
+      ? theCase.sessionArrangements !== SessionArrangements.ALL_PRESENT
+      : false
+    : theCase.isAccusedRightsHidden
+}

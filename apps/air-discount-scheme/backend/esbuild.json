@@ -26,7 +26,9 @@
     "atob",
     "logform",
     "pg-native",
-    "form-data"
+    "form-data",
+    "swagger-ui-express",
+    "swagger-ui-dist"
   ],
   "keepNames": true
 }

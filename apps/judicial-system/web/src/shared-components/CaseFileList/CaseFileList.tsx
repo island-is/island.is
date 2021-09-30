@@ -9,6 +9,7 @@ import {
 import { Modal } from '..'
 import { useFileList } from '../../utils/hooks'
 import { caseFiles as m } from '@island.is/judicial-system-web/messages/Core/caseFiles'
+import { CaseFile } from '../../utils/hooks/useCourtUpload'
 
 interface Props {
   caseId: string
@@ -32,25 +33,28 @@ const CaseFileList: React.FC<Props> = (props) => {
   })
   const { formatMessage } = useIntl()
 
-  return files.length > 0 ? (
+  const xFiles = files as CaseFile[]
+
+  return xFiles.length > 0 ? (
     <>
-      {files.map((file, index) => {
+      {xFiles.map((file, index) => {
         return (
-          <Box marginBottom={index !== files.length - 1 ? 3 : 0} key={index}>
+          <Box marginBottom={index !== xFiles.length - 1 ? 3 : 0} key={index}>
             <UploadedFile
-              file={file}
+              file={file as TCaseFile}
               showFileSize={true}
-              defaultBackgroundColor="blue100"
+              defaultBackgroundColor={
+                file.state === CaseFileState.BOKEN_LINK ? 'dark100' : 'blue100'
+              }
               doneIcon="checkmark"
               hideIcons={
                 hideIcons ||
-                [
-                  CaseFileState.BOKEN_LINK,
-                  CaseFileState.STORED_IN_RVG,
-                ].includes(file.state)
+                file.state === CaseFileState.BOKEN_LINK ||
+                (file.state === CaseFileState.STORED_IN_RVG &&
+                  file.status !== 'error')
               }
               onOpenFile={
-                canOpenFiles
+                canOpenFiles && file.state === CaseFileState.STORED_IN_RVG
                   ? (file: UploadFile) => {
                       if (file.id) {
                         handleOpenFile(file.id)

@@ -4,10 +4,6 @@ import { Text, Box, Icon } from '@island.is/island-ui/core'
 import * as styles from './History.treat'
 import cn from 'classnames'
 
-import { useQuery } from '@apollo/client'
-import { useRouter } from 'next/router'
-
-import { GetApplicationEventQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import {
   ApplicationEvent,
   ApplicationEventType,
@@ -16,24 +12,13 @@ import {
 
 import format from 'date-fns/format'
 
-interface ApplicationEventData {
-  applicationEvents: ApplicationEvent[]
-}
-
 interface Props {
   className?: string
   applicantName?: string
+  applicationEvents?: ApplicationEvent[]
 }
 
-const History = ({ className, applicantName }: Props) => {
-  const router = useRouter()
-
-  const { data } = useQuery<ApplicationEventData>(GetApplicationEventQuery, {
-    variables: { input: { id: router.query.id } },
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-
+const History = ({ className, applicantName, applicationEvents }: Props) => {
   return (
     <Box
       className={cn({
@@ -41,13 +26,13 @@ const History = ({ className, applicantName }: Props) => {
         [`${className}`]: true,
       })}
     >
-      {data?.applicationEvents && data?.applicationEvents.length > 0 && (
+      {applicationEvents && applicationEvents.length > 0 && (
         <>
           <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
             Saga umsóknar
           </Text>
 
-          {data?.applicationEvents.map((item, index) => {
+          {applicationEvents.map((item, index) => {
             return (
               <Box
                 key={'timeline-' + index}
