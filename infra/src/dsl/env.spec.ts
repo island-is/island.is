@@ -32,4 +32,18 @@ describe('Env variable', () => {
       'Missing settings for service api in env staging. Keys of missing settings: B',
     ])
   })
+
+  it('Should not allow to collide with secrets', () => {
+    const sut = service('api').env({
+      A: 'B',
+    }).secrets({
+      A: 'somesecret'
+    })
+    const serviceDef = serializeService(
+      sut,
+      new UberChart(Staging),
+    ) as SerializeErrors
+    
+    expect(serviceDef.errors).toStrictEqual(['Error'])
+  })
 })

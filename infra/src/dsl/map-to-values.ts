@@ -33,6 +33,13 @@ export const serializeService: SerializeMethod = (
   uberChart: UberChartType,
 ) => {
   let allErrors: string[] = []
+  const mergeObject = (target: any, source: any) => {
+    const targetKeys = Object.keys(target)
+    return (
+      Object.keys(source).findIndex((srcKey) => targetKeys.includes(srcKey)) ===
+      -1
+    )
+  }
   const addToErrors = (errors: string[]) => {
     allErrors.push(...errors)
   }
