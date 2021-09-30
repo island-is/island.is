@@ -3,7 +3,7 @@ import {
   EmptyList,
   LinkCard,
   SearchHeader,
-  TopLine
+  TopLine,
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -14,17 +14,19 @@ import {
   AppStateStatus,
   FlatList,
   Image,
-  Platform, SafeAreaView, TouchableOpacity,
-  View
+  Platform,
+  SafeAreaView,
+  TouchableOpacity,
+  View,
 } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
 import {
   Navigation,
-  NavigationFunctionComponent
+  NavigationFunctionComponent,
 } from 'react-native-navigation'
 import {
   useNavigationSearchBarCancelPress,
-  useNavigationSearchBarUpdate
+  useNavigationSearchBarUpdate,
 } from 'react-native-navigation-hooks/dist'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
@@ -80,9 +82,10 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  const SEARCH_QUERY_SIZE = 80
+  const SEARCH_QUERY_SIZE = 40
   const SEARCH_QUERY_TYPE = 'webArticle'
-  const QUERY_STRING_DEFAULT = 'Umsókn' // change to *
+  const TAGS = [{ type: 'processentry', key: 'true' }]
+  const QUERY_STRING_DEFAULT = '*'
 
   const ui = useUiStore()
   const flatListRef = useRef<FlatList>(null)
@@ -90,21 +93,65 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const [queryString, setQueryString] = useState(QUERY_STRING_DEFAULT)
   const keyboardRef = useRef(false)
   const intl = useIntl()
+  const [page, setPage] = useState(1)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+
+  const input = {
+    queryString: queryString,
+    types: [SEARCH_QUERY_TYPE],
+    tags: TAGS,
+    size: SEARCH_QUERY_SIZE,
+    page: 1,
+  }
 
   const res = useQuery(LIST_SEARCH_QUERY, {
     client,
     variables: {
-      input: {
-        queryString: queryString,
-        types: [SEARCH_QUERY_TYPE],
-        tags: [],
-        size: SEARCH_QUERY_SIZE,
-        page: 1,
-      },
+      input,
     },
   })
 
-  const items = res?.data?.searchResults?.items || []
+  // refetch load more on scroll
+  useEffect(() => {
+    if (page > 1) {
+      try {
+        res
+          .fetchMore({
+            updateQuery(prev, { fetchMoreResult }) {
+              setIsLoadingMore(true)
+              const oldIds = prev.searchResults.items.map(
+                (item: any) => item.id,
+              )
+              if (
+                !fetchMoreResult ||
+                fetchMoreResult.searchResults.items.length === 0
+              ) {
+                setIsLoadingMore(false)
+              }
+              return {
+                ...prev,
+                searchResults: {
+                  ...prev.searchResults,
+                  items: prev.searchResults.items.concat(
+                    fetchMoreResult.searchResults.items.filter(
+                      (item: any) => !oldIds.includes(item.id),
+                    ),
+                  ),
+                },
+              }
+            },
+            variables: {
+              input: { ...input, page },
+            },
+          })
+          .then(() => setIsLoadingMore(false))
+      } catch (err) {
+        // noop
+      }
+    }
+  }, [page])
+
+  const items = res?.data?.searchResults?.items || ([] as [])
 
   const scrollY = useRef(new Animated.Value(0)).current
 
@@ -192,11 +239,15 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const keyExtractor = useCallback((item: IArticleSearchResults) => item.id, [])
 
   const isSearch = ui.applicationQuery.length > 0
-  const isLoading = res.loading
-  const isEmpty = (res?.data?.searchResults?.items ?? []).length === 0
+  const isLoading = res.loading && page === 1
+  const isEmpty = (items ?? []).length === 0
 
   if (isLoading) {
-    return <ActivityIndicator size="large" color="#0061FF" />
+    return (
+      <View style={{ paddingVertical: 20 }}>
+        <ActivityIndicator size="large" color="#0061FF" />
+      </View>
+    )
   }
 
   if (!isLoading && isEmpty && !isSearch) {
@@ -256,6 +307,15 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
           }
           data={items}
           renderItem={renderApplicationItem}
+          onEndReached={() => setPage((p) => p + 1)}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={() =>
+            isLoadingMore && (
+              <View style={{ paddingVertical: 20 }}>
+                <ActivityIndicator size="large" color="#0061FF" />
+              </View>
+            )
+          }
         />
         <TopLine scrollY={scrollY} />
       </View>
