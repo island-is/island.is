@@ -1847,7 +1847,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n application-system-form-e2e -t react -d dist/apps/application-system/form -c"
+            "command": "yarn e2e-ci -n application-system-form-e2e -t react -p 4242 -d dist/apps/application-system/form -c"
           }
         },
         "lint": {
