@@ -14,7 +14,7 @@ import {
   ApplicationFilters,
   CreateFilesResponse,
   ApplicationStateUrl,
-  UpdateApplicationResponse,
+  UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -54,7 +54,7 @@ class BackendAPI extends RESTDataSource {
   updateApplication(
     id: string,
     updateApplication: UpdateApplication,
-  ): Promise<UpdateApplicationResponse> {
+  ): Promise<UpdateApplicationResponseType> {
     return this.put(`applications/${id}`, updateApplication)
   }
 

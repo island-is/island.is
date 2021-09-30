@@ -2,16 +2,15 @@ import { useContext } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   Application,
-  ApplicationFilters,
   ApplicationState,
-  UpdateApplicationResponse,
+  UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
 import { UpdateApplicationMutation } from '../../graphql'
 import { ApplicationFiltersContext } from '../components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 import { AdminContext } from '../components/AdminProvider/AdminProvider'
 
 interface SaveData {
-  updateApplicationRes: UpdateApplicationResponse
+  updateApplicationRes: UpdateApplicationResponseType
 }
 
 export const useApplicationState = () => {

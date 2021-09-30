@@ -180,7 +180,7 @@ export interface GetSignedUrlForId {
   id: string
 }
 
-export interface UpdateApplicationResponse {
+export interface UpdateApplicationResponseType {
   application: Application
   filters?: ApplicationFilters
 }
