@@ -33,9 +33,13 @@ export const serializeService: SerializeMethod = (
   uberChart: UberChartType,
 ) => {
   let allErrors: string[] = []
-  const keyCollisions = (target: any, source: any) => {
+  const checkCollisions = (target: any, source: any) => {
     const targetKeys = Object.keys(target)    
     addToErrors(Object.keys(source).filter((srcKey) => targetKeys.includes(srcKey)).map(key => `Collisions for environment or secrets for key ${key}`))
+  }
+  const mergeObjects = (target: any, source: any) => {
+    checkCollisions(target, source)
+    Object.assign(target, source)
   }
   const addToErrors = (errors: string[]) => {
     allErrors.push(...errors)
@@ -127,8 +131,7 @@ export const serializeService: SerializeMethod = (
       serviceDef.env,
     )
     addToErrors(errors)
-    keyCollisions(result.env, envs)
-    result.env = { ...result.env, ...envs }
+    mergeObjects(result.env, envs)
   }
 
   // secrets
@@ -141,11 +144,9 @@ export const serializeService: SerializeMethod = (
     errors: featureErrors,
     secrets: featureSecrets,
   } = addFeaturesConfig(serviceDef.features, uberChart, service)
-  keyCollisions(result.env, featureEnvs)
-  result.env = { ...result.env, ...featureEnvs }
+  mergeObjects(result.env, featureEnvs)
   addToErrors(featureErrors)
-  keyCollisions(result.secrets, featureSecrets)
-  result.secrets = { ...result.secrets, ...featureSecrets }
+  mergeObjects(result.secrets, featureSecrets)
 
   // service account
   if (serviceDef.serviceAccountEnabled) {
@@ -181,8 +182,7 @@ export const serializeService: SerializeMethod = (
           serviceDef.initContainers.envs,
         )
         addToErrors(errors)
-        keyCollisions(result.initContainer.env, envs)
-        result.initContainer.env = { ...result.initContainer.env, ...envs }
+        mergeObjects(result.initContainer.env, envs)
       }
       if (typeof serviceDef.initContainers.secrets !== 'undefined') {
         result.initContainer.secrets = serviceDef.initContainers.secrets
@@ -195,13 +195,8 @@ export const serializeService: SerializeMethod = (
           serviceDef.initContainers.postgres,
         )
 
-        keyCollisions(result.initContainer.env, env)
-        result.initContainer.env = { ...result.initContainer.env, ...env }
-        keyCollisions(result.initContainer.secrets, secrets)
-        result.initContainer.secrets = {
-          ...result.initContainer.secrets,
-          ...secrets,
-        }
+        mergeObjects(result.initContainer.env, env)
+        mergeObjects(result.initContainer.secrets, secrets)
         addToErrors(errors)
       }
       if (serviceDef.initContainers.features) {
@@ -215,19 +210,11 @@ export const serializeService: SerializeMethod = (
           service,
         )
 
-        keyCollisions(result.initContainer.env, featureEnvs)
-        result.initContainer.env = {
-          ...result.initContainer.env,
-          ...featureEnvs,
-        }
+        mergeObjects(result.initContainer.env, featureEnvs)
         addToErrors(featureErrors)
-        keyCollisions(result.initContainer.secrets, featureSecrets)
-        result.initContainer.secrets = {
-          ...result.initContainer.secrets,
-          ...featureSecrets,
-        }
+        mergeObjects(result.initContainer.secrets, featureSecrets)
       }
-      keyCollisions(result.initContainer.secrets, result.initContainer.env)
+      checkCollisions(result.initContainer.secrets, result.initContainer.env)
     } else {
       addToErrors(['No containers to run defined in initContainers'])
     }
@@ -265,14 +252,12 @@ export const serializeService: SerializeMethod = (
       serviceDef.postgres,
     )
 
-    keyCollisions(result.env, env)
-    result.env = { ...result.env, ...env }
-    keyCollisions(result.secrets, secrets)
-    result.secrets = { ...result.secrets, ...secrets }
+    mergeObjects(result.env, env)
+    mergeObjects(result.secrets, secrets)
     addToErrors(errors)
   }
 
-  keyCollisions(result.secrets, result.env)
+  checkCollisions(result.secrets, result.env)
 
   return allErrors.length === 0
     ? { type: 'success', serviceDef: result }
