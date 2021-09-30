@@ -98,9 +98,13 @@ export class SyslumennClient {
       })
       .toPromise()
 
+
+    // TODO: BUG workaround. Currently the Syslumenn Webservice encodes whitespaces as '+' instead of '%20'. Until that has been addressed, we work around the bug.
+    const searchQueryBugWorkaround = decodeURIComponent((response.headers['x-searchby'] ?? '').replace('+', '%20'))
+
     const paginatedOperatingLicenses: IPaginatedOperatingLicenses = {
       paginationInfo: JSON.parse(response.headers['x-pagination']),
-      searchQuery: decodeURIComponent(response.headers['x-searchby'] ?? ''),
+      searchQuery: searchQueryBugWorkaround,
       results: response.data,
     }
 

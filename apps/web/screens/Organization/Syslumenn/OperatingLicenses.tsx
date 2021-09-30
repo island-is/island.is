@@ -94,7 +94,6 @@ const searchReducer = (state: SearchState, action): SearchState => {
 
     case SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_NEXT_PAGE:
       // Request-Response matching, based on current search term and current page.
-      // TODO: BUG, trailing space in search string, makes loading hang. (Potentially fixed by trimming the values before comparing for request-response match)
       if (
         action.searchQuery === state.currentTerm &&
         action.currentPageNumber === state.currentPageNumber
