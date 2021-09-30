@@ -33,7 +33,7 @@ import { skjaldarmerki } from './skjaldarmerki'
 function constructRestrictionRulingPdf(
   existingCase: Case,
   formatMessage: FormatMessage,
-  shortVerison: boolean,
+  shortVersion: boolean,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -219,8 +219,11 @@ function constructRestrictionRulingPdf(
     .lineGap(16)
     .text(formatMessage(ruling.rulingHeading), { align: 'center' })
 
-  if (shortVerison) {
-    doc.fontSize(11).lineGap(1).text('(...)')
+  if (shortVersion) {
+    doc
+      .fontSize(11)
+      .lineGap(1)
+      .text(formatMessage(ruling.rulingShortVersionPlaceholder))
   } else {
     doc
       .fontSize(11)
@@ -395,7 +398,7 @@ function constructRestrictionRulingPdf(
 function constructInvestigationRulingPdf(
   existingCase: Case,
   formatMessage: FormatMessage,
-  shortVerison: boolean,
+  shortVersion: boolean,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -583,8 +586,11 @@ function constructInvestigationRulingPdf(
     .lineGap(16)
     .text(formatMessage(ruling.rulingHeading), { align: 'center' })
 
-  if (shortVerison) {
-    doc.fontSize(11).lineGap(1).text('(...)')
+  if (shortVersion) {
+    doc
+      .fontSize(11)
+      .lineGap(1)
+      .text(formatMessage(ruling.rulingShortVersionPlaceholder))
   } else {
     doc
       .fontSize(11)
@@ -728,11 +734,11 @@ function constructInvestigationRulingPdf(
 function constructRulingPdf(
   existingCase: Case,
   formatMessage: FormatMessage,
-  shortVerison: boolean,
+  shortVersion: boolean,
 ): streamBuffers.WritableStreamBuffer {
   return existingCase.type === CaseType.CUSTODY ||
     existingCase.type === CaseType.TRAVEL_BAN
-    ? constructRestrictionRulingPdf(existingCase, formatMessage, shortVerison)
+    ? constructRestrictionRulingPdf(existingCase, formatMessage, shortVersion)
     : constructInvestigationRulingPdf(existingCase, formatMessage, shortVersion)
 }
 
