@@ -2,7 +2,8 @@ import { ExternalData } from '@island.is/application/core'
 import { Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
 import { NordicCountriesCountryCode } from './shared'
-import { EFTA, EU } from './assets'
+import EFTA from './assets/EFTA.json'
+import EU from './assets/EU.json'
 
 const sortApplicationsByDateAscending = (applications: Applications[]) => {
   const sortedApplications = applications
@@ -77,8 +78,6 @@ export const isEUCountry = (countryCode: string) => {
 // Special cases for Faroe islands and greenland
 export const requireConfirmationOfResidency = (country: string) => {
   const countryCode = extractKeyFromStringObject(country, 'countryCode')
-  console.log(countryCode)
-  console.log(countryCode === 'FO' || countryCode === 'GL')
   return countryCode === 'FO' || countryCode === 'GL'
 }
 
