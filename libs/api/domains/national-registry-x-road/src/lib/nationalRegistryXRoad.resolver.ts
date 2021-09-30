@@ -11,7 +11,6 @@ import { Audit } from '@island.is/nest/audit'
 
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
-import { NationalRegistryResidenceHistory } from '../models/nationalRegistryResidenceHistory.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Resolver(() => NationalRegistryPerson)
@@ -42,19 +41,6 @@ export class NationalRegistryXRoadResolver {
   ): Promise<NationalRegistryPerson[] | undefined> {
     return await this.nationalRegistryXRoadService.getChildrenCustodyInformation(
       person.nationalId,
-      user.authorization,
-    )
-  }
-
-  @Query(() => NationalRegistryResidenceHistory, {
-    name: 'nationalRegistryResidenceHistory',
-  })
-  @Audit()
-  async nationalRegistryResidenceHistory(
-    @CurrentUser() user: User,
-  ): Promise<NationalRegistryResidenceHistory> {
-    return await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
-      user.nationalId,
       user.authorization,
     )
   }

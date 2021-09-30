@@ -1,18 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import {
-  EinstaklingarGetBusetaRequest,
   Einstaklingsupplysingar,
   Fjolskylda,
-  Heimili,
 } from '@island.is/clients/national-registry-v2'
 import type { NationalRegistryXRoadConfig } from './nationalRegistryXRoad.module'
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { NationalRegistryResidenceHistory } from '../models/nationalRegistryResidenceHistory.model'
-import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
-import { NationalRegistryAddress } from '../models/nationalRegistryAddress.model'
 
 @Injectable()
 export class NationalRegistryXRoadService {
@@ -49,79 +44,6 @@ export class NationalRegistryXRoadService {
     } catch (error) {
       throw this.handleError(error)
     }
-  }
-
-  async getNationalRegistryResidenceHistory(
-    nationalId: string,
-    authToken: string,
-  ): Promise<NationalRegistryResidenceHistory> {
-    const historyList = await this.nationalRegistryFetch<Array<Heimili>>(
-      `/${nationalId}/buseta`,
-      authToken,
-    )
-
-    const history = historyList.map((heimili: Heimili) => {
-      // API says Date, but is string -- fallback in case that changes in the future
-      const date =
-        typeof heimili.breytt === 'string'
-          ? new Date(heimili.breytt)
-          : heimili.breytt
-      return {
-        address: {
-          city: heimili.stadur,
-          postalCode: heimili.postnumer,
-          streetName: heimili.heimilisfang,
-        } as NationalRegistryAddress,
-        country: heimili.landakodi,
-        dateOfChange: date,
-      } as NationalRegistryResidence
-    })
-
-    this.computeCountryResidence(history)
-
-    return {
-      nationalId,
-      history,
-    }
-  }
-
-  public computeCountryResidence(history: NationalRegistryResidence[]) {
-    if (history.length < 1) {
-      return null
-    }
-
-    const simplified = history
-      .map(({ dateOfChange, country }) => ({
-        time: dateOfChange.getTime(),
-        country,
-      }))
-      .sort(({ time: a }, { time: b }) => {
-        // reversed order, make sure we get this right even if the national ID
-        // registry is out of order
-        return b - a
-      })
-
-    const now = new Date()
-    const yearFromNow = new Date(
-      now.getFullYear() - 1,
-      now.getMonth(),
-      now.getDate(),
-    ).getTime()
-
-    let lastTime = now.getTime()
-    let i = 0
-    let current = Number.MAX_SAFE_INTEGER
-    const timeByCountry: Record<string, number> = {}
-    while (current > yearFromNow && simplified[i]) {
-      const { time, country } = simplified[i]
-      current = Math.max(time, yearFromNow)
-      const period = Math.round((lastTime - current) / (86400 * 1000))
-      timeByCountry[country] = (timeByCountry[country] || 0) + period
-      lastTime = current
-      i++
-    }
-
-    return timeByCountry
   }
 
   async getNationalRegistryPerson(
