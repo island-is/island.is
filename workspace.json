@@ -1836,7 +1836,7 @@
             "cypressConfig": "apps/application-system/form-e2e/cypress.json",
             "tsConfig": "apps/application-system/form-e2e/tsconfig.e2e.json",
             "devServerTarget": "application-system-form:serve",
-            "baseUrl": "http://localhost:4200"
+            "baseUrl": "http://localhost:4242"
           },
           "configurations": {
             "production": {
