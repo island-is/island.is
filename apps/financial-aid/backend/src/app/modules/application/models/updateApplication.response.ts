@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { ApplicationFilters } from '@island.is/financial-aid/shared/lib'
 import { ApplicationModel } from './application.model'
+import { ApplicationFilterModel } from './applicationFilters.response'
 
 export class UpdateApplicationResponse {
   @ApiProperty()
   application: ApplicationModel
 
   @ApiProperty()
-  filters?: ApplicationFilters
+  filters?: ApplicationFilterModel
 }
