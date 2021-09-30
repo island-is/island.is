@@ -127,17 +127,16 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
           <div className={s.sidebarScroller}>
             <Stack space={3}>
               <Hidden print={true}>
-                <Link href={linkResolver('regulationshome').href}>
-                  <Button
-                    preTextIcon="arrowBack"
-                    preTextIconType="filled"
-                    size="small"
-                    type="button"
-                    variant="text"
-                  >
+                <Button
+                  preTextIcon="arrowBack"
+                  preTextIconType="filled"
+                  size="small"
+                  variant="text"
+                >
+                  <Link href={linkResolver('regulationshome').href}>
                     {txt('goHome')}
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </Hidden>
 
               <RegulationInfoBox regulation={regulation} texts={texts} />
