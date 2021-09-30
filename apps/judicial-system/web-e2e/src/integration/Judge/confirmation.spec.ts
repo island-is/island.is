@@ -1,5 +1,5 @@
 import { Case } from '@island.is/judicial-system/types'
-import { makeCase } from '../../fixtures/caseFactory'
+import { makeCase } from '../../fixtures/testDataFactory'
 import { intercept } from '../../utils'
 
 describe('/domur/stadfesta/:id', () => {

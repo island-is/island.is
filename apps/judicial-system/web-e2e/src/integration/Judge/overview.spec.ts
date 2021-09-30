@@ -4,7 +4,7 @@ import {
   CaseCustodyRestrictions,
   CaseState,
 } from '@island.is/judicial-system/types'
-import { makeCase, makeProsecutor } from '../../fixtures/caseFactory'
+import { makeCase, makeProsecutor } from '../../fixtures/testDataFactory'
 import { intercept } from '../../utils'
 
 describe('/domur/krafa/:id', () => {

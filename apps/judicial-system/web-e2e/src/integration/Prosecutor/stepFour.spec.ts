@@ -1,4 +1,4 @@
-import { makeCase } from '../../fixtures/caseFactory'
+import { makeCase } from '../../fixtures/testDataFactory'
 import { intercept } from '../../utils'
 
 describe('/krafa/greinagerd/:id', () => {
