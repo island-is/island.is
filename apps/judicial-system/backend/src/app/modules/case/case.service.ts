@@ -249,23 +249,6 @@ export class CaseService {
       )
     }
 
-    if (
-      existingCase.type === CaseType.CUSTODY ||
-      existingCase.type === CaseType.TRAVEL_BAN
-    ) {
-      promises.push(
-        this.sendEmail(
-          {
-            name: 'Fangelsismálastofnun',
-            address: environment.notifications.prisonAdminEmail,
-          },
-          existingCase.courtCaseNumber,
-          signedRulingPdf,
-          'Sjá viðhengi',
-        ),
-      )
-    }
-
     await Promise.all(promises)
   }
 
