@@ -33,6 +33,7 @@ import { skjaldarmerki } from './skjaldarmerki'
 function constructRestrictionRulingPdf(
   existingCase: Case,
   formatMessage: FormatMessage,
+  shortVerison: boolean,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -217,46 +218,54 @@ function constructRestrictionRulingPdf(
     .fontSize(14)
     .lineGap(16)
     .text(formatMessage(ruling.rulingHeading), { align: 'center' })
-    .fontSize(11)
-    .lineGap(1)
-    .font('Times-Bold')
-    .text(formatMessage(ruling.courtDemandsHeading))
-    .text(' ')
-    .font('Times-Roman')
-    .text(existingCase.demands ?? formatMessage(core.missing.demands), {
-      paragraphGap: 1,
-    })
-    .text(' ')
-    .font('Times-Bold')
-    .text(formatMessage(ruling.courtCaseFactsHeading))
-    .text(' ')
-    .font('Times-Roman')
-    .text(
-      existingCase.courtCaseFacts ?? formatMessage(core.missing.caseFacts),
-      {
+
+  if (shortVerison) {
+    doc.fontSize(11).lineGap(1).text('(...)')
+  } else {
+    doc
+      .fontSize(11)
+      .lineGap(1)
+      .font('Times-Bold')
+      .text(formatMessage(ruling.courtDemandsHeading))
+      .text(' ')
+      .font('Times-Roman')
+      .text(existingCase.demands ?? formatMessage(core.missing.demands), {
         paragraphGap: 1,
-      },
-    )
-    .text(' ')
-    .font('Times-Bold')
-    .text(formatMessage(ruling.courtLegalArgumentsHeading))
-    .text(' ')
-    .font('Times-Roman')
-    .text(
-      existingCase.courtLegalArguments ??
-        formatMessage(core.missing.legalArguments),
-      {
+      })
+      .text(' ')
+      .font('Times-Bold')
+      .text(formatMessage(ruling.courtCaseFactsHeading))
+      .text(' ')
+      .font('Times-Roman')
+      .text(
+        existingCase.courtCaseFacts ?? formatMessage(core.missing.caseFacts),
+        {
+          paragraphGap: 1,
+        },
+      )
+      .text(' ')
+      .font('Times-Bold')
+      .text(formatMessage(ruling.courtLegalArgumentsHeading))
+      .text(' ')
+      .font('Times-Roman')
+      .text(
+        existingCase.courtLegalArguments ??
+          formatMessage(core.missing.legalArguments),
+        {
+          paragraphGap: 1,
+        },
+      )
+      .text(' ')
+      .font('Times-Bold')
+      .text(formatMessage(ruling.conclusionHeading))
+      .text(' ')
+      .font('Times-Roman')
+      .text(existingCase.ruling ?? formatMessage(core.missing.conclusion), {
         paragraphGap: 1,
-      },
-    )
-    .text(' ')
-    .font('Times-Bold')
-    .text(formatMessage(ruling.conclusionHeading))
-    .text(' ')
-    .font('Times-Roman')
-    .text(existingCase.ruling ?? formatMessage(core.missing.conclusion), {
-      paragraphGap: 1,
-    })
+      })
+  }
+
+  doc
     .lineGap(3)
     .text(' ')
     .text(' ')
@@ -386,6 +395,7 @@ function constructRestrictionRulingPdf(
 function constructInvestigationRulingPdf(
   existingCase: Case,
   formatMessage: FormatMessage,
+  shortVerison: boolean,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -572,46 +582,54 @@ function constructInvestigationRulingPdf(
     .fontSize(14)
     .lineGap(16)
     .text(formatMessage(ruling.rulingHeading), { align: 'center' })
-    .fontSize(11)
-    .lineGap(1)
-    .font('Times-Bold')
-    .text(formatMessage(ruling.courtDemandsHeading))
-    .text(' ')
-    .font('Times-Roman')
-    .text(existingCase.demands ?? formatMessage(core.missing.demands), {
-      paragraphGap: 1,
-    })
-    .text(' ')
-    .font('Times-Bold')
-    .text(formatMessage(ruling.courtCaseFactsHeading))
-    .text(' ')
-    .font('Times-Roman')
-    .text(
-      existingCase.courtCaseFacts ?? formatMessage(core.missing.caseFacts),
-      {
+
+  if (shortVerison) {
+    doc.fontSize(11).lineGap(1).text('(...)')
+  } else {
+    doc
+      .fontSize(11)
+      .lineGap(1)
+      .font('Times-Bold')
+      .text(formatMessage(ruling.courtDemandsHeading))
+      .text(' ')
+      .font('Times-Roman')
+      .text(existingCase.demands ?? formatMessage(core.missing.demands), {
         paragraphGap: 1,
-      },
-    )
-    .text(' ')
-    .font('Times-Bold')
-    .text(formatMessage(ruling.courtLegalArgumentsHeading))
-    .text(' ')
-    .font('Times-Roman')
-    .text(
-      existingCase.courtLegalArguments ??
-        formatMessage(core.missing.legalArguments),
-      {
+      })
+      .text(' ')
+      .font('Times-Bold')
+      .text(formatMessage(ruling.courtCaseFactsHeading))
+      .text(' ')
+      .font('Times-Roman')
+      .text(
+        existingCase.courtCaseFacts ?? formatMessage(core.missing.caseFacts),
+        {
+          paragraphGap: 1,
+        },
+      )
+      .text(' ')
+      .font('Times-Bold')
+      .text(formatMessage(ruling.courtLegalArgumentsHeading))
+      .text(' ')
+      .font('Times-Roman')
+      .text(
+        existingCase.courtLegalArguments ??
+          formatMessage(core.missing.legalArguments),
+        {
+          paragraphGap: 1,
+        },
+      )
+      .text(' ')
+      .font('Times-Bold')
+      .text(formatMessage(ruling.conclusionHeading))
+      .text(' ')
+      .font('Times-Roman')
+      .text(existingCase.ruling ?? formatMessage(core.missing.conclusion), {
         paragraphGap: 1,
-      },
-    )
-    .text(' ')
-    .font('Times-Bold')
-    .text(formatMessage(ruling.conclusionHeading))
-    .text(' ')
-    .font('Times-Roman')
-    .text(existingCase.ruling ?? formatMessage(core.missing.conclusion), {
-      paragraphGap: 1,
-    })
+      })
+  }
+
+  doc
     .lineGap(3)
     .text(' ')
     .text(' ')
@@ -710,18 +728,20 @@ function constructInvestigationRulingPdf(
 function constructRulingPdf(
   existingCase: Case,
   formatMessage: FormatMessage,
+  shortVerison: boolean,
 ): streamBuffers.WritableStreamBuffer {
   return existingCase.type === CaseType.CUSTODY ||
     existingCase.type === CaseType.TRAVEL_BAN
-    ? constructRestrictionRulingPdf(existingCase, formatMessage)
-    : constructInvestigationRulingPdf(existingCase, formatMessage)
+    ? constructRestrictionRulingPdf(existingCase, formatMessage, shortVerison)
+    : constructInvestigationRulingPdf(existingCase, formatMessage, shortVersion)
 }
 
 export async function getRulingPdfAsString(
   existingCase: Case,
   formatMessage: FormatMessage,
+  shortVersion = false,
 ): Promise<string> {
-  const stream = constructRulingPdf(existingCase, formatMessage)
+  const stream = constructRulingPdf(existingCase, formatMessage, shortVersion)
 
   // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {

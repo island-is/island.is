@@ -355,7 +355,10 @@ export class CaseService {
     return getRequestPdfAsString(existingCase, intl.formatMessage)
   }
 
-  async getRulingPdf(existingCase: Case): Promise<string> {
+  async getRulingPdf(
+    existingCase: Case,
+    shortversion = false,
+  ): Promise<string> {
     this.logger.debug(
       `Getting the ruling for case ${existingCase.id} as a pdf document`,
     )
@@ -365,7 +368,7 @@ export class CaseService {
       'is',
     )
 
-    return getRulingPdfAsString(existingCase, intl.formatMessage)
+    return getRulingPdfAsString(existingCase, intl.formatMessage, shortversion)
   }
 
   async getCustodyPdf(existingCase: Case): Promise<string> {
