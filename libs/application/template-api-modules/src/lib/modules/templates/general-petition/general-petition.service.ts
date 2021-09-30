@@ -72,10 +72,10 @@ export class GeneralPetitionService {
 
   async createEndorsementList({
     application,
-    authorization,
+    auth,
   }: TemplateApiModuleActionProps) {
     const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
+      .makeGraphqlQuery(auth.authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
         input: {
           title: application.answers.listName,
           description: application.answers.aboutList,
