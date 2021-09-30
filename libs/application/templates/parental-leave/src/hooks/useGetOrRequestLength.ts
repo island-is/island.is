@@ -25,16 +25,14 @@ export const useGetOrRequestLength = (application: Application) => {
       if (loadedLengths.has(id)) {
         setLoading(false)
 
-        return loadedLengths.get(id)!
+        return loadedLengths.get(id)
       }
-
-      const temporaryPercentage = '100'
 
       const { data: temporaryLength } = await lazyGetLength({
         input: {
           startDate,
           endDate,
-          percentage: temporaryPercentage,
+          percentage: '100',
         },
       })
 

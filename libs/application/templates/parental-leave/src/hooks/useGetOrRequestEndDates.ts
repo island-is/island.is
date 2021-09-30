@@ -37,20 +37,17 @@ export const useGetOrRequestEndDates = (application: Application) => {
         return loadedEndDates.get(id)
       }
 
-      const temporaryPercentage = '100'
-
-      const { data: temporaryEndDateData } = await lazyGetEndDate({
+      const { data: endDateData } = await lazyGetEndDate({
         input: {
           startDate,
           length: String(length),
-          percentage: temporaryPercentage,
+          percentage: '100', // Get end date if
         },
       })
 
-      const temporaryLazyEndDate =
-        temporaryEndDateData?.getParentalLeavesPeriodEndDate?.periodEndDate
+      const endDate = endDateData?.getParentalLeavesPeriodEndDate?.periodEndDate
 
-      if (!temporaryLazyEndDate) {
+      if (!endDate) {
         setLoading(false)
 
         throw new Error(
@@ -58,68 +55,26 @@ export const useGetOrRequestEndDates = (application: Application) => {
         )
       }
 
-      const { data: lengthData } = await lazyGetLength({
-        input: {
-          startDate,
-          endDate: new Date(temporaryLazyEndDate).toISOString(),
-          percentage: temporaryPercentage,
-        },
-      })
-
-      const startToEndDatesLength =
-        lengthData?.getParentalLeavesPeriodLength.periodLength
-
-      if (!startToEndDatesLength) {
-        setLoading(false)
-
-        throw new Error(
-          `VMST: Cannot calculate length between startDate and calculated endDate, startDate/${startDate} length/${length} temporaryLazyEndDate/${temporaryLazyEndDate} startToEndDatesLength/${startToEndDatesLength}`,
-        )
-      }
-
       const computedPercentage = calculateDaysToPercentage(
         application,
-        startToEndDatesLength,
+        length,
         daysAlreadyUsed,
       )
 
-      const computedLength = Math.min(
-        100,
-        Math.floor((length * computedPercentage) / 100),
-      )
-
-      const { data } = await lazyGetEndDate({
-        input: {
-          startDate,
-          length: String(computedLength),
-          percentage: String(computedPercentage),
-        },
-      })
-
-      const lazyEndDate = data?.getParentalLeavesPeriodEndDate?.periodEndDate
-
-      if (!lazyEndDate) {
-        setLoading(false)
-
-        throw new Error(
-          `VMST: Cannot calculate end date, startDate/${startDate} length/${length} temporaryLazyEndDate/${temporaryLazyEndDate} startToEndDatesLength/${startToEndDatesLength} computedPercentage/${computedPercentage} lazyEndDate/${lazyEndDate}`,
-        )
-      }
-
       loadedEndDates.set(id, {
-        date: lazyEndDate,
+        date: endDate,
         percentage: computedPercentage,
-        days: startToEndDatesLength,
+        days: length,
       })
       setLoading(false)
 
       return {
-        date: lazyEndDate,
+        date: endDate,
         percentage: computedPercentage,
-        days: startToEndDatesLength,
+        days: length,
       }
     },
-    [application, daysAlreadyUsed, lazyGetEndDate, lazyGetLength],
+    [application, daysAlreadyUsed, lazyGetEndDate],
   )
 
   return {
