@@ -6,7 +6,7 @@ import {
 import { UpdateApplicationTableMutation } from '../../graphql'
 
 interface SaveData {
-  updateApplication: Application
+  updateApplication: Application[]
 }
 
 export const useAllApplications = () => {

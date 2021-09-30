@@ -80,7 +80,7 @@ export class ApplicationResolver {
     return backendApi.updateApplication(id, updateApplication)
   }
 
-  @Mutation(() => ApplicationModel, { nullable: true })
+  @Mutation(() => [ApplicationModel], { nullable: true })
   updateApplicationTable(
     @Args('input', { type: () => UpdateApplicationInput })
     input: UpdateApplicationInput,
@@ -90,7 +90,7 @@ export class ApplicationResolver {
 
     this.logger.debug(`updating application ${id}`)
 
-    return backendApi.updateApplication(id, updateApplication)
+    return backendApi.updateApplicationTable(id, updateApplication)
   }
 
   @Query(() => ApplicationFiltersModel, { nullable: false })
