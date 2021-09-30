@@ -2,14 +2,16 @@ import { useContext } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   Application,
+  ApplicationFilters,
   ApplicationState,
+  UpdateApplicationResponse,
 } from '@island.is/financial-aid/shared/lib'
 import { UpdateApplicationMutation } from '../../graphql'
 import { ApplicationFiltersContext } from '../components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 import { AdminContext } from '../components/AdminProvider/AdminProvider'
 
 interface SaveData {
-  updateApplication: Application
+  updateApplicationRes: UpdateApplicationResponse
 }
 
 export const useApplicationState = () => {
@@ -42,11 +44,10 @@ export const useApplicationState = () => {
       })
 
       if (data) {
-        if (data.updateApplication.filters) {
-          setApplicationFilters(data.updateApplication.filters)
-          delete data.updateApplication.filters
+        if (data.updateApplicationRes.filters) {
+          setApplicationFilters(data.updateApplicationRes.filters)
         }
-        return data.updateApplication
+        return data.updateApplicationRes.application
       }
     }
   }

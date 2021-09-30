@@ -93,40 +93,42 @@ export const GetApplicationQuery = gql`
 `
 export const UpdateApplicationMutation = gql`
   mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
-    updateApplication(input: $input) {
-      id
-      nationalId
-      created
-      modified
-      name
-      phoneNumber
-      email
-      homeCircumstances
-      student
-      employment
-      hasIncome
-      usePersonalTaxCredit
-      bankNumber
-      ledger
-      accountNumber
-      interview
-      employmentCustom
-      homeCircumstancesCustom
-      files {
+    updateApplicationRes(input: $input) {
+      application {
         id
-        applicationId
-        name
-        size
+        nationalId
         created
-        type
-      }
-      state
-      formComment
-      studentCustom
-      amount
-      rejection
-      staff {
+        modified
         name
+        phoneNumber
+        email
+        homeCircumstances
+        student
+        employment
+        hasIncome
+        usePersonalTaxCredit
+        bankNumber
+        ledger
+        accountNumber
+        interview
+        employmentCustom
+        homeCircumstancesCustom
+        files {
+          id
+          applicationId
+          name
+          size
+          created
+          type
+        }
+        state
+        formComment
+        studentCustom
+        amount
+        rejection
+        staff {
+          name
+        }
       }
       filters {
         New

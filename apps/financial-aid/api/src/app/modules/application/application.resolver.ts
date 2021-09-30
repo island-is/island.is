@@ -10,7 +10,7 @@ import { BackendAPI } from '../../../services'
 import {
   ApplicationFiltersModel,
   ApplicationModel,
-  ApplicationEventModel,
+  UpdateApplicationResponseModel,
 } from './models'
 import {
   CreateApplicationInput,
@@ -25,6 +25,7 @@ import {
   Application,
   ApplicationFilters,
   ApplicationEvent,
+  UpdateApplicationResponse,
 } from '@island.is/financial-aid/shared/lib'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -67,12 +68,12 @@ export class ApplicationResolver {
     return backendApi.createApplication(input)
   }
 
-  @Mutation(() => ApplicationModel, { nullable: true })
-  updateApplication(
+  @Mutation(() => UpdateApplicationResponseModel, { nullable: true })
+  updateApplicationRes(
     @Args('input', { type: () => UpdateApplicationInput })
     input: UpdateApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Application> {
+  ): Promise<UpdateApplicationResponse> {
     const { id, ...updateApplication } = input
 
     this.logger.debug(`updating application ${id}`)

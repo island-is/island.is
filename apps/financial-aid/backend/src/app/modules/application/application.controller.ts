@@ -13,7 +13,11 @@ import {
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 
 import { ApplicationService } from './application.service'
-import { CurrentApplicationModel, ApplicationModel } from './models'
+import {
+  CurrentApplicationModel,
+  ApplicationModel,
+  UpdateApplicationResponse,
+} from './models'
 
 import {
   ApplicationEventModel,
@@ -37,6 +41,7 @@ import {
 import { ApplicationGuard } from '../../guards/application.guard'
 
 import type {
+  Application,
   ApplicationStateUrl,
   User,
 } from '@island.is/financial-aid/shared/lib'
@@ -107,13 +112,13 @@ export class ApplicationController {
   @UseGuards(JwtAuthGuard)
   @Put('applications/:id')
   @ApiOkResponse({
-    type: ApplicationModel,
+    type: UpdateApplicationResponse,
     description: 'Updates an existing application',
   })
   async update(
     @Param('id') id: string,
     @Body() applicationToUpdate: UpdateApplicationDto,
-  ): Promise<ApplicationModel> {
+  ): Promise<UpdateApplicationResponse> {
     const {
       numberOfAffectedRows,
       updatedApplication,
@@ -123,11 +128,10 @@ export class ApplicationController {
       throw new NotFoundException(`Application ${id} does not exist`)
     }
 
-    const filters = await this.applicationService.getAllFilters()
-
-    updatedApplication?.setDataValue('filters', filters)
-
-    return updatedApplication
+    return {
+      application: updatedApplication,
+      filters: await this.applicationService.getAllFilters(),
+    }
   }
 
   @UseGuards(JwtAuthGuard)
