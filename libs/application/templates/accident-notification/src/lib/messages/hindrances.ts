@@ -11,7 +11,8 @@ export const hindrances = {
   carAccident: defineMessages({
     radioFieldTitle: {
       id: 'an.application:hindrances.carAccident.radioFieldTitle',
-      defaultMessage: 'Átti slysið sér stað í ökutæki? ',
+      defaultMessage:
+        'Varðar slysið skráningarskylt ökutæki með lögboðna ábyrgðartryggingu?',
       description: 'Did the accident take place in a car?',
     },
     errorTitle: {

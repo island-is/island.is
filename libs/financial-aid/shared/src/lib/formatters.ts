@@ -3,6 +3,7 @@ import {
   ApplicationState,
   Employment,
   ApplicationEventType,
+  ApplicationStateUrl,
 } from './enums'
 import type { KeyMapping } from './types'
 
@@ -28,6 +29,15 @@ export const getState: KeyMapping<ApplicationState, string> = {
   InProgress: 'Í vinnslu',
   Rejected: 'Synjað',
   Approved: 'Samþykkt',
+}
+
+export const getStateFromUrl: KeyMapping<
+  ApplicationStateUrl,
+  ApplicationState[]
+> = {
+  nymal: [ApplicationState.NEW],
+  vinnslu: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+  afgreidd: [ApplicationState.REJECTED, ApplicationState.APPROVED],
 }
 
 export const getEventType: KeyMapping<

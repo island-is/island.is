@@ -75,8 +75,7 @@ export const applicantInformationSection = buildSection({
           width: 'half',
           variant: 'email',
           required: true,
-          defaultValue: (application: AccidentNotification) =>
-            application.externalData?.userProfile?.data?.email,
+          defaultValue: (application: AccidentNotification) => '',
         }),
         buildTextField({
           id: 'applicant.phoneNumber',
@@ -84,8 +83,7 @@ export const applicantInformationSection = buildSection({
           format: '###-####',
           width: 'half',
           variant: 'tel',
-          defaultValue: (application: AccidentNotification) =>
-            application.externalData?.userProfile?.data?.mobilePhoneNumber,
+          defaultValue: (application: AccidentNotification) => '',
         }),
       ],
     }),

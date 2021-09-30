@@ -16,6 +16,9 @@ export const transactionFilter = (
       item.itemCode.toLowerCase().includes(query.toLowerCase()) ||
       item.performingOrganization.toLowerCase().includes(query.toLowerCase()) ||
       item.subCategory.toLowerCase().includes(query.toLowerCase()) ||
+      item.chargeType.toLowerCase().includes(query.toLowerCase()) ||
+      item.period.toLowerCase().includes(query.toLowerCase()) ||
+      item.amount.toString().includes(query.toLowerCase()) ||
       item.reference.toLowerCase().includes(query.toLowerCase())
     ) {
       return true
