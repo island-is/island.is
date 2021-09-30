@@ -132,6 +132,23 @@ describe('DrivingLicenseService', () => {
     })
   })
 
+  describe('getTeachers', () => {
+    it('should return a list', async () => {
+      const response = await service.getTeachers()
+
+      expect(response).toHaveLength(2)
+
+      expect(response).toStrictEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: 'Jóna Jónsdóttir',
+            nationalId: '1234567890',
+          }),
+        ]),
+      )
+    })
+  })
+
   describe('getDrivingAssessmentResult', () => {
     it('should return a valid assessment when applicable', async () => {
       const response = await service.getDrivingAssessment(MOCK_NATIONAL_ID)
