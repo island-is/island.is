@@ -1,14 +1,16 @@
-import { makeCase } from '../../fixtures/testDataFactory'
+import { Case } from '@island.is/judicial-system/types'
+import { makeCase, makeCourt } from '../../fixtures/testDataFactory'
 import { intercept } from '../../utils'
 
 describe('/krafa/fyrirtaka/:id', () => {
   beforeEach(() => {
     const caseData = makeCase()
+    const caseDataAddition = { ...caseData, court: makeCourt() }
 
     cy.stubAPIResponses()
     cy.visit('/krafa/fyrirtaka/test_id')
 
-    intercept(caseData)
+    intercept(caseDataAddition)
   })
 
   it('should require a valid arrest time', () => {
