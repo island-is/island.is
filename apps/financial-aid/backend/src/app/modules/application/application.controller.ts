@@ -131,13 +131,14 @@ export class ApplicationController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put('applicationsTable/:id')
+  @Put('applicationsTable/:id/:stateUrl')
   @ApiOkResponse({
     type: UpdateApplicationTableResponse,
     description: 'Updates an existing application',
   })
   async updateTable(
     @Param('id') id: string,
+    @Param('stateUrl') stateUrl: ApplicationStateUrl,
     @Body() applicationToUpdate: UpdateApplicationDto,
   ): Promise<UpdateApplicationTableResponse> {
     const {
@@ -150,7 +151,7 @@ export class ApplicationController {
     }
 
     return {
-      applications: [updatedApplication],
+      applications: await this.applicationService.getAll(stateUrl),
       filters: await this.applicationService.getAllFilters(),
     }
   }

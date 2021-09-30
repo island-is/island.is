@@ -1,12 +1,16 @@
 import { useMutation } from '@apollo/client'
 import {
-  Application,
   ApplicationState,
+  ApplicationStateUrl,
+  UpdateApplicationTableResponseType,
 } from '@island.is/financial-aid/shared/lib'
+import { useContext } from 'react'
 import { UpdateApplicationTableMutation } from '../../graphql'
+import { AdminContext } from '../components/AdminProvider/AdminProvider'
+import { ApplicationFiltersContext } from '../components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 
 interface SaveData {
-  updateApplication: Application[]
+  updateApplicationTable: UpdateApplicationTableResponseType
 }
 
 export const useAllApplications = () => {
@@ -15,10 +19,13 @@ export const useAllApplications = () => {
     { loading: saveLoading },
   ] = useMutation<SaveData>(UpdateApplicationTableMutation)
 
+  const { setApplicationFilters } = useContext(ApplicationFiltersContext)
+  const { admin } = useContext(AdminContext)
+
   const changeApplicationTable = async (
     applicationId: string,
     state: ApplicationState,
-    staffId: string,
+    stateUrl: ApplicationStateUrl,
   ) => {
     if (saveLoading === false && applicationId) {
       const { data } = await updateApplicationMutation({
@@ -26,14 +33,18 @@ export const useAllApplications = () => {
           input: {
             id: applicationId,
             state,
-            staffId,
+            staffId: admin?.staff?.id,
+            stateUrl,
           },
         },
       })
 
       if (data) {
-        console.log(data)
-        return null
+        if (data.updateApplicationTable.filters && setApplicationFilters) {
+          setApplicationFilters(data.updateApplicationTable.filters)
+        }
+
+        return data.updateApplicationTable.applications
       }
     }
   }

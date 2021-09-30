@@ -17,6 +17,7 @@ import {
   CreateApplicationInput,
   UpdateApplicationInput,
   CreateApplicationEventInput,
+  UpdateApplicationInputTable,
 } from './dto'
 import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
 
@@ -84,15 +85,15 @@ export class ApplicationResolver {
 
   @Mutation(() => UpdateApplicationTableResponse, { nullable: true })
   updateApplicationTable(
-    @Args('input', { type: () => UpdateApplicationInput })
-    input: UpdateApplicationInput,
+    @Args('input', { type: () => UpdateApplicationInputTable })
+    input: UpdateApplicationInputTable,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<UpdateApplicationTableResponseType> {
-    const { id, ...updateApplication } = input
+    const { id, stateUrl, ...updateApplication } = input
 
     this.logger.debug(`updating application ${id}`)
 
-    return backendApi.updateApplicationTable(id, updateApplication)
+    return backendApi.updateApplicationTable(id, stateUrl, updateApplication)
   }
 
   @Query(() => ApplicationFiltersModel, { nullable: false })

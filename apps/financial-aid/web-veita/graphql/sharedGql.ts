@@ -133,7 +133,9 @@ export const UpdateApplicationMutation = gql`
 `
 
 export const UpdateApplicationTableMutation = gql`
-  mutation UpdateApplicationTableMutation($input: UpdateApplicationInput!) {
+  mutation UpdateApplicationTableMutation(
+    $input: UpdateApplicationInputTable!
+  ) {
     updateApplicationTable(input: $input) {
       applications {
         id

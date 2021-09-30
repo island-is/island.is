@@ -12,6 +12,7 @@ import {
 import {
   Application,
   ApplicationState,
+  ApplicationStateUrl,
 } from '@island.is/financial-aid/shared/lib'
 import { TableHeadersProps } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
@@ -35,13 +36,13 @@ const ApplicationsTable = ({
   const updateApplicationAndTable = async (
     applicationId: string,
     state: ApplicationState,
-    staffId: string,
   ) => {
     const updateApplicationTable = await changeApplicationTable(
       applicationId,
       state,
-      staffId,
+      router.pathname.substring(1) as ApplicationStateUrl,
     )
+    setApplications(updateApplicationTable)
   }
 
   if (applications && applications.length > 0) {

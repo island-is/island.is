@@ -21,8 +21,6 @@ import {
   getTagByState,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
-import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
-
 interface PageProps {
   application: Application
   index: number
@@ -30,10 +28,6 @@ interface PageProps {
 }
 
 const TableBody = ({ application, index, onApplicationUpdate }: PageProps) => {
-  // TODO: Remove state and context when we reload the page when we change the state of application
-  const [staffName, setStaffName] = useState(application.staff?.name)
-  const { admin } = useContext(AdminContext)
-
   return (
     <Link href={'application/' + application.id}>
       <tr
@@ -85,18 +79,14 @@ const TableBody = ({ application, index, onApplicationUpdate }: PageProps) => {
             [`${styles.tablePadding} `]: true,
           })}
         >
-          {staffName ? (
-            <Text>{staffName}</Text>
+          {application.staff?.name ? (
+            <Text>{application.staff?.name}</Text>
           ) : (
             <Button
               variant="text"
               onClick={(ev) => {
                 ev.stopPropagation()
-                onApplicationUpdate(
-                  application.id,
-                  ApplicationState.NEW,
-                  admin?.name,
-                )
+                onApplicationUpdate(application.id, ApplicationState.INPROGRESS)
               }}
             >
               Sjá um

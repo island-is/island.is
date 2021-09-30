@@ -60,9 +60,10 @@ class BackendAPI extends RESTDataSource {
 
   updateApplicationTable(
     id: string,
+    stateUrl: ApplicationStateUrl,
     updateApplication: UpdateApplication,
   ): Promise<UpdateApplicationTableResponseType> {
-    return this.put(`applicationsTable/${id}`, updateApplication)
+    return this.put(`applicationsTable/${id}/${stateUrl}`, updateApplication)
   }
 
   getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
