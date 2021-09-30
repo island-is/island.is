@@ -48,6 +48,15 @@ export class EndorsementList extends Model<EndorsementList> {
   @Column({
     type: DataType.DATE,
   })
+  openedDate!: Date | null
+
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
+  @Column({
+    type: DataType.DATE,
+  })
   closedDate!: Date | null
 
   @ApiProperty({ type: [EndorsementMetadataDto] })
@@ -76,6 +85,13 @@ export class EndorsementList extends Model<EndorsementList> {
     allowNull: false,
   })
   owner!: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  adminLock!: boolean
 
   @ApiProperty({ type: () => [Endorsement], required: false })
   @HasMany(() => Endorsement)

@@ -24,4 +24,10 @@ export class EndorsementListOpen {
     nullable: true,
   })
   closedDate!: Date | null
+
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
+  openedDate!: Date | null
 }

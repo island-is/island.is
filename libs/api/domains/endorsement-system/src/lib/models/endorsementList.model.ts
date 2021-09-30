@@ -18,6 +18,9 @@ export class EndorsementList {
   @Field({ nullable: true })
   closedDate!: string | null
 
+  @Field({ nullable: true })
+  openedDate?: string | null
+
   @Field(() => [EndorsementListTagsEnum])
   tags!: EndorsementListTagsEnum[]
 
