@@ -34,8 +34,12 @@ export const serializeService: SerializeMethod = (
 ) => {
   let allErrors: string[] = []
   const checkCollisions = (target: any, source: any) => {
-    const targetKeys = Object.keys(target)    
-    addToErrors(Object.keys(source).filter((srcKey) => targetKeys.includes(srcKey)).map(key => `Collisions for environment or secrets for key ${key}`))
+    const targetKeys = Object.keys(target)
+    addToErrors(
+      Object.keys(source)
+        .filter((srcKey) => targetKeys.includes(srcKey))
+        .map((key) => `Collisions for environment or secrets for key ${key}`),
+    )
   }
   const mergeObjects = (target: any, source: any) => {
     checkCollisions(target, source)
@@ -136,7 +140,7 @@ export const serializeService: SerializeMethod = (
 
   // secrets
   if (Object.keys(serviceDef.secrets).length > 0) {
-    result.secrets = serviceDef.secrets
+    result.secrets = { ...serviceDef.secrets }
   }
 
   const {
