@@ -14,17 +14,17 @@ import {
   Comparators,
   Application,
   FormValue,
-  buildAsyncSelectField,
+  buildSelectField,
 } from '@island.is/application/core'
 import { m } from './messages'
 import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../shared'
-import { CountryDataResult } from '../types'
 import { Address } from '@island.is/api/schema'
 import Logo from '../assets/Logo'
 import {
   requireConfirmationOfResidency,
   requireWaitingPeriod,
 } from '../healthInsuranceUtils'
+import { Countries } from '../assets'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
@@ -223,29 +223,19 @@ export const HealthInsuranceForm: Form = buildForm({
                 { label: m.yesOptionLabel, value: YES },
               ],
             }),
-            buildAsyncSelectField({
+            buildSelectField({
               id: 'formerInsurance.country',
               title: m.formerInsuranceCountry,
               description: m.formerInsuranceDetails,
               placeholder: m.formerInsuranceCountryPlaceholder,
-              loadingError: m.formerInsuranceCountryError,
               backgroundColor: 'blue',
-              loadOptions: async () => {
-                const countries = await fetch(
-                  'https://restcountries.eu/rest/v2/all',
-                )
-                const data = (await countries.json()) as CountryDataResult[]
-                return data.map(
-                  ({ name, alpha2Code: countryCode, regionalBlocs }) => {
-                    const regions = regionalBlocs.map((blocs) => blocs.acronym)
-                    const option = { name, countryCode, regions }
-                    return {
-                      label: name,
-                      value: JSON.stringify(option),
-                    }
-                  },
-                )
-              },
+              options: Countries.map(({ name, alpha2Code: countryCode }) => {
+                const option = { name, countryCode }
+                return {
+                  label: name,
+                  value: JSON.stringify(option),
+                }
+              }),
             }),
             buildTextField({
               id: 'formerInsurance.personalId',
