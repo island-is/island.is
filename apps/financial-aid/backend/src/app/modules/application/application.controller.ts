@@ -112,10 +112,32 @@ export class ApplicationController {
   @UseGuards(JwtAuthGuard)
   @Put('applications/:id')
   @ApiOkResponse({
-    type: UpdateApplicationResponse,
+    type: ApplicationModel,
     description: 'Updates an existing application',
   })
   async update(
+    @Param('id') id: string,
+    @Body() applicationToUpdate: UpdateApplicationDto,
+  ): Promise<ApplicationModel> {
+    const {
+      numberOfAffectedRows,
+      updatedApplication,
+    } = await this.applicationService.update(id, applicationToUpdate)
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Application ${id} does not exist`)
+    }
+
+    return updatedApplication
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('updateApplication/:id')
+  @ApiOkResponse({
+    type: UpdateApplicationResponse,
+    description: 'Updates an existing application',
+  })
+  async updateApplication(
     @Param('id') id: string,
     @Body() applicationToUpdate: UpdateApplicationDto,
   ): Promise<UpdateApplicationResponse> {

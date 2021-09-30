@@ -26,6 +26,7 @@ import {
   ApplicationFilters,
   UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
+import { ApplicationModule } from './application.module'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => ApplicationModel)
@@ -67,6 +68,17 @@ export class ApplicationResolver {
     return backendApi.createApplication(input)
   }
 
+  @Mutation(() => ApplicationModel, { nullable: true })
+  updateApplication(
+    @Args('input', { type: () => UpdateApplicationInput })
+    input: UpdateApplicationInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<ApplicationModel> {
+    const { id, ...updateApplication } = input
+    this.logger.debug(`updating application ${id}`)
+    return backendApi.updateApplication(id, updateApplication)
+  }
+
   @Mutation(() => UpdateApplicationResponse, { nullable: true })
   updateApplicationRes(
     @Args('input', { type: () => UpdateApplicationInput })
@@ -77,7 +89,7 @@ export class ApplicationResolver {
 
     this.logger.debug(`updating application ${id}`)
 
-    return backendApi.updateApplication(id, updateApplication)
+    return backendApi.updateApplicationRes(id, updateApplication)
   }
 
   @Query(() => ApplicationFiltersModel, { nullable: false })
