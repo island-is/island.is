@@ -32,7 +32,8 @@ export const useAllApplications = () => {
       })
 
       if (data) {
-        return data.updateApplication
+        console.log(data)
+        return null
       }
     }
   }
