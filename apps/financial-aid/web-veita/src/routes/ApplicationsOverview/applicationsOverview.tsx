@@ -39,6 +39,9 @@ export const ApplicationsOverview = () => {
   const { data, error, loading } = useQuery<ApplicationsProvider>(
     GetApplicationsQuery,
     {
+      variables: {
+        input: { stateUrl: router.pathname.substring(1) },
+      },
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     },
@@ -52,11 +55,7 @@ export const ApplicationsOverview = () => {
 
   useEffect(() => {
     if (data?.applications) {
-      setApplications(
-        data.applications.filter((item) =>
-          currentNavigationItem?.applicationState.includes(item?.state),
-        ),
-      )
+      setApplications(data.applications)
     }
   }, [data, router])
 

@@ -43,12 +43,6 @@ export const externalDataSection = buildSection({
               subTitle: externalData.nationalRegistry.description,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: DataProviderTypes.UserProfile,
-              title: externalData.userProfile.title,
-              subTitle: externalData.userProfile.description,
-            }),
-            buildDataProviderItem({
               id: 'revAndCustoms',
               type: '',
               title: externalData.revAndCustoms.title,

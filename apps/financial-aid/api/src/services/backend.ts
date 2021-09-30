@@ -13,6 +13,7 @@ import {
   CreateApplicationEvent,
   ApplicationFilters,
   CreateFilesResponse,
+  ApplicationStateUrl,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -27,8 +28,8 @@ class BackendAPI extends RESTDataSource {
     req.headers.set('cookie', this.context.req.headers.cookie)
   }
 
-  getApplications(): Promise<Application[]> {
-    return this.get('applications')
+  getApplications(stateUrl: ApplicationStateUrl): Promise<Application[]> {
+    return this.get(`allApplications/${stateUrl}`)
   }
 
   getApplication(id: string): Promise<Application> {
