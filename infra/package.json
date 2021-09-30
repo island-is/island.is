@@ -12,8 +12,8 @@
     "@types/js-yaml": "3.12.5",
     "@types/node": "14.14.14",
     "@zeit/ncc": "0.22.3",
-    "jest": "26.6.3",
-    "ts-jest": "26.4.4",
+    "jest": "27.2.4",
+    "ts-jest": "27.0.5",
     "ts-node": "9.0.0",
     "typescript": "4.0.5"
   },
