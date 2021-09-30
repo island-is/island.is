@@ -295,7 +295,6 @@ export function hasCaseBeenAppealed(theCase: Case): boolean {
 }
 
 export function isAccusedRightsHidden(theCase: Case): boolean {
-  console.log('isAccused', theCase.isAccusedRightsHidden)
   return theCase.isAccusedRightsHidden == null
     ? theCase.sessionArrangements
       ? theCase.sessionArrangements !== SessionArrangements.ALL_PRESENT
