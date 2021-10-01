@@ -15,7 +15,6 @@ import {
   FlatList,
   Image,
   Platform,
-  SafeAreaView,
   TouchableOpacity,
   View,
 } from 'react-native'
@@ -95,6 +94,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const [page, setPage] = useState(1)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const scrollY = useRef(new Animated.Value(0)).current
 
   const input = {
     queryString: queryString,
@@ -110,6 +110,8 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
       input,
     },
   })
+
+  const items = res?.data?.searchResults?.items || ([] as [])
 
   // refetch load more on scroll
   useEffect(() => {
@@ -151,12 +153,32 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     }
   }, [page])
 
-  const items = res?.data?.searchResults?.items || ([] as [])
 
-  const scrollY = useRef(new Animated.Value(0)).current
 
-  const renderApplicationItem = useCallback(
-    ({ item }) => (
+  const renderItem = useCallback(({ item }) => {
+    if (item.type === 'loading') {
+      return (
+        <View style={{ paddingVertical: 20 }}>
+          <ActivityIndicator size="large" color="#0061FF" />
+        </View>
+      )
+    }
+
+    if (item.type === 'empty') {
+      return (
+        <View style={{ marginTop: 80 }}>
+          <EmptyList
+            title={intl.formatMessage({ id: 'applications.emptyListTitle' })}
+            description={intl.formatMessage({
+              id: 'applications.emptyListDescription',
+            })}
+            image={<Image source={illustrationSrc} height={176} width={134} />}
+          />
+        </View>
+      )
+    }
+
+    return (
       <TouchableOpacity
         key={item.id}
         onPress={() =>
@@ -165,9 +187,8 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
       >
         <LinkCard>{item.title}</LinkCard>
       </TouchableOpacity>
-    ),
-    [],
-  )
+    )
+  }, [])
 
   const onAppStateBlur = useCallback((status: AppStateStatus) => {
     if (status !== 'inactive') {
@@ -241,85 +262,67 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const isSearch = ui.applicationQuery.length > 0
   const isLoading = res.loading && page === 1
   const isEmpty = (items ?? []).length === 0
+  const isEmptyView = !isLoading && isEmpty && !isSearch
 
-  if (isLoading) {
-    return (
-      <View style={{ paddingVertical: 20 }}>
-        <ActivityIndicator size="large" color="#0061FF" />
-      </View>
-    )
-  }
-
-  if (!isLoading && isEmpty && !isSearch) {
-    return (
-      <View style={{ flex: 1 }}>
-        <BottomTabsIndicator index={3} total={4} />
-        <EmptyList
-          title={intl.formatMessage({ id: 'applications.emptyListTitle' })}
-          description={intl.formatMessage({
-            id: 'applications.emptyListDescription',
-          })}
-          image={<Image source={illustrationSrc} height={176} width={134} />}
-        />
-      </View>
-    )
-  }
+  const emptyItem = [{ id: '0', type: 'empty' }]
+  const loadingItem = [{ id: '1', type: 'loading' }]
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ width: '100%', height: '100%', paddingHorizontal: 16 }}>
-        <Animated.FlatList
-          ref={flatListRef}
-          testID={testIDs.SCREEN_APPLICATIONS}
-          scrollEventThrottle={16}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            {
-              useNativeDriver: true,
-            },
-          )}
-          style={{ marginHorizontal: 0, flex: 1 }}
-          keyExtractor={keyExtractor}
-          keyboardDismissMode="on-drag"
-          stickyHeaderIndices={isSearch ? [0] : undefined}
-          contentInset={{
-            bottom: 32,
-          }}
-          ListHeaderComponent={
-            isSearch ? (
-              <SearchHeader
-                loadingText={intl.formatMessage({
-                  id: 'applications.loadingText',
-                })}
-                resultText={
-                  items.length === 0
-                    ? intl.formatMessage({ id: 'applications.noResultText' })
-                    : items.length === 1
-                    ? intl.formatMessage({
-                        id: 'applications.singleResultText',
-                      })
-                    : intl.formatMessage({ id: 'applications.resultText' })
-                }
-                count={items.length}
-                loading={searchLoading}
-              />
-            ) : undefined
-          }
-          data={items}
-          renderItem={renderApplicationItem}
-          onEndReached={() => setPage((p) => p + 1)}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={() =>
-            isLoadingMore && (
-              <View style={{ paddingVertical: 20 }}>
-                <ActivityIndicator size="large" color="#0061FF" />
-              </View>
-            )
-          }
-        />
-        <TopLine scrollY={scrollY} />
-      </View>
-    </SafeAreaView>
+    <>
+      <BottomTabsIndicator index={3} total={3} />
+      <Animated.FlatList
+        ref={flatListRef}
+        testID={testIDs.SCREEN_APPLICATIONS}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          {
+            useNativeDriver: true,
+          },
+        )}
+        style={{ paddingHorizontal: 16, zIndex: 9 }}
+        keyExtractor={keyExtractor}
+        keyboardDismissMode="on-drag"
+        stickyHeaderIndices={isSearch ? [0] : undefined}
+        contentInset={{
+          bottom: 32,
+        }}
+        ListHeaderComponent={
+          isSearch ? (
+            <SearchHeader
+              loadingText={intl.formatMessage({
+                id: 'applications.loadingText',
+              })}
+              resultText={
+                items.length === 0
+                  ? intl.formatMessage({ id: 'applications.noResultText' })
+                  : items.length === 1
+                  ? intl.formatMessage({
+                      id: 'applications.singleResultText',
+                    })
+                  : intl.formatMessage({ id: 'applications.resultText' })
+              }
+              count={items.length}
+              loading={searchLoading}
+            />
+          ) : undefined
+        }
+        data={isLoading ? loadingItem : isEmptyView ? emptyItem : items}
+        renderItem={renderItem}
+        onEndReached={() => !isLoading && setPage((p) => p + 1)}
+        onEndReachedThreshold={0.5}
+        refreshing={res.networkStatus === 4}
+        onRefresh={() => res.refetch()}
+        ListFooterComponent={() =>
+          !isEmptyView && isSearch && isLoadingMore && (
+            <View style={{ paddingVertical: 20 }}>
+              <ActivityIndicator size="large" color="#0061FF" />
+            </View>
+          )
+        }
+      />
+      <TopLine scrollY={scrollY} />
+    </>
   )
 }
 
