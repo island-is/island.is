@@ -12,7 +12,7 @@ describe('findEndorsementsEndorsementList', () => {
     })
 
     const response = await request(app.getHttpServer())
-      .get('/endorsement-list/endorsements?limit=10')
+      .get('/endorsement-list/endorsements')
       .send()
       .expect(403)
 
@@ -28,7 +28,7 @@ describe('findEndorsementsEndorsementList', () => {
     })
 
     const response = await request(app.getHttpServer())
-      .get('/endorsement-list/endorsements?limit=10')
+      .get('/endorsement-list/endorsements')
       .send()
       .expect(200)
 

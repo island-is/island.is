@@ -9,7 +9,7 @@ import { Endorsement } from '../endorsement/models/endorsement.model'
 
 import { paginate } from '../pagination/paginate'
 
-import { QueryDto } from '../pagination/dto/query.dto'
+// import { QueryDto } from '../pagination/dto/query.dto'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -31,7 +31,7 @@ export class EndorsementListService {
 
     return await paginate({
       Model: this.endorsementListModel,
-      limit: query.limit,
+      limit: query.limit || 10,
       after: query.after,
       before: query.before,
       primaryKeyField: 'counter',
@@ -62,7 +62,7 @@ export class EndorsementListService {
 
     return await paginate({
       Model: this.endorsementModel,
-      limit: query.limit,
+      limit: query.limit || 10,
       after: query.after,
       before: query.before,
       primaryKeyField: 'counter',

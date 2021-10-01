@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNumberString, IsOptional, IsString } from 'class-validator'
 
-export class QueryDto {
-  @ApiProperty({ required: true })
-  @IsNumberString()
-  limit!: number
+export class PaginationDto {
+  @ApiProperty({ required: false })
+  // @IsNumberString()
+  limit?: number
 
   @IsOptional()
   @ApiProperty({ required: false })

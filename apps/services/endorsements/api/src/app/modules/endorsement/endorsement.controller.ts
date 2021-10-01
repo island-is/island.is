@@ -40,7 +40,7 @@ import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
 
-import { QueryDto } from '../pagination/dto/query.dto'
+import { PaginationDto } from '../pagination/dto/pagination.dto'
 import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
@@ -49,7 +49,7 @@ const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 })
 @ApiTags('endorsement')
 @ApiOAuth2([])
-@ApiExtraModels(QueryDto, PaginatedEndorsementDto)
+@ApiExtraModels(PaginationDto, PaginatedEndorsementDto)
 @Controller('endorsement-list/:listId/endorsement')
 export class EndorsementController {
   constructor(
@@ -78,13 +78,13 @@ export class EndorsementController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
-    @Query() query: QueryDto,
+    @Query() query: PaginationDto,
   ): Promise<PaginatedEndorsementDto> {
     return await this.endorsementService.findEndorsements(
       {
         listId: endorsementList.id,
       },
-      query,
+      query
     )
   }
 

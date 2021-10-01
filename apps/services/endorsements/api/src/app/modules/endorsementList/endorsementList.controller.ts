@@ -16,6 +16,7 @@ import {
   ApiTags,
   ApiExtraModels,
   ApiOperation,
+  IntersectionType,
 } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { EndorsementList } from './endorsementList.model'
@@ -31,11 +32,15 @@ import type { User } from '@island.is/auth-nest-tools'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
 
-import { QueryDto } from '../pagination/dto/query.dto'
+import { PaginationDto } from '../pagination/dto/pagination.dto'
 import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
 
 
+export class FindTagPaginationCombo extends IntersectionType(
+  FindEndorsementListByTagsDto,
+  PaginationDto,
+) {}
 
 @Audit({
   namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
@@ -43,7 +48,7 @@ import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
 @ApiOAuth2([])
-@ApiExtraModels(QueryDto, PaginatedEndorsementListDto)
+@ApiExtraModels(FindTagPaginationCombo, PaginatedEndorsementListDto)
 export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
@@ -55,12 +60,11 @@ export class EndorsementListController {
   @Get()
   @BypassAuth()
   async findByTags(
-    @Query() { tags }: FindEndorsementListByTagsDto,
-    @Query() query: QueryDto,
+    @Query() query: FindTagPaginationCombo,
   ): Promise<PaginatedEndorsementListDto> {
     return await this.endorsementListService.findListsByTags(
       // query parameters of length one are not arrays, we normalize all tags input to arrays here
-      !Array.isArray(tags) ? [tags] : tags,
+      !Array.isArray(query.tags) ? [query.tags] : query.tags,
       query,
     )
   }
@@ -77,7 +81,7 @@ export class EndorsementListController {
   })
   async findEndorsements(
     @CurrentUser() user: User,
-    @Query() query: QueryDto,
+    @Query() query: PaginationDto,
   ): Promise<PaginatedEndorsementDto[]> {
     return await this.endorsementListService.findAllEndorsementsByNationalId(
       user.nationalId,

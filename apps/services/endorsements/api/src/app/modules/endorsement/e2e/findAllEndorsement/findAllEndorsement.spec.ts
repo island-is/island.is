@@ -46,7 +46,7 @@ describe('findAllEndorsement', () => {
       app.getHttpServer(),
     )
       .get(
-        '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c8/endorsement?limit=10',
+        '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c8/endorsement',
       )
       .send()
       .expect(200)

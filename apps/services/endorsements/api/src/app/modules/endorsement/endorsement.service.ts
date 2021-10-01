@@ -172,28 +172,17 @@ export class EndorsementService {
   async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
     this.logger.debug(`Finding endorsements by list id "${listId}"`)
 
-    console.log(query)
-
-    // // pagination setup defaults
-    // const limit = query.limit;
-    // const after = query.after;
-    // const before = query.before;
-    // const primaryKeyField = 'counter'
-    // const orderOption = [['counter', 'ASC']]
-    // const where = { endorsementListId: listId }
 
     return await paginate({
       Model: this.endorsementModel,
-      limit: query.limit,
+      limit: query.limit || 10,
       after: query.after,
       before: query.before,
       primaryKeyField: 'counter',
       orderOption: [['counter', 'DESC']],
       where: { endorsementListId: listId },
     })
-    // return await this.endorsementModel.findAll({
-    //   where: { endorsementListId: listId },
-    // })
+
   }
 
   async findSingleUserEndorsement({
