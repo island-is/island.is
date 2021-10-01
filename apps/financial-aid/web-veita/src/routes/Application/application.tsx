@@ -136,7 +136,7 @@ const ApplicationProfile = () => {
     const applicant = [
       {
         title: 'Nafn',
-        content: data?.application.name,
+        content: application.name,
       },
       {
         title: 'Aldur',
@@ -149,8 +149,8 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Netfang',
-        content: data?.application.email,
-        link: 'mailto:' + data?.application.email,
+        content: application.email,
+        link: 'mailto:' + application.email,
       },
       {
         title: 'Sími',
@@ -160,15 +160,15 @@ const ApplicationProfile = () => {
       {
         title: 'Bankareikningur',
         content:
-          data?.application.bankNumber +
+          application.bankNumber +
           '-' +
-          data?.application.ledger +
+          application.ledger +
           '-' +
-          data?.application.accountNumber,
+          application.accountNumber,
       },
       {
         title: 'Nota persónuafslátt',
-        content: data?.application.usePersonalTaxCredit ? 'Já' : 'Nei',
+        content: application.usePersonalTaxCredit ? 'Já' : 'Nei',
       },
       {
         title: 'Ríkisfang',
@@ -253,9 +253,13 @@ const ApplicationProfile = () => {
 
           <CommentSection
             className={`contentUp delay-125 ${styles.widthAlmostFull}`}
+            setApplication={setApplication}
           />
 
-          <History applicantName={application.name} />
+          <History
+            applicantName={application.name}
+            applicationEvents={application.applicationEvents}
+          />
         </Box>
 
         {application.state && (
@@ -264,12 +268,7 @@ const ApplicationProfile = () => {
             onVisibilityChange={(isVisibleBoolean) => {
               setStateModalVisible(isVisibleBoolean)
             }}
-            onStateChange={(applicationState: ApplicationState) => {
-              setApplication({
-                ...application,
-                state: applicationState,
-              })
-            }}
+            setApplication={setApplication}
             application={application}
           />
         )}

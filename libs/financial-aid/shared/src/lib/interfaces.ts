@@ -59,6 +59,7 @@ export interface User {
   currentApplication?: CurrentApplication
   returnUrl: ReturnUrl
   staff?: Staff
+  postalCode?: number
 }
 
 export interface UpdateApplication {
@@ -172,6 +173,7 @@ export interface Application {
   comment?: string
   rejection?: string
   staff?: Staff
+  applicationEvents?: ApplicationEvent[]
 }
 
 export interface GetSignedUrlForId {

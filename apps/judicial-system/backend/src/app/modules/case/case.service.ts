@@ -26,6 +26,7 @@ import {
   getRulingPdfAsString,
   getCasefilesPdfAsString,
   writeFile,
+  getCustodyNoticePdfAsString,
 } from '../../formatters'
 import { Institution } from '../institution'
 import { User } from '../user'
@@ -341,6 +342,19 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
+  async getRequestPdf(existingCase: Case): Promise<string> {
+    this.logger.debug(
+      `Getting the request for case ${existingCase.id} as a pdf document`,
+    )
+
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    return getRequestPdfAsString(existingCase, intl.formatMessage)
+  }
+
   async getRulingPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
       `Getting the ruling for case ${existingCase.id} as a pdf document`,
@@ -354,17 +368,12 @@ export class CaseService {
     return getRulingPdfAsString(existingCase, intl.formatMessage)
   }
 
-  async getRequestPdf(existingCase: Case): Promise<string> {
+  async getCustodyPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
-      `Getting the request for case ${existingCase.id} as a pdf document`,
+      `Getting the custody notice for case ${existingCase.id} as a pdf document`,
     )
 
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    return getRequestPdfAsString(existingCase, intl.formatMessage)
+    return getCustodyNoticePdfAsString(existingCase)
   }
 
   async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
