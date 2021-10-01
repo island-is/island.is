@@ -4,10 +4,8 @@ import {
   Box,
   Button,
   ButtonTypes,
-  ColorSchemes,
   IconMapIcon,
 } from '@island.is/island-ui/core'
-import { Colors } from '@island.is/island-ui/theme'
 
 import InfoBox from '../InfoBox/InfoBox'
 interface Props {
