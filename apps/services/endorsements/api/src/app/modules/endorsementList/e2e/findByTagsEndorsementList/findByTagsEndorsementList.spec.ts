@@ -31,7 +31,7 @@ describe('findByTagsEndorsementList', () => {
       )
       .send()
       .expect(200)
-      expect(response.body.data).toStrictEqual([])
+    expect(response.body.data).toStrictEqual([])
   })
   it(`GET /endorsement-list?tags should return 200 and a list`, async () => {
     const response = await request(app.getHttpServer())
@@ -44,5 +44,4 @@ describe('findByTagsEndorsementList', () => {
     expect(response.body.data).toHaveLength(2)
     expect(response.body.totalCount).toEqual(2)
   })
-
 })

@@ -84,7 +84,7 @@ export class EndorsementController {
       {
         listId: endorsementList.id,
       },
-      query
+      query,
     )
   }
 

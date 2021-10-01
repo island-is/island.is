@@ -45,9 +45,7 @@ describe('findAllEndorsement', () => {
     const response: { body: PaginatedEndorsementDto } = await request(
       app.getHttpServer(),
     )
-      .get(
-        '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c8/endorsement',
-      )
+      .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c8/endorsement')
       .send()
       .expect(200)
 

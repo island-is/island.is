@@ -36,7 +36,6 @@ import { PaginationDto } from '../pagination/dto/pagination.dto'
 import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
 
-
 export class FindTagPaginationCombo extends IntersectionType(
   FindEndorsementListByTagsDto,
   PaginationDto,

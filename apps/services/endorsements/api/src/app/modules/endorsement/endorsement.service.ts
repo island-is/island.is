@@ -172,7 +172,6 @@ export class EndorsementService {
   async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
     this.logger.debug(`Finding endorsements by list id "${listId}"`)
 
-
     return await paginate({
       Model: this.endorsementModel,
       limit: query.limit || 10,
@@ -182,7 +181,6 @@ export class EndorsementService {
       orderOption: [['counter', 'DESC']],
       where: { endorsementListId: listId },
     })
-
   }
 
   async findSingleUserEndorsement({
