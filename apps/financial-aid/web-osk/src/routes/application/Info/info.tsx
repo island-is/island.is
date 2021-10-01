@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { Text, Icon, Box, Checkbox } from '@island.is/island-ui/core'
 
 import {
@@ -14,20 +14,10 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFor
 
 import {
   getNextPeriod,
-  Municipality,
   NavigationProps,
 } from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
-import { GetMunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql'
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
-
-import { useMutation, useQuery } from '@apollo/client'
-import { setUser } from '@sentry/minimal'
-
-interface MunicipalityData {
-  municipality: Municipality
-}
 
 const ApplicationInfo = () => {
   const router = useRouter()

@@ -3,7 +3,7 @@ import { GridContainer, Button, Text, Box } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 import * as styles from './login.treat'
-import { Routes } from '@island.is/financial-aid/shared/lib'
+import { Routes, signOutUrl } from '@island.is/financial-aid/shared/lib'
 import { signIn, useSession, signOut } from 'next-auth/client'
 
 interface Props {
@@ -37,10 +37,8 @@ const Login = ({ headline, about }: Props) => {
           {/* TODO: REMOVE THIS BUTTON AFTER TESTING AND MOVE TO CORRECT LOGOUT */}
           <Button
             onClick={() =>
-              session &&
-              window &&
               signOut({
-                callbackUrl: `${window.location.origin}/api/auth/logout?id_token=${session.idToken}`,
+                callbackUrl: signOutUrl(window, session?.idToken),
               })
             }
             data-testid="logout-button"
