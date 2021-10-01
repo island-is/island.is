@@ -417,12 +417,13 @@ export class CaseController {
   })
   async getRulingPdf(
     @Param('id') id: string,
+    @Query('shortVersion') shortVersion: boolean,
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
     const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
-    const pdf = await this.caseService.getRulingPdf(existingCase)
+    const pdf = await this.caseService.getRulingPdf(existingCase, shortVersion)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,
