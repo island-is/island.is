@@ -17,6 +17,7 @@ import {
   CurrentApplicationModel,
   ApplicationModel,
   UpdateApplicationTableResponse,
+  UpdateApplicationResponse,
 } from './models'
 
 import {
@@ -41,6 +42,7 @@ import {
 import { ApplicationGuard } from '../../guards/application.guard'
 
 import type {
+  Application,
   ApplicationStateUrl,
   User,
 } from '@island.is/financial-aid/shared/lib'
@@ -145,13 +147,32 @@ export class ApplicationController {
       id,
       applicationToUpdate,
     )
+    return {
+      applications: await this.applicationService.getAll(stateUrl),
+      filters: await this.applicationService.getAllFilters(),
+    }
+  }
+
+  @Put('updateApplication/:id')
+  @ApiOkResponse({
+    type: UpdateApplicationResponse,
+    description: 'Updates an existing application',
+  })
+  async updateApplication(
+    @Param('id') id: string,
+    @Body() applicationToUpdate: UpdateApplicationDto,
+  ): Promise<UpdateApplicationResponse> {
+    const {
+      numberOfAffectedRows,
+      updatedApplication,
+    } = await this.applicationService.update(id, applicationToUpdate)
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Application ${id} does not exist`)
     }
 
     return {
-      applications: await this.applicationService.getAll(stateUrl),
+      application: updatedApplication,
       filters: await this.applicationService.getAllFilters(),
     }
   }

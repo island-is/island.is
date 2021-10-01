@@ -5,11 +5,12 @@ import {
   HomeCircumstances,
   Employment,
   ApplicationState,
+  ApplicationFilters,
 } from '@island.is/financial-aid/shared/lib'
 
 import { ApplicationFileModel } from '../../file'
 import { StaffModel } from '../../staff'
-import { ApplicationEventModel } from './index'
+import { ApplicationEventModel, ApplicationFiltersModel } from './index'
 
 @ObjectType()
 export class ApplicationModel implements Application {
@@ -90,4 +91,7 @@ export class ApplicationModel implements Application {
 
   @Field(() => [ApplicationEventModel], { nullable: true })
   readonly applicationEvents?: ApplicationEventModel[]
+
+  @Field(() => ApplicationFiltersModel, { nullable: true })
+  readonly filters?: ApplicationFiltersModel
 }
