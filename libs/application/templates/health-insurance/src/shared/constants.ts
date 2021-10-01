@@ -17,13 +17,13 @@ export enum StatusTypes {
   EMPLOYED = 'employed',
 }
 
-export enum NordicCountries {
-  NORWAY = 'Norway',
-  DENMARK = 'Denmark',
-  SWEDEN = 'Sweden',
-  FINLAND = 'Finland',
-  FAROE_ISLANDS = 'Faroe Islands',
-  GREENLAND = 'Greenland',
-  ALAND = 'Åland Islands',
-  SVALBARD = 'Svalbard and Jan Mayen', // because this is in the list of countries we get from api
+export enum NordicCountriesCountryCode {
+  'NO',
+  'DK',
+  'SE',
+  'FI',
+  'FO',
+  'GL',
+  'AX',
+  'SJ',
 }
