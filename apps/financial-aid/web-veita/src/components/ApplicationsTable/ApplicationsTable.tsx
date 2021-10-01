@@ -15,6 +15,7 @@ import {
   Application,
   ApplicationState,
   ApplicationStateUrl,
+  getStateUrlFromRoute,
 } from '@island.is/financial-aid/shared/lib'
 import { TableHeadersProps } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
@@ -47,7 +48,7 @@ const ApplicationsTable = ({
     const updateApplicationTable = await changeApplicationTable(
       applicationId,
       state,
-      router.pathname.substring(1) as ApplicationStateUrl,
+      getStateUrlFromRoute[router.pathname],
     )
     if (updateApplicationTable) {
       setIsLoading(false)

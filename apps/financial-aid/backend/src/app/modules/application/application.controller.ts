@@ -144,10 +144,7 @@ export class ApplicationController {
     @Param('stateUrl') stateUrl: ApplicationStateUrl,
     @Body() applicationToUpdate: UpdateApplicationDto,
   ): Promise<UpdateApplicationTableResponse> {
-    const { numberOfAffectedRows } = await this.applicationService.update(
-      id,
-      applicationToUpdate,
-    )
+    await this.applicationService.update(id, applicationToUpdate)
     return {
       applications: await this.applicationService.getAll(stateUrl),
       filters: await this.applicationService.getAllFilters(),
