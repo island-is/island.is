@@ -309,10 +309,6 @@ export const m = defineMessages({
     id: 'service.portal:applications',
     defaultMessage: 'Umsóknir',
   },
-  petitions: {
-    id: 'service.portal:petitions',
-    defaultMessage: 'Meðmæli',
-  },
   myInfo: {
     id: 'service.portal:my-info',
     defaultMessage: 'Mín gögn',
@@ -332,10 +328,6 @@ export const m = defineMessages({
   endorsements: {
     id: 'service.portal:endorsements',
     defaultMessage: 'Meðmæli',
-  },
-  endorsementsAdmin: {
-    id: 'service.portal:endorsements-admin',
-    defaultMessage: 'Meðmæli Admin',
   },
   educationLicense: {
     id: 'service.portal:educationLicense',
