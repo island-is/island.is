@@ -126,6 +126,13 @@ export const UpdateApplicationMutation = gql`
         studentCustom
         amount
         rejection
+        applicationEvents {
+          id
+          applicationId
+          eventType
+          comment
+          created
+        }
         staff {
           name
         }
