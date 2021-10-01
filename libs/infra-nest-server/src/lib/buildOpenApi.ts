@@ -24,7 +24,7 @@ export const buildOpenApi = async ({
     })
     const document = SwaggerModule.createDocument(app, openApi)
 
-    return writeFileSync(path, yaml.safeDump(document, { noRefs: true }))
+    return writeFileSync(path, yaml.dump(document, { noRefs: true }))
   } catch (e) {
     logger.error('Error while creating openapi.yaml', { message: e.message })
   }

@@ -27,6 +27,9 @@ export interface Config {
     apiKey: string
     apiUrl: string
     secretKey: string
+    cacheKey: string
+    cacheTokenExpiryDelta: string
+    authRetries: string
   }
 }
 

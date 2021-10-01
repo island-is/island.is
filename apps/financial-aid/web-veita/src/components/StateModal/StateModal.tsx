@@ -1,34 +1,25 @@
-import React, { useContext, useState, useMemo } from 'react'
+import React, { useState } from 'react'
 import { ModalBase, Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './StateModal.treat'
 import cn from 'classnames'
-
-import { useMutation } from '@apollo/client'
 
 import {
   InputModal,
   OptionsModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
-import { UpdateApplicationMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
-
-import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/src/components/ApplicationFiltersProvider/ApplicationFiltersProvider'
-
 import {
   Application,
   ApplicationState,
 } from '@island.is/financial-aid/shared/lib'
+import { useApplicationState } from '../../utils/useApplicationState'
 
 interface Props {
   isVisible: boolean
-  onVisiblityChange: React.Dispatch<React.SetStateAction<boolean>>
-  onStateChange: (applicationState: ApplicationState) => void
+  onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
   application: Application
-}
-
-interface SaveData {
-  application: Application
+  setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
 }
 
 interface InputType {
@@ -38,23 +29,16 @@ interface InputType {
 
 const StateModal = ({
   isVisible,
-  onVisiblityChange,
-  onStateChange,
+  onVisibilityChange,
   application,
+  setApplication,
 }: Props) => {
   const [inputType, setInputType] = useState<InputType>({
     show: false,
     type: undefined,
   })
 
-  const { applicationFilters, setApplicationFilters } = useContext(
-    ApplicationFiltersContext,
-  )
-
-  const [
-    updateApplicationMutation,
-    { loading: saveLoading },
-  ] = useMutation<SaveData>(UpdateApplicationMutation)
+  const changeApplicationState = useApplicationState()
 
   const saveStateApplication = async (
     application: Application,
@@ -62,36 +46,22 @@ const StateModal = ({
     amount?: number,
     rejection?: string,
   ) => {
-    const prevState = application.state
-
-    if (saveLoading === false && application) {
-      await updateApplicationMutation({
-        variables: {
-          input: {
-            id: application.id,
-            state: state,
-            amount: amount,
-            rejection: rejection,
-          },
-        },
-      })
+    const updatedApplication = await changeApplicationState(
+      application,
+      state,
+      amount,
+      rejection,
+    )
+    if (updatedApplication) {
+      setApplication(updatedApplication)
     }
 
-    onVisiblityChange(!isVisible)
-    onStateChange(state)
-
-    if (applicationFilters && setApplicationFilters) {
-      setApplicationFilters((preState) => ({
-        ...preState,
-        [prevState]: applicationFilters[prevState] - 1,
-        [state]: applicationFilters[state] + 1,
-      }))
-    }
+    onVisibilityChange((isVisible) => !isVisible)
   }
 
   const closeModal = (): void => {
     if (!inputType.show) {
-      onVisiblityChange(false)
+      onVisibilityChange(false)
     }
   }
 
@@ -113,7 +83,7 @@ const StateModal = ({
       isVisible={isVisible}
       onVisibilityChange={(visibility) => {
         if (visibility !== isVisible) {
-          onVisiblityChange(visibility)
+          onVisibilityChange(visibility)
         }
       }}
       className={styles.modalBase}

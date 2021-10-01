@@ -22,6 +22,12 @@ export enum ApplicationState {
   APPROVED = 'Approved',
 }
 
+export enum ApplicationStateUrl {
+  NEW = 'nymal',
+  INPROGRESS = 'vinnslu',
+  PROCESSED = 'afgreidd',
+}
+
 export enum ApplicationEventType {
   NEW = 'New',
   INPROGRESS = 'InProgress',
@@ -48,4 +54,9 @@ export enum FileType {
   TAXRETURN = 'TaxReturn',
   INCOME = 'Income',
   OTHER = 'Other',
+}
+
+export enum StaffRole {
+  ADMIN = 'Admin',
+  EMPLOYEE = 'Employee',
 }

@@ -11,31 +11,34 @@ interface NavigationInfoProps {
   nextUrl?: string
 }
 
-const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
-  const { form, updateForm } = useContext(FormContext)
+export const findSectionIndex = (
+  navigationTree: FormStepperSection[],
+  currentRoute: string,
+) => {
+  for (const [index, item] of Object.entries(navigationTree)) {
+    if (item.url === currentRoute) {
+      return { activeSectionIndex: parseInt(index) }
+    }
 
-  var navigationTree = useNavigationTree(Boolean(form?.hasIncome))
-
-  const findSectionIndex = (navigationTree: FormStepperSection[]) => {
-    for (const [index, item] of Object.entries(navigationTree)) {
-      if (item.url === currentRoute) {
-        return { activeSectionIndex: parseInt(index) }
-      }
-
-      if (item.children) {
-        for (const [childIndex, child] of Object.entries(item.children)) {
-          if (child.url === currentRoute) {
-            return {
-              activeSectionIndex: parseInt(index),
-              activeSubSectionIndex: parseInt(childIndex),
-            }
+    if (item.children) {
+      for (const [childIndex, child] of Object.entries(item.children)) {
+        if (child.url === currentRoute) {
+          return {
+            activeSectionIndex: parseInt(index),
+            activeSubSectionIndex: parseInt(childIndex),
           }
         }
       }
     }
-
-    return { activeSectionIndex: 0 }
   }
+
+  return { activeSectionIndex: 0 }
+}
+
+const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
+  const { form, updateForm } = useContext(FormContext)
+
+  var navigationTree = useNavigationTree(Boolean(form?.hasIncome))
 
   const getNextUrl = (obj: FormStepperSection) => {
     if (obj?.children) {
@@ -82,7 +85,7 @@ const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
   }
 
   const createNavigationInfo = (navigationTree: FormStepperSection[]) => {
-    const findSection = findSectionIndex(navigationTree)
+    const findSection = findSectionIndex(navigationTree, currentRoute)
 
     const nextUrl = findNextUrl(findSection)
     const prevUrl = findPrevUrl(findSection)

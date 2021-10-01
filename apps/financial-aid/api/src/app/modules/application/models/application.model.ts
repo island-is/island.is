@@ -8,6 +8,8 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import { ApplicationFileModel } from '../../file'
+import { StaffModel } from '../../staff'
+import { ApplicationEventModel } from './index'
 
 @ObjectType()
 export class ApplicationModel implements Application {
@@ -82,4 +84,10 @@ export class ApplicationModel implements Application {
 
   @Field({ nullable: true })
   readonly rejection?: string
+
+  @Field({ nullable: true })
+  readonly staff?: StaffModel
+
+  @Field(() => [ApplicationEventModel], { nullable: true })
+  readonly applicationEvents?: ApplicationEventModel[]
 }

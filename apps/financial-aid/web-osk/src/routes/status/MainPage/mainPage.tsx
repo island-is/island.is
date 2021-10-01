@@ -15,7 +15,6 @@ import {
   Footer,
   InProgress,
   Rejected,
-  StatusLayout,
   Timeline,
 } from '@island.is/financial-aid-web/osk/src/components'
 
@@ -45,6 +44,7 @@ const MainPage = () => {
       errorPolicy: 'all',
     },
   )
+
   const currentApplication = useMemo(() => {
     if (data?.application) {
       return data.application
@@ -52,7 +52,7 @@ const MainPage = () => {
   }, [data])
 
   return (
-    <StatusLayout>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
           Aðstoðin þín
@@ -76,9 +76,8 @@ const MainPage = () => {
         )}
         {error && (
           <Text>
-            {' '}
-            Umsókn ekki fundin eða einhvað fór úrskeiðis, ertu viss þú hefur
-            sótt um?{' '}
+            Umsókn ekki fundin eða einhvað fór úrskeiðis <br />
+            vinsamlegast reyndu síðar
           </Text>
         )}
         {loading && <LoadingDots />}
@@ -121,7 +120,7 @@ const MainPage = () => {
         previousIsDestructive={true}
         hideNextButton={true}
       />
-    </StatusLayout>
+    </>
   )
 }
 

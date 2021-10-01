@@ -49,16 +49,6 @@ input[type='number'] {
   margin: 0 auto;
 }
 
-.logoHfj {
-  width: 32px;
-  height: 48px;
-}
-
-.logoContainer {
-  max-width: 160px;
-  display: flex;
-}
-
 .headLine {
   position: relative;
 }
@@ -75,7 +65,7 @@ input[type='number'] {
 
 .contentUp {
   opacity: 0;
-  transform: translate3d(0, 30px, 0);
+  transform: translate3d(0, 15px, 0);
   animation-name: ptContentUp;
   animation-timing-function: ease;
   animation-fill-mode: forwards;

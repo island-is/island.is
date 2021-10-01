@@ -36,10 +36,6 @@ const CourtRecord = () => {
     const defaultCourtAttendees = (wc: Case): string => {
       let attendees = ''
 
-      if (wc.registrar) {
-        attendees += `${wc.registrar.name} ${wc.registrar.title}\n`
-      }
-
       if (
         wc.prosecutor &&
         wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
@@ -80,7 +76,21 @@ const CourtRecord = () => {
 
       autofill('courtStartDate', new Date().toString(), theCase)
 
-      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      if (theCase.court) {
+        autofill(
+          'courtLocation',
+          `í ${
+            theCase.court.name.indexOf('dómur') > -1
+              ? theCase.court.name.replace('dómur', 'dómi')
+              : theCase.court.name
+          }`,
+          theCase,
+        )
+      }
+
+      if (theCase.courtAttendees !== '') {
+        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      }
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)

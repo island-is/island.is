@@ -29,6 +29,12 @@ const prodConfig = {
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
   },
+  emailOptions: {
+    useTestAccount: false,
+    options: {
+      region: process.env.EMAIL_REGION ?? '',
+    },
+  },
 }
 
 const devConfig = {
@@ -43,6 +49,12 @@ const devConfig = {
     fileBaseUrl: 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
+  },
+  emailOptions: {
+    useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
+    options: {
+      region: process.env.EMAIL_REGION ?? '',
+    },
   },
 }
 

@@ -703,6 +703,18 @@ const Auctions: Screen<AuctionsProps> = ({
                       />
                     )}
 
+                  {/* Real Estate auction location info */}
+                  {auction.lotId &&
+                    auction.lotType === LOT_TYPES.REAL_ESTATE &&
+                    auction.auctionType === AUCTION_TYPES.CONTINUATION && (
+                      <Text paddingBottom={1}>
+                        {n(
+                          'auctionRealEstateAuctionContinuationLocation',
+                          'Framhald uppboðs fasteignarinnar verður háð á fasteigninni sjálfri.',
+                        )}
+                      </Text>
+                    )}
+
                   {/* Real Estate respondents */}
                   {auctionRespondents &&
                     auction.lotType === LOT_TYPES.REAL_ESTATE && (
