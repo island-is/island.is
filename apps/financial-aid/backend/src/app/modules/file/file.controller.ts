@@ -1,20 +1,17 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
-import {
-  CurrentUser,
-  RolesGuard,
-  RolesRules,
-  TokenGuard,
-} from '@island.is/financial-aid/auth'
 import { apiBasePath, RolesRule } from '@island.is/financial-aid/shared/lib'
 import type { User } from '@island.is/financial-aid/shared/lib'
 
 import { GetSignedUrlDto, CreateFilesDto } from './dto'
 import { CreateFilesModel, SignedUrlModel } from './models'
 import { FileService } from './file.service'
+import { RolesGuard } from '../../guards'
+import { CurrentUser, RolesRules } from '../../decorators'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-@UseGuards(TokenGuard)
+@UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/file`)
 @ApiTags('files')
 export class FileController {

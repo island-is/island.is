@@ -5,9 +5,6 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.AUTH_JWT_SECRET) {
     throw new Error('Missing AUTH_JWT_SECRET environment.')
   }
-  if (!process.env.SECRET_TOKEN) {
-    throw new Error('Missing SECRET_TOKEN environment.')
-  }
   if (!process.env.BACKEND_URL) {
     throw new Error('Missing BACKEND_URL environment.')
   }
@@ -36,8 +33,6 @@ const prodConfig = {
     audienceOsk: process.env.AUTH_AUDIENCE_OSK ?? '',
     audienceVeita: process.env.AUTH_AUDIENCE_VEITA ?? '',
     allowFakeUsers: process.env.ALLOW_FAKE_USERS === 'true',
-    jwtSecret: process.env.AUTH_JWT_SECRET!,
-    secretToken: process.env.SECRET_TOKEN!,
   },
   identityServerAuth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',

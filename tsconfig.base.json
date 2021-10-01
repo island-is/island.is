@@ -274,7 +274,6 @@
       "@island.is/financial-aid-web/veita/*": [
         "apps/financial-aid/web-veita/*"
       ],
-      "@island.is/financial-aid/auth": ["libs/financial-aid/auth/src/index.ts"],
       "@island.is/financial-aid/shared/components": [
         "libs/financial-aid/shared/src/components/index.ts"
       ],

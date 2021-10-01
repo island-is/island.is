@@ -4,21 +4,26 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { StaffService } from './staff.service'
 import { StaffModel } from './models'
-import { TokenGuard } from '@island.is/financial-aid/auth'
-import { apiBasePath } from '@island.is/financial-aid/shared/lib'
+import { apiBasePath, RolesRule } from '@island.is/financial-aid/shared/lib'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { RolesGuard } from '../../guards'
+import { RolesRules } from '../../decorators'
 
+@UseGuards(IdsUserGuard, RolesGuard)
+@RolesRules(RolesRule.VEITA)
 @Controller(`${apiBasePath}/staff`)
 @ApiTags('staff')
 export class StaffController {
   constructor(private readonly staffService: StaffService) {}
 
-  @UseGuards(TokenGuard)
   @Get(':nationalId')
   @ApiOkResponse({
     type: StaffModel,
     description: 'Gets staff by nationalId',
   })
-  async getStaffByNationalId(@Param('nationalId') nationalId: string) {
+  async getStaffByNationalId(
+    @Param('nationalId') nationalId: string,
+  ): Promise<StaffModel> {
     return await this.staffService.findByNationalId(nationalId)
   }
 }

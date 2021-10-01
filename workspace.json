@@ -150,8 +150,7 @@
             "outputPath": "dist/apps/air-discount-scheme/backend",
             "main": "apps/air-discount-scheme/backend/src/main.ts",
             "tsConfig": "apps/air-discount-scheme/backend/tsconfig.app.json",
-            "assets": [
-              {
+            "assets": [{
                 "glob": "*sequelize*",
                 "input": "apps/air-discount-scheme/backend",
                 "output": "./"
@@ -1604,8 +1603,7 @@
             "outputPath": "dist/apps/application-system/api",
             "main": "apps/application-system/api/src/main.ts",
             "tsConfig": "apps/application-system/api/tsconfig.app.json",
-            "assets": [
-              {
+            "assets": [{
                 "glob": "*",
                 "input": "apps/application-system/api/migrations",
                 "output": "./migrations"
@@ -1748,13 +1746,11 @@
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                }
-              ]
+              "budgets": [{
+                "type": "initial",
+                "maximumWarning": "2mb",
+                "maximumError": "5mb"
+              }]
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -3976,33 +3972,6 @@
         "docker-express": {}
       }
     },
-    "financial-aid-auth": {
-      "root": "libs/financial-aid/auth",
-      "sourceRoot": "libs/financial-aid/auth/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/financial-aid/auth/tsconfig.lib.json",
-              "libs/financial-aid/auth/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/financial-aid/auth/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/financial-aid/auth/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/financial-aid/auth"]
-        }
-      }
-    },
     "financial-aid-backend": {
       "root": "apps/financial-aid/backend",
       "sourceRoot": "apps/financial-aid/backend/src",
@@ -4016,8 +3985,7 @@
             "outputPath": "dist/apps/financial-aid/backend",
             "main": "apps/financial-aid/backend/src/main.ts",
             "tsConfig": "apps/financial-aid/backend/tsconfig.app.json",
-            "assets": [
-              {
+            "assets": [{
                 "glob": "*",
                 "input": "apps/financial-aid/backend/migrations",
                 "output": "./migrations"
@@ -4159,12 +4127,10 @@
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/financial-aid/web-osk/src/environments/environment.ts",
-                  "with": "apps/financial-aid/web-osk/src/environments/environment.prod.ts"
-                }
-              ]
+              "fileReplacements": [{
+                "replace": "apps/financial-aid/web-osk/src/environments/environment.ts",
+                "with": "apps/financial-aid/web-osk/src/environments/environment.prod.ts"
+              }]
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -4253,12 +4219,10 @@
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/financial-aid/web-veita/src/environments/environment.ts",
-                  "with": "apps/financial-aid/web-veita/src/environments/environment.prod.ts"
-                }
-              ]
+              "fileReplacements": [{
+                "replace": "apps/financial-aid/web-veita/src/environments/environment.ts",
+                "with": "apps/financial-aid/web-veita/src/environments/environment.prod.ts"
+              }]
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -4390,8 +4354,7 @@
             "outputPath": "dist/apps/gjafakort/application",
             "main": "apps/gjafakort/application/src/main.ts",
             "tsConfig": "apps/gjafakort/application/tsconfig.app.json",
-            "assets": [
-              {
+            "assets": [{
                 "glob": "*sequelize*",
                 "input": "apps/gjafakort/application",
                 "output": "./"
@@ -4746,8 +4709,7 @@
             "main": "apps/icelandic-names-registry/backend/src/main.ts",
             "tsConfig": "apps/icelandic-names-registry/backend/tsconfig.app.json",
             "webpackConfig": "apps/icelandic-names-registry/backend/webpack.config.js",
-            "assets": [
-              {
+            "assets": [{
                 "glob": "*sequelize*",
                 "input": "apps/icelandic-names-registry/backend",
                 "output": "./"
@@ -5336,8 +5298,7 @@
             "outputPath": "dist/apps/judicial-system/backend",
             "main": "apps/judicial-system/backend/src/main.ts",
             "tsConfig": "apps/judicial-system/backend/tsconfig.app.json",
-            "assets": [
-              {
+            "assets": [{
                 "glob": "*",
                 "input": "apps/judicial-system/backend/migrations",
                 "output": "./migrations"
@@ -5947,8 +5908,7 @@
             "outputPath": "dist/apps/reference-backend",
             "main": "apps/reference-backend/src/main.ts",
             "tsConfig": "apps/reference-backend/tsconfig.app.json",
-            "assets": [
-              {
+            "assets": [{
                 "glob": "*",
                 "input": "apps/reference-backend/migrations",
                 "output": "./migrations"
@@ -6174,13 +6134,11 @@
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                }
-              ]
+              "budgets": [{
+                "type": "initial",
+                "maximumWarning": "2mb",
+                "maximumError": "5mb"
+              }]
             }
           },
           "outputs": ["{options.outputPath}"]
@@ -7393,8 +7351,7 @@
             "outputPath": "dist/apps/services/endorsements/api",
             "main": "apps/services/endorsements/api/src/main.ts",
             "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
-            "assets": [
-              {
+            "assets": [{
                 "glob": "updateMetadata.js",
                 "input": "apps/services/endorsements/api/script-entrypoints",
                 "output": "./"
@@ -7544,8 +7501,7 @@
             "outputPath": "dist/apps/services/party-letter-registry-api",
             "main": "apps/services/party-letter-registry-api/src/main.ts",
             "tsConfig": "apps/services/party-letter-registry-api/tsconfig.app.json",
-            "assets": [
-              {
+            "assets": [{
                 "glob": "*",
                 "input": "apps/services/party-letter-registry-api/migrations",
                 "output": "./migrations"
@@ -7655,8 +7611,7 @@
             "outputPath": "dist/apps/services/search-indexer",
             "main": "apps/services/search-indexer/src/main.ts",
             "tsConfig": "apps/services/search-indexer/tsconfig.app.json",
-            "assets": [
-              {
+            "assets": [{
                 "glob": "config/**",
                 "input": "apps/services/search-indexer",
                 "output": "./"
@@ -7741,8 +7696,7 @@
             "outputPath": "dist/apps/services/temporary-voter-registry-api",
             "main": "apps/services/temporary-voter-registry-api/src/main.ts",
             "tsConfig": "apps/services/temporary-voter-registry-api/tsconfig.app.json",
-            "assets": [
-              {
+            "assets": [{
                 "glob": "*",
                 "input": "apps/services/temporary-voter-registry-api/migrations",
                 "output": "./migrations"

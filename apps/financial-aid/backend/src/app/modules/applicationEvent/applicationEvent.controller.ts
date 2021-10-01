@@ -16,9 +16,9 @@ import { ApplicationEventModel } from './models'
 
 import { CreateApplicationEventDto } from './dto'
 import { apiBasePath } from '@island.is/financial-aid/shared/lib'
-import { TokenGuard } from '@island.is/financial-aid/auth'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-@UseGuards(TokenGuard)
+@UseGuards(IdsUserGuard)
 @Controller(apiBasePath)
 @ApiTags('applicationEvents')
 export class ApplicationEventController {

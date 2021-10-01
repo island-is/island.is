@@ -43,7 +43,7 @@ export class ApplicationService {
 
     const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
 
-    return this.applicationModel.findOne({
+    return await this.applicationModel.findOne({
       where: {
         nationalId,
         created: { [Op.gte]: firstDateOfMonth },

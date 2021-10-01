@@ -6,7 +6,6 @@ import { ApplicationEventModule } from '../applicationEvent'
 import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
 import { FileModule } from '../file'
-import { AuthModule } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments'
 
 @Module({
@@ -14,7 +13,6 @@ import { environment } from '../../../environments'
     FileModule,
     ApplicationEventModule,
     SequelizeModule.forFeature([ApplicationModel]),
-    AuthModule.register(environment.identityServerAuth),
   ],
   providers: [ApplicationService],
   controllers: [ApplicationController],

@@ -10,33 +10,23 @@ import {
   Query,
   Inject,
 } from '@nestjs/common'
-
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
-
 import { ApplicationService } from './application.service'
 import { CurrentApplicationModel, ApplicationModel } from './models'
-
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
-
-import {
-  CurrentUser,
-  TokenGuard,
-  RolesGuard,
-  RolesRules,
-} from '@island.is/financial-aid/auth'
-
-import { ApplicationGuard } from '../../guards/application.guard'
-
 import { apiBasePath, User } from '@island.is/financial-aid/shared/lib'
-
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
 import {
   ApplicationFilters,
   RolesRule,
 } from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { RolesGuard } from '../../guards'
+import { CurrentUser, RolesRules } from '../../decorators'
+import { ApplicationGuard } from '../../guards/application.guard'
+
+@UseGuards(IdsUserGuard)
 @Controller(apiBasePath)
 @ApiTags('applications')
 export class ApplicationController {
@@ -46,14 +36,26 @@ export class ApplicationController {
     private readonly logger: Logger,
   ) {}
 
-  @Get('getCurrentApplication')
+  @UseGuards(RolesGuard)
+  @RolesRules(RolesRule.OSK)
+  @Get('currentApplication')
   @ApiOkResponse({
     type: CurrentApplicationModel,
     description: 'Checks if user has a current application for this period',
   })
-  async getCurrentApplication(@Query('nationalId') nationalId: string) {
+  async getCurrentApplication(
+    @Query('nationalId') nationalId: string,
+  ): Promise<CurrentApplicationModel> {
     this.logger.debug('Application controller: Getting current application')
-    return await this.applicationService.getCurrentApplication(nationalId)
+    const currentApplication = await this.applicationService.getCurrentApplication(
+      nationalId,
+    )
+
+    if (currentApplication === null) {
+      throw new NotFoundException(404, 'Current application not found')
+    }
+
+    return currentApplication
   }
 
   @UseGuards(RolesGuard)
@@ -121,7 +123,6 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @UseGuards(IdsUserGuard)
   @Post('application')
   @ApiCreatedResponse({
     type: ApplicationModel,

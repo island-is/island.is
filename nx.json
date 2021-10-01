@@ -379,9 +379,6 @@
     "financial-aid-api": {
       "tags": []
     },
-    "financial-aid-auth": {
-      "tags": []
-    },
     "financial-aid-backend": {
       "tags": []
     },

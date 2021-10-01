@@ -1,3 +1,4 @@
+import { AuthModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 
@@ -24,9 +25,12 @@ const autoSchemaFile = environment.production
       playground,
       autoSchemaFile,
       path: '/api/graphql',
-      context: ({ req }) => ({ req }),
-      dataSources: () => ({ backendApi: new BackendAPI() }),
+      context: ({ req }) => req,
+      dataSources: () => ({
+        backendApi: new BackendAPI(),
+      }),
     }),
+    AuthModule.register(environment.identityServerAuth),
     UserModule,
     ApplicationModule,
     MunicipalityModule,

@@ -1,6 +1,6 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import {
   Application,
@@ -18,6 +18,8 @@ import {
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
+import { CurrentApplicationModel } from '../app/modules/application'
+import { StaffModel } from '../app/modules/staff'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -79,6 +81,14 @@ class BackendAPI extends RESTDataSource {
     createApplicationFiles: CreateApplicationFilesInput,
   ): Promise<CreateFilesResponse> {
     return this.post('file', createApplicationFiles)
+  }
+
+  getCurrentApplication(nationalId: string): Promise<CurrentApplicationModel> {
+    return this.get(`currentApplication/?nationalId=${nationalId}`)
+  }
+
+  getStaff(nationalId: string): Promise<StaffModel> {
+    return this.get(`staff/${nationalId}`)
   }
 }
 

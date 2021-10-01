@@ -1,8 +1,7 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
-
 import { RolesRule } from '@island.is/financial-aid/shared/lib'
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
+import { getUserFromContext } from '../lib'
 import { ApplicationService } from '../modules/application'
-import { getUserFromContext } from '@island.is/financial-aid/auth'
 
 @Injectable()
 export class ApplicationGuard implements CanActivate {

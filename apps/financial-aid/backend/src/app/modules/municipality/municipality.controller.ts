@@ -1,27 +1,20 @@
 import {
-  Body,
   Controller,
   Get,
-  Post,
   NotFoundException,
   Param,
   UseGuards,
 } from '@nestjs/common'
 
-import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { MunicipalityService } from './municipality.service'
 import { MunicipalityModel } from './models'
 
-import {
-  apiBasePath,
-  Municipality,
-  MunicipalitySettings,
-} from '@island.is/financial-aid/shared/lib'
+import { apiBasePath, Municipality } from '@island.is/financial-aid/shared/lib'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-import { TokenGuard } from '@island.is/financial-aid/auth'
-
-@UseGuards(TokenGuard)
+@UseGuards(IdsUserGuard)
 @Controller(apiBasePath)
 @ApiTags('municipality')
 export class MunicipalityController {

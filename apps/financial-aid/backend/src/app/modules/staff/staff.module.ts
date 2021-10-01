@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+import { environment } from '../../../environments'
 
 import { StaffModel } from './models'
 import { StaffController } from './staff.controller'
