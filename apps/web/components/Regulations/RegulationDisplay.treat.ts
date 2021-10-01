@@ -60,6 +60,26 @@ export const diffInfo = style({
   opacity: 0.67,
 })
 
+export const historyStepper = style({
+  position: 'relative',
+  top: spacing[1],
+  marginTop: spacing[1],
+  fontSize: '.75em',
+  display: 'flex',
+  flexFlow: 'row-reverse',
+})
+export const historyStepperLink = style({
+  selectors: {
+    '&:not(:first-child)': {
+      marginRight: spacing[2],
+    },
+  },
+})
+export const historyStepperLinkText = style({
+  display: 'inline-block',
+  verticalAlign: 'top',
+})
+
 const makeWatermark = (text: string, size = 1, opacity = 1) => {
   const fontSize = size * 200
   opacity *= 0.0575
@@ -72,7 +92,7 @@ export const repealedWarning = style({
   backgroundPosition: 'top center',
 })
 export const oudatedWarning = style({
-  backgroundImage: makeWatermark('Úrelt', 1, 0.5),
+  backgroundImage: makeWatermark('Úrelt', 1, 0.6),
   backgroundSize: '100% auto',
   backgroundPosition: 'top center',
 })

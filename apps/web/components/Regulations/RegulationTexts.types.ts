@@ -43,6 +43,8 @@ export type RegulationPageTexts = Partial<
     | 'hideDiff' // 'Fela breytingar'
     | 'showDiff_fromOriginal' // 'Sjá allar breytingar frá upphafi'
     | 'showDiff_fromLast' // 'Sjá síðustu breytingar'
+    | 'nextVersion' // 'Næsta útgáfa'
+    | 'previousVersion' // 'Fyrri útgáfa'
     | 'appendixesTitle' // 'Viðaukar'
     | 'appendixGenericTitle' // 'Viðauki'
     | 'commentsTitle' // 'Athugasemdir ritstjóra'

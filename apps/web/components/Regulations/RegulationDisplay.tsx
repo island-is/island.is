@@ -20,6 +20,7 @@ import { RegulationChangelog } from './RegulationChangelog'
 import { AffectingRegulations } from './AffectingRegulations'
 import { RegulationTimeline } from './RegulationTimeline'
 import { DiffModeToggle } from './DiffModeToggle'
+import { HistoryStepper } from './HistoryStepper'
 
 const getKey = (regulation: RegulationMaybeDiff): string => {
   const { name, timelineDate, showingDiff } = regulation
@@ -83,6 +84,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
               texts={texts}
             />
             <AffectingRegulations regulation={regulation} texts={texts} />
+            <HistoryStepper regulation={regulation} texts={texts} />
           </div>
 
           <div className={waterMarkClass}>
