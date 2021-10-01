@@ -36,4 +36,27 @@ export const core = defineMessages({
     defaultMessage: 'Lögheimili/dvalarstaður',
     description: 'Notað fyrir orðið Lögheimili/dvalarstaður í öllum flæðum.',
   },
+  pdfButtonRequest: {
+    id: 'judicial.system.core:pdf_button_request',
+    defaultMessage: 'Krafa - PDF',
+    description: 'Notað fyrir texta á hnappi til að sækja kröfu sem pdf skjal.',
+  },
+  pdfButtonRuling: {
+    id: 'judicial.system.core:pdf_button_ruling',
+    defaultMessage: 'Þingbók og úrskurður - PDF',
+    description:
+      'Notað fyrir texta á hnappi til að sækja þingbók og úrskurð sem pdf skjal.',
+  },
+  pdfButtonRulingShortVersion: {
+    id: 'judicial.system.core:pdf_button_ruling_short_version',
+    defaultMessage: 'Þingbók án úrskurðar - PDF',
+    description:
+      'Notað fyrir texta á hnappi til að sækja þingbók án úrskurðar sem pdf skjal.',
+  },
+  pdfButtonCustodyNotice: {
+    id: 'judicial.system.core:pdf_button_custody_notice',
+    defaultMessage: 'Vistunarseðill - PDF',
+    description:
+      'Notað fyrir texta á hnappi til að sækja vistunarseðil sem pdf skjal.',
+  },
 })

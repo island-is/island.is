@@ -68,7 +68,7 @@ describe('/domur/krafa/:id', () => {
   })
 
   it('should have a button to a PDF of the case', () => {
-    cy.contains('button', 'Opna PDF kröfu')
+    cy.contains('button', 'Krafa - PDF')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
