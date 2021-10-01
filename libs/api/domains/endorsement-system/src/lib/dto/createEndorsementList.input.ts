@@ -49,5 +49,5 @@ export class CreateEndorsementListDto {
 
   @Field({})
   @IsBoolean()
-  adminLock!: false
+  adminLock!: boolean
 }

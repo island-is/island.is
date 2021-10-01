@@ -72,6 +72,16 @@ export class EndorsementListService {
     return await endorsementList.update({ closedDate: new Date(newDate.closedDate )})
   }
 
+  async lock(endorsementList: EndorsementList): Promise<EndorsementList> {
+    this.logger.info(`Locking endorsement list: ${endorsementList.id}`)
+    return await endorsementList.update({ adminLock: true })
+  }
+
+  async unlock(endorsementList: EndorsementList): Promise<EndorsementList> {
+    this.logger.info(`Unlocking endorsement list: ${endorsementList.id}`)
+    return await endorsementList.update({ adminLock: false })
+  }
+
   async create(list: CreateInput) {
     const open = new Date(list.openedDate)
     const close = new Date(list.closedDate)

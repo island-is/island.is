@@ -144,6 +144,50 @@ export class EndorsementListController {
   }
 
   @ApiOkResponse({
+    description: 'Lock a single endorsements list by id',
+    type: EndorsementList,
+  })
+  @ApiParam({ name: 'listId', type: 'string' })
+  @Scopes(EndorsementsScope.main)
+  @Put(':listId/lock')
+  @HasAccessGroup(AccessGroup.Admin)
+  @Audit<EndorsementList>({
+    resources: (endorsementList) => endorsementList.id,
+  })
+  async lock(
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+    )
+    endorsementList: EndorsementList,
+  ): Promise<EndorsementList> {
+    return await this.endorsementListService.lock(endorsementList)
+  }
+
+  @ApiOkResponse({
+    description: 'Unlock a single endorsements list by id',
+    type: EndorsementList,
+  })
+  @ApiParam({ name: 'listId', type: 'string' })
+  @Scopes(EndorsementsScope.main)
+  @Put(':listId/unlock')
+  @HasAccessGroup(AccessGroup.Admin)
+  @Audit<EndorsementList>({
+    resources: (endorsementList) => endorsementList.id,
+  })
+  async unlock(
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+    )
+    endorsementList: EndorsementList,
+  ): Promise<EndorsementList> {
+    return await this.endorsementListService.unlock(endorsementList)
+  }
+
+  @ApiOkResponse({
     description: 'Create an endorsements list',
     type: EndorsementList,
   })
