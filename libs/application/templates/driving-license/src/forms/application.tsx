@@ -25,7 +25,7 @@ import { NationalRegistryUser, Teacher, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
-import { QualityPhotoData } from '../utils'
+import { QualityPhotoData } from '../types'
 import { StudentAssessment } from '@island.is/api/schema'
 import {
   DrivingLicenseApplicationFor,
@@ -34,6 +34,7 @@ import {
   B_FULL,
   B_TEMP,
 } from '../lib/constants'
+import { hasYes } from '../utils'
 
 // const ALLOW_FAKE_DATA = todo: serverside feature flag
 const ALLOW_FAKE_DATA = false
@@ -159,11 +160,11 @@ export const application: Form = buildForm({
                         condition: allowFakeCondition(YES),
                         options: [
                           {
-                            value: 'yes',
+                            value: YES,
                             label: 'Mynd',
                           },
                           {
-                            value: 'no',
+                            value: NO,
                             label: 'Engin mynd',
                           },
                         ],
@@ -351,16 +352,53 @@ export const application: Form = buildForm({
                 }))
               },
             }),
-            buildCheckboxField({
-              id: 'noDrivingLicenseInOtherCountry',
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'otherCountry',
+      title: m.foreignDrivingLicense,
+      condition: isApplicationForCondition(B_TEMP),
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: m.drivingLicenseInOtherCountry,
+          space: 1,
+          children: [
+            buildRadioField({
+              id: 'drivingLicenseInOtherCountry',
               backgroundColor: 'white',
               title: '',
+              description: '',
+              space: 0,
+              largeButtons: true,
               options: [
                 {
-                  value: 'no',
-                  label: m.noDrivingLicenseInOtherCountryTitle,
+                  label: m.no,
+                  subLabel: '',
+                  value: NO,
+                },
+                {
+                  label: m.yes,
+                  subLabel: '',
+                  value: YES,
+                },
+              ],
+            }),
+            buildCheckboxField({
+              id: 'drivingLicenseDeprivedOrRestrictedInOtherCountry',
+              backgroundColor: 'white',
+              title: '',
+              condition: (answers) =>
+                hasYes(answers?.drivingLicenseInOtherCountry || []),
+              options: [
+                {
+                  value: NO,
+                  label: m.noDeprivedDrivingLicenseInOtherCountryTitle,
                   subLabel:
-                    m.noDrivingLicenseInOtherCountryDescription.defaultMessage,
+                    m.noDeprivedDrivingLicenseInOtherCountryDescription
+                      .defaultMessage,
                 },
               ],
             }),
@@ -401,9 +439,7 @@ export const application: Form = buildForm({
               id: 'photdesc',
               title: '',
               component: 'Bullets',
-              condition: (answers) => {
-                return answers.willBringQualityPhoto === YES
-              },
+              condition: (answers) => hasYes(answers.willBringQualityPhoto),
             }),
           ],
         }),
@@ -681,11 +717,7 @@ export const application: Form = buildForm({
                 (studentAssessment.data as StudentAssessment).teacherName,
             }),
             buildDividerField({
-              condition: (answers) => {
-                return Object.values(answers?.healthDeclaration || []).includes(
-                  YES,
-                )
-              },
+              condition: (answers) => hasYes(answers?.healthDeclaration || []),
             }),
             buildDescriptionField({
               id: 'bringalong',
@@ -706,13 +738,7 @@ export const application: Form = buildForm({
                   label: m.overviewBringCertificateData,
                 },
               ],
-              condition: (answers) => {
-                try {
-                  return Object.values(answers?.healthDeclaration).includes(YES)
-                } catch (error) {
-                  return false
-                }
-              },
+              condition: (answers) => hasYes(answers?.healthDeclaration || {}),
             }),
             buildDividerField({}),
             buildKeyValueField({
