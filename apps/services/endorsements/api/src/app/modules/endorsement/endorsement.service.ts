@@ -220,7 +220,7 @@ export class EndorsementService {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
     // we don't allow endorsements on closed lists
-    if (endorsementList.closedDate) {
+    if (new Date() >= new Date(endorsementList.closedDate)) {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
 
@@ -255,7 +255,7 @@ export class EndorsementService {
     this.logger.debug('Creating resource with nationalIds:', nationalIds)
 
     // we don't allow endorsements on closed lists
-    if (endorsementList.closedDate) {
+    if (new Date() >= new Date(endorsementList.closedDate)) {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
 
@@ -319,7 +319,7 @@ export class EndorsementService {
     )
 
     // we don't allow endorsements on closed lists
-    if (endorsementList.closedDate) {
+    if (new Date() >= new Date(endorsementList.closedDate)) {
       throw new MethodNotAllowedException([
         'Unable to remove endorsement form closed list',
       ])

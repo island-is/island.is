@@ -63,7 +63,6 @@ export class EndorsementListService {
 
   async close(endorsementList: EndorsementList): Promise<EndorsementList> {
     this.logger.info(`Closing endorsement list: ${endorsementList.id}`)
-
     return await endorsementList.update({ closedDate: new Date() })
   }
 

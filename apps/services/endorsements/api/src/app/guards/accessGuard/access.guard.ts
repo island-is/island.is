@@ -64,6 +64,16 @@ export class AccessGuard implements CanActivate {
             }
           }
         }
+        case AccessGroup.Admin: {
+          if (
+            environment.accessGroups.Admin.split(',').includes(
+              request.auth.nationalId,
+            )
+          ) {
+            return true
+          }
+          break
+        }
       }
     }
 
