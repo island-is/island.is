@@ -1,11 +1,12 @@
 import { Inject, Injectable, NotFoundException, BadRequestException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
+import { json, Op } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { Endorsement } from '../endorsement/models/endorsement.model'
+import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto';
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -62,23 +63,26 @@ export class EndorsementListService {
 
   async close(endorsementList: EndorsementList): Promise<EndorsementList> {
     this.logger.info(`Closing endorsement list: ${endorsementList.id}`)
+
     return await endorsementList.update({ closedDate: new Date() })
   }
 
   // TODO: change to input date
-  async open(endorsementList: EndorsementList): Promise<EndorsementList> {
+  async open(endorsementList: EndorsementList, newDate: ChangeEndorsmentListClosedDateDto): Promise<EndorsementList> {
     this.logger.info(`Opening endorsement list: ${endorsementList.id}`)
-    return await endorsementList.update({ closedDate: null })
+    return await endorsementList.update({ closedDate: new Date(newDate.closedDate )})
   }
 
   async create(list: CreateInput) {
-    if(!list.openedDate || !list.closedDate) {
+    const open = new Date(list.openedDate)
+    const close = new Date(list.closedDate)
+    if(!open || !close) {
       throw new BadRequestException(['Body missing openedDate or closedDate value.'])
     }
-    if(new Date(list.openedDate) >= new Date(list.closedDate)) {
+    if(open >= close) {
       throw new BadRequestException(['openedDate can not be bigger than closedDate.'])
     }
-    if(new Date() >= new Date(list.closedDate)) {
+    if(new Date() >= close) {
       throw new BadRequestException(['closedDate can not have already passed on creation of Endorsement List'])
     }
     this.logger.info(`Creating endorsement list: ${list.title}`)

@@ -20,6 +20,7 @@ import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
+import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
 import { Endorsement } from '../endorsement/models/endorsement.model'
 import { BypassAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
@@ -123,13 +124,15 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
+  @ApiBody({ type: ChangeEndorsmentListClosedDateDto })
   @Scopes(EndorsementsScope.main)
   @Put(':listId/open')
-  @HasAccessGroup(AccessGroup.DMR)
+  @HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })
   async open(
+    @Body() newDate: ChangeEndorsmentListClosedDateDto,
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -137,7 +140,7 @@ export class EndorsementListController {
     )
     endorsementList: EndorsementList,
   ): Promise<EndorsementList> {
-    return await this.endorsementListService.open(endorsementList)
+    return await this.endorsementListService.open(endorsementList, newDate)
   }
 
   @ApiOkResponse({
