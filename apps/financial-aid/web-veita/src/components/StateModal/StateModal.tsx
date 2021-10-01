@@ -20,6 +20,7 @@ interface Props {
   onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
   application: Application
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 interface InputType {
@@ -32,6 +33,7 @@ const StateModal = ({
   onVisibilityChange,
   application,
   setApplication,
+  setIsLoading,
 }: Props) => {
   const [inputType, setInputType] = useState<InputType>({
     show: false,
@@ -46,6 +48,9 @@ const StateModal = ({
     amount?: number,
     rejection?: string,
   ) => {
+    setIsLoading(true)
+    onVisibilityChange((isVisible) => !isVisible)
+
     const updatedApplication = await changeApplicationState(
       application,
       state,
@@ -53,10 +58,9 @@ const StateModal = ({
       rejection,
     )
     if (updatedApplication) {
+      setIsLoading(false)
       setApplication(updatedApplication)
     }
-
-    onVisibilityChange((isVisible) => !isVisible)
   }
 
   const closeModal = (): void => {
