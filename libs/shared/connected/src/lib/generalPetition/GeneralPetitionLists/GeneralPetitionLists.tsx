@@ -14,18 +14,19 @@ export const GeneralPetitionLists = () => {
       </Box>
       <Stack space={4}>
         {petitionLists.map((petition: any) => {
+          console.log(petition)
           return (
             <ActionCard
               key={petition.title}
               backgroundColor="blue"
               heading={petition.title}
-              text={'Fjöldi undirskrifta: 69' + ' Virkur til: 02.02.22'}
+              text={petition.description}
               cta={{
                 label: 'Nánar um lista',
                 variant: 'text',
                 icon: 'arrowForward',
                 onClick: () =>
-                  router.push('/undirskriftalistar/' + petition.id),
+                  router.push('/undirskriftalistar/' + petition.meta.applicationId),
               }}
             />
           )

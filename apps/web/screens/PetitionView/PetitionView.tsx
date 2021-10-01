@@ -10,21 +10,8 @@ import {
   Table as T,
   Pagination,
 } from '@island.is/island-ui/core'
-import { ApplicationTypes, getSlugFromType } from '@island.is/application/core'
 import { list } from './mocks'
 import { PAGE_SIZE, pages, paginate } from './pagination'
-
-const isLocalhost = window.location.origin.includes('localhost')
-const isDev = window.location.origin.includes('beta.dev01.devland.is')
-const isStaging = window.location.origin.includes('beta.staging01.devland.is')
-
-const baseUrlForm = isLocalhost
-  ? 'http://localhost:4242/umsoknir'
-  : isDev
-  ? 'https://beta.dev01.devland.is/umsoknir'
-  : isStaging
-  ? 'https://beta.staging01.devland.is/umsoknir'
-  : 'https://island.is/umsoknir'
 
 const PetitionView = () => {
   const [page, setPage] = useState(1)
@@ -71,19 +58,10 @@ const PetitionView = () => {
               </GridColumn>
             </GridRow>
             <GridRow marginTop={5}>
-              <GridColumn span={['12/12', '4/12', '4/12']}>
+              <GridColumn span={['12/12', '6/12', '6/12']}>
                 <Button
                   variant="primary"
                   icon="arrowForward"
-                  onClick={() =>
-                    window.open(
-                      `${baseUrlForm}/${
-                        getSlugFromType(
-                          ApplicationTypes.GENERAL_PETITION,
-                        ) as string
-                      }/${'f7023b53-5593-414c-9721-ba059aaa5120'}`,
-                    )
-                  }
                 >
                   Setja nafn mitt á þennan lista
                 </Button>
@@ -96,7 +74,6 @@ const PetitionView = () => {
                     <T.Row>
                       <T.HeadData>Dags skráð</T.HeadData>
                       <T.HeadData>Nafn</T.HeadData>
-                      <T.HeadData>Athugasemd</T.HeadData>
                     </T.Row>
                   </T.Head>
                   <T.Body>
@@ -105,7 +82,6 @@ const PetitionView = () => {
                         <T.Row key={petition.kt}>
                           <T.Data>{petition.signed}</T.Data>
                           <T.Data>{petition.name}</T.Data>
-                          <T.Data>{petition.athugasemd}</T.Data>
                         </T.Row>
                       )
                     })}
