@@ -223,7 +223,9 @@ function constructRestrictionRulingPdf(
     doc
       .fontSize(11)
       .lineGap(1)
-      .text(formatMessage(ruling.rulingShortVersionPlaceholder))
+      .text(formatMessage(ruling.rulingShortVersionPlaceholder), {
+        align: 'center',
+      })
   } else {
     doc
       .fontSize(11)
@@ -590,7 +592,9 @@ function constructInvestigationRulingPdf(
     doc
       .fontSize(11)
       .lineGap(1)
-      .text(formatMessage(ruling.rulingShortVersionPlaceholder))
+      .text(formatMessage(ruling.rulingShortVersionPlaceholder), {
+        align: 'center',
+      })
   } else {
     doc
       .fontSize(11)

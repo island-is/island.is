@@ -163,11 +163,18 @@ const Confirmation: React.FC<Props> = (props) => {
             </Box>
           )}
         </Box>
-        <Box marginBottom={15}>
+        <Box marginBottom={3}>
           <PdfButton
             caseId={workingCase.id}
             title="Opna PDF þingbók og úrskurð"
-            pdfType="ruling"
+            pdfType="ruling?shortVersion=false"
+          />
+        </Box>
+        <Box marginBottom={15}>
+          <PdfButton
+            caseId={workingCase.id}
+            title="Þingbók án úrskurðar - PDF"
+            pdfType="ruling?shortVersion=true"
           />
         </Box>
       </FormContentContainer>

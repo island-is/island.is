@@ -16,6 +16,7 @@ import {
   Header,
   UseGuards,
   BadRequestException,
+  ParseBoolPipe,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -417,7 +418,7 @@ export class CaseController {
   })
   async getRulingPdf(
     @Param('id') id: string,
-    @Query('shortVersion') shortVersion: boolean,
+    @Query('shortVersion', ParseBoolPipe) shortVersion: boolean,
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {

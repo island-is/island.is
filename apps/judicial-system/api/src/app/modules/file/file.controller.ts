@@ -7,6 +7,7 @@ import {
   Header,
   Inject,
   Param,
+  ParseBoolPipe,
   Query,
   Req,
   Res,
@@ -39,7 +40,6 @@ export class FileController {
 
   private async getPdf(
     id: string,
-    shortVersion: boolean,
     pdfDoc: string,
     req: Request,
     res: Response,
@@ -50,7 +50,7 @@ export class FileController {
     headers.set('cookie', req.headers.cookie as string)
 
     const result = await fetch(
-      `${environment.backend.url}/api/case/${id}/${pdfDoc}?shortVersion=${shortVersion}`,
+      `${environment.backend.url}/api/case/${id}/${pdfDoc}`,
       { headers },
     )
 
@@ -100,7 +100,7 @@ export class FileController {
   @Header('Content-Type', 'application/pdf')
   async getRulingPdf(
     @Param('id') id: string,
-    @Query('shortVersion') shortVersion: boolean,
+    @Query('shortVersion', ParseBoolPipe) shortVersion: boolean,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
@@ -111,7 +111,7 @@ export class FileController {
       return this.auditTrailService.audit(
         user.id,
         AuditedAction.GET_RULING_PDF,
-        this.getPdf(id, shortVersion, 'ruling', req, res),
+        this.getPdf(id, `ruling?shortVersion=${shortVersion}`, req, res),
         id,
       )
     } catch (error) {
