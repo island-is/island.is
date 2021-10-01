@@ -50,6 +50,7 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.REJECT]: { target: States.DECLINED },
         },
       },
       [States.PAYMENT]: {
@@ -91,6 +92,22 @@ const template: ApplicationTemplate<
             {
               id: 'applicant',
               formLoader: () => import('../forms/done').then((val) => val.done),
+              read: 'all',
+            },
+          ],
+        },
+        type: 'final' as const,
+      },
+      [States.DECLINED]: {
+        meta: {
+          name: 'Declined',
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/declined').then((val) => val.declined),
               read: 'all',
             },
           ],
