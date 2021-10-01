@@ -22,7 +22,7 @@ const devConfig = {
   },
   accessGroups: {
     DMR: process.env.ACCESS_GROUP_DMR ?? '',
-    Admin: process.env.ACCESS_GROUP_ADMIN ?? ''
+    Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
 }
 
@@ -51,7 +51,7 @@ const prodConfig = {
   },
   accessGroups: {
     DMR: process.env.ACCESS_GROUP_DMR ?? '',
-    Admin: process.env.ACCESS_GROUP_ADMIN ?? ''
+    Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
 }
 

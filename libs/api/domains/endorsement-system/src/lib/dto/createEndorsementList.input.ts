@@ -1,5 +1,11 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
-import { IsEnum, IsOptional, IsString, ValidateNested, IsBoolean } from 'class-validator'
+import {
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateNested,
+  IsBoolean,
+} from 'class-validator'
 import { Type } from 'class-transformer'
 import graphqlTypeJson from 'graphql-type-json'
 import { EndorsementListDtoTagsEnum } from '../../../gen/fetch'

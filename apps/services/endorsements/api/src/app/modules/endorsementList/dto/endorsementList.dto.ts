@@ -5,7 +5,7 @@ import {
   ValidateNested,
   IsArray,
   IsObject,
-  IsBoolean
+  IsBoolean,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ValidationRuleDto } from './validationRule.dto'
@@ -55,7 +55,7 @@ export class EndorsementListDto {
   @IsString()
   openedDate!: string
 
-  @ApiProperty({ type: Boolean})
+  @ApiProperty({ type: Boolean })
   @IsBoolean()
   adminLock!: boolean
 }
