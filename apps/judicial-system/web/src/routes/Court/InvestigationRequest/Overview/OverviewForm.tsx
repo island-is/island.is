@@ -29,7 +29,7 @@ import {
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
-import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 
 interface Props {
@@ -293,7 +293,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <PdfButton
               caseId={workingCase.id}
-              title="Opna PDF kröfu"
+              title={formatMessage(core.pdfButtonRequest)}
               pdfType="request"
             />
           </Box>
