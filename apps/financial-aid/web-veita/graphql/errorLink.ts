@@ -1,10 +1,7 @@
 import { ApolloError, ServerError } from '@apollo/client'
 import { onError, ErrorResponse } from '@apollo/client/link/error'
 
-import {
-  NotificationService,
-  api,
-} from '@island.is/financial-aid-web/veita/src/services'
+import { NotificationService } from '@island.is/financial-aid-web/veita/src/services'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (networkError) {
@@ -15,7 +12,7 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
     graphQLErrors.forEach((err) => {
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
-          return //api.logOut('?villa=innskraning-utrunnin')
+          return
         case 'FORBIDDEN':
           return
         default:
