@@ -9,7 +9,7 @@ interface ApplicationFiltersData {
 }
 
 interface ApplicationFiltersProvider {
-  applicationFilters?: ApplicationFilters
+  applicationFilters: ApplicationFilters
   setApplicationFilters: React.Dispatch<
     React.SetStateAction<ApplicationFilters>
   >
