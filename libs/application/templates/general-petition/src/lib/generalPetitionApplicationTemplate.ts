@@ -20,7 +20,7 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.GENERAL_PETITION,
-  name: 'Undirskirftarlisti',
+  name: 'Meðmælendalisti',
   dataSchema: GeneralPetitionSchema,
   readyForProduction: true,
   stateMachineConfig: {

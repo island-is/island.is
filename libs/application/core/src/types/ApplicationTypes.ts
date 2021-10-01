@@ -109,7 +109,7 @@ export const ApplicationConfigurations = {
     translation: 'an.application',
   },
   [ApplicationTypes.GENERAL_PETITION]: {
-    slug: 'undirskriftalisti',
+    slug: 'medmaelendalisti',
     translation: 'gpt.application',
   },
 }

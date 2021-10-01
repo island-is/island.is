@@ -6,8 +6,20 @@ import { Approved } from '@island.is/application/ui-components'
 import { CopyLink } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 
-const ListSubmited: FC<FieldBaseProps> = () => {
+const ListSubmited: FC<FieldBaseProps> = ({application}) => {
   const { formatMessage } = useLocale()
+
+  const isLocalhost = window.location.origin.includes('localhost')
+  const isDev = window.location.origin.includes('beta.dev01.devland.is')
+  const isStaging = window.location.origin.includes('beta.staging01.devland.is')
+
+  const baseUrlForm = isLocalhost
+    ? 'http://localhost:4200/undirskriftalistar/'
+    : isDev
+    ? 'https://beta.dev01.devland.is/undirskriftalistar/'
+    : isStaging
+    ? 'https://beta.staging01.devland.is/undirskriftalistar/'
+    : 'https://island.is/undirskriftalistar/'
 
   return (
     <>
@@ -20,7 +32,7 @@ const ListSubmited: FC<FieldBaseProps> = () => {
       </Text>
       <Box marginBottom={2}>
         <CopyLink
-          linkUrl={'TODO: link'}
+          linkUrl={baseUrlForm + application.id}
           buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
         />
       </Box>

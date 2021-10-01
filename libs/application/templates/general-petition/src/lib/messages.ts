@@ -263,7 +263,7 @@ export const m: MessageDir = {
     },
     listName: {
       id: 'gpt.application:information.listName',
-      defaultMessage: 'Heiti undirskriftalista',
+      defaultMessage: 'Heiti meðmælendalista',
       description: 'List name',
     },
     slogan: {
@@ -273,12 +273,12 @@ export const m: MessageDir = {
     },
     aboutList: {
       id: 'gpt.application:information.aboutList',
-      defaultMessage: 'Um undirskriftalista',
+      defaultMessage: 'Um meðmælendalista',
       description: 'About list',
     },
     aboutListPlaceholder: {
       id: 'gpt.application:information.aboutListPlaceholder',
-      defaultMessage: 'Texti sem birtist með undirskriftalista',
+      defaultMessage: 'Texti sem birtist með meðmælendalista',
       description: 'About list placeholder',
     },
     dateTitle: {
@@ -323,7 +323,7 @@ export const m: MessageDir = {
     },
     overviewTitle: {
       id: 'gpt.application:overview.overviewTitle',
-      defaultMessage: 'Upplýsingar um undirskriftalista',
+      defaultMessage: 'Upplýsingar um meðmælendalista',
       description: 'Overview review title',
     },
     applicant: {
@@ -333,12 +333,12 @@ export const m: MessageDir = {
     },
     listName: {
       id: 'gpt.application:overview.listName',
-      defaultMessage: 'Heiti undirskriftalista',
+      defaultMessage: 'Heiti meðmælendalista',
       description: 'List name',
     },
     aboutList: {
       id: 'gpt.application:overview.aboutList',
-      defaultMessage: 'Um undirskriftalista',
+      defaultMessage: 'Um meðmælendalista',
       description: 'About list',
     },
     listPeriod: {
@@ -381,18 +381,18 @@ export const m: MessageDir = {
   listSubmitted: defineMessages({
     title: {
       id: 'gpt.application.list.submitted.title',
-      defaultMessage: 'Undirskriftalista hefur verið skilað',
+      defaultMessage: 'Með hefur verið skilað',
       description: 'Title for conlcusion',
     },
     approvedTitle: {
       id: 'gpt.application.list.submitted.title',
-      defaultMessage: 'Undirskriftalista hefur verið skilað til Ísland.is',
+      defaultMessage: 'Meðmælendalista hefur verið skilað til Ísland.is',
       description: 'Title for approved card',
     },
     approvedSubtitle: {
       id: 'gpt.application.list.submitted.subtitle',
       defaultMessage:
-        'Staðfesting á móttöku verður send í pósthólf á Mínum Síðum.',
+        'Staðfesting á móttöku verður send í pósthólf á Mínum Síðum. Hægt er að sýsla með lista þar.',
       description: 'Subtitle for approved card',
     },
     bulletListTitle: {
