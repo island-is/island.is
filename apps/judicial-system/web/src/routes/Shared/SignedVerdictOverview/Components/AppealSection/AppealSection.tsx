@@ -58,29 +58,17 @@ const AppealSection: React.FC<Props> = (props) => {
         </Text>
       </Box>
 
-      {!workingCase.isAppealDeadlineExpired &&
+      {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+        workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
         workingCase.rulingDate &&
         !isHighCourt && (
-          <Box marginBottom={2}>
-            <Text>{`Kærufrestur rennur út ${getAppealEndDate(
-              workingCase.rulingDate,
-            )}`}</Text>
+          <Box marginBottom={3}>
+            <Text>
+              {`Kærufrestur ${
+                workingCase.isAppealDeadlineExpired ? 'rann' : 'rennur'
+              } út ${getAppealEndDate(workingCase.rulingDate)}`}
+            </Text>
           </Box>
-        )}
-      {workingCase.isAppealDeadlineExpired &&
-        workingCase.rulingDate &&
-        !isHighCourt && (
-          <div className={styles.appealContainer}>
-            <BlueBox>
-              <InfoBox
-                text={`Kærufrestur rann út ${getAppealEndDate(
-                  workingCase.rulingDate,
-                )}`}
-                fluid
-                light
-              />
-            </BlueBox>
-          </div>
         )}
       {workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
         <div className={styles.appealContainer}>

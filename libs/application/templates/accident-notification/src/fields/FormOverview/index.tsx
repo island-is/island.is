@@ -25,11 +25,13 @@ import { States, YES } from '../../constants'
 import { AccidentNotification } from '../../lib/dataSchema'
 import {
   accidentDetails,
+  accidentLocation,
   accidentType,
   applicantInformation,
   application as applicationMessages,
   childInCustody,
   fatalAccident,
+  fishingCompanyInfo,
   injuredPersonInformation,
   juridicalPerson,
   locationAndPurpose,
@@ -39,6 +41,8 @@ import {
 import {
   getAttachmentTitles,
   getWorkplaceData,
+  isFishermanAccident,
+  isHomeActivitiesAccident,
   isMachineRelatedAccident,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfChild,
@@ -317,6 +321,48 @@ export const FormOverview: FC<FieldBaseProps> = ({
                 )}
             </GridRow>
           </ReviewGroup>
+          {isFishermanAccident(answers as FormValue) && (
+            <>
+              <Text variant="h4" paddingTop={6} paddingBottom={3}>
+                {formatMessage(
+                  fishingCompanyInfo.general.informationAboutShipTitle,
+                )}
+              </Text>
+              <ReviewGroup
+                isLast
+                editAction={() => changeScreens('fishingShipInfo')}
+              >
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.shipName}
+                      value={answers.fishingShipInfo.shipName}
+                    ></ValueLine>
+                  </GridColumn>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.shipCharacters}
+                      value={answers.fishingShipInfo.shipCharacters}
+                    ></ValueLine>
+                  </GridColumn>
+                </GridRow>
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.homePort}
+                      value={answers.fishingShipInfo.homePort}
+                    ></ValueLine>
+                  </GridColumn>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.shipRegisterNumber}
+                      value={answers.fishingShipInfo.shipRegisterNumber}
+                    ></ValueLine>
+                  </GridColumn>
+                </GridRow>
+              </ReviewGroup>
+            </>
+          )}
 
           {answers.isRepresentativeOfCompanyOrInstitue?.toString() !== YES && (
             <>
@@ -359,12 +405,49 @@ export const FormOverview: FC<FieldBaseProps> = ({
         </>
       )}
 
+      {isHomeActivitiesAccident(answers as FormValue) && (
+        <>
+          <Text variant="h4" paddingTop={6} paddingBottom={3}>
+            {formatMessage(accidentLocation.homeAccidentLocation.title)}
+          </Text>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('accidentLocation.homeAccident')}
+          >
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.address}
+                  value={answers.homeAccident.address}
+                ></ValueLine>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.postalCode}
+                  value={answers.homeAccident.postalCode}
+                ></ValueLine>
+              </GridColumn>
+            </GridRow>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.community}
+                  value={answers.homeAccident.community}
+                ></ValueLine>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.moreDetails}
+                  value={answers.homeAccident.moreDetails || ''}
+                ></ValueLine>
+              </GridColumn>
+            </GridRow>
+          </ReviewGroup>
+        </>
+      )}
+
       <Text variant="h4" paddingTop={6} paddingBottom={3}>
-        {formatText(
-          accidentDetails.general.sectionTitle,
-          application,
-          formatMessage,
-        )}
+        {formatMessage(accidentDetails.general.sectionTitle)}
       </Text>
       <ReviewGroup isLast editAction={() => changeScreens('accidentDetails')}>
         <GridRow>

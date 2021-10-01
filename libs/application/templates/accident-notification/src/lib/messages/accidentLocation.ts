@@ -210,7 +210,7 @@ export const accidentLocation = {
     description: {
       id: 'an.application:accidentLocation.homeAccidentLocation.description',
       defaultMessage:
-        'Nauðsynlegt er að gefa upp staðsetningu á slysinu... blabla',
+        'Vinsamlegast fylltu inn upplýsingar um hvar slysið átti sér stað.',
       description: 'Home accident location description',
     },
     address: {

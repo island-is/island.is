@@ -70,6 +70,8 @@ const SigningModal: React.FC<SigningModalProps> = ({
                   workingCase,
                   workingCase.decision === CaseDecision.REJECTING
                     ? CaseTransition.REJECT
+                    : workingCase.decision === CaseDecision.DISMISSING
+                    ? CaseTransition.DISMISS
                     : CaseTransition.ACCEPT,
                   setWorkingCase,
                 )

@@ -25,6 +25,8 @@ import {
   getInvestigationCaseCourtSections,
   getInvestigationCaseProsecutorSection,
 } from './Sections'
+import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import { useIntl } from 'react-intl'
 
 interface PageProps {
   children: ReactNode
@@ -55,6 +57,7 @@ const PageLayout: React.FC<PageProps> = ({
   showSidepanel = true,
 }) => {
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
 
   const caseResult = () => {
     const decisionIsRejecting =
@@ -64,6 +67,10 @@ const PageLayout: React.FC<PageProps> = ({
     const decisionIsAccepting =
       decision === CaseDecision.ACCEPTING ||
       parentCaseDecision === CaseDecision.ACCEPTING
+
+    const decisionIsDismissing =
+      decision === CaseDecision.DISMISSING ||
+      parentCaseDecision === CaseDecision.DISMISSING
 
     const decisionIsAcceptingAlternativeTravelBan =
       decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
@@ -90,6 +97,8 @@ const PageLayout: React.FC<PageProps> = ({
               caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
             } virkt`
       }
+    } else if (decisionIsDismissing) {
+      return formatMessage(signedVerdictOverview.dismissedTitle)
     } else if (decisionIsAcceptingAlternativeTravelBan) {
       return isValidToDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
     } else {

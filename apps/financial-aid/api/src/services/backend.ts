@@ -13,10 +13,13 @@ import {
   CreateApplicationEvent,
   ApplicationFilters,
   CreateFilesResponse,
+  ApplicationStateUrl,
+  UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
+import { ApplicationModule } from '../app/modules'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -27,8 +30,8 @@ class BackendAPI extends RESTDataSource {
     req.headers.set('cookie', this.context.req.headers.cookie)
   }
 
-  getApplications(): Promise<Application[]> {
-    return this.get('applications')
+  getApplications(stateUrl: ApplicationStateUrl): Promise<Application[]> {
+    return this.get(`allApplications/${stateUrl}`)
   }
 
   getApplication(id: string): Promise<Application> {
@@ -56,6 +59,13 @@ class BackendAPI extends RESTDataSource {
     return this.put(`applications/${id}`, updateApplication)
   }
 
+  updateApplicationRes(
+    id: string,
+    updateApplication: UpdateApplication,
+  ): Promise<UpdateApplicationResponseType> {
+    return this.put(`updateApplication/${id}`, updateApplication)
+  }
+
   getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
     return this.post('file/url', getSignedUrl)
   }
@@ -70,7 +80,7 @@ class BackendAPI extends RESTDataSource {
 
   createApplicationEvent(
     createApplicationEvent: CreateApplicationEvent,
-  ): Promise<ApplicationEvent> {
+  ): Promise<Application> {
     return this.post('applicationEvent', createApplicationEvent)
   }
 

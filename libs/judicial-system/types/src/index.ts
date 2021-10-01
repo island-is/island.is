@@ -11,6 +11,7 @@ export type {
 } from './lib/notification'
 
 export { CaseFileState } from './lib/file'
+
 export type {
   PresignedPost,
   CreatePresignedPost,
@@ -40,6 +41,7 @@ export {
   SessionArrangements,
   completedCaseStates,
   hasCaseBeenAppealed,
+  isAccusedRightsHidden,
 } from './lib/case'
 export type {
   Case,

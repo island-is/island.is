@@ -1,7 +1,21 @@
+import { Case, CaseState } from '@island.is/judicial-system/types'
+import { makeCase, makeCourt } from '../../fixtures/testDataFactory'
+import { intercept } from '../../utils'
+
 describe('/domur/krafa/fyrirtokutimi/:id', () => {
   beforeEach(() => {
+    const caseData = makeCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      court: makeCourt(),
+      requestedCourtDate: '2020-09-16T19:50:08.033Z',
+      state: CaseState.RECEIVED,
+    }
+
     cy.stubAPIResponses()
     cy.visit('/domur/fyrirtokutimi/test_id_stadfest')
+
+    intercept(caseDataAddition)
   })
 
   it('should allow users to choose if they send COURT_DATE notification', () => {

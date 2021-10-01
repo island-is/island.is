@@ -40,7 +40,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
-import { rcConfirmation } from '@island.is/judicial-system-web/messages'
+import { core, rcConfirmation } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as style from './Confirmation.treat'
 
@@ -96,6 +96,17 @@ export const Confirmation: React.FC = () => {
       // TODO: Handle error
     }
   }
+
+  const custodyRestrictions = formatCustodyRestrictions(
+    workingCase?.accusedGender,
+    workingCase?.custodyRestrictions,
+  )
+
+  const alternativeTravelBanRestrictions = formatAlternativeTravelBanRestrictions(
+    workingCase?.accusedGender,
+    workingCase?.custodyRestrictions,
+    workingCase?.otherRestrictions,
+  )
 
   return (
     <PageLayout
@@ -244,24 +255,19 @@ export const Confirmation: React.FC = () => {
                 </Box>
               )}
             </Box>
-            {workingCase.decision === CaseDecision.ACCEPTING &&
-              workingCase.type === CaseType.CUSTODY && (
+            {workingCase.type === CaseType.CUSTODY &&
+              workingCase.decision === CaseDecision.ACCEPTING && (
                 <Box marginBottom={7}>
                   <Box marginBottom={1}>
                     <Text as="h3" variant="h3">
                       Tilhögun gæsluvarðhalds
                     </Text>
                   </Box>
-                  <Box marginBottom={2}>
-                    <Text>
-                      {formatCustodyRestrictions(
-                        workingCase.accusedGender,
-                        workingCase.custodyRestrictions,
-                        workingCase.validToDate,
-                        workingCase.isolationToDate,
-                      )}
-                    </Text>
-                  </Box>
+                  {custodyRestrictions && (
+                    <Box marginBottom={2}>
+                      <Text>{custodyRestrictions}</Text>
+                    </Box>
+                  )}
                   <Text>
                     {formatMessage(
                       rcConfirmation.sections.custodyRestrictions.disclaimer,
@@ -270,8 +276,9 @@ export const Confirmation: React.FC = () => {
                   </Text>
                 </Box>
               )}
-            {(workingCase.decision ===
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+            {((workingCase.type === CaseType.CUSTODY &&
+              workingCase.decision ===
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) ||
               (workingCase.type === CaseType.TRAVEL_BAN &&
                 workingCase.decision === CaseDecision.ACCEPTING)) && (
               <Box marginBottom={7}>
@@ -280,23 +287,21 @@ export const Confirmation: React.FC = () => {
                     Tilhögun farbanns
                   </Text>
                 </Box>
-                <Box marginBottom={2}>
-                  <Text>
-                    {formatAlternativeTravelBanRestrictions(
-                      workingCase.accusedGender,
-                      workingCase.custodyRestrictions,
-                      workingCase.otherRestrictions,
-                    )
-                      .split('\n')
-                      .map((str, index) => {
-                        return (
-                          <div key={index}>
-                            <Text>{str}</Text>
-                          </div>
-                        )
-                      })}
-                  </Text>
-                </Box>
+                {alternativeTravelBanRestrictions && (
+                  <Box marginBottom={2}>
+                    <Text>
+                      {alternativeTravelBanRestrictions
+                        .split('\n')
+                        .map((str, index) => {
+                          return (
+                            <div key={index}>
+                              <Text>{str}</Text>
+                            </div>
+                          )
+                        })}
+                    </Text>
+                  </Box>
+                )}
                 <Text>
                   {formatMessage(
                     rcConfirmation.sections.custodyRestrictions.disclaimer,
@@ -305,11 +310,18 @@ export const Confirmation: React.FC = () => {
                 </Text>
               </Box>
             )}
+            <Box marginBottom={3}>
+              <PdfButton
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRuling)}
+                pdfType="ruling?shortVersion=false"
+              />
+            </Box>
             <Box marginBottom={15}>
               <PdfButton
                 caseId={workingCase.id}
-                title="Opna PDF þingbók og úrskurð"
-                pdfType="ruling"
+                title={formatMessage(core.pdfButtonRulingShortVersion)}
+                pdfType="ruling?shortVersion=true"
               />
             </Box>
           </FormContentContainer>

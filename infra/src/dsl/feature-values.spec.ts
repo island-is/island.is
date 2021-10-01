@@ -9,6 +9,7 @@ const Dev: EnvironmentConfig = {
   auroraHost: 'a',
   domain: 'staging01.devland.is',
   type: 'dev',
+  featuresOn: [],
   defaultMaxReplicas: 3,
   releaseName: 'web',
   awsAccountId: '111111',
@@ -55,6 +56,7 @@ describe('Feature-deployment support', () => {
       DB_USER: 'feature_feature_A_graphql',
       DB_NAME: 'feature_feature_A_graphql',
       DB_HOST: 'a',
+      SERVERSIDE_FEATURES_ON: '',
     })
   })
 
@@ -77,6 +79,7 @@ describe('Feature-deployment support', () => {
     expect(values['graphql'].namespace).toEqual(`feature-${Dev.feature}`)
     expect(values['service-a'].namespace).toEqual(`feature-${Dev.feature}`)
   })
+
   it('feature deployment ingress', () => {
     expect(values.graphql.ingress).toEqual({
       'primary-alb': {

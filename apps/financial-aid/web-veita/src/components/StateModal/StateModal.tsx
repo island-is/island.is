@@ -1,10 +1,8 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { ModalBase, Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './StateModal.treat'
 import cn from 'classnames'
-
-import { useMutation } from '@apollo/client'
 
 import {
   InputModal,
@@ -20,12 +18,8 @@ import { useApplicationState } from '../../utils/useApplicationState'
 interface Props {
   isVisible: boolean
   onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
-  onStateChange: (applicationState: ApplicationState) => void
   application: Application
-}
-
-interface SaveData {
-  application: Application
+  setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
 }
 
 interface InputType {
@@ -36,8 +30,8 @@ interface InputType {
 const StateModal = ({
   isVisible,
   onVisibilityChange,
-  onStateChange,
   application,
+  setApplication,
 }: Props) => {
   const [inputType, setInputType] = useState<InputType>({
     show: false,
@@ -52,9 +46,17 @@ const StateModal = ({
     amount?: number,
     rejection?: string,
   ) => {
-    changeApplicationState(application, state, amount, rejection)
+    const updatedApplication = await changeApplicationState(
+      application,
+      state,
+      amount,
+      rejection,
+    )
+    if (updatedApplication) {
+      setApplication(updatedApplication)
+    }
+
     onVisibilityChange((isVisible) => !isVisible)
-    onStateChange(state)
   }
 
   const closeModal = (): void => {
