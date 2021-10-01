@@ -1,6 +1,3 @@
-export { default as BulkUpload } from './BulkUpload'
-export { default as EndorsementList } from './EndorsementList'
-export { default as FileUploadDisclaimer } from './FileUploadDisclaimer'
 export { default as EndorsementDisclaimer } from './EndorsementDisclaimer'
 export { default as EndorsementApproved } from './EndorsementApproved'
 export { default as Overview } from './Overview'

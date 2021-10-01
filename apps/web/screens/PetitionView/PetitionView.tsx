@@ -45,7 +45,7 @@ const PetitionView = () => {
             </GridRow>
             <GridRow>
               <GridColumn span={['12/12', '4/12', '4/12']}>
-                <Text variant="h4">Undirskriftalistinn er opinn:</Text>
+                <Text variant="h4">Meðmælendalistinn er opinn:</Text>
                 <Text variant="default">{list.til}</Text>
               </GridColumn>
               <GridColumn span={['12/12', '4/12', '4/12']}>
