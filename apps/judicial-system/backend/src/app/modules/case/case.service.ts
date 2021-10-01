@@ -249,23 +249,6 @@ export class CaseService {
       )
     }
 
-    if (
-      existingCase.type === CaseType.CUSTODY ||
-      existingCase.type === CaseType.TRAVEL_BAN
-    ) {
-      promises.push(
-        this.sendEmail(
-          {
-            name: 'Fangelsismálastofnun',
-            address: environment.notifications.prisonAdminEmail,
-          },
-          existingCase.courtCaseNumber,
-          signedRulingPdf,
-          'Sjá viðhengi',
-        ),
-      )
-    }
-
     await Promise.all(promises)
   }
 
@@ -355,7 +338,10 @@ export class CaseService {
     return getRequestPdfAsString(existingCase, intl.formatMessage)
   }
 
-  async getRulingPdf(existingCase: Case): Promise<string> {
+  async getRulingPdf(
+    existingCase: Case,
+    shortversion = false,
+  ): Promise<string> {
     this.logger.debug(
       `Getting the ruling for case ${existingCase.id} as a pdf document`,
     )
@@ -365,7 +351,7 @@ export class CaseService {
       'is',
     )
 
-    return getRulingPdfAsString(existingCase, intl.formatMessage)
+    return getRulingPdfAsString(existingCase, intl.formatMessage, shortversion)
   }
 
   async getCustodyPdf(existingCase: Case): Promise<string> {

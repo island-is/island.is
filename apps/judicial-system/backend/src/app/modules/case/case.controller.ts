@@ -16,6 +16,7 @@ import {
   Header,
   UseGuards,
   BadRequestException,
+  ParseBoolPipe,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -417,12 +418,13 @@ export class CaseController {
   })
   async getRulingPdf(
     @Param('id') id: string,
+    @Query('shortVersion', ParseBoolPipe) shortVersion: boolean,
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
     const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
-    const pdf = await this.caseService.getRulingPdf(existingCase)
+    const pdf = await this.caseService.getRulingPdf(existingCase, shortVersion)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,
