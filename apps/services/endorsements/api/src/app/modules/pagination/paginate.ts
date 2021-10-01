@@ -1,8 +1,10 @@
 // SEQUELIZE CURSOR PAGINATION
 // taken from here https://github.com/Kaltsoon/sequelize-cursor-pagination
 
-const Sequelize = require('sequelize')
-const Op = Sequelize.Op
+import { Op } from 'sequelize'
+
+// const Sequelize = require('sequelize')
+// const Op = Sequelize.Op
 
 const parseCursor = (cursor: string | null) => {
   if (!cursor) {
