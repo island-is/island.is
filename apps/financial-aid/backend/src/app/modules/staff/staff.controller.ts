@@ -1,4 +1,10 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  UseGuards,
+} from '@nestjs/common'
 
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -24,6 +30,10 @@ export class StaffController {
   async getStaffByNationalId(
     @Param('nationalId') nationalId: string,
   ): Promise<StaffModel> {
-    return await this.staffService.findByNationalId(nationalId)
+    const staff = await this.staffService.findByNationalId(nationalId)
+    if (staff === null) {
+      throw new NotFoundException(404, 'Staff not found')
+    }
+    return staff
   }
 }
