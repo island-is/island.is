@@ -25,7 +25,7 @@ import { NationalRegistryUser, Teacher, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
-import { QualityPhotoData } from '../types'
+import { QualityPhotoData, ConditionFn } from '../types'
 import { StudentAssessment } from '@island.is/api/schema'
 import {
   DrivingLicenseApplicationFor,
@@ -52,6 +52,9 @@ const needsHealthCertificateCondition = (result = YES) => (
   return Object.values(answers?.healthDeclaration || {}).includes(result)
 }
 
+const isVisible = (...fns: ConditionFn[]) => (answers: FormValue) =>
+  fns.reduce((s, fn) => (!s ? false : fn(answers)), true)
+
 const isApplicationForCondition = (result: DrivingLicenseApplicationFor) => (
   answers: FormValue,
 ) => {
@@ -60,6 +63,9 @@ const isApplicationForCondition = (result: DrivingLicenseApplicationFor) => (
   ]) as string[]
   return applicationFor.includes(result)
 }
+
+const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) =>
+  !hasYes(answers?.drivingLicenseInOtherCountry)
 
 const chooseDistrictCommissionerDescription = ({
   answers,
@@ -407,9 +413,26 @@ export const application: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'otherCountrySelected',
+      title: 'Leiðbeiningar',
+      condition: (answer) => hasYes(answer?.drivingLicenseInOtherCountry),
+      children: [
+        buildCustomField({
+          condition: (answers) =>
+            hasYes(answers?.drivingLicenseInOtherCountry || []),
+          title: 'SubmitAndDecline',
+          component: 'SubmitAndDecline',
+          id: 'SubmitAndDecline',
+        }),
+      ],
+    }),
+    buildSection({
       id: 'photoStep',
       title: m.applicationQualityPhotoTitle,
-      condition: isApplicationForCondition(B_FULL),
+      condition: isVisible(
+        isApplicationForCondition(B_FULL),
+        hasNoDrivingLicenseInOtherCountry,
+      ),
       children: [
         buildMultiField({
           id: 'info',
@@ -480,6 +503,7 @@ export const application: Form = buildForm({
     buildSection({
       id: 'user',
       title: m.informationSectionTitle,
+      condition: hasNoDrivingLicenseInOtherCountry,
       children: [
         buildMultiField({
           id: 'info',
@@ -524,6 +548,7 @@ export const application: Form = buildForm({
     buildSection({
       id: 'healthDeclaration',
       title: m.healthDeclarationSectionTitle,
+      condition: hasNoDrivingLicenseInOtherCountry,
       children: [
         buildMultiField({
           id: 'overview',
@@ -638,6 +663,7 @@ export const application: Form = buildForm({
     buildSection({
       id: 'overview',
       title: m.overviewSectionTitle,
+      condition: hasNoDrivingLicenseInOtherCountry,
       children: [
         buildMultiField({
           id: 'overview',
