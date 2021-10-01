@@ -3189,7 +3189,7 @@ export interface IUrlFields {
   title?: string | undefined
 
   /** Page */
-  page:
+  page?:
     | IAboutSubPage
     | IArticle
     | IArticleCategory
@@ -3197,9 +3197,13 @@ export interface IUrlFields {
     | INews
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | undefined
 
   /** Urls list */
   urlsList: string[]
+
+  /** Explicit Redirect */
+  explicitRedirect?: string | undefined
 }
 
 export interface IUrl extends Entry<IUrlFields> {
