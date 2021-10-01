@@ -24,7 +24,10 @@ import {
 interface PageProps {
   application: Application
   index: number
-  onApplicationUpdate: any
+  onApplicationUpdate: (
+    applicationId: string,
+    state: ApplicationState,
+  ) => Promise<void>
 }
 
 const TableBody = ({ application, index, onApplicationUpdate }: PageProps) => {

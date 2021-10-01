@@ -102,7 +102,7 @@ export class ApplicationResolver {
   ): Promise<UpdateApplicationTableResponseType> {
     const { id, stateUrl, ...updateApplication } = input
 
-    this.logger.debug(`updating application ${id}`)
+    this.logger.debug(`updating application table ${id}`)
 
     return backendApi.updateApplicationTable(id, stateUrl, updateApplication)
   }

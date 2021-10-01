@@ -136,7 +136,8 @@ export class ApplicationController {
   @Put('applicationsTable/:id/:stateUrl')
   @ApiOkResponse({
     type: UpdateApplicationTableResponse,
-    description: 'Updates an existing application',
+    description:
+      'Updates an existing application and returns application table',
   })
   async updateTable(
     @Param('id') id: string,

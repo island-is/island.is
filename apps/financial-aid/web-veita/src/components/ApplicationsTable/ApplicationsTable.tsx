@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Text } from '@island.is/island-ui/core'
 import * as styles from './ApplicationsTable.treat'
 import { useRouter } from 'next/router'
@@ -8,6 +8,8 @@ import cn from 'classnames'
 import {
   TableHeaders,
   TableBody,
+  LoadingContainer,
+  TableSkeleton,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Application,
@@ -20,7 +22,9 @@ import { useAllApplications } from '@island.is/financial-aid-web/veita/src/utils
 
 interface PageProps {
   applications: Application[]
-  setApplications: any
+  setApplications: React.Dispatch<
+    React.SetStateAction<Application[] | undefined>
+  >
   headers: TableHeadersProps[]
 }
 
@@ -33,51 +37,59 @@ const ApplicationsTable = ({
 
   const changeApplicationTable = useAllApplications()
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const updateApplicationAndTable = async (
     applicationId: string,
     state: ApplicationState,
   ) => {
+    setIsLoading(true)
     const updateApplicationTable = await changeApplicationTable(
       applicationId,
       state,
       router.pathname.substring(1) as ApplicationStateUrl,
     )
-    setApplications(updateApplicationTable)
+    if (updateApplicationTable) {
+      setIsLoading(false)
+      setApplications(updateApplicationTable)
+    }
   }
 
   if (applications && applications.length > 0) {
     return (
-      <div className={`${styles.wrapper} hideScrollBar`}>
-        <table
-          className={cn({
-            [`${styles.tableContainer}`]: true,
-          })}
-          key={router.pathname}
-        >
-          <thead className={`contentUp delay-50`}>
-            <tr>
-              {headers.map((item, index) => (
-                <TableHeaders
-                  header={item}
+      <LoadingContainer isLoading={isLoading} loader={<TableSkeleton />}>
+        <div className={`${styles.wrapper} hideScrollBar`}>
+          <table
+            className={cn({
+              [`${styles.tableContainer}`]: true,
+            })}
+            key={router.pathname}
+          >
+            <thead className={`contentUp delay-50`}>
+              <tr>
+                {headers.map((item, index) => (
+                  <TableHeaders
+                    header={item}
+                    index={index}
+                    key={'tableHeaders-' + index}
+                  />
+                ))}
+              </tr>
+            </thead>
+
+            <tbody className={styles.tableBody}>
+              {applications.map((item: Application, index) => (
+                <TableBody
+                  application={item}
                   index={index}
-                  key={'tableHeaders-' + index}
+                  key={'tableBody-' + item.id}
+                  onApplicationUpdate={updateApplicationAndTable}
                 />
               ))}
-            </tr>
-          </thead>
-
-          <tbody className={styles.tableBody}>
-            {applications.map((item: Application, index) => (
-              <TableBody
-                application={item}
-                index={index}
-                key={'tableBody-' + item.id}
-                onApplicationUpdate={updateApplicationAndTable}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
+      </LoadingContainer>
     )
   }
 
