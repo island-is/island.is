@@ -415,11 +415,21 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             pdfType="request"
           />
         </Box>
-        <PdfButton
-          caseId={workingCase.id}
-          title="Opna PDF þingbók og úrskurð"
-          pdfType="ruling"
-        />
+        <Box marginBottom={3}>
+          <PdfButton
+            caseId={workingCase.id}
+            title="Opna PDF þingbók og úrskurð"
+            pdfType="ruling"
+          />
+        </Box>
+        {workingCase.type === CaseType.CUSTODY &&
+          workingCase.state === CaseState.ACCEPTED && (
+            <PdfButton
+              caseId={workingCase.id}
+              title="Opna PDF vistunarseðil"
+              pdfType="custodyNotice"
+            />
+          )}
       </Box>
       {user?.role === UserRole.PROSECUTOR &&
         user.institution?.id === workingCase.prosecutor?.institution?.id &&

@@ -18,7 +18,7 @@ import {
   RolesGuard,
   RolesRule,
   RolesRules,
-  TokenGuaard,
+  TokenGuard,
 } from '@island.is/judicial-system/auth'
 
 import { CreateUserDto, UpdateUserDto } from './dto'
@@ -91,7 +91,7 @@ export class UserController {
     return user
   }
 
-  @UseGuards(TokenGuaard)
+  @UseGuards(TokenGuard)
   @Get('user')
   @ApiOkResponse({
     type: User,
