@@ -33,7 +33,10 @@ export const serializeService: SerializeMethod = (
   uberChart: UberChartType,
 ) => {
   let allErrors: string[] = []
-  const checkCollisions = (target: any, source: any) => {
+  const checkCollisions = (
+    target: { [name: string]: string },
+    source: { [name: string]: string },
+  ) => {
     const targetKeys = Object.keys(target)
     addToErrors(
       Object.keys(source)
@@ -41,7 +44,10 @@ export const serializeService: SerializeMethod = (
         .map((key) => `Collisions for environment or secrets for key ${key}`),
     )
   }
-  const mergeObjects = (target: any, source: any) => {
+  const mergeObjects = (
+    target: { [name: string]: string },
+    source: { [name: string]: string },
+  ) => {
     checkCollisions(target, source)
     Object.assign(target, source)
   }
@@ -460,7 +466,7 @@ function serializeEnvironmentVariables(
   service: Service,
   uberChart: UberChartType,
   envs: EnvironmentVariables,
-): { errors: string[]; envs: { [name: string]: string } } {
+): { errors: string[]; envs: ContainerEnvironmentVariables } {
   return Object.entries(envs).reduce(
     (acc, [name, value]) => {
       const r = resolveVariable(value, uberChart, service)
@@ -482,7 +488,7 @@ function serializeEnvironmentVariables(
           }
       }
     },
-    { errors: [] as string[], envs: {} },
+    { errors: [] as string[], envs: {} as ContainerEnvironmentVariables },
   )
 }
 
