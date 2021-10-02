@@ -25,7 +25,8 @@ export const useGetOrRequestLength = (application: Application) => {
       if (loadedLengths.has(id)) {
         setLoading(false)
 
-        return loadedLengths.get(id)
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return loadedLengths.get(id)!
       }
 
       const { data: temporaryLength } = await lazyGetLength({

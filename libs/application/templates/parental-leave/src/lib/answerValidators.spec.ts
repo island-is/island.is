@@ -55,30 +55,6 @@ describe('answerValidators', () => {
     application = createBaseApplication()
   })
 
-  it('should return error when DOB is undefined', () => {
-    const newApplication = {
-      ...application,
-      externalData: {
-        ...application.externalData,
-        children: {
-          date: new Date(),
-          reason: 'Sync failed',
-          status: 'failure',
-        },
-      },
-    } as Application
-
-    const newAnswers = 'specificDate'
-
-    expect(
-      answerValidators['firstPeriodStart'](newAnswers, newApplication),
-    ).toStrictEqual({
-      message: errorMessages.dateOfBirth,
-      path: 'firstPeriodStart',
-      values: undefined,
-    })
-  })
-
   it.skip('should return error for a (2nd or later) period that is empty (ex: they try to continue with empty startDate)', () => {
     const newAnswers = [
       { startDate: '2021-06-01', endDate: '2021-07-01', ratio: '100' },
@@ -186,7 +162,7 @@ describe('when constructing a new period', () => {
     application = createBaseApplication()
   })
 
-  const createValidationResultForPeriod = (period: object) =>
+  const createValidationResultForPeriod = (period: Record<string, unknown>) =>
     answerValidators[VALIDATE_LATEST_PERIOD]([period], application)
 
   it('should be required that the answer is an array', () => {

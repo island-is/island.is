@@ -43,7 +43,6 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   application,
   expandRepeater,
   field,
-  repeater,
   error,
   setRepeaterItems,
   setBeforeSubmitCallback,

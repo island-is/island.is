@@ -37,7 +37,7 @@ type FieldPeriodEndDateProps = {
 
 export const PeriodEndDate: FC<
   FieldBaseProps & CustomField & FieldPeriodEndDateProps
-> = ({ field, application, errors, setFieldLoadingState, description }) => {
+> = ({ field, application, errors, setFieldLoadingState }) => {
   const { formatMessage } = useLocale()
   const { id, title, props } = field
   const rights = getAvailableRightsInDays(application)
@@ -82,7 +82,7 @@ export const PeriodEndDate: FC<
       setDays(length)
       setDuration(daysToMonths(length))
     } catch (e) {
-      Sentry.captureException(e.message)
+      Sentry.captureException((e as Error).message)
 
       setError(fieldId, {
         type: 'error',

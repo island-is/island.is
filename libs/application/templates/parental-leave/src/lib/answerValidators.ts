@@ -55,7 +55,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     if (
       isSelfEmployed === YES &&
-      isEmpty((obj.selfEmployed as { file: any[] }).file)
+      isEmpty((obj.selfEmployed as { file: unknown[] }).file)
     ) {
       return buildError(errorMessages.requiredAttachment, 'selfEmployed.file')
     }

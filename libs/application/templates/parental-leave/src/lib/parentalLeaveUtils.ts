@@ -60,11 +60,6 @@ export function getNameAndIdOfSpouse(
   return [spouse.fullName, spouse.nationalId]
 }
 
-export function getEstimatedMonthlyPay(application: Application): number {
-  // TODO read this value from external data when APIs have arrived
-  return 384000
-}
-
 // TODO: Once we have the data, add the otherParentPeriods here.
 export function formatPeriods(
   application: Application,
