@@ -3,15 +3,11 @@ import {
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
-import differenceInDays from 'date-fns/differenceInDays'
-import parseISO from 'date-fns/parseISO'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
-import parse from 'date-fns/parse'
 
 import {
   minPeriodDays,
-  usageMaxMonths,
   minimumPeriodStartBeforeExpectedDateOfBirth,
 } from '../config'
 import { ParentalRelations } from '../constants'
@@ -24,7 +20,6 @@ const DEFAULT_DOB = '2021-01-15'
 const DEFAULT_DOB_DATE = new Date(DEFAULT_DOB)
 
 const formatDate = (date: Date) => format(date, dateFormat)
-const parseDate = (date: string) => parse(date, dateFormat, new Date(0))
 
 const createBaseApplication = (): Application => ({
   answers: { someAnswer: 'someValue', selectedChild: '0' },
@@ -53,7 +48,7 @@ const createBaseApplication = (): Application => ({
   status: ApplicationStatus.IN_PROGRESS,
 })
 
-describe.skip('answerValidators', () => {
+describe('answerValidators', () => {
   let application: Application
 
   beforeEach(() => {
@@ -84,37 +79,7 @@ describe.skip('answerValidators', () => {
     })
   })
 
-  it('should return error for a period with undefined startDate and undefined endDate', () => {
-    const newAnswers = [{}]
-
-    expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
-      message: errorMessages.periodsStartDateRequired,
-      path: 'periods[0].startDate',
-      values: undefined,
-    })
-  })
-
-  it('should return error for a period with estimatedDateOfBirth startDate and undefined endDate', () => {
-    const newAnswers = [{}]
-
-    const newApplication = {
-      ...application,
-      answers: {
-        ...application.answers,
-        firstPeriodStart: 'estimatedDateOfBirth',
-      },
-    } as Application
-
-    expect(
-      answerValidators['periods'](newAnswers, newApplication),
-    ).toStrictEqual({
-      message: errorMessages.periodsEndDateRequired,
-      path: 'periods[0].endDate',
-      values: undefined,
-    })
-  })
-
-  it('should return error for a (2nd or later) period that is empty (ex: they try to continue with empty startDate)', () => {
+  it.skip('should return error for a (2nd or later) period that is empty (ex: they try to continue with empty startDate)', () => {
     const newAnswers = [
       { startDate: '2021-06-01', endDate: '2021-07-01', ratio: '100' },
       {},
@@ -134,7 +99,7 @@ describe.skip('answerValidators', () => {
     ).toStrictEqual(undefined)
   })
 
-  it('should return error for a 2nd (or later) period with a startDate but with endDate undefined)', () => {
+  it.skip('should return error for a 2nd (or later) period with a startDate but with endDate undefined)', () => {
     const newAnswers = [
       { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
       { startDate: '2021-07-15' },
@@ -161,52 +126,47 @@ describe.skip('answerValidators', () => {
   })
 
   it('should return an error if startDate is more than 1 month before DOB', () => {
-    const newAnswers = [{ startDate: '2020-12-01' }]
+    const newAnswers = [
+      {
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: '2020-12-01',
+      },
+    ]
 
     expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
-      message: errorMessages.periodsStartDateBeforeDob,
+      message: errorMessages.periodsStartDate,
       path: 'periods[0].startDate',
-      values: undefined,
+      values: {},
     })
   })
 
   it(`shouldn't return an error if startDate is less than 1 month before DOB`, () => {
-    const newAnswers = [{ startDate: '2021-01-12' }]
+    const newAnswers = [
+      {
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: '2021-01-12',
+      },
+    ]
 
     expect(answerValidators['periods'](newAnswers, application)).toBeUndefined()
   })
 
   it('should return error for startDate after maximum months period', () => {
-    const newAnswers = [{ startDate: '2025-01-29' }]
+    const newAnswers = [
+      {
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: '2025-01-29',
+      },
+    ]
 
     expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
       message: errorMessages.periodsPeriodRange,
       path: 'periods[0].startDate',
-      values: { usageMaxMonths },
+      values: { usageMaxMonths: 23.5 },
     })
   })
 
-  it('should return error for endDate before startDate', () => {
-    const newAnswers = [{ startDate: '2021-01-29', endDate: '2021-01-20' }]
-
-    expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
-      message: errorMessages.periodsEndDateBeforeStartDate,
-      path: 'periods[0].endDate',
-      values: undefined,
-    })
-  })
-
-  it('should return error if the endDate is before or less than 14 days from the DOB when the startDate is undefined', () => {
-    const newAnswers = [{ endDate: '2021-01-20' }]
-
-    expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
-      message: errorMessages.periodsEndDate,
-      path: 'periods[0].endDate',
-      values: { minPeriodDays },
-    })
-  })
-
-  it('should return error for endDate before minimum days', () => {
+  it.skip('should return error for endDate before minimum days', () => {
     const newAnswers = [
       { startDate: '2021-01-29', endDate: '2021-02-04', ratio: '100' },
     ]
@@ -215,26 +175,6 @@ describe.skip('answerValidators', () => {
       message: errorMessages.periodsEndDateMinimumPeriod,
       path: 'periods[0].endDate',
       values: { minPeriodDays },
-    })
-  })
-
-  it('should return error for ratio of days less than minimum days', () => {
-    const startDate = '2021-01-29'
-    const endDate = '2021-02-16'
-    const ratio = 25
-    const newAnswers = [{ startDate, endDate, ratio }]
-    const diff = differenceInDays(parseISO(endDate), parseISO(startDate))
-    const diffWithRatio = (diff * ratio) / 100
-
-    expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
-      message: errorMessages.periodsRatio,
-      path: 'periods[0].ratio',
-      values: {
-        minPeriodDays,
-        diff,
-        ratio,
-        diffWithRatio,
-      },
     })
   })
 })
@@ -287,9 +227,9 @@ describe('when constructing a new period', () => {
         startDate: formatDate(addDays(minimumDate, -1)),
       }),
     ).toStrictEqual({
-      message: 'Ógild upphafsdagsetning',
+      message: errorMessages.periodsStartDate,
       path: 'periods[0].startDate',
-      values: undefined,
+      values: {},
     })
   })
 
@@ -301,9 +241,9 @@ describe('when constructing a new period', () => {
         endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
       }),
     ).toStrictEqual({
-      message: 'Ekki tilgreint hvernig eigi að velja endalok tímabils',
+      message: errorMessages.periodsEndDateDefinitionMissing,
       path: 'periods[0].endDate',
-      values: undefined,
+      values: {},
     })
 
     expect(
@@ -325,9 +265,9 @@ describe('when constructing a new period', () => {
         endDate: formatDate(addDays(DEFAULT_DOB_DATE, -1)),
       }),
     ).toStrictEqual({
-      message: 'Endadagsetning getur ekki verið á undan upphafsdagsetningu',
+      message: errorMessages.periodsEndDateBeforeStartDate,
       path: 'periods[0].endDate',
-      values: undefined,
+      values: {},
     })
 
     expect(
@@ -338,9 +278,9 @@ describe('when constructing a new period', () => {
         endDate: formatDate(addDays(DEFAULT_DOB_DATE, 5)),
       }),
     ).toStrictEqual({
-      message: 'Tímabil verður of stutt með þessa endadagsetningu',
+      message: errorMessages.periodsEndDateMinimumPeriod,
       path: 'periods[0].endDate',
-      values: undefined,
+      values: {},
     })
 
     expect(
@@ -362,9 +302,9 @@ describe('when constructing a new period', () => {
         endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
       }),
     ).toStrictEqual({
-      message: 'Ekki tókst að finna upplýsingar um fjölda mánaða valda',
+      message: errorMessages.periodsEndDateDefinitionInvalid,
       path: 'periods[0].endDate',
-      values: undefined,
+      values: {},
     })
   })
 
@@ -389,9 +329,9 @@ describe('when constructing a new period', () => {
         ratio: '100',
       }),
     ).toStrictEqual({
-      message: 'Upplýsingar um fjölda daga sem á að nýta vantar',
+      message: errorMessages.periodsRatioDaysMissing,
       path: 'periods[0].ratio',
-      values: undefined,
+      values: {},
     })
 
     expect(
@@ -404,9 +344,9 @@ describe('when constructing a new period', () => {
         ratio: '100',
       }),
     ).toStrictEqual({
-      message: 'Upplýsingar um mögulega hámarksnýtingu á tímibili vantar',
+      message: errorMessages.periodsRatioPercentageMissing,
       path: 'periods[0].ratio',
-      values: undefined,
+      values: {},
     })
 
     expect(
@@ -434,10 +374,27 @@ describe('when constructing a new period', () => {
         ratio: '100',
       }),
     ).toStrictEqual({
-      message:
-        'Nýtingarhlutfall hærra en möguleg hámarksnýting fyrir valið tímabil',
+      message: errorMessages.periodsRatioExceedsMaximum,
       path: 'periods[0].ratio',
-      values: undefined,
+      values: {},
+    })
+  })
+
+  it('should not be able to have a lower ratio than 10%', () => {
+    expect(
+      createValidationResultForPeriod({
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: DEFAULT_DOB,
+        useLength: NO,
+        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
+        days: '30',
+        percentage: '50',
+        ratio: '9',
+      }),
+    ).toStrictEqual({
+      message: errorMessages.periodsRatioBelowMinimum,
+      path: 'periods[0].ratio',
+      values: {},
     })
   })
 })

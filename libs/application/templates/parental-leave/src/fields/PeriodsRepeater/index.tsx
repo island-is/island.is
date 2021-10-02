@@ -5,7 +5,7 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import {
   RepeaterProps,
   FieldBaseProps,
-  getErrorViaPath,
+  // getErrorViaPath,
 } from '@island.is/application/core'
 import {
   Box,
@@ -40,7 +40,6 @@ type FieldProps = FieldBaseProps & {
 type ScreenProps = RepeaterProps & FieldProps
 
 const PeriodsRepeater: FC<ScreenProps> = ({
-  removeRepeaterItem,
   application,
   expandRepeater,
   field,
@@ -126,7 +125,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
       (period) => period.startDate !== startDate,
     )
 
-    const { errors } = await setRepeaterItems(remainingAfterDelete)
+    await setRepeaterItems(remainingAfterDelete)
   }
 
   if (!dob) {

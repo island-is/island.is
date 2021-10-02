@@ -1,7 +1,11 @@
-import { Application } from '@island.is/application/core'
+import {
+  AnswerValidationError,
+  Application,
+  StaticTextObject,
+} from '@island.is/application/core'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import parseISO from 'date-fns/parseISO'
-import addYears from 'date-fns/addYears'
+import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
 import subtractDays from 'date-fns/subDays'
 import { StartDateOptions, YES, NO } from '../constants'
@@ -9,7 +13,10 @@ import { getExpectedDateOfBirth } from './parentalLeaveUtils'
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minPeriodDays,
+  usageMaxMonths,
+  usageMinMonths,
 } from '../config'
+import { errorMessages } from './messages'
 
 import { Period } from '../types'
 
@@ -54,14 +61,14 @@ export const validatePeriod = (
   application: Application,
   buildError: (
     field: string | null,
-    message: string,
-    values?: object,
-  ) => { path: string; message: string; values: object },
+    message: StaticTextObject,
+    values?: Record<string, unknown>,
+  ) => AnswerValidationError,
 ) => {
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
 
   if (!expectedDateOfBirth) {
-    return buildError(null, 'Áætlaðan fæðingardag vantar í umsókn')
+    return buildError(null, errorMessages.dateOfBirth)
   }
 
   const dob = parseISO(expectedDateOfBirth)
@@ -69,7 +76,9 @@ export const validatePeriod = (
     dob,
     minimumPeriodStartBeforeExpectedDateOfBirth,
   )
-  const maximumEndDate = addYears(dob, 2)
+
+  const maximumStartDate = addMonths(dob, usageMaxMonths - usageMinMonths)
+  const maximumEndDate = addMonths(dob, usageMaxMonths)
 
   const {
     firstPeriodStart,
@@ -86,7 +95,7 @@ export const validatePeriod = (
     if (!firstPeriodStart) {
       return buildError(
         'firstPeriodStart',
-        'Ekki er tilgreint hvenær tímabil á að hefjast',
+        errorMessages.periodsFirstPeriodStartDateDefinitionMissing,
       )
     } else if (
       !validFirstPeriodStartValues.includes(
@@ -95,7 +104,7 @@ export const validatePeriod = (
     ) {
       return buildError(
         'firstPeriodStart',
-        'Ekki rétt tilgreint hvernig tímabil á að hefjast',
+        errorMessages.periodsFirstPeriodStartDateDefinitionInvalid,
       )
     }
   }
@@ -113,33 +122,40 @@ export const validatePeriod = (
     }
 
     if (startDateValue < minimumStartDate) {
-      return buildError('startDate', 'Ógild upphafsdagsetning')
+      return buildError('startDate', errorMessages.periodsStartDate)
     }
 
     if (
       dateIsWithinOtherPeriods(startDateValue, existingPeriods, period.rawIndex)
     ) {
-      return buildError(
-        'startDate',
-        'Upphafsdagsetning skarast á við annað tímabil',
-      )
+      return buildError('startDate', errorMessages.periodsStartDateOverlaps)
+    }
+
+    if (startDateValue > maximumStartDate) {
+      return buildError('startDate', errorMessages.periodsPeriodRange, {
+        usageMaxMonths: usageMaxMonths - usageMinMonths,
+      })
     }
   } else {
-    return buildError('startDate', 'Upphafsdagsetningu vantar')
+    return buildError('startDate', errorMessages.periodsStartMissing)
+  }
+
+  if (endDate === '') {
+    return buildError('endDate', errorMessages.periodsEndDateRequired)
   }
 
   if (endDate !== undefined) {
     if (useLength !== YES && useLength !== NO) {
       return buildError(
         'endDate',
-        'Ekki tilgreint hvernig eigi að velja endalok tímabils',
+        errorMessages.periodsEndDateDefinitionMissing,
       )
     }
 
     if (useLength === YES && duration === undefined) {
       return buildError(
         'endDate',
-        'Ekki tókst að finna upplýsingar um fjölda mánaða valda',
+        errorMessages.periodsEndDateDefinitionInvalid,
       )
     }
 
@@ -150,28 +166,31 @@ export const validatePeriod = (
     ) {
       return buildError(
         useLength === YES ? 'endDateDuration' : 'endDate',
-        'Endadagsetning skarast á við annað tímabil',
+        errorMessages.periodsEndDateOverlapsPeriod,
       )
     }
 
     if (endDateValue > maximumEndDate) {
       return buildError(
         useLength === YES ? 'endDateDuration' : 'endDate',
-        'Endadagsetning of langt frá áætluðum fæðingardegi',
+        errorMessages.periodsPeriodRange,
+        {
+          usageMaxMonths,
+        },
       )
     }
 
     if (endDateValue < startDateValue) {
       return buildError(
         useLength === YES ? 'endDateDuration' : 'endDate',
-        'Endadagsetning getur ekki verið á undan upphafsdagsetningu',
+        errorMessages.periodsEndDateBeforeStartDate,
       )
     }
 
     if (endDateValue < addDays(startDateValue, minPeriodDays)) {
       return buildError(
         useLength === YES ? 'endDateDuration' : 'endDate',
-        'Tímabil verður of stutt með þessa endadagsetningu',
+        errorMessages.periodsEndDateMinimumPeriod,
       )
     }
   }
@@ -180,24 +199,26 @@ export const validatePeriod = (
     const ratioValue = Number(ratio)
 
     if (days === undefined) {
-      return buildError(
-        'ratio',
-        'Upplýsingar um fjölda daga sem á að nýta vantar',
-      )
+      return buildError('ratio', errorMessages.periodsRatioDaysMissing)
     }
 
     if (percentage === undefined) {
-      return buildError(
-        'ratio',
-        'Upplýsingar um mögulega hámarksnýtingu á tímibili vantar',
-      )
+      return buildError('ratio', errorMessages.periodsRatioPercentageMissing)
     }
 
-    if (ratioValue > Number(percentage)) {
-      return buildError(
-        'ratio',
-        'Nýtingarhlutfall hærra en möguleg hámarksnýting fyrir valið tímabil',
-      )
+    const dayValue = Number(days)
+    const percentageValue = Number(percentage)
+
+    if (dayValue < minPeriodDays) {
+      return buildError('days', errorMessages.periodsEndDateMinimumPeriod)
+    }
+
+    if (ratioValue > percentageValue) {
+      return buildError('ratio', errorMessages.periodsRatioExceedsMaximum)
+    }
+
+    if (ratioValue < 10) {
+      return buildError('ratio', errorMessages.periodsRatioBelowMinimum)
     }
   }
 }

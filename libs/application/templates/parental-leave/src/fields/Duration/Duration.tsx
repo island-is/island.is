@@ -1,17 +1,9 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import addMonths from 'date-fns/addMonths'
-import formatISO from 'date-fns/formatISO'
-import parseISO from 'date-fns/parseISO'
 import format from 'date-fns/format'
 import * as Sentry from '@sentry/react'
 
-import {
-  extractRepeaterIndexFromField,
-  FieldBaseProps,
-  getValueViaPath,
-  RecordObject,
-} from '@island.is/application/core'
+import { FieldBaseProps, RecordObject } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
@@ -31,7 +23,6 @@ import * as styles from './Duration.treat'
 
 const df = 'yyyy-MM-dd'
 const DEFAULT_PERIOD_LENGTH = 1
-const DEFAULT_PERIOD_PERCENTAGE = 100
 
 export const Duration: FC<FieldBaseProps> = ({
   field,
@@ -43,9 +34,7 @@ export const Duration: FC<FieldBaseProps> = ({
   const { register, setError, clearErrors } = useFormContext()
   const { formatMessage, formatDateFns } = useLocale()
   const { answers } = application
-  const { periods, rawPeriods, firstPeriodStart } = getApplicationAnswers(
-    answers,
-  )
+  const { rawPeriods } = getApplicationAnswers(answers)
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
   const currentIndex = rawPeriods.length - 1
   const currentPeriod = rawPeriods[currentIndex]
@@ -61,7 +50,8 @@ export const Duration: FC<FieldBaseProps> = ({
   const [percent, setPercent] = useState<number>(100)
   const { getEndDate, loading } = useGetOrRequestEndDates(application)
   const errorMessage =
-    (errors?.component as RecordObject<string>)?.message || errors?.[id]
+    (errors?.component as RecordObject<string>)?.message ||
+    (errors as RecordObject<string>)?.[id]
 
   const monthsToEndDate = async (duration: number) => {
     try {
@@ -88,7 +78,7 @@ export const Duration: FC<FieldBaseProps> = ({
 
       return date
     } catch (e) {
-      Sentry.captureException(e.message)
+      Sentry.captureException((e as Error).message)
 
       setError('component', {
         type: 'error',

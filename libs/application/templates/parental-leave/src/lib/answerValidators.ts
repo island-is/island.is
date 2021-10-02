@@ -1,12 +1,5 @@
-import differenceInDays from 'date-fns/differenceInDays'
-import parseISO from 'date-fns/parseISO'
-import isValid from 'date-fns/isValid'
-import differenceInMonths from 'date-fns/differenceInMonths'
-import isWithinInterval from 'date-fns/isWithinInterval'
-import subMonths from 'date-fns/subMonths'
 import isEmpty from 'lodash/isEmpty'
 import isArray from 'lodash/isArray'
-import has from 'lodash/has'
 
 import {
   Application,
@@ -16,15 +9,15 @@ import {
   buildValidationError,
   coreErrorMessages,
   StaticText,
+  StaticTextObject,
+  AnswerValidationError,
 } from '@island.is/application/core'
 
 import { Period } from '../types'
-import { minPeriodDays, usageMaxMonths } from '../config'
 import { NO, YES } from '../constants'
 import { isValidEmail } from './isValidEmail'
 import { errorMessages } from './messages'
 import {
-  getApplicationAnswers,
   getExpectedDateOfBirth,
   calculateDaysUsedByPeriods,
   getAvailableRightsInDays,
@@ -33,7 +26,6 @@ import { filterValidPeriods } from '../lib/parentalLeaveUtils'
 import { validatePeriod } from './answerValidator-utils'
 
 const EMPLOYER = 'employer'
-const FIRST_PERIOD_START = 'firstPeriodStart'
 // When attempting to continue from the periods repeater main screen
 // this validator will get called to validate all of the periods
 export const VALIDATE_PERIODS = 'validatedPeriods'
@@ -78,16 +70,16 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     return undefined
   },
-  [FIRST_PERIOD_START]: (_, application: Application) => {
-    const buildError = buildValidationError(FIRST_PERIOD_START)
-    const expectedDateOfBirth = getExpectedDateOfBirth(application)
+  // [FIRST_PERIOD_START]: (_, application: Application) => {
+  //   const buildError = buildValidationError(FIRST_PERIOD_START)
+  //   const expectedDateOfBirth = getExpectedDateOfBirth(application)
 
-    if (!expectedDateOfBirth) {
-      return buildError(errorMessages.dateOfBirth)
-    }
+  //   if (!expectedDateOfBirth) {
+  //     return buildError(errorMessages.dateOfBirth)
+  //   }
 
-    return undefined
-  },
+  //   return undefined
+  // },
   [VALIDATE_LATEST_PERIOD]: (newAnswer: unknown, application: Application) => {
     const periods = newAnswer as Period[]
 
@@ -126,9 +118,9 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     const buildFieldError = (
       field: string | null,
-      message: string,
-      values: Record<string, unknown> | undefined = undefined,
-    ) => {
+      message: StaticTextObject,
+      values: Record<string, unknown> = {},
+    ): AnswerValidationError => {
       if (field !== null) {
         return buildError(message, field, values)
       }
@@ -164,14 +156,9 @@ export const answerValidators: Record<string, AnswerValidator> = {
       }
     }
 
-    const newPeriodIndex = periods.length - 1
-    const period = periods[newPeriodIndex]
-    const buildError = buildValidationError(VALIDATE_PERIODS, newPeriodIndex)
-    const expectedDateOfBirth = getExpectedDateOfBirth(application)
-    const dob = expectedDateOfBirth as string
-    const { periods: answeredPeriods } = getApplicationAnswers(
-      application.answers,
-    )
+    // const newPeriodIndex = periods.length - 1
+    // const buildError = buildValidationError(VALIDATE_PERIODS, newPeriodIndex)
+    // const expectedDateOfBirth = getExpectedDateOfBirth(application)
 
     // TODO: best to make requests to VMST to calculate period length again
     // based on start, end + ratio in the case of a handcrafted update request

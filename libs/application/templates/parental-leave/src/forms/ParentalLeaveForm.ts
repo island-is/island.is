@@ -71,6 +71,8 @@ const percentOptions = createRange<{ label: string; value: string }>(
   },
 ).sort((a, b) => Number(b.value) - Number(a.value))
 
+console.log(percentOptions)
+
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
   title: parentalLeaveFormMessages.shared.formTitle,
@@ -712,9 +714,18 @@ export const ParentalLeaveForm: Form = buildForm({
                   description: parentalLeaveFormMessages.startDate.description,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
                   condition: (answers) => {
-                    const { periods } = getApplicationAnswers(answers)
+                    const { periods, rawPeriods } = getApplicationAnswers(
+                      answers,
+                    )
+                    const currentPeriod = rawPeriods[rawPeriods.length - 1]
+                    const firstPeriodRequestingSpecificStartDate =
+                      currentPeriod?.firstPeriodStart ===
+                      StartDateOptions.SPECIFIC_DATE
 
-                    return periods.length !== 0
+                    return (
+                      firstPeriodRequestingSpecificStartDate ||
+                      periods.length !== 0
+                    )
                   },
                   minDate: (application: Application) => {
                     const expectedDateOfBirth = getExpectedDateOfBirth(

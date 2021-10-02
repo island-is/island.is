@@ -3,7 +3,6 @@ import { useCallback, useState } from 'react'
 import { Application } from '@island.is/application/core'
 
 import { useLazyParentalLeavePeriodEndDate } from './useLazyParentalLeavePeriodEndDate'
-import { useLazyParentalLeavePeriodLength } from './useLazyParentalLeavePeriodLength'
 import { useDaysAlreadyUsed } from './useDaysAlreadyUsed'
 import { calculateDaysToPercentage } from '../lib/parentalLeaveUtils'
 
@@ -18,7 +17,6 @@ const loadedEndDates = new Map<
 
 export const useGetOrRequestEndDates = (application: Application) => {
   const lazyGetEndDate = useLazyParentalLeavePeriodEndDate()
-  const lazyGetLength = useLazyParentalLeavePeriodLength()
   const [loading, setLoading] = useState(false)
   const daysAlreadyUsed = useDaysAlreadyUsed(application)
 
@@ -51,7 +49,7 @@ export const useGetOrRequestEndDates = (application: Application) => {
         setLoading(false)
 
         throw new Error(
-          `VMST: Cannot calculate temporary end date, startDate/${startDate} length/${length} temporaryLazyEndDate/${temporaryLazyEndDate}`,
+          `VMST: Cannot calculate temporary end date, startDate/${startDate} length/${length}`,
         )
       }
 
