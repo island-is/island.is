@@ -285,9 +285,7 @@ const Screen: FC<ScreenProps> = ({
 
   const onUpdateRepeater = async (newRepeaterItems: unknown[]) => {
     if (!screen.id) {
-      return {
-        errors: 'Ekki tókst að uppfæra',
-      }
+      return {}
     }
 
     const newData = await updateApplication({
@@ -299,6 +297,7 @@ const Screen: FC<ScreenProps> = ({
         locale,
       },
     })
+
     if (!!newData && !newData.errors) {
       answerQuestions(newData.data.updateApplication.answers)
       reset(

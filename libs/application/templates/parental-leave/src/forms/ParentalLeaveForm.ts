@@ -71,8 +71,6 @@ const percentOptions = createRange<{ label: string; value: string }>(
   },
 ).sort((a, b) => Number(b.value) - Number(a.value))
 
-console.log(percentOptions)
-
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
   title: parentalLeaveFormMessages.shared.formTitle,

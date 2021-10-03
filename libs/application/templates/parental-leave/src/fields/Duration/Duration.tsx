@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import format from 'date-fns/format'
 import * as Sentry from '@sentry/react'
@@ -22,7 +22,7 @@ import { useGetOrRequestEndDates } from '../../hooks/useGetOrRequestEndDates'
 import * as styles from './Duration.treat'
 
 const df = 'yyyy-MM-dd'
-const DEFAULT_PERIOD_LENGTH = 1
+const DEFAULT_PERIOD_LENGTH = usageMinMonths
 
 export const Duration: FC<FieldBaseProps> = ({
   field,
@@ -43,9 +43,11 @@ export const Duration: FC<FieldBaseProps> = ({
   const [chosenEndDate, setChosenEndDate] = useState<string | undefined>(
     undefined,
   )
-  const [chosenDuration, setChosenDuration] = useState<number>(usageMinMonths)
+  const [chosenDuration, setChosenDuration] = useState<number>(
+    DEFAULT_PERIOD_LENGTH,
+  )
   const [durationInDays, setDurationInDays] = useState<number>(
-    usageMinMonths * 30,
+    DEFAULT_PERIOD_LENGTH * 30,
   )
   const [percent, setPercent] = useState<number>(100)
   const { getEndDate, loading } = useGetOrRequestEndDates(application)
@@ -53,39 +55,42 @@ export const Duration: FC<FieldBaseProps> = ({
     (errors?.component as RecordObject<string>)?.message ||
     (errors as RecordObject<string>)?.[id]
 
-  const monthsToEndDate = async (duration: number) => {
-    try {
-      const days = monthsToDays(duration)
+  const monthsToEndDate = useCallback(
+    async (duration: number) => {
+      try {
+        const days = monthsToDays(duration)
 
-      const endDateResult = await getEndDate({
-        startDate: currentStartDateAnswer,
-        length: days,
-      })
+        const endDateResult = await getEndDate({
+          startDate: currentStartDateAnswer,
+          length: days,
+        })
 
-      if (!endDateResult || !endDateResult.date) {
+        if (!endDateResult || !endDateResult.date) {
+          setError('component', {
+            type: 'error',
+            message: formatMessage(errorMessages.durationPeriods),
+          })
+          return
+        }
+
+        const date = new Date(endDateResult.date)
+
+        setChosenEndDate(date.toISOString())
+        setPercent(endDateResult.percentage)
+        setDurationInDays(endDateResult.days)
+
+        return date
+      } catch (e) {
+        Sentry.captureException((e as Error).message)
+
         setError('component', {
           type: 'error',
           message: formatMessage(errorMessages.durationPeriods),
         })
-        return
       }
-
-      const date = new Date(endDateResult.date)
-
-      setChosenEndDate(date.toISOString())
-      setPercent(endDateResult.percentage)
-      setDurationInDays(endDateResult.days)
-
-      return date
-    } catch (e) {
-      Sentry.captureException((e as Error).message)
-
-      setError('component', {
-        type: 'error',
-        message: formatMessage(errorMessages.durationPeriods),
-      })
-    }
-  }
+    },
+    [currentStartDateAnswer, formatMessage, getEndDate, setError],
+  )
 
   const handleChange = async (months: number) => {
     clearErrors([id, 'component'])
@@ -148,32 +153,40 @@ export const Duration: FC<FieldBaseProps> = ({
         paddingX={3}
         marginTop={3}
       >
-        <Controller
-          defaultValue={chosenEndDate}
-          name={id}
-          render={({ onChange }) => (
-            <Slider
-              min={usageMinMonths}
-              max={usageMaxMonths}
-              trackStyle={{ gridTemplateRows: 8 }}
-              calculateCellStyle={() => ({
-                background: theme.color.dark200,
-              })}
-              showMinMaxLabels
-              showToolTip
-              label={{
-                singular: formatMessage(parentalLeaveFormMessages.shared.month),
-                plural: formatMessage(parentalLeaveFormMessages.shared.months),
-              }}
-              rangeDates={rangeDates}
-              currentIndex={chosenDuration}
-              onChange={(months: number) => handleChange(months)}
-              onChangeEnd={(months: number) =>
-                handleChangeEnd(months, onChange)
-              }
-            />
-          )}
-        />
+        {chosenEndDate ? (
+          <Controller
+            defaultValue={chosenEndDate}
+            name={id}
+            render={({ onChange }) => (
+              <Slider
+                min={usageMinMonths}
+                max={usageMaxMonths}
+                trackStyle={{ gridTemplateRows: 8 }}
+                calculateCellStyle={() => ({
+                  background: theme.color.dark200,
+                })}
+                showMinMaxLabels
+                showToolTip
+                label={{
+                  singular: formatMessage(
+                    parentalLeaveFormMessages.shared.month,
+                  ),
+                  plural: formatMessage(
+                    parentalLeaveFormMessages.shared.months,
+                  ),
+                }}
+                rangeDates={rangeDates}
+                currentIndex={chosenDuration}
+                onChange={(months: number) => handleChange(months)}
+                onChangeEnd={(months: number) =>
+                  handleChangeEnd(months, onChange)
+                }
+              />
+            )}
+          />
+        ) : (
+          'Sæki gögn...'
+        )}
       </Box>
 
       {errorMessage && (

@@ -11,6 +11,7 @@ import {
 
 import { useFields } from '../context/FieldContext'
 import { RepeaterScreen } from '../types'
+import { FetchResult } from '@apollo/client'
 
 type RepeaterItems = unknown[]
 
@@ -23,7 +24,7 @@ const FormRepeater: FC<{
   expandRepeater: () => void
   onUpdateRepeater: (
     newRepeaterItems: RepeaterItems,
-  ) => Promise<{ errors?: ReadonlyArray<GraphQLError> }>
+  ) => Promise<{ errors?: FetchResult['errors'] }>
 }> = ({
   application,
   errors,
