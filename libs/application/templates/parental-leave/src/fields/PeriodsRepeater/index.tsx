@@ -61,6 +61,20 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   const { rawPeriods, periods } = getApplicationAnswers(application.answers)
 
   useEffect(() => {
+    const syncPeriods = async () => {
+      setFieldLoadingState?.(true)
+      await setRepeaterItems(periods)
+      setFieldLoadingState?.(false)
+    }
+    // Upon entering this screen, if rawPeriods are not in sync with periods, sync them
+    // This means that there is an incomplete period inside answers.periods which we will remove
+    // TODO: real comparison
+    if (rawPeriods.length !== periods.length) {
+      syncPeriods()
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     if (!editable) {
       return
     }
@@ -91,15 +105,6 @@ const PeriodsRepeater: FC<ScreenProps> = ({
           return [false, 'Ekki tókst að halda áfram']
         }
 
-        // Overwrite any pending periods with those that are valid
-        const { errors: updateRepeaterErrors } = await setRepeaterItems(periods)
-
-        if (updateRepeaterErrors) {
-          setFieldLoadingState?.(false)
-          return [false, 'Gat ekki uppfært svör']
-        }
-
-        setFieldLoadingState?.(false)
         return [true, null]
       } catch (e) {
         setFieldLoadingState?.(false)
