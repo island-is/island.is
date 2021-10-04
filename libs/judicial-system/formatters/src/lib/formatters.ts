@@ -316,21 +316,17 @@ export function formatGenderPronouns(gender?: CaseGender): string {
 export function formatAppeal(
   appealDecision: CaseAppealDecision | undefined,
   stakeholder: string,
-  stakeholderGender?: CaseGender,
+  stakeholderGender: CaseGender = CaseGender.MALE,
 ): string {
   const stakeholderGenderText = formatGenderPronouns(stakeholderGender)
 
   switch (appealDecision) {
     case CaseAppealDecision.APPEAL:
-      return `${stakeholder} lýsir því yfir að ${
-        stakeholderGender ? stakeholderGenderText : 'hann'
-      } kæri úrskurðinn til Landsréttar.`
+      return `${stakeholder} lýsir því yfir að ${stakeholderGenderText} kæri úrskurðinn til Landsréttar.`
     case CaseAppealDecision.ACCEPT:
       return `${stakeholder} unir úrskurðinum.`
     case CaseAppealDecision.POSTPONE:
-      return `${stakeholder} lýsir því yfir að ${
-        stakeholderGender ? stakeholderGenderText : 'hann'
-      } taki sér lögbundinn kærufrest.`
+      return `${stakeholder} lýsir því yfir að ${stakeholderGenderText} taki sér lögbundinn kærufrest.`
     default:
       return ''
   }
