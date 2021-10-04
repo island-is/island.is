@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Text, Box, Link } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
@@ -11,7 +11,7 @@ import {
 import {
   ApplicationState,
   Application,
-  ApplicationStateUrl,
+  getStateUrlFromRoute,
 } from '@island.is/financial-aid/shared/lib'
 
 import { GetApplicationsQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
@@ -41,7 +41,7 @@ export const ApplicationsOverview = () => {
     GetApplicationsQuery,
     {
       variables: {
-        input: { stateUrl: router.pathname.substring(1) },
+        input: { stateUrl: getStateUrlFromRoute[router.pathname] },
       },
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
@@ -80,6 +80,7 @@ export const ApplicationsOverview = () => {
           <ApplicationsTable
             headers={currentNavigationItem.headers}
             applications={applications}
+            setApplications={setApplications}
           />
         )}
 

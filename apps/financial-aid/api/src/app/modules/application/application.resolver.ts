@@ -10,12 +10,14 @@ import { BackendAPI } from '../../../services'
 import {
   ApplicationFiltersModel,
   ApplicationModel,
+  UpdateApplicationTableResponse,
   UpdateApplicationResponse,
 } from './models'
 import {
   CreateApplicationInput,
   UpdateApplicationInput,
   CreateApplicationEventInput,
+  UpdateApplicationInputTable,
 } from './dto'
 import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
 
@@ -24,9 +26,9 @@ import { ApplicationInput, AllApplicationInput } from './dto'
 import {
   Application,
   ApplicationFilters,
+  UpdateApplicationTableResponseType,
   UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
-import { ApplicationModule } from './application.module'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => ApplicationModel)
@@ -90,6 +92,19 @@ export class ApplicationResolver {
     this.logger.debug(`updating application ${id}`)
 
     return backendApi.updateApplicationRes(id, updateApplication)
+  }
+
+  @Mutation(() => UpdateApplicationTableResponse, { nullable: true })
+  updateApplicationTable(
+    @Args('input', { type: () => UpdateApplicationInputTable })
+    input: UpdateApplicationInputTable,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<UpdateApplicationTableResponseType> {
+    const { id, stateUrl, ...updateApplication } = input
+
+    this.logger.debug(`updating application table ${id}`)
+
+    return backendApi.updateApplicationTable(id, stateUrl, updateApplication)
   }
 
   @Query(() => ApplicationFiltersModel, { nullable: false })

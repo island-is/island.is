@@ -113,7 +113,10 @@ describe('/domur/urskurdarord/:id', () => {
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.REJECTING,
-      parentCase: { ...makeCase(), decision: CaseDecision.ACCEPTING },
+      parentCase: {
+        ...makeCase(),
+        decision: CaseDecision.ACCEPTING,
+      },
     }
 
     cy.visit('/domur/urskurdarord/conclusion_rejected_extension')

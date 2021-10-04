@@ -7,6 +7,7 @@ import {
   RolesRule,
   ReturnUrl,
   StaffRole,
+  ApplicationStateUrl,
 } from './enums'
 
 export interface GetSignedUrl {
@@ -67,6 +68,12 @@ export interface UpdateApplication {
   amount?: number
   rejection?: string
   staffId?: string
+}
+
+export interface UpdateApplicationTable {
+  state: ApplicationState
+  staffId: string
+  stateUrl: ApplicationStateUrl
 }
 
 export interface CreateApplicationEvent {
@@ -178,6 +185,11 @@ export interface Application {
 
 export interface GetSignedUrlForId {
   id: string
+}
+
+export interface UpdateApplicationTableResponseType {
+  applications: Application[]
+  filters: ApplicationFilters
 }
 
 export interface UpdateApplicationResponseType {

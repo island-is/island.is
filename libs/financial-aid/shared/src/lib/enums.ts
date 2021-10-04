@@ -23,9 +23,9 @@ export enum ApplicationState {
 }
 
 export enum ApplicationStateUrl {
-  NEW = 'nymal',
-  INPROGRESS = 'vinnslu',
-  PROCESSED = 'afgreidd',
+  NEW = 'New',
+  INPROGRESS = 'InProgress',
+  PROCESSED = 'Processed',
 }
 
 export enum ApplicationEventType {
