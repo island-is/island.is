@@ -103,22 +103,28 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             þennan til Landsréttar innan þriggja sólarhringa.
           </Text>
         </Box>
-        <Box marginBottom={1}>
+        {workingCase.prosecutorAppealDecision !==
+          CaseAppealDecision.NOT_APPLICABLE && (
+          <Box marginBottom={1}>
+            <Text variant="h4">
+              {formatAppeal(workingCase.prosecutorAppealDecision, 'Sækjandi')}
+            </Text>
+          </Box>
+        )}
+        {workingCase.accusedAppealDecision !==
+          CaseAppealDecision.NOT_APPLICABLE && (
           <Text variant="h4">
-            {formatAppeal(workingCase.prosecutorAppealDecision, 'Sækjandi')}
+            {formatAppeal(
+              workingCase.accusedAppealDecision,
+              [CaseType.CUSTODY, CaseType.TRAVEL_BAN].includes(workingCase.type)
+                ? capitalize(formatAccusedByGender(workingCase.accusedGender))
+                : 'Varnaraðili',
+              [CaseType.CUSTODY, CaseType.TRAVEL_BAN].includes(workingCase.type)
+                ? workingCase.accusedGender
+                : undefined,
+            )}
           </Text>
-        </Box>
-        <Text variant="h4">
-          {formatAppeal(
-            workingCase.accusedAppealDecision,
-            [CaseType.CUSTODY, CaseType.TRAVEL_BAN].includes(workingCase.type)
-              ? capitalize(formatAccusedByGender(workingCase.accusedGender))
-              : 'Varnaraðili',
-            [CaseType.CUSTODY, CaseType.TRAVEL_BAN].includes(workingCase.type)
-              ? workingCase.accusedGender
-              : undefined,
-          )}
-        </Text>
+        )}
       </Box>
       {(workingCase.accusedAppealAnnouncement ||
         workingCase.prosecutorAppealAnnouncement) && (

@@ -213,16 +213,17 @@ export const Confirmation: React.FC = () => {
               <Box marginBottom={1}>
                 <Text variant="h4">
                   {formatAppeal(
-                    workingCase.accusedAppealDecision,
-                    capitalize(
-                      formatAccusedByGender(workingCase.accusedGender),
-                    ),
-                    workingCase.accusedGender,
+                    workingCase.prosecutorAppealDecision,
+                    'Sækjandi',
                   )}
                 </Text>
               </Box>
               <Text variant="h4">
-                {formatAppeal(workingCase.prosecutorAppealDecision, 'Sækjandi')}
+                {formatAppeal(
+                  workingCase.accusedAppealDecision,
+                  capitalize(formatAccusedByGender(workingCase.accusedGender)),
+                  workingCase.accusedGender,
+                )}
               </Text>
               {(workingCase.accusedAppealAnnouncement ||
                 workingCase.prosecutorAppealAnnouncement) && (

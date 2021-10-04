@@ -122,14 +122,14 @@ const Confirmation: React.FC<Props> = (props) => {
             CaseAppealDecision.NOT_APPLICABLE && (
             <Box marginBottom={1}>
               <Text variant="h4">
-                {formatAppeal(workingCase.accusedAppealDecision, 'Varnaraðili')}
+                {formatAppeal(workingCase.prosecutorAppealDecision, 'Sækjandi')}
               </Text>
             </Box>
           )}
           {workingCase.prosecutorAppealDecision !==
             CaseAppealDecision.NOT_APPLICABLE && (
             <Text variant="h4">
-              {formatAppeal(workingCase.prosecutorAppealDecision, 'Sækjandi')}
+              {formatAppeal(workingCase.accusedAppealDecision, 'Varnaraðili')}
             </Text>
           )}
           {(workingCase.accusedAppealAnnouncement ||
