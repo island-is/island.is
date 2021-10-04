@@ -1,6 +1,3 @@
-export const IDENTITY_SERVER_SESSION_TOKEN_COOKIE_NAME =
-  'next-auth.session-token'
-
 export const Routes = {
   application: '/umsokn',
   status: '/stada',
@@ -46,8 +43,3 @@ export const getNextPeriod = {
 }
 
 export const apiBasePath = 'api'
-
-export const signOutUrl = (window: Window, idToken: string) =>
-  `${window.location.origin}/api/auth/logout?id_token=${idToken}`
-
-export const identityServerId = 'identity-server'
