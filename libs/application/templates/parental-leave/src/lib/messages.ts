@@ -1628,7 +1628,7 @@ export const errorMessages = defineMessages({
   periodsNotAList: {
     id: 'pl.application:answerValidators.periodsNotAList',
     defaultMessage: 'Svar þarf að vera listi af tímabilum',
-    description: 'Copy when periods is not a list of objects',
+    description: 'Copy when periods is not a list',
   },
   periodsEmpty: {
     id: 'pl.application:answerValidators.periodsEmpty',

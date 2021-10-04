@@ -173,7 +173,7 @@ describe('when constructing a new period', () => {
     expect(answerValidators[VALIDATE_LATEST_PERIOD](null, application)).toEqual(
       {
         path: 'periods',
-        message: 'Svar þarf að vera listi af tímabilum',
+        message: errorMessages.periodsNotAList,
       },
     )
   })
