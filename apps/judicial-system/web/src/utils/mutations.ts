@@ -57,6 +57,7 @@ export const ExtendCaseMutation = gql`
       defenderPhoneNumber
       sendRequestToDefender
       defenderIsSpokesperson
+      isHeightenedSecurityLevel
       court {
         id
         type

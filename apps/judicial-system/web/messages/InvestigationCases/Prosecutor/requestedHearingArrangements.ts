@@ -15,7 +15,15 @@ export const icRequestedHearingArrangements = {
           'judicial.system.investigation_cases:requested_hearing_arrangements.prosecutor.heighten_security_level_label',
         defaultMessage: 'Hækka öryggisstig',
         description:
-          'Notaður sem texti í "Hækka öryggisstig" checkmark á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
+          'Notaður sem texti í "Hækka öryggisstig" checkboxi á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      heightenSecurityLevelInfo: {
+        id:
+          'judicial.system.investigation_cases:requested_hearing_arrangements.prosecutor.heighten_security_level_info',
+        defaultMessage:
+          'Með því að hækka öryggisstig á kröfunni verður krafan eingöngu aðgengileg þeim sem stofnaði kröfuna ásamt skráðum saksóknari í málinu.',
+        description:
+          'Notaður sem upplýsingatexti í "Hækka öryggisstig" checkboxi á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
       },
     }),
     translator: defineMessages({

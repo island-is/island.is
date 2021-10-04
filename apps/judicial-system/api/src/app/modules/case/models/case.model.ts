@@ -68,6 +68,9 @@ export class Case implements TCase {
   @Field({ nullable: true })
   defenderIsSpokesperson?: boolean
 
+  @Field({ nullable: true })
+  isHeightenedSecurityLevel?: boolean
+
   @Field(() => Institution, { nullable: true })
   readonly court?: Institution
 

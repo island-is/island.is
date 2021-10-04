@@ -195,6 +195,17 @@ export class Case extends Model<Case> {
   defenderIsSpokesperson?: boolean
 
   /**********
+   * Indicates whether the secutity level of the case has been heightened -
+   * optional
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  isHeightenedSecurityLevel?: boolean
+
+  /**********
    * The surrogate key of the court assigned to the case
    **********/
   @Column({

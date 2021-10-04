@@ -75,6 +75,7 @@ const prosecutorUpdateRule = {
     'defenderEmail',
     'defenderPhoneNumber',
     'sendRequestToDefender',
+    'isHeightenedSecurityLevel',
     'courtId',
     'leadInvestigator',
     'arrestDate',

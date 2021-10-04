@@ -55,11 +55,12 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
   const [, setRequestedCourtDateIsValid] = useState<boolean>(
     workingCase.requestedCourtDate !== null,
   )
-  const { isValid, setField, validateAndSendToServer } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
+  const {
+    isValid,
+    setField,
+    validateAndSendToServer,
+    setAndSendToServer,
+  } = useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   const { updateCase } = useCase()
 
@@ -82,9 +83,15 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
                 />
               </Box>
               <Checkbox
+                name="isHeightenedSecurityLevel"
                 label={formatMessage(
                   m.sections.prosecutor.heightenSecurityLevelLabel,
                 )}
+                tooltip={formatMessage(
+                  m.sections.prosecutor.heightenSecurityLevelInfo,
+                )}
+                checked={workingCase.isHeightenedSecurityLevel}
+                onChange={(event) => setAndSendToServer(event.target)}
                 large
                 filled
               />
