@@ -165,6 +165,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         assetData?.notkunareiningar?.notkunareiningar?.length > 0 ? (
           <AssetGrid
             title={formatMessage(messages.unitsOfUse)}
+            locationData={assetData?.sjalfgefidStadfang}
             units={assetData?.notkunareiningar}
             assetId={assetData?.fasteignanumer}
           />

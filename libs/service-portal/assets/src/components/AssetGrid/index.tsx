@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { NotkunareiningWrapper } from '@island.is/clients/assets'
+import { NotkunareiningWrapper, Stadfang } from '@island.is/clients/assets'
 import {
   Text,
   Table as T,
@@ -16,11 +16,12 @@ import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
 interface Props {
   units: NotkunareiningWrapper | undefined
+  locationData?: Stadfang | null
   title?: string
   assetId?: string | number | null
 }
 
-const AssetGrid: FC<Props> = ({ title, units, assetId }) => {
+const AssetGrid: FC<Props> = ({ title, units, assetId, locationData }) => {
   const { formatMessage } = useLocale()
   const [getUnitsOfUseQuery, { fetchMore, data }] = useLazyQuery(
     GET_UNITS_OF_USE_QUERY,
@@ -60,7 +61,7 @@ const AssetGrid: FC<Props> = ({ title, units, assetId }) => {
 
   const unitData = units?.notkunareiningar || []
   const tableArray = [...unitData, ...paginateData]
-  const tables = unitsArray(tableArray, formatMessage)
+  const tables = unitsArray(tableArray, locationData, formatMessage)
 
   const loadMoreButton =
     data?.getNotkunareiningar.paging?.hasNextPage ||

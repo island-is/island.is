@@ -5,7 +5,11 @@ import amountFormat from './amountFormat'
 import { messages } from '../lib/messages'
 import { FormatMessage } from '@island.is/application/core'
 
-import { Notkunareining, ThinglysturEigandi } from '@island.is/clients/assets'
+import {
+  Notkunareining,
+  ThinglysturEigandi,
+  Stadfang,
+} from '@island.is/clients/assets'
 import is from 'date-fns/locale/is'
 import format from 'date-fns/format'
 
@@ -30,13 +34,15 @@ const ownersArray = (data: ThinglysturEigandi[] | undefined) => {
 
 const unitsArray = (
   data: Notkunareining[] | undefined,
+  stadfang: Stadfang | undefined | null,
   formatMessage: FormatMessage,
 ) =>
   data?.map((unit: Notkunareining) => {
+    const locationData = unit.stadfang || stadfang
     return {
       header: {
         title: unit.notkunBirting || '',
-        value: unit.sjalfgefidStadfang?.birting || '',
+        value: locationData?.birting || '',
       },
       rows: chunk(
         [
@@ -54,10 +60,10 @@ const unitsArray = (
           },
           {
             title: formatMessage(messages.location),
-            value: unit.sjalfgefidStadfang?.birtingStutt || '',
-            detail: unit.sjalfgefidStadfang?.stadfanganumer
+            value: locationData?.birtingStutt || '',
+            detail: locationData?.stadfanganumer
               ? `${formatMessage(messages.locationNumber)}: ${
-                  unit.sjalfgefidStadfang?.stadfanganumer
+                  locationData?.stadfanganumer
                 }`
               : undefined,
           },
@@ -75,7 +81,7 @@ const unitsArray = (
           },
           {
             title: formatMessage(messages.municipality),
-            value: unit.sjalfgefidStadfang?.sveitarfelagBirting || '',
+            value: locationData?.sveitarfelagBirting || '',
           },
           // {
           //   title: formatMessage(messages.siteAssessment),
