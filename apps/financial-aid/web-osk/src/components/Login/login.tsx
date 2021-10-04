@@ -12,9 +12,6 @@ interface Props {
 }
 
 const Login = ({ headline, about }: Props) => {
-  const router = useRouter()
-  const [session] = useSession()
-
   return (
     <GridContainer>
       <div className={styles.gridRowContainer}>
@@ -22,7 +19,6 @@ const Login = ({ headline, about }: Props) => {
           <Text as="h1" variant="h1" marginBottom={2} marginTop={10}>
             {headline}
           </Text>
-
           <Text marginBottom={3}>{about}</Text>
 
           <Button
@@ -34,71 +30,6 @@ const Login = ({ headline, about }: Props) => {
           >
             Innskráning
           </Button>
-          {/* TODO: REMOVE THIS BUTTON AFTER TESTING AND MOVE TO CORRECT LOGOUT */}
-          <Button
-            onClick={() =>
-              signOut({
-                callbackUrl: signOutUrl(window, session?.idToken),
-              })
-            }
-            data-testid="logout-button"
-            preTextIconType="filled"
-            type="button"
-            variant="primary"
-          >
-            Skrá út
-          </Button>
-          <Box paddingTop={4}>
-            <Button
-              onClick={() => {
-                router.push(
-                  `${Routes.apiLoginRouteForFake(
-                    router.query.id as string,
-                  )}0000000000`,
-                )
-              }}
-              data-testid="logout-button"
-              preTextIconType="filled"
-              type="button"
-              variant="primary"
-            >
-              Plat notandi (Árnason)
-            </Button>
-          </Box>
-          <Box paddingTop={4}>
-            <Button
-              onClick={() => {
-                router.push(
-                  `${Routes.apiLoginRouteForFake(
-                    router.query.id as string,
-                  )}0000000001`,
-                )
-              }}
-              data-testid="logout-button"
-              preTextIconType="filled"
-              type="button"
-              variant="primary"
-            >
-              Plat notandi (Margrétardóttir)
-            </Button>
-          </Box>
-          <Box paddingTop={4}>
-            <Button
-              onClick={() => {
-                router.push(
-                  `${Routes.apiLoginRouteForFake(
-                    router.query.id as string,
-                  )}0000000003`,
-                )
-              }}
-              data-testid="logout-button"
-              preTextIconType="filled"
-              type="button"
-              variant="primary"
-            >
-              Plat notandi (Frilluson)
-            </Button>
-          </Box>
         </Box>
       </div>
     </GridContainer>
