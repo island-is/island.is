@@ -572,7 +572,7 @@ export class NotificationService {
       'Sjá viðhengi',
       [
         {
-          filename: `Þingbók og úrskurður ${existingCase.courtCaseNumber}.pdf`,
+          filename: `Þingbók án úrskurður ${existingCase.courtCaseNumber}.pdf`,
           content: pdf,
           encoding: 'binary',
         },
