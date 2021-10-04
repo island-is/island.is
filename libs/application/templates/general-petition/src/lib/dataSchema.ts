@@ -13,33 +13,30 @@ export const GeneralPetitionSchema = z.object({
       (v) => v,
       m.validationMessages.approveTerms.defaultMessage as string,
     ),
-  ssd: z.string().refine((p) => {
-    return p.trim().length > 0
-  }, m.validationMessages.ssd.defaultMessage as string),
   documents: z.array(FileSchema).optional(),
   listName: z
     .string()
     .refine(
       (p) => p.trim().length > 0,
-      m.validationMessages.partyName.defaultMessage as string,
+      m.validationMessages.listName.defaultMessage as string,
     ),
   aboutList: z
     .string()
     .refine(
       (p) => p.trim().length > 0,
-      m.validationMessages.partyName.defaultMessage as string,
+      m.validationMessages.aboutList.defaultMessage as string,
     ),
   dateTil: z
     .string()
     .refine(
       (p) => p.trim().length > 0,
-      m.validationMessages.partyName.defaultMessage as string,
+      m.validationMessages.date.defaultMessage as string,
     ),
   dateFrom: z
     .string()
     .refine(
       (p) => p.trim().length > 0,
-      m.validationMessages.partyName.defaultMessage as string,
+      m.validationMessages.date.defaultMessage as string,
     ),
 })
 

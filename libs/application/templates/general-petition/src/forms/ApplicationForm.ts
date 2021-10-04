@@ -46,7 +46,7 @@ export const PetitionApplicationForm: Form = buildForm({
       title: m.information.titleSidebar,
       children: [
         buildMultiField({
-          id: 'party',
+          id: 'list',
           title: m.information.title,
           children: [
             buildTextField({

@@ -429,35 +429,20 @@ export const m: MessageDir = {
       defaultMessage: 'Vinsamlegast samþykktu skilmála',
       description: 'Error message for terms and conditions',
     },
-    ssd: {
-      id: 'gpt.application:validationmessages.ssd',
-      defaultMessage: 'Vinsamlegast veldu kennitölu',
-      description: 'Error message for selection ssd',
-    },
-    partyLetterOccupied: {
-      id: 'gpt.application:validationmessages.letter.occupied',
-      defaultMessage: 'Bókstafur þegar á skrá',
-      description: 'Error message if party letter is occupied',
-    },
-    partyLetterSingle: {
-      id: 'gpt.application:validationmessages.letter.single',
-      defaultMessage: 'Bókstafur skal vera stakur',
-      description: 'Error message if party letter is empty or > 1',
-    },
-    partyName: {
+    listName: {
       id: 'gpt.application:validationmessages.party.name',
-      defaultMessage: 'Vinsamlegast veldu nafn á flokkinn',
-      description: 'Error message if party name is empty',
+      defaultMessage: 'Vinsamlegast veldu nafn á listann',
+      description: 'Error message if list name is empty',
     },
-    signatureInvalid: {
-      id: 'gpt.application:validationmessages.signature.invalid',
-      defaultMessage: 'Undirskrift ekki lengur gild',
-      description: 'Error message if signature has new address',
+    aboutList: {
+      id: 'gpt.application:validationmessages.party.name',
+      defaultMessage: 'Vinsamlegast veldu lýsingu á listann',
+      description: 'Error message if list decription is empty',
     },
-    emailInvalid: {
-      id: 'gpt.application:validationmessages.email.invalid',
-      defaultMessage: 'Netfang þarf að vera gilt',
-      description: 'Error message if email is invalid',
+    date: {
+      id: 'gpt.application:validationmessages.party.name',
+      defaultMessage: 'Vinsamlegast veldu dagsettningu',
+      description: 'Error message if date is empty',
     },
   }),
   endorsementForm: defineMessages({
