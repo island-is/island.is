@@ -99,19 +99,31 @@ const PeriodsRepeater: FC<ScreenProps> = ({
 
         if (errors) {
           setFieldLoadingState?.(false)
-          return [false, 'Ekki tókst að halda áfram']
+          return [
+            false,
+            formatMessage(
+              parentalLeaveFormMessages.errorMessages.periodsCouldNotContinue,
+            ),
+          ]
         }
 
         return [true, null]
       } catch (e) {
         setFieldLoadingState?.(false)
-        return [false, (e as Error)?.message || 'Villa kom upp']
+        return [
+          false,
+          (e as Error)?.message ||
+            formatMessage(
+              parentalLeaveFormMessages.errorMessages.periodsUnexpectedError,
+            ),
+        ]
       }
     })
   }, [
     application,
     editable,
     expandRepeater,
+    formatMessage,
     locale,
     periods,
     rawPeriods,
@@ -146,11 +158,11 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     <Box>
       {showDescription && (
         <FieldDescription
-          description={
+          description={formatMessage(
             hasAddedPeriods
-              ? formatMessage(parentalLeaveFormMessages.leavePlan.description)
-              : 'Nú er komið að því að velja tímabil'
-          }
+              ? parentalLeaveFormMessages.leavePlan.description
+              : parentalLeaveFormMessages.leavePlan.emptyDescription,
+          )}
         />
       )}
 
@@ -168,7 +180,11 @@ const PeriodsRepeater: FC<ScreenProps> = ({
           editable={editable}
         />
         {!hasAddedPeriods && (
-          <FieldDescription description="Ekkert tímabil valið" />
+          <FieldDescription
+            description={formatMessage(
+              parentalLeaveFormMessages.leavePlan.empty,
+            )}
+          />
         )}
       </Box>
 

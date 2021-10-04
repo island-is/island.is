@@ -696,6 +696,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Hér er tilhögun fæðingarorlofsins þíns',
       description: 'Here is your current leave plan',
     },
+    emptyDescription: {
+      id: 'pl.application:leave.plan.emptyDescription',
+      defaultMessage: 'Nú er komið að því að velja tímabil',
+      description: 'Description when no period has been added',
+    },
     description: {
       id: 'pl.application:leave.plan.description',
       defaultMessage:
@@ -736,6 +741,11 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Þú átt bara eftir {daysLeft} daga og lágmarkslengd tímabils eru {minimumNumberOfDays} dagar',
       description:
         'Copy to explain why a user cannot add a new period even though there are some days left of rights but they are < minimum number of days',
+    },
+    empty: {
+      id: 'pl.application:period.empty',
+      defaultMessage: 'Ekkert tímabil valið',
+      description: 'Copy when no period has been added',
     },
   }),
 
@@ -1635,6 +1645,17 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Þú þarft að velja tímabil',
     description:
       'Copy when periods list is empty and user is trying to continue',
+  },
+  periodsCouldNotContinue: {
+    id: 'pl.application:answerValidators.periodsCouldNotContinue',
+    defaultMessage: 'Þú þarft að velja tímabil',
+    description:
+      'Copy when periods list is empty and user is trying to continue',
+  },
+  periodsUnexpectedError: {
+    id: 'pl.application:answerValidators.periodsUnexpectedError',
+    defaultMessage: 'Óvænt villa kom upp',
+    description: 'Copy when an unexpected error occurs',
   },
   periodsExceedRights: {
     id: 'pl.application:answerValidators.periodsExceedRights',
