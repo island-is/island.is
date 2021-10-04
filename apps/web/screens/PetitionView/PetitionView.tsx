@@ -12,6 +12,8 @@ import {
 } from '@island.is/island-ui/core'
 import { list } from './mocks'
 import { PAGE_SIZE, pages, paginate } from './pagination'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 
 const PetitionView = () => {
   const [page, setPage] = useState(1)
@@ -45,8 +47,12 @@ const PetitionView = () => {
             </GridRow>
             <GridRow>
               <GridColumn span={['12/12', '4/12', '4/12']}>
-                <Text variant="h4">Meðmælendalistinn er opinn:</Text>
-                <Text variant="default">{list.til}</Text>
+                <Text variant="h4">Meðmælendalistinn er opinn til:</Text>
+                <Text variant="default">
+                  {format(new Date(list.til), 'dd. MMMM yyyy', {
+                    locale: is,
+                  })}
+                </Text>
               </GridColumn>
               <GridColumn span={['12/12', '4/12', '4/12']}>
                 <Text variant="h4">Ábyrgðarmaður:</Text>

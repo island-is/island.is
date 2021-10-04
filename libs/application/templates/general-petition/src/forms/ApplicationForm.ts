@@ -53,7 +53,6 @@ export const PetitionApplicationForm: Form = buildForm({
               id: 'listName',
               title: m.information.listName,
               backgroundColor: 'white',
-              required: true,
               defaultValue: () => '',
             }),
             buildTextField({
