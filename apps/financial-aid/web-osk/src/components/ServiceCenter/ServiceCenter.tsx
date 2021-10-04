@@ -20,7 +20,7 @@ const ServiceCenter = ({ serviceCenter }: Props) => {
     <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
-          Fjárhagsaðstoð hjá þínu sveitarfélagi{' '}
+          Fjárhagsaðstoð hjá þínu sveitarfélagi
         </Text>
 
         <Text marginBottom={[1, 1, 2]}>
@@ -34,16 +34,18 @@ const ServiceCenter = ({ serviceCenter }: Props) => {
           þess sveitarfélags sem sér um fjárhagsaðstoð hjá þínu sveitarfélagi.
         </Text>
 
-        <Button
-          variant="ghost"
-          icon="open"
-          iconType="outline"
-          onClick={() => {
-            window.open(serviceCenter?.link, '_ blank')
-          }}
-        >
-          Fjárhagsaðstoð {serviceCenter?.name}
-        </Button>
+        {serviceCenter?.link && (
+          <Button
+            variant="ghost"
+            icon="open"
+            iconType="outline"
+            onClick={() => {
+              window.open(serviceCenter?.link, '_ blank')
+            }}
+          >
+            Fjárhagsaðstoð {serviceCenter?.name}
+          </Button>
+        )}
       </ContentContainer>
       <Footer
         onPrevButtonClick={() => logOut()}
