@@ -24,10 +24,19 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   application,
 }) => {
   const { register } = useFormContext()
-  const { rawPeriods } = getApplicationAnswers(application.answers)
   const { formatMessage } = useLocale()
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
-  const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>()
+  const { rawPeriods } = getApplicationAnswers(application.answers)
+  const currentIndex = rawPeriods.length - 1
+  const currentPeriod = rawPeriods[currentIndex]
+
+  const [statefulAnswer, setStatefulAnswer] = useState<
+    ValidAnswers | undefined
+  >(
+    currentPeriod.firstPeriodStart
+      ? (currentPeriod.firstPeriodStart as ValidAnswers)
+      : undefined,
+  )
 
   return (
     <Box marginY={3} key={field.id}>

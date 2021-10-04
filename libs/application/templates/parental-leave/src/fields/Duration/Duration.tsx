@@ -41,15 +41,19 @@ export const Duration: FC<FieldBaseProps> = ({
   const currentStartDateAnswer = currentPeriod.startDate ?? expectedDateOfBirth
 
   const [chosenEndDate, setChosenEndDate] = useState<string | undefined>(
-    undefined,
+    currentPeriod.endDate,
   )
   const [chosenDuration, setChosenDuration] = useState<number>(
-    DEFAULT_PERIOD_LENGTH,
+    currentPeriod.duration
+      ? Number(currentPeriod.duration)
+      : DEFAULT_PERIOD_LENGTH,
   )
   const [durationInDays, setDurationInDays] = useState<number>(
-    DEFAULT_PERIOD_LENGTH * 30,
+    chosenDuration * 30,
   )
-  const [percent, setPercent] = useState<number>(100)
+  const [percent, setPercent] = useState<number>(
+    currentPeriod.percentage ? Number(currentPeriod.percentage) : 100,
+  )
   const { getEndDate, loading } = useGetOrRequestEndDates(application)
   const errorMessage =
     (errors?.component as RecordObject<string>)?.message ||
