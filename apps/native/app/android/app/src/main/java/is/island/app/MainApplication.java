@@ -10,7 +10,6 @@ import com.microsoft.codepush.react.CodePush;
 import com.reactnativecommunity.cookies.CookieManagerPackage;
 import com.aakashns.reactnativedialogs.ReactNativeDialogsPackage;
 import com.oblador.keychain.KeychainPackage;
-import com.zoontek.rnlocalize.RNLocalizePackage;
 import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationPackage;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
@@ -24,6 +23,10 @@ import io.invertase.firebase.perf.ReactNativeFirebasePerfPackage;
 import com.wix.interactable.Interactable;
 import com.github.droibit.android.reactnative.customtabs.CustomTabsPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
+import org.wonday.pdf.RCTPdfView;
+import com.RNFetchBlob.RNFetchBlobPackage;
+import com.reactnativecommunity.progressview.RNCProgressViewPackage;
+import com.reactnativecommunity.androidprogressbar.RNCProgressBarPackage;
 
 // unimodules
 import org.unimodules.adapters.react.ModuleRegistryAdapter;
@@ -66,7 +69,6 @@ public class MainApplication extends NavigationApplication {
           packages.add(new ReactNativeDialogsPackage());
           packages.add(new RNAppAuthPackage());
           packages.add(new RNCWebViewPackage());
-          packages.add(new RNLocalizePackage());
           packages.add(new UltimateConfigPackage());
           packages.add(new RNSentryPackage());
           packages.add(new ReactNativeFirebaseAppPackage());
@@ -75,6 +77,11 @@ public class MainApplication extends NavigationApplication {
           packages.add(new Interactable());
           packages.add(new CustomTabsPackage());
           packages.add(new RandomBytesPackage());
+          packages.add(new RCTPdfView());
+          packages.add(new RNFetchBlobPackage());
+          packages.add(new RNCProgressViewPackage());
+          packages.add(new RNCProgressBarPackage());
+
 
           // Unimodules
           List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(

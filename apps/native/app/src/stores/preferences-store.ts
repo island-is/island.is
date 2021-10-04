@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-community/async-storage'
-import RNLocalize from 'react-native-localize'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
@@ -32,13 +31,10 @@ export interface PreferencesStore extends State {
 }
 
 const availableLocales: Locale[] = ['en-US', 'is-IS', 'is-US', 'en-IS'];
-const bestAvailableLanguage = RNLocalize.findBestAvailableLanguage(
-  availableLocales,
-)?.languageTag
 
 const defaultPreferences = {
   appearanceMode: 'automatic',
-  locale: bestAvailableLanguage,
+  locale: 'is-IS',
   useBiometrics: false,
   dev__useLockScreen: true,
   hasOnboardedBiometrics: false,

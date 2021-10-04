@@ -28,7 +28,6 @@ target 'IslandApp' do
   pod 'CodePush', :path => '../../node_modules/react-native-code-push'
   pod 'RNSentry', path: '../../node_modules/@sentry/react-native'
   pod 'RNKeychain', :path => '../../node_modules/react-native-keychain'
-  pod 'RNLocalize', :path => '../../node_modules/react-native-localize'
   pod 'RNFBApp', :path => '../../node_modules/@react-native-firebase/app'
   pod 'RNFBPerf', :path => '../../node_modules/@react-native-firebase/perf'
   pod 'RNFBMessaging', :path => '../../node_modules/@react-native-firebase/messaging'
@@ -39,13 +38,17 @@ target 'IslandApp' do
   pod 'Interactable', :path => '../../node_modules/react-native-interactable'
   pod 'react-native-randombytes', :path => '../../node_modules/react-native-randombytes'
   pod 'react-native-cookies', :path => '../../node_modules/@react-native-community/react-native-cookies/ios'
-  pod 'react-native-segmented-control', :path => '../../node_modules/@react-native-segmented-control/segmented-control'
   pod 'react-native-webview', :path => '../../node_modules/react-native-webview'
   pod 'react-native-app-auth', :path => '../../node_modules/react-native-app-auth'
   pod 'react-native-ultimate-config', :path => '../../node_modules/react-native-ultimate-config'
   pod 'react-native-passkit-wallet', path: '../../node_modules/react-native-passkit-wallet'
   pod 'react-native-spotlight-search', path: '../../node_modules/react-native-spotlight-search'
   pod 'react-native-flipper', path: '../../node_modules/react-native-flipper'
+  pod 'react-native-pdf', path: '../../node_modules/react-native-pdf'
+  pod 'rn-fetch-blob', path: '../../node_modules/rn-fetch-blob'
+  pod 'react-native-progress-view', path: '../../node_modules/@react-native-community/progress-view'
+
+
 
   use_flipper!({
     'Flipper' => '0.92.0',
