@@ -15,7 +15,7 @@ import {
 interface UserProvider {
   isAuthenticated?: boolean
   user?: User
-  setUser?: React.Dispatch<React.SetStateAction<User | undefined>>
+  setUser: React.Dispatch<React.SetStateAction<User | undefined>>
   userServiceCenter?: ServiceCenter
 }
 
@@ -23,7 +23,9 @@ interface Props {
   children: ReactNode
 }
 
-export const UserContext = createContext<UserProvider>({})
+export const UserContext = createContext<UserProvider>({
+  setUser: () => undefined,
+})
 
 const UserProvider = ({ children }: Props) => {
   const router = useRouter()

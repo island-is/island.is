@@ -8,18 +8,22 @@ import {
   SpouseInfo,
 } from '@island.is/financial-aid-web/osk/src/components'
 
-import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 
-import * as styles from './relationshipstatusForm.treat'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import cn from 'classnames'
+import * as styles from './relationshipstatusForm.treat'
 
-import { NavigationProps } from '@island.is/financial-aid/shared/lib'
+import {
+  FamilyStatus,
+  NavigationProps,
+} from '@island.is/financial-aid/shared/lib'
+import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
 const RelationshipstatusForm = () => {
   const router = useRouter()
-  const { form, updateForm } = useContext(FormContext)
+
+  const { user, setUser } = useContext(UserContext)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -27,26 +31,50 @@ const RelationshipstatusForm = () => {
 
   const [hasError, setHasError] = useState(false)
 
+  const [acceptData, setAcceptData] = useState(false)
+
   const options = [
     {
       label: 'Nei, ég er ekki í sambúð',
-      value: 1,
+      value: FamilyStatus.SINGLE,
     },
     {
       label: 'Já, ég er í óstaðfestri sambúð',
-      value: 0,
+      value: FamilyStatus.UNREGISTEREDCOBAHITATION,
     },
   ]
 
   const errorCheck = () => {
-    if (form?.usePersonalTaxCredit === undefined) {
+    if (!user?.familyStatus) {
       setHasError(true)
       return
     }
 
-    if (navigation?.nextUrl) {
+    if (!navigation?.nextUrl) {
+      return
+    }
+
+    if (user?.familyStatus === FamilyStatus.SINGLE) {
       router.push(navigation?.nextUrl)
     }
+
+    if (user?.familyStatus === FamilyStatus.UNREGISTEREDCOBAHITATION) {
+      if (!acceptData) {
+        setHasError(true)
+      }
+      // router.push(navigation?.nextUrl)
+    }
+
+    console.log('TODO')
+
+    // if (form?.usePersonalTaxCredit === undefined) {
+    //   setHasError(true)
+    //   return
+    // }
+
+    // if (navigation?.nextUrl) {
+    //   router.push(navigation?.nextUrl)
+    // }
   }
 
   return (
@@ -68,12 +96,14 @@ const RelationshipstatusForm = () => {
 
         <RadioButtonContainer
           options={options}
-          error={hasError && !form?.usePersonalTaxCredit}
-          isChecked={(value: number | boolean) => {
-            return value === form?.usePersonalTaxCredit
+          error={hasError && !user?.familyStatus}
+          isChecked={(value: FamilyStatus) => {
+            return value === user?.familyStatus
           }}
-          onChange={(value: number | boolean) => {
-            updateForm({ ...form, usePersonalTaxCredit: value })
+          onChange={(value: FamilyStatus) => {
+            if (user) {
+              setUser({ ...user, familyStatus: value })
+            }
             if (hasError) {
               setHasError(false)
             }
@@ -82,17 +112,33 @@ const RelationshipstatusForm = () => {
 
         <div
           className={cn({
+            [`${styles.infoContainer}`]: true,
+            [`${styles.showInfoContainer}`]:
+              FamilyStatus.UNREGISTEREDCOBAHITATION === user?.familyStatus,
+          })}
+        >
+          <SpouseInfo
+            hasError={hasError}
+            acceptData={acceptData}
+            setAcceptData={(event: React.ChangeEvent<HTMLInputElement>) => {
+              if (hasError) {
+                setHasError(false)
+              }
+              setAcceptData(event.target.checked)
+            }}
+          />
+        </div>
+
+        <div
+          className={cn({
             [`errorMessage`]: true,
-            [`showErrorMessage`]:
-              hasError && form?.usePersonalTaxCredit === undefined,
+            [`showErrorMessage`]: hasError,
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að velja einn valmöguleika
+            Þú verður að fylla út allar upplýsingarnar
           </Text>
         </div>
-
-        <SpouseInfo />
       </ContentContainer>
 
       <Footer

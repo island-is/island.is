@@ -8,6 +8,7 @@ import {
   ReturnUrl,
   StaffRole,
   ApplicationStateUrl,
+  FamilyStatus,
 } from './enums'
 
 export interface GetSignedUrl {
@@ -51,6 +52,11 @@ export interface NavigationProps {
   nextUrl: string | undefined
 }
 
+export interface Spouse {
+  nationalId?: string
+  email?: string
+}
+
 export interface User {
   nationalId: string
   name: string
@@ -61,6 +67,8 @@ export interface User {
   returnUrl: ReturnUrl
   staff?: Staff
   postalCode?: number
+  familyStatus?: FamilyStatus
+  spouse?: Spouse
 }
 
 export interface UpdateApplication {

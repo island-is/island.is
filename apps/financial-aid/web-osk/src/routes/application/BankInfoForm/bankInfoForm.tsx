@@ -11,6 +11,7 @@ import * as styles from './bankInfoForm.treat'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
+import { focusOnNextInput } from '@island.is/financial-aid/shared/lib'
 
 import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
@@ -82,15 +83,15 @@ const Form = () => {
     },
   ]
 
-  const focusOnNextInput = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    nextInputId: string,
-  ) => {
-    if (event.target.value.length >= event.target.maxLength) {
-      const el = document.getElementById(nextInputId)
-      el?.focus()
-    }
-  }
+  // const focusOnNextInput = (
+  //   event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  //   nextInputId: string,
+  // ) => {
+  //   if (event.target.value.length >= event.target.maxLength) {
+  //     const el = document.getElementById(nextInputId)
+  //     el?.focus()
+  //   }
+  // }
 
   const saveValue = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

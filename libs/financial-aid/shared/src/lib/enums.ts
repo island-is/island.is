@@ -60,3 +60,13 @@ export enum StaffRole {
   ADMIN = 'Admin',
   EMPLOYEE = 'Employee',
 }
+
+export enum FamilyStatus {
+  UNKNOWN = 'Unknown',
+  SINGLE = 'Single',
+  COHABITATION = 'Cohabitation',
+  UNREGISTEREDCOBAHITATION = 'UnregisteredCohabitation',
+  MARRIED = 'Married',
+  MARRIEDNOTLIVINGTOGETHER = 'MarriedNotLivingTogether',
+  NOTINFORMED = 'NotInformed',
+}

@@ -26,7 +26,20 @@ export const formatPhoneNumber = (phoneNumber: string) => {
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
 
+export const sanitizeNationalId = (nationalId: string) =>
+  nationalId.replace(/[^0-9]/g, '')
+
 export const isEmailValid = (emailAddress: string) => {
   let re = /\S+@\S+\.\S+/
   return re.test(emailAddress)
+}
+
+export const focusOnNextInput = (
+  event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  nextInputId: string,
+) => {
+  if (event.target.value.length >= event.target.maxLength) {
+    const el = document.getElementById(nextInputId)
+    el?.focus()
+  }
 }
