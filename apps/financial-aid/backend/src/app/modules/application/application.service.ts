@@ -190,6 +190,10 @@ export class ApplicationService {
 
     await this.setFilesToApplication(id, updatedApplication)
 
+    const events = await this.applicationEventService.findById(id)
+
+    updatedApplication?.setDataValue('applicationEvents', events)
+
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({
       applicationId: id,

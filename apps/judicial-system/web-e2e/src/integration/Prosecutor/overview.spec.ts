@@ -48,7 +48,7 @@ describe('/krafa/stadfesta/:id', () => {
   })
 
   it('should have a button that links to a pdf of the case', () => {
-    cy.contains('button', 'Opna PDF kröfu')
+    cy.contains('button', 'Krafa - PDF')
   })
 
   it.skip('should navigate to /krofur on successful confirmation', () => {

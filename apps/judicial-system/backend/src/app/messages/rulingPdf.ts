@@ -85,6 +85,11 @@ export const ruling = {
     defaultMessage: 'Úrskurður',
     description: 'Notaður sem fyrirsögn á úrskurð.',
   }),
+  rulingShortVersionPlaceholder: {
+    id: 'judicial.system.backend:pdf.ruling.short_version_placeholder',
+    defaultMessage: '(...)',
+    description: 'Notaður í stað úrskurðartexta í stuttu útgáfu úrskurðar.',
+  },
   courtDemandsHeading: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.court_demands_heading',
     defaultMessage: 'Krafa',

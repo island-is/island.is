@@ -7,6 +7,8 @@ import {
   Header,
   Inject,
   Param,
+  ParseBoolPipe,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -98,6 +100,7 @@ export class FileController {
   @Header('Content-Type', 'application/pdf')
   async getRulingPdf(
     @Param('id') id: string,
+    @Query('shortVersion', ParseBoolPipe) shortVersion: boolean,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
@@ -108,7 +111,7 @@ export class FileController {
       return this.auditTrailService.audit(
         user.id,
         AuditedAction.GET_RULING_PDF,
-        this.getPdf(id, 'ruling', req, res),
+        this.getPdf(id, `ruling?shortVersion=${shortVersion}`, req, res),
         id,
       )
     } catch (error) {

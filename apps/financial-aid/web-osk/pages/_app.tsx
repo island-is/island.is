@@ -2,17 +2,17 @@ import App, { AppProps } from 'next/app'
 import getConfig from 'next/config'
 import { ApolloProvider } from '@apollo/client'
 import React from 'react'
-import { Header } from '../src/components'
+
 import { client } from '../graphql'
 import {
   FormProvider,
   UserProvider,
   MunicipalityProvider,
-} from '../src/components'
+} from '@island.is/financial-aid-web/osk/src/components'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 import { AppLayout } from '@island.is/financial-aid-web/osk/src/components'
 
-import '../src/styles.css'
+import '@island.is/financial-aid-web/osk/src/styles.css'
 
 class FinancialAidApplication extends App<AppProps> {
   render() {
@@ -23,7 +23,6 @@ class FinancialAidApplication extends App<AppProps> {
         <FormProvider>
           <UserProvider>
             <MunicipalityProvider>
-              <Header />
               <AppLayout>
                 <Component {...pageProps} />
               </AppLayout>
