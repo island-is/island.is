@@ -13,9 +13,9 @@ import { CreateChargeResult } from './payment.type'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Application as ApplicationModel } from '../application/application.model'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 const handleError = async (error: any) => {
-  // TODO: this seems unreasonable
   logger.error(JSON.stringify(error))
 
   if (error.json) {
@@ -108,14 +108,24 @@ export class PaymentService {
     chargeItemCode: string,
     search: Item[],
   ): Promise<Item> {
-    // TODO: this seems just really really off
-    const found = search.find(({ chargeItemCode: c }) => c === chargeItemCode)
-
-    if (!found) {
-      throw new Error(`No catalog found with ${chargeItemCode}`)
+    if (chargeItemCode === '' || search === []) {
+      return Promise.reject(new Error('Bad search catalog parameters.')).catch(
+        handleError,
+      )
+    }
+    // TODO: temp - This is only while payment dummy is being used/tested. Should be deleted later.
+    if (!isRunningOnEnvironment('production') && chargeItemCode === 'AYXXX') {
+      chargeItemCode = 'AY110'
     }
 
-    return found
+    for (const item in search) {
+      if (search[item].chargeItemCode === chargeItemCode) {
+        return Promise.resolve(search[item])
+      }
+    }
+    return Promise.reject(
+      new Error('No catalog found with ' + chargeItemCode),
+    ).catch(handleError)
   }
 
   async findApplicationById(
