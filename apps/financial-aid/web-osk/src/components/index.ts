@@ -10,7 +10,6 @@ export { default as ContentContainer } from './ContentContainer/ContentContainer
 export { default as Logo } from './Logo/index'
 export { default as RadioButtonContainer } from './RadioButtonContainer/RadioButtonContainer'
 export { default as CancelModal } from './CancelModal/CancelModal'
-export { default as Login } from './Login/login'
 export { default as HasApplied } from './HasApplied/hasApplied'
 export { default as Estimation } from './Estimation/Estimation'
 export { default as FileUploadContainer } from './FileUploadContainer/FileUploadContainer'

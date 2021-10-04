@@ -4,7 +4,6 @@ import { Box, GridContainer } from '@island.is/island-ui/core'
 import * as styles from './Layout.treat'
 
 import {
-  Login,
   HasApplied,
   FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
@@ -23,10 +22,7 @@ const Layout = ({ children }: Props) => {
     document.title = 'Umsókn um fjárhagsaðstoð'
   }, [])
 
-  if (!isAuthenticated) {
-    return <Login headline="Skráðu þig inn" />
-  }
-  if (!user) {
+  if (isAuthenticated === false || user === undefined) {
     return null
   }
 

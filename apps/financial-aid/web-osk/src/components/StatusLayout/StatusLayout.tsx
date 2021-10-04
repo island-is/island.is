@@ -1,13 +1,11 @@
-import React, { ReactNode, useContext, useEffect, useMemo } from 'react'
+import React, { ReactNode, useContext, useEffect } from 'react'
 import { Box, GridContainer, Text } from '@island.is/island-ui/core'
 
 import * as styles from './StatusLayout.treat'
 
-import { Logo, Login } from '@island.is/financial-aid-web/osk/src/components'
+import { Logo } from '@island.is/financial-aid-web/osk/src/components'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
-import { getState } from '@island.is/financial-aid/shared/lib'
-
 interface Props {
   children: ReactNode
 }
@@ -19,15 +17,7 @@ const StatusLayout = ({ children }: Props) => {
     document.title = 'Fjárhagsaðstoð – Staða'
   }, [])
 
-  if (isAuthenticated === false) {
-    return (
-      <Login
-        headline="Hver er staðan á umsókn minni um fjárhagsaðstoð?"
-        about="Skráðu þig inn til að sjá stöðu, hlaða upp viðeigandi gögnum, hafa samband við okkur og annað slíkt sem tengist umsókninni þinni."
-      />
-    )
-  }
-  if (!user) {
+  if (isAuthenticated === false || user === undefined) {
     return null
   }
 
