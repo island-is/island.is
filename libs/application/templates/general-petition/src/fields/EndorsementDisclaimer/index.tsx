@@ -59,7 +59,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
             <Text>{answers.aboutList}</Text>
           </Box>
           <Box marginBottom={3}>
-            <Text variant="h4">Undirskriftalistinn er opinn:</Text>
+            <Text variant="h4">Meðmælendalistinn er opinn:</Text>
             <Text variant="default">{answers.dateTil}</Text>
           </Box>
           <Box marginBottom={3}>

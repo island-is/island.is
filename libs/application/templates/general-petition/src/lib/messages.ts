@@ -175,44 +175,6 @@ export const m: MessageDir = {
       description: 'Select national id title',
     },
   }),
-  selectPartyLetter: defineMessages({
-    title: {
-      id: 'gpt.application:partyletter.title',
-      defaultMessage: 'Skráðu nafn og listabókstaf',
-      description: 'Party Letter title',
-    },
-    sectionTitle: {
-      id: 'gpt.application:partyletter.section.title',
-      defaultMessage: 'Nafn flokks',
-      description: 'Party Letter section title',
-    },
-    partyLetterLabel: {
-      id: 'gpt.application:partyletter.partyletter.label',
-      defaultMessage: 'Listabókstafur sem óskað er eftir',
-      description: 'Label for party letter input box',
-    },
-    partyLetterPlaceholder: {
-      id: 'gpt.application:partyletter.partyletter.placeholder',
-      defaultMessage: 'Listabókstafur',
-      description: 'Placeholder for party letter input box',
-    },
-    partyNameLabel: {
-      id: 'gpt.application:partyletter.partyname.label',
-      defaultMessage: 'Nafn flokks',
-      description: 'Label for party name input box',
-    },
-    partyNamePlaceholder: {
-      id: 'gpt.application:partyletter.partyname.placeholder',
-      defaultMessage: 'Nafn',
-      description: 'Placeholder for party name input box',
-    },
-    partyLetterSubtitle: {
-      id: 'gpt.application:partyletter.subtitle',
-      defaultMessage:
-        'Við alþingiskosningarnar 28. október 2017 buðu eftirtalin stjórnmálasamtök fram lista og voru þeir merktir sem hér segir:',
-      description: 'Description before listing upp unavailable party letters',
-    },
-  }),
   email: defineMessages({
     title: {
       id: 'gpt.application:email.title',
@@ -596,16 +558,6 @@ export const m: MessageDir = {
       defaultMessage: 'Yfirlit framboðs',
       description: 'Step one',
     },
-    partyNameLabel: {
-      id: 'gpt.application:ministry.justice.partyname.label',
-      defaultMessage: 'Nafn flokks',
-      description: 'Label for party name',
-    },
-    partyLetterLabel: {
-      id: 'gpt.application:ministry.justice.partyletter.label',
-      defaultMessage: 'Listabókstafur',
-      description: 'Label for party letter',
-    },
     responsiblePersonLabel: {
       id: 'gpt.application:ministry.justice.responsibleperson.label',
       defaultMessage: 'Ábyrgðarmaður',
@@ -662,13 +614,6 @@ export const m: MessageDir = {
       defaultMessage:
         'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
       description: 'Text after MOJ has submitted',
-    },
-  }),
-  partyLetterApprovedOverview: defineMessages({
-    title: {
-      id: 'gpt.application:letter.approved.overview.title',
-      defaultMessage: 'Umsókn samþykkt',
-      description: 'title',
     },
   }),
 }

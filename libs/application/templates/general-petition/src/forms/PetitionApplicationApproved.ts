@@ -7,7 +7,7 @@ import {
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
 
-export const LetterApplicationApproved: Form = buildForm({
+export const PetitionApplicationApproved: Form = buildForm({
   id: 'PetitionApplicationApproved',
   title: m.overview.finalTitle,
   logo: Logo,

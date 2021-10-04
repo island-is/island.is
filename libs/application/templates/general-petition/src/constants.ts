@@ -4,7 +4,6 @@ export enum ApiModuleActions {
 
 export enum States {
   DRAFT = 'draft',
-  COLLECT_ENDORSEMENTS = 'collectSignatures',
   APPROVED = 'approved',
 }
 

@@ -69,8 +69,8 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/LetterApplicationApproved').then((val) =>
-                  Promise.resolve(val.LetterApplicationApproved),
+                import('../forms/PetitionApplicationApproved').then((val) =>
+                  Promise.resolve(val.PetitionApplicationApproved),
                 ),
               read: 'all',
             },  
