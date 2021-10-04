@@ -6,12 +6,12 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
+  capitalize,
   formatAccusedByGender,
   formatAlternativeTravelBanRestrictions,
+  formatAppeal,
   formatCustodyRestrictions,
   NounCases,
 } from '@island.is/judicial-system/formatters'
@@ -105,18 +105,18 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </Box>
         <Box marginBottom={1}>
           <Text variant="h4">
-            {getAppealDecisionText(
-              AppealDecisionRole.PROSECUTOR,
-              workingCase.prosecutorAppealDecision,
-              workingCase.accusedGender,
-            )}
+            {formatAppeal(workingCase.prosecutorAppealDecision, 'Sækjandi')}
           </Text>
         </Box>
         <Text variant="h4">
-          {getAppealDecisionText(
-            AppealDecisionRole.ACCUSED,
+          {formatAppeal(
             workingCase.accusedAppealDecision,
-            workingCase.accusedGender,
+            [CaseType.CUSTODY, CaseType.TRAVEL_BAN].includes(workingCase.type)
+              ? capitalize(formatAccusedByGender(workingCase.accusedGender))
+              : 'Varnaraðili',
+            [CaseType.CUSTODY, CaseType.TRAVEL_BAN].includes(workingCase.type)
+              ? workingCase.accusedGender
+              : undefined,
           )}
         </Text>
       </Box>
