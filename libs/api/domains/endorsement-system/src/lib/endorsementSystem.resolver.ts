@@ -1,5 +1,6 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
-import { BypassAuth, User } from '@island.is/auth-nest-tools'
+import { BypassAuth } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { Endorsement } from './models/endorsement.model'
