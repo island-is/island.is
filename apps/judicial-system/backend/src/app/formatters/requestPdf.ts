@@ -2,7 +2,7 @@ import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import {
   caseTypes,
   formatRequestedCustodyRestrictions,
@@ -352,8 +352,7 @@ function constructRequestPdf(
   existingCase: Case,
   formatMessage: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
-  return existingCase.type === CaseType.CUSTODY ||
-    existingCase.type === CaseType.TRAVEL_BAN
+  return isRestrictionCase(existingCase.type)
     ? constructRestrictionRequestPdf(existingCase, formatMessage)
     : constructInvestigationRequestPdf(existingCase, formatMessage)
 }
