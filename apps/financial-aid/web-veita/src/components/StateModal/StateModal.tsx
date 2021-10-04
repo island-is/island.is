@@ -51,16 +51,15 @@ const StateModal = ({
     setIsLoading(true)
     onVisibilityChange((isVisible) => !isVisible)
 
-    const updatedApplication = await changeApplicationState(
-      application,
-      state,
-      amount,
-      rejection,
-    )
-    if (updatedApplication) {
-      setIsLoading(false)
-      setApplication(updatedApplication)
-    }
+    await changeApplicationState(application, state, amount, rejection)
+      .then((updatedApplication) => {
+        setIsLoading(false)
+        setApplication(updatedApplication)
+      })
+      .catch(() => {
+        //TODO ERROR STATE
+        setIsLoading(false)
+      })
   }
 
   const closeModal = (): void => {

@@ -45,15 +45,19 @@ const ApplicationsTable = ({
     state: ApplicationState,
   ) => {
     setIsLoading(true)
-    const updateApplicationTable = await changeApplicationTable(
+    await changeApplicationTable(
       applicationId,
       state,
       getStateUrlFromRoute[router.pathname],
     )
-    if (updateApplicationTable) {
-      setIsLoading(false)
-      setApplications(updateApplicationTable)
-    }
+      .then((updateTable) => {
+        setIsLoading(false)
+        setApplications(updateTable)
+      })
+      .catch(() => {
+        //TODO ERROR STATE
+        setIsLoading(false)
+      })
   }
 
   if (applications && applications.length > 0) {

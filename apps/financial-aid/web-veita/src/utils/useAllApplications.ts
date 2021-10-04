@@ -40,7 +40,7 @@ export const useAllApplications = () => {
       })
 
       if (data) {
-        if (data.updateApplicationTable.filters && setApplicationFilters) {
+        if (data.updateApplicationTable.filters) {
           setApplicationFilters(data.updateApplicationTable.filters)
         }
 
