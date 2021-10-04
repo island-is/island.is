@@ -5,7 +5,6 @@ import {
   Employment,
   ApplicationEventType,
   RolesRule,
-  ReturnUrl,
   StaffRole,
   ApplicationStateUrl,
 } from './enums'
@@ -58,7 +57,6 @@ export interface User {
   folder: string
   service: RolesRule
   currentApplication?: CurrentApplication
-  returnUrl: ReturnUrl
   staff?: Staff
   postalCode?: number
 }

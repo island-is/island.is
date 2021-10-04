@@ -30,6 +30,5 @@ export const getUserFromContext = (
     nationalId: decodedToken.nationalId,
     folder: decodedToken.folder,
     service: decodedToken.service,
-    returnUrl: decodedToken.returnUrl,
   }
 }

@@ -3,7 +3,6 @@ import React, { ReactNode, useContext, useEffect, useState } from 'react'
 import {
   Nav,
   MobileMenuButton,
-  Login,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './AdminLayout.treat'
@@ -11,6 +10,8 @@ import cn from 'classnames'
 import { useRouter } from 'next/router'
 
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import { signIn } from 'next-auth/client'
+import { identityServerId, Routes } from '@island.is/financial-aid/shared/lib'
 
 interface PageProps {
   children: ReactNode
@@ -35,12 +36,18 @@ const AdminLayout = ({ children, className }: PageProps) => {
     }
   }, [showNavMobile])
 
-  if (!isAuthenticated) {
-    return <Login />
-  }
-  if (!admin) {
+  useEffect(() => {
+    if (isAuthenticated === false || admin === undefined) {
+      signIn(identityServerId, {
+        callbackUrl: `${window.location.origin}${Routes.newCases}`,
+      })
+    }
+  })
+
+  if (isAuthenticated === false || admin === undefined) {
     return null
   }
+
   return (
     <>
       <Nav showInMobile={showNavMobile} />

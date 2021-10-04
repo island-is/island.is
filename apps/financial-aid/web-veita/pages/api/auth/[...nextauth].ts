@@ -7,7 +7,6 @@ import {
   NextApiResponse,
   SessionBase,
 } from 'next-auth/_utils'
-import { uuid } from 'uuidv4'
 import {
   decodeToken,
   identityServerId,
@@ -75,8 +74,7 @@ async function jwt(token: GenericObject, user: AuthUser) {
       refreshToken: user.refreshToken,
       idToken: user.idToken,
       isRefreshTokenExpired: false,
-      folder: token.folder ?? uuid(),
-      service: RolesRule.OSK,
+      service: RolesRule.VEITA,
     }
   }
 
