@@ -703,6 +703,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'These are your already selected parental leave periods. If the other parent has agreed to share their period leave information, then those period leaves are visible below.',
     },
+    addFirst: {
+      id: 'pl.application:periods.add.first',
+      defaultMessage: 'Búa til fyrsta tímabilið',
+      description: 'Create first period',
+    },
     addAnother: {
       id: 'pl.application:periods.add.another',
       defaultMessage: 'Bættu við öðru tímabili',
@@ -719,6 +724,18 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Þú hefur náð þeim mörkum sem þú getur tekið fyrir fæðingarorlofinu þínu',
       description:
         'You reached the limit of days you can take for your parental leave',
+    },
+    usage: {
+      id: 'pl.application:period.usage',
+      defaultMessage: '{daysAlreadyUsed} dagar af {rights} dögum nýttir',
+      description: 'Copy of how many days are being used and how many are left',
+    },
+    cannotCreatePeriod: {
+      id: 'pl.application:period.cannotCreatePeriod',
+      defaultMessage:
+        'Þú átt bara eftir {daysLeft} daga og lágmarkslengd tímabils eru {minimumNumberOfDays} dagar',
+      description:
+        'Copy to explain why a user cannot add a new period even though there are some days left of rights but they are < minimum number of days',
     },
   }),
 
@@ -1607,6 +1624,23 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Minnsta mögulega nýting er 10%',
     description:
       'Copy for when user is attempting to choose a ratio below minimum ratio',
+  },
+  periodsNotAList: {
+    id: 'pl.application:answerValidators.periodsNotAList',
+    defaultMessage: 'Svar þarf að vera listi af tímabilum',
+    description: 'Copy when periods is not a list of objects',
+  },
+  periodsEmpty: {
+    id: 'pl.application:answerValidators.periodsEmpty',
+    defaultMessage: 'Þú þarft að velja tímabil',
+    description:
+      'Copy when periods list is empty and user is trying to continue',
+  },
+  periodsExceedRights: {
+    id: 'pl.application:answerValidators.periodsExceedRights',
+    defaultMessage:
+      'Valin tímabil fara yfir réttindi ({daysUsedByPeriods} > {rights} dagar)',
+    description: 'Copy when total number of days used by periods exceed rights',
   },
   requiredAttachment: {
     id: 'pl.application:errors.required.attachment',

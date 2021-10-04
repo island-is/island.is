@@ -85,10 +85,6 @@ const PeriodsRepeater: FC<ScreenProps> = ({
 
     setBeforeSubmitCallback?.(async () => {
       try {
-        if (periods.length === 0) {
-          return [false, 'Þú þarft að velja tímabil']
-        }
-
         // Run answer validator on the periods selected by the user
         const { errors } = await updateApplication({
           variables: {
@@ -181,9 +177,11 @@ const PeriodsRepeater: FC<ScreenProps> = ({
               disabled={!canAddAnotherPeriod}
               onClick={expandRepeater}
             >
-              {hasAddedPeriods
-                ? formatMessage(parentalLeaveFormMessages.leavePlan.addAnother)
-                : 'Bæta við fyrsta tímabilinu'}
+              {formatMessage(
+                hasAddedPeriods
+                  ? parentalLeaveFormMessages.leavePlan.addAnother
+                  : parentalLeaveFormMessages.leavePlan.addFirst,
+              )}
             </Button>
 
             {daysAlreadyUsed >= rights && (
@@ -195,7 +193,13 @@ const PeriodsRepeater: FC<ScreenProps> = ({
             {remainingDays > 0 && !canAddAnotherPeriod && (
               <Tooltip
                 placement="bottom"
-                text="Hérna vantar útskýringu á því hvers vegna er ekki hægt að bæta við tímabili þó það séu eftir dagar"
+                text={formatMessage(
+                  parentalLeaveFormMessages.leavePlan.cannotCreatePeriod,
+                  {
+                    daysLeft: rights - daysAlreadyUsed,
+                    minimumNumberOfDays: minPeriodDays,
+                  },
+                )}
               />
             )}
           </Inline>
@@ -203,7 +207,13 @@ const PeriodsRepeater: FC<ScreenProps> = ({
       )}
       {hasAddedPeriods && canAddAnotherPeriod && (
         <FieldDescription
-          description={`${daysAlreadyUsed} dagar af ${rights} dögum notaðir`}
+          description={formatMessage(
+            parentalLeaveFormMessages.leavePlan.usage,
+            {
+              daysAlreadyUsed,
+              rights,
+            },
+          )}
         />
       )}
       {!!error && (

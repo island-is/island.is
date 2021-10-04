@@ -70,23 +70,13 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     return undefined
   },
-  // [FIRST_PERIOD_START]: (_, application: Application) => {
-  //   const buildError = buildValidationError(FIRST_PERIOD_START)
-  //   const expectedDateOfBirth = getExpectedDateOfBirth(application)
-
-  //   if (!expectedDateOfBirth) {
-  //     return buildError(errorMessages.dateOfBirth)
-  //   }
-
-  //   return undefined
-  // },
   [VALIDATE_LATEST_PERIOD]: (newAnswer: unknown, application: Application) => {
     const periods = newAnswer as Period[]
 
     if (!isArray(periods)) {
       return {
         path: 'periods',
-        message: 'Svar þarf að vera listi af tímabilum',
+        message: errorMessages.periodsNotAList,
       }
     }
 
@@ -102,7 +92,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
     if (!expectedDateOfBirth) {
       return {
         path: 'periods',
-        message: 'Áætlaðan fæðingardag vantar í umsókn',
+        message: errorMessages.dateOfBirth,
       }
     }
 
@@ -152,13 +142,9 @@ export const answerValidators: Record<string, AnswerValidator> = {
     if (periods.length === 0) {
       return {
         path: 'periods',
-        message: 'Þú þarft að velja tímabil',
+        message: errorMessages.periodsEmpty,
       }
     }
-
-    // const newPeriodIndex = periods.length - 1
-    // const buildError = buildValidationError(VALIDATE_PERIODS, newPeriodIndex)
-    // const expectedDateOfBirth = getExpectedDateOfBirth(application)
 
     // TODO: best to make requests to VMST to calculate period length again
     // based on start, end + ratio in the case of a handcrafted update request
@@ -168,7 +154,11 @@ export const answerValidators: Record<string, AnswerValidator> = {
     if (daysUsedByPeriods > rights) {
       return {
         path: 'periods',
-        message: `Valin tímabil fara yfir réttindi (${daysUsedByPeriods} > ${rights} dagar)`,
+        message: errorMessages.periodsExceedRights,
+        values: {
+          daysUsedByPeriods,
+          rights,
+        },
       }
     }
 
