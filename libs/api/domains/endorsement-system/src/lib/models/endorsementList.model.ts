@@ -21,6 +21,9 @@ export class EndorsementList {
   @Field()
   openedDate?: string
 
+  @Field()
+  adminLock!: boolean
+
   @Field(() => [EndorsementListTagsEnum])
   tags!: EndorsementListTagsEnum[]
 

@@ -45,15 +45,15 @@ export class CreateEndorsementListDto {
   @IsOptional()
   meta!: object | null
 
-  @Field({ nullable: true })
+  @Field()
   @IsString()
-  closedDate!: string | null
+  closedDate!: string
 
-  @Field({ nullable: true })
+  @Field()
   @IsString()
-  openedDate!: string | null
+  openedDate!: string
 
-  @Field({})
+  @Field()
   @IsBoolean()
   adminLock!: boolean
 }

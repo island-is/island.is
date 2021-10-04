@@ -18,6 +18,4 @@ export class EndorsementListOpen {
   @Field()
   closedDate!: string
 
-  @Field()
-  openedDate!: string
 }
