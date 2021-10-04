@@ -9,6 +9,7 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
+  completedCaseStates,
   InstitutionType,
   NotificationType,
   UserRole,
@@ -58,26 +59,17 @@ export const Requests: React.FC = () => {
       setActiveCases(
         casesWithoutDeleted.filter((c: Case) => {
           return isProsecutor
-            ? c.state !== CaseState.ACCEPTED &&
-                c.state !== CaseState.REJECTED &&
-                c.state !== CaseState.DISMISSED
+            ? !completedCaseStates.includes(c.state)
             : // Judges and registrars should see all cases except cases with status code NEW.
             isJudge || isRegistrar
-            ? c.state !== CaseState.NEW &&
-              c.state !== CaseState.ACCEPTED &&
-              c.state !== CaseState.REJECTED &&
-              c.state !== CaseState.DISMISSED
+            ? ![...completedCaseStates, CaseState.NEW].includes(c.state)
             : null
         }),
       )
 
       setPastCases(
         casesWithoutDeleted.filter((c: Case) => {
-          return (
-            c.state === CaseState.ACCEPTED ||
-            c.state === CaseState.REJECTED ||
-            c.state === CaseState.DISMISSED
-          )
+          return completedCaseStates.includes(c.state)
         }),
       )
     }
