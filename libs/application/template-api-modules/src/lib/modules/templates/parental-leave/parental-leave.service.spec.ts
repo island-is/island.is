@@ -1,4 +1,6 @@
 import { Test } from '@nestjs/testing'
+import get from 'lodash/get'
+import set from 'lodash/set'
 
 import {
   Application,
@@ -137,16 +139,15 @@ describe('ParentalLeaveService', () => {
     it('should return 2 periods, one standard and mark it as ActualDateOfBirth and one using the right period code', async () => {
       const application = createApplication()
 
-      const extendedApplication = {
-        ...application,
-        answers: {
-          ...application.answers,
-          firstPeriodStart: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
-        },
-      }
+      const firstPeriod = get(application.answers, 'periods[0]') as object
+      set(
+        firstPeriod,
+        'firstPeriodStart',
+        StartDateOptions.ACTUAL_DATE_OF_BIRTH,
+      )
 
       const res = await parentalLeaveService.createPeriodsDTO(
-        extendedApplication,
+        application,
         nationalId,
       )
 
