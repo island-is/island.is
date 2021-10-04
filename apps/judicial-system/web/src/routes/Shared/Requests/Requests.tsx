@@ -9,7 +9,6 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
-  Feature,
   InstitutionType,
   NotificationType,
   UserRole,
@@ -23,7 +22,6 @@ import ActiveRequests from './ActiveRequests'
 import PastRequests from './PastRequests'
 import router from 'next/router'
 import * as styles from './Requests.treat'
-import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
@@ -32,7 +30,6 @@ export const Requests: React.FC = () => {
   const [pastCases, setPastCases] = useState<Case[]>()
 
   const { user } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isJudge = user?.role === UserRole.JUDGE
   const isRegistrar = user?.role === UserRole.REGISTRAR
@@ -185,33 +182,20 @@ export const Requests: React.FC = () => {
             <DropdownMenu
               menuLabel="Tegund kröfu"
               icon="add"
-              items={
-                features.includes(Feature.R_CASES)
-                  ? [
-                      {
-                        href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
-                        title: 'Gæsluvarðhald',
-                      },
-                      {
-                        href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
-                        title: 'Farbann',
-                      },
-                      {
-                        href: Constants.NEW_IC_ROUTE,
-                        title: 'Rannsóknarheimild',
-                      },
-                    ]
-                  : [
-                      {
-                        href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
-                        title: 'Gæsluvarðhald',
-                      },
-                      {
-                        href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
-                        title: 'Farbann',
-                      },
-                    ]
-              }
+              items={[
+                {
+                  href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
+                  title: 'Gæsluvarðhald',
+                },
+                {
+                  href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
+                  title: 'Farbann',
+                },
+                {
+                  href: Constants.NEW_IC_ROUTE,
+                  title: 'Rannsóknarheimild',
+                },
+              ]}
               title="Stofna nýja kröfu"
             />
           )}

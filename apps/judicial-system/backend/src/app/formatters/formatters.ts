@@ -5,6 +5,7 @@ import {
   laws,
   formatGender,
   caseTypes,
+  formatAppeal,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
@@ -65,22 +66,6 @@ export function formatCustodyProvisions(
     : legalBasis
     ? legalBasis
     : 'Lagaákvæði ekki skráð'
-}
-
-export function formatAppeal(
-  appealDecision: CaseAppealDecision | undefined,
-  stakeholder: string,
-): string {
-  switch (appealDecision) {
-    case CaseAppealDecision.APPEAL:
-      return `${stakeholder} lýsir því yfir að hann kæri úrskurðinn til Landsréttar.`
-    case CaseAppealDecision.ACCEPT:
-      return `${stakeholder} unir úrskurðinum.`
-    case CaseAppealDecision.POSTPONE:
-      return `${stakeholder} lýsir því yfir að hann taki sér lögbundinn kærufrest.`
-    default:
-      return ''
-  }
 }
 
 export function formatCourtHeadsUpSmsNotification(
