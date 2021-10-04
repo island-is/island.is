@@ -1,9 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { GridContainer, Button, Text, Box } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 import * as styles from './login.treat'
-import { Routes, signOutUrl } from '@island.is/financial-aid/shared/lib'
+import {
+  identityServerId,
+  Routes,
+  signOutUrl,
+} from '@island.is/financial-aid/shared/lib'
 import { signIn, useSession, signOut } from 'next-auth/client'
 
 interface Props {
@@ -12,6 +16,10 @@ interface Props {
 }
 
 const Login = ({ headline, about }: Props) => {
+  useEffect(() => {
+    console.log('window', window?.location?.origin)
+  })
+
   return (
     <GridContainer>
       <div className={styles.gridRowContainer}>
@@ -22,7 +30,11 @@ const Login = ({ headline, about }: Props) => {
           <Text marginBottom={3}>{about}</Text>
 
           <Button
-            onClick={() => signIn('identity-server')}
+            onClick={() =>
+              signIn(identityServerId, {
+                callbackUrl: `${window.location.origin}/umsokn`,
+              })
+            }
             data-testid="logout-button"
             preTextIconType="filled"
             type="button"

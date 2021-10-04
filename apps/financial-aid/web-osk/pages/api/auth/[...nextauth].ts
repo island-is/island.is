@@ -10,6 +10,7 @@ import {
 import { uuid } from 'uuidv4'
 import {
   decodeToken,
+  identityServerId,
   ReturnUrl,
   RolesRule,
 } from '@island.is/financial-aid/shared/lib'
@@ -27,7 +28,7 @@ type AuthSession = SessionBase & {
 }
 
 const identityServer = {
-  id: 'identity-server',
+  id: identityServerId,
   name: 'Iceland authentication service',
   scope: 'openid profile',
   clientId: '@samband_islenskra_sveitarfelaga/fjarhagur',
