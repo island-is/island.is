@@ -133,7 +133,7 @@ export class ApplicationController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put('applicationsTable/:id/:stateUrl')
+  @Put('applications/:id/:stateUrl')
   @ApiOkResponse({
     type: UpdateApplicationTableResponse,
     description:

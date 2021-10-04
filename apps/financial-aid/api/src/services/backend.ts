@@ -65,7 +65,7 @@ class BackendAPI extends RESTDataSource {
     stateUrl: ApplicationStateUrl,
     updateApplication: UpdateApplication,
   ): Promise<UpdateApplicationTableResponseType> {
-    return this.put(`applicationsTable/${id}/${stateUrl}`, updateApplication)
+    return this.put(`applications/${id}/${stateUrl}`, updateApplication)
   }
 
   updateApplicationRes(
