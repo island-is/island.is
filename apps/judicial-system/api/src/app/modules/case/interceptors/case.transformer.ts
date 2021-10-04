@@ -10,6 +10,8 @@ export function transformCase(theCase: Case): Case {
   theCase.requestProsecutorOnlySession =
     theCase.requestProsecutorOnlySession ?? false
   theCase.isClosedCourtHidden = theCase.isClosedCourtHidden ?? false
+  theCase.isHeightenedSecurityLevel = theCase.isHeightenedSecurityLevel ?? false
+
   theCase.isAccusedRightsHidden = isAccusedRightsHidden(theCase)
 
   if (theCase.validToDate) {
