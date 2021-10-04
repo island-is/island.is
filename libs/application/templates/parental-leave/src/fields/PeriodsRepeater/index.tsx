@@ -1,5 +1,6 @@
 import React, { FC, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
+import round from 'lodash/round'
 
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import {
@@ -27,7 +28,7 @@ import {
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States } from '../../constants'
-import { minPeriodDays } from '../../config'
+import { minPeriodDays, daysInMonth } from '../../config'
 import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
 
 type FieldProps = FieldBaseProps & {
@@ -138,6 +139,9 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   const remainingDays = rights - daysAlreadyUsed
   const canAddAnotherPeriod = remainingDays >= minPeriodDays
 
+  const monthsAlreadyUsed = round(daysAlreadyUsed / daysInMonth, 1)
+  const monthsInRights = round(rights / daysInMonth, 1)
+
   return (
     <Box>
       {showDescription && (
@@ -210,8 +214,8 @@ const PeriodsRepeater: FC<ScreenProps> = ({
           description={formatMessage(
             parentalLeaveFormMessages.leavePlan.usage,
             {
-              daysAlreadyUsed,
-              rights,
+              alreadyUsed: monthsAlreadyUsed,
+              rights: monthsInRights,
             },
           )}
         />

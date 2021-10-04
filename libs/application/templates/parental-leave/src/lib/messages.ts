@@ -727,7 +727,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     usage: {
       id: 'pl.application:period.usage',
-      defaultMessage: '{daysAlreadyUsed} dagar af {rights} dögum nýttir',
+      defaultMessage: '{alreadyUsed} af {rights} mánuðum nýttir',
       description: 'Copy of how many days are being used and how many are left',
     },
     cannotCreatePeriod: {
