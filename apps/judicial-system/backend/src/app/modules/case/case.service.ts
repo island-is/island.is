@@ -26,6 +26,7 @@ import {
   getRulingPdfAsString,
   getCasefilesPdfAsString,
   writeFile,
+  getCustodyNoticePdfAsString,
 } from '../../formatters'
 import { Institution } from '../institution'
 import { User } from '../user'
@@ -248,23 +249,6 @@ export class CaseService {
       )
     }
 
-    if (
-      existingCase.type === CaseType.CUSTODY ||
-      existingCase.type === CaseType.TRAVEL_BAN
-    ) {
-      promises.push(
-        this.sendEmail(
-          {
-            name: 'Fangelsismálastofnun',
-            address: environment.notifications.prisonAdminEmail,
-          },
-          existingCase.courtCaseNumber,
-          signedRulingPdf,
-          'Sjá viðhengi',
-        ),
-      )
-    }
-
     await Promise.all(promises)
   }
 
@@ -341,19 +325,6 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
-  async getRulingPdf(existingCase: Case): Promise<string> {
-    this.logger.debug(
-      `Getting the ruling for case ${existingCase.id} as a pdf document`,
-    )
-
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    return getRulingPdfAsString(existingCase, intl.formatMessage)
-  }
-
   async getRequestPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
       `Getting the request for case ${existingCase.id} as a pdf document`,
@@ -365,6 +336,30 @@ export class CaseService {
     )
 
     return getRequestPdfAsString(existingCase, intl.formatMessage)
+  }
+
+  async getRulingPdf(
+    existingCase: Case,
+    shortversion = false,
+  ): Promise<string> {
+    this.logger.debug(
+      `Getting the ruling for case ${existingCase.id} as a pdf document`,
+    )
+
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    return getRulingPdfAsString(existingCase, intl.formatMessage, shortversion)
+  }
+
+  async getCustodyPdf(existingCase: Case): Promise<string> {
+    this.logger.debug(
+      `Getting the custody notice for case ${existingCase.id} as a pdf document`,
+    )
+
+    return getCustodyNoticePdfAsString(existingCase)
   }
 
   async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {

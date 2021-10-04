@@ -13,7 +13,11 @@ import {
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 
 import { ApplicationService } from './application.service'
-import { CurrentApplicationModel, ApplicationModel } from './models'
+import {
+  CurrentApplicationModel,
+  ApplicationModel,
+  UpdateApplicationResponse,
+} from './models'
 
 import {
   ApplicationEventModel,
@@ -36,7 +40,11 @@ import {
 
 import { ApplicationGuard } from '../../guards/application.guard'
 
-import type { User } from '@island.is/financial-aid/shared/lib'
+import type {
+  Application,
+  ApplicationStateUrl,
+  User,
+} from '@island.is/financial-aid/shared/lib'
 
 import {
   ApplicationFilters,
@@ -63,14 +71,16 @@ export class ApplicationController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(RolesRule.VEITA)
-  @Get('applications')
+  @Get('allApplications/:stateUrl')
   @ApiOkResponse({
     type: ApplicationModel,
     isArray: true,
     description: 'Gets all existing applications',
   })
-  getAll(): Promise<ApplicationModel[]> {
-    return this.applicationService.getAll()
+  getAll(
+    @Param('stateUrl') stateUrl: ApplicationStateUrl,
+  ): Promise<ApplicationModel[]> {
+    return this.applicationService.getAll(stateUrl)
   }
 
   @UseGuards(JwtAuthGuard, ApplicationGuard)
@@ -119,6 +129,31 @@ export class ApplicationController {
     }
 
     return updatedApplication
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('updateApplication/:id')
+  @ApiOkResponse({
+    type: UpdateApplicationResponse,
+    description: 'Updates an existing application',
+  })
+  async updateApplication(
+    @Param('id') id: string,
+    @Body() applicationToUpdate: UpdateApplicationDto,
+  ): Promise<UpdateApplicationResponse> {
+    const {
+      numberOfAffectedRows,
+      updatedApplication,
+    } = await this.applicationService.update(id, applicationToUpdate)
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Application ${id} does not exist`)
+    }
+
+    return {
+      application: updatedApplication,
+      filters: await this.applicationService.getAllFilters(),
+    }
   }
 
   @UseGuards(JwtAuthGuard)
