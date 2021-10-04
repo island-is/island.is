@@ -9,7 +9,10 @@ import {
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
-import { NavigationProps } from '@island.is/financial-aid/shared/lib'
+import {
+  NavigationProps,
+  isEmailValid,
+} from '@island.is/financial-aid/shared/lib'
 
 const EmailForm = () => {
   const router = useRouter()
@@ -21,18 +24,13 @@ const EmailForm = () => {
     router.pathname,
   ) as NavigationProps
 
-  const isValid = (emailAddress: string) => {
-    let re = /\S+@\S+\.\S+/
-    return re.test(emailAddress)
-  }
-
   const errorCheck = () => {
     if (form?.emailAddress === undefined) {
       setHasError(true)
       return
     }
 
-    if (!isValid(form?.emailAddress)) {
+    if (!isEmailValid(form?.emailAddress)) {
       setHasError(true)
       return
     }

@@ -25,3 +25,8 @@ export const formatPhoneNumber = (phoneNumber: string) => {
 
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
+
+export const isEmailValid = (emailAddress: string) => {
+  let re = /\S+@\S+\.\S+/
+  return re.test(emailAddress)
+}
