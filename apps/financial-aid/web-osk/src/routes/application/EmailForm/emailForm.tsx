@@ -56,6 +56,7 @@ const EmailForm = () => {
 
         <Box marginBottom={[1, 1, 2]}>
           <Input
+            autoFocus={true}
             name="email"
             label="Netfang"
             placeholder="Sláðu inn netfang"
