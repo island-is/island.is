@@ -14,6 +14,8 @@ import {
   ApplicationEventType,
   ApplicationFilters,
   ApplicationState,
+  ApplicationStateUrl,
+  getStateFromUrl,
   User,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
@@ -67,11 +69,20 @@ export class ApplicationService {
     })
   }
 
-  async getAll(): Promise<ApplicationModel[]> {
+  async getAll(stateUrl: ApplicationStateUrl): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
+      where: {
+        state: { [Op.in]: getStateFromUrl[stateUrl] },
+      },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
     })
+  }
+
+  async setFilesToApplication(id: string, application: ApplicationModel) {
+    const files = await this.fileService.getAllApplicationFiles(id)
+
+    application?.setDataValue('files', files)
   }
 
   async findById(id: string): Promise<ApplicationModel | null> {
@@ -88,9 +99,7 @@ export class ApplicationService {
       ],
     })
 
-    const files = await this.fileService.getAllApplicationFiles(id)
-
-    application?.setDataValue('files', files)
+    await this.setFilesToApplication(id, application)
 
     return application
   }
@@ -170,6 +179,7 @@ export class ApplicationService {
     if (update.state === ApplicationState.NEW) {
       update.staffId = null
     }
+
     const [
       numberOfAffectedRows,
       [updatedApplication],
@@ -177,6 +187,8 @@ export class ApplicationService {
       where: { id },
       returning: true,
     })
+
+    await this.setFilesToApplication(id, updatedApplication)
 
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({

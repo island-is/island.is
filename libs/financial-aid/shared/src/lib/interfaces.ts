@@ -179,3 +179,8 @@ export interface Application {
 export interface GetSignedUrlForId {
   id: string
 }
+
+export interface UpdateApplicationResponseType {
+  application: Application
+  filters?: ApplicationFilters
+}

@@ -268,12 +268,7 @@ const ApplicationProfile = () => {
             onVisibilityChange={(isVisibleBoolean) => {
               setStateModalVisible(isVisibleBoolean)
             }}
-            onStateChange={(applicationState: ApplicationState) => {
-              setApplication({
-                ...application,
-                state: applicationState,
-              })
-            }}
+            setApplication={setApplication}
             application={application}
           />
         )}

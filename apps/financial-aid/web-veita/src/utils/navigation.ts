@@ -1,9 +1,12 @@
-import { ApplicationState } from '@island.is/financial-aid/shared/lib'
+import {
+  ApplicationState,
+  ApplicationStateUrl,
+} from '@island.is/financial-aid/shared/lib'
 
 export const navigationItems = [
   {
     label: 'Ný mál',
-    link: '/nymal',
+    link: `/${ApplicationStateUrl.NEW}`,
     applicationState: [ApplicationState.NEW],
     headers: [
       { title: 'Nafn' },
@@ -15,7 +18,7 @@ export const navigationItems = [
   },
   {
     label: 'Mál í vinnslu',
-    link: '/vinnslu',
+    link: `/${ApplicationStateUrl.INPROGRESS}`,
     applicationState: [
       ApplicationState.INPROGRESS,
       ApplicationState.DATANEEDED,
@@ -30,7 +33,7 @@ export const navigationItems = [
   },
   {
     label: 'Afgreidd mál',
-    link: '/afgreidd',
+    link: `/${ApplicationStateUrl.PROCESSED}`,
     applicationState: [ApplicationState.APPROVED, ApplicationState.REJECTED],
     headers: [
       { title: 'Nafn' },
