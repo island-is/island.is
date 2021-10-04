@@ -7,7 +7,7 @@ PODS:
   - Base64 (1.1.2)
   - boost (1.76.0)
   - CocoaAsyncSocket (7.6.5)
-  - CodePush (7.0.1):
+  - CodePush (7.0.3):
     - Base64 (~> 1.1)
     - JWT (~> 3.0.0-beta.12)
     - React-Core
@@ -54,17 +54,17 @@ PODS:
     - React-Core (= 0.66.0)
     - React-jsi (= 0.66.0)
     - ReactCommon/turbomodule/core (= 0.66.0)
-  - Firebase/CoreOnly (8.1.1):
-    - FirebaseCore (= 8.1.0)
-  - Firebase/Messaging (8.1.1):
+  - Firebase/CoreOnly (8.8.0):
+    - FirebaseCore (= 8.8.0)
+  - Firebase/Messaging (8.8.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 8.1.0)
-  - Firebase/Performance (8.1.1):
+    - FirebaseMessaging (~> 8.8.0)
+  - Firebase/Performance (8.8.0):
     - Firebase/CoreOnly
-    - FirebasePerformance (~> 8.1.0)
+    - FirebasePerformance (~> 8.8.0)
   - FirebaseABTesting (8.8.0):
     - FirebaseCore (~> 8.0)
-  - FirebaseCore (8.1.0):
+  - FirebaseCore (8.8.0):
     - FirebaseCoreDiagnostics (~> 8.0)
     - GoogleUtilities/Environment (~> 7.4)
     - GoogleUtilities/Logger (~> 7.4)
@@ -78,14 +78,16 @@ PODS:
     - GoogleUtilities/Environment (~> 7.4)
     - GoogleUtilities/UserDefaults (~> 7.4)
     - PromisesObjC (< 3.0, >= 1.2)
-  - FirebaseMessaging (8.1.0):
+  - FirebaseMessaging (8.8.0):
     - FirebaseCore (~> 8.0)
     - FirebaseInstallations (~> 8.0)
+    - GoogleDataTransport (~> 9.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.4)
     - GoogleUtilities/Environment (~> 7.4)
     - GoogleUtilities/Reachability (~> 7.4)
     - GoogleUtilities/UserDefaults (~> 7.4)
-  - FirebasePerformance (8.1.0):
+    - nanopb (~> 2.30908.0)
+  - FirebasePerformance (8.8.0):
     - FirebaseCore (~> 8.0)
     - FirebaseInstallations (~> 8.0)
     - FirebaseRemoteConfig (~> 8.0)
@@ -93,7 +95,7 @@ PODS:
     - GoogleUtilities/Environment (~> 7.4)
     - GoogleUtilities/ISASwizzler (~> 7.4)
     - GoogleUtilities/MethodSwizzler (~> 7.4)
-    - Protobuf (~> 3.15)
+    - nanopb (~> 2.30908.0)
   - FirebaseRemoteConfig (8.8.0):
     - FirebaseABTesting (~> 8.0)
     - FirebaseCore (~> 8.0)
@@ -200,7 +202,6 @@ PODS:
   - nanopb/encode (2.30908.0)
   - OpenSSL-Universal (1.1.180)
   - PromisesObjC (2.0.0)
-  - Protobuf (3.18.0)
   - RCT-Folly (2021.06.28.00-v2):
     - boost
     - DoubleConversion
@@ -435,7 +436,7 @@ PODS:
     - React
   - react-native-ultimate-config (3.4.1):
     - React
-  - react-native-webview (11.6.4):
+  - react-native-webview (11.14.0):
     - React-Core
   - React-perflogger (0.66.0)
   - React-RCTActionSheet (0.66.0):
@@ -502,9 +503,9 @@ PODS:
     - React-jsi (= 0.66.0)
     - React-logger (= 0.66.0)
     - React-perflogger (= 0.66.0)
-  - ReactNativeKeyboardManager (6.5.4-1):
+  - ReactNativeKeyboardManager (6.5.4-3):
     - IQKeyboardManagerSwift (= 6.5.4)
-    - React
+    - React-Core
     - React-RCTText
   - ReactNativeNavigation (7.19.1):
     - React-Core
@@ -519,15 +520,15 @@ PODS:
     - React-Core
   - RNCAsyncStorage (1.12.1):
     - React-Core
-  - RNFBApp (12.1.0):
-    - Firebase/CoreOnly (= 8.1.1)
+  - RNFBApp (12.9.0):
+    - Firebase/CoreOnly (= 8.8.0)
     - React-Core
-  - RNFBMessaging (12.1.0):
-    - Firebase/Messaging (= 8.1.1)
+  - RNFBMessaging (12.9.0):
+    - Firebase/Messaging (= 8.8.0)
     - React-Core
     - RNFBApp
-  - RNFBPerf (12.1.0):
-    - Firebase/Performance (= 8.1.1)
+  - RNFBPerf (12.9.0):
+    - Firebase/Performance (= 8.8.0)
     - React-Core
     - RNFBApp
   - RNKeychain (8.0.0):
@@ -683,7 +684,6 @@ SPEC REPOS:
     - nanopb
     - OpenSSL-Universal
     - PromisesObjC
-    - Protobuf
     - Sentry
     - SSZipArchive
     - YogaKit
@@ -828,7 +828,7 @@ SPEC CHECKSUMS:
   Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   boost: a7c83b31436843459a1961bfd74b96033dc77234
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  CodePush: 9bb93f52a44ee80b72739d89dead9c7e86c3bd3a
+  CodePush: f509246638a5ebe5209b08351e48a95093d1f307
   DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
   EXApplication: 9ff2a206009d6e55bca6c20b3f33d07986b51ef3
   EXBarCodeScanner: ea326d0d2f0b84d4fa2fb833d17e28eaff7f831b
@@ -841,13 +841,13 @@ SPEC CHECKSUMS:
   ExpoModulesCore: 2734852616127a6c1fc23012197890a6f3763dc7
   FBLazyVector: 6816ca39e1cc8beffd2a96783f518296789d1c48
   FBReactNativeSpec: 3b1e86618e902743fde35b40cf9ebd100fd655b7
-  Firebase: 4bb49ae87756034cef870fa3c4006235eb46f475
+  Firebase: 629510f1a9ddb235f3a7c5c8ceb23ba887f0f814
   FirebaseABTesting: 981336dd14d84787e33466e4247f77ec2343f8d9
-  FirebaseCore: 389c4ce9a7cce4a7e25eb22326b4bee0050557b2
+  FirebaseCore: 98b29e3828f0a53651c363937a7f7d92a19f1ba2
   FirebaseCoreDiagnostics: fe77f42da6329d6d83d21fd9d621a6b704413bfc
   FirebaseInstallations: 2563cb18a723ef9c6ef18318a49519b75dce613c
-  FirebaseMessaging: c8871b0907dcf4e76de81241eb6a62be6d657d2f
-  FirebasePerformance: f4c53dfbac3dc51cbbb2afb951ebc7d4490f4bc0
+  FirebaseMessaging: 419b5c9d84f294a753c6501d8cfb9ced1ce37304
+  FirebasePerformance: 0c01a7a496657d7cea86d40c0b1725259d164c6c
   FirebaseRemoteConfig: f6365883d7950d784ee97bcdbbf1e442d4fa6119
   Flipper: bc940dd278ca91f9b2d36b6fac5c098a8906ffa2
   Flipper-Boost-iOSX: fd1e2b8cbef7e662a122412d7ac5f5bea715403c
@@ -870,7 +870,6 @@ SPEC CHECKSUMS:
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
-  Protobuf: 1a37ebea1338949e9ac35a3f06e80b3f536eec8d
   RCT-Folly: a21c126816d8025b547704b777a2ba552f3d9fa9
   RCTRequired: e4a18a90004e0ed97bba9081099104fd0f658dc9
   RCTTypeSafety: 8a3c31d38de58e1a6a7df6e4e643644a60b00e22
@@ -893,7 +892,7 @@ SPEC CHECKSUMS:
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-spotlight-search: a42542a7818d20f8d815b38436be538e85755330
   react-native-ultimate-config: 7301d864d5511016587ccc89bb8787e6fcf17723
-  react-native-webview: 1a19adb5578cdf7f005b7961dcc50c1c6b70f41b
+  react-native-webview: d70bc760daaa0e2667dec569b93014882565819c
   React-perflogger: 1f554c2b684e2f484f9edcdfdaeedab039fbaca8
   React-RCTActionSheet: 610d5a5d71ab4808734782c8bca6a12ec3563672
   React-RCTAnimation: ec6ed97370ace32724c253f29f0586cafcab8126
@@ -906,13 +905,13 @@ SPEC CHECKSUMS:
   React-RCTVibration: 53b92d54b923283638cb0186da7a5c2d2b70a49b
   React-runtimeexecutor: 4bb657a97aa74568d9ed634c8bd478299bb8a3a6
   ReactCommon: eb059748e842a1a86025ebbd4ac9d99e74492f88
-  ReactNativeKeyboardManager: 93ac3934a51f548c54ac02d61c90e33220bba086
+  ReactNativeKeyboardManager: 4fb4d82d670ec6c00e9a2d2cc576f7cbb14975d6
   ReactNativeNavigation: ec13f7391c5b0e01803abaa73ed1d084359509eb
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
-  RNFBApp: 406bc9586c70ccf20504b4d3b54ac4341c98993f
-  RNFBMessaging: 154dc7815e2b6c55941793630ffb3a55f03d77e6
-  RNFBPerf: 243e8bd24e72333b39ab56642cb3948b5436981a
+  RNFBApp: d11e8ae04b9b6230f3a28b70761f2edd185deaa8
+  RNFBMessaging: dd0bd7d837b7b6b8e881248a2639af5dc36b28ef
+  RNFBPerf: 9051a42c7fe834f29a6764a43cca3f4bd7e87cac
   RNKeychain: 4f63aada75ebafd26f4bc2c670199461eab85d94
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
   RNSentry: 49abc89b0190b4c8afe0fa5d065f98e36cb53233
@@ -928,4 +927,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 61621b69267462e4de7e78c28c100c047e87e474
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2
