@@ -25,17 +25,21 @@ export const messages = defineMessages({
     id: 'sp.assets:location',
     defaultMessage: 'Staðfang',
   },
+  locationNumber: {
+    id: 'sp.assets:location-number',
+    defaultMessage: 'Staðfanganúmer',
+  },
   housing: {
     id: 'sp.assets:housing',
     defaultMessage: 'Íbúðarhúsnæði',
   },
-  currentAppraisal: {
-    id: 'sp.assets:current-appraisal',
-    defaultMessage: 'Gildandi fasteignamat',
+  appraisal: {
+    id: 'sp.assets:appraisal',
+    defaultMessage: 'Fasteignamat',
   },
-  futureAppraisal: {
-    id: 'sp.assets:future-appraisal',
-    defaultMessage: 'Fyrirhugað fasteignamat',
+  description: {
+    id: 'sp.assets:description',
+    defaultMessage: 'Lýsing',
   },
   unitsOfUse: {
     id: 'sp.assets:units-of-use',
@@ -51,7 +55,7 @@ export const messages = defineMessages({
   },
   purchaseDate: {
     id: 'sp.assets:purchase-date',
-    defaultMessage: 'Kaupdagur',
+    defaultMessage: 'Dagsetning eignarheimildar',
   },
   siteAssessment: {
     id: 'sp.assets:site-assessment',

@@ -94,11 +94,19 @@ const AssetGrid: FC<Props> = ({ title, units, assetId }) => {
                   <T.Data key={`rowitem-${iii}`} colSpan={2}>
                     <Columns collapseBelow="md" space={2}>
                       <Column>
-                        <Text variant="eyebrow" as="span">
+                        <Text
+                          title={rowitem.detail}
+                          variant="eyebrow"
+                          as="span"
+                        >
                           {rowitem.title}
                         </Text>
                       </Column>
-                      <Column>{rowitem.value}</Column>
+                      <Column>
+                        <Text variant="small" title={rowitem.detail}>
+                          {rowitem.value}
+                        </Text>
+                      </Column>
                     </Columns>
                   </T.Data>
                 ))}

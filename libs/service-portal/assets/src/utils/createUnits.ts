@@ -35,8 +35,8 @@ const unitsArray = (
   data?.map((unit: Notkunareining) => {
     return {
       header: {
-        title: formatMessage(messages.housing),
-        value: unit.stadfang?.birting || '',
+        title: unit.notkunBirting || '',
+        value: unit.sjalfgefidStadfang?.birting || '',
       },
       rows: chunk(
         [
@@ -45,17 +45,24 @@ const unitsArray = (
             value: unit.notkunareininganumer || '',
           },
           {
-            title: formatMessage(messages.currentAppraisal),
+            title: `${formatMessage(messages.appraisal)} ${
+              unit?.fasteignamat?.gildandiAr
+            }`,
             value: unit.fasteignamat?.gildandiFasteignamat
               ? amountFormat(unit.fasteignamat.gildandiFasteignamat)
               : '',
           },
           {
             title: formatMessage(messages.location),
-            value: unit.stadfang?.birtingStutt || '',
+            value: unit.sjalfgefidStadfang?.birtingStutt || '',
+            detail: unit.sjalfgefidStadfang?.stadfanganumer
+              ? `${formatMessage(messages.locationNumber)}: ${
+                  unit.sjalfgefidStadfang?.stadfanganumer
+                }`
+              : undefined,
           },
           {
-            title: `${formatMessage(messages.futureAppraisal)} ${
+            title: `${formatMessage(messages.appraisal)} ${
               unit?.fasteignamat?.fyrirhugadAr
             }`,
             value: unit?.fasteignamat?.fyrirhugadFasteignamat
@@ -68,15 +75,15 @@ const unitsArray = (
           },
           {
             title: formatMessage(messages.municipality),
-            value: unit.stadfang?.sveitarfelagBirting || '',
+            value: unit.sjalfgefidStadfang?.sveitarfelagBirting || '',
           },
           // {
           //   title: formatMessage(messages.siteAssessment),
           //   value: unit.lodarmat ? amountFormat(unit.lodarmat) : '',
           // },
           {
-            title: formatMessage(messages.usage),
-            value: unit.notkunBirting || '',
+            title: formatMessage(messages.description),
+            value: unit.skyring || '',
           },
           {
             title: formatMessage(messages.fireCompAssessment),

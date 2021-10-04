@@ -453,7 +453,7 @@ components:
         fasteignanumer:
           type: string
           nullable: true
-        stadfang:
+        sjalfgefidStadfang:
           nullable: true
           oneOf:
             - $ref: '#/components/schemas/Stadfang'

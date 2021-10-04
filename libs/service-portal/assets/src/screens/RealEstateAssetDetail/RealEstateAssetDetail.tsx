@@ -137,10 +137,10 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
             },
             {
               header: [
-                `${formatMessage(messages.currentAppraisal)} ${
+                `${formatMessage(messages.appraisal)} ${
                   assetData.fasteignamat?.gildandiAr
                 }`,
-                `${formatMessage(messages.currentAppraisal)} ${
+                `${formatMessage(messages.appraisal)} ${
                   assetData.fasteignamat?.fyrirhugadAr
                 }`,
               ],
