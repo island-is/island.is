@@ -18,10 +18,7 @@ import type { Case, User } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
-import {
-  icConfirmation,
-  icCourtRecord,
-} from '@island.is/judicial-system-web/messages'
+import { core, icConfirmation } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './Confirmation.treat'
 
@@ -167,11 +164,18 @@ const Confirmation: React.FC<Props> = (props) => {
             </Box>
           )}
         </Box>
+        <Box marginBottom={3}>
+          <PdfButton
+            caseId={workingCase.id}
+            title={formatMessage(core.pdfButtonRuling)}
+            pdfType="ruling?shortVersion=false"
+          />
+        </Box>
         <Box marginBottom={15}>
           <PdfButton
             caseId={workingCase.id}
-            title="Opna PDF þingbók og úrskurð"
-            pdfType="ruling"
+            title={formatMessage(core.pdfButtonRulingShortVersion)}
+            pdfType="ruling?shortVersion=true"
           />
         </Box>
       </FormContentContainer>

@@ -14,10 +14,12 @@ import {
   ApplicationFilters,
   CreateFilesResponse,
   ApplicationStateUrl,
+  UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
+import { ApplicationModule } from '../app/modules'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -55,6 +57,13 @@ class BackendAPI extends RESTDataSource {
     updateApplication: UpdateApplication,
   ): Promise<Application> {
     return this.put(`applications/${id}`, updateApplication)
+  }
+
+  updateApplicationRes(
+    id: string,
+    updateApplication: UpdateApplication,
+  ): Promise<UpdateApplicationResponseType> {
+    return this.put(`updateApplication/${id}`, updateApplication)
   }
 
   getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {

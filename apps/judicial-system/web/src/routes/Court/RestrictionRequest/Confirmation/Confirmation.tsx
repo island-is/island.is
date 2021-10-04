@@ -40,7 +40,10 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
-import { rcConfirmation as m } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  rcConfirmation as m,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as style from './Confirmation.treat'
 
@@ -306,11 +309,18 @@ export const Confirmation: React.FC = () => {
                 </Text>
               </Box>
             )}
+            <Box marginBottom={3}>
+              <PdfButton
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRuling)}
+                pdfType="ruling?shortVersion=false"
+              />
+            </Box>
             <Box marginBottom={15}>
               <PdfButton
                 caseId={workingCase.id}
-                title="Opna PDF þingbók og úrskurð"
-                pdfType="ruling"
+                title={formatMessage(core.pdfButtonRulingShortVersion)}
+                pdfType="ruling?shortVersion=true"
               />
             </Box>
           </FormContentContainer>

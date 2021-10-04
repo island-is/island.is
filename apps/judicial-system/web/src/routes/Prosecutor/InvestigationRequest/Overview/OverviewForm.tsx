@@ -18,7 +18,7 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './Overview.treat'
@@ -225,7 +225,7 @@ const OverviewForm: React.FC<Props> = (props) => {
         <Box marginBottom={10}>
           <PdfButton
             caseId={workingCase.id}
-            title="Opna PDF kröfu"
+            title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
         </Box>
