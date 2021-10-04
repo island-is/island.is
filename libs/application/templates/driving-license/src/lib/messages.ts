@@ -548,7 +548,7 @@ export const m = defineMessages({
     defaultMessage:
       'Umsókn þín um fullnaðarskírteinið hefur verið móttekin. Áður en hægt er að panta fullnaðarskírteini, þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum.',
     description:
-      'Your application for full driving license has been received. Before a full driving license can be applied for, you must bring the following to the district commissioner.',
+      'Your application for a full driving license has been received. Before a full driving license can be applied for, you must bring the following to the district commissioner.',
   },
   congratulationsTitleSuccess: {
     id: 'dl.application:congratulationsTitleSuccess',
@@ -616,25 +616,25 @@ export const m = defineMessages({
   districtCommisionerTitle: {
     id: 'dl.application:districtCommisionerTitle',
     defaultMessage: 'Sýslumannsembætti',
-    description: 'Title for districit commissioner',
+    description: 'Title for district commissioner',
   },
   districtCommisionerPickup: {
     id: 'dl.application:districtCommisionerPickup',
     defaultMessage: 'Afhending',
-    description: 'Pickup for districit commissioner',
+    description: 'Pickup for district commissioner',
   },
   chooseDistrictCommisionerForFullLicense: {
     id: 'dl.application:chooseDistrictCommisionerForFullLicense',
     defaultMessage:
       'Veldu það embætti sýslumanns þar sem þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini',
     description:
-      'Choose districit commissioner for returning a temporary license and recieve a new full license',
+      'Choose district commissioner for returning a temporary license and recieve a new full license',
   },
   chooseDistrictCommisionerForTempLicense: {
     id: 'dl.application:chooseDistrictCommisionerForTempLicense',
     defaultMessage:
       'Veldu það embætti sýslumanns sem þú hyggst skila inn gæðamerktri ljósmynd',
-    description: 'Choose districit commissioner for submitting a quality photo',
+    description: 'Choose district commissioner for submitting a quality photo',
   },
   confirmationStatusOfEligability: {
     id: 'dl.application:confirmationStatusOfEligability',
@@ -713,7 +713,7 @@ export const m = defineMessages({
   drivingLicenseInOtherCountry: {
     id: 'dl.application:drivingLicenseInOtherCountry',
     defaultMessage: 'Ertu með ökuskírteini í öðru landi?',
-    description: 'Do you have driving license in another country?',
+    description: 'Do you have a driving license in another country?',
   },
   foreignDrivingLicense: {
     id: 'dl.application:foreignDrivingLicense',
@@ -723,14 +723,14 @@ export const m = defineMessages({
   noDeprivedDrivingLicenseInOtherCountryTitle: {
     id: 'dl.application:noDeprivedDrivingLicenseInOtherCountryTitle',
     defaultMessage: 'Ég er ekki með sviptingu í öðru landi',
-    description: 'I do not have a drivering license in another country',
+    description: 'I do not have a deprived driving license in another country',
   },
   noDeprivedDrivingLicenseInOtherCountryDescription: {
     id: 'dl.application:noDeprivedDrivingLicenseInOtherCountryDescription',
     defaultMessage:
       'Staðfesting að umsækjandi hafi ekki undir höndum ökuskírteini gefið út af öðru ríki sem er aðili að Evrópska efnahagssvæðinu né hafi sætt takmörkunum á ökurétti eða verið svipt(ur) ökuréttindum í þeim ríkjum',
     description:
-      'Confirmation that the applicant did not hold a driving license issued by another Member State of the European Economic Area, nor was he subject to a driving license restriction or was deprived of his driving license in those countries',
+      'Confirmation that the applicant did not hold a driving license issued by another Member State of the European Economic Area, nor were they subject to a driving license restriction or were deprived of their driving license in those countries',
   },
   applicationForFullLicenseTitle: {
     id: 'dl.application:applicationForFullLicenseTitle',
