@@ -24,21 +24,17 @@ const TableRow = ({
   dueDate,
   payment,
   accumulated,
-  totalAmount,
 }: {
   dueDate: string
   payment: number
   accumulated: number
-  totalAmount: number
 }) => {
-  const remaining = totalAmount > accumulated ? totalAmount - accumulated : 0
   return (
     <T.Row>
       <T.Data>{format(new Date(dueDate), 'dd.MM.yyyy')}</T.Data>
-      <T.Data>{formatIsk(remaining)}</T.Data>
-      <T.Data>{formatIsk(payment)}</T.Data>
-      <T.Data>
-        <Text variant="h5">{formatIsk(payment)}</Text>
+      <T.Data box={{ textAlign: 'right' }}>{formatIsk(payment)}</T.Data>
+      <T.Data box={{ textAlign: 'right' }}>
+        <Text variant="h5">{formatIsk(accumulated)}</Text>
       </T.Data>
     </T.Row>
   )
@@ -49,7 +45,6 @@ export const PaymentPlanTable = ({ isLoading, data, totalAmount }: Props) => {
   const { formatMessage } = useLocale()
 
   const handleExpandTable = () => setIsExpanded(!isExpanded)
-
   return (
     <>
       {isLoading && (
@@ -69,14 +64,17 @@ export const PaymentPlanTable = ({ isLoading, data, totalAmount }: Props) => {
               <T.HeadData>
                 {formatMessage(paymentPlanTable.table.head.dueDate)}
               </T.HeadData>
-              <T.HeadData>
-                {formatMessage(paymentPlanTable.table.head.remaining)}
+              <T.HeadData box={{ textAlign: 'right' }}>
+                {data.scheduleType === 'Wagedection'
+                  ? formatMessage(paymentPlanTable.table.head.wageDeduction)
+                  : formatMessage(paymentPlanTable.table.head.payment)}
               </T.HeadData>
-              <T.HeadData>
-                {formatMessage(paymentPlanTable.table.head.payment)}
-              </T.HeadData>
-              <T.HeadData>
-                {formatMessage(paymentPlanTable.table.head.totalPayment)}
+              <T.HeadData box={{ textAlign: 'right' }}>
+                {data.scheduleType === 'Wagedection'
+                  ? formatMessage(
+                      paymentPlanTable.table.head.totalWageDeduction,
+                    )
+                  : formatMessage(paymentPlanTable.table.head.totalPayment)}
               </T.HeadData>
             </T.Row>
           </T.Head>
@@ -84,11 +82,11 @@ export const PaymentPlanTable = ({ isLoading, data, totalAmount }: Props) => {
             {!isExpanded && data.payments.length > 6 ? (
               <>
                 {data.payments.slice(0, 2).map((line, index) => (
-                  <TableRow key={index} totalAmount={totalAmount} {...line} />
+                  <TableRow key={index} {...line} />
                 ))}
                 {data.payments.length > 2 && (
                   <T.Row>
-                    <T.Data colSpan={4} box={{ background: 'blue100' }}>
+                    <T.Data colSpan={3} box={{ background: 'blue100' }}>
                       <Box display="flex" justifyContent="center" marginY={1}>
                         <Button
                           variant="ghost"
@@ -106,12 +104,12 @@ export const PaymentPlanTable = ({ isLoading, data, totalAmount }: Props) => {
                 {data.payments
                   .slice(data.payments.length - 2, data.payments.length)
                   .map((line, index) => (
-                    <TableRow key={index} totalAmount={totalAmount} {...line} />
+                    <TableRow key={index} {...line} />
                   ))}
               </>
             ) : (
               data.payments.map((line, index) => (
-                <TableRow key={index} totalAmount={totalAmount} {...line} />
+                <TableRow key={index} {...line} />
               ))
             )}
             <T.Row>
@@ -120,17 +118,16 @@ export const PaymentPlanTable = ({ isLoading, data, totalAmount }: Props) => {
                   {formatMessage(paymentPlanTable.table.labels.totalAmount)}
                 </Text>
               </T.Data>
-              <T.Data />
-              <T.Data />
-              <T.Data>
+              <T.Data box={{ textAlign: 'right' }}>
                 <Text variant="h4" color="blue400">
                   {formatIsk(totalAmount)}
                 </Text>
               </T.Data>
+              <T.Data />
             </T.Row>
             {isExpanded && data.payments.length > 6 && (
               <T.Row>
-                <T.Data colSpan={4} box={{ background: 'blue100' }}>
+                <T.Data colSpan={3} box={{ background: 'blue100' }}>
                   <Box display="flex" justifyContent="center" marginY={1}>
                     <Button
                       variant="ghost"

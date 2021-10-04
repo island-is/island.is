@@ -7,7 +7,6 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application } from './messages'
@@ -16,6 +15,9 @@ const States = {
   draft: 'draft',
   submitted: 'submitted',
   closed: 'closed',
+}
+export enum API_MODULE_ACTIONS {
+  sendApplication = 'sendApplication',
 }
 
 type PublicDebtPaymentPlanEvent =
@@ -50,7 +52,12 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
             description: application.description,
           },
           progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          // Application is only suppose to live for an hour
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -69,9 +76,6 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
           SUBMIT: {
             target: States.submitted,
           },
-          ABORT: {
-            target: States.closed,
-          },
         },
       },
       [States.submitted]: {
@@ -81,33 +85,14 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
             title: application.name,
             description: application.description,
           },
-          progress: 1,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/PaymentPlanSubmittedForm').then((module) =>
-                  // TODO: Rename this once we start work on it
-                  Promise.resolve(module.PaymentPlanSubmittedForm),
-                ),
-              write: 'all',
-            },
-          ],
-        },
-      },
-      [States.closed]: {
-        meta: {
-          name: States.closed,
-          actionCard: {
-            title: application.name,
-            description: application.description,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
           },
           progress: 1,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
-            whenToPrune: 1,
+            whenToPrune: 3600 * 1000,
           },
         },
       },

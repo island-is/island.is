@@ -21,7 +21,7 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 
 interface Props {
@@ -171,6 +171,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                 )
               },
             )}
+            {workingCase.legalBasis && <Text>{workingCase.legalBasis}</Text>}
           </Box>
         </div>
         <div className={styles.infoSection} data-testid="custodyRestrictions">
@@ -289,7 +290,7 @@ const OverviewForm: React.FC<Props> = (props) => {
         <Box marginBottom={3}>
           <PdfButton
             caseId={workingCase.id}
-            title="Opna PDF kröfu"
+            title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
         </Box>

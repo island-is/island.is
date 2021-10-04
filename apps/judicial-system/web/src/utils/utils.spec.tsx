@@ -180,7 +180,7 @@ describe('Validation', () => {
   })
 
   describe('Validate national id format', () => {
-    test('should fail if not in correct form', () => {
+    test('should be valid if all digits filled in', () => {
       // Arrange
       const nid = '999999-9999'
 
@@ -188,8 +188,7 @@ describe('Validation', () => {
       const r = validate(nid, 'national-id')
 
       // Assert
-      expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Dæmi: 000000-0000')
+      expect(r.isValid).toEqual(true)
     })
 
     test('should be valid given just the first six digits', () => {
@@ -204,9 +203,9 @@ describe('Validation', () => {
       expect(r.errorMessage).toEqual('')
     })
 
-    test('should not be valid given an invalid day', () => {
+    test('should not be valid given too few digits', () => {
       // Arrange
-      const nid = '991201'
+      const nid = '99120'
 
       // Act
       const r = validate(nid, 'national-id')
@@ -216,9 +215,9 @@ describe('Validation', () => {
       expect(r.errorMessage).toEqual('Dæmi: 000000-0000')
     })
 
-    test('should not be valid given an invalid month', () => {
+    test('should not be valid given invalid number of digits', () => {
       // Arrange
-      const nid = '019901'
+      const nid = '991201-22'
 
       // Act
       const r = validate(nid, 'national-id')

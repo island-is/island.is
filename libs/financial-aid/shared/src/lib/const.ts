@@ -10,12 +10,16 @@ export const AllowedFakeUsers = [
   '0000000001', // User with an application which is in progress
   '0000000002', // Veita user
   '0000000003', // User with an application which needs data
+  '0000000004', // User that does not have home in hfj
 ]
 
 export const Routes = {
+  application: '/umsokn',
   status: '/stada',
   statusPage: (id: string) => `/stada/${id}`,
   statusFileUpload: (id: string) => `/stada/${id}/gogn`,
+  statusFileUploadSuccess: (id: string) => `/stada/${id}/gogn/send`,
+  statusFileUploadFailure: (id: string) => `/stada/${id}/gogn/villa`,
   apiLoginRouteForFake: (id: string) =>
     id
       ? `/api/auth/login?applicationId=${id}&nationalId=`

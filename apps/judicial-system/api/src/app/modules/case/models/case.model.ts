@@ -138,6 +138,9 @@ export class Case implements TCase {
   readonly courtDate?: string
 
   @Field({ nullable: true })
+  readonly courtLocation?: string
+
+  @Field({ nullable: true })
   readonly courtRoom?: string
 
   @Field({ nullable: true })
@@ -145,6 +148,9 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly courtEndTime?: string
+
+  @Field({ nullable: true })
+  isClosedCourtHidden?: boolean
 
   @Field({ nullable: true })
   readonly courtAttendees?: string
@@ -156,7 +162,7 @@ export class Case implements TCase {
   readonly courtDocuments?: string[]
 
   @Field({ nullable: true })
-  isAccusedAbsent?: boolean
+  isAccusedRightsHidden?: boolean
 
   @Field(() => String, { nullable: true })
   readonly accusedPleaDecision?: AccusedPleaDecision

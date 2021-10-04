@@ -121,7 +121,7 @@ export class RestMetadataService {
   async getOpenApi(
     xroadIdentifier: XroadIdentifier,
   ): Promise<OpenApi | undefined> {
-    return YamlParser.safeLoad(
+    return YamlParser.load(
       await this.getOpenApiString(xroadIdentifier),
     ) as OpenApi
   }

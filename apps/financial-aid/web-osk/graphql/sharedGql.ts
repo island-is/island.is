@@ -29,7 +29,12 @@ export const GetMunicipalityQuery = gql`
     municipality(input: $input) {
       id
       name
-      settings
+      homePage
+      aid {
+        ownApartmentOrLease
+        withOthersOrUnknow
+        withParents
+      }
     }
   }
 `
@@ -49,6 +54,7 @@ export const CurrentUserQuery = gql`
       nationalId
       name
       phoneNumber
+      postalCode
       currentApplication {
         id
         state
@@ -68,6 +74,7 @@ export const GetApplicationQuery = gql`
       state
       amount
       rejection
+      created
     }
   }
 `

@@ -27,6 +27,7 @@ export enum CaseState {
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
   DELETED = 'DELETED',
+  DISMISSED = 'DISMISSED',
 }
 
 export enum CaseTransition {
@@ -36,6 +37,7 @@ export enum CaseTransition {
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
   DELETE = 'DELETE',
+  DISMISS = 'DISMISS',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -45,11 +47,8 @@ export enum CaseCustodyProvisions {
   _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
   _95_1_D = '_95_1_D', // d-lið 1. mgr. 95. gr.
   _95_2 = '_95_2', // 2. mgr. 95. gr.
-  _97_3 = '_97_3', // 3. mgr. 97. gr.
-  _98_2 = '_98_2', // 2. mgr. 98. gr.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
-  _115_1 = '_115_1', // 1. mgr. 115. gr útll.
 }
 /* eslint-enable @typescript-eslint/naming-convention */
 
@@ -80,6 +79,7 @@ export enum CaseDecision {
   REJECTING = 'REJECTING',
   ACCEPTING_ALTERNATIVE_TRAVEL_BAN = 'ACCEPTING_ALTERNATIVE_TRAVEL_BAN',
   ACCEPTING_PARTIALLY = 'ACCEPTING_PARTIALLY',
+  DISMISSING = 'DISMISSING',
 }
 
 export enum AccusedPleaDecision {
@@ -135,13 +135,15 @@ export interface Case {
   courtCaseNumber?: string
   sessionArrangements?: SessionArrangements
   courtDate?: string
+  courtLocation?: string
   courtRoom?: string
   courtStartDate?: string
   courtEndTime?: string
+  isClosedCourtHidden?: boolean
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  isAccusedAbsent?: boolean
+  isAccusedRightsHidden?: boolean
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
@@ -224,6 +226,7 @@ export interface UpdateCase {
   courtCaseNumber?: string
   sessionArrangements?: SessionArrangements
   courtDate?: string
+  courtLocation?: string
   courtRoom?: string
   courtStartDate?: string
   courtEndTime?: string
@@ -275,7 +278,11 @@ export interface CreateCourtCase {
   isExtension: boolean
 }
 
-export const completedCaseStates = [CaseState.ACCEPTED, CaseState.REJECTED]
+export const completedCaseStates = [
+  CaseState.ACCEPTED,
+  CaseState.REJECTED,
+  CaseState.DISMISSED,
+]
 
 export function hasCaseBeenAppealed(theCase: Case): boolean {
   return (
@@ -285,4 +292,12 @@ export function hasCaseBeenAppealed(theCase: Case): boolean {
       Boolean(theCase.accusedPostponedAppealDate) ||
       Boolean(theCase.prosecutorPostponedAppealDate))
   )
+}
+
+export function isAccusedRightsHidden(theCase: Case): boolean {
+  return theCase.isAccusedRightsHidden == null
+    ? theCase.sessionArrangements
+      ? theCase.sessionArrangements !== SessionArrangements.ALL_PRESENT
+      : false
+    : theCase.isAccusedRightsHidden
 }

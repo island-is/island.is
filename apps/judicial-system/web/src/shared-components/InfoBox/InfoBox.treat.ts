@@ -2,7 +2,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { style } from 'treat'
 
 export const infoBoxContainer = style({
-  maxWidth: '432px',
+  maxWidth: '440px',
   padding: theme.spacing[2],
   border: `1px solid ${theme.color.blue200}`,
   borderRadius: theme.border.radius.large,

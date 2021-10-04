@@ -1,6 +1,9 @@
-import { FormValue } from '@island.is/application/core'
-import { YES } from '../constants'
+import { FormValue, getValueViaPath } from '@island.is/application/core'
+import { WhoIsTheNotificationForEnum } from '../types'
 
 export const isRepresentativeOfCompanyOrInstitute = (formValue: FormValue) => {
-  return formValue.isRepresentativeOfCompanyOrInstitue?.toString() === YES
+  return (
+    getValueViaPath(formValue, 'whoIsTheNotificationFor.answer') ===
+    WhoIsTheNotificationForEnum.JURIDICALPERSON
+  )
 }

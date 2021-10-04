@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common'
 
 import { environment } from '../../../environments'
 import { CurrentApplicationModel } from '../application'
+import { StaffModel } from '../staff'
 
 @Injectable()
 export class UserService {
@@ -11,11 +12,8 @@ export class UserService {
     nationalId: string,
   ): Promise<CurrentApplicationModel | null> {
     //Checks if user has a current application
-    const res = await fetch(
-      `${environment.backend.url}/api/getCurrentApplication/?nationalId=${nationalId}`,
-      {
-        headers: { authorization: `Bearer ${environment.auth.secretToken}` },
-      },
+    const res = await this.fetchRequest(
+      `getCurrentApplication/?nationalId=${nationalId}`,
     ).then((res) => {
       {
         //If failed to reach the backend throws error
@@ -28,6 +26,31 @@ export class UserService {
       }
     })
     //If no application is found, returns null
+
+    return await res.json().catch(() => {
+      return null
+    })
+  }
+
+  private async fetchRequest(path: string) {
+    return await fetch(`${environment.backend.url}/api/${path}`, {
+      headers: { authorization: `Bearer ${environment.auth.secretToken}` },
+    })
+  }
+
+  async getStaff(nationalId: string): Promise<StaffModel> {
+    const res = await this.fetchRequest(`staff/${nationalId}`)
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error(
+            `Failed to get staff ${res.status}, ${res.statusText}`,
+          )
+        }
+        return res
+      })
+      .catch(() => {
+        throw new Error('Failed to get staff')
+      })
 
     return await res.json().catch(() => {
       return null

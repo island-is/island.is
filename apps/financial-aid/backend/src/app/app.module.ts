@@ -8,6 +8,7 @@ import {
   MunicipalityModule,
   ApplicationEventModule,
   FileModule,
+  StaffModule,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
@@ -24,6 +25,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     MunicipalityModule,
     FileModule,
     ApplicationEventModule,
+    StaffModule,
   ],
 })
 export class AppModule {}

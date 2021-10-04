@@ -19,6 +19,7 @@ import { UserService } from './user.service'
 
 import { CurrentApplicationModel } from '../application'
 import { environment } from '../../../environments'
+import { StaffModel } from '../staff/models'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => UserModel)
@@ -36,12 +37,14 @@ export class UserResolver {
       state: ApplicationState.INPROGRESS,
       homeCircumstances: HomeCircumstances.OWNPLACE,
       usePersonalTaxCredit: true,
+      created: '2021-09-11 18:11:17.103+00',
     },
     '0000000003': {
       id: '5ebdb6ca-edcb-4391-bda7-f5999d2b6b08',
       state: ApplicationState.DATANEEDED,
       homeCircumstances: HomeCircumstances.OWNPLACE,
       usePersonalTaxCredit: true,
+      created: '2021-09-12 18:11:17.103+00',
     },
   }
 
@@ -59,9 +62,18 @@ export class UserResolver {
     @Parent() user: User,
   ): Promise<CurrentApplicationModel | null> {
     // Local development
+    this.logger.debug(
+      `Getting current application for nationalId: ${user.nationalId}`,
+    )
     if (environment.auth.allowFakeUsers && user.nationalId in this.fakeUsers) {
       return this.fakeUsers[user.nationalId]
     }
     return await this.userService.getCurrentApplication(user.nationalId)
+  }
+
+  @ResolveField('staff', () => StaffModel)
+  async staff(@Parent() user: User): Promise<StaffModel> {
+    this.logger.debug(`Getting staff for nationalId: ${user.nationalId}`)
+    return await this.userService.getStaff(user.nationalId)
   }
 }

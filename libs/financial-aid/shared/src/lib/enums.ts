@@ -22,6 +22,12 @@ export enum ApplicationState {
   APPROVED = 'Approved',
 }
 
+export enum ApplicationStateUrl {
+  NEW = 'New',
+  INPROGRESS = 'InProgress',
+  PROCESSED = 'Processed',
+}
+
 export enum ApplicationEventType {
   NEW = 'New',
   INPROGRESS = 'InProgress',
@@ -29,6 +35,8 @@ export enum ApplicationEventType {
   REJECTED = 'Rejected',
   APPROVED = 'Approved',
   STAFFCOMMENT = 'StaffComment',
+  USERCOMMENT = 'UserComment',
+  FILEUPLOAD = 'FileUpload',
 }
 
 export enum RolesRule {
@@ -46,4 +54,9 @@ export enum FileType {
   TAXRETURN = 'TaxReturn',
   INCOME = 'Income',
   OTHER = 'Other',
+}
+
+export enum StaffRole {
+  ADMIN = 'Admin',
+  EMPLOYEE = 'Employee',
 }

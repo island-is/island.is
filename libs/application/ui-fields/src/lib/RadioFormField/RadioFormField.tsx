@@ -35,6 +35,7 @@ export const RadioFormField: FC<Props> = ({
     options,
     width,
     largeButtons,
+    backgroundColor,
   } = field
   const { formatMessage } = useLocale()
 
@@ -60,6 +61,7 @@ export const RadioFormField: FC<Props> = ({
       <Box marginTop={3}>
         <RadioController
           largeButtons={largeButtons}
+          backgroundColor={backgroundColor}
           id={id}
           disabled={disabled}
           error={error}

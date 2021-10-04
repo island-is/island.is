@@ -7,15 +7,27 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { BackendAPI } from '../../../services'
 
-import { ApplicationFiltersModel, ApplicationModel } from './models'
-import { CreateApplicationInput, UpdateApplicationInput } from './dto'
+import {
+  ApplicationFiltersModel,
+  ApplicationModel,
+  UpdateApplicationTableResponse,
+  UpdateApplicationResponse,
+} from './models'
+import {
+  CreateApplicationInput,
+  UpdateApplicationInput,
+  CreateApplicationEventInput,
+  UpdateApplicationInputTable,
+} from './dto'
 import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
 
-import { ApplicationInput } from './dto'
+import { ApplicationInput, AllApplicationInput } from './dto'
 
 import {
   Application,
   ApplicationFilters,
+  UpdateApplicationTableResponseType,
+  UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -28,11 +40,13 @@ export class ApplicationResolver {
 
   @Query(() => [ApplicationModel], { nullable: false })
   applications(
+    @Args('input', { type: () => AllApplicationInput })
+    input: AllApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Application[]> {
     this.logger.debug('Getting all applications')
 
-    return backendApi.getApplications()
+    return backendApi.getApplications(input.stateUrl)
   }
 
   @Query(() => ApplicationModel, { nullable: false })
@@ -61,12 +75,36 @@ export class ApplicationResolver {
     @Args('input', { type: () => UpdateApplicationInput })
     input: UpdateApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Application> {
+  ): Promise<ApplicationModel> {
+    const { id, ...updateApplication } = input
+    this.logger.debug(`updating application ${id}`)
+    return backendApi.updateApplication(id, updateApplication)
+  }
+
+  @Mutation(() => UpdateApplicationResponse, { nullable: true })
+  updateApplicationRes(
+    @Args('input', { type: () => UpdateApplicationInput })
+    input: UpdateApplicationInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<UpdateApplicationResponseType> {
     const { id, ...updateApplication } = input
 
     this.logger.debug(`updating application ${id}`)
 
-    return backendApi.updateApplication(id, updateApplication)
+    return backendApi.updateApplicationRes(id, updateApplication)
+  }
+
+  @Mutation(() => UpdateApplicationTableResponse, { nullable: true })
+  updateApplicationTable(
+    @Args('input', { type: () => UpdateApplicationInputTable })
+    input: UpdateApplicationInputTable,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<UpdateApplicationTableResponseType> {
+    const { id, stateUrl, ...updateApplication } = input
+
+    this.logger.debug(`updating application table ${id}`)
+
+    return backendApi.updateApplicationTable(id, stateUrl, updateApplication)
   }
 
   @Query(() => ApplicationFiltersModel, { nullable: false })
@@ -76,5 +114,16 @@ export class ApplicationResolver {
     this.logger.debug('Getting all applications filters')
 
     return backendApi.getApplicationFilters()
+  }
+
+  @Mutation(() => ApplicationModel, { nullable: true })
+  async createApplicationEvent(
+    @Args('input', { type: () => CreateApplicationEventInput })
+    input: CreateApplicationEventInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Application> {
+    this.logger.debug('Creating application event')
+
+    return backendApi.createApplicationEvent(input)
   }
 }

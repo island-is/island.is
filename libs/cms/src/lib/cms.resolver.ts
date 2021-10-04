@@ -23,12 +23,10 @@ import { GetOrganizationInput } from './dto/getOrganization.input'
 import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
 import { GetErrorPageInput } from './dto/getErrorPage.input'
 import { Namespace } from './models/namespace.model'
-import { AboutPage } from './models/aboutPage.model'
 import { AlertBanner } from './models/alertBanner.model'
 import { GenericPage } from './models/genericPage.model'
 import { GenericOverviewPage } from './models/genericOverviewPage.model'
 import { GetNamespaceInput } from './dto/getNamespace.input'
-import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
@@ -111,14 +109,6 @@ export class CmsResolver {
       input?.namespace ?? '',
       input?.lang ?? 'is-IS',
     )
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => AboutPage)
-  getAboutPage(
-    @Args('input') input: GetAboutPageInput,
-  ): Promise<AboutPage | null> {
-    return this.cmsContentfulService.getAboutPage(input)
   }
 
   @Directive(cacheControlDirective())
@@ -516,25 +506,5 @@ export class ArticleResolver {
   @ResolveField(() => [Article])
   async relatedArticles(@Parent() article: Article) {
     return this.cmsContentfulService.getRelatedArticles(article.slug, 'is')
-  }
-}
-
-@Resolver(() => AboutSubPage)
-@Directive(cacheControlDirective())
-export class AboutSubPageResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
-
-  @Directive(cacheControlDirective())
-  @ResolveField(() => AboutPage)
-  async parent(@Parent() { parent }: AboutSubPage) {
-    if (parent) {
-      const { lang, id } = parent
-      return this.cmsElasticsearchService.getSingleAboutPage(
-        getElasticsearchIndex(lang),
-        id,
-      )
-    } else {
-      return null
-    }
   }
 }

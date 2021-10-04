@@ -6,8 +6,9 @@ import {
   ApplicationEventType,
   RolesRule,
   ReturnUrl,
+  StaffRole,
+  ApplicationStateUrl,
 } from './enums'
-import type { StaffRole } from './types'
 
 export interface GetSignedUrl {
   fileName: string
@@ -33,11 +34,14 @@ export interface Staff {
 }
 
 export interface MunicipalitySettings {
-  aid: {
-    ownApartmentOrLease: number
-    withOthersOrUnknow: number
-    withParents: number
-  }
+  homePage?: string
+  aid: MunicipalityAid
+}
+
+export interface MunicipalityAid {
+  ownApartmentOrLease: number
+  withOthersOrUnknow: number
+  withParents: number
 }
 
 export interface NavigationProps {
@@ -55,12 +59,21 @@ export interface User {
   service: RolesRule
   currentApplication?: CurrentApplication
   returnUrl: ReturnUrl
+  staff?: Staff
+  postalCode?: number
 }
 
 export interface UpdateApplication {
   state: ApplicationState
   amount?: number
   rejection?: string
+  staffId?: string
+}
+
+export interface UpdateApplicationTable {
+  state: ApplicationState
+  staffId: string
+  stateUrl: ApplicationStateUrl
 }
 
 export interface CreateApplicationEvent {
@@ -80,7 +93,8 @@ export interface ApplicationEvent {
 export interface Municipality {
   id: string
   name: string
-  settings: MunicipalitySettings
+  homePage?: string
+  aid: MunicipalityAid
 }
 
 export interface CurrentApplication {
@@ -88,6 +102,7 @@ export interface CurrentApplication {
   homeCircumstances: HomeCircumstances
   usePersonalTaxCredit: boolean
   state: ApplicationState
+  created: string
 }
 
 export interface ApplicationFile {
@@ -164,8 +179,20 @@ export interface Application {
   amount?: number
   comment?: string
   rejection?: string
+  staff?: Staff
+  applicationEvents?: ApplicationEvent[]
 }
 
 export interface GetSignedUrlForId {
   id: string
+}
+
+export interface UpdateApplicationTableResponseType {
+  applications: Application[]
+  filters: ApplicationFilters
+}
+
+export interface UpdateApplicationResponseType {
+  application: Application
+  filters?: ApplicationFilters
 }

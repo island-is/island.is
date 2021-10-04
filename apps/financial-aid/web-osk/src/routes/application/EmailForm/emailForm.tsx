@@ -4,7 +4,6 @@ import { Text, Input, Box } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
@@ -44,10 +43,7 @@ const EmailForm = () => {
   }
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Samskipti
@@ -60,6 +56,7 @@ const EmailForm = () => {
 
         <Box marginBottom={[1, 1, 2]}>
           <Input
+            autoFocus={true}
             name="email"
             label="Netfang"
             placeholder="Sláðu inn netfang"
@@ -82,7 +79,7 @@ const EmailForm = () => {
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
-    </FormLayout>
+    </>
   )
 }
 

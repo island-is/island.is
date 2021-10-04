@@ -17,7 +17,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   const requests: { [Key: string]: XMLHttpRequest } = {}
 
   useEffect(() => {
-    if (files && files.length === 0 && formFiles && formFiles.length > 0) {
+    if (files && formFiles && files.length < formFiles.length) {
       setFiles(formFiles)
     }
   }, [formFiles])
@@ -52,7 +52,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     }
 
     newUploadFiles.forEach(async (file) => {
-      const signedUrl = await createSignedUrl(file.name)
+      const signedUrl = await createSignedUrl(file.name.normalize())
 
       if (signedUrl) {
         file.key = signedUrl.key
@@ -124,15 +124,15 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     })
 
     request.upload.addEventListener('error', (evt) => {
+      file.percent = 0
+      file.status = 'error'
+      setUploadErrorMessage('Næ ekki að hlaða upp')
+
       if (file.key) {
         delete requests[file.key]
       }
 
       if (evt.lengthComputable) {
-        file.percent = 0
-        file.status = 'error'
-        setUploadErrorMessage('Næ ekki að hlaða upp')
-
         updateFile(file)
       }
     })
@@ -157,19 +157,18 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     const formData = new FormData()
 
     formData.append('file', file as File)
-
     request.setRequestHeader('x-amz-acl', 'bucket-owner-full-control')
 
-    request.send(formData)
+    formData.forEach((el) => {
+      request.send(el)
+    })
   }
 
   const updateFile = (file: UploadFile) => {
     const newFiles = [...filesRef.current]
-
     const updatedFiles = newFiles.map((newFile) => {
       return newFile.key === file.key ? file : newFile
     })
-
     setFiles(updatedFiles)
   }
 
@@ -205,5 +204,12 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     onChange([file as File], true)
   }
 
-  return { files, uploadErrorMessage, onChange, onRemove, onRetry, uploadFiles }
+  return {
+    files,
+    uploadErrorMessage,
+    onChange,
+    onRemove,
+    onRetry,
+    uploadFiles,
+  }
 }

@@ -1,15 +1,17 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { Text, Box, LoadingDots } from '@island.is/island-ui/core'
+import React, { useEffect, useState } from 'react'
+import { Text, Box, Link } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import {
-  AdminLayout,
+  ApplicationOverviewSkeleton,
   ApplicationsTable,
+  LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import {
   ApplicationState,
   Application,
+  getStateUrlFromRoute,
 } from '@island.is/financial-aid/shared/lib'
 
 import { GetApplicationsQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
@@ -38,6 +40,9 @@ export const ApplicationsOverview = () => {
   const { data, error, loading } = useQuery<ApplicationsProvider>(
     GetApplicationsQuery,
     {
+      variables: {
+        input: { stateUrl: getStateUrlFromRoute[router.pathname] },
+      },
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     },
@@ -51,17 +56,16 @@ export const ApplicationsOverview = () => {
 
   useEffect(() => {
     if (data?.applications) {
-      setApplications(
-        data.applications.filter((item) =>
-          currentNavigationItem?.applicationState.includes(item?.state),
-        ),
-      )
+      setApplications(data.applications)
     }
   }, [data, router])
 
   if (currentNavigationItem) {
     return (
-      <AdminLayout>
+      <LoadingContainer
+        isLoading={loading}
+        loader={<ApplicationOverviewSkeleton />}
+      >
         <Box
           className={`contentUp delay-25`}
           marginTop={15}
@@ -74,9 +78,9 @@ export const ApplicationsOverview = () => {
 
         {applications && (
           <ApplicationsTable
-            className={`contentUp delay-50`}
             headers={currentNavigationItem.headers}
             applications={applications}
+            setApplications={setApplications}
           />
         )}
 
@@ -86,17 +90,18 @@ export const ApplicationsOverview = () => {
             þessu upplýsingum?{' '}
           </div>
         )}
-
-        {loading && <LoadingDots />}
-      </AdminLayout>
+      </LoadingContainer>
     )
   }
   return (
     <div>
-      <Box className={`contentUp delay-25`}>
+      <Box marginTop={15} className={`contentUp delay-25`}>
         <Text as="h1" variant="h1" marginBottom={[2, 2, 4]} marginTop={4}>
-          Enginn umsókn fundinn
+          Hefuru villst?
         </Text>
+        <Link href="/nymal" color="blue600">
+          Kíktu á nýmál
+        </Link>
       </Box>
     </div>
   )

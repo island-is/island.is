@@ -1,62 +1,13 @@
-import {
-  AppealDecisionRole,
-  RequiredField,
-} from '@island.is/judicial-system-web/src/types'
+import { RequiredField } from '@island.is/judicial-system-web/src/types'
 import { TagVariant } from '@island.is/island-ui/core'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  capitalize,
-  formatAccusedByGender,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
-import {
-  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseGender,
-  CaseType,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 import parseISO from 'date-fns/parseISO'
 import addDays from 'date-fns/addDays'
-
-export const getAppealDecisionText = (
-  role: AppealDecisionRole,
-  appealDecision?: CaseAppealDecision,
-  accusedGender?: CaseGender,
-  caseType?: CaseType,
-) => {
-  switch (appealDecision) {
-    case CaseAppealDecision.APPEAL: {
-      return `${
-        role === AppealDecisionRole.ACCUSED
-          ? caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
-            ? capitalize(formatAccusedByGender(accusedGender))
-            : 'Varnaraðili'
-          : 'Sækjandi'
-      } kærir úrskurðinn`
-    }
-    case CaseAppealDecision.ACCEPT: {
-      return `${
-        role === AppealDecisionRole.ACCUSED
-          ? caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
-            ? capitalize(formatAccusedByGender(accusedGender))
-            : 'Varnaraðili'
-          : 'Sækjandi'
-      } unir úrskurðinum`
-    }
-    case CaseAppealDecision.POSTPONE: {
-      return `${
-        role === AppealDecisionRole.ACCUSED
-          ? caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
-            ? capitalize(formatAccusedByGender(accusedGender))
-            : 'Varnaraðili'
-          : 'Sækjandi'
-      } tekur sér lögboðinn frest`
-    }
-    default: {
-      return ''
-    }
-  }
-}
 
 export const isNextDisabled = (requiredFields: RequiredField[]) => {
   // Loop through requiredFields
