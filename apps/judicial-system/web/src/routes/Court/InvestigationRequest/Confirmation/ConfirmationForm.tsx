@@ -15,8 +15,6 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Case, User } from '@island.is/judicial-system/types'
 import { formatAppeal, formatDate } from '@island.is/judicial-system/formatters'
-import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
 import { core, icConfirmation } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './Confirmation.treat'
