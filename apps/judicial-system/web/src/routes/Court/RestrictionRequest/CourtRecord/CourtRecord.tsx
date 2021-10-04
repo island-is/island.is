@@ -120,7 +120,9 @@ export const CourtRecord: React.FC = () => {
         )
       }
 
-      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      if (theCase.courtAttendees !== '') {
+        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      }
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
@@ -171,33 +173,34 @@ export const CourtRecord: React.FC = () => {
               <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
               <CaseNumbers workingCase={workingCase} />
             </Box>
-            <Box component="section" marginBottom={8}>
-              <Box marginBottom={3}>
-                <DateTime
-                  name="courtStartDate"
-                  datepickerLabel="Dagsetning þinghalds"
-                  timeLabel="Þinghald hófst (kk:mm)"
-                  maxDate={new Date()}
-                  selectedDate={
-                    workingCase.courtStartDate
-                      ? new Date(workingCase.courtStartDate)
-                      : new Date()
-                  }
-                  onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
-                      'courtStartDate',
-                      date,
-                      valid,
-                      workingCase,
-                      setWorkingCase,
-                      setCourtRecordStartDateIsValid,
-                      updateCase,
-                    )
-                  }}
-                  required
-                />
-              </Box>
-              <Box marginBottom={3}>
+            <Box component="section" marginBottom={3}>
+              <BlueBox>
+                <Box marginBottom={3}>
+                  <DateTime
+                    name="courtStartDate"
+                    datepickerLabel="Dagsetning þinghalds"
+                    timeLabel="Þinghald hófst (kk:mm)"
+                    maxDate={new Date()}
+                    selectedDate={
+                      workingCase.courtStartDate
+                        ? new Date(workingCase.courtStartDate)
+                        : new Date()
+                    }
+                    onChange={(date: Date | undefined, valid: boolean) => {
+                      newSetAndSendDateToServer(
+                        'courtStartDate',
+                        date,
+                        valid,
+                        workingCase,
+                        setWorkingCase,
+                        setCourtRecordStartDateIsValid,
+                        updateCase,
+                      )
+                    }}
+                    blueBox={false}
+                    required
+                  />
+                </Box>
                 <Input
                   data-testid="courtLocation"
                   name="courtLocation"
@@ -237,7 +240,9 @@ export const CourtRecord: React.FC = () => {
                   autoComplete="off"
                   required
                 />
-              </Box>
+              </BlueBox>
+            </Box>
+            <Box component="section" marginBottom={8}>
               <Box marginBottom={3}>
                 <HideableText
                   text={formatMessage(closedCourt.text)}

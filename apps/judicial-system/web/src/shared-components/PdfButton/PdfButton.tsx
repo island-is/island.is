@@ -5,7 +5,11 @@ import { api } from '@island.is/judicial-system-web/src/services'
 interface Props {
   caseId: string
   title: string
-  pdfType: 'ruling' | 'request'
+  pdfType:
+    | 'ruling?shortVersion=false'
+    | 'ruling?shortVersion=true'
+    | 'request'
+    | 'custodyNotice'
   disabled?: boolean
 }
 

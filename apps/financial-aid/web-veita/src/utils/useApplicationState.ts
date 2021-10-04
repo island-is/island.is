@@ -3,13 +3,14 @@ import { useMutation } from '@apollo/client'
 import {
   Application,
   ApplicationState,
+  UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
 import { UpdateApplicationMutation } from '../../graphql'
 import { ApplicationFiltersContext } from '../components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 import { AdminContext } from '../components/AdminProvider/AdminProvider'
 
 interface SaveData {
-  application: Application
+  updateApplicationRes: UpdateApplicationResponseType
 }
 
 export const useApplicationState = () => {
@@ -18,9 +19,8 @@ export const useApplicationState = () => {
     { loading: saveLoading },
   ] = useMutation<SaveData>(UpdateApplicationMutation)
 
-  const { applicationFilters, setApplicationFilters } = useContext(
-    ApplicationFiltersContext,
-  )
+  const { setApplicationFilters } = useContext(ApplicationFiltersContext)
+
   const { admin } = useContext(AdminContext)
 
   const changeApplicationState = async (
@@ -29,10 +29,8 @@ export const useApplicationState = () => {
     amount?: number,
     rejection?: string,
   ) => {
-    const prevState = application.state
-
     if (saveLoading === false && application) {
-      await updateApplicationMutation({
+      const { data } = await updateApplicationMutation({
         variables: {
           input: {
             id: application.id,
@@ -43,14 +41,13 @@ export const useApplicationState = () => {
           },
         },
       })
-    }
 
-    if (applicationFilters && setApplicationFilters) {
-      setApplicationFilters((preState) => ({
-        ...preState,
-        [prevState]: applicationFilters[prevState] - 1,
-        [state]: applicationFilters[state] + 1,
-      }))
+      if (data) {
+        if (data.updateApplicationRes.filters) {
+          setApplicationFilters(data.updateApplicationRes.filters)
+        }
+        return data.updateApplicationRes.application
+      }
     }
   }
 
