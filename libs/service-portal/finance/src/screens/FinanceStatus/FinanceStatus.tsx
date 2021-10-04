@@ -72,6 +72,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
 
   const previousYear = subYears(new Date(), 1).getFullYear().toString()
   const twoYearsAgo = subYears(new Date(), 2).getFullYear().toString()
+  const financeStatusZero = financeStatusData?.statusTotals === 0
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
@@ -114,7 +115,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
               />
             </Box>
           )}
-          {financeStatusData?.organizations?.length > 0 ? (
+          {financeStatusData?.organizations?.length > 0 || financeStatusZero ? (
             <>
               <Hidden print={true}>
                 <Columns space="p2" align="right">
@@ -192,7 +193,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                     ]}
                   />
                   <T.Body>
-                    {financeStatusData.organizations.map(
+                    {financeStatusData?.organizations?.map(
                       (org: FinanceStatusOrganizationType) =>
                         org.chargeTypes.map((chargeType) => (
                           <FinanceStatusTableRow

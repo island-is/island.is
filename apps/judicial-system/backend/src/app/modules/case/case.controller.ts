@@ -15,6 +15,8 @@ import {
   Res,
   Header,
   UseGuards,
+  BadRequestException,
+  ParseBoolPipe,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -26,6 +28,7 @@ import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   CaseState,
   CaseTransition,
+  CaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -36,7 +39,7 @@ import {
   RolesGuard,
   RolesRule,
   RulesType,
-  TokenGuaard,
+  TokenGuard,
 } from '@island.is/judicial-system/auth'
 
 import { CaseFile } from '../file/models/file.model'
@@ -103,13 +106,15 @@ const courtFields = [
   'courtCaseNumber',
   'sessionArrangements',
   'courtDate',
+  'courtLocation',
   'courtRoom',
   'courtStartDate',
   'courtEndTime',
+  'isClosedCourtHidden',
   'courtAttendees',
   'prosecutorDemands',
   'courtDocuments',
-  'isAccusedAbsent',
+  'isAccusedRightsHidden',
   'accusedPleaDecision',
   'accusedPleaAnnouncement',
   'litigationPresentations',
@@ -167,6 +172,7 @@ const judgeTransitionRule = {
     CaseTransition.RECEIVE,
     CaseTransition.ACCEPT,
     CaseTransition.REJECT,
+    CaseTransition.DISMISS,
   ],
 } as RolesRule
 
@@ -211,7 +217,7 @@ export class CaseController {
     }
   }
 
-  @UseGuards(TokenGuaard)
+  @UseGuards(TokenGuard)
   @Post('internal/case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   async internalCreate(
@@ -319,7 +325,6 @@ export class CaseController {
     @Body() transition: TransitionCaseDto,
   ): Promise<Case | null> {
     // Use existingCase.modified when client is ready to send last modified timestamp with all updates
-
     const existingCase = await this.caseService.findByIdAndUser(id, user)
 
     const state = transitionCase(transition.transition, existingCase.state)
@@ -413,12 +418,54 @@ export class CaseController {
   })
   async getRulingPdf(
     @Param('id') id: string,
+    @Query('shortVersion', ParseBoolPipe) shortVersion: boolean,
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
     const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
-    const pdf = await this.caseService.getRulingPdf(existingCase)
+    const pdf = await this.caseService.getRulingPdf(existingCase, shortVersion)
+
+    const stream = new ReadableStreamBuffer({
+      frequency: 10,
+      chunkSize: 2048,
+    })
+    stream.put(pdf, 'binary')
+
+    res.header('Content-length', pdf.length.toString())
+
+    return stream.pipe(res)
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @Get('case/:id/custodyNotice')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      'Gets custody notice for an existing custody case as a pdf document',
+  })
+  async getCustodyNoticePdf(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Res() res: Response,
+  ) {
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
+
+    if (existingCase.type !== CaseType.CUSTODY) {
+      throw new BadRequestException(
+        `Cannot generate a custody notice for ${existingCase.type} cases`,
+      )
+    }
+
+    if (existingCase.state !== CaseState.ACCEPTED) {
+      throw new BadRequestException(
+        `Cannot generate a custody notice for ${existingCase.state} cases`,
+      )
+    }
+
+    const pdf = await this.caseService.getCustodyPdf(existingCase)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,

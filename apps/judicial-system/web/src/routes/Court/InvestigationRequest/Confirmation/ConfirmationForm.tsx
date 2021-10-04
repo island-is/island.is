@@ -11,13 +11,14 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   CaseAppealDecision,
+  CaseDecision,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import type { Case, User } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
-import { icConfirmation } from '@island.is/judicial-system-web/messages'
+import { core, icConfirmation } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './Confirmation.treat'
 
@@ -163,11 +164,18 @@ const Confirmation: React.FC<Props> = (props) => {
             </Box>
           )}
         </Box>
+        <Box marginBottom={3}>
+          <PdfButton
+            caseId={workingCase.id}
+            title={formatMessage(core.pdfButtonRuling)}
+            pdfType="ruling?shortVersion=false"
+          />
+        </Box>
         <Box marginBottom={15}>
           <PdfButton
             caseId={workingCase.id}
-            title="Opna PDF þingbók og úrskurð"
-            pdfType="ruling"
+            title={formatMessage(core.pdfButtonRulingShortVersion)}
+            pdfType="ruling?shortVersion=true"
           />
         </Box>
       </FormContentContainer>
@@ -176,7 +184,31 @@ const Confirmation: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
           nextUrl={Constants.REQUEST_LIST_ROUTE}
           nextIsLoading={isLoading}
-          nextButtonText="Staðfesta og hefja undirritun"
+          nextButtonText={formatMessage(
+            workingCase.decision === CaseDecision.ACCEPTING
+              ? icConfirmation.footer.accepting.continueButtonText
+              : workingCase.decision === CaseDecision.REJECTING
+              ? icConfirmation.footer.rejecting.continueButtonText
+              : workingCase.decision === CaseDecision.DISMISSING
+              ? icConfirmation.footer.dismissing.continueButtonText
+              : icConfirmation.footer.acceptingPartially.continueButtonText,
+          )}
+          nextButtonIcon={
+            workingCase.decision &&
+            [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
+              workingCase.decision,
+            )
+              ? 'checkmark'
+              : 'close'
+          }
+          nextButtonColorScheme={
+            workingCase.decision &&
+            [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
+              workingCase.decision,
+            )
+              ? 'default'
+              : 'destructive'
+          }
           onNextButtonClick={handleNextButtonClick}
           hideNextButton={workingCase.judge?.id !== user?.id}
           infoBoxText={

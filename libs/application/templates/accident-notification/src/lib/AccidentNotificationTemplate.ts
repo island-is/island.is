@@ -64,7 +64,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/AccidentNotificationForm').then((val) =>
+                import('../forms/AccidentNotificationForm/index').then((val) =>
                   Promise.resolve(val.AccidentNotificationForm),
                 ),
               actions: [

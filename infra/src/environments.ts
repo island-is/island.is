@@ -2,10 +2,10 @@ import { EnvironmentConfigs } from './dsl/types/charts'
 
 export const Envs: EnvironmentConfigs = {
   dev: {
-    auroraHost:
-      'dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
+    auroraHost: 'postgres-applications.internal',
     domain: 'dev01.devland.is',
     type: 'dev',
+    featuresOn: [],
     defaultMaxReplicas: 3,
     rolloutStrategy: 'Recreate',
     releaseName: 'web',
@@ -33,10 +33,10 @@ export const Envs: EnvironmentConfigs = {
     },
   },
   staging: {
-    auroraHost:
-      'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com',
+    auroraHost: 'postgres-applications.internal',
     domain: 'staging01.devland.is',
     type: 'staging',
+    featuresOn: [],
     defaultMaxReplicas: 3,
     releaseName: 'web',
     awsAccountId: '261174024191',
@@ -63,10 +63,10 @@ export const Envs: EnvironmentConfigs = {
     },
   },
   prod: {
-    auroraHost:
-      'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com',
+    auroraHost: 'postgres-applications.internal',
     domain: 'island.is',
     type: 'prod',
+    featuresOn: [],
     defaultMaxReplicas: 10,
     releaseName: 'web',
     awsAccountId: '251502586493',

@@ -1,13 +1,16 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { ReactNode, useContext, useEffect, useState } from 'react'
 
 import {
   Nav,
   MobileMenuButton,
+  Login,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './AdminLayout.treat'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
+
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface PageProps {
   children: ReactNode
@@ -15,6 +18,8 @@ interface PageProps {
 }
 
 const AdminLayout = ({ children, className }: PageProps) => {
+  const { admin, isAuthenticated } = useContext(AdminContext)
+
   useEffect(() => {
     document.title = 'Veita • Umsóknir um fjárhagsaðstoð'
   }, [])
@@ -30,6 +35,12 @@ const AdminLayout = ({ children, className }: PageProps) => {
     }
   }, [showNavMobile])
 
+  if (!isAuthenticated) {
+    return <Login />
+  }
+  if (!admin) {
+    return null
+  }
   return (
     <>
       <Nav showInMobile={showNavMobile} />

@@ -47,9 +47,8 @@ jest.mock('apollo-datasource-rest', () => {
     post = postMock
     initialize = () => undefined
   }
-  return {
-    RESTDataSource: MockRESTDataSource,
-  }
+
+  return { RESTDataSource: MockRESTDataSource }
 })
 
 const testOptions = {

@@ -66,8 +66,6 @@ export const AccidentNotificationSchema = z.object({
         email: z.string(),
         mobilePhoneNumber: z.string(),
       }),
-      date: z.string(),
-      status: z.enum(['success', 'failure']),
     }),
   }),
   approveExternalData: z.boolean().refine((p) => p),

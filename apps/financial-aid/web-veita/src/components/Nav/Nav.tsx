@@ -1,9 +1,19 @@
 import React, { useContext } from 'react'
-import { Logo, Text, Box, Divider, Icon } from '@island.is/island-ui/core'
+import {
+  Logo,
+  Text,
+  Box,
+  Divider,
+  Icon,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-import { LogoMunicipality } from '@island.is/financial-aid-web/veita/src/components'
+import {
+  LoadingContainer,
+  LogoMunicipality,
+} from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './Nav.treat'
 import cn from 'classnames'
@@ -27,7 +37,8 @@ const Nav = ({ showInMobile }: Props) => {
 
   const logOut = useLogOut()
 
-  const { applicationFilters } = useContext(ApplicationFiltersContext)
+  const { applicationFilters, loading } = useContext(ApplicationFiltersContext)
+
   const { admin } = useContext(AdminContext)
 
   return (
@@ -55,35 +66,41 @@ const Nav = ({ showInMobile }: Props) => {
       </header>
 
       <div>
-        {navigationItems.map((item: NavigationElement, index: number) => {
-          return (
-            <Link href={item.link} key={'NavigationLinks-' + index}>
-              <a
-                aria-label={item.label}
-                className={cn({
-                  [`${styles.link}`]: true,
-                  [`${styles.activeLink}`]: router.pathname === item.link,
-                  [`${styles.linkHoverEffect}`]: router.pathname !== item.link,
-                })}
-              >
-                <Box display="flex" justifyContent="spaceBetween">
-                  <Text fontWeight="semiBold">{item.label}</Text>
-                  <Text fontWeight="semiBold" color="dark300">
-                    {item.applicationState
-                      .map((state: ApplicationState) => {
-                        if (applicationFilters) {
-                          return applicationFilters[state]
-                        }
-                      })
-                      .reduce((a?: number, b?: number) => {
-                        return (a || 0) + (b || 0)
-                      })}
-                  </Text>
-                </Box>
-              </a>
-            </Link>
-          )
-        })}
+        <LoadingContainer
+          isLoading={loading}
+          loader={<SkeletonLoader repeat={3} space={2} />}
+        >
+          {navigationItems.map((item: NavigationElement, index: number) => {
+            return (
+              <Link href={item.link} key={'NavigationLinks-' + index}>
+                <a
+                  aria-label={item.label}
+                  className={cn({
+                    [`${styles.link}`]: true,
+                    [`${styles.activeLink}`]: router.pathname === item.link,
+                    [`${styles.linkHoverEffect}`]:
+                      router.pathname !== item.link,
+                  })}
+                >
+                  <Box display="flex" justifyContent="spaceBetween">
+                    <Text fontWeight="semiBold">{item.label}</Text>
+                    <Text fontWeight="semiBold" color="dark300">
+                      {item.applicationState
+                        .map((state: ApplicationState) => {
+                          if (applicationFilters) {
+                            return applicationFilters[state]
+                          }
+                        })
+                        .reduce((a?: number, b?: number) => {
+                          return (a || 0) + (b || 0)
+                        })}
+                    </Text>
+                  </Box>
+                </a>
+              </Link>
+            )
+          })}
+        </LoadingContainer>
       </div>
 
       <Box display="block" marginBottom={2} marginTop={4}>

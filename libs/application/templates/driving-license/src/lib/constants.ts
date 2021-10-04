@@ -11,3 +11,15 @@ export enum States {
   DONE = 'done',
   PAYMENT = 'payment',
 }
+
+export const YES = 'yes'
+export const NO = 'no'
+
+type FakeCurrentLicense = 'none' | 'temp'
+type YesOrNo = 'yes' | 'no'
+
+export interface DrivingLicenseFakeData {
+  useFakeData?: YesOrNo
+  qualityPhoto?: YesOrNo
+  currentLicense?: FakeCurrentLicense
+}

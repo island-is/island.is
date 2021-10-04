@@ -1,3 +1,3 @@
-import Login from '@island.is/financial-aid-web/veita/src/routes/Login/login'
+import ApplicationsOverview from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
-export default Login
+export default ApplicationsOverview
