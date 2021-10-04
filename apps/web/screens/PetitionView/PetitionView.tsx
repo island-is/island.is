@@ -59,10 +59,7 @@ const PetitionView = () => {
             </GridRow>
             <GridRow marginTop={5}>
               <GridColumn span={['12/12', '6/12', '6/12']}>
-                <Button
-                  variant="primary"
-                  icon="arrowForward"
-                >
+                <Button variant="primary" icon="arrowForward">
                   Setja nafn mitt á þennan lista
                 </Button>
               </GridColumn>

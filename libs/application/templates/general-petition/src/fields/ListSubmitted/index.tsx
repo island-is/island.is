@@ -6,7 +6,7 @@ import { Approved } from '@island.is/application/ui-components'
 import { CopyLink } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 
-const ListSubmited: FC<FieldBaseProps> = ({application}) => {
+const ListSubmited: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   const isLocalhost = window.location.origin.includes('localhost')

@@ -135,4 +135,3 @@ export const useGetSinglePetition = (listId: string) => {
   })
   return petition?.endorsementSystemGetSingleEndorsementList
 }
-

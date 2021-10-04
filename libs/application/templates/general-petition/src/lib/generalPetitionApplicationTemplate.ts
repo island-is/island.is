@@ -73,11 +73,11 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
                   Promise.resolve(val.PetitionApplicationApproved),
                 ),
               read: 'all',
-            },  
+            },
           ],
         },
         type: 'final' as const,
-      }
+      },
     },
   },
   stateMachineOptions: {

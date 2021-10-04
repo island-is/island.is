@@ -17,7 +17,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
 
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
-  
+
   const [agreed, setAgreed] = useState(false)
   const [allowName, setAllowName] = useState(false)
   const [hasEndorsed, setHasEndorsed] = useState(false)
