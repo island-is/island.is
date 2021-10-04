@@ -125,6 +125,7 @@ const Form = () => {
                 })}
               >
                 <Input
+                  autoFocus={i === 0}
                   backgroundColor="blue"
                   label={item.label}
                   id={item.id}
