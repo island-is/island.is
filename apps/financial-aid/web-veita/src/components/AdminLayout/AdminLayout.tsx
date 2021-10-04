@@ -36,14 +36,6 @@ const AdminLayout = ({ children, className }: PageProps) => {
     }
   }, [showNavMobile])
 
-  useEffect(() => {
-    if (isAuthenticated === false || admin === undefined) {
-      signIn(identityServerId, {
-        callbackUrl: `${window.location.origin}${Routes.newCases}`,
-      })
-    }
-  })
-
   if (isAuthenticated === false || admin === undefined) {
     return null
   }

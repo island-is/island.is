@@ -4,6 +4,8 @@ import { User } from '@island.is/financial-aid/shared/lib'
 
 import { CurrentUserQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import { useSession } from 'next-auth/client'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { useLogOut } from '../../utils/useLogOut'
 
 interface AdminProvider {
   isAuthenticated?: boolean
@@ -19,12 +21,16 @@ export const AdminContext = createContext<AdminProvider>({})
 
 const AdminProvider = ({ children }: PageProps) => {
   const [session] = useSession()
+  const logOut = useLogOut()
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(session?.user),
   )
   const [admin, setAdmin] = useState<User>()
 
-  const { data } = useQuery(CurrentUserQuery, { fetchPolicy: 'no-cache' })
+  const { data, error } = useQuery(CurrentUserQuery, {
+    fetchPolicy: 'no-cache',
+  })
   const loggedInUser = data?.currentUser
 
   useEffect(() => {
@@ -33,6 +39,16 @@ const AdminProvider = ({ children }: PageProps) => {
       setIsAuthenticated(true)
     }
   }, [setAdmin, loggedInUser, admin])
+
+  if (error && session) {
+    // TODO: Get design and implement
+    return (
+      <Box margin={8}>
+        <Text marginBottom={8}>Notandi fannst ekki</Text>
+        <Button onClick={() => logOut()}>Skrá mig út</Button>
+      </Box>
+    )
+  }
 
   return (
     <AdminContext.Provider value={{ isAuthenticated, admin, setAdmin }}>

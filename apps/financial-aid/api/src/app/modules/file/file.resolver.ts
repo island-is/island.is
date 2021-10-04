@@ -1,5 +1,5 @@
 import { Args, Context, Mutation, Resolver, Query } from '@nestjs/graphql'
-import { Inject, UseGuards } from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -11,9 +11,7 @@ import {
   GetSignedUrlInput,
 } from './dto'
 import { SignedUrlModel, CreateFilesModel } from './models'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-@UseGuards(IdsUserGuard)
 @Resolver()
 export class FileResolver {
   constructor(

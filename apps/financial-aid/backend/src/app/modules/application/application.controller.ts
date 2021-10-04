@@ -34,7 +34,6 @@ import {
 
 import {
   apiBasePath,
-  Application,
   ApplicationStateUrl,
   User,
 } from '@island.is/financial-aid/shared/lib'

@@ -2,7 +2,7 @@ import { ApolloError, ServerError } from '@apollo/client'
 import { onError, ErrorResponse } from '@apollo/client/link/error'
 
 import { NotificationService } from '@island.is/financial-aid-web/veita/src/services'
-import { identityServerId } from '@island.is/financial-aid/shared/lib'
+import { identityServerId, Routes } from '@island.is/financial-aid/shared/lib'
 import { signIn } from 'next-auth/client'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
@@ -15,10 +15,8 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
           return signIn(identityServerId, {
-            callbackUrl: `${window.location.href}`,
+            callbackUrl: `${window.location.origin}${Routes.newCases}`,
           })
-        case 'FORBIDDEN':
-          return
         default:
           return NotificationService.onGraphQLError({
             graphQLErrors,

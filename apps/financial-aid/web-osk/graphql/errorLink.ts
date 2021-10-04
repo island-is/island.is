@@ -17,8 +17,6 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
           return signIn(identityServerId, {
             callbackUrl: `${window.location.href}`,
           })
-        case 'FORBIDDEN':
-          return
         default:
           return NotificationService.onGraphQLError({
             graphQLErrors,

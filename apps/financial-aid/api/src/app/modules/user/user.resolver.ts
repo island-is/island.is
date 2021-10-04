@@ -1,5 +1,5 @@
 import { Context, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { Inject, UseGuards } from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -9,11 +9,9 @@ import { UserModel } from './user.model'
 
 import { CurrentApplicationModel } from '../application'
 import { StaffModel } from '../staff/models'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { CurrentUser } from '../decorators'
 import { BackendAPI } from '../../../services'
 
-@UseGuards(IdsUserGuard)
 @Resolver(() => UserModel)
 export class UserResolver {
   constructor(
@@ -55,8 +53,6 @@ export class UserResolver {
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<StaffModel | undefined> {
     this.logger.debug('Getting staff for nationalId')
-    return await this.handleNotFoundException(() =>
-      backendApi.getStaff(user.nationalId),
-    )
+    return await backendApi.getStaff(user.nationalId)
   }
 }

@@ -1,5 +1,6 @@
 import {
   Controller,
+  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -32,7 +33,7 @@ export class StaffController {
   ): Promise<StaffModel> {
     const staff = await this.staffService.findByNationalId(nationalId)
     if (staff === null) {
-      throw new NotFoundException(404, 'Staff not found')
+      throw new ForbiddenException('Staff not found')
     }
     return staff
   }
