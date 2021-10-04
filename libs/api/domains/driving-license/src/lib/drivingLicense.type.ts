@@ -33,7 +33,7 @@ export interface DrivingLicenseType {
   name: string
 }
 
-export type DrivingLicenseApplicationFor = 'B-full'|'B-temp'
+export type DrivingLicenseApplicationFor = 'B-full' | 'B-temp'
 
 export interface RemarkType {
   id: number
@@ -83,7 +83,7 @@ export enum RequirementKey {
   drivingAssessmentMissing = 'DrivingAssessmentMissing',
   drivingSchoolMissing = 'DrivingSchoolMissing',
   deniedByService = 'DeniedByService',
-  localResidency = 'localResidency',
+  localResidency = 'LocalResidency',
 }
 
 export interface ApplicationEligibilityRequirement {
