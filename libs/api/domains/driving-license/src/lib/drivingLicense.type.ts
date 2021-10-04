@@ -33,10 +33,7 @@ export interface DrivingLicenseType {
   name: string
 }
 
-export const B_FULL = 'B-full'
-export const B_TEMP = 'B-temp'
-
-export type DrivingLicenseApplicationFor = typeof B_FULL | typeof B_TEMP
+export type DrivingLicenseApplicationFor = 'B-full'|'B-temp'
 
 export interface RemarkType {
   id: number
