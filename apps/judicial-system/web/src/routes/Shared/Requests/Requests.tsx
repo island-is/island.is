@@ -61,7 +61,9 @@ export const Requests: React.FC = () => {
       setActiveCases(
         casesWithoutDeleted.filter((c: Case) => {
           return isProsecutor
-            ? c.state !== CaseState.ACCEPTED && c.state !== CaseState.REJECTED
+            ? c.state !== CaseState.ACCEPTED &&
+                c.state !== CaseState.REJECTED &&
+                c.state !== CaseState.DISMISSED
             : // Judges and registrars should see all cases except cases with status code NEW.
             isJudge || isRegistrar
             ? c.state !== CaseState.NEW &&
