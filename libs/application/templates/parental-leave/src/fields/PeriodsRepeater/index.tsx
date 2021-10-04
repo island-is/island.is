@@ -98,7 +98,6 @@ const PeriodsRepeater: FC<ScreenProps> = ({
         })
 
         if (errors) {
-          setFieldLoadingState?.(false)
           return [
             false,
             formatMessage(
@@ -109,7 +108,6 @@ const PeriodsRepeater: FC<ScreenProps> = ({
 
         return [true, null]
       } catch (e) {
-        setFieldLoadingState?.(false)
         return [
           false,
           (e as Error)?.message ||
@@ -128,7 +126,6 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     periods,
     rawPeriods,
     setBeforeSubmitCallback,
-    setFieldLoadingState,
     setRepeaterItems,
     updateApplication,
   ])
