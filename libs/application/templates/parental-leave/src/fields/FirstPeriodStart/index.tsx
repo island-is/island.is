@@ -33,7 +33,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   const [statefulAnswer, setStatefulAnswer] = useState<
     ValidAnswers | undefined
   >(
-    currentPeriod.firstPeriodStart
+    currentPeriod?.firstPeriodStart
       ? (currentPeriod.firstPeriodStart as ValidAnswers)
       : undefined,
   )

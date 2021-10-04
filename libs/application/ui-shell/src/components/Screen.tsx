@@ -146,20 +146,12 @@ const Screen: FC<ScreenProps> = ({
 
   const [beforeSubmitError, setBeforeSubmitError] = useState({})
   const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
-  const [
-    beforeSubmitCallbackScreenIndex,
-    setBeforeSubmitCallbackScreenIndex,
-  ] = useState<null | number>(null)
+
   const setBeforeSubmitCallback = useCallback(
     (callback: BeforeSubmitCallback | null) => {
       beforeSubmitCallback.current = callback
-      if (callback === null) {
-        setBeforeSubmitCallbackScreenIndex(null)
-      } else {
-        setBeforeSubmitCallbackScreenIndex(activeScreenIndex)
-      }
     },
-    [beforeSubmitCallback, activeScreenIndex],
+    [beforeSubmitCallback],
   )
 
   const dataSchemaOrApiErrors = isJSONObject(error?.message)
@@ -169,9 +161,8 @@ const Screen: FC<ScreenProps> = ({
   const goBack = useCallback(() => {
     // using deepmerge to prevent some weird react-hook-form read-only bugs
     reset(deepmerge({}, formValue))
-    setBeforeSubmitCallback(null)
     prevScreen()
-  }, [formValue, prevScreen, reset, setBeforeSubmitCallback])
+  }, [formValue, prevScreen, reset])
 
   const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
     let response
@@ -249,7 +240,6 @@ const Screen: FC<ScreenProps> = ({
 
     if (response?.data) {
       answerAndGoToNextScreen(data)
-      setBeforeSubmitCallback(null)
     }
 
     setIsSubmitting(false)
@@ -270,18 +260,10 @@ const Screen: FC<ScreenProps> = ({
     const target = isMobile ? headerHeight : 0
     window.scrollTo(0, target)
 
-    if (
-      beforeSubmitCallback.current !== null &&
-      activeScreenIndex !== beforeSubmitCallbackScreenIndex
-    ) {
+    if (beforeSubmitCallback.current !== null) {
       setBeforeSubmitCallback(null)
     }
-  }, [
-    activeScreenIndex,
-    isMobile,
-    setBeforeSubmitCallback,
-    beforeSubmitCallbackScreenIndex,
-  ])
+  }, [activeScreenIndex, isMobile, setBeforeSubmitCallback])
 
   const onUpdateRepeater = async (newRepeaterItems: unknown[]) => {
     if (!screen.id) {
