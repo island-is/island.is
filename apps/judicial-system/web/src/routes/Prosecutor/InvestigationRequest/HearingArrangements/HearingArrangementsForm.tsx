@@ -2,10 +2,11 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { Case, Institution } from '@island.is/judicial-system/types'
 import {
+  BlueBox,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
@@ -16,7 +17,7 @@ import {
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import { icRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
+import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
@@ -67,16 +68,27 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(icRequestedHearingArrangements.heading)}
+            {formatMessage(m.heading)}
           </Text>
         </Box>
         {prosecutors && (
           <Box component="section" marginBottom={5}>
-            <SelectProsecutor
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              prosecutors={prosecutors}
-            />
+            <BlueBox>
+              <Box marginBottom={2}>
+                <SelectProsecutor
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                  prosecutors={prosecutors}
+                />
+              </Box>
+              <Checkbox
+                label={formatMessage(
+                  m.sections.prosecutor.heightenSecurityLevelLabel,
+                )}
+                large
+                filled
+              />
+            </BlueBox>
           </Box>
         )}
         {courts && (
@@ -107,21 +119,15 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={10}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(
-                icRequestedHearingArrangements.sections.translator.heading,
-              )}
+              {formatMessage(m.sections.translator.heading)}
             </Text>
           </Box>
           <Input
             data-testid="translator"
             name="translator"
             autoComplete="off"
-            label={formatMessage(
-              icRequestedHearingArrangements.sections.translator.label,
-            )}
-            placeholder={formatMessage(
-              icRequestedHearingArrangements.sections.translator.placeholder,
-            )}
+            label={formatMessage(m.sections.translator.label)}
+            placeholder={formatMessage(m.sections.translator.placeholder)}
             defaultValue={workingCase.translator}
             onChange={(event) => setField(event.target)}
             onBlur={(event) => validateAndSendToServer(event.target)}

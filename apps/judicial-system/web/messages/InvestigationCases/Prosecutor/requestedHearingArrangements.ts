@@ -9,6 +9,15 @@ export const icRequestedHearingArrangements = {
       'Notaður sem titill á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
   }),
   sections: {
+    prosecutor: defineMessages({
+      heightenSecurityLevelLabel: {
+        id:
+          'judicial.system.investigation_cases:requested_hearing_arrangements.prosecutor.heighten_security_level_label',
+        defaultMessage: 'Hækka öryggisstig',
+        description:
+          'Notaður sem texti í "Hækka öryggisstig" checkmark á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+    }),
     translator: defineMessages({
       heading: {
         id:
