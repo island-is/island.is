@@ -12,6 +12,8 @@ export enum States {
   APPROVED = 'approved',
   SUBMITTED = 'submitted',
 
+  REVIEW = 'review',
+
   NEEDS_DOCUMENT = 'needsDocument',
   NEEDS_REVIEW = 'needsReview',
   NEEDS_DOCUMENT_AND_REVIEW = 'needsDocumentAndReview',

@@ -5,7 +5,12 @@ export const inReview = {
     formTitle: {
       id: 'an.application:inReview.general.formTitle',
       defaultMessage: 'Staða umsóknar',
-      description: 'Parental Leave',
+      description: 'In review form title',
+    },
+    title: {
+      id: 'an.application:inReview.general.title',
+      defaultMessage: 'Staða tilkynningar',
+      description: 'In review title',
     },
     titleInReview: {
       id: 'an.application:inReview.general.titleInReview',

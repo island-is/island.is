@@ -12,27 +12,16 @@ const hasAttachment = (attachment: FileType[] | undefined) =>
   attachment && attachment.length > 0
 
 export const hasMissingInjuryCertificate = (answers: FormValue) => {
-  const injuryCertificate = (answers as AccidentNotification).attachments
-    .injuryCertificate
-  const injuryCertificateFile = (answers as AccidentNotification).attachments
-    .injuryCertificateFile
-
-  return (
-    injuryCertificate === AttachmentsEnum.SENDCERTIFICATELATER &&
-    !hasAttachment(injuryCertificateFile)
-  )
+  const injuryCertificate = (answers as AccidentNotification).injuryCertificate
+    .answer
+  return injuryCertificate === AttachmentsEnum.SENDCERTIFICATELATER
 }
 
 export const hasMissingDeathCertificate = (answers: FormValue) => {
   const wasTheAccidentFatal = (answers as AccidentNotification)
     .wasTheAccidentFatal
 
-  return (
-    wasTheAccidentFatal === YES &&
-    !hasAttachment(
-      (answers as AccidentNotification).attachments.deathCertificateFile,
-    )
-  )
+  return wasTheAccidentFatal === YES
 }
 
 export const hasMissingPowerOfAttorneyFile = (answers: FormValue) => {
@@ -42,17 +31,23 @@ export const hasMissingPowerOfAttorneyFile = (answers: FormValue) => {
     ?.type
   return (
     whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
-    powerOfAttorneyType !== PowerOfAttorneyUploadEnum.FORCHILDINCUSTODY &&
-    !hasAttachment(
-      (answers as AccidentNotification).attachments.powerOfAttorneyFile,
-    )
+    powerOfAttorneyType !== PowerOfAttorneyUploadEnum.FORCHILDINCUSTODY
   )
 }
 
 export const hasMissingDocuments = (answers: FormValue) => {
   return (
-    hasMissingInjuryCertificate(answers) ||
-    hasMissingDeathCertificate(answers) ||
-    hasMissingPowerOfAttorneyFile(answers)
+    (hasMissingInjuryCertificate(answers) &&
+      !hasAttachment(
+        (answers as AccidentNotification).attachments?.injuryCertificateFile,
+      )) ||
+    (hasMissingDeathCertificate(answers) &&
+      !hasAttachment(
+        (answers as AccidentNotification).attachments?.deathCertificateFile,
+      )) ||
+    (hasMissingPowerOfAttorneyFile(answers) &&
+      !hasAttachment(
+        (answers as AccidentNotification).attachments?.powerOfAttorneyFile,
+      ))
   )
 }

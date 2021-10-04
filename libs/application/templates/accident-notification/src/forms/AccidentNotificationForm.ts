@@ -1111,7 +1111,7 @@ export const AccidentNotificationForm: Form = buildForm({
           title: attachments.general.heading,
           children: [
             buildRadioField({
-              id: 'attachments.injuryCertificate',
+              id: 'injuryCertificate.answer',
               title: '',
               description: attachments.general.description,
               condition: (formValue) =>
@@ -1132,7 +1132,7 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
             buildRadioField({
-              id: 'attachments.injuryCertificate',
+              id: 'injuryCertificate.answer',
               title: '',
               description: attachments.general.description,
               condition: (formValue) =>
@@ -1164,8 +1164,8 @@ export const AccidentNotificationForm: Form = buildForm({
                 component: 'FieldAlertMessage',
                 condition: (formValue) =>
                   (formValue as {
-                    attachments: { injuryCertificate: AttachmentsEnum }
-                  }).attachments?.injuryCertificate ===
+                    injuryCertificate: { answer: AttachmentsEnum }
+                  }).injuryCertificate?.answer ===
                   AttachmentsEnum.SENDCERTIFICATELATER,
               },
               { type: 'warning' },
@@ -1188,9 +1188,8 @@ export const AccidentNotificationForm: Form = buildForm({
           ],
           condition: (formValue) =>
             (formValue as {
-              attachments: { injuryCertificate: AttachmentsEnum }
-            }).attachments?.injuryCertificate ===
-            AttachmentsEnum.INJURYCERTIFICATE,
+              injuryCertificate: { answer: AttachmentsEnum }
+            }).injuryCertificate?.answer === AttachmentsEnum.INJURYCERTIFICATE,
         }),
       ],
     }),

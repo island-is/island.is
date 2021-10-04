@@ -8,6 +8,8 @@ import {
   ApplicationTypes,
   DefaultEvents,
 } from '@island.is/application/core'
+import set from 'lodash/set'
+import { assign } from 'xstate'
 import * as z from 'zod'
 import { States } from '../constants'
 import { ApiActions } from '../shared'
@@ -73,30 +75,108 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: [
+          [DefaultEvents.SUBMIT]: {
+            target: States.REVIEW,
+          },
+        },
+      },
+      [States.REVIEW]: {
+        meta: {
+          name: States.REVIEW,
+          progress: 0.6,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
+          roles: [
             {
-              target: States.WAITING_TO_ASSIGN,
-              cond: (context) =>
-                !isHomeActivitiesAccident(context.application.answers) ||
-                !(
-                  isReportingOnBehalfSelf(context.application.answers) &&
-                  isRepresentativeOfCompanyOrInstitute(
-                    context.application.answers,
-                  )
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
                 ),
+              read: 'all',
+              write: 'all',
             },
             {
-              target: States.NEEDS_DOCUMENT,
-              cond: (context) =>
-                hasMissingDocuments(context.application.answers),
-            },
-            {
-              target: States.IN_FINAL_REVIEW,
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/AssigneeInReview').then((val) =>
+                  Promise.resolve(val.AssigneeInReview),
+                ),
+              read: 'all',
+              write: 'all',
             },
           ],
         },
+        on: {
+          [DefaultEvents.ASSIGN]: {
+            actions: 'something',
+          },
+          [DefaultEvents.SUBMIT]: {
+            target: States.WAITING_TO_ASSIGN,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.IN_FINAL_REVIEW,
+          },
+          [DefaultEvents.APPROVE]: {
+            target: States.IN_FINAL_REVIEW,
+          },
+        },
       },
       [States.WAITING_TO_ASSIGN]: {
+        meta: {
+          name: States.WAITING_TO_ASSIGN,
+          progress: 0.6,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/AssigneeInReview').then((val) =>
+                  Promise.resolve(val.AssigneeInReview),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.ASSIGN]: {
+            actions: 'something',
+          },
+          [DefaultEvents.SUBMIT]: {
+            target: States.REVIEW,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.IN_FINAL_REVIEW,
+          },
+          [DefaultEvents.APPROVE]: {
+            target: States.IN_FINAL_REVIEW,
+          },
+        },
+      },
+      /* [States.WAITING_TO_ASSIGN]: {
         meta: {
           name: States.WAITING_TO_ASSIGN,
           progress: 0.4,
@@ -162,7 +242,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             target: States.OVERVIEW,
           },
         },
-      },
+      }, */
       [States.NEEDS_DOCUMENT_AND_REVIEW]: {
         meta: {
           name: States.NEEDS_DOCUMENT_AND_REVIEW,
@@ -526,6 +606,36 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           ],
         },
       },
+    },
+  },
+  stateMachineOptions: {
+    actions: {
+      setHideAttachments: assign((context) => {
+        const { application } = context
+        set(application.answers, 'hideAttachments', true)
+        return context
+      }),
+      setHideAssigneeAttachments: assign((context) => {
+        const { application } = context
+        set(application.answers, 'hideAssigneeAttachments', true)
+        return context
+      }),
+      setShowAttachments: assign((context) => {
+        const { application } = context
+        set(application.answers, 'hideAttachments', false)
+        return context
+      }),
+      setShowAssigneeAttachments: assign((context) => {
+        const { application } = context
+        set(application.answers, 'hideAssigneeAttachments', false)
+        return context
+      }),
+      updateApplication: assign((context) => {
+        // Save attachments in file
+        const { application } = context
+        set(application.answers, 'hideAttachments', true)
+        return context
+      }),
     },
   },
   mapUserToRole(
