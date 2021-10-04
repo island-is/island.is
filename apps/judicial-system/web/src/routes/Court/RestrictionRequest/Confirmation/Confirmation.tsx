@@ -40,7 +40,10 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
-import { rcConfirmation } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  rcConfirmation as m,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as style from './Confirmation.treat'
 
@@ -96,6 +99,17 @@ export const Confirmation: React.FC = () => {
       // TODO: Handle error
     }
   }
+
+  const custodyRestrictions = formatCustodyRestrictions(
+    workingCase?.accusedGender,
+    workingCase?.custodyRestrictions,
+  )
+
+  const alternativeTravelBanRestrictions = formatAlternativeTravelBanRestrictions(
+    workingCase?.accusedGender,
+    workingCase?.custodyRestrictions,
+    workingCase?.otherRestrictions,
+  )
 
   return (
     <PageLayout
@@ -194,9 +208,7 @@ export const Confirmation: React.FC = () => {
               </Box>
               <Box marginBottom={1}>
                 <Text>
-                  {formatMessage(
-                    rcConfirmation.sections.accusedAppealDecision.disclaimer,
-                  )}
+                  {formatMessage(m.sections.accusedAppealDecision.disclaimer)}
                 </Text>
               </Box>
               <Box marginBottom={1}>
@@ -244,34 +256,29 @@ export const Confirmation: React.FC = () => {
                 </Box>
               )}
             </Box>
-            {workingCase.decision === CaseDecision.ACCEPTING &&
-              workingCase.type === CaseType.CUSTODY && (
+            {workingCase.type === CaseType.CUSTODY &&
+              workingCase.decision === CaseDecision.ACCEPTING && (
                 <Box marginBottom={7}>
                   <Box marginBottom={1}>
                     <Text as="h3" variant="h3">
                       Tilhögun gæsluvarðhalds
                     </Text>
                   </Box>
-                  <Box marginBottom={2}>
-                    <Text>
-                      {formatCustodyRestrictions(
-                        workingCase.accusedGender,
-                        workingCase.custodyRestrictions,
-                        workingCase.validToDate,
-                        workingCase.isolationToDate,
-                      )}
-                    </Text>
-                  </Box>
+                  {custodyRestrictions && (
+                    <Box marginBottom={2}>
+                      <Text>{custodyRestrictions}</Text>
+                    </Box>
+                  )}
                   <Text>
-                    {formatMessage(
-                      rcConfirmation.sections.custodyRestrictions.disclaimer,
-                      { caseType: 'gæsluvarðhaldsins' },
-                    )}
+                    {formatMessage(m.sections.custodyRestrictions.disclaimer, {
+                      caseType: 'gæsluvarðhaldsins',
+                    })}
                   </Text>
                 </Box>
               )}
-            {(workingCase.decision ===
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+            {((workingCase.type === CaseType.CUSTODY &&
+              workingCase.decision ===
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) ||
               (workingCase.type === CaseType.TRAVEL_BAN &&
                 workingCase.decision === CaseDecision.ACCEPTING)) && (
               <Box marginBottom={7}>
@@ -280,36 +287,40 @@ export const Confirmation: React.FC = () => {
                     Tilhögun farbanns
                   </Text>
                 </Box>
-                <Box marginBottom={2}>
-                  <Text>
-                    {formatAlternativeTravelBanRestrictions(
-                      workingCase.accusedGender,
-                      workingCase.custodyRestrictions,
-                      workingCase.otherRestrictions,
-                    )
-                      .split('\n')
-                      .map((str, index) => {
-                        return (
-                          <div key={index}>
-                            <Text>{str}</Text>
-                          </div>
-                        )
-                      })}
-                  </Text>
-                </Box>
+                {alternativeTravelBanRestrictions && (
+                  <Box marginBottom={2}>
+                    <Text>
+                      {alternativeTravelBanRestrictions
+                        .split('\n')
+                        .map((str, index) => {
+                          return (
+                            <div key={index}>
+                              <Text>{str}</Text>
+                            </div>
+                          )
+                        })}
+                    </Text>
+                  </Box>
+                )}
                 <Text>
-                  {formatMessage(
-                    rcConfirmation.sections.custodyRestrictions.disclaimer,
-                    { caseType: 'farbannsins' },
-                  )}
+                  {formatMessage(m.sections.custodyRestrictions.disclaimer, {
+                    caseType: 'farbannsins',
+                  })}
                 </Text>
               </Box>
             )}
+            <Box marginBottom={3}>
+              <PdfButton
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRuling)}
+                pdfType="ruling?shortVersion=false"
+              />
+            </Box>
             <Box marginBottom={15}>
               <PdfButton
                 caseId={workingCase.id}
-                title="Opna PDF þingbók og úrskurð"
-                pdfType="ruling"
+                title={formatMessage(core.pdfButtonRulingShortVersion)}
+                pdfType="ruling?shortVersion=true"
               />
             </Box>
           </FormContentContainer>
@@ -317,7 +328,33 @@ export const Confirmation: React.FC = () => {
             <FormFooter
               previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
               nextUrl={Constants.REQUEST_LIST_ROUTE}
-              nextButtonText="Staðfesta og hefja undirritun"
+              nextButtonText={formatMessage(
+                workingCase.decision === CaseDecision.ACCEPTING
+                  ? m.footer.accepting.continueButtonText
+                  : workingCase.decision === CaseDecision.REJECTING
+                  ? m.footer.rejecting.continueButtonText
+                  : workingCase.decision === CaseDecision.DISMISSING
+                  ? m.footer.dismissing.continueButtonText
+                  : m.footer.acceptingAlternativeTravelBan.continueButtonText,
+              )}
+              nextButtonIcon={
+                workingCase.decision &&
+                [
+                  CaseDecision.ACCEPTING,
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+                ].includes(workingCase.decision)
+                  ? 'checkmark'
+                  : 'close'
+              }
+              nextButtonColorScheme={
+                workingCase.decision &&
+                [
+                  CaseDecision.ACCEPTING,
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+                ].includes(workingCase.decision)
+                  ? 'default'
+                  : 'destructive'
+              }
               onNextButtonClick={handleNextButtonClick}
               nextIsLoading={isRequestingSignature}
               hideNextButton={workingCase.judge?.id !== user?.id}

@@ -21,6 +21,12 @@ const prodConfig = {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',
     audience: '@samband.is',
   },
+  emailOptions: {
+    useTestAccount: false,
+    options: {
+      region: process.env.EMAIL_REGION ?? '',
+    },
+  },
 }
 
 const devConfig = {
@@ -35,6 +41,12 @@ const devConfig = {
   identityServerAuth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@samband.is',
+  },
+  emailOptions: {
+    useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
+    options: {
+      region: process.env.EMAIL_REGION ?? '',
+    },
   },
 }
 

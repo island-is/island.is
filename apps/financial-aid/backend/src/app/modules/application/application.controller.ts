@@ -12,11 +12,33 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 import { ApplicationService } from './application.service'
-import { CurrentApplicationModel, ApplicationModel } from './models'
-import { CreateApplicationDto, UpdateApplicationDto } from './dto'
-import { apiBasePath, User } from '@island.is/financial-aid/shared/lib'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  CurrentApplicationModel,
+  ApplicationModel,
+  UpdateApplicationTableResponse,
+  UpdateApplicationResponse,
+} from './models'
+
+import {
+  ApplicationEventModel,
+  ApplicationEventService,
+} from '../applicationEvent'
+
+import {
+  CreateApplicationDto,
+  UpdateApplicationDto,
+  CreateApplicationEventDto,
+} from './dto'
+
+import {
+  apiBasePath,
+  Application,
+  ApplicationStateUrl,
+  User,
+} from '@island.is/financial-aid/shared/lib'
+
 import {
   ApplicationFilters,
   RolesRule,
@@ -32,6 +54,7 @@ import { ApplicationGuard } from '../../guards/application.guard'
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly applicationEventService: ApplicationEventService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -60,15 +83,17 @@ export class ApplicationController {
 
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.VEITA)
-  @Get('applications')
+  @Get('allApplications/:stateUrl')
   @ApiOkResponse({
     type: ApplicationModel,
     isArray: true,
     description: 'Gets all existing applications',
   })
-  getAll(): Promise<ApplicationModel[]> {
+  getAll(
+    @Param('stateUrl') stateUrl: ApplicationStateUrl,
+  ): Promise<ApplicationModel[]> {
     this.logger.debug('Application controller: Getting all applications')
-    return this.applicationService.getAll()
+    return this.applicationService.getAll(stateUrl)
   }
 
   @UseGuards(ApplicationGuard)
@@ -123,6 +148,48 @@ export class ApplicationController {
     return updatedApplication
   }
 
+  @Put('applications/:id/:stateUrl')
+  @ApiOkResponse({
+    type: UpdateApplicationTableResponse,
+    description:
+      'Updates an existing application and returns application table',
+  })
+  async updateTable(
+    @Param('id') id: string,
+    @Param('stateUrl') stateUrl: ApplicationStateUrl,
+    @Body() applicationToUpdate: UpdateApplicationDto,
+  ): Promise<UpdateApplicationTableResponse> {
+    await this.applicationService.update(id, applicationToUpdate)
+    return {
+      applications: await this.applicationService.getAll(stateUrl),
+      filters: await this.applicationService.getAllFilters(),
+    }
+  }
+
+  @Put('updateApplication/:id')
+  @ApiOkResponse({
+    type: UpdateApplicationResponse,
+    description: 'Updates an existing application',
+  })
+  async updateApplication(
+    @Param('id') id: string,
+    @Body() applicationToUpdate: UpdateApplicationDto,
+  ): Promise<UpdateApplicationResponse> {
+    const {
+      numberOfAffectedRows,
+      updatedApplication,
+    } = await this.applicationService.update(id, applicationToUpdate)
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Application ${id} does not exist`)
+    }
+
+    return {
+      application: updatedApplication,
+      filters: await this.applicationService.getAllFilters(),
+    }
+  }
+
   @Post('application')
   @ApiCreatedResponse({
     type: ApplicationModel,
@@ -134,5 +201,28 @@ export class ApplicationController {
   ): Promise<ApplicationModel> {
     this.logger.debug('Application controller: Creating application')
     return this.applicationService.create(application, user)
+  }
+
+  @Post('applicationEvent')
+  @ApiCreatedResponse({
+    type: ApplicationEventModel,
+    description: 'Creates a new application event',
+  })
+  async createEvent(
+    @Body() applicationEvent: CreateApplicationEventDto,
+  ): Promise<ApplicationModel> {
+    await this.applicationEventService.create(applicationEvent)
+
+    const application = await this.applicationService.findById(
+      applicationEvent.applicationId,
+    )
+
+    if (!application) {
+      throw new NotFoundException(
+        `application ${applicationEvent.applicationId} not found`,
+      )
+    }
+
+    return application
   }
 }

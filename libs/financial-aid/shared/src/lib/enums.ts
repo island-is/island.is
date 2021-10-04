@@ -22,6 +22,12 @@ export enum ApplicationState {
   APPROVED = 'Approved',
 }
 
+export enum ApplicationStateUrl {
+  NEW = 'New',
+  INPROGRESS = 'InProgress',
+  PROCESSED = 'Processed',
+}
+
 export enum ApplicationEventType {
   NEW = 'New',
   INPROGRESS = 'InProgress',

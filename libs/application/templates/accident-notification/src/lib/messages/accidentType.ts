@@ -4,7 +4,7 @@ export const accidentType = {
   general: defineMessages({
     sectionTitle: {
       id: 'an.application:accidentType.sectionTitle',
-      defaultMessage: 'Aðstæður slys',
+      defaultMessage: 'Upplýsingar um slys',
       description: 'Accident circumstances',
     },
     heading: {
@@ -14,7 +14,7 @@ export const accidentType = {
     },
     description: {
       id: 'an.application:accidentType.description',
-      defaultMessage: `Vinsamlegast veldu þann slysaflokk sem lýsir best aðstæðum slyssins. `,
+      defaultMessage: `Vinsamlegast veldu þann slysaflokk sem lýsir best aðstæðum slyssins.  Slysið sem um ræðir varð við:`,
       description:
         'Please select the category of accident that best describes the situation of the accident.',
     },

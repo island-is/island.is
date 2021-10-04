@@ -3,6 +3,7 @@ import {
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseFileState,
   CaseGender,
   CaseState,
   CaseType,
@@ -133,6 +134,7 @@ const testCase1 = {
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
       size: 4991527,
       created: '2021-04-12T13:55:28.131Z',
+      state: CaseFileState.STORED_IN_RVG,
     },
   ],
 }
@@ -670,6 +672,52 @@ const testCase11 = {
   defenderEmail: 'saul@goodman.com',
 }
 
+const testCase12 = {
+  id: 'test_id_11',
+  created: '2020-09-16T19:50:08.033Z',
+  modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
+  state: CaseState.DISMISSED,
+  policeCaseNumber: '000-0000-0000',
+  accusedNationalId: '000000-0000',
+  accusedName: 'Jon Harring',
+  accusedAddress: 'Harringvej 2',
+  accusedGender: CaseGender.MALE,
+  court: mockCourt,
+  arrestDate: '2020-09-16T19:51:28.224Z',
+  requestedCourtDate: '2020-09-12T14:51:00.000Z',
+  requestedValidToDate: '2020-09-16T19:51:28.224Z',
+  lawsBroken: null,
+  custodyProvisions: [],
+  requestedCustodyRestrictions: [],
+  caseFacts: null,
+  legalArguments: null,
+  comments: 'string',
+  prosecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
+  courtCaseNumber: null,
+  courtDate: null,
+  courtStartDate: null,
+  courtEndTime: '2020-09-16T19:51:28.224Z',
+  courtAttendees: null,
+  prosecutorDemands: null,
+  accusedPleaAnnouncement: null,
+  litigationPresentations: null,
+  ruling: null,
+  decision: CaseDecision.DISMISSING,
+  validToDate: null,
+  custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
+  accusedAppealDecision: null,
+  accusedAppealAnnouncement: null,
+  prosecutorAppealDecision: null,
+  prosecutorAppealAnnouncement: null,
+  judge: null,
+  defenderName: 'Saul Goodman',
+  defenderEmail: 'saul@goodman.com',
+}
+
 export const mockInstitutionsQuery = [
   {
     request: {
@@ -867,6 +915,17 @@ export const mockCaseQueries = [
     result: {
       data: {
         case: testCase11,
+      },
+    },
+  },
+  {
+    request: {
+      query: CaseQuery,
+      variables: { input: { id: 'test_id_12' } },
+    },
+    result: {
+      data: {
+        case: testCase12,
       },
     },
   },

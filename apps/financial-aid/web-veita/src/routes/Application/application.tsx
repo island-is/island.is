@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { LoadingDots, Text, Box, Button } from '@island.is/island-ui/core'
+import { Text, Box, Button } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 import * as styles from './application.treat'
@@ -31,13 +31,14 @@ import { calcAge } from '@island.is/financial-aid-web/veita/src/utils/formHelper
 
 import {
   Profile,
-  AdminLayout,
   StateModal,
   AidAmountModal,
   History,
   CommentSection,
   ApplicationHeader,
   FilesListWithHeaderContainer,
+  ApplicationSkeleton,
+  LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 interface ApplicantData {
@@ -54,6 +55,8 @@ const ApplicationProfile = () => {
   const [isStateModalVisible, setStateModalVisible] = useState(false)
 
   const [isAidModalVisible, setAidModalVisible] = useState(false)
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const { data, loading } = useQuery<ApplicantData>(GetApplicationQuery, {
     variables: { input: { id: router.query.id } },
@@ -135,7 +138,7 @@ const ApplicationProfile = () => {
     const applicant = [
       {
         title: 'Nafn',
-        content: data?.application.name,
+        content: application.name,
       },
       {
         title: 'Aldur',
@@ -148,8 +151,8 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Netfang',
-        content: data?.application.email,
-        link: 'mailto:' + data?.application.email,
+        content: application.email,
+        link: 'mailto:' + application.email,
       },
       {
         title: 'Sími',
@@ -159,15 +162,15 @@ const ApplicationProfile = () => {
       {
         title: 'Bankareikningur',
         content:
-          data?.application.bankNumber +
+          application.bankNumber +
           '-' +
-          data?.application.ledger +
+          application.ledger +
           '-' +
-          data?.application.accountNumber,
+          application.accountNumber,
       },
       {
         title: 'Nota persónuafslátt',
-        content: data?.application.usePersonalTaxCredit ? 'Já' : 'Nei',
+        content: application.usePersonalTaxCredit ? 'Já' : 'Nei',
       },
       {
         title: 'Ríkisfang',
@@ -217,7 +220,7 @@ const ApplicationProfile = () => {
     ]
 
     return (
-      <AdminLayout>
+      <LoadingContainer isLoading={isLoading} loader={<ApplicationSkeleton />}>
         <Box
           marginTop={10}
           marginBottom={15}
@@ -252,9 +255,13 @@ const ApplicationProfile = () => {
 
           <CommentSection
             className={`contentUp delay-125 ${styles.widthAlmostFull}`}
+            setApplication={setApplication}
           />
 
-          <History applicantName={application.name} />
+          <History
+            applicantName={application.name}
+            applicationEvents={application.applicationEvents}
+          />
         </Box>
 
         {application.state && (
@@ -263,13 +270,9 @@ const ApplicationProfile = () => {
             onVisibilityChange={(isVisibleBoolean) => {
               setStateModalVisible(isVisibleBoolean)
             }}
-            onStateChange={(applicationState: ApplicationState) => {
-              setApplication({
-                ...application,
-                state: applicationState,
-              })
-            }}
+            setApplication={setApplication}
             application={application}
+            setIsLoading={setIsLoading}
           />
         )}
 
@@ -283,18 +286,12 @@ const ApplicationProfile = () => {
             }}
           />
         )}
-      </AdminLayout>
+      </LoadingContainer>
     )
   }
-  if (loading) {
-    return (
-      <AdminLayout>
-        <LoadingDots />
-      </AdminLayout>
-    )
-  }
+
   return (
-    <AdminLayout>
+    <LoadingContainer isLoading={loading} loader={<ApplicationSkeleton />}>
       <Box>
         <Button
           colorScheme="default"
@@ -314,7 +311,7 @@ const ApplicationProfile = () => {
       <Text color="red400" fontWeight="semiBold" marginTop={4}>
         Abbabab Notendi ekki fundinn, farðu tilbaka og reyndu vinsamlegast aftur{' '}
       </Text>
-    </AdminLayout>
+    </LoadingContainer>
   )
 }
 

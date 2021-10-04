@@ -460,6 +460,16 @@ export class Case extends Model<Case> {
   courtDate?: Date
 
   /**********
+   * The location of the court session
+   **********/
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtLocation?: string
+
+  /**********
    * The assigned court room for the court session
    **********/
   @Column({
@@ -488,6 +498,16 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   courtEndTime?: Date
+
+  /**********
+   * Indicates whether the closed court announcement is hidden from the court record - optional
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  isClosedCourtHidden?: boolean
 
   /**********
    * The court attendees
@@ -520,14 +540,14 @@ export class Case extends Model<Case> {
   courtDocuments?: string[]
 
   /**********
-   * Indicates whether the accused was present during the court session - optional
+   * Indicates whether the accused rights are hidden from the court record - optional
    **********/
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
   @ApiProperty()
-  isAccusedAbsent?: boolean
+  isAccusedRightsHidden?: boolean
 
   /**********
    * The accused's plea decision - example: REJECT

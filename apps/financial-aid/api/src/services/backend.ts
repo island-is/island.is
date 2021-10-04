@@ -1,6 +1,6 @@
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
 import {
   Application,
@@ -14,6 +14,9 @@ import {
   ApplicationFilters,
   CreateFilesResponse,
   apiBasePath,
+  ApplicationStateUrl,
+  UpdateApplicationTableResponseType,
+  UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -30,8 +33,8 @@ class BackendAPI extends RESTDataSource {
     req.headers.set('cookie', this.context.req.headers.cookie)
   }
 
-  getApplications(): Promise<Application[]> {
-    return this.get('applications')
+  getApplications(stateUrl: ApplicationStateUrl): Promise<Application[]> {
+    return this.get(`allApplications/${stateUrl}`)
   }
 
   getApplication(id: string): Promise<Application> {
@@ -59,6 +62,21 @@ class BackendAPI extends RESTDataSource {
     return this.put(`applications/${id}`, updateApplication)
   }
 
+  updateApplicationTable(
+    id: string,
+    stateUrl: ApplicationStateUrl,
+    updateApplication: UpdateApplication,
+  ): Promise<UpdateApplicationTableResponseType> {
+    return this.put(`applications/${id}/${stateUrl}`, updateApplication)
+  }
+
+  updateApplicationRes(
+    id: string,
+    updateApplication: UpdateApplication,
+  ): Promise<UpdateApplicationResponseType> {
+    return this.put(`updateApplication/${id}`, updateApplication)
+  }
+
   getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
     return this.post('file/url', getSignedUrl)
   }
@@ -73,7 +91,7 @@ class BackendAPI extends RESTDataSource {
 
   createApplicationEvent(
     createApplicationEvent: CreateApplicationEvent,
-  ): Promise<ApplicationEvent> {
+  ): Promise<Application> {
     return this.post('applicationEvent', createApplicationEvent)
   }
 

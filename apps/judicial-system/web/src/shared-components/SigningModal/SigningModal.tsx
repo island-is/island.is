@@ -5,6 +5,7 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
+  completedCaseStates,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import type {
@@ -62,19 +63,20 @@ const SigningModal: React.FC<SigningModalProps> = ({
     const completeSigning = async (
       resSignatureConfirmationResponse: SignatureConfirmationResponse,
     ) => {
-      if (resSignatureConfirmationResponse.documentSigned) {
+      if (
+        resSignatureConfirmationResponse.documentSigned &&
+        workingCase.state === CaseState.RECEIVED
+      ) {
         try {
-          const caseCompleted =
-            workingCase.state === CaseState.RECEIVED
-              ? await transitionCase(
-                  workingCase,
-                  workingCase.decision === CaseDecision.REJECTING
-                    ? CaseTransition.REJECT
-                    : CaseTransition.ACCEPT,
-                  setWorkingCase,
-                )
-              : workingCase.state === CaseState.REJECTED ||
-                workingCase.state === CaseState.ACCEPTED
+          const caseCompleted = await transitionCase(
+            workingCase,
+            workingCase.decision === CaseDecision.REJECTING
+              ? CaseTransition.REJECT
+              : workingCase.decision === CaseDecision.DISMISSING
+              ? CaseTransition.DISMISS
+              : CaseTransition.ACCEPT,
+            setWorkingCase,
+          )
 
           if (caseCompleted) {
             await sendNotification(workingCase.id, NotificationType.RULING)

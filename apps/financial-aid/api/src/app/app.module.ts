@@ -9,7 +9,6 @@ import {
   ApplicationModule,
   MunicipalityModule,
   FileModule,
-  ApplicationEventModule,
 } from './modules/'
 
 const debug = !environment.production
@@ -35,7 +34,6 @@ const autoSchemaFile = environment.production
     ApplicationModule,
     MunicipalityModule,
     FileModule,
-    ApplicationEventModule,
   ],
   providers: [BackendAPI],
 })

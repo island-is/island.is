@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { ApplicationModel } from './models'
 import { ApplicationEventModule } from '../applicationEvent'
+import { EmailModule } from '@island.is/email-service'
 import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
 import { FileModule } from '../file'
@@ -11,6 +12,7 @@ import { environment } from '../../../environments'
 @Module({
   imports: [
     FileModule,
+    EmailModule.register(environment.emailOptions),
     ApplicationEventModule,
     SequelizeModule.forFeature([ApplicationModel]),
   ],

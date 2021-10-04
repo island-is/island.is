@@ -21,23 +21,22 @@ import {
   getTagByState,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
-import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
-import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
-
 interface PageProps {
   application: Application
+  index: number
+  onApplicationUpdate: (
+    applicationId: string,
+    state: ApplicationState,
+  ) => Promise<void>
 }
 
-const TableBody = ({ application }: PageProps) => {
-  const changeApplicationState = useApplicationState()
-
-  // TODO: Remove state and context when we reload the page when we change the state of application
-  const [staffName, setStaffName] = useState(application.staff?.name)
-  const { admin } = useContext(AdminContext)
-
+const TableBody = ({ application, index, onApplicationUpdate }: PageProps) => {
   return (
     <Link href={'application/' + application.id}>
-      <tr className={styles.link}>
+      <tr
+        className={`${styles.link} contentUp`}
+        style={{ animationDelay: 55 + 3.5 * index + 'ms' }}
+      >
         <td
           className={cn({
             [`${styles.tablePadding} ${styles.firstChildPadding}`]: true,
@@ -83,15 +82,14 @@ const TableBody = ({ application }: PageProps) => {
             [`${styles.tablePadding} `]: true,
           })}
         >
-          {staffName ? (
-            <Text>{staffName}</Text>
+          {application.staff?.name ? (
+            <Text>{application.staff?.name}</Text>
           ) : (
             <Button
               variant="text"
               onClick={(ev) => {
                 ev.stopPropagation()
-                changeApplicationState(application, ApplicationState.INPROGRESS)
-                setStaffName(admin?.name)
+                onApplicationUpdate(application.id, ApplicationState.INPROGRESS)
               }}
             >
               Sjá um
