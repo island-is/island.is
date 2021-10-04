@@ -403,4 +403,19 @@ describe('formatAppeal', () => {
       'Aðili lýsir því yfir að hann taki sér lögbundinn kærufrest.',
     )
   })
+
+  test('should format gender pronouns if gender is set', () => {
+    // Arrange
+    const appealDecision = CaseAppealDecision.POSTPONE
+    const stakeholder = 'Kærða'
+    const stakeholderGender = CaseGender.FEMALE
+
+    // Act
+    const res = formatAppeal(appealDecision, stakeholder, stakeholderGender)
+
+    // Assert
+    expect(res).toBe(
+      'Kærða lýsir því yfir að hún taki sér lögbundinn kærufrest.',
+    )
+  })
 })
