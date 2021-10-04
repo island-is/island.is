@@ -1,6 +1,7 @@
 import { uuid } from 'uuidv4'
 import { Response } from 'express'
 import each from 'jest-each'
+import * as streamBuffers from 'stream-buffers'
 
 import { Test } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/sequelize'
@@ -19,6 +20,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
+import * as formatters from '../../formatters'
 import { CourtService } from '../court'
 import { UserService } from '../user'
 import { EventService } from '../event'
@@ -111,11 +113,11 @@ describe('CaseController', () => {
           caseModel.findOne.mockResolvedValueOnce(mockCase)
         })
 
-        it('should not throw', async () => {
-          const res = {} as Response
+        it('should throw', async () => {
+          const response = {} as Response
 
           await expect(
-            caseController.getCustodyNoticePdf(id, user, res),
+            caseController.getCustodyNoticePdf(id, user, response),
           ).rejects.toThrow(BadRequestException)
         })
       })
@@ -152,10 +154,10 @@ describe('CaseController', () => {
 
           caseModel.findOne.mockResolvedValueOnce({ ...mockCase, state })
 
-          const res = {} as Response
+          const response = {} as Response
 
           await expect(
-            caseController.getCustodyNoticePdf(id, user, res),
+            caseController.getCustodyNoticePdf(id, user, response),
           ).rejects.toThrow(BadRequestException)
         },
       )
@@ -172,17 +174,48 @@ describe('CaseController', () => {
           // this test.
           const user = { role } as User
 
-          caseModel.findOne.mockResolvedValueOnce({
-            ...mockCase,
-            state: CaseState.ACCEPTED,
-          })
+          const mockAcceptedCase = { ...mockCase, state: CaseState.ACCEPTED }
+          caseModel.findOne.mockResolvedValueOnce(mockAcceptedCase)
 
-          const res = ({ header: jest.fn() } as unknown) as Response
+          const mockPdf = 'Mock PDF content'
+          const mockGetCustodyNoticePdfAsString = jest.spyOn(
+            formatters,
+            'getCustodyNoticePdfAsString',
+          )
+          mockGetCustodyNoticePdfAsString.mockResolvedValueOnce(mockPdf)
 
-          const pdf = await caseController.getCustodyNoticePdf(id, user, res)
+          const mockPut = jest.fn()
+          const mockPipe = jest.fn()
+          const mockReadableStreamBuffer = jest.spyOn(
+            streamBuffers,
+            'ReadableStreamBuffer',
+          )
+          mockReadableStreamBuffer.mockReturnValueOnce(({
+            put: mockPut,
+            pipe: mockPipe,
+          } as unknown) as streamBuffers.ReadableStreamBuffer)
+          const mockResponse = {} as Response
+          mockPipe.mockReturnValueOnce(mockResponse)
 
-          expect(pdf).toBe(res)
-          // TODO: add proper test.
+          const response = ({ header: jest.fn() } as unknown) as Response
+
+          const result = await caseController.getCustodyNoticePdf(
+            id,
+            user,
+            response,
+          )
+
+          expect(mockGetCustodyNoticePdfAsString).toHaveBeenCalledWith(
+            mockAcceptedCase,
+          )
+
+          expect(mockPut).toHaveBeenCalledWith(mockPdf, 'binary')
+
+          expect(response.header).toHaveBeenCalledWith('Content-length', '16')
+
+          expect(mockPipe).toHaveBeenCalledWith(response)
+
+          expect(result).toBe(mockResponse)
         },
       )
     })

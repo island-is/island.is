@@ -63,14 +63,6 @@ jest.mock('pdfkit', function () {
 })
 
 jest.mock('stream-buffers', function () {
-  class MockReadableStreamBuffer {
-    put = jest.fn()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    pipe(res: any) {
-      return res
-    }
-  }
-
   class MockWritableStreamBuffer {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     on(_: any, fn: () => void) {
@@ -82,7 +74,7 @@ jest.mock('stream-buffers', function () {
   }
 
   return {
-    ReadableStreamBuffer: MockReadableStreamBuffer,
+    ReadableStreamBuffer: jest.fn(),
     WritableStreamBuffer: MockWritableStreamBuffer,
   }
 })
