@@ -2,7 +2,7 @@ import React, { ReactNode, useContext, useEffect } from 'react'
 import { Box, GridContainer } from '@island.is/island-ui/core'
 
 import * as styles from './AppLayout.treat'
-import { Logo } from '@island.is/financial-aid-web/osk/src/components'
+import { Logo, Header } from '@island.is/financial-aid-web/osk/src/components'
 
 import {
   Login,
@@ -32,39 +32,43 @@ const AppLayout = ({ children }: Props) => {
   }
 
   return (
-    <Box
-      paddingY={[3, 3, 3, 6]}
-      background="purple100"
-      className={styles.processContainer}
-    >
-      <GridContainer
-        className={cn({
-          [`${styles.gridContainer}`]: true,
-        })}
+    <>
+      <Header />
+
+      <Box
+        paddingY={[3, 3, 3, 6]}
+        background="purple100"
+        className={styles.processContainer}
       >
-        <div className={styles.gridRowContainer}>
-          <Box
-            background="white"
-            borderColor="white"
-            borderRadius="large"
-            className={styles.formContainer}
-          >
-            {/* Todo: þjóðskrá */}
-            {userServiceCenter === undefined || userServiceCenter?.active ? (
-              <>{children}</>
-            ) : (
-              <ServiceCenter serviceCenter={userServiceCenter} />
-            )}
-          </Box>
+        <GridContainer
+          className={cn({
+            [`${styles.gridContainer}`]: true,
+          })}
+        >
+          <div className={styles.gridRowContainer}>
+            <Box
+              background="white"
+              borderColor="white"
+              borderRadius="large"
+              className={styles.formContainer}
+            >
+              {/* Todo: þjóðskrá */}
+              {userServiceCenter === undefined || userServiceCenter?.active ? (
+                <>{children}</>
+              ) : (
+                <ServiceCenter serviceCenter={userServiceCenter} />
+              )}
+            </Box>
 
-          <Box className={styles.sidebarContent}>
-            <SideBar />
+            <Box className={styles.sidebarContent}>
+              <SideBar />
 
-            <Logo className={styles.logo} />
-          </Box>
-        </div>
-      </GridContainer>
-    </Box>
+              <Logo className={styles.logo} />
+            </Box>
+          </div>
+        </GridContainer>
+      </Box>
+    </>
   )
 }
 
