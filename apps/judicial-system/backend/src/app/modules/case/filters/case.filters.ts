@@ -134,6 +134,20 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     },
   ]
 
+  const blockHightenedSecurity =
+    user.role === UserRole.PROSECUTOR
+      ? [
+          {
+            [Op.or]: [
+              { is_heightened_security_level: { [Op.is]: null } },
+              { is_heightened_security_level: false },
+              { creating_prosecutor_id: user.id },
+              { prosecutor_id: user.id },
+            ],
+          },
+        ]
+      : []
+
   const blockInstitutions =
     user.role === UserRole.PROSECUTOR
       ? {
@@ -159,5 +173,12 @@ export function getCasesQueryFilter(user: User): WhereOptions {
           ],
         }
 
-  return { [Op.and]: [blockStates, ...blockOld, blockInstitutions] }
+  return {
+    [Op.and]: [
+      blockStates,
+      ...blockOld,
+      ...blockHightenedSecurity,
+      blockInstitutions,
+    ],
+  }
 }
