@@ -67,7 +67,7 @@ const HearingArrangements = () => {
   }, [workingCase, setWorkingCase, data])
 
   useEffect(() => {
-    if (userData) {
+    if (userData && workingCase) {
       setProsecutors(
         userData.users
           .filter(
@@ -81,7 +81,7 @@ const HearingArrangements = () => {
           }),
       )
     }
-  }, [userData, workingCase?.creatingProsecutor?.institution?.id])
+  }, [userData, workingCase, workingCase?.creatingProsecutor?.institution?.id])
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
