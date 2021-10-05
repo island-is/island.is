@@ -7,7 +7,7 @@ export enum GenericScope {
 
   /**
    * This scope is assigned to systems
-   * It ensures endpoints are not accessible to request with user tokens
+   * It ensures endpoints within the island.is ecosystem are not accessible to request with user tokens
    * Only systems within island.is should be able to acquire this token
    */
   system = '@island.is/system',
