@@ -9,11 +9,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  applyDecorators,
   Query,
-  Type,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -25,7 +21,6 @@ import {
   ApiParam,
   ApiTags,
   ApiExtraModels,
-  getSchemaPath,
   ApiResponse,
 } from '@nestjs/swagger'
 import { environment } from '../../../environments'

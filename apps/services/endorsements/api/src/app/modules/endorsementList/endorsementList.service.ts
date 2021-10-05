@@ -9,7 +9,6 @@ import { Endorsement } from '../endorsement/models/endorsement.model'
 
 import { paginate } from '../pagination/paginate'
 
-// import { QueryDto } from '../pagination/dto/query.dto'
 
 interface CreateInput extends EndorsementListDto {
   owner: string

@@ -2,8 +2,9 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsNumberString, IsOptional, IsString } from 'class-validator'
 
 export class PaginationDto {
+  @IsOptional()
   @ApiProperty({ required: false })
-  // @IsNumberString()
+  @IsNumberString()
   limit?: number
 
   @IsOptional()

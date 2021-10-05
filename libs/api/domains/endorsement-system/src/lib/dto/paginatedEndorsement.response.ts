@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { PageInfoResponse } from './pageInfo.response'
 import { Endorsement } from '../models/endorsement.model'
 
