@@ -227,6 +227,7 @@ describe('reducerUtils', () => {
 
       it('should not stop on repeater, even if it has an answer, if a previous question is missing an answer', () => {
         const screens: FormScreen[] = [
+          buildIntroScreen('intro1'),
           buildTextScreen('first'),
           buildRepeater({
             id: 'person',
@@ -237,10 +238,45 @@ describe('reducerUtils', () => {
           buildTextScreen('c'),
         ]
 
+        const screensNoIntro = screens.slice(1)
         const answers1 = { person: [{ a: '1' }] }
-        const convertedScreens = convertScreens(screens, answers1)
 
-        expect(findCurrentScreen(convertedScreens, answers1, true)).toBe(0)
+        // We expect to go to the first intro screen before the question with the missing answer
+        expect(
+          findCurrentScreen(convertScreens(screens, answers1), answers1, true),
+        ).toBe(0)
+        // Or the question if there was no intro screen
+        expect(
+          findCurrentScreen(
+            convertScreens(screensNoIntro, answers1),
+            answers1,
+            true,
+          ),
+        ).toBe(0)
+      })
+
+      it('should stop in the middle of a repeater if it has a missing answer', () => {
+        const screens: FormScreen[] = [
+          buildIntroScreen('intro1'),
+          buildTextScreen('first'),
+          buildRepeater({
+            id: 'person',
+            children: [
+              buildTextScreen('a'),
+              buildTextScreen('b'),
+              buildTextScreen('c'),
+            ],
+            title: 'This is a great screen',
+            component: 'SomeComponent',
+          }) as RepeaterScreen,
+          buildTextScreen('c'),
+        ]
+
+        const answers1 = { first: 'hello', person: [{ a: '1' }] }
+
+        expect(
+          findCurrentScreen(convertScreens(screens, answers1), answers1, true),
+        ).toBe(4)
       })
     })
   })
