@@ -76,6 +76,7 @@ export const ParentalLeaveForm: Form = buildForm({
   title: parentalLeaveFormMessages.shared.formTitle,
   logo: Logo,
   mode: FormModes.APPLYING,
+  stopOnFirstMissingAnswer: true,
   children: [
     buildSection({
       id: 'prerequisites',
@@ -687,6 +688,7 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'periodsImageScreen',
           title: parentalLeaveFormMessages.shared.periodsImageTitle,
           component: 'PeriodsSectionImage',
+          doesNotRequireAnswer: true,
         }),
         buildSubSection({
           id: 'addPeriods',
