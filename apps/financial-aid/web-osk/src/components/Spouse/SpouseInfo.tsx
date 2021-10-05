@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
 import { Input, Checkbox, Box } from '@island.is/island-ui/core'
 
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import {
   focusOnNextInput,
   isEmailValid,
   sanitizeNationalId,
 } from '@island.is/financial-aid/shared/lib'
+import { FormContext } from '../FormProvider/FormProvider'
 
 interface Props {
   hasError: boolean
@@ -21,11 +21,8 @@ const SpouseInfo = ({
   setAcceptData,
   removeError,
 }: Props) => {
-  const { user, setUser } = useContext(UserContext)
+  const { form, updateForm } = useContext(FormContext)
 
-  if (!user) {
-    return null
-  }
   return (
     <>
       <Box marginBottom={[2, 2, 3]} marginTop={[1, 1, 0]}>
@@ -35,16 +32,16 @@ const SpouseInfo = ({
           placeholder="Sláðu inn kennitölu maka"
           backgroundColor="blue"
           hasError={
-            (hasError && !user?.spouse?.nationalId) ||
-            (hasError && user?.spouse?.nationalId?.length !== 10)
+            (hasError && !form?.spouse?.nationalId) ||
+            (hasError && form?.spouse?.nationalId?.length !== 10)
           }
-          value={user?.spouse?.nationalId}
+          value={form?.spouse?.nationalId}
           maxLength={10}
           onChange={(event) => {
-            setUser({
-              ...user,
+            updateForm({
+              ...form,
               spouse: {
-                ...user.spouse,
+                ...form.spouse,
                 nationalId: sanitizeNationalId(event.target.value),
               },
             })
@@ -63,17 +60,17 @@ const SpouseInfo = ({
           placeholder="Sláðu inn netfang maka"
           backgroundColor="blue"
           hasError={
-            (hasError && !user?.spouse?.email) ||
-            (hasError && !isEmailValid(user?.spouse?.email))
+            (hasError && !form?.spouse?.email) ||
+            (hasError && !isEmailValid(form?.spouse?.email))
           }
           type="email"
-          value={user?.spouse?.email}
+          value={form?.spouse?.email}
           onChange={(event) => {
             removeError()
-            setUser({
-              ...user,
+            updateForm({
+              ...form,
               spouse: {
-                ...user.spouse,
+                ...form.spouse,
                 email: event.target.value,
               },
             })

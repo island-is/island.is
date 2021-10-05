@@ -67,8 +67,6 @@ export interface User {
   returnUrl: ReturnUrl
   staff?: Staff
   postalCode?: number
-  familyStatus?: FamilyStatus
-  spouse?: Spouse
 }
 
 export interface UpdateApplication {

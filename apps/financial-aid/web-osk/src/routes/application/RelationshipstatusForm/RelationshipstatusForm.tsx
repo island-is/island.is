@@ -18,14 +18,15 @@ import {
   FamilyStatus,
   isEmailValid,
   NavigationProps,
+  Spouse,
   User,
 } from '@island.is/financial-aid/shared/lib'
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
+import { FormContext } from '../../../components/FormProvider/FormProvider'
 
 const RelationshipstatusForm = () => {
   const router = useRouter()
 
-  const { user, setUser } = useContext(UserContext)
+  const { form, updateForm } = useContext(FormContext)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -46,18 +47,18 @@ const RelationshipstatusForm = () => {
     },
   ]
 
-  const isInputAndRadioValid = (acceptData: boolean, user: User) => {
+  const isInputAndRadioValid = (acceptData: boolean, spouse?: Spouse) => {
     return (
       !acceptData ||
-      !user.spouse?.email ||
-      !user.spouse?.nationalId ||
-      !isEmailValid(user.spouse?.email) ||
-      user.spouse?.nationalId.length !== 10
+      !spouse?.email ||
+      !spouse?.nationalId ||
+      !isEmailValid(spouse?.email) ||
+      spouse?.nationalId.length !== 10
     )
   }
 
   const errorCheck = () => {
-    if (user?.familyStatus === undefined) {
+    if (form?.familyStatus === undefined) {
       setHasError(true)
       return
     }
@@ -67,18 +68,14 @@ const RelationshipstatusForm = () => {
       return
     }
 
-    if (user.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION) {
-      if (isInputAndRadioValid(acceptData, user)) {
+    if (form.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION) {
+      if (isInputAndRadioValid(acceptData, form?.spouse)) {
         setHasError(true)
         return
       }
     }
 
     router.push(navigation?.nextUrl)
-  }
-
-  if (!user) {
-    return null
   }
 
   return (
@@ -100,12 +97,12 @@ const RelationshipstatusForm = () => {
 
         <RadioButtonContainer
           options={options}
-          error={hasError && !user?.familyStatus}
+          error={hasError && !form?.familyStatus}
           isChecked={(value: FamilyStatus) => {
-            return value === user?.familyStatus
+            return value === form?.familyStatus
           }}
           onChange={(value: FamilyStatus) => {
-            setUser({ ...user, familyStatus: value })
+            updateForm({ ...form, familyStatus: value })
 
             setHasError(false)
           }}
@@ -115,7 +112,7 @@ const RelationshipstatusForm = () => {
           className={cn({
             [`${styles.infoContainer}`]: true,
             [`${styles.showInfoContainer}`]:
-              FamilyStatus.UNREGISTERED_COBAHITATION === user?.familyStatus,
+              FamilyStatus.UNREGISTERED_COBAHITATION === form?.familyStatus,
           })}
         >
           <SpouseInfo
