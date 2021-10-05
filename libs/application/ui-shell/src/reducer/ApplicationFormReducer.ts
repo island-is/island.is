@@ -24,7 +24,7 @@ export function initializeReducer(
   const currentScreen =
     form.mode === FormModes.REVIEW || form.mode === FormModes.EDITING
       ? 0
-      : findCurrentScreen(screens, answers)
+      : findCurrentScreen(screens, answers, form.stopOnFirstMissingAnswer)
 
   return {
     ...state,

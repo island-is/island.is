@@ -58,15 +58,20 @@ export enum FormModes {
 }
 
 export interface Form {
-  id: string
-  title: StaticText
-  logo?: React.FC
-  type: FormItemTypes.FORM
-  mode?: FormModes
-  renderLastScreenButton?: boolean
-  renderLastScreenBackButton?: boolean
-  icon?: string
   children: FormChildren[]
+  icon?: string
+  id: string
+  logo?: React.FC
+  mode?: FormModes
+  renderLastScreenBackButton?: boolean
+  renderLastScreenButton?: boolean
+  // When initialising the form and finding the
+  // current screen this will make sure we won't
+  // traverse over any screen that should have an answer
+  // but does not
+  stopOnFirstMissingAnswer?: boolean
+  title: StaticText
+  type: FormItemTypes.FORM
 }
 
 export type FormLeaf = MultiField | Field | Repeater | ExternalDataProvider

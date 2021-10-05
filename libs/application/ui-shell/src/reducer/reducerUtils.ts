@@ -1,4 +1,4 @@
-import { getDefaultValues } from '@apollo/client/utilities'
+import get from 'lodash/get'
 import {
   ExternalData,
   ExternalDataProvider,
@@ -32,25 +32,63 @@ import {
 export const findCurrentScreen = (
   screens: FormScreen[],
   answers: FormValue,
+  stopOnFirstMissingAnswer = false,
 ): number => {
   let currentScreen = 0
   let missingAnswerBeforeCurrentIndex = false
   let currentAnswerIndex = 0
 
-  screens.forEach((screen, index) => {
+  for (let index = 0; index < screens.length; index += 1) {
+    const screen = screens[index]
+
+    const isNavigable = get(screen, 'isNavigable') === true
+    const doesNotRequireAnswer = get(screen, 'doesNotRequireAnwer') === true
+
+    if (!isNavigable || doesNotRequireAnswer) {
+      let skipLength = 1
+
+      if (
+        screen.type === FormItemTypes.MULTI_FIELD ||
+        screen.type === FormItemTypes.REPEATER
+      ) {
+        skipLength = screen.children.length
+      }
+      currentScreen = index + skipLength
+      currentAnswerIndex = index + skipLength
+      index = index + skipLength
+      continue
+    }
+
     if (screen.type === FormItemTypes.MULTI_FIELD) {
       let numberOfAnsweredQuestionsInScreen = 0
 
-      screen.children.forEach((field) => {
-        if (getValueViaPath(answers, field.id) !== undefined) {
-          numberOfAnsweredQuestionsInScreen++
-        }
-      })
+      for (const subScreen of screen.children) {
+        const isSubScreenNavigable = get(subScreen, 'isNavigable') === true
+        const subScreenDoesNotRequireAnswer =
+          get(subScreen, 'doesNotRequireAnswer') === true
 
-      if (numberOfAnsweredQuestionsInScreen === screen.children.length) {
-        currentScreen = index + 1
-      } else if (numberOfAnsweredQuestionsInScreen > 0) {
-        currentScreen = index
+        if (!isSubScreenNavigable || subScreenDoesNotRequireAnswer) {
+          numberOfAnsweredQuestionsInScreen++
+        } else if (getValueViaPath(answers, subScreen.id) !== undefined) {
+          numberOfAnsweredQuestionsInScreen++
+        } else if (stopOnFirstMissingAnswer) {
+          break
+        }
+      }
+
+      const answeredAllSubScreens =
+        numberOfAnsweredQuestionsInScreen === screen.children.length
+
+      if (answeredAllSubScreens) {
+        currentScreen += screen.children.length
+      } else {
+        currentScreen = index + numberOfAnsweredQuestionsInScreen
+        currentAnswerIndex = currentScreen
+        console.log({ currentScreen, currentAnswerIndex })
+
+        if (stopOnFirstMissingAnswer) {
+          break
+        }
       }
     } else if (screen.type === FormItemTypes.REPEATER) {
       if (getValueViaPath(answers, screen.id) !== undefined) {
@@ -63,6 +101,9 @@ export const findCurrentScreen = (
       ) {
         missingAnswerBeforeCurrentIndex = true
         currentAnswerIndex = index
+        if (stopOnFirstMissingAnswer) {
+          break
+        }
       }
 
       if (
@@ -73,9 +114,11 @@ export const findCurrentScreen = (
         currentAnswerIndex = index
       }
     }
-  })
+  }
 
-  return Math.min(currentScreen, screens.length - 1)
+  const screenIndex = Math.min(currentScreen, screens.length - 1)
+
+  return screenIndex
 }
 
 export const moveToScreen = (

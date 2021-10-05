@@ -75,16 +75,22 @@ describe('reducerUtils', () => {
       expect(findCurrentScreen(screens, { a: 'answer', c: 'answer' })).toBe(2)
     })
 
-    it('should, if the last answer is in a partially answered multifield, go to that screen', () => {
-      const screens: FormScreen[] = [
-        buildIntroScreen('intro'),
-        buildMultiField({
-          id: 'multifield',
-          children: [buildTextScreen('a'), buildTextScreen('b')],
-          title: 'This is a great screen',
-        }) as MultiFieldScreen,
-        buildTextScreen('c'),
-      ]
+    it.only('should, if the last answer is in a partially answered multifield, go to that screen', () => {
+      const form = buildForm({
+        id: 'ExampleForm',
+        title: 'asdf',
+        children: [
+          buildIntroScreen('intro'),
+          buildMultiField({
+            id: 'multifield',
+            children: [buildTextScreen('a'), buildTextScreen('b')],
+            title: 'This is a great screen',
+          }) as MultiFieldScreen,
+          buildTextScreen('c'),
+        ],
+      })
+
+      const screens = convertFormToScreens(form, {}, {})
 
       expect(findCurrentScreen(screens, { a: 'sick' })).toBe(1)
       expect(findCurrentScreen(screens, { b: 'very sick' })).toBe(1)
