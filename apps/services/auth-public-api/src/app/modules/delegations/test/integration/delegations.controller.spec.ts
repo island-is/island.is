@@ -1,15 +1,14 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import uuidv4 from 'uuidv4'
 import randomString from 'randomstring'
 
 import {
   CreateDelegationDTO,
   DelegationsService,
+  Delegation,
 } from '@island.is/auth-api-lib'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { IdsUserGuard, User } from '@island.is/auth-nest-tools'
-import { of } from 'rxjs'
 
 import { setup } from '../../../../../../test/setup'
 
@@ -44,6 +43,7 @@ class MockEinstaklingarApi {
 
 describe('DelegationsController with auth', () => {
   let app: INestApplication
+  let delegationModel: typeof Delegation
 
   beforeAll(async () => {
     app = await setup({
@@ -54,12 +54,12 @@ describe('DelegationsController with auth', () => {
           .useValue(new MockEinstaklingarApi())
       },
     })
+    delegationModel = app.get<typeof Delegation>('DelegationRepository')
   })
 
   describe('create', () => {
     it('should create a delegation', async () => {
       // Arrange
-      const id = '00000000-0000-0000-0000-000000000000'
       const payload: CreateDelegationDTO = {
         toNationalId: user.nationalId,
         scopes: [],
@@ -70,7 +70,7 @@ describe('DelegationsController with auth', () => {
           'getUserName',
         )
         .mockImplementation(() => Promise.resolve(user.info.name))
-      jest.spyOn(uuidv4, 'uuid').mockImplementation(() => id)
+      const numberOfExistingDelegations = await delegationModel.count()
 
       // Act
       const response = await request(app.getHttpServer())
@@ -79,16 +79,23 @@ describe('DelegationsController with auth', () => {
 
       // Assert
       expect(response.status).toEqual(201)
-      expect(response.body).toEqual({
+      expect(response.body).toMatchObject({
         fromName: user.info.name,
         fromNationalId: currentUser.nationalId,
-        id,
         provider: 'delegationdb',
         scopes: [],
         toName: user.fullName,
         toNationalId: user.nationalId,
         type: 'Custom',
       })
+
+      const numberOfDelegations = await delegationModel.count()
+      expect(numberOfDelegations).toEqual(numberOfExistingDelegations + 1)
+
+      const newDelegation = await delegationModel.findOne({
+        where: { id: response.body.id },
+      })
+      expect(newDelegation).not.toBeNull()
     })
   })
 })
