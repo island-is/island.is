@@ -124,24 +124,24 @@ const Screen: FC<ScreenProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const refetch = useContext<() => void>(RefetchContext)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [updateApplication, { loading, error }] = useMutation(
-    UPDATE_APPLICATION,
-    {
-      onError: (e) => {
-        // We only show the error message if it doesn't contains a json data object
-        if (!isJSONObject(e.message)) {
-          return handleError(e.message, formatMessage)
-        }
-      },
+  const [
+    updateApplication,
+    { loading, error: updateApplicationError },
+  ] = useMutation(UPDATE_APPLICATION, {
+    onError: (e) => {
+      // We only show the error message if it doesn't contains a json data object
+      if (!isJSONObject(e.message)) {
+        return handleError(e.message, formatMessage)
+      }
     },
-  )
+  })
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
       onError: (e) => handleError(e.message, formatMessage),
     },
   )
-  const { handleSubmit, errors, reset } = hookFormData
+  const { handleSubmit, errors: formErrors, reset } = hookFormData
   const submitField = useMemo(() => findSubmitField(screen), [screen])
 
   const [beforeSubmitError, setBeforeSubmitError] = useState({})
@@ -154,9 +154,16 @@ const Screen: FC<ScreenProps> = ({
     [beforeSubmitCallback],
   )
 
-  const dataSchemaOrApiErrors = isJSONObject(error?.message)
-    ? parseMessage(error?.message)
-    : beforeSubmitError || (errors ?? beforeSubmitError)
+  const parsedUpdateApplicationError =
+    updateApplicationError && isJSONObject(updateApplicationError?.message)
+      ? parseMessage(updateApplicationError.message)
+      : {}
+
+  const dataSchemaOrApiErrors = {
+    ...parsedUpdateApplicationError,
+    ...beforeSubmitError,
+    ...formErrors,
+  }
 
   const goBack = useCallback(() => {
     // using deepmerge to prevent some weird react-hook-form read-only bugs
@@ -168,7 +175,7 @@ const Screen: FC<ScreenProps> = ({
     let response
 
     setIsSubmitting(true)
-    setBeforeSubmitError('')
+    setBeforeSubmitError({})
 
     if (typeof beforeSubmitCallback.current === 'function') {
       const [canContinue, possibleError] = await beforeSubmitCallback.current()
