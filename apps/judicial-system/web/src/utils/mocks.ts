@@ -99,6 +99,12 @@ const testCase1 = {
   caseFacts: 'string',
   legalArguments: 'string',
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Áki Ákærandi',
+    institution: {
+      id: '1338',
+    },
+  },
   prosecutor: {
     name: 'Áki Ákærandi',
     institution: {
@@ -160,6 +166,10 @@ const testCase2 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -207,6 +217,7 @@ const testCase3 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: null,
   prosecutor: null,
   courtCaseNumber: null,
   courtDate: '2020-09-16T19:51:28.224Z',
@@ -254,6 +265,10 @@ const testCase4 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -314,6 +329,10 @@ const testCase5 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -376,6 +395,10 @@ const testCase6 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -423,6 +446,10 @@ const testCase7 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -469,6 +496,10 @@ const testCase8 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -554,6 +585,10 @@ const testCase9 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -600,6 +635,10 @@ const testCase10 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -647,6 +686,10 @@ const testCase11 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -693,6 +736,10 @@ const testCase12 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',

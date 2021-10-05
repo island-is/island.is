@@ -15,10 +15,7 @@ import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/m
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 
 interface Props {
   workingCase: Case

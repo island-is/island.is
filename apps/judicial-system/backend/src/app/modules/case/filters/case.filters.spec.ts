@@ -65,7 +65,7 @@ describe('isCaseBlockedFromUser', () => {
       // Arrange
       const theCase = {
         state,
-        prosecutor: { institutionId: 'Prosecutors Office' },
+        creatingProsecutor: { institutionId: 'Prosecutors Office' },
       } as Case
       const user = {
         role: UserRole.PROSECUTOR,
@@ -88,7 +88,7 @@ describe('isCaseBlockedFromUser', () => {
       // Arrange
       const theCase = {
         state,
-        prosecutor: { institutionId: 'Prosecutors Office' },
+        creatingProsecutor: { institutionId: 'Prosecutors Office' },
       } as Case
       const user = {
         role: UserRole.PROSECUTOR,
@@ -111,7 +111,7 @@ describe('isCaseBlockedFromUser', () => {
       // Arrange
       const theCase = {
         state,
-        prosecutor: { institutionId: 'Prosecutors Office' },
+        creatingProsecutor: { institutionId: 'Prosecutors Office' },
         sharedWithProsecutorsOfficeId: 'Another Prosecutors Office',
       } as Case
       const user = {
@@ -370,8 +370,8 @@ describe('getCasesQueryFilter', () => {
         },
         {
           [Op.or]: [
-            { prosecutor_id: { [Op.is]: null } },
-            { '$prosecutor.institution_id$': 'Prosecutors Office Id' },
+            { creating_prosecutor_id: { [Op.is]: null } },
+            { '$creating_prosecutor.institution_id$': 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
           ],
         },

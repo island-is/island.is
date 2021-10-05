@@ -404,6 +404,24 @@ export class Case extends Model<Case> {
   caseFilesComments?: string
 
   /**********
+   * The surrogate key of the prosecutor that created the case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ApiProperty()
+  creatingProsecutorId?: string
+
+  /**********
+   * The prosxecutor that created the case
+   **********/
+  @BelongsTo(() => User, 'creatingProsecutorId')
+  @ApiProperty({ type: User })
+  creatingProsecutor?: User
+
+  /**********
    * The surrogate key of the prosecutor assigned to the case
    **********/
   @ForeignKey(() => User)

@@ -56,7 +56,8 @@ const OverviewForm: React.FC<Props> = (props) => {
               {
                 title: 'Embætti',
                 value: `${
-                  workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
+                  workingCase.creatingProsecutor?.institution?.name ??
+                  'Ekki skráð'
                 }`,
               },
               {

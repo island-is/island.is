@@ -80,6 +80,10 @@ export const ExtendCaseMutation = gql`
       prosecutorOnlySessionRequest
       comments
       caseFilesComments
+      creatingProsecutor {
+        name
+        title
+      }
       prosecutor {
         name
         title

@@ -69,18 +69,19 @@ const HearingArrangements = () => {
   useEffect(() => {
     if (userData) {
       setProsecutors(
-        userData?.users
+        userData.users
           .filter(
             (aUser: User) =>
               aUser.role === UserRole.PROSECUTOR &&
-              aUser.institution?.id === user?.institution?.id,
+              aUser.institution?.id ===
+                workingCase?.creatingProsecutor?.institution?.id,
           )
           .map((prosecutor: User) => {
             return { label: prosecutor.name, value: prosecutor.id }
           }),
       )
     }
-  }, [userData, user?.institution?.id])
+  }, [userData, workingCase?.creatingProsecutor?.institution?.id])
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {

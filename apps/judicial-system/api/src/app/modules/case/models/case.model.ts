@@ -126,6 +126,9 @@ export class Case implements TCase {
   readonly caseFilesComments?: string
 
   @Field(() => User, { nullable: true })
+  readonly creatingProsecutor?: User
+
+  @Field(() => User, { nullable: true })
   readonly prosecutor?: User
 
   @Field(() => Institution, { nullable: true })

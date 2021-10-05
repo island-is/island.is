@@ -173,7 +173,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
 
     const isProsecutorWithAccess =
       user?.role === UserRole.PROSECUTOR &&
-      user.institution?.id === workingCase.prosecutor?.institution?.id
+      user.institution?.id === workingCase.creatingProsecutor?.institution?.id
 
     const isCourtRoleWithAccess =
       user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
@@ -279,7 +279,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             {
               title: 'Embætti',
               value: `${
-                workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
+                workingCase.creatingProsecutor?.institution?.name ??
+                'Ekki skráð'
               }`,
             },
             { title: 'Dómstóll', value: workingCase.court?.name },
@@ -440,7 +441,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           )}
       </Box>
       {user?.role === UserRole.PROSECUTOR &&
-        user.institution?.id === workingCase.prosecutor?.institution?.id &&
+        user.institution?.id ===
+          workingCase.creatingProsecutor?.institution?.id &&
         (workingCase.type === CaseType.CUSTODY ||
           workingCase.type === CaseType.TRAVEL_BAN) && (
           <Box marginBottom={9}>

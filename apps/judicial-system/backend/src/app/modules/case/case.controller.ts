@@ -267,9 +267,18 @@ export class CaseController {
       await this.validateAssignedUser(
         caseToUpdate.prosecutorId,
         UserRole.PROSECUTOR,
-        existingCase.prosecutor?.institutionId,
+        existingCase.creatingProsecutor?.institutionId,
       )
+
+      // If the case was created via xRoad, then there is no creating prosecutor
+      if (!existingCase.creatingProsecutor) {
+        caseToUpdate = {
+          ...caseToUpdate,
+          creatingProsecutorId: caseToUpdate.prosecutorId,
+        } as UpdateCaseDto
+      }
     }
+
     if (caseToUpdate.judgeId) {
       await this.validateAssignedUser(
         caseToUpdate.judgeId,
@@ -277,6 +286,7 @@ export class CaseController {
         existingCase.courtId,
       )
     }
+
     if (caseToUpdate.registrarId) {
       await this.validateAssignedUser(
         caseToUpdate.registrarId,

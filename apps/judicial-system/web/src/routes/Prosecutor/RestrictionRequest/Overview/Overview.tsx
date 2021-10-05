@@ -158,7 +158,8 @@ export const Overview: React.FC = () => {
                   {
                     title: 'Embætti',
                     value: `${
-                      workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
+                      workingCase.creatingProsecutor?.institution?.name ??
+                      'Ekki skráð'
                     }`,
                   },
                   {

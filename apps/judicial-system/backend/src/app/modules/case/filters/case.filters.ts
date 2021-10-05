@@ -86,7 +86,7 @@ export function isCaseBlockedFromUser(
   return (
     isStateHiddenFromRole(theCase.state, user.role, user.institution?.type) ||
     isProsecutorsOfficeCaseHiddenFromUser(
-      theCase.prosecutor?.institutionId,
+      theCase.creatingProsecutor?.institutionId,
       user,
       forUpdate,
       theCase.sharedWithProsecutorsOfficeId,
@@ -138,8 +138,8 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     user.role === UserRole.PROSECUTOR
       ? {
           [Op.or]: [
-            { prosecutor_id: { [Op.is]: null } },
-            { '$prosecutor.institution_id$': user.institution?.id },
+            { creating_prosecutor_id: { [Op.is]: null } },
+            { '$creating_prosecutor.institution_id$': user.institution?.id },
             { shared_with_prosecutors_office_id: user.institution?.id },
           ],
         }
