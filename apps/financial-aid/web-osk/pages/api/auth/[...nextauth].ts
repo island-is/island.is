@@ -7,15 +7,16 @@ import {
 } from 'next-auth/_utils'
 import { uuid } from 'uuidv4'
 import {
-  AuthSession,
-  AuthUser,
-  checkExpiry,
-  getSession,
-  handleSignIn,
   identityServerConfig,
-  refreshAccessToken,
   RolesRule,
 } from '@island.is/financial-aid/shared/lib'
+import {
+  AuthUser,
+  signIn as handleSignIn,
+  jwt as handleJwt,
+  session as handleSession,
+  AuthSession,
+} from '@island.is/next-ids-auth'
 
 const providers = [
   Providers.IdentityServer4({
@@ -39,7 +40,7 @@ async function signIn(
   account: GenericObject,
   profile: GenericObject,
 ): Promise<boolean> {
-  return handleSignIn(user, account, profile)
+  return handleSignIn(user, account, profile, identityServerConfig.id)
 }
 
 async function jwt(token: GenericObject, user: AuthUser) {
@@ -55,32 +56,17 @@ async function jwt(token: GenericObject, user: AuthUser) {
       service: RolesRule.OSK,
     }
   }
-
-  if (checkExpiry(token.accessToken, token.isRefreshTokenExpired)) {
-    try {
-      const [accessToken, refreshToken] = await refreshAccessToken(
-        token.refreshToken,
-        process.env.IDENTITY_SERVER_SECRET,
-        process.env.NEXTAUTH_URL,
-        process.env.IDENTITY_SERVER_DOMAIN,
-      )
-      token.accessToken = accessToken
-      token.refreshToken = refreshToken
-    } catch (error) {
-      console.warn('Error refreshing access token.', error)
-      // We don't know the refresh token lifetime, so we use the error response to check if it had expired
-      const errorMessage = error?.response?.data?.error
-      if (errorMessage && errorMessage === 'invalid_grant') {
-        token.isRefreshTokenExpired = true
-      }
-    }
-  }
-
-  return token
+  return await handleJwt(
+    token,
+    identityServerConfig.id,
+    process.env.IDENTITY_SERVER_SECRET,
+    process.env.NEXTAUTH_URL,
+    process.env.IDENTITY_SERVER_DOMAIN,
+  )
 }
 
 async function session(session: AuthSession, user: AuthUser) {
-  return getSession(session, user)
+  return handleSession(session, user)
 }
 
 const options = { providers, callbacks }

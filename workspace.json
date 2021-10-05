@@ -5853,6 +5853,33 @@
         }
       }
     },
+    "next-ids-auth": {
+      "root": "libs/next-ids-auth",
+      "sourceRoot": "libs/next-ids-auth/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/next-ids-auth/tsconfig.lib.json",
+              "libs/next-ids-auth/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/next-ids-auth/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/next-ids-auth/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/next-ids-auth"]
+        }
+      }
+    },
     "nova-sms": {
       "root": "libs/nova-sms",
       "sourceRoot": "libs/nova-sms/src",

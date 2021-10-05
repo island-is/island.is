@@ -332,6 +332,7 @@
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
       "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
+      "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
