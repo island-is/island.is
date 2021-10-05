@@ -5,8 +5,7 @@ const webpack = require('webpack')
 
 /**
  * This file is based on how @nrwl/web does it's env config
- * https://github.com/nrwl/nx/blob/master/packages/web/src/utils/config.ts#L84
- * https://github.com/nrwl/nx/blob/master/packages/web/src/utils/config.ts#L201
+ * https://github.com/nrwl/nx/blob/master/packages/web/src/utils/config.ts
  */
 
 /**

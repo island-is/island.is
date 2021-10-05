@@ -55,11 +55,15 @@ const argv = yargs
 
 // Strip '-e2e' ending to get the target app name
 const target = argv.name.replace('-e2e', '')
+const isReact = argv.type === 'react'
 
 // We run the e2e tests on production built application
+// NOTE: When the repo was upgraded to Nx 12.9.0 with webpack5 there was a unresolved bug for React apps
+// when running e2e on production build with API_MOCKS=true. So for a workaround we don't do production build
+// for React apps (at the time of writing were only service-portal and application-system-form).
 // prettier-ignore
 const CMD = {
-  BUILD: `yarn nx run ${target}:build:production${argv['skip-cache'] ? ' --skip-nx-cache' : ''}`,
+  BUILD: `yarn nx run ${target}:build${isReact ? '' : ':production'}${argv['skip-cache'] ? ' --skip-nx-cache' : ''}`,
   EXTRACT_ENV: `scripts/dockerfile-assets/bash/extract-environment.sh ${argv.dist}`,
   SERVE_NEXT: [ `main.js` ],
   SERVE_REACT: ['scripts/static-serve.js', '-p', argv.port, '-d', argv.dist, '-b', argv['base-path']],
@@ -105,7 +109,7 @@ const serve = () => {
   // Start static-serve
   let child = spawn('node', CMD[`SERVE_${argv.type.toUpperCase()}`], {
     stdio: 'inherit',
-    cwd: `${process.cwd()}/${argv.type === 'next' ? argv.dist : ''}`,
+    cwd: `${process.cwd()}/${!isReact ? argv.dist : ''}`,
   })
   console.log(`Serving target project in a child process: ${child.pid}`)
 

@@ -1849,7 +1849,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n application-system-form-e2e -t react -p 4242 -d dist/apps/application-system/form -c"
+            "command": "yarn e2e-ci -n application-system-form-e2e -t react -p 4242 -d dist/apps/application-system/form -b /umsoknir -c"
           }
         },
         "lint": {
@@ -6402,8 +6402,7 @@
             "styles": ["apps/service-portal/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/service-portal/webpack.config.js",
-            "maxWorkers": 2,
-            "optimization": true
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
