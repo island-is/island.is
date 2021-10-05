@@ -1,4 +1,5 @@
 import { months } from './const'
+import React from 'react'
 
 export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)
