@@ -46,7 +46,7 @@ const RelationshipstatusForm = () => {
   ]
 
   const errorCheck = () => {
-    if (!user?.familyStatus) {
+    if (user?.familyStatus === undefined) {
       setHasError(true)
       return
     }
@@ -54,10 +54,6 @@ const RelationshipstatusForm = () => {
     if (!navigation?.nextUrl) {
       setHasError(true)
       return
-    }
-
-    if (user?.familyStatus === FamilyStatus.UNKNOWN) {
-      router.push(navigation?.nextUrl)
     }
 
     if (user?.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION) {
@@ -73,9 +69,9 @@ const RelationshipstatusForm = () => {
         setHasError(true)
         return
       }
-
-      router.push(navigation?.nextUrl)
     }
+
+    router.push(navigation?.nextUrl)
   }
 
   if (!user) {
