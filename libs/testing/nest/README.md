@@ -1,4 +1,4 @@
-# testing-nest
+# Testing Nest
 
 This library was generated with [Nx](https://nx.dev).
 

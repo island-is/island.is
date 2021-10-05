@@ -1,1 +1,2 @@
-export * from './lib/testing-nest.module'
+export { testServer } from './lib/testServer'
+export * from './lib/hooks'
