@@ -17,4 +17,5 @@ export class EndorsementMetadata {
 
   @ApiProperty()
   voterRegion!: TemporaryVoterRegistryResponse
+
 }

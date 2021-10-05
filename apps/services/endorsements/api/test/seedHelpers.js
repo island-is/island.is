@@ -3,7 +3,7 @@ const today = new Date()
 
 
 module.exports = {
-  getGenericEndorsementList: () => ({
+  getGenericEndorsementList: (tags) => ({
     id: faker.random.uuid(),
     title: faker.lorem.words(2),
     description: faker.lorem.paragraph(1),
@@ -12,7 +12,7 @@ module.exports = {
     admin_lock: false,
     endorsement_meta: '{}', // default empty array in postgres
     endorsement_metadata: '[]', // default empty array in postgres
-    tags: '{}', // default empty array in postgres
+    tags: tags ?? '{}', // default empty array in postgres
     validation_rules: '[]',
     meta: '{}',
     owner: faker.phone.phoneNumber('##########'),

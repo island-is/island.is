@@ -42,7 +42,7 @@ module.exports = {
       // lets add some random lists
       ...Array(30)
         .fill()
-        .map(() => getGenericEndorsementList()),
+        .map(() => getGenericEndorsementList(['generalPetition'])),
     ]
 
     await queryInterface.bulkInsert('endorsement_list', endorsementLists)

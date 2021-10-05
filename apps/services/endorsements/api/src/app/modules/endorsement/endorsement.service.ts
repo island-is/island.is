@@ -27,7 +27,12 @@ interface FindEndorsementInput {
 interface EndorsementInput {
   endorsementList: EndorsementList
   nationalId: string
-  showName?: boolean
+  showName: boolean
+}
+
+interface DeleteEndorsementInput {
+  endorsementList: EndorsementList
+  nationalId: string
 }
 interface EndorsementListsInput {
   endorsementList: EndorsementList
@@ -155,18 +160,22 @@ export class EndorsementService {
       nationalId,
     })
 
+    const meta = this.metadataService.pruneMetadataFields(
+      // apply metadata service pruning logic
+      metadata, // the metadata we have e.g. {fullName: 'Some name', lastName: 'SomeOtherName'}
+      endorsementList.endorsementMetadata.map(({ field }) => field), // the fields we want to keep e.g. ['fullName']
+    )
+
     return {
       endorser: nationalId,
       endorsementListId: endorsementList.id,
       // this removes validation fields fetched by meta service
       meta: {
-        ...this.metadataService.pruneMetadataFields(
-          metadata,
-          endorsementList.endorsementMetadata.map(({ field }) => field),
-        ),
+        ...meta, // add all allowed metadata fields
+        ...(showName ? {} : { fullName: '' }), // if hideName is true overwrite full name field),
         bulkEndorsement: false, // defaults to false we overwrite this value in bulk import
       },
-      showName: showName
+      showName: showName,
     }
   }
 
@@ -231,7 +240,7 @@ export class EndorsementService {
       {
         nationalId: auth.nationalId,
         endorsementList,
-        showName: showName || true
+        showName: showName,
       },
       auth,
     )
@@ -272,7 +281,7 @@ export class EndorsementService {
           {
             nationalId,
             endorsementList,
-            showName: true
+            showName: true,
           },
           auth,
         ).catch((error: Error) => {
@@ -318,7 +327,7 @@ export class EndorsementService {
   async deleteFromListByNationalId({
     nationalId,
     endorsementList,
-  }: EndorsementInput) {
+  }: DeleteEndorsementInput) {
     this.logger.debug(
       `Removing endorsement from list "${endorsementList.id}" by nationalId "${nationalId}"`,
     )
