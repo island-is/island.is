@@ -7,7 +7,6 @@ import {
   Param,
   Put,
   NotFoundException,
-  Query,
   Inject,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
@@ -67,7 +66,7 @@ export class ApplicationController {
     description: 'Checks if user has a current application for this period',
   })
   async getCurrentApplication(
-    @Query('nationalId') nationalId: string,
+    @Param('nationalId') nationalId: string,
   ): Promise<CurrentApplicationModel> {
     this.logger.debug('Application controller: Getting current application')
     const currentApplication = await this.applicationService.getCurrentApplication(

@@ -102,7 +102,7 @@ class BackendAPI extends RESTDataSource {
   }
 
   getCurrentApplication(nationalId: string): Promise<CurrentApplicationModel> {
-    return this.get(`currentApplication/?nationalId=${nationalId}`)
+    return this.get(`currentApplication/${nationalId}`)
   }
 
   getStaff(nationalId: string): Promise<StaffModel> {
