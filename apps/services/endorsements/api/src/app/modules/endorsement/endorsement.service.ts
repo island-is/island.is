@@ -174,8 +174,8 @@ export class EndorsementService {
         ...meta, // add all allowed metadata fields
         ...(showName ? {} : { fullName: '' }), // if hideName is true overwrite full name field),
         bulkEndorsement: false, // defaults to false we overwrite this value in bulk import
+        showName: showName,
       },
-      showName: showName,
     }
   }
 

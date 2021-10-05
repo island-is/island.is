@@ -70,6 +70,7 @@ module.exports = {
           },
           signedTags: [],
           bulkEndorsement: faker.random.boolean(),
+          showName: true,
           voterRegion: {
             voterRegionNumber: faker.phone.phoneNumber('#'),
             voterRegionName: faker.random.word(),

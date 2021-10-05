@@ -50,13 +50,6 @@ export class Endorsement extends Model<Endorsement> {
   @BelongsTo(() => EndorsementList, 'endorsementListId')
   endorsementList?: EndorsementListOpen
 
-  @ApiProperty()
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false
-  })
-  showName!: boolean 
-
   @ApiProperty({ type: EndorsementMetadata })
   @Column({
     type: DataType.JSONB,
