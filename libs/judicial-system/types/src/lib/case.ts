@@ -281,6 +281,16 @@ export interface CreateCourtCase {
   isExtension: boolean
 }
 
+export const restrictionCases = [CaseType.CUSTODY, CaseType.TRAVEL_BAN]
+
+export function isRestrictionCase(type?: CaseType): boolean {
+  return Boolean(type && restrictionCases.includes(type))
+}
+
+export function isInvestigationCase(type?: CaseType): boolean {
+  return Boolean(type && !restrictionCases.includes(type))
+}
+
 export const completedCaseStates = [
   CaseState.ACCEPTED,
   CaseState.REJECTED,

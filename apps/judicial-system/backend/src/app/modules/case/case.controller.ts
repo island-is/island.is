@@ -17,6 +17,7 @@ import {
   UseGuards,
   BadRequestException,
   ParseBoolPipe,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -48,6 +49,7 @@ import { CaseEvent, EventService } from '../event'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
+import { CasesInterceptor } from './interceptors'
 import { CaseService } from './case.service'
 
 // Allows prosecutors to perform any action
@@ -370,6 +372,7 @@ export class CaseController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @UseInterceptors(CasesInterceptor)
   @Get('cases')
   @ApiOkResponse({
     type: Case,
