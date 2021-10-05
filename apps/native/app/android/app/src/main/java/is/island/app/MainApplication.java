@@ -27,6 +27,7 @@ import org.wonday.pdf.RCTPdfView;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.reactnativecommunity.progressview.RNCProgressViewPackage;
 import com.reactnativecommunity.androidprogressbar.RNCProgressBarPackage;
+import cl.json.RNSharePackage;
 
 // unimodules
 import org.unimodules.adapters.react.ModuleRegistryAdapter;
@@ -81,7 +82,7 @@ public class MainApplication extends NavigationApplication {
           packages.add(new RNFetchBlobPackage());
           packages.add(new RNCProgressViewPackage());
           packages.add(new RNCProgressBarPackage());
-
+          packages.add(new RNSharePackage());
 
           // Unimodules
           List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(

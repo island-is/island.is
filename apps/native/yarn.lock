@@ -2680,10 +2680,10 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.3.tgz#7ee330ba7caafb98090bece86a5ee44115904c2c"
   integrity sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
 
-"@types/react-native@*", "@types/react-native@0.65.3":
-  version "0.65.3"
-  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.65.3.tgz#1cc6eb292ab7f4487d3c378ff0be04940fa257b4"
-  integrity sha512-23YX98rFNR43f2rvEV1cQ8VAFSj9ylXPqmzQMotC45hsK/SCNtLwJx1mgZ5jkyqs9TLjspzU0jszr58+Z9seQQ==
+"@types/react-native@*", "@types/react-native@0.65.5":
+  version "0.65.5"
+  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.65.5.tgz#e5e473be8c7ed784419554f25cc8850b9c3ce68d"
+  integrity sha512-lc2JVmqVIkFmEtUHX8jCkuepqRSzlhRPBIlVFVc0hgfoUxvntrORhmK7LCnAbHfmpUqVVGhMjax27CCTACQ2Kw==
   dependencies:
     "@types/react" "*"
 
@@ -3966,10 +3966,10 @@ detox-recorder@1.0.151:
   resolved "https://registry.yarnpkg.com/detox-recorder/-/detox-recorder-1.0.151.tgz#5d59775dc01ea58595c749aade0420c5ba73dd43"
   integrity sha512-a4ZPo7AR5XJJiLy8Xqml8YXxrIz6R7RKfiGmG9u5MBxG2I+w+yGJTj7ZhYDfoi5StpUD+dKHTCdvycZTOQ84Cw==
 
-detox@18.22.0:
-  version "18.22.0"
-  resolved "https://registry.yarnpkg.com/detox/-/detox-18.22.0.tgz#a22ecb3c9d4e140563619bc3d2bb1288796b7d78"
-  integrity sha512-oNkslt2ksyeS6lLBlkWsa3WRdwBed4/U4OK5w6Vv2kBoA2VNQSph8U7ac233kxXbIIcjrC4nmXFPYxBoqpjIeA==
+detox@18.22.1:
+  version "18.22.1"
+  resolved "https://registry.yarnpkg.com/detox/-/detox-18.22.1.tgz#2d9b8f0ea77b8a3ab11b1933dfed53c484abb341"
+  integrity sha512-3EPgATrzwQYp+RLi+1GY67S+kKFmWHVlwN6tmDk8sfFcDomq9MawcwkqlfpFktUWPrCRXKFDQAtYW4NNWcKHxQ==
   dependencies:
     bunyan "^1.8.12"
     bunyan-debug-stream "^1.1.0"
@@ -4302,10 +4302,10 @@ expo-barcode-scanner@10.2.2:
     "@expo/config-plugins" "^3.0.0"
     expo-modules-core "~0.2.0"
 
-expo-constants@11.0.1, expo-constants@~11.0.2:
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-11.0.1.tgz#8a33d9702d03289ab68d6de2bbeb2bbc9654734c"
-  integrity sha512-yolJSfsNAVmuNDc+NNxBzUKbZRXPM35edoMpv8xdmRBMpOWkRmTdpBIFAYAKCtrGruw2tkIQhnLmCD2aDycvTg==
+expo-constants@11.0.1, expo-constants@11.0.2, expo-constants@~11.0.2:
+  version "11.0.2"
+  resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-11.0.2.tgz#069930145908fef7d76bf72a1a874a1d4621af82"
+  integrity sha512-CVjM+FbOMe/nFOSly5lnj0seMAYsjjc6+q3X8nIXG+gtw9iNBLwMX3Fz308rxiaPRJw+TBdd5/mcGJdNfoS+ew==
   dependencies:
     "@expo/config" "^4.0.0"
     expo-modules-core "~0.2.0"
@@ -4971,11 +4971,6 @@ hoist-non-react-statics@3.3.2, hoist-non-react-statics@3.x.x, hoist-non-react-st
   integrity sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==
   dependencies:
     react-is "^16.7.0"
-
-hoist-non-react-statics@^2.5.5:
-  version "2.5.5"
-  resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz#c5903cf409c0dfd908f388e619d86b9c1174cb47"
-  integrity sha512-rqcy4pJo55FTTLWt+bU8ukscqHeE/e9KWvsOW2b/a3afxQZhwkQdT1rPPCJ0rYXdj4vNcasY8zHTH+jF/qStxw==
 
 html-encoding-sniffer@^2.0.1:
   version "2.0.1"
@@ -6109,11 +6104,6 @@ lodash.isboolean@^3.0.3:
   resolved "https://registry.yarnpkg.com/lodash.isboolean/-/lodash.isboolean-3.0.3.tgz#6c2e171db2a257cd96802fd43b01b20d5f5870f6"
   integrity sha1-bC4XHbKiV82WgC/UOwGyDV9YcPY=
 
-lodash.isfunction@^3.0.9:
-  version "3.0.9"
-  resolved "https://registry.yarnpkg.com/lodash.isfunction/-/lodash.isfunction-3.0.9.tgz#06de25df4db327ac931981d1bdb067e5af68d051"
-  integrity sha512-AirXNj15uRIMMPihnkInB4i3NHeb4iBtNg9WRWuK2o31S+ePwwNmDPaTL3o7dTJ+VXNZim7rFs4rxN4YU1oUJw==
-
 lodash.isinteger@^4.0.4:
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/lodash.isinteger/-/lodash.isinteger-4.0.4.tgz#619c0af3d03f8b04c31f5882840b77b11cd68343"
@@ -6123,11 +6113,6 @@ lodash.isnumber@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz#3ce76810c5928d03352301ac287317f11c0b1ffc"
   integrity sha1-POdoEMWSjQM1IwGsKHMX8RwLH/w=
-
-lodash.isobjectlike@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/lodash.isobjectlike/-/lodash.isobjectlike-4.0.0.tgz#742c5fc65add27924d3d24191681aa9a17b2b60d"
-  integrity sha1-dCxfxlrdJ5JNPSQZFoGqmheytg0=
 
 lodash.isplainobject@^4.0.6:
   version "4.0.6"
@@ -6363,19 +6348,6 @@ mkdirp@^0.5.1, mkdirp@^0.5.5, mkdirp@~0.5.1:
   integrity sha512-NKmAlESf6jMGym1++R0Ra7wvhV+wFW63FaSOFPwRahvea0gMUcGUhVeAg/0BC0wiv9ih5NYPB1Wn1UEI1/L+xQ==
   dependencies:
     minimist "^1.2.5"
-
-mobx-react@^5.2.3:
-  version "5.4.4"
-  resolved "https://registry.yarnpkg.com/mobx-react/-/mobx-react-5.4.4.tgz#b3de9c6eabcd0ed8a40036888cb0221ab9568b80"
-  integrity sha512-2mTzpyEjVB/RGk2i6KbcmP4HWcAUFox5ZRCrGvSyz49w20I4C4qql63grPpYrS9E9GKwgydBHQlA4y665LuRCQ==
-  dependencies:
-    hoist-non-react-statics "^3.0.0"
-    react-lifecycles-compat "^3.0.2"
-
-"mobx@4.0.0 - 4.3.1":
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/mobx/-/mobx-4.3.1.tgz#334e5aab4916b1d43f0faf3605a64b1b4b3ccb8d"
-  integrity sha1-M05aq0kWsdQ/D682BaZLG0s8y40=
 
 moment@^2.19.3:
   version "2.29.1"
@@ -7182,11 +7154,6 @@ react-lifecycles-compat@2.0.0:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-2.0.0.tgz#71d9c4cde47114c4102454f76da055c2bc48c948"
   integrity sha512-txfpPCQYiazVdcbMRhatqWKcAxJweUu2wDXvts5/7Wyp6+Y9cHojqXHsLPEckzutfHlxZhG8Oiundbmp8Fd6eQ==
 
-react-lifecycles-compat@^3.0.2:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
-  integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
-
 react-native-app-auth@6.4.0:
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/react-native-app-auth/-/react-native-app-auth-6.4.0.tgz#a392a9370983954a49c079515e3116e6699ab868"
@@ -7239,10 +7206,10 @@ react-native-dialogs@1.1.1:
   resolved "https://registry.yarnpkg.com/react-native-dialogs/-/react-native-dialogs-1.1.1.tgz#db68fee6f6f654a2ae6fd45d5a75fc23118e4b96"
   integrity sha512-JduVYRXvLTT4k4VfXuKt3HF2/fixsR1EDXkvNf8fJwxKZUs2kzs1E0EtgiAx4IgYMTOewLPVtzTVfiv0GWeHuA==
 
-react-native-flipper@0.104.0:
-  version "0.104.0"
-  resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.104.0.tgz#f380a6b1c17f3d30dcefcb7767735beec16ede76"
-  integrity sha512-zzW2HiD9I9KTW+g+nIull2qkVVj0ivIYMRes38E1r+syOKIrzV1BNKlA9glX1x31gcQFmFCv/ibDv61KnC6Q2A==
+react-native-flipper@0.113.0:
+  version "0.113.0"
+  resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.113.0.tgz#1fb1b7678d014bf78f0e4fb9a3a9e7a153dd4c74"
+  integrity sha512-WHliie4qnx97K86wsBStqFFw5jxMNHOZJSugETYPv9fp+5Ne5PQ5QV2qRE4BX17/VrNz6BdeeW/9WVImV6CZMA==
 
 react-native-interactable@2.0.1:
   version "2.0.1"
@@ -7266,16 +7233,15 @@ react-native-navigation-hooks@6.3.0:
   dependencies:
     hoist-non-react-statics "3.3.2"
 
-react-native-navigation@7.19.1:
-  version "7.19.1"
-  resolved "https://registry.yarnpkg.com/react-native-navigation/-/react-native-navigation-7.19.1.tgz#169e5ca257c89c9402bd53e6e50b4fdf892fc3fd"
-  integrity sha512-o2BtbibceeQb+OjIy0SH9Q3cgvj4MNeZWvLdZDg4r5eS3m/HmWPis84YWZ9M1sSuBtp6aXCGj6OKd0tqDI1Q4w==
+react-native-navigation@7.22.1:
+  version "7.22.1"
+  resolved "https://registry.yarnpkg.com/react-native-navigation/-/react-native-navigation-7.22.1.tgz#5896467b7d9db2b500a6cc52e16c189b83f17190"
+  integrity sha512-8zLDJ/w+bvFxMCih3DMi15vBE9IRnkrQi86l+/oPT9WTm4GLecZ99FXHj06IQbeAq/HVczeTydwEklILZPtfoA==
   dependencies:
     hoist-non-react-statics "3.x.x"
     lodash "4.17.x"
     prop-types "15.x.x"
     react-lifecycles-compat "2.0.0"
-    remx "3.x.x"
     tslib "1.9.3"
 
 react-native-passkit-wallet@0.1.4:
@@ -7306,15 +7272,20 @@ react-native-randombytes@3.6.1, react-native-randombytes@^3.5.1:
     buffer "^4.9.1"
     sjcl "^1.0.3"
 
+react-native-share@7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-7.1.1.tgz#99cbba83e2940d6a2ec442c35ecbdbd34dfcbc2f"
+  integrity sha512-pdIr+OUmCP5+t0HHSTy5opbBle+dE7Qw98U8ixSaIGoeQbkyP7vnCDpngxQoOHJ4IdcrbGgSAx+m0OAvvACzXg==
+
 react-native-spotlight-search@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/react-native-spotlight-search/-/react-native-spotlight-search-2.0.0.tgz#91acc119247fdf9382e5b3833f762fb53a0d47b4"
   integrity sha512-/afRQg6jrZ4w839U0ymOiHab4WPu+pIHe34BVOD153U/NQ0certtWLF9RgwtFDNCYn960mux5Xno0vVylPhPGg==
 
-react-native-ultimate-config@3.4.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/react-native-ultimate-config/-/react-native-ultimate-config-3.4.1.tgz#775de4076e062c1977352a69fab4538babc88a1a"
-  integrity sha512-UaRdM5k9blDMf/gQ30zApjoolWI7hkpGqsOV1ppi4dt+WE9oqYgJaXF/GzB+vjsovOR+UC/DZEJRlh5mPayaLQ==
+react-native-ultimate-config@3.4.2:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-ultimate-config/-/react-native-ultimate-config-3.4.2.tgz#9494f6462e23cf350a886ec74a86610e6adae6ba"
+  integrity sha512-c7VFhiHqg7OqYqRhijXcahgEJ+2kBlGkXsm85+Zx9IqsVKQ4iJSyy6DuQTeeXh0jcFFlIhHKjfL5Q3cA7vPTNA==
   dependencies:
     dotenv "^8"
     handlebars "^4.7.7"
@@ -7430,18 +7401,6 @@ regjsparser@^0.6.4:
   integrity sha512-3weFrFQREJhJ2PW+iCGaG6TenyzNSZgsBKZ/oEf6Trme31COSeIWhHw9O6FPkuXktfx+b6Hf/5e6dKPHaROq2g==
   dependencies:
     jsesc "~0.5.0"
-
-remx@3.x.x:
-  version "3.0.611"
-  resolved "https://registry.yarnpkg.com/remx/-/remx-3.0.611.tgz#51e84c75601ec6e7aff7e24b3210fb787803bc05"
-  integrity sha512-CIVaNrwIkKRpmYFnA/OOI49T8OBN6NIHUOzefK3G3VEb4mvu3EblMqeBUbnAuY17KahYEE8xtsBR5pxcWBps6Q==
-  dependencies:
-    hoist-non-react-statics "^2.5.5"
-    lodash.isfunction "^3.0.9"
-    lodash.isobjectlike "^4.0.0"
-    mobx "4.0.0 - 4.3.1"
-    mobx-react "^5.2.3"
-    snyk "^1.192.3"
 
 require-directory@^2.1.1:
   version "2.1.1"
@@ -7771,11 +7730,6 @@ snakeize@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/snakeize/-/snakeize-0.1.0.tgz#10c088d8b58eb076b3229bb5a04e232ce126422d"
   integrity sha1-EMCI2LWOsHazIpu1oE4jLOEmQi0=
-
-snyk@^1.192.3:
-  version "1.696.0"
-  resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.696.0.tgz#096998efd8be757a6093ac354ccc1628db2c4373"
-  integrity sha512-0ZTIc2RAfh6dD+KCegJe65AIzEpm6RBIvbPcnQXmGe/lf1GsmwxWO8GALvWnAmDPNHIBSdjq+a6ijF5VoxdKAA==
 
 socks-proxy-agent@5, socks-proxy-agent@^5.0.0:
   version "5.0.0"

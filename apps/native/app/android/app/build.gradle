@@ -225,6 +225,7 @@ dependencies {
     implementation project(':rn-fetch-blob')
     implementation project(':progress-bar-android')
     implementation project(':progress-view')
+    implementation project(':react-native-share')
     implementation project(':@react-native-firebase_app')
     implementation project(':@react-native-firebase_messaging')
     implementation project(':@react-native-firebase_perf')

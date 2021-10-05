@@ -47,8 +47,7 @@ target 'IslandApp' do
   pod 'react-native-pdf', path: '../../node_modules/react-native-pdf'
   pod 'rn-fetch-blob', path: '../../node_modules/rn-fetch-blob'
   pod 'react-native-progress-view', path: '../../node_modules/@react-native-community/progress-view'
-
-
+  pod 'RNShare', path: '../../node_modules/react-native-share'
 
   use_flipper!({
     'Flipper' => '0.92.0',
