@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import type { Case, Institution } from '@island.is/judicial-system/types'
+import type { Case, Institution, User } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   FormContentContainer,
@@ -23,6 +23,7 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  user: User
   prosecutors: ReactSelectOption[]
   courts: Institution[]
   isLoading: boolean
@@ -33,6 +34,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
   const {
     workingCase,
     setWorkingCase,
+    user,
     prosecutors,
     courts,
     isLoading,
@@ -90,6 +92,10 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
                 tooltip={formatMessage(
                   m.sections.prosecutor.heightenSecurityLevelInfo,
                 )}
+                disabled={
+                  user.id !== workingCase.creatingProsecutor?.id &&
+                  user.id !== workingCase.prosecutor?.id
+                }
                 checked={workingCase.isHeightenedSecurityLevel}
                 onChange={(event) => setAndSendToServer(event.target)}
                 large

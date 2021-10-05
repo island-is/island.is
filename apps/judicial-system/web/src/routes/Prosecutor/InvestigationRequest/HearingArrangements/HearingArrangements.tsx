@@ -125,11 +125,12 @@ const HearingArrangements = () => {
       caseType={workingCase?.type}
       caseId={workingCase?.id}
     >
-      {workingCase && prosecutors && courts && (
+      {workingCase && user && prosecutors && courts && (
         <>
           <HearingArrangementsForms
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            user={user}
             prosecutors={prosecutors}
             courts={courts}
             isLoading={loading || isTransitioningCase}
