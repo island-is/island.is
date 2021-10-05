@@ -19,11 +19,10 @@ import {
   isEmailValid,
   NavigationProps,
   Spouse,
-  User,
 } from '@island.is/financial-aid/shared/lib'
-import { FormContext } from '../../../components/FormProvider/FormProvider'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
-const RelationshipstatusForm = () => {
+const RelationshipStatusForm = () => {
   const router = useRouter()
 
   const { form, updateForm } = useContext(FormContext)
@@ -58,12 +57,7 @@ const RelationshipstatusForm = () => {
   }
 
   const errorCheck = () => {
-    if (form?.familyStatus === undefined) {
-      setHasError(true)
-      return
-    }
-
-    if (!navigation?.nextUrl) {
+    if (form?.familyStatus === undefined || !navigation?.nextUrl) {
       setHasError(true)
       return
     }
@@ -146,4 +140,4 @@ const RelationshipstatusForm = () => {
   )
 }
 
-export default RelationshipstatusForm
+export default RelationshipStatusForm

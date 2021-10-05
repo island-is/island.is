@@ -1,3 +1,3 @@
-import RelationshipstatusForm from '@island.is/financial-aid-web/osk/src/routes/application/RelationshipstatusForm/RelationshipstatusForm'
+import RelationshipStatusForm from '@island.is/financial-aid-web/osk/src/routes/application/RelationshipStatusForm/relationshipStatusForm'
 
-export default RelationshipstatusForm
+export default RelationshipStatusForm

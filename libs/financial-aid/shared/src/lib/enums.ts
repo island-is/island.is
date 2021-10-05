@@ -68,5 +68,5 @@ export enum FamilyStatus {
   UNREGISTERED_COBAHITATION = 'UnregisteredCohabitation',
   MARRIED = 'Married',
   MARRIED_NOT_LIVING_TOGETHER = 'MarriedNotLivingTogether',
-  NOTINFORMED = 'NotInformed',
+  NOT_INFORMED = 'NotInformed',
 }
