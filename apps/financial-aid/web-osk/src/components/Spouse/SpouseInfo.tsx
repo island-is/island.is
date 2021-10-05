@@ -34,7 +34,10 @@ const SpouseInfo = ({
           name="nationalIdSpouse"
           placeholder="Sláðu inn kennitölu maka"
           backgroundColor="blue"
-          hasError={hasError && !user?.spouse?.nationalId}
+          hasError={
+            (hasError && !user?.spouse?.nationalId) ||
+            (hasError && user?.spouse?.nationalId?.length !== 10)
+          }
           value={user?.spouse?.nationalId}
           maxLength={10}
           onChange={(event) => {
