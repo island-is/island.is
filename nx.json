@@ -686,6 +686,9 @@
     "system-e2e": {
       "tags": []
     },
+    "testing-nest": {
+      "tags": []
+    },
     "web": {
       "tags": []
     },

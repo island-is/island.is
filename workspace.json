@@ -8783,6 +8783,27 @@
           }
         }
       }
+    },
+    "testing-nest": {
+      "root": "libs/testing/nest",
+      "sourceRoot": "libs/testing/nest/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/testing/nest/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/testing/nest"],
+          "options": {
+            "jestConfig": "libs/testing/nest/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }
