@@ -12,7 +12,7 @@ interface Props {
   hasError: boolean
   acceptData: boolean
   setAcceptData: (event: React.ChangeEvent<HTMLInputElement>) => void
-  removeError: React.Dispatch<React.SetStateAction<boolean>>
+  removeError: () => void
 }
 
 const SpouseInfo = ({
@@ -45,7 +45,7 @@ const SpouseInfo = ({
                 nationalId: sanitizeNationalId(event.target.value),
               },
             })
-            removeError(hasError)
+            removeError()
 
             focusOnNextInput(event, 'email')
           }}
@@ -66,7 +66,7 @@ const SpouseInfo = ({
           type="email"
           value={user?.spouse?.email}
           onChange={(event) => {
-            removeError(hasError)
+            removeError()
             setUser({
               ...user,
               spouse: {

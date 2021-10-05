@@ -61,9 +61,8 @@ const EmailForm = () => {
             type="email"
             value={form?.emailAddress}
             onChange={(event) => {
-              if (hasError) {
-                setHasError(false)
-              }
+              setHasError(false)
+
               updateForm({ ...form, emailAddress: event.target.value })
             }}
             backgroundColor="blue"

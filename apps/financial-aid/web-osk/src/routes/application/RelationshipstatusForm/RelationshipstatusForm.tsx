@@ -104,9 +104,7 @@ const RelationshipstatusForm = () => {
           onChange={(value: FamilyStatus) => {
             setUser({ ...user, familyStatus: value })
 
-            if (hasError) {
-              setHasError(false)
-            }
+            setHasError(false)
           }}
         />
 
@@ -121,16 +119,10 @@ const RelationshipstatusForm = () => {
             hasError={hasError}
             acceptData={acceptData}
             setAcceptData={(event: React.ChangeEvent<HTMLInputElement>) => {
-              if (hasError) {
-                setHasError(false)
-              }
+              setHasError(false)
               setAcceptData(event.target.checked)
             }}
-            removeError={(errState) => {
-              if (errState) {
-                setHasError(false)
-              }
-            }}
+            removeError={() => setHasError(false)}
           />
         </div>
 

@@ -80,9 +80,8 @@ const HomeCircumstancesForm = () => {
           }}
           onChange={(value: HomeCircumstances) => {
             updateForm({ ...form, homeCircumstances: value })
-            if (hasError) {
-              setHasError(false)
-            }
+
+            setHasError(false)
           }}
         />
 
