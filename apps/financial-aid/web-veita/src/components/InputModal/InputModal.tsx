@@ -32,6 +32,8 @@ const InputModal = ({ onShowInputChange, type, onSaveState }: Props) => {
         return 'Synja'
       case ApplicationState.APPROVED:
         return 'Samþykkja'
+      case ApplicationState.DATANEEDED:
+        return 'Senda á umsækjanda'
     }
   }
 
@@ -46,6 +48,10 @@ const InputModal = ({ onShowInputChange, type, onSaveState }: Props) => {
       )}
 
       {type === ApplicationState.REJECTED && (
+        <CommentInput placeholder="Skrifaðu athugasemd" onUpdate={setComment} />
+      )}
+
+      {type === ApplicationState.DATANEEDED && (
         <CommentInput placeholder="Skrifaðu athugasemd" onUpdate={setComment} />
       )}
 

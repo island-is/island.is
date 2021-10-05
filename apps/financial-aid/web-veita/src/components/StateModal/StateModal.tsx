@@ -68,14 +68,31 @@ const StateModal = ({
     }
   }
 
+  const stateNeedInput = [
+    {
+      state: ApplicationState.REJECTED,
+      modalHeader: 'Synja umsókn',
+      submitButtonText: 'Synja',
+    },
+    {
+      state: ApplicationState.APPROVED,
+      modalHeader: 'Samþykkja umsókn',
+      submitButtonText: 'Samþykkja',
+    },
+    {
+      state: ApplicationState.DATANEEDED,
+      modalHeader: 'Vantar gögn',
+      submitButtonText: 'Senda á umsækjanda',
+    },
+  ]
+
   const headingText = (inputType: InputType): string => {
     if (inputType.show) {
-      switch (inputType.type) {
-        case ApplicationState.REJECTED:
-          return 'Synja umsókn'
-        case ApplicationState.APPROVED:
-          return 'Samþykkja umsókn'
-      }
+      const header = stateNeedInput.find(
+        (item) => inputType.type === item.state,
+      )?.modalHeader
+
+      return header ?? ''
     }
     return 'Stöðubreyting'
   }
@@ -123,7 +140,8 @@ const StateModal = ({
                 e.stopPropagation()
                 if (
                   stateOption === ApplicationState.APPROVED ||
-                  stateOption === ApplicationState.REJECTED
+                  stateOption === ApplicationState.REJECTED ||
+                  stateOption === ApplicationState.DATANEEDED
                 ) {
                   setInputType({
                     show: !inputType.show,
@@ -134,7 +152,6 @@ const StateModal = ({
                 }
               }}
             />
-
             <InputModal
               onShowInputChange={(e) => {
                 e.stopPropagation()

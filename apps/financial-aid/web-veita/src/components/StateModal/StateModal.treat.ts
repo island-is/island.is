@@ -1,6 +1,5 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
-import { borderColor } from 'libs/island-ui/core/src/lib/Box/useBoxStyles.treat'
 
 export const modalBase = style({
   height: '100%',
