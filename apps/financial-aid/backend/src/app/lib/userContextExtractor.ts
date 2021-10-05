@@ -9,10 +9,7 @@ import { GqlExecutionContext } from '@nestjs/graphql'
 export const getUserFromContext = (
   context: ExecutionContext & { contextType?: string },
 ): User => {
-  const req =
-    context.contextType === 'graphql'
-      ? GqlExecutionContext.create(context).getContext().req
-      : context.switchToHttp().getRequest()
+  const req = context.switchToHttp().getRequest()
 
   const sessionToken = req.cookies
     ? req.cookies[IDENTITY_SERVER_SESSION_TOKEN_COOKIE_NAME]

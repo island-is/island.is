@@ -4,12 +4,8 @@ import {
   User,
 } from '@island.is/financial-aid/shared/lib'
 
-import {
-  createParamDecorator,
-  ExecutionContext,
-  UnauthorizedException,
-} from '@nestjs/common'
-
+import { createParamDecorator, ExecutionContext } from '@nestjs/common'
+import { AuthenticationError } from 'apollo-server-express'
 import { GqlExecutionContext } from '@nestjs/graphql'
 
 export const CurrentUser = createParamDecorator(
@@ -21,7 +17,7 @@ export const CurrentUser = createParamDecorator(
       : null
 
     if (!sessionToken) {
-      throw new UnauthorizedException('Invalid user')
+      throw new AuthenticationError('Invalid user')
     }
 
     const decodedToken = decodeToken(sessionToken)

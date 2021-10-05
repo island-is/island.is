@@ -9,7 +9,6 @@ import {
   AuthSession,
   AuthUser,
   checkExpiry,
-  decodeToken,
   getSession,
   handleSignIn,
   identityServerConfig,
