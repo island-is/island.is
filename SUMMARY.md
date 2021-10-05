@@ -197,6 +197,7 @@
 - [Localization](libs/localization/README.md)
 - [Nest Modules](libs/nest/README.md)
   - [Audit Module](libs/nest/audit/README.md)
+  - [Pagination Module](libs/nest/pagination/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)
 - [Plausible](libs/plausible/README.md)
 - [Regulations](libs/regulations/README.md)
