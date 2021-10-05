@@ -34,17 +34,21 @@ describe('Env variable', () => {
   })
 
   it('Should not allow to collision of secrets and env variables', () => {
-    const sut = service('api').env({
-      A: 'B',
-    }).secrets({
-      A: 'somesecret'
-    })
+    const sut = service('api')
+      .env({
+        A: 'B',
+      })
+      .secrets({
+        A: 'somesecret',
+      })
     const serviceDef = serializeService(
       sut,
       new UberChart(Staging),
     ) as SerializeErrors
-    
-    expect(serviceDef.errors).toStrictEqual(['Collisions for environment or secrets for key A'])
+
+    expect(serviceDef.errors).toStrictEqual([
+      'Collisions for environment or secrets for key A',
+    ])
   })
 
   it('Should not allow collision of secrets and env variables in init containers', () => {
@@ -53,15 +57,17 @@ describe('Env variable', () => {
         A: 'B',
       },
       secrets: {
-        A: 'somesecret'
+        A: 'somesecret',
       },
-      containers: [{command: 'go'}]
+      containers: [{ command: 'go' }],
     })
     const serviceDef = serializeService(
       sut,
       new UberChart(Staging),
     ) as SerializeErrors
-    
-    expect(serviceDef.errors).toStrictEqual(['Collisions for environment or secrets for key A'])
+
+    expect(serviceDef.errors).toStrictEqual([
+      'Collisions for environment or secrets for key A',
+    ])
   })
 })
