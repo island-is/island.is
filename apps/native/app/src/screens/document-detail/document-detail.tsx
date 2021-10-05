@@ -47,6 +47,11 @@ const Border = styled.View`
   }))};
 `
 
+const PdfWrapper = styled.View`
+  flex: 1;
+  background-color: ${dynamicColor('background')};
+`
+
 const {
   useNavigationOptions,
   getNavigationOptions,
@@ -103,6 +108,10 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   const [visible, setVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const [pdfUrl, setPdfUrl] = useState('')
+  const hasPdf = Document.fileType! === 'pdf'
+
+  console.log(pdfUrl, 'pdf url', hasPdf)
 
   useNavigationButtonPress(
     (e) => {
@@ -112,7 +121,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       Share.share(
         {
           title: Document.subject,
-          url: `data:application/pdf;base64,${Document?.content!}`,
+          url: hasPdf ? `file://${pdfUrl}` : Document.url!,
         },
         {
           subject: Document.subject,
@@ -166,7 +175,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, [loaded])
 
-  const hasContent = Document.content !== ''
+
+
   return (
     <>
       <Host>
@@ -192,25 +202,27 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               opacity: fadeAnim,
             }}
           >
-            {hasContent ? (
-              <Pdf
-                source={{
-                  uri: Document.url!,
-                  headers: {
-                    'content-type': 'application/x-www-form-urlencoded',
-                  },
-                  body: `documentId=${Document.id}&__accessToken=${accessToken}`,
-                  method: 'POST',
-                }}
-                onLoadComplete={() => {
-                  setLoaded(true)
-                }}
-                style={{
-                  flex: 1,
-                  height: Dimensions.get('window').height,
-                  width: Dimensions.get('window').width,
-                }}
-              />
+            {hasPdf ? (
+              <PdfWrapper>
+                <Pdf
+                  source={{
+                    uri: Document.url!,
+                    headers: {
+                      'content-type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `documentId=${Document.id}&__accessToken=${accessToken}`,
+                    method: 'POST',
+                  }}
+                  onLoadComplete={(numberOfPages,filePath) => {
+                    setPdfUrl(filePath)
+                    setLoaded(true)
+                  }}
+                  style={{
+                    flex: 1,
+                    backgroundColor: 'transparent',
+                  }}
+                />
+              </PdfWrapper>
             ) : (
               <WebView
                 source={{ uri: Document.url! }}
