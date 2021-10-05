@@ -7,7 +7,7 @@ if (process.env.NODE_ENV === 'production') {
 const prodConfig = {
   production: true,
   identityServerAuth: {
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',
+    issuer: process.env.IDENTITYSERVER_DOMAIN ?? '',
     audience: '@samband.is',
   },
   backend: {
