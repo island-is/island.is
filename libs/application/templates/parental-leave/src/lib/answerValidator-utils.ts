@@ -218,7 +218,7 @@ export const validatePeriod = (
       return buildError('ratio', errorMessages.periodsRatioExceedsMaximum)
     }
 
-    if (ratioValue < minimumRatio * 10) {
+    if (ratioValue < minimumRatio * 100) {
       return buildError('ratio', errorMessages.periodsRatioBelowMinimum)
     }
   }
