@@ -409,7 +409,7 @@ export class Case extends Model<Case> {
   @ForeignKey(() => User)
   @Column({
     type: DataType.UUID,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty()
   creatingProsecutorId?: string

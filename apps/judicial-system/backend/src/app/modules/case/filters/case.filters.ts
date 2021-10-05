@@ -139,7 +139,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
       ? {
           [Op.or]: [
             { creating_prosecutor_id: { [Op.is]: null } },
-            { '$creating_prosecutor.institution_id$': user.institution?.id },
+            { '$creatingProsecutor.institution_id$': user.institution?.id },
             { shared_with_prosecutors_office_id: user.institution?.id },
           ],
         }

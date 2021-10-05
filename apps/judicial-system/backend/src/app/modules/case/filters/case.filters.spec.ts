@@ -371,7 +371,7 @@ describe('getCasesQueryFilter', () => {
         {
           [Op.or]: [
             { creating_prosecutor_id: { [Op.is]: null } },
-            { '$creating_prosecutor.institution_id$': 'Prosecutors Office Id' },
+            { '$creatingProsecutor.institution_id$': 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
           ],
         },
