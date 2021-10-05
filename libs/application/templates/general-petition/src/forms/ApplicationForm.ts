@@ -28,7 +28,7 @@ export const PetitionApplicationForm: Form = buildForm({
           id: 'approveTermsAndConditions',
           title: m.externalDataSection.title,
           subTitle: m.externalDataSection.subtitle,
-          description: m.externalDataSection.dmrSubtitle,
+          description: m.externalDataSection.termsAndConditions,
           checkboxLabel: m.externalDataSection.agree,
           dataProviders: [
             buildDataProviderItem({

@@ -3,7 +3,7 @@ import { defineMessages, MessageDescriptor } from 'react-intl'
 type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
 export const m: MessageDir = {
-  // Messages shared across party letter application
+  // Messages shared across General Petition application
   externalDataSection: defineMessages({
     title: {
       id: 'gpt.application:terms.title',
@@ -15,36 +15,11 @@ export const m: MessageDir = {
       defaultMessage: 'Eftirfarandi gildir um söfnun meðmæla',
       description: 'External data subtitle',
     },
-    dmrTitle: {
-      id: 'gpt.application:dmr.title',
-      defaultMessage: 'Dómsmálaráðuneyti',
-      description: 'External data DRM title',
-    },
-    dmrSubtitle: {
+    termsAndConditions: {
       id: 'gpt.application:dmr.subtitle',
       defaultMessage:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vestibulum auctor ipsum. Sed at erat odio. In consectetur sem bibendum augue gravida consectetur. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aliquam fringilla sem a quam pellentesque, eu condimentum augue vestibulum. Integer porttitor ante nec tellus accumsan, vel cursus velit commodo. Cras pellentesque lacus non est interdum volutpat.',
       description: 'External data DRM subtitle',
-    },
-    nationalRegistryTitle: {
-      id: 'gpt.application:nationalRegistry.title',
-      defaultMessage: 'Persónupplýsingar úr Þjóðskrá',
-      description: 'External data national registry title',
-    },
-    nationalRegistrySubtitle: {
-      id: 'gpt.application:nationalRegistry.subtitle',
-      defaultMessage: 'Nafn og kennitala.',
-      description: 'External data national registry subtitle',
-    },
-    islandTitle: {
-      id: 'gpt.application:island.title',
-      defaultMessage: 'Fyrirtækjaskrá',
-      description: 'Grunnupplýsingar úr fyrirtækjaskrá eru sóttar',
-    },
-    islandSubtitle: {
-      id: 'gpt.application:island.subtitle',
-      defaultMessage: 'Nafn fyrirtækis og kennitala.',
-      description: 'External data island.is subtitle',
     },
     agree: {
       id: 'gpt.application:terms.checkbox',
@@ -86,35 +61,6 @@ export const m: MessageDir = {
       description: 'Searchbar placeholder',
     },
   }),
-  endorsementTable: defineMessages({
-    thDate: {
-      id: 'gpt.application:endorsementTable.th.date',
-      defaultMessage: 'Dags skráð',
-      description: 'Table header date',
-    },
-    thName: {
-      id: 'gpt.application:endorsementTable.th.name',
-      defaultMessage: 'Nafn',
-      description: 'Table header name',
-    },
-    thNationalNumber: {
-      id: 'gpt.application:endorsementTable.th.nationalnumber',
-      defaultMessage: 'Kennitala',
-      description: 'Table header national number',
-    },
-    thAddress: {
-      id: 'gpt.application:endorsementTable.th.address',
-      defaultMessage: 'Heimilisfang',
-      description: 'Table header address',
-    },
-  }),
-  selectNationalId: defineMessages({
-    title: {
-      id: 'gpt.application:select.national.id.title',
-      defaultMessage: 'Veldu umsækjenda',
-      description: 'Select national id title',
-    },
-  }),
   email: defineMessages({
     title: {
       id: 'gpt.application:email.title',
@@ -130,26 +76,6 @@ export const m: MessageDir = {
       id: 'gpt.application:email.subtitle',
       defaultMessage: '',
       description: 'Overview subtitle',
-    },
-    email: {
-      id: 'gpt.application:email.review.email',
-      defaultMessage: 'Netfang',
-      description: 'Registered email for party letter',
-    },
-    emailRepeated: {
-      id: 'gpt.application:email.review.emailRepeated',
-      defaultMessage: 'Netfang endurtekið',
-      description: 'Registered email for party letter',
-    },
-    confirmationCode: {
-      id: 'gpt.application:email.review.confirmationCode',
-      defaultMessage: 'Sláðu inn staðfestingarkóða',
-      description: 'Confirmation code',
-    },
-    confirmationCodeDescription: {
-      id: 'gpt.application:email.review.confirmationCodeDescription',
-      defaultMessage: 'Staðfestingarkóði sendur á netfangið þitt',
-      description: 'Confirmation code description',
     },
   }),
   information: defineMessages({
@@ -167,11 +93,6 @@ export const m: MessageDir = {
       id: 'gpt.application:information.listName',
       defaultMessage: 'Heiti meðmælendalista',
       description: 'List name',
-    },
-    slogan: {
-      id: 'gpt.application:information.slogan',
-      defaultMessage: 'Slagorð',
-      description: 'Slogan',
     },
     aboutList: {
       id: 'gpt.application:information.aboutList',
@@ -247,11 +168,6 @@ export const m: MessageDir = {
       id: 'gpt.application:overview.listPeriod',
       defaultMessage: 'Tímabil lista',
       description: 'List period',
-    },
-    listOnPaper: {
-      id: 'gpt.application:overview.lstOnPaper',
-      defaultMessage: 'Undirskriftalisti á pappir',
-      description: 'List on paper',
     },
     ageInterval: {
       id: 'gpt.application:overview.ageInterval',
