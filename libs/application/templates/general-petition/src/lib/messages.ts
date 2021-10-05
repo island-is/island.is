@@ -48,7 +48,7 @@ export const m: MessageDir = {
     },
     agree: {
       id: 'gpt.application:terms.checkbox',
-      defaultMessage: 'Ég samþýkki skilmála hér að ofan',
+      defaultMessage: 'Ég samþykki skilmála hér að ofan',
       description: 'Agree terms and conditions',
     },
   }),
@@ -106,66 +106,6 @@ export const m: MessageDir = {
       id: 'gpt.application:endorsementTable.th.address',
       defaultMessage: 'Heimilisfang',
       description: 'Table header address',
-    },
-  }),
-  fileUpload: defineMessages({
-    includePapers: {
-      id: 'pa.application:file.upload.includePapers',
-      defaultMessage: 'Ég ætla skila inn meðmælum á pappír*',
-      description: 'Include paper signatures',
-    },
-    includePapersDisclaimerPt1: {
-      id: 'gpt.application:file.upload.disclaimer.pt1',
-      defaultMessage:
-        '*Fyrir meðmæli á pappír þarf að lista upp kennitölur meðmælenda í Excel skjal og hlaða upp hér að neðan.',
-      description: 'Include paper endorsements disclaimer part 1',
-    },
-    includePapersDisclaimerPt2: {
-      id: 'gpt.application:file.upload.disclaimer.pt2',
-      defaultMessage:
-        '*Pappírsmeðmæli skulu einnig sendast með bréfpósti til yfirkjörstjórnar.',
-      description: 'Include paper endorsements disclaimer part 2',
-    },
-    includePapersDisclaimerPt3: {
-      id: 'gpt.application:file.upload.disclaimer.pt3',
-      defaultMessage:
-        '*Skjalið skal innihalda eina kennitölu per reit. Allar kennitölur skulu vera í fyrsta dálk (dálk A), fyrsta kennitalan skal vera staðsett í reit A1.',
-      description: 'Include paper signatures disclaimer part 3',
-    },
-    fileUploadHeader: {
-      id: 'gpt.application:file.upload.header',
-      defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
-      description: 'Header for file upload',
-    },
-    uploadDescription: {
-      id: 'gpt.application:file.upload.description',
-      defaultMessage: 'Tekið er við skjölum með endingu: .xlsx',
-      description: 'Description for file upload',
-    },
-    uploadButtonLabel: {
-      id: 'gpt.application:file.upload.label',
-      defaultMessage: 'Velja skjöl til að hlaða upp',
-      description: 'Label for file upload',
-    },
-    uploadSuccess: {
-      id: 'pa.application:uploadButton.uploadSuccess',
-      defaultMessage: 'Pappírsmeðmælum hefur verið hlaðið upp!',
-      description: 'Upload succeeded text',
-    },
-    uploadFail: {
-      id: 'pa.application:uploadButton.uploadSuccess',
-      defaultMessage: 'Ekki tókst að hlaða upp pappírsmeðmælum',
-      description: 'Upload failed text',
-    },
-    attention: {
-      id: 'pa.application:uploadButton.attention',
-      defaultMessage: 'Athugið!',
-      description: 'Warning title',
-    },
-    uploadWarningText: {
-      id: 'pa.application:uploadButton.warningDescription',
-      defaultMessage: 'Ekki tókst að hlaða upp eftirfarandi kennitölur: ',
-      description: 'Warning description',
     },
   }),
   selectNationalId: defineMessages({
@@ -403,7 +343,7 @@ export const m: MessageDir = {
     },
     date: {
       id: 'gpt.application:validationmessages.party.name',
-      defaultMessage: 'Vinsamlegast veldu dagsettningu',
+      defaultMessage: 'Vinsamlegast veldu dagsetningu',
       description: 'Error message if date is empty',
     },
   }),
@@ -464,6 +404,12 @@ export const m: MessageDir = {
       defaultMessage: 'Setja nafn mitt á lista',
       description: 'Title for submit button',
     },
+    errorToast: {
+      id: 'gpt.application:endorsement.form.toast.error',
+      defaultMessage:
+        'Ekki tókst að setja nafn þitt á lista. Vinsamlegast reyndu aftur síðar',
+      description: 'Error message for error on endorse',
+    },
   }),
   endorsementDisclaimer: defineMessages({
     part1: {
@@ -507,7 +453,7 @@ export const m: MessageDir = {
     },
     cardSubtitle: {
       id: 'gpt.application:endorsement.approved.card.subtitle',
-      defaultMessage: 'Yfirlit yfir öll meðmæli má finna á Minum Síðum',
+      defaultMessage: 'Yfirlit yfir öll meðmæli má finna á Mínum Síðum',
       description: 'Approved card subtitle',
     },
     myPagesButton: {

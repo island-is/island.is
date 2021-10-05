@@ -6,6 +6,7 @@ import { SharedTemplateApiService } from '../../shared'
 import {
   EndorsementListApi,
   EndorsementMetadataDtoFieldEnum,
+  EndorsementListTagsEnum,
 } from './gen/fetch/endorsements'
 
 const CREATE_ENDORSEMENT_LIST_QUERY = `
@@ -82,7 +83,7 @@ export class GeneralPetitionService {
           endorsementMetadata: [
             { field: EndorsementMetadataDtoFieldEnum.address },
           ],
-          tags: ['partyLetter2021'],
+          tags: [EndorsementListTagsEnum.generalPetition],
           validationRules: [
             {
               type: 'minAge',

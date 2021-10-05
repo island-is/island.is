@@ -14,7 +14,6 @@ export const GeneralPetitionLists = () => {
       </Box>
       <Stack space={4}>
         {petitionLists.map((petition: any) => {
-          console.log(petition)
           return (
             <ActionCard
               key={petition.title}

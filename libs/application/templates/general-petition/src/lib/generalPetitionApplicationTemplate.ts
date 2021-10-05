@@ -10,7 +10,6 @@ import {
 } from '@island.is/application/core'
 import { ApiModuleActions, States, Roles } from '../constants'
 import { GeneralPetitionSchema } from './dataSchema'
-import { assign } from 'xstate'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
@@ -78,27 +77,6 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
         },
         type: 'final' as const,
       },
-    },
-  },
-  stateMachineOptions: {
-    actions: {
-      assignToMinistryOfJustice: assign((context) => {
-        return {
-          ...context,
-          application: {
-            ...context.application,
-            assignees:
-              process.env.PARTY_LETTER_ASSIGNED_ADMINS?.split(',') ?? [],
-          },
-        }
-      }),
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
     },
   },
   mapUserToRole(

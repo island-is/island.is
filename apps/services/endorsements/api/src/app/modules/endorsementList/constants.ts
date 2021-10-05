@@ -1,4 +1,5 @@
 export enum EndorsementTag {
+  GENERAL_PETITION = 'generalPetition',
   PARTY_LETTER_2021 = 'partyLetter2021',
   PARTY_APPLICATION_NORDAUSTURKJORDAEMI_2021 = 'partyApplicationNordausturkjordaemi2021',
   PARTY_APPLICATION_NORDVESTURKJORDAEMI_2021 = 'partyApplicationNordvesturkjordaemi2021',

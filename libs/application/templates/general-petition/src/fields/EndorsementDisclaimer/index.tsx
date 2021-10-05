@@ -40,7 +40,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
         },
       },
     }).catch(() => {
-      toast.error('error! semja texta hér')
+      toast.error(formatMessage(m.endorsementForm.errorToast))
     })
 
     if (success) {
@@ -65,10 +65,6 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
           <Box marginBottom={3}>
             <Text variant="h4">Ábyrgðarmaður:</Text>
             <Text variant="default">{listOwner}</Text>
-          </Box>
-          <Box marginBottom={3}>
-            <Text variant="h4">Fjöldi skráðir:</Text>
-            <Text variant="default">{'//:TODO'}</Text>
           </Box>
           <Box display="flex" marginBottom={10}>
             <Box width="half">

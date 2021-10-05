@@ -26,7 +26,7 @@ export const useGetPetitionLists = () => {
     {
       variables: {
         input: {
-          tags: 'partyLetter2021',
+          tags: 'generalPetition',
         },
       },
       pollInterval: 20000,
