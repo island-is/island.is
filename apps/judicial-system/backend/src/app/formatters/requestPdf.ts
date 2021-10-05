@@ -236,7 +236,7 @@ function constructInvestigationRequestPdf(
     .lineGap(40)
     .text(`Dómstóll: ${existingCase.court?.name}`, { align: 'center' })
     .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
+    .fontSize(largeFontSize)
     .lineGap(8)
     .text(formatMessage(m.baseInfo.heading))
     .font('Helvetica')
