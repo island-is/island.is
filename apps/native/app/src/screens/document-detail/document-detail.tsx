@@ -1,25 +1,20 @@
 import { useQuery } from '@apollo/client'
 import { dynamicColor, Header, Loader } from '@island.is/island-ui-native'
+import { theme } from '@island.is/island-ui/theme'
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import {
-  Animated,
-  Platform,
-  StyleSheet,
-  View,
-  Dimensions,
-} from 'react-native'
+import { Animated, Platform, StyleSheet, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
   useNavigationComponentDidDisappear,
 } from 'react-native-navigation-hooks/dist'
-import WebView from 'react-native-webview'
 import Pdf from 'react-native-pdf'
+import Share from 'react-native-share'
+import WebView from 'react-native-webview'
 import styled from 'styled-components/native'
 import { client } from '../../graphql/client'
-import Share from 'react-native-share'
 import {
   GetDocumentResponse,
   GET_DOCUMENT_QUERY,
@@ -29,7 +24,7 @@ import {
   LIST_DOCUMENTS_QUERY,
 } from '../../graphql/queries/list-documents.query'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
-import { authStore, useAuthStore } from '../../stores/auth-store'
+import { authStore } from '../../stores/auth-store'
 import { inboxStore } from '../../stores/inbox-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { ButtonRegistry } from '../../utils/component-registry'
@@ -116,15 +111,13 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       if (Platform.OS === 'android') {
         authStore.setState({ noLockScreenUntilNextAppStateActive: true })
       }
-      Share.open(
-        {
-          title: Document.subject!,
-          subject: Document.subject!,
-          message: `${Document.senderName!} \n ${Document.subject!}`,
-          type: hasPdf ? 'application/pdf' : undefined,
-          url: hasPdf ? `file://${pdfUrl}` : Document.url!,
-        }
-      )
+      Share.open({
+        title: Document.subject!,
+        subject: Document.subject!,
+        message: `${Document.senderName!} \n ${Document.subject!}`,
+        type: hasPdf ? 'application/pdf' : undefined,
+        url: hasPdf ? `file://${pdfUrl}` : Document.url!,
+      })
     },
     componentId,
     ButtonRegistry.ShareButton,
@@ -173,8 +166,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, [loaded])
 
-
-
   return (
     <>
       <Host>
@@ -211,13 +202,17 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                     body: `documentId=${Document.id}&__accessToken=${accessToken}`,
                     method: 'POST',
                   }}
-                  onLoadComplete={(numberOfPages,filePath) => {
+                  onLoadComplete={(numberOfPages, filePath) => {
                     setPdfUrl(filePath)
                     setLoaded(true)
                   }}
                   style={{
                     flex: 1,
                     backgroundColor: 'transparent',
+                  }}
+                  activityIndicatorProps={{
+                    color: theme.color.blue400,
+                    progressTintColor: theme.color.blue200,
                   }}
                 />
               </PdfWrapper>
