@@ -1,14 +1,9 @@
-import { FormatInputValueFunction } from 'react-number-format'
 import { Colors } from '@island.is/island-ui/theme'
-import type {
-  DatePickerBackgroundColor,
-  InputBackgroundColor,
-  BoxProps,
-} from '@island.is/island-ui/core/types'
 
 import { Application } from '../types/Application'
 import { Condition } from '../types/Condition'
 import {
+  BaseField,
   CheckboxField,
   CustomField,
   DateField,
@@ -24,104 +19,75 @@ import {
   SubmitField,
   SelectField,
   TextField,
-  TextFieldVariant,
   MaybeWithApplicationAndField,
   AsyncSelectField,
-  Context,
   RecordObject,
   Field,
-  TitleVariants,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
 import { FormText, FormTextArray } from '../types/Form'
 
-interface SelectOption {
-  label: string
-  value: string | number
-}
-
-export function buildCheckboxField(data: {
-  condition?: Condition
-  id: string
-  title: FormText
-  description?: FormText
-  options: MaybeWithApplicationAndField<Option[]>
-  disabled?: boolean
-  width?: FieldWidth
-  large?: boolean
-  strong?: boolean
-  backgroundColor?: InputBackgroundColor
-  defaultValue?: MaybeWithApplicationAndField<unknown>
-}): CheckboxField {
+const extractCommonFields = (
+  data: Omit<BaseField, 'type' | 'component' | 'children'>,
+) => {
   const {
     condition,
+    defaultValue,
+    description,
+    disabled = false,
+    doesNotRequireAnswer = false,
     id,
     title,
-    description,
-    options,
-    disabled = false,
     width = 'full',
+  } = data
+
+  return {
+    condition,
+    defaultValue,
+    description,
+    disabled,
+    doesNotRequireAnswer,
+    id,
+    title,
+    width,
+  }
+}
+
+export function buildCheckboxField(
+  data: Omit<CheckboxField, 'type' | 'component' | 'children'>,
+): CheckboxField {
+  const {
+    options,
     strong = false,
     large = true,
     backgroundColor = 'blue',
-    defaultValue,
   } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
-    defaultValue,
-    disabled,
-    width,
     large,
     strong,
     backgroundColor,
-    condition,
-    id,
-    title,
-    description,
     options,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
 }
 
-export function buildDateField(data: {
-  condition?: Condition
-  id: string
-  title: FormText
-  placeholder?: FormText
-  description?: FormText
-  maxDate?: Date
-  minDate?: MaybeWithApplicationAndField<Date>
-  excludeDates?: MaybeWithApplicationAndField<Date[]>
-  disabled?: boolean
-  width?: FieldWidth
-  backgroundColor?: DatePickerBackgroundColor
-  defaultValue?: MaybeWithApplicationAndField<unknown>
-}): DateField {
+export function buildDateField(
+  data: Omit<DateField, 'type' | 'component' | 'children'>,
+): DateField {
   const {
-    condition,
-    id,
-    title,
-    description,
-    defaultValue,
     maxDate,
     minDate,
     excludeDates,
-    disabled = false,
-    width = 'full',
     placeholder,
     backgroundColor = 'blue',
   } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
-    condition,
-    defaultValue,
-    id,
     placeholder,
-    disabled,
-    width,
-    title,
-    description,
     maxDate,
     minDate,
     excludeDates,
@@ -131,51 +97,25 @@ export function buildDateField(data: {
   }
 }
 
-export function buildDescriptionField(data: {
-  condition?: Condition
-  id: string
-  title: FormText
-  titleVariant?: TitleVariants
-  description: FormText
-  space?: BoxProps['paddingTop']
-  tooltip?: FormText
-}): DescriptionField {
-  const {
-    condition,
-    id,
-    titleVariant = 'h2',
-    title,
-    description,
-    tooltip,
-    space,
-  } = data
+export function buildDescriptionField(
+  data: Omit<DescriptionField, 'type' | 'component' | 'children'>,
+): DescriptionField {
+  const { titleVariant = 'h2', description, tooltip, space } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
-    condition,
     description,
     titleVariant,
     tooltip,
     space,
-    id,
-    title,
     type: FieldTypes.DESCRIPTION,
     component: FieldComponents.DESCRIPTION,
   }
 }
 
-export function buildRadioField(data: {
-  condition?: Condition
-  id: string
-  title: FormText
-  description?: FormText
-  options: MaybeWithApplicationAndField<Option[]>
-  largeButtons?: boolean
-  disabled?: boolean
-  width?: FieldWidth
-  defaultValue?: MaybeWithApplicationAndField<unknown>
-  backgroundColor?: InputBackgroundColor
-  space?: BoxProps['paddingTop']
-}): RadioField {
+export function buildRadioField(
+  data: Omit<RadioField, 'type' | 'component' | 'children'>,
+): RadioField {
   const {
     condition,
     id,
@@ -191,15 +131,9 @@ export function buildRadioField(data: {
   } = data
 
   return {
+    ...extractCommonFields(data),
     children: undefined,
-    defaultValue,
     largeButtons,
-    disabled,
-    width,
-    condition,
-    id,
-    title,
-    description,
     options,
     backgroundColor,
     space,
@@ -208,42 +142,14 @@ export function buildRadioField(data: {
   }
 }
 
-export function buildSelectField(data: {
-  condition?: Condition
-  id: string
-  title: FormText
-  description?: FormText
-  placeholder?: FormText
-  options: MaybeWithApplicationAndField<Option[]>
-  disabled?: boolean
-  width?: FieldWidth
-  onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
-  defaultValue?: MaybeWithApplicationAndField<unknown>
-  backgroundColor?: InputBackgroundColor
-}): SelectField {
-  const {
-    condition,
-    defaultValue,
-    id,
-    title,
-    description,
-    options,
-    placeholder,
-    disabled = false,
-    width = 'full',
-    onSelect,
-    backgroundColor = 'blue',
-  } = data
+export function buildSelectField(
+  data: Omit<SelectField, 'type' | 'component' | 'children'>,
+): SelectField {
+  const { options, placeholder, onSelect, backgroundColor = 'blue' } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
-    defaultValue,
     placeholder,
-    disabled,
-    width,
-    condition,
-    id,
-    title,
-    description,
     options,
     type: FieldTypes.SELECT,
     component: FieldComponents.SELECT,
@@ -252,47 +158,22 @@ export function buildSelectField(data: {
   }
 }
 
-export function buildAsyncSelectField(data: {
-  condition?: Condition
-  id: string
-  title: FormText
-  description?: FormText
-  placeholder?: FormText
-  loadOptions: (c: Context) => Promise<Option[]>
-  loadingError?: FormText
-  disabled?: boolean
-  width?: FieldWidth
-  onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
-  defaultValue?: MaybeWithApplicationAndField<unknown>
-  backgroundColor?: InputBackgroundColor
-  isSearchable?: boolean
-}): AsyncSelectField {
+export function buildAsyncSelectField(
+  data: Omit<AsyncSelectField, 'type' | 'component' | 'children'>,
+): AsyncSelectField {
   const {
-    condition,
-    defaultValue,
-    id,
-    title,
-    description,
     loadOptions,
     loadingError,
     placeholder,
-    disabled = false,
-    width = 'full',
     onSelect,
     backgroundColor = 'blue',
     isSearchable,
   } = data
 
   return {
+    ...extractCommonFields(data),
     children: undefined,
-    defaultValue,
     placeholder,
-    disabled,
-    width,
-    condition,
-    id,
-    title,
-    description,
     loadOptions,
     loadingError,
     type: FieldTypes.ASYNC_SELECT,
@@ -303,32 +184,12 @@ export function buildAsyncSelectField(data: {
   }
 }
 
-export function buildTextField(data: {
-  condition?: Condition
-  id: string
-  title: FormText
-  description?: FormText
-  disabled?: boolean
-  width?: FieldWidth
-  variant?: TextFieldVariant
-  placeholder?: FormText
-  format?: string | FormatInputValueFunction
-  backgroundColor?: InputBackgroundColor
-  suffix?: string
-  defaultValue?: MaybeWithApplicationAndField<unknown>
-  rows?: number
-  required?: boolean
-}): TextField {
+export function buildTextField(
+  data: Omit<TextField, 'type' | 'component' | 'children'>,
+): TextField {
   const {
-    condition,
-    defaultValue,
-    id,
-    title,
-    description,
     backgroundColor = 'blue',
     placeholder,
-    disabled = false,
-    width = 'full',
     variant = 'text',
     format,
     suffix,
@@ -336,16 +197,10 @@ export function buildTextField(data: {
     required,
   } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
-    defaultValue,
     placeholder,
-    disabled,
-    width,
-    condition,
     backgroundColor,
-    id,
-    title,
-    description,
     variant,
     format,
     suffix,
@@ -357,59 +212,24 @@ export function buildTextField(data: {
 }
 
 export function buildCustomField(
-  data: {
-    condition?: Condition
-    id: string
-    childInputIds?: string[]
-    title: FormText
-    description?: FormText
-    component: string
-    defaultValue?: MaybeWithApplicationAndField<unknown>
-    width?: FieldWidth
-  },
+  data: Omit<CustomField, 'props' | 'type' | 'children'>,
   props?: RecordObject,
 ): CustomField {
-  const {
-    condition,
-    defaultValue,
-    id,
-    title,
-    description,
-    component,
-    childInputIds,
-    width = 'full',
-  } = data
+  const { component, childInputIds } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
-    defaultValue,
-    condition,
-    id,
     childInputIds,
-    title,
-    width,
-    description,
     type: FieldTypes.CUSTOM,
     component,
     props: props ?? {},
   }
 }
 
-export function buildFileUploadField(data: {
-  condition?: Condition
-  id: string
-  title: FormText
-  introduction: FormText
-  uploadHeader?: FormText
-  uploadDescription?: FormText
-  uploadButtonLabel?: FormText
-  uploadMultiple?: boolean
-  uploadAccept?: string
-  maxSize?: number
-}): FileUploadField {
+export function buildFileUploadField(
+  data: Omit<FileUploadField, 'type' | 'component' | 'children'>,
+): FileUploadField {
   const {
-    condition,
-    id,
-    title,
     introduction,
     uploadHeader,
     uploadDescription,
@@ -419,10 +239,8 @@ export function buildFileUploadField(data: {
     maxSize,
   } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
-    condition,
-    id,
-    title,
     introduction,
     uploadHeader,
     uploadDescription,
@@ -446,6 +264,7 @@ export function buildDividerField(data: {
     children: undefined,
     type: FieldTypes.DIVIDER,
     component: FieldComponents.DIVIDER,
+    doesNotRequireAnswer: true,
     title: title ?? '',
     color,
     condition,
@@ -464,6 +283,7 @@ export function buildKeyValueField(data: {
     id: '',
     title: '',
     children: undefined,
+    doesNotRequireAnswer: true,
     condition,
     width,
     label,
@@ -493,6 +313,7 @@ export function buildSubmitField(data: {
     title,
     actions,
     placement,
+    doesNotRequireAnswer: true,
     refetchApplicationAfterSubmit:
       typeof refetchApplicationAfterSubmit !== 'undefined'
         ? refetchApplicationAfterSubmit
