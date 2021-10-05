@@ -2,7 +2,14 @@ import { useQuery } from '@apollo/client'
 import { dynamicColor, Header, Loader } from '@island.is/island-ui-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import { Animated, Platform, Share, StyleSheet, View } from 'react-native'
+import {
+  Animated,
+  Platform,
+  Share,
+  StyleSheet,
+  View,
+  Dimensions,
+} from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationButtonPress,
@@ -10,7 +17,7 @@ import {
   useNavigationComponentDidDisappear,
 } from 'react-native-navigation-hooks/dist'
 import WebView from 'react-native-webview'
-import PDFReader from 'rn-pdf-reader-js'
+import Pdf from 'react-native-pdf'
 import styled from 'styled-components/native'
 import { client } from '../../graphql/client'
 import {
@@ -75,7 +82,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId)
   const intl = useIntl()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
-  const [accessToken, setAccessToken] = useState<string>();
+  const [accessToken, setAccessToken] = useState<string>()
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
     client,
@@ -132,18 +139,20 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   }, [res.data])
 
   useEffect(() => {
-    const { authorizeResult, refresh } = authStore.getState();
-    const isExpired = new Date(authorizeResult?.accessTokenExpirationDate!).getTime() < Date.now();
+    const { authorizeResult, refresh } = authStore.getState()
+    const isExpired =
+      new Date(authorizeResult?.accessTokenExpirationDate!).getTime() <
+      Date.now()
     if (isExpired) {
       refresh().then(() => {
-        setAccessToken(authStore.getState().authorizeResult?.accessToken);
+        setAccessToken(authStore.getState().authorizeResult?.accessToken)
       })
     } else {
-      setAccessToken(authorizeResult?.accessToken);
+      setAccessToken(authorizeResult?.accessToken)
     }
   }, [])
 
-  const loading = res.loading || !accessToken;
+  const loading = res.loading || !accessToken
 
   const fadeAnim = useRef(new Animated.Value(0)).current
 
@@ -157,6 +166,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, [loaded])
 
+  const hasContent = Document.content !== ''
   return (
     <>
       <Host>
@@ -175,48 +185,42 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           flex: 1,
         }}
       >
-        {visible && accessToken &&
-          Platform.select({
-            android: (
-              <Animated.View
+        {visible && accessToken && (
+          <Animated.View
+            style={{
+              flex: 1,
+              opacity: fadeAnim,
+            }}
+          >
+            {hasContent ? (
+              <Pdf
+                source={{
+                  uri: Document.url!,
+                  headers: {
+                    'content-type': 'application/x-www-form-urlencoded',
+                  },
+                  body: `documentId=${Document.id}&__accessToken=${accessToken}`,
+                  method: 'POST',
+                }}
+                onLoadComplete={() => {
+                  setLoaded(true)
+                }}
                 style={{
                   flex: 1,
-                  opacity: fadeAnim,
+                  height: Dimensions.get('window').height,
+                  width: Dimensions.get('window').width,
                 }}
-              >
-                <PDFReader
-                  onLoadEnd={() => {
-                    setLoaded(true)
-                  }}
-                  source={{
-                    base64: `data:application/pdf;base64,${Document.content!}`,
-                  }}
-                />
-              </Animated.View>
-            ),
-            ios: (
-              <Animated.View
-                style={{
-                  flex: 1,
-                  opacity: fadeAnim,
+              />
+            ) : (
+              <WebView
+                source={{ uri: Document.url! }}
+                onLoadEnd={() => {
+                  setLoaded(true)
                 }}
-              >
-                <WebView
-                  onLoadEnd={() => {
-                    setLoaded(true)
-                  }}
-                  source={{
-                    uri: Document.url!,
-                    headers: {
-                      'content-type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `documentId=${Document.id}&__accessToken=${accessToken}`,
-                    method: 'POST',
-                  }}
-                />
-              </Animated.View>
-            ),
-          })}
+              />
+            )}
+          </Animated.View>
+        )}
         {(!loaded || !accessToken) && (
           <View
             style={[
