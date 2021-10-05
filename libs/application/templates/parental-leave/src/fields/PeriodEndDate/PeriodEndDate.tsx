@@ -13,18 +13,19 @@ import {
 } from '@island.is/application/core'
 import { DateFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
+import { FieldDescription } from '@island.is/shared/form-fields'
+import { Box } from '@island.is/island-ui/core'
 
 import {
   getAvailableRightsInDays,
   getExpectedDateOfBirth,
   getPeriodIndex,
 } from '../../lib/parentalLeaveUtils'
+import { minimumRatio } from '../../config'
 import { useGetOrRequestLength } from '../../hooks/useGetOrRequestLength'
 import { daysToMonths } from '../../lib/directorateOfLabour.utils'
 import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
-import { Box } from '@island.is/island-ui/core'
-import { FieldDescription } from '@island.is/shared/form-fields'
 
 type FieldPeriodEndDateProps = {
   field: {
@@ -40,8 +41,6 @@ export const PeriodEndDate: FC<
 > = ({ field, application, errors, setFieldLoadingState }) => {
   const { formatMessage } = useLocale()
   const { id, title, props } = field
-  const rights = getAvailableRightsInDays(application)
-  const daysAlreadyUsed = useDaysAlreadyUsed(application)
   const { answers } = application
   const { getLength, loading } = useGetOrRequestLength(application)
   const { register, clearErrors, setError } = useFormContext()
@@ -71,10 +70,10 @@ export const PeriodEndDate: FC<
         endDate,
       })
 
-      if (length + daysAlreadyUsed > rights) {
+      if (percentage < minimumRatio) {
         return setError(fieldId, {
           type: 'error',
-          message: formatMessage(errorMessages.exceedingLength),
+          message: formatMessage(errorMessages.periodsRatioBelowMinimum),
         })
       }
 

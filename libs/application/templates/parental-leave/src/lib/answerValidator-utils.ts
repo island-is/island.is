@@ -12,6 +12,7 @@ import { StartDateOptions, YES, NO } from '../constants'
 import { getExpectedDateOfBirth } from './parentalLeaveUtils'
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
+  minimumRatio,
   minPeriodDays,
   usageMaxMonths,
   usageMinMonths,
@@ -217,7 +218,7 @@ export const validatePeriod = (
       return buildError('ratio', errorMessages.periodsRatioExceedsMaximum)
     }
 
-    if (ratioValue < 10) {
+    if (ratioValue < minimumRatio * 10) {
       return buildError('ratio', errorMessages.periodsRatioBelowMinimum)
     }
   }
