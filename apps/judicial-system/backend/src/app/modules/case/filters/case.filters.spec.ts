@@ -130,6 +130,93 @@ describe('isCaseBlockedFromUser', () => {
       expect(isWriteBlocked).toBe(true)
       expect(isReadBlocked).toBe(false)
     })
+
+    it('should block a hightened security case from other prosecutors', () => {
+      // Arrange
+      const theCase = {
+        state,
+        isHeightenedSecurityLevel: true,
+        creatingProsecutor: {
+          id: 'Creating Prosecutor',
+          institution: { id: 'Prosecutors Office' },
+        },
+        prosecutor: { id: 'Assigned Prosecutor' },
+      } as Case
+      const user = {
+        id: 'Other Prosecutor',
+        role: UserRole.PROSECUTOR,
+        institution: {
+          id: 'Prosecutors Office',
+          type: InstitutionType.PROSECUTORS_OFFICE,
+        },
+      } as User
+
+      // Act
+      const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+      const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+      // Assert
+      expect(isWriteBlocked).toBe(true)
+      expect(isReadBlocked).toBe(true)
+    })
+
+    it('should not block a hightened security case from creating prosecutor', () => {
+      // Arrange
+      const theCase = {
+        state,
+        isHeightenedSecurityLevel: true,
+        creatingProsecutor: {
+          id: 'Creating Prosecutor',
+          institution: { id: 'Prosecutors Office' },
+        },
+        prosecutor: { id: 'Assigned Prosecutor' },
+      } as Case
+      const user = {
+        id: 'Creating Prosecutor',
+        role: UserRole.PROSECUTOR,
+        institution: {
+          id: 'Prosecutors Office',
+          type: InstitutionType.PROSECUTORS_OFFICE,
+        },
+      } as User
+
+      // Act
+      const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+      const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+      // Assert
+      expect(isWriteBlocked).toBe(false)
+      expect(isReadBlocked).toBe(false)
+    })
+
+    it('should not block a hightened security case from assigned prosecutor', () => {
+      // Arrange
+      const theCase = {
+        state,
+        isHeightenedSecurityLevel: true,
+        creatingProsecutor: {
+          id: 'Creating Prosecutor',
+          institution: { id: 'Prosecutors Office' },
+        },
+        prosecutor: { id: 'Assigned Prosecutor' },
+      } as Case
+      const user = {
+        id: 'Assigned Prosecutor',
+        role: UserRole.PROSECUTOR,
+        institution: {
+          id: 'Prosecutors Office',
+          type: InstitutionType.PROSECUTORS_OFFICE,
+        },
+      } as User
+
+      // Act
+      const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+      const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+      // Assert
+      expect(isWriteBlocked).toBe(false)
+      expect(isReadBlocked).toBe(false)
+    })
   })
 
   each`
@@ -371,17 +458,17 @@ describe('getCasesQueryFilter', () => {
         },
         {
           [Op.or]: [
-            { is_heightened_security_level: { [Op.is]: null } },
-            { is_heightened_security_level: false },
-            { creating_prosecutor_id: 'Prosecutor Id' },
-            { prosecutor_id: 'Prosecutor Id' },
+            { creating_prosecutor_id: { [Op.is]: null } },
+            { '$creatingProsecutor.institution_id$': 'Prosecutors Office Id' },
+            { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
           ],
         },
         {
           [Op.or]: [
-            { creating_prosecutor_id: { [Op.is]: null } },
-            { '$creatingProsecutor.institution_id$': 'Prosecutors Office Id' },
-            { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
+            { is_heightened_security_level: { [Op.is]: null } },
+            { is_heightened_security_level: false },
+            { creating_prosecutor_id: 'Prosecutor Id' },
+            { prosecutor_id: 'Prosecutor Id' },
           ],
         },
       ],

@@ -47,10 +47,10 @@ function isStateHiddenFromRole(
 }
 
 function isProsecutorsOfficeCaseHiddenFromUser(
-  prosecutorInstitutionId: string | undefined,
   user: User,
   forUpdate: boolean,
-  sharedWithProsecutorsOfficeId: string | undefined,
+  prosecutorInstitutionId?: string,
+  sharedWithProsecutorsOfficeId?: string,
 ): boolean {
   return (
     prosecutorsOfficeMustMatchUserInstitution(user.role) &&
@@ -63,10 +63,10 @@ function isProsecutorsOfficeCaseHiddenFromUser(
 }
 
 function isCourtCaseHiddenFromUser(
-  courtId: string | undefined,
   user: User,
   forUpdate: boolean,
   hasCaseBeenAppealed: boolean,
+  courtId?: string,
 ): boolean {
   return (
     courtMustMatchUserIInstitution(user.role) &&
@@ -78,6 +78,19 @@ function isCourtCaseHiddenFromUser(
   )
 }
 
+function isHightenedSecurityCaseHiddenFromUser(
+  user: User,
+  isHeightenedSecurityLevel?: boolean,
+  creatingProsecutorId?: string,
+  prosecutorId?: string,
+): boolean {
+  return (
+    Boolean(isHeightenedSecurityLevel) &&
+    user.id !== creatingProsecutorId &&
+    user.id !== prosecutorId
+  )
+}
+
 export function isCaseBlockedFromUser(
   theCase: Case,
   user: User,
@@ -86,16 +99,22 @@ export function isCaseBlockedFromUser(
   return (
     isStateHiddenFromRole(theCase.state, user.role, user.institution?.type) ||
     isProsecutorsOfficeCaseHiddenFromUser(
-      theCase.creatingProsecutor?.institutionId,
       user,
       forUpdate,
+      theCase.creatingProsecutor?.institutionId,
       theCase.sharedWithProsecutorsOfficeId,
     ) ||
     isCourtCaseHiddenFromUser(
-      theCase.courtId,
       user,
       forUpdate,
       hasCaseBeenAppealed((theCase as unknown) as TCase),
+      theCase.courtId,
+    ) ||
+    isHightenedSecurityCaseHiddenFromUser(
+      user,
+      theCase.isHeightenedSecurityLevel,
+      theCase.creatingProsecutor?.id,
+      theCase.prosecutor?.id,
     )
   )
 }
@@ -105,7 +124,8 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     [Op.not]: { state: getBlockedStates(user.role, user.institution?.type) },
   }
 
-  const blockOld = [
+  // Old cases are only filtered from case lists
+  const hideOld = [
     {
       [Op.not]: {
         [Op.and]: [
@@ -134,20 +154,6 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     },
   ]
 
-  const blockHightenedSecurity =
-    user.role === UserRole.PROSECUTOR
-      ? [
-          {
-            [Op.or]: [
-              { is_heightened_security_level: { [Op.is]: null } },
-              { is_heightened_security_level: false },
-              { creating_prosecutor_id: user.id },
-              { prosecutor_id: user.id },
-            ],
-          },
-        ]
-      : []
-
   const blockInstitutions =
     user.role === UserRole.PROSECUTOR
       ? {
@@ -173,12 +179,26 @@ export function getCasesQueryFilter(user: User): WhereOptions {
           ],
         }
 
+  const blockHightenedSecurity =
+    user.role === UserRole.PROSECUTOR
+      ? [
+          {
+            [Op.or]: [
+              { is_heightened_security_level: { [Op.is]: null } },
+              { is_heightened_security_level: false },
+              { creating_prosecutor_id: user.id },
+              { prosecutor_id: user.id },
+            ],
+          },
+        ]
+      : []
+
   return {
     [Op.and]: [
       blockStates,
-      ...blockOld,
-      ...blockHightenedSecurity,
+      ...hideOld,
       blockInstitutions,
+      ...blockHightenedSecurity,
     ],
   }
 }
