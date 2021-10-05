@@ -176,8 +176,12 @@ const Screen: FC<ScreenProps> = ({
       if (!canContinue) {
         setIsSubmitting(false)
 
+        if (!screen || !screen.id) {
+          return
+        }
+
         if (typeof possibleError === 'string') {
-          setBeforeSubmitError({ [screen?.id || '']: possibleError })
+          setBeforeSubmitError({ [screen.id]: possibleError })
         }
 
         return
