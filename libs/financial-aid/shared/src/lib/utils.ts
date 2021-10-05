@@ -31,8 +31,8 @@ export const sanitizeNationalId = (nationalId: string) =>
 
 export const isEmailValid = (emailAddress?: string) => {
   if (emailAddress) {
-    let re = /\S+@\S+\.\S+/
-    return re.test(emailAddress)
+    const regex = /\S+@\S+\.\S+/
+    return regex.test(emailAddress)
   }
   return
 }
