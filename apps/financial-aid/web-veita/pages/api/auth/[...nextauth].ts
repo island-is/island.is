@@ -23,8 +23,8 @@ const providers = [
     name: identityServerConfig.name,
     scope: identityServerConfig.scope,
     clientId: identityServerConfig.clientId,
-    domain: process.env.IDENTITYSERVER_DOMAIN ?? '',
-    clientSecret: process.env.IDENTITYSERVER_SECRET ?? '',
+    domain: process.env.IDENTITY_SERVER_DOMAIN ?? '',
+    clientSecret: process.env.IDENTITY_SERVER_SECRET ?? '',
   }),
 ]
 
@@ -59,9 +59,9 @@ async function jwt(token: GenericObject, user: AuthUser) {
     try {
       const [accessToken, refreshToken] = await refreshAccessToken(
         token.refreshToken,
-        process.env.IDENTITYSERVER_SECRET,
+        process.env.IDENTITY_SERVER_SECRET,
         process.env.NEXTAUTH_URL,
-        process.env.IDENTITYSERVER_DOMAIN,
+        process.env.IDENTITY_SERVER_DOMAIN,
       )
       token.accessToken = accessToken
       token.refreshToken = refreshToken
