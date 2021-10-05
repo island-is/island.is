@@ -83,16 +83,6 @@ const Form = () => {
     },
   ]
 
-  // const focusOnNextInput = (
-  //   event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  //   nextInputId: string,
-  // ) => {
-  //   if (event.target.value.length >= event.target.maxLength) {
-  //     const el = document.getElementById(nextInputId)
-  //     el?.focus()
-  //   }
-  // }
-
   const saveValue = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     fieldSettings: BankOptionsProps,
