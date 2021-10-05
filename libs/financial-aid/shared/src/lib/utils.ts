@@ -29,9 +29,12 @@ export const formatNationalId = (nationalId: string) =>
 export const sanitizeNationalId = (nationalId: string) =>
   nationalId.replace(/[^0-9]/g, '')
 
-export const isEmailValid = (emailAddress: string) => {
-  let re = /\S+@\S+\.\S+/
-  return re.test(emailAddress)
+export const isEmailValid = (emailAddress?: string) => {
+  if (emailAddress) {
+    let re = /\S+@\S+\.\S+/
+    return re.test(emailAddress)
+  }
+  return
 }
 
 export const focusOnNextInput = (

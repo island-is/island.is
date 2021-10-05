@@ -16,6 +16,7 @@ import * as styles from './relationshipstatusForm.treat'
 
 import {
   FamilyStatus,
+  isEmailValid,
   NavigationProps,
 } from '@island.is/financial-aid/shared/lib'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
@@ -59,22 +60,21 @@ const RelationshipstatusForm = () => {
     }
 
     if (user?.familyStatus === FamilyStatus.UNREGISTEREDCOBAHITATION) {
-      if (!acceptData) {
+      if (!acceptData || !user.spouse?.email || !user.spouse?.nationalId) {
         setHasError(true)
+        return
       }
-      // router.push(navigation?.nextUrl)
+
+      if (
+        !isEmailValid(user.spouse?.email) ||
+        user.spouse?.nationalId.length !== 10
+      ) {
+        setHasError(true)
+        return
+      }
+
+      router.push(navigation?.nextUrl)
     }
-
-    console.log('TODO')
-
-    // if (form?.usePersonalTaxCredit === undefined) {
-    //   setHasError(true)
-    //   return
-    // }
-
-    // if (navigation?.nextUrl) {
-    //   router.push(navigation?.nextUrl)
-    // }
   }
 
   return (
@@ -125,6 +125,11 @@ const RelationshipstatusForm = () => {
                 setHasError(false)
               }
               setAcceptData(event.target.checked)
+            }}
+            removeError={(errState) => {
+              if (errState) {
+                setHasError(false)
+              }
             }}
           />
         </div>

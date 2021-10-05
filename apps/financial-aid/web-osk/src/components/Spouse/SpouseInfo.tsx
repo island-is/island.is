@@ -4,6 +4,7 @@ import { Input, Checkbox, Box, Text } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import {
   focusOnNextInput,
+  isEmailValid,
   sanitizeNationalId,
 } from '@island.is/financial-aid/shared/lib'
 
@@ -13,58 +14,72 @@ interface Props {
   setAcceptData:
     | ((event: React.ChangeEvent<HTMLInputElement>) => void)
     | undefined
+  removeError: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const SpouseInfo = ({ hasError, acceptData, setAcceptData }: Props) => {
+const SpouseInfo = ({
+  hasError,
+  acceptData,
+  setAcceptData,
+  removeError,
+}: Props) => {
   const { user, setUser } = useContext(UserContext)
 
   return (
     <>
-      <Box marginBottom={[2, 2, 3]}>
-        <Input
-          label="Kennitala maka"
-          name="nationalIdSpouse"
-          placeholder="Sláðu inn kennitölu maka"
-          backgroundColor="blue"
-          hasError={hasError && !user?.spouse?.nationalId}
-          value={user?.spouse?.nationalId}
-          maxLength={10}
-          onChange={(event) => {
-            if (user) {
-              setUser({
-                ...user,
-                spouse: {
-                  nationalId: sanitizeNationalId(event.target.value),
-                },
-              })
-            }
+      {user && (
+        <>
+          <Box marginBottom={[2, 2, 3]}>
+            <Input
+              label="Kennitala maka"
+              name="nationalIdSpouse"
+              placeholder="Sláðu inn kennitölu maka"
+              backgroundColor="blue"
+              hasError={hasError && !user?.spouse?.nationalId}
+              value={user?.spouse?.nationalId}
+              maxLength={10}
+              onChange={(event) => {
+                setUser({
+                  ...user,
+                  spouse: {
+                    ...user.spouse,
+                    nationalId: sanitizeNationalId(event.target.value),
+                  },
+                })
+                removeError(hasError)
 
-            focusOnNextInput(event, 'email')
-          }}
-        />
-      </Box>
-      <Box marginBottom={[2, 2, 3]}>
-        <Input
-          label="Netfang maka"
-          name="emailSpouse"
-          id="email"
-          placeholder="Sláðu inn netfang maka"
-          backgroundColor="blue"
-          hasError={hasError && !user?.spouse?.email}
-          type="email"
-          value={user?.spouse?.email}
-          onChange={(event) => {
-            if (user) {
-              setUser({
-                ...user,
-                spouse: {
-                  email: event.target.value,
-                },
-              })
-            }
-          }}
-        />
-      </Box>
+                focusOnNextInput(event, 'email')
+              }}
+            />
+          </Box>
+          <Box marginBottom={[2, 2, 3]}>
+            <Input
+              label="Netfang maka"
+              name="emailSpouse"
+              id="email"
+              placeholder="Sláðu inn netfang maka"
+              backgroundColor="blue"
+              hasError={
+                (hasError && !user?.spouse?.email) ||
+                (hasError && !isEmailValid(user?.spouse?.email))
+              }
+              type="email"
+              value={user?.spouse?.email}
+              onChange={(event) => {
+                removeError(hasError)
+                setUser({
+                  ...user,
+                  spouse: {
+                    ...user.spouse,
+                    email: event.target.value,
+                  },
+                })
+              }}
+            />
+          </Box>
+        </>
+      )}
+
       <Box cursor="pointer" marginBottom={[5, 5, 10]}>
         <Checkbox
           name={'accept'}
