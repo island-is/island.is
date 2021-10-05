@@ -23,60 +23,60 @@ const SpouseInfo = ({
 }: Props) => {
   const { user, setUser } = useContext(UserContext)
 
+  if (!user) {
+    return null
+  }
   return (
     <>
-      {user && (
-        <>
-          <Box marginBottom={[2, 2, 3]} marginTop={[1, 1, 0]}>
-            <Input
-              label="Kennitala maka"
-              name="nationalIdSpouse"
-              placeholder="Sláðu inn kennitölu maka"
-              backgroundColor="blue"
-              hasError={hasError && !user?.spouse?.nationalId}
-              value={user?.spouse?.nationalId}
-              maxLength={10}
-              onChange={(event) => {
-                setUser({
-                  ...user,
-                  spouse: {
-                    ...user.spouse,
-                    nationalId: sanitizeNationalId(event.target.value),
-                  },
-                })
-                removeError(hasError)
+      <Box marginBottom={[2, 2, 3]} marginTop={[1, 1, 0]}>
+        <Input
+          label="Kennitala maka"
+          name="nationalIdSpouse"
+          placeholder="Sláðu inn kennitölu maka"
+          backgroundColor="blue"
+          hasError={hasError && !user?.spouse?.nationalId}
+          value={user?.spouse?.nationalId}
+          maxLength={10}
+          onChange={(event) => {
+            setUser({
+              ...user,
+              spouse: {
+                ...user.spouse,
+                nationalId: sanitizeNationalId(event.target.value),
+              },
+            })
+            removeError(hasError)
 
-                focusOnNextInput(event, 'email')
-              }}
-            />
-          </Box>
-          <Box marginBottom={[2, 2, 3]}>
-            <Input
-              label="Netfang maka"
-              name="emailSpouse"
-              id="email"
-              placeholder="Sláðu inn netfang maka"
-              backgroundColor="blue"
-              hasError={
-                (hasError && !user?.spouse?.email) ||
-                (hasError && !isEmailValid(user?.spouse?.email))
-              }
-              type="email"
-              value={user?.spouse?.email}
-              onChange={(event) => {
-                removeError(hasError)
-                setUser({
-                  ...user,
-                  spouse: {
-                    ...user.spouse,
-                    email: event.target.value,
-                  },
-                })
-              }}
-            />
-          </Box>
-        </>
-      )}
+            focusOnNextInput(event, 'email')
+          }}
+        />
+      </Box>
+
+      <Box marginBottom={[2, 2, 3]}>
+        <Input
+          label="Netfang maka"
+          name="emailSpouse"
+          id="email"
+          placeholder="Sláðu inn netfang maka"
+          backgroundColor="blue"
+          hasError={
+            (hasError && !user?.spouse?.email) ||
+            (hasError && !isEmailValid(user?.spouse?.email))
+          }
+          type="email"
+          value={user?.spouse?.email}
+          onChange={(event) => {
+            removeError(hasError)
+            setUser({
+              ...user,
+              spouse: {
+                ...user.spouse,
+                email: event.target.value,
+              },
+            })
+          }}
+        />
+      </Box>
 
       <Box marginBottom={[5, 5, 10]}>
         <Checkbox

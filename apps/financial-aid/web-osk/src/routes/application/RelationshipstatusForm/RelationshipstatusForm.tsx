@@ -78,6 +78,10 @@ const RelationshipstatusForm = () => {
     }
   }
 
+  if (!user) {
+    return null
+  }
+
   return (
     <>
       <ContentContainer>
@@ -102,9 +106,8 @@ const RelationshipstatusForm = () => {
             return value === user?.familyStatus
           }}
           onChange={(value: FamilyStatus) => {
-            if (user) {
-              setUser({ ...user, familyStatus: value })
-            }
+            setUser({ ...user, familyStatus: value })
+
             if (hasError) {
               setHasError(false)
             }
