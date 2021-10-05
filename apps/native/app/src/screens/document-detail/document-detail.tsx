@@ -5,7 +5,6 @@ import { FormattedDate, useIntl } from 'react-intl'
 import {
   Animated,
   Platform,
-  Share,
   StyleSheet,
   View,
   Dimensions,
@@ -20,6 +19,7 @@ import WebView from 'react-native-webview'
 import Pdf from 'react-native-pdf'
 import styled from 'styled-components/native'
 import { client } from '../../graphql/client'
+import Share from 'react-native-share'
 import {
   GetDocumentResponse,
   GET_DOCUMENT_QUERY,
@@ -111,21 +111,19 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [pdfUrl, setPdfUrl] = useState('')
   const hasPdf = Document.fileType! === 'pdf'
 
-  console.log(pdfUrl, 'pdf url', hasPdf)
-
   useNavigationButtonPress(
     (e) => {
       if (Platform.OS === 'android') {
         authStore.setState({ noLockScreenUntilNextAppStateActive: true })
       }
-      Share.share(
+      Share.open(
         {
-          title: Document.subject,
+          title: Document.subject!,
+          subject: Document.subject!,
+          message: `${Document.senderName!} \n ${Document.subject!}`,
+          type: hasPdf ? 'application/pdf' : undefined,
           url: hasPdf ? `file://${pdfUrl}` : Document.url!,
-        },
-        {
-          subject: Document.subject,
-        },
+        }
       )
     },
     componentId,
