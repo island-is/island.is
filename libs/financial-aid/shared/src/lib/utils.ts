@@ -35,7 +35,7 @@ export const isEmailValid = (emailAddress?: string) => {
     const regex = /\S+@\S+\.\S+/
     return regex.test(emailAddress)
   }
-  return
+  return false
 }
 
 export const focusOnNextInput = (

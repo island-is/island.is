@@ -1,5 +1,5 @@
-import React, { ChangeEvent, useCallback, useContext, useState } from 'react'
-import { Input, Checkbox, Box, Text } from '@island.is/island-ui/core'
+import React, { useContext } from 'react'
+import { Input, Checkbox, Box } from '@island.is/island-ui/core'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import {
@@ -11,9 +11,7 @@ import {
 interface Props {
   hasError: boolean
   acceptData: boolean
-  setAcceptData:
-    | ((event: React.ChangeEvent<HTMLInputElement>) => void)
-    | undefined
+  setAcceptData: (event: React.ChangeEvent<HTMLInputElement>) => void
   removeError: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -85,7 +83,7 @@ const SpouseInfo = ({
           name={'accept'}
           id="accept"
           backgroundColor="blue"
-          label="Ég skil að ofangreindra gagna verður aflað í umsóknar- og staðfestingarferlinu"
+          label="Ég skil að maki minn þarf líka að skila inn umsókn áður en úrvinnsla hefst"
           large
           checked={acceptData}
           onChange={setAcceptData}

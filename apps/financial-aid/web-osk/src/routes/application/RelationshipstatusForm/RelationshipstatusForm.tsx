@@ -41,7 +41,7 @@ const RelationshipstatusForm = () => {
     },
     {
       label: 'Já, ég er í óstaðfestri sambúð',
-      value: FamilyStatus.UNREGISTEREDCOBAHITATION,
+      value: FamilyStatus.UNREGISTERED_COBAHITATION,
     },
   ]
 
@@ -52,6 +52,7 @@ const RelationshipstatusForm = () => {
     }
 
     if (!navigation?.nextUrl) {
+      setHasError(true)
       return
     }
 
@@ -59,7 +60,7 @@ const RelationshipstatusForm = () => {
       router.push(navigation?.nextUrl)
     }
 
-    if (user?.familyStatus === FamilyStatus.UNREGISTEREDCOBAHITATION) {
+    if (user?.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION) {
       if (!acceptData || !user.spouse?.email || !user.spouse?.nationalId) {
         setHasError(true)
         return
@@ -114,7 +115,7 @@ const RelationshipstatusForm = () => {
           className={cn({
             [`${styles.infoContainer}`]: true,
             [`${styles.showInfoContainer}`]:
-              FamilyStatus.UNREGISTEREDCOBAHITATION === user?.familyStatus,
+              FamilyStatus.UNREGISTERED_COBAHITATION === user?.familyStatus,
           })}
         >
           <SpouseInfo
