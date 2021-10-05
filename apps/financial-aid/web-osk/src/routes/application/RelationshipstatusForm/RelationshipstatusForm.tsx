@@ -141,7 +141,7 @@ const RelationshipstatusForm = () => {
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú verður að fylla út allar upplýsingarnar
+            Þú þarft að fylla út alla reiti
           </Text>
         </div>
       </ContentContainer>
