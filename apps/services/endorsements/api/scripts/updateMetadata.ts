@@ -2,6 +2,7 @@ import 'reflect-metadata'
 import { NestFactory } from '@nestjs/core/nest-factory'
 import { Sequelize } from 'sequelize-typescript'
 import Bottleneck from 'bottleneck'
+import jsonwebtoken from 'jsonwebtoken'
 import { logger } from '@island.is/logging'
 import { Auth } from '@island.is/auth-nest-tools'
 import { GenericScope } from '@island.is/auth/scopes'
@@ -92,10 +93,7 @@ const parseScopes = (scopes: undefined | string | string[]): string[] => {
 // token is not validated at this point, we expect the underlying services to authenticate the token
 const convertTokenToAuth = (token: string): Auth => {
   try {
-    const payload = token.split('.')[1]
-    const decodedPayload: JwtPayload = JSON.parse(
-      Buffer.from(payload, 'base64').toString(),
-    )
+    const decodedPayload = jsonwebtoken.decode(token) as JwtPayload
 
     return {
       scope: parseScopes(decodedPayload.scope),
