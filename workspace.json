@@ -5882,27 +5882,6 @@
         }
       }
     },
-    "nest-validators": {
-      "root": "libs/nest/validators",
-      "sourceRoot": "libs/nest/validators/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/nest/validators/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/nest/validators"],
-          "options": {
-            "jestConfig": "libs/nest/validators/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "nest-pagination": {
       "root": "libs/nest/pagination",
       "sourceRoot": "libs/nest/pagination/src",
@@ -5919,6 +5898,27 @@
           "outputs": ["coverage/libs/nest/pagination"],
           "options": {
             "jestConfig": "libs/nest/pagination/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "nest-validators": {
+      "root": "libs/nest/validators",
+      "sourceRoot": "libs/nest/validators/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/validators/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/validators"],
+          "options": {
+            "jestConfig": "libs/nest/validators/jest.config.js",
             "passWithNoTests": true
           }
         }

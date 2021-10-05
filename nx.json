@@ -510,10 +510,10 @@
     "nest-audit": {
       "tags": []
     },
-    "nest-validators": {
+    "nest-pagination": {
       "tags": []
     },
-    "nest-pagination": {
+    "nest-validators": {
       "tags": []
     },
     "nova-sms": {

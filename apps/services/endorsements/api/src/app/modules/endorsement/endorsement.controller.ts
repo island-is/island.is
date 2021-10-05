@@ -34,8 +34,7 @@ import type { User, Auth } from '@island.is/auth-nest-tools'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
-
-import { PaginationDto } from '../../../../../../../../libs/nest/pagination/src/lib/dto/pagination.dto'
+import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`

@@ -19,7 +19,7 @@ import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
 import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 
-import { paginate } from '../../../../../../../../libs/nest/pagination/src/lib/paginate'
+import { paginate } from '@island.is/nest/pagination'
 
 interface FindEndorsementInput {
   listId: string
