@@ -9,7 +9,6 @@ import { Endorsement } from '../endorsement/models/endorsement.model'
 
 import { paginate } from '../pagination/paginate'
 
-
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
