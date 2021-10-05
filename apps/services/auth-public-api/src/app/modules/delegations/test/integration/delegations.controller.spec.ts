@@ -1,30 +1,31 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import * as uuidv4 from 'uuidv4'
-import {
-  TestContainer,
-  StartedTestContainer,
-  StoppedTestContainer,
-  GenericContainer,
-} from 'testcontainers'
+import uuidv4 from 'uuidv4'
+import randomString from 'randomstring'
 
 import {
   CreateDelegationDTO,
   DelegationsService,
-  SEQUELIZE_CONFIG,
-  SequalizeConfig,
 } from '@island.is/auth-api-lib'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { IdsUserGuard, User } from '@island.is/auth-nest-tools'
+import { of } from 'rxjs'
 
 import { setup } from '../../../../../../test/setup'
 
+const currentUser: User = {
+  nationalId: randomString.generate({ length: 10, charset: 'numeric' }),
+  scope: [],
+  authorization: '',
+  client: '',
+}
+
 const user = {
-  nationalId: '1234567890',
-  name: 'Test name',
-  fullName: 'Test fullName',
+  nationalId: randomString.generate({ length: 10, charset: 'numeric' }),
+  name: randomString.generate(),
+  fullName: randomString.generate(),
   info: {
-    name: 'Test info name',
+    name: randomString.generate(),
   },
 }
 
@@ -46,33 +47,12 @@ describe('DelegationsController with auth', () => {
   let currentUser: any
 
   beforeAll(async () => {
-    // const container = await new GenericContainer(
-    //   'public.ecr.aws/bitnami/postgresql:11.12.0',
-    // )
-    //   .withExposedPorts(5432)
-    //   .withEnv('PG_PASSWORD', 'stafraentislandisthebest')
-    //   .start()
-
     app = await setup({
-      // sequalizeConfig: {
-      //   // host: container.getIpAddress,
-      //   // port: container.getMappedPort(5432),
-      //   username: 'postgres',
-      //   password: 'stafraentislandisthebest',
-      //   database: ':memory:',
-      //   dialect: 'sqlite',
-      // },
+      currentUser,
       override: (builder) => {
         builder
           .overrideProvider(EinstaklingarApi)
           .useValue(new MockEinstaklingarApi())
-          .overrideProvider(SEQUELIZE_CONFIG)
-          .useValue({
-            username: 'postgres',
-            password: 'stafraentislandisthebest',
-            database: ':memory:',
-            dialect: 'sqlite',
-          } as SequalizeConfig)
       },
     })
     currentUser = (app.get<IdsUserGuard>(IdsUserGuard) as IdsUserGuard & {
@@ -80,7 +60,7 @@ describe('DelegationsController with auth', () => {
     }).user
   })
 
-  xdescribe('create', () => {
+  describe('create', () => {
     it('should create a delegation', async () => {
       // Arrange
       const id = '00000000-0000-0000-0000-000000000000'

@@ -9,6 +9,15 @@ module.exports = {
     port: 5433,
     seederStorage: 'sequelize',
   },
+  test: {
+    username: 'test_db',
+    password: 'test_db',
+    database: 'test_db',
+    host: 'localhost',
+    dialect: 'postgres',
+    port: 5433,
+    seederStorage: 'sequelize',
+  },
   production: {
     username: process.env.DB_USER,
     password: process.env.DB_PASS,

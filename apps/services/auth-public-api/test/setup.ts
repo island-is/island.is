@@ -39,29 +39,12 @@ export const truncate = async () => {
   )
 }
 
-export const setup = async (
-  { withAuth = true, sequalizeConfig, ...options }: Options = {
-    withAuth: true,
-  },
-) => {
-  if (withAuth) {
-    app = await testServerActivateAuthGuards({
-      appModule: AppModule,
-      ...options,
-    })
-  } else {
-    app = await testServer({
-      appModule: AppModule,
-      ...options,
-    })
-  }
+export const setup = async (options: Partial<TestServerOptions> = {}) => {
+  app = await testServer({
+    appModule: AppModule,
+    ...options,
+  })
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
-  // sequelize.options.host = sequalizeConfig.host
-  // sequelize.options.username = sequalizeConfig.username
-  // sequelize.options.password = sequalizeConfig.password
-  // sequelize.options.database = sequalizeConfig.database
-  // sequelize.options.port = sequalizeConfig.port
-  // sequelize.options.dialect = sequalizeConfig.dialect
 
   try {
     await sequelize.sync({ logging: false })
@@ -77,6 +60,6 @@ beforeEach(truncate)
 afterAll(async () => {
   if (app && sequelize) {
     await app.close()
-    // await sequelize.close()
+    await sequelize.close()
   }
 })
