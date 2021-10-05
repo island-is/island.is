@@ -159,7 +159,10 @@ const PastRequests: React.FC<Props> = (props) => {
         const courtEndDate = row.row.original.courtEndTime
         const state = row.row.original.state
 
-        if (state === CaseState.REJECTED || !validToDate) {
+        if (
+          [CaseState.REJECTED, CaseState.DISMISSED].includes(state) ||
+          !validToDate
+        ) {
           return null
         } else if (rulingDate) {
           return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
