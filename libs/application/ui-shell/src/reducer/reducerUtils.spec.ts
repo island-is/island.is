@@ -48,38 +48,68 @@ describe('reducerUtils', () => {
       subSectionIndex,
     })
 
-    const screens: FormScreen[] = [
-      buildIntroScreen('intro'),
-      buildTextScreen('a'),
-      buildTextScreen('b'),
-      buildTextScreen('c'),
-    ]
-
-    it('should default to the first screen if there are no answers', () => {
-      expect(findCurrentScreen(screens, {})).toBe(0)
-    })
-
-    it('should default to the first screen if the answers dont really match the list of screens', () => {
-      expect(findCurrentScreen(screens, { random: 'asdf', notThis: '4' })).toBe(
-        0,
+    const convertScreens = (
+      screens: FormScreen[],
+      answers = {},
+      externalData = {},
+    ) =>
+      convertFormToScreens(
+        buildForm({
+          id: 'ExampleForm',
+          title: 'asdf',
+          children: screens,
+        }),
+        answers,
+        externalData,
       )
-    })
 
-    it('should go to the screen where the last answer belongs to the screen before', () => {
-      expect(findCurrentScreen(screens, { a: 'answer' })).toBe(2)
-      expect(findCurrentScreen(screens, { b: 'answer' })).toBe(0)
-      expect(findCurrentScreen(screens, { a: 'answer', b: 'answer' })).toBe(3)
-    })
+    describe('with stopOnFirstMissingAnswer = false', () => {
+      const screens: FormScreen[] = [
+        buildIntroScreen('intro'),
+        buildTextScreen('a'),
+        buildTextScreen('b'),
+        buildTextScreen('c'),
+      ]
 
-    it('should go to the screen missing an answer', () => {
-      expect(findCurrentScreen(screens, { a: 'answer', c: 'answer' })).toBe(2)
-    })
+      it('should default to the first screen if there are no answers', () => {
+        expect(findCurrentScreen(convertScreens(screens), {})).toBe(0)
+      })
 
-    it.only('should, if the last answer is in a partially answered multifield, go to that screen', () => {
-      const form = buildForm({
-        id: 'ExampleForm',
-        title: 'asdf',
-        children: [
+      it('should default to the first screen if the answers dont really match the list of screens', () => {
+        expect(
+          findCurrentScreen(convertScreens(screens), {
+            random: 'asdf',
+            notThis: '4',
+          }),
+        ).toBe(0)
+      })
+
+      it('should go to the screen where the last answer belongs to the screen before', () => {
+        expect(
+          findCurrentScreen(convertScreens(screens), { a: 'answer' }),
+        ).toBe(2)
+        expect(
+          findCurrentScreen(convertScreens(screens), { b: 'answer' }),
+        ).toBe(0)
+        expect(
+          findCurrentScreen(convertScreens(screens), {
+            a: 'answer',
+            b: 'answer',
+          }),
+        ).toBe(3)
+      })
+
+      it('should go to the screen missing an answer', () => {
+        expect(
+          findCurrentScreen(convertScreens(screens), {
+            a: 'answer',
+            c: 'answer',
+          }),
+        ).toBe(2)
+      })
+
+      it('should, if the last answer is in a partially answered multifield, go to that screen', () => {
+        const screens = [
           buildIntroScreen('intro'),
           buildMultiField({
             id: 'multifield',
@@ -87,46 +117,103 @@ describe('reducerUtils', () => {
             title: 'This is a great screen',
           }) as MultiFieldScreen,
           buildTextScreen('c'),
-        ],
+        ]
+
+        const answers1 = { a: 'sick' }
+        const answers2 = { b: 'very sick' }
+
+        expect(
+          findCurrentScreen(convertScreens(screens, answers1), answers1),
+        ).toBe(1)
+        expect(
+          findCurrentScreen(convertScreens(screens, answers2), answers2),
+        ).toBe(1)
       })
 
-      const screens = convertFormToScreens(form, {}, {})
+      it('should, if the last answer is in a fully answered multifield, go to the next screen after', () => {
+        const screens: FormScreen[] = [
+          buildIntroScreen('intro'),
+          buildMultiField({
+            id: 'multifield',
+            children: [buildTextScreen('a'), buildTextScreen('b')],
+            title: 'This is a great screen',
+          }) as MultiFieldScreen,
+          buildTextScreen('c'),
+        ]
 
-      expect(findCurrentScreen(screens, { a: 'sick' })).toBe(1)
-      expect(findCurrentScreen(screens, { b: 'very sick' })).toBe(1)
+        const answers = { a: 'sick', b: 'very sick' }
+
+        expect(
+          findCurrentScreen(convertScreens(screens, answers), answers),
+        ).toBe(2)
+      })
+
+      it('should, if the last answer is a fully built repeater, go to the repeater screen', () => {
+        const screens: FormScreen[] = [
+          buildIntroScreen('intro'),
+          buildTextScreen('first'),
+          buildRepeater({
+            id: 'person',
+            children: [buildTextScreen('a'), buildTextScreen('b')],
+            title: 'This is a great screen',
+            component: 'SomeComponent',
+          }) as RepeaterScreen,
+          buildTextScreen('c'),
+        ]
+
+        const answers1 = { person: [{ a: '1', b: '2' }] }
+        const answers2 = { person: [] }
+        const answers3 = { first: 'asdf' }
+
+        expect(
+          findCurrentScreen(convertScreens(screens, answers1), answers1),
+        ).toBe(2)
+        expect(
+          findCurrentScreen(convertScreens(screens, answers2), answers2),
+        ).toBe(2)
+        expect(
+          findCurrentScreen(convertScreens(screens, answers3), answers3),
+        ).toBe(2)
+      })
+
+      it('should, go to the last remaining answer in a repeater when everything before it has been answered', () => {
+        const screens: FormScreen[] = [
+          buildIntroScreen('intro'),
+          buildTextScreen('first'),
+          buildRepeater({
+            id: 'person',
+            children: [buildTextScreen('a'), buildTextScreen('b')],
+            title: 'This is a great screen',
+            component: 'SomeComponent',
+          }) as RepeaterScreen,
+          buildTextScreen('c'),
+        ]
+
+        const answers1 = { first: 'hello', person: [{ a: '1' }] }
+        const convertedScreens = convertScreens(screens, answers1)
+
+        expect(findCurrentScreen(convertedScreens, answers1)).toBe(4)
+      })
     })
 
-    it('should, if the last answer is in a fully answered multifield, go to the next screen after', () => {
-      const screens: FormScreen[] = [
-        buildIntroScreen('intro'),
-        buildMultiField({
-          id: 'multifield',
-          children: [buildTextScreen('a'), buildTextScreen('b')],
-          title: 'This is a great screen',
-        }) as MultiFieldScreen,
-        buildTextScreen('c'),
-      ]
-      expect(findCurrentScreen(screens, { a: 'sick', b: 'very sick' })).toBe(2)
-    })
+    describe('with stopOnFirstMissingAnswer = true', () => {
+      it('should not stop on repeater, even if it has an answer, if a previous question is missing an answer', () => {
+        const screens: FormScreen[] = [
+          buildTextScreen('first'),
+          buildRepeater({
+            id: 'person',
+            children: [buildTextScreen('a'), buildTextScreen('b')],
+            title: 'This is a great screen',
+            component: 'SomeComponent',
+          }) as RepeaterScreen,
+          buildTextScreen('c'),
+        ]
 
-    it('should, if the last answer is a fully built repeater, go to the repeater screen', () => {
-      const screens: FormScreen[] = [
-        buildIntroScreen('intro'),
-        buildTextScreen('first'),
-        buildRepeater({
-          id: 'person',
-          children: [buildTextScreen('a'), buildTextScreen('b')],
-          title: 'This is a great screen',
-          component: 'SomeComponent',
-        }) as RepeaterScreen,
-        buildTextScreen('c'),
-      ]
+        const answers1 = { person: [{ a: '1' }] }
+        const convertedScreens = convertScreens(screens, answers1)
 
-      expect(findCurrentScreen(screens, { person: [{ a: '1', b: '2' }] })).toBe(
-        2,
-      )
-      expect(findCurrentScreen(screens, { person: [] })).toBe(2)
-      expect(findCurrentScreen(screens, { first: 'asdf' })).toBe(2)
+        expect(findCurrentScreen(convertedScreens, answers1, true)).toBe(0)
+      })
     })
   })
 

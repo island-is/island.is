@@ -506,6 +506,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     id: 'rightsIntro',
                     title: '',
                     component: 'BoxChart',
+                    doesNotRequireAnswer: true,
                   },
                   {
                     boxes: defaultMonths,

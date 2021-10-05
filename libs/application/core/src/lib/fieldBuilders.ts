@@ -42,12 +42,12 @@ const extractCommonFields = (
   } = data
 
   return {
+    id,
     condition,
     defaultValue,
     description,
     disabled,
     doesNotRequireAnswer,
-    id,
     title,
     width,
   }
@@ -103,6 +103,7 @@ export function buildDescriptionField(
   const { titleVariant = 'h2', description, tooltip, space } = data
   return {
     ...extractCommonFields(data),
+    doesNotRequireAnswer: true,
     children: undefined,
     description,
     titleVariant,
@@ -116,19 +117,7 @@ export function buildDescriptionField(
 export function buildRadioField(
   data: Omit<RadioField, 'type' | 'component' | 'children'>,
 ): RadioField {
-  const {
-    condition,
-    id,
-    title,
-    description,
-    defaultValue,
-    options,
-    largeButtons = true,
-    disabled = false,
-    width = 'full',
-    backgroundColor,
-    space,
-  } = data
+  const { options, largeButtons = true, backgroundColor, space } = data
 
   return {
     ...extractCommonFields(data),
