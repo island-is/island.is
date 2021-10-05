@@ -61,6 +61,7 @@ const useApplication = () => {
               formComment: form?.formComment,
               state: ApplicationState.NEW,
               files: files,
+              // spouseNationalId: form?.
             },
           },
         })

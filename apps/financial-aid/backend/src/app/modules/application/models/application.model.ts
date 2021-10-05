@@ -202,6 +202,28 @@ export class ApplicationModel extends Model<Application> {
   @ApiProperty({ type: StaffModel })
   staff?: StaffModel
 
+  // @Column({
+  //   type: DataType.ENUM,
+  //   allowNull: false,
+  //   values: Object.values(Employment),
+  // })
+  // @ApiProperty({ enum: Employment })
+  // familyStatus: Fami
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spouseNationalId?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spouseEmail?: string
+
   @HasMany(() => ApplicationEventModel, 'applicationId')
   @ApiProperty({ type: ApplicationEventModel, isArray: true })
   applicationEvents?: ApplicationEventModel[]

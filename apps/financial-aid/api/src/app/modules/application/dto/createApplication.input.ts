@@ -91,4 +91,16 @@ export class CreateApplicationInput implements CreateApplication {
 
   @Field({ nullable: true })
   readonly amount?: number
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseNationalId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseEmail?: string
+
+  // @Allow()
+  // @Field(() => String)
+  // readonly familyStatus!: ApplicationState
 }
