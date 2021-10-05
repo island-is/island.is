@@ -1,4 +1,4 @@
-import { CurrentAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
+import { BypassAuth, CurrentAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
@@ -23,6 +23,7 @@ import { environment } from '../../../environments'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementListById.pipe'
 import { BulkEndorsementDto } from './dto/bulkEndorsement.dto'
+import { EndorsementDto } from './dto/endorsement.dto'
 import { Endorsement } from './models/endorsement.model'
 import { EndorsementService } from './endorsement.service'
 import { EndorsementsScope } from '@island.is/auth/scopes'
@@ -51,7 +52,7 @@ export class EndorsementController {
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)
   @Get()
-  @HasAccessGroup(AccessGroup.Owner, AccessGroup.DMR)
+  @BypassAuth()
   @Audit<Endorsement[]>({
     resources: (endorsement) => endorsement.map((e) => e.id),
     meta: (endorsement) => ({ count: endorsement.length }),
@@ -101,6 +102,7 @@ export class EndorsementController {
     type: Endorsement,
   })
   @ApiParam({ name: 'listId', type: String })
+  @ApiBody({type: EndorsementDto})
   @Scopes(EndorsementsScope.main)
   @Post()
   @Audit<Endorsement>({
@@ -113,12 +115,14 @@ export class EndorsementController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
+    @Body() endorsement: EndorsementDto,
     @CurrentUser() user: User,
   ): Promise<Endorsement> {
     return await this.endorsementService.createEndorsementOnList(
       {
         nationalId: user.nationalId,
         endorsementList,
+        showName: endorsement.showName
       },
       user,
     )

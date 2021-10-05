@@ -27,6 +27,7 @@ interface FindEndorsementInput {
 interface EndorsementInput {
   endorsementList: EndorsementList
   nationalId: string
+  showName?: boolean
 }
 interface EndorsementListsInput {
   endorsementList: EndorsementList
@@ -55,6 +56,7 @@ interface FindUserEndorsementsByTagsInput {
 interface ProcessEndorsementInput {
   nationalId: string
   endorsementList: EndorsementList
+  showName: boolean
 }
 
 export interface NationalIdError {
@@ -133,7 +135,7 @@ export class EndorsementService {
   }
 
   private processEndorsement = async (
-    { nationalId, endorsementList }: ProcessEndorsementInput,
+    { nationalId, endorsementList, showName }: ProcessEndorsementInput,
     auth: Auth,
   ) => {
     // get metadata for this national id
@@ -164,6 +166,7 @@ export class EndorsementService {
         ),
         bulkEndorsement: false, // defaults to false we overwrite this value in bulk import
       },
+      showName: showName
     }
   }
 
@@ -214,7 +217,7 @@ export class EndorsementService {
 
   // FIXME: Find a way to combine with create bulk endorsements
   async createEndorsementOnList(
-    { endorsementList, nationalId }: EndorsementInput,
+    { endorsementList, nationalId, showName }: EndorsementInput,
     auth: User,
   ) {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
@@ -228,6 +231,7 @@ export class EndorsementService {
       {
         nationalId: auth.nationalId,
         endorsementList,
+        showName: showName || true
       },
       auth,
     )
@@ -268,6 +272,7 @@ export class EndorsementService {
           {
             nationalId,
             endorsementList,
+            showName: true
           },
           auth,
         ).catch((error: Error) => {
