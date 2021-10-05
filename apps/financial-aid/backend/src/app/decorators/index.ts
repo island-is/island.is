@@ -1,2 +1,2 @@
-export * from './current.user.decorator'
+export * from './currentUser.decorator'
 export * from './roles.decorator'

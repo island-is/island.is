@@ -1,5 +1,5 @@
 import { Context, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { Inject } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -11,7 +11,9 @@ import { CurrentApplicationModel } from '../application'
 import { StaffModel } from '../staff/models'
 import { CurrentUser } from '../decorators'
 import { BackendAPI } from '../../../services'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
+@UseGuards(IdsUserGuard)
 @Resolver(() => UserModel)
 export class UserResolver {
   constructor(

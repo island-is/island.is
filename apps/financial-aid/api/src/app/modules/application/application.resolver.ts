@@ -1,5 +1,5 @@
 import { Query, Resolver, Context, Mutation, Args } from '@nestjs/graphql'
-import { Inject } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BackendAPI } from '../../../services'
@@ -24,7 +24,9 @@ import {
   UpdateApplicationTableResponseType,
   UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
+@UseGuards(IdsUserGuard)
 @Resolver(() => ApplicationModel)
 export class ApplicationResolver {
   constructor(
