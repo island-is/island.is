@@ -44,7 +44,6 @@ class MockEinstaklingarApi {
 
 describe('DelegationsController with auth', () => {
   let app: INestApplication
-  let currentUser: any
 
   beforeAll(async () => {
     app = await setup({
@@ -55,9 +54,6 @@ describe('DelegationsController with auth', () => {
           .useValue(new MockEinstaklingarApi())
       },
     })
-    currentUser = (app.get<IdsUserGuard>(IdsUserGuard) as IdsUserGuard & {
-      user: User
-    }).user
   })
 
   describe('create', () => {
@@ -101,7 +97,7 @@ describe('DelegationsController without auth', () => {
   let app: INestApplication
 
   beforeAll(async () => {
-    app = await setup({ withAuth: false })
+    app = await setup()
   })
 
   describe('create', () => {

@@ -1,18 +1,9 @@
-import {
-  testServer,
-  testServerActivateAuthGuards,
-  TestServerOptions,
-} from '@island.is/infra-nest-server'
+import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
 import { getConnectionToken } from '@nestjs/sequelize'
 import { INestApplication, Type } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
 import { logger } from '@island.is/logging'
-
-type Options = {
-  withAuth?: boolean
-  sequalizeConfig?: any
-} & Partial<TestServerOptions>
 
 export let app: INestApplication
 let sequelize: Sequelize
