@@ -328,6 +328,7 @@ describe('getCasesQueryFilter', () => {
   it('should get prosecutor filter', () => {
     // Arrange
     const user = {
+      id: 'Prosecutor Id',
       role: UserRole.PROSECUTOR,
       institution: {
         id: 'Prosecutors Office Id',
@@ -367,6 +368,14 @@ describe('getCasesQueryFilter', () => {
               { ruling_date: { [Op.lt]: literal('current_date - 90') } },
             ],
           },
+        },
+        {
+          [Op.or]: [
+            { is_heightened_security_level: { [Op.is]: null } },
+            { is_heightened_security_level: false },
+            { creating_prosecutor_id: 'Prosecutor Id' },
+            { prosecutor_id: 'Prosecutor Id' },
+          ],
         },
         {
           [Op.or]: [
