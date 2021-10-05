@@ -18,6 +18,7 @@ import {
   FamilyStatus,
   isEmailValid,
   NavigationProps,
+  User,
 } from '@island.is/financial-aid/shared/lib'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
@@ -45,6 +46,16 @@ const RelationshipstatusForm = () => {
     },
   ]
 
+  const isInputAndRadioValid = (acceptData: boolean, user: User) => {
+    return (
+      !acceptData ||
+      !user.spouse?.email ||
+      !user.spouse?.nationalId ||
+      !isEmailValid(user.spouse?.email) ||
+      user.spouse?.nationalId.length !== 10
+    )
+  }
+
   const errorCheck = () => {
     if (user?.familyStatus === undefined) {
       setHasError(true)
@@ -56,16 +67,8 @@ const RelationshipstatusForm = () => {
       return
     }
 
-    if (user?.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION) {
-      if (!acceptData || !user.spouse?.email || !user.spouse?.nationalId) {
-        setHasError(true)
-        return
-      }
-
-      if (
-        !isEmailValid(user.spouse?.email) ||
-        user.spouse?.nationalId.length !== 10
-      ) {
+    if (user.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION) {
+      if (isInputAndRadioValid(acceptData, user)) {
         setHasError(true)
         return
       }
