@@ -42,6 +42,15 @@ export const CaseQuery = gql`
       prosecutorOnlySessionRequest
       comments
       caseFilesComments
+      creatingProsecutor {
+        id
+        name
+        title
+        institution {
+          id
+          name
+        }
+      }
       prosecutor {
         id
         name
