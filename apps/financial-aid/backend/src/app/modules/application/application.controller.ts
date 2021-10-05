@@ -35,8 +35,9 @@ import {
 import {
   apiBasePath,
   ApplicationStateUrl,
-  User,
 } from '@island.is/financial-aid/shared/lib'
+
+import type { User } from '@island.is/financial-aid/shared/lib'
 
 import {
   ApplicationFilters,

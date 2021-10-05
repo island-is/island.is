@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { User } from '@island.is/financial-aid/shared/lib'
+import type { User } from '@island.is/financial-aid/shared/lib'
 
 import { UserModel } from './user.model'
 
