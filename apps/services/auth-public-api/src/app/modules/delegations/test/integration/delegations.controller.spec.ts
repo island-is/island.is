@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import randomString from 'randomstring'
+import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
 import {
   CreateDelegationDTO,
@@ -8,25 +8,17 @@ import {
   Delegation,
 } from '@island.is/auth-api-lib'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
-import { IdsUserGuard, User } from '@island.is/auth-nest-tools'
+import { testServer, useDatabase } from '@island.is/testing/nest'
+import {
+  createCurrentUser,
+  createOpenIDUser,
+  createNationalRegistryUser,
+} from '@island.is/testing/fixtures'
 
-import { setup } from '../../../../../../test/setup'
+import { AppModule } from '../../../../app.module'
 
-const currentUser: User = {
-  nationalId: randomString.generate({ length: 10, charset: 'numeric' }),
-  scope: [],
-  authorization: '',
-  client: '',
-}
-
-const user = {
-  nationalId: randomString.generate({ length: 10, charset: 'numeric' }),
-  name: randomString.generate(),
-  fullName: randomString.generate(),
-  info: {
-    name: randomString.generate(),
-  },
-}
+const currentUser = createCurrentUser()
+const nationalRegistryUser = createNationalRegistryUser()
 
 class MockEinstaklingarApi {
   withMiddleware() {
@@ -34,10 +26,7 @@ class MockEinstaklingarApi {
   }
 
   einstaklingarGetEinstaklingur() {
-    return {
-      fulltNafn: user.fullName,
-      nafn: user.name,
-    }
+    return nationalRegistryUser
   }
 }
 
@@ -46,13 +35,14 @@ describe('DelegationsController with auth', () => {
   let delegationModel: typeof Delegation
 
   beforeAll(async () => {
-    app = await setup({
+    app = await testServer<AppModule>({
+      appModule: AppModule,
       currentUser,
-      override: (builder) => {
+      override: (builder: TestingModuleBuilder) =>
         builder
           .overrideProvider(EinstaklingarApi)
-          .useValue(new MockEinstaklingarApi())
-      },
+          .useValue(new MockEinstaklingarApi()),
+      hooks: [useDatabase],
     })
     delegationModel = app.get<typeof Delegation>('DelegationRepository')
   })
@@ -60,8 +50,9 @@ describe('DelegationsController with auth', () => {
   describe('create', () => {
     it('should create a delegation', async () => {
       // Arrange
+      const openIdUser = createOpenIDUser()
       const payload: CreateDelegationDTO = {
-        toNationalId: user.nationalId,
+        toNationalId: nationalRegistryUser.kennitala,
         scopes: [],
       }
       jest
@@ -69,7 +60,7 @@ describe('DelegationsController with auth', () => {
           app.get<DelegationsService>(DelegationsService) as any,
           'getUserName',
         )
-        .mockImplementation(() => Promise.resolve(user.info.name))
+        .mockImplementation(() => openIdUser.profile.name)
       const numberOfExistingDelegations = await delegationModel.count()
 
       // Act
@@ -80,12 +71,12 @@ describe('DelegationsController with auth', () => {
       // Assert
       expect(response.status).toEqual(201)
       expect(response.body).toMatchObject({
-        fromName: user.info.name,
+        fromName: openIdUser.profile.name,
         fromNationalId: currentUser.nationalId,
         provider: 'delegationdb',
         scopes: [],
-        toName: user.fullName,
-        toNationalId: user.nationalId,
+        toName: nationalRegistryUser.fulltNafn,
+        toNationalId: nationalRegistryUser.kennitala,
         type: 'Custom',
       })
 
@@ -104,7 +95,9 @@ describe('DelegationsController without auth', () => {
   let app: INestApplication
 
   beforeAll(async () => {
-    app = await setup()
+    app = await testServer({
+      appModule: AppModule,
+    })
   })
 
   describe('create', () => {
