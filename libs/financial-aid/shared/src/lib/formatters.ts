@@ -35,9 +35,15 @@ export const getStateFromUrl: KeyMapping<
   ApplicationStateUrl,
   ApplicationState[]
 > = {
-  nymal: [ApplicationState.NEW],
-  vinnslu: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
-  afgreidd: [ApplicationState.REJECTED, ApplicationState.APPROVED],
+  New: [ApplicationState.NEW],
+  InProgress: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+  Processed: [ApplicationState.REJECTED, ApplicationState.APPROVED],
+}
+
+export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
+  '/nymal': ApplicationStateUrl.NEW,
+  '/vinnslu': ApplicationStateUrl.INPROGRESS,
+  '/afgreidd': ApplicationStateUrl.PROCESSED,
 }
 
 export const getEventType: KeyMapping<

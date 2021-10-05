@@ -6,7 +6,7 @@ import {
 export const navigationItems = [
   {
     label: 'Ný mál',
-    link: `/${ApplicationStateUrl.NEW}`,
+    link: `/nymal`,
     applicationState: [ApplicationState.NEW],
     headers: [
       { title: 'Nafn' },
@@ -18,7 +18,7 @@ export const navigationItems = [
   },
   {
     label: 'Mál í vinnslu',
-    link: `/${ApplicationStateUrl.INPROGRESS}`,
+    link: `/vinnslu`,
     applicationState: [
       ApplicationState.INPROGRESS,
       ApplicationState.DATANEEDED,
@@ -33,7 +33,7 @@ export const navigationItems = [
   },
   {
     label: 'Afgreidd mál',
-    link: `/${ApplicationStateUrl.PROCESSED}`,
+    link: `/afgreidd`,
     applicationState: [ApplicationState.APPROVED, ApplicationState.REJECTED],
     headers: [
       { title: 'Nafn' },

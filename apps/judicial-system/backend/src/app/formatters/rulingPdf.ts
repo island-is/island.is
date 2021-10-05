@@ -20,12 +20,12 @@ import {
   formatAccusedByGender,
   caseTypes,
   lowercase,
+  formatAppeal,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
 import { core, ruling } from '../messages'
-import { formatAppeal } from './formatters'
 import { setPageNumbers } from './pdfHelpers'
 import { writeFile } from './writeFile'
 import { skjaldarmerki } from './skjaldarmerki'
@@ -317,7 +317,11 @@ function constructRestrictionRulingPdf(
     )
     .text(' ')
     .text(
-      `${formatAppeal(existingCase.accusedAppealDecision, 'Varnaraðili')} ${
+      `${formatAppeal(
+        existingCase.accusedAppealDecision,
+        capitalize(formatAccusedByGender(existingCase.accusedGender)),
+        existingCase.accusedGender,
+      )} ${
         existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
           ? existingCase.accusedAppealAnnouncement ?? ''
           : ''

@@ -126,6 +126,13 @@ export const UpdateApplicationMutation = gql`
         studentCustom
         amount
         rejection
+        applicationEvents {
+          id
+          applicationId
+          eventType
+          comment
+          created
+        }
         staff {
           name
         }
@@ -140,6 +147,36 @@ export const UpdateApplicationMutation = gql`
     }
   }
 `
+
+export const UpdateApplicationTableMutation = gql`
+  mutation UpdateApplicationTableMutation(
+    $input: UpdateApplicationInputTable!
+  ) {
+    updateApplicationTable(input: $input) {
+      applications {
+        id
+        nationalId
+        name
+        phoneNumber
+        email
+        modified
+        created
+        state
+        staff {
+          name
+        }
+      }
+      filters {
+        New
+        InProgress
+        DataNeeded
+        Rejected
+        Approved
+      }
+    }
+  }
+`
+
 export const GetApplicationsQuery = gql`
   query GetApplicationsQuery($input: AllApplicationInput!) {
     applications(input: $input) {
