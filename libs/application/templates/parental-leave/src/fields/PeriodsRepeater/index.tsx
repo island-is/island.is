@@ -3,11 +3,7 @@ import { useMutation } from '@apollo/client'
 import round from 'lodash/round'
 
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import {
-  RepeaterProps,
-  FieldBaseProps,
-  // getErrorViaPath,
-} from '@island.is/application/core'
+import { RepeaterProps, FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
   Button,
