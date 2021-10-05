@@ -35,14 +35,14 @@ export const findCurrentScreen = (
   stopOnFirstMissingAnswer = false,
 ): number => {
   let currentScreen = 0
-  let missingAnswerBeforeCurrentIndex = false
-  let currentAnswerIndex = 0
+  let missingAnswer = false
+  let lastAnswerIndex = 0
 
-  for (let index = 0; index < screens.length; index += 1) {
+  for (let index = 0; index < screens.length; ) {
     const screen = screens[index]
 
     const isNavigable = get(screen, 'isNavigable') === true
-    const doesNotRequireAnswer = get(screen, 'doesNotRequireAnwer') === true
+    const doesNotRequireAnswer = get(screen, 'doesNotRequireAnswer') === true
 
     if (!isNavigable || doesNotRequireAnswer) {
       let skipLength = 1
@@ -51,11 +51,10 @@ export const findCurrentScreen = (
         screen.type === FormItemTypes.MULTI_FIELD ||
         screen.type === FormItemTypes.REPEATER
       ) {
-        skipLength = screen.children.length
+        skipLength = screen.children.length + 1
       }
-      console.log(`#1: ${screen.type} -> ${skipLength}`)
+
       currentScreen = index + skipLength
-      currentAnswerIndex = index + skipLength
       index = index + skipLength
 
       continue
@@ -84,13 +83,13 @@ export const findCurrentScreen = (
         numberOfAnsweredQuestionsInScreen === screen.children.length
 
       if (answeredAllSubScreens) {
-        console.log('#2.1')
-        currentScreen += screen.children.length
+        lastAnswerIndex = index + 1
+        currentScreen = index + screen.children.length
       } else {
-        console.log('#2.2')
         // Did not answer all the questions
         currentScreen = index
-        missingAnswerBeforeCurrentIndex = true
+        lastAnswerIndex = currentScreen
+        missingAnswer = true
 
         if (stopOnFirstMissingAnswer) {
           break
@@ -101,7 +100,7 @@ export const findCurrentScreen = (
         getValueViaPath(answers, screen.id) !== undefined
 
       if (repeaterHasAnswer) {
-        console.log('#3')
+        lastAnswerIndex = index
         currentScreen = index
       }
     } else if (screen.id) {
@@ -109,25 +108,42 @@ export const findCurrentScreen = (
         getValueViaPath(answers, screen.id) !== undefined
 
       if (!screenHasBeenAnswered && stopOnFirstMissingAnswer) {
+        currentScreen = index
         break
       }
 
-      if (!screenHasBeenAnswered && index > currentAnswerIndex) {
-        console.log('#4.1')
-        missingAnswerBeforeCurrentIndex = true
-        currentAnswerIndex = index
+      if (!screenHasBeenAnswered && index > lastAnswerIndex) {
+        missingAnswer = true
       }
 
-      if (!missingAnswerBeforeCurrentIndex && screenHasBeenAnswered) {
-        console.log('#4.2')
+      if (!missingAnswer && screenHasBeenAnswered) {
         currentScreen = index + 1
-        currentAnswerIndex = index
+        lastAnswerIndex = index
       }
     }
-    console.log(`index=${index}: ${screen.id}`)
+    index += 1
   }
 
   const screenIndex = Math.min(currentScreen, screens.length - 1)
+
+  // Check if we jumped over some intro screens in search of the latest answer
+  if (screenIndex > lastAnswerIndex) {
+    const screen = screens[lastAnswerIndex]
+
+    if (!screen || !screen.id) {
+      return screenIndex
+    }
+
+    const hasBeenAnswered = getValueViaPath(answers, screen.id) !== undefined
+    const requiresAnswer = !get(screen, 'doesNotRequireAnswer')
+
+    if (requiresAnswer && hasBeenAnswered) {
+      return lastAnswerIndex + 1
+    }
+
+    return lastAnswerIndex
+  }
+
   return screenIndex
 }
 

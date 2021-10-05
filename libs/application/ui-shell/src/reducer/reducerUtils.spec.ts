@@ -197,6 +197,34 @@ describe('reducerUtils', () => {
     })
 
     describe('with stopOnFirstMissingAnswer = true', () => {
+      it('should only skip fields that do not require answers when they come before an answer', () => {
+        const screens: FormScreen[] = [
+          buildIntroScreen('intro1'),
+          buildTextScreen('first'),
+          buildIntroScreen('intro1'),
+          buildIntroScreen('intro2'),
+          buildTextScreen('second'),
+          buildIntroScreen('done'),
+        ]
+
+        const answers1 = {}
+        const answers2 = { first: 'something' }
+        const answers3 = { first: 'something', second: 'more' }
+
+        // No answer, so we should go to intro1
+        expect(
+          findCurrentScreen(convertScreens(screens, answers1), answers1, true),
+        ).toBe(0)
+        // We have an answer to 'first' go to intro2
+        expect(
+          findCurrentScreen(convertScreens(screens, answers2), answers2, true),
+        ).toBe(2)
+        // We have an answer to 'first' and 'second' so we're done
+        expect(
+          findCurrentScreen(convertScreens(screens, answers3), answers3, true),
+        ).toBe(5)
+      })
+
       it('should not stop on repeater, even if it has an answer, if a previous question is missing an answer', () => {
         const screens: FormScreen[] = [
           buildTextScreen('first'),
