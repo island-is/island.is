@@ -29,7 +29,7 @@ const SpouseInfo = ({
     <>
       {user && (
         <>
-          <Box marginBottom={[2, 2, 3]}>
+          <Box marginBottom={[2, 2, 3]} marginTop={[1, 1, 0]}>
             <Input
               label="Kennitala maka"
               name="nationalIdSpouse"
@@ -80,7 +80,7 @@ const SpouseInfo = ({
         </>
       )}
 
-      <Box cursor="pointer" marginBottom={[5, 5, 10]}>
+      <Box marginBottom={[5, 5, 10]}>
         <Checkbox
           name={'accept'}
           id="accept"

@@ -37,7 +37,7 @@ const RelationshipstatusForm = () => {
   const options = [
     {
       label: 'Nei, ég er ekki í sambúð',
-      value: FamilyStatus.SINGLE,
+      value: FamilyStatus.UNKNOWN,
     },
     {
       label: 'Já, ég er í óstaðfestri sambúð',
@@ -55,7 +55,7 @@ const RelationshipstatusForm = () => {
       return
     }
 
-    if (user?.familyStatus === FamilyStatus.SINGLE) {
+    if (user?.familyStatus === FamilyStatus.UNKNOWN) {
       router.push(navigation?.nextUrl)
     }
 
