@@ -64,6 +64,7 @@
 /libs/clients/middlewares/                                                                    @island-is/aranja-core
 /libs/localization/                                                                           @island-is/aranja-core
 /libs/service-portal/settings/access-control                                                  @island-is/aranja-core @island-is/vice-versa
+/libs/testing/                                                                                @island-is/aranja-core @island-is/vice-versa
 
 /apps/application-system/                                                                     @island-is/aranja-applications
 /libs/api/domains/application/                                                                @island-is/aranja-applications
