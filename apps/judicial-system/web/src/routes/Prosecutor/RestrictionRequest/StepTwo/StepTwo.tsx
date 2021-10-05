@@ -71,8 +71,9 @@ export const StepTwo: React.FC = () => {
     .filter(
       (aUser: User) =>
         aUser.role === UserRole.PROSECUTOR &&
-        aUser.institution?.id ===
-          workingCase?.creatingProsecutor?.institution?.id,
+        (!workingCase?.creatingProsecutor ||
+          aUser.institution?.id ===
+            workingCase?.creatingProsecutor?.institution?.id),
     )
     .map((prosecutor: User, _: number) => {
       return { label: prosecutor.name, value: prosecutor.id }
