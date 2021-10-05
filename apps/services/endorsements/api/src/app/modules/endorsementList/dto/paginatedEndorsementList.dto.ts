@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString, IsArray } from 'class-validator'
-import { PageInfoDto } from '../../pagination/dto/pageinfo.dto'
+import { PageInfoDto } from '../../../../../../../../../libs/nest/pagination/src/lib/dto/pageinfo.dto'
 import { EndorsementList } from '../endorsementList.model'
 
 export class PaginatedEndorsementListDto {

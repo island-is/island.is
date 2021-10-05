@@ -7,7 +7,7 @@ import { EndorsementList } from './endorsementList.model'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { Endorsement } from '../endorsement/models/endorsement.model'
 
-import { paginate } from '../pagination/paginate'
+import { paginate } from '../../../../../../../../libs/nest/pagination/src/lib/paginate'
 
 interface CreateInput extends EndorsementListDto {
   owner: string

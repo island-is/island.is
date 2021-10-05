@@ -35,7 +35,7 @@ import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
 
-import { PaginationDto } from '../pagination/dto/pagination.dto'
+import { PaginationDto } from '../../../../../../../../libs/nest/pagination/src/lib/dto/pagination.dto'
 import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
