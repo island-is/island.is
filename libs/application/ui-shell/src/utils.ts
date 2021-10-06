@@ -88,11 +88,6 @@ export function extractAnswersToSubmitFromScreen(
 
     // We always submit the whole array for the repeater answers
     const repeaterId = baseId.split('[')[0] ?? ''
-    const dataBeingSubmittedByScreen = get(data, baseId)
-
-    if (dataBeingSubmittedByScreen === undefined) {
-      throw new Error(JSON.stringify({ [repeaterId]: 'Svar vantar' }))
-    }
 
     return pick(data, [repeaterId])
   }
