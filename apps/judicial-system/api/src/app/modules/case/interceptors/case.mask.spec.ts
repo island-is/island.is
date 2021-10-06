@@ -5,7 +5,7 @@ import { CaseType } from '@island.is/judicial-system/types'
 import { Case } from '../models'
 import { maskCase } from './case.mask'
 
-describe('Cases Mask', () => {
+describe('Mask Case', () => {
   each`
     type
     ${CaseType.CUSTODY}
