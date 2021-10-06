@@ -168,9 +168,10 @@ describe('reducerUtils', () => {
         expect(
           findCurrentScreen(convertScreens(screens, answers1), answers1),
         ).toBe(2)
+        // Empty repeater equals no answer so in this case we should go to the first screen
         expect(
           findCurrentScreen(convertScreens(screens, answers2), answers2),
-        ).toBe(2)
+        ).toBe(0)
         expect(
           findCurrentScreen(convertScreens(screens, answers3), answers3),
         ).toBe(2)
@@ -277,6 +278,35 @@ describe('reducerUtils', () => {
         expect(
           findCurrentScreen(convertScreens(screens, answers1), answers1, true),
         ).toBe(4)
+      })
+
+      it('should not skip a repeater with missing answers', () => {
+        const screens: FormScreen[] = [
+          buildIntroScreen('intro'),
+          buildTextScreen('first'),
+          buildRepeater({
+            id: 'person',
+            children: [
+              buildTextScreen('a'),
+              buildTextScreen('b'),
+              buildTextScreen('c'),
+            ],
+            title: 'This is a great screen',
+            component: 'SomeComponent',
+          }) as RepeaterScreen,
+          buildTextScreen('second'),
+          buildIntroScreen('outro'),
+        ]
+
+        const answers1 = { first: 'hello', person: [] }
+        const answers2 = { first: 'hello' }
+
+        expect(
+          findCurrentScreen(convertScreens(screens, answers1), answers1, true),
+        ).toBe(2)
+        expect(
+          findCurrentScreen(convertScreens(screens, answers2), answers2, true),
+        ).toBe(2)
       })
     })
   })

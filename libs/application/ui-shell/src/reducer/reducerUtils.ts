@@ -1,4 +1,5 @@
 import get from 'lodash/get'
+import isArray from 'lodash/isArray'
 import {
   ExternalData,
   ExternalDataProvider,
@@ -96,12 +97,22 @@ export const findCurrentScreen = (
         }
       }
     } else if (screen.type === FormItemTypes.REPEATER) {
-      const repeaterHasAnswer =
-        getValueViaPath(answers, screen.id) !== undefined
+      const repeaterAnswer = getValueViaPath(answers, screen.id)
+      const repeaterHasAnswer = repeaterAnswer !== undefined
 
-      if (repeaterHasAnswer) {
+      if (
+        repeaterHasAnswer &&
+        isArray(repeaterAnswer) &&
+        repeaterAnswer.length > 0
+      ) {
         lastAnswerIndex = index
         currentScreen = index
+      } else {
+        missingAnswer = true
+
+        if (stopOnFirstMissingAnswer) {
+          break
+        }
       }
     } else if (screen.id) {
       const screenHasBeenAnswered =
