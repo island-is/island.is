@@ -114,13 +114,7 @@ export const findCurrentScreen = (
     const requiresAnswer = screenRequiresAnswer(screen)
 
     if (!requiresAnswer) {
-      let skipLength = 1
-
-      if (screen.type === FormItemTypes.REPEATER) {
-        skipLength = screen.children.length + 1
-      }
-
-      index = index + skipLength
+      index += 1
       continue
     }
 
