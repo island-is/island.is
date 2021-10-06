@@ -22,12 +22,8 @@ export type TestServerOptions<AppModule> = {
   appModule: AppModule
   override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
   hooks?: {
-    override?: (
-      builder: TestingModuleBuilder,
-    ) => TestingModuleBuilder
-    extend?: (
-      app: INestApplication,
-    ) => Promise<INestApplication>
+    override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
+    extend?: (app: INestApplication) => Promise<INestApplication>
   }[]
 }
 
