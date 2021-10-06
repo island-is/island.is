@@ -20,6 +20,8 @@
 /.github/                                                                                     @island-is/core
 /handbook/                                                                                    @island-is/core
 /libs/api/domains/identity/                                                                   @island-is/core
+/libs/service-portal/settings/access-control                                                  @island-is/core
+/libs/testing/                                                                                @island-is/core
 
 /apps/services/endorsements/                                                                  @island-is/kosmos-kaos
 /apps/services/temporary-voter-registry-api/                                                  @island-is/kosmos-kaos
@@ -63,8 +65,6 @@
 /libs/clients/auth-public-api/                                                                @island-is/aranja-core
 /libs/clients/middlewares/                                                                    @island-is/aranja-core
 /libs/localization/                                                                           @island-is/aranja-core
-/libs/service-portal/settings/access-control                                                  @island-is/aranja-core @island-is/vice-versa
-/libs/testing/                                                                                @island-is/aranja-core @island-is/vice-versa
 
 /apps/application-system/                                                                     @island-is/aranja-applications
 /libs/api/domains/application/                                                                @island-is/aranja-applications
