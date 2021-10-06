@@ -15,9 +15,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import type { Case, User } from '@island.is/judicial-system/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
+import { formatAppeal, formatDate } from '@island.is/judicial-system/formatters'
 import { core, icConfirmation } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './Confirmation.treat'
@@ -121,23 +119,20 @@ const Confirmation: React.FC<Props> = (props) => {
               )}
             </Text>
           </Box>
-          <Box marginBottom={1}>
+          {workingCase.accusedAppealDecision !==
+            CaseAppealDecision.NOT_APPLICABLE && (
+            <Box marginBottom={1}>
+              <Text variant="h4">
+                {formatAppeal(workingCase.prosecutorAppealDecision, 'Sækjandi')}
+              </Text>
+            </Box>
+          )}
+          {workingCase.prosecutorAppealDecision !==
+            CaseAppealDecision.NOT_APPLICABLE && (
             <Text variant="h4">
-              {getAppealDecisionText(
-                AppealDecisionRole.ACCUSED,
-                workingCase.accusedAppealDecision,
-                workingCase.accusedGender,
-                workingCase.type,
-              )}
+              {formatAppeal(workingCase.accusedAppealDecision, 'Varnaraðili')}
             </Text>
-          </Box>
-          <Text variant="h4">
-            {getAppealDecisionText(
-              AppealDecisionRole.PROSECUTOR,
-              workingCase.prosecutorAppealDecision,
-              workingCase.accusedGender,
-            )}
-          </Text>
+          )}
           {(workingCase.accusedAppealAnnouncement ||
             workingCase.prosecutorAppealAnnouncement) && (
             <Box component="section" marginTop={3}>
