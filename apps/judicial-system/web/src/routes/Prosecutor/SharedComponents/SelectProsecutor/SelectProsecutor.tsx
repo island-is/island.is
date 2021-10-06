@@ -21,6 +21,16 @@ const SelectProsecutor: React.FC<Props> = (props) => {
     (prosecutor: Option) => prosecutor.value === workingCase.prosecutor?.id,
   )
 
+  const setProsecutor = (prosecutorId: string) => {
+    setAndSendToServer(
+      'prosecutorId',
+      prosecutorId,
+      workingCase,
+      setWorkingCase,
+      updateCase,
+    )
+  }
+
   const handleChange = (selectedOption: ValueType<ReactSelectOption>) => {
     const option = selectedOption as ReactSelectOption
     const isRemovingCaseAccessFromSelf =
@@ -31,13 +41,7 @@ const SelectProsecutor: React.FC<Props> = (props) => {
     if (isRemovingCaseAccessFromSelf) {
       console.log('You are about to loose access to the case')
     } else {
-      setAndSendToServer(
-        'prosecutorId',
-        option.value.toString(),
-        workingCase,
-        setWorkingCase,
-        updateCase,
-      )
+      setProsecutor(option.value.toString())
     }
   }
 

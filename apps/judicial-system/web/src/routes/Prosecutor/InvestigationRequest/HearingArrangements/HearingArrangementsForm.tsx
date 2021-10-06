@@ -28,7 +28,6 @@ interface Props {
   courts: Institution[]
   isLoading: boolean
   handleNextButtonClick: () => Promise<void>
-  user?: User
 }
 
 const HearingArrangementsForms: React.FC<Props> = (props) => {
@@ -40,7 +39,6 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     courts,
     isLoading,
     handleNextButtonClick,
-    user,
   } = props
 
   const { formatMessage } = useIntl()

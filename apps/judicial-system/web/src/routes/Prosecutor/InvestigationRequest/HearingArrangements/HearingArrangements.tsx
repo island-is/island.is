@@ -36,6 +36,7 @@ const HearingArrangements = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [prosecutors, setProsecutors] = useState<ReactSelectOption[]>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const { user } = useContext(UserContext)
   const { courts } = useInstitution()
   const { formatMessage } = useIntl()
   const {
@@ -130,11 +131,11 @@ const HearingArrangements = () => {
           <HearingArrangementsForms
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            user={user}
             prosecutors={prosecutors}
             courts={courts}
             isLoading={loading || isTransitioningCase}
             handleNextButtonClick={handleNextButtonClick}
+            user={user}
           />
           {modalVisible && (
             <Modal
