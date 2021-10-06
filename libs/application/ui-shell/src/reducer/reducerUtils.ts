@@ -30,6 +30,54 @@ import {
   RepeaterScreen,
 } from '../types'
 
+const screenRequiresAnswer = (screen: FormScreen) => {
+  if (screen.type === FormItemTypes.REPEATER) {
+    return true
+  } else if (screen.type === FormItemTypes.MULTI_FIELD) {
+    let screensThatRequireAnswer = 0
+
+    for (const subScreen of screen.children) {
+      if (screenRequiresAnswer(subScreen)) {
+        screensThatRequireAnswer += 1
+      }
+    }
+
+    return screensThatRequireAnswer > 0
+  }
+
+  const doesNotRequireAnswer = get(screen, 'doesNotRequireAnswer') === true
+  return !doesNotRequireAnswer
+}
+
+const screenHasBeenAnswered = (screen: FormScreen, answers: FormValue) => {
+  if (!screenRequiresAnswer(screen)) {
+    return true
+  }
+
+  if (!screen.id) {
+    return false
+  }
+
+  const answer = getValueViaPath(answers, screen.id)
+  const answerHasValue = answer !== undefined && answer !== null
+
+  if (screen.type === FormItemTypes.REPEATER) {
+    return isArray(answer) && answer.length > 0
+  } else if (screen.type === FormItemTypes.MULTI_FIELD) {
+    let numberOfAnswers = 0
+
+    for (const subScreen of screen.children) {
+      if (screenHasBeenAnswered(subScreen, answers)) {
+        numberOfAnswers += 1
+      }
+    }
+
+    return numberOfAnswers === screen.children.length
+  }
+
+  return answerHasValue
+}
+
 export const findCurrentScreen = (
   screens: FormScreen[],
   answers: FormValue,
@@ -37,21 +85,20 @@ export const findCurrentScreen = (
 ): number => {
   let currentScreen = 0
   let missingAnswer = false
-  let lastAnswerIndex = 0
+  let lastAnswerIndex = -1
 
   for (let index = 0; index < screens.length; ) {
     const screen = screens[index]
 
     const isNavigable = get(screen, 'isNavigable') === true
-    const doesNotRequireAnswer = get(screen, 'doesNotRequireAnswer') === true
+    const requiresAnswer = screenRequiresAnswer(screen)
 
-    if (!isNavigable || doesNotRequireAnswer) {
+    const canBeSkipped = !isNavigable || !requiresAnswer
+
+    if (canBeSkipped) {
       let skipLength = 1
 
-      if (
-        screen.type === FormItemTypes.MULTI_FIELD ||
-        screen.type === FormItemTypes.REPEATER
-      ) {
+      if (screen.type === FormItemTypes.REPEATER) {
         skipLength = screen.children.length + 1
       }
 
@@ -61,50 +108,46 @@ export const findCurrentScreen = (
       continue
     }
 
+    const hasBeenAnswered = screenHasBeenAnswered(screen, answers)
+
     if (screen.type === FormItemTypes.MULTI_FIELD) {
       let numberOfAnsweredQuestionsInScreen = 0
 
       for (const subScreen of screen.children) {
         const isSubScreenNavigable = get(subScreen, 'isNavigable') === true
-        const subScreenDoesNotRequireAnswer =
-          get(subScreen, 'doesNotRequireAnswer') === true
-        const subScreenHasBeenAnswered =
-          getValueViaPath(answers, subScreen.id) !== undefined
+        const subScreenRequiresAnswers = screenRequiresAnswer(subScreen)
+        const subScreenHasBeenAnswered = screenHasBeenAnswered(
+          subScreen,
+          answers,
+        )
 
-        if (!isSubScreenNavigable || subScreenDoesNotRequireAnswer) {
+        if (subScreenHasBeenAnswered) {
           numberOfAnsweredQuestionsInScreen++
-        } else if (subScreenHasBeenAnswered) {
-          numberOfAnsweredQuestionsInScreen++
-        } else {
-          break
+        } else if (subScreenRequiresAnswers && isSubScreenNavigable) {
+          // We don't want to break right away in case
+          // there is some other screen that has been answered
+          // that we should count
+          missingAnswer = true
         }
       }
 
-      const answeredAllSubScreens =
-        numberOfAnsweredQuestionsInScreen === screen.children.length
-
-      if (answeredAllSubScreens) {
-        lastAnswerIndex = index + 1
-        currentScreen = index + screen.children.length
-      } else {
+      if (hasBeenAnswered) {
+        lastAnswerIndex = index
+        currentScreen = index + 1
+      } else if (numberOfAnsweredQuestionsInScreen > 0) {
         // Did not answer all the questions
         currentScreen = index
         lastAnswerIndex = currentScreen
         missingAnswer = true
+      } else {
+        missingAnswer = true
+      }
 
-        if (stopOnFirstMissingAnswer) {
-          break
-        }
+      if (missingAnswer && stopOnFirstMissingAnswer) {
+        break
       }
     } else if (screen.type === FormItemTypes.REPEATER) {
-      const repeaterAnswer = getValueViaPath(answers, screen.id)
-      const repeaterHasAnswer = repeaterAnswer !== undefined
-
-      if (
-        repeaterHasAnswer &&
-        isArray(repeaterAnswer) &&
-        repeaterAnswer.length > 0
-      ) {
+      if (hasBeenAnswered) {
         lastAnswerIndex = index
         currentScreen = index
       } else {
@@ -115,23 +158,21 @@ export const findCurrentScreen = (
         }
       }
     } else if (screen.id) {
-      const screenHasBeenAnswered =
-        getValueViaPath(answers, screen.id) !== undefined
-
-      if (!screenHasBeenAnswered && stopOnFirstMissingAnswer) {
+      if (!hasBeenAnswered && stopOnFirstMissingAnswer) {
         currentScreen = index
         break
       }
 
-      if (!screenHasBeenAnswered && index > lastAnswerIndex) {
+      if (!hasBeenAnswered && index > lastAnswerIndex) {
         missingAnswer = true
       }
 
-      if (!missingAnswer && screenHasBeenAnswered) {
+      if (!missingAnswer && hasBeenAnswered) {
         currentScreen = index + 1
         lastAnswerIndex = index
       }
     }
+
     index += 1
   }
 
@@ -139,20 +180,7 @@ export const findCurrentScreen = (
 
   // Check if we jumped over some intro screens in search of the latest answer
   if (screenIndex > lastAnswerIndex) {
-    const screen = screens[lastAnswerIndex]
-
-    if (!screen || !screen.id) {
-      return screenIndex
-    }
-
-    const hasBeenAnswered = getValueViaPath(answers, screen.id) !== undefined
-    const requiresAnswer = !get(screen, 'doesNotRequireAnswer')
-
-    if (requiresAnswer && hasBeenAnswered) {
-      return lastAnswerIndex + 1
-    }
-
-    return lastAnswerIndex
+    return lastAnswerIndex + 1
   }
 
   return screenIndex

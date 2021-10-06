@@ -308,6 +308,66 @@ describe('reducerUtils', () => {
           findCurrentScreen(convertScreens(screens, answers2), answers2, true),
         ).toBe(2)
       })
+
+      it('should not jump too far when skipping a multifield', () => {
+        const screens: FormScreen[] = [
+          buildIntroScreen('intro'),
+          buildTextScreen('first'),
+          buildMultiField({
+            id: 'multifield',
+            children: [
+              buildTextScreen('multi.a'),
+              buildTextScreen('multi.b'),
+              buildTextScreen('multi.c'),
+            ],
+            title: 'This is a great screen',
+          }) as MultiFieldScreen,
+          buildTextScreen('second'),
+          buildTextScreen('third'),
+          buildTextScreen('fourth'),
+          buildTextScreen('fifth'),
+          buildIntroScreen('outro'),
+        ]
+
+        // multifield incomplete
+        const answers1 = {
+          first: 'hello',
+          multi: {
+            a: 'answer',
+            b: 'answer',
+          },
+        }
+        // multifield complete
+        const answers2 = {
+          first: 'hello',
+          multi: {
+            a: 'answer',
+            b: 'answer',
+            c: 'answer',
+          },
+        }
+        // multifield complete, missing third answer
+        const answers3 = {
+          first: 'hello',
+          multi: {
+            a: 'answer',
+            b: 'answer',
+            c: 'answer',
+          },
+          second: 'answer',
+          fourth: 'answer',
+        }
+
+        expect(
+          findCurrentScreen(convertScreens(screens, answers1), answers1, true),
+        ).toBe(2)
+        expect(
+          findCurrentScreen(convertScreens(screens, answers2), answers2, true),
+        ).toBe(3)
+        expect(
+          findCurrentScreen(convertScreens(screens, answers3), answers3, true),
+        ).toBe(4)
+      })
     })
   })
 
