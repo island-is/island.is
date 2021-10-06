@@ -6,9 +6,10 @@ import {
   CreateDelegationDTO,
   DelegationsService,
   Delegation,
+  SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
-import { testServer, useDatabase } from '@island.is/testing/nest'
+import { testServer, useDatabase, useAuth } from '@island.is/testing/nest'
 import {
   createCurrentUser,
   createOpenIDUser,
@@ -37,12 +38,14 @@ describe('DelegationsController with auth', () => {
   beforeAll(async () => {
     app = await testServer<AppModule>({
       appModule: AppModule,
-      currentUser,
       override: (builder: TestingModuleBuilder) =>
         builder
           .overrideProvider(EinstaklingarApi)
           .useValue(new MockEinstaklingarApi()),
-      hooks: [useDatabase],
+      hooks: [
+        useAuth({ currentUser }),
+        useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
+      ],
     })
     delegationModel = app.get<typeof Delegation>('DelegationRepository')
   })

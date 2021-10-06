@@ -16,16 +16,23 @@ import {
 } from '@island.is/auth-nest-tools'
 import { InfraModule } from '@island.is/infra-nest-server'
 
+let app: INestApplication
+
 export type TestServerOptions<AppModule> = {
   appModule: AppModule
   override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
-  currentUser?: User
-  hooks?: ((app: INestApplication) => Promise<INestApplication>)[]
+  hooks?: {
+    override?: (
+      builder: TestingModuleBuilder,
+    ) => TestingModuleBuilder
+    extend?: (
+      app: INestApplication,
+    ) => Promise<INestApplication>
+  }[]
 }
 
 export const testServer = async <AppModule>({
   appModule,
-  currentUser,
   hooks = [],
   override,
 }: TestServerOptions<AppModule>): Promise<INestApplication> => {
@@ -33,28 +40,18 @@ export const testServer = async <AppModule>({
     imports: [InfraModule.forRoot(appModule as any)],
   })
 
-  if (currentUser) {
-    builder = builder
-      .overrideGuard(IdsAuthGuard)
-      .useValue({ canActivate: () => true })
-      .overrideGuard(IdsUserGuard)
-      .useValue({
-        canActivate: (context: ExecutionContext) => {
-          const request = getRequest(context)
-          request.user = currentUser
-          return true
-        },
-      })
-      .overrideGuard(ScopesGuard)
-      .useValue({ canActivate: () => true })
-  }
-
   if (override) {
     builder = override(builder)
   }
 
+  hooks.forEach(async (hook) => {
+    if (hook.override) {
+      builder = await hook.override(builder)
+    }
+  })
+
   const moduleRef = await builder.compile()
-  let app: INestApplication = await moduleRef
+  app = await moduleRef
     .createNestApplication()
     .useGlobalPipes(
       new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
@@ -62,8 +59,16 @@ export const testServer = async <AppModule>({
     .init()
 
   hooks.forEach(async (hook) => {
-    app = await hook(app)
+    if (hook.extend) {
+      app = await hook.extend(app)
+    }
   })
 
   return app
 }
+
+afterAll(async () => {
+  if (app) {
+    await app.close()
+  }
+})

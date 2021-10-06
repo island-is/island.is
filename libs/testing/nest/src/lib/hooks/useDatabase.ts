@@ -1,10 +1,58 @@
-import { getConnectionToken } from '@nestjs/sequelize'
+import {
+  getConnectionToken,
+  SequelizeModuleOptions,
+  SequelizeOptionsFactory,
+} from '@nestjs/sequelize'
 import { INestApplication, Type } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
+import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
-import { logger } from '@island.is/logging'
+type DatabaseType = 'sqlite' | 'postgres'
 
-export let app: INestApplication
+interface UseDatabase {
+  type: DatabaseType
+  provider: any
+}
+
+const sharedConfig: SequelizeModuleOptions = {
+  define: {
+    underscored: true,
+    timestamps: true,
+    createdAt: 'created',
+    updatedAt: 'modified',
+  },
+  dialectOptions: {
+    useUTC: true,
+  },
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000,
+  },
+  logging: false,
+  autoLoadModels: true,
+}
+
+const config: Record<DatabaseType, SequelizeModuleOptions> = {
+  sqlite: {
+    dialect: 'sqlite',
+    database: ':memory:',
+    synchronize: true,
+    ...sharedConfig,
+  },
+  postgres: {
+    username: 'test_db',
+    password: 'test_db',
+    database: 'test_db',
+    host: 'localhost',
+    dialect: 'postgres',
+    port: 5433,
+    synchronize: false,
+    ...sharedConfig,
+  },
+}
+
 let sequelize: Sequelize
 
 export const truncate = async () => {
@@ -29,24 +77,34 @@ export const truncate = async () => {
   )
 }
 
-export default async (nestApp: INestApplication) => {
-  app = nestApp
-  sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
+export default ({ type, provider }: UseDatabase) => ({
+  override: (builder: TestingModuleBuilder) =>
+    builder.overrideProvider(provider).useValue({
+      createSequelizeOptions() {
+        return config[type]
+      },
+    }),
+  extend: async (app: INestApplication) => {
+    sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
-  try {
-    await sequelize.sync({ logging: false })
-  } catch (err) {
-    logger.error('Migration error', err)
-  }
+    try {
+      await truncate()
+    } catch {}
 
-  return app
-}
+    try {
+      await sequelize.sync({ logging: false })
+    } catch (err) {
+      console.log('Sync error', err)
+    }
 
-beforeEach(truncate)
+    return app
+  },
+})
 
 afterAll(async () => {
-  if (app && sequelize) {
-    await app.close()
-    await sequelize.close()
+  if (sequelize) {
+    try {
+      await sequelize.close()
+    } catch {}
   }
 })
