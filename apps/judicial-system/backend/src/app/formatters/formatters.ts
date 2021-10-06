@@ -12,6 +12,7 @@ import {
   CaseCustodyProvisions,
   CaseDecision,
   CaseType,
+  isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import type {
@@ -130,12 +131,11 @@ export function formatProsecutorReceivedByCourtSmsNotification(
   court?: string,
   courtCaseNumber?: string,
 ): string {
-  const receivedCaseText =
-    type === CaseType.CUSTODY || type === CaseType.TRAVEL_BAN
-      ? `${caseTypes[type]}`
-      : type === CaseType.OTHER
-      ? 'rannsóknarheimild'
-      : `rannsóknarheimild (${caseTypes[type]})`
+  const receivedCaseText = isRestrictionCase(type)
+    ? `${caseTypes[type]}`
+    : type === CaseType.OTHER
+    ? 'rannsóknarheimild'
+    : `rannsóknarheimild (${caseTypes[type]})`
 
   return `${court} hefur móttekið kröfu um ${receivedCaseText} sem þú sendir og úthlutað málsnúmerinu ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.`
 }

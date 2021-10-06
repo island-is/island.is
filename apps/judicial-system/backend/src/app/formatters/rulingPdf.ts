@@ -8,6 +8,7 @@ import {
   CaseDecision,
   CaseType,
   isAccusedRightsHidden,
+  isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import type { Case as TCase } from '@island.is/judicial-system/types'
@@ -749,8 +750,7 @@ function constructRulingPdf(
   formatMessage: FormatMessage,
   shortVersion: boolean,
 ): streamBuffers.WritableStreamBuffer {
-  return existingCase.type === CaseType.CUSTODY ||
-    existingCase.type === CaseType.TRAVEL_BAN
+  return isRestrictionCase(existingCase.type)
     ? constructRestrictionRulingPdf(existingCase, formatMessage, shortVersion)
     : constructInvestigationRulingPdf(existingCase, formatMessage, shortVersion)
 }
