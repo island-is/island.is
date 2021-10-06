@@ -63,7 +63,7 @@ export class StaffModel extends Model<Staff> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty()
   phoneNumber: string
