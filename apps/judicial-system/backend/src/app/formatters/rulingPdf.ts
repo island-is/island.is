@@ -318,7 +318,11 @@ function constructRestrictionRulingPdf(
     )
     .text(' ')
     .text(
-      `${formatAppeal(existingCase.accusedAppealDecision, 'Varnaraðili')} ${
+      `${formatAppeal(
+        existingCase.accusedAppealDecision,
+        capitalize(formatAccusedByGender(existingCase.accusedGender)),
+        existingCase.accusedGender,
+      )} ${
         existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
           ? existingCase.accusedAppealAnnouncement ?? ''
           : ''
