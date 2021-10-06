@@ -29,6 +29,14 @@ export const error = defineMessages({
       'Persónuvernd getur ekki fjallað um meiðyrði eða ærumeiðingar',
     description: 'Error message when concernsLibel has been answered as yes',
   },
+  concernsPersonalDataConflict: {
+    id: 'dpac.application:error.concernsPersonalDataConflict',
+    defaultMessage:
+      'Vinsamlegast athugaðu að nauðsynlegt er að leita fyrst til ábyrgðaraðila vinnslunnar og óska eftir að fá aðgang að upplýsingum, þær verði leiðréttar eða þeim eytt. Ef þú færð ekki svör innan mánaðar getur þú leitað til Persónuverndar.',
+    description:
+      'Error message when concernsPersonalDataConflict has been answered as yes',
+  },
+
   concernsPersonalLettersOrSocialMedia: {
     id: 'dpac.application:error.concernsPersonalLettersOrSocialMedia',
     defaultMessage: 'concernsPersonalLettersOrSocialMedia message',
@@ -112,6 +120,21 @@ export const errorCards = defineMessages({
       'Önnur úrræði kunna að vera í boði, svo sem að leita til lögreglu eða dómstóla, en það þarf að meta í hverju tilviki. Hægt er að leita aðstoðar lögmanns ef þarf.',
     description: 'Shown in a card when concernsLibel has been answered as yes',
   },
+  concernsPersonalDataConflictTitle: {
+    id: 'dpac.application:error.concernsPersonalDataConflict.card.title',
+    defaultMessage: 'Athugaðu',
+    description:
+      'Shown in a card when concernsPersonalDataConflict has been answered as yes',
+  },
+
+  concernsPersonalDataConflictDescription: {
+    id: 'dpac.application:error.concernsPersonalDataConflict.card.description',
+    defaultMessage:
+      'Vinsamlegast athugaðu að nauðsynlegt er að leita fyrst til ábyrgðaraðila vinnslunnar og óska eftir að fá aðgang að upplýsingum, þær verði leiðréttar eða þeim eytt. Ef þú færð ekki svör innan mánaðar getur þú leitað til Persónuverndar. Nánari upplýsingar um þín réttindi samkvæmt persónuverndarlögum.',
+    description:
+      'Shown in a card when concernsPersonalDataConflict has been answered as yes',
+  },
+
   onBehalfOfACompanyTitle: {
     id: 'dpac.application:error.onBehalfOfACompany.card.title',
     defaultMessage: 'Hér er ekki hægt að senda inn kvörtun á vegum fyrirtækis',
