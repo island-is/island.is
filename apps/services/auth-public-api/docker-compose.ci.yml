@@ -1,0 +1,21 @@
+version: '3.3'
+
+services:
+  sut:
+    build:
+      context: .
+      dockerfile: ../../../scripts/ci/Dockerfile.test
+      args:
+        DB_NAME: db_services_auth_public_api
+        APP: services_auth_public_api
+    networks:
+      - local
+    depends_on:
+      - db_services_auth_public_api
+    environment:
+      - DB_HOST=db_services_auth_public_api
+    volumes:
+      - ../../..:/code
+
+  db_services_auth_public_api:
+    ports: []
