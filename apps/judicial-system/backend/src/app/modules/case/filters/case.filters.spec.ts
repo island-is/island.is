@@ -4,8 +4,8 @@ import each from 'jest-each'
 import {
   CaseAppealDecision,
   CaseState,
-  CaseType,
   InstitutionType,
+  restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -456,7 +456,7 @@ describe('getCasesQueryFilter', () => {
         {
           [Op.not]: {
             [Op.and]: [
-              { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
+              { type: restrictionCases },
               { state: CaseState.ACCEPTED },
               { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
             ],
@@ -465,7 +465,7 @@ describe('getCasesQueryFilter', () => {
         {
           [Op.not]: {
             [Op.and]: [
-              { [Op.not]: { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] } },
+              { [Op.not]: { type: restrictionCases } },
               { state: CaseState.ACCEPTED },
               { ruling_date: { [Op.lt]: literal('current_date - 90') } },
             ],
@@ -535,7 +535,7 @@ describe('getCasesQueryFilter', () => {
           {
             [Op.not]: {
               [Op.and]: [
-                { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
+                { type: restrictionCases },
                 { state: CaseState.ACCEPTED },
                 { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
               ],
@@ -544,7 +544,7 @@ describe('getCasesQueryFilter', () => {
           {
             [Op.not]: {
               [Op.and]: [
-                { [Op.not]: { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] } },
+                { [Op.not]: { type: restrictionCases } },
                 { state: CaseState.ACCEPTED },
                 { ruling_date: { [Op.lt]: literal('current_date - 90') } },
               ],
@@ -610,7 +610,7 @@ describe('getCasesQueryFilter', () => {
           {
             [Op.not]: {
               [Op.and]: [
-                { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
+                { type: restrictionCases },
                 { state: CaseState.ACCEPTED },
                 { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
               ],
@@ -619,7 +619,7 @@ describe('getCasesQueryFilter', () => {
           {
             [Op.not]: {
               [Op.and]: [
-                { [Op.not]: { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] } },
+                { [Op.not]: { type: restrictionCases } },
                 { state: CaseState.ACCEPTED },
                 { ruling_date: { [Op.lt]: literal('current_date - 90') } },
               ],
