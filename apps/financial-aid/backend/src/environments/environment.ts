@@ -19,7 +19,7 @@ const prodConfig = {
   },
   identityServerAuth: {
     issuer: process.env.IDENTITY_SERVER_DOMAIN ?? '',
-    audience: '@samband.is',
+    audience: '@sambandid.is',
   },
   emailOptions: {
     useTestAccount: false,
@@ -40,7 +40,7 @@ const devConfig = {
   },
   identityServerAuth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: '@samband.is',
+    audience: '@sambandid.is',
   },
   emailOptions: {
     useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
