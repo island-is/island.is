@@ -1,6 +1,5 @@
 import { PaymentCatalogItem } from '@island.is/api/schema'
 import { BasicDataProvider } from '@island.is/application/core'
-import { logger } from '@island.is/logging'
 
 export abstract class PaymentCatalogProvider extends BasicDataProvider {
   async getCatalogForOrganization(
@@ -25,7 +24,7 @@ export abstract class PaymentCatalogProvider extends BasicDataProvider {
       const response = await res.json()
 
       if (response.errors) {
-        logger.error(response)
+        console.error(response)
         throw new Error('Payment catalog provider response')
       }
 
