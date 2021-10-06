@@ -76,7 +76,6 @@ export const ParentalLeaveForm: Form = buildForm({
   title: parentalLeaveFormMessages.shared.formTitle,
   logo: Logo,
   mode: FormModes.APPLYING,
-  stopOnFirstMissingAnswer: true,
   children: [
     buildSection({
       id: 'prerequisites',

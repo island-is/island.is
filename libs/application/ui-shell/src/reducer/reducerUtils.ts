@@ -99,7 +99,6 @@ export const screenHasBeenAnswered = (
 export const findCurrentScreen = (
   screens: FormScreen[],
   answers: FormValue,
-  stopOnFirstMissingAnswer = false,
 ): number => {
   let currentScreen = 0
   let missingAnswer = false
@@ -151,7 +150,7 @@ export const findCurrentScreen = (
       missingAnswer = true
     }
 
-    if (missingAnswer && stopOnFirstMissingAnswer) {
+    if (missingAnswer) {
       break
     }
 
