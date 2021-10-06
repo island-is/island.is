@@ -256,7 +256,9 @@ describe('when constructing a new period', () => {
     ).toStrictEqual({
       message: errorMessages.periodsEndDateMinimumPeriod,
       path: 'periods[0].endDate',
-      values: {},
+      values: {
+        minPeriodDays: 13,
+      },
     })
 
     expect(
