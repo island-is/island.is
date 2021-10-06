@@ -26,7 +26,12 @@ import {
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
 import { core, ruling } from '../messages'
-import { setPageNumbers } from './pdfHelpers'
+import {
+  baseFontSize,
+  mediumFontSize,
+  largeFontSize,
+  setPageNumbers,
+} from './pdfHelpers'
 import { writeFile } from './writeFile'
 import { skjaldarmerki } from './skjaldarmerki'
 
@@ -68,12 +73,12 @@ function constructRestrictionRulingPdf(
 
   doc
     .font('Times-Roman')
-    .fontSize(18)
+    .fontSize(largeFontSize)
     .lineGap(4)
     .text(existingCase.court?.name ?? formatMessage(core.missing.court), {
       align: 'center',
     })
-    .fontSize(14)
+    .fontSize(mediumFontSize)
     .lineGap(2)
     .text(formatMessage(ruling.proceedingsHeading), { align: 'center' })
     .lineGap(30)
@@ -81,7 +86,7 @@ function constructRestrictionRulingPdf(
       `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
       { align: 'center' },
     )
-    .fontSize(11)
+    .fontSize(baseFontSize)
     .lineGap(1)
     .text(
       formatMessage(ruling.intro, {
@@ -215,20 +220,20 @@ function constructRestrictionRulingPdf(
     .lineGap(3)
     .text(' ')
     .text(' ')
-    .fontSize(14)
+    .fontSize(mediumFontSize)
     .lineGap(16)
     .text(formatMessage(ruling.rulingHeading), { align: 'center' })
 
   if (shortVersion) {
     doc
-      .fontSize(11)
+      .fontSize(baseFontSize)
       .lineGap(1)
       .text(formatMessage(ruling.rulingShortVersionPlaceholder), {
         align: 'center',
       })
   } else {
     doc
-      .fontSize(11)
+      .fontSize(baseFontSize)
       .lineGap(1)
       .font('Times-Bold')
       .text(formatMessage(ruling.courtDemandsHeading))
@@ -274,10 +279,10 @@ function constructRestrictionRulingPdf(
     .lineGap(3)
     .text(' ')
     .text(' ')
-    .fontSize(14)
+    .fontSize(mediumFontSize)
     .lineGap(16)
     .text(formatMessage(ruling.rulingTextHeading), { align: 'center' })
-    .fontSize(11)
+    .fontSize(baseFontSize)
     .lineGap(1)
     .text(existingCase.conclusion ?? formatMessage(core.missing.rulingText), {
       align: 'center',
@@ -439,12 +444,12 @@ function constructInvestigationRulingPdf(
 
   doc
     .font('Times-Roman')
-    .fontSize(18)
+    .fontSize(largeFontSize)
     .lineGap(4)
     .text(existingCase.court?.name ?? formatMessage(core.missing.court), {
       align: 'center',
     })
-    .fontSize(14)
+    .fontSize(mediumFontSize)
     .lineGap(2)
     .text(formatMessage(ruling.proceedingsHeading), { align: 'center' })
     .lineGap(30)
@@ -452,7 +457,7 @@ function constructInvestigationRulingPdf(
       `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
       { align: 'center' },
     )
-    .fontSize(11)
+    .fontSize(baseFontSize)
     .lineGap(1)
     .text(
       formatMessage(ruling.intro, {
@@ -501,7 +506,7 @@ function constructInvestigationRulingPdf(
     .text(formatMessage(ruling.demandsHeading))
     .text(' ')
     .font('Times-Roman')
-    .fontSize(12)
+    .fontSize(baseFontSize)
     .text(
       existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
       {
@@ -588,20 +593,20 @@ function constructInvestigationRulingPdf(
     .lineGap(3)
     .text(' ')
     .text(' ')
-    .fontSize(14)
+    .fontSize(mediumFontSize)
     .lineGap(16)
     .text(formatMessage(ruling.rulingHeading), { align: 'center' })
 
   if (shortVersion) {
     doc
-      .fontSize(11)
+      .fontSize(baseFontSize)
       .lineGap(1)
       .text(formatMessage(ruling.rulingShortVersionPlaceholder), {
         align: 'center',
       })
   } else {
     doc
-      .fontSize(11)
+      .fontSize(baseFontSize)
       .lineGap(1)
       .font('Times-Bold')
       .text(formatMessage(ruling.courtDemandsHeading))
@@ -647,10 +652,10 @@ function constructInvestigationRulingPdf(
     .lineGap(3)
     .text(' ')
     .text(' ')
-    .fontSize(14)
+    .fontSize(mediumFontSize)
     .lineGap(16)
     .text(formatMessage(ruling.rulingTextHeading), { align: 'center' })
-    .fontSize(11)
+    .fontSize(baseFontSize)
     .lineGap(1)
     .text(existingCase.conclusion ?? formatMessage(core.missing.rulingText), {
       align: 'center',

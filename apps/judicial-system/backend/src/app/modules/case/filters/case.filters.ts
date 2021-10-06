@@ -137,6 +137,21 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     {
       [Op.not]: {
         [Op.and]: [
+          {
+            state: [
+              CaseState.NEW,
+              CaseState.DRAFT,
+              CaseState.SUBMITTED,
+              CaseState.RECEIVED,
+            ],
+          },
+          { created: { [Op.lt]: literal('current_date - 90') } },
+        ],
+      },
+    },
+    {
+      [Op.not]: {
+        [Op.and]: [
           { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
           { state: CaseState.ACCEPTED },
           { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
