@@ -27,7 +27,7 @@ import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
+import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import HearingArrangementsForms from './HearingArrangementsForm'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -37,7 +37,15 @@ const HearingArrangements = () => {
   const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
   const [prosecutors, setProsecutors] = useState<ReactSelectOption[]>()
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [
+    isNotificationModalVisible,
+    setIsNotificationModalVisible,
+  ] = useState<boolean>(false)
+  const [
+    isProsecutorAccessModalVisible,
+    setIsProsecutorAccessModalVisible,
+  ] = useState<boolean>(false)
+  const [substituteProsecutorId, setSubstituteProsecutorId] = useState<string>()
   const { user } = useContext(UserContext)
   const { courts } = useInstitution()
   const { formatMessage } = useIntl()
@@ -108,7 +116,7 @@ const HearingArrangements = () => {
       ) {
         router.push(`${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`)
       } else {
-        setModalVisible(true)
+        setIsNotificationModalVisible(true)
       }
     } else {
       // TODO: Handle error
@@ -133,12 +141,11 @@ const HearingArrangements = () => {
     if (workingCase) {
       const option = selectedOption as ReactSelectOption
       const isRemovingCaseAccessFromSelf =
-        workingCase.creatingProsecutor?.id !== workingCase.prosecutor?.id &&
-        option.value !== workingCase.creatingProsecutor?.id &&
-        option.value !== workingCase.prosecutor?.id
+        user?.id !== workingCase.creatingProsecutor?.id
 
       if (isRemovingCaseAccessFromSelf) {
-        console.log('You are about to loose access to the case')
+        setSubstituteProsecutorId(option.value.toString())
+        setIsProsecutorAccessModalVisible(true)
       } else {
         setProsecutor(option.value.toString())
       }
@@ -172,15 +179,13 @@ const HearingArrangements = () => {
             onProsecutorChange={handleProsecutorChange}
             updateCase={updateCase}
           />
-          {modalVisible && (
+          {isNotificationModalVisible && (
             <Modal
-              title={formatMessage(
-                icRequestedHearingArrangements.modal.heading,
-              )}
-              text={formatMessage(icRequestedHearingArrangements.modal.text)}
-              primaryButtonText="Senda tilkynningu"
-              secondaryButtonText="Halda áfram með kröfu"
-              handleClose={() => setModalVisible(false)}
+              title={formatMessage(m.modal.heading)}
+              text={formatMessage(m.modal.text)}
+              primaryButtonText={formatMessage(m.modal.primaryButtonText)}
+              secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
+              handleClose={() => setIsNotificationModalVisible(false)}
               handleSecondaryButtonClick={() =>
                 router.push(
                   `${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
@@ -199,6 +204,25 @@ const HearingArrangements = () => {
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}
+            />
+          )}
+          {isProsecutorAccessModalVisible && (
+            <Modal
+              title={formatMessage(m.prosecutorAccessModal.heading)}
+              text={formatMessage(m.prosecutorAccessModal.text)}
+              primaryButtonText={formatMessage(
+                m.prosecutorAccessModal.primaryButtonText,
+              )}
+              secondaryButtonText={formatMessage(
+                m.prosecutorAccessModal.secondaryButtonText,
+              )}
+              handlePrimaryButtonClick={() => {
+                substituteProsecutorId && setProsecutor(substituteProsecutorId)
+                router.push(Constants.REQUEST_LIST_ROUTE)
+              }}
+              handleSecondaryButtonClick={() => {
+                setIsProsecutorAccessModalVisible(false)
+              }}
             />
           )}
         </>

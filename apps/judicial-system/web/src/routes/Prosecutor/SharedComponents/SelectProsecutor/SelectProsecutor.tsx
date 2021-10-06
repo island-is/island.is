@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import type { Case } from '@island.is/judicial-system/types'
+import { Case, isRestrictionCase, User } from '@island.is/judicial-system/types'
 import { ValueType } from 'react-select'
 import { Option } from '@island.is/island-ui/core'
 
@@ -9,14 +9,17 @@ interface Props {
   workingCase: Case
   prosecutors: ReactSelectOption[]
   onChange: (selectedOption: ValueType<ReactSelectOption>) => void
+  user?: User
 }
 
 const SelectProsecutor: React.FC<Props> = (props) => {
-  const { workingCase, prosecutors, onChange } = props
-
-  const defaultProsecutor = prosecutors?.find(
-    (prosecutor: Option) => prosecutor.value === workingCase.prosecutor?.id,
-  )
+  const { workingCase, prosecutors, onChange, user } = props
+  const [selectedProsecutor, setSelectedProsecutor] = useState<
+    ValueType<Option>
+  >({
+    label: workingCase.prosecutor?.name || '',
+    value: workingCase.prosecutor?.id || '',
+  })
 
   return (
     <>
@@ -31,10 +34,17 @@ const SelectProsecutor: React.FC<Props> = (props) => {
       <Select
         name="prosecutor"
         label="Veldu saksóknara"
-        defaultValue={defaultProsecutor}
+        value={selectedProsecutor}
         options={prosecutors}
-        onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+        onChange={(selectedOption) => {
           onChange(selectedOption)
+
+          if (
+            isRestrictionCase ||
+            user?.id === workingCase.creatingProsecutor?.id
+          ) {
+            setSelectedProsecutor(selectedOption)
+          }
         }}
         required
       />

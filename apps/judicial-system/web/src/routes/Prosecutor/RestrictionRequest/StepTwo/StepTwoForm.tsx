@@ -2,7 +2,10 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { Case, Institution } from '@island.is/judicial-system/types'
 import { Box, Input, Text } from '@island.is/island-ui/core'
-import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  newSetAndSendDateToServer,
+  setAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -60,8 +63,16 @@ const StepTwoForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <SelectProsecutor
             workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
             prosecutors={prosecutors}
+            onChange={(selectedOption) => {
+              setAndSendToServer(
+                'prosecutorId',
+                (selectedOption as ReactSelectOption).value.toString(),
+                workingCase,
+                setWorkingCase,
+                updateCase,
+              )
+            }}
           />
         </Box>
         <Box component="section" marginBottom={5}>

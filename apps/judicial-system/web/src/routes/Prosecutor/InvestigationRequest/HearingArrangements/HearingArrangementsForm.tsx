@@ -88,6 +88,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
                   workingCase={workingCase}
                   prosecutors={prosecutors}
                   onChange={onProsecutorChange}
+                  user={user}
                 />
               </Box>
               <Checkbox
