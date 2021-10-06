@@ -31,6 +31,10 @@ import {
 } from '../types'
 
 const screenRequiresAnswer = (screen: FormScreen) => {
+  if (!screen.isNavigable) {
+    return false
+  }
+
   if (screen.type === FormItemTypes.REPEATER) {
     return true
   } else if (screen.type === FormItemTypes.MULTI_FIELD) {
@@ -65,14 +69,17 @@ const screenHasBeenAnswered = (screen: FormScreen, answers: FormValue) => {
     return isArray(answer) && answer.length > 0
   } else if (screen.type === FormItemTypes.MULTI_FIELD) {
     let numberOfAnswers = 0
+    let numberOfNotNavigable = 0
 
     for (const subScreen of screen.children) {
-      if (screenHasBeenAnswered(subScreen, answers)) {
+      if (!subScreen.isNavigable) {
+        numberOfNotNavigable += 1
+      } else if (screenHasBeenAnswered(subScreen, answers)) {
         numberOfAnswers += 1
       }
     }
 
-    return numberOfAnswers === screen.children.length
+    return numberOfAnswers + numberOfNotNavigable === screen.children.length
   }
 
   return answerHasValue
@@ -90,12 +97,9 @@ export const findCurrentScreen = (
   for (let index = 0; index < screens.length; ) {
     const screen = screens[index]
 
-    const isNavigable = get(screen, 'isNavigable') === true
     const requiresAnswer = screenRequiresAnswer(screen)
 
-    const canBeSkipped = !isNavigable || !requiresAnswer
-
-    if (canBeSkipped) {
+    if (!requiresAnswer) {
       let skipLength = 1
 
       if (screen.type === FormItemTypes.REPEATER) {
@@ -114,7 +118,6 @@ export const findCurrentScreen = (
       let numberOfAnsweredQuestionsInScreen = 0
 
       for (const subScreen of screen.children) {
-        const isSubScreenNavigable = get(subScreen, 'isNavigable') === true
         const subScreenRequiresAnswers = screenRequiresAnswer(subScreen)
         const subScreenHasBeenAnswered = screenHasBeenAnswered(
           subScreen,
@@ -123,7 +126,7 @@ export const findCurrentScreen = (
 
         if (subScreenHasBeenAnswered) {
           numberOfAnsweredQuestionsInScreen++
-        } else if (subScreenRequiresAnswers && isSubScreenNavigable) {
+        } else if (subScreenRequiresAnswers) {
           // We don't want to break right away in case
           // there is some other screen that has been answered
           // that we should count
