@@ -277,13 +277,13 @@ const OverviewForm: React.FC<Props> = (props) => {
           <Box marginBottom={1}>
             <Text as="h2" variant="h3">
               {`Rannsóknargögn (${
-                workingCase.files ? workingCase.files.length : 0
+                workingCase.caseFiles ? workingCase.caseFiles.length : 0
               })`}
             </Text>
           </Box>
           <CaseFileList
             caseId={workingCase.id}
-            files={workingCase.files ?? []}
+            files={workingCase.caseFiles ?? []}
             canOpenFiles={
               workingCase.judge !== null && workingCase.judge?.id === user?.id
             }
