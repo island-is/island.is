@@ -1,53 +1,72 @@
-import * as randomString from 'randomstring'
+import * as faker from 'faker'
 
 import { Einstaklingsupplysingar } from '@island.is/clients/national-registry-v2'
 
-const defaultValues: Einstaklingsupplysingar = {
-  kennitala: randomString.generate({ length: 10, charset: 'numeric' }),
-  nafn: randomString.generate(),
-  eiginnafn: randomString.generate(),
-  millinafn: randomString.generate(),
-  kenninafn: randomString.generate(),
-  fulltNafn: randomString.generate(),
-  kynkodi: randomString.generate({ length: 1, charset: 'numeric' }),
-  bannmerking: false,
-  faedingardagur: new Date(),
-  logheimili: {
-    heiti: randomString.generate(),
-    postnumer: randomString.generate({ length: 3, charset: 'numeric' }),
-    stadur: randomString.generate(),
-    sveitarfelagsnumer: randomString.generate(),
-  },
-  adsetur: {
-    heiti: randomString.generate(),
-    postnumer: randomString.generate({ length: 3, charset: 'numeric' }),
-    stadur: randomString.generate(),
-    sveitarfelagsnumer: randomString.generate(),
-  },
+const createRandomNationalRegistryUser = (): Einstaklingsupplysingar => {
+  const [firstName, middleName, lastName] = [
+    faker.name.firstName(),
+    faker.name.middleName(),
+    faker.name.lastName(),
+  ]
+  const name = `${firstName} ${middleName} ${lastName}`
+
+  return {
+    kennitala: faker.datatype
+      .number({ min: 1000000000, max: 9999999999 })
+      .toString(),
+    nafn: name,
+    eiginnafn: firstName,
+    millinafn: middleName,
+    kenninafn: lastName,
+    fulltNafn: name,
+    kynkodi: faker.datatype.number({ min: 1, max: 1 }).toString(),
+    bannmerking: faker.datatype.boolean(),
+    faedingardagur: faker.date.past(),
+    logheimili: {
+      heiti: faker.address.streetName(),
+      postnumer: faker.address.zipCode(),
+      stadur: faker.address.city(),
+      sveitarfelagsnumer: faker.address.cityPrefix(),
+    },
+    adsetur: {
+      heiti: faker.address.streetName(),
+      postnumer: faker.address.zipCode(),
+      stadur: faker.address.city(),
+      sveitarfelagsnumer: faker.address.cityPrefix(),
+    },
+  }
 }
 
-export const createNationalRegistryUser = ({
-  kennitala = defaultValues.kennitala,
-  nafn = defaultValues.nafn,
-  eiginnafn = defaultValues.eiginnafn,
-  millinafn = defaultValues.millinafn,
-  kenninafn = defaultValues.kenninafn,
-  fulltNafn = defaultValues.fulltNafn,
-  kynkodi = defaultValues.kynkodi,
-  bannmerking = defaultValues.bannmerking,
-  faedingardagur = defaultValues.faedingardagur,
-  logheimili = defaultValues.logheimili,
-  adsetur = defaultValues.adsetur,
-}: Einstaklingsupplysingar = defaultValues): Einstaklingsupplysingar => ({
-  kennitala,
-  nafn,
-  eiginnafn,
-  millinafn,
-  kenninafn,
-  fulltNafn,
-  kynkodi,
-  bannmerking,
-  faedingardagur,
-  logheimili,
-  adsetur,
-})
+export const createNationalRegistryUser = (
+  user: Einstaklingsupplysingar = createRandomNationalRegistryUser(),
+): Einstaklingsupplysingar => {
+  const fallback = createRandomNationalRegistryUser()
+
+  const {
+    kennitala = user['kennitala'] ?? fallback['kennitala'],
+    nafn = user['nafn'] ?? fallback['nafn'],
+    eiginnafn = user['eiginnafn'] ?? fallback['eiginnafn'],
+    millinafn = user['millinafn'] ?? fallback['millinafn'],
+    kenninafn = user['kenninafn'] ?? fallback['kenninafn'],
+    fulltNafn = user['fulltNafn'] ?? fallback['fulltNafn'],
+    kynkodi = user['kynkodi'] ?? fallback['kynkodi'],
+    bannmerking = user['bannmerking'] ?? fallback['bannmerking'],
+    faedingardagur = user['faedingardagur'] ?? fallback['faedingardagur'],
+    logheimili = user['logheimili'] ?? fallback['logheimili'],
+    adsetur = user['adsetur'] ?? fallback['adsetur'],
+  } = user
+
+  return {
+    kennitala,
+    nafn,
+    eiginnafn,
+    millinafn,
+    kenninafn,
+    fulltNafn,
+    kynkodi,
+    bannmerking,
+    faedingardagur,
+    logheimili,
+    adsetur,
+  }
+}

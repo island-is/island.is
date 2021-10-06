@@ -6616,10 +6616,10 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
-"@types/faker@5.1.2":
-  version "5.1.2"
-  resolved "https://registry.yarnpkg.com/@types/faker/-/faker-5.1.2.tgz#3d5a97d5648502d7fb1eeb2809ca105edcd0d59b"
-  integrity sha512-a3FADSHjjinczCwr7tTejoMZzbSS5vi70VCyns4C1idxJrDSRGZCQG0s27YppXLcoWrBOkwBbBsZ9vDRDpQK7A==
+"@types/faker@5.5.3":
+  version "5.5.3"
+  resolved "https://registry.yarnpkg.com/@types/faker/-/faker-5.5.3.tgz#80978e52862e5df9e7a96befdfdd8fad882f6350"
+  integrity sha512-InxkM6sCFQTI6YQl29M/XGlO19ecv/EHH5X5zLEFdge2/qya8oIT0XkJUKTqheVYWJtGi+FBAfP7hbbunDiOmg==
 
 "@types/folder-hash@3.3.0":
   version "3.3.0"
@@ -7119,11 +7119,6 @@
   version "6.9.6"
   resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.9.6.tgz#df9c3c8b31a247ec315e6996566be3171df4b3b1"
   integrity sha512-0/HnwIfW4ki2D8L8c9GVcG5I72s9jP5GSLVF0VIXDW00kmIpA6O33G7a8n59Tmh7Nz0WUC3rSb7PTY/sdW2JzA==
-
-"@types/randomstring@1.1.7":
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/@types/randomstring/-/randomstring-1.1.7.tgz#e214feeed53a14965d2865f6d8ae99a4ff3a9278"
-  integrity sha512-S6NRYPiH8VGcLW4m9KEMUPtGxXqToCOLLCutQh8sSMaZGrL6/PEQCZAPGBtMP6SKd43ep5eWuPFN732h23h15w==
 
 "@types/range-parser@*":
   version "1.2.3"
@@ -8902,11 +8897,6 @@ array-union@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/array-union/-/array-union-2.1.0.tgz#b798420adbeb1de828d84acd8a2e23d3efe85e8d"
   integrity sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==
-
-array-uniq@1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/array-uniq/-/array-uniq-1.0.2.tgz#5fcc373920775723cfd64d65c64bef53bf9eba6d"
-  integrity sha1-X8w3OSB3VyPP1k1lxkvvU7+eum0=
 
 array-uniq@^1.0.1:
   version "1.0.3"
@@ -14401,10 +14391,10 @@ fake-xml-http-request@^2.1.1:
   resolved "https://registry.yarnpkg.com/fake-xml-http-request/-/fake-xml-http-request-2.1.2.tgz#f1786720cae50bbb46273035a0173414f3e85e74"
   integrity sha512-HaFMBi7r+oEC9iJNpc3bvcW7Z7iLmM26hPDmlb0mFwyANSsOQAtJxbdWsXITKOzZUyMYK0zYCv3h5yDj9TsiXg==
 
-faker@5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/faker/-/faker-5.1.0.tgz#e10fa1dec4502551aee0eb771617a7e7b94692e8"
-  integrity sha512-RrWKFSSA/aNLP0g3o2WW1Zez7/MnMr7xkiZmoCfAGZmdkDQZ6l2KtuXHN5XjdvpRjDl8+3vf+Rrtl06Z352+Mw==
+faker@5.5.3:
+  version "5.5.3"
+  resolved "https://registry.yarnpkg.com/faker/-/faker-5.5.3.tgz#c57974ee484431b25205c2c8dc09fda861e51e0e"
+  integrity sha512-wLTv2a28wjUyWkbnX7u/ABZBkUkIF2fCd73V6P2oFqEGEktDfzWx4UxrSqtPRw0xPRAcjeAOIiJWqZm3pP4u3g==
 
 falafel@^2.1.0:
   version "2.2.4"
@@ -23391,11 +23381,6 @@ ramda@~0.27.1:
   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.27.1.tgz#66fc2df3ef873874ffc2da6aa8984658abacf5c9"
   integrity sha512-PgIdVpn5y5Yns8vqb8FzBUEYn98V3xcPgawAkkgj0YJ0qDsnHCiNmZYfOGMgOvoB0eWFLpYbhxUR3mxfDIMvpw==
 
-randombytes@2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/randombytes/-/randombytes-2.0.3.tgz#674c99760901c3c4112771a31e521dc349cc09ec"
-  integrity sha1-Z0yZdgkBw8QRJ3GjHlIdw0nMCew=
-
 randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5, randombytes@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/randombytes/-/randombytes-2.1.0.tgz#df6f84372f0270dc65cdf6291349ab7a473d4f2a"
@@ -23410,14 +23395,6 @@ randomfill@^1.0.3:
   dependencies:
     randombytes "^2.0.5"
     safe-buffer "^5.1.0"
-
-randomstring@1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/randomstring/-/randomstring-1.2.1.tgz#71cd3cda24ad1b7e0b65286b3aa5c10853019349"
-  integrity sha512-eMnfell9XuU3jfCx3f4xCaFAt0YMFPZhx9R3PSStmLarDKg5j5vivqKhf/8pvG+VX/YkxsckHK/VPUrKa5V07A==
-  dependencies:
-    array-uniq "1.0.2"
-    randombytes "2.0.3"
 
 range-parser@^1.2.1, range-parser@~1.2.1:
   version "1.2.1"
