@@ -42,47 +42,47 @@ type CategoryId =
   /**
    * Fjölskyldumál
    */
-  | '69HeuLviw3gfK9c0B9AVwn'
+  | '4vQ4htPOAZvzcXBcjx06SH'
   /**
    * Skírteini
    */
-  | '1jeEF0NCzquMoUbFWKhCae'
+  | '7nWhQCER920RakQ7BZpEmV'
   /**
    * Andlát og dánarbú
    */
-  | '4OcHzX4wSgmLrX8NjbVmKl'
+  | '2TkJynZlamqTHdjUziXDG0'
   /**
    * Þinglýsingar, staðfestingar og skráningar
    */
-  | 'CPVfReLmOMUD32DA9k6ep'
+  | '6K9stHLAB2mEyGqtqjnXxf'
   /**
    * Gjöld og innheimta
    */
-  | '6Upd5qvyHk3zSZTywwOM85'
+  | '5u2M09Kw3p1Spva1GSuAzB'
   /**
    * Löggildingar
    */
-  | '3lw0aUaePoyMWLPLLDNDNs'
+  | 'WrQIftmx61sHJMoIr1QRW'
   /**
    * Vottorð
    */
-  | '4T3333TKM9ihXKPHaLENX4'
+  | '76Expbwtudon1Gz5lrKOit'
   /**
    * Lögráðamál
    */
-  | 'QDLhh38prxV8CjjjqbOpn'
+  | '4tvRkPgKP3kerbyRJDvaWF'
   /**
    * Önnur þjónusta sýslumanna
    */
-  | '4MoRkdeC9IpxU3wJaRJ0sO'
+  | '4LNbNB3GvH3RcoIGpuZKhG'
   /**
    * Leyfi
    */
-  | '6gbQGNSBcv3MX8v3PhQdK4'
+  | '7HbSNTUHJReJ2GPeT1ni1C'
   /**
    * Fullnustugerðir
    */
-  | '6Db1w3hMxYT1kunuI52gxz'
+  | '7LkzuYSzqwM7k8fJyeRbm6'
 
 const labels = {
   syslumadur: 'Sýslumannsembætti',
@@ -156,7 +156,7 @@ export const SyslumennForms = ({
     let fields = null
 
     switch (categoryId as CategoryId) {
-      case 'CPVfReLmOMUD32DA9k6ep':
+      case '6K9stHLAB2mEyGqtqjnXxf':
         fields = (
           <>
             <GridColumn span={['12/12', '12/12', '4/12']} paddingBottom={3}>
@@ -174,7 +174,7 @@ export const SyslumennForms = ({
           </>
         )
         break
-      case '6gbQGNSBcv3MX8v3PhQdK4':
+      case '7HbSNTUHJReJ2GPeT1ni1C':
         fields = (
           <>
             <GridColumn span="12/12" paddingBottom={3}>
@@ -193,8 +193,8 @@ export const SyslumennForms = ({
           </>
         )
         break
-      case '6Upd5qvyHk3zSZTywwOM85':
-      case '1jeEF0NCzquMoUbFWKhCae':
+      case '5u2M09Kw3p1Spva1GSuAzB':
+      case '7nWhQCER920RakQ7BZpEmV':
         fields = (
           <GridColumn span={['12/12', '6/12']} paddingBottom={3}>
             <BasicInput
@@ -205,9 +205,9 @@ export const SyslumennForms = ({
           </GridColumn>
         )
         break
-      case '6Db1w3hMxYT1kunuI52gxz':
-      case 'QDLhh38prxV8CjjjqbOpn':
-      case '69HeuLviw3gfK9c0B9AVwn':
+      case '7LkzuYSzqwM7k8fJyeRbm6':
+      case '4tvRkPgKP3kerbyRJDvaWF':
+      case '4vQ4htPOAZvzcXBcjx06SH':
         fields = (
           <>
             <GridColumn span="12/12" paddingBottom={3}>
@@ -225,7 +225,7 @@ export const SyslumennForms = ({
           </>
         )
         break
-      case '4OcHzX4wSgmLrX8NjbVmKl':
+      case '2TkJynZlamqTHdjUziXDG0':
         fields = (
           <>
             <GridColumn span="12/12" paddingBottom={3}>
