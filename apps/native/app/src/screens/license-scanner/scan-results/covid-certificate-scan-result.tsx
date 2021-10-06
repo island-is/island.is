@@ -6,18 +6,27 @@ export const CovidCertificateScanResult = ({ data }: any) => {
   const [loading, setLoading] = useState(true)
   const [decoded, setDecoded] = useState<DecodedEudcc>()
   const [error, setError] = useState<string>()
+  const [valid, setValid] = useState(false)
 
   useEffect(() => {
     setError(undefined)
-    parseEudcc(data)
-      .then((value) => {
-        setDecoded(value)
-        setLoading(false)
-      })
-      .catch((err: Error) => {
-        setError(err.message)
-        setLoading(false)
-      })
+    setLoading(true)
+    try {
+      const decoded = parseEudcc(data)
+      setDecoded(decoded)
+      decoded
+        .verify()
+        .then((isValid) => {
+          setValid(isValid)
+          setLoading(false)
+        })
+        .catch((err) => {
+          throw err
+        })
+    } catch (err) {
+      setError('Villa')
+      setLoading(false)
+    }
   }, [data])
 
   return (
@@ -25,7 +34,7 @@ export const CovidCertificateScanResult = ({ data }: any) => {
       loading={loading}
       errorMessage={error}
       error={!!error}
-      valid={decoded?.valid!}
+      valid={valid}
       name={`${decoded?.givenName} ${decoded?.familyName}`}
       birthDate={decoded?.dateOfBirth!}
       vaccination={decoded?.vaccinations?.[0]}

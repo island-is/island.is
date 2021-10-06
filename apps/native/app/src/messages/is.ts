@@ -159,6 +159,9 @@ export const is = {
   'licenseScanner.awaitingPermission': 'Bið um leyfi til að nota myndavél',
   'licenseScanner.noCameraAccess': 'Myndavél ekki aðgengileg',
   'licenseScannerDetail.driverLicenseNumber': 'Númer ökuskírteinis',
+  'licenseScannerDetail.invalidBarcode': 'Ógilt strikamerki',
+  'licenseScannerResult.androidHelp': 'Smellið á hnapp neðan við skírteini til þess að fá uppfært strikamerki.',
+  'licenseScannerResult.iosHelp': 'Smellið á hnapp með þremur punktum fyrir neðan skírteinið. Dragið því næst niður með fingur á miðjum skjánum til þess að uppfæra strikamerkið.',
 
   // license scan detail
   'licenseScanDetail.errorUnknown': 'Óþekkt villa',

@@ -157,6 +157,9 @@ export const en: TranslatedMessages = {
   'licenseScanner.awaitingPermission': 'Asking for camera permissions',
   'licenseScanner.noCameraAccess': 'Camera not available',
   'licenseScannerDetail.driverLicenseNumber': 'Driver license number',
+  'licenseScannerDetail.invalidBarcode': 'Invalid barcode',
+  'licenseScannerResult.androidHelp': 'Press button below the license to get updated barcode.',
+  'licenseScannerResult.iosHelp': 'Press three-dot button below the license. Next, refresh the screen by pulling down from the center to update the barcode.',
 
   // license scan detail
   'licenseScanDetail.errorUnknown': 'Unknown error',
