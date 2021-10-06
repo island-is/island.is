@@ -40,7 +40,7 @@ const SelectProsecutor: React.FC<Props> = (props) => {
           onChange(selectedOption)
 
           if (
-            isRestrictionCase ||
+            isRestrictionCase(workingCase.type) ||
             user?.id === workingCase.creatingProsecutor?.id
           ) {
             setSelectedProsecutor(selectedOption)
