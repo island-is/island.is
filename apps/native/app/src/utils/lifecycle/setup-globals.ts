@@ -36,15 +36,27 @@ import '@formatjs/intl-relativetimeformat/polyfill'
 import '@formatjs/intl-relativetimeformat/locale-data/en'
 import '@formatjs/intl-relativetimeformat/locale-data/is'
 import { setupQuickActions } from '../quick-actions'
+import { ReactNativeNavigationInstrumentation } from '../../lib/react-native-navigation-instrumentation';
+import { Navigation } from 'react-native-navigation'
 
 if (__DEV__) {
   perf().setPerformanceCollectionEnabled(false)
-
   require('../devtools/index')
 } else {
+  const instrumentation = new ReactNativeNavigationInstrumentation(Navigation);
+
   // initialize sentry
   Sentry.init({
     dsn: config.sentryDsn,
+    integrations: [
+      new Sentry.ReactNativeTracing({
+        tracingOrigins: ["localhost", "*.devland.is", "island.is", /^\//],
+        routingInstrumentation: instrumentation,
+        enableAppStartTracking: true,
+        enableNativeFramesTracking: true,
+      }),
+    ],
+    tracesSampleRate: 0.2
   })
 
   // enable performance metrics collection
@@ -56,9 +68,10 @@ if (__DEV__) {
 
 // ignore expo warnings
 LogBox.ignoreLogs([
-  /^Constants\.manifest is null/,
+  /^Constants\./,
   /RCTRootView cancelTouches/,
   /toggling bottomTabs visibility is deprecated on iOS/,
+  /Require cycle:/
 ])
 
 // set default timezone

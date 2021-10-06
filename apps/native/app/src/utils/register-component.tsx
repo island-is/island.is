@@ -12,7 +12,7 @@ export function registerComponent(
   name: string,
   Component: NavigationFunctionComponent<any>,
 ) {
-  const SentryComponent = Sentry.withProfiler(Component)
+  const SentryComponent = Sentry.wrap(Component)
   Navigation.registerComponent(
     name,
     () => (props) => {
