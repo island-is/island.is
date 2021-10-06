@@ -3,9 +3,9 @@ import each from 'jest-each'
 import { CaseType } from '@island.is/judicial-system/types'
 
 import { Case } from '../models'
-import { transformCase } from './case.transformer'
+import { maskCase } from './case.mask'
 
-describe('Cases Interceptor', () => {
+describe('Cases Mask', () => {
   each`
     type
     ${CaseType.CUSTODY}
@@ -19,7 +19,7 @@ describe('Cases Interceptor', () => {
         accusedName: 'John Doe',
       } as Case
 
-      const res = transformCase(theCase)
+      const res = maskCase(theCase)
 
       expect(res.accusedNationalId).toBe('1234567890')
       expect(res.accusedName).toBe('John Doe')
@@ -48,7 +48,7 @@ describe('Cases Interceptor', () => {
         accusedName: 'John Doe',
       } as Case
 
-      const res = transformCase(theCase)
+      const res = maskCase(theCase)
 
       expect(res.accusedNationalId).toBe('0000000000')
       expect(res.accusedName).toBe('X')

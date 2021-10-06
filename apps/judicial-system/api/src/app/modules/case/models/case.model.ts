@@ -42,10 +42,10 @@ export class Case implements TCase {
   readonly policeCaseNumber!: string
 
   @Field()
-  readonly accusedNationalId!: string
+  accusedNationalId!: string
 
   @Field({ nullable: true })
-  readonly accusedName?: string
+  accusedName?: string
 
   @Field({ nullable: true })
   readonly accusedAddress?: string
