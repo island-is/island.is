@@ -1,49 +1,22 @@
 import React from 'react'
 import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import type { Case } from '@island.is/judicial-system/types'
 import { ValueType } from 'react-select'
 import { Option } from '@island.is/island-ui/core'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   prosecutors: ReactSelectOption[]
+  onChange: (selectedOption: ValueType<ReactSelectOption>) => void
 }
 
 const SelectProsecutor: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, prosecutors } = props
-  const { updateCase } = useCase()
+  const { workingCase, prosecutors, onChange } = props
 
   const defaultProsecutor = prosecutors?.find(
     (prosecutor: Option) => prosecutor.value === workingCase.prosecutor?.id,
   )
-
-  const setProsecutor = (prosecutorId: string) => {
-    setAndSendToServer(
-      'prosecutorId',
-      prosecutorId,
-      workingCase,
-      setWorkingCase,
-      updateCase,
-    )
-  }
-
-  const handleChange = (selectedOption: ValueType<ReactSelectOption>) => {
-    const option = selectedOption as ReactSelectOption
-    const isRemovingCaseAccessFromSelf =
-      workingCase.creatingProsecutor?.id !== workingCase.prosecutor?.id &&
-      option.value !== workingCase.creatingProsecutor?.id &&
-      option.value !== workingCase.prosecutor?.id
-
-    if (isRemovingCaseAccessFromSelf) {
-      console.log('You are about to loose access to the case')
-    } else {
-      setProsecutor(option.value.toString())
-    }
-  }
 
   return (
     <>
@@ -61,7 +34,7 @@ const SelectProsecutor: React.FC<Props> = (props) => {
         defaultValue={defaultProsecutor}
         options={prosecutors}
         onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-          handleChange(selectedOption)
+          onChange(selectedOption)
         }}
         required
       />

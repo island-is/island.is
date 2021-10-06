@@ -1,6 +1,12 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import type { Case, Institution, User } from '@island.is/judicial-system/types'
+import { ValueType } from 'react-select'
+import type {
+  Case,
+  Institution,
+  UpdateCase,
+  User,
+} from '@island.is/judicial-system/types'
 import {
   BlueBox,
   FormContentContainer,
@@ -15,7 +21,6 @@ import {
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -27,7 +32,9 @@ interface Props {
   prosecutors: ReactSelectOption[]
   courts: Institution[]
   isLoading: boolean
-  handleNextButtonClick: () => Promise<void>
+  onNextButtonClick: () => Promise<void>
+  onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => void
+  updateCase: (id: string, updateCase: UpdateCase) => Promise<Case | undefined>
 }
 
 const HearingArrangementsForms: React.FC<Props> = (props) => {
@@ -38,7 +45,9 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     prosecutors,
     courts,
     isLoading,
-    handleNextButtonClick,
+    onNextButtonClick,
+    onProsecutorChange,
+    updateCase,
   } = props
 
   const { formatMessage } = useIntl()
@@ -63,9 +72,6 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     validateAndSendToServer,
     setAndSendToServer,
   } = useCaseFormHelper(workingCase, setWorkingCase, validations)
-
-  const { updateCase } = useCase()
-
   return (
     <>
       <FormContentContainer>
@@ -80,8 +86,8 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
               <Box marginBottom={2}>
                 <SelectProsecutor
                   workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
                   prosecutors={prosecutors}
+                  onChange={onProsecutorChange}
                 />
               </Box>
               <Checkbox
@@ -150,7 +156,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.IC_DEFENDANT_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={async () => await handleNextButtonClick()}
+          onNextButtonClick={async () => await onNextButtonClick()}
           nextIsDisabled={!isValid}
           nextIsLoading={isLoading}
         />

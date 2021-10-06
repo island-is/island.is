@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { ValueType } from 'react-select'
 import {
   Modal,
   PageLayout,
@@ -29,6 +30,7 @@ import {
 import { icRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
 import HearingArrangementsForms from './HearingArrangementsForm'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 const HearingArrangements = () => {
   const router = useRouter()
@@ -44,6 +46,7 @@ const HearingArrangements = () => {
     isSendingNotification,
     transitionCase,
     isTransitioningCase,
+    updateCase,
   } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -112,6 +115,36 @@ const HearingArrangements = () => {
     }
   }
 
+  const setProsecutor = (prosecutorId: string) => {
+    if (workingCase) {
+      setAndSendToServer(
+        'prosecutorId',
+        prosecutorId,
+        workingCase,
+        setWorkingCase,
+        updateCase,
+      )
+    }
+  }
+
+  const handleProsecutorChange = (
+    selectedOption: ValueType<ReactSelectOption>,
+  ) => {
+    if (workingCase) {
+      const option = selectedOption as ReactSelectOption
+      const isRemovingCaseAccessFromSelf =
+        workingCase.creatingProsecutor?.id !== workingCase.prosecutor?.id &&
+        option.value !== workingCase.creatingProsecutor?.id &&
+        option.value !== workingCase.prosecutor?.id
+
+      if (isRemovingCaseAccessFromSelf) {
+        console.log('You are about to loose access to the case')
+      } else {
+        setProsecutor(option.value.toString())
+      }
+    }
+  }
+
   return (
     <PageLayout
       activeSection={
@@ -131,11 +164,13 @@ const HearingArrangements = () => {
           <HearingArrangementsForms
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            user={user}
             prosecutors={prosecutors}
             courts={courts}
             isLoading={loading || isTransitioningCase}
-            handleNextButtonClick={handleNextButtonClick}
-            user={user}
+            onNextButtonClick={handleNextButtonClick}
+            onProsecutorChange={handleProsecutorChange}
+            updateCase={updateCase}
           />
           {modalVisible && (
             <Modal
