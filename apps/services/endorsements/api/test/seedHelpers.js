@@ -6,7 +6,7 @@ module.exports = {
     id: faker.random.uuid(),
     title: faker.lorem.words(2),
     description: faker.lorem.paragraph(1),
-    opened_date: new Date(),
+    opened_date: today,
     closed_date: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000),
     admin_lock: false,
     endorsement_meta: '{}', // default empty array in postgres

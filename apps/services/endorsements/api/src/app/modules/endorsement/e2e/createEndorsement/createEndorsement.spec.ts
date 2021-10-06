@@ -31,11 +31,15 @@ describe('createEndorsement', () => {
       nationalId: authNationalId,
       scope: [EndorsementsScope.main],
     })
+
+    const endorsementBody = {
+      showName: true
+    }
     const response = await request(app.getHttpServer())
       .post(
         '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba777/endorsement',
       )
-      .send()
+      .send(endorsementBody)
       .expect(404)
 
     expect(response.body).toMatchObject({
@@ -48,11 +52,14 @@ describe('createEndorsement', () => {
       nationalId: authNationalId,
       scope: [EndorsementsScope.main],
     })
+    const endorsementBody = {
+      showName: true
+    }
     const response = await request(app.getHttpServer())
       .post(
         '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c4/endorsement',
       )
-      .send()
+      .send(endorsementBody)
       .expect(405)
 
     expect(response.body).toMatchObject({
@@ -65,11 +72,14 @@ describe('createEndorsement', () => {
       nationalId: authNationalId,
       scope: [EndorsementsScope.main],
     })
+    const endorsementBody = {
+      showName: true
+    }
     const response = await request(app.getHttpServer())
       .post(
         `/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c5/endorsement`,
       )
-      .send()
+      .send(endorsementBody)
       .expect(400)
 
     expect(response.body).toMatchObject({
@@ -82,10 +92,13 @@ describe('createEndorsement', () => {
       nationalId: authNationalId,
       scope: [EndorsementsScope.main],
     })
+    const endorsementBody = {
+      showName: true
+    }
     const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba011'
     const response = await request(app.getHttpServer())
       .post(`/endorsement-list/${listId}/endorsement`)
-      .send()
+      .send(endorsementBody)
       .expect(201)
 
     // should return the created object

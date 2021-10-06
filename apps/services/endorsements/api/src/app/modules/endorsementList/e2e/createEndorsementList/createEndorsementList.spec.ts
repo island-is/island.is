@@ -103,19 +103,16 @@ describe('createEndorsementList', () => {
       nationalId: authNationalId,
       scope: [EndorsementsScope.main],
     })
+    const today = new Date()
     const newEndorsementList = {
       title: 'Some title',
       description: 'Some description',
-      tags: [EndorsementTag.PARTY_APPLICATION_NORDAUSTURKJORDAEMI_2021],
+      tags: [EndorsementTag.GENERAL_PETITION],
       endorsementMetadata: [{ field: 'fullName' }],
+      openedDate: today,
+      closedDate: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000),
+      adminLock: false,
       validationRules: [
-        {
-          type: 'minAgeAtDate',
-          value: {
-            date: '2021-04-15T00:00:00Z',
-            age: 18,
-          },
-        },
       ],
     }
     const response = await request(app.getHttpServer())
