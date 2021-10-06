@@ -30,7 +30,7 @@ import {
   RepeaterScreen,
 } from '../types'
 
-const screenRequiresAnswer = (screen: FormScreen) => {
+export const screenRequiresAnswer = (screen: FormScreen) => {
   if (!screen.isNavigable) {
     return false
   }
@@ -53,7 +53,11 @@ const screenRequiresAnswer = (screen: FormScreen) => {
   return !doesNotRequireAnswer
 }
 
-const screenHasBeenAnswered = (screen: FormScreen, answers: FormValue) => {
+export const screenHasBeenAnswered = (
+  screen: FormScreen,
+  answers: FormValue,
+  checkIfPartlyAnswered = false,
+) => {
   if (!screenRequiresAnswer(screen)) {
     return true
   }
@@ -66,6 +70,9 @@ const screenHasBeenAnswered = (screen: FormScreen, answers: FormValue) => {
   const answerHasValue = answer !== undefined && answer !== null
 
   if (screen.type === FormItemTypes.REPEATER) {
+    // We do not need to check all individual screens here like we do
+    // with multi field since the screens are rendered individually
+    // and will be checked individually
     return isArray(answer) && answer.length > 0
   } else if (screen.type === FormItemTypes.MULTI_FIELD) {
     let numberOfAnswers = 0
@@ -77,6 +84,10 @@ const screenHasBeenAnswered = (screen: FormScreen, answers: FormValue) => {
       } else if (screenHasBeenAnswered(subScreen, answers)) {
         numberOfAnswers += 1
       }
+    }
+
+    if (checkIfPartlyAnswered) {
+      return numberOfAnswers > 0
     }
 
     return numberOfAnswers + numberOfNotNavigable === screen.children.length
@@ -115,39 +126,16 @@ export const findCurrentScreen = (
     const hasBeenAnswered = screenHasBeenAnswered(screen, answers)
 
     if (screen.type === FormItemTypes.MULTI_FIELD) {
-      let numberOfAnsweredQuestionsInScreen = 0
-
-      for (const subScreen of screen.children) {
-        const subScreenRequiresAnswers = screenRequiresAnswer(subScreen)
-        const subScreenHasBeenAnswered = screenHasBeenAnswered(
-          subScreen,
-          answers,
-        )
-
-        if (subScreenHasBeenAnswered) {
-          numberOfAnsweredQuestionsInScreen++
-        } else if (subScreenRequiresAnswers) {
-          // We don't want to break right away in case
-          // there is some other screen that has been answered
-          // that we should count
-          missingAnswer = true
-        }
-      }
-
       if (hasBeenAnswered) {
         lastAnswerIndex = index
         currentScreen = index + 1
-      } else if (numberOfAnsweredQuestionsInScreen > 0) {
-        // Did not answer all the questions
+      } else if (screenHasBeenAnswered(screen, answers, true)) {
+        // Checks if screen has been partly answered (at least one answer found)
+        lastAnswerIndex = index
         currentScreen = index
-        lastAnswerIndex = currentScreen
-        missingAnswer = true
       } else {
+        // Did not answer any question
         missingAnswer = true
-      }
-
-      if (missingAnswer && stopOnFirstMissingAnswer) {
-        break
       }
     } else if (screen.type === FormItemTypes.REPEATER) {
       if (hasBeenAnswered) {
@@ -155,25 +143,16 @@ export const findCurrentScreen = (
         currentScreen = index
       } else {
         missingAnswer = true
+      }
+    } else if (hasBeenAnswered && !missingAnswer) {
+      currentScreen = index + 1
+      lastAnswerIndex = index
+    } else {
+      missingAnswer = true
+    }
 
-        if (stopOnFirstMissingAnswer) {
-          break
-        }
-      }
-    } else if (screen.id) {
-      if (!hasBeenAnswered && stopOnFirstMissingAnswer) {
-        currentScreen = index
-        break
-      }
-
-      if (!hasBeenAnswered && index > lastAnswerIndex) {
-        missingAnswer = true
-      }
-
-      if (!missingAnswer && hasBeenAnswered) {
-        currentScreen = index + 1
-        lastAnswerIndex = index
-      }
+    if (missingAnswer && stopOnFirstMissingAnswer) {
+      break
     }
 
     index += 1

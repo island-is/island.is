@@ -12,6 +12,8 @@ import {
   convertFormToScreens,
   findCurrentScreen,
   getNavigableSectionsInForm,
+  screenHasBeenAnswered,
+  screenRequiresAnswer,
 } from './reducerUtils'
 import { FormScreen, MultiFieldScreen, RepeaterScreen } from '../types'
 
@@ -367,6 +369,217 @@ describe('reducerUtils', () => {
         expect(
           findCurrentScreen(convertScreens(screens, answers3), answers3, true),
         ).toBe(4)
+      })
+    })
+
+    describe('utility functions', () => {
+      // Sets defaults when seeing if you can navigate to screens
+      // Used when not set manually
+      const getConvertedScreen = (screen: FormScreen, answers = {}) => {
+        const converted = convertScreens([screen], answers)
+
+        return converted.length > 0 ? converted[0] : screen
+      }
+
+      describe('screenRequiresAnswer', () => {
+        it('should require answer for text screen', () => {
+          expect(
+            screenRequiresAnswer(getConvertedScreen(buildTextScreen('id'))),
+          ).toBe(true)
+        })
+
+        it('should require answer for multi field', () => {
+          expect(
+            screenRequiresAnswer(
+              getConvertedScreen(
+                buildMultiField({
+                  id: 'multifield',
+                  children: [buildTextScreen('a'), buildTextScreen('b')],
+                  title: 'title',
+                }) as MultiFieldScreen,
+              ),
+            ),
+          ).toBe(true)
+        })
+
+        it('should not require answer for multi field with all child screens not navigable', () => {
+          expect(
+            screenRequiresAnswer(
+              buildMultiField({
+                id: 'multifield',
+                children: [
+                  buildTextScreen('a', false),
+                  buildTextScreen('b', false),
+                ],
+                title: 'title',
+              }) as MultiFieldScreen,
+            ),
+          ).toBe(false)
+        })
+
+        it('should always require answer for repeater', () => {
+          expect(
+            screenRequiresAnswer(
+              getConvertedScreen(
+                buildRepeater({
+                  id: 'person',
+                  children: [
+                    buildTextScreen('a'),
+                    buildTextScreen('b'),
+                    buildTextScreen('c'),
+                  ],
+                  title: 'This is a great screen',
+                  component: 'SomeComponent',
+                }) as RepeaterScreen,
+              ),
+            ),
+          ).toBe(true)
+        })
+
+        it('should never require answer for a description field', () => {
+          expect(screenRequiresAnswer(buildIntroScreen('intro'))).toBe(false)
+        })
+      })
+
+      describe('screenHasBeenAnswered', () => {
+        it('should always say a description screen has been answered', () => {
+          const answers = {}
+          expect(
+            screenHasBeenAnswered(buildIntroScreen('intro'), answers),
+          ).toBe(true)
+        })
+
+        it('should only say a text has been answered if it has a value', () => {
+          const answers1 = {}
+          const answers2 = { a: 'answer' }
+
+          expect(screenHasBeenAnswered(buildTextScreen('a'), answers1)).toBe(
+            false,
+          )
+          expect(screenHasBeenAnswered(buildTextScreen('a'), answers2)).toBe(
+            true,
+          )
+        })
+
+        it('should say a repeater has been answered if some or all questions have been answered', () => {
+          const answers1 = {}
+          const answers2 = { repeater: [] }
+          const answers3 = { repeater: [{ a: 'answer' }] }
+          const answers4 = { repeater: [{ b: 'answer' }] }
+          const answers5 = { repeater: [{ a: 'answer', b: 'answer' }] }
+
+          const buildRepeaterForTest = () =>
+            buildRepeater({
+              id: 'repeater',
+              children: [buildTextScreen('a'), buildTextScreen('b')],
+              title: 'Repeater',
+              component: 'RepeaterComponent',
+            }) as RepeaterScreen
+
+          const repeater1 = getConvertedScreen(buildRepeaterForTest(), answers1)
+          const repeater2 = getConvertedScreen(buildRepeaterForTest(), answers2)
+          const repeater3 = getConvertedScreen(buildRepeaterForTest(), answers3)
+          const repeater4 = getConvertedScreen(buildRepeaterForTest(), answers4)
+          const repeater5 = getConvertedScreen(buildRepeaterForTest(), answers5)
+
+          expect(screenHasBeenAnswered(repeater1, answers1)).toBe(false)
+          expect(screenHasBeenAnswered(repeater2, answers2)).toBe(false)
+          expect(screenHasBeenAnswered(repeater3, answers3)).toBe(true)
+          expect(screenHasBeenAnswered(repeater4, answers4)).toBe(true)
+          expect(screenHasBeenAnswered(repeater5, answers5)).toBe(true)
+        })
+
+        it('should only say a multi field has been answered if all screens requiring an answer have been answered', () => {
+          const buildMultiFieldForTest = () => {
+            const screen = buildMultiField({
+              id: 'multifield',
+              children: [
+                buildTextScreen('a', true),
+                buildTextScreen('b', true),
+                buildTextScreen('c', false),
+              ],
+              title: 'title',
+            }) as MultiFieldScreen
+
+            screen.isNavigable = true
+
+            return screen
+          }
+
+          const answers1 = {}
+          const answers2 = { a: 'answer' }
+          const answers3 = { b: 'answer' }
+          const answers4 = { c: 'answer' }
+          const answers5 = { a: 'answer', c: 'answer' }
+          const answers6 = { b: 'answer', c: 'answer' }
+          const answers7 = { a: 'answer', b: 'answer' }
+
+          expect(
+            screenHasBeenAnswered(buildMultiFieldForTest(), answers1),
+          ).toBe(false)
+          expect(
+            screenHasBeenAnswered(buildMultiFieldForTest(), answers2),
+          ).toBe(false)
+          expect(
+            screenHasBeenAnswered(buildMultiFieldForTest(), answers3),
+          ).toBe(false)
+          expect(
+            screenHasBeenAnswered(buildMultiFieldForTest(), answers4),
+          ).toBe(false)
+          expect(
+            screenHasBeenAnswered(buildMultiFieldForTest(), answers5),
+          ).toBe(false)
+          expect(
+            screenHasBeenAnswered(buildMultiFieldForTest(), answers6),
+          ).toBe(false)
+          expect(
+            screenHasBeenAnswered(buildMultiFieldForTest(), answers7),
+          ).toBe(true)
+        })
+
+        it('should say a multi screen has been partly answered when some answers are missing', () => {
+          const buildMultiFieldForTest = () => {
+            const screen = buildMultiField({
+              id: 'multifield',
+              children: [
+                buildTextScreen('a', true),
+                buildTextScreen('b', true),
+                buildTextScreen('c', true),
+              ],
+              title: 'title',
+            }) as MultiFieldScreen
+
+            screen.isNavigable = true
+
+            return screen
+          }
+
+          const answers1 = {}
+          const answers2 = { a: 'answer' }
+          const answers3 = { b: 'answer' }
+          const answers4 = { c: 'answer' }
+          const answers5 = { a: 'answer', c: 'answer' }
+          const answers6 = { b: 'answer', c: 'answer' }
+
+          expect(
+            screenHasBeenAnswered(buildMultiFieldForTest(), answers1, true),
+          ).toBe(false)
+          expect(
+            screenHasBeenAnswered(buildMultiFieldForTest(), answers2, true),
+          ).toBe(true)
+          expect(
+            screenHasBeenAnswered(buildMultiFieldForTest(), answers3, true),
+          ).toBe(true)
+          expect(
+            screenHasBeenAnswered(buildMultiFieldForTest(), answers4, true),
+          ).toBe(true)
+          expect(
+            screenHasBeenAnswered(buildMultiFieldForTest(), answers5, true),
+          ).toBe(true)
+          expect(
+            screenHasBeenAnswered(buildMultiFieldForTest(), answers6, true),
+          ).toBe(true)
+        })
       })
     })
   })
