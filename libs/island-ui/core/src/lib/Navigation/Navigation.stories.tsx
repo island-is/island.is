@@ -1,5 +1,5 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
+
 import { withFigma } from '../../utils/withFigma'
 import { Box } from '../Box/Box'
 import { Navigation } from './Navigation'
@@ -8,7 +8,6 @@ import { categories, pages } from './mock'
 export default {
   title: 'Navigation/Navigation',
   component: Navigation,
-  decorators: [withDesign],
   parameters: withFigma('Navigation'),
 }
 

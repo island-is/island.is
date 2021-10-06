@@ -1,12 +1,11 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
+
 import { withFigma } from '../../utils/withFigma'
 import { Select } from './Select'
 
 export default {
   title: 'Form/Select',
   component: Select,
-  decorators: [withDesign],
   parameters: withFigma('Select'),
 }
 

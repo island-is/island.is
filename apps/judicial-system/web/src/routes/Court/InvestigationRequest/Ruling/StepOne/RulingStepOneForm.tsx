@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Case } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
   CaseNumbers,
@@ -205,6 +205,9 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               acceptedLabelText="Krafa samþykkt"
               rejectedLabelText="Kröfu hafnað"
               partiallyAcceptedLabelText="Krafa tekin til greina að hluta"
+              dismissLabelText={formatMessage(
+                icRulingStepOne.sections.decision.dismissLabel,
+              )}
             />
           </Box>
         </Box>

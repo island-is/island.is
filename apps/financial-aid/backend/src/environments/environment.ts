@@ -1,12 +1,4 @@
 if (process.env.NODE_ENV === 'production') {
-  if (!process.env.AUTH_JWT_SECRET) {
-    throw new Error('Missing AUTH_JWT_SECRET environment.')
-  }
-
-  if (!process.env.SECRET_TOKEN) {
-    throw new Error('Missing SECRET_TOKEN environment.')
-  }
-
   if (!process.env.CLOUDFRONT_PUBLIC_KEY_ID) {
     throw new Error('Missing CLOUDFRONT_PUBLIC_KEY_ID environment.')
   }
@@ -18,10 +10,6 @@ if (process.env.NODE_ENV === 'production') {
 
 const prodConfig = {
   production: true,
-  auth: {
-    jwtSecret: process.env.AUTH_JWT_SECRET,
-    secretToken: process.env.SECRET_TOKEN,
-  },
   files: {
     cloudFrontPublicKeyId: process.env.CLOUDFRONT_PUBLIC_KEY_ID,
     cloudFrontPrivateKey: process.env.CLOUDFRONT_PRIVATE_KEY,
@@ -29,20 +17,36 @@ const prodConfig = {
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
   },
+  identityServerAuth: {
+    issuer: process.env.IDENTITY_SERVER_DOMAIN ?? '',
+    audience: '@sambandid.is',
+  },
+  emailOptions: {
+    useTestAccount: false,
+    options: {
+      region: process.env.EMAIL_REGION ?? '',
+    },
+  },
 }
 
 const devConfig = {
   production: false,
-  auth: {
-    jwtSecret: 'jwt-secret',
-    secretToken: 'secret-token',
-  },
   files: {
-    cloudFrontPublicKeyId: '',
-    cloudFrontPrivateKey: '',
+    cloudFrontPublicKeyId: process.env.CLOUDFRONT_PUBLIC_KEY_ID ?? '',
+    cloudFrontPrivateKey: process.env.CLOUDFRONT_PRIVATE_KEY ?? '',
     fileBaseUrl: 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
+  },
+  identityServerAuth: {
+    issuer: 'https://identity-server.dev01.devland.is',
+    audience: '@sambandid.is',
+  },
+  emailOptions: {
+    useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
+    options: {
+      region: process.env.EMAIL_REGION ?? '',
+    },
   },
 }
 

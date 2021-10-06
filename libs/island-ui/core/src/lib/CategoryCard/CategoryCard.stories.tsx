@@ -1,5 +1,4 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { GridColumn } from '../Grid/GridColumn/GridColumn'
@@ -10,7 +9,6 @@ import { CategoryCard } from './CategoryCard'
 export default {
   title: 'Cards/CategoryCard',
   component: CategoryCard,
-  decorators: [withDesign],
   parameters: withFigma('CategoryCard'),
 }
 

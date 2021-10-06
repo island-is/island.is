@@ -143,7 +143,7 @@ export const m: MessageDir = {
     },
     submitApplication: {
       id: 'pa.application:overview.submit.application',
-      defaultMessage: 'Skila meðmælum',
+      defaultMessage: 'Loka söfnun',
       description: 'Submit application',
     },
   }),
@@ -348,7 +348,7 @@ export const m: MessageDir = {
       description: 'Label and placeholder for name input field',
     },
     descriptionPt1: {
-      id: 'ppale.application:collect.descripton.pt.one',
+      id: 'pa.application:collect.descripton.pt.one',
       defaultMessage:
         'Með því að mæla með úthlutun tiltekins listabókstafs til tilgreinds stjórnamálaflokks samþykkir þú að viðkomandi stjórnmálaflokkur, dómsmálaráðuneytið og Þjóðskrá Íslands fái aðgang að þeim upplýsingum sem skráðar eru. Þeir aðilar hafa ekki heimild til að miðla þeim upplýsingum frekar.',
       description: 'Disclaimer description, first paragraph',
@@ -499,6 +499,12 @@ export const m: MessageDir = {
       defaultMessage:
         'Þú ert ekki með skráða búsetu í þessu kjördæmi ertu viss um að vilja halda áfram?',
       description: 'Alert message if signaturee is in the wrong constituency',
+    },
+    toastMessage: {
+      id: 'pa.application:endorsement.alert.descrtipion.toast.message',
+      defaultMessage:
+        'Ekki tókst að ná sambandi við vefþjónustu. Vinsamlegast reyndu aftur síðar',
+      description: 'Toast message on error',
     },
   }),
   endorsementApproved: defineMessages({
@@ -651,7 +657,7 @@ export const m: MessageDir = {
     },
     rejectButton: {
       id: 'pa.application:supreme.court.reject.button',
-      defaultMessage: 'Hafna',
+      defaultMessage: 'Opna á ný',
       description: 'Reject button',
     },
     approveButton: {

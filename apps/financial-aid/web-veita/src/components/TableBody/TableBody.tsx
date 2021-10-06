@@ -1,33 +1,42 @@
-import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import React, { useContext, useState } from 'react'
+import { Text, Box, Button } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
 import * as styles from './TableBody.treat'
-
 import cn from 'classnames'
-import { Application, getState } from '@island.is/financial-aid/shared'
-import format from 'date-fns/format'
+
+import {
+  Application,
+  getState,
+  getMonth,
+  ApplicationState,
+} from '@island.is/financial-aid/shared/lib'
 
 import {
   GeneratedProfile,
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
-
 import {
   calcDifferenceInDate,
-  translateMonth,
   getTagByState,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 interface PageProps {
   application: Application
   index: number
+  onApplicationUpdate: (
+    applicationId: string,
+    state: ApplicationState,
+  ) => Promise<void>
 }
 
-const TableBody: React.FC<PageProps> = ({ application, index }) => {
+const TableBody = ({ application, index, onApplicationUpdate }: PageProps) => {
   return (
-    <Link href={'application/' + application.id} key={'key-' + index}>
-      <tr className={styles.link}>
+    <Link href={'application/' + application.id}>
+      <tr
+        className={`${styles.link} contentUp`}
+        style={{ animationDelay: 55 + 3.5 * index + 'ms' }}
+      >
         <td
           className={cn({
             [`${styles.tablePadding} ${styles.firstChildPadding}`]: true,
@@ -46,7 +55,7 @@ const TableBody: React.FC<PageProps> = ({ application, index }) => {
             [`${styles.tablePadding} `]: true,
           })}
         >
-          <Box>
+          <Box display="flex">
             <div className={`tags ${getTagByState(application.state)}`}>
               {getState[application.state]}
             </div>
@@ -66,11 +75,26 @@ const TableBody: React.FC<PageProps> = ({ application, index }) => {
             [`${styles.tablePadding} `]: true,
           })}
         >
-          <Text>
-            {translateMonth(
-              parseInt(format(new Date(application.created), 'M')),
-            )}
-          </Text>
+          <Text>{getMonth(new Date(application.created).getMonth())}</Text>
+        </td>
+        <td
+          className={cn({
+            [`${styles.tablePadding} `]: true,
+          })}
+        >
+          {application.staff?.name ? (
+            <Text>{application.staff?.name}</Text>
+          ) : (
+            <Button
+              variant="text"
+              onClick={(ev) => {
+                ev.stopPropagation()
+                onApplicationUpdate(application.id, ApplicationState.INPROGRESS)
+              }}
+            >
+              Sjá um
+            </Button>
+          )}
         </td>
       </tr>
     </Link>

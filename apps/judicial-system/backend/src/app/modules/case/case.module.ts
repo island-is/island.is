@@ -3,14 +3,15 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { SigningModule } from '@island.is/dokobit-signing'
 import { EmailModule } from '@island.is/email-service'
+import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { environment } from '../../../environments'
 import { UserModule } from '../user'
 import { CourtModule } from '../court'
+import { EventModule } from '../event'
 import { Case } from './models'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
-import { TranslationsModule } from '@island.is/api/domains/translations'
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { TranslationsModule } from '@island.is/api/domains/translations'
     UserModule,
     CourtModule,
     SequelizeModule.forFeature([Case]),
-    TranslationsModule,
+    CmsTranslationsModule,
+    EventModule,
   ],
   providers: [CaseService],
   controllers: [CaseController],

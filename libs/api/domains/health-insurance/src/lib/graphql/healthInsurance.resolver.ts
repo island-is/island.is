@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Query } from '@nestjs/graphql'
+import { Resolver, Query, Args } from '@nestjs/graphql'
 
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
@@ -10,6 +10,7 @@ import {
 import { AuditService } from '@island.is/nest/audit'
 
 import { HealthInsuranceService } from '../healthInsurance.service'
+import { IsHealthInsuredInput } from './dto'
 
 const namespace = '@island.is/api/health-insurance'
 
@@ -33,6 +34,7 @@ export class HealthInsuranceResolver {
   })
   healthInsuranceIsHealthInsured(
     @CurrentUser() user: AuthUser,
+    @Args('input') input: IsHealthInsuredInput,
   ): Promise<boolean> {
     return this.auditService.auditPromise(
       {
@@ -40,7 +42,11 @@ export class HealthInsuranceResolver {
         namespace,
         action: 'healthInsuranceIsHealthInsured',
       },
-      this.healthInsuranceService.isHealthInsured(user.nationalId),
+
+      this.healthInsuranceService.isHealthInsured(
+        user.nationalId,
+        input.date?.getTime(),
+      ),
     )
   }
 

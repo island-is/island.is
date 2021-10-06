@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
+
 import { ElasticService } from '@island.is/content-search-toolkit'
 import { logger } from '@island.is/logging'
-import { CmsSyncService } from '@island.is/api/domains/cms'
+import { CmsSyncService } from '@island.is/cms'
 import {
   ContentSearchImporter,
   SyncOptions,

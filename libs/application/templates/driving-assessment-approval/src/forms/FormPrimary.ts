@@ -13,9 +13,9 @@ import {
   buildTextField,
   buildDataProviderItem,
   buildCustomField,
+  buildDividerField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
-import { ApiActions } from '../shared'
 import { format as formatKennitala } from 'kennitala'
 
 export const FormPrimary: Form = buildForm({
@@ -65,6 +65,10 @@ export const FormPrimary: Form = buildForm({
               backgroundColor: 'blue',
               variant: 'email',
             }),
+            buildDividerField({
+              title: 'nemandi',
+              color: 'transparent',
+            }),
             buildCustomField({
               id: 'studentLookup',
               title: m.studentLookup,
@@ -86,6 +90,7 @@ export const FormPrimary: Form = buildForm({
               id: 'submit',
               placement: 'footer',
               title: m.submitConfirmation,
+              refetchApplicationAfterSubmit: true,
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
@@ -110,9 +115,16 @@ export const FormPrimary: Form = buildForm({
               value: ({ answers }) =>
                 get(answers, 'student.email', '') as string,
             }),
+            buildDividerField({
+              // if you don't include a title, there's a line that shows up
+              title: '-',
+              color: 'transparent',
+            }),
             buildCheckboxField({
               title: '',
               id: 'drivingAssessmentConfirmationCheck',
+              large: true,
+              backgroundColor: 'blue',
               options: [
                 {
                   label: m.drivingAssessmentConfirmationCheck,
@@ -124,15 +136,8 @@ export const FormPrimary: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'final',
-          title: m.finalAssessmentTitle,
-          description: (application) => {
-            const sendApplicationActionResult =
-              application.externalData[ApiActions.submitAssessmentConfirmation]
-
-            const success = get(sendApplicationActionResult, 'success', false)
-
-            return success ? m.outroMessage : m.error
-          },
+          title: '',
+          description: '',
         }),
       ],
     }),

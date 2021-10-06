@@ -141,14 +141,20 @@ describe('answerValidators', () => {
     })
   })
 
-  it('should return error for startDate before DOB', () => {
-    const newAnswers = [{ startDate: '2021-01-12' }]
+  it('should return an error if startDate is more than 1 month before DOB', () => {
+    const newAnswers = [{ startDate: '2020-12-01' }]
 
     expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
       message: errorMessages.periodsStartDateBeforeDob,
       path: 'periods[0].startDate',
       values: undefined,
     })
+  })
+
+  it(`shouldn't return an error if startDate is less than 1 month before DOB`, () => {
+    const newAnswers = [{ startDate: '2021-01-12' }]
+
+    expect(answerValidators['periods'](newAnswers, application)).toBeUndefined()
   })
 
   it('should return error for startDate after maximum months period', () => {

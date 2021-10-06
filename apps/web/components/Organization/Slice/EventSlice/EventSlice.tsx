@@ -24,7 +24,7 @@ export const EventSlice: React.FC<SliceProps> = ({ slice }) => {
       <Box
         className={styles.wrapper}
         style={{
-          background: `url(${slice.backgroundImage?.url}, rgb(31, 101, 251)`,
+          background: `url(${slice.backgroundImage?.url}), rgb(31, 101, 251)`,
         }}
       >
         <GridContainer>

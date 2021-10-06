@@ -21,6 +21,7 @@ import { serviceSetup as contentfulTranslationExtensionSetup } from '../../../li
 
 import { serviceSetup as downloadServiceSetup } from '../../../apps/download-service/infra/download-service'
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
+import { serviceSetup as endorsementServiceUpdateMetadataSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-scripts-update-metadata'
 import { serviceSetup as partyLetterServiceSetup } from '../../../apps/services/party-letter-registry-api/infra/party-letter-registry-api'
 import { serviceSetup as temporaryVoterRegistryServiceSetup } from '../../../apps/services/temporary-voter-registry-api/infra/temporary-voter-registry-api'
 
@@ -29,6 +30,9 @@ import { EnvironmentServices } from '.././dsl/types/charts'
 const temporaryVoterRegistry = temporaryVoterRegistryServiceSetup()
 const partyLetterRegistry = partyLetterServiceSetup()
 const endorsement = endorsementServiceSetup({
+  servicesTemporaryVoterRegistryApi: temporaryVoterRegistry,
+})
+const endorsementUpdateMetadata = endorsementServiceUpdateMetadataSetup({
   servicesTemporaryVoterRegistryApi: temporaryVoterRegistry,
 })
 
@@ -85,6 +89,7 @@ export const Services: EnvironmentServices = {
     endorsement,
     partyLetterRegistry,
     temporaryVoterRegistry,
+    endorsementUpdateMetadata,
   ],
   staging: [
     appSystemApi,
@@ -105,6 +110,7 @@ export const Services: EnvironmentServices = {
     endorsement,
     partyLetterRegistry,
     temporaryVoterRegistry,
+    endorsementUpdateMetadata,
   ],
   dev: [
     appSystemApi,
@@ -125,6 +131,7 @@ export const Services: EnvironmentServices = {
     endorsement,
     partyLetterRegistry,
     temporaryVoterRegistry,
+    endorsementUpdateMetadata,
   ],
 }
 
@@ -132,4 +139,5 @@ export const FeatureDeploymentServices = [
   endorsement,
   partyLetterRegistry,
   temporaryVoterRegistry,
+  endorsementUpdateMetadata,
 ]

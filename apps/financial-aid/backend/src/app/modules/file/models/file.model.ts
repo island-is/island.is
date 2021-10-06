@@ -5,18 +5,18 @@ import {
   ForeignKey,
   Model,
   Table,
-  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
 
 import { ApplicationModel } from '../../application'
+import { FileType, ApplicationFile } from '@island.is/financial-aid/shared/lib'
 
 @Table({
   tableName: 'application_files',
   timestamps: false,
 })
-export class ApplicationFileModel extends Model<ApplicationFileModel> {
+export class ApplicationFileModel extends Model<ApplicationFile> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -61,4 +61,12 @@ export class ApplicationFileModel extends Model<ApplicationFileModel> {
   })
   @ApiProperty()
   size: number
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(FileType),
+  })
+  @ApiProperty({ enum: FileType })
+  type: FileType
 }

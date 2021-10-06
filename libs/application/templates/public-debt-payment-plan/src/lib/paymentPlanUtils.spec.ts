@@ -36,19 +36,13 @@ describe('prerequisitesFailed', () => {
 
     expect(res).toBe(true)
   })
-  it('should return a true value since the maxDebt prerequisite was false and caused the function to fail.', () => {
+  it('should return a true value since the maxDebt prerequisite was true and caused the function to fail.', () => {
     const application = buildApplication({
       externalData: {
         paymentPlanPrerequisites: {
           data: {
             conditions: {
-              maxDebt: false,
-              taxReturns: true,
-              vatReturns: true,
-              citReturns: true,
-              accommodationTaxReturns: true,
-              withholdingTaxReturns: true,
-              wageReturns: true,
+              maxDebt: true,
             },
           },
           date: new Date(),
@@ -61,19 +55,13 @@ describe('prerequisitesFailed', () => {
     expect(res).toBe(true)
   })
 
-  it('should return false since all prerequisites where true and therefore did not fail.', () => {
+  it('should return false since all prerequisites have their correct boolean assigned to them and therefore did not fail.', () => {
     const application = buildApplication({
       externalData: {
         paymentPlanPrerequisites: {
           data: {
             conditions: {
-              maxDebt: true,
-              taxReturns: true,
-              vatReturns: true,
-              citReturns: true,
-              accommodationTaxReturns: true,
-              withholdingTaxReturns: true,
-              wageReturns: true,
+              maxDebt: false,
             },
           },
           date: new Date(),

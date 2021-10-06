@@ -1,8 +1,21 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
+export const wrapper = style({
+  paddingBottom: theme.spacing[6],
+  marginBottom: theme.spacing[6],
+  overflowX: 'auto',
+})
+
 export const tableContainer = style({
-  marginBottom: theme.spacing[15],
+  marginBottom: theme.spacing[3],
+  marginRight: -theme.spacing[2],
+  marginLeft: -theme.spacing[2],
+  whiteSpace: 'nowrap',
+})
+
+export const emptyTableContainer = style({
+  marginBottom: theme.spacing[2],
   marginRight: -theme.spacing[2],
   marginLeft: -theme.spacing[2],
 })

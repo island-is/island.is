@@ -1,18 +1,25 @@
+import { makeCase } from '../../fixtures/testDataFactory'
+import { intercept } from '../../utils'
+
 describe('/krafa/domkrofur-og-lagaakvaedi/:id', () => {
   beforeEach(() => {
+    const caseData = makeCase()
+
     cy.stubAPIResponses()
     cy.visit('/krafa/domkrofur-og-lagaakvaedi/test_id')
+
+    intercept(caseData)
   })
 
   it('should require a valid requested custody end time', () => {
     cy.getByTestid('datepicker').click()
     cy.getByTestid('datepickerIncreaseMonth').click()
     cy.contains('15').click()
-    cy.getByTestid('requestedCustodyEndTime').type('13:').blur()
+    cy.getByTestid('reqValidToDate-time').type('13:').blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 12:34 eða 1:23')
-    cy.getByTestid('requestedCustodyEndTime').clear().blur()
+    cy.getByTestid('reqValidToDate-time').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('requestedCustodyEndTime').clear().type('1333')
+    cy.getByTestid('reqValidToDate-time').clear().type('1333')
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
@@ -27,7 +34,7 @@ describe('/krafa/domkrofur-og-lagaakvaedi/:id', () => {
     cy.getByTestid('datepicker').click()
     cy.getByTestid('datepickerIncreaseMonth').click()
     cy.contains('15').click()
-    cy.getByTestid('requestedCustodyEndTime').clear().type('1333')
+    cy.getByTestid('reqValidToDate-time').clear().type('1333')
     cy.getByTestid('lawsBroken').type('Lorem ipsum')
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('checkbox').first().click()
@@ -38,7 +45,7 @@ describe('/krafa/domkrofur-og-lagaakvaedi/:id', () => {
     cy.getByTestid('datepicker').click()
     cy.getByTestid('datepickerIncreaseMonth').click()
     cy.contains('15').click()
-    cy.getByTestid('requestedCustodyEndTime').clear().type('1333')
+    cy.getByTestid('reqValidToDate-time').clear().type('1333')
     cy.getByTestid('lawsBroken').type('Lorem ipsum')
     cy.getByTestid('checkbox').first().click()
     cy.getByTestid('continueButton').click()

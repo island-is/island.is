@@ -20,6 +20,7 @@ apps/judicial-system/api.graphql
 # financial-aid
 apps/financial-aid/codegen.yml
 apps/financial-aid/api.graphql
+apps/financial-aid/README.md
 
 # Readmes
 apps/air-discount-scheme/README.md

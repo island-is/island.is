@@ -5,7 +5,7 @@ import responseCachePlugin from 'apollo-server-plugin-response-cache'
 
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
-import { CmsModule } from '@island.is/api/domains/cms'
+import { CmsModule } from '@island.is/cms'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { EducationModule } from '@island.is/api/domains/education'
 import { ApplicationModule } from '@island.is/api/domains/application'
@@ -13,7 +13,7 @@ import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
 import { CommunicationsModule } from '@island.is/api/domains/communications'
-import { TranslationsModule } from '@island.is/api/domains/translations'
+import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
@@ -140,7 +140,7 @@ const autoSchemaFile = environment.production
       documentProviderAdmins:
         environment.documentProviderService.documentProviderAdmins,
     }),
-    TranslationsModule,
+    CmsTranslationsModule,
     TerminusModule,
     NationalRegistryModule.register({
       nationalRegistry: {
@@ -196,8 +196,6 @@ const autoSchemaFile = environment.production
       url: environment.regulationsDomain.url,
     }),
     FinanceModule.register({
-      username: environment.fjarmalDomain.username,
-      password: environment.fjarmalDomain.password,
       ttl: environment.fjarmalDomain.ttl,
       downloadServiceBaseUrl: environment.downloadService.baseUrl,
       xroadApiPath: environment.fjarmalDomain.xroadApiPath,
@@ -234,6 +232,9 @@ const autoSchemaFile = environment.production
         apiKey: environment.pkpass.apiKey,
         apiUrl: environment.pkpass.apiUrl,
         secretKey: environment.pkpass.secretKey,
+        cacheKey: environment.pkpass.cacheKey,
+        cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta,
+        authRetries: environment.pkpass.authRetries,
       },
     }),
     PaymentScheduleModule.register({

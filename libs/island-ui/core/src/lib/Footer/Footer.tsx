@@ -309,7 +309,7 @@ const defaultTopLinksInfo = [
 const defaultTopLinksContact = [
   {
     title: 'Hafa samband',
-    href: '/stafraent-island/hafa-samband',
+    href: '/s/stafraent-island/hafa-samband',
   },
   {
     title: 'Sími: 426 5500',

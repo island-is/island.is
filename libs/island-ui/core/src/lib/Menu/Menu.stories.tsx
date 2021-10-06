@@ -1,5 +1,5 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
+
 import { withFigma } from '../../utils/withFigma'
 
 import { Menu } from './Menu'
@@ -63,7 +63,6 @@ const asideBottomLinks = [
 export default {
   title: 'Navigation/Menu',
   component: Menu,
-  decorators: [withDesign],
   parameters: withFigma('Menu'),
 }
 

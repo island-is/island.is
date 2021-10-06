@@ -2,6 +2,7 @@ import React, { useState, useEffect, FC } from 'react'
 import { gql, useLazyQuery } from '@apollo/client'
 import { dateFormat } from '@island.is/shared/constants'
 import format from 'date-fns/format'
+import sub from 'date-fns/sub'
 import { Table as T } from '@island.is/island-ui/core'
 import {
   Box,
@@ -16,12 +17,16 @@ import {
   AlertBanner,
   SkeletonLoader,
   Pagination,
+  Input,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
 import amountFormat from '../../utils/amountFormat'
 import { showPdfDocument } from '@island.is/service-portal/graphql'
+import { billsFilter } from '../../utils/simpleFilter'
+import * as styles from './DocumentScreen.treat'
 
 const ITEMS_ON_PAGE = 20
 
@@ -29,6 +34,7 @@ interface Props {
   title: string
   intro: string
   listPath: string
+  defaultDateRangeMonths?: number
 }
 
 const getFinanceDocumentsListQuery = gql`
@@ -47,20 +53,28 @@ const getFinanceDocumentsListQuery = gql`
   }
 `
 
-const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
-  const { showPdf } = showPdfDocument()
+const DocumentScreen: FC<Props> = ({
+  title,
+  intro,
+  listPath,
+  defaultDateRangeMonths = 3,
+}) => {
+  const { showPdf, loadingPDF, fetchingPdfId } = showPdfDocument()
   const { formatMessage } = useLocale()
 
   const [page, setPage] = useState(1)
-  const [fromDate, setFromDate] = useState<string>()
-  const [toDate, setToDate] = useState<string>()
+  const [fromDate, setFromDate] = useState<Date>()
+  const [toDate, setToDate] = useState<Date>()
+  const [q, setQ] = useState<string>('')
 
   const [loadDocumentsList, { data, loading, called, error }] = useLazyQuery(
     getFinanceDocumentsListQuery,
   )
 
   const billsDataArray: DocumentsListItemTypes[] =
-    data?.getDocumentsList?.documentsList || []
+    (data?.getDocumentsList?.documentsList &&
+      billsFilter(data.getDocumentsList.documentsList, q)) ||
+    []
 
   const totalPages =
     billsDataArray.length > ITEMS_ON_PAGE
@@ -72,14 +86,22 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
       loadDocumentsList({
         variables: {
           input: {
-            dayFrom: fromDate,
-            dayTo: toDate,
+            dayFrom: format(fromDate, 'yyyy-MM-dd'),
+            dayTo: format(toDate, 'yyyy-MM-dd'),
             listPath: listPath,
           },
         },
       })
     }
   }, [toDate, fromDate])
+
+  useEffect(() => {
+    const backInTheDay = sub(new Date(), {
+      months: defaultDateRangeMonths,
+    })
+    setFromDate(backInTheDay)
+    setToDate(new Date())
+  }, [])
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -94,37 +116,46 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
         </Columns>
         <Box marginTop={[1, 1, 2, 2, 5]}>
           <GridRow>
-            <GridColumn span={['1/1', '4/12']}>
+            <GridColumn span={['1/1', '6/12', '6/12', '6/12', '4/12']}>
               <DatePicker
                 backgroundColor="blue"
-                handleChange={(d) => {
-                  const date = format(d, 'yyyy-MM-dd')
-                  setFromDate(date)
-                }}
+                handleChange={(d) => setFromDate(d)}
                 icon="calendar"
                 iconType="outline"
                 size="sm"
                 label={formatMessage(m.dateFrom)}
+                selected={fromDate}
                 locale="is"
                 placeholderText={formatMessage(m.chooseDate)}
               />
             </GridColumn>
-            <GridColumn span={['1/1', '4/12']}>
+            <GridColumn
+              paddingTop={[2, 0]}
+              span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+            >
               <DatePicker
                 backgroundColor="blue"
-                handleChange={(d) => {
-                  const date = format(d, 'yyyy-MM-dd')
-                  setToDate(date)
-                }}
+                handleChange={(d) => setToDate(d)}
                 icon="calendar"
                 iconType="outline"
                 size="sm"
                 label={formatMessage(m.dateTo)}
+                selected={toDate}
                 locale="is"
                 placeholderText={formatMessage(m.chooseDate)}
               />
             </GridColumn>
           </GridRow>
+          <Box marginTop={3}>
+            <Input
+              label="Leit"
+              name="Search1"
+              placeholder="Sláðu inn leitarorð"
+              size="sm"
+              onChange={(e) => setQ(e.target.value)}
+              value={q}
+            />
+          </Box>
         </Box>
         <Box marginTop={2}>
           {error && (
@@ -167,7 +198,7 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
                       {formatMessage(m.performingOrganization)}
                     </Text>
                   </T.HeadData>
-                  <T.HeadData>
+                  <T.HeadData box={{ textAlign: 'right' }}>
                     <Text variant="eyebrow">{formatMessage(m.amount)}</Text>
                   </T.HeadData>
                   <T.HeadData>
@@ -185,17 +216,25 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
                       <T.Data>
                         {format(new Date(listItem.date), dateFormat.is)}
                       </T.Data>
-                      <T.Data>
+                      <T.Data box={{ position: 'relative' }}>
                         <Button
                           size="small"
                           variant="text"
                           onClick={() => showPdf(listItem.id)}
+                          disabled={loadingPDF && fetchingPdfId === listItem.id}
                         >
                           {listItem.type}
+                          {loadingPDF && fetchingPdfId === listItem.id && (
+                            <span className={styles.loadingDot}>
+                              <LoadingDots single />
+                            </span>
+                          )}
                         </Button>
                       </T.Data>
                       <T.Data>{listItem.sender}</T.Data>
-                      <T.Data>{amountFormat(listItem.amount)}</T.Data>
+                      <T.Data box={{ textAlign: 'right' }}>
+                        {amountFormat(listItem.amount)}
+                      </T.Data>
                       <T.Data>{listItem.note}</T.Data>
                     </T.Row>
                   ))}

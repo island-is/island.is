@@ -3,6 +3,10 @@ import parseISO from 'date-fns/parseISO'
 import isValid from 'date-fns/isValid'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import isWithinInterval from 'date-fns/isWithinInterval'
+import subMonths from 'date-fns/subMonths'
+import isEmpty from 'lodash/isEmpty'
+import has from 'lodash/has'
+
 import {
   Application,
   AnswerValidator,
@@ -12,8 +16,6 @@ import {
   coreErrorMessages,
   StaticText,
 } from '@island.is/application/core'
-import isEmpty from 'lodash/isEmpty'
-import has from 'lodash/has'
 
 import { Period } from '../types'
 import { minPeriodDays, usageMaxMonths } from '../config'
@@ -87,6 +89,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
     )
     const lastAnsweredPeriod = answeredPeriods?.[answeredPeriods.length - 1]
 
+    if (newPeriodIndex < 0) {
+      return
+    }
+
     if (isEmpty(period)) {
       let message = errorMessages.periodsStartDateRequired
       let field = 'startDate'
@@ -116,8 +122,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
         return buildError(errorMessages.periodsStartDate, field)
       }
 
-      // Start date needs to be after or equal to the expectedDateOfBirth
-      if (startDate < dob) {
+      // Start date can be up to 1 month before the expectedDateOfBirth
+      if (
+        parseISO(startDate).getTime() < subMonths(parseISO(dob), 1).getTime()
+      ) {
         return buildError(errorMessages.periodsStartDateBeforeDob, field)
       }
 
@@ -167,7 +175,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
       // We need a valid end date
       if (typeof endDate !== 'string' || !isValid(parseISO(endDate))) {
-        return buildError('The end date is not valid.', field)
+        return buildError(coreErrorMessages.defaultError, field)
       }
 
       // If the startDate is using the expected date of birth, we then calculate the minimum period required from the date of birth

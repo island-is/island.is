@@ -18,12 +18,14 @@ import {
   RolesRule,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import type { User } from '@island.is/judicial-system/types'
 import {
   UserRole,
   CaseState,
   CaseAppealDecision,
+  completedCaseStates,
+  courtRoles,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { Case, CaseService } from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
@@ -32,6 +34,7 @@ import {
   CaseFile,
   DeleteFileResponse,
   SignedUrl,
+  UploadFileToCourtResponse,
 } from './models'
 import { FileService } from './file.service'
 
@@ -44,10 +47,6 @@ const judgeRule = UserRole.JUDGE as RolesRule
 // Allows registrars to perform any action
 const registrarRule = UserRole.REGISTRAR as RolesRule
 
-const completedCaseStates = [CaseState.ACCEPTED, CaseState.REJECTED]
-
-const sevenDays = 7 * 24 * 60 * 60 * 1000
-
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId')
 @ApiTags('files')
@@ -57,16 +56,6 @@ export class FileController {
     private readonly caseService: CaseService,
   ) {}
 
-  private hasCaseBeenAppealed(existingCase: Case): boolean {
-    return (
-      completedCaseStates.includes(existingCase.state) &&
-      (existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-        existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
-        Boolean(existingCase.prosecutorPostponedAppealDate) ||
-        Boolean(existingCase.accusedPostponedAppealDate))
-    )
-  }
-
   private getAppealDate(existingCase: Case): Date {
     // Assumption: case has been appealed and the appeal date is in the past
 
@@ -75,7 +64,7 @@ export class FileController {
       existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
       existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
     ) {
-      return existingCase.rulingDate
+      return existingCase.rulingDate as Date // We should have date
     }
 
     // Otherwise, use the earliest postponed appeal date
@@ -89,12 +78,6 @@ export class FileController {
       : accusedPostponedAppealDate
   }
 
-  private isLessThanSevenDaysAfterAppealDate(existingCase: Case): boolean {
-    const appealDate = this.getAppealDate(existingCase)
-
-    return Date.now() < appealDate.getTime() + sevenDays
-  }
-
   private doesUserHavePermissionToViewCaseFiles(
     user: User,
     existingCase: Case,
@@ -104,27 +87,34 @@ export class FileController {
       return true
     }
 
-    // Judges have permission to view files of appealed cases for 7 days, and
+    // Judges have permission to view files of completed cases, and
     // of uncompleted received cases they have been assigned to
     if (user.role === UserRole.JUDGE) {
       return (
-        (this.hasCaseBeenAppealed(existingCase) &&
-          this.isLessThanSevenDaysAfterAppealDate(existingCase)) ||
+        completedCaseStates.includes(existingCase.state) ||
         (existingCase.state === CaseState.RECEIVED &&
           user.id === existingCase.judgeId)
       )
     }
 
-    // Registrars have permission to view files of appealed cases for 7 days
+    // Registrars have permission to view files of completed cases
     if (user.role === UserRole.REGISTRAR) {
-      return (
-        this.hasCaseBeenAppealed(existingCase) &&
-        this.isLessThanSevenDaysAfterAppealDate(existingCase)
-      )
+      return completedCaseStates.includes(existingCase.state)
     }
 
     // Other users do not have permission to view any case files
     return false
+  }
+
+  private doesUserHavePermissionToUploadCaseFilesToCourt(
+    user: User,
+    existingCase: Case,
+  ): boolean {
+    // Judges and registrars have permission to upload files of completed cases
+    return (
+      courtRoles.includes(user.role) &&
+      completedCaseStates.includes(existingCase.state)
+    )
   }
 
   @RolesRules(prosecutorRule)
@@ -154,7 +144,7 @@ export class FileController {
   @Post('file')
   @ApiCreatedResponse({
     type: CaseFile,
-    description: 'Creates a new file',
+    description: 'Creates a new case file',
   })
   async createCaseFile(
     @Param('caseId') caseId: string,
@@ -175,7 +165,7 @@ export class FileController {
   @ApiOkResponse({
     type: CaseFile,
     isArray: true,
-    description: 'Gets all existing files for an existing case',
+    description: 'Gets all existing case file',
   })
   async getAllCaseFiles(
     @Param('caseId') caseId: string,
@@ -194,7 +184,7 @@ export class FileController {
   @Delete('file/:id')
   @ApiOkResponse({
     type: DeleteFileResponse,
-    description: 'Deletes a file',
+    description: 'Deletes a case file',
   })
   async deleteCaseFile(
     @Param('caseId') caseId: string,
@@ -209,9 +199,9 @@ export class FileController {
       )
     }
 
-    const file = await this.fileService.findById(id)
+    const file = await this.fileService.findById(id, existingCase.id)
 
-    if (!file || file.caseId !== existingCase.id) {
+    if (!file) {
       throw new NotFoundException(
         `File ${id} of case ${existingCase.id} does not exist`,
       )
@@ -224,14 +214,18 @@ export class FileController {
   @Get('file/:id/url')
   @ApiOkResponse({
     type: PresignedPost,
-    description: 'Gets a signed url for an existing file',
+    description: 'Gets a signed url for a case file',
   })
   async getCaseFileSignedUrl(
     @Param('caseId') caseId: string,
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<SignedUrl> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
+    const existingCase = await this.caseService.findByIdAndUser(
+      caseId,
+      user,
+      false,
+    )
 
     if (!this.doesUserHavePermissionToViewCaseFiles(user, existingCase)) {
       throw new ForbiddenException(
@@ -239,14 +233,55 @@ export class FileController {
       )
     }
 
-    const file = await this.fileService.findById(id)
+    const file = await this.fileService.findById(id, existingCase.id)
 
-    if (!file || file.caseId !== existingCase.id) {
+    if (!file) {
       throw new NotFoundException(
         `File ${id} of case ${existingCase.id} does not exist`,
       )
     }
 
     return this.fileService.getCaseFileSignedUrl(existingCase.id, file)
+  }
+
+  @RolesRules(judgeRule, registrarRule)
+  @Post('file/:id/court')
+  @ApiOkResponse({
+    type: PresignedPost,
+    description: 'Uploads a case file to court',
+  })
+  async uploadCaseFileToCourt(
+    @Param('caseId') caseId: string,
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+  ): Promise<UploadFileToCourtResponse> {
+    const existingCase = await this.caseService.findByIdAndUser(
+      caseId,
+      user,
+      true,
+    )
+
+    if (
+      !this.doesUserHavePermissionToUploadCaseFilesToCourt(user, existingCase)
+    ) {
+      throw new ForbiddenException(
+        `User ${user.id} does not have permission to upload files of case ${existingCase.id} to court`,
+      )
+    }
+
+    const file = await this.fileService.findById(id, existingCase.id)
+
+    if (!file) {
+      throw new NotFoundException(
+        `File ${id} of case ${existingCase.id} does not exist`,
+      )
+    }
+
+    return this.fileService.uploadCaseFileToCourt(
+      existingCase.id,
+      existingCase.courtId,
+      existingCase.courtCaseNumber,
+      file,
+    )
   }
 }

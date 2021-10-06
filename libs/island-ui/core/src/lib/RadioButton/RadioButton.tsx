@@ -24,6 +24,8 @@ export interface RadioButtonProps {
   backgroundColor?: InputBackgroundColor
   /** subLabel can only be used if the 'large' prop set to true */
   subLabel?: string
+  /** illustration can only be used if the 'large' prop set to true */
+  illustration?: React.FC
 }
 
 interface AriaError {
@@ -45,6 +47,7 @@ export const RadioButton = ({
   disabled,
   onChange,
   tooltip,
+  illustration: Illustration,
   hasError,
   errorMessage,
   large,
@@ -62,6 +65,7 @@ export const RadioButton = ({
     <Box
       className={cn(styles.container, {
         [styles.large]: large,
+        [styles.largeError]: large && hasError,
       })}
       background={
         large && backgroundColor ? backgroundColors[backgroundColor] : undefined
@@ -109,25 +113,28 @@ export const RadioButton = ({
             </Text>
           )}
         </span>
+        {large && Illustration && (
+          <Box marginLeft="auto" paddingRight="smallGutter">
+            <Illustration />
+          </Box>
+        )}
         {tooltip && (
           <div
             className={cn(styles.tooltipContainer, {
-              [styles.tooltipLargeContainer]: large,
+              [styles.tooltipLargeContainer]: large && !Illustration,
+              [styles.toolTipLargeContainerWithIllustration]:
+                large && Illustration,
             })}
           >
             <Tooltip text={tooltip} />
           </div>
         )}
-        {hasError && errorMessage && (
-          <div
-            id={errorId}
-            className={styles.errorMessage}
-            aria-live="assertive"
-          >
-            {errorMessage}
-          </div>
-        )}
       </label>
+      {hasError && errorMessage && (
+        <div id={errorId} className={styles.errorMessage} aria-live="assertive">
+          {errorMessage}
+        </div>
+      )}
     </Box>
   )
 }

@@ -27,6 +27,10 @@ export const CasesQuery = gql`
       courtCaseNumber
       rulingDate
       courtEndTime
+      accusedAppealDecision
+      prosecutorAppealDecision
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       parentCase {
         id
       }
@@ -61,6 +65,7 @@ export const ExtendCaseMutation = gql`
       leadInvestigator
       arrestDate
       requestedCourtDate
+      translator
       requestedValidToDate
       demands
       lawsBroken
@@ -86,13 +91,15 @@ export const ExtendCaseMutation = gql`
       courtCaseNumber
       sessionArrangements
       courtDate
+      courtLocation
       courtRoom
       courtStartDate
       courtEndTime
+      isClosedCourtHidden
       courtAttendees
       prosecutorDemands
       courtDocuments
-      isAccusedAbsent
+      isAccusedRightsHidden
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations

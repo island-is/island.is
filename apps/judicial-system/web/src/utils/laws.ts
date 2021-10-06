@@ -28,11 +28,6 @@ export const custodyProvisions = [
     info: laws[CaseCustodyProvisions._95_2],
   },
   {
-    title: '2. mgr. 98. gr',
-    id: CaseCustodyProvisions._98_2,
-    info: laws[CaseCustodyProvisions._98_2],
-  },
-  {
     title: 'b-lið 1. mgr. 99. gr.',
     id: CaseCustodyProvisions._99_1_B,
     info: laws[CaseCustodyProvisions._99_1_B],

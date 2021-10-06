@@ -31,6 +31,28 @@ Run Ósk or Veita client:
 
 Go to localhost:4200
 
+## To test authentication locally
+
+Install <https://github.com/cameronhunter/local-ssl-proxy>:
+
+- `npm install -g local-ssl-proxy`
+
+- change defaultcookie in financial-aid/api/src/app/modules/auth/auth.controller.ts:
+
+  const defaultCookieOptions: CookieOptions = {
+  secure: true,
+  }
+
+- add .env to web project and change port to 4202
+- start project
+- `local-ssl-proxy --source 4200 --target 4202`
+
+### File upload locally
+
+To test/develop file upload locally you will need to set the secrets: `process.env.CLOUDFRONT_PUBLIC_KEY_ID` and `process.env.CLOUDFRONT_PRIVATE_KEY` in your .env file.
+
+Then you need to turn off web safety, we use the following command: `open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security`, to turn web safety back on you need to restart Chrome.
+
 ## Code owners and maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri-robin-hood)

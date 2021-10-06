@@ -25,7 +25,7 @@
 /apps/services/temporary-voter-registry-api/                                                  @island-is/kosmos-kaos
 /apps/services/party-letter-registry-api/                                                     @island-is/kosmos-kaos
 /apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
-/libs/api/domains/cms/                                                                        @island-is/kosmos-kaos
+/libs/cms/                                                                                    @island-is/kosmos-kaos
 /libs/api/domains/endorsement-system                                                          @island-is/kosmos-kaos
 /libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
 /libs/api/domains/temporary-voter-registry/                                                   @island-is/kosmos-kaos
@@ -53,9 +53,12 @@
 /libs/application/templates/driving-license/                                                  @island-is/kosmos-kaos
 /libs/application/templates/driving-assessment-approval/                                      @island-is/kosmos-kaos
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission   @island-is/kosmos-kaos
+/apps/application-system/api/src/app/modules/payment                                          @island-is/kosmos-kaos @island-is/aranja-applications
+/libs/api/domains/driving-license/                                                            @island-is/kosmos-kaos
+/libs/api/domains/education/                                                                  @island-is/kosmos-kaos
 
 /apps/reference-next-app/                                                                     @island-is/aranja-core
-/libs/api/domains/translations/                                                               @island-is/aranja-core
+/libs/cms-translations/                                                                       @island-is/aranja-core
 /libs/contentful-extensions/translation/                                                      @island-is/aranja-core
 /libs/clients/auth-public-api/                                                                @island-is/aranja-core
 /libs/clients/middlewares/                                                                    @island-is/aranja-core
@@ -82,6 +85,7 @@
 
 /apps/financial-aid/                                                                          @island-is/kolibri-robin-hood
 /libs/financial-aid/                                                                          @island-is/kolibri-robin-hood
+/libs/next-ids-auth/                                                                          @island-is/kolibri-robin-hood
 
 /apps/service-portal*/                                                                        @island-is/hugsmidjan
 /apps/services/user-profile/                                                                  @island-is/hugsmidjan
@@ -109,6 +113,7 @@
 /libs/application/templates/public-debt-payment-plan/                                         @island-is/sendiradid
 /libs/application/templates/complaints-to-althingi-ombudsman/                                 @island-is/sendiradid
 /libs/application/templates/accident-notification/                                            @island-is/sendiradid
+/libs/application/template-api-modules/src/lib/modules/templates/accident-notification/       @island-is/sendiradid
 /libs/health-insurance/                                                                       @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/health-insurance/            @island-is/sendiradid
 /libs/api/domains/health-insurance/                                                           @island-is/sendiradid

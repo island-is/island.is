@@ -7,13 +7,15 @@ import {
   Header,
   Inject,
   Param,
+  ParseBoolPipe,
+  Query,
   Req,
   Res,
   UseGuards,
 } from '@nestjs/common'
 
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   CurrentHttpUser,
   JwtInjectBearerAuthGuard,
@@ -25,6 +27,7 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
+import { FileExeption } from './file.exception'
 
 @UseGuards(JwtInjectBearerAuthGuard)
 @Controller('api/case/:id')
@@ -35,6 +38,33 @@ export class FileController {
     private readonly logger: Logger,
   ) {}
 
+  private async getPdf(
+    id: string,
+    pdfDoc: string,
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
+    const headers = new Headers()
+    headers.set('Content-Type', 'application/pdf')
+    headers.set('authorization', req.headers.authorization as string)
+    headers.set('cookie', req.headers.cookie as string)
+
+    const result = await fetch(
+      `${environment.backend.url}/api/case/${id}/${pdfDoc}`,
+      { headers },
+    )
+
+    if (!result.ok) {
+      throw new FileExeption(result.status, result.statusText)
+    }
+
+    const stream = result.body
+
+    res.header('Content-length', result.headers.get('Content-Length') as string)
+
+    return stream.pipe(res)
+  }
+
   @Get('request')
   @Header('Content-Type', 'application/pdf')
   async getRequestPdf(
@@ -42,38 +72,65 @@ export class FileController {
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
-  ) {
+  ): Promise<Response> {
     this.logger.debug(`Getting the request for case ${id} as a pdf document`)
 
-    const headers = new Headers()
-    headers.set('Content-Type', 'application/pdf')
-    headers.set('authorization', req.headers.authorization as string)
-    headers.set('cookie', req.headers.cookie as string)
+    try {
+      return this.auditTrailService.audit(
+        user.id,
+        AuditedAction.GET_REQUEST_PDF,
+        this.getPdf(id, 'request', req, res),
+        id,
+      )
+    } catch (error) {
+      this.logger.debug(
+        `Failed to get the request for case ${id} as a pdf document`,
+        error,
+      )
 
-    const result = await fetch(
-      `${environment.backend.url}/api/case/${id}/request`,
-      { headers },
-    )
+      if (error instanceof FileExeption) {
+        return res.status(error.status).json(error.message)
+      }
 
-    if (!result.ok) {
-      return res.status(result.status).json(result.statusText)
+      throw error
     }
-
-    const stream = result.body
-
-    res.header('Content-length', result.headers.get('Content-Length') as string)
-
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.GET_REQUEST_PDF,
-      stream.pipe(res),
-      id,
-    )
   }
 
   @Get('ruling')
   @Header('Content-Type', 'application/pdf')
   async getRulingPdf(
+    @Param('id') id: string,
+    @Query('shortVersion', ParseBoolPipe) shortVersion: boolean,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(`Getting the ruling for case ${id} as a pdf document`)
+
+    try {
+      return this.auditTrailService.audit(
+        user.id,
+        AuditedAction.GET_RULING_PDF,
+        this.getPdf(id, `ruling?shortVersion=${shortVersion}`, req, res),
+        id,
+      )
+    } catch (error) {
+      this.logger.debug(
+        `Failed to get the ruling for case ${id} as a pdf document`,
+        error,
+      )
+
+      if (error instanceof FileExeption) {
+        return res.status(error.status).json(error.message)
+      }
+
+      throw error
+    }
+  }
+
+  @Get('custodyNotice')
+  @Header('Content-Type', 'application/pdf')
+  async getCustodyNoticePdf(
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
@@ -81,29 +138,24 @@ export class FileController {
   ): Promise<Response> {
     this.logger.debug(`Getting the ruling for case ${id} as a pdf document`)
 
-    const headers = new Headers()
-    headers.set('Content-Type', 'application/pdf')
-    headers.set('authorization', req.headers.authorization as string)
-    headers.set('cookie', req.headers.cookie as string)
+    try {
+      return this.auditTrailService.audit(
+        user.id,
+        AuditedAction.GET_RULING_PDF,
+        this.getPdf(id, 'custodyNotice', req, res),
+        id,
+      )
+    } catch (error) {
+      this.logger.debug(
+        `Failed to get the custody notice for case ${id} as a pdf document`,
+        error,
+      )
 
-    const result = await fetch(
-      `${environment.backend.url}/api/case/${id}/ruling`,
-      { headers },
-    )
+      if (error instanceof FileExeption) {
+        return res.status(error.status).json(error.message)
+      }
 
-    if (!result.ok) {
-      return res.status(result.status).json(result.statusText)
+      throw error
     }
-
-    const stream = result.body
-
-    res.header('Content-length', result.headers.get('Content-Length') as string)
-
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.GET_RULING_PDF,
-      stream.pipe(res),
-      id,
-    )
   }
 }

@@ -6,10 +6,11 @@ export const GET_OPEN_DATA_PAGE_QUERY = gql`
       pageTitle
       pageDescription
       pageHeaderGraph {
-        title
+        graphTitle
         type
         data
         datakeys
+        displayAsCard
       }
       link
       linkTitle
@@ -40,12 +41,18 @@ export const GET_OPEN_DATA_PAGE_QUERY = gql`
         graphTitle
         graphDescription
         organization
-        graph {
+        organizationLogo {
+          id
+          url
           title
-          type
-          data
-          datakeys
+          contentType
+          width
+          height
         }
+        type
+        data
+        datakeys
+        displayAsCard
       }
       externalLinkSectionTitle
       externalLinkSectionDescription

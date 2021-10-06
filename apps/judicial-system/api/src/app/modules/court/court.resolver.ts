@@ -1,9 +1,9 @@
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { User } from '@island.is/judicial-system/types'
+import type { Logger } from '@island.is/logging'
+import type { CaseType, User } from '@island.is/judicial-system/types'
 import {
   AuditedAction,
   AuditTrailService,
@@ -28,8 +28,28 @@ export class CourtResolver {
     private readonly logger: Logger,
   ) {}
 
+  private async createAndUpdate(
+    backendApi: BackendAPI,
+    caseId: string,
+    courtId: string,
+    type: CaseType,
+    policeCaseNumber: string,
+    isExtension: boolean,
+  ): Promise<Case> {
+    const courtCaseNumber = await this.courtService.createCourtCase(
+      courtId,
+      type,
+      policeCaseNumber,
+      isExtension,
+    )
+
+    return backendApi.updateCase(caseId, {
+      courtCaseNumber,
+    })
+  }
+
   @Mutation(() => Case, { nullable: true })
-  async createCourtCase(
+  createCourtCase(
     @Args('input', { type: () => CreateCourtCaseInput })
     input: CreateCourtCaseInput,
     @CurrentGraphQlUser() user: User,
@@ -42,14 +62,14 @@ export class CourtResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_COURT_CASE,
-      backendApi.updateCase(caseId, {
-        courtCaseNumber: await this.courtService.createCourtCase(
-          courtId,
-          type,
-          policeCaseNumber,
-          isExtension,
-        ),
-      }),
+      this.createAndUpdate(
+        backendApi,
+        caseId,
+        courtId,
+        type,
+        policeCaseNumber,
+        isExtension,
+      ),
       caseId,
     )
   }

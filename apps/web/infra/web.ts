@@ -20,11 +20,6 @@ export const serviceSetup = (services: {
         staging: 'false',
         prod: 'false',
       },
-      DISABLE_REGULATIONS_PAGE: {
-        dev: 'false',
-        staging: 'false',
-        prod: 'true',
-      },
     })
     .secrets({
       SENTRY_DSN: '/k8s/web/SENTRY_DSN',

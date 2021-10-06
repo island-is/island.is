@@ -3,7 +3,6 @@ import {
   Application,
   ApplicationStatus,
   ApplicationTypes,
-  buildTextField,
   ExternalData,
   FormValue,
 } from '@island.is/application/core'
@@ -11,7 +10,6 @@ import {
 import { NO, MANUAL, ParentalRelations } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
-  calculatePeriodPercentage,
   formatIsk,
   getAvailableRightsInMonths,
   getExpectedDateOfBirth,
@@ -234,123 +232,6 @@ describe('getSelectedChild', () => {
       parentalRelation: ParentalRelations.primary,
       expectedDateOfBirth: '2021-05-17',
     })
-  })
-})
-
-describe('calculatePeriodPercentage', () => {
-  it('should return 100% when under the maximum amount of months', () => {
-    const application = buildApplication({
-      answers: {
-        selectedChild: 0,
-        periods: [
-          {
-            startDate: '2021-01-01',
-            endDate: '2021-04-01',
-          },
-        ],
-      },
-      externalData: {
-        children: {
-          data: {
-            children: [
-              {
-                hasRights: true,
-                remainingDays: 180,
-                parentalRelation: ParentalRelations.primary,
-                expectedDateOfBirth: '2021-05-17',
-              },
-            ],
-            existingApplications: [],
-          },
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
-
-    const res = calculatePeriodPercentage(application, {
-      field: buildTextField({
-        id: 'periods[0].startDate',
-        title: '',
-      }),
-    })
-
-    expect(res).toEqual(100)
-  })
-
-  it('should return 74% when number of months used is above limit using default dates', () => {
-    const application = buildApplication({
-      answers: {
-        selectedChild: 0,
-        periods: [],
-      },
-      externalData: {
-        children: {
-          data: {
-            children: [
-              {
-                hasRights: true,
-                remainingDays: 180,
-                parentalRelation: ParentalRelations.primary,
-                expectedDateOfBirth: '2021-05-17',
-              },
-            ],
-            existingApplications: [],
-          },
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
-
-    const res = calculatePeriodPercentage(application, {
-      dates: {
-        startDate: '2021-01-01',
-        endDate: '2021-09-01',
-      },
-    })
-
-    expect(res).toEqual(74)
-  })
-
-  it('should return 74% when number of months used is above limit', () => {
-    const application = buildApplication({
-      answers: {
-        selectedChild: 0,
-        periods: [
-          {
-            startDate: '2021-01-01',
-            endDate: '2021-09-01',
-          },
-        ],
-      },
-      externalData: {
-        children: {
-          data: {
-            children: [
-              {
-                hasRights: true,
-                remainingDays: 180,
-                parentalRelation: ParentalRelations.primary,
-                expectedDateOfBirth: '2021-05-17',
-              },
-            ],
-            existingApplications: [],
-          },
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
-
-    const res = calculatePeriodPercentage(application, {
-      field: buildTextField({
-        id: 'periods[0].startDate',
-        title: '',
-      }),
-    })
-
-    expect(res).toEqual(74)
   })
 })
 

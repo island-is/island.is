@@ -1,5 +1,4 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { AlertBanner } from './AlertBanner'
@@ -8,7 +7,6 @@ import { Box } from '../Box/Box'
 export default {
   title: 'Alerts/AlertBanner',
   component: AlertBanner,
-  decorators: [withDesign],
   parameters: withFigma('AlertBanner'),
 }
 

@@ -41,9 +41,9 @@ const FinanceStatusTableRow: FC<Props> = ({ organization, chargeType }) => {
         })
       }
       data={[
-        chargeType.name,
-        organization.name,
-        amountFormat(chargeType.totals),
+        { value: chargeType.name },
+        { value: organization.name },
+        { value: amountFormat(chargeType.totals), align: 'right' },
       ]}
       loading={loading}
       error={error}

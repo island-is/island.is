@@ -16,7 +16,7 @@ interface Props {
   className?: string
 }
 
-const Profile: React.FC<Props> = ({ heading, info, className }) => {
+const Profile = ({ heading, info, className }: Props) => {
   return (
     <>
       {' '}
@@ -33,7 +33,7 @@ const Profile: React.FC<Props> = ({ heading, info, className }) => {
       </Box>
       <div
         className={cn({
-          [`${styles.container}`]: true,
+          [`${styles.container} hideScrollBar`]: true,
           [`${className}`]: true,
         })}
       >

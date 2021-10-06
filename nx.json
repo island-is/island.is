@@ -82,9 +82,6 @@
     "api-domains-auth": {
       "tags": []
     },
-    "api-domains-cms": {
-      "tags": []
-    },
     "api-domains-communications": {
       "tags": []
     },
@@ -152,9 +149,6 @@
       "tags": []
     },
     "api-domains-temporary-voter-registry": {
-      "tags": []
-    },
-    "api-domains-translations": {
       "tags": []
     },
     "api-domains-user-profile": {
@@ -337,6 +331,12 @@
     "clients-zendesk": {
       "tags": []
     },
+    "cms": {
+      "tags": []
+    },
+    "cms-translations": {
+      "tags": []
+    },
     "content-search-index-manager": {
       "tags": []
     },
@@ -377,9 +377,6 @@
       "tags": []
     },
     "financial-aid-api": {
-      "tags": []
-    },
-    "financial-aid-auth": {
       "tags": []
     },
     "financial-aid-backend": {
@@ -513,6 +510,9 @@
     "nest-validators": {
       "tags": []
     },
+    "next-ids-auth": {
+      "tags": []
+    },
     "nova-sms": {
       "tags": []
     },
@@ -523,6 +523,9 @@
       "tags": []
     },
     "reference-next-app": {
+      "tags": []
+    },
+    "regulations": {
       "tags": []
     },
     "service-portal": {
@@ -634,6 +637,9 @@
     "shared-babel": {
       "tags": []
     },
+    "shared-components": {
+      "tags": []
+    },
     "shared-connected": {
       "tags": []
     },
@@ -644,6 +650,9 @@
       "tags": []
     },
     "shared-mocking": {
+      "tags": []
+    },
+    "shared-translations": {
       "tags": []
     },
     "shared-types": {

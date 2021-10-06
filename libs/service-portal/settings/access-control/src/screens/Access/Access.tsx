@@ -218,88 +218,91 @@ function Access() {
         <form onSubmit={onSubmit}>
           <Box marginBottom={3} display="flex" justifyContent="flexEnd">
             <Inline space={3}>
-              <ModalBase
-                baseId="authDelegation-remove"
-                className={styles.modal}
-                disclosure={
-                  <Button
-                    variant="ghost"
-                    colorScheme="destructive"
-                    size="small"
-                    icon="close"
-                  >
-                    {formatMessage({
-                      id:
-                        'service.portal.settings.accessControl:access-remove-delegation',
-                      defaultMessage: 'Eyða umboði',
-                    })}
-                  </Button>
-                }
-              >
-                {({ closeModal }: { closeModal: () => void }) => (
-                  <Box
-                    position="relative"
-                    background="white"
-                    borderRadius="large"
-                    paddingTop={[3, 6, 10]}
-                    paddingBottom={[3, 6]}
-                    paddingX={[3, 6, 12]}
-                  >
-                    <Box className={styles.closeButton}>
-                      <Button
-                        circle
-                        colorScheme="negative"
-                        icon="close"
-                        onClick={() => {
-                          closeModal()
-                        }}
-                        size="large"
-                      />
-                    </Box>
-                    <Stack space={10}>
-                      <Box marginRight={4}>
-                        <Stack space={1}>
-                          <Text variant="h1">
-                            {formatMessage({
-                              id:
-                                'service.portal.settings.accessControl:access-remove-modal-title',
-                              defaultMessage: 'Þú ert að fara að eyða aðgangi.',
-                            })}
-                          </Text>
-                          <Text>
-                            {formatMessage({
-                              id:
-                                'service.portal.settings.accessControl:access-remove-modal-content',
-                              defaultMessage:
-                                'Ertu viss um að þú viljir eyða þessum aðgangi?',
-                            })}
-                          </Text>
-                        </Stack>
-                      </Box>
-                      <Box display="flex" justifyContent="spaceBetween">
-                        <Button onClick={closeModal} variant="ghost">
-                          {formatMessage({
-                            id:
-                              'service.portal.settings.accessControl:access-remove-modal-cancel',
-                            defaultMessage: 'Hætta við',
-                          })}
-                        </Button>
+              {authDelegation?.scopes.length > 0 && (
+                <ModalBase
+                  baseId="authDelegation-remove"
+                  className={styles.modal}
+                  disclosure={
+                    <Button
+                      variant="ghost"
+                      colorScheme="destructive"
+                      size="small"
+                      icon="close"
+                    >
+                      {formatMessage({
+                        id:
+                          'service.portal.settings.accessControl:access-remove-delegation',
+                        defaultMessage: 'Eyða umboði',
+                      })}
+                    </Button>
+                  }
+                >
+                  {({ closeModal }: { closeModal: () => void }) => (
+                    <Box
+                      position="relative"
+                      background="white"
+                      borderRadius="large"
+                      paddingTop={[3, 6, 10]}
+                      paddingBottom={[3, 6]}
+                      paddingX={[3, 6, 12]}
+                    >
+                      <Box className={styles.closeButton}>
                         <Button
-                          onClick={() => onDelete(closeModal)}
-                          loading={deleteLoading}
-                          colorScheme="destructive"
-                        >
-                          {formatMessage({
-                            id:
-                              'service.portal.settings.accessControl:access-remove-modal-confirm',
-                            defaultMessage: 'Eyða',
-                          })}
-                        </Button>
+                          circle
+                          colorScheme="negative"
+                          icon="close"
+                          onClick={() => {
+                            closeModal()
+                          }}
+                          size="large"
+                        />
                       </Box>
-                    </Stack>
-                  </Box>
-                )}
-              </ModalBase>
+                      <Stack space={10}>
+                        <Box marginRight={4}>
+                          <Stack space={1}>
+                            <Text variant="h1">
+                              {formatMessage({
+                                id:
+                                  'service.portal.settings.accessControl:access-remove-modal-title',
+                                defaultMessage:
+                                  'Þú ert að fara að eyða aðgangi.',
+                              })}
+                            </Text>
+                            <Text>
+                              {formatMessage({
+                                id:
+                                  'service.portal.settings.accessControl:access-remove-modal-content',
+                                defaultMessage:
+                                  'Ertu viss um að þú viljir eyða þessum aðgangi?',
+                              })}
+                            </Text>
+                          </Stack>
+                        </Box>
+                        <Box display="flex" justifyContent="spaceBetween">
+                          <Button onClick={closeModal} variant="ghost">
+                            {formatMessage({
+                              id:
+                                'service.portal.settings.accessControl:access-remove-modal-cancel',
+                              defaultMessage: 'Hætta við',
+                            })}
+                          </Button>
+                          <Button
+                            onClick={() => onDelete(closeModal)}
+                            loading={deleteLoading}
+                            colorScheme="destructive"
+                          >
+                            {formatMessage({
+                              id:
+                                'service.portal.settings.accessControl:access-remove-modal-confirm',
+                              defaultMessage: 'Eyða',
+                            })}
+                          </Button>
+                        </Box>
+                      </Stack>
+                    </Box>
+                  )}
+                </ModalBase>
+              )}
               <Button
                 size="small"
                 loading={updateLoading}

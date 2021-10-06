@@ -13,12 +13,8 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  Institution,
-  InstitutionType,
-  User,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
+import type { Institution, User } from '@island.is/judicial-system/types'
 import { FormSettings } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { ReactSelectOption } from '../../../types'
 import { validate } from '../../../utils/validate'
@@ -29,7 +25,7 @@ type ExtendedOption = ReactSelectOption & { institution: Institution }
 
 interface Props {
   user: User
-  courts: Institution[]
+  allCourts: Institution[]
   prosecutorsOffices: Institution[]
   onSave: (user: User) => void
   loading: boolean
@@ -50,7 +46,7 @@ export const UserForm: React.FC<Props> = (props) => {
   const selectInstitutions = (user.role === UserRole.PROSECUTOR
     ? props.prosecutorsOffices
     : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
-    ? props.courts
+    ? props.allCourts
     : []
   ).map((institution) => ({
     label: institution.name,
@@ -112,7 +108,8 @@ export const UserForm: React.FC<Props> = (props) => {
     return user.role === UserRole.PROSECUTOR
       ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
       : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
-      ? user.institution?.type === InstitutionType.COURT
+      ? user.institution?.type === InstitutionType.COURT ||
+        user.institution?.type === InstitutionType.HIGH_COURT
       : false
   }
 
@@ -159,6 +156,7 @@ export const UserForm: React.FC<Props> = (props) => {
             name="name"
             label="Nafn"
             placeholder="Fullt nafn"
+            autoComplete="off"
             defaultValue={user.name}
             onChange={(event) =>
               storeAndRemoveErrorIfValid('name', event.target.value)
@@ -189,6 +187,7 @@ export const UserForm: React.FC<Props> = (props) => {
               name="nationalId"
               label="Kennitala"
               placeholder="Kennitala"
+              autoComplete="off"
               defaultValue={user.nationalId}
               required
               hasError={nationalIdErrorMessage !== undefined}
@@ -249,6 +248,7 @@ export const UserForm: React.FC<Props> = (props) => {
           <Input
             name="title"
             label="Titill"
+            autoComplete="off"
             defaultValue={user.title}
             onChange={(event) =>
               storeAndRemoveErrorIfValid('title', event.target.value)
@@ -278,6 +278,7 @@ export const UserForm: React.FC<Props> = (props) => {
               name="mobileNumber"
               label="Símanúmer"
               placeholder="Símanúmer"
+              autoComplete="off"
               defaultValue={user.mobileNumber}
               required
               hasError={mobileNumberErrorMessage !== undefined}
@@ -290,6 +291,7 @@ export const UserForm: React.FC<Props> = (props) => {
             name="email"
             label="Netfang"
             placeholder=""
+            autoComplete="off"
             defaultValue={user.email}
             onChange={(event) =>
               storeAndRemoveErrorIfValid('email', event.target.value)

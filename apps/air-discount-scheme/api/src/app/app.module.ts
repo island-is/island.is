@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
-import { CmsModule } from '@island.is/api/domains/cms'
+import { CmsModule } from '@island.is/cms'
 
 import {
   AuthModule,

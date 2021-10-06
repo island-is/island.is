@@ -16,11 +16,14 @@ import {
   ApplicationEligibility,
   DrivingLicenseCategory,
   NeedsHealhCertificate,
+  QualityPhotoResult,
+  StudentAssessment,
 } from './drivingLicense.type'
 import {
   AkstursmatDto,
   EmbaettiDto,
   HefurLokidOkugerdiDto,
+  Okuskirteini,
   OkuskirteiniApi,
   Rettindi,
   TegSviptingaDto,
@@ -28,10 +31,12 @@ import {
   TegundRettindaDto,
 } from '@island.is/clients/driving-license'
 import {
+  BLACKLISTED_JURISTICTION,
   DRIVING_ASSESSMENT_MAX_AGE,
   DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE,
   LICENSE_RESPONSE_API_VERSION,
 } from './util/constants'
+import { NeedsQualityPhoto } from '..'
 
 @Injectable()
 export class DrivingLicenseService {
@@ -78,20 +83,20 @@ export class DrivingLicenseService {
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
-    const drivingLicense = await this.getLicense(nationalId)
+    const drivingLicense = await this.drivingLicenseApi.apiOkuskirteiniKennitalaAllGet(
+      {
+        kennitala: nationalId,
+      },
+    )
 
-    if (!drivingLicense) {
-      return null
-    }
+    const licenseWithName = drivingLicense.find(({ nafn }) => !!nafn)
 
-    const expiryDate = drivingLicense.expires
-
-    if (!expiryDate || expiryDate < new Date()) {
+    if (!licenseWithName) {
       return null
     }
 
     return {
-      name: drivingLicense.name,
+      name: licenseWithName.nafn as string,
     }
   }
 
@@ -180,11 +185,13 @@ export class DrivingLicenseService {
   async getListOfJuristictions(): Promise<Juristiction[]> {
     const embaetti = await this.drivingLicenseApi.apiOkuskirteiniEmbaettiGet({})
 
-    return embaetti.map(({ nr, postnumer, nafn }: EmbaettiDto) => ({
-      id: nr || 0,
-      zip: postnumer || 0,
-      name: nafn || '',
-    }))
+    return embaetti
+      .map(({ nr, postnumer, nafn }: EmbaettiDto) => ({
+        id: nr || 0,
+        zip: postnumer || 0,
+        name: nafn || '',
+      }))
+      .filter(({ id }) => id !== BLACKLISTED_JURISTICTION)
   }
 
   private async getDrivingAssessmentResult(
@@ -197,7 +204,7 @@ export class DrivingLicenseService {
         },
       )
     } catch (e) {
-      if (e.status === 404) {
+      if (e?.status === 404) {
         return null
       }
 
@@ -210,7 +217,6 @@ export class DrivingLicenseService {
     type: DrivingLicenseType['id'],
   ): Promise<ApplicationEligibility> {
     const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
-
     const hasFinishedSchoolResult: HefurLokidOkugerdiDto = await this.drivingLicenseApi.apiOkuskirteiniKennitalaFinishedokugerdiGet(
       {
         kennitala: nationalId,
@@ -283,6 +289,11 @@ export class DrivingLicenseService {
             ? NeedsHealhCertificate.TRUE
             : NeedsHealhCertificate.FALSE,
           personIdNumber: nationalId,
+          bringsNewPhoto: input.needsToPresentQualityPhoto
+            ? NeedsQualityPhoto.TRUE
+            : NeedsQualityPhoto.FALSE,
+          sendLicenseInMail: 0,
+          sendToAddress: '',
         },
       },
     )
@@ -299,6 +310,56 @@ export class DrivingLicenseService {
     return {
       success,
       errorMessage: success ? null : errorMessage,
+    }
+  }
+
+  async getQualityPhoto(
+    nationalId: User['nationalId'],
+  ): Promise<QualityPhotoResult> {
+    const result = await this.drivingLicenseApi.apiOkuskirteiniKennitalaHasqualityphotoGet(
+      {
+        kennitala: nationalId,
+      },
+    )
+    const image =
+      result > 0
+        ? await this.drivingLicenseApi.apiOkuskirteiniKennitalaGetqualityphotoGet(
+            {
+              kennitala: nationalId,
+            },
+          )
+        : null
+
+    return {
+      success: result > 0,
+      qualityPhoto: image,
+      errorMessage: null,
+    }
+  }
+
+  async getDrivingAssessment(
+    nationalId: string,
+  ): Promise<StudentAssessment | null> {
+    const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
+
+    if (!assessmentResult) {
+      return null
+    }
+
+    let teacherName: string | null
+    if (assessmentResult.kennitalaOkukennara) {
+      const teacherLicense = await this.getLicense(
+        assessmentResult.kennitalaOkukennara,
+      )
+      teacherName = teacherLicense?.name || null
+    } else {
+      teacherName = null
+    }
+
+    return {
+      studentNationalId: assessmentResult.kennitala ?? null,
+      teacherNationalId: assessmentResult.kennitalaOkukennara ?? null,
+      teacherName,
     }
   }
 }

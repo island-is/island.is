@@ -4,7 +4,7 @@ import { Box } from '@island.is/island-ui/core'
 import * as styles from './OptionsModal.treat'
 import cn from 'classnames'
 
-import { getState, ApplicationState } from '@island.is/financial-aid/shared'
+import { getState, ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   state: ApplicationState
@@ -14,7 +14,7 @@ interface Props {
   ): void
 }
 
-const OptionsModal: React.FC<Props> = ({ state, onClick }) => {
+const OptionsModal = ({ state, onClick }: Props) => {
   const statusOptions = [
     ApplicationState.NEW,
     ApplicationState.INPROGRESS,

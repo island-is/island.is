@@ -14,22 +14,22 @@ import {
 import {
   FormFooter,
   PageLayout,
-  Modal,
   CaseNumbers,
   BlueBox,
   FormContentContainer,
+  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   Case,
   CaseState,
+  CaseType,
   NotificationType,
-  User,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
@@ -53,10 +53,9 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
 
 export const HearingArrangements: React.FC = () => {
-  const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
+  const [modalVisible, setModalVisible] = useState(false)
   const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState('')
   const [
     defenderPhoneNumberErrorMessage,
@@ -67,7 +66,12 @@ export const HearingArrangements: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { updateCase, sendNotification, isSendingNotification } = useCase()
+  const {
+    updateCase,
+    autofill,
+    sendNotification,
+    isSendingNotification,
+  } = useCase()
   const { formatMessage } = useIntl()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -117,27 +121,18 @@ export const HearingArrangements: React.FC = () => {
 
   useEffect(() => {
     if (!workingCase && data?.case) {
-      let theCase = data.case
+      const theCase = data.case
 
-      if (!theCase.courtDate && theCase.requestedCourtDate) {
-        updateCase(
-          theCase.id,
-          parseString('courtDate', theCase.requestedCourtDate),
-        )
-
-        theCase = { ...theCase, courtDate: theCase.requestedCourtDate }
+      if (theCase.requestedCourtDate) {
+        autofill('courtDate', theCase.requestedCourtDate, theCase)
       }
 
       setWorkingCase(theCase)
     }
-  }, [setWorkingCase, workingCase, updateCase, data])
+  }, [setWorkingCase, workingCase, autofill, data])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
-      {
-        value: workingCase?.courtRoom ?? '',
-        validations: ['empty'],
-      },
       {
         value: workingCase?.defenderEmail ?? '',
         validations: ['email-format'],
@@ -180,6 +175,18 @@ export const HearingArrangements: React.FC = () => {
       const registrar = userData?.users.find((r) => r.id === id)
 
       setWorkingCase({ ...workingCase, registrar: registrar })
+    }
+  }
+
+  const handleNextButtonClick = () => {
+    if (
+      workingCase?.notifications?.find(
+        (notification) => notification.type === NotificationType.COURT_DATE,
+      )
+    ) {
+      router.push(`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
+    } else {
+      setModalVisible(true)
     }
   }
 
@@ -302,32 +309,27 @@ export const HearingArrangements: React.FC = () => {
                     data-testid="courtroom"
                     name="courtroom"
                     label="Dómsalur"
+                    autoComplete="off"
                     defaultValue={workingCase.courtRoom}
                     placeholder="Skráðu inn dómsal"
                     onChange={(event) =>
                       removeTabsValidateAndSet(
                         'courtRoom',
                         event,
-                        ['empty'],
+                        [],
                         workingCase,
                         setWorkingCase,
-                        courtroomErrorMessage,
-                        setCourtroomErrorMessage,
                       )
                     }
                     onBlur={(event) =>
                       validateAndSendToServer(
                         'courtRoom',
                         event.target.value,
-                        ['empty'],
+                        [],
                         workingCase,
                         updateCase,
-                        setCourtroomErrorMessage,
                       )
                     }
-                    errorMessage={courtroomErrorMessage}
-                    hasError={courtroomErrorMessage !== ''}
-                    required
                   />
                 </BlueBox>
               </Box>
@@ -343,6 +345,7 @@ export const HearingArrangements: React.FC = () => {
                   <Input
                     name="defenderName"
                     label="Nafn verjanda"
+                    autoComplete="off"
                     defaultValue={workingCase.defenderName}
                     placeholder="Fullt nafn"
                     onChange={(event) =>
@@ -369,6 +372,7 @@ export const HearingArrangements: React.FC = () => {
                   <Input
                     name="defenderEmail"
                     label="Netfang verjanda"
+                    autoComplete="off"
                     defaultValue={workingCase.defenderEmail}
                     placeholder="Netfang"
                     errorMessage={defenderEmailErrorMessage}
@@ -424,6 +428,7 @@ export const HearingArrangements: React.FC = () => {
                   <Input
                     name="defenderPhoneNumber"
                     label="Símanúmer verjanda"
+                    autoComplete="off"
                     defaultValue={workingCase.defenderPhoneNumber}
                     placeholder="Símanúmer"
                     errorMessage={defenderPhoneNumberErrorMessage}
@@ -436,36 +441,46 @@ export const HearingArrangements: React.FC = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
+              onNextButtonClick={handleNextButtonClick}
               nextIsDisabled={
                 workingCase.state === CaseState.DRAFT ||
                 isStepIllegal ||
                 !courtDateIsValid
               }
-              nextIsLoading={isSendingNotification}
-              onNextButtonClick={async () => {
+            />
+          </FormContentContainer>
+          {modalVisible && (
+            <Modal
+              title={formatMessage(
+                workingCase.type === CaseType.CUSTODY
+                  ? rcHearingArrangements.modal.custodyCases.heading
+                  : rcHearingArrangements.modal.travelBanCases.heading,
+              )}
+              text={formatMessage(
+                workingCase.type === CaseType.CUSTODY
+                  ? rcHearingArrangements.modal.custodyCases.text
+                  : rcHearingArrangements.modal.travelBanCases.text,
+              )}
+              isPrimaryButtonLoading={isSendingNotification}
+              handleSecondaryButtonClick={() => {
+                router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+              }}
+              handlePrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
                   workingCase.id,
                   NotificationType.COURT_DATE,
                 )
 
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                if (notificationSent && !window.Cypress) {
-                  setModalVisible(true)
-                } else {
+                if (notificationSent) {
                   router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
                 }
               }}
-            />
-          </FormContentContainer>
-          {modalVisible && (
-            <Modal
-              title={formatMessage(rcHearingArrangements.modal.heading)}
-              text={formatMessage(rcHearingArrangements.modal.text)}
-              handlePrimaryButtonClick={() => {
-                router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
-              }}
-              primaryButtonText="Loka glugga"
+              primaryButtonText={formatMessage(
+                rcHearingArrangements.modal.shared.primaryButtonText,
+              )}
+              secondaryButtonText={formatMessage(
+                rcHearingArrangements.modal.shared.secondaryButtonText,
+              )}
             />
           )}
         </>

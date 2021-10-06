@@ -2,9 +2,8 @@ import React, { useContext } from 'react'
 import { Text, Input, Box } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
-  FormLayout,
+  ContentContainer,
+  Footer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
@@ -13,7 +12,7 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFor
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 
-import { NavigationProps } from '@island.is/financial-aid/shared'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 interface BankOptionsProps {
   label: string
@@ -103,11 +102,8 @@ const Form = () => {
   }
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
-      <FormContentContainer>
+    <>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Greiðsla fjárhagsaðstoðar
         </Text>
@@ -129,6 +125,7 @@ const Form = () => {
                 })}
               >
                 <Input
+                  autoFocus={i === 0}
                   backgroundColor="blue"
                   label={item.label}
                   id={item.id}
@@ -154,9 +151,9 @@ const Form = () => {
           fjárhagsaðstoðar sveitarfélaganna. Kjósirðu að gefa þær ekki upp núna
           verður hringt í þig og óskað eftir þeim ef umsóknin verður samþykkt.
         </Text>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         previousUrl={navigation?.prevUrl}
         nextUrl={navigation?.nextUrl}
         nextButtonText={
@@ -165,7 +162,7 @@ const Form = () => {
             : 'Gefa upp seinna'
         }
       />
-    </FormLayout>
+    </>
   )
 }
 

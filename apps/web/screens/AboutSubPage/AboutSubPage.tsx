@@ -29,7 +29,6 @@ import {
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
 import { SidebarLayout } from '../Layouts/SidebarLayout'
-import { Document } from '@contentful/rich-text-types'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 export interface AboutSubPageProps {

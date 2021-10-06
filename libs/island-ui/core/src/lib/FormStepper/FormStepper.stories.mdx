@@ -4,25 +4,17 @@ import {
   Canvas,
   ArgsTable,
   Description,
-} from '@storybook/addon-docs/blocks'
-import { withDesign } from 'storybook-addon-designs'
+} from '@storybook/addon-docs'
 
-import { withFigma, DescriptionFigma } from '../../utils/withFigma'
+import { DescriptionFigma } from '../../utils/withFigma'
 import { FormStepper } from './FormStepper'
 import { FormStepperThemes } from './types'
 
-<Meta
-  title="Navigation/FormStepper"
-  component={FormStepper}
-  decorators={[withDesign]}
-  parameters={withFigma('FormStepper')}
-/>
+<Meta title="Navigation/FormStepper" component={FormStepper} />
 
 # FormStepper
 
 <DescriptionFigma name="FormStepper" />
-
-<br />
 
 ### Very basic `<FormStepper/>` example with only sections:
 

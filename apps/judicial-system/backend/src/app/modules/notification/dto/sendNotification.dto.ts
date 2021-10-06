@@ -7,5 +7,5 @@ import { NotificationType } from '@island.is/judicial-system/types'
 export class SendNotificationDto {
   @IsEnum(NotificationType)
   @ApiProperty({ enum: NotificationType })
-  readonly type: NotificationType
+  readonly type!: NotificationType
 }

@@ -9,7 +9,12 @@ import {
   generateApplicationApprovedEmail,
 } from './emailGenerators'
 import { PartyLetterRegistryApi } from './gen/fetch/party-letter'
-import { EndorsementListApi } from './gen/fetch/endorsements'
+import {
+  EndorsementListApi,
+  EndorsementMetadataDtoFieldEnum,
+  EndorsementListTagsEnum,
+} from './gen/fetch/endorsements'
+import { User, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
 
@@ -20,31 +25,6 @@ const CREATE_ENDORSEMENT_LIST_QUERY = `
     }
   }
 `
-
-/**
- * We proxy the auth header to the subsystem where it is resolved.
- */
-interface FetchParams {
-  url: string
-  init: RequestInit
-}
-
-interface RequestContext {
-  init: RequestInit
-}
-
-interface Middleware {
-  pre?(context: RequestContext): Promise<FetchParams | void>
-}
-class ForwardAuthHeaderMiddleware implements Middleware {
-  constructor(private bearerToken: string) {}
-
-  async pre(context: RequestContext) {
-    context.init.headers = Object.assign({}, context.init.headers, {
-      authorization: this.bearerToken,
-    })
-  }
-}
 
 type ErrorResponse = {
   errors: {
@@ -69,26 +49,22 @@ export class PartyLetterService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  partyLetterRegistryApiWithAuth(token: string) {
-    return this.partyLetterRegistryApi.withMiddleware(
-      new ForwardAuthHeaderMiddleware(token),
-    )
+  partyLetterRegistryApiWithAuth(auth: User) {
+    return this.partyLetterRegistryApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  endorsementListApiWithAuth(token: string) {
-    return this.endorsementListApi.withMiddleware(
-      new ForwardAuthHeaderMiddleware(token),
-    )
+  endorsementListApiWithAuth(auth: User) {
+    return this.endorsementListApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async assignMinistryOfJustice({
     application,
-    authorization,
+    auth,
   }: TemplateApiModuleActionProps) {
     const listId = (application.externalData?.createEndorsementList.data as any)
       .id
 
-    return this.endorsementListApiWithAuth(authorization)
+    return this.endorsementListApiWithAuth(auth)
       .endorsementListControllerClose({ listId })
       .then(async () => {
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
@@ -105,12 +81,12 @@ export class PartyLetterService {
 
   async applicationRejected({
     application,
-    authorization,
+    auth,
   }: TemplateApiModuleActionProps) {
     const listId = (application.externalData?.createEndorsementList.data as any)
       .id
 
-    return this.endorsementListApiWithAuth(authorization)
+    return this.endorsementListApiWithAuth(auth)
       .endorsementListControllerOpen({ listId })
       .then(async () => {
         // if we succeed in creating the party letter let the applicant know
@@ -134,15 +110,19 @@ export class PartyLetterService {
 
   async createEndorsementList({
     application,
-    authorization,
+    auth,
   }: TemplateApiModuleActionProps) {
     const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
+      .makeGraphqlQuery(auth.authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
         input: {
           title: application.answers.partyName,
           description: application.answers.partyLetter,
-          endorsementMeta: ['fullName', 'address', 'signedTags'],
-          tags: ['partyLetter2021'],
+          endorsementMetadata: [
+            { field: EndorsementMetadataDtoFieldEnum.fullName },
+            { field: EndorsementMetadataDtoFieldEnum.signedTags },
+            { field: EndorsementMetadataDtoFieldEnum.address },
+          ],
+          tags: [EndorsementListTagsEnum.partyLetter2021],
           validationRules: [
             {
               type: 'minAge',
@@ -171,12 +151,9 @@ export class PartyLetterService {
     }
   }
 
-  async submitPartyLetter({
-    application,
-    authorization,
-  }: TemplateApiModuleActionProps) {
+  async submitPartyLetter({ application, auth }: TemplateApiModuleActionProps) {
     return await this.partyLetterRegistryApiWithAuth(
-      authorization,
+      auth,
     ).partyLetterRegistryControllerCreate({
       createDto: {
         partyLetter: application.answers.partyLetter as string,

@@ -23,6 +23,7 @@ export interface Charge extends BaseCharge {
   chargeItemSubject: string
   immediateProcess: boolean
   systemID: string
+  requestID: string
   payInfo?: PayInfo
   returnUrl: string
 }

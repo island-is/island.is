@@ -18,7 +18,7 @@ import {
   RolesGuard,
   RolesRule,
   RolesRules,
-  TokenGuaard,
+  TokenGuard,
 } from '@island.is/judicial-system/auth'
 
 import { CreateUserDto, UpdateUserDto } from './dto'
@@ -81,7 +81,7 @@ export class UserController {
     type: User,
     description: 'Gets an existing user',
   })
-  async getById(@Param('id') id: string) {
+  async getById(@Param('id') id: string): Promise<User> {
     const user = await this.userService.findById(id)
 
     if (!user) {
@@ -91,13 +91,15 @@ export class UserController {
     return user
   }
 
-  @UseGuards(TokenGuaard)
+  @UseGuards(TokenGuard)
   @Get('user')
   @ApiOkResponse({
     type: User,
     description: 'Gets an existing user by national id',
   })
-  async getByNationalId(@Query('nationalId') nationalId: string) {
+  async getByNationalId(
+    @Query('nationalId') nationalId: string,
+  ): Promise<User> {
     const user = await this.userService.findByNationalId(nationalId)
 
     if (!user) {

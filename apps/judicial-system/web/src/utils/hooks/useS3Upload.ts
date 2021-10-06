@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
 import {
@@ -6,11 +6,12 @@ import {
   CreatePresignedPostMutation,
   DeleteFileMutation,
 } from '@island.is/judicial-system-web/graphql'
-import { Case, PresignedPost } from '@island.is/judicial-system/types'
+import type { Case, PresignedPost } from '@island.is/judicial-system/types'
 
 export const useS3Upload = (workingCase?: Case) => {
   const [files, setFiles] = useState<UploadFile[]>([])
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
+  const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
   const filesRef = useRef<UploadFile[]>(files)
 
   useEffect(() => {
@@ -23,6 +24,13 @@ export const useS3Upload = (workingCase?: Case) => {
     setFilesRefAndState(uploadCaseFiles ?? [])
   }, [workingCase?.files])
 
+  useMemo(() => {
+    setAllFilesUploaded(
+      files.filter((file) => file.status === 'done' || file.status === 'error')
+        .length === files.length,
+    )
+  }, [files])
+
   const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
   const [createFileMutation] = useMutation(CreateFileMutation)
   const [deleteFileMutation] = useMutation(DeleteFileMutation)
@@ -30,9 +38,16 @@ export const useS3Upload = (workingCase?: Case) => {
   // File upload spesific functions
   const createPresignedPost = async (
     filename: string,
+    type: string,
   ): Promise<PresignedPost> => {
     const { data: presignedPostData } = await createPresignedPostMutation({
-      variables: { input: { caseId: workingCase?.id, fileName: filename } },
+      variables: {
+        input: {
+          caseId: workingCase?.id,
+          fileName: filename,
+          type,
+        },
+      },
     })
 
     return presignedPostData?.createPresignedPost
@@ -142,6 +157,7 @@ export const useS3Upload = (workingCase?: Case) => {
         variables: {
           input: {
             caseId: workingCase.id,
+            type: file.type,
             key: file.key,
             size: file.size,
           },
@@ -172,7 +188,10 @@ export const useS3Upload = (workingCase?: Case) => {
     }
 
     newUploadFiles.forEach(async (file) => {
-      const presignedPost = await createPresignedPost(file.name).catch(() =>
+      const presignedPost = await createPresignedPost(
+        file.name.normalize(),
+        file.type ?? '',
+      ).catch(() =>
         setUploadErrorMessage(
           'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
         ),
@@ -224,5 +243,12 @@ export const useS3Upload = (workingCase?: Case) => {
     onChange([file as File], true)
   }
 
-  return { files, uploadErrorMessage, onChange, onRemove, onRetry }
+  return {
+    files,
+    uploadErrorMessage,
+    allFilesUploaded,
+    onChange,
+    onRemove,
+    onRetry,
+  }
 }

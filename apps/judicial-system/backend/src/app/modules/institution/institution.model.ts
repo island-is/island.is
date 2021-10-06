@@ -23,22 +23,22 @@ export class Institution extends Model<Institution> {
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
-  id: string
+  id!: string
 
   @CreatedAt
   @ApiProperty()
-  created: Date
+  created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  modified: Date
+  modified!: Date
 
   @Column({
     type: DataType.ENUM,
-    allowNull: true,
+    allowNull: false,
     values: Object.values(InstitutionType),
   })
-  type: InstitutionType
+  type!: InstitutionType
 
   @Column({
     type: DataType.STRING,
@@ -46,12 +46,12 @@ export class Institution extends Model<Institution> {
     unique: true,
   })
   @ApiProperty()
-  name: string
+  name?: string
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  active: boolean
+  active?: boolean
 }

@@ -25,7 +25,7 @@ export class DrivingLicenseApiModule {
                 headers: {
                   'X-Road-Client': config.xroadClientId,
                   SECRET: config.secret,
-                  'Content-type': 'application/json',
+                  'Content-Type': 'application/json',
                   Accept: 'application/json',
                 },
                 basePath: `${config.xroadBaseUrl}/${config.xroadPath}`,

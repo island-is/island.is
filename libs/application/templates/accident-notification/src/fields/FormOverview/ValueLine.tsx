@@ -1,14 +1,8 @@
-import { MessageDescriptor } from 'react-intl'
-import React, { FC } from 'react'
-import { useLocale } from '@island.is/localization'
-import {
-  Box,
-  Text,
-  Button,
-  BulletList,
-  Bullet,
-} from '@island.is/island-ui/core'
+import { Box, Bullet, BulletList, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
+import React, { FC } from 'react'
+import { MessageDescriptor } from 'react-intl'
 import { FileType } from '../../types'
 
 interface ValueLineProps {
@@ -30,24 +24,24 @@ export const ValueLine: FC<ValueLineProps> = ({ label, value, color }) => {
 
 interface FileValueLineProps {
   label: string | MessageDescriptor
-  files: FileType[] | undefined
+  files: MessageDescriptor[] | undefined
 }
 
 export const FileValueLine: FC<FileValueLineProps> = ({ label, files }) => {
   const { formatMessage } = useLocale()
 
-  if (!files || files.length === 0) return null
-
   return (
-    <Box paddingBottom={3}>
+    <Box marginTop={2} paddingBottom={!files || files.length === 0 ? 0 : 2}>
       <Text variant="h5" marginBottom={[2, 2, 3]}>
         {formatMessage(label)}
       </Text>
-      <BulletList space={1} type="ul">
-        {files?.map((file, index) => (
-          <Bullet key={`${file.name}-${index}`}>{file.name}</Bullet>
-        ))}
-      </BulletList>
+      {!files || files.length === 0 ? null : (
+        <BulletList space={1} type="ul">
+          {files?.map((file, index) => (
+            <Bullet key={`${file.id}-${index}`}>{formatMessage(file)}</Bullet>
+          ))}
+        </BulletList>
+      )}
     </Box>
   )
 }

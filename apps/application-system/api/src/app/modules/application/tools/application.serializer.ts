@@ -16,7 +16,7 @@ import {
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
-import { IntlService } from '@island.is/api/domains/translations'
+import { IntlService } from '@island.is/cms-translations'
 import { Locale } from '@island.is/shared/types'
 import { getCurrentUser } from '@island.is/auth-nest-tools'
 

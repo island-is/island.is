@@ -1,8 +1,8 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 
+import { RegulationsService } from '@island.is/clients/regulations'
 import {
-  RegulationsService,
   RegulationSearchResults,
   Regulation,
   RegulationMinistryList,
@@ -11,7 +11,7 @@ import {
   RegulationLawChapterTree,
   RegulationRedirect,
   RegulationListItem,
-} from '@island.is/clients/regulations'
+} from '@island.is/regulations/web'
 import { GetRegulationsInput } from './dto/getRegulations.input'
 import { GetRegulationInput } from './dto/getRegulation.input'
 import { GetRegulationsLawChaptersInput } from './dto/getRegulationsLawChapters.input'
@@ -56,6 +56,9 @@ export class RegulationsResolver {
       input.year,
       input.yearTo,
       input.ch,
+      input.iA,
+      input.iR,
+      input.page,
     )
   }
 

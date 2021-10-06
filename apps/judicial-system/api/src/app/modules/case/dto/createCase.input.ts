@@ -2,7 +2,7 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import {
+import type {
   CaseGender,
   CaseType,
   CreateCase,

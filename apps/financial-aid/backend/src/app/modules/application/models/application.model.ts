@@ -1,29 +1,33 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
-  ForeignKey,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
-
-import { ApplicationEventModel } from '../../applicationEvent'
 
 import {
   HomeCircumstances,
   Employment,
   ApplicationState,
-} from '@island.is/financial-aid/shared'
+  Application,
+} from '@island.is/financial-aid/shared/lib'
+
+import { ApplicationEventModel } from '../../applicationEvent/models'
 import { ApplicationFileModel } from '../../file/models'
+import { StaffModel } from '../../staff'
 
 @Table({
   tableName: 'applications',
   timestamps: true,
 })
-export class ApplicationModel extends Model<ApplicationModel> {
+export class ApplicationModel extends Model<Application> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -57,7 +61,7 @@ export class ApplicationModel extends Model<ApplicationModel> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty()
   phoneNumber: string
@@ -185,4 +189,20 @@ export class ApplicationModel extends Model<ApplicationModel> {
   })
   @ApiProperty()
   rejection: string
+
+  @ForeignKey(() => StaffModel)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  staffId: string
+
+  @BelongsTo(() => StaffModel, 'staffId')
+  @ApiProperty({ type: StaffModel })
+  staff?: StaffModel
+
+  @HasMany(() => ApplicationEventModel, 'applicationId')
+  @ApiProperty({ type: ApplicationEventModel, isArray: true })
+  applicationEvents?: ApplicationEventModel[]
 }

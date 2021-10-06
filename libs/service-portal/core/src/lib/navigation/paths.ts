@@ -15,7 +15,7 @@ export enum ServicePortalPath {
   SettingsRoot = '/stillingar',
   SettingsAccessControl = '/stillingar/adgangsstyring',
   SettingsAccessControlGrant = '/stillingar/adgangsstyring/veita',
-  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:nationalId',
+  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:nationalId(\\d+)',
   SettingsPersonalInformation = '/stillingar/personuupplysingar',
   SettingsPersonalInformationEditPhoneNumber = '/stillingar/personuupplysingar/breyta-simanumeri',
   SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
@@ -37,10 +37,12 @@ export enum ServicePortalPath {
   FinanceStatus = '/fjarmal/stada',
   FinanceTransactions = '/fjarmal/faerslur',
   FinanceEmployeeClaims = '/fjarmal/laungreidendakrofur',
+  FinanceLocalTax = '/fjarmal/utsvar',
   FinanceBills = '/fjarmal/greidslusedlar-og-greidslukvittanir',
   FinanceVehicles = 'https://mitt.samgongustofa.is/',
   FinancePayments = '/greidslur',
   FinanceExternal = 'https://minarsidur.island.is/minar-sidur/fjarmal/fjarmal-stada-vid-rikissjod-og-stofnanir/',
+  FinanceWIP = '/fjarmal-annad',
 
   // Electronic Documents
   ElectronicDocumentsRoot = '/postholf',
@@ -53,7 +55,7 @@ export enum ServicePortalPath {
   EducationRoot = '/menntun',
   EducationDegree = '/menntun/profgradur',
   EducationCareer = '/menntun/namsferill',
-  EducationStudentAssessment = '/menntun/namsferill/:nationalId/samraemd-prof',
+  EducationStudentAssessment = '/menntun/namsferill/:familyIndex/samraemd-prof',
   EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
 
   // Education License

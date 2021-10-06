@@ -1,7 +1,10 @@
 import React, { FC } from 'react'
+import { useHistory } from 'react-router-dom'
+
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Bullet, BulletList } from '@island.is/island-ui/core'
+import { Box, Bullet, BulletList, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import {
@@ -10,10 +13,12 @@ import {
 } from '../../lib/parentalLeaveUtils'
 import { NO } from '../../constants'
 
+import * as styles from './ConclusionImageScreen.treat'
+
 const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { isSelfEmployed } = useApplicationAnswers(application)
-
+  const history = useHistory()
   const steps = [formatMessage(parentalLeaveFormMessages.finalScreen.step3)]
 
   if (isSelfEmployed === NO) {
@@ -26,6 +31,10 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
     steps.unshift(
       otherParentApprovalDescription(application.answers, formatMessage),
     )
+  }
+
+  const handleRefresh = () => {
+    history.go(0)
   }
 
   return (
@@ -219,6 +228,24 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
             </linearGradient>
           </defs>
         </svg>
+      </Box>
+
+      <Box marginTop={7} className={styles.buttonContainer}>
+        <Box
+          display="flex"
+          flexDirection="rowReverse"
+          alignItems="center"
+          justifyContent="spaceBetween"
+          paddingTop={[1, 4]}
+        >
+          <Box display="inlineFlex" padding={2} paddingRight="none">
+            <Button icon="arrowForward" onClick={handleRefresh} type="submit">
+              {formatMessage(
+                parentalLeaveFormMessages.reviewScreen.buttonsViewProgress,
+              )}
+            </Button>
+          </Box>
+        </Box>
       </Box>
     </Box>
   )

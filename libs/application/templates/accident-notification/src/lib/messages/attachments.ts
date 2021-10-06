@@ -20,10 +20,7 @@ export const attachments = {
     },
     alertMessage: {
       id: 'an.application:attachments.alertMessage',
-      defaultMessage: `Mögulegt er að bæta við fylgiskjölum eftir að tilkynning hefur verið send til Sjúkratrygginga Íslands. 
-      Áður en hægt er að taka afstöðu til tilkynningar og bótaskyldu þurfa áverkavottorð eða tilkynningarseðill frá
-       Landspítala Íslands hins vegar að vera til staðar og bótaskyldu þarf áverkavottorð frá þeim lækni sem sá slasaða fyrst eða samskiptaseðill
-        vegna fyrstu komu frá Landspítala að vera til staðar.`,
+      defaultMessage: `Mögulegt er að bæta við fylgiskjölum eftir að tilkynning hefur verið send til Sjúkratrygginga Íslands. Áður en hægt er að taka afstöðu til tilkynningar og bótaskyldu og þarf áverkavottorð frá þeim lækni sem sá slasaða fyrst eða samskiptaseðill vegna fyrstu komu frá Landspítala að vera til staðar.`,
       description: 'Alert message when send certificate later is selecte',
     },
     uploadSubSectionTitle: {
@@ -54,7 +51,7 @@ export const attachments = {
     uploadIntroduction: {
       id: 'an.application:attachments.uploadIntroduction',
       defaultMessage: `Athugaðu að það er hægt að tilkynna slys án þess að öll nauðsynleg skjöl
-       eru til staðar en Sjúkratryggingar Íslands kunna að óska eftir frekari gögnum
+       séu til staðar en Sjúkratryggingar Íslands kunna að óska eftir frekari gögnum
        við afgreiðslu málsins, svo taka megi ákvörðun um bótarétt, fjárhæð og greiðslu bóta.`,
       description: 'Upload introduction',
     },
@@ -68,7 +65,7 @@ export const attachments = {
     hospitalSendsCertificate: {
       id: 'an.application:attachments.hospitalSendsCertificate',
       defaultMessage:
-        'Ég mun óska eftir því að Landspítalinn sendi  samskiptaseðill frá bráðamóttöku',
+        'Ég mun óska eftir því að Landspítalinn sendi samskiptaseðil til Sjúkratrygginga Íslands',
       description: 'Label for hospital sends certificate',
     },
     sendCertificateLater: {
@@ -88,6 +85,28 @@ export const attachments = {
       defaultMessage: 'Athugið',
       description:
         'Label for alert message when send certificate later is selected',
+    },
+  }),
+  documentNames: defineMessages({
+    injuryCertificate: {
+      id: 'an.application:attachments.documentNames.injuryCertificate',
+      defaultMessage: 'Áverkavottorð',
+      description: 'Name of injury certificate for in review',
+    },
+    deathCertificate: {
+      id: 'an.application:attachments.documentNames.deathCertificate',
+      defaultMessage: 'Dánarvottorð',
+      description: 'Name of death certificate for in review',
+    },
+    policeReport: {
+      id: 'an.application:attachments.documentNames.policeReport',
+      defaultMessage: 'Lögregluskýrsla',
+      description: 'Name of police report for in review',
+    },
+    powerOfAttorneyDocument: {
+      id: 'an.application:attachments.documentNames.powerOfAttorney',
+      defaultMessage: 'Umboð',
+      description: 'Name of power of attorney document for in review',
     },
   }),
 }

@@ -5,12 +5,14 @@ import { useQuery } from '@apollo/client'
 
 import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import {
-  Case,
-  CaseCustodyProvisions,
   NotificationType,
   CaseState,
   CaseType,
   CaseTransition,
+} from '@island.is/judicial-system/types'
+import type {
+  Case,
+  CaseCustodyProvisions,
 } from '@island.is/judicial-system/types'
 import {
   formatDate,
@@ -38,7 +40,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 
 import * as styles from './Overview.treat'
 
@@ -249,6 +251,9 @@ export const Overview: React.FC = () => {
                         )
                       },
                     )}
+                  {workingCase.legalBasis && (
+                    <Text>{workingCase.legalBasis}</Text>
+                  )}
                 </AccordionItem>
                 <AccordionItem
                   labelVariant="h3"
@@ -362,7 +367,7 @@ export const Overview: React.FC = () => {
             <Box marginBottom={10}>
               <PdfButton
                 caseId={workingCase.id}
-                title="Opna PDF kröfu"
+                title={formatMessage(core.pdfButtonRequest)}
                 pdfType="request"
               />
             </Box>

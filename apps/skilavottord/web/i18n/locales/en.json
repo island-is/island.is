@@ -23,7 +23,7 @@
     "topLinksContact": [
       {
         "title": "Contact us",
-        "href": "https://island.is/stafraent-island/hafa-samband"
+        "href": "https://island.is/s/stafraent-island/hafa-samband"
       },
       {
         "title": "Tel: 426 5500",
@@ -363,7 +363,7 @@
     "title": "An error occurred",
     "contents": [
       "Something went wrong.",
-      "Please <a href='https://island.is/stafraent-island/hafa-samband/'>contact</a> for further help"
+      "Please <a href='https://island.is/s/stafraent-island/hafa-samband/'>contact</a> for further help"
     ]
   },
   "routes": {

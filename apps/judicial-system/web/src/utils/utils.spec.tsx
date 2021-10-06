@@ -3,20 +3,8 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { RequiredField } from '@island.is/judicial-system-web/src/types'
-import {
-  CaseTransition,
-  CaseCustodyRestrictions,
-  Case,
-  CaseGender,
-  CaseDecision,
-  CaseType,
-} from '@island.is/judicial-system/types'
-import {
-  getConclusion,
-  getShortGender,
-  isDirty,
-  isNextDisabled,
-} from './stepHelper'
+import { CaseTransition, CaseGender } from '@island.is/judicial-system/types'
+import { getShortGender, isDirty, isNextDisabled } from './stepHelper'
 import { validate } from './validate'
 
 import * as formatters from './formatters'
@@ -192,7 +180,7 @@ describe('Validation', () => {
   })
 
   describe('Validate national id format', () => {
-    test('should fail if not in correct form', () => {
+    test('should be valid if all digits filled in', () => {
       // Arrange
       const nid = '999999-9999'
 
@@ -200,8 +188,7 @@ describe('Validation', () => {
       const r = validate(nid, 'national-id')
 
       // Assert
-      expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Dæmi: 000000-0000')
+      expect(r.isValid).toEqual(true)
     })
 
     test('should be valid given just the first six digits', () => {
@@ -216,9 +203,9 @@ describe('Validation', () => {
       expect(r.errorMessage).toEqual('')
     })
 
-    test('should not be valid given an invalid day', () => {
+    test('should not be valid given too few digits', () => {
       // Arrange
-      const nid = '991201'
+      const nid = '99120'
 
       // Act
       const r = validate(nid, 'national-id')
@@ -228,9 +215,9 @@ describe('Validation', () => {
       expect(r.errorMessage).toEqual('Dæmi: 000000-0000')
     })
 
-    test('should not be valid given an invalid month', () => {
+    test('should not be valid given invalid number of digits', () => {
       // Arrange
-      const nid = '019901'
+      const nid = '991201-22'
 
       // Act
       const r = validate(nid, 'national-id')
@@ -337,235 +324,6 @@ describe('Step helper', () => {
 
       // Assert
       expect(result).toEqual('Lorem lara ipsum dolum kara')
-    })
-  })
-
-  describe('getConclution', () => {
-    test('should return rejected message if the case is being rejected', async () => {
-      // Arrange
-      const wc = {
-        decision: CaseDecision.REJECTING,
-        accusedName: 'Mikki Refur',
-        accusedNationalId: '0000000000',
-        accusedGender: CaseGender.MALE,
-      }
-
-      // Act
-      render(getConclusion(wc as Case))
-
-      // Assert
-      expect(
-        await screen.findByText((_, node) => {
-          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-          const hasText = (node: Element) =>
-            node.textContent ===
-            'Kröfu um að kærði, Mikki Refur, kt. 000000-0000, sæti gæsluvarðhaldi er hafnað.'
-
-          if (node) {
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
-
-            return nodeHasText && childrenDontHaveText
-          }
-
-          return false
-        }),
-      ).toBeTruthy()
-    })
-
-    test('should return the correct string if there is no isolation and the case is not being rejected', async () => {
-      // Arrange
-      const wc = {
-        id: 'testid',
-        created: 'test',
-        modified: 'test',
-        type: CaseType.CUSTODY,
-        state: 'DRAFT',
-        policeCaseNumber: 'test',
-        decision: CaseDecision.ACCEPTING,
-        custodyRestrictions: [],
-        accusedName: 'Doe',
-        accusedNationalId: '0123456789',
-        accusedGender: CaseGender.MALE,
-        validToDate: '2020-10-22T12:31:00.000Z',
-      }
-
-      // Act
-      render(getConclusion(wc as Case))
-
-      // Assert
-      expect(
-        await screen.findByText((_, node) => {
-          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-          const hasText = (node: Element) =>
-            node.textContent ===
-            'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
-
-          if (node) {
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
-
-            return nodeHasText && childrenDontHaveText
-          }
-
-          return false
-        }),
-      ).toBeTruthy()
-    })
-
-    test('should return the correct string if there is isolation and the case is not being rejected', async () => {
-      // Arrange
-      const wc = {
-        decision: CaseDecision.ACCEPTING,
-        custodyRestrictions: [CaseCustodyRestrictions.ISOLATION],
-        accusedName: 'Doe',
-        accusedNationalId: '0123456789',
-        accusedGender: CaseGender.MALE,
-        validToDate: '2020-10-22T12:31:00.000Z',
-        type: CaseType.CUSTODY,
-        isolationToDate: '2020-10-22T12:31:00.000Z',
-      }
-
-      // Act
-      render(getConclusion(wc as Case))
-
-      // Assert
-      expect(
-        await screen.findByText((_, node) => {
-          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-          const hasText = (node: Element) =>
-            node.textContent ===
-            'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
-
-          if (node) {
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
-
-            return nodeHasText && childrenDontHaveText
-          }
-
-          return false
-        }),
-      ).toBeTruthy()
-    })
-
-    test('should return the correct string if the case is accepted with travel ban', async () => {
-      // Arrange
-      const wc = {
-        decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-        accusedName: 'Doe',
-        accusedNationalId: '0123456789',
-        validToDate: '2020-10-22T12:31:00.000Z',
-        accusedGender: CaseGender.MALE,
-      }
-
-      // Act
-      render(getConclusion(wc as Case))
-
-      // Assert
-      expect(
-        await screen.findByText((_, node) => {
-          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-          const hasText = (node: Element) =>
-            node.textContent ===
-            'Kærði, Doe kt. 012345-6789, skal sæta farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
-
-          if (node) {
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
-
-            return nodeHasText && childrenDontHaveText
-          }
-
-          return false
-        }),
-      ).toBeTruthy()
-    })
-
-    test('should return the correct string if the case is an extension on alternative travel ban', async () => {
-      // Arrange
-      const wc = {
-        decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-        accusedName: 'Doe',
-        accusedNationalId: '0123456789',
-        validToDate: '2020-10-22T12:31:00.000Z',
-        accusedGender: CaseGender.MALE,
-        parentCase: {
-          id: 'TEST_EXTENSION',
-          decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-        },
-      }
-
-      // Act
-      render(getConclusion(wc as Case))
-
-      // Assert
-      expect(
-        await screen.findByText((_, node) => {
-          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-          const hasText = (node: Element) =>
-            node.textContent ===
-            'Kærði, Doe kt. 012345-6789, skal sæta áframhaldandi farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
-
-          if (node) {
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
-
-            return nodeHasText && childrenDontHaveText
-          }
-
-          return false
-        }),
-      ).toBeTruthy()
-    })
-
-    test('should return the correct string if the case is an extension on accepted custody', async () => {
-      // Arrange
-      const wc = {
-        decision: CaseDecision.ACCEPTING,
-        accusedName: 'Doe',
-        accusedNationalId: '0123456789',
-        validToDate: '2020-10-22T12:31:00.000Z',
-        accusedGender: CaseGender.MALE,
-        parentCase: {
-          id: 'TEST_EXTENSION',
-          decision: CaseDecision.ACCEPTING,
-        },
-      }
-
-      // Act
-      render(getConclusion(wc as Case))
-
-      // Assert
-      expect(
-        await screen.findByText((_, node) => {
-          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-          const hasText = (node: Element) =>
-            node.textContent ===
-            'Kærði, Doe kt. 012345-6789, skal sæta áframhaldandi gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
-
-          if (node) {
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
-
-            return nodeHasText && childrenDontHaveText
-          }
-
-          return false
-        }),
-      ).toBeTruthy()
     })
   })
 

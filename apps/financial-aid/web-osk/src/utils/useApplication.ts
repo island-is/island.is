@@ -1,12 +1,13 @@
 import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 
-import {
-  CreateApplicationQuery,
-  CreateApplicationEventQuery,
-} from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { CreateApplicationQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
-import { User, ApplicationState } from '@island.is/financial-aid/shared'
+import {
+  User,
+  ApplicationState,
+  FileType,
+} from '@island.is/financial-aid/shared/lib'
 import { Form } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { UploadFile } from '@island.is/island-ui/core'
 
@@ -16,20 +17,27 @@ const useApplication = () => {
     { loading: isCreatingApplication },
   ] = useMutation(CreateApplicationQuery)
 
+  const formatFiles = (files: UploadFile[], type: FileType) => {
+    return files.map((f) => {
+      return {
+        name: f.name ?? '',
+        key: f.key ?? '',
+        size: f.size ?? 0,
+        type: type,
+      }
+    })
+  }
+
   const createApplication = useMemo(
     () => async (
       form: Form,
       user: User,
-      allFiles: UploadFile[],
+      updateForm?: any,
     ): Promise<string | undefined> => {
       if (isCreatingApplication === false) {
-        const formatAllFiles = allFiles.map((f) => {
-          return {
-            name: f.name ?? '',
-            key: f.key ?? '',
-            size: f.size ?? 0,
-          }
-        })
+        const files = formatFiles(form.taxReturnFiles, FileType.TAXRETURN)
+          .concat(formatFiles(form.incomeFiles, FileType.INCOME))
+          .concat(formatFiles(form.otherFiles, FileType.OTHER))
 
         const { data } = await createApplicationMutation({
           variables: {
@@ -52,13 +60,14 @@ const useApplication = () => {
               employmentCustom: form?.employmentCustom,
               formComment: form?.formComment,
               state: ApplicationState.NEW,
-              files: formatAllFiles,
+              files: files,
             },
           },
         })
 
         if (data) {
-          return data?.id
+          updateForm({ ...form, applicationId: data.createApplication.id })
+          return data
         }
       }
     },

@@ -1,5 +1,6 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
+
 import { EmailService } from '@island.is/email-service'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
@@ -7,7 +8,7 @@ import {
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
-import { ContentfulRepository } from '@island.is/api/domains/cms'
+import { ContentfulRepository } from '@island.is/cms'
 
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'

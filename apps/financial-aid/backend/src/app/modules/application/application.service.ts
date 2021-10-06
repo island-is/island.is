@@ -1,12 +1,37 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { ApplicationModel } from './models'
+import { CurrentApplicationModel, ApplicationModel } from './models'
 
-import { CreateApplicationDto, UpdateApplicationDto } from './dto'
-import { User } from '@island.is/financial-aid/shared'
+import { Op } from 'sequelize'
+
+import {
+  CreateApplicationDto,
+  CreateApplicationEventDto,
+  UpdateApplicationDto,
+} from './dto'
+import {
+  ApplicationEventType,
+  ApplicationFilters,
+  ApplicationState,
+  ApplicationStateUrl,
+  getStateFromUrl,
+  User,
+} from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
-import { ApplicationEventService } from '../applicationEvent'
+import {
+  ApplicationEventService,
+  ApplicationEventModel,
+} from '../applicationEvent'
+import { StaffModel } from '../staff'
+
+import { EmailService } from '@island.is/email-service'
+import { environment } from '../../../environments'
+
+interface Recipient {
+  name: string
+  address: string
+}
 
 @Injectable()
 export class ApplicationService {
@@ -15,22 +40,94 @@ export class ApplicationService {
     private readonly applicationModel: typeof ApplicationModel,
     private readonly fileService: FileService,
     private readonly applicationEventService: ApplicationEventService,
+    private readonly emailService: EmailService,
   ) {}
 
-  getAll(): Promise<ApplicationModel[]> {
-    return this.applicationModel.findAll()
+  async hasAccessToApplication(
+    nationalId: string,
+    id: string,
+  ): Promise<boolean> {
+    const hasApplication = await this.applicationModel.findOne({
+      where: { id, nationalId },
+    })
+
+    return Boolean(hasApplication)
+  }
+
+  async getCurrentApplication(
+    nationalId: string,
+  ): Promise<CurrentApplicationModel | null> {
+    const date = new Date()
+
+    const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
+
+    return await this.applicationModel.findOne({
+      where: {
+        nationalId,
+        created: { [Op.gte]: firstDateOfMonth },
+      },
+    })
+  }
+
+  async getAll(stateUrl: ApplicationStateUrl): Promise<ApplicationModel[]> {
+    return this.applicationModel.findAll({
+      where: {
+        state: { [Op.in]: getStateFromUrl[stateUrl] },
+      },
+      order: [['modified', 'DESC']],
+      include: [{ model: StaffModel, as: 'staff' }],
+    })
+  }
+
+  async setFilesToApplication(id: string, application: ApplicationModel) {
+    const files = await this.fileService.getAllApplicationFiles(id)
+
+    application?.setDataValue('files', files)
   }
 
   async findById(id: string): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
+      include: [
+        { model: StaffModel, as: 'staff' },
+        {
+          model: ApplicationEventModel,
+          as: 'applicationEvents',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+      ],
     })
 
-    const files = await this.fileService.getAllApplicationFiles(id)
-
-    application.setDataValue('files', files)
+    await this.setFilesToApplication(id, application)
 
     return application
+  }
+
+  async getAllFilters(): Promise<ApplicationFilters> {
+    const statesToCount = [
+      ApplicationState.NEW,
+      ApplicationState.INPROGRESS,
+      ApplicationState.DATANEEDED,
+      ApplicationState.REJECTED,
+      ApplicationState.APPROVED,
+    ]
+
+    const countPromises = statesToCount.map((item) =>
+      this.applicationModel.count({
+        where: { state: { [Op.eq]: item } },
+      }),
+    )
+
+    const filterCounts = await Promise.all(countPromises)
+
+    return {
+      New: filterCounts[0],
+      InProgress: filterCounts[1],
+      DataNeeded: filterCounts[2],
+      Rejected: filterCounts[3],
+      Approved: filterCounts[4],
+    }
   }
 
   async create(
@@ -40,23 +137,34 @@ export class ApplicationService {
     const appModel = await this.applicationModel.create(application)
 
     //Create applicationEvent
-    const eventModel = await this.applicationEventService.create({
+    await this.applicationEventService.create({
       applicationId: appModel.id,
-      state: appModel.state,
-      comment: null,
+      eventType: ApplicationEventType[appModel.state.toUpperCase()],
     })
 
     //Create file
-    if (application.files) {
-      const fileModel = await application.files.map((f) => {
-        this.fileService.createFile({
+    if (appModel.files) {
+      const promises = application.files.map((f) => {
+        return this.fileService.createFile({
           applicationId: appModel.id,
           name: f.name,
           key: f.key,
           size: f.size,
+          type: f.type,
         })
       })
+
+      await Promise.all(promises)
     }
+
+    await this.sendEmail(
+      {
+        name: user.name,
+        address: appModel.email,
+      },
+      appModel.id,
+      `Umsókn þín er móttekin og er nú í vinnslu. <a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${appModel.id}" target="_blank"> Getur kíkt á stöðu síðuna þína hér</a>`,
+    )
 
     return appModel
   }
@@ -68,6 +176,10 @@ export class ApplicationService {
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
   }> {
+    if (update.state === ApplicationState.NEW) {
+      update.staffId = null
+    }
+
     const [
       numberOfAffectedRows,
       [updatedApplication],
@@ -76,13 +188,44 @@ export class ApplicationService {
       returning: true,
     })
 
+    await this.setFilesToApplication(id, updatedApplication)
+
+    const events = await this.applicationEventService.findById(id)
+
+    updatedApplication?.setDataValue('applicationEvents', events)
+
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({
       applicationId: id,
-      state: update.state,
-      comment: update.rejection,
+      eventType: ApplicationEventType[update.state.toUpperCase()],
+      comment: update?.rejection || update?.amount?.toLocaleString('de-DE'),
     })
 
     return { numberOfAffectedRows, updatedApplication }
+  }
+
+  private async sendEmail(
+    to: Recipient | Recipient[],
+    applicationId: string | undefined,
+    body: string,
+  ) {
+    try {
+      await this.emailService.sendEmail({
+        from: {
+          name: 'no-reply@svg.is',
+          address: 'Samband íslenskra sveitarfélaga',
+        },
+        replyTo: {
+          name: 'no-reply@svg.is',
+          address: 'Samband íslenskra sveitarfélaga',
+        },
+        to,
+        subject: `Umsókn fyrir fjárhagsaðstoð móttekin ~ ${applicationId}`,
+        text: body,
+        html: body,
+      })
+    } catch (error) {
+      console.log('failed to send email', error)
+    }
   }
 }

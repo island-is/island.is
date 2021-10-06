@@ -10,12 +10,8 @@ import {
   buildMultiField,
   buildSubmitField,
   DefaultEvents,
-  buildRadioField,
 } from '@island.is/application/core'
-import {
-  Answers,
-  DataProviderTypes,
-} from '@island.is/application/templates/children-residence-change'
+import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
 import { selectDurationInputs } from '../fields/Duration'
 import { confirmContractIds } from '../fields/Overview'
@@ -23,7 +19,6 @@ import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
 import { ExternalData } from '@island.is/application/templates/family-matters-core/types'
 import { hasChildren } from '../lib/utils'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 const soleCustodyField = () => {
   return buildCustomField({
@@ -52,14 +47,14 @@ const noChildrenFoundField = () => {
 // TODO: Added by Kolibri - 2021-07-05 - Revisit mockdata implementation to prevent
 // Continue and Back button from being displayed on production
 
-const shouldUseMocks = (answers: Answers): boolean => {
-  if (answers.useMocks && answers.useMocks === 'yes') {
-    return true
-  }
-  return false
-}
+// const shouldUseMocks = (answers: Answers): boolean => {
+//   if (answers.useMocks && answers.useMocks === 'yes') {
+//     return true
+//   }
+//   return false
+// }
 
-const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
+// const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
   id: 'ChildrenResidenceChangeFormDraft',
@@ -67,72 +62,72 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
-    buildSection({
-      id: 'mockData',
-      title: 'Mock data',
-      condition: () => shouldRenderMockDataSubSection,
-      children: [
-        buildSubSection({
-          id: 'useMocks',
-          title: 'Nota gervigögn?',
-          children: [
-            buildRadioField({
-              id: 'useMocks',
-              title: 'Nota gervigögn',
-              options: [
-                {
-                  value: 'yes',
-                  label: 'Já',
-                },
-                {
-                  value: 'no',
-                  label: 'Nei',
-                },
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'applicantMock',
-          title: 'Umsækjandi',
-          condition: (answers) =>
-            shouldUseMocks((answers as unknown) as Answers),
-          children: [
-            buildCustomField({
-              id: 'mockData.applicant',
-              title: 'Mock Umsækjandi',
-              component: 'ApplicantMock',
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'parentMock',
-          title: 'Foreldrar',
-          condition: (answers) =>
-            shouldUseMocks((answers as unknown) as Answers),
-          children: [
-            buildCustomField({
-              id: 'mockData.parents',
-              title: 'Mock Foreldrar',
-              component: 'ParentMock',
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'childrenMock',
-          title: 'Börn',
-          condition: (answers) =>
-            shouldUseMocks((answers as unknown) as Answers),
-          children: [
-            buildCustomField({
-              id: 'mockData.children',
-              title: 'Mock Börn',
-              component: 'ChildrenMock',
-            }),
-          ],
-        }),
-      ],
-    }),
+    // buildSection({
+    //   id: 'mockData',
+    //   title: 'Mock data',
+    //   condition: () => shouldRenderMockDataSubSection,
+    //   children: [
+    //     buildSubSection({
+    //       id: 'useMocks',
+    //       title: 'Nota gervigögn?',
+    //       children: [
+    //         buildRadioField({
+    //           id: 'useMocks',
+    //           title: 'Nota gervigögn',
+    //           options: [
+    //             {
+    //               value: 'yes',
+    //               label: 'Já',
+    //             },
+    //             {
+    //               value: 'no',
+    //               label: 'Nei',
+    //             },
+    //           ],
+    //         }),
+    //       ],
+    //     }),
+    //     buildSubSection({
+    //       id: 'applicantMock',
+    //       title: 'Umsækjandi',
+    //       condition: (answers) =>
+    //         shouldUseMocks((answers as unknown) as Answers),
+    //       children: [
+    //         buildCustomField({
+    //           id: 'mockData.applicant',
+    //           title: 'Mock Umsækjandi',
+    //           component: 'ApplicantMock',
+    //         }),
+    //       ],
+    //     }),
+    //     buildSubSection({
+    //       id: 'parentMock',
+    //       title: 'Foreldrar',
+    //       condition: (answers) =>
+    //         shouldUseMocks((answers as unknown) as Answers),
+    //       children: [
+    //         buildCustomField({
+    //           id: 'mockData.parents',
+    //           title: 'Mock Foreldrar',
+    //           component: 'ParentMock',
+    //         }),
+    //       ],
+    //     }),
+    //     buildSubSection({
+    //       id: 'childrenMock',
+    //       title: 'Börn',
+    //       condition: (answers) =>
+    //         shouldUseMocks((answers as unknown) as Answers),
+    //       children: [
+    //         buildCustomField({
+    //           id: 'mockData.children',
+    //           title: 'Mock Börn',
+    //           component: 'ChildrenMock',
+    //         }),
+    //       ],
+    //     }),
+    //   ],
+    // }),
     buildSection({
       id: 'backgroundInformation',
       title: m.section.backgroundInformation,
@@ -140,8 +135,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         buildSubSection({
           id: 'externalData',
           title: m.externalData.general.sectionTitle,
-          condition: (answers) =>
-            !shouldUseMocks((answers as unknown) as Answers),
+          // condition: (answers) =>
+          //   !shouldUseMocks((answers as unknown) as Answers),
           children: [
             buildExternalDataProvider({
               title: m.externalData.general.pageTitle,
@@ -174,43 +169,43 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
             soleCustodyField(),
           ],
         }),
-        buildSubSection({
-          id: 'externalData',
-          title: m.externalData.general.sectionTitle,
-          condition: (answers) =>
-            shouldUseMocks((answers as unknown) as Answers),
-          children: [
-            buildExternalDataProvider({
-              title: m.externalData.general.pageTitle,
-              id: 'approveExternalData',
-              subTitle: m.externalData.general.subTitle,
-              description: m.externalData.general.description,
-              checkboxLabel: m.externalData.general.checkboxLabel,
-              dataProviders: [
-                buildDataProviderItem({
-                  id: 'nationalRegistry',
-                  type: DataProviderTypes.MockNationalRegistry,
-                  title: m.externalData.applicant.title,
-                  subTitle: m.externalData.applicant.subTitle,
-                }),
-                buildDataProviderItem({
-                  id: '',
-                  type: '',
-                  title: m.externalData.children.title,
-                  subTitle: m.externalData.children.subTitle,
-                }),
-                buildDataProviderItem({
-                  id: 'userProfile',
-                  type: DataProviderTypes.UserProfile,
-                  title: '',
-                  subTitle: '',
-                }),
-              ],
-            }),
-            noChildrenFoundField(),
-            soleCustodyField(),
-          ],
-        }),
+        // buildSubSection({
+        //   id: 'externalData',
+        //   title: m.externalData.general.sectionTitle,
+        //   condition: (answers) =>
+        //     shouldUseMocks((answers as unknown) as Answers),
+        //   children: [
+        //     buildExternalDataProvider({
+        //       title: m.externalData.general.pageTitle,
+        //       id: 'approveExternalData',
+        //       subTitle: m.externalData.general.subTitle,
+        //       description: m.externalData.general.description,
+        //       checkboxLabel: m.externalData.general.checkboxLabel,
+        //       dataProviders: [
+        //         buildDataProviderItem({
+        //           id: 'nationalRegistry',
+        //           type: DataProviderTypes.MockNationalRegistry,
+        //           title: m.externalData.applicant.title,
+        //           subTitle: m.externalData.applicant.subTitle,
+        //         }),
+        //         buildDataProviderItem({
+        //           id: '',
+        //           type: '',
+        //           title: m.externalData.children.title,
+        //           subTitle: m.externalData.children.subTitle,
+        //         }),
+        //         buildDataProviderItem({
+        //           id: 'userProfile',
+        //           type: DataProviderTypes.UserProfile,
+        //           title: '',
+        //           subTitle: '',
+        //         }),
+        //       ],
+        //     }),
+        //     noChildrenFoundField(),
+        //     soleCustodyField(),
+        //   ],
+        // }),
         buildSubSection({
           id: 'selectChildInCustody',
           title: m.selectChildren.general.sectionTitle,

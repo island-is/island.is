@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Case } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'

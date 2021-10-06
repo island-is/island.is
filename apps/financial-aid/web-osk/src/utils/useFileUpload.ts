@@ -1,19 +1,23 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
-import { CreateSignedUrlMutation } from '@island.is/financial-aid-web/oskgraphql/sharedGql'
-import { SignedUrl } from '@island.is/financial-aid/shared'
+import {
+  CreateSignedUrlMutation,
+  CreateApplicationFiles,
+} from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { FileType, SignedUrl } from '@island.is/financial-aid/shared/lib'
 
 export const useFileUpload = (formFiles: UploadFile[]) => {
   const [files, _setFiles] = useState<UploadFile[]>([])
   const filesRef = useRef<UploadFile[]>(files)
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
+  const [createApplicationFiles] = useMutation(CreateApplicationFiles)
 
   const requests: { [Key: string]: XMLHttpRequest } = {}
 
   useEffect(() => {
-    if (files && files.length === 0 && formFiles && formFiles.length > 0) {
+    if (files && formFiles && files.length < formFiles.length) {
       setFiles(formFiles)
     }
   }, [formFiles])
@@ -48,7 +52,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     }
 
     newUploadFiles.forEach(async (file) => {
-      const signedUrl = await createSignedUrl(file.name)
+      const signedUrl = await createSignedUrl(file.name.normalize())
 
       if (signedUrl) {
         file.key = signedUrl.key
@@ -67,13 +71,13 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   const createSignedUrl = async (
     filename: string,
   ): Promise<SignedUrl | undefined> => {
-    const validFileName = filename.replace(/ +/g, '_')
+    const validEncodedFileName = encodeURI(filename.replace(/ +/g, '_'))
 
     let signedUrl: SignedUrl | undefined = undefined
 
     try {
       const { data: presignedUrlData } = await createSignedUrlMutation({
-        variables: { input: { fileName: validFileName } },
+        variables: { input: { fileName: validEncodedFileName } },
       })
 
       signedUrl = presignedUrlData?.getSignedUrl
@@ -82,6 +86,27 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     }
 
     return signedUrl
+  }
+
+  const uploadFiles = async (applicationId: string, type: FileType) => {
+    const formatFiles = files.map((f) => {
+      return {
+        applicationId: applicationId,
+        name: f.name ?? '',
+        key: f.key ?? '',
+        size: f.size ?? 0,
+        type: type,
+      }
+    })
+    try {
+      return await createApplicationFiles({
+        variables: {
+          input: { files: formatFiles },
+        },
+      })
+    } catch (e) {
+      throw e
+    }
   }
 
   const uploadToCloudFront = (file: UploadFile, url: string) => {
@@ -99,15 +124,15 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     })
 
     request.upload.addEventListener('error', (evt) => {
+      file.percent = 0
+      file.status = 'error'
+      setUploadErrorMessage('Næ ekki að hlaða upp')
+
       if (file.key) {
         delete requests[file.key]
       }
 
       if (evt.lengthComputable) {
-        file.percent = 0
-        file.status = 'error'
-        setUploadErrorMessage('Næ ekki að hlaða upp')
-
         updateFile(file)
       }
     })
@@ -132,27 +157,24 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     const formData = new FormData()
 
     formData.append('file', file as File)
+    request.setRequestHeader('x-amz-acl', 'bucket-owner-full-control')
 
-    request.send(formData)
+    formData.forEach((el) => {
+      request.send(el)
+    })
   }
 
   const updateFile = (file: UploadFile) => {
     const newFiles = [...filesRef.current]
-
     const updatedFiles = newFiles.map((newFile) => {
       return newFile.key === file.key ? file : newFile
     })
-
     setFiles(updatedFiles)
   }
 
   const deleteUrl = async (url: string) => {
-    let success = false
-
     try {
       await fetch(url, { method: 'DELETE' })
-
-      success = true
     } catch (e) {
       setUploadErrorMessage('Næ ekki að eyða skrá')
     }
@@ -182,5 +204,12 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     onChange([file as File], true)
   }
 
-  return { files, uploadErrorMessage, onChange, onRemove, onRetry }
+  return {
+    files,
+    uploadErrorMessage,
+    onChange,
+    onRemove,
+    onRetry,
+    uploadFiles,
+  }
 }

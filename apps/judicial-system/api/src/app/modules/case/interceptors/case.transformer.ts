@@ -1,3 +1,4 @@
+import { isAccusedRightsHidden } from '@island.is/judicial-system/types'
 import { Case } from '../models'
 
 const threeDays = 3 * 24 * 60 * 60 * 1000
@@ -8,7 +9,8 @@ export function transformCase(theCase: Case): Case {
   theCase.defenderIsSpokesperson = theCase.defenderIsSpokesperson ?? false
   theCase.requestProsecutorOnlySession =
     theCase.requestProsecutorOnlySession ?? false
-  theCase.isAccusedAbsent = theCase.isAccusedAbsent ?? false
+  theCase.isClosedCourtHidden = theCase.isClosedCourtHidden ?? false
+  theCase.isAccusedRightsHidden = isAccusedRightsHidden(theCase)
 
   if (theCase.validToDate) {
     theCase.isValidToDateInThePast =

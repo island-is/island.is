@@ -1,31 +1,26 @@
-import React, { useContext, useState, useMemo } from 'react'
+import React, { useState } from 'react'
 import { ModalBase, Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './StateModal.treat'
 import cn from 'classnames'
-
-import { useMutation } from '@apollo/client'
 
 import {
   InputModal,
   OptionsModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
-import { UpdateApplicationMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
-
-import { NavigationStatisticsContext } from '@island.is/financial-aid-web/veita/src/components/NavigationStatisticsProvider/NavigationStatisticsProvider'
-
-import { Application, ApplicationState } from '@island.is/financial-aid/shared'
+import {
+  Application,
+  ApplicationState,
+} from '@island.is/financial-aid/shared/lib'
+import { useApplicationState } from '../../utils/useApplicationState'
 
 interface Props {
   isVisible: boolean
-  onVisiblityChange: React.Dispatch<React.SetStateAction<boolean>>
-  onStateChange: (applicationState: ApplicationState) => void
+  onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
   application: Application
-}
-
-interface SaveData {
-  application: Application
+  setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 interface InputType {
@@ -33,23 +28,19 @@ interface InputType {
   type: ApplicationState | undefined
 }
 
-const StateModal: React.FC<Props> = ({
+const StateModal = ({
   isVisible,
-  onVisiblityChange,
-  onStateChange,
+  onVisibilityChange,
   application,
-}) => {
+  setApplication,
+  setIsLoading,
+}: Props) => {
   const [inputType, setInputType] = useState<InputType>({
     show: false,
     type: undefined,
   })
 
-  const { statistics, setStatistics } = useContext(NavigationStatisticsContext)
-
-  const [
-    updateApplicationMutation,
-    { loading: saveLoading },
-  ] = useMutation<SaveData>(UpdateApplicationMutation)
+  const changeApplicationState = useApplicationState()
 
   const saveStateApplication = async (
     application: Application,
@@ -57,37 +48,36 @@ const StateModal: React.FC<Props> = ({
     amount?: number,
     rejection?: string,
   ) => {
-    const prevState = application.state
+    setIsLoading(true)
+    onVisibilityChange((isVisible) => !isVisible)
 
-    if (saveLoading === false && application) {
-      await updateApplicationMutation({
-        variables: {
-          input: {
-            id: application.id,
-            state: state,
-            amount: amount,
-            rejection: rejection,
-          },
-        },
+    await changeApplicationState(application, state, amount, rejection)
+      .then((updatedApplication) => {
+        setIsLoading(false)
+        setApplication(updatedApplication)
       })
-    }
-
-    onVisiblityChange(!isVisible)
-    onStateChange(state)
-
-    if (statistics && setStatistics) {
-      setStatistics((preState) => ({
-        ...preState,
-        [prevState]: statistics[prevState] - 1,
-        [state]: statistics[state] + 1,
-      }))
-    }
+      .catch(() => {
+        //TODO ERROR STATE
+        setIsLoading(false)
+      })
   }
 
   const closeModal = (): void => {
     if (!inputType.show) {
-      onVisiblityChange(false)
+      onVisibilityChange(false)
     }
+  }
+
+  const headingText = (inputType: InputType): string => {
+    if (inputType.show) {
+      switch (inputType.type) {
+        case ApplicationState.REJECTED:
+          return 'Synja umsókn'
+        case ApplicationState.APPROVED:
+          return 'Samþykkja umsókn'
+      }
+    }
+    return 'Stöðubreyting'
   }
 
   return (
@@ -96,7 +86,7 @@ const StateModal: React.FC<Props> = ({
       isVisible={isVisible}
       onVisibilityChange={(visibility) => {
         if (visibility !== isVisible) {
-          onVisiblityChange(visibility)
+          onVisibilityChange(visibility)
         }
       }}
       className={styles.modalBase}
@@ -116,7 +106,7 @@ const StateModal: React.FC<Props> = ({
             className={styles.modalHeadline}
           >
             <Text fontWeight="semiBold" color="white">
-              Stöðubreyting
+              {headingText(inputType)}
             </Text>
           </Box>
 

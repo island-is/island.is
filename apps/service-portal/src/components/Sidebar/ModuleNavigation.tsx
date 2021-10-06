@@ -89,6 +89,7 @@ const ModuleNavigation: FC<Props> = ({
                 {navChildren.map((child, index) => (
                   <SubNavItem
                     path={child.path}
+                    enabled={child.enabled}
                     key={`child-${index}`}
                     active={
                       child.path && pathname.includes(child.path) ? true : false

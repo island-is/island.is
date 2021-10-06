@@ -92,6 +92,7 @@ export class PaymentService {
         ],
         immediateProcess: true,
         returnUrl: callbackUrl,
+        requestID: payment.id,
       }
       const result = await this.paymentApi.createCharge(charge)
       return {

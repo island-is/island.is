@@ -148,7 +148,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   error: {
-    id: 'dla.application:outro.message',
+    id: 'dla.application:outro.error',
     defaultMessage: 'Ekki er víst að akstursmat hafi borist',
     description: 'Some description',
   },
@@ -231,7 +231,7 @@ export const m = defineMessages({
   },
   studentEmail: {
     id: 'dla.application:student.email',
-    defaultMessage: 'Tölvupóstfang nemanda',
+    defaultMessage: 'Netfang',
     description: 'E-mail of driving student',
   },
   studentLookup: {
@@ -245,7 +245,7 @@ export const m = defineMessages({
     description: 'Driving assessment',
   },
   drivingAssessmentConfirmation: {
-    id: 'dla.application:',
+    id: 'dla.application:confirmation',
     defaultMessage: 'Staðfesting akstursmats',
     description: 'Confirmation of driving assessment',
   },
@@ -261,12 +261,19 @@ export const m = defineMessages({
   },
   drivingAssessmentConfirmationCheck: {
     id: 'dla.application:drivingAssessment.confirmationCheck',
-    defaultMessage: 'Ég staðfesti að nemandi hafi staðist akstursmat',
+    defaultMessage:
+      'Ég staðfesti að akstursmat hefur farið fram í samræmi við ákvæði í reglugerð um ökuskírteini og leiðbeiningar Samgöngustofu.',
     description: 'I confirm that the student has passed the driving assessment',
   },
   finalAssessmentTitle: {
-    id: 'dla.application:',
+    id: 'dla.application:finalAssessmentTitle',
     defaultMessage: 'Akstursmat móttekið',
     description: 'Driving assessment received.',
+  },
+  finalAssessmentDescription: {
+    id: 'dla.application:finalAssessmentDescription',
+    defaultMessage:
+      'Tölvupóstur hefur verið sendur á nemanda og honum tilkynnt að ökukennari hafi staðfest að akstursmat hafi farið fram. Nemandi getur nú sótt um fullnaðarskírteini.',
+    description: 'Driving assessment received description.',
   },
 })

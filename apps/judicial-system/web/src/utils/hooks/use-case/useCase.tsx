@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
-import {
+import type {
+  NotificationType,
+  SendNotificationResponse,
   Case,
   CaseTransition,
-  NotificationType,
   RequestSignatureResponse,
-  SendNotificationResponse,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import {
@@ -32,6 +32,9 @@ type autofillProperties = Pick<
   | 'isolationToDate'
   | 'prosecutorOnlySessionRequest'
   | 'otherRestrictions'
+  | 'conclusion'
+  | 'courtDate'
+  | 'courtLocation'
 >
 
 interface CreateCaseMutationResponse {
@@ -122,7 +125,7 @@ const useCase = () => {
       setCourtCaseNumberErrorMessage: React.Dispatch<
         React.SetStateAction<string>
       >,
-    ): Promise<void> => {
+    ): Promise<string> => {
       if (isCreatingCourtCase === false) {
         try {
           const { data, errors } = await createCourtCaseMutation({
@@ -145,32 +148,35 @@ const useCase = () => {
 
             setCourtCaseNumberErrorMessage('')
 
-            return
+            return data.createCourtCase.courtCaseNumber
           }
         } catch (error) {
           // Catch all so we can set an eror message
+          setCourtCaseNumberErrorMessage(
+            'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
+          )
         }
-
-        setCourtCaseNumberErrorMessage(
-          'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
-        )
       }
+
+      return ''
     },
     [createCourtCaseMutation, isCreatingCourtCase],
   )
 
   const updateCase = useMemo(
-    () => (id: string, updateCase: UpdateCase) => {
+    () => async (id: string, updateCase: UpdateCase) => {
       // Only update if id has been set
       if (!id) {
         return
       }
 
-      updateCaseMutation({
+      const { data } = await updateCaseMutation({
         variables: { input: { id, ...updateCase } },
       })
 
-      // TODO: Handle errors and perhaps wait for and do something with the result
+      // TODO: Handle errors and
+
+      return data?.updateCase
     },
     [updateCaseMutation],
   )
@@ -215,16 +221,20 @@ const useCase = () => {
       id: string,
       notificationType: NotificationType,
     ): Promise<boolean> => {
-      const { data } = await sendNotificationMutation({
-        variables: {
-          input: {
-            caseId: id,
-            type: notificationType,
+      try {
+        const { data } = await sendNotificationMutation({
+          variables: {
+            input: {
+              caseId: id,
+              type: notificationType,
+            },
           },
-        },
-      })
+        })
 
-      return Boolean(data?.sendNotification?.notificationSent)
+        return Boolean(data?.sendNotification?.notificationSent)
+      } catch (e) {
+        return false
+      }
     },
     [sendNotificationMutation],
   )

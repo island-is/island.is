@@ -21,7 +21,7 @@ export const complaintDescription = {
     alertMessage: {
       id: 'ctao.application:complaintDescription.alertMessage',
       defaultMessage:
-        'Í kvörtun skal lýst þeirri úrlausn eða annarri háttsemi sem stjórnvalda sem er tilefni kvörtunar. Hér skalt þú reyna að lýsa því hvað í meðferð stjórnvalda á máli þínu þú ert ósátt/-ur við. Lýsing kvörtunar þarf ekki að vera flókin, t.d. er ekki nauðsynlegt að vísa til lagareglna.',
+        'Yfirleitt eru umsóknir um ákvarðanir lengra en ár aftur í tímann ekki teknar fyrir.',
       description: 'Description alert message',
     },
   }),

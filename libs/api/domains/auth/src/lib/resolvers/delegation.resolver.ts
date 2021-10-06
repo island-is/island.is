@@ -79,6 +79,8 @@ export class DelegationResolver {
       .catch(ignore404)
     if (!delegation) {
       delegation = await this.authService.createDelegation(user, input)
+    } else if (input.scopes) {
+      delegation = await this.authService.updateDelegation(user, input)
     }
 
     return delegation
@@ -137,5 +139,14 @@ export class DelegationResolver {
       } as Identity)
     }
     return this.identityService.getIdentity(delegation.fromNationalId, user)
+  }
+
+  @ResolveField('validTo', () => Date, { nullable: true })
+  resolveValidTo(@Parent() delegation: DelegationDTO): Date | undefined {
+    return delegation.scopes?.every(
+      (scope) => scope.validTo?.toString() === delegation.validTo?.toString(),
+    )
+      ? delegation.validTo
+      : undefined
   }
 }

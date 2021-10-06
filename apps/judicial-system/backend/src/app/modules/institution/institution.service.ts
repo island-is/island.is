@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 import { Institution } from './institution.model'
 
@@ -15,7 +15,7 @@ export class InstitutionService {
     private readonly logger: Logger,
   ) {}
 
-  getAll(): Promise<Institution[]> {
+  async getAll(): Promise<Institution[]> {
     this.logger.debug('Getting all institutions')
 
     return this.institutionModel.findAll({

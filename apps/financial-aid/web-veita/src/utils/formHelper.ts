@@ -4,7 +4,7 @@ import differenceInDays from 'date-fns/differenceInDays'
 import differenceInYears from 'date-fns/differenceInYears'
 import differenceInWeeks from 'date-fns/differenceInWeeks'
 
-import { ApplicationState } from '@island.is/financial-aid/shared'
+import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 export const isPluralInIcelandic = (value: number): boolean =>
   value % 10 !== 1 || value % 100 === 11
@@ -35,25 +35,6 @@ export const calcDifferenceInDate = (dateCreated: string | undefined) => {
   }
 }
 
-export const translateMonth = (month: number) => {
-  const months = [
-    'Janúar',
-    'Febrúar',
-    'Mars',
-    'Apríl',
-    'Maí',
-    'Júní',
-    'Júlí',
-    'Ágúst',
-    'September',
-    'Október',
-    'Nóvember',
-    'Desember',
-  ]
-
-  return months[month - 1]
-}
-
 export const calcAge = (ssn: string) => {
   const year = ssn.substring(4, 6)
   const significant = ssn.substring(9, 10)
@@ -65,11 +46,6 @@ export const calcAge = (ssn: string) => {
   )
 
   return differenceInYears(new Date(), birthDay)
-}
-
-export const getFileType = (fileName: string) => {
-  // TODO: hande no file type? Handle when files is ready?
-  return fileName.substring(fileName.lastIndexOf('.') + 1)
 }
 
 export const getTagByState = (state: ApplicationState) => {

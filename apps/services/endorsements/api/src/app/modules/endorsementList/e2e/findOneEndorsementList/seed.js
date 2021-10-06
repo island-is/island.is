@@ -1,6 +1,5 @@
 const {
   getGenericEndorsementList,
-  getGenericEndorsement,
 } = require('../../../../../../test/seedHelpers')
 
 const authNationalId = '0000000010'

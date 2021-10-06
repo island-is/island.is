@@ -1,9 +1,13 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, ReactNode, useEffect, useState } from 'react'
 
-import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
+import {
+  HomeCircumstances,
+  Employment,
+} from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
 
 export interface Form {
+  applicationId?: string
   customAddress?: boolean
   customHomeAddress?: string
   customPostalCode?: number
@@ -16,6 +20,7 @@ export interface Form {
   hasIncome?: boolean
   incomeFiles: UploadFile[]
   taxReturnFiles: UploadFile[]
+  otherFiles: UploadFile[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string
   ledger?: string
@@ -25,30 +30,29 @@ export interface Form {
   submitted: boolean
   section?: Array<string>
   formComment?: string
+  fileUploadComment?: string
 }
 
 export const initialState = {
   submitted: false,
   incomeFiles: [],
   taxReturnFiles: [],
+  otherFiles: [],
 }
 
 interface FormProvider {
   form: Form
   updateForm?: any
+  initializeFormProvider?: any
+}
+
+interface Props {
+  children: ReactNode
 }
 
 export const FormContext = createContext<FormProvider>({ form: initialState })
 
-const FormProvider: React.FC = ({ children }) => {
-  const getSessionStorageOrDefault = (key: any) => {
-    const stored = sessionStorage.getItem(key)
-    if (!stored) {
-      return initialState
-    }
-    return JSON.parse(stored)
-  }
-
+const FormProvider = ({ children }: Props) => {
   const storageKey = 'formState'
 
   const [form, updateForm] = useState(initialState)
@@ -67,8 +71,17 @@ const FormProvider: React.FC = ({ children }) => {
     sessionStorage.setItem(storageKey, JSON.stringify(form))
   }, [form])
 
+  const initializeFormProvider = () => {
+    updateForm({
+      submitted: false,
+      incomeFiles: [],
+      taxReturnFiles: [],
+      otherFiles: [],
+    })
+  }
+
   return (
-    <FormContext.Provider value={{ form, updateForm }}>
+    <FormContext.Provider value={{ form, updateForm, initializeFormProvider }}>
       {children}
     </FormContext.Provider>
   )

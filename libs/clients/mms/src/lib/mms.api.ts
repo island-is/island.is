@@ -64,7 +64,7 @@ export class MMSApi {
     nationalId: User['nationalId'],
   ): Promise<StudentAssessmentResponse> {
     const response = await this.requestApi(
-      `api/public/studentAssessments/${nationalId}`,
+      `api/v2/public/studentAssessments/${nationalId}`,
       'grade',
     )
     return response.json()

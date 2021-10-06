@@ -1,8 +1,11 @@
+import * as s from './RegulationsSearchSection.treat'
+
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import {
+  Box,
   Button,
-  Filter,
+  Checkbox,
   GridColumn,
   GridContainer,
   GridRow,
@@ -10,17 +13,16 @@ import {
   Option,
   Select,
 } from '@island.is/island-ui/core'
-import { useNamespace } from '@island.is/web/hooks'
+import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+import { useShortState } from '@island.is/regulations'
 import {
   RegulationLawChapterTree,
   RegulationMinistry,
-} from './Regulations.types'
+} from '@island.is/regulations/web'
 import { RegulationHomeTexts } from './RegulationTexts.types'
 import { OptionTypeBase, ValueType } from 'react-select'
-import {
-  RegulationSearchFilters,
-  RegulationSearchKeys,
-} from './regulationUtils'
+import { RegulationSearchFilters, RegulationSearchKey } from './regulationUtils'
+import cn from 'classnames'
 
 // ---------------------------------------------------------------------------
 
@@ -32,44 +34,25 @@ const getRSValue = (option: ValueType<OptionTypeBase>) => {
   const opt: OptionTypeBase | undefined | null = Array.isArray(option)
     ? (option as Array<OptionTypeBase>)[0]
     : option
-  return opt ? opt.value : undefined
+  return opt ? String(opt.value) : undefined
 }
 
 const emptyOption = (label?: string): Option => ({
   value: '',
-  label: label != null ? `– ${label} –` : '—',
+  label: label ? `– ${label} –` : '—',
 })
 
-/** Looks through a list of `Option`s for one with a matching
- * `value` and returns a copy of it with its label trimmed for nicer
- * display by `react-select`
+/** Looks through a list of `Option`s for one with a matching `value`
  *
  * If a match is not found it returns `null` because that's the
  * magic value that tricks `react-select` to show the "placeholder" value
  */
-const findValueOption = (
-  options: ReadonlyArray<Option>,
-  value?: string,
-): Option | null => {
-  if (!value) {
-    return null
-  }
-  const opt = options.find((opt) => opt.value === value)
-  return (
-    (opt && {
-      value: opt.value,
-      label: opt.label.trim(),
-    }) ||
-    null
-  )
-}
-
-const isLegacyMinistry = (
-  ministries: ReadonlyArray<RegulationMinistry>,
-  slug: string,
-) => {
-  const ministry = ministries.find((m) => m.slug === slug)
-  return !!(ministry && !ministry.current)
+const findValueOption = (options: ReadonlyArray<Option>, value?: string) => {
+  // NOTE: The returned option MUST NOT be a copy (with trimmed value,
+  // even if it would look nicer) because react-select seems to do an
+  // internal `===` comparison against the options list, and thus copies
+  // will fail to appear selected in the dropdown list.
+  return (value && options.find((opt) => opt.value === value)) || null
 }
 
 const yearToOption = (year: number | string): Option => {
@@ -80,23 +63,25 @@ const yearToOption = (year: number | string): Option => {
   }
 }
 
-const filterOrder: Record<RegulationSearchKeys, number> = {
+const filterOrder: Record<RegulationSearchKey, number> = {
   q: 1,
   year: 2,
   yearTo: 3,
   rn: 4,
   ch: 5,
-  all: 6,
+  iA: 6,
+  iR: 7,
+  page: 8,
 }
 
 /** Returns a copy of the original query with any falsy values filtered out  */
 const cleanQuery = (
-  query: Record<RegulationSearchKeys, string | null | undefined>,
+  query: Record<RegulationSearchKey, string | null | undefined>,
 ) =>
   Object.entries(query)
     .sort((a, b) => {
-      const keyA = a[0] as RegulationSearchKeys
-      const keyB = b[0] as RegulationSearchKeys
+      const keyA = a[0] as RegulationSearchKey
+      const keyB = b[0] as RegulationSearchKey
       return (filterOrder[keyA] || 999) > (filterOrder[keyB] || 999) ? 1 : -1
     })
     .reduce<Record<string, string>>((newQuery, [key, value]) => {
@@ -114,6 +99,8 @@ export type RegulationsSearchSectionProps = {
   ministries: ReadonlyArray<RegulationMinistry>
   lawChapters: Readonly<RegulationLawChapterTree>
   texts: RegulationHomeTexts
+  page?: number
+  anchorRef: React.RefObject<HTMLDivElement>
 }
 
 export const RegulationsSearchSection = (
@@ -122,8 +109,6 @@ export const RegulationsSearchSection = (
   const filters = props.searchFilters
   const txt = useNamespace(props.texts)
   const router = useRouter()
-
-  const [showExtraSearch, setShowExtraSearch] = useState(false)
 
   const yearOptions = useMemo(() => {
     return [emptyOption(txt('searchYearEmptyOption'))].concat(
@@ -148,13 +133,25 @@ export const RegulationsSearchSection = (
     }
   }, [yearOptions, filters.year])
 
+  useEffect(() => {
+    doSearch('page', props.page && props.page > 1 ? String(props.page) : '')
+    const anchorTop =
+      (props?.anchorRef?.current?.getBoundingClientRect()?.top || 0) +
+      window.scrollY
+    setTimeout(() => {
+      window.scrollTo({
+        top: props.page && props.page > 1 ? anchorTop - 30 : 0,
+        behavior: 'smooth',
+      })
+    }, 100)
+  }, [props.page])
+
   const ministryOptions = useMemo(() => {
     return [emptyOption(txt('searchMinistryEmptyOption'))].concat(
       props.ministries.map(
         (m): Option => ({
           value: m.slug,
-          label:
-            m.name + (m.current ? '' : ` ${txt('searchLegacyMinistrySuffix')}`),
+          label: m.name,
         }),
       ),
     ) as ReadonlyArray<Option>
@@ -171,7 +168,7 @@ export const RegulationsSearchSection = (
           opts = opts.concat(
             subChapters.map(({ name, slug }) => ({
               value: slug,
-              label: `    ${name}`,
+              label: '    ' + name,
             })),
           )
           return opts
@@ -181,160 +178,276 @@ export const RegulationsSearchSection = (
     [props.lawChapters],
   )
 
-  const doSearch = (key: RegulationSearchKeys, value: string) => {
+  const doSearch = (
+    keyOrFilters: RegulationSearchKey | Partial<RegulationSearchFilters>,
+    value?: string,
+  ) => {
+    let newFilters =
+      typeof keyOrFilters !== 'string'
+        ? { ...filters, ...keyOrFilters }
+        : { ...filters, [keyOrFilters]: value }
+
+    // reset page to 1 if any search params change
+    if (keyOrFilters !== 'page') {
+      newFilters = { ...newFilters, page: '' }
+    }
     router.replace({
       pathname: router.pathname,
-      query: cleanQuery({
-        ...props.searchFilters,
-        [key]: value || undefined,
-      }),
+      query: cleanQuery(newFilters),
     })
   }
+
   const clearSearch = () => {
+    setFilterValue('')
     router.replace({
+      pathname: router.pathname,
       query: null,
     })
   }
 
-  const [filterValue, setFilterValue] = useState(filters.q)
-  const textFilter = (q: string) => {
-    setFilterValue(q)
+  const clearAdvancedFields = () => {
+    router.replace({
+      pathname: router.pathname,
+      query: filterValue ? { q: filterValue } : undefined,
+    })
   }
 
-  return (
-    <Filter
-      labelClear={txt('searchClearLabel')}
-      labelOpen={txt('searchOpenLabel')}
-      labelClose={txt('searchCloseLabel')}
-      labelResult={txt('searchResultLabel')}
-      labelTitle={txt('searchTitleLabel')}
-      onFilterClear={clearSearch}
-    >
-      <GridContainer>
-        <GridRow alignItems="center">
-          <GridColumn
-            span={['1/1', '1/1', '12/12', '11/12', '8/12']}
-            offset={['0', '0', '0', '0', '1/12']}
-            paddingTop={0}
-            paddingBottom={[2, 2, 0]}
-          >
-            <Input
-              id="q"
-              name="q"
-              placeholder={txt('searchQueryLabel')}
-              backgroundColor={['blue', 'blue', 'white']}
-              size="md"
-              icon="search"
-              iconType="outline"
-              value={filterValue}
-              onChange={(event) => textFilter(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  doSearch('q', filterValue)
-                }
-              }}
-              onBlur={() => doSearch('q', filterValue)}
-            />
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn
-            span={['1/1', '1/1', '4/12', '3/12', '2/12']}
-            offset={['0', '0', '0', '0', '1/12']}
-            paddingTop={[0, 0, 4]}
-            paddingBottom={[2, 2, 0]}
-          >
-            <Select
-              name="year"
-              isSearchable
-              label={txt('searchYearLabel', 'Útgáfuár')}
-              placeholder={txt('searchYearPlaceholder', 'Veldu ár')}
-              value={findValueOption(yearOptions, filters.year)}
-              options={yearOptions}
-              onChange={(option) => doSearch('year', getRSValue(option) || '')}
-              size="sm"
-            />
-          </GridColumn>
-          <GridColumn
-            span={['1/1', '1/1', '4/12', '4/12', '3/12']}
-            paddingTop={[0, 0, 4]}
-            paddingBottom={[2, 2, 0]}
-          >
-            <Select
-              name="rn"
-              isSearchable
-              label={txt('searchMinistryLabel', 'Ráðuneyti')}
-              placeholder={txt('searchMinistryPlaceholder', 'Veldu ráðuneyti')}
-              value={findValueOption(ministryOptions, filters.rn)}
-              options={ministryOptions}
-              onChange={(option) => doSearch('rn', getRSValue(option) || '')}
-              size="sm"
-            />
-          </GridColumn>
+  const [filterValue, setFilterValue] = useState(filters.q)
+  useEffect(() => {
+    setFilterValue(filters.q)
+  }, [filters.q])
 
-          <GridColumn
-            span={['1/1', '1/1', '4/12', '4/12', '3/12']}
-            paddingTop={[2, 2, 6]}
-            paddingBottom={[2, 2, 0]}
+  const hasAdvancedValues = !!(
+    filters.year ||
+    filters.rn ||
+    filters.ch ||
+    filters.iA ||
+    filters.iR
+  )
+  const filterHasValues = !!filterValue || hasAdvancedValues
+
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(
+    hasAdvancedValues,
+  )
+  const [
+    advancedSearchTransitioning,
+    setAdvancedSearchTransitioning,
+  ] = useShortState<boolean>(undefined, 600)
+
+  return (
+    <GridContainer>
+      <GridRow>
+        <GridColumn
+          span={['1/1', '1/1', '1/1', '1/1', '10/12']}
+          offset={['0', '0', '0', '0', '1/12']}
+          paddingTop={2}
+          paddingBottom={[4, 4, 4]}
+        >
+          <GridContainer>
+            <GridRow alignItems="center">
+              <GridColumn
+                span={['1/1', '1/1', '10/12', '10/12', '8/10']}
+                paddingTop={0}
+                paddingBottom={[2, 2, 0]}
+              >
+                <Input
+                  id="q"
+                  name="q"
+                  placeholder={txt('searchQueryLabel')}
+                  backgroundColor={['blue', 'blue', 'white']}
+                  size="md"
+                  icon="search"
+                  iconType="outline"
+                  value={filterValue}
+                  onChange={(event) => setFilterValue(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      doSearch('q', filterValue)
+                    }
+                  }}
+                  onBlur={() => doSearch('q', filterValue)}
+                />
+              </GridColumn>
+              <GridColumn
+                span={['1/1', '1/1', '2/12', '2/12', '2/10']}
+                paddingBottom={[2, 2, 0]}
+              >
+                <Button
+                  variant="text"
+                  icon={showAdvancedSearch ? 'chevronUp' : 'chevronDown'}
+                  onClick={() => {
+                    if (hasAdvancedValues) {
+                      clearAdvancedFields()
+                    }
+                    setShowAdvancedSearch(!showAdvancedSearch)
+                    setAdvancedSearchTransitioning(true)
+                  }}
+                >
+                  Ítarleit
+                </Button>
+              </GridColumn>
+            </GridRow>
+
+            <div
+              className={cn(
+                s.advancedFields,
+                advancedSearchTransitioning && s.advancedFieldsTransitioning,
+              )}
+              hidden={!showAdvancedSearch}
+            >
+              {(showAdvancedSearch || advancedSearchTransitioning) && (
+                <>
+                  <GridRow>
+                    <GridColumn
+                      span={['1/1', '1/1', '6/12', '5/12', '4/10']}
+                      paddingTop={[0, 0, 3]}
+                      paddingBottom={[2, 2, 0]}
+                    >
+                      <Checkbox
+                        id="regulations-search-amendments-checkbox"
+                        label={txt(
+                          'searchIncludeAmendingLabel',
+                          'Leita í breytingareglugerðum',
+                        )}
+                        checked={!!filters.iA}
+                        onChange={() =>
+                          doSearch('iA', !filters.iA ? 'true' : '')
+                        }
+                      />
+                    </GridColumn>
+                    <GridColumn
+                      span={['1/1', '1/1', '6/12', '5/12', '4/10']}
+                      paddingTop={[0, 0, 3]}
+                      paddingBottom={[2, 2, 0]}
+                    >
+                      <Checkbox
+                        id="regulations-search-repelled-checkbox"
+                        label={txt(
+                          'searchIncludeRepelledLabel',
+                          'Leita í brottföllnum reglugerðum',
+                        )}
+                        checked={!!filters.iR}
+                        onChange={() =>
+                          doSearch({
+                            iR: !filters.iR ? 'true' : '',
+                            rn: undefined,
+                          })
+                        }
+                      />
+                    </GridColumn>
+                  </GridRow>
+                  <GridRow>
+                    <GridColumn
+                      span={['1/1', '1/1', '6/12', '5/12', '4/10']}
+                      paddingTop={[0, 0, 4]}
+                      paddingBottom={[2, 2, 0]}
+                    >
+                      <Select
+                        name="rn"
+                        isSearchable
+                        label={txt('searchMinistryLabel', 'Ráðuneyti')}
+                        placeholder={txt(
+                          'searchMinistryPlaceholder',
+                          'Veldu ráðuneyti',
+                        )}
+                        value={findValueOption(ministryOptions, filters.rn)}
+                        options={ministryOptions}
+                        onChange={(option) =>
+                          doSearch({ rn: getRSValue(option), iR: undefined })
+                        }
+                        size="sm"
+                      />
+                    </GridColumn>
+                    <GridColumn
+                      span={['1/1', '1/1', '6/12', '5/12', '4/10']}
+                      paddingTop={[0, 0, 4]}
+                      paddingBottom={[2, 2, 0]}
+                    >
+                      <Select
+                        name="ch"
+                        isSearchable
+                        label={txt('searchChapterLabel', 'Kafli í lagasafni')}
+                        placeholder={txt(
+                          'searchChapterPlaceholder',
+                          'Veldu kafla',
+                        )}
+                        value={findValueOption(lawChapterOptions, filters.ch)}
+                        options={lawChapterOptions}
+                        onChange={(option) =>
+                          doSearch('ch', getRSValue(option))
+                        }
+                        size="sm"
+                      />
+                    </GridColumn>
+                  </GridRow>
+
+                  <GridRow>
+                    <GridColumn
+                      span={['1/1', '1/1', '4/12', '3/12', '2/10']}
+                      paddingTop={[0, 0, 4]}
+                      paddingBottom={[2, 2, 0]}
+                    >
+                      <Select
+                        name="year"
+                        isSearchable
+                        label={txt('searchYearLabel', 'Útgáfuár')}
+                        placeholder={txt('searchYearPlaceholder', 'Veldu ár')}
+                        value={findValueOption(yearOptions, filters.year)}
+                        options={yearOptions}
+                        onChange={(option) => {
+                          const year = getRSValue(option)
+                          const yearTo = !year ? undefined : filters.yearTo // clear yearTo along with year
+                          doSearch({ year, yearTo })
+                        }}
+                        size="sm"
+                      />
+                    </GridColumn>
+                    {filters.year && (
+                      <GridColumn
+                        span={['1/1', '1/1', '4/12', '3/12', '2/10']}
+                        paddingTop={[0, 0, 4]}
+                        paddingBottom={[2, 2, 0]}
+                      >
+                        <Select
+                          name="yearTo"
+                          isSearchable
+                          label={txt('searchYearToLabel', 'Tímabili til')}
+                          placeholder={txt(
+                            'searchYearToPlaceholder',
+                            'Veldu ár',
+                          )}
+                          value={findValueOption(yearToOptions, filters.yearTo)}
+                          options={yearToOptions}
+                          onChange={(option) =>
+                            doSearch('yearTo', getRSValue(option))
+                          }
+                          size="sm"
+                        />
+                      </GridColumn>
+                    )}
+                  </GridRow>
+                </>
+              )}
+            </div>
+          </GridContainer>
+          <Box
+            marginTop={2}
+            className={s.clearSearch}
+            hidden={!filterHasValues}
           >
             <Button
+              icon="reload"
+              type="button"
+              size="small"
               variant="text"
-              icon={showExtraSearch ? 'chevronUp' : 'chevronDown'}
-              onClick={() => setShowExtraSearch(!showExtraSearch)}
+              disabled={!filterHasValues}
+              onClick={() => clearSearch()}
             >
-              Ítarleit
+              {txt('searchClearLabel')}
             </Button>
-          </GridColumn>
-        </GridRow>
-        {showExtraSearch && (
-          <GridRow>
-            <GridColumn
-              span={['1/1', '1/1', '4/12', '3/12', '2/12']}
-              offset={['0', '0', '0', '0', '1/12']}
-              paddingTop={[0, 0, 4]}
-              paddingBottom={[2, 2, 0]}
-            >
-              <Select
-                name="yearTo"
-                isSearchable
-                label={txt('searchYearToLabel', 'Tímabili til')}
-                placeholder={txt('searchYearToPlaceholder', 'Veldu ár')}
-                value={findValueOption(yearToOptions, filters.yearTo)}
-                options={yearToOptions}
-                onChange={(option) =>
-                  doSearch('yearTo', getRSValue(option) || '')
-                }
-                size="sm"
-              />
-            </GridColumn>
-            <GridColumn
-              span={['1/1', '1/1', '4/12', '4/12', '3/12']}
-              paddingTop={[0, 0, 4]}
-              paddingBottom={[2, 2, 0]}
-            >
-              <Select
-                name="ch"
-                isSearchable
-                label={txt('searchChapterLabel', 'Kafli í lagasafni')}
-                placeholder={txt('searchChapterPlaceholder', 'Veldu kafla')}
-                value={findValueOption(lawChapterOptions, filters.ch)}
-                options={lawChapterOptions}
-                onChange={(option) => doSearch('ch', getRSValue(option) || '')}
-                size="sm"
-              />
-            </GridColumn>
-          </GridRow>
-        )}
-      </GridContainer>
-
-      {/*
-      // TODO: awaiting feedback from client
-      <Checkbox
-        id="regulations-search-amendments-checkbox"
-        label={txt('searchIncludeAmendingLabel')}
-        checked={!!filters.all}
-        onChange={() => doSearch('all', !filters.all ? 'y' : '')}
-      />*/}
-    </Filter>
+          </Box>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }

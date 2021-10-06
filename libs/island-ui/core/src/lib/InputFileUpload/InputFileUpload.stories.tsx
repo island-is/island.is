@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { InputFileUpload, fileToObject, UploadFile } from './InputFileUpload'
@@ -9,7 +8,6 @@ import { ContentBlock } from '../ContentBlock/ContentBlock'
 export default {
   title: 'Form/InputFileUpload',
   component: InputFileUpload,
-  decorators: [withDesign],
   parameters: withFigma('InputFileUpload'),
 }
 

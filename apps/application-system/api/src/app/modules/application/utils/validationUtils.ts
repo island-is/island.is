@@ -12,10 +12,10 @@ import {
 } from '@nestjs/common'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { Unwrap } from '@island.is/shared/types'
+import { logger } from '@island.is/logging'
 
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
-import { logger } from '@island.is/logging'
 
 const isRunningOnProductionEnvironment =
   environment.production === true &&
@@ -155,6 +155,7 @@ export async function validateIncomingAnswers(
   try {
     await helper.applyAnswerValidators(newAnswers, formatMessage)
   } catch (error) {
+    logger.error('Failed to validate answers', error)
     throw new HttpException(error, 403)
   }
 

@@ -12,9 +12,10 @@ const EmployeeClaims = () => {
       intro={formatMessage({
         id: 'sp.employee-claims:intro',
         defaultMessage:
-          'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
+          'Hér er að finna opinber gjöld utan staðgreiðslu sem dregin eru af starfsmönnum.',
       })}
       listPath="employeeClaims"
+      defaultDateRangeMonths={12}
     />
   )
 }

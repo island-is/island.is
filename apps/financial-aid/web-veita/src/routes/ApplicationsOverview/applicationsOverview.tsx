@@ -1,13 +1,18 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { Text, Box, LoadingDots } from '@island.is/island-ui/core'
+import React, { useEffect, useState } from 'react'
+import { Text, Box, Link } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import {
-  AdminLayout,
+  ApplicationOverviewSkeleton,
   ApplicationsTable,
+  LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 
-import { ApplicationState, Application } from '@island.is/financial-aid/shared'
+import {
+  ApplicationState,
+  Application,
+  getStateUrlFromRoute,
+} from '@island.is/financial-aid/shared/lib'
 
 import { GetApplicationsQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
@@ -29,17 +34,15 @@ export interface TableHeadersProps {
   title: string
 }
 
-export interface sortByProps {
-  selected: 'modified' | 'state'
-  sorted: 'asc' | 'dsc'
-}
-
 export const ApplicationsOverview = () => {
   const router = useRouter()
 
   const { data, error, loading } = useQuery<ApplicationsProvider>(
     GetApplicationsQuery,
     {
+      variables: {
+        input: { stateUrl: getStateUrlFromRoute[router.pathname] },
+      },
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     },
@@ -49,64 +52,56 @@ export const ApplicationsOverview = () => {
     (i) => i.link === router.pathname,
   )
 
-  const [sortBy, setSortBy] = useState<sortByProps>({
-    selected: 'modified',
-    sorted: 'asc',
-  })
-
   const [applications, setApplications] = useState<Application[]>()
 
   useEffect(() => {
     if (data?.applications) {
-      setApplications(
-        data.applications
-          .filter((item) =>
-            currentNavigationItem?.applicationState.includes(item?.state),
-          )
-          .sort((a, b) =>
-            a[sortBy.selected] > b[sortBy.selected]
-              ? -1
-              : a[sortBy.selected] < b[sortBy.selected]
-              ? 1
-              : 0,
-          ),
-      )
+      setApplications(data.applications)
     }
-  }, [data, router, sortBy])
+  }, [data, router])
 
   if (currentNavigationItem) {
     return (
-      <AdminLayout>
-        <Box className={`contentUp delay-25`} key={currentNavigationItem.label}>
-          <Text as="h1" variant="h1" marginBottom={[2, 2, 4]} marginTop={15}>
+      <LoadingContainer
+        isLoading={loading}
+        loader={<ApplicationOverviewSkeleton />}
+      >
+        <Box
+          className={`contentUp delay-25`}
+          marginTop={15}
+          key={currentNavigationItem.label}
+        >
+          <Text as="h1" variant="h1" marginBottom={[2, 2, 4]}>
             {currentNavigationItem.label}
           </Text>
         </Box>
 
         {applications && (
           <ApplicationsTable
-            className={`contentUp delay-50`}
             headers={currentNavigationItem.headers}
-            setSortBy={(filter) => {
-              if (filter === 'modified' || filter === 'state') {
-                setSortBy({ ...sortBy, selected: filter })
-              }
-            }}
-            sortBy={sortBy}
             applications={applications}
+            setApplications={setApplications}
           />
         )}
 
-        {loading && <LoadingDots />}
-      </AdminLayout>
+        {error && (
+          <div>
+            Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að
+            þessu upplýsingum?{' '}
+          </div>
+        )}
+      </LoadingContainer>
     )
   }
   return (
     <div>
-      <Box className={`contentUp delay-25`}>
+      <Box marginTop={15} className={`contentUp delay-25`}>
         <Text as="h1" variant="h1" marginBottom={[2, 2, 4]} marginTop={4}>
-          Enginn umsókn fundinn
+          Hefuru villst?
         </Text>
+        <Link href="/nymal" color="blue600">
+          Kíktu á nýmál
+        </Link>
       </Box>
     </div>
   )

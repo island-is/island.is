@@ -1,5 +1,4 @@
 import { Injectable, Inject } from '@nestjs/common'
-import { Response } from 'node-fetch'
 import { uuid } from 'uuidv4'
 import * as kennitala from 'kennitala'
 import flatten from 'lodash/flatten'
@@ -7,9 +6,8 @@ import flatten from 'lodash/flatten'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   MMSApi,
-  LanguageGrade,
-  MathGrade,
-  BaseGrade,
+  Grade,
+  GradeTypeResult,
   GradeResult,
 } from '@island.is/clients/mms'
 import {
@@ -66,22 +64,59 @@ export class EducationService {
     })
   }
 
-  async getFamily(nationalId: string) {
-    const family = await this.nationalRegistryApi.getMyFamily(nationalId)
-    return family.filter(
-      (familyMember) =>
-        nationalId === familyMember.Kennitala ||
-        (!['1', '2', '7'].includes(familyMember.Kyn) &&
-          kennitala.info(familyMember.Kennitala).age < ADULT_AGE_LIMIT),
+  public isChild(familyMember: ISLFjolskyldan): boolean {
+    return (
+      !['1', '2', '7'].includes(familyMember.Kyn) &&
+      kennitala.info(familyMember.Kennitala).age < ADULT_AGE_LIMIT
     )
+  }
+
+  public canView(
+    viewer: ISLFjolskyldan,
+    familyMember: ISLFjolskyldan,
+  ): boolean {
+    if (familyMember.Kennitala === viewer.Kennitala) {
+      return true
+    }
+
+    const viewerIsAnAdult = !this.isChild(viewer)
+
+    return this.isChild(familyMember) && viewerIsAnAdult
+  }
+
+  async getFamily(nationalId: string): Promise<ISLFjolskyldan[]> {
+    const family = await this.nationalRegistryApi.getMyFamily(nationalId)
+    const myself = family.find(({ Kennitala }) => Kennitala === nationalId)
+
+    if (!myself) {
+      return []
+    }
+
+    // Note: we are explicitly sorting by name & national id, since we will
+    // use the index within the family to link to and select the correct
+    // family memember, so that indexes are consistant no matter how they
+    // are displayed or fetched.
+    // They also don't need to be absolute indexes, only indexes that are
+    // unique from the point of view of each viewer.
+
+    return family
+      .filter((familyMember) => this.canView(myself, familyMember))
+      .sort((a, b) => {
+        const nameDiff = a.Nafn.localeCompare(b.Nafn)
+
+        return nameDiff === 0
+          ? a.Kennitala.localeCompare(b.Kennitala)
+          : nameDiff
+      })
   }
 
   async getExamFamilyOverviews(
     nationalId: string,
   ): Promise<ExamFamilyOverview[]> {
     const family = await this.getFamily(nationalId)
+
     const examFamilyOverviews = await Promise.all(
-      family.map(async (familyMember) => {
+      family.map(async (familyMember, index) => {
         const studentAssessment = await this.mmsApi.getStudentAssessment(
           familyMember.Kennitala,
         )
@@ -93,11 +128,9 @@ export class EducationService {
         }
 
         const examDates = flatten(
-          studentAssessment.einkunnir.map((einkunn) => [
-            einkunn.islenska?.dagsetning,
-            einkunn.enska?.dagsetning,
-            einkunn.staerdfraedi?.dagsetning,
-          ]),
+          studentAssessment.einkunnir.map((einkunn) =>
+            einkunn.namsgreinar.map((namsgrein) => namsgrein.dagsetning),
+          ),
         ).filter(Boolean) as string[]
 
         return {
@@ -107,45 +140,48 @@ export class EducationService {
           organizationType: 'Menntamálastofnun',
           organizationName: 'Samræmd Könnunarpróf',
           yearInterval: getYearInterval(examDates),
+          familyIndex: index,
         }
       }),
     )
     return examFamilyOverviews.filter(Boolean) as ExamFamilyOverview[]
   }
 
-  private mapGrade(grade: GradeResult) {
+  private mapGrade(grade?: GradeResult) {
+    if (!grade) {
+      return undefined
+    }
     return {
-      grade: grade.radeinkunn,
+      grade: grade.einkunn,
+      label: grade.heiti,
       weight: grade.vaegi,
     }
   }
 
-  private mapBaseGrade(grade: BaseGrade) {
+  private mapGradeType(grade?: GradeTypeResult) {
+    if (!grade) {
+      return undefined
+    }
     return {
-      grade: grade.samtals.radeinkunn,
+      label: grade.heiti,
+      serialGrade: this.mapGrade(grade.radeinkunn),
+      elementaryGrade: this.mapGrade(grade.grunnskolaeinkunn),
+    }
+  }
+
+  private mapCourseGrade(grade: Grade): any {
+    if (!grade) {
+      return undefined
+    }
+
+    return {
+      label: grade.heiti,
       competence: grade.haefnieinkunn,
       competenceStatus: grade.haefnieinkunnStada,
-      progressText: grade.framfaraTexti,
-    }
-  }
-
-  private mapLanguageGrade(grade: LanguageGrade) {
-    return {
-      ...this.mapBaseGrade(grade),
-      reading: this.mapGrade(grade.lesskilningur),
-      grammar: this.mapGrade(grade.malnotkun),
-    }
-  }
-
-  private mapMathGrade(grade: MathGrade) {
-    return {
-      ...this.mapBaseGrade(grade),
-      wordAndNumbers: grade.ordOgTalnadaemi,
-      calculation: this.mapGrade(grade.reikningurOgAdgerdir),
-      geometry: this.mapGrade(grade.rumfraedi),
-      ratiosAndPercentages: this.mapGrade(grade.hlutfollOgProsentur),
-      algebra: this.mapGrade(grade.algebra),
-      numberComprehension: this.mapGrade(grade.tolurOgTalnaskilningur),
+      gradeSum: this.mapGradeType(grade.samtals),
+      progressText: this.mapGrade(grade.framfaraTexti),
+      grades: grade.einkunnir.map((gradeType) => this.mapGradeType(gradeType)),
+      wordAndNumbers: this.mapGrade(grade.ordOgTalnadaemi),
     }
   }
 
@@ -153,16 +189,15 @@ export class EducationService {
     const studentAssessment = await this.mmsApi.getStudentAssessment(
       familyMember.Kennitala,
     )
+
     return {
       id: `EducationExamResult${familyMember.Kennitala}`,
       fullName: familyMember.Nafn,
       grades: studentAssessment.einkunnir.map((einkunn) => ({
         studentYear: einkunn.bekkur,
-        icelandicGrade:
-          einkunn.islenska && this.mapLanguageGrade(einkunn.islenska),
-        englishGrade: einkunn.enska && this.mapLanguageGrade(einkunn.enska),
-        mathGrade:
-          einkunn.staerdfraedi && this.mapMathGrade(einkunn.staerdfraedi),
+        courses: einkunn.namsgreinar.map((namsgrein) =>
+          this.mapCourseGrade(namsgrein),
+        ),
       })),
     }
   }

@@ -1,6 +1,4 @@
 import React, { useState } from 'react'
-import { number } from '@storybook/addon-knobs'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { Pagination } from './Pagination'
@@ -9,13 +7,11 @@ import { Box } from '../Box/Box'
 export default {
   title: 'Navigation/Pagination',
   component: Pagination,
-  decorators: [withDesign],
   parameters: withFigma('Pagination'),
 }
 
-export const Default = () => {
+export const Default = ({ totalPages }) => {
   const [page, setPage] = useState(10)
-  const totalPages = number('Total pages', 20)
 
   return (
     <Pagination
@@ -32,4 +28,8 @@ export const Default = () => {
       )}
     />
   )
+}
+
+Default.args = {
+  totalPages: 20,
 }

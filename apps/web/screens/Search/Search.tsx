@@ -1,12 +1,4 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React, {
-  useRef,
-  useEffect,
-  useState,
-  FC,
-  useLayoutEffect,
-  useMemo,
-} from 'react'
+import React, { useRef, useEffect, useState, FC, useMemo } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
@@ -51,7 +43,6 @@ import {
   GetNamespaceQuery,
   Article,
   LifeEventPage,
-  AboutPage,
   News,
   SearchableContentTypes,
   SearchableTags,
@@ -63,7 +54,6 @@ import {
 import { Image } from '@island.is/web/graphql/schema'
 import * as styles from './Search.treat'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { typenameResolver } from '@island.is/web/utils/typenameResolver'
 import { useLazyQuery } from '@apollo/client'
 
 const PERPAGE = 10
@@ -165,15 +155,10 @@ const Search: Screen<CategoryProps> = ({
   const getLabels = (item) => {
     const labels = []
     switch (
-      item.__typename as LifeEventPage['__typename'] &
-        News['__typename'] &
-        AboutPage['__typename']
+      item.__typename as LifeEventPage['__typename'] & News['__typename']
     ) {
       case 'LifeEventPage':
         labels.push(n('lifeEvent'))
-        break
-      case 'AboutPage':
-        labels.push(n('aboutPageTitle'))
         break
       case 'News':
         labels.push(n('newsTitle'))
@@ -213,7 +198,6 @@ const Search: Screen<CategoryProps> = ({
   const searchResultsItems = (searchResults.items as Array<
     Article &
       LifeEventPage &
-      AboutPage &
       News &
       AdgerdirPage &
       SubArticle &
@@ -221,15 +205,8 @@ const Search: Screen<CategoryProps> = ({
   >).map((item) => ({
     title: item.title,
     parentTitle: item.parent?.title,
-    description:
-      item.intro ??
-      item.seoDescription ??
-      item.description ??
-      item.parent?.intro,
-    link: linkResolver(
-      typenameResolver(item.__typename),
-      item?.url ?? item.slug.split('/'),
-    ),
+    description: item.intro ?? item.description ?? item.parent?.intro,
+    link: linkResolver(item.__typename, item?.url ?? item.slug.split('/')),
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
@@ -286,7 +263,6 @@ const Search: Screen<CategoryProps> = ({
   }
 
   const isServer = typeof window === 'undefined'
-  console.log('sidebarDataTypes', sidebarDataTypes)
 
   return (
     <>
@@ -532,7 +508,6 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     types = [
       'webArticle' as SearchableContentTypes,
       'webLifeEventPage' as SearchableContentTypes,
-      'webAboutPage' as SearchableContentTypes,
       'webAdgerdirPage' as SearchableContentTypes,
       'webSubArticle' as SearchableContentTypes,
     ]

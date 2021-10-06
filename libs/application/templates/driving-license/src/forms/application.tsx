@@ -1,5 +1,3 @@
-import React from 'react'
-
 import {
   buildForm,
   buildDescriptionField,
@@ -7,32 +5,134 @@ import {
   buildSection,
   buildExternalDataProvider,
   buildKeyValueField,
-  buildDataProviderItem,
   buildSubmitField,
   buildCheckboxField,
   buildCustomField,
   buildSelectField,
   buildDividerField,
+  buildRadioField,
   Form,
   FormModes,
   DefaultEvents,
   StaticText,
+  buildSubSection,
+  getValueViaPath,
+  buildDataProviderItem,
+  FormValue,
 } from '@island.is/application/core'
 import { NationalRegistryUser, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
+import { QualityPhotoData } from '../utils'
+import { StudentAssessment } from '@island.is/api/schema'
+import { NO, YES } from '../lib/constants'
+
+// const ALLOW_FAKE_DATA = todo: serverside feature flag
+const ALLOW_FAKE_DATA = false
+
+const allowFakeCondition = (result = YES) => (answers: FormValue) =>
+  getValueViaPath(answers, 'fakeData.useFakeData') === result
+
+const needsHealthCertificateCondition = (result = YES) => (
+  answers: FormValue,
+) => {
+  return Object.values(answers?.healthDeclaration || {}).includes(result)
+}
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
   title: m.applicationName,
   mode: FormModes.APPLYING,
   renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'externalData',
       title: m.externalDataSection,
       children: [
+        ...(ALLOW_FAKE_DATA
+          ? [
+              buildSubSection({
+                id: 'fakeData',
+                title: 'Gervigögn',
+                children: [
+                  buildMultiField({
+                    id: 'shouldFake',
+                    title: 'Gervigögn',
+                    children: [
+                      buildDescriptionField({
+                        id: 'gervigognDesc',
+                        title: 'Viltu nota gervigögn?',
+                        titleVariant: 'h5',
+                        // Note: text is rendered by a markdown component.. and when
+                        // it sees the indented spaces it seems to assume this is code
+                        // and so it will wrap the text in a <code> block when the double
+                        // spaces are not removed.
+                        description: `
+                          Ath. gervigögn eru eingöngu notuð í stað þess að sækja
+                          forsendugögn í staging umhverfi (dev x-road) hjá RLS, auk þess
+                          sem hægt er að senda inn umsóknina í "þykjó" - þeas. allt hagar sér
+                          eins nema að RLS tekur ekki við umsókninni.
+
+                          Öll önnur gögn eru ekki gervigögn og er þetta eingöngu gert
+                          til að hægt sé að prófa ferlið án þess að vera með tilheyrandi
+                          ökuréttindi í staging grunni RLS.
+                        `.replace(/\s{2}/g, ''),
+                      }),
+                      buildRadioField({
+                        id: 'fakeData.useFakeData',
+                        title: '',
+                        width: 'half',
+                        options: [
+                          {
+                            value: YES,
+                            label: 'Já',
+                          },
+                          {
+                            value: NO,
+                            label: 'Nei',
+                          },
+                        ],
+                      }),
+                      buildRadioField({
+                        id: 'fakeData.currentLicense',
+                        title: 'Réttindi umsækjanda',
+                        width: 'half',
+                        condition: allowFakeCondition(YES),
+                        options: [
+                          {
+                            value: 'student',
+                            label: 'Nemi',
+                          },
+                          {
+                            value: 'temp',
+                            label: 'Bráðabyrgða',
+                          },
+                        ],
+                      }),
+                      buildRadioField({
+                        id: 'fakeData.qualityPhoto',
+                        title: 'Gervimynd eða enga mynd?',
+                        width: 'half',
+                        condition: allowFakeCondition(YES),
+                        options: [
+                          {
+                            value: 'yes',
+                            label: 'Mynd',
+                          },
+                          {
+                            value: 'no',
+                            label: 'Engin mynd',
+                          },
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ]
+          : []),
         buildExternalDataProvider({
           title: m.externalDataTitle,
           id: 'approveExternalData',
@@ -52,16 +152,26 @@ export const application: Form = buildForm({
               subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
+              id: 'qualityPhoto',
+              type: 'QualityPhotoProvider',
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
               id: 'eligibility',
               type: 'EligibilityProvider',
               title: m.infoFromLicenseRegistry,
               subTitle: m.confirmationStatusOfEligability,
             }),
             buildDataProviderItem({
+              id: 'studentAssessment',
+              type: 'DrivingAssessmentProvider',
+              title: '',
+            }),
+            buildDataProviderItem({
               id: 'juristictions',
               type: 'JuristictionProvider',
               title: '',
-              subTitle: '',
             }),
             buildDataProviderItem({
               id: 'payment',
@@ -84,6 +194,82 @@ export const application: Form = buildForm({
               title: m.eligibilityRequirementTitle,
               component: 'EligibilitySummary',
               id: 'eligsummary',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'photoStep',
+      title: m.applicationQualityPhotoTitle,
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: m.qualityPhotoTitle,
+          condition: (_, externalData) => {
+            return (
+              (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
+              true
+            )
+          },
+          children: [
+            buildCustomField({
+              title: m.eligibilityRequirementTitle,
+              component: 'QualityPhoto',
+              id: 'qphoto',
+            }),
+            buildRadioField({
+              id: 'willBringQualityPhoto',
+              title: '',
+              disabled: false,
+              options: [
+                { value: NO, label: m.qualityPhotoNoAcknowledgement },
+                { value: YES, label: m.qualityPhotoAcknowledgement },
+              ],
+            }),
+            buildCustomField({
+              id: 'photdesc',
+              title: '',
+              component: 'Bullets',
+              condition: (answers) => {
+                try {
+                  return answers.willBringQualityPhoto === YES
+                } catch (error) {
+                  return false
+                }
+              },
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'info',
+          title: m.qualityPhotoTitle,
+          condition: (_, externalData) => {
+            return (
+              (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
+              false
+            )
+          },
+          children: [
+            buildCustomField({
+              title: m.eligibilityRequirementTitle,
+              component: 'QualityPhoto',
+              id: 'qphoto',
+            }),
+            buildCustomField({
+              id: 'photodescription',
+              title: '',
+              component: 'Bullets',
+            }),
+            buildCheckboxField({
+              id: 'willBringQualityPhoto',
+              title: '',
+              options: [
+                {
+                  value: YES,
+                  label: m.qualityPhotoAcknowledgement,
+                },
+              ],
             }),
           ],
         }),
@@ -324,31 +510,40 @@ export const application: Form = buildForm({
             buildDividerField({}),
             buildKeyValueField({
               label: m.overviewTeacher,
-              value: ({ answers: { teacher } }) => teacher as string,
+              width: 'half',
+              value: ({ externalData: { studentAssessment } }) =>
+                (studentAssessment.data as StudentAssessment).teacherName,
             }),
-            buildDividerField({}),
+            buildDividerField({
+              condition: (answers) => {
+                return Object.values(answers?.healthDeclaration || []).includes(
+                  YES,
+                )
+              },
+            }),
+            buildDescriptionField({
+              id: 'bringalong',
+              title: m.overviewBringAlongTitle,
+              titleVariant: 'h4',
+              description: '',
+              condition: needsHealthCertificateCondition(YES),
+            }),
             buildCheckboxField({
-              id: 'willBringAlongData',
-              title: m.overviewBringData,
-              options: (app) => {
-                const options = [
-                  {
-                    value: 'picture',
-                    label: m.qualityPhotoAcknowledgement,
-                  },
-                ]
-                if (
-                  Object.values(app.answers.healthDeclaration).includes('yes')
-                ) {
-                  return [
-                    {
-                      value: 'certificate',
-                      label: m.overviewBringCertificateData,
-                    },
-                    ...options,
-                  ]
+              id: 'certificate',
+              title: '',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: m.overviewBringCertificateData,
+                },
+              ],
+              condition: (answers) => {
+                try {
+                  return Object.values(answers?.healthDeclaration).includes(YES)
+                } catch (error) {
+                  return false
                 }
-                return options
               },
             }),
             buildDividerField({}),

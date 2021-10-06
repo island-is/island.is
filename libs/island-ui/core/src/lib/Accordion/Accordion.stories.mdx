@@ -4,10 +4,9 @@ import {
   Canvas,
   ArgsTable,
   Description,
-} from '@storybook/addon-docs/blocks'
-import { withDesign } from 'storybook-addon-designs'
+} from '@storybook/addon-docs'
 
-import { withFigma, DescriptionFigma } from '../../utils/withFigma'
+import { DescriptionFigma } from '../../utils/withFigma'
 import { Accordion } from './Accordion'
 import {
   AccordionItem,
@@ -19,12 +18,7 @@ import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { Stack } from '../Stack/Stack'
 
-<Meta
-  title="Components/Accordion"
-  component={Accordion}
-  decorators={[withDesign]}
-  parameters={withFigma('Accordion')}
-/>
+<Meta title="Components/Accordion" component={Accordion} />
 
 # Accordion
 
@@ -34,8 +28,6 @@ The **Accordion** component has three different type of items that can be render
 
 - `<AccordionItem />` rendered inside the **Accordion** component
 - `<AccordionCard />` and `<SidebarAccordion />` rendered as standalone
-
-<br />
 
 ### Basic usage
 

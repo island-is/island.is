@@ -1,31 +1,43 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { ApplicationEventModel } from './models'
 
-import { CreateApplicationEventDto } from './dto'
+import { CreateApplicationEventDto } from '../application/dto'
+
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { ApplicationService } from '../application'
 
 @Injectable()
 export class ApplicationEventService {
   constructor(
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
     @InjectModel(ApplicationEventModel)
     private readonly applicationEventModel: typeof ApplicationEventModel,
   ) {}
 
-  getAll(): Promise<ApplicationEventModel[]> {
+  async getAll(): Promise<ApplicationEventModel[]> {
+    this.logger.debug('Getting all application events')
     return this.applicationEventModel.findAll()
   }
 
-  findById(id: string): Promise<ApplicationEventModel | null> {
-    return this.applicationEventModel.findOne({
-      where: { id },
+  async findById(id: string): Promise<ApplicationEventModel[]> {
+    this.logger.debug('Finding application event by id')
+    return this.applicationEventModel.findAll({
+      where: {
+        applicationId: id,
+      },
+      order: [['created', 'DESC']],
     })
   }
 
-  create(
+  async create(
     applicationEvent: CreateApplicationEventDto,
   ): Promise<ApplicationEventModel> {
-    // this.logger.debug('Creating a new application event')
+    this.logger.debug('Creating a new application event')
     return this.applicationEventModel.create(applicationEvent)
   }
 }

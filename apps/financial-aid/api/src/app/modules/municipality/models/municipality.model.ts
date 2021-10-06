@@ -1,9 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import graphqlTypeJson from 'graphql-type-json'
 
-import type { MunicipalitySettings } from '@island.is/financial-aid/shared'
-
-import { Municipality } from '@island.is/financial-aid/shared'
+import { Municipality } from '@island.is/financial-aid/shared/lib'
+import { MunicipalityAidModel } from './municipalityAid.model'
 
 @ObjectType()
 export class MunicipalityModel implements Municipality {
@@ -19,6 +17,9 @@ export class MunicipalityModel implements Municipality {
   @Field()
   readonly name!: string
 
-  @Field(() => graphqlTypeJson)
-  readonly settings!: MunicipalitySettings
+  @Field()
+  readonly homePage?: string
+
+  @Field()
+  readonly aid!: MunicipalityAidModel
 }

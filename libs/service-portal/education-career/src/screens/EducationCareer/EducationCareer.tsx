@@ -16,6 +16,7 @@ function EducationCareer(): JSX.Element {
         intro={defineMessage({
           id: 'sp.education-career:education-career-intro',
           defaultMessage: 'Hér getur þú fundið yfirlit yfir námsmat.',
+          description: 'education career intro',
         })}
         img="./assets/images/educationGrades.svg"
       />

@@ -1,23 +1,15 @@
-import React, { useState, useContext, useMemo } from 'react'
-import {
-  Text,
-  Divider,
-  Box,
-  Button,
-  LoadingDots,
-  Input,
-  Icon,
-} from '@island.is/island-ui/core'
-
-import { useQuery } from '@apollo/client'
-
-import { GetMunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import React, { useState, useContext } from 'react'
+import { Text, Divider, Box } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
-  FormLayout,
+  ContentContainer,
+  Footer,
   CancelModal,
+  Estimation,
+  UserInfo,
+  AllFiles,
+  FormInfo,
+  FormComment,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
@@ -28,54 +20,24 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import format from 'date-fns/format'
-
-import {
-  calculateAidFinalAmount,
-  calulateTaxOfAmount,
-  calulatePersonalTaxAllowanceUsed,
-} from '@island.is/financial-aid-web/osk/src/utils/taxCalculator'
-
-import {
-  Municipality,
-  NavigationProps,
-  getHomeCircumstances,
-  HomeCircumstances,
-  Employment,
-  getEmploymentStatus,
-  formatPhoneNumber,
-  formatNationalId,
-  aidCalculator,
-} from '@island.is/financial-aid/shared'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/useApplication'
 
-interface MunicipalityData {
-  municipality: Municipality
-}
+import {
+  Employment,
+  getEmploymentStatus,
+  getHomeCircumstances,
+  HomeCircumstances,
+} from '@island.is/financial-aid/shared/lib'
 
 const SummaryForm = () => {
-  const currentYear = format(new Date(), 'yyyy')
-
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
-
-  const allFiles = form.hasIncome
-    ? form.taxReturnFiles
-    : form.taxReturnFiles.concat(form.incomeFiles)
 
   const { user } = useContext(UserContext)
 
   const [isVisible, setIsVisible] = useState(false)
-
-  const { data, error, loading } = useQuery<MunicipalityData>(
-    GetMunicipalityQuery,
-    {
-      variables: { input: { id: 'hfj' } },
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
 
   const [formError, setFormError] = useState({
     status: false,
@@ -84,39 +46,9 @@ const SummaryForm = () => {
 
   const { createApplication } = useApplication()
 
-  const handleNextButtonClick = async () => {
-    if (!form || !user) {
-      return
-    }
-    try {
-      await createApplication(form, user, allFiles).then(() => {
-        if (navigation?.nextUrl) {
-          router.push(navigation.nextUrl)
-        }
-      })
-    } catch (e) {
-      setFormError({
-        status: true,
-        message: 'Obobb einhvað fór úrskeiðis',
-      })
-    }
-  }
-
-  const aidAmount = useMemo(() => {
-    if (form && data && form.homeCircumstances) {
-      return aidCalculator(
-        form.homeCircumstances,
-        data?.municipality.settings.aid,
-      )
-    }
-  }, [form, data])
-
-  const navigation: NavigationProps = useFormNavigation(
-    router.pathname,
-  ) as NavigationProps
-
-  const overview = [
+  const formInfoOverview = [
     {
+      id: 'homeCircumstances',
       label: 'Búseta',
       url: 'buseta',
       info:
@@ -125,14 +57,18 @@ const SummaryForm = () => {
           : getHomeCircumstances[form?.homeCircumstances as HomeCircumstances],
     },
     {
+      id: 'hasIncome',
       label: 'Tekjur',
       url: 'tekjur',
       info:
-        'Ég hef ' +
-        (form?.incomeFiles ? '' : 'ekki') +
-        'fengið tekjur í þessum mánuði eða síðasta',
+        form?.hasIncome === undefined
+          ? undefined
+          : 'Ég hef ' +
+            (form?.hasIncome ? '' : 'ekki') +
+            'fengið tekjur í þessum mánuði eða síðasta',
     },
     {
+      id: 'employmentCustom',
       label: 'Staða',
       url: 'atvinna',
       info: form?.employmentCustom
@@ -140,261 +76,84 @@ const SummaryForm = () => {
         : getEmploymentStatus[form?.employment as Employment],
     },
     {
+      id: 'emailAddress',
       label: 'Netfang',
       url: 'samskipti',
       info: form?.emailAddress,
     },
   ]
 
+  const handleNextButtonClick = async () => {
+    if (!form || !user) {
+      return
+    }
+
+    await createApplication(form, user, updateForm)
+      .then(() => {
+        if (navigation?.nextUrl) {
+          router.push(navigation.nextUrl)
+        }
+      })
+      .catch((e) => {
+        setFormError({
+          status: true,
+          message: 'Obbobbob einhvað fór úrskeiðis',
+        })
+
+        if (e.networkError?.statusCode === 400) {
+          const findErrorInFormInfo = formInfoOverview.find(
+            (el) => el.info === undefined,
+          )
+
+          if (findErrorInFormInfo) {
+            var element = document.getElementById(findErrorInFormInfo.id)
+            element?.scrollIntoView({
+              behavior: 'smooth',
+            })
+          }
+        }
+      })
+  }
+
+  const navigation: NavigationProps = useFormNavigation(
+    router.pathname,
+  ) as NavigationProps
+
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
-      <FormContentContainer>
+    <>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Yfirlit umsóknar
         </Text>
-        <Box
-          display="flex"
-          alignItems="center"
-          flexWrap="wrap"
-          marginBottom={1}
-        >
-          <Box marginRight={1}>
-            <Text as="h2" variant="h3" marginBottom={1}>
-              Áætluð aðstoð
+
+        <Estimation
+          usePersonalTaxCredit={form.usePersonalTaxCredit}
+          homeCircumstances={form.homeCircumstances}
+          aboutText={
+            <Text marginBottom={[2, 2, 3]}>
+              Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og{' '}
+              <span className={styles.taxReturn}>
+                gerir ekki ráð fyrir tekjum eða gögnum úr skattframtali
+              </span>{' '}
+              sem geta haft áhrif á þína aðstoð. Þú færð skilaboð þegar frekari
+              útreikningur liggur fyrir.
             </Text>
-          </Box>
+          }
+        />
 
-          <Text variant="small">(til útgreiðslu í byrjun júní)</Text>
-        </Box>
-
-        <Text marginBottom={[2, 2, 3]}>
-          Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og{' '}
-          <span className={styles.taxReturn}>
-            gerir ekki ráð fyrir tekjum eða gögnum úr skattframtali
-          </span>{' '}
-          sem geta haft áhrif á þína aðstoð. Þú færð skilaboð þegar frekari
-          útreikningur liggur fyrir.
-        </Text>
-        {data && (
-          <>
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              padding={2}
-            >
-              <Text variant="small">Full upphæð aðstoðar </Text>
-              <Text>{aidAmount?.toLocaleString('de-DE')} kr.</Text>
-            </Box>
-
-            <Divider />
-
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              padding={2}
-            >
-              <Text variant="small">Skattur</Text>
-              <Text>
-                -{' '}
-                {aidAmount &&
-                  calulateTaxOfAmount(aidAmount, currentYear).toLocaleString(
-                    'de-DE',
-                  )}{' '}
-                kr.
-              </Text>
-            </Box>
-
-            <Divider />
-
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              padding={2}
-            >
-              <Text variant="small">Persónuafsláttur</Text>
-              <Text>
-                +{' '}
-                {aidAmount &&
-                  calulatePersonalTaxAllowanceUsed(
-                    aidAmount,
-                    Boolean(form?.usePersonalTaxCredit),
-                    currentYear,
-                  ).toLocaleString('de-DE')}{' '}
-                kr.
-              </Text>
-            </Box>
-
-            <Divider />
-
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              padding={2}
-              background="blue100"
-            >
-              <Text variant="small">Áætluð aðstoð (hámark)</Text>
-              <Text>
-                {aidAmount !== undefined
-                  ? calculateAidFinalAmount(
-                      aidAmount,
-                      Boolean(form?.usePersonalTaxCredit),
-                      currentYear,
-                    ).toLocaleString('de-DE') + ' kr.'
-                  : 'Abbabb.. mistókst að reikna'}
-              </Text>
-            </Box>
-            <Divider />
-          </>
-        )}
-        {loading && (
-          <Box marginBottom={[4, 4, 5]} display="flex" justifyContent="center">
-            <LoadingDots large />
-          </Box>
-        )}
         <Box marginTop={[4, 4, 5]}>
           <Divider />
         </Box>
 
-        <Box
-          display="flex"
-          alignItems="flexStart"
-          paddingY={[4, 4, 5]}
-          className={cn({
-            [`${styles.userInfoContainer}`]: true,
-          })}
-        >
-          <Box className={styles.mainInfo}>
-            <Text fontWeight="semiBold">Nafn</Text>
-            <Text marginBottom={3}>{user?.name}</Text>
+        <UserInfo />
 
-            <Text fontWeight="semiBold">Kennitala</Text>
-            {user?.nationalId && (
-              <Text>{formatNationalId(user.nationalId)}</Text>
-            )}
-          </Box>
+        <FormInfo info={formInfoOverview} error={formError.status} />
 
-          <Box className={styles.contactInfo}>
-            <Text fontWeight="semiBold">Sími</Text>
-            {user?.phoneNumber && (
-              <Text marginBottom={3}>
-                {formatPhoneNumber(user.phoneNumber)}
-              </Text>
-            )}
-
-            <Text fontWeight="semiBold">Heimili</Text>
-            <Text>Hafnargata 3, 220 Hafnarfjörður</Text>
-          </Box>
-        </Box>
-        {overview.map((item, index) => {
-          return (
-            <span key={'overview-' + index}>
-              <Divider />
-
-              <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                alignItems="flexStart"
-                paddingY={[4, 4, 5]}
-              >
-                <Box marginRight={3}>
-                  <Text fontWeight="semiBold">{item.label}</Text>
-                  <Text>{item.info}</Text>
-                </Box>
-
-                {item.url && (
-                  <Button
-                    icon="pencil"
-                    iconType="filled"
-                    variant="utility"
-                    onClick={() => {
-                      router.push(item.url)
-                    }}
-                  >
-                    Breyta
-                  </Button>
-                )}
-              </Box>
-            </span>
-          )
-        })}
         <Divider />
 
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="flexStart"
-          paddingY={[4, 4, 5]}
-          marginBottom={[2, 2, 5]}
-        >
-          <Box marginRight={3}>
-            <Text fontWeight="semiBold">Gögn</Text>
-            <Box>
-              {allFiles && (
-                <>
-                  {allFiles.map((file, index) => {
-                    return (
-                      <a
-                        href={file.name}
-                        key={`file-` + index}
-                        className={styles.filesButtons}
-                        target="_blank"
-                        download
-                      >
-                        <Box marginRight={1} display="flex" alignItems="center">
-                          <Icon
-                            color="blue400"
-                            icon="document"
-                            size="small"
-                            type="outline"
-                          />
-                        </Box>
+        <AllFiles />
 
-                        <Text>{file.name}</Text>
-                      </a>
-                    )
-                  })}
-                </>
-              )}
-            </Box>
-          </Box>
-
-          <Button
-            icon="pencil"
-            iconType="filled"
-            variant="utility"
-            onClick={() => {
-              router.push('gogn')
-            }}
-          >
-            Breyta
-          </Button>
-        </Box>
-
-        <Box marginBottom={[3, 3, 4]}>
-          <Text variant="h3">Annað sem þú vilt koma á framfæri?</Text>
-        </Box>
-
-        <Box marginBottom={[4, 4, 10]}>
-          <Input
-            backgroundColor={'blue'}
-            label="Athugasemd"
-            name="formComment"
-            placeholder="Skrifaðu hér"
-            rows={8}
-            textarea
-            value={form?.formComment}
-            onChange={(event) => {
-              updateForm({ ...form, formComment: event.target.value })
-            }}
-          />
-        </Box>
+        <FormComment />
 
         <div
           className={cn({
@@ -413,17 +172,18 @@ const SummaryForm = () => {
             setIsVisible(isVisibleBoolean)
           }}
         />
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         onPrevButtonClick={() => {
           setIsVisible(!isVisible)
         }}
         previousIsDestructive={true}
+        prevButtonText="Hætta við"
         nextButtonText="Senda umsókn"
         onNextButtonClick={handleNextButtonClick}
       />
-    </FormLayout>
+    </>
   )
 }
 

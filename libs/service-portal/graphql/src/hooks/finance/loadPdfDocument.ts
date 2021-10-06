@@ -1,5 +1,6 @@
 import { useLazyQuery } from '@apollo/client'
 import { GET_FINANCE_DOCUMENT_DATA } from '../../lib/queries/getFinanceDocument'
+import { GET_ANNUAL_STATUS_DOCUMENT_DATA } from '../../lib/queries/getAnnualStatusDocument'
 
 const base64ToArrayBuffer = (base64Pdf: string) => {
   const binaryString = window.atob(base64Pdf)
@@ -23,17 +24,20 @@ const documentIsPdf = (data: any) => {
 }
 
 export const showPdfDocument = () => {
-  const [loadFinanceDocument] = useLazyQuery(GET_FINANCE_DOCUMENT_DATA, {
-    fetchPolicy: 'no-cache',
-    onCompleted: (docData) => {
-      const pdfData = docData?.getFinanceDocument?.docment || null
-      if (pdfData && documentIsPdf(pdfData)) {
-        window.open(getPdfURL(pdfData.document))
-      } else {
-        console.warn('No PDF data')
-      }
+  const [loadFinanceDocument, { loading, variables }] = useLazyQuery(
+    GET_FINANCE_DOCUMENT_DATA,
+    {
+      fetchPolicy: 'no-cache',
+      onCompleted: (docData) => {
+        const pdfData = docData?.getFinanceDocument?.docment || null
+        if (pdfData && documentIsPdf(pdfData)) {
+          window.open(getPdfURL(pdfData.document))
+        } else {
+          console.warn('No PDF data')
+        }
+      },
     },
-  })
+  )
 
   const showPdf = (id: string) => {
     loadFinanceDocument({
@@ -47,5 +51,40 @@ export const showPdfDocument = () => {
 
   return {
     showPdf,
+    loadingPDF: loading,
+    fetchingPdfId: variables?.input?.documentID,
+  }
+}
+
+export const showAnnualStatusDocument = () => {
+  const [loadAnnualStatusDocument, { loading, variables }] = useLazyQuery(
+    GET_ANNUAL_STATUS_DOCUMENT_DATA,
+    {
+      fetchPolicy: 'no-cache',
+      onCompleted: (annualDoc) => {
+        const pdfData = annualDoc?.getAnnualStatusDocument?.docment || null
+        if (pdfData && documentIsPdf(pdfData)) {
+          window.open(getPdfURL(pdfData.document))
+        } else {
+          console.warn('No PDF data')
+        }
+      },
+    },
+  )
+
+  const showAnnualStatusPdf = (year: string) => {
+    loadAnnualStatusDocument({
+      variables: {
+        input: {
+          year,
+        },
+      },
+    })
+  }
+
+  return {
+    showAnnualStatusPdf,
+    loadingAnnualPDF: loading,
+    fetchingYearPDF: variables?.input?.year,
   }
 }

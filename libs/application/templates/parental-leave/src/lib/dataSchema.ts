@@ -51,7 +51,11 @@ export const dataSchema = z.object({
   }),
   shareInformationWithOtherParent: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
-  employerInformation: z.object({ email: z.string().email() }).optional(),
+  employerNationalRegistryId: z
+    .string()
+    .refine((n) => n && kennitala.isValid(n), {
+      params: errorMessages.employerNationalRegistryId,
+    }),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z

@@ -4,7 +4,19 @@ This application allows governmental parties to get assigned a party letter for 
 
 ## Setup
 
-Application System setup: [Setup](https://docs.devland.is/apps/application-system)
+To setup the docker environment run (this only needs to be run once):
+
+```bash
+yarn nx run application-templates-party-letter:dev/init
+```
+
+To start all required services:
+
+```bash
+yarn nx run application-templates-party-letter:dev
+```
+
+This template runs within the application system, make sure your setup fulfills requirements set by the [Application System](https://docs.devland.is/apps/application-system)
 
 ### Additional setup
 

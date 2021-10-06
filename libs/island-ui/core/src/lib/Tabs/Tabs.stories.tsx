@@ -1,5 +1,4 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { Tabs } from './Tabs'
@@ -10,7 +9,6 @@ import { ContentBlock } from '../ContentBlock/ContentBlock'
 export default {
   title: 'Navigation/Tabs',
   component: Tabs,
-  decorators: [withDesign],
   parameters: withFigma('Tabs'),
 }
 

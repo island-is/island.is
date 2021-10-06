@@ -37,6 +37,8 @@ export interface Option {
   subLabel?: string
   tooltip?: FormText
   excludeOthers?: boolean
+  illustration?: React.FC
+  disabled?: boolean
 }
 
 interface SelectOption {
@@ -106,6 +108,7 @@ export interface DateField extends BaseField {
   minDate?: MaybeWithApplicationAndField<Date>
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
+  onChange?(date: string): void
 }
 
 export interface DescriptionField extends BaseField {

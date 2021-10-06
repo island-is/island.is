@@ -36,5 +36,40 @@ export const icCourtRecord = {
           'Notaður sem skýritexti í "afstaða kærða" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
     }),
+    litigationPresentations: defineMessages({
+      autofill: {
+        id:
+          'judicial.system.investigation_cases:court_record.litigation_presentations.autofill',
+        defaultMessage:
+          'Málflutningur var skriflegur og gögn send dómara rafrænt.',
+        description:
+          'Notaður sem sjálfgefinn texti í "Málflutningur" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+      },
+    }),
+    courtLocation: defineMessages({
+      label: {
+        id:
+          'judicial.system.investigation_cases:court_record.court_location.label',
+        defaultMessage: 'Hvar var dómþing haldið?',
+        description:
+          'Notaður sem titill í "Hvar var dómþing haldið?" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      placeholder: {
+        id:
+          'judicial.system.investigation_cases:court_record.court_location.placeholder',
+        defaultMessage:
+          'Staðsetning þinghalds, t.d. "í Héraðsdómi Reykjavíkur"',
+        description:
+          'Notaður sem skýritexti í "Hvar var dómþing haldið?" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      tooltip: {
+        id:
+          'judicial.system.investigation_cases:court_record.court_location.tooltip',
+        defaultMessage:
+          'Sláðu inn staðsetningu dómþings í þágufalli með forskeyti sem hefst á litlum staf. Dæmi "í Héraðsdómi Reykjavíkur". Staðsetning mun birtast með þeim hætti í upphafi þingbókar.',
+        description:
+          'Notaður sem upplýsingatexti í "Hvar var dómþing haldið?" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+      },
+    }),
   },
 }

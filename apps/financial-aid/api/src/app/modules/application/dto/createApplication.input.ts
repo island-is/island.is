@@ -7,7 +7,7 @@ import {
   HomeCircumstances,
   Employment,
   ApplicationState,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 import { CreateApplicationFileInput } from '../../file/dto'
 
@@ -22,8 +22,8 @@ export class CreateApplicationInput implements CreateApplication {
   readonly name!: string
 
   @Allow()
-  @Field()
-  readonly phoneNumber!: string
+  @Field({ nullable: true })
+  readonly phoneNumber?: string
 
   @Allow()
   @Field()

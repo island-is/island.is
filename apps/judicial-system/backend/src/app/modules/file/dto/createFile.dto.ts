@@ -5,9 +5,13 @@ import { ApiProperty } from '@nestjs/swagger'
 export class CreateFileDto {
   @IsString()
   @ApiProperty()
-  readonly key: string
+  readonly type!: string
+
+  @IsString()
+  @ApiProperty()
+  readonly key!: string
 
   @IsNumber()
   @ApiProperty()
-  readonly size: number
+  readonly size!: number
 }

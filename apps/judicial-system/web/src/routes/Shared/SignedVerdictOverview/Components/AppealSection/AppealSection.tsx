@@ -1,8 +1,13 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { Box, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { Case, CaseAppealDecision } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  InstitutionType,
+} from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import * as styles from './AppealSection.treat'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
@@ -11,6 +16,13 @@ import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
 import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
 import { useEffectOnce } from 'react-use'
 import ProsecutorAppealDatePicker from '../Prosecutor/ProsecutorAppealDatePicker'
+import {
+  capitalize,
+  formatAccusedByGender,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
+import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 interface Props {
   workingCase: Case
@@ -28,6 +40,9 @@ const AppealSection: React.FC<Props> = (props) => {
     withdrawAccusedAppealDate,
     withdrawProsecutorAppealDate,
   } = props
+  const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
+  const isHighCourt = user?.institution?.type === InstitutionType.HIGH_COURT
 
   const [isInitialMount, setIsInitialMount] = useState<boolean>(true)
 
@@ -42,20 +57,51 @@ const AppealSection: React.FC<Props> = (props) => {
           Ákvörðun um kæru
         </Text>
       </Box>
-      {!workingCase.isAppealDeadlineExpired && workingCase.rulingDate && (
-        <Box marginBottom={2}>
-          <Text>{`Kærufrestur rennur út ${getAppealEndDate(
-            workingCase.rulingDate,
-          )}`}</Text>
-        </Box>
-      )}
-      {workingCase.isAppealDeadlineExpired && workingCase.rulingDate && (
+
+      {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+        workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
+        workingCase.rulingDate &&
+        !isHighCourt && (
+          <Box marginBottom={3}>
+            <Text>
+              {`Kærufrestur ${
+                workingCase.isAppealDeadlineExpired ? 'rann' : 'rennur'
+              } út ${getAppealEndDate(workingCase.rulingDate)}`}
+            </Text>
+          </Box>
+        )}
+      {workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
         <div className={styles.appealContainer}>
           <BlueBox>
             <InfoBox
-              text={`Kærufrestur rann út ${getAppealEndDate(
-                workingCase.rulingDate,
-              )}`}
+              text={formatMessage(signedVerdictOverview.accusedAppealed, {
+                genderedAccused: capitalize(
+                  formatAccusedByGender(workingCase.accusedGender),
+                ),
+                courtEndTime: `${formatDate(
+                  workingCase.rulingDate,
+                  'PP',
+                )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
+              })}
+              fluid
+              light
+            />
+          </BlueBox>
+        </div>
+      )}
+      {workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL && (
+        <div className={styles.appealContainer}>
+          <BlueBox>
+            <InfoBox
+              text={formatMessage(signedVerdictOverview.prosecutorAppealed, {
+                genderedAccused: capitalize(
+                  formatAccusedByGender(workingCase.accusedGender),
+                ),
+                courtEndTime: `${formatDate(
+                  workingCase.courtEndTime,
+                  'PP',
+                )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
+              })}
               fluid
               light
             />
@@ -83,7 +129,7 @@ const AppealSection: React.FC<Props> = (props) => {
                     <AccusedAppealInfo
                       workingCase={workingCase}
                       withdrawAccusedAppealDate={
-                        workingCase.isAppealGracePeriodExpired
+                        workingCase.isAppealGracePeriodExpired || isHighCourt
                           ? undefined
                           : withdrawAccusedAppealDate
                       }
@@ -114,7 +160,7 @@ const AppealSection: React.FC<Props> = (props) => {
                       workingCase.prosecutorPostponedAppealDate
                     }
                     withdrawProsecutorAppealDate={
-                      workingCase.isAppealGracePeriodExpired
+                      workingCase.isAppealGracePeriodExpired || isHighCourt
                         ? undefined
                         : withdrawProsecutorAppealDate
                     }

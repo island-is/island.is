@@ -126,7 +126,7 @@ export const getInvestigationCaseCourtSections = (
         name: 'Fyrirtökutími',
         href:
           activeSubSection && activeSubSection > 1
-            ? `${Constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${caseId}`
+            ? `${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${caseId}`
             : undefined,
       },
       {

@@ -268,7 +268,7 @@ export const m: MessageDir = {
     },
     submitButton: {
       id: 'ple.application:overview.submit.button',
-      defaultMessage: 'Skila lista',
+      defaultMessage: 'Loka söfnun',
       description: 'Overview submit button',
     },
     finalTitle: {
@@ -513,7 +513,7 @@ export const m: MessageDir = {
     },
     rejectButton: {
       id: 'ple.application:ministry.justice.reject.button',
-      defaultMessage: 'Hafna',
+      defaultMessage: 'Opna á ný',
       description: 'Reject button',
     },
     approveButton: {

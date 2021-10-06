@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import { Case } from '@island.is/judicial-system/types'
+import { CaseDecision } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseData,
   JudgeSubsections,
@@ -10,12 +11,14 @@ import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import RulingStepTwoForm from './RulingStepTwoForm'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 const RulingStepTwo = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
 
   const router = useRouter()
   const id = router.query.id
+  const { autofill } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -28,9 +31,12 @@ const RulingStepTwo = () => {
 
   useEffect(() => {
     if (!workingCase && data?.case) {
+      if (data.case.decision === CaseDecision.ACCEPTING && data.case.demands) {
+        autofill('conclusion', data.case.demands, data.case)
+      }
       setWorkingCase(data.case)
     }
-  }, [workingCase, setWorkingCase, data])
+  }, [workingCase, setWorkingCase, data, autofill])
 
   return (
     <PageLayout

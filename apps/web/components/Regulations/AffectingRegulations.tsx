@@ -1,20 +1,12 @@
+import * as s from './RegulationDisplay.treat'
+
 import React, { Fragment, memo } from 'react'
-import {
-  Accordion,
-  AccordionItem,
-  Box,
-  Bullet,
-  BulletList,
-  Link,
-} from '@island.is/island-ui/core'
-import { RegulationMaybeDiff } from './Regulations.types'
+import { Link } from '@island.is/island-ui/core'
+import { interpolate, prettyName } from '@island.is/regulations'
+import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
-import { uniqBy } from 'lodash'
-import {
-  prettyName,
-  useDomid,
-  useRegulationLinkResolver,
-} from './regulationUtils'
+import uniqBy from 'lodash/uniqBy'
+import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 
 export type AffectingRegulationsProps = {
@@ -24,71 +16,64 @@ export type AffectingRegulationsProps = {
 
 export const AffectingRegulations = memo((props: AffectingRegulationsProps) => {
   const { regulation, texts } = props
-  const { showingDiff, history } = regulation
+  const { showingDiff } = regulation
 
-  const domid = useDomid()
   const txt = useNamespace(texts)
+  const { formatDate } = useDateUtils()
   const { linkToRegulation } = useRegulationLinkResolver()
 
   if (!showingDiff) {
     return null
   }
 
-  const affectingRegulations = showingDiff
-    ? uniqBy(
-        regulation.history.filter(
-          ({ effect, date }) =>
-            effect === 'amend' &&
-            showingDiff.from < date &&
-            date <= showingDiff.to,
-        ),
-        'name',
-      )
-    : []
+  const { from, to } = showingDiff
+
+  const affectingRegulations = uniqBy(
+    regulation.history.filter(
+      ({ effect, date }) => effect === 'amend' && from <= date && date <= to,
+    ),
+    'name',
+  )
 
   if (affectingRegulations.length === 0) {
     return null
   }
 
+  const dates: string =
+    from === to
+      ? formatDate(to)
+      : interpolate(txt('affectingLinkDateRange'), {
+          dateFrom: formatDate(from),
+          dateTo: formatDate(to),
+        })
+
+  const affectingLinksPrefix =
+    (affectingRegulations.length > 1 && txt('affectingLinkPrefixPlural')) ||
+    txt('affectingLinkPrefix')
+
   return (
-    <Box marginTop={3} marginBottom={3}>
-      {affectingRegulations.length === 1 ? (
-        affectingRegulations.map(({ name, title }, i) => (
+    <div className={s.diffInfo}>
+      {interpolate(affectingLinksPrefix, { dates }) + ' '}
+      {affectingRegulations.map(({ name, title }, i) => {
+        const separator =
+          i === 0
+            ? undefined
+            : i === affectingRegulations.length - 1
+            ? ' og '
+            : ', '
+        return (
           <Fragment key={i}>
-            {txt('affectingLinkPrefix')}{' '}
+            {separator}
             <Link
-              key={i}
               href={linkToRegulation(name)}
               color="blue400"
               underline="small"
             >
-              {prettyName(name)} {title}
+              <span title={title}>{prettyName(name)}</span>
             </Link>
           </Fragment>
-        ))
-      ) : (
-        <Accordion>
-          <AccordionItem
-            id={domid}
-            label={txt('affectingListLegend')}
-            labelVariant="h5"
-          >
-            <BulletList>
-              {affectingRegulations.map(({ name, title }, i) => (
-                <Bullet key={i}>
-                  <Link
-                    href={linkToRegulation(name)}
-                    color="blue400"
-                    underline="small"
-                  >
-                    {prettyName(name)} {title}
-                  </Link>
-                </Bullet>
-              ))}
-            </BulletList>
-          </AccordionItem>
-        </Accordion>
-      )}
-    </Box>
+        )
+      })}
+    </div>
   )
 })

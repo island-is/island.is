@@ -9,5 +9,6 @@ import { Endorsement } from '../endorsement/models/endorsement.model'
   imports: [SequelizeModule.forFeature([EndorsementList, Endorsement])],
   controllers: [EndorsementListController],
   providers: [EndorsementListService],
+  exports: [EndorsementListService],
 })
 export class EndorsementListModule {}

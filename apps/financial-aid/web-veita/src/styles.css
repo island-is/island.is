@@ -21,16 +21,6 @@ td {
   text-align: left;
 }
 
-.errorMessage {
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 250ms ease;
-}
-
-.showErrorMessage {
-  max-height: 50px;
-}
-
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -43,19 +33,20 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hideScrollBar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hideScrollBar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 .wrapper {
   max-width: 1440px;
   margin: 0 auto;
-}
-
-.logoHfj {
-  width: 32px;
-  height: 48px;
-}
-
-.logoContainer {
-  max-width: 160px;
-  display: flex;
 }
 
 .headLine {
@@ -74,7 +65,7 @@ input[type='number'] {
 
 .contentUp {
   opacity: 0;
-  transform: translate3d(0, 30px, 0);
+  transform: translate3d(0, 15px, 0);
   animation-name: ptContentUp;
   animation-timing-function: ease;
   animation-fill-mode: forwards;
@@ -151,4 +142,8 @@ input[type='number'] {
   content: 'kr.';
   display: inline-block;
   margin-left: 8px;
+}
+
+.logOutButtonHover:hover > svg {
+  transform: translate3d(5px, 0px, 0px);
 }

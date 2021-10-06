@@ -40,3 +40,13 @@ export const title = style({
   color: '#00003C',
   paddingBottom: '12px',
 })
+
+export const tooltip = style({
+  display: 'inline-block',
+  backgroundColor: '#F2F7FF',
+  borderRadius: '8px',
+  padding: '20px',
+  maxWidth: '240px',
+  fontSize: '15px',
+  lineHeight: '20px',
+})

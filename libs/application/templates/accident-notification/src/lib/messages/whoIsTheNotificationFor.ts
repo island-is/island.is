@@ -4,7 +4,7 @@ export const whoIsTheNotificationFor = {
   general: defineMessages({
     sectionTitle: {
       id: 'an.application:whoIsTheNotificationFor.sectionTitle',
-      defaultMessage: 'Fyrir hvern ertu að tilkynna slys?',
+      defaultMessage: 'Fyrir hvern ertu að tilkynna?',
       description: 'Section title for who is the notifaction for',
     },
     heading: {
@@ -14,11 +14,10 @@ export const whoIsTheNotificationFor = {
     },
     description: {
       id: 'an.application:whoIsTheNotificationFor.description',
-      defaultMessage: `Hægt er að tilkynna slys  í eigin nafni, fyrir aðra einstaklinga sem þú ert með skriflegt umboð 
-				frá eða fyrir starfsmann sem þú hefur umsjá yfir.
-			 	Foreldrar og forráðamenn geta líka sent inn tilkynningu fyrir hönd barna sem þeir fara með forsjá yfir. 
-				Stofnanir, samtök og félög sem eru virk á sviði persónuverndar geta einnig sent inn
-				tilkynningu án umboðs að uppfylltum skilyrðum 80. gr. reglugerðar (ESB) 2016/679 (almennu persónuverndarreglugerðarinnar).`,
+      defaultMessage: `<p>Hægt er að tilkynna slys  í eigin nafni, fyrir aðra einstaklinga sem þú ert með skriflegt umboð 
+				frá eða fyrir starfsmann sem þú hefur umsjá yfir. Foreldrar og forráðamenn geta líka sent inn tilkynningu fyrir hönd barna
+        sem þeir fara með forsjá yfir.</p><br/><p>Stofnanir, samtök og félög sem eru virk á sviði persónuverndar geta einnig sent inn
+				tilkynningu án umboðs að uppfylltum skilyrðum 80. gr. reglugerðar (ESB) 2016/679 (almennu persónuverndarreglugerðarinnar).</p>`,
       description: 'Description for who is the notifaction for',
     },
   }),
@@ -37,6 +36,11 @@ export const whoIsTheNotificationFor = {
       id: 'an.application:whoIsTheNotificationFor.labels.powerOfAttorney',
       defaultMessage: 'Í umboði fyrir annan einstakling',
       description: 'Label for power of attorney option',
+    },
+    childInCustody: {
+      id: 'an.application:whoIsTheNotificationFor.labels.childInCustody',
+      defaultMessage: 'Fyrir barn sem ég hef forræði yfir',
+      description: 'Label for child in custody option',
     },
   }),
 }

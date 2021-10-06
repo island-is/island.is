@@ -179,6 +179,7 @@ const DateTime: React.FC<Props> = (props) => {
             required={required}
             backgroundColor={backgroundColor}
             size={size}
+            autoComplete="off"
           />
         </TimeInputField>
       </div>

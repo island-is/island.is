@@ -1,13 +1,15 @@
 import { createUnionType, Field, Int, ObjectType } from '@nestjs/graphql'
+
 import {
-  AboutPage,
   Article,
   LifeEventPage,
   News,
   AdgerdirPage,
   SubArticle,
   OrganizationSubpage,
-} from '@island.is/api/domains/cms'
+  SupportQNA,
+} from '@island.is/cms'
+
 import { TagCount } from './tagCount'
 import { TypeCount } from './typeCount'
 
@@ -17,10 +19,10 @@ const Items = createUnionType({
     Article,
     LifeEventPage,
     News,
-    AboutPage,
     AdgerdirPage,
     SubArticle,
     OrganizationSubpage,
+    SupportQNA,
   ], // add new return types here
   resolveType: (document) => document.typename, // typename is appended to request on mapping
 })

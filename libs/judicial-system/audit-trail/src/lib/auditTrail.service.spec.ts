@@ -2,8 +2,8 @@ import { mock } from 'jest-mock-extended'
 
 import { Test, TestingModule } from '@nestjs/testing'
 
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 import {
   AuditedAction,
@@ -142,6 +142,49 @@ describe('AuditTrailService generic', () => {
     )
     expect(idFromResult).toHaveBeenCalledWith(result)
     expect(res).toBe(result)
+  })
+
+  it('should log a rejection from a promised result', async () => {
+    // Arrange
+    const spy = jest.spyOn(genericLogger, 'info')
+    const userId = 'some-user-id-xxx'
+    const action = AuditedAction.GET_CASE
+    const id = 'some-id'
+    const idFromResult = jest.fn().mockReturnValue(id)
+
+    // Act and assert
+    await expect(
+      service.audit(userId, action, Promise.reject('Rejected'), idFromResult),
+    ).rejects.toBe('Rejected')
+    expect(spy).toHaveBeenCalledWith(
+      JSON.stringify({
+        user: userId,
+        action,
+        entities: undefined,
+        error: 'Rejected',
+      }),
+    )
+  })
+
+  it('should log a single id and a rejection from a promised result', async () => {
+    // Arrange
+    const spy = jest.spyOn(genericLogger, 'info')
+    const userId = 'some-user-id-xxx'
+    const action = AuditedAction.GET_CASE
+    const id = 'some-id'
+
+    // Act and assert
+    await expect(
+      service.audit(userId, action, Promise.reject('Rejected'), id),
+    ).rejects.toBe('Rejected')
+    expect(spy).toHaveBeenCalledWith(
+      JSON.stringify({
+        user: userId,
+        action,
+        entities: id,
+        error: 'Rejected',
+      }),
+    )
   })
 })
 

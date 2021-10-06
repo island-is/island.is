@@ -66,7 +66,9 @@ function AccessCard({
         <Box display="flex" justifyContent="spaceBetween">
           <Inline alignY="bottom" space={1}>
             {tags.map((tag, index) => (
-              <Tag key={index}>{tag}</Tag>
+              <Tag disabled key={index}>
+                {tag}
+              </Tag>
             ))}
           </Inline>
           <Link to={href}>

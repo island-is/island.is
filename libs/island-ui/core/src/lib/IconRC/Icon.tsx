@@ -102,6 +102,7 @@ export const Icon = ({
       }
     >
       <IconSvg
+        data-testid={`icon-${icon}`}
         aria-hidden={ariaHidden}
         fill={colors[color]}
         color={colors[color]}

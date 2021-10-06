@@ -1,7 +1,11 @@
-import { gql, useQuery } from '@apollo/client'
-import React, { createContext, useEffect, useState } from 'react'
-import { CSRF_COOKIE_NAME, User } from '@island.is/financial-aid/shared'
-import Cookies from 'js-cookie'
+import { useQuery } from '@apollo/client'
+import React, { createContext, ReactNode, useEffect, useState } from 'react'
+import { User } from '@island.is/financial-aid/shared/lib'
+
+import { CurrentUserQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+import { useSession } from 'next-auth/client'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { useLogOut } from '../../utils/useLogOut'
 
 interface AdminProvider {
   isAuthenticated?: boolean
@@ -9,25 +13,24 @@ interface AdminProvider {
   setAdmin?: React.Dispatch<React.SetStateAction<User | undefined>>
 }
 
+interface PageProps {
+  children: ReactNode
+}
+
 export const AdminContext = createContext<AdminProvider>({})
 
-export const CurrentUserQuery = gql`
-  query CurrentUserQuery {
-    currentUser {
-      nationalId
-      name
-      phoneNumber
-    }
-  }
-`
+const AdminProvider = ({ children }: PageProps) => {
+  const [session] = useSession()
+  const logOut = useLogOut()
 
-const AdminProvider: React.FC = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    Boolean(Cookies.get(CSRF_COOKIE_NAME)),
+    Boolean(session?.user),
   )
   const [admin, setAdmin] = useState<User>()
 
-  const { data } = useQuery(CurrentUserQuery, { fetchPolicy: 'no-cache' })
+  const { data, error } = useQuery(CurrentUserQuery, {
+    fetchPolicy: 'no-cache',
+  })
   const loggedInUser = data?.currentUser
 
   useEffect(() => {
@@ -36,6 +39,16 @@ const AdminProvider: React.FC = ({ children }) => {
       setIsAuthenticated(true)
     }
   }, [setAdmin, loggedInUser, admin])
+
+  if (error && session) {
+    // TODO: Get design and implement
+    return (
+      <Box margin={8}>
+        <Text marginBottom={8}>Notandi fannst ekki</Text>
+        <Button onClick={() => logOut()}>Skrá mig út</Button>
+      </Box>
+    )
+  }
 
   return (
     <AdminContext.Provider value={{ isAuthenticated, admin, setAdmin }}>

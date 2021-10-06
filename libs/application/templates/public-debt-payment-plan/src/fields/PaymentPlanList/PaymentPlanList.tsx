@@ -25,7 +25,7 @@ export const PaymentPlanList = ({
 
   return (
     <Box>
-      <Text marginBottom={3}>
+      <Text marginBottom={4} marginTop={1}>
         {formatMessage(paymentPlan.general.pageDescription)}
       </Text>
       {paymentScheduleDebts?.map((payment, index) => {

@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Case, Institution } from '@island.is/judicial-system/types'
+import type { Case, Institution } from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Input, Text } from '@island.is/island-ui/core'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
@@ -54,7 +54,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
   const [, setRequestedCourtDateIsValid] = useState<boolean>(
     workingCase.requestedCourtDate !== null,
   )
-  const { isValid } = useCaseFormHelper(
+  const { isValid, setField, validateAndSendToServer } = useCaseFormHelper(
     workingCase,
     setWorkingCase,
     validations,
@@ -88,7 +88,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={5}>
           <RequestCourtDate
             workingCase={workingCase}
             onChange={(date: Date | undefined, valid: boolean) =>
@@ -102,6 +102,29 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
                 updateCase,
               )
             }
+          />
+        </Box>
+        <Box component="section" marginBottom={10}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(
+                icRequestedHearingArrangements.sections.translator.heading,
+              )}
+            </Text>
+          </Box>
+          <Input
+            data-testid="translator"
+            name="translator"
+            autoComplete="off"
+            label={formatMessage(
+              icRequestedHearingArrangements.sections.translator.label,
+            )}
+            placeholder={formatMessage(
+              icRequestedHearingArrangements.sections.translator.placeholder,
+            )}
+            defaultValue={workingCase.translator}
+            onChange={(event) => setField(event.target)}
+            onBlur={(event) => validateAndSendToServer(event.target)}
           />
         </Box>
       </FormContentContainer>

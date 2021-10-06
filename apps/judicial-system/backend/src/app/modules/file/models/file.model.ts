@@ -10,7 +10,9 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { Case } from '../../case'
+import { CaseFileState } from '@island.is/judicial-system/types'
+
+import { Case } from '../../case/models/case.model'
 
 @Table({
   tableName: 'case_file',
@@ -24,15 +26,15 @@ export class CaseFile extends Model<CaseFile> {
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
-  id: string
+  id!: string
 
   @CreatedAt
   @ApiProperty()
-  created: Date
+  created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  modified: Date
+  modified!: Date
 
   @ForeignKey(() => Case)
   @Column({
@@ -40,26 +42,42 @@ export class CaseFile extends Model<CaseFile> {
     allowNull: false,
   })
   @ApiProperty()
-  caseId: string
+  caseId!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  name: string
+  name!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  key: string
+  type!: string
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(CaseFileState),
+    defaultValue: CaseFileState.STORED_IN_RVG,
+  })
+  @ApiProperty({ enum: CaseFileState })
+  state!: CaseFileState
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  key!: string
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
   @ApiProperty()
-  size: number
+  size!: number
 }

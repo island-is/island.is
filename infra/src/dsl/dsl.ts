@@ -10,8 +10,8 @@ import {
   Resources,
   ReplicaCount,
   PostgresInfo,
-  OpsEnv,
   HealthProbe,
+  Features,
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -41,11 +41,17 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
 
+  features(features: Partial<Features>) {
+    this.serviceDef.features = features
+    return this
+  }
+
   constructor(name: string) {
     this.serviceDef = {
       liveness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
       readiness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
       env: {},
+      features: {},
       name: name,
       grantNamespaces: [],
       grantNamespacesEnabled: false,
@@ -143,6 +149,18 @@ export class ServiceBuilder<ServiceType> implements Service {
 
   resources(res: Resources) {
     this.serviceDef.resources = res
+    if (res.limits && res.limits.memory) {
+      if (this.serviceDef.env.NODE_OPTIONS) {
+        throw new Error(
+          'NODE_OPTIONS already set. At the moment of writing, there is no known use case for this, so this might need to be revisited in the future.',
+        )
+      }
+      this.env({
+        NODE_OPTIONS: `--max-old-space-size=${
+          parseInt(res.limits.memory, 10) - 48
+        }`,
+      })
+    }
     return this
   }
 
@@ -197,6 +215,7 @@ const postgresIdentifier = (id: string) => id.replace(/[\W\s]/gi, '_')
 export const ref = (renderer: (env: Context) => string) => {
   return renderer
 }
+
 export const service = <Service extends string>(
   name: Service,
 ): ServiceBuilder<Service> => {

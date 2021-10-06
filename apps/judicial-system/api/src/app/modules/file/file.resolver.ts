@@ -1,8 +1,8 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
@@ -19,12 +19,14 @@ import {
   CreatePresignedPostInput,
   DeleteFileInput,
   GetSignedUrlInput,
+  UploadFileToCourtInput,
 } from './dto'
 import {
   PresignedPost,
   CaseFile,
   DeleteFileResponse,
   SignedUrl,
+  UploadFileToCourtResponse,
 } from './models'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -109,6 +111,25 @@ export class FileResolver {
       AuditedAction.CREATE_FILE,
       backendApi.createCaseFile(caseId, createFile),
       (file) => file.id,
+    )
+  }
+
+  @Mutation(() => UploadFileToCourtResponse)
+  uploadFileToCourt(
+    @Args('input', { type: () => UploadFileToCourtInput })
+    input: UploadFileToCourtInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<UploadFileToCourtResponse> {
+    const { caseId, id } = input
+
+    this.logger.debug(`Uploading file ${id} of case ${caseId} to court`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPLOAD_FILE_TO_COURT,
+      backendApi.uploadCaseFileToCourt(caseId, id),
+      id,
     )
   }
 }

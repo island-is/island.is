@@ -11,13 +11,16 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { ApplicationModel } from '../../application'
 
-import { ApplicationState } from '@island.is/financial-aid/shared'
+import {
+  ApplicationEventType,
+  ApplicationEvent,
+} from '@island.is/financial-aid/shared/lib'
 
 @Table({
   tableName: 'application_events',
   timestamps: false,
 })
-export class ApplicationEventModel extends Model<ApplicationEventModel> {
+export class ApplicationEventModel extends Model<ApplicationEvent> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -45,15 +48,15 @@ export class ApplicationEventModel extends Model<ApplicationEventModel> {
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: Object.values(ApplicationState),
+    values: Object.values(ApplicationEventType),
   })
-  @ApiProperty({ enum: ApplicationState })
-  state: ApplicationState
+  @ApiProperty({ enum: ApplicationEventType })
+  eventType: ApplicationEventType
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  comment: string
+  comment?: string
 }

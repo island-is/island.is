@@ -2,7 +2,6 @@ import { NO, YES } from './../constants'
 
 export type CompanyInfo = {
   nationalRegistrationId: string
-  companyName: string
   name: string
   email: string
   phoneNumber: string
@@ -27,6 +26,7 @@ export enum WhoIsTheNotificationForEnum {
   JURIDICALPERSON = 'juridicalPerson',
   ME = 'me',
   POWEROFATTORNEY = 'powerOfAttorney',
+  CHILDINCUSTODY = 'childInCustody',
 }
 
 export enum AccidentTypeEnum {
@@ -97,7 +97,6 @@ export enum StudiesAccidentTypeEnum {
 
 export enum StudiesAccidentLocationEnum {
   ATTHESCHOOL = 'atTheSchool',
-  DURINGSTUDIES = 'duringStudies',
   OTHER = 'studiesLocation.other',
 }
 
@@ -105,4 +104,13 @@ export enum PowerOfAttorneyUploadEnum {
   UPLOADNOW = 'uploadNow',
   UPLOADLATER = 'uploadLater',
   FORCHILDINCUSTODY = 'forChildInCustody',
+}
+
+export enum ReviewSectionState {
+  inProgress = 'In progress',
+  received = 'Received',
+  missing = 'Missing documents',
+  pending = 'Pending',
+  approved = 'Approved',
+  objected = 'Objected',
 }

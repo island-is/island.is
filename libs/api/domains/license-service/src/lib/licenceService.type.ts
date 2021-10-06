@@ -45,6 +45,7 @@ export type GenericLicenseMetadata = {
   type: GenericLicenseType
   provider: GenericLicenseProvider
   pkpass: boolean
+  pkpassVerify: boolean
   timeout: number
 
   // TODO(osk) should these be here? or be resolved by client via contentful?
@@ -100,6 +101,31 @@ export type GenericUserLicense = {
   payload?: GenericUserLicensePayload
 }
 
+export type PkPassVerificationError = {
+  /**
+   * Generic placeholder for a status code, could be the HTTP status code, code
+   * from API, or empty string. Semantics need to be defined per license type
+   */
+  status: string
+
+  /**
+   * Generic placeholder for a status message, from API, or empty "Unknown error".
+   * Semantics need to be defined per license type
+   */
+  message: string
+
+  /**
+   * data is used to pass along the error from originator, e.g. SmartSolution
+   */
+  data?: string
+}
+
+export type PkPassVerification = {
+  valid: boolean
+  data?: string
+  error?: PkPassVerificationError
+}
+
 /**
  * Interface for client services, fetches generic payload and status from a third party API.
  * Only one license per client to start with.
@@ -119,6 +145,8 @@ export interface GenericLicenseClient<LicenseType> {
     nationalId: string,
     data?: LicenseType,
   ) => Promise<string | null>
+
+  verifyPkPass: (data: string) => Promise<PkPassVerification | null>
 }
 
 export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'

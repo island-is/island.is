@@ -113,10 +113,6 @@ export const routesTemplate = {
     is: '/s/[organization]/frett',
     en: '/en/o/[organization]/news',
   },
-  auction: {
-    is: '/s/syslumenn/uppbod/[id]',
-    en: '',
-  },
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',
     en: '/en/covid-operations/[slug]',
@@ -160,6 +156,18 @@ export const routesTemplate = {
   article: {
     is: '/[slug]',
     en: '/en/[slug]',
+  },
+  helpdesk: {
+    is: '/thjonustuvefur',
+    en: '/en/helpdesk',
+  },
+  helpdeskcategory: {
+    is: '/thjonustuvefur/[organizationSlug]/[categorySlug]',
+    en: '/en/helpdesk/[organizationSlug]/[categorySlug]',
+  },
+  helpdesksearch: {
+    is: '/thjonustuvefur/leit',
+    en: '/en/helpdesk/search',
   },
   homepage: {
     is: '/',

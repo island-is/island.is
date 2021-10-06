@@ -51,32 +51,3 @@ export interface GenericDrivingLicenseResponse {
     endurupptakaSkirteinis?: number | null
   }
 }
-
-export interface PkPassServiceTokenResponse {
-  status?: number
-  message?: string
-  data?: {
-    ACCESS_TOKEN: string
-    GENERATED_ON: {
-      date: string
-      timezone_type: number
-      timezone: string
-    }
-    EXPIRED_ON: string
-  }
-}
-
-export interface PkPassServiceDriversLicenseResponse {
-  message: string
-  data?: {
-    pass_url: string
-    pass_qrcode: string
-  }
-  status: number
-}
-
-export interface PkPassServiceErrorResponse {
-  message?: string
-  status?: number
-  data?: unknown
-}

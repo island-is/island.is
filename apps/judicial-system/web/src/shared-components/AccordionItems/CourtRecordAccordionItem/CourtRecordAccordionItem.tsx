@@ -11,60 +11,65 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   AccusedPleaDecision,
-  Case,
   CaseAppealDecision,
-  CaseType,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
+import { closedCourt } from '@island.is/judicial-system-web/messages'
+import { useIntl } from 'react-intl'
+import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
 
 interface Props {
   workingCase: Case
 }
 
 const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
-  const isRestrictionCase =
-    workingCase.type === CaseType.CUSTODY ||
-    workingCase.type === CaseType.TRAVEL_BAN
+  const { formatMessage } = useIntl()
 
   return (
     <AccordionItem id="id_2" label="Þingbók" labelVariant="h3">
-      <Box marginBottom={2}>
-        <Text variant="h4" as="h4">
-          Upplýsingar
+      <AccordionListItem
+        title={formatMessage(m.sections.timeAndLocation.title)}
+      >
+        <Text>
+          {workingCase.courtEndTime
+            ? formatMessage(m.sections.timeAndLocation.text, {
+                courtStartTime: formatDate(
+                  workingCase.courtStartDate,
+                  TIME_FORMAT,
+                ),
+                courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
+                courtEndDate: formatDate(workingCase.courtEndTime, 'PP'),
+                courtLocation: workingCase.courtLocation,
+              })
+            : formatMessage(m.sections.timeAndLocation.textOngoing, {
+                courtStartTime: formatDate(
+                  workingCase.courtStartDate,
+                  TIME_FORMAT,
+                ),
+              })}
         </Text>
-      </Box>
-      <Box marginBottom={3}>
-        {workingCase.courtEndTime ? (
-          <Text>
-            {`Þinghald frá kl. ${formatDate(
-              workingCase.courtStartDate,
-              TIME_FORMAT,
-            )} til kl. ${formatDate(
-              workingCase.courtEndTime,
-              TIME_FORMAT,
-            )} ${formatDate(workingCase.courtEndTime, 'PP')}`}
-          </Text>
-        ) : (
-          <>
-            <Text>
-              {`Þinghald frá kl. ${formatDate(
-                workingCase.courtStartDate,
-                TIME_FORMAT,
-              )}`}
-            </Text>
-            <Text>Þinghaldi er ekki lokið</Text>
-          </>
+        {!workingCase.isClosedCourtHidden && (
+          <Box marginBottom={3}>
+            <Text>{formatMessage(closedCourt.text)}</Text>
+          </Box>
         )}
-      </Box>
+      </AccordionListItem>
       <AccordionListItem title="Krafa" breakSpaces>
         <Text>{workingCase.prosecutorDemands}</Text>
       </AccordionListItem>
-      <AccordionListItem title="Viðstaddir" breakSpaces>
-        <Text>{workingCase.courtAttendees}</Text>
-      </AccordionListItem>
-      <AccordionListItem title="Dómskjöl">
+      {workingCase.courtAttendees?.trim() && (
+        <AccordionListItem
+          title={formatMessage(m.sections.courtAttendees.title)}
+          breakSpaces
+        >
+          <Text>{workingCase.courtAttendees.trim()}</Text>
+        </AccordionListItem>
+      )}
+      <AccordionListItem title={formatMessage(m.sections.courtDocuments.title)}>
         <Text>{`Krafa ${
-          isRestrictionCase
+          isRestrictionCase(workingCase.type)
             ? `um ${caseTypes[workingCase.type]}`
             : `- ${capitalize(caseTypes[workingCase.type])}`
         } þingmerkt nr. 1.`}</Text>
@@ -87,23 +92,28 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           })}
         </Text>
       </AccordionListItem>
-      {!workingCase.isAccusedAbsent && (
+      {!workingCase.isAccusedRightsHidden && (
         <AccordionListItem
-          title={`Réttindi ${
-            workingCase.type === CaseType.CUSTODY ||
-            workingCase.type === CaseType.TRAVEL_BAN
+          title={formatMessage(m.sections.accusedRights.title, {
+            accusedType: isRestrictionCase(workingCase.type)
               ? formatAccusedByGender(
                   workingCase.accusedGender,
                   NounCases.GENITIVE,
                 )
-              : 'varnaraðila'
-          }`}
+              : 'varnaraðila',
+          })}
         >
           <Text>
-            Sakborning er bent á að honum sé óskylt að svara spurningum er varða
-            brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr.
-            88/2008. Sakborning er enn fremur áminntur um sannsögli kjósi hann
-            að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.
+            {formatMessage(m.sections.accusedRights.text, {
+              genderedAccused: isRestrictionCase(workingCase.type)
+                ? capitalize(
+                    formatAccusedByGender(
+                      workingCase.accusedGender,
+                      NounCases.GENITIVE,
+                    ),
+                  )
+                : 'Varnaraðila',
+            })}
           </Text>
         </AccordionListItem>
       )}
@@ -111,8 +121,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         CaseAppealDecision.NOT_APPLICABLE && (
         <AccordionListItem
           title={`Afstaða ${
-            workingCase.type === CaseType.CUSTODY ||
-            workingCase.type === CaseType.TRAVEL_BAN
+            isRestrictionCase(workingCase.type)
               ? formatAccusedByGender(
                   workingCase.accusedGender,
                   NounCases.GENITIVE,
@@ -125,15 +134,13 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             {`${
               workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
                 ? `${capitalize(
-                    workingCase.type === CaseType.CUSTODY ||
-                      workingCase.type === CaseType.TRAVEL_BAN
+                    isRestrictionCase(workingCase.type)
                       ? formatAccusedByGender(workingCase.accusedGender)
                       : 'varnaraðili',
                   )} hafnar kröfunni. `
                 : workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
                 ? `${capitalize(
-                    workingCase.type === CaseType.CUSTODY ||
-                      workingCase.type === CaseType.TRAVEL_BAN
+                    isRestrictionCase(workingCase.type)
                       ? formatAccusedByGender(workingCase.accusedGender)
                       : 'varnaraðili',
                   )} samþykkir kröfuna. `

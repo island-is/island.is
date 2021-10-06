@@ -9,8 +9,14 @@ import {
   UseGuards,
   NotFoundException,
   BadRequestException,
+  Query,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger'
 
 import {
   DelegationsService,
@@ -230,13 +236,18 @@ export class DelegationsController {
 
   @Scopes(AuthScope.readDelegations)
   @Get('custom/from')
+  @ApiQuery({ name: 'is-valid', required: false })
   @ApiOkResponse({ type: [DelegationDTO] })
   @Audit<DelegationDTO[]>({
     resources: (delegations) => delegations.map((delegation) => delegation?.id),
   })
   async findAllCustomFrom(
     @CurrentUser() user: User,
+    @Query('is-valid') isValid?: string,
   ): Promise<DelegationDTO[] | null> {
-    return await this.delegationsService.findAllCustomFrom(user.nationalId)
+    if (isValid && isValid === 'true') {
+      return this.delegationsService.findAllValidCustomFrom(user.nationalId)
+    }
+    return this.delegationsService.findAllCustomFrom(user.nationalId)
   }
 }

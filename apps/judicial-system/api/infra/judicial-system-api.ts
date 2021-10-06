@@ -22,15 +22,15 @@ export const serviceSetup = (services: {
       AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',
       AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log',
       AUDIT_TRAIL_REGION: 'eu-west-1',
-      XROAD_BASE_PATH_WITH_ENV: {
-        dev: 'https://securityserver.dev01.devland.is/r1/IS-DEV',
-        staging: 'https://securityserver.staging01.devland.is/r1/IS-TEST',
-        prod: 'https://securityserver.island.is/r1/IS',
-      },
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
+      },
+      XROAD_BASE_PATH_WITH_ENV: {
+        dev: 'https://securityserver.dev01.devland.is/r1/IS-DEV',
+        staging: 'https://securityserver.staging01.devland.is/r1/IS-TEST',
+        prod: 'https://securityserver.island.is/r1/IS',
       },
       XROAD_CLIENT_ID: {
         dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Client',
@@ -44,8 +44,8 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: 'R_CASES',
-        prod: 'R_CASES',
+        staging: '',
+        prod: '',
       },
     })
     .secrets({

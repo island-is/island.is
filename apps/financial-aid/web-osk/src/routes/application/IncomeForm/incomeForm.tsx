@@ -2,9 +2,8 @@ import React, { useEffect, useState, useContext } from 'react'
 import { Text, BulletList, Bullet, Box } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
-  FormLayout,
+  ContentContainer,
+  Footer,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 
@@ -13,7 +12,7 @@ import { useRouter } from 'next/router'
 import * as styles from './incomeForm.treat'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import cn from 'classnames'
-import { NavigationProps } from '@island.is/financial-aid/shared'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 const IncomeForm = () => {
   const router = useRouter()
@@ -47,11 +46,8 @@ const IncomeForm = () => {
   }
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
-      <FormContentContainer>
+    <>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Hefur þú fengið tekjur í þessum eða síðasta mánuði?
         </Text>
@@ -93,13 +89,13 @@ const IncomeForm = () => {
             <Bullet>Styrkir frá lífeyrissjóðum</Bullet>
           </BulletList>
         </Box>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
-    </FormLayout>
+    </>
   )
 }
 

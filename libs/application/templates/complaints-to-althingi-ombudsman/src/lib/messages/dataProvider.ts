@@ -37,4 +37,15 @@ export const dataProvider = defineMessages({
       'Símanúmer, netfang. Upplýsingar um símanúmer eða netfang er hægt að uppfæra á vefsíðu island.is ef þess þarf.',
     description: 'User Profile Subtitle',
   },
+  notificationTitle: {
+    id: 'ctao.application:dataProvider.notificationTitle',
+    defaultMessage: 'Samþykki fyrir tilkynningar',
+    description: 'Approval of notifications',
+  },
+  notificationSubTitle: {
+    id: 'ctao.application:dataProvider.notificationSubTitle',
+    defaultMessage: 'Send verða til þín skilaboð um stöðu mála osfrv.',
+    description:
+      'Notifications will be sent regarding the status of your application',
+  },
 })

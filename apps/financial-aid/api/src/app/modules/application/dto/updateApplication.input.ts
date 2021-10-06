@@ -5,7 +5,7 @@ import { Field, InputType } from '@nestjs/graphql'
 import {
   UpdateApplication,
   ApplicationState,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 @InputType()
 export class UpdateApplicationInput implements UpdateApplication {
@@ -24,4 +24,8 @@ export class UpdateApplicationInput implements UpdateApplication {
   @Allow()
   @Field({ nullable: true })
   readonly rejection?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly staffId?: string
 }

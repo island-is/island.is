@@ -71,3 +71,7 @@ export const mobileText = style({
     },
   },
 })
+
+export const dropdownMenuWrapper = style({
+  zIndex: 10,
+})

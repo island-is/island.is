@@ -119,7 +119,7 @@ export const m = defineMessages({
   },
   transactionsLabel: {
     id: 'service.portal:transactions-label',
-    defaultMessage: 'Veldu tegund færslu',
+    defaultMessage: 'Veldu gjaldflokk',
   },
   chooseDate: {
     id: 'service.portal:choose-date',
@@ -135,7 +135,7 @@ export const m = defineMessages({
   },
   selectForResults: {
     id: 'service.portal:select-for-results',
-    defaultMessage: 'Veldu öll leitarskilyrði til að fá niðurstöður.',
+    defaultMessage: 'Veldu leitarskilyrði, t.d. gjaldflokk og tímabil.',
   },
   datesForResults: {
     id: 'service.portal:dates-for-results',
@@ -143,8 +143,7 @@ export const m = defineMessages({
   },
   noResultsTryAgain: {
     id: 'service.portal:no-results-try-again',
-    defaultMessage:
-      'Leit skilaði engum niðurstöðum. Vinsamlegast leitaðu aftur.',
+    defaultMessage: 'Engar færslur eru innan þeirra skilyrða sem valið er.',
   },
   moreOptions: {
     id: 'service.portal:more-options',
@@ -290,10 +289,6 @@ export const m = defineMessages({
     id: 'service.portal:loadingData',
     defaultMessage: `Sæki gögn`,
   },
-  userDelegationList: {
-    id: 'service.portal:user-delegation-list',
-    defaultMessage: `Aðgangar/umboð`,
-  },
   info: {
     id: 'service.portal:info',
     defaultMessage: 'Upplýsingar',
@@ -374,6 +369,10 @@ export const m = defineMessages({
     id: 'service.portal:finance-employee-claims',
     defaultMessage: 'Laungreiðendakröfur',
   },
+  financeLocalTax: {
+    id: 'service.portal:finance-local-tax',
+    defaultMessage: 'Útsvar',
+  },
   actions: {
     id: 'service.portal:actions',
     defaultMessage: 'Aðgerðir',
@@ -419,6 +418,14 @@ export const m = defineMessages({
   accessControl: {
     id: 'service.portal:accessControl',
     defaultMessage: 'Aðgangsstýring',
+  },
+  accessControlGrant: {
+    id: 'service.portal:accessControlGrant',
+    defaultMessage: 'Veita aðgang',
+  },
+  accessControlAccess: {
+    id: 'service.portal:accessControlAccess',
+    defaultMessage: 'Aðgangur',
   },
   educationStudentAssessment: {
     id: 'service.portal:educationStudentAssessment',

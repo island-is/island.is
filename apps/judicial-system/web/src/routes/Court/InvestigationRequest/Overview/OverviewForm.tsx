@@ -8,7 +8,12 @@ import {
   InfoCard,
   PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Case } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseTransition,
+  NotificationType,
+} from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   capitalize,
@@ -24,7 +29,7 @@ import {
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
-import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 
 interface Props {
@@ -42,7 +47,13 @@ const OverviewForm: React.FC<Props> = (props) => {
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   const { user } = useContext(UserContext)
-  const { createCourtCase, isCreatingCourtCase } = useCase()
+  const {
+    createCourtCase,
+    isCreatingCourtCase,
+    transitionCase,
+    isTransitioningCase,
+    sendNotification,
+  } = useCase()
   const { formatMessage } = useIntl()
 
   const validations: FormSettings = {
@@ -57,11 +68,31 @@ const OverviewForm: React.FC<Props> = (props) => {
     validations,
   )
 
-  const handleCreateCourtCase = (workingCase: Case) => {
-    createCourtCase(workingCase, setWorkingCase, setCourtCaseNumberEM)
+  const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
+    if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
+      // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
+      const received = await transitionCase(
+        { ...workingCase, courtCaseNumber },
+        CaseTransition.RECEIVE,
+        setWorkingCase,
+      )
 
-    if (courtCaseNumberEM === '') {
+      if (received) {
+        sendNotification(workingCase.id, NotificationType.RECEIVED_BY_COURT)
+      }
+    }
+  }
+
+  const handleCreateCourtCase = async (workingCase: Case) => {
+    const courtCaseNumber = await createCourtCase(
+      workingCase,
+      setWorkingCase,
+      setCourtCaseNumberEM,
+    )
+
+    if (courtCaseNumber !== '') {
       setCreateCourtCaseSuccess(true)
+      receiveCase(workingCase, courtCaseNumber)
     }
   }
 
@@ -83,6 +114,7 @@ const OverviewForm: React.FC<Props> = (props) => {
             setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
             handleCreateCourtCase={handleCreateCourtCase}
             isCreatingCourtCase={isCreatingCourtCase}
+            receiveCase={receiveCase}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -128,6 +160,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
+              defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
             isRCase
           />
@@ -260,7 +293,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <PdfButton
               caseId={workingCase.id}
-              title="Opna PDF kröfu"
+              title={formatMessage(core.pdfButtonRequest)}
               pdfType="request"
             />
           </Box>

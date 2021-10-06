@@ -1,67 +1,66 @@
 api:
   args:
     - '--tls-min-v1.0'
-    - main.js
+    - 'main.js'
   command:
-    - node
+    - 'node'
   enabled: true
   env:
-    APPLICATION_SYSTEM_API_URL: http://web-application-system-api.application-system.svc.cluster.local
-    AUTH_PUBLIC_API_URL: https://innskra.island.is
-    CONTACT_US_EMAIL: island@island.is
-    CONTENTFUL_HOST: cdn.contentful.com
-    DOWNLOAD_SERVICE_BASE_PATH: https://api.island.is
-    ELASTIC_NODE: https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/
-    ENDORSEMENT_SYSTEM_BASE_API_URL: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
-    FILE_DOWNLOAD_BUCKET: island-is-prod-download-cache-api
-    FILE_STORAGE_UPLOAD_BUCKET: island-is-prod-upload-api
-    ICELANDIC_NAMES_REGISTRY_BACKEND_URL: >-
-      http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local
-    PARTY_LETTER_REGISTRY_BASE_API_URL: >-
-      http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local
-    SEND_FROM_EMAIL: island@island.is
-    SERVICE_DOCUMENTS_BASEPATH: http://web-services-documents.services-documents.svc.cluster.local
-    SERVICE_USER_PROFILE_URL: http://web-service-portal-api.service-portal.svc.cluster.local
-    TELL_US_A_STORY_EMAIL: sogur@island.is
-    TEMPORARY_VOTER_REGISTRY_BASE_API_URL: >-
-      http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local
-    XROAD_BASE_PATH: http://securityserver.island.is
-    XROAD_BASE_PATH_WITH_ENV: http://securityserver.island.is/r1/IS
-    XROAD_CLIENT_ID: IS/GOV/5501692829/island-is-client
-    XROAD_HEALTH_INSURANCE_ID: IS/GOV/4804080550/SJUKRA-Protected
-    XROAD_MMS_GRADE_SERVICE_ID: IS/EDU/5708150320/MMS-Protected/grade-api-v1
-    XROAD_MMS_LICENSE_SERVICE_ID: IS/EDU/5708150320/MMS-Protected/license-api-v1
+    APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
+    AUTH_PUBLIC_API_URL: 'https://innskra.island.is'
+    CONTACT_US_EMAIL: 'island@island.is'
+    CONTENTFUL_HOST: 'cdn.contentful.com'
+    DOWNLOAD_SERVICE_BASE_PATH: 'https://api.island.is'
+    ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/'
+    ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
+    FILE_DOWNLOAD_BUCKET: 'island-is-prod-download-cache-api'
+    FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
+    ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
+    NODE_OPTIONS: '--max-old-space-size=464'
+    PARTY_LETTER_REGISTRY_BASE_API_URL: 'http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local'
+    SEND_FROM_EMAIL: 'island@island.is'
+    SERVERSIDE_FEATURES_ON: ''
+    SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
+    SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    TELL_US_A_STORY_EMAIL: 'sogur@island.is'
+    TEMPORARY_VOTER_REGISTRY_BASE_API_URL: 'http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local'
+    XROAD_BASE_PATH: 'http://securityserver.island.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
+    XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
+    XROAD_MMS_GRADE_SERVICE_ID: 'IS/EDU/5708150320/MMS-Protected/grade-api-v1'
+    XROAD_MMS_LICENSE_SERVICE_ID: 'IS/EDU/5708150320/MMS-Protected/license-api-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_VMST_MEMBER_CODE: '7005942039'
-    ZENDESK_CONTACT_FORM_SUBDOMAIN: digitaliceland
+    ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
-    - nginx-ingress-external
-    - api-catalogue
-    - application-system
+    - 'nginx-ingress-external'
+    - 'api-catalogue'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /health
+      path: '/health'
       timeoutSeconds: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/api
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: nginx-external-alb
+        kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
-        - host: island.is
+        - host: 'island.is'
           paths:
-            - /api
-        - host: www.island.is
+            - '/api'
+        - host: 'www.island.is'
           paths:
-            - /api
-  namespace: islandis
+            - '/api'
+  namespace: 'islandis'
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
@@ -70,126 +69,139 @@ api:
     min: 2
   resources:
     limits:
-      cpu: 400m
-      memory: 512Mi
+      cpu: '400m'
+      memory: '512Mi'
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: '100m'
+      memory: '256Mi'
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    CONTENTFUL_ACCESS_TOKEN: /k8s/api/CONTENTFUL_ACCESS_TOKEN
-    DOCUMENT_PROVIDER_ADMINS: /k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS
-    DOCUMENT_PROVIDER_BASE_PATH: /k8s/api/DOCUMENT_PROVIDER_BASE_PATH
-    DOCUMENT_PROVIDER_BASE_PATH_TEST: /k8s/api/DOCUMENT_PROVIDER_BASE_PATH_TEST
-    DOCUMENT_PROVIDER_CLIENTID: /k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID
-    DOCUMENT_PROVIDER_CLIENTID_TEST: /k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID_TEST
-    DOCUMENT_PROVIDER_CLIENT_SECRET: /k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET
-    DOCUMENT_PROVIDER_CLIENT_SECRET_TEST: /k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST
-    DOCUMENT_PROVIDER_TOKEN_URL: /k8s/api/DOCUMENT_PROVIDER_TOKEN_URL
-    DOCUMENT_PROVIDER_TOKEN_URL_TEST: /k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST
-    DRIVING_LICENSE_SECRET: /k8s/api/DRIVING_LICENSE_SECRET
-    DRIVING_LICENSE_XROAD_PATH: /k8s/api/DRIVING_LICENSE_XROAD_PATH
-    FINANCE_PASS: /k8s/service-portal/FINANCE_PASS
-    FINANCE_USER: /k8s/service-portal/FINANCE_USER
-    HEALTH_INSURANCE_XROAD_PASSWORD: /k8s/health-insurance/XROAD-PASSWORD
-    HEALTH_INSURANCE_XROAD_USERNAME: /k8s/health-insurance/XROAD-USER
-    HEALTH_INSURANCE_XROAD_WSDLURL: /k8s/api/HEALTH_INSURANCE_XROAD_WSDLURL
-    PAYMENT_PASSWORD: /k8s/application-system-api/PAYMENT_PASSWORD
-    PAYMENT_USER: /k8s/application-system-api/PAYMENT_USER
-    PAYMENT_XROAD_PROVIDER_ID: /k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID
-    PKPASS_API_KEY: /k8s/api/PKPASS_API_KEY
-    PKPASS_API_URL: /k8s/api/PKPASS_API_URL
-    PKPASS_SECRET_KEY: /k8s/api/PKPASS_SECRET_KEY
-    POSTHOLF_BASE_PATH: /k8s/documents/POSTHOLF_BASE_PATH
-    POSTHOLF_CLIENTID: /k8s/documents/POSTHOLF_CLIENTID
-    POSTHOLF_CLIENT_SECRET: /k8s/documents/POSTHOLF_CLIENT_SECRET
-    POSTHOLF_TOKEN_URL: /k8s/documents/POSTHOLF_TOKEN_URL
-    REGULATIONS_API_URL: /k8s/api/REGULATIONS_API_URL
-    RSK_API_PASSWORD: /k8s/shared/api/RSK_API_PASSWORD
-    RSK_API_URL: /k8s/shared/api/RSK_API_URL
-    RSK_API_USERNAME: /k8s/shared/api/RSK_API_USERNAME
-    SOFFIA_HOST_URL: /k8s/api/SOFFIA_HOST_URL
-    SOFFIA_PASS: /k8s/service-portal/SOFFIA_PASS
-    SOFFIA_SOAP_URL: /k8s/api/SOFFIA_SOAP_URL
-    SOFFIA_USER: /k8s/service-portal/SOFFIA_USER
-    SYSLUMENN_HOST: /k8s/api/SYSLUMENN_HOST
-    SYSLUMENN_PASSWORD: /k8s/api/SYSLUMENN_PASSWORD
-    SYSLUMENN_USERNAME: /k8s/api/SYSLUMENN_USERNAME
-    VMST_API_KEY: /k8s/vmst-client/VMST_API_KEY
-    XROAD_FINANCES_PATH: /k8s/service-portal/XROAD_FINANCES_PATH
-    XROAD_TJODSKRA_API_PATH: /k8s/api/XROAD_TJODSKRA_API_PATH
-    XROAD_VMST_API_PATH: /k8s/api/XROAD_VMST_API_PATH
-    ZENDESK_CONTACT_FORM_EMAIL: /k8s/api/ZENDESK_CONTACT_FORM_EMAIL
-    ZENDESK_CONTACT_FORM_TOKEN: /k8s/api/ZENDESK_CONTACT_FORM_TOKEN
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+    DOCUMENT_PROVIDER_ADMINS: '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS'
+    DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH'
+    DOCUMENT_PROVIDER_BASE_PATH_TEST: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH_TEST'
+    DOCUMENT_PROVIDER_CLIENTID: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID'
+    DOCUMENT_PROVIDER_CLIENTID_TEST: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID_TEST'
+    DOCUMENT_PROVIDER_CLIENT_SECRET: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET'
+    DOCUMENT_PROVIDER_CLIENT_SECRET_TEST: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST'
+    DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL'
+    DOCUMENT_PROVIDER_TOKEN_URL_TEST: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST'
+    DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
+    DRIVING_LICENSE_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_XROAD_PATH'
+    HEALTH_INSURANCE_XROAD_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
+    HEALTH_INSURANCE_XROAD_USERNAME: '/k8s/health-insurance/XROAD-USER'
+    HEALTH_INSURANCE_XROAD_WSDLURL: '/k8s/api/HEALTH_INSURANCE_XROAD_WSDLURL'
+    PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD'
+    PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD'
+    PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER'
+    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: '/k8s/api/PAYMENT_SCHEDULE_XROAD_PROVIDER_ID'
+    PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER'
+    PAYMENT_XROAD_PROVIDER_ID: '/k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID'
+    PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY'
+    PKPASS_API_URL: '/k8s/api/PKPASS_API_URL'
+    PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES'
+    PKPASS_CACHE_KEY: '/k8s/api/PKPASS_CACHE_KEY'
+    PKPASS_CACHE_TOKEN_EXPIRY_DELTA: '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA'
+    PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY'
+    POSTHOLF_BASE_PATH: '/k8s/documents/POSTHOLF_BASE_PATH'
+    POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID'
+    POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET'
+    POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL'
+    REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
+    RSK_API_PASSWORD: '/k8s/shared/api/RSK_API_PASSWORD'
+    RSK_API_URL: '/k8s/shared/api/RSK_API_URL'
+    RSK_API_USERNAME: '/k8s/shared/api/RSK_API_USERNAME'
+    SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL'
+    SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
+    SOFFIA_SOAP_URL: '/k8s/api/SOFFIA_SOAP_URL'
+    SOFFIA_USER: '/k8s/service-portal/SOFFIA_USER'
+    SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST'
+    SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD'
+    SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME'
+    VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
+    XROAD_FINANCES_PATH: '/k8s/service-portal/XROAD_FINANCES_PATH'
+    XROAD_TJODSKRA_API_PATH: '/k8s/api/XROAD_TJODSKRA_API_PATH'
+    XROAD_VMST_API_PATH: '/k8s/api/XROAD_VMST_API_PATH'
+    ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
+    ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::251502586493:role/api
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/api'
     create: true
-    name: api
+    name: 'api'
 application-system-api:
   enabled: true
   env:
-    APPLICATION_ATTACHMENT_BUCKET: island-is-prod-storage-application-system
-    CLIENT_LOCATION_ORIGIN: https://island.is/umsoknir
-    CONTENTFUL_HOST: cdn.contentful.com
-    DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-    DB_NAME: application_system_api
-    DB_USER: application_system_api
-    EMAIL_REGION: eu-west-1
-    ENDORSEMENTS_API_BASE_PATH: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
-    FILE_SERVICE_PRESIGN_BUCKET: island-is-prod-fs-presign-bucket
-    FILE_STORAGE_UPLOAD_BUCKET: island-is-prod-upload-api
-    FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: island@island.is
-    FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: Stafrænt Ísland
-    GRAPHQL_API_URL: http://web-api.islandis.svc.cluster.local
-    INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: island@island.is
-    INSTITUTION_APPLICATION_RECIPIENT_NAME: Stafrænt Ísland
-    LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: island@island.is
-    LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: Stafrænt Ísland
-    NOVA_USERNAME: IslandIs_User_Production
-    PARTY_LETTER_REGISTRY_API_BASE_PATH: >-
-      http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local
-    PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: postur@dmr.is
-    REDIS_URL_NODE_01: >-
-      clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379
-    SERVICE_DOCUMENTS_BASEPATH: http://web-services-documents.services-documents.svc.cluster.local
-    XROAD_BASE_PATH: http://securityserver.island.is
-    XROAD_BASE_PATH_WITH_ENV: http://securityserver.island.is/r1/IS
-    XROAD_CLIENT_ID: IS/GOV/5501692829/island-is-client
-    XROAD_HEALTH_INSURANCE_ID: IS/GOV/4804080550/SJUKRA-Protected
+    APPLICATION_ATTACHMENT_BUCKET: 'island-is-prod-storage-application-system'
+    CLIENT_LOCATION_ORIGIN: 'https://island.is/umsoknir'
+    CONTENTFUL_HOST: 'cdn.contentful.com'
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'application_system_api'
+    DB_USER: 'application_system_api'
+    EMAIL_REGION: 'eu-west-1'
+    ENDORSEMENTS_API_BASE_PATH: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
+    FILE_SERVICE_PRESIGN_BUCKET: 'island-is-prod-fs-presign-bucket'
+    FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
+    FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
+    FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
+    GRAPHQL_API_URL: 'http://web-api.islandis.svc.cluster.local'
+    INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
+    INSTITUTION_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
+    LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
+    LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
+    NODE_OPTIONS: '--max-old-space-size=464'
+    NOVA_USERNAME: 'IslandIs_User_Production'
+    PARTY_LETTER_REGISTRY_API_BASE_PATH: 'http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local'
+    PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: 'postur@dmr.is'
+    REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379'
+    SERVERSIDE_FEATURES_ON: ''
+    SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
+    XROAD_BASE_PATH: 'http://securityserver.island.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
+    XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
     XROAD_VMST_MEMBER_CODE: '7005942039'
   grantNamespaces:
-    - nginx-ingress-external
-    - islandis
+    - 'nginx-ingress-internal'
+    - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+      hosts:
+        - host: 'application-payment-callback-xrd.internal.island.is'
+          paths:
+            - '/application-payment'
   initContainer:
     containers:
       - args:
-          - sequelize-cli
-          - db:migrate
+          - 'sequelize-cli'
+          - 'db:migrate'
         command:
-          - npx
+          - 'npx'
     env:
-      DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-      DB_NAME: application_system_api
-      DB_USER: application_system_api
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'application_system_api'
+      DB_USER: 'application_system_api'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: /k8s/application-system/api/DB_PASSWORD
-  namespace: application-system
+      DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+  namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
@@ -198,454 +210,519 @@ application-system-api:
     min: 2
   resources:
     limits:
-      cpu: 400m
-      memory: 512Mi
+      cpu: '400m'
+      memory: '512Mi'
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: '100m'
+      memory: '256Mi'
   secrets:
-    ARK_BASE_URL: /k8s/application-system-api/ARK_BASE_URL
-    AUTH_JWT_SECRET: /k8s/application-system/api/AUTH_JWT_SECRET
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    CONTENTFUL_ACCESS_TOKEN: /k8s/api/CONTENTFUL_ACCESS_TOKEN
-    DB_PASS: /k8s/application-system/api/DB_PASSWORD
-    DOCUMENT_PROVIDER_ONBOARDING_REVIEWER: /k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER
-    DOKOBIT_ACCESS_TOKEN: /k8s/application-system/api/DOKOBIT_ACCESS_TOKEN
-    DOKOBIT_URL: /k8s/application-system-api/DOKOBIT_URL
-    EMAIL_FROM: /k8s/application-system/api/EMAIL_FROM
-    EMAIL_FROM_NAME: /k8s/application-system/api/EMAIL_FROM_NAME
-    EMAIL_REPLY_TO: /k8s/application-system/api/EMAIL_REPLY_TO
-    EMAIL_REPLY_TO_NAME: /k8s/application-system/api/EMAIL_REPLY_TO_NAME
-    HEALTH_INSURANCE_XROAD_PASSWORD: /k8s/health-insurance/XROAD-PASSWORD
-    HEALTH_INSURANCE_XROAD_USERNAME: /k8s/health-insurance/XROAD-USER
-    HEALTH_INSURANCE_XROAD_WSDLURL: /k8s/application-system-api/HEALTH_INSURANCE_XROAD_WSDLURL
-    NOVA_PASSWORD: /k8s/application-system/api/NOVA_PASSWORD
-    NOVA_URL: /k8s/application-system-api/NOVA_URL
-    PARTY_APPLICATION_NORTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_NORTH_ADMIN_EMAIL
-    PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS
-    PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL
-    PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS
-    PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL
-    PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS
-    PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL
-    PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS
-    PARTY_APPLICATION_SOUTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_ADMIN_EMAIL
-    PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS
-    PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL
-    PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS
-    PARTY_LETTER_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS
-    PAYMENT_ADDITION_CALLBACK_URL: /k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL
-    PAYMENT_BASE_CALLBACK_URL: /k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL
-    PAYMENT_PASSWORD: /k8s/application-system-api/PAYMENT_PASSWORD
-    PAYMENT_USER: /k8s/application-system-api/PAYMENT_USER
-    PAYMENT_XROAD_PROVIDER_ID: /k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID
-    SYSLUMENN_HOST: /k8s/application-system-api/SYSLUMENN_HOST
-    SYSLUMENN_PASSWORD: /k8s/application-system/api/SYSLUMENN_PASSWORD
-    SYSLUMENN_USERNAME: /k8s/application-system/api/SYSLUMENN_USERNAME
-    VMST_API_KEY: /k8s/vmst-client/VMST_API_KEY
-    XROAD_VMST_API_PATH: /k8s/application-system-api/XROAD_VMST_API_PATH
+    ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
+    AUTH_JWT_SECRET: '/k8s/application-system/api/AUTH_JWT_SECRET'
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+    DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    DOCUMENT_PROVIDER_ONBOARDING_REVIEWER: '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
+    DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
+    DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
+    DRIVING_LICENSE_SECRET: '/k8s/application-system/api/DRIVING_LICENSE_SECRET'
+    DRIVING_LICENSE_XROAD_PATH: '/k8s/application-system/api/DRIVING_LICENSE_XROAD_PATH'
+    EMAIL_FROM: '/k8s/application-system/api/EMAIL_FROM'
+    EMAIL_FROM_NAME: '/k8s/application-system/api/EMAIL_FROM_NAME'
+    EMAIL_REPLY_TO: '/k8s/application-system/api/EMAIL_REPLY_TO'
+    EMAIL_REPLY_TO_NAME: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME'
+    HEALTH_INSURANCE_XROAD_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
+    HEALTH_INSURANCE_XROAD_USERNAME: '/k8s/health-insurance/XROAD-USER'
+    HEALTH_INSURANCE_XROAD_WSDLURL: '/k8s/application-system-api/HEALTH_INSURANCE_XROAD_WSDLURL'
+    NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD'
+    NOVA_URL: '/k8s/application-system-api/NOVA_URL'
+    PARTY_APPLICATION_NORTH_ADMIN_EMAIL: '/k8s/application-system/api/PARTY_APPLICATION_NORTH_ADMIN_EMAIL'
+    PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS'
+    PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL: '/k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL'
+    PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS'
+    PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL: '/k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL'
+    PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS'
+    PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL: '/k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL'
+    PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS'
+    PARTY_APPLICATION_SOUTH_ADMIN_EMAIL: '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_ADMIN_EMAIL'
+    PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS'
+    PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL: '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL'
+    PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS'
+    PARTY_LETTER_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS'
+    PAYMENT_ADDITION_CALLBACK_URL: '/k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL'
+    PAYMENT_BASE_CALLBACK_URL: '/k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL'
+    PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD'
+    PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER'
+    PAYMENT_XROAD_PROVIDER_ID: '/k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID'
+    SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
+    SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
+    SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
+    VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
+    XROAD_VMST_API_PATH: '/k8s/application-system-api/XROAD_VMST_API_PATH'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::251502586493:role/application-system-api
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/application-system-api'
     create: true
-    name: application-system-api
+    name: 'application-system-api'
 application-system-form:
   enabled: true
   env:
-    BASEPATH: /umsoknir
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
+    BASEPATH: '/umsoknir'
+    SERVERSIDE_FEATURES_ON: ''
+    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:
-    - nginx-ingress-external
-    - islandis
+    - 'nginx-ingress-internal'
+    - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /readiness
+      path: '/readiness'
       timeoutSeconds: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: nginx-external-alb
+        kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
-        - host: island.is
+        - host: 'island.is'
           paths:
-            - /umsoknir
-        - host: www.island.is
+            - '/umsoknir'
+        - host: 'www.island.is'
           paths:
-            - /umsoknir
-  namespace: application-system
+            - '/umsoknir'
+  namespace: 'application-system'
   replicaCount:
     default: 2
     max: 10
     min: 2
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 contentful-translation-extension:
   enabled: true
+  env:
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - nginx-ingress-external
+    - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /readiness
+      path: '/readiness'
       timeoutSeconds: 3
   image:
-    repository: >-
-      821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-translation-extension
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-translation-extension'
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: nginx-external-alb
+        kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
-        - host: contentful-translation-extension.devland.is
+        - host: 'contentful-translation-extension.devland.is'
           paths:
-            - /
-  namespace: contentful-translation-extension
+            - '/'
+  namespace: 'contentful-translation-extension'
   replicaCount:
     default: 2
     max: 10
     min: 2
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 download-service:
   enabled: true
+  env:
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - islandis
-    - nginx-ingress-external
+    - 'islandis'
+    - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: download/v1/liveness
+      path: 'download/v1/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: download/v1/readiness
+      path: 'download/v1/readiness'
       timeoutSeconds: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: nginx-external-alb
+        kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
-        - host: api.island.is
+        - host: 'api.island.is'
           paths:
-            - /download
-  namespace: download-service
+            - '/download'
+  namespace: 'download-service'
   replicaCount:
     default: 2
     max: 10
     min: 2
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    POSTHOLF_BASE_PATH: /k8s/documents/POSTHOLF_BASE_PATH
-    POSTHOLF_CLIENTID: /k8s/documents/POSTHOLF_CLIENTID
-    POSTHOLF_CLIENT_SECRET: /k8s/documents/POSTHOLF_CLIENT_SECRET
-    POSTHOLF_TOKEN_URL: /k8s/documents/POSTHOLF_TOKEN_URL
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    POSTHOLF_BASE_PATH: '/k8s/documents/POSTHOLF_BASE_PATH'
+    POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID'
+    POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET'
+    POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 endorsement-system-api:
+  args:
+    - '--tls-min-v1.0'
+    - 'main.js'
+  command:
+    - 'node'
   enabled: true
   env:
-    DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-    DB_NAME: services_endorsements_api
-    DB_USER: services_endorsements_api
-    TEMPORARY_VOTER_REGISTRY_API_URL: >-
-      http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_endorsements_api'
+    DB_USER: 'services_endorsements_api'
+    SERVERSIDE_FEATURES_ON: ''
+    TEMPORARY_VOTER_REGISTRY_API_URL: 'http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local'
   grantNamespaces:
-    - islandis
-    - application-system
+    - 'islandis'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
   initContainer:
     containers:
       - args:
-          - sequelize-cli
-          - db:migrate
+          - 'sequelize-cli'
+          - 'db:migrate'
         command:
-          - npx
-        name: migrations
+          - 'npx'
+        name: 'migrations'
     env:
-      DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-      DB_NAME: services_endorsements_api
-      DB_USER: services_endorsements_api
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'services_endorsements_api'
+      DB_USER: 'services_endorsements_api'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: /k8s/services-endorsements-api/DB_PASSWORD
-  namespace: endorsement-system
+      DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
+  namespace: 'endorsement-system'
   replicaCount:
     default: 2
     max: 10
     min: 2
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    DB_PASS: /k8s/services-endorsements-api/DB_PASSWORD
-    SOFFIA_HOST_URL: /k8s/endorsement-system-api/SOFFIA_HOST_URL
-    SOFFIA_PASS: /k8s/service-portal/SOFFIA_PASS
-    SOFFIA_SOAP_URL: /k8s/endorsement-system-api/SOFFIA_SOAP_URL
-    SOFFIA_USER: /k8s/service-portal/SOFFIA_USER
+    ACCESS_GROUP_DMR: '/k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS'
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
+    SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL'
+    SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
+    SOFFIA_SOAP_URL: '/k8s/endorsement-system-api/SOFFIA_SOAP_URL'
+    SOFFIA_USER: '/k8s/service-portal/SOFFIA_USER'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+endorsement-system-scripts-update-metadata:
+  args:
+    - '--tls-min-v1.0'
+    - 'updateMetadata.js'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_endorsements_api'
+    DB_USER: 'services_endorsements_api'
+    SERVERSIDE_FEATURES_ON: ''
+    TEMPORARY_VOTER_REGISTRY_API_URL: 'http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local'
+  grantNamespaces:
+    - 'islandis'
+    - 'application-system'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
+  namespace: 'endorsement-system'
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  schedule: '1 */6 * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
+    SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL'
+    SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
+    SOFFIA_SOAP_URL: '/k8s/endorsement-system-api/SOFFIA_SOAP_URL'
+    SOFFIA_USER: '/k8s/service-portal/SOFFIA_USER'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 global:
   env:
-    AUDIT_GROUP_NAME: /island-is/audit-log
-    AWS_REGION: eu-west-1
-    IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
+    AUDIT_GROUP_NAME: '/island-is/audit-log'
+    AWS_REGION: 'eu-west-1'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     PORT: '3333'
-    name: prod
+    name: 'prod'
   image:
-    tag: latest_master
+    tag: 'latest_master'
   initContainer:
     env:
-      AWS_REGION: eu-west-1
+      AWS_REGION: 'eu-west-1'
 icelandic-names-registry-backend:
   enabled: true
   env:
-    DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-    DB_NAME: icelandic_names_registry_backend
-    DB_USER: icelandic_names_registry_backend
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'icelandic_names_registry_backend'
+    DB_USER: 'icelandic_names_registry_backend'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - islandis
+    - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
   image:
-    repository: >-
-      821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
   initContainer:
     containers:
       - args:
-          - sequelize-cli
-          - db:migrate
+          - 'sequelize-cli'
+          - 'db:migrate'
         command:
-          - npx
-        name: migrations
+          - 'npx'
+        name: 'migrations'
       - args:
-          - sequelize-cli
-          - db:seed:all
+          - 'sequelize-cli'
+          - 'db:seed:all'
         command:
-          - npx
-        name: seeds
+          - 'npx'
+        name: 'seeds'
     env:
-      DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-      DB_NAME: icelandic_names_registry_backend
-      DB_USER: icelandic_names_registry_backend
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'icelandic_names_registry_backend'
+      DB_USER: 'icelandic_names_registry_backend'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: /k8s/icelandic-names-registry-backend/DB_PASSWORD
-  namespace: icelandic-names-registry
+      DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
+  namespace: 'icelandic-names-registry'
   replicaCount:
     default: 2
     max: 10
     min: 2
   secrets:
-    ALLOWED_NATIONAL_IDS: /k8s/icelandic-names-registry-backend/ALLOWED_NATIONAL_IDS
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    DB_PASS: /k8s/icelandic-names-registry-backend/DB_PASSWORD
+    ALLOWED_NATIONAL_IDS: '/k8s/icelandic-names-registry-backend/ALLOWED_NATIONAL_IDS'
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 island-ui-storybook:
   enabled: true
+  env:
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - nginx-ingress-external
+    - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /readiness
+      path: '/readiness'
       timeoutSeconds: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: nginx-external-alb
+        kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
-        - host: ui.devland.is
+        - host: 'ui.devland.is'
           paths:
-            - /
-  namespace: storybook
+            - '/'
+  namespace: 'storybook'
   replicaCount:
     default: 2
     max: 10
     min: 2
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 party-letter-registry-api:
   enabled: true
   env:
-    DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-    DB_NAME: services_party_letter_registry_api
-    DB_USER: services_party_letter_registry_api
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_party_letter_registry_api'
+    DB_USER: 'services_party_letter_registry_api'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - islandis
-    - application-system
+    - 'islandis'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
   image:
-    repository: >-
-      821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-party-letter-registry-api
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-party-letter-registry-api'
   initContainer:
     containers:
       - args:
-          - sequelize-cli
-          - db:migrate
+          - 'sequelize-cli'
+          - 'db:migrate'
         command:
-          - npx
-        name: migrations
+          - 'npx'
+        name: 'migrations'
     env:
-      DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-      DB_NAME: services_party_letter_registry_api
-      DB_USER: services_party_letter_registry_api
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'services_party_letter_registry_api'
+      DB_USER: 'services_party_letter_registry_api'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: /k8s/services-party-letter-registry-api/DB_PASSWORD
-  namespace: party-letter-registry
+      DB_PASS: '/k8s/services-party-letter-registry-api/DB_PASSWORD'
+  namespace: 'party-letter-registry'
   replicaCount:
     default: 2
     max: 10
     min: 2
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    DB_PASS: /k8s/services-party-letter-registry-api/DB_PASSWORD
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-party-letter-registry-api/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 search-indexer-service:
   enabled: true
   env:
-    APPLICATION_URL: http://search-indexer-service
-    CONTENTFUL_ENVIRONMENT: master
-    CONTENTFUL_HOST: cdn.contentful.com
-    CONTENTFUL_SPACE: 8k0h54kbe6bj
-    ELASTIC_INDEX: island-is
-    ELASTIC_NODE: https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com
+    APPLICATION_URL: 'http://search-indexer-service'
+    CONTENTFUL_ENVIRONMENT: 'master'
+    CONTENTFUL_HOST: 'cdn.contentful.com'
+    CONTENTFUL_SPACE: '8k0h54kbe6bj'
+    ELASTIC_INDEX: 'island-is'
+    ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
+    NODE_OPTIONS: '--max-old-space-size=976'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /
+      path: '/'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /
+      path: '/'
       timeoutSeconds: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: nginx-external-alb
+        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
       hosts:
-        - host: search-indexer-service.devland.is
+        - host: 'search-indexer-service.devland.is'
           paths:
-            - /
+            - '/'
   initContainer:
     containers:
       - args:
-          - /webapp/migrateAws.js
+          - '/webapp/migrateAws.js'
         command:
-          - /usr/local/bin/node
-        name: migrate-aws
+          - '/usr/local/bin/node'
+        name: 'migrate-aws'
         resources:
           limits:
-            cpu: 400m
-            memory: 1024Mi
+            cpu: '400m'
+            memory: '1024Mi'
           requests:
-            cpu: 100m
-            memory: 256Mi
+            cpu: '100m'
+            memory: '256Mi'
       - args:
-          - /webapp/migrateElastic.js
+          - '/webapp/migrateElastic.js'
         command:
-          - /usr/local/bin/node
-        name: migrate-elastic
+          - '/usr/local/bin/node'
+        name: 'migrate-elastic'
         resources:
           limits:
-            cpu: 400m
-            memory: 1024Mi
+            cpu: '400m'
+            memory: '1024Mi'
           requests:
-            cpu: 100m
-            memory: 256Mi
+            cpu: '100m'
+            memory: '256Mi'
       - args:
-          - /webapp/migrateKibana.js
+          - '/webapp/migrateKibana.js'
         command:
-          - /usr/local/bin/node
-        name: migrate-kibana
+          - '/usr/local/bin/node'
+        name: 'migrate-kibana'
         resources:
           limits:
-            cpu: 400m
-            memory: 1024Mi
+            cpu: '400m'
+            memory: '1024Mi'
           requests:
-            cpu: 100m
-            memory: 256Mi
+            cpu: '100m'
+            memory: '256Mi'
     env:
-      APPLICATION_URL: http://search-indexer-service
-      CONTENTFUL_ENVIRONMENT: master
-      CONTENTFUL_HOST: cdn.contentful.com
-      CONTENTFUL_SPACE: 8k0h54kbe6bj
-      ELASTIC_DOMAIN: search
-      ELASTIC_INDEX: island-is
-      ELASTIC_NODE: https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com
-      S3_BUCKET: prod-es-custom-packages
+      APPLICATION_URL: 'http://search-indexer-service'
+      CONTENTFUL_ENVIRONMENT: 'master'
+      CONTENTFUL_HOST: 'cdn.contentful.com'
+      CONTENTFUL_SPACE: '8k0h54kbe6bj'
+      ELASTIC_DOMAIN: 'search'
+      ELASTIC_INDEX: 'island-is'
+      ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
+      S3_BUCKET: 'prod-es-custom-packages'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
-      CONTENTFUL_ACCESS_TOKEN: /k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN
-  namespace: search-indexer
+      CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
+  namespace: 'search-indexer'
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
@@ -654,102 +731,106 @@ search-indexer-service:
     min: 1
   resources:
     limits:
-      cpu: 400m
-      memory: 1024Mi
+      cpu: '400m'
+      memory: '1024Mi'
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: '100m'
+      memory: '256Mi'
   secrets:
-    API_CMS_SYNC_TOKEN: /k8s/search-indexer/API_CMS_SYNC_TOKEN
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    CONTENTFUL_ACCESS_TOKEN: /k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN
+    API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::251502586493:role/search-indexer
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/search-indexer'
     create: true
-    name: search-indexer
+    name: 'search-indexer'
 service-portal:
   enabled: true
   env:
-    BASEPATH: /minarsidur
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: https://innskra.island.is
+    BASEPATH: '/minarsidur'
+    SERVERSIDE_FEATURES_ON: ''
+    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:
-    - nginx-ingress-external
-    - islandis
+    - 'nginx-ingress-external'
+    - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /readiness
+      path: '/readiness'
       timeoutSeconds: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: nginx-external-alb
+        kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
-        - host: island.is
+        - host: 'island.is'
           paths:
-            - /minarsidur
-        - host: www.island.is
+            - '/minarsidur'
+        - host: 'www.island.is'
           paths:
-            - /minarsidur
-  namespace: service-portal
+            - '/minarsidur'
+  namespace: 'service-portal'
   replicaCount:
     default: 2
     max: 10
     min: 2
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 service-portal-api:
   enabled: true
   env:
-    DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-    DB_NAME: service_portal_api
-    DB_USER: service_portal_api
-    EMAIL_REGION: eu-west-1
-    SERVICE_PORTAL_BASE_URL: https://island.is/minarsidur
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'service_portal_api'
+    DB_USER: 'service_portal_api'
+    EMAIL_REGION: 'eu-west-1'
+    NODE_OPTIONS: '--max-old-space-size=464'
+    SERVERSIDE_FEATURES_ON: ''
+    SERVICE_PORTAL_BASE_URL: 'https://island.is/minarsidur'
   grantNamespaces:
-    - nginx-ingress-external
-    - islandis
+    - 'nginx-ingress-external'
+    - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /readiness
+      path: '/readiness'
       timeoutSeconds: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
   initContainer:
     containers:
       - args:
-          - sequelize-cli
-          - db:migrate
+          - 'sequelize-cli'
+          - 'db:migrate'
         command:
-          - npx
+          - 'npx'
     env:
-      DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-      DB_NAME: service_portal_api
-      DB_USER: service_portal_api
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'service_portal_api'
+      DB_USER: 'service_portal_api'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: /k8s/service-portal/api/DB_PASSWORD
-  namespace: service-portal
+      DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+  namespace: 'service-portal'
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
@@ -758,325 +839,333 @@ service-portal-api:
     min: 2
   resources:
     limits:
-      cpu: 400m
-      memory: 512Mi
+      cpu: '400m'
+      memory: '512Mi'
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: '100m'
+      memory: '256Mi'
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    DB_PASS: /k8s/service-portal/api/DB_PASSWORD
-    EMAIL_FROM: /k8s/service-portal/api/EMAIL_FROM
-    EMAIL_FROM_NAME: /k8s/service-portal/api/EMAIL_FROM_NAME
-    EMAIL_REPLY_TO: /k8s/service-portal/api/EMAIL_REPLY_TO
-    EMAIL_REPLY_TO_NAME: /k8s/service-portal/api/EMAIL_REPLY_TO_NAME
-    NOVA_PASSWORD: /k8s/gjafakort/NOVA_PASSWORD
-    NOVA_URL: /k8s/service-portal-api/NOVA_URL
-    NOVA_USERNAME: /k8s/gjafakort/NOVA_USERNAME
-    SENTRY_DSN: /k8s/service-portal/SENTRY_DSN
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+    EMAIL_FROM: '/k8s/service-portal/api/EMAIL_FROM'
+    EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
+    EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
+    EMAIL_REPLY_TO_NAME: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME'
+    NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD'
+    NOVA_URL: '/k8s/service-portal-api/NOVA_URL'
+    NOVA_USERNAME: '/k8s/gjafakort/NOVA_USERNAME'
+    SENTRY_DSN: '/k8s/service-portal/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::251502586493:role/service-portal-api
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/service-portal-api'
     create: true
-    name: service-portal-api
+    name: 'service-portal-api'
 services-documents:
   enabled: true
   env:
-    DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-    DB_NAME: services_documents
-    DB_USER: services_documents
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_documents'
+    DB_USER: 'services_documents'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - islandis
-    - application-system
+    - 'islandis'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /readiness
+      path: '/readiness'
       timeoutSeconds: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
   initContainer:
     containers:
       - args:
-          - sequelize-cli
-          - db:migrate
+          - 'sequelize-cli'
+          - 'db:migrate'
         command:
-          - npx
+          - 'npx'
     env:
-      DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-      DB_NAME: services_documents
-      DB_USER: services_documents
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'services_documents'
+      DB_USER: 'services_documents'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: /k8s/services-documents/DB_PASSWORD
-  namespace: services-documents
+      DB_PASS: '/k8s/services-documents/DB_PASSWORD'
+  namespace: 'services-documents'
   replicaCount:
     default: 2
     max: 10
     min: 2
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    DB_PASS: /k8s/services-documents/DB_PASSWORD
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 skilavottord-web:
   enabled: true
   env:
-    API_URL: http://web-skilavottord-ws
+    API_URL: 'http://web-skilavottord-ws'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - nginx-ingress-external
+    - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: nginx-external-alb
+        kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
-        - host: island.is
+        - host: 'island.is'
           paths:
-            - /app/skilavottord/
-        - host: www.island.is
+            - '/app/skilavottord/'
+        - host: 'www.island.is'
           paths:
-            - /app/skilavottord/
-  namespace: skilavottord
+            - '/app/skilavottord/'
+  namespace: 'skilavottord'
   replicaCount:
     default: 2
     max: 10
     min: 2
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 skilavottord-ws:
   enabled: true
   env:
-    AUTH_AUDIENCE: island.is
-    DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-    DB_NAME: skilavottord
-    DB_USER: skilavottord
-    SAML_ENTRY_POINT: https://innskraning.island.is/?id=sv_citizen.prod&qaa=4
-    SAML_ENTRY_POINT2: https://innskraning.island.is/?id=sv_company.prod&qaa=4
+    AUTH_AUDIENCE: 'island.is'
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'skilavottord'
+    DB_USER: 'skilavottord'
+    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=sv_citizen.prod&qaa=4'
+    SAML_ENTRY_POINT2: 'https://innskraning.island.is/?id=sv_company.prod&qaa=4'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - nginx-ingress-external
+    - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: nginx-external-alb
+        kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
-        - host: island.is
+        - host: 'island.is'
           paths:
-            - /app/skilavottord/api/
-        - host: www.island.is
+            - '/app/skilavottord/api/'
+        - host: 'www.island.is'
           paths:
-            - /app/skilavottord/api/
+            - '/app/skilavottord/api/'
   initContainer:
     containers:
       - args:
-          - sequelize-cli
-          - db:migrate
+          - 'sequelize-cli'
+          - 'db:migrate'
         command:
-          - npx
+          - 'npx'
     env:
-      DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-      DB_NAME: skilavottord
-      DB_USER: skilavottord
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'skilavottord'
+      DB_USER: 'skilavottord'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: /k8s/skilavottord/DB_PASSWORD
-  namespace: skilavottord
+      DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
+  namespace: 'skilavottord'
   replicaCount:
     default: 2
     max: 10
     min: 2
   secrets:
-    AUTH_JWT_SECRET: /k8s/skilavottord/AUTH_JWT_SECRET
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    DB_PASS: /k8s/skilavottord/DB_PASSWORD
-    FJARSYSLA_REST_PASS: /k8s/skilavottord/FJARSYSLA_REST_PASS
-    FJARSYSLA_REST_URL: /k8s/skilavottord-ws/FJARSYSLA_REST_URL
-    FJARSYSLA_REST_USER: /k8s/skilavottord/FJARSYSLA_REST_USER
-    SAMGONGUSTOFA_REST_AUTH_URL: /k8s/skilavottord-ws/SAMGONGUSTOFA_REST_AUTH_URL
-    SAMGONGUSTOFA_REST_DEREG_URL: /k8s/skilavottord-ws/SAMGONGUSTOFA_REST_DEREG_URL
-    SAMGONGUSTOFA_REST_PASS: /k8s/skilavottord/SAMGONGUSTOFA_REST_PASS
-    SAMGONGUSTOFA_REST_USER: /k8s/skilavottord/SAMGONGUSTOFA_REST_USER
-    SAMGONGUSTOFA_SOAP_PASS: /k8s/skilavottord/SAMGONGUSTOFA_SOAP_PASS
-    SAMGONGUSTOFA_SOAP_URL: /k8s/skilavottord-ws/SAMGONGUSTOFA_SOAP_URL
-    SAMGONGUSTOFA_SOAP_USER: /k8s/skilavottord/SAMGONGUSTOFA_SOAP_USER
-    SKILAVOTTORD_USER_LIST: /k8s/skilavottord/SKILAVOTTORD_USER_LIST
+    AUTH_JWT_SECRET: '/k8s/skilavottord/AUTH_JWT_SECRET'
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
+    FJARSYSLA_REST_PASS: '/k8s/skilavottord/FJARSYSLA_REST_PASS'
+    FJARSYSLA_REST_URL: '/k8s/skilavottord-ws/FJARSYSLA_REST_URL'
+    FJARSYSLA_REST_USER: '/k8s/skilavottord/FJARSYSLA_REST_USER'
+    SAMGONGUSTOFA_REST_AUTH_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_REST_AUTH_URL'
+    SAMGONGUSTOFA_REST_DEREG_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_REST_DEREG_URL'
+    SAMGONGUSTOFA_REST_PASS: '/k8s/skilavottord/SAMGONGUSTOFA_REST_PASS'
+    SAMGONGUSTOFA_REST_USER: '/k8s/skilavottord/SAMGONGUSTOFA_REST_USER'
+    SAMGONGUSTOFA_SOAP_PASS: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_PASS'
+    SAMGONGUSTOFA_SOAP_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_SOAP_URL'
+    SAMGONGUSTOFA_SOAP_USER: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_USER'
+    SKILAVOTTORD_USER_LIST: '/k8s/skilavottord/SKILAVOTTORD_USER_LIST'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 temporary-voter-registry-api:
   enabled: true
   env:
-    DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-    DB_NAME: services_temporary_voter_registry_api
-    DB_USER: services_temporary_voter_registry_api
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_temporary_voter_registry_api'
+    DB_USER: 'services_temporary_voter_registry_api'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - islandis
+    - 'islandis'
+    - 'endorsement-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
   image:
-    repository: >-
-      821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-temporary-voter-registry-api
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-temporary-voter-registry-api'
   initContainer:
     containers:
       - args:
-          - sequelize-cli
-          - db:migrate
+          - 'sequelize-cli'
+          - 'db:migrate'
         command:
-          - npx
-        name: migrations
+          - 'npx'
+        name: 'migrations'
     env:
-      DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
-      DB_NAME: services_temporary_voter_registry_api
-      DB_USER: services_temporary_voter_registry_api
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'services_temporary_voter_registry_api'
+      DB_USER: 'services_temporary_voter_registry_api'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: /k8s/services-temporary-voter-registry-api/DB_PASSWORD
-  namespace: temporary-voter-registry
+      DB_PASS: '/k8s/services-temporary-voter-registry-api/DB_PASSWORD'
+  namespace: 'temporary-voter-registry'
   replicaCount:
     default: 2
     max: 10
     min: 2
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    DB_PASS: /k8s/services-temporary-voter-registry-api/DB_PASSWORD
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-temporary-voter-registry-api/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 web:
   enabled: true
   env:
-    API_URL: http://web-api
+    API_URL: 'http://web-api'
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
-    DISABLE_REGULATIONS_PAGE: 'true'
     DISABLE_SYSLUMENN_PAGE: 'false'
-    TRACKING_DOMAIN: island.is
+    NODE_OPTIONS: '--max-old-space-size=464'
+    SERVERSIDE_FEATURES_ON: ''
+    TRACKING_DOMAIN: 'island.is'
   grantNamespaces:
-    - nginx-ingress-external
-    - api-catalogue
-    - application-system
+    - 'nginx-ingress-external'
+    - 'api-catalogue'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /readiness
+      path: '/readiness'
       timeoutSeconds: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/web
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: nginx-external-alb
+        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
       hosts:
-        - host: island.is
+        - host: 'island.is'
           paths:
-            - /
-        - host: www.island.is
+            - '/'
+        - host: 'www.island.is'
           paths:
-            - /
-  namespace: islandis
+            - '/'
+  namespace: 'islandis'
   replicaCount:
     default: 2
     max: 10
     min: 2
   resources:
     limits:
-      cpu: 400m
-      memory: 512Mi
+      cpu: '400m'
+      memory: '512Mi'
     requests:
-      cpu: 200m
-      memory: 256Mi
+      cpu: '200m'
+      memory: '256Mi'
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    SENTRY_DSN: /k8s/web/SENTRY_DSN
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    SENTRY_DSN: '/k8s/web/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 xroad-collector:
   args:
-    - main.js
+    - 'main.js'
   command:
-    - node
+    - 'node'
   enabled: true
   env:
-    ELASTIC_NODE: https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com
+    ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     NODE_TLS_REJECT_UNAUTHORIZED: '0'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /
+      path: '/'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /
+      path: '/'
       timeoutSeconds: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector
-  namespace: xroad-collector
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
+  namespace: 'xroad-collector'
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
     default: 2
     max: 10
     min: 2
-  schedule: 0 2 * * *
+  schedule: '0 2 * * *'
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    XROAD_BASE_PATH: /k8s/xroad-collector/XROAD_BASE_PATH
-    XROAD_CLIENT_ID: /k8s/xroad-collector/XROAD_CLIENT_ID
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    XROAD_BASE_PATH: '/k8s/xroad-collector/XROAD_BASE_PATH'
+    XROAD_CLIENT_ID: '/k8s/xroad-collector/XROAD_CLIENT_ID'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::251502586493:role/xroad-collector
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/xroad-collector'
     create: true
-    name: xroad-collector
-
+    name: 'xroad-collector'

@@ -18,11 +18,12 @@ import {
   TimeInputField,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
-  Case,
   CaseAppealDecision,
+  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useQuery } from '@apollo/client'
@@ -48,17 +49,16 @@ import {
   capitalize,
   formatAccusedByGender,
   formatDate,
+  formatNationalId,
   NounCases,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { getConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useRouter } from 'next/router'
 import {
   useCase,
   useDateTime,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { rcRulingStepTwo } from '@island.is/judicial-system-web/messages'
-import * as style from './RulingStepTwo.treat'
 
 export const RulingStepTwo: React.FC = () => {
   const router = useRouter()
@@ -86,7 +86,11 @@ export const RulingStepTwo: React.FC = () => {
 
   useEffect(() => {
     if (id && !workingCase && data?.case) {
-      const theCase = data.case
+      const theCase: Case = data.case
+      const isolationEndsBeforeValidToDate =
+        theCase.validToDate &&
+        theCase.isolationToDate &&
+        new Date(theCase.validToDate) > new Date(theCase.isolationToDate)
 
       // Normally we always autofill if the target has a "falsy" value.
       // However, if the target is optional, then it should not be autofilled after
@@ -102,9 +106,100 @@ export const RulingStepTwo: React.FC = () => {
         )
       }
 
+      autofill(
+        'conclusion',
+        theCase.decision === CaseDecision.DISMISSING
+          ? formatMessage(
+              rcRulingStepTwo.sections.conclusion.dismissingAutofill,
+              {
+                genderedAccused: formatAccusedByGender(theCase.accusedGender),
+                accusedName: theCase.accusedName,
+                extensionSuffix:
+                  theCase.parentCase !== undefined &&
+                  theCase.parentCase?.decision === CaseDecision.ACCEPTING
+                    ? ' áframhaldandi'
+                    : '',
+                caseType:
+                  theCase.type === CaseType.CUSTODY
+                    ? 'gæsluvarðhaldi'
+                    : 'farbanni',
+              },
+            )
+          : theCase.decision === CaseDecision.REJECTING
+          ? formatMessage(
+              rcRulingStepTwo.sections.conclusion.rejectingAutofill,
+              {
+                genderedAccused: formatAccusedByGender(theCase.accusedGender),
+                accusedName: theCase.accusedName,
+                accusedNationalId: formatNationalId(theCase.accusedNationalId),
+                extensionSuffix:
+                  theCase.parentCase !== undefined &&
+                  theCase.parentCase?.decision === CaseDecision.ACCEPTING
+                    ? ' áframhaldandi'
+                    : '',
+                caseType:
+                  theCase.type === CaseType.CUSTODY
+                    ? 'gæsluvarðhaldi'
+                    : 'farbanni',
+              },
+            )
+          : formatMessage(
+              rcRulingStepTwo.sections.conclusion.acceptingAutofill,
+              {
+                genderedAccused: capitalize(
+                  formatAccusedByGender(theCase.accusedGender),
+                ),
+                accusedName: theCase.accusedName,
+                accusedNationalId: formatNationalId(theCase.accusedNationalId),
+                caseTypeAndExtensionSuffix:
+                  theCase.decision === CaseDecision.ACCEPTING
+                    ? `${
+                        theCase.parentCase !== undefined &&
+                        theCase.parentCase?.decision === CaseDecision.ACCEPTING
+                          ? 'áframhaldandi '
+                          : ''
+                      }${
+                        theCase.type === CaseType.CUSTODY
+                          ? 'gæsluvarðhaldi'
+                          : 'farbanni'
+                      }`
+                    : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                      `${
+                        theCase.parentCase !== undefined &&
+                        theCase.parentCase?.decision ===
+                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                          ? 'áframhaldandi '
+                          : ''
+                      }farbanni`,
+                validToDate: `${formatDate(theCase.validToDate, 'PPPPp')
+                  ?.replace('dagur,', 'dagsins')
+                  ?.replace(' kl.', ', kl.')}`,
+                isolationSuffix:
+                  theCase.decision === CaseDecision.ACCEPTING &&
+                  theCase.custodyRestrictions?.includes(
+                    CaseCustodyRestrictions.ISOLATION,
+                  )
+                    ? ` ${capitalize(
+                        formatAccusedByGender(theCase.accusedGender),
+                      )} skal sæta einangrun ${
+                        isolationEndsBeforeValidToDate
+                          ? `ekki lengur en til ${formatDate(
+                              theCase.isolationToDate,
+                              'PPPPp',
+                            )
+                              ?.replace('dagur,', 'dagsins')
+                              ?.replace(' kl.', ', kl.')}.`
+                          : 'á meðan á gæsluvarðhaldinu stendur.'
+                      }`
+                    : '',
+              },
+            ),
+        theCase,
+      )
+
       setWorkingCase(theCase)
     }
-  }, [id, workingCase, setWorkingCase, data, autofill])
+  }, [id, workingCase, setWorkingCase, data, autofill, formatMessage])
 
   return (
     <PageLayout
@@ -136,35 +231,34 @@ export const RulingStepTwo: React.FC = () => {
                     Úrskurðarorð
                   </Text>
                 </Box>
-                <BlueBox>
-                  <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
-                  <Input
-                    name="conclusion"
-                    label="Bæta texta við úrskurðarorð"
-                    placeholder="Hér er hægt að bæta texta við úrskurðarorð eftir þörfum"
-                    defaultValue={workingCase?.conclusion}
-                    onChange={(event) =>
-                      removeTabsValidateAndSet(
-                        'conclusion',
-                        event,
-                        [],
-                        workingCase,
-                        setWorkingCase,
-                      )
-                    }
-                    onBlur={(event) =>
-                      validateAndSendToServer(
-                        'conclusion',
-                        event.target.value,
-                        [],
-                        workingCase,
-                        updateCase,
-                      )
-                    }
-                    rows={7}
-                    textarea
-                  />
-                </BlueBox>
+                <Input
+                  name="conclusion"
+                  data-testid="conclusion"
+                  label="Úrskurðarorð"
+                  defaultValue={workingCase.conclusion}
+                  placeholder="Hver eru úrskurðarorðin"
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'conclusion',
+                      event,
+                      [],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'conclusion',
+                      event.target.value,
+                      [],
+                      workingCase,
+                      updateCase,
+                    )
+                  }
+                  textarea
+                  required
+                  rows={7}
+                />
               </Box>
             </Box>
             <Box component="section" marginBottom={8}>
@@ -566,7 +660,7 @@ export const RulingStepTwo: React.FC = () => {
                 </Text>
               )}
             </Box>
-            <Box className={style.courtEndTimeContainer}>
+            <Box marginBottom={10}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
                   Þinghald
@@ -605,6 +699,7 @@ export const RulingStepTwo: React.FC = () => {
                         name="courtEndTime"
                         label="Þinghaldi lauk (kk:mm)"
                         placeholder="Veldu tíma"
+                        autoComplete="off"
                         defaultValue={formatDate(
                           workingCase.courtEndTime,
                           TIME_FORMAT,
@@ -626,6 +721,7 @@ export const RulingStepTwo: React.FC = () => {
               nextIsDisabled={
                 !workingCase.accusedAppealDecision ||
                 !workingCase.prosecutorAppealDecision ||
+                !workingCase.conclusion ||
                 !isValidCourtEndTime?.isValid
               }
             />

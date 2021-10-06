@@ -24,7 +24,8 @@
     "atob",
     "logform",
     "pg-native",
-    "form-data"
+    "form-data",
+    "@island.is/login"
   ],
   "keepNames": true
 }

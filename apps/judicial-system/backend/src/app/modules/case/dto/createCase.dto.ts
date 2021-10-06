@@ -8,7 +8,7 @@ export class CreateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ enum: CaseType })
-  readonly type: CaseType
+  readonly type!: CaseType
 
   @IsOptional()
   @IsString()
@@ -18,12 +18,12 @@ export class CreateCaseDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly policeCaseNumber: string
+  readonly policeCaseNumber!: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly accusedNationalId: string
+  readonly accusedNationalId!: string
 
   @IsOptional()
   @IsString()

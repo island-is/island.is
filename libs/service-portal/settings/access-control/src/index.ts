@@ -1,10 +1,10 @@
 import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
 
 import {
   ServicePortalModule,
   ServicePortalPath,
   ServicePortalRoute,
+  m,
 } from '@island.is/service-portal/core'
 
 export const accessControlModule: ServicePortalModule = {
@@ -13,26 +13,17 @@ export const accessControlModule: ServicePortalModule = {
   routes: () => {
     const routes: ServicePortalRoute[] = [
       {
-        name: defineMessage({
-          id: 'service.portal.settings.accessControl:root-title',
-          defaultMessage: 'Aðgangsstýring',
-        }),
+        name: m.accessControl,
         path: ServicePortalPath.SettingsAccessControl,
         render: () => lazy(() => import('./screens/AccessControl')),
       },
       {
-        name: defineMessage({
-          id: 'service.portal.settings.accessControl:root-grant-ritle',
-          defaultMessage: 'Veita aðgang',
-        }),
+        name: m.accessControlGrant,
         path: ServicePortalPath.SettingsAccessControlGrant,
         render: () => lazy(() => import('./screens/GrantAccess')),
       },
       {
-        name: defineMessage({
-          id: 'service.portal.settings.accessControl:root-access-title',
-          defaultMessage: 'Aðgangur',
-        }),
+        name: m.accessControlAccess,
         path: ServicePortalPath.SettingsAccessControlAccess,
         render: () => lazy(() => import('./screens/Access')),
       },

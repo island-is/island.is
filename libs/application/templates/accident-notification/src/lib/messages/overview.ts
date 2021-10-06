@@ -26,10 +26,57 @@ export const overview = {
       defaultMessage: 'Fylgiskjöl',
       description: 'Attachments',
     },
+    submit: {
+      id: 'an.application:overview.labels.submit',
+      defaultMessage: 'Staðfesta',
+      description: 'Submit button text',
+    },
+    update: {
+      id: 'an.application:overview.labels.update',
+      defaultMessage: 'Uppfæra tilkynningu',
+      description: 'Update button text',
+    },
     workMachine: {
       id: 'an.application:overview.labels.workMachine',
       defaultMessage: 'Upplýsingar um vinnuvél sem tengist slysi',
       description: 'Label for work machine section in overview',
+    },
+    missingDocumentsButton: {
+      id: 'an.application:overview.labels.missingDocumentsButton',
+      defaultMessage: 'Bæta við skjölum',
+      description: 'Label for missing documents button in overview',
+    },
+    hospitalSendsCertificate: {
+      id: 'an.application:overview.labels.hospitalSendsCertificate',
+      defaultMessage:
+        'Samskiptaseðill - Ég mun óska eftir því að Landspítalinn sendi samskiptaseðil til Sjúkratrygginga Íslands',
+      description: 'Label for hospital sends certificate in document list',
+    },
+  }),
+  alertMessage: defineMessages({
+    title: {
+      id: 'an.application:overview.alertMessage.title',
+      defaultMessage: 'Athugið!',
+      description: 'Title of alert message that appears on overview page',
+    },
+    description: {
+      id: 'an.application:overview.alertMessage.description',
+      defaultMessage:
+        'Áður en að Sjúkratryggingar Íslands fer yfir umsókn og tekur afstöðu til bótaskyldu þurfa eftirtalin fylgiskjöl að berast: ',
+      description: 'Description of alert message that appears on overview page',
+    },
+  }),
+  forThirdParty: defineMessages({
+    description: {
+      id: 'an.application:overview.forThirdParty.description',
+      defaultMessage:
+        'Á þessari síðu má sjá upplýsingar um þann slasaða og nákvæma lýsingu á slysi, farðu vel yfir áður en þú staðfestir eða andmælir tilkynningu.',
+      description: 'Description visible for third party',
+    },
+    buttonText: {
+      id: 'an.application:overview.forThirdParty.buttonText',
+      defaultMessage: 'Athugasemd',
+      description: 'Comment button',
     },
   }),
 }

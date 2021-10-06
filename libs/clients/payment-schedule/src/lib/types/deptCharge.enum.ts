@@ -19,4 +19,13 @@ export enum ChargeType {
   DailyFinesEnvironmentAgency = 'US',
   ExciseDutyOnVehicles = 'VF',
   SentencingCourtOrder = 'DR',
+  ValueAddedTax = 'VA',
+  // Missing charge types that are very likely to appear
+  // = 'TA',
+  // = 'BB',
+  // = 'SF',
+  // = 'FT',
+  // = 'GN',
+  // = 'HB',
+  // = 'UA',
 }

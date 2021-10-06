@@ -5,5 +5,9 @@ import { ApiProperty } from '@nestjs/swagger'
 export class CreatePresignedPostDto {
   @IsString()
   @ApiProperty()
-  readonly fileName: string
+  readonly fileName!: string
+
+  @IsString()
+  @ApiProperty()
+  readonly type!: string
 }

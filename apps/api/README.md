@@ -144,8 +144,8 @@ If your domain needs to expose fields in the GraphQL schema, make sure to export
 
 ## Code owners and maintainers
 
-- [Kosmos & Kaos](https://github.com/orgs/island-is/teams/kosmos-kaos/members): `libs/api/domains/cms`, `libs/api/domains/content-search`
-- [Aranja](https://github.com/orgs/island-is/teams/aranja/members): `libs/api/domains/cms`, `libs/api/domains/application`, `libs/api/domains/content-search`
+- [Kosmos & Kaos](https://github.com/orgs/island-is/teams/kosmos-kaos/members): `libs/cms`, `libs/api/domains/content-search`
+- [Aranja](https://github.com/orgs/island-is/teams/aranja/members): `libs/cms`, `libs/api/domains/application`, `libs/api/domains/content-search`
 - [Sendiráðið](https://github.com/orgs/island-is/teams/sendiradid/members): `libs/api/domains/documents`, `libs/api/domains/national-registry`
 - [Stefna](https://github.com/orgs/island-is/teams/stefna/members): `libs/api/domains/content-search`
 - [Advania](https://github.com/orgs/island-is/teams/advania/members) `libs/api/domains/api-catalogue`

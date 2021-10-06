@@ -7,7 +7,9 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Case, CaseType, ICaseTypes } from '@island.is/judicial-system/types'
+import { ICaseTypes } from '@island.is/judicial-system/consts'
+import { CaseType } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
   setAndSendToServer,
@@ -144,6 +146,7 @@ const DefendantForm: React.FC<Props> = (props) => {
               defaultValue={workingCase.description}
               errorMessage={petitionDescriptionEM}
               hasError={petitionDescriptionEM !== ''}
+              autoComplete="off"
               onChange={(event) => {
                 removeTabsValidateAndSet(
                   'description',

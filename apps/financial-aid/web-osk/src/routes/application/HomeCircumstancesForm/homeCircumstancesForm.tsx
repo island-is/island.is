@@ -2,9 +2,8 @@ import React, { useState, useContext } from 'react'
 import { Text, Input, Box } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
-  FormLayout,
+  ContentContainer,
+  Footer,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
@@ -17,7 +16,7 @@ import {
   NavigationProps,
   getHomeCircumstances,
   HomeCircumstances,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 const HomeCircumstancesForm = () => {
   const router = useRouter()
@@ -67,11 +66,8 @@ const HomeCircumstancesForm = () => {
   }
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
-      <FormContentContainer>
+    <>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Hvernig býrðu?
         </Text>
@@ -127,13 +123,13 @@ const HomeCircumstancesForm = () => {
             }}
           />
         </Box>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
-    </FormLayout>
+    </>
   )
 }
 

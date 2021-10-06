@@ -5,7 +5,7 @@ export const rcConfirmation = {
     accusedAppealDecision: defineMessages({
       disclaimer: {
         id:
-          'judicial.system:restriction_cases.confirmation.accused_appeal_decision.disclaimer',
+          'judicial.system.restriction_cases:confirmation.accused_appeal_decision.disclaimer',
         defaultMessage:
           'Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa.',
         description:
@@ -15,7 +15,7 @@ export const rcConfirmation = {
     custodyRestrictions: defineMessages({
       disclaimer: {
         id:
-          'judicial.system:restriction_cases.ruling_step_two.custody_restrictions.disclaimer',
+          'judicial.system.restriction_cases:ruling_step_two.custody_restrictions.disclaimer',
         defaultMessage:
           'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd {caseType} undir dómara.',
         description:
@@ -23,13 +23,64 @@ export const rcConfirmation = {
       },
     }),
   },
-  modal: defineMessages({
-    text: {
-      id: 'judicial.system:restriction_cases.confirmation.modal.text',
-      defaultMessage:
-        'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
-      description:
-        'Notaður sem texti í úrskurðar tilkynningaglugganum á staðfesingar skrefi í gæsluvarðhalds- og farbannsmálum.',
-    },
-  }),
+  modal: {
+    custodyCases: defineMessages({
+      text: {
+        id:
+          'judicial.system.restriction_cases:confirmation.modal.custody_cases.text#markdown',
+        defaultMessage:
+          'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.<br/><br/>Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
+        description:
+          'Notaður sem texti í úrskurðar tilkynningaglugganum á staðfesingar skrefi í gæsluvarðhaldsmálum.',
+      },
+    }),
+    travelBanCases: defineMessages({
+      text: {
+        id:
+          'judicial.system.restriction_cases:confirmation.modal.travel_ban_cases.text#markdown',
+        defaultMessage:
+          'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð.<br/><br/>Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
+        description:
+          'Notaður sem texti í úrskurðar tilkynningaglugganum á staðfesingar skrefi í farbannsmálum.',
+      },
+    }),
+  },
+  footer: {
+    accepting: defineMessages({
+      continueButtonText: {
+        id:
+          'judicial.system.restriction_cases:confirmation.footer.accepting.continue_button_text',
+        defaultMessage: 'Samþykkja kröfu og undirrita úrskurð',
+        description:
+          'Notaður sem texti í "áfram" takkanum á staðfesingar skrefi í gæslu- og farbannsmálum þegar verið er að samþykkja kröfu',
+      },
+    }),
+    rejecting: defineMessages({
+      continueButtonText: {
+        id:
+          'judicial.system.restriction_cases:confirmation.footer.rejecting.continue_button_text',
+        defaultMessage: 'Hafna kröfu og undirrita úrskurð',
+        description:
+          'Notaður sem texti í "áfram" takkanum á staðfesingar skrefi í gæslu- og farbannsmálum þegar verið er að hafna kröfu',
+      },
+    }),
+    dismissing: defineMessages({
+      continueButtonText: {
+        id:
+          'judicial.system.restriction_cases:confirmation.footer.dismissing.continue_button_text',
+        defaultMessage: 'Vísa kröfu frá og undirrita úrskurð',
+        description:
+          'Notaður sem texti í "áfram" takkanum á staðfesingar skrefi í gæslu- og farbannsmálum þegar verið er að vísa kröfu frá',
+      },
+    }),
+    acceptingAlternativeTravelBan: defineMessages({
+      continueButtonText: {
+        id:
+          'judicial.system.restriction_cases:confirmation.footer.accepting_alternative_travel_ban.continue_button_text',
+        defaultMessage: 'Staðfesta farbann og undirrita úrskurð',
+        description:
+          'Notaður sem texti í "áfram" takkanum á staðfesingar skrefi í gæslu- og farbannsmálum þegar verið er að hafna kröfu en úrskurða í farbann',
+      },
+    }),
+  },
 }

@@ -2,6 +2,7 @@ import { User, UserManager } from 'oidc-client'
 
 import { AuthSettings, mergeAuthSettings } from './AuthSettings'
 import { toStringScope } from './utils/toStringScope'
+import { createMockUser, MockUser } from './createMockUser'
 
 let authSettings: AuthSettings | null = null
 let userManager: UserManager | null = null
@@ -31,32 +32,22 @@ export const configure = (settings: AuthSettings) => {
   return userManager
 }
 
-interface MockUser extends Partial<Omit<User, 'profile'>> {
-  profile: Partial<User['profile']>
-}
-
 export const configureMock = (user?: MockUser) => {
   authSettings = mergeAuthSettings({
     client_id: 'test-client',
   })
 
-  const userInfo: MockUser = {
-    profile: { name: 'Mock', locale: 'is', nationalId: '0000000000' },
-    expired: false,
-    expires_in: 9999,
-    scopes: [],
-    ...user,
-  }
+  const userInfo = createMockUser(user)
   const empty = () => {
     /* intentionally empty */
   }
 
   userManager = ({
     getUser() {
-      return Promise.resolve(userInfo as User)
+      return Promise.resolve(userInfo)
     },
     signinSilent(): Promise<User> {
-      return Promise.resolve(userInfo as User)
+      return Promise.resolve(userInfo)
     },
     signinRedirect: empty,
     events: {

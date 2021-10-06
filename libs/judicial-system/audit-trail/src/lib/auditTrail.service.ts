@@ -4,8 +4,8 @@ import { createHash } from 'crypto'
 
 import { Inject, Injectable } from '@nestjs/common'
 
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 export enum AuditedAction {
   LOGIN = 'LOGIN',
@@ -25,11 +25,13 @@ export enum AuditedAction {
   CREATE_COURT_CASE = 'CREATE_COURT_CASE',
   GET_REQUEST_PDF = 'GET_REQUEST_PDF',
   GET_RULING_PDF = 'GET_RULING_PDF',
+  GET_CUSTODY_NOTICE_PDF = 'GET_CUSTODY_NOTICE_PDF',
   GET_INSTITUTIONS = 'GET_INSTITUTIONS',
   CREATE_PRESIGNED_POST = 'CREATE_PRESIGNED_POST',
   CREATE_FILE = 'CREATE_FILE',
   GET_SIGNED_URL = 'GET_SIGNED_URL',
   DELETE_FILE = 'DELETE_FILE',
+  UPLOAD_FILE_TO_COURT = 'UPLOAD_FILE_TO_COURT',
 }
 
 export const AUDIT_TRAIL_OPTIONS = 'AUDIT_TRAIL_OPTIONS'
@@ -58,12 +60,14 @@ export class AuditTrailService {
   private formatMessage(
     userId: string,
     action: AuditedAction,
-    ids: string | string[],
+    ids: string | string[] | undefined,
+    error?: unknown,
   ) {
     const message = {
       user: userId,
       action,
       entities: ids,
+      error,
     }
 
     // The generic logger expects a string, whereas the CloudWatch trail expect a json object
@@ -107,13 +111,51 @@ export class AuditTrailService {
   private writeToTrail(
     userId: string,
     actionType: AuditedAction,
-    ids: string | string[],
+    ids: string | string[] | undefined,
+    error?: unknown,
   ) {
     if (!this.trail) {
       throw new ReferenceError('Audit trail has not been initialized')
     }
 
-    this.trail?.info(this.formatMessage(userId, actionType, ids))
+    this.trail.info(this.formatMessage(userId, actionType, ids, error))
+  }
+
+  private async auditResult<R>(
+    userId: string,
+    actionType: AuditedAction,
+    result: R,
+    auditedResult: string | ((result: R) => string | string[]),
+  ): Promise<R> {
+    this.writeToTrail(
+      userId,
+      actionType,
+      typeof auditedResult === 'string' ? auditedResult : auditedResult(result),
+    )
+
+    return result
+  }
+
+  private async auditPromisedResult<R>(
+    userId: string,
+    actionType: AuditedAction,
+    action: Promise<R>,
+    auditedResult: string | ((result: R) => string | string[]),
+  ): Promise<R> {
+    try {
+      const result = await action
+
+      return await this.auditResult(userId, actionType, result, auditedResult)
+    } catch (e) {
+      this.writeToTrail(
+        userId,
+        actionType,
+        typeof auditedResult === 'string' ? auditedResult : undefined,
+        e,
+      )
+
+      throw e
+    }
   }
 
   async audit<R>(
@@ -122,14 +164,15 @@ export class AuditTrailService {
     action: Promise<R> | R,
     auditedResult: string | ((result: R) => string | string[]),
   ): Promise<R> {
-    const result = action instanceof Promise ? await action : action
-
-    this.writeToTrail(
-      userId,
-      actionType,
-      typeof auditedResult === 'string' ? auditedResult : auditedResult(result),
-    )
-
-    return result
+    if (action instanceof Promise) {
+      return await this.auditPromisedResult<R>(
+        userId,
+        actionType,
+        action,
+        auditedResult,
+      )
+    } else {
+      return await this.auditResult(userId, actionType, action, auditedResult)
+    }
   }
 }

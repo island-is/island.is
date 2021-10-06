@@ -49,15 +49,25 @@ export const colors: Record<ColorScheme, ColorValues> = {
 export const smallText = style({
   fontSize: 14,
 })
-export const sidebarLink = style({
+
+const linkStyles = {
   color: 'var(--RegSidebarBox-linkColor)',
   marginBottom: spacing[2],
   display: 'block',
+
   ':hover': {
     color: 'var(--RegSidebarBox-linkColorHover)',
     textDecoration: 'none',
   },
+}
+
+export const sidebarNonLink = style({
+  marginBottom: spacing[2],
+  display: 'block',
+  // color: color.dark400,
+  opacity: 0.67,
 })
+export const sidebarLink = style(linkStyles)
 export const sidebarLinkCurrent = style({})
 
 export const changelogCurrent = style({
@@ -70,4 +80,9 @@ export const timelineCurrent = changelogCurrent
 export const timelineCurrentVersion = style({
   paddingTop: spacing[1],
   paddingBottom: spacing[1],
+})
+
+export const showAllChanges = style({
+  ...linkStyles,
+  fontSize: 14,
 })

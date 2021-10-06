@@ -6,14 +6,10 @@ const devConfig = {
   name: 'local',
   baseApiUrl: 'http://localhost:4444',
   redis: {
-    urls: [
-      'localhost:7000',
-      'localhost:7001',
-      'localhost:7002',
-      'localhost:7003',
-      'localhost:7004',
-      'localhost:7005',
-    ],
+    urls: (
+      process.env.REDIS_NODES ??
+      'localhost:7000,localhost:7001,localhost:7002,localhost:7003,localhost:7004,localhost:7005'
+    ).split(','),
   },
   audit: {
     defaultNamespace: '@island.is/applications',
@@ -48,6 +44,8 @@ const devConfig = {
     drivingLicense: {
       secret: process.env.DRIVING_LICENSE_SECRET,
       xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
+      xroadPath:
+        'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
       xroadBaseUrl: 'http://localhost:8081',
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
@@ -106,7 +104,9 @@ const prodConfig = {
   name: process.env.name,
   baseApiUrl: process.env.GRAPHQL_API_URL,
   redis: {
-    urls: [process.env.REDIS_URL_NODE_01],
+    urls: (process.env.REDIS_NODES ?? process.env.REDIS_URL_NODE_01)?.split(
+      ',',
+    ),
   },
   audit: {
     defaultNamespace: '@island.is/applications',
@@ -149,6 +149,7 @@ const prodConfig = {
       secret: process.env.DRIVING_LICENSE_SECRET,
       xroadClientId: process.env.XROAD_CLIENT_ID,
       xroadBaseUrl: process.env.XROAD_BASE_PATH,
+      xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH,
     },
     paymentOptions: {
       arkBaseUrl: process.env.ARK_BASE_URL,

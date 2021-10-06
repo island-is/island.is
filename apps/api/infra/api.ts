@@ -174,11 +174,13 @@ export const serviceSetup = (services: {
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
       DOCUMENT_PROVIDER_ADMINS:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS',
-      FINANCE_PASS: '/k8s/service-portal/FINANCE_PASS',
-      FINANCE_USER: '/k8s/service-portal/FINANCE_USER',
       XROAD_FINANCES_PATH: '/k8s/service-portal/XROAD_FINANCES_PATH',
       PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
       PKPASS_API_URL: '/k8s/api/PKPASS_API_URL',
+      PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES',
+      PKPASS_CACHE_KEY: '/k8s/api/PKPASS_CACHE_KEY',
+      PKPASS_CACHE_TOKEN_EXPIRY_DELTA:
+        '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA',
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
       PAYMENT_XROAD_PROVIDER_ID:
         '/k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID',
@@ -187,6 +189,10 @@ export const serviceSetup = (services: {
       RSK_API_USERNAME: '/k8s/shared/api/RSK_API_USERNAME',
       RSK_API_PASSWORD: '/k8s/shared/api/RSK_API_PASSWORD',
       RSK_API_URL: '/k8s/shared/api/RSK_API_URL',
+      PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER',
+      PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD',
+      PAYMENT_SCHEDULE_XROAD_PROVIDER_ID:
+        '/k8s/api/PAYMENT_SCHEDULE_XROAD_PROVIDER_ID',
     })
 
     .ingress({

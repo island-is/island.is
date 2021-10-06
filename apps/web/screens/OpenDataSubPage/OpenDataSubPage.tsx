@@ -12,17 +12,33 @@ import {
   Inline,
   Icon,
 } from '@island.is/island-ui/core'
+import {
+  GetOpenDataSubpageQuery,
+  QueryGetOpenDataSubpageArgs,
+  ContentLanguage,
+} from '@island.is/web/graphql/schema'
+import { GET_OPEN_DATA_SUBPAGE_QUERY } from '../queries'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
 import { StatisticsCard, ChartsCard } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
-import { area, gender, applications, category } from './data'
 
-const OpenDataSubPage: Screen = () => {
+interface OpenDataSubpageProps {
+  page: GetOpenDataSubpageQuery['getOpenDataSubpage']
+}
+
+const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
   // Contentful currently has no available content types, so this is a teporary solution for a demo
   const { linkResolver } = useLinkResolver()
-  const data = [area, gender, category, applications]
+  const {
+    pageTitle,
+    fundTitle,
+    fundDescription,
+    statisticsCards,
+    graphCards,
+    organizationLogo,
+  } = page
   return (
     <Box id="main-content" style={{ overflow: 'hidden' }}>
       <GridContainer>
@@ -42,22 +58,31 @@ const OpenDataSubPage: Screen = () => {
               </Link>
             </Box>
             <Box
-              padding={[2, 2, 4]}
+              padding={[2, 2, 2]}
               background="purple100"
               borderRadius="large"
               marginBottom={3}
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
             >
-              <Text variant="eyebrow" color="purple600">
-                Þjónustuaðili
-              </Text>
-              <Box display="flex" alignItems="center">
-                <Box display="inlineFlex" flexGrow={1}>
-                  <Text variant="h3" color="purple600">
-                    Rannís
-                  </Text>
+              {organizationLogo && (
+                <img src={organizationLogo.url} width={80} />
+              )}
+              <Box padding={1}>
+                <Text variant="eyebrow" color="purple600">
+                  Þjónustuaðili
+                </Text>
+                <Box display="flex" alignItems="center">
+                  <Box display="inlineFlex" flexGrow={1}>
+                    <Text variant="h3" color="purple600">
+                      Rannís
+                    </Text>
+                  </Box>
                 </Box>
               </Box>
             </Box>
+
             <Link
               href="https://www.rannis.is/sjodir/rannsoknir/taeknithrounarsjodur/"
               skipTab
@@ -107,7 +132,7 @@ const OpenDataSubPage: Screen = () => {
               />
             </Box>
             <Box marginBottom={8}>
-              <Text variant="h1">Mælaborð</Text>
+              <Text variant="h1">{pageTitle}</Text>
             </Box>
             <Box
               background="roseTinted100"
@@ -124,31 +149,26 @@ const OpenDataSubPage: Screen = () => {
                 />
                 <Text variant="eyebrow">Sjóðir Rannís</Text>
               </Inline>
-              <Text variant="h3">Tækniþróunarsjóður</Text>
+              <Text variant="h3">{fundTitle}</Text>
+              <Text>{fundDescription}</Text>
             </Box>
             <GridRow>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <Box marginBottom={3}>
-                  <StatisticsCard
-                    title="Samningar/umsóknir 2020-21"
-                    description="127/745"
-                  />
-                </Box>
-              </GridColumn>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <Box marginBottom={3}>
-                  <StatisticsCard
-                    title="Heildarupphæð styrkja 2020-21"
-                    description="19.536 m.kr"
-                  />
-                </Box>
-              </GridColumn>
+              {statisticsCards.map((card, index) => (
+                <GridColumn span={['12/12', '12/12', '6/12']} key={index}>
+                  <Box marginBottom={3}>
+                    <StatisticsCard
+                      title={card.title}
+                      description={card.statistic}
+                    />
+                  </Box>
+                </GridColumn>
+              ))}
             </GridRow>
             <GridRow>
               <GridColumn span={'12/12'}>
-                {data.map((item, index) => (
+                {graphCards.map((item, index) => (
                   <Box marginBottom={3} key={index}>
-                    <ChartsCard data={item} subPage />
+                    <ChartsCard chart={item} subPage />
                   </Box>
                 ))}
               </GridColumn>
@@ -158,6 +178,27 @@ const OpenDataSubPage: Screen = () => {
       </GridContainer>
     </Box>
   )
+}
+
+OpenDataSubPage.getInitialProps = async ({ apolloClient, locale }) => {
+  const [
+    {
+      data: { getOpenDataSubpage: page },
+    },
+  ] = await Promise.all([
+    apolloClient.query<GetOpenDataSubpageQuery, QueryGetOpenDataSubpageArgs>({
+      query: GET_OPEN_DATA_SUBPAGE_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+  ])
+
+  return {
+    page,
+  }
 }
 
 export default withMainLayout(OpenDataSubPage)

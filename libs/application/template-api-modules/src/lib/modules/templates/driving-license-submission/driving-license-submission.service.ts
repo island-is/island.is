@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import get from 'lodash/get'
 import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -11,14 +10,6 @@ const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
 }
 
-interface Payment {
-  chargeItemCode: string
-  chargeItemName: string
-  priceAmount: number
-  performingOrgID: string
-  chargeType: string
-}
-
 @Injectable()
 export class DrivingLicenseSubmissionService {
   constructor(
@@ -28,27 +19,25 @@ export class DrivingLicenseSubmissionService {
 
   async createCharge({
     application: { id, externalData },
-    authorization,
+    auth,
   }: TemplateApiModuleActionProps) {
     const parsedPaymentData = externalData.payment.data as Item
     return this.sharedTemplateAPIService.createCharge(
-      authorization,
+      auth.authorization,
       id,
       parsedPaymentData.chargeItemCode,
     )
   }
 
-  async submitApplication({
-    application,
-    authorization,
-  }: TemplateApiModuleActionProps) {
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { answers } = application
     const nationalId = application.applicant
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
+    const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
     const juristictionId = answers.juristiction
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      authorization,
+      auth.authorization,
       application.id,
     )
 
@@ -57,6 +46,7 @@ export class DrivingLicenseSubmissionService {
         .newDrivingLicense(nationalId, {
           juristictionId: juristictionId as number,
           needsToPresentHealthCertificate: needsHealthCert,
+          needsToPresentQualityPhoto: needsQualityPhoto,
         })
         .catch((e) => {
           return {
@@ -85,17 +75,14 @@ export class DrivingLicenseSubmissionService {
     application,
   }: TemplateApiModuleActionProps) {
     const { answers } = application
-    const studentNationalId = get(answers, 'student.nationalId')
+    const studentNationalId = (answers.student as { nationalId: string })
+      .nationalId
     const teacherNationalId = application.applicant
 
-    const result = await this.drivingLicenseService
-      .newDrivingAssessment(studentNationalId as string, teacherNationalId)
-      .catch((e) => {
-        return {
-          success: false,
-          errorMessage: e.message,
-        }
-      })
+    const result = await this.drivingLicenseService.newDrivingAssessment(
+      studentNationalId as string,
+      teacherNationalId,
+    )
 
     if (result.success) {
       await this.sharedTemplateAPIService.sendEmail(

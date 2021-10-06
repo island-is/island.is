@@ -1,5 +1,4 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { Breadcrumbs } from './Breadcrumbs'
@@ -7,7 +6,6 @@ import { Breadcrumbs } from './Breadcrumbs'
 export default {
   title: 'Navigation/Breadcrumbs',
   component: Breadcrumbs,
-  decorators: [withDesign],
   parameters: withFigma('Breadcrumbs'),
 }
 

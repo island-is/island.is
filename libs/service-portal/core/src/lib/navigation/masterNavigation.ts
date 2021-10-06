@@ -156,7 +156,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Fjarmal
       {
         name: m.finance,
-        path: ServicePortalPath.FinanceStatus,
+        path: ServicePortalPath.FinanceRoot,
         children: [
           {
             name: m.financeStatus,
@@ -173,6 +173,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.financeEmployeeClaims,
             path: ServicePortalPath.FinanceEmployeeClaims,
+          },
+          {
+            name: m.financeLocalTax,
+            path: ServicePortalPath.FinanceLocalTax,
           },
         ],
         icon: {
@@ -212,7 +216,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Fjármál
       {
         name: m.finance,
-        path: ServicePortalPath.FinanceRoot,
+        path: ServicePortalPath.FinanceWIP,
         systemRoute: true,
         icon: {
           type: 'outline',
@@ -233,6 +237,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.accessControl,
             path: ServicePortalPath.SettingsAccessControl,
+            children: [
+              {
+                name: m.accessControlGrant,
+                path: ServicePortalPath.SettingsAccessControlGrant,
+              },
+              {
+                name: m.accessControlAccess,
+                path: ServicePortalPath.SettingsAccessControlAccess,
+              },
+            ],
           },
         ],
       },

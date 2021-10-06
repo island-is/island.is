@@ -18,7 +18,7 @@ We defined a hashFiles variable in the GitHub workflow that contains the list of
 
 ```text
 scripts/schemas.js
-libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts
+libs/cms/src/lib/generated/contentfulTypes.d.ts
 apps/air-discount-scheme/web/i18n/withLocale.tsx
 apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx
 apps/air-discount-scheme/web/components/Header/Header.tsx

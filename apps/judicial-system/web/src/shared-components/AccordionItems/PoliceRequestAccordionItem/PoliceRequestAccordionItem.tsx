@@ -10,10 +10,10 @@ import {
   laws,
   caseTypes,
 } from '@island.is/judicial-system/formatters'
-import {
+import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
+import type {
   Case,
   CaseCustodyProvisions,
-  CaseType,
 } from '@island.is/judicial-system/types'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 
@@ -27,15 +27,12 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
   workingCase,
 }: Props) => {
   const { formatMessage } = useIntl()
-  const isRestrictionCase =
-    workingCase.type === CaseType.CUSTODY ||
-    workingCase.type === CaseType.TRAVEL_BAN
 
   return (
     <AccordionItem
       id="id_1"
       label={`Krafa ${
-        isRestrictionCase
+        isRestrictionCase(workingCase.type)
           ? `um ${caseTypes[workingCase.type]}`
           : `- ${capitalize(caseTypes[workingCase.type])}`
       }`}
@@ -83,22 +80,25 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         <Text>{workingCase.lawsBroken}</Text>
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði sem krafan er byggð á" breakSpaces>
-        {isRestrictionCase ? (
-          workingCase.custodyProvisions &&
-          workingCase.custodyProvisions.map(
-            (custodyProvision: CaseCustodyProvisions, index) => {
-              return (
-                <div key={index}>
-                  <Text>{laws[custodyProvision]}</Text>
-                </div>
-              )
-            },
-          )
+        {isRestrictionCase(workingCase.type) ? (
+          <>
+            {workingCase.custodyProvisions &&
+              workingCase.custodyProvisions.map(
+                (custodyProvision: CaseCustodyProvisions, index) => {
+                  return (
+                    <div key={index}>
+                      <Text>{laws[custodyProvision]}</Text>
+                    </div>
+                  )
+                },
+              )}
+            {workingCase.legalBasis && <Text>{workingCase.legalBasis}</Text>}
+          </>
         ) : (
           <Text>{workingCase.legalBasis}</Text>
         )}
       </AccordionListItem>
-      {isRestrictionCase && (
+      {isRestrictionCase(workingCase.type) && (
         <>
           <Box marginBottom={1}>
             <Text variant="h5">{`Takmarkanir og tilhögun ${

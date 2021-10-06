@@ -246,7 +246,7 @@ export class DirectorateOfLabourRepository {
     }
   }
 
-  async getParentalLeavesPeriodsLength(
+  async getParentalLeavesPeriodLength(
     nationalId: string,
     startDate: Date,
     endDate: Date,

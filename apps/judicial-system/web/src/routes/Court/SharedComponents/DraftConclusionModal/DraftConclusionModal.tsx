@@ -1,5 +1,5 @@
 import React from 'react'
-import { Case } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { AnimatePresence } from 'framer-motion'
 import {
   ConclusionDraft,

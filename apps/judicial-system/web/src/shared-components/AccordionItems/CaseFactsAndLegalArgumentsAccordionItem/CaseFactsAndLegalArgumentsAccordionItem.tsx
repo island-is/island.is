@@ -1,6 +1,7 @@
 import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { isInvestigationCase } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case
@@ -29,8 +30,7 @@ const CaseFactsAndLegalArgumentsAccordionItem: React.FC<Props> = ({
         </Text>
       </Box>
       <Text>{workingCase.courtLegalArguments}</Text>
-      {workingCase.type !== CaseType.CUSTODY &&
-        workingCase.type !== CaseType.TRAVEL_BAN &&
+      {isInvestigationCase(workingCase.type) &&
         workingCase.requestProsecutorOnlySession && (
           <Box marginTop={4}>
             <Box marginBottom={1}>

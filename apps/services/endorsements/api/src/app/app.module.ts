@@ -12,6 +12,8 @@ import { environment } from '../environments'
 import { EndorsementModule } from './modules/endorsement/endorsement.module'
 import { EndorsementListModule } from './modules/endorsementList/endorsementList.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
+import { AccessGuard } from './guards/accessGuard/access.guard'
+import { LoggingModule } from '@island.is/logging'
 
 @Module({
   imports: [
@@ -22,6 +24,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     }),
     EndorsementModule,
     EndorsementListModule,
+    LoggingModule,
   ],
   providers: [
     {
@@ -32,6 +35,10 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     {
       provide: APP_GUARD,
       useClass: ScopesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AccessGuard,
     },
   ],
 })

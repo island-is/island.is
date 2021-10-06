@@ -2,15 +2,17 @@ import React from 'react'
 import { Text, BulletList, Bullet, Box, Link } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
-  FormLayout,
+  ContentContainer,
+  Footer,
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import { NavigationProps } from '@island.is/financial-aid/shared'
+import {
+  NavigationProps,
+  currentMonth,
+} from '@island.is/financial-aid/shared/lib'
 
 const AboutForm = () => {
   const router = useRouter()
@@ -20,18 +22,16 @@ const AboutForm = () => {
   ) as NavigationProps
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
-      <FormContentContainer>
+    <>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Varðandi rétt til fjárhagsaðstoðar
         </Text>
 
         <Text variant="h3" fontWeight="light" marginBottom={3}>
-          Þú ert að sækja um <strong>fjárhagsaðstoð hjá Hafnarfirði</strong>.
-          Áður en þú heldur áfram er gott að hafa eftirfarandi í huga:
+          Þú ert að sækja um <strong>fjárhagsaðstoð hjá Hafnarfirði</strong>{' '}
+          fyrir {currentMonth()}. Áður en þú heldur áfram er gott að hafa
+          eftirfarandi í huga:
         </Text>
 
         <Box marginBottom={5}>
@@ -91,13 +91,10 @@ const AboutForm = () => {
             </Bullet>
           </BulletList>
         </Box>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
-        previousUrl={navigation?.prevUrl}
-        nextUrl={navigation?.nextUrl}
-      />
-    </FormLayout>
+      <Footer previousUrl={navigation?.prevUrl} nextUrl={navigation?.nextUrl} />
+    </>
   )
 }
 
