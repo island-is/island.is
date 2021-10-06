@@ -111,9 +111,8 @@ export const findCurrentScreen = (
 
   while (index < screens.length) {
     const screen = screens[index]
-    const requiresAnswer = screenRequiresAnswer(screen)
 
-    if (!requiresAnswer) {
+    if (!screenRequiresAnswer(screen)) {
       index += 1
       continue
     }
