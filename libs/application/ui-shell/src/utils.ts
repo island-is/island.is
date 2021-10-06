@@ -4,6 +4,8 @@ import {
   FieldTypes,
   FormItemTypes,
   FormValue,
+  getValueViaPath,
+  RecordObject,
   SubmitField,
 } from '@island.is/application/core'
 import { FormScreen } from './types'
@@ -22,6 +24,36 @@ export function verifyExternalData(
     }
   }
   return true
+}
+
+export function getFieldsWithNoAnswer(
+  screen: FormScreen,
+  answers: FormValue,
+  errorMessage: string,
+): RecordObject<string> {
+  let missingAnswers: RecordObject<string> = {}
+
+  if (screen.type === FormItemTypes.MULTI_FIELD) {
+    const { children } = screen
+
+    for (const child of children) {
+      missingAnswers = {
+        ...missingAnswers,
+        ...getFieldsWithNoAnswer(child, answers, errorMessage),
+      }
+    }
+  } else if (screen.type !== FormItemTypes.REPEATER && screen.isNavigable) {
+    const screenId = screen.id!
+    const screenAnswer = getValueViaPath(answers, screenId)
+    const hasBeenAnswered = screenAnswer !== undefined && screenAnswer !== null
+    const shouldBeAnswered = !get(screen, 'doesNotRequireAnswer')
+
+    if (!hasBeenAnswered && shouldBeAnswered) {
+      missingAnswers[screenId] = errorMessage
+    }
+  }
+
+  return missingAnswers
 }
 
 export function findSubmitField(screen: FormScreen): SubmitField | undefined {

@@ -7,6 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import get from 'lodash/get'
 import { useMutation } from '@apollo/client'
 import {
   Application,
@@ -20,7 +21,10 @@ import {
   MessageFormatter,
   mergeAnswers,
   coreMessages,
+  coreErrorMessages,
   BeforeSubmitCallback,
+  getValueViaPath,
+  RecordObject,
 } from '@island.is/application/core'
 import {
   Box,
@@ -48,6 +52,7 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import {
   extractAnswersToSubmitFromScreen,
   findSubmitField,
+  getFieldsWithNoAnswer,
   isJSONObject,
   parseMessage,
 } from '../utils'
@@ -230,20 +235,34 @@ const Screen: FC<ScreenProps> = ({
       }
     } else {
       try {
-        const extractedAnswers = extractAnswersToSubmitFromScreen(
-          mergeAnswers(formValue, data),
-          screen,
+        const missingAnswerMessage = formatMessage(
+          coreErrorMessages.missingAnswer,
         )
+        const fieldsWithNoAnswer = getFieldsWithNoAnswer(
+          screen,
+          data,
+          missingAnswerMessage,
+        )
+        const missingFields = Object.keys(fieldsWithNoAnswer)
 
-        response = await updateApplication({
-          variables: {
-            input: {
-              id: applicationId,
-              answers: extractedAnswers,
+        if (missingFields.length > 0) {
+          setBeforeSubmitError(fieldsWithNoAnswer)
+        } else {
+          const extractedAnswers = extractAnswersToSubmitFromScreen(
+            mergeAnswers(formValue, data),
+            screen,
+          )
+
+          response = await updateApplication({
+            variables: {
+              input: {
+                id: applicationId,
+                answers: extractedAnswers,
+              },
+              locale,
             },
-            locale,
-          },
-        })
+          })
+        }
       } catch (e) {
         handleError((e as Error).message, formatMessage)
       }
