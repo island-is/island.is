@@ -32,7 +32,6 @@ export class RskCompanyInfoResolver {
       input.nationalId,
     )
     this.logger.debug(`Company in resolver ${company}`)
-    console.log('RESOLVER ', company)
     if (!company) {
       return null
     }

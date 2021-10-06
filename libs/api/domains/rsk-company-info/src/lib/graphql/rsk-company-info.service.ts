@@ -27,7 +27,6 @@ export class RskCompanyInfoService {
       ssid: nationalId,
     })
     this.logger.debug(`Company in service ${company.toString()}`)
-    console.log(company)
     return {
       nationalId: company.kennitala,
       name: company.nafn,
