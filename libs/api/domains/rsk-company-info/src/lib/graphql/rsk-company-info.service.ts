@@ -80,70 +80,71 @@ export class RskCompanyInfoService {
     }
   }
 
-  // async companyInformationSearch(
-  //   searchTerm: string,
-  //   first: number,
-  //   after = '',
-  // ): Promise<RskCompanySearchItems | null> {
-  //   const searchResults = await this.rskCompanyInfoApi.v1FyrirtaekjaskraSearchSearchStringGet(
-  //     { searchString: searchTerm },
-  //   )
-  //   if (!searchResults?.count || searchResults.count < 1) {
-  //     throw new NotFoundException('No search results found')
-  //   }
+  async companyInformationSearch(
+    searchTerm: string,
+    first: number,
+    after = '',
+  ): Promise<RskCompanySearchItems | null> {
+    const searchResults = await this.rskCompanyInfoApi.v1FyrirtaekjaskraSearchSearchStringGet(
+      { searchString: searchTerm },
+    )
+    if (
+      !searchResults.items ||
+      !searchResults?.count ||
+      searchResults.count < 1
+    ) {
+      throw new NotFoundException('No search results found')
+    }
 
-  //   const pageResult = this.getPage(searchResults.items, first, after)
-  //   if (!pageResult) {
-  //     yarn
-  //     throw new NotFoundException('No search results found')
-  //   }
+    const formattedSearchResults = searchResults.items?.map((item) => {
+      return {
+        name: item.nafn,
+        status: item.stada,
+        dateOfRegistration: item.skrad,
+        nationalId: item.kennitala,
+        vatNumber: item.vskNumer,
+        lastUpdated: item.sidastUppfaert,
+      } as RskCompany
+    })
 
-  //   const totalLength = searchResults.count
+    const pageResult = this.getPage(formattedSearchResults, first, after)
+    if (!pageResult) {
+      throw new NotFoundException('No search results found')
+    }
 
-  //   const cursor = toCursorHash(this.getLastItemIdentifer(pageResult.items))
+    const totalLength = searchResults.count
+    const cursor = toCursorHash(this.getLastItemIdentifer(pageResult.items))
 
-  //   return {
-  //     items: pageResult.items?.map(
-  //       (company) =>
-  //         ({
-  //           nationalId: company.nationalId,
-  //           name: company.name,
-  //           dateOfRegistration: company.dateOfRegistration,
-  //           status: company.status,
-  //           vskNumber: company.vatNumber,
-  //           lastUpdated: company.lastUpdated,
-  //         } as RskCompany),
-  //     ),
-  //     count: totalLength,
-  //     pageInfo: {
-  //       endCursor: cursor,
-  //       hasNextPage: pageResult.hasNextPage,
-  //     },
-  //   }
-  // }
+    return {
+      items: pageResult.items,
+      count: totalLength,
+      pageInfo: {
+        endCursor: cursor,
+        hasNextPage: pageResult.hasNextPage,
+      },
+    }
+  }
 
   getPage(
-    searchResult: RskCompanySearchItems,
+    searchResult: RskCompany[],
     first: number,
     cursor: string,
   ): PageResult {
-    const result = searchResult.items
-
-    if (result) {
+    if (searchResult) {
       if (cursor === '')
         return {
-          items: result.slice(0, first),
-          hasNextPage: first < result.length,
+          items: searchResult.slice(0, first),
+          hasNextPage: first < searchResult.length,
         }
 
-      const index = result.findIndex(
+      const index = searchResult.findIndex(
         (x) => x.nationalId === fromCursorHash(cursor),
       )
       const start = index + 1
 
       return {
-        items: result.slice(start, start + first),
-        hasNextPage: start + first < result.length,
+        items: searchResult.slice(start, start + first),
+        hasNextPage: start + first < searchResult.length,
       }
     }
     return { items: [], hasNextPage: false }

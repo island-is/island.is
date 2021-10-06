@@ -8,9 +8,8 @@ import { RskCompanyInfoInput } from './dto/RskCompanyInfo.input'
 import { RskCompanyInfoSearchInput } from './dto/RskCompanyInfoSearch.input'
 import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-// import { RskCompanySearchItem } from './models/rskCompanySearchItem.model'
 
-// @UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => RskCompany)
 export class RskCompanyInfoResolver {
   constructor(
@@ -23,7 +22,7 @@ export class RskCompanyInfoResolver {
     name: 'rskCompany',
     nullable: true,
   })
-  // @Audit()
+  @Audit()
   async companyInformation(
     @Args('input', { type: () => RskCompanyInfoInput })
     input: RskCompanyInfoInput,
@@ -40,39 +39,39 @@ export class RskCompanyInfoResolver {
     return company
   }
 
-  // @Query(() => RskCompanySearchItems, {
-  //   name: 'rskCompanies',
-  // })
-  // // @Audit()
-  // async companyInformationSearch(
-  //   @Args('input', { type: () => RskCompanyInfoSearchInput })
-  //   input: RskCompanyInfoSearchInput,
-  // ): Promise<RskCompanySearchItems | null> {
-  //   this.logger.debug('Searching for companies')
-  //   return await this.rskCompanyInfoService.companyInformationSearch(
-  //     input.searchTerm,
-  //     input.first,
-  //     input.after,
-  //   )
-  // }
+  @Query(() => RskCompanySearchItems, {
+    name: 'rskCompanies',
+  })
+  @Audit()
+  async companyInformationSearch(
+    @Args('input', { type: () => RskCompanyInfoSearchInput })
+    input: RskCompanyInfoSearchInput,
+  ): Promise<RskCompanySearchItems | null> {
+    this.logger.debug('Searching for companies')
+    return await this.rskCompanyInfoService.companyInformationSearch(
+      input.searchTerm,
+      input.first,
+      input.after,
+    )
+  }
 
-  // @Audit()
-  // @ResolveField(() => RskCompany)
-  // async companySearchItems(
-  //   @Parent() parent: RskCompanySearchItems,
-  // ): Promise<RskCompany[]> {
-  //   this.logger.debug('RskCompanySearchItems')
-  //   return parent.items ?? []
-  // }
+  @Audit()
+  @ResolveField(() => RskCompany)
+  async companySearchItems(
+    @Parent() parent: RskCompanySearchItems,
+  ): Promise<RskCompany[]> {
+    this.logger.debug('RskCompanySearchItems')
+    return parent.items ?? []
+  }
 
-  // // Receives companysearchitem and gets the company information
-  // // @Audit()
-  // @ResolveField(() => RskCompany)
-  // async companyInfo(
-  //   @Parent() rskCompanyItem: RskCompany,
-  // ): Promise<RskCompany | null> {
-  //   return await this.rskCompanyInfoService.getCompanyInformationWithExtra(
-  //     rskCompanyItem.nationalId ?? '',
-  //   )
-  // }
+  @Audit()
+  @ResolveField(() => RskCompany)
+  async companyInfo(
+    @Parent() rskCompanyItem: RskCompany,
+  ): Promise<RskCompany | null> {
+    this.logger.debug('Resolving companyInfo')
+    return await this.rskCompanyInfoService.getCompanyInformationWithExtra(
+      rskCompanyItem.nationalId ?? '',
+    )
+  }
 }

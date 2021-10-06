@@ -25,12 +25,12 @@ export class RskCompanyInfoAPI extends RESTDataSource {
     return response
   }
 
-  // async searchCompanyInformation(
-  //   searchString: string,
-  // ): Promise<SearchCompanyItems> {
-  //   const response = await this.get<SearchCompanyItems>(
-  //     `/search/${searchString}`,
-  //   )
-  //   return response
-  // }
+  async searchCompanyInformation(
+    searchString: string,
+  ): Promise<SearchCompanyItems> {
+    const response = await this.get<SearchCompanyItems>(
+      `/search/${searchString}`,
+    )
+    return response
+  }
 }
