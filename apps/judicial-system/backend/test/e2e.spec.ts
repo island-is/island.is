@@ -79,10 +79,14 @@ beforeAll(async () => {
 
   // Need to use sequelize-cli becuase sequelize.sync does not keep track of completed migrations
   // await sequelize.sync()
-  execSync('yarn nx run judicial-system-backend:migrate')
+  execSync('yarn nx run judicial-system-backend:migrate', {
+    stdio: 'inherit',
+  })
 
   // Seed the database
-  execSync('yarn nx run judicial-system-backend:seed')
+  execSync('yarn nx run judicial-system-backend:seed', {
+    stdio: 'inherit',
+  })
 
   const sharedAuthService = await app.resolve(SharedAuthService)
 
