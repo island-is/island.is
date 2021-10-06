@@ -69,6 +69,8 @@ const {
       iconInsets,
       disableIconTint: false,
       disableSelectedIconTint: true,
+      iconColor: null as any,
+      selectedIconColor: null as any,
     },
   },
 )

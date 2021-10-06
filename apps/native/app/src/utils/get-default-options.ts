@@ -22,21 +22,28 @@ export function getDefaultOptions(
         fontFamily: 'IBMPlexSans-SemiBold',
         fontSize: 19,
       },
+      scrollEdgeAppearance: {
+        active: true,
+        noBorder: true,
+      },
       noBorder: true,
       animateRightButtons: false,
       animateLeftButtons: false,
       borderHeight: 0,
-      // borderColor: 'transparent',
+      borderColor: 'transparent',
     },
     navigationBar: {
       backgroundColor: theme.shade.background,
       visible: true,
     },
-    statusBar: Platform.OS === 'android' ? {
-      animated: true,
-      backgroundColor: theme.shade.background,
-      style: theme.isDark ? 'light' : 'dark',
-    } : undefined,
+    statusBar:
+      Platform.OS === 'android'
+        ? {
+            animated: true,
+            backgroundColor: theme.shade.background,
+            style: theme.isDark ? 'light' : 'dark',
+          }
+        : undefined,
     window: {
       backgroundColor:
         Platform.OS === 'android'

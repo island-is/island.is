@@ -56,9 +56,10 @@ if (__DEV__) {
 
 // ignore expo warnings
 LogBox.ignoreLogs([
-  /^Constants\.manifest is null/,
+  /^Constants\./,
   /RCTRootView cancelTouches/,
   /toggling bottomTabs visibility is deprecated on iOS/,
+  /Require cycle:/
 ])
 
 // set default timezone
