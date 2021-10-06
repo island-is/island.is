@@ -12,6 +12,7 @@ type DatabaseType = 'sqlite' | 'postgres'
 interface UseDatabase {
   type: DatabaseType
   provider: any
+  skipTruncate?: boolean
 }
 
 const sharedConfig: SequelizeModuleOptions = {
@@ -77,7 +78,7 @@ export const truncate = async () => {
   )
 }
 
-export default ({ type, provider }: UseDatabase) => ({
+export default ({ type, provider, skipTruncate = false }: UseDatabase) => ({
   override: (builder: TestingModuleBuilder) =>
     builder.overrideProvider(provider).useValue({
       createSequelizeOptions() {
@@ -88,7 +89,9 @@ export default ({ type, provider }: UseDatabase) => ({
     sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
     try {
-      await truncate()
+      if (!skipTruncate) {
+        await truncate()
+      }
     } catch {}
 
     try {
