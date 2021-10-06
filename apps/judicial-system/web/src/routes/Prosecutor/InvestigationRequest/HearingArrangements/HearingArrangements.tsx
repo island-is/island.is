@@ -72,8 +72,9 @@ const HearingArrangements = () => {
           .filter(
             (aUser: User) =>
               aUser.role === UserRole.PROSECUTOR &&
-              aUser.institution?.id ===
-                workingCase?.creatingProsecutor?.institution?.id,
+              (!workingCase.creatingProsecutor ||
+                aUser.institution?.id ===
+                  workingCase.creatingProsecutor?.institution?.id),
           )
           .map((prosecutor: User) => {
             return { label: prosecutor.name, value: prosecutor.id }
@@ -124,11 +125,12 @@ const HearingArrangements = () => {
       caseType={workingCase?.type}
       caseId={workingCase?.id}
     >
-      {workingCase && prosecutors && courts && (
+      {workingCase && user && prosecutors && courts && (
         <>
           <HearingArrangementsForms
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            user={user}
             prosecutors={prosecutors}
             courts={courts}
             isLoading={loading || isTransitioningCase}
