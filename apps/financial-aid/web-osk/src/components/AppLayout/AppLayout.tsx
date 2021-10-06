@@ -5,7 +5,6 @@ import * as styles from './AppLayout.treat'
 import { Logo, Header } from '@island.is/financial-aid-web/osk/src/components'
 
 import {
-  Login,
   SideBar,
   ServiceCenter,
 } from '@island.is/financial-aid-web/osk/src/components'
@@ -24,10 +23,7 @@ const AppLayout = ({ children }: Props) => {
     document.title = 'Fjárhagsaðstoð'
   }, [])
 
-  if (!isAuthenticated) {
-    return <Login headline="Skráðu þig inn" />
-  }
-  if (!user) {
+  if (isAuthenticated === false || user === undefined) {
     return null
   }
 

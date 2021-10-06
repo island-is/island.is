@@ -4,6 +4,7 @@ import {
   CaseState,
   CaseType,
   InstitutionType,
+  isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -71,12 +72,8 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const handleNextButtonClick = async () => {
     if (workingCase) {
-      const isRestrictionCase =
-        workingCase.type === CaseType.CUSTODY ||
-        workingCase.type === CaseType.TRAVEL_BAN
-
       if (workingCase.childCase) {
-        if (isRestrictionCase) {
+        if (isRestrictionCase(workingCase.type)) {
           router.push(`${Constants.STEP_ONE_ROUTE}/${workingCase.childCase.id}`)
         } else {
           router.push(
@@ -93,7 +90,7 @@ export const SignedVerdictOverview: React.FC = () => {
         })
 
         if (data) {
-          if (isRestrictionCase) {
+          if (isRestrictionCase(workingCase.type)) {
             router.push(`${Constants.STEP_ONE_ROUTE}/${data.extendCase.id}`)
           } else {
             router.push(`${Constants.IC_DEFENDANT_ROUTE}/${data.extendCase.id}`)

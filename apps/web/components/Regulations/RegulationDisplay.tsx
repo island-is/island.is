@@ -13,12 +13,14 @@ import { RegulationStatus } from './RegulationStatus'
 import { Appendixes } from './Appendixes'
 import { HTMLBox } from '@island.is/regulations/react'
 import { CommentsBox } from './CommentsBox'
+import { Disclaimer } from './Disclaimer'
 import { RegulationInfoBox } from './RegulationInfoBox'
 import { RegulationEffectsBox } from './RegulationEffectsBox'
 import { RegulationChangelog } from './RegulationChangelog'
 import { AffectingRegulations } from './AffectingRegulations'
 import { RegulationTimeline } from './RegulationTimeline'
 import { DiffModeToggle } from './DiffModeToggle'
+import { HistoryStepper } from './HistoryStepper'
 
 const getKey = (regulation: RegulationMaybeDiff): string => {
   const { name, timelineDate, showingDiff } = regulation
@@ -82,6 +84,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
               texts={texts}
             />
             <AffectingRegulations regulation={regulation} texts={texts} />
+            <HistoryStepper regulation={regulation} texts={texts} />
           </div>
 
           <div className={waterMarkClass}>
@@ -99,12 +102,10 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
                 <span className={s.titleText}>{regulation.title}</span>
               )}
             </Text>
-
             <HTMLBox
               className={s.bodyText + ' ' + s.diffText}
               html={regulation.text}
             />
-
             <Appendixes
               key={key}
               legend={txt('appendixesTitle')}
@@ -112,55 +113,59 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
               appendixes={regulation.appendixes}
               diffing={!!regulation.showingDiff}
             />
-
             <CommentsBox
               title={txt('commentsTitle')}
               content={regulation.comments}
             />
           </div>
+          <Disclaimer
+            title={txt('disclaimerTitle')}
+            content={txt('disclaimerMd')}
+          />
         </>
       }
       sidebar={
-        <Sticky>
-          <Stack space={3}>
-            <Hidden print={true}>
-              <Link href={linkResolver('regulationshome').href}>
+        <Sticky constantSticky>
+          <div className={s.sidebarScroller}>
+            <Stack space={3}>
+              <Hidden print={true}>
                 <Button
                   preTextIcon="arrowBack"
                   preTextIconType="filled"
                   size="small"
-                  type="button"
                   variant="text"
                 >
-                  {txt('goHome')}
+                  <Link href={linkResolver('regulationshome').href}>
+                    {txt('goHome')}
+                  </Link>
                 </Button>
-              </Link>
-            </Hidden>
+              </Hidden>
 
-            <RegulationInfoBox regulation={regulation} texts={texts} />
+              <RegulationInfoBox regulation={regulation} texts={texts} />
 
-            <Hidden print={true}>
-              {showTimeline ? (
-                <RegulationTimeline regulation={regulation} texts={texts} />
-              ) : (
-                <RegulationChangelog
-                  key={regulation.name}
-                  regulation={regulation}
-                  texts={texts}
+              <Hidden print={true}>
+                {showTimeline ? (
+                  <RegulationTimeline regulation={regulation} texts={texts} />
+                ) : (
+                  <RegulationChangelog
+                    key={regulation.name}
+                    regulation={regulation}
+                    texts={texts}
+                  />
+                )}
+                <button
+                  onClick={() => setShowTimeline(!showTimeline)}
+                  {...((v) => ({
+                    'aria-label': v,
+                    title: v,
+                  }))(showTimeline ? 'Birta tímalínu' : 'Birta breytinga logg')}
+                  style={{ width: '100%', padding: '1em', cursor: 'pointer' }}
                 />
-              )}
-              <button
-                onClick={() => setShowTimeline(!showTimeline)}
-                {...((v) => ({
-                  'aria-label': v,
-                  title: v,
-                }))(showTimeline ? 'Birta tímalínu' : 'Birta breytinga logg')}
-                style={{ width: '100%', padding: '1em', cursor: 'pointer' }}
-              />
 
-              <RegulationEffectsBox regulation={regulation} texts={texts} />
-            </Hidden>
-          </Stack>
+                <RegulationEffectsBox regulation={regulation} texts={texts} />
+              </Hidden>
+            </Stack>
+          </div>
         </Sticky>
       }
     />

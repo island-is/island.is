@@ -122,12 +122,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
-          nextUrl={`${
-            workingCase.type === CaseType.CUSTODY ||
-            workingCase.type === CaseType.TRAVEL_BAN
-              ? Constants.STEP_SIX_ROUTE
-              : Constants.IC_POLICE_CONFIRMATION_ROUTE
-          }/${workingCase.id}`}
+          nextUrl={`${Constants.STEP_SIX_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!allFilesUploaded}
         />
       </FormContentContainer>
