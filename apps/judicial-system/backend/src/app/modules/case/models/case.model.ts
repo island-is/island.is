@@ -415,7 +415,7 @@ export class Case extends Model<Case> {
   creatingProsecutorId?: string
 
   /**********
-   * The prosxecutor that created the case
+   * The prosecutor that created the case
    **********/
   @BelongsTo(() => User, 'creatingProsecutorId')
   @ApiProperty({ type: User })
