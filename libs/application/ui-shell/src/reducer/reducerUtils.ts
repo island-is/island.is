@@ -76,13 +76,19 @@ export const screenHasBeenAnswered = (
     return isArray(answer) && answer.length > 0
   } else if (screen.type === FormItemTypes.MULTI_FIELD) {
     let numberOfAnswers = 0
-    let numberOfNotNavigable = 0
+    let numberOfRequiredAnswers = 0
 
     for (const subScreen of screen.children) {
-      if (!subScreen.isNavigable) {
-        numberOfNotNavigable += 1
-      } else if (screenHasBeenAnswered(subScreen, answers)) {
-        numberOfAnswers += 1
+      const requiresAnswer = screenRequiresAnswer(subScreen)
+      const hasBeenAnswered = screenHasBeenAnswered(subScreen, answers)
+
+      if (requiresAnswer) {
+        numberOfRequiredAnswers += 1
+
+        // Only count answers where they are required
+        if (hasBeenAnswered) {
+          numberOfAnswers += 1
+        }
       }
     }
 
@@ -90,7 +96,7 @@ export const screenHasBeenAnswered = (
       return numberOfAnswers > 0
     }
 
-    return numberOfAnswers + numberOfNotNavigable === screen.children.length
+    return numberOfAnswers === numberOfRequiredAnswers
   }
 
   return answerHasValue
@@ -100,13 +106,11 @@ export const findCurrentScreen = (
   screens: FormScreen[],
   answers: FormValue,
 ): number => {
-  let currentScreen = 0
-  let missingAnswer = false
   let lastAnswerIndex = -1
+  let index = 0
 
-  for (let index = 0; index < screens.length; ) {
+  while (index < screens.length) {
     const screen = screens[index]
-
     const requiresAnswer = screenRequiresAnswer(screen)
 
     if (!requiresAnswer) {
@@ -116,55 +120,27 @@ export const findCurrentScreen = (
         skipLength = screen.children.length + 1
       }
 
-      currentScreen = index + skipLength
       index = index + skipLength
-
       continue
     }
 
+    // If we reach here we know that this screen requires an answer
     const hasBeenAnswered = screenHasBeenAnswered(screen, answers)
+    const hasBeenPartlyAnswered = screenHasBeenAnswered(screen, answers, true)
 
-    if (screen.type === FormItemTypes.MULTI_FIELD) {
-      if (hasBeenAnswered) {
-        lastAnswerIndex = index
-        currentScreen = index + 1
-      } else if (screenHasBeenAnswered(screen, answers, true)) {
-        // Checks if screen has been partly answered (at least one answer found)
-        lastAnswerIndex = index
-        currentScreen = index
-      } else {
-        // Did not answer any question
-        missingAnswer = true
-      }
-    } else if (screen.type === FormItemTypes.REPEATER) {
-      if (hasBeenAnswered) {
-        lastAnswerIndex = index
-        currentScreen = index
-      } else {
-        missingAnswer = true
-      }
-    } else if (hasBeenAnswered && !missingAnswer) {
-      currentScreen = index + 1
+    if (hasBeenAnswered) {
       lastAnswerIndex = index
+    } else if (hasBeenPartlyAnswered) {
+      lastAnswerIndex = index
+      break
     } else {
-      missingAnswer = true
-    }
-
-    if (missingAnswer) {
       break
     }
 
     index += 1
   }
 
-  const screenIndex = Math.min(currentScreen, screens.length - 1)
-
-  // Check if we jumped over some intro screens in search of the latest answer
-  if (screenIndex > lastAnswerIndex) {
-    return lastAnswerIndex + 1
-  }
-
-  return screenIndex
+  return Math.max(Math.min(index, lastAnswerIndex + 1, screens.length - 1), 0)
 }
 
 export const moveToScreen = (
