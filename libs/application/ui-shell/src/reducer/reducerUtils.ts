@@ -67,7 +67,7 @@ export const screenHasBeenAnswered = (
   }
 
   const answer = getValueViaPath(answers, screen.id)
-  const answerHasValue = answer !== undefined && answer !== null
+  const answerHasValue = answer !== undefined
 
   if (screen.type === FormItemTypes.REPEATER) {
     // We do not need to check all individual screens here like we do
