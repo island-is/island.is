@@ -6,6 +6,7 @@ import {
   IsArray,
   IsObject,
   IsBoolean,
+  IsDateString
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ValidationRuleDto } from './validationRule.dto'
@@ -48,12 +49,14 @@ export class EndorsementListDto {
   meta = {}
 
   @ApiProperty({ type: String })
-  @IsString()
-  closedDate!: string
+  @Type(() => Date)
+  @IsDateString()
+  closedDate!: Date
 
   @ApiProperty({ type: String })
-  @IsString()
-  openedDate!: string
+  @Type(() => Date)
+  @IsDateString()
+  openedDate!: Date
 
   @ApiProperty({ type: Boolean })
   @IsBoolean()

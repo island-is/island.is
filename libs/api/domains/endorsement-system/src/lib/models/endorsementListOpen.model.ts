@@ -16,5 +16,5 @@ export class EndorsementListOpen {
   tags?: EndorsementListOpenTagsEnum[]
 
   @Field()
-  closedDate!: string
+  closedDate!: Date
 }

@@ -78,14 +78,13 @@ export class EndorsementListService {
     return await endorsementList.update({ closedDate: new Date() })
   }
 
-  // TODO: change to input date
   async open(
     endorsementList: EndorsementList,
     newDate: ChangeEndorsmentListClosedDateDto,
   ): Promise<EndorsementList> {
     this.logger.info(`Opening endorsement list: ${endorsementList.id}`)
     return await endorsementList.update({
-      closedDate: new Date(newDate.closedDate),
+      closedDate: newDate.closedDate,
     })
   }
 
@@ -100,19 +99,17 @@ export class EndorsementListService {
   }
 
   async create(list: CreateInput) {
-    const open = new Date(list.openedDate)
-    const close = new Date(list.closedDate)
-    if (!open || !close) {
+    if (!list.openedDate || !list.closedDate) {
       throw new BadRequestException([
         'Body missing openedDate or closedDate value.',
       ])
     }
-    if (open >= close) {
+    if (list.openedDate >= list.closedDate) {
       throw new BadRequestException([
         'openedDate can not be bigger than closedDate.',
       ])
     }
-    if (new Date() >= close) {
+    if (new Date() >= list.closedDate) {
       throw new BadRequestException([
         'closedDate can not have already passed on creation of Endorsement List',
       ])

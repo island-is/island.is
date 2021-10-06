@@ -5,6 +5,7 @@ import {
   IsString,
   ValidateNested,
   IsBoolean,
+  IsDateString
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import graphqlTypeJson from 'graphql-type-json'
@@ -46,12 +47,14 @@ export class CreateEndorsementListDto {
   meta!: object | null
 
   @Field()
-  @IsString()
-  closedDate!: string
+  @IsDateString()
+  @Type(() => Date)
+  closedDate!: Date
 
   @Field()
-  @IsString()
-  openedDate!: string
+  @IsDateString()
+  @Type(() => Date)
+  openedDate!: Date
 
   @Field()
   @IsBoolean()

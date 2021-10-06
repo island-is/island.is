@@ -1,8 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString } from 'class-validator'
+import { IsDateString } from 'class-validator'
+import { Type } from 'class-transformer';
 
 export class ChangeEndorsmentListClosedDateDto {
   @ApiProperty({ type: String })
-  @IsString()
-  closedDate!: string
+  @Type(() => Date)
+  @IsDateString()
+  closedDate!: Date
+
 }

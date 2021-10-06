@@ -16,10 +16,10 @@ export class EndorsementList {
   description!: string | null
 
   @Field()
-  closedDate!: string
+  closedDate!: Date
 
   @Field()
-  openedDate?: string
+  openedDate?: Date
 
   @Field()
   adminLock!: boolean
