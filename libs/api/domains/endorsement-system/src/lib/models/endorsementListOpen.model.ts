@@ -17,5 +17,4 @@ export class EndorsementListOpen {
 
   @Field()
   closedDate!: string
-
 }

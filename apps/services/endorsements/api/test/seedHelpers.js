@@ -1,7 +1,6 @@
 const faker = require('faker')
 const today = new Date()
 
-
 module.exports = {
   getGenericEndorsementList: (tags) => ({
     id: faker.random.uuid(),

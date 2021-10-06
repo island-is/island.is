@@ -63,6 +63,7 @@ export class AccessGuard implements CanActivate {
               return true
             }
           }
+          break
         }
         case AccessGroup.Admin: {
           if (

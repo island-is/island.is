@@ -1,4 +1,9 @@
-import { BypassAuth, CurrentAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
+import {
+  BypassAuth,
+  CurrentAuth,
+  CurrentUser,
+  Scopes,
+} from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
@@ -102,7 +107,7 @@ export class EndorsementController {
     type: Endorsement,
   })
   @ApiParam({ name: 'listId', type: String })
-  @ApiBody({type: EndorsementDto})
+  @ApiBody({ type: EndorsementDto })
   @Scopes(EndorsementsScope.main)
   @Post()
   @Audit<Endorsement>({
@@ -122,7 +127,7 @@ export class EndorsementController {
       {
         nationalId: user.nationalId,
         endorsementList,
-        showName: endorsement.showName
+        showName: endorsement.showName,
       },
       user,
     )

@@ -19,5 +19,5 @@ export class EndorsementMetadata {
   voterRegion!: TemporaryVoterRegistryResponse
 
   @ApiProperty()
-  showName!: boolean 
+  showName!: boolean
 }
