@@ -44,12 +44,6 @@ export enum RolesRule {
   VEITA = 'veita',
 }
 
-export enum ReturnUrl {
-  APPLICATION = '/umsokn',
-  MYPAGE = '/stada',
-  ADMIN = '/nymal',
-}
-
 export enum FileType {
   TAXRETURN = 'TaxReturn',
   INCOME = 'Income',
