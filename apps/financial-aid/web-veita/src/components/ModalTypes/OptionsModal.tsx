@@ -1,20 +1,19 @@
 import React from 'react'
-import { Box } from '@island.is/island-ui/core'
 
-import * as styles from './OptionsModal.treat'
+import * as styles from './ModalTypes.treat'
 import cn from 'classnames'
 
 import { getState, ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
-  state: ApplicationState
+  activeState: ApplicationState
   onClick(
     event: React.MouseEvent<HTMLButtonElement>,
     stateOption: ApplicationState,
   ): void
 }
 
-const OptionsModal = ({ state, onClick }: Props) => {
+const OptionsModal = ({ activeState, onClick }: Props) => {
   const statusOptions = [
     ApplicationState.NEW,
     ApplicationState.INPROGRESS,
@@ -24,14 +23,15 @@ const OptionsModal = ({ state, onClick }: Props) => {
   ]
 
   return (
-    <Box display="block" width="full" padding={4}>
+    <>
       {statusOptions.map((item, index) => {
         return (
           <button
             key={'statusoptions-' + index}
             className={cn({
               [`${styles.statusOptions}`]: true,
-              [`${styles.activeState}`]: item === state,
+              [`${styles.hoverEffect}`]: item !== activeState,
+              [`${styles.activeState}`]: item === activeState,
             })}
             onClick={(e) => onClick(e, item)}
           >
@@ -39,7 +39,7 @@ const OptionsModal = ({ state, onClick }: Props) => {
           </button>
         )
       })}
-    </Box>
+    </>
   )
 }
 

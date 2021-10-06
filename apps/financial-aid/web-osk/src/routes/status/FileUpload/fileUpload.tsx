@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -14,21 +14,39 @@ import {
   ApplicationState,
   FileType,
 } from '@island.is/financial-aid/shared/lib'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import {
   CreateApplicationEventQuery,
+  GetApplicationEventsQuery,
+  GetApplicationQuery,
   UpdateApplicationMutation,
 } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
 
 import { Routes } from '@island.is/financial-aid/shared/lib'
 import cn from 'classnames'
+
+interface ApplicantData {
+  application: Application
+}
 
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
   const router = useRouter()
   const { uploadFiles } = useFileUpload(form.otherFiles)
+
+  // const { data, loading } = useQuery<ApplicantData>(GetApplicationEventsQuery, {
+  //   variables: { input: { id: router.query.id } },
+  //   fetchPolicy: 'no-cache',
+  //   errorPolicy: 'all',
+  // })
+
+  // const currentApplication = useMemo(() => {
+  //   if (data?.application.applicationEvents) {
+  //     return data.application.applicationEvents[0]
+  //   }
+  // }, [data])
 
   const [error, setError] = useState(false)
 
@@ -103,9 +121,22 @@ const FileUpload = () => {
   return (
     <>
       <ContentContainer>
-        <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
+        <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
           Senda inn gögn
         </Text>
+
+        <Text marginBottom={[3, 3, 4]}>
+          Hér getur þú sent okkur gögn ef vantar svo hægt sé að vinna þína
+          umsókn.
+        </Text>
+
+        <Box marginBottom={[3, 3, 5]}>
+          <AlertMessage
+            type="warning"
+            title="Athugasemd frá vinnsluaðila"
+            message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in."
+          />
+        </Box>
 
         <Files
           header="Senda inn gögn"

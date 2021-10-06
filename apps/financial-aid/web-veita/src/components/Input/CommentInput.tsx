@@ -1,17 +1,19 @@
-import React, { useContext, useState, useCallback, ChangeEvent } from 'react'
+import React, { useState, useCallback, ChangeEvent } from 'react'
+import { Input } from '@island.is/island-ui/core'
 
 import * as styles from './Input.treat'
 
 interface Props {
+  label?: string
   placeholder: string
   onUpdate(n: string): void
 }
 
-export default function CommentInput({ onUpdate, placeholder }: Props) {
+export default function CommentInput({ onUpdate, placeholder, label }: Props) {
   const [text, setText] = useState<string>('')
 
   const handleChange = useCallback(
-    (ev: ChangeEvent<HTMLInputElement>) => {
+    (ev: any) => {
       const value = ev.currentTarget.value
       setText(value)
       onUpdate(value)
@@ -20,6 +22,23 @@ export default function CommentInput({ onUpdate, placeholder }: Props) {
   )
 
   return (
+    // <Input
+    //   // value={text}
+    //   // onChange={(event) => {
+    //   //   onUpdate(event.currentTarget.value)
+    //   // }}
+    //   // type="text"
+    //   // placeholder={placeholder}
+    //   // backgroundColor="blue"
+    //   backgroundColor="blue"
+    //   label={label}
+    //   name="comment"
+    //   value={text}
+    //   placeholder={placeholder}
+    //   onChange={(event) => {
+    //     setText(event.currentTarget.value)
+    //   }}
+    // />
     <input
       value={text}
       onChange={handleChange}

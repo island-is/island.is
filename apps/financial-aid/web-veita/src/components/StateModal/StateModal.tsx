@@ -2,11 +2,13 @@ import React, { useState } from 'react'
 import { ModalBase, Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './StateModal.treat'
-import cn from 'classnames'
 
 import {
-  InputModal,
   OptionsModal,
+  RejectModal,
+  AcceptModal,
+  DataNeededModal,
+  InputModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import {
@@ -18,40 +20,41 @@ import { useApplicationState } from '../../utils/useApplicationState'
 interface Props {
   isVisible: boolean
   onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
-  application: Application
+  applicationId: string
+  currentState: ApplicationState
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-interface InputType {
-  show: boolean
-  type: ApplicationState | undefined
 }
 
 const StateModal = ({
   isVisible,
   onVisibilityChange,
-  application,
+  applicationId,
+  currentState,
   setApplication,
   setIsLoading,
 }: Props) => {
-  const [inputType, setInputType] = useState<InputType>({
-    show: false,
-    type: undefined,
-  })
+  const [selected, setSelected] = useState<ApplicationState | undefined>()
 
   const changeApplicationState = useApplicationState()
 
   const saveStateApplication = async (
-    application: Application,
+    applicationId: string,
     state: ApplicationState,
     amount?: number,
     rejection?: string,
+    comment?: string,
   ) => {
     setIsLoading(true)
     onVisibilityChange((isVisible) => !isVisible)
 
-    await changeApplicationState(application, state, amount, rejection)
+    await changeApplicationState(
+      applicationId,
+      state,
+      amount,
+      rejection,
+      comment,
+    )
       .then((updatedApplication) => {
         setIsLoading(false)
         setApplication(updatedApplication)
@@ -63,38 +66,36 @@ const StateModal = ({
   }
 
   const closeModal = (): void => {
-    if (!inputType.show) {
+    if (selected === undefined) {
       onVisibilityChange(false)
     }
+  }
+
+  const onClickCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation()
+    setSelected(undefined)
   }
 
   const stateNeedInput = [
     {
       state: ApplicationState.REJECTED,
       modalHeader: 'Synja umsókn',
-      submitButtonText: 'Synja',
     },
     {
       state: ApplicationState.APPROVED,
       modalHeader: 'Samþykkja umsókn',
-      submitButtonText: 'Samþykkja',
     },
     {
       state: ApplicationState.DATANEEDED,
       modalHeader: 'Vantar gögn',
-      submitButtonText: 'Senda á umsækjanda',
     },
   ]
 
-  const headingText = (inputType: InputType): string => {
-    if (inputType.show) {
-      const header = stateNeedInput.find(
-        (item) => inputType.type === item.state,
-      )?.modalHeader
+  const headingText = (state?: ApplicationState): string => {
+    const header = stateNeedInput.find((item) => state === item.state)
+      ?.modalHeader
 
-      return header ?? ''
-    }
-    return 'Stöðubreyting'
+    return header ?? 'Stöðubreyting'
   }
 
   return (
@@ -123,56 +124,55 @@ const StateModal = ({
             className={styles.modalHeadline}
           >
             <Text fontWeight="semiBold" color="white">
-              {headingText(inputType)}
+              {headingText(selected)}
             </Text>
           </Box>
+          <Box display="block" width="full" padding={4}>
+            {selected === undefined && (
+              <OptionsModal
+                activeState={currentState}
+                onClick={(e, stateOption) => {
+                  e.stopPropagation()
 
-          <Box
-            display="flex"
-            className={cn({
-              [`${styles.container}`]: true,
-              [`${styles.showInput}`]: inputType.show,
-            })}
-          >
-            <OptionsModal
-              state={application.state}
-              onClick={(e, stateOption) => {
-                e.stopPropagation()
-                if (
-                  stateOption === ApplicationState.APPROVED ||
-                  stateOption === ApplicationState.REJECTED ||
-                  stateOption === ApplicationState.DATANEEDED
-                ) {
-                  setInputType({
-                    show: !inputType.show,
-                    type: stateOption,
-                  })
-                } else {
-                  saveStateApplication(application, stateOption)
-                }
-              }}
-            />
-            <InputModal
-              onShowInputChange={(e) => {
-                e.stopPropagation()
-                setInputType({
-                  ...inputType,
-                  show: false,
-                })
-              }}
-              type={inputType.type}
-              onSaveState={(e, amount, comment) => {
-                e.stopPropagation()
-                if (inputType.type) {
+                  const goToNextWindow = stateNeedInput.find(
+                    (item) => stateOption === item.state,
+                  )
+                  if (goToNextWindow) {
+                    setSelected(stateOption)
+                    return
+                  }
+
+                  saveStateApplication(applicationId, stateOption)
+                }}
+              />
+            )}
+
+            {selected === ApplicationState.DATANEEDED && (
+              <DataNeededModal
+                onCancel={onClickCancel}
+                onSaveApplication={(comment?: string) => {
+                  if (!comment) {
+                    setSelected(undefined)
+                    return
+                  }
                   saveStateApplication(
-                    application,
-                    inputType.type,
-                    amount,
+                    applicationId,
+                    selected,
+                    undefined,
+                    undefined,
                     comment,
                   )
-                }
-              }}
-            />
+                }}
+              />
+            )}
+
+            {selected === ApplicationState.APPROVED && (
+              <AcceptModal onCancel={onClickCancel} />
+            )}
+
+            {selected === ApplicationState.REJECTED && (
+              <RejectModal onCancel={onClickCancel} />
+            )}
           </Box>
         </Box>
       </Box>

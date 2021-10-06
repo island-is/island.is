@@ -75,6 +75,27 @@ export const GetApplicationQuery = gql`
       amount
       rejection
       created
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
+    }
+  }
+`
+
+export const GetApplicationEventsQuery = gql`
+  query GetApplicationQuery($input: ApplicationInput!) {
+    application(input: $input) {
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
     }
   }
 `
