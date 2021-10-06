@@ -123,6 +123,13 @@ export interface PaginateInput {
   [key: string]: any
 }
 
+export interface PageInfo {
+  hasNextPage: boolean
+  hasPreviousPage: boolean
+  startCursor: string
+  endCursor: string
+}
+
 export async function paginate({
   Model,
   primaryKeyField,
@@ -132,7 +139,11 @@ export async function paginate({
   before,
   limit,
   ...queryArgs
-}: PaginateInput): Promise<any> {
+}: PaginateInput): Promise<{
+  totalCount: number
+  data: any[]
+  pageInfo: PageInfo
+}> {
   let order = normalizeOrder(orderOption, primaryKeyField)
 
   order = before ? reverseOrder(order) : order

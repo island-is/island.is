@@ -80,7 +80,7 @@ export class EndorsementListController {
   async findEndorsements(
     @CurrentUser() user: User,
     @Query() query: PaginationDto,
-  ): Promise<PaginatedEndorsementDto[]> {
+  ): Promise<PaginatedEndorsementDto> {
     return await this.endorsementListService.findAllEndorsementsByNationalId(
       user.nationalId,
       query,
