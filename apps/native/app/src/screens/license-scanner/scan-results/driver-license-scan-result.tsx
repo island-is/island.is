@@ -4,21 +4,7 @@ import { useIntl } from 'react-intl'
 import { client } from '../../../graphql/client'
 import { VERIFY_PKPASS_MUTATION } from '../../../graphql/queries/verify-pkpass.mutation'
 
-function nationalIdToBirthDate(ssn?: string) {
-  const firstChar = ssn?.substr(0, 1)
-  if (['8', '9'].includes(firstChar ?? '8')) {
-    return null
-  }
-  const lastChar = ssn?.substr(-1)
-  const decade = lastChar === '9' ? 1900 : 2000 + Number(lastChar) * 100
-  const year = decade + Number(ssn?.substr(4, 2))
-  const month = Number(ssn?.substr(2, 2))
-  const date = Number(ssn?.substr(0, 2))
-
-  return [date, month, year].map((n) => n.toString().padStart(2, '0')).join('-')
-}
-
-export const DriverLicenseScanResult = ({ data }: any) => {
+export const DriverLicenseScanResult = ({ data, onLoad, isExpired }: any) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string>()
@@ -27,6 +13,10 @@ export const DriverLicenseScanResult = ({ data }: any) => {
   const [photo, setPhoto] = useState<string>()
   const [birthDate, setBirthDate] = useState<string>()
   const intl = useIntl()
+
+  useEffect(() => {
+    onLoad(!loading)
+  }, [loading])
 
   useEffect(() => {
     client
@@ -40,7 +30,6 @@ export const DriverLicenseScanResult = ({ data }: any) => {
         },
       })
       .then((res) => {
-        console.log(res);
         if (res.errors) {
           setError(true)
           setErrorMessage(
@@ -48,21 +37,24 @@ export const DriverLicenseScanResult = ({ data }: any) => {
           )
           setLoading(false)
         } else {
-          const { data, valid } = res.data.verifyPkPass
-          if (!valid) {
+          const { data, valid, error: smartError } = res.data.verifyPkPass
+          if (!valid && smartError) {
             setError(true)
+
             setErrorMessage(
-              intl.formatMessage({ id: 'licenseScanDetail.errorTryToRefresh' }),
+              intl.formatMessage(
+                { id: 'licenseScanDetail.errorCodeMessage' },
+                { errorCode: smartError?.status },
+              ),
             )
             setLoading(false)
           } else {
             try {
-              const { name, nationalId, photo, birthDate } = JSON.parse(data)
+              const { name, nationalId, photo } = JSON.parse(data)
               setError(false)
-              setErrorMessage(undefined);
+              setErrorMessage(undefined)
               setNationalId(nationalId)
               setName(name)
-              setBirthDate(birthDate ? birthDate.substr(0, 10) : nationalIdToBirthDate(nationalId));
               setPhoto(photo.mynd)
             } catch (err) {
               // whoops
@@ -72,7 +64,7 @@ export const DriverLicenseScanResult = ({ data }: any) => {
           }
         }
       })
-      .catch(() => {
+      .catch((err) => {
         setError(true)
         setErrorMessage(
           intl.formatMessage({ id: 'licenseScanDetail.errorNetwork' }),
@@ -92,10 +84,11 @@ export const DriverLicenseScanResult = ({ data }: any) => {
   return (
     <ScanResultCard
       loading={loading}
+      isExpired={isExpired}
       error={error}
       errorMessage={errorMessage}
       name={name}
-      birthDate={birthDate ?? undefined}
+      nationalId={nationalId}
       licenseNumber={driverLicenseNumber}
       photo={photo}
     />

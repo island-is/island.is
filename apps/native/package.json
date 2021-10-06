@@ -31,6 +31,7 @@
     "cbor": "8.0.2",
     "cose-js": "0.7.0",
     "expo-barcode-scanner": "10.2.2",
+    "expo-camera": "11.2.2",
     "expo-file-system": "11.1.3",
     "expo-haptics": "10.1.0",
     "expo-image-loader": "2.2.0",

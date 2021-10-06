@@ -3,7 +3,7 @@ import { ActivityIndicator } from 'react-native'
 import styled from 'styled-components/native'
 import agencyLogo from '../../assets/card/agency-logo.png'
 import danger from '../../../../island-ui/src/assets/card/danger.png'
-import success from '../../../../island-ui/src/assets/card/is-verified.png'
+import success from '../../../../island-ui/src/assets/card/checkmark.png'
 import backgroundPink from '../../../../island-ui/src/assets/card/okuskirteini.png'
 import backgroundBlue from '../../../../island-ui/src/assets/card/skotvopnaleyfi.png'
 import { useIntl } from 'react-intl'
@@ -18,7 +18,7 @@ const Host = styled.View`
 const Header = styled.View`
   flex-direction: row;
   align-items: center;
-  padding: 24px;
+  padding: 24px 24px 14px 24px;
 `
 
 const Subtitle = styled.View`
@@ -55,7 +55,6 @@ const Detail = styled.View`
 
 const Title = styled.Text`
   margin-bottom: 4px;
-
   ${font({
     fontWeight: '600',
     color: '#000',
@@ -72,6 +71,21 @@ const Content = styled.View`
   flex-direction: row;
   padding: 16px 24px;
   padding-top: 0px;
+`
+
+const ErrorContent = styled.View`
+  flex-direction: row;
+  padding: 16px 24px;
+  padding-top: 20px;
+`
+
+const Splitter = styled.View`
+  height: 1px;
+  margin-right: 24px;
+  margin-left: 24px;
+  margin-bottom: 20px;
+  background-color: rgba(98, 80, 88, 1);
+  opacity: 0.1;
 `
 
 const Label = styled.Text`
@@ -99,7 +113,8 @@ const Photo = styled.Image`
   width: 79px;
   height: 109px;
   background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
+  border-radius: 6px;
+  margin-right: 32px;
 `
 
 const Left = styled.View`
@@ -126,12 +141,27 @@ const Background = styled.Image`
   background-color: #e2c4d1;
 `
 
+const Bold = styled.Text`
+  font-family: 'IBMPlexSans-SemiBold';
+`
+const Normal = styled.Text``
+
+const Copy = styled.Text`
+  ${font({
+    fontSize: 14,
+    lineHeight: 18,
+    fontWeight: '300',
+  })}
+  margin-bottom: 8px;
+`
+
 interface ScanResultCardProps {
   loading: boolean
   error?: boolean
   valid?: boolean
+  isExpired?: boolean
   errorMessage?: string
-  birthDate?: string
+  nationalId?: string
   name?: string
   licenseNumber?: string
   photo?: string
@@ -144,8 +174,9 @@ export function ScanResultCard(props: ScanResultCardProps) {
     error,
     errorMessage,
     valid,
+    isExpired,
     loading,
-    birthDate,
+    nationalId,
     name,
     photo,
     data,
@@ -154,6 +185,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
   const intl = useIntl()
   const background =
     backgroundColor === 'pink' ? backgroundPink : backgroundBlue
+
   return (
     <Host>
       <Background source={background} resizeMode="stretch" />
@@ -172,9 +204,9 @@ export function ScanResultCard(props: ScanResultCardProps) {
                   style={{ transform: [{ scale: 0.8 }] }}
                 />
               ) : error ? (
-                <SubtitleImage source={danger} />
+                <SubtitleImage source={danger} resizeMode="contain" />
               ) : (
-                <SubtitleImage source={success} />
+                <SubtitleImage source={success} resizeMode="contain" />
               )}
             </SubtitleIcon>
             <SubtitleText>
@@ -189,7 +221,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
         <Logo source={agencyLogo} />
       </Header>
       {error ? (
-        <Content>
+        <ErrorContent>
           <Left>
             <LabelGroup>
               <Label>
@@ -197,50 +229,86 @@ export function ScanResultCard(props: ScanResultCardProps) {
                   id: 'licenseScannerResult.errorMessage',
                 })}
               </Label>
-              <Value>{errorMessage}</Value>
+              {isExpired ? (
+                <>
+                  <Value style={{ marginBottom: 16 }}>{errorMessage}</Value>
+                  <Copy>
+                    <Bold>Android</Bold>
+                    {'  '}
+                    <Normal>
+                      {intl.formatMessage({
+                        id: 'licenseScannerResult.androidHelp',
+                      })}
+                    </Normal>
+                  </Copy>
+                  <Copy>
+                    <Bold>iOS</Bold>
+                    {'  '}
+                    <Normal>
+                      {intl.formatMessage({
+                        id: 'licenseScannerResult.iosHelp',
+                      })}
+                    </Normal>
+                  </Copy>
+                </>
+              ) : (
+                <Value>{errorMessage}</Value>
+              )}
             </LabelGroup>
           </Left>
-        </Content>
+        </ErrorContent>
       ) : (
-        <Content>
-          <Left>
-            <LabelGroup>
-              <Label>
-                {intl.formatMessage({ id: 'licenseScannerResult.name' })}
-              </Label>
-              {loading ? (
-                <Placeholder style={{ width: 120 }} />
-              ) : (
-                <Value>{name}</Value>
-              )}
-            </LabelGroup>
-            <LabelGroup>
-              <Label>
-                {intl.formatMessage({ id: 'licenseScannerResult.birthDate' })}
-              </Label>
-              {loading ? (
-                <Placeholder style={{ width: 120 }} />
-              ) : (
-                <Value>{birthDate ?? `---`}</Value>
-              )}
-            </LabelGroup>
-            {data?.map(({ key, value }) => {
-              return (
-                <LabelGroup key={key}>
-                  <Label>{key}</Label>
-                  {loading ? (
-                    <Placeholder style={{ width: 120 }} />
-                  ) : (
-                    <Value>{value}</Value>
-                  )}
-                </LabelGroup>
+        <>
+          <Splitter />
+
+          <Content>
+            {loading ? (
+              <Placeholder
+                style={{ width: 79, height: 109, marginRight: 32 }}
+              />
+            ) : (
+              photo && (
+                <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
               )
-            })}
-          </Left>
-          {photo && (
-            <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
-          )}
-        </Content>
+            )}
+            <Left>
+              <LabelGroup>
+                <Label>
+                  {intl.formatMessage({ id: 'licenseScannerResult.name' })}
+                </Label>
+                {loading ? (
+                  <Placeholder style={{ width: 120 }} />
+                ) : (
+                  <Value>{name}</Value>
+                )}
+              </LabelGroup>
+              <LabelGroup>
+                <Label>
+                  {intl.formatMessage({
+                    id: 'licenseScannerResult.nationalId',
+                  })}
+                </Label>
+                {loading ? (
+                  <Placeholder style={{ width: 120 }} />
+                ) : (
+                  <Value>{nationalId ?? `---`}</Value>
+                )}
+              </LabelGroup>
+              {data?.map(({ key, value }) => {
+                return (
+                  <LabelGroup key={key}>
+                    <Label>{key}</Label>
+                    {loading ? (
+                      <Placeholder style={{ width: 120 }} />
+                    ) : (
+                      <Value>{value}</Value>
+                    )}
+                  </LabelGroup>
+                )
+              })}
+            </Left>
+          </Content>
+        </>
       )}
     </Host>
   )
