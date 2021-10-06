@@ -21,6 +21,7 @@ import {
   buildDataProviderItem,
   FormValue,
 } from '@island.is/application/core'
+import { LogreglanLogo } from '../assets'
 import { NationalRegistryUser, Teacher, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
@@ -91,6 +92,7 @@ const chooseDistrictCommissionerDescription = ({
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
   title: m.applicationName,
+  logo: LogreglanLogo,
   mode: FormModes.APPLYING,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
