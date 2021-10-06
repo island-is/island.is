@@ -25,7 +25,7 @@ export abstract class PaymentCatalogProvider extends BasicDataProvider {
 
       if (response.errors) {
         console.error(response)
-        return Promise.reject(response.errors)
+        throw new Error('Payment catalog provider response')
       }
 
       return response.data.paymentCatalog.items
