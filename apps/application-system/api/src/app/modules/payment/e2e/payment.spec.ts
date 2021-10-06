@@ -84,7 +84,7 @@ let server: request.SuperTest<request.Test>
 
 beforeAll(async () => {
   app = await setup({
-    override: (builder) => {
+    override: (builder) =>
       builder
         .overrideProvider(PaymentAPI)
         .useClass(MockPaymentApi)
@@ -96,9 +96,7 @@ beforeAll(async () => {
           }),
         )
         .overrideProvider(PaymentService)
-        .useClass(MockPaymentService)
-        .compile()
-    },
+        .useClass(MockPaymentService),
   })
 
   server = request(app.getHttpServer())

@@ -5,7 +5,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Type, ValidationPipe } from '@nestjs/common'
 import { InfraModule } from './infra/infra.module'
-import { Test } from '@nestjs/testing'
+import { Test, TestingModule } from '@nestjs/testing'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
 export type TestServerOptions = {
@@ -18,15 +18,15 @@ export type TestServerOptions = {
   /**
    * Hook to override providers.
    */
-  override?: (builder: TestingModuleBuilder) => void
+  override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
 }
 
 export const testServer = async (options: TestServerOptions) => {
-  const builder = Test.createTestingModule({
+  let builder = Test.createTestingModule({
     imports: [InfraModule.forRoot(options.appModule)],
   })
   if (options.override) {
-    options.override(builder)
+    builder = options.override(builder)
   }
 
   const moduleRef = await builder.compile()
