@@ -1,5 +1,6 @@
 import {
   Controller,
+  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -10,17 +11,18 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { StaffService } from './staff.service'
 import { StaffModel } from './models'
+import { apiBasePath, RolesRule } from '@island.is/financial-aid/shared/lib'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { RolesGuard } from '../../guards'
+import { RolesRules } from '../../decorators'
 
-import { Staff } from '@island.is/financial-aid/shared/lib'
-
-import { TokenGuard } from '@island.is/financial-aid/auth'
-
-@Controller('api/staff')
+@UseGuards(IdsUserGuard, RolesGuard)
+@RolesRules(RolesRule.VEITA)
+@Controller(`${apiBasePath}/staff`)
 @ApiTags('staff')
 export class StaffController {
   constructor(private readonly staffService: StaffService) {}
 
-  @UseGuards(TokenGuard)
   @Get(':nationalId')
   @ApiOkResponse({
     type: StaffModel,
@@ -28,15 +30,11 @@ export class StaffController {
   })
   async getStaffByNationalId(
     @Param('nationalId') nationalId: string,
-  ): Promise<Staff> {
+  ): Promise<StaffModel> {
     const staff = await this.staffService.findByNationalId(nationalId)
-
-    if (!staff) {
-      throw new NotFoundException(
-        `Staff with nationalId ${nationalId} not found`,
-      )
+    if (staff === null) {
+      throw new ForbiddenException('Staff not found')
     }
-
     return staff
   }
 }

@@ -1,22 +1,21 @@
-import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import React, { useContext, useState } from 'react'
+import { Text, Box, Button } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
 import * as styles from './TableBody.treat'
-
 import cn from 'classnames'
+
 import {
   Application,
   getState,
   getMonth,
+  ApplicationState,
 } from '@island.is/financial-aid/shared/lib'
-import format from 'date-fns/format'
 
 import {
   GeneratedProfile,
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
-
 import {
   calcDifferenceInDate,
   getTagByState,
@@ -25,12 +24,19 @@ import {
 interface PageProps {
   application: Application
   index: number
+  onApplicationUpdate: (
+    applicationId: string,
+    state: ApplicationState,
+  ) => Promise<void>
 }
 
-const TableBody = ({ application, index }: PageProps) => {
+const TableBody = ({ application, index, onApplicationUpdate }: PageProps) => {
   return (
     <Link href={'application/' + application.id}>
-      <tr className={styles.link}>
+      <tr
+        className={`${styles.link} contentUp`}
+        style={{ animationDelay: 55 + 3.5 * index + 'ms' }}
+      >
         <td
           className={cn({
             [`${styles.tablePadding} ${styles.firstChildPadding}`]: true,
@@ -70,6 +76,25 @@ const TableBody = ({ application, index }: PageProps) => {
           })}
         >
           <Text>{getMonth(new Date(application.created).getMonth())}</Text>
+        </td>
+        <td
+          className={cn({
+            [`${styles.tablePadding} `]: true,
+          })}
+        >
+          {application.staff?.name ? (
+            <Text>{application.staff?.name}</Text>
+          ) : (
+            <Button
+              variant="text"
+              onClick={(ev) => {
+                ev.stopPropagation()
+                onApplicationUpdate(application.id, ApplicationState.INPROGRESS)
+              }}
+            >
+              Sjá um
+            </Button>
+          )}
         </td>
       </tr>
     </Link>

@@ -9,7 +9,7 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
-  Feature,
+  completedCaseStates,
   InstitutionType,
   NotificationType,
   UserRole,
@@ -23,7 +23,6 @@ import ActiveRequests from './ActiveRequests'
 import PastRequests from './PastRequests'
 import router from 'next/router'
 import * as styles from './Requests.treat'
-import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
@@ -32,7 +31,6 @@ export const Requests: React.FC = () => {
   const [pastCases, setPastCases] = useState<Case[]>()
 
   const { user } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isJudge = user?.role === UserRole.JUDGE
   const isRegistrar = user?.role === UserRole.REGISTRAR
@@ -61,21 +59,17 @@ export const Requests: React.FC = () => {
       setActiveCases(
         casesWithoutDeleted.filter((c: Case) => {
           return isProsecutor
-            ? c.state !== CaseState.ACCEPTED && c.state !== CaseState.REJECTED
+            ? !completedCaseStates.includes(c.state)
             : // Judges and registrars should see all cases except cases with status code NEW.
             isJudge || isRegistrar
-            ? c.state !== CaseState.NEW &&
-              c.state !== CaseState.ACCEPTED &&
-              c.state !== CaseState.REJECTED
+            ? ![...completedCaseStates, CaseState.NEW].includes(c.state)
             : null
         }),
       )
 
       setPastCases(
         casesWithoutDeleted.filter((c: Case) => {
-          return (
-            c.state === CaseState.ACCEPTED || c.state === CaseState.REJECTED
-          )
+          return completedCaseStates.includes(c.state)
         }),
       )
     }
@@ -128,7 +122,8 @@ export const Requests: React.FC = () => {
   const openCase = (caseToOpen: Case, role: UserRole) => {
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
-      caseToOpen.state === CaseState.REJECTED
+      caseToOpen.state === CaseState.REJECTED ||
+      caseToOpen.state === CaseState.DISMISSED
     ) {
       router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`)
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
@@ -179,33 +174,20 @@ export const Requests: React.FC = () => {
             <DropdownMenu
               menuLabel="Tegund kröfu"
               icon="add"
-              items={
-                features.includes(Feature.R_CASES)
-                  ? [
-                      {
-                        href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
-                        title: 'Gæsluvarðhald',
-                      },
-                      {
-                        href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
-                        title: 'Farbann',
-                      },
-                      {
-                        href: Constants.NEW_IC_ROUTE,
-                        title: 'Rannsóknarheimild',
-                      },
-                    ]
-                  : [
-                      {
-                        href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
-                        title: 'Gæsluvarðhald',
-                      },
-                      {
-                        href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
-                        title: 'Farbann',
-                      },
-                    ]
-              }
+              items={[
+                {
+                  href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
+                  title: 'Gæsluvarðhald',
+                },
+                {
+                  href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
+                  title: 'Farbann',
+                },
+                {
+                  href: Constants.NEW_IC_ROUTE,
+                  title: 'Rannsóknarheimild',
+                },
+              ]}
               title="Stofna nýja kröfu"
             />
           )}

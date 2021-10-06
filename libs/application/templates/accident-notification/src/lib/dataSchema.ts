@@ -61,14 +61,6 @@ export const AccidentNotificationSchema = z.object({
       date: z.string(),
       status: z.enum(['success', 'failure']),
     }),
-    userProfile: z.object({
-      data: z.object({
-        email: z.string(),
-        mobilePhoneNumber: z.string(),
-      }),
-      date: z.string(),
-      status: z.enum(['success', 'failure']),
-    }),
   }),
   approveExternalData: z.boolean().refine((p) => p),
   info: z.object({
@@ -107,14 +99,14 @@ export const AccidentNotificationSchema = z.object({
   wasTheAccidentFatal: z.enum([YES, NO]),
   fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),
   accidentDetails: z.object({
-    dateOfAccident: z.string().min(1),
-    isHealthInsured: z.enum([YES, NO]),
+    dateOfAccident: z.string(),
+    isHealthInsured: z.enum([YES, NO]).optional(),
     timeOfAccident: z
       .string()
       .refine((x) => (x ? isValid24HFormatTime(x) : false)),
     descriptionOfAccident: z.string().min(1),
   }),
-  isRepresentativeOfCompanyOrInstitue: z.enum([YES, NO]),
+  isRepresentativeOfCompanyOrInstitue: z.array(z.string()).optional(),
   companyInfo: CompanyInfoSchema,
   schoolInfo: CompanyInfoSchema,
   fishingCompanyInfo: CompanyInfoSchema,
@@ -208,7 +200,9 @@ export const AccidentNotificationSchema = z.object({
     companyNationalId: z
       .string()
       .refine((x) => (x ? kennitala.isCompany(x) : false)),
-    companyConfirmation: z.enum([YES]),
+    companyConfirmation: z.array(z.string()).refine((v) => v.includes(YES), {
+      params: error.requiredCheckmark,
+    }),
   }),
   childInCustody: z.object({
     name: z.string().min(1, error.required.defaultMessage),

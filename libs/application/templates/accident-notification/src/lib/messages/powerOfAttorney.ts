@@ -8,9 +8,8 @@ export const powerOfAttorney = {
       description: 'Label for power of attorney upload now radio button',
     },
     uploadLater: {
-      id: 'an.application:powerOfAttorney.labels.uploadNow',
-      defaultMessage:
-        'Ég vil klára að tilkynna slys og skila umboðsskjali síðar',
+      id: 'an.application:powerOfAttorney.labels.uploadLater',
+      defaultMessage: 'Ég vil klára að tilkynna slys og skila inn umboði síðar',
       description: 'Label for power of attorney upload now radio button',
     },
     forChildInCustody: {
@@ -29,19 +28,34 @@ export const powerOfAttorney = {
     },
     sectionTitle: {
       id: 'an.application:powerOfAttorney.type.sectionTitle',
-      defaultMessage: 'Fylgiskjöl',
+      defaultMessage: 'Umboð',
       description: 'Section title of upload section',
     },
     heading: {
       id: 'an.application:powerOfAttorney.type.heading',
-      defaultMessage: 'Fylgiskjöl',
+      defaultMessage: 'Umboð fyrir tilkynningu',
       description: 'Heading of upload section',
+    },
+  }),
+  alertMessage: defineMessages({
+    title: {
+      id: 'an.application:powerOfAttorney.alertMessage.title',
+      defaultMessage: 'Athugið',
+      description:
+        'Bold title in alert when uploading required attachment later',
+    },
+    description: {
+      id: 'an.application:powerOfAttorney.alertMessage.description',
+      defaultMessage:
+        'Það er hægt að bæta við skjölum eftir að umsókn hefur verið send inn. Áður en að Sjúkratryggingar Íslands fer yfir umsókn og tekur afstöðu til bótaskyldu þarf umboð að vera til staðar.',
+      description:
+        'Description message in Alert when uploading required attachment later',
     },
   }),
   upload: defineMessages({
     heading: {
       id: 'an.application:powerOfAttorney.upload.heading',
-      defaultMessage: 'Fylgiskjöl',
+      defaultMessage: 'Hlaða upp umboði',
       description: 'Heading of upload section',
     },
     description: {
@@ -52,7 +66,7 @@ export const powerOfAttorney = {
     },
     sectionTitle: {
       id: 'an.application:powerOfAttorney.upload.sectionTitle',
-      defaultMessage: 'Hlaða upp skjali',
+      defaultMessage: 'Hlaða upp umboði',
       description: 'Section title of upload section',
     },
     uploadDescription: {

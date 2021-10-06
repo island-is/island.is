@@ -4,7 +4,6 @@ import { Text, Divider, Box } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
   CancelModal,
   Estimation,
   UserInfo,
@@ -90,7 +89,7 @@ const SummaryForm = () => {
     }
 
     await createApplication(form, user, updateForm)
-      .then((res) => {
+      .then(() => {
         if (navigation?.nextUrl) {
           router.push(navigation.nextUrl)
         }
@@ -101,7 +100,7 @@ const SummaryForm = () => {
           message: 'Obbobbob einhvað fór úrskeiðis',
         })
 
-        if (e.networkError.statusCode === 400) {
+        if (e.networkError?.statusCode === 400) {
           const findErrorInFormInfo = formInfoOverview.find(
             (el) => el.info === undefined,
           )
@@ -121,10 +120,7 @@ const SummaryForm = () => {
   ) as NavigationProps
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Yfirlit umsóknar
@@ -187,7 +183,7 @@ const SummaryForm = () => {
         nextButtonText="Senda umsókn"
         onNextButtonClick={handleNextButtonClick}
       />
-    </FormLayout>
+    </>
   )
 }
 

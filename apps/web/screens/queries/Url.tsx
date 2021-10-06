@@ -10,6 +10,7 @@ export const GET_URL_QUERY = gql`
         slug
         type
       }
+      explicitRedirect
     }
   }
 `

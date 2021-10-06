@@ -379,9 +379,6 @@
     "financial-aid-api": {
       "tags": []
     },
-    "financial-aid-auth": {
-      "tags": []
-    },
     "financial-aid-backend": {
       "tags": []
     },
@@ -514,6 +511,9 @@
       "tags": []
     },
     "nest-validators": {
+      "tags": []
+    },
+    "next-ids-auth": {
       "tags": []
     },
     "nova-sms": {

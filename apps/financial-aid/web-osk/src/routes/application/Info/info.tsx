@@ -4,8 +4,7 @@ import { Text, Icon, Box, Checkbox } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
-  LogoHfj,
+  Logo,
 } from '@island.is/financial-aid-web/osk/src/components'
 import * as styles from './info.treat'
 import { useRouter } from 'next/router'
@@ -43,7 +42,7 @@ const ApplicationInfo = () => {
   }
 
   return (
-    <FormLayout activeSection={0}>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
           Gagnaöflun
@@ -108,19 +107,18 @@ const ApplicationInfo = () => {
           justifyContent="center"
           marginBottom={5}
         >
-          <LogoHfj className={styles.logo} />
+          <Logo className={styles.logo} />
         </Box>
       </ContentContainer>
-
       <Footer
         onPrevButtonClick={() => logOut()}
         previousIsDestructive={true}
         prevButtonText="Hætta við"
         nextButtonText="Staðfesta"
         nextButtonIcon="checkmark"
-        onNextButtonClick={() => errorCheck()}
+        onNextButtonClick={errorCheck}
       />
-    </FormLayout>
+    </>
   )
 }
 

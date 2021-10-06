@@ -1,12 +1,11 @@
 import {
-  capitalize,
-  formatAccusedByGender,
   formatDate,
   formatNationalId,
   formatCustodyRestrictions,
   laws,
   formatGender,
   caseTypes,
+  formatAppeal,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
@@ -67,29 +66,6 @@ export function formatCustodyProvisions(
     : legalBasis
     ? legalBasis
     : 'Lagaákvæði ekki skráð'
-}
-
-export function formatAppeal(
-  appealDecision: CaseAppealDecision | undefined,
-  stakeholder: string,
-  includeBullet = true,
-): string {
-  switch (appealDecision) {
-    case CaseAppealDecision.APPEAL:
-      return `${
-        includeBullet ? '  \u2022  ' : ''
-      }${stakeholder} kærir úrskurðinn.`
-    case CaseAppealDecision.ACCEPT:
-      return `${
-        includeBullet ? '  \u2022  ' : ''
-      }${stakeholder} unir úrskurðinum.`
-    case CaseAppealDecision.POSTPONE:
-      return `${
-        includeBullet ? '  \u2022  ' : ''
-      }${stakeholder} tekur sér lögboðinn frest.`
-    default:
-      return ''
-  }
 }
 
 export function formatCourtHeadsUpSmsNotification(
@@ -276,15 +252,18 @@ export function formatPrisonRulingEmailNotification(
   defenderName?: string,
   defenderEmail?: string,
   decision?: CaseDecision,
-  validToDate?: Date,
   custodyRestrictions?: CaseCustodyRestrictions[],
   accusedAppealDecision?: CaseAppealDecision,
   prosecutorAppealDecision?: CaseAppealDecision,
   judgeName?: string,
   judgeTitle?: string,
   conclusion?: string,
-  isolationToDate?: Date,
 ): string {
+  const custodyRestrictionsText = formatCustodyRestrictions(
+    accusedGender,
+    custodyRestrictions,
+  )
+
   return `<strong>Úrskurður um gæsluvarðhald</strong><br /><br />${court}, ${formatDate(
     courtEndTime,
     'PPP',
@@ -300,17 +279,11 @@ export function formatPrisonRulingEmailNotification(
       ? defenderEmail
       : 'Hefur ekki verið skráður'
   }.<br /><br /><strong>Úrskurðarorð</strong><br /><br />${conclusion}<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
-    accusedAppealDecision,
-    capitalize(formatAccusedByGender(accusedGender)),
-    false,
-  )}<br />${formatAppeal(prosecutorAppealDecision, 'Sækjandi', false)}${
-    decision === CaseDecision.ACCEPTING
-      ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatCustodyRestrictions(
-          accusedGender,
-          custodyRestrictions,
-          validToDate,
-          isolationToDate,
-        )}`
+    prosecutorAppealDecision,
+    'Sækjandi',
+  )}<br />${formatAppeal(accusedAppealDecision, 'Varnaraðili')}${
+    decision === CaseDecision.ACCEPTING && custodyRestrictions
+      ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${custodyRestrictionsText}`
       : ''
   }<br /><br />${judgeName} ${judgeTitle}`
 }

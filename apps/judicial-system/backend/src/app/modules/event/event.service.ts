@@ -24,6 +24,7 @@ const caseEvent = {
   REJECT: ':negative_squared_cross_mark: Kröfu hafnað',
   DELETE: ':fire: Krafa dregin til baka',
   COURT_DATE: ':timer_clock: Kröfu úthlutað fyrirtökutíma',
+  DISMISS: ':woman-shrugging: Kröfu vísað frá',
 }
 
 export enum CaseEvent {
@@ -37,6 +38,7 @@ export enum CaseEvent {
   REJECT = 'REJECT',
   DELETE = 'DELETE',
   COURT_DATE = 'COURT_DATE',
+  DISMISS = 'DISMISS',
 }
 
 @Injectable()

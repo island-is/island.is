@@ -1,9 +1,8 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
   Footer,
-  StatusLayout,
   Files,
   ContentContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
@@ -24,11 +23,14 @@ import {
 import { Box, Input, Text } from '@island.is/island-ui/core'
 
 import { Routes } from '@island.is/financial-aid/shared/lib'
+import cn from 'classnames'
 
 const FileUpload = () => {
-  const { form, updateForm, initializeFormProvider } = useContext(FormContext)
+  const { form, updateForm } = useContext(FormContext)
   const router = useRouter()
   const { uploadFiles } = useFileUpload(form.otherFiles)
+
+  const [error, setError] = useState(false)
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -40,11 +42,13 @@ const FileUpload = () => {
     CreateApplicationEventQuery,
   )
 
-  const sendFiles = async () => {
-    if (form?.otherFiles.length <= 0 || router.query.id === undefined) {
-      return
+  useEffect(() => {
+    if (error) {
+      setError(false)
     }
+  }, [form?.otherFiles])
 
+  const sendFiles = async () => {
     setIsLoading(true)
 
     try {
@@ -97,7 +101,7 @@ const FileUpload = () => {
   }
 
   return (
-    <StatusLayout>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
           Senda inn gögn
@@ -130,6 +134,17 @@ const FileUpload = () => {
             }}
           />
         </Box>
+
+        <div
+          className={cn({
+            [`errorMessage`]: true,
+            [`showErrorMessage`]: error && form?.otherFiles.length <= 0,
+          })}
+        >
+          <Text color="red600" fontWeight="semiBold" variant="small">
+            Það vantar gögn
+          </Text>
+        </div>
       </ContentContainer>
 
       <Footer
@@ -137,10 +152,13 @@ const FileUpload = () => {
         nextButtonText={'Senda gögn'}
         nextIsLoading={isLoading}
         onNextButtonClick={() => {
+          if (form?.otherFiles.length <= 0 || router.query.id === undefined) {
+            return setError(true)
+          }
           Promise.all([sendFiles(), sendUserComment()])
         }}
       />
-    </StatusLayout>
+    </>
   )
 }
 
