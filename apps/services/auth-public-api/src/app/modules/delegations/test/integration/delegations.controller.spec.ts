@@ -44,7 +44,7 @@ describe('DelegationsController with auth', () => {
           .useValue(new MockEinstaklingarApi()),
       hooks: [
         useAuth({ currentUser }),
-        useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
+        useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
       ],
     })
     delegationModel = app.get<typeof Delegation>('DelegationRepository')
