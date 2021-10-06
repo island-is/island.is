@@ -21,7 +21,6 @@ import {
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
-  formatAppeal,
 } from './formatters'
 
 describe('formatCustodyProvisions', () => {
@@ -1142,47 +1141,5 @@ describe('stripHtmlTags', () => {
 
     // Assert
     expect(res).toBe('blablabla\n\nblabla')
-  })
-})
-
-describe('formatAppeal', () => {
-  test('should format appeal', () => {
-    // Arrange
-    const appealDecision = CaseAppealDecision.APPEAL
-    const stakeholder = 'Aðili'
-
-    // Act
-    const res = formatAppeal(appealDecision, stakeholder)
-
-    // Assert
-    expect(res).toBe(
-      'Aðili lýsir því yfir að hann kæri úrskurðinn til Landsréttar.',
-    )
-  })
-
-  test('should format acceptance', () => {
-    // Arrange
-    const appealDecision = CaseAppealDecision.ACCEPT
-    const stakeholder = 'Aðili'
-
-    // Act
-    const res = formatAppeal(appealDecision, stakeholder)
-
-    // Assert
-    expect(res).toBe('Aðili unir úrskurðinum.')
-  })
-
-  test('should format postponement', () => {
-    // Arrange
-    const appealDecision = CaseAppealDecision.POSTPONE
-    const stakeholder = 'Aðili'
-
-    // Act
-    const res = formatAppeal(appealDecision, stakeholder)
-
-    // Assert
-    expect(res).toBe(
-      'Aðili lýsir því yfir að hann taki sér lögbundinn kærufrest.',
-    )
   })
 })

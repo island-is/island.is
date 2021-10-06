@@ -5,9 +5,7 @@ import {
   CaseFile as TCaseFile,
   CaseFileState,
 } from '@island.is/judicial-system/types'
-import { NotFoundException } from '@nestjs/common'
 import { useEffect, useState } from 'react'
-import { ConsoleTransportOptions } from 'winston/lib/winston/transports'
 
 export type CaseFileStatus =
   | 'not-uploaded'

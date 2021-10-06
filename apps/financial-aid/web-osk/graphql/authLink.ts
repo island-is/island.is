@@ -1,18 +1,15 @@
 import { setContext } from '@apollo/client/link/context'
-import { CSRF_COOKIE_NAME } from '@island.is/financial-aid/shared/lib'
-import Cookie from 'js-cookie'
+import { getSession } from 'next-auth/client'
 
-export default setContext((_, { headers }) => {
-  const token = Cookie.get(CSRF_COOKIE_NAME)
+export default setContext(async (_, { headers }) => {
+  const session = await getSession()
 
-  if (token) {
-    return {
-      headers: {
-        ...headers,
-        authorization: `Bearer ${token}`,
-      },
-    }
+  return {
+    headers: {
+      ...headers,
+      authorization: session?.accessToken
+        ? `Bearer ${session.accessToken}`
+        : '',
+    },
   }
-
-  return headers
 })

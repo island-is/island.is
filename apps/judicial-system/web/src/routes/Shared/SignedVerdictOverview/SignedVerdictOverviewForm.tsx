@@ -53,6 +53,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import { UploadStateMessage } from './Components/UploadStateMessage'
 import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
+import { core } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -411,22 +412,29 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         <Box marginBottom={3}>
           <PdfButton
             caseId={workingCase.id}
-            title="Opna PDF kröfu"
+            title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
         </Box>
         <Box marginBottom={3}>
           <PdfButton
             caseId={workingCase.id}
-            title="Opna PDF þingbók og úrskurð"
-            pdfType="ruling"
+            title={formatMessage(core.pdfButtonRuling)}
+            pdfType="ruling?shortVersion=false"
+          />
+        </Box>
+        <Box marginBottom={3}>
+          <PdfButton
+            caseId={workingCase.id}
+            title={formatMessage(core.pdfButtonRulingShortVersion)}
+            pdfType="ruling?shortVersion=true"
           />
         </Box>
         {workingCase.type === CaseType.CUSTODY &&
           workingCase.state === CaseState.ACCEPTED && (
             <PdfButton
               caseId={workingCase.id}
-              title="Opna PDF vistunarseðil"
+              title={formatMessage(core.pdfButtonCustodyNotice)}
               pdfType="custodyNotice"
             />
           )}

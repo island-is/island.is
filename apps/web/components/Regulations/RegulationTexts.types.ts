@@ -35,6 +35,7 @@ export type RegulationPageTexts = Partial<
   Record<
     | 'goBack' // 'Til baka'
     | 'goHome' // 'Yfirlit reglugerða'
+    | 'originalDocLink' // 'Skjal í Stjórnartíðindum'
     | 'printThisVersion' // 'Prenta þessa útgáfu'
     | 'copyPermaLink' // "Afrita hlekk á þessa útgáfu"
     | 'redirectText' // 'Þessi reglugerð er enn sem komið er hýst á eldri vefslóð:'
@@ -42,9 +43,16 @@ export type RegulationPageTexts = Partial<
     | 'hideDiff' // 'Fela breytingar'
     | 'showDiff_fromOriginal' // 'Sjá allar breytingar frá upphafi'
     | 'showDiff_fromLast' // 'Sjá síðustu breytingar'
+    | 'nextVersion' // 'Næsta útgáfa'
+    | 'previousVersion' // 'Fyrri útgáfa'
     | 'appendixesTitle' // 'Viðaukar'
     | 'appendixGenericTitle' // 'Viðauki'
     | 'commentsTitle' // 'Athugasemdir ritstjóra'
+    | 'disclaimerTitle' // 'Fyrirvari'
+    | 'disclaimerMd' // '
+    //   Reglugerðir eru birtar í B-deild Stjórnartíðinda skv. 3. gr. laga um Stjórnartíðindi og Lögbirtingablað, nr. 15/2005, sbr. reglugerð um útgáfu Stjórnartíðinda nr. 958/2005.\n\n
+    //   Sé misræmi milli þess texta sem birtist hér í safninu og þess sem birtur er í útgáfu B-deildar Stjórnartíðinda skal sá síðarnefndi ráða.
+    // '
     | 'printedDate' // 'Prentað þann'
     | 'statusCurrentBase' // 'Stofnreglugerð'
     | 'statusCurrentAmending' // 'Breytingareglugerð'
