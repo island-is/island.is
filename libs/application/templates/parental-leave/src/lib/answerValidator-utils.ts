@@ -188,10 +188,13 @@ export const validatePeriod = (
       )
     }
 
-    if (endDateValue < addDays(startDateValue, minPeriodDays)) {
+    if (endDateValue < addDays(startDateValue, minPeriodDays - 1)) {
       return buildError(
         useLength === YES ? 'endDateDuration' : 'endDate',
         errorMessages.periodsEndDateMinimumPeriod,
+        {
+          minPeriodDays: minPeriodDays - 1,
+        },
       )
     }
   }
