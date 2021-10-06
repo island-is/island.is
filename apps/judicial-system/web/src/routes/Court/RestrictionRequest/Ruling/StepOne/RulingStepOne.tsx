@@ -397,6 +397,11 @@ export const RulingStepOne: React.FC = () => {
                     <DateTime
                       name="isolationToDate"
                       datepickerLabel="Einangrun til"
+                      disabled={
+                        !workingCase.custodyRestrictions?.includes(
+                          CaseCustodyRestrictions.ISOLATION,
+                        )
+                      }
                       selectedDate={
                         workingCase.isolationToDate
                           ? new Date(workingCase.isolationToDate)

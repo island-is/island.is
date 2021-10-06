@@ -89,7 +89,7 @@ const SummaryForm = () => {
     }
 
     await createApplication(form, user, updateForm)
-      .then((res) => {
+      .then(() => {
         if (navigation?.nextUrl) {
           router.push(navigation.nextUrl)
         }
@@ -100,7 +100,7 @@ const SummaryForm = () => {
           message: 'Obbobbob einhvað fór úrskeiðis',
         })
 
-        if (e.networkError.statusCode === 400) {
+        if (e.networkError?.statusCode === 400) {
           const findErrorInFormInfo = formInfoOverview.find(
             (el) => el.info === undefined,
           )
