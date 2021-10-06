@@ -31,9 +31,9 @@ Run Ósk or Veita client:
 
 Go to localhost:4200
 
-## To test authentication locally:
+## To test authentication locally
 
-Install https://github.com/cameronhunter/local-ssl-proxy:
+Install <https://github.com/cameronhunter/local-ssl-proxy>:
 
 - `npm install -g local-ssl-proxy`
 

@@ -3976,33 +3976,6 @@
         "docker-express": {}
       }
     },
-    "financial-aid-auth": {
-      "root": "libs/financial-aid/auth",
-      "sourceRoot": "libs/financial-aid/auth/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/financial-aid/auth/tsconfig.lib.json",
-              "libs/financial-aid/auth/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/financial-aid/auth/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/financial-aid/auth/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/financial-aid/auth"]
-        }
-      }
-    },
     "financial-aid-backend": {
       "root": "apps/financial-aid/backend",
       "sourceRoot": "apps/financial-aid/backend/src",
@@ -5877,6 +5850,33 @@
             "jestConfig": "libs/nest/validators/jest.config.js",
             "passWithNoTests": true
           }
+        }
+      }
+    },
+    "next-ids-auth": {
+      "root": "libs/next-ids-auth",
+      "sourceRoot": "libs/next-ids-auth/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/next-ids-auth/tsconfig.lib.json",
+              "libs/next-ids-auth/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/next-ids-auth/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/next-ids-auth/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/next-ids-auth"]
         }
       }
     },

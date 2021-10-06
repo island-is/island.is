@@ -1,6 +1,10 @@
 /// <reference path="../../support/index.d.ts" />
 
-import { Case } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseCustodyRestrictions,
+  CaseDecision,
+} from '@island.is/judicial-system/types'
 import { makeCase } from '../../fixtures/testDataFactory'
 import { intercept } from '../../utils'
 
@@ -12,13 +16,14 @@ describe('/domur/urskurdur/:id', () => {
       caseFacts: 'lorem ipsum',
       legalArguments: 'lorem ipsum',
     }
-    cy.stubAPIResponses()
 
+    cy.stubAPIResponses()
     intercept(caseDataAddition)
+
+    cy.visit('/domur/urskurdur/test_id_stadfest')
   })
 
   it('should require a valid ruling', () => {
-    cy.visit('/domur/urskurdur/test_id_stadfest')
     cy.getByTestid('ruling').click().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('ruling').type('lorem')
@@ -26,7 +31,6 @@ describe('/domur/urskurdur/:id', () => {
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    cy.visit('/domur/urskurdur/test_id_stadfest')
     cy.getByTestid('ruling').type('lorem')
     cy.get('#case-decision-accepting').check()
     cy.getByTestid('continueButton').click()
@@ -34,7 +38,6 @@ describe('/domur/urskurdur/:id', () => {
   })
 
   it('should show appropriate valid to dates based on decision', () => {
-    cy.visit('/domur/urskurdur/test_id_without_decision')
     cy.getByTestid('caseDecisionSection').should('not.exist')
     cy.get('#case-decision-accepting').check()
     cy.getByTestid('caseDecisionSection').should('exist')
@@ -42,5 +45,20 @@ describe('/domur/urskurdur/:id', () => {
     cy.getByTestid('caseDecisionSection').should('not.exist')
     cy.get('#case-decision-accepting-partially').check()
     cy.getByTestid('caseDecisionSection').should('exist')
+  })
+
+  it('should have a disabled isolationTo datepicker if isolation is not one of the custody restrictions and not if it is', () => {
+    const caseData = makeCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      decision: CaseDecision.ACCEPTING,
+      custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
+    }
+
+    intercept(caseDataAddition)
+
+    cy.get('#isolationToDate').should('have.attr', 'disabled')
+    cy.getByTestid('checkbox').children('div').children('input').check()
+    cy.get('#isolationToDate').should('not.have.attr', 'disabled')
   })
 })
