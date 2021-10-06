@@ -19,6 +19,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_LICENSE,
   name: m.applicationForDrivingLicense,
+  institution: m.nationalCommissionerOfPolice,
   dataSchema,
   readyForProduction: true,
   stateMachineConfig: {

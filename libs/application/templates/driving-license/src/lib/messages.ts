@@ -777,4 +777,9 @@ export const m = defineMessages({
     defaultMessage: '[declinedOtherCountryDescription]',
     description: '[declinedOtherCountryDescription]',
   },
+  nationalCommissionerOfPolice: {
+    id: 'dl.application:nationalCommissionerOfPolice',
+    defaultMessage: 'Ríkislögreglustjóri',
+    description: 'National Commissioner of Police',
+  },
 })
