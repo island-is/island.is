@@ -20,6 +20,27 @@ const SelectProsecutor: React.FC<Props> = (props) => {
   const defaultProsecutor = prosecutors?.find(
     (prosecutor: Option) => prosecutor.value === workingCase.prosecutor?.id,
   )
+
+  const handleChange = (selectedOption: ValueType<ReactSelectOption>) => {
+    const option = selectedOption as ReactSelectOption
+    const isRemovingCaseAccessFromSelf =
+      workingCase.creatingProsecutor?.id !== workingCase.prosecutor?.id &&
+      option.value !== workingCase.creatingProsecutor?.id &&
+      option.value !== workingCase.prosecutor?.id
+
+    if (isRemovingCaseAccessFromSelf) {
+      console.log('You are about to loose access to the case')
+    } else {
+      setAndSendToServer(
+        'prosecutorId',
+        option.value.toString(),
+        workingCase,
+        setWorkingCase,
+        updateCase,
+      )
+    }
+  }
+
   return (
     <>
       <Box marginBottom={3}>
@@ -35,15 +56,9 @@ const SelectProsecutor: React.FC<Props> = (props) => {
         label="Veldu saksóknara"
         defaultValue={defaultProsecutor}
         options={prosecutors}
-        onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-          setAndSendToServer(
-            'prosecutorId',
-            (selectedOption as ReactSelectOption).value.toString(),
-            workingCase,
-            setWorkingCase,
-            updateCase,
-          )
-        }
+        onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+          handleChange(selectedOption)
+        }}
         required
       />
     </>

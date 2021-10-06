@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import type { Case, Institution } from '@island.is/judicial-system/types'
+import type { Case, Institution, User } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   FormContentContainer,
@@ -27,6 +27,7 @@ interface Props {
   courts: Institution[]
   isLoading: boolean
   handleNextButtonClick: () => Promise<void>
+  user?: User
 }
 
 const HearingArrangementsForms: React.FC<Props> = (props) => {
@@ -37,6 +38,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     courts,
     isLoading,
     handleNextButtonClick,
+    user,
   } = props
 
   const { formatMessage } = useIntl()
