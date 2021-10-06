@@ -55,52 +55,6 @@ describe('answerValidators', () => {
     application = createBaseApplication()
   })
 
-  it.skip('should return error for a (2nd or later) period that is empty (ex: they try to continue with empty startDate)', () => {
-    const newAnswers = [
-      { startDate: '2021-06-01', endDate: '2021-07-01', ratio: '100' },
-      {},
-    ]
-    const newApplication = {
-      ...application,
-      answers: {
-        ...application.answers,
-        periods: [
-          { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
-        ],
-      },
-    } as Application
-
-    expect(
-      answerValidators['periods'](newAnswers, newApplication),
-    ).toStrictEqual(undefined)
-  })
-
-  it.skip('should return error for a 2nd (or later) period with a startDate but with endDate undefined)', () => {
-    const newAnswers = [
-      { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
-      { startDate: '2021-07-15' },
-    ]
-    const newApplication = {
-      ...application,
-      answers: {
-        ...application.answers,
-        periods: [
-          { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
-          { startDate: '2021-07-15' },
-        ],
-        firstPeriodStart: 'estimatedDateOfBirth',
-      },
-    } as Application
-
-    expect(
-      answerValidators['periods'](newAnswers, newApplication),
-    ).toStrictEqual({
-      message: errorMessages.periodsEndDateRequired,
-      path: 'periods[1].endDate',
-      values: undefined,
-    })
-  })
-
   it('should return an error if startDate is more than 1 month before DOB', () => {
     const newAnswers = [
       {
@@ -139,18 +93,6 @@ describe('answerValidators', () => {
       message: errorMessages.periodsPeriodRange,
       path: 'periods[0].startDate',
       values: { usageMaxMonths: 23.5 },
-    })
-  })
-
-  it.skip('should return error for endDate before minimum days', () => {
-    const newAnswers = [
-      { startDate: '2021-01-29', endDate: '2021-02-04', ratio: '100' },
-    ]
-
-    expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
-      message: errorMessages.periodsEndDateMinimumPeriod,
-      path: 'periods[0].endDate',
-      values: { minPeriodDays },
     })
   })
 })
