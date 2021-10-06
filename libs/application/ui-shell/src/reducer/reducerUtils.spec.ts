@@ -205,8 +205,8 @@ describe('reducerUtils', () => {
       const screens: FormScreen[] = [
         buildIntroScreen('intro1'),
         buildTextScreen('first'),
-        buildIntroScreen('intro1'),
         buildIntroScreen('intro2'),
+        buildIntroScreen('intro3'),
         buildTextScreen('second'),
         buildIntroScreen('done'),
       ]
