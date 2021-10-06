@@ -12,7 +12,7 @@ render() {
     for env in "${ENVS[@]}"; do
         # avoid clearing values file if render-env fails
         tmp_file=$(mktemp)
-        ts-node --dir "$ROOT" "$ROOT"/src/render-env --chart="$APP" --env="${env}" > "$tmp_file"
+        ts-node --dir "$ROOT" "$ROOT"/src/cli/cli render-env --chart="$APP" --env="${env}" > "$tmp_file"
         mv "$tmp_file" "$ROOT"/../charts/"$APP"/values."${env}".yaml
     done
 }
