@@ -5,8 +5,8 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
-  completedCaseStates,
   NotificationType,
+  isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import type {
   Case,
@@ -120,11 +120,11 @@ const SigningModal: React.FC<SigningModalProps> = ({
   }
 
   const renderSuccessText = (caseType: CaseType) => {
-    return caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
-      ? caseType === CaseType.CUSTODY
-        ? rcConfirmation.modal.custodyCases.text
-        : rcConfirmation.modal.travelBanCases.text
-      : icConfirmation.modal.text
+    return isInvestigationCase(caseType)
+      ? icConfirmation.modal.text
+      : caseType === CaseType.CUSTODY
+      ? rcConfirmation.modal.custodyCases.text
+      : rcConfirmation.modal.travelBanCases.text
   }
 
   return (
