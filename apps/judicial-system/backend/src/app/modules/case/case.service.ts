@@ -16,7 +16,10 @@ import {
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import { IntegratedCourts } from '@island.is/judicial-system/consts'
-import { CaseType, SessionArrangements } from '@island.is/judicial-system/types'
+import {
+  isRestrictionCase,
+  SessionArrangements,
+} from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
@@ -232,8 +235,7 @@ export class CaseService {
 
     if (
       existingCase.defenderEmail &&
-      (existingCase.type === CaseType.CUSTODY ||
-        existingCase.type === CaseType.TRAVEL_BAN ||
+      (isRestrictionCase(existingCase.type) ||
         existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT)
     ) {
       promises.push(
