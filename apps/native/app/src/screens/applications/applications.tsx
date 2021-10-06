@@ -153,8 +153,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     }
   }, [page])
 
-
-
   const renderItem = useCallback(({ item }) => {
     if (item.type === 'loading') {
       return (
@@ -283,7 +281,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         style={{ paddingHorizontal: 16, zIndex: 9 }}
         keyExtractor={keyExtractor}
         keyboardDismissMode="on-drag"
-        stickyHeaderIndices={isSearch ? [0] : undefined}
+        stickyHeaderIndices={[0]}
         contentInset={{
           bottom: 32,
         }}
@@ -305,7 +303,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
               count={items.length}
               loading={searchLoading}
             />
-          ) : undefined
+          ) : <View />
         }
         data={isLoading ? loadingItem : isEmptyView ? emptyItem : items}
         renderItem={renderItem}
