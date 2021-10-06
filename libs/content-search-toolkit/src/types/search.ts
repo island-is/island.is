@@ -8,4 +8,6 @@ export interface SearchInput {
   tags?: Omit<elasticTagField, 'value'>[]
   countTag?: string
   countTypes?: boolean
+  fuzzy?: boolean
+  fuzzyFactor?: number
 }

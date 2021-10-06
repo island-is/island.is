@@ -11,17 +11,26 @@ export const searchQuery = ({
   tags = [],
   countTag = '',
   countTypes = false,
+  fuzzy = false,
+  fuzzyFactor = 1,
 }: SearchInput) => {
   const should = []
   const must: TagQuery[] = []
   let minimumShouldMatch = 1
+
+  if (fuzzy) {
+    queryString = queryString
+      .split(' ')
+      .map((term) => `${term}~${fuzzyFactor}`)
+      .join(' ')
+  }
 
   should.push({
     simple_query_string: {
       query: queryString,
       fields: ['title.stemmed^15', 'title.compound', 'content.stemmed^5'],
       analyze_wildcard: true,
-      default_operator: 'and',
+      default_operator: 'or',
     },
   })
 

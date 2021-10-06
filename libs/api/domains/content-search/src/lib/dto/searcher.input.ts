@@ -60,4 +60,14 @@ export class SearcherInput {
   @IsBoolean()
   @IsOptional()
   countTypes?: boolean = false
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  fuzzy?: boolean = false
+
+  @Field(() => Int, { nullable: true })
+  @IsInt()
+  @IsOptional()
+  fuzzyFactor?: number = 1
 }

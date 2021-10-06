@@ -533,6 +533,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
           ...countTag,
           size: PERPAGE,
           page,
+          fuzzy: true,
         },
       },
     }),
