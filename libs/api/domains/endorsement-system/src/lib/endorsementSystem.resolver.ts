@@ -77,13 +77,14 @@ export class EndorsementSystemResolver {
   }
 
   // Endorsement list
-  @BypassAuth()
   @Query(() => [EndorsementList])
   async endorsementSystemFindEndorsementLists(
     @Args('input') input: FindEndorsementListByTagsDto,
+    @CurrentUser() user: User,
   ): Promise<EndorsementList[]> {
     return await this.endorsementSystemService.endorsementListControllerFindLists(
       input,
+      user
     )
   }
 

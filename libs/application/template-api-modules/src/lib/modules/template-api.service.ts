@@ -71,7 +71,6 @@ export class TemplateAPIService {
       | PayableDummyTemplateService
       | AccidentNotificationService
       | PublicDebtPaymentPlanTemplateService
-      | AccidentNotificationService
       | GeneralPetitionService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
