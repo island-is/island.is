@@ -137,7 +137,7 @@
     "curry": "1.2.0",
     "cypress-promise": "1.1.0",
     "date-fns": "2.14.0",
-    "dd-trace": "0.33.1",
+    "dd-trace": "1.5.0",
     "deepmerge": "4.2.2",
     "document-register-element": "1.13.1",
     "downshift": "5.4.3",
