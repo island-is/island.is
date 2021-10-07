@@ -73,10 +73,6 @@ let admin: CUser
 let adminAuthCookie: string
 
 beforeAll(async () => {
-  app = await testServer({ appModule: AppModule })
-
-  sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
-
   // Need to use sequelize-cli becuase sequelize.sync does not keep track of completed migrations
   // await sequelize.sync()
   execSync('yarn nx run judicial-system-backend:migrate', {
@@ -87,6 +83,9 @@ beforeAll(async () => {
   execSync('yarn nx run judicial-system-backend:seed', {
     stdio: 'inherit',
   })
+
+  app = await testServer({ appModule: AppModule })
+  sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
   const sharedAuthService = await app.resolve(SharedAuthService)
 
