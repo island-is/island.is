@@ -24,9 +24,9 @@ const PetitionsAdmin = () => {
           {'Virkir listar'}
         </Text>
 
-        {!!petitionLists.length && (
+        {!!petitionLists.data && (
           <Stack space={4}>
-            {petitionLists.map((list) => {
+            {petitionLists.data.map((list: any) => {
               return (
                 <Link
                   style={{ textDecoration: 'none' }}
@@ -61,7 +61,7 @@ const PetitionsAdmin = () => {
 
         {!!petitionLists.length && (
           <Stack space={4}>
-            {petitionLists.map((list) => {
+            {petitionLists.data.map((list: any) => {
               return (
                 <Link
                   style={{ textDecoration: 'none' }}

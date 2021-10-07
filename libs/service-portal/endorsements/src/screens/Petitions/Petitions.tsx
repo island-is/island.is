@@ -25,33 +25,32 @@ const Petitions = () => {
           {'Listar stofnaðir af mér'}
         </Text>
 
-        {!!petitionLists.length && (
+        {!!petitionLists.data && (
           <Stack space={4}>
-            {petitionLists.map((pl) => {
-              console.log(pl)
+            {petitionLists.data.map((pl: any) => {
               return (
-              <Link
-                style={{ textDecoration: 'none' }}
-                key={pl.id}
-                to={{
-                  pathname: ServicePortalPath.PetitionList.replace(
-                    ':listId',
-                    pl.id,
-                  ),
-                  state: { type: 'edit', listId: pl.id },
-                }}
-              >
-                <ActionCard
-                  backgroundColor="blue"
-                  heading={pl.title}
-                  text={'Tímabil lista: '}
-                  cta={{
-                    label: 'Sýsla með lista',
-                    variant: 'text',
-                    icon: 'arrowForward',
+                <Link
+                  style={{ textDecoration: 'none' }}
+                  key={pl.id}
+                  to={{
+                    pathname: ServicePortalPath.PetitionList.replace(
+                      ':listId',
+                      pl.id,
+                    ),
+                    state: { type: 'edit', listId: pl.id },
                   }}
-                />
-              </Link>
+                >
+                  <ActionCard
+                    backgroundColor="blue"
+                    heading={pl.title}
+                    text={'Tímabil lista: '}
+                    cta={{
+                      label: 'Sýsla með lista',
+                      variant: 'text',
+                      icon: 'arrowForward',
+                    }}
+                  />
+                </Link>
               )
             })}
           </Stack>
@@ -63,9 +62,9 @@ const Petitions = () => {
           {'Virkir listar sem ég hef mælt með'}
         </Text>
 
-        {!!userLists.length && (
+        {!!userLists.data && (
           <Stack space={4}>
-            {userLists.map((list) => {
+            {userLists.data.map((list: any) => {
               return (
                 <Link
                   style={{ textDecoration: 'none' }}
@@ -105,7 +104,7 @@ const Petitions = () => {
 
         {!!userLists.length && (
           <Stack space={4}>
-            {userLists.map((list) => {
+            {userLists.map((list: any) => {
               return (
                 <Link
                   style={{ textDecoration: 'none' }}

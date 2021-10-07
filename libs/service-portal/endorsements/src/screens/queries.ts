@@ -10,12 +10,12 @@ import { useQuery } from '@apollo/client'
 
 export type RegionsPetitionList = Pick<
   EndorsementList,
-  'id' | 'title' | 'description' | 'meta' | 'closedDate'
+  'data'
 > & { tags: EndorsementListOpenTagsEnum[] }
 
 export type UserEndorsement = Pick<
   Endorsement,
-  'id' | 'created' | 'endorsementList'
+  'data'
 >
 export type UserVoterRegion = Pick<
   TemporaryVoterRegistry,
@@ -33,37 +33,53 @@ interface SinglePetition {
 }
 
 const GET_USER_ENDORSEMENTS = gql`
-  query endorsementSystemUserEndorsements {
-    endorsementSystemUserEndorsements {
-      id
-      endorser
-      endorsementList {
+  query endorsementSystemUserEndorsements($input: PaginatedEndorsementInput!) {
+    endorsementSystemUserEndorsements(input: $input) {
+      totalCount
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        startCursor
+        endCursor
+      }
+      data {
         id
-        title
-        description
-        tags
-        closedDate
+        endorser
+        endorsementList {
+          id
+          title
+          description
+          tags
+          closedDate
+        }
+        meta {
+          fullName
+          address
+        }
+        created
+        modified
       }
-      meta {
-        fullName
-        address
-      }
-      created
-      modified
     }
   }
 `
 const GET_REGION_ENDORSEMENTS = gql`
   query endorsementSystemFindEndorsementLists(
-    $input: FindEndorsementListByTagsDto!
+    $input: PaginatedEndorsementListInput!
   ) {
     endorsementSystemFindEndorsementLists(input: $input) {
-      id
-      title
-      description
-      tags
-      meta
-      closedDate
+      totalCount
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        startCursor
+        endCursor
+      }
+      data {
+        id
+        title
+        description
+        closedDate
+      }
     }
   }
 `
@@ -105,7 +121,8 @@ export const useGetPetitionLists = () => {
     {
       variables: {
         input: {
-          tags: 'generalPetition',
+          tags: 'partyLetter2021',
+          limit: 5,
         },
       },
       pollInterval: 20000,
@@ -119,6 +136,12 @@ export const useGetUserLists = () => {
   const { data: endorsementResponse } = useQuery<UserEndorsementsResponse>(
     GET_USER_ENDORSEMENTS,
     {
+      variables: {
+        input: {
+          listId: '3e2a9818-accb-4e8a-b476-adfa0c8d0c1f',
+          limit: 5,
+        },
+      },
       pollInterval: 20000,
     },
   )

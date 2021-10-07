@@ -88,7 +88,7 @@ export class EndorsementSystemResolver {
   ): Promise<PaginatedEndorsementListResponse> {
     return await this.endorsementSystemService.endorsementListControllerFindLists(
       input,
-      user
+      user,
     )
   }
 

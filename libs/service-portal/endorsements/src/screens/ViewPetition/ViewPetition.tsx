@@ -174,7 +174,12 @@ const ViewPetition = () => {
               placeholderText="Veldu dagsetningu"
             />
           </Box>
-          <Box display="flex" justifyContent='spaceBetween' marginTop={5} marginBottom={10}>
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            marginTop={5}
+            marginBottom={10}
+          >
             <DialogPrompt
               baseId="demo_dialog"
               title="Ertu viss um að vilja loka lista?"
@@ -194,15 +199,12 @@ const ViewPetition = () => {
               buttonTextCancel="Hætta við"
             />
 
-            <Button
-              icon="reload"
-              iconType="outline"
-            >
+            <Button icon="reload" iconType="outline">
               Uppfæra lista
             </Button>
           </Box>
 
-          <Box display="flex" justifyContent='flexEnd' marginY={5}>
+          <Box display="flex" justifyContent="flexEnd" marginY={5}>
             <ExportAsCSV
               data={mapToCSVFile(list.signedPetitions) as object[]}
               filename="Meðmælalisti"
