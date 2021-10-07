@@ -41,6 +41,7 @@ export const getStateFromUrl: KeyMapping<
 }
 
 export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
+  '/': ApplicationStateUrl.NEW,
   '/nymal': ApplicationStateUrl.NEW,
   '/vinnslu': ApplicationStateUrl.INPROGRESS,
   '/afgreidd': ApplicationStateUrl.PROCESSED,

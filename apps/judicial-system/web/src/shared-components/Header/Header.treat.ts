@@ -21,7 +21,3 @@ export const headerDiviter = style({
   backgroundColor: theme.color.dark200,
   margin: `5px ${theme.spacing[3]}px 0 ${theme.spacing[3]}px`,
 })
-
-export const islandIsApplicationLogoWrapper = style({
-  display: 'flex',
-})
