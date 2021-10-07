@@ -31,7 +31,7 @@ export class CreateApplicationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly phoneNumber?: string
+  readonly phoneNumber: string
 
   @IsNotEmpty()
   @IsString()

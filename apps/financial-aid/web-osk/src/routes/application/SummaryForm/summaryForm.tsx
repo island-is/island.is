@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { Text, Divider, Box, LoadingDots } from '@island.is/island-ui/core'
+import { Text, Divider, Box } from '@island.is/island-ui/core'
 
 import {
   ContentContainer,
