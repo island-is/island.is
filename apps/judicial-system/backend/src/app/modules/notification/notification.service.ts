@@ -13,6 +13,8 @@ import {
   CaseState,
   CaseType,
   NotificationType,
+  isRestrictionCase,
+  isInvestigationCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
@@ -32,6 +34,7 @@ import {
   getRequestPdfAsBuffer,
   getCustodyNoticePdfAsString,
   formatProsecutorReceivedByCourtSmsNotification,
+  getRulingPdfAsString,
 } from '../../formatters'
 import { Case } from '../case'
 import { CourtService } from '../court'
@@ -470,8 +473,7 @@ export class NotificationService {
     ]
 
     if (
-      (existingCase.type === CaseType.CUSTODY ||
-        existingCase.type === CaseType.TRAVEL_BAN ||
+      (isRestrictionCase(existingCase.type) ||
         existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) &&
       existingCase.defenderEmail
     ) {
@@ -550,18 +552,57 @@ export class NotificationService {
     ])
   }
 
+  private async sendRulingEmailNotificationToPrisonAdministration(
+    existingCase: Case,
+  ): Promise<Recipient> {
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    const pdf = await getRulingPdfAsString(
+      existingCase,
+      intl.formatMessage,
+      true,
+    )
+
+    return this.sendEmail(
+      'Fangelsismálastofnun',
+      environment.notifications.prisonAdminEmail,
+      existingCase.courtCaseNumber ?? '',
+      'Sjá viðhengi',
+      [
+        {
+          filename: `Þingbók án úrskurður ${existingCase.courtCaseNumber}.pdf`,
+          content: pdf,
+          encoding: 'binary',
+        },
+      ],
+    )
+  }
+
   private async sendRulingNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
-    if (existingCase.type !== CaseType.CUSTODY) {
+    if (isInvestigationCase(existingCase.type)) {
       return {
         notificationSent: false,
       }
     }
 
-    const recipients = await this.sendRulingEmailNotificationToProsecutorAndPrison(
-      existingCase,
-    )
+    const recipients = [
+      await this.sendRulingEmailNotificationToPrisonAdministration(
+        existingCase,
+      ),
+    ]
+
+    if (existingCase.type === CaseType.CUSTODY) {
+      recipients.concat(
+        await this.sendRulingEmailNotificationToProsecutorAndPrison(
+          existingCase,
+        ),
+      )
+    }
 
     return this.recordNotification(
       existingCase.id,

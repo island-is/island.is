@@ -1,6 +1,6 @@
 import { Query, Resolver, Context, Args } from '@nestjs/graphql'
 
-import { Inject } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -9,7 +9,9 @@ import { BackendAPI } from '../../../services'
 
 import { MunicipalityModel } from './models'
 import { MunicipalityQueryInput } from './dto'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
+@UseGuards(IdsUserGuard)
 @Resolver(() => MunicipalityModel)
 export class MunicipalityResolver {
   constructor(

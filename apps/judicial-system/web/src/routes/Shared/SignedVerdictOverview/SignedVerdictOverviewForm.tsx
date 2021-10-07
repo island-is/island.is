@@ -29,6 +29,8 @@ import {
   CaseState,
   CaseType,
   InstitutionType,
+  isRestrictionCase,
+  isInvestigationCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -53,6 +55,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import { UploadStateMessage } from './Components/UploadStateMessage'
 import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
+import { core } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -107,11 +110,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
       theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
       theCase.type === CaseType.TRAVEL_BAN
 
-    const isInvestigationCase =
-      theCase.type !== CaseType.CUSTODY && theCase.type !== CaseType.TRAVEL_BAN
-
     if (theCase.state === CaseState.REJECTED) {
-      if (isInvestigationCase) {
+      if (isInvestigationCase(theCase.type)) {
         return 'Kröfu um rannsóknarheimild hafnað'
       } else {
         return 'Kröfu hafnað'
@@ -128,7 +128,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
 
     return isTravelBan
       ? 'Farbann virkt'
-      : isInvestigationCase
+      : isInvestigationCase(theCase.type)
       ? 'Krafa um rannsóknarheimild samþykkt'
       : 'Gæsluvarðhald virkt'
   }
@@ -141,8 +141,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     if (
       theCase.decision === CaseDecision.REJECTING ||
       theCase.decision === CaseDecision.DISMISSING ||
-      (theCase.type !== CaseType.CUSTODY &&
-        theCase.type !== CaseType.TRAVEL_BAN)
+      isInvestigationCase(theCase.type)
     ) {
       return `Úrskurðað ${formatDate(
         theCase.courtEndTime,
@@ -285,8 +284,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             { title: 'Ákærandi', value: workingCase.prosecutor?.name },
             { title: 'Dómari', value: workingCase.judge?.name },
             // Conditionally add this field based on case type
-            ...(workingCase.type !== CaseType.CUSTODY &&
-            workingCase.type !== CaseType.TRAVEL_BAN
+            ...(isInvestigationCase(workingCase.type)
               ? [
                   {
                     title: 'Tegund kröfu',
@@ -411,30 +409,36 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         <Box marginBottom={3}>
           <PdfButton
             caseId={workingCase.id}
-            title="Opna PDF kröfu"
+            title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
         </Box>
         <Box marginBottom={3}>
           <PdfButton
             caseId={workingCase.id}
-            title="Opna PDF þingbók og úrskurð"
-            pdfType="ruling"
+            title={formatMessage(core.pdfButtonRuling)}
+            pdfType="ruling?shortVersion=false"
+          />
+        </Box>
+        <Box marginBottom={3}>
+          <PdfButton
+            caseId={workingCase.id}
+            title={formatMessage(core.pdfButtonRulingShortVersion)}
+            pdfType="ruling?shortVersion=true"
           />
         </Box>
         {workingCase.type === CaseType.CUSTODY &&
           workingCase.state === CaseState.ACCEPTED && (
             <PdfButton
               caseId={workingCase.id}
-              title="Opna PDF vistunarseðil"
+              title={formatMessage(core.pdfButtonCustodyNotice)}
               pdfType="custodyNotice"
             />
           )}
       </Box>
       {user?.role === UserRole.PROSECUTOR &&
         user.institution?.id === workingCase.prosecutor?.institution?.id &&
-        (workingCase.type === CaseType.CUSTODY ||
-          workingCase.type === CaseType.TRAVEL_BAN) && (
+        isRestrictionCase(workingCase.type) && (
           <Box marginBottom={9}>
             <Box marginBottom={3}>
               <Text variant="h3">

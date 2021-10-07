@@ -56,6 +56,8 @@ const ApplicationProfile = () => {
 
   const [isAidModalVisible, setAidModalVisible] = useState(false)
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const { data, loading } = useQuery<ApplicantData>(GetApplicationQuery, {
     variables: { input: { id: router.query.id } },
     fetchPolicy: 'no-cache',
@@ -154,7 +156,7 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Sími',
-        content: formatPhoneNumber(application.phoneNumber),
+        content: formatPhoneNumber(application.phoneNumber ?? ''),
         link: 'tel:' + application.phoneNumber,
       },
       {
@@ -218,7 +220,7 @@ const ApplicationProfile = () => {
     ]
 
     return (
-      <>
+      <LoadingContainer isLoading={isLoading} loader={<ApplicationSkeleton />}>
         <Box
           marginTop={10}
           marginBottom={15}
@@ -270,6 +272,7 @@ const ApplicationProfile = () => {
             }}
             setApplication={setApplication}
             application={application}
+            setIsLoading={setIsLoading}
           />
         )}
 
@@ -283,7 +286,7 @@ const ApplicationProfile = () => {
             }}
           />
         )}
-      </>
+      </LoadingContainer>
     )
   }
 

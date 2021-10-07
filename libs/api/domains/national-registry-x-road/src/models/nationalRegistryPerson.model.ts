@@ -1,5 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { NationalRegistryAddress } from './nationalRegistryAddress.model'
+import { NationalRegistryResidence } from './nationalRegistryResidence.model'
 
 @ObjectType()
 export class NationalRegistryPerson {
@@ -23,4 +24,7 @@ export class NationalRegistryPerson {
 
   @Field(() => NationalRegistryPerson, { nullable: true })
   otherParent?: NationalRegistryPerson
+
+  @Field(() => [NationalRegistryResidence], { nullable: true })
+  residenceHistory?: NationalRegistryResidence[]
 }

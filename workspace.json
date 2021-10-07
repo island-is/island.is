@@ -972,6 +972,29 @@
           },
           "outputs": ["coverage/libs/api/domains/endorsement-system"]
         },
+        "dev/init": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run services-endorsements-api:dev/init $NX_OPTIONS",
+              "yarn nx run services-endorsements-api:schemas/external-openapi-generator $NX_OPTIONS",
+              "yarn nx run services-endorsements-api:schemas/openapi-generator $NX_OPTIONS",
+              "yarn nx run services-endorsements-api:schemas/build-openapi $NX_OPTIONS",
+              "yarn nx run api-domains-endorsement-system:schemas/openapi-generator $NX_OPTIONS"
+            ],
+            "parallel": false
+          }
+        },
+        "dev": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run services-endorsements-api:dev $NX_OPTIONS &",
+              "yarn start api $NX_OPTIONS &"
+            ],
+            "parallel": true
+          }
+        },
         "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -2689,7 +2712,8 @@
             "commands": [
               "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/party-letter/gen/fetch/party-letter -i apps/services/party-letter-registry-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original",
               "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/party-letter/gen/fetch/endorsements -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
-            ]
+            ],
+            "parallel": false
           }
         }
       }
@@ -4062,33 +4086,6 @@
           }
         },
         "docker-express": {}
-      }
-    },
-    "financial-aid-auth": {
-      "root": "libs/financial-aid/auth",
-      "sourceRoot": "libs/financial-aid/auth/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/financial-aid/auth/tsconfig.lib.json",
-              "libs/financial-aid/auth/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/financial-aid/auth/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/financial-aid/auth/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/financial-aid/auth"]
-        }
       }
     },
     "financial-aid-backend": {
@@ -5947,6 +5944,27 @@
         }
       }
     },
+    "nest-pagination": {
+      "root": "libs/nest/pagination",
+      "sourceRoot": "libs/nest/pagination/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/pagination/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/pagination"],
+          "options": {
+            "jestConfig": "libs/nest/pagination/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-validators": {
       "root": "libs/nest/validators",
       "sourceRoot": "libs/nest/validators/src",
@@ -5965,6 +5983,33 @@
             "jestConfig": "libs/nest/validators/jest.config.js",
             "passWithNoTests": true
           }
+        }
+      }
+    },
+    "next-ids-auth": {
+      "root": "libs/next-ids-auth",
+      "sourceRoot": "libs/next-ids-auth/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/next-ids-auth/tsconfig.lib.json",
+              "libs/next-ids-auth/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/next-ids-auth/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/next-ids-auth/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/next-ids-auth"]
         }
       }
     },
@@ -7543,11 +7588,11 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "yarn nx run services-endorsements-api:dev-services",
+              "yarn nx run services-endorsements-api:dev-services $NX_OPTIONS",
               "echo \"Waiting for databases to start...\" && sleep 2",
-              "yarn nx run services-party-letter-registry-api:migrate",
-              "yarn nx run services-temporary-voter-registry-api:migrate",
-              "yarn nx run services-endorsements-api:migrate"
+              "yarn nx run services-party-letter-registry-api:migrate $NX_OPTIONS",
+              "yarn nx run services-temporary-voter-registry-api:migrate $NX_OPTIONS",
+              "yarn nx run services-endorsements-api:migrate $NX_OPTIONS"
             ],
             "parallel": false
           }
@@ -7557,9 +7602,9 @@
           "options": {
             "commands": [
               "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
-              "yarn start services-party-letter-registry-api &",
-              "yarn start services-temporary-voter-registry-api &",
-              "yarn start services-endorsements-api &"
+              "yarn start services-party-letter-registry-api $NX_OPTIONS &",
+              "yarn start services-temporary-voter-registry-api $NX_OPTIONS &",
+              "yarn start services-endorsements-api $NX_OPTIONS &"
             ],
             "parallel": true
           }

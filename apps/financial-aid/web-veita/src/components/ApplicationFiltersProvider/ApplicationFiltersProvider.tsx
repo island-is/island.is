@@ -9,8 +9,8 @@ interface ApplicationFiltersData {
 }
 
 interface ApplicationFiltersProvider {
-  applicationFilters?: ApplicationFilters
-  setApplicationFilters?: React.Dispatch<
+  applicationFilters: ApplicationFilters
+  setApplicationFilters: React.Dispatch<
     React.SetStateAction<ApplicationFilters>
   >
   loading: boolean
@@ -28,6 +28,7 @@ export const ApplicationFiltersContext = createContext<ApplicationFiltersProvide
   {
     applicationFilters: initialState,
     loading: true,
+    setApplicationFilters: () => initialState,
   },
 )
 

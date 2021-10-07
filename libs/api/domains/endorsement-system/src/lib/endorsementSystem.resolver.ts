@@ -1,5 +1,4 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
-import { BypassAuth } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
@@ -7,10 +6,15 @@ import { Endorsement } from './models/endorsement.model'
 import { EndorsementSystemService } from './endorsementSystem.service'
 import { FindEndorsementListInput } from './dto/findEndorsementList.input'
 import { EndorsementList } from './models/endorsementList.model'
-import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
 import { CreateEndorsementListDto } from './dto/createEndorsementList.input'
 import { BulkEndorseListInput } from './dto/bulkEndorseList.input'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
+
+import { PaginatedEndorsementInput } from './dto/paginatedEndorsement.input'
+import { PaginatedEndorsementResponse } from './dto/paginatedEndorsement.response'
+
+import { PaginatedEndorsementListInput } from './dto/paginatedEndorsementList.input'
+import { PaginatedEndorsementListResponse } from './dto/paginatedEndorsementList.response'
 
 @UseGuards(IdsUserGuard)
 @Resolver('EndorsementSystemResolver')
@@ -29,11 +33,11 @@ export class EndorsementSystemResolver {
     )
   }
 
-  @Query(() => [Endorsement], { nullable: true })
+  @Query(() => PaginatedEndorsementResponse, { nullable: true })
   async endorsementSystemGetEndorsements(
-    @Args('input') input: FindEndorsementListInput,
+    @Args('input') input: PaginatedEndorsementInput,
     @CurrentUser() user: User,
-  ): Promise<Endorsement[]> {
+  ): Promise<PaginatedEndorsementResponse> {
     return await this.endorsementSystemService.endorsementControllerFindAll(
       input,
       user,
@@ -77,13 +81,14 @@ export class EndorsementSystemResolver {
   }
 
   // Endorsement list
-  @BypassAuth()
-  @Query(() => [EndorsementList])
+  @Query(() => PaginatedEndorsementListResponse)
   async endorsementSystemFindEndorsementLists(
-    @Args('input') input: FindEndorsementListByTagsDto,
-  ): Promise<EndorsementList[]> {
+    @Args('input') input: PaginatedEndorsementListInput,
+    @CurrentUser() user: User,
+  ): Promise<PaginatedEndorsementListResponse> {
     return await this.endorsementSystemService.endorsementListControllerFindLists(
       input,
+      user
     )
   }
 
@@ -98,12 +103,14 @@ export class EndorsementSystemResolver {
     )
   }
 
-  @Query(() => [Endorsement])
+  @Query(() => PaginatedEndorsementResponse)
   async endorsementSystemUserEndorsements(
     @CurrentUser() user: User,
-  ): Promise<Endorsement[]> {
+    @Args('input') input: PaginatedEndorsementInput,
+  ): Promise<PaginatedEndorsementResponse> {
     return await this.endorsementSystemService.endorsementListControllerFindEndorsements(
       user,
+      input,
     )
   }
 

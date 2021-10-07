@@ -16,6 +16,8 @@ import {
   Header,
   UseGuards,
   BadRequestException,
+  ParseBoolPipe,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -47,6 +49,7 @@ import { CaseEvent, EventService } from '../event'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
+import { CasesInterceptor } from './interceptors'
 import { CaseService } from './case.service'
 
 // Allows prosecutors to perform any action
@@ -358,6 +361,7 @@ export class CaseController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @UseInterceptors(CasesInterceptor)
   @Get('cases')
   @ApiOkResponse({
     type: Case,
@@ -417,12 +421,13 @@ export class CaseController {
   })
   async getRulingPdf(
     @Param('id') id: string,
+    @Query('shortVersion', ParseBoolPipe) shortVersion: boolean,
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
     const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
-    const pdf = await this.caseService.getRulingPdf(existingCase)
+    const pdf = await this.caseService.getRulingPdf(existingCase, shortVersion)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,

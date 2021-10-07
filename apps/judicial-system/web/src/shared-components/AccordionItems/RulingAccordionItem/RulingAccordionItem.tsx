@@ -4,14 +4,15 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
+  capitalize,
   formatAccusedByGender,
   formatAlternativeTravelBanRestrictions,
+  formatAppeal,
   formatCustodyRestrictions,
   NounCases,
 } from '@island.is/judicial-system/formatters'
@@ -103,22 +104,28 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             þennan til Landsréttar innan þriggja sólarhringa.
           </Text>
         </Box>
-        <Box marginBottom={1}>
+        {workingCase.prosecutorAppealDecision !==
+          CaseAppealDecision.NOT_APPLICABLE && (
+          <Box marginBottom={1}>
+            <Text variant="h4">
+              {formatAppeal(workingCase.prosecutorAppealDecision, 'Sækjandi')}
+            </Text>
+          </Box>
+        )}
+        {workingCase.accusedAppealDecision !==
+          CaseAppealDecision.NOT_APPLICABLE && (
           <Text variant="h4">
-            {getAppealDecisionText(
-              AppealDecisionRole.PROSECUTOR,
-              workingCase.prosecutorAppealDecision,
-              workingCase.accusedGender,
+            {formatAppeal(
+              workingCase.accusedAppealDecision,
+              isRestrictionCase(workingCase.type)
+                ? capitalize(formatAccusedByGender(workingCase.accusedGender))
+                : 'Varnaraðili',
+              isRestrictionCase(workingCase.type)
+                ? workingCase.accusedGender
+                : undefined,
             )}
           </Text>
-        </Box>
-        <Text variant="h4">
-          {getAppealDecisionText(
-            AppealDecisionRole.ACCUSED,
-            workingCase.accusedAppealDecision,
-            workingCase.accusedGender,
-          )}
-        </Text>
+        )}
       </Box>
       {(workingCase.accusedAppealAnnouncement ||
         workingCase.prosecutorAppealAnnouncement) && (
