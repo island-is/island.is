@@ -91,9 +91,8 @@ const ApplicationInfo = () => {
             large
             checked={accept}
             onChange={(event) => {
-              if (hasError) {
-                setHasError(false)
-              }
+              setHasError(false)
+
               setAccept(event.target.checked)
             }}
             hasError={hasError}
