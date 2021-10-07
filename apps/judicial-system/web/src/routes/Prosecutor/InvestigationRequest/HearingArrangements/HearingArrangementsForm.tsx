@@ -72,6 +72,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     validateAndSendToServer,
     setAndSendToServer,
   } = useCaseFormHelper(workingCase, setWorkingCase, validations)
+
   return (
     <>
       <FormContentContainer>
@@ -101,7 +102,12 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
                 )}
                 disabled={
                   user.id !== workingCase.creatingProsecutor?.id &&
-                  user.id !== workingCase.prosecutor?.id
+                  user.id !==
+                    (((workingCase as unknown) as { prosecutorId: string })
+                      .prosecutorId === undefined
+                      ? workingCase.prosecutor?.id
+                      : ((workingCase as unknown) as { prosecutorId: string })
+                          .prosecutorId)
                 }
                 checked={workingCase.isHeightenedSecurityLevel}
                 onChange={(event) => setAndSendToServer(event.target)}

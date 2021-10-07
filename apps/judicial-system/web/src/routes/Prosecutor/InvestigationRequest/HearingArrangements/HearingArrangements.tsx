@@ -143,7 +143,10 @@ const HearingArrangements = () => {
       const isRemovingCaseAccessFromSelf =
         user?.id !== workingCase.creatingProsecutor?.id
 
-      if (isRemovingCaseAccessFromSelf) {
+      if (
+        workingCase.isHeightenedSecurityLevel &&
+        isRemovingCaseAccessFromSelf
+      ) {
         setSubstituteProsecutorId(option.value.toString())
         setIsProsecutorAccessModalVisible(true)
       } else {

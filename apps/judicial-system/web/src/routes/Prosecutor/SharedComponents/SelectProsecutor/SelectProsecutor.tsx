@@ -41,6 +41,7 @@ const SelectProsecutor: React.FC<Props> = (props) => {
 
           if (
             isRestrictionCase(workingCase.type) ||
+            !workingCase.isHeightenedSecurityLevel ||
             user?.id === workingCase.creatingProsecutor?.id
           ) {
             setSelectedProsecutor(selectedOption)
