@@ -8,7 +8,7 @@ export const m = defineMessages({
   },
   externalDataTitle: {
     id: 'dl.application:externalData.title',
-    defaultMessage: 'Umsókn um fullnaðarskírteini',
+    defaultMessage: 'Umsókn um ökuskírteini',
     description: 'Title of the application',
   },
   externalDataSubTitle: {
@@ -142,7 +142,7 @@ export const m = defineMessages({
   },
   informationSectionTitle: {
     id: 'dl.application:informationSection.title',
-    defaultMessage: 'Afhending',
+    defaultMessage: 'Sýslumannsembætti',
     description: 'Information',
   },
   pickupLocationTitle: {
@@ -457,6 +457,17 @@ export const m = defineMessages({
       'Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: 'requirement unmet api returned false',
   },
+  requirementUnmetLocalResidencyTitle: {
+    id: 'dl.application:requirementunmet.localResidencyTitle',
+    defaultMessage: 'Búseta á Íslandi',
+    description: 'requirement unmet api returned false',
+  },
+  requirementUnmetLocalResidencyDescription: {
+    id: 'dl.application:requirementunmet.localResidencyDescription',
+    defaultMessage:
+      'Þú þarft að hafa búið að minnsta kosti 180 daga af síðustu 365 dögum á Íslandi til að geta sótt um ökuskírteini.',
+    description: 'requirement unmet api returned false',
+  },
   errorDataProvider: {
     id: 'dl.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',
@@ -522,6 +533,23 @@ export const m = defineMessages({
     defaultMessage: 'Skilyrði umsóknar',
     description: 'title for requirement section',
   },
+  applicationDrivingLicenseTitle: {
+    id: 'dl.application:applicationDrivingLicenseTitle',
+    defaultMessage: 'Tegund umsóknar',
+    description: 'Type of application for driving license',
+  },
+  drivingLicenseApplyingForTitle: {
+    id: 'dl.application:drivingLicenseApplyingForTitle',
+    defaultMessage: 'Ég er að sækja um:',
+    description: 'I am applying for:',
+  },
+  congratulationsHelpText: {
+    id: 'dl.application:congratulationsHelpText',
+    defaultMessage:
+      'Umsókn þín um fullnaðarskírteinið hefur verið móttekin. Áður en hægt er að panta fullnaðarskírteini, þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum.',
+    description:
+      'Your application for a full driving license has been received. Before a full driving license can be applied for, you must bring the following to the district commissioner.',
+  },
   congratulationsTitleSuccess: {
     id: 'dl.application:congratulationsTitleSuccess',
     defaultMessage:
@@ -585,19 +613,35 @@ export const m = defineMessages({
     defaultMessage: `Skrautmynd`,
     description: 'Company Image',
   },
-  chooseDistrictCommisioner: {
-    id: 'dl.application:chooseDistrictCommisioner',
+  districtCommisionerTitle: {
+    id: 'dl.application:districtCommisionerTitle',
+    defaultMessage: 'Sýslumannsembætti',
+    description: 'Title for district commissioner',
+  },
+  districtCommisionerPickup: {
+    id: 'dl.application:districtCommisionerPickup',
+    defaultMessage: 'Afhending',
+    description: 'Pickup for district commissioner',
+  },
+  chooseDistrictCommisionerForFullLicense: {
+    id: 'dl.application:chooseDistrictCommisionerForFullLicense',
     defaultMessage:
       'Veldu það embætti sýslumanns þar sem þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini',
     description:
-      'Choose the district jurisdiction where you will return the temporary driving license and receive permanent driving license.',
+      'Choose district commissioner for returning a temporary license and recieve a new full license',
+  },
+  chooseDistrictCommisionerForTempLicense: {
+    id: 'dl.application:chooseDistrictCommisionerForTempLicense',
+    defaultMessage:
+      'Veldu það embætti sýslumanns sem þú hyggst skila inn gæðamerktri ljósmynd',
+    description: 'Choose district commissioner for submitting a quality photo',
   },
   confirmationStatusOfEligability: {
     id: 'dl.application:confirmationStatusOfEligability',
     defaultMessage:
-      'Staðfesting akstursmats, punktastaða, sviptingar, ökuréttindi og almennar upplýsingar um skilríki',
+      'Sóttar eru almennar upplýsingar um núverandi réttindi, sviptingar, punktastöðu og akstursmat ef við á.',
     description:
-      'Confirmation driving assessment, penalties, license loss, driving license and general information about identification',
+      'General information about current licenses, license loss, penalties and driving assessment if applicable.',
   },
   infoFromLicenseRegistry: {
     id: 'dl.application:infoFromLicenseRegistry',
@@ -634,5 +678,83 @@ export const m = defineMessages({
       'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
     description:
       'Text that shows up when an error occurs while submitting the application',
+  },
+  informationTitle: {
+    id: 'dl.application:informationTitle',
+    defaultMessage: 'Upplýsingar',
+    description: 'Title for information section',
+  },
+  chooseDrivingInstructor: {
+    id: 'dl.application:chooseDrivingInstructor',
+    defaultMessage: 'Finndu og veldu nafn ökukennara þíns úr listanum',
+    description:
+      'Find and select the name of your driving instructor from the list',
+  },
+  drivingLicenseTypeRequested: {
+    id: 'dl.application:drivingLicenseTypeRequested',
+    defaultMessage: 'Réttindi sem sótt er um',
+    description: 'Driving license type that is requested',
+  },
+  informationStreetAddress: {
+    id: 'dl.application:informationStreetAddress',
+    defaultMessage: 'Heimilisfang',
+    description: 'Street address',
+  },
+  informationYourEmail: {
+    id: 'dl.application:informationYourEmail',
+    defaultMessage: 'Netfangið þitt',
+    description: 'Your email',
+  },
+  drivingInstructor: {
+    id: 'dl.application:drivingInstructor',
+    defaultMessage: 'Ökukennari',
+    description: 'Driving instructor',
+  },
+  drivingLicenseInOtherCountry: {
+    id: 'dl.application:drivingLicenseInOtherCountry',
+    defaultMessage: 'Ertu með ökuskírteini í öðru landi?',
+    description: 'Do you have a driving license in another country?',
+  },
+  foreignDrivingLicense: {
+    id: 'dl.application:foreignDrivingLicense',
+    defaultMessage: 'Erlent ökuskírteini',
+    description: 'Foreign driving license',
+  },
+  noDeprivedDrivingLicenseInOtherCountryTitle: {
+    id: 'dl.application:noDeprivedDrivingLicenseInOtherCountryTitle',
+    defaultMessage: 'Ég er ekki með sviptingu í öðru landi',
+    description: 'I do not have a deprived driving license in another country',
+  },
+  noDeprivedDrivingLicenseInOtherCountryDescription: {
+    id: 'dl.application:noDeprivedDrivingLicenseInOtherCountryDescription',
+    defaultMessage:
+      'Staðfesting að umsækjandi hafi ekki undir höndum ökuskírteini gefið út af öðru ríki sem er aðili að Evrópska efnahagssvæðinu né hafi sætt takmörkunum á ökurétti eða verið svipt(ur) ökuréttindum í þeim ríkjum',
+    description:
+      'Confirmation that the applicant did not hold a driving license issued by another Member State of the European Economic Area, nor were they subject to a driving license restriction or were deprived of their driving license in those countries',
+  },
+  applicationForFullLicenseTitle: {
+    id: 'dl.application:applicationForFullLicenseTitle',
+    defaultMessage: 'Fullnaðarréttindi',
+    description: 'Option title for selecting to apply for full driving license',
+  },
+  applicationForFullLicenseDescription: {
+    id: 'dl.application:applicationForFullLicenseDescription',
+    defaultMessage:
+      'Ef ökumaður hefur haft bráðabirgðaskírteini í að minnsta kosti ár og farið í akstursmat með ökukennara getur hann sótt um fullnaðarskírteini.',
+    description:
+      'Option description for selecting to apply for full driving license',
+  },
+  applicationForTempLicenseTitle: {
+    id: 'dl.application:applicationForTempLicenseTitle',
+    defaultMessage: 'Almenn ökuréttindi',
+    description:
+      'Option title for selecting to apply for temporary driving license',
+  },
+  applicationForTempLicenseDescription: {
+    id: 'dl.application:applicationForTempLicenseDescription',
+    defaultMessage:
+      'Umsókn um almenn ökuréttindi í B flokki (fólksbifreið). Fyrsta ökuskírteinið er bráðabirgðaskírteini sem gildir í 3 ár.',
+    description:
+      'Option description for selecting to apply for temporary driving license',
   },
 })
