@@ -195,6 +195,17 @@ export class Case extends Model<Case> {
   defenderIsSpokesperson?: boolean
 
   /**********
+   * Indicates whether the secutity level of the case has been heightened -
+   * optional
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  isHeightenedSecurityLevel?: boolean
+
+  /**********
    * The surrogate key of the court assigned to the case
    **********/
   @Column({
@@ -391,6 +402,24 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   caseFilesComments?: string
+
+  /**********
+   * The surrogate key of the prosecutor that created the case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  creatingProsecutorId?: string
+
+  /**********
+   * The prosecutor that created the case
+   **********/
+  @BelongsTo(() => User, 'creatingProsecutorId')
+  @ApiProperty({ type: User })
+  creatingProsecutor?: User
 
   /**********
    * The surrogate key of the prosecutor assigned to the case

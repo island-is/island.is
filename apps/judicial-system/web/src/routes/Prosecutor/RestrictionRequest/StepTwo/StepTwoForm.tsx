@@ -2,7 +2,10 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { Case, Institution } from '@island.is/judicial-system/types'
 import { Box, Input, Text } from '@island.is/island-ui/core'
-import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  newSetAndSendDateToServer,
+  setAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -15,10 +18,7 @@ import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/m
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 
 interface Props {
   workingCase: Case
@@ -63,8 +63,18 @@ const StepTwoForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <SelectProsecutor
             workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
             prosecutors={prosecutors}
+            onChange={(selectedOption) => {
+              setAndSendToServer(
+                'prosecutorId',
+                (selectedOption as ReactSelectOption).value.toString(),
+                workingCase,
+                setWorkingCase,
+                updateCase,
+              )
+
+              return true
+            }}
           />
         </Box>
         <Box component="section" marginBottom={5}>

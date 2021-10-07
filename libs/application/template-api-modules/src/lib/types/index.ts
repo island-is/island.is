@@ -43,6 +43,9 @@ export interface BaseTemplateAPIModuleConfig {
     endorsementsApiBasePath: string
     options: PartyApplicationServiceOptions
   }
+  generalPetition: {
+    endorsementsApiBasePath: string
+  }
 }
 
 export interface TemplateApiModuleActionProps {
