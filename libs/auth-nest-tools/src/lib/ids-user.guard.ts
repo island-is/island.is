@@ -1,3 +1,4 @@
+import { logger } from '@island.is/logging'
 import {
   ExecutionContext,
   Injectable,
@@ -23,6 +24,9 @@ export class IdsUserGuard extends AuthGuard('jwt') {
     context: ExecutionContext,
     status?: unknown,
   ) {
+    logger.error('info', info)
+    logger.error('error', error)
+    logger.info('user', user)
     // Throws if there is an error or missing user.
     super.handleRequest(error, user, info, context, status)
 
