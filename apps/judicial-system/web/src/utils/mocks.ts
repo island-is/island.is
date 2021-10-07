@@ -128,7 +128,7 @@ const testCase1 = {
   prosecutorAppealAnnouncement: 'prosecutorAppealAnnouncement test',
   judge: null,
   conclusion: null,
-  files: [
+  caseFiles: [
     {
       id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
@@ -277,7 +277,7 @@ const testCase4 = {
   judge: mockJudgeBatman,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  files: [
+  caseFiles: [
     {
       id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
@@ -339,7 +339,7 @@ const testCase5 = {
   judge: mockJudge,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  files: [
+  caseFiles: [
     {
       id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
@@ -498,7 +498,7 @@ const testCase8 = {
   parentCase: {
     validToDate: '2021-01-18T19:50:08.033Z',
   },
-  files: [
+  caseFiles: [
     {
       id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
