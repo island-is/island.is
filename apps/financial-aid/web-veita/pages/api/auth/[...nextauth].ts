@@ -58,7 +58,7 @@ async function jwt(token: GenericObject, user: AuthUser) {
 
   return await handleJwt(
     token,
-    identityServerConfig.id,
+    identityServerConfig.clientId,
     process.env.IDENTITY_SERVER_SECRET,
     process.env.NEXTAUTH_URL,
     process.env.IDENTITY_SERVER_DOMAIN,

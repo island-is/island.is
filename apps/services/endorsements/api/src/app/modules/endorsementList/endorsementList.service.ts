@@ -7,6 +7,8 @@ import { EndorsementList } from './endorsementList.model'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { Endorsement } from '../endorsement/models/endorsement.model'
 
+import { paginate } from '@island.is/nest/pagination'
+
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
@@ -21,11 +23,17 @@ export class EndorsementListService {
     private logger: Logger,
   ) {}
 
-  async findListsByTags(tags: string[]) {
+  async findListsByTags(tags: string[], query: any) {
     this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
     // TODO: Add option to get only open endorsement lists
 
-    return this.endorsementListModel.findAll({
+    return await paginate({
+      Model: this.endorsementListModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'ASC']],
       where: {
         tags: { [Op.overlap]: tags },
       },
@@ -45,11 +53,18 @@ export class EndorsementListService {
     return result
   }
 
-  async findAllEndorsementsByNationalId(nationalId: string) {
+  async findAllEndorsementsByNationalId(nationalId: string, query: any) {
     this.logger.debug(
       `Finding endorsements for single national id ${nationalId}`,
     )
-    return this.endorsementModel.findAll({
+
+    return await paginate({
+      Model: this.endorsementModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'DESC']],
       where: { endorser: nationalId },
       include: [
         {
