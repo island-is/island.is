@@ -167,11 +167,34 @@ const StateModal = ({
             )}
 
             {selected === ApplicationState.APPROVED && (
-              <AcceptModal onCancel={onClickCancel} />
+              <AcceptModal
+                onCancel={onClickCancel}
+                onSaveApplication={(amount: number) => {
+                  if (amount < 0) {
+                    setSelected(undefined)
+                    return
+                  }
+                  saveStateApplication(applicationId, selected, amount)
+                }}
+              />
             )}
 
             {selected === ApplicationState.REJECTED && (
-              <RejectModal onCancel={onClickCancel} />
+              <RejectModal
+                onCancel={onClickCancel}
+                onSaveApplication={(reasonForRejection?: string) => {
+                  if (!reasonForRejection) {
+                    setSelected(undefined)
+                    return
+                  }
+                  saveStateApplication(
+                    applicationId,
+                    selected,
+                    undefined,
+                    reasonForRejection,
+                  )
+                }}
+              />
             )}
           </Box>
         </Box>

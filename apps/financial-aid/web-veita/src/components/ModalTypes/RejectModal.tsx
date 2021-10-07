@@ -1,30 +1,42 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { InputModal } from '@island.is/financial-aid-web/veita/src/components'
 import { Input, Text, Box } from '@island.is/island-ui/core'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
+  onSaveApplication: (comment?: string) => void
 }
 
-const RejectModal = ({ onCancel }: Props) => {
+const RejectModal = ({ onCancel, onSaveApplication }: Props) => {
+  const [comment, setComment] = useState<string>()
+  const [linkToRules, setLink] = useState<string>()
+
   return (
     <InputModal
       headline="Umsókn þinni um aðstoð hefur verið synjað"
       onCancel={onCancel}
       onSubmit={() => {
-        console.log('hello')
+        if (linkToRules) {
+          onSaveApplication(comment + linkToRules)
+          return
+        }
+        onSaveApplication(comment)
       }}
       submitButtonText="Synja og senda á umsækjanda"
     >
       <Box marginBottom={5}>
         <Input
           label="Ástæða synjunar"
-          name="Test5"
+          name="reasonForRejection"
           placeholder="Umsókn þinni um fjárhagsaðstoð hefur verið synjað …"
           rows={4}
+          value={comment}
           textarea
           backgroundColor="blue"
+          onChange={(event) => {
+            setComment(event.target.value)
+          }}
         />
       </Box>
 
@@ -39,6 +51,9 @@ const RejectModal = ({ onCancel }: Props) => {
           name="Test5"
           placeholder="https://www.dæmi-um-vefslóð.is"
           backgroundColor="blue"
+          onChange={(event) => {
+            setLink(`<br/> ${event.target.value}`)
+          }}
         />
       </Box>
 

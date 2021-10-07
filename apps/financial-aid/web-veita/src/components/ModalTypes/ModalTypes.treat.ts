@@ -10,9 +10,6 @@ export const statusOptions = style({
   paddingTop: theme.spacing[2],
   borderRadius: '12px',
   fontWeight: 'lighter',
-})
-
-export const hoverEffect = style({
   transition: 'background-color ease 250ms, font-weight ease 50ms',
   selectors: {
     '&:hover': {
@@ -21,6 +18,7 @@ export const hoverEffect = style({
     },
   },
 })
+
 export const activeState = style({
   color: theme.color.blue400,
 })

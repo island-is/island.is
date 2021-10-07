@@ -127,12 +127,28 @@ const ApplicationProfile = () => {
       })
     }
     if (application.state === ApplicationState.REJECTED) {
-      applicationInfo.push({
-        title: 'Aðstoð synjað',
-        content: application?.rejection
-          ? application?.rejection
-          : 'enginn ástæða gefin',
-      })
+      //TODO
+      if (
+        application?.rejection &&
+        application?.rejection.split('<br/>').length
+      ) {
+        const rej = {
+          title: 'Aðstoð synjað',
+          content: application?.rejection
+            ? application?.rejection.split('<br/>')[0]
+            : 'enginn ástæða gefin',
+          link: application?.rejection?.split('<br/>')[1],
+        }
+        applicationInfo.push(rej)
+      } else {
+        const rej = {
+          title: 'Aðstoð synjað',
+          content: application?.rejection
+            ? application?.rejection
+            : 'enginn ástæða gefin',
+        }
+        applicationInfo.push(rej)
+      }
     }
 
     const applicant = [

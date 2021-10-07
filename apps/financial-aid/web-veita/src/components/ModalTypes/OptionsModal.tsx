@@ -30,7 +30,6 @@ const OptionsModal = ({ activeState, onClick }: Props) => {
             key={'statusoptions-' + index}
             className={cn({
               [`${styles.statusOptions}`]: true,
-              [`${styles.hoverEffect}`]: item !== activeState,
               [`${styles.activeState}`]: item === activeState,
             })}
             onClick={(e) => onClick(e, item)}
