@@ -7,6 +7,7 @@ import {
   RolesRule,
   StaffRole,
   ApplicationStateUrl,
+  FamilyStatus,
 } from './enums'
 
 export interface GetSignedUrl {
@@ -48,6 +49,11 @@ export interface NavigationProps {
   activeSubSectionIndex?: number
   prevUrl: string | undefined
   nextUrl: string | undefined
+}
+
+export interface Spouse {
+  nationalId?: string
+  email?: string
 }
 
 export interface User {

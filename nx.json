@@ -507,6 +507,9 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-pagination": {
+      "tags": []
+    },
     "nest-validators": {
       "tags": []
     },

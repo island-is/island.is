@@ -22,7 +22,7 @@ export const signIn = (
 
 export const jwt = async (
   token: GenericObject,
-  idsId: string,
+  clientId: string,
   idsSecret?: string,
   nextUrl?: string,
   idsServerDomain?: string,
@@ -31,7 +31,7 @@ export const jwt = async (
     try {
       const [accessToken, refreshToken] = await refreshAccessToken(
         token.refreshToken,
-        idsId,
+        clientId,
         idsSecret,
         nextUrl,
         idsServerDomain,
