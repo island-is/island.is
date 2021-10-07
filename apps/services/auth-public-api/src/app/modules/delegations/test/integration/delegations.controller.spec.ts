@@ -1,5 +1,4 @@
 import request from 'supertest'
-import { INestApplication } from '@nestjs/common'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
 import {
@@ -9,7 +8,12 @@ import {
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
-import { testServer, useDatabase, useAuth } from '@island.is/testing/nest'
+import {
+  testServer,
+  useDatabase,
+  useAuth,
+  TestApp,
+} from '@island.is/testing/nest'
 import {
   createCurrentUser,
   createOpenIDUser,
@@ -32,7 +36,7 @@ class MockEinstaklingarApi {
 }
 
 describe('DelegationsController with auth', () => {
-  let app: INestApplication
+  let app: TestApp
   let delegationModel: typeof Delegation
 
   beforeAll(async () => {
@@ -48,6 +52,10 @@ describe('DelegationsController with auth', () => {
       ],
     })
     delegationModel = app.get<typeof Delegation>('DelegationRepository')
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
   })
 
   describe('create', () => {
@@ -95,12 +103,19 @@ describe('DelegationsController with auth', () => {
 })
 
 describe('DelegationsController without auth', () => {
-  let app: INestApplication
+  let app: TestApp
 
   beforeAll(async () => {
     app = await testServer({
       appModule: AppModule,
+      hooks: [
+        useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+      ],
     })
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
   })
 
   describe('create', () => {

@@ -1,2 +1,2 @@
-export { testServer } from './lib/testServer'
+export { testServer, TestApp } from './lib/testServer'
 export * from './lib/hooks'

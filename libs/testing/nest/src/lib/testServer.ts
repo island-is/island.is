@@ -4,14 +4,16 @@ import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
 import { InfraModule } from '@island.is/infra-nest-server'
 
-let app: INestApplication
+type CleanUp = () => Promise<void> | undefined
+
+export type TestApp = INestApplication & { cleanUp: CleanUp }
 
 export type TestServerOptions<AppModule> = {
   appModule: AppModule
   override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
   hooks?: {
     override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
-    extend?: (app: INestApplication) => Promise<INestApplication>
+    extend?: (app: TestApp) => Promise<CleanUp | undefined>
   }[]
 }
 
@@ -19,7 +21,7 @@ export const testServer = async <AppModule>({
   appModule,
   hooks = [],
   override,
-}: TestServerOptions<AppModule>): Promise<INestApplication> => {
+}: TestServerOptions<AppModule>): Promise<TestApp> => {
   let builder = Test.createTestingModule({
     imports: [InfraModule.forRoot(appModule as any)],
   })
@@ -35,24 +37,25 @@ export const testServer = async <AppModule>({
   })
 
   const moduleRef = await builder.compile()
-  app = await moduleRef
+  const app = (await moduleRef
     .createNestApplication()
     .useGlobalPipes(
       new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
     )
-    .init()
+    .init()) as TestApp
 
-  hooks.forEach(async (hook) => {
-    if (hook.extend) {
-      app = await hook.extend(app)
-    }
-  })
+  const hookCleanups = await Promise.all(
+    hooks.map((hook) => {
+      if (hook.extend) {
+        return hook.extend(app)
+      }
+    }),
+  )
+
+  app.cleanUp = async () => {
+    await app.close()
+    await Promise.all(hookCleanups.map((cleanup) => cleanup && cleanup()))
+  }
 
   return app
 }
-
-afterAll(async () => {
-  if (app) {
-    await app.close()
-  }
-})

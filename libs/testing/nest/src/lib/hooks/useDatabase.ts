@@ -1,8 +1,10 @@
 import { getConnectionToken, SequelizeModuleOptions } from '@nestjs/sequelize'
-import { INestApplication, Type } from '@nestjs/common'
+import { Type } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
 import { Dialect } from 'sequelize/types'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
+
+import { TestApp } from '../testServer'
 
 type Database = Extract<Dialect, 'postgres' | 'sqlite'>
 
@@ -55,9 +57,7 @@ const config: Record<Database, SequelizeModuleOptions> = {
   },
 }
 
-let sequelize: Sequelize
-
-export const truncate = async () => {
+export const truncate = async (sequelize: Sequelize) => {
   if (!sequelize) {
     return
   }
@@ -86,12 +86,14 @@ export default ({ type, provider, skipTruncate = false }: UseDatabase) => ({
         return config[type]
       },
     }),
-  extend: async (app: INestApplication) => {
-    sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
+  extend: async (app: TestApp) => {
+    const sequelize: Sequelize = await app.resolve(
+      getConnectionToken() as Type<Sequelize>,
+    )
 
     try {
       if (!skipTruncate) {
-        await truncate()
+        await truncate(sequelize)
       }
     } catch (e) {
       // ignore
@@ -103,14 +105,10 @@ export default ({ type, provider, skipTruncate = false }: UseDatabase) => ({
       console.log('Sync error', err)
     }
 
-    return app
+    return () => {
+      if (sequelize?.options.dialect === Dialect.Postgres) {
+        return sequelize.close()
+      }
+    }
   },
-})
-
-afterAll(async () => {
-  if (sequelize) {
-    try {
-      await sequelize.close()
-    } catch {}
-  }
 })
