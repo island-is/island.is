@@ -1,5 +1,9 @@
 import React from 'react'
-import { CompanyList, CompanyListConnected } from '@island.is/shared/connected'
+import {
+  CompanyList,
+  CompanyListConnected,
+  GeneralPetitionLists,
+} from '@island.is/shared/connected'
 import { Image } from '../Image/Image'
 import FaqList from '../FaqList/FaqList'
 import { Statistics } from '../Statistics/Statistics'
@@ -21,6 +25,8 @@ const renderConnectedComponent = (slice) => {
         return <CompanyList recyclingPartners={data} />
       }
       break
+    case 'Undirskriftalistar/PetitionLists':
+      return <GeneralPetitionLists />
     case 'Skilavottord/CompanyListConnected':
       if (typeof data === 'object') {
         const { graphqlLink } = data

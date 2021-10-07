@@ -18,9 +18,6 @@ const Approved: FC<Props> = ({ title, subtitle }) => {
       borderRadius="standard"
     >
       <Box display="flex" alignItems="center">
-        <Box marginRight={2}>
-          <Icon icon="checkmarkCircle" color="mint600" size="large" />
-        </Box>
         <Text variant="h4">{title}</Text>
       </Box>
       <Text paddingTop={1}>{subtitle}</Text>

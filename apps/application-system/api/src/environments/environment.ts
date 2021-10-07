@@ -68,6 +68,9 @@ const devConfig = {
       partyLetterRegistryApiBasePath: 'http://localhost:4251',
       endorsementsApiBasePath: 'http://localhost:4246',
     },
+    generalPetition: {
+      endorsementsApiBasePath: 'http://localhost:4246',
+    },
     partyApplication: {
       endorsementsApiBasePath: 'http://localhost:4246',
       options: {
@@ -164,6 +167,9 @@ const prodConfig = {
     partyLetter: {
       partyLetterRegistryApiBasePath:
         process.env.PARTY_LETTER_REGISTRY_API_BASE_PATH,
+      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
+    },
+    generalPetition: {
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
     },
     partyApplication: {
