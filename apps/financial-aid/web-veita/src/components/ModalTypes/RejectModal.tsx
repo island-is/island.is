@@ -10,17 +10,12 @@ interface Props {
 
 const RejectModal = ({ onCancel, onSaveApplication }: Props) => {
   const [comment, setComment] = useState<string>()
-  const [linkToRules, setLink] = useState<string>()
 
   return (
     <InputModal
       headline="Umsókn þinni um aðstoð hefur verið synjað"
       onCancel={onCancel}
       onSubmit={() => {
-        if (linkToRules) {
-          onSaveApplication(comment + linkToRules)
-          return
-        }
         onSaveApplication(comment)
       }}
       submitButtonText="Synja og senda á umsækjanda"
@@ -44,18 +39,6 @@ const RejectModal = ({ onCancel, onSaveApplication }: Props) => {
         Smelltu á hlekkinn hér fyrir neðan til að kynna þér reglur um
         fjárhagsaðstoð.
       </Text>
-
-      <Box marginBottom={2}>
-        <Input
-          label="Hlekkur á reglur fjárhagsaðstoðar Hafnarfjarðar"
-          name="Test5"
-          placeholder="https://www.dæmi-um-vefslóð.is"
-          backgroundColor="blue"
-          onChange={(event) => {
-            setLink(`<br/> ${event.target.value}`)
-          }}
-        />
-      </Box>
 
       <Text variant="small" marginBottom={10}>
         Afritaðu og límdu hlekk á reglur um fjárhagsaðstoð hjá því sveitarfélagi
