@@ -9,4 +9,8 @@ export {
   SubjectOfComplaint,
   subjectOfComplaintValueLabelMapper,
   onBehalfValueLabelMapper,
+  YES,
+  NO,
+  yesNoValueLabelMapper,
 } from './shared'
+export { DataProtectionComplaint } from './lib/dataSchema'

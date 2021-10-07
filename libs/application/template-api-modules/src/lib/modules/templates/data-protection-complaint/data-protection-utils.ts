@@ -1,12 +1,28 @@
 import get from 'lodash/get'
-import { Agency, ComplaintDto, TargetOfComplaint } from './models'
+import { Agency, ComplaintDto, ContactInfo, TargetOfComplaint } from './models'
 import {
   OnBehalf,
   subjectOfComplaintValueLabelMapper,
   onBehalfValueLabelMapper,
   SubjectOfComplaint,
+  DataProtectionComplaint,
+  yesNoValueLabelMapper,
+  YES,
+  NO,
 } from '@island.is/application/templates/data-protection-complaint'
 import { Application } from '@island.is/application/core'
+import * as kennitala from 'kennitala'
+import {
+  CreateCaseRequest,
+  CreateQuickCaseRequest,
+  DocumentInfo,
+  LinkedContact,
+  Metadata,
+} from '@island.is/clients/data-protection-complaint'
+import { generateApplicationPdf } from './pdfGenerators'
+import { DataProtectionAttachment } from './models/attachments'
+
+type YesOrNo = typeof YES | typeof NO
 
 const extractAnswer = <T>(
   object: unknown,
@@ -22,19 +38,10 @@ const extractAnswer = <T>(
 }
 
 export const getComplaintTargets = (
-  application: Application,
+  answers: DataProtectionComplaint,
 ): TargetOfComplaint[] => {
-  const firstTarget = extractAnswer<TargetOfComplaint>(
-    application.answers,
-    'complainee',
-  )
-  const otherTargets = extractAnswer<TargetOfComplaint[]>(
-    application.answers,
-    'additionalComplainees',
-    [],
-  )
-
-  return [firstTarget, ...otherTargets]
+  const targets = extractAnswer<TargetOfComplaint[]>(answers, 'complainees', [])
+  return targets
 }
 
 export const getAgencies = (application: Application): Agency[] => {
@@ -48,41 +55,136 @@ export const getAndFormatOnBehalf = (application: Application): string => {
 }
 
 export const getAndFormatSubjectsOfComplaint = (
-  application: Application,
+  answers: DataProtectionComplaint,
 ): string[] => {
-  const other = extractAnswer<SubjectOfComplaint[]>(
-    application.answers,
-    'subjectOfComplaint.other',
+  const values = extractAnswer<SubjectOfComplaint[]>(
+    answers,
+    'subjectOfComplaint.values',
   )
-  const authorities = extractAnswer<SubjectOfComplaint[]>(
-    application.answers,
-    'subjectOfComplaint.authorities',
-  )
-  const useOfPersonalInformation = extractAnswer<SubjectOfComplaint[]>(
-    application.answers,
-    'subjectOfComplaint.useOfPersonalInformation',
-  )
-
-  const enums = [...other, ...authorities, ...useOfPersonalInformation]
-
-  const somethingElse =
-    extractAnswer<string>(
-      application.answers,
-      'subjectOfComplaint.somethingElse',
-    ) ?? ''
 
   return [
-    ...enums.map((subject) => {
+    ...values.map((subject) => {
       return subjectOfComplaintValueLabelMapper[subject].defaultMessage
     }),
-    somethingElse,
+  ]
+}
+
+export const gatherContacts = (
+  answers: DataProtectionComplaint,
+): LinkedContact[] => {
+  const contact = getContactInfo(answers)
+  //Kvartandi - main contact
+  const complaintant = {
+    type: getContactType(contact.nationalId),
+    name: contact.name,
+    email: contact.email,
+    phone: contact.phone,
+    address: contact.address,
+    city: contact.city,
+    idnumber: contact.nationalId,
+    postalCode: contact.postalCode,
+    role: 'Kvartandi',
+    primary: 'true',
+  }
+
+  //Ábyrgðaraðili - subject of complaint
+  const complainees = getComplaintTargets(answers).map(
+    (target: TargetOfComplaint, index: number) => {
+      return {
+        type: getContactType(target.nationalId),
+        name: target.name,
+        address: target.address,
+        idnumber: target.nationalId,
+        role: 'Ábyrgðaraðili',
+        primary: index === 0 ? 'true' : 'false',
+        webPage: '',
+      }
+    },
+  )
+
+  return [complaintant, ...complainees]
+}
+
+export const getContactType = (nationalId: string): string => {
+  return kennitala.isCompany(nationalId) ? 'Company' : 'Individal'
+}
+
+export const applicationToQuickCaseRequest = (
+  application: Application,
+): CreateQuickCaseRequest => {
+  const answers = application.answers as DataProtectionComplaint
+
+  return {
+    category: 'Kvörtun',
+    subject: 'kvörtun frá ísland.is',
+    keywords: getAndFormatSubjectsOfComplaint(answers),
+    metadata: toRequestMetadata(answers),
+    template: 'Kvörtun',
+  }
+}
+
+export const applicationToCaseRequest = async (
+  application: Application,
+  attachments: DataProtectionAttachment[],
+): Promise<CreateCaseRequest> => {
+  const answers = application.answers as DataProtectionComplaint
+
+  return {
+    category: 'Kvörtun',
+    subject: 'kvörtun frá ísland.is',
+    keywords: getAndFormatSubjectsOfComplaint(answers),
+    metadata: toRequestMetadata(answers),
+    template: 'Kvörtun',
+    contacts: gatherContacts(answers),
+    documents: gatherDocuments(attachments),
+  }
+}
+
+const gatherDocuments = (
+  attachments: DataProtectionAttachment[],
+): DocumentInfo[] => {
+  return attachments.map((attachment) => {
+    return {
+      content: attachment.content,
+      subject: 'Kvörtun',
+      fileName: attachment.name,
+      type: 'Other',
+    } as DocumentInfo
+  })
+}
+
+export const toRequestMetadata = (
+  answers: DataProtectionComplaint,
+): Metadata[] => {
+  const onBehalf = extractAnswer<OnBehalf>(answers, 'info.onBehalf')
+
+  const targets = getComplaintTargets(answers)
+  const mainTarget = targets[0]
+
+  if (!mainTarget)
+    throw new Error('No targets of complaint found on application')
+
+  return [
+    {
+      name: 'OnBehalf',
+      value: onBehalf,
+    },
+    {
+      name: 'OperatesWithinEurope',
+      value:
+        yesNoValueLabelMapper[mainTarget.operatesWithinEurope].defaultMessage,
+    },
+    {
+      name: 'CountryOfOperation',
+      value: mainTarget.countryOfOperation ?? '',
+    },
   ]
 }
 
 export const transformApplicationToComplaintDto = (
   application: Application,
 ): ComplaintDto => {
-  console.log(application.answers)
+  const answers = application.answers as DataProtectionComplaint
   return {
     applicantInfo: {
       name: 'Applicant',
@@ -93,20 +195,25 @@ export const transformApplicationToComplaintDto = (
       files: [],
       persons: getAgencies(application),
     },
-    contactInfo: {
-      name: extractAnswer(application.answers, 'applicant.name'),
-      nationalId: extractAnswer(application.answers, 'applicant.nationalId'),
-      type: extractAnswer(application.answers, 'applicant.email'), //person | felag/samtok,
-      address: extractAnswer(application.answers, 'applicant.address'),
-      email: extractAnswer(application.answers, 'applicant.email'),
-      phone: extractAnswer(application.answers, 'applicant.phoneNumber'),
-      postalCode: extractAnswer(application.answers, 'applicant.postalCode'),
-      city: extractAnswer(application.answers, 'applicant.city'),
-    },
-    targetsOfComplaint: getComplaintTargets(application),
-    complaintCategories: getAndFormatSubjectsOfComplaint(application),
+    contactInfo: getContactInfo(answers),
+    targetsOfComplaint: getComplaintTargets(answers),
+    complaintCategories: getAndFormatSubjectsOfComplaint(answers),
     attachments: [],
     description: extractAnswer(application.answers, 'complaint.description'),
     applicationPdf: '',
+  }
+}
+export const getContactInfo = (
+  answers: DataProtectionComplaint,
+): ContactInfo => {
+  return {
+    name: extractAnswer(answers, 'applicant.name'),
+    nationalId: extractAnswer(answers, 'applicant.nationalId'),
+    type: extractAnswer(answers, 'applicant.email'), //person | felag/samtok,
+    address: extractAnswer(answers, 'applicant.address'),
+    email: extractAnswer(answers, 'applicant.email'),
+    phone: extractAnswer(answers, 'applicant.phoneNumber'),
+    postalCode: extractAnswer(answers, 'applicant.postalCode'),
+    city: extractAnswer(answers, 'applicant.city'),
   }
 }

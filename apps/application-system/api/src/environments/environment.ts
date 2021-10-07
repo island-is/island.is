@@ -85,6 +85,12 @@ const devConfig = {
         },
       },
     },
+    dataProtectionComplaintApplication: {
+      clientConfig: {
+        password: process.env.COMPLAINT_API_CLIENT_PASSWORD,
+        username: process.env.COMPLAINT_API_CLIENT_USERNAME,
+      },
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
@@ -185,6 +191,12 @@ const prodConfig = {
           partyApplicationSouth:
             process.env.PARTY_APPLICATION_SOUTH_ADMIN_EMAIL,
         },
+      },
+    },
+    dataProtectionComplaintApplication: {
+      clientConfig: {
+        password: process.env.COMPLAINT_API_CLIENT_PASSWORD,
+        username: process.env.COMPLAINT_API_CLIENT_USERNAME,
       },
     },
   },

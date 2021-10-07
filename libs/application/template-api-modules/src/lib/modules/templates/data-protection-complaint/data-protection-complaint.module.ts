@@ -10,11 +10,8 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 // Here you import your module service
 import { DataProtectionComplaintService } from './data-protection-complaint.service'
 import { ClientsDataProtectionComplaintModule } from '@island.is/clients/data-protection-complaint'
-
-const COMPLAINT_API_CLIENT_USERNAME =
-  process.env.COMPLAINT_API_CLIENT_USERNAME ?? ''
-const COMPLAINT_API_CLIENT_PASSWORD =
-  process.env.COMPLAINT_API_CLIENT_PASSWORD ?? ''
+import { FileStorageModule } from '@island.is/file-storage'
+import { DataProtectionComplaintAttachmentProvider } from './data-protection-attachments.provider'
 
 export class DataProtectionComplaintModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -22,12 +19,15 @@ export class DataProtectionComplaintModule {
       module: DataProtectionComplaintModule,
       imports: [
         SharedTemplateAPIModule.register(config),
-        ClientsDataProtectionComplaintModule.register({
-          password: COMPLAINT_API_CLIENT_PASSWORD,
-          username: COMPLAINT_API_CLIENT_USERNAME,
-        }),
+        FileStorageModule.register({}),
+        ClientsDataProtectionComplaintModule.register(
+          config.dataProtectionComplaintApplication.clientConfig,
+        ),
       ],
-      providers: [DataProtectionComplaintService],
+      providers: [
+        DataProtectionComplaintAttachmentProvider,
+        DataProtectionComplaintService,
+      ],
       exports: [DataProtectionComplaintService],
     }
   }

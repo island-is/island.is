@@ -1,61 +1,36 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
+import { applicationToCaseRequest } from './data-protection-utils'
+import { CaseApi } from '@island.is/clients/data-protection-complaint'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { generateApplicationPdf } from './pdfGenerators'
-import AWS from 'aws-sdk'
-import { transformApplicationToComplaintDto } from './data-protection-utils'
-import {
-  //CaseApi,
-  ClientsApi,
-} from '@island.is/clients/data-protection-complaint'
+import { DataProtectionComplaintAttachmentProvider } from './data-protection-attachments.provider'
 
 @Injectable()
 export class DataProtectionComplaintService {
-  s3: AWS.S3
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    //private readonly caseApi: CaseApi,
-    private readonly clientsApi: ClientsApi,
-  ) {
-    this.s3 = new AWS.S3()
-  }
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    private readonly caseApi: CaseApi,
+    private readonly dataProtectionComplaintAttachmentProvider: DataProtectionComplaintAttachmentProvider,
+  ) {}
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    // Pretend to be doing stuff for a short while
-    /* const buffer = await generateApplicationPdf(
-      transformApplicationToComplaintDto(application),
-    )*/
-    console.log('Application sending ....')
-    const stuff = await this.clientsApi.getContact({
-      requestData: { searchText: 'T' },
+    const attachments = await this.dataProtectionComplaintAttachmentProvider.gatherAllAttachments(
+      application,
+    )
+    const caseRequest = await applicationToCaseRequest(application, attachments)
+    console.log(caseRequest)
+    const newCase = await this.caseApi.createCase({
+      requestData: caseRequest,
     })
-    console.log('Stuff below ....')
-    console.log(stuff)
 
-    if (stuff.returnCode !== 200) throw new Error(stuff.message)
-    //await this.uploadFile(buffer, 'testing-islandis-sen', 'applicaton.pdf')
-  }
+    const getnewCase = await this.caseApi.getCase({
+      requestData: { caseNumber: newCase.identifier },
+    })
 
-  async uploadFile(
-    content: Buffer,
-    bucket: string,
-    fileName: string,
-  ): Promise<void> {
-    const uploadParams = {
-      Bucket: bucket,
-      Key: fileName,
-      ContentEncoding: 'base64',
-      ContentDisposition: 'inline',
-      ContentType: 'application/pdf',
-      Body: content,
-    }
-    try {
-      const res = await this.s3.upload(uploadParams).promise()
-      console.log(res)
-    } catch (er) {
-      console.log(er)
-    }
+    throw new Error('STOP APPLICATION FROM SUBMITTING')
   }
 }
