@@ -56,7 +56,7 @@ const Profile = ({ heading, info, className }: Props) => {
                 </button>
               )}
 
-              {!item.link && !item.onclick && <Text>{item.content} </Text>}
+              {!item.link && !item.onclick && <Text>{item.content}</Text>}
 
               {item.other && (
                 <Box
