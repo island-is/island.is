@@ -62,7 +62,7 @@ const RelationshipStatusForm = () => {
       return
     }
 
-    if (form.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION) {
+    if (form?.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION) {
       if (isInputAndRadioValid(acceptData, form?.spouse)) {
         setHasError(true)
         return
