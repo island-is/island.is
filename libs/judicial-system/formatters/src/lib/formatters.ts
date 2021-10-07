@@ -1,11 +1,12 @@
 import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
+
 import {
+  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseGender,
   CaseType,
-  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -300,13 +301,33 @@ export function formatGender(gender?: CaseGender): string {
   }
 }
 
-export const areAccusedRightsHidden = (
-  isAccusedRightsHidden?: boolean,
-  sessionArrangements?: SessionArrangements,
-): boolean => {
-  return isAccusedRightsHidden
-    ? isAccusedRightsHidden
-    : sessionArrangements === SessionArrangements.ALL_PRESENT
-    ? false
-    : true
+export function formatGenderPronouns(gender?: CaseGender): string {
+  switch (gender) {
+    case CaseGender.MALE:
+      return 'hann'
+    case CaseGender.FEMALE:
+      return 'hún'
+    case CaseGender.OTHER:
+    default:
+      return 'hán'
+  }
+}
+
+export function formatAppeal(
+  appealDecision: CaseAppealDecision | undefined,
+  stakeholder: string,
+  stakeholderGender: CaseGender = CaseGender.MALE,
+): string {
+  const stakeholderGenderText = formatGenderPronouns(stakeholderGender)
+
+  switch (appealDecision) {
+    case CaseAppealDecision.APPEAL:
+      return `${stakeholder} lýsir því yfir að ${stakeholderGenderText} kæri úrskurðinn til Landsréttar.`
+    case CaseAppealDecision.ACCEPT:
+      return `${stakeholder} unir úrskurðinum.`
+    case CaseAppealDecision.POSTPONE:
+      return `${stakeholder} lýsir því yfir að ${stakeholderGenderText} taki sér lögbundinn kærufrest.`
+    default:
+      return ''
+  }
 }

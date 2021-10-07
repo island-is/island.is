@@ -18,7 +18,6 @@ describe('findByTagsEndorsementList', () => {
       )
       .send()
       .expect(400)
-
     expect(response.body).toMatchObject({
       ...errorExpectedStructure,
       statusCode: 400,
@@ -32,8 +31,7 @@ describe('findByTagsEndorsementList', () => {
       )
       .send()
       .expect(200)
-
-    expect(response.body).toStrictEqual([])
+    expect(response.body.data).toStrictEqual([])
   })
   it(`GET /endorsement-list?tags should return 200 and a list`, async () => {
     const response = await request(app.getHttpServer())
@@ -42,8 +40,8 @@ describe('findByTagsEndorsementList', () => {
       )
       .send()
       .expect(200)
-
-    expect(Array.isArray(response.body)).toBeTruthy()
-    expect(response.body).toHaveLength(2)
+    expect(Array.isArray(response.body.data)).toBeTruthy()
+    expect(response.body.data).toHaveLength(2)
+    expect(response.body.totalCount).toEqual(2)
   })
 })

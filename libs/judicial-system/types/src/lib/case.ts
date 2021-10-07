@@ -171,7 +171,8 @@ export interface Case {
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
-  files?: CaseFile[]
+  caseFiles?: CaseFile[]
+  isMasked?: boolean
 }
 
 export interface CreateCase {
@@ -278,6 +279,16 @@ export interface CreateCourtCase {
   isExtension: boolean
 }
 
+export const restrictionCases = [CaseType.CUSTODY, CaseType.TRAVEL_BAN]
+
+export function isRestrictionCase(type?: CaseType): boolean {
+  return Boolean(type && restrictionCases.includes(type))
+}
+
+export function isInvestigationCase(type?: CaseType): boolean {
+  return Boolean(type && !restrictionCases.includes(type))
+}
+
 export const completedCaseStates = [
   CaseState.ACCEPTED,
   CaseState.REJECTED,
@@ -292,4 +303,12 @@ export function hasCaseBeenAppealed(theCase: Case): boolean {
       Boolean(theCase.accusedPostponedAppealDate) ||
       Boolean(theCase.prosecutorPostponedAppealDate))
   )
+}
+
+export function isAccusedRightsHidden(theCase: Case): boolean {
+  return theCase.isAccusedRightsHidden == null
+    ? theCase.sessionArrangements
+      ? theCase.sessionArrangements !== SessionArrangements.ALL_PRESENT
+      : false
+    : theCase.isAccusedRightsHidden
 }

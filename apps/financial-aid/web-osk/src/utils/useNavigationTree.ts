@@ -18,6 +18,11 @@ const useNavigationTree = (hasIncome: boolean) => {
     {
       name: 'Persónuhagir',
       children: [
+        {
+          type: 'SUB_SECTION',
+          name: 'Hjúskaparstaða',
+          url: '/umsokn/hjuskaparstada',
+        },
         { type: 'SUB_SECTION', name: 'Búseta', url: '/umsokn/buseta' },
         { type: 'SUB_SECTION', name: 'Nám', url: '/umsokn/nam' },
         { type: 'SUB_SECTION', name: 'Atvinna', url: '/umsokn/atvinna' },

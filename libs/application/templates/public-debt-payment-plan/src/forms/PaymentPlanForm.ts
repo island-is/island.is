@@ -77,7 +77,7 @@ export const PaymentPlanForm: Form = buildForm({
         buildExternalDataProvider({
           id: 'approveExternalData',
           title: externalData.general.pageTitle,
-          description: '',
+          description: externalData.general.description,
           subTitle: externalData.general.subTitle,
           checkboxLabel: externalData.general.checkboxLabel,
           dataProviders: [
@@ -98,6 +98,13 @@ export const PaymentPlanForm: Form = buildForm({
               title: externalData.labels.paymentPlanTitle,
               type: 'PaymentPlanPrerequisitesProvider',
               subTitle: externalData.labels.paymentPlanSubtitle,
+            }),
+
+            buildDataProviderItem({
+              id: 'additionalDataProviderMessage',
+              type: '',
+              title: externalData.labels.paymentEmployerTitle,
+              subTitle: externalData.labels.paymentEmployerSubtitle,
             }),
           ],
         }),

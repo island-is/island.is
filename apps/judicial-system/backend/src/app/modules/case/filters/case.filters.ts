@@ -1,10 +1,11 @@
-import { Op, WhereOptions } from 'sequelize'
+import { literal, Op, WhereOptions } from 'sequelize'
 
 import {
   CaseAppealDecision,
   CaseState,
   hasCaseBeenAppealed,
   InstitutionType,
+  restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User, Case as TCase } from '@island.is/judicial-system/types'
@@ -101,10 +102,52 @@ export function isCaseBlockedFromUser(
 
 export function getCasesQueryFilter(user: User): WhereOptions {
   const blockStates = {
-    [Op.not]: {
-      state: getBlockedStates(user.role, user.institution?.type),
-    },
+    [Op.not]: { state: getBlockedStates(user.role, user.institution?.type) },
   }
+
+  const blockOld = [
+    {
+      [Op.not]: {
+        [Op.and]: [
+          { state: [CaseState.REJECTED, CaseState.DISMISSED] },
+          { ruling_date: { [Op.lt]: literal('current_date - 90') } },
+        ],
+      },
+    },
+    {
+      [Op.not]: {
+        [Op.and]: [
+          {
+            state: [
+              CaseState.NEW,
+              CaseState.DRAFT,
+              CaseState.SUBMITTED,
+              CaseState.RECEIVED,
+            ],
+          },
+          { created: { [Op.lt]: literal('current_date - 90') } },
+        ],
+      },
+    },
+    {
+      [Op.not]: {
+        [Op.and]: [
+          { type: restrictionCases },
+          { state: CaseState.ACCEPTED },
+          { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
+        ],
+      },
+    },
+    {
+      [Op.not]: {
+        [Op.and]: [
+          { [Op.not]: { type: restrictionCases } },
+          { state: CaseState.ACCEPTED },
+          { ruling_date: { [Op.lt]: literal('current_date - 90') } },
+        ],
+      },
+    },
+  ]
 
   const blockInstitutions =
     user.role === UserRole.PROSECUTOR
@@ -131,5 +174,5 @@ export function getCasesQueryFilter(user: User): WhereOptions {
           ],
         }
 
-  return { [Op.and]: [blockStates, blockInstitutions] }
+  return { [Op.and]: [blockStates, ...blockOld, blockInstitutions] }
 }

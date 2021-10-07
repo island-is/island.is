@@ -98,7 +98,7 @@ describe('FileController', () => {
   })
 
   describe('when uploading a case file', () => {
-    // RoleGuard blocks access for roles other than PROSECUTOR
+    // RolesGuard blocks access for roles other than PROSECUTOR
     const prosecutor = { role: UserRole.PROSECUTOR } as User
 
     each`
@@ -273,7 +273,7 @@ describe('FileController', () => {
   })
 
   describe('when getting all case files', () => {
-    // RoleGuard blocks access for the ADMIN role. Also, mockFindByIdAndUser
+    // RolesGuard blocks access for the ADMIN role. Also, mockFindByIdAndUser
     // blocks access for some roles to some cases. This is not relevant in
     // this test.
     const user = {} as User
@@ -316,7 +316,7 @@ describe('FileController', () => {
   })
 
   describe('when removing a case file', () => {
-    // RoleGuard blocks access for roles other than PROSECUTOR
+    // RolesGuard blocks access for roles other than PROSECUTOR
     const prosecutor = { role: UserRole.PROSECUTOR } as User
 
     each`
@@ -435,7 +435,7 @@ describe('FileController', () => {
   })
 
   describe('when getting a case file signed url', () => {
-    // RoleGuard blocks access for the ADMIN role. Also, mockFindByIdAndUser
+    // RolesGuard blocks access for the ADMIN role. Also, mockFindByIdAndUser
     // blocks access for some roles to some cases. This is not relevant in
     // this test.
 
@@ -614,7 +614,7 @@ describe('FileController', () => {
   })
 
   describe('when uploading a case file to court', () => {
-    // RoleGuard blocks access for non court roles. Also, mockFindByIdAndUser
+    // RolesGuard blocks access for non court roles. Also, mockFindByIdAndUser
     // blocks access for some roles to some cases. This is not relevant in
     // this test.
 

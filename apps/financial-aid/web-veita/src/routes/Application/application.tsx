@@ -56,6 +56,8 @@ const ApplicationProfile = () => {
 
   const [isAidModalVisible, setAidModalVisible] = useState(false)
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const { data, loading } = useQuery<ApplicantData>(GetApplicationQuery, {
     variables: { input: { id: router.query.id } },
     fetchPolicy: 'no-cache',
@@ -136,7 +138,7 @@ const ApplicationProfile = () => {
     const applicant = [
       {
         title: 'Nafn',
-        content: data?.application.name,
+        content: application.name,
       },
       {
         title: 'Aldur',
@@ -149,26 +151,26 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Netfang',
-        content: data?.application.email,
-        link: 'mailto:' + data?.application.email,
+        content: application.email,
+        link: 'mailto:' + application.email,
       },
       {
         title: 'Sími',
-        content: formatPhoneNumber(application.phoneNumber),
+        content: formatPhoneNumber(application.phoneNumber ?? ''),
         link: 'tel:' + application.phoneNumber,
       },
       {
         title: 'Bankareikningur',
         content:
-          data?.application.bankNumber +
+          application.bankNumber +
           '-' +
-          data?.application.ledger +
+          application.ledger +
           '-' +
-          data?.application.accountNumber,
+          application.accountNumber,
       },
       {
         title: 'Nota persónuafslátt',
-        content: data?.application.usePersonalTaxCredit ? 'Já' : 'Nei',
+        content: application.usePersonalTaxCredit ? 'Já' : 'Nei',
       },
       {
         title: 'Ríkisfang',
@@ -218,7 +220,7 @@ const ApplicationProfile = () => {
     ]
 
     return (
-      <>
+      <LoadingContainer isLoading={isLoading} loader={<ApplicationSkeleton />}>
         <Box
           marginTop={10}
           marginBottom={15}
@@ -253,9 +255,13 @@ const ApplicationProfile = () => {
 
           <CommentSection
             className={`contentUp delay-125 ${styles.widthAlmostFull}`}
+            setApplication={setApplication}
           />
 
-          <History applicantName={application.name} />
+          <History
+            applicantName={application.name}
+            applicationEvents={application.applicationEvents}
+          />
         </Box>
 
         {application.state && (
@@ -264,13 +270,9 @@ const ApplicationProfile = () => {
             onVisibilityChange={(isVisibleBoolean) => {
               setStateModalVisible(isVisibleBoolean)
             }}
-            onStateChange={(applicationState: ApplicationState) => {
-              setApplication({
-                ...application,
-                state: applicationState,
-              })
-            }}
+            setApplication={setApplication}
             application={application}
+            setIsLoading={setIsLoading}
           />
         )}
 
@@ -284,7 +286,7 @@ const ApplicationProfile = () => {
             }}
           />
         )}
-      </>
+      </LoadingContainer>
     )
   }
 
