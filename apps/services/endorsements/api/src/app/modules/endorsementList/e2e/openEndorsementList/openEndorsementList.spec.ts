@@ -55,7 +55,9 @@ describe('openEndorsementList', () => {
       nationalId: authNationalId,
       scope: [EndorsementsScope.main],
     })
-    const closedDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
+    const closedDate = new Date(
+      new Date().getTime() + 7 * 24 * 60 * 60 * 1000,
+    ).toISOString()
     const newDate = {
       closedDate: closedDate,
     }

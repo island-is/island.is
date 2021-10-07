@@ -5,7 +5,7 @@ import {
   IsString,
   ValidateNested,
   IsBoolean,
-  IsDate
+  IsDate,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import graphqlTypeJson from 'graphql-type-json'

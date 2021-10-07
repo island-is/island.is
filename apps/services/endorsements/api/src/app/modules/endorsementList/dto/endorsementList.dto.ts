@@ -6,7 +6,7 @@ import {
   IsArray,
   IsObject,
   IsBoolean,
-  IsDate
+  IsDate,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ValidationRuleDto } from './validationRule.dto'

@@ -98,8 +98,13 @@ export class PartyApplicationService {
     const listId = (application.externalData?.createEndorsementList.data as any)
       .id
 
+    const defaultDate = '1992-05-01'
+
     return this.endorsementListApiWithAuth(auth)
-      .endorsementListControllerOpen({ listId })
+      .endorsementListControllerOpen({
+        listId,
+        changeEndorsmentListClosedDateDto: { closedDate: defaultDate },
+      })
       .then(async () => {
         await this.sharedTemplateAPIService.sendEmail(
           generateApplicationRejectedEmail,

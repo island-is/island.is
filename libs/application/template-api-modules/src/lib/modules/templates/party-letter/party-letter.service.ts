@@ -85,11 +85,14 @@ export class PartyLetterService {
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const listId: string = (application.externalData?.createEndorsementList.data as any)
-      .id
+    const listId: string = (application.externalData?.createEndorsementList
+      .data as any).id
 
     return this.endorsementListApiWithAuth(auth)
-      .endorsementListControllerOpen({listId, changeEndorsmentListClosedDateDto: { closedDate: defaultClosedDate} })
+      .endorsementListControllerOpen({
+        listId,
+        changeEndorsmentListClosedDateDto: { closedDate: defaultClosedDate },
+      })
       .then(async () => {
         // if we succeed in creating the party letter let the applicant know
         await this.sharedTemplateAPIService.sendEmail(

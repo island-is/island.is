@@ -33,7 +33,7 @@ describe('createEndorsement', () => {
     })
 
     const endorsementBody = {
-      showName: true
+      showName: true,
     }
     const response = await request(app.getHttpServer())
       .post(
@@ -53,7 +53,7 @@ describe('createEndorsement', () => {
       scope: [EndorsementsScope.main],
     })
     const endorsementBody = {
-      showName: true
+      showName: true,
     }
     const response = await request(app.getHttpServer())
       .post(
@@ -73,7 +73,7 @@ describe('createEndorsement', () => {
       scope: [EndorsementsScope.main],
     })
     const endorsementBody = {
-      showName: true
+      showName: true,
     }
     const response = await request(app.getHttpServer())
       .post(
@@ -93,7 +93,7 @@ describe('createEndorsement', () => {
       scope: [EndorsementsScope.main],
     })
     const endorsementBody = {
-      showName: true
+      showName: true,
     }
     const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba011'
     const response = await request(app.getHttpServer())

@@ -110,11 +110,12 @@ describe('createEndorsementList', () => {
       tags: [EndorsementTag.GENERAL_PETITION],
       endorsementMetadata: [{ field: 'fullName' }],
       openedDate: today.toISOString(),
-      closedDate: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      closedDate: new Date(
+        today.getTime() + 7 * 24 * 60 * 60 * 1000,
+      ).toISOString(),
       adminLock: false,
-      validationRules: [
-      ],
-      meta: {}
+      validationRules: [],
+      meta: {},
     }
     const response = await request(app.getHttpServer())
       .post('/endorsement-list')
