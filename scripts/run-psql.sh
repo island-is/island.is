@@ -76,7 +76,7 @@ run_proxy() {
 }
 
 function usage {
-        echo "${BLUE}Usage: $(basename $0) -n -d [-c] [-q | -p] [-l]${RST}" 2>&1
+        echo "${BLUE}Usage: $(basename $0) -l -n -d [-c] [-q | -p] ${RST}" 2>&1
         echo "${LBLUE}Example query: $(basename $0) -l staging -n some-namespace -d some-pod -q \"SELECT field from db\"${LBLUE}" 2>&1
         echo "${LBLUE}Example psql: $(basename $0) -l staging -n some-namespace -d some-pod -p${LBLUE}" 2>&1
         echo '   -c   returns db credentials.'
