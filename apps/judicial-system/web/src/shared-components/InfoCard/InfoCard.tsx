@@ -27,7 +27,9 @@ const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
             {props.accusedName}
             <Text as="span">{`, `}</Text>
             {`kt. ${formatNationalId(props.accusedNationalId ?? '')}`}
-            <Text as="span">{`, ${props.accusedAddress}`}</Text>
+            {props.accusedAddress && (
+              <Text as="span">{`, ${props.accusedAddress}`}</Text>
+            )}
           </Text>
         </Box>
         <Box>
