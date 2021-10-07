@@ -22,7 +22,11 @@ export function maskCase(theCase: Case): Case {
       defenderPhoneNumber: theCase.defenderPhoneNumber,
       defenderIsSpokesperson: theCase.defenderIsSpokesperson,
       court: theCase.court,
+      requestedCourtDate: theCase.requestedCourtDate,
       courtCaseNumber: theCase.courtCaseNumber,
+      sessionArrangements: theCase.sessionArrangements,
+      courtDate: theCase.courtDate,
+      courtRoom: theCase.courtRoom,
       courtEndTime: theCase.courtEndTime,
       decision: theCase.decision,
       validToDate: theCase.validToDate,
@@ -34,7 +38,11 @@ export function maskCase(theCase: Case): Case {
       accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
       prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
       judge: theCase.judge,
-      parentCase: theCase.parentCase && { id: theCase.parentCase.id },
+      registrar: theCase.registrar,
+      parentCase: theCase.parentCase && {
+        id: theCase.parentCase.id,
+        decision: theCase.parentCase.decision,
+      },
       isMasked: true,
     } as Case
   }

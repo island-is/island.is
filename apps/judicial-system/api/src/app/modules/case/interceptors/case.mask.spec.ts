@@ -156,6 +156,46 @@ function createCase(type: CaseType): Case {
   }
 }
 
+function maskedCase(theCase: Case) {
+  return {
+    id: theCase.id,
+    created: theCase.created,
+    modified: theCase.modified,
+    type: theCase.type,
+    state: theCase.state,
+    policeCaseNumber: theCase.policeCaseNumber,
+    accusedNationalId: '0000000000',
+    accusedName: 'X',
+    defenderName: theCase.defenderName,
+    defenderEmail: theCase.defenderEmail,
+    defenderPhoneNumber: theCase.defenderPhoneNumber,
+    defenderIsSpokesperson: theCase.defenderIsSpokesperson,
+    court: theCase.court,
+    requestedCourtDate: theCase.requestedCourtDate,
+    courtCaseNumber: theCase.courtCaseNumber,
+    sessionArrangements: theCase.sessionArrangements,
+    courtDate: theCase.courtDate,
+    courtRoom: theCase.courtRoom,
+    courtEndTime: theCase.courtEndTime,
+    decision: theCase.decision,
+    validToDate: theCase.validToDate,
+    isValidToDateInThePast: theCase.isValidToDateInThePast,
+    prosecutor: theCase.prosecutor,
+    rulingDate: theCase.rulingDate,
+    accusedAppealDecision: theCase.accusedAppealDecision,
+    prosecutorAppealDecision: theCase.prosecutorAppealDecision,
+    accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
+    prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
+    judge: theCase.judge,
+    registrar: theCase.registrar,
+    parentCase: theCase.parentCase && {
+      id: theCase.parentCase.id,
+      decision: theCase.parentCase.decision,
+    },
+    isMasked: true,
+  }
+}
+
 describe('Mask Case', () => {
   each`
     type
@@ -187,35 +227,7 @@ describe('Mask Case', () => {
 
     const res = maskCase(theCase)
 
-    expect(res).toStrictEqual({
-      id: theCase.id,
-      created: theCase.created,
-      modified: theCase.modified,
-      type: theCase.type,
-      state: theCase.state,
-      policeCaseNumber: theCase.policeCaseNumber,
-      accusedNationalId: '0000000000',
-      accusedName: 'X',
-      defenderName: theCase.defenderName,
-      defenderEmail: theCase.defenderEmail,
-      defenderPhoneNumber: theCase.defenderPhoneNumber,
-      defenderIsSpokesperson: theCase.defenderIsSpokesperson,
-      court: theCase.court,
-      courtCaseNumber: theCase.courtCaseNumber,
-      courtEndTime: theCase.courtEndTime,
-      decision: theCase.decision,
-      validToDate: theCase.validToDate,
-      isValidToDateInThePast: theCase.isValidToDateInThePast,
-      prosecutor: theCase.prosecutor,
-      rulingDate: theCase.rulingDate,
-      accusedAppealDecision: theCase.accusedAppealDecision,
-      prosecutorAppealDecision: theCase.prosecutorAppealDecision,
-      accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
-      prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
-      judge: theCase.judge,
-      parentCase: theCase.parentCase && { id: theCase.parentCase.id },
-      isMasked: true,
-    })
+    expect(res).toStrictEqual(maskedCase(theCase))
   })
 })
 
@@ -275,35 +287,7 @@ describe('Mask Case by User', () => {
 
       const res = maskCaseByUser(theCase, user)
 
-      expect(res).toStrictEqual({
-        id: theCase.id,
-        created: theCase.created,
-        modified: theCase.modified,
-        type: theCase.type,
-        state: theCase.state,
-        policeCaseNumber: theCase.policeCaseNumber,
-        accusedNationalId: '0000000000',
-        accusedName: 'X',
-        defenderName: theCase.defenderName,
-        defenderEmail: theCase.defenderEmail,
-        defenderPhoneNumber: theCase.defenderPhoneNumber,
-        defenderIsSpokesperson: theCase.defenderIsSpokesperson,
-        court: theCase.court,
-        courtCaseNumber: theCase.courtCaseNumber,
-        courtEndTime: theCase.courtEndTime,
-        decision: theCase.decision,
-        validToDate: theCase.validToDate,
-        isValidToDateInThePast: theCase.isValidToDateInThePast,
-        prosecutor: theCase.prosecutor,
-        rulingDate: theCase.rulingDate,
-        accusedAppealDecision: theCase.accusedAppealDecision,
-        prosecutorAppealDecision: theCase.prosecutorAppealDecision,
-        accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
-        prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
-        judge: theCase.judge,
-        parentCase: theCase.parentCase && { id: theCase.parentCase.id },
-        isMasked: true,
-      })
+      expect(res).toStrictEqual(maskedCase(theCase))
     })
 
     it('should mask cases without a judge for judges', () => {
@@ -312,35 +296,7 @@ describe('Mask Case by User', () => {
 
       const res = maskCaseByUser(theCase, judge)
 
-      expect(res).toStrictEqual({
-        id: theCase.id,
-        created: theCase.created,
-        modified: theCase.modified,
-        type: theCase.type,
-        state: theCase.state,
-        policeCaseNumber: theCase.policeCaseNumber,
-        accusedNationalId: '0000000000',
-        accusedName: 'X',
-        defenderName: theCase.defenderName,
-        defenderEmail: theCase.defenderEmail,
-        defenderPhoneNumber: theCase.defenderPhoneNumber,
-        defenderIsSpokesperson: theCase.defenderIsSpokesperson,
-        court: theCase.court,
-        courtCaseNumber: theCase.courtCaseNumber,
-        courtEndTime: theCase.courtEndTime,
-        decision: theCase.decision,
-        validToDate: theCase.validToDate,
-        isValidToDateInThePast: theCase.isValidToDateInThePast,
-        prosecutor: theCase.prosecutor,
-        rulingDate: theCase.rulingDate,
-        accusedAppealDecision: theCase.accusedAppealDecision,
-        prosecutorAppealDecision: theCase.prosecutorAppealDecision,
-        accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
-        prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
-        judge: theCase.judge,
-        parentCase: theCase.parentCase && { id: theCase.parentCase.id },
-        isMasked: true,
-      })
+      expect(res).toStrictEqual(maskedCase(theCase))
     })
 
     it('should mask cases without a registrar for registrars', () => {
@@ -349,35 +305,7 @@ describe('Mask Case by User', () => {
 
       const res = maskCaseByUser(theCase, registrar)
 
-      expect(res).toStrictEqual({
-        id: theCase.id,
-        created: theCase.created,
-        modified: theCase.modified,
-        type: theCase.type,
-        state: theCase.state,
-        policeCaseNumber: theCase.policeCaseNumber,
-        accusedNationalId: '0000000000',
-        accusedName: 'X',
-        defenderName: theCase.defenderName,
-        defenderEmail: theCase.defenderEmail,
-        defenderPhoneNumber: theCase.defenderPhoneNumber,
-        defenderIsSpokesperson: theCase.defenderIsSpokesperson,
-        court: theCase.court,
-        courtCaseNumber: theCase.courtCaseNumber,
-        courtEndTime: theCase.courtEndTime,
-        decision: theCase.decision,
-        validToDate: theCase.validToDate,
-        isValidToDateInThePast: theCase.isValidToDateInThePast,
-        prosecutor: theCase.prosecutor,
-        rulingDate: theCase.rulingDate,
-        accusedAppealDecision: theCase.accusedAppealDecision,
-        prosecutorAppealDecision: theCase.prosecutorAppealDecision,
-        accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
-        prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
-        judge: theCase.judge,
-        parentCase: theCase.parentCase && { id: theCase.parentCase.id },
-        isMasked: true,
-      })
+      expect(res).toStrictEqual(maskedCase(theCase))
     })
   })
 })

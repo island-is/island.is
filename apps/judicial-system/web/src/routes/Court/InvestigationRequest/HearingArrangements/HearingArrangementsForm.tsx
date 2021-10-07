@@ -541,7 +541,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isLoading}
-          nextIsDisabled={!isValid || !courtDateIsValid}
+          nextIsDisabled={workingCase.isMasked || !isValid || !courtDateIsValid}
         />
       </FormContentContainer>
       {modalVisible && (
