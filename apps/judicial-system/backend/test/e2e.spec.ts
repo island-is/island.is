@@ -367,6 +367,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.defenderIsSpokesperson ?? null).toBe(
     caseTwo.defenderIsSpokesperson ?? null,
   )
+  expect(caseOne.isHeightenedSecurityLevel ?? null).toBe(
+    caseTwo.isHeightenedSecurityLevel ?? null,
+  )
   expect(caseOne.courtId ?? null).toBe(caseTwo.courtId ?? null)
   expectInstitutionsToMatch(caseOne.court, caseTwo.court)
   expect(caseOne.leadInvestigator ?? null).toBe(
