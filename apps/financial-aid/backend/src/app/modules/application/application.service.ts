@@ -136,7 +136,6 @@ export class ApplicationService {
   ): Promise<ApplicationModel> {
     const appModel = await this.applicationModel.create(application)
 
-    //Create applicationEvent
     await this.applicationEventService.create({
       applicationId: appModel.id,
       eventType: ApplicationEventType[appModel.state.toUpperCase()],
