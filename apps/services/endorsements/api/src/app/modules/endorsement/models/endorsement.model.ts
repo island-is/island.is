@@ -33,6 +33,13 @@ export class Endorsement extends Model<Endorsement> {
 
   @ApiProperty()
   @Column({
+    type: DataType.NUMBER,
+    allowNull: true,
+  })
+  counter!: number
+
+  @ApiProperty()
+  @Column({
     type: DataType.STRING,
     allowNull: false,
   })

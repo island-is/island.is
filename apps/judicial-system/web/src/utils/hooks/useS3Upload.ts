@@ -15,14 +15,14 @@ export const useS3Upload = (workingCase?: Case) => {
   const filesRef = useRef<UploadFile[]>(files)
 
   useEffect(() => {
-    const uploadCaseFiles = workingCase?.files?.map((caseFile) => {
+    const uploadCaseFiles = workingCase?.caseFiles?.map((caseFile) => {
       const uploadCaseFile = caseFile as UploadFile
       uploadCaseFile.status = 'done'
       return uploadCaseFile
     })
 
     setFilesRefAndState(uploadCaseFiles ?? [])
-  }, [workingCase?.files])
+  }, [workingCase?.caseFiles])
 
   useMemo(() => {
     setAllFilesUploaded(

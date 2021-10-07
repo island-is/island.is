@@ -70,9 +70,8 @@ const PersonalTaxCreditForm = () => {
           }}
           onChange={(value: number | boolean) => {
             updateForm({ ...form, usePersonalTaxCredit: value })
-            if (hasError) {
-              setHasError(false)
-            }
+
+            setHasError(false)
           }}
         />
 

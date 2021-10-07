@@ -4,6 +4,7 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
@@ -116,10 +117,10 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           <Text variant="h4">
             {formatAppeal(
               workingCase.accusedAppealDecision,
-              [CaseType.CUSTODY, CaseType.TRAVEL_BAN].includes(workingCase.type)
+              isRestrictionCase(workingCase.type)
                 ? capitalize(formatAccusedByGender(workingCase.accusedGender))
                 : 'Varnaraðili',
-              [CaseType.CUSTODY, CaseType.TRAVEL_BAN].includes(workingCase.type)
+              isRestrictionCase(workingCase.type)
                 ? workingCase.accusedGender
                 : undefined,
             )}

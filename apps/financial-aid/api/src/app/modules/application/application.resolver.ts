@@ -1,10 +1,7 @@
 import { Query, Resolver, Context, Mutation, Args } from '@nestjs/graphql'
-
 import { Inject, UseGuards } from '@nestjs/common'
-
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
 import { BackendAPI } from '../../../services'
 
 import {
@@ -18,19 +15,18 @@ import {
   UpdateApplicationInput,
   CreateApplicationEventInput,
   UpdateApplicationInputTable,
+  ApplicationInput,
+  AllApplicationInput,
 } from './dto'
-import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
-
-import { ApplicationInput, AllApplicationInput } from './dto'
-
 import {
   Application,
   ApplicationFilters,
   UpdateApplicationTableResponseType,
   UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(IdsUserGuard)
 @Resolver(() => ApplicationModel)
 export class ApplicationResolver {
   constructor(
