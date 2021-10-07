@@ -179,6 +179,15 @@ export class ApplicationService {
     if (update.state === ApplicationState.NEW) {
       update.staffId = null
     }
+    //Create applicationEvent
+    const eventModel = await this.applicationEventService.create({
+      applicationId: id,
+      eventType: ApplicationEventType[update.state.toUpperCase()],
+      comment:
+        update?.rejection ||
+        update?.amount?.toLocaleString('de-DE') ||
+        update?.comment,
+    })
 
     const [
       numberOfAffectedRows,
@@ -193,16 +202,6 @@ export class ApplicationService {
     const events = await this.applicationEventService.findById(id)
 
     updatedApplication?.setDataValue('applicationEvents', events)
-
-    //Create applicationEvent
-    const eventModel = await this.applicationEventService.create({
-      applicationId: id,
-      eventType: ApplicationEventType[update.state.toUpperCase()],
-      comment:
-        update?.rejection ||
-        update?.amount?.toLocaleString('de-DE') ||
-        update?.comment,
-    })
 
     return { numberOfAffectedRows, updatedApplication }
   }
