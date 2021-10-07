@@ -149,10 +149,16 @@ const HearingArrangements = () => {
       ) {
         setSubstituteProsecutorId(option.value.toString())
         setIsProsecutorAccessModalVisible(true)
+
+        return false
       } else {
         setProsecutor(option.value.toString())
+
+        return true
       }
     }
+
+    return false
   }
 
   return (

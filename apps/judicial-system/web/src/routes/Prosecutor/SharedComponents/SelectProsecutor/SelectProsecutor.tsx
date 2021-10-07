@@ -8,7 +8,7 @@ import { Option } from '@island.is/island-ui/core'
 interface Props {
   workingCase: Case
   prosecutors: ReactSelectOption[]
-  onChange: (selectedOption: ValueType<ReactSelectOption>) => void
+  onChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
   user?: User
 }
 
@@ -37,15 +37,7 @@ const SelectProsecutor: React.FC<Props> = (props) => {
         value={selectedProsecutor}
         options={prosecutors}
         onChange={(selectedOption) => {
-          onChange(selectedOption)
-
-          if (
-            isRestrictionCase(workingCase.type) ||
-            !workingCase.isHeightenedSecurityLevel ||
-            user?.id === workingCase.creatingProsecutor?.id
-          ) {
-            setSelectedProsecutor(selectedOption)
-          }
+          onChange(selectedOption) && setSelectedProsecutor(selectedOption)
         }}
         required
       />

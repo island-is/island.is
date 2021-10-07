@@ -72,6 +72,8 @@ const StepTwoForm: React.FC<Props> = (props) => {
                 setWorkingCase,
                 updateCase,
               )
+
+              return true
             }}
           />
         </Box>

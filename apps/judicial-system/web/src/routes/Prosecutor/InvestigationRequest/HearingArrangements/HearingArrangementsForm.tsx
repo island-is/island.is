@@ -33,7 +33,7 @@ interface Props {
   courts: Institution[]
   isLoading: boolean
   onNextButtonClick: () => Promise<void>
-  onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => void
+  onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
   updateCase: (id: string, updateCase: UpdateCase) => Promise<Case | undefined>
 }
 
