@@ -381,7 +381,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               {user &&
                 [UserRole.JUDGE, UserRole.REGISTRAR].includes(user?.role) && (
                   <Box display="flex" justifyContent="flexEnd">
-                    {uploadState === UploadState.NONE_CAN_BE_UPLOADED ? (
+                    {(workingCase.caseFiles || []).length ===
+                    0 ? null : uploadState ===
+                      UploadState.NONE_CAN_BE_UPLOADED ? (
                       <InfoBox
                         text={formatMessage(
                           signedVerdictOverview.uploadToCourtAllBrokenText,
