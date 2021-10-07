@@ -16,7 +16,6 @@ export const CasesQuery = gql`
       id
       created
       type
-      description
       state
       policeCaseNumber
       accusedNationalId

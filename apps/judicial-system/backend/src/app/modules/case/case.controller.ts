@@ -17,7 +17,6 @@ import {
   UseGuards,
   BadRequestException,
   ParseBoolPipe,
-  UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -30,6 +29,7 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
+  isInvestigationCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -49,7 +49,6 @@ import { CaseEvent, EventService } from '../event'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
-import { CasesInterceptor } from './interceptors'
 import { CaseService } from './case.service'
 
 // Allows prosecutors to perform any action
@@ -372,7 +371,6 @@ export class CaseController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
-  @UseInterceptors(CasesInterceptor)
   @Get('cases')
   @ApiOkResponse({
     type: Case,
@@ -409,6 +407,17 @@ export class CaseController {
   ) {
     const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
+    if (
+      isInvestigationCase(existingCase.type) &&
+      ((user.role === UserRole.JUDGE && user.id !== existingCase.judge?.id) ||
+        (user.role === UserRole.REGISTRAR &&
+          user.id !== existingCase.registrar?.id))
+    ) {
+      throw new ForbiddenException(
+        'Only the assigned judge and registrar can get the request pdf for investigation cases',
+      )
+    }
+
     const pdf = await this.caseService.getRequestPdf(existingCase)
 
     const stream = new ReadableStreamBuffer({
@@ -437,6 +446,17 @@ export class CaseController {
     @Res() res: Response,
   ) {
     const existingCase = await this.caseService.findByIdAndUser(id, user, false)
+
+    if (
+      isInvestigationCase(existingCase.type) &&
+      ((user.role === UserRole.JUDGE && user.id !== existingCase.judge?.id) ||
+        (user.role === UserRole.REGISTRAR &&
+          user.id !== existingCase.registrar?.id))
+    ) {
+      throw new ForbiddenException(
+        'Only the assigned judge and registrar can get the ruling pdf for investigation cases',
+      )
+    }
 
     const pdf = await this.caseService.getRulingPdf(existingCase, shortVersion)
 
