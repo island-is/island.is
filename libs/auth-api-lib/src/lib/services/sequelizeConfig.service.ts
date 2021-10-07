@@ -18,14 +18,15 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
   createSequelizeOptions(): SequelizeModuleOptions {
     let config
     switch (process.env.NODE_ENV) {
-      case 'development':
+      case 'test':
+        this.logger.error('Please use @island.is/testing for testing purposes')
         config = databaseConfig.development
         break
       case 'production':
         config = databaseConfig.production
         break
       default:
-        throw new Error('No database configuration found')
+        config = databaseConfig.development
     }
 
     return {
