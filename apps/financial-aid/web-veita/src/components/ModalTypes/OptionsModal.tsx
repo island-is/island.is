@@ -29,7 +29,6 @@ const OptionsModal = ({ activeState, onClick }: Props) => {
       data-testid="optionsModal"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
     >
       {statusOptions.map((item, index) => {
         return (

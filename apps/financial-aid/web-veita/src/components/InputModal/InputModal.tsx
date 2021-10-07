@@ -19,7 +19,7 @@ const InputModal = ({
 }: Props) => {
   return (
     <motion.div
-      layoutId="modal"
+      layoutId="inputmodal"
       data-testid="modal"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
