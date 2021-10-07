@@ -72,9 +72,8 @@ const StudentForm = () => {
             }}
             onChange={(value: number | boolean) => {
               updateForm({ ...form, student: value })
-              if (hasError) {
-                setHasError(false)
-              }
+
+              setHasError(false)
             }}
           />
         </div>

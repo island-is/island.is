@@ -171,7 +171,8 @@ export interface Case {
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
-  files?: CaseFile[]
+  caseFiles?: CaseFile[]
+  isMasked?: boolean
 }
 
 export interface CreateCase {
@@ -276,6 +277,16 @@ export interface CreateCourtCase {
   type: CaseType
   policeCaseNumber: string
   isExtension: boolean
+}
+
+export const restrictionCases = [CaseType.CUSTODY, CaseType.TRAVEL_BAN]
+
+export function isRestrictionCase(type?: CaseType): boolean {
+  return Boolean(type && restrictionCases.includes(type))
+}
+
+export function isInvestigationCase(type?: CaseType): boolean {
+  return Boolean(type && !restrictionCases.includes(type))
 }
 
 export const completedCaseStates = [

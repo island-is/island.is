@@ -1,4 +1,5 @@
 import { months } from './const'
+import React from 'react'
 
 export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)
@@ -25,3 +26,30 @@ export const formatPhoneNumber = (phoneNumber: string) => {
 
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
+
+export const sanitizeNationalId = (nationalId: string) =>
+  nationalId.replace(/[^0-9]/g, '')
+
+export const isEmailValid = (emailAddress?: string) => {
+  if (emailAddress) {
+    const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+    return emailRegex.test(emailAddress)
+  }
+  return false
+}
+
+export const focusOnNextInput = (
+  event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  nextInputId: string,
+) => {
+  if (event.target.value.length >= event.target.maxLength) {
+    const el = document.getElementById(nextInputId)
+    el?.focus()
+  }
+}
+
+export const decodeToken = (token: string) => {
+  const base64Url = token.split('.')[1]
+  const base64 = base64Url.replace('-', '+').replace('_', '/')
+  return JSON.parse(Buffer.from(base64, 'base64').toString('binary'))
+}

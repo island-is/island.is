@@ -49,17 +49,13 @@ export const getAuthenticatedApp = ({
   scope = [EndorsementsScope.main],
 }: SetupAuthInput): Promise<INestApplication> =>
   setup({
-    override: (builder) => {
-      builder
-        .overrideProvider(IdsUserGuard)
-        .useValue(
-          new MockAuthGuard({
-            nationalId,
-            scope,
-          }),
-        )
-        .compile()
-    },
+    override: (builder) =>
+      builder.overrideProvider(IdsUserGuard).useValue(
+        new MockAuthGuard({
+          nationalId,
+          scope,
+        }),
+      ),
   })
 
 afterAll(async () => {
