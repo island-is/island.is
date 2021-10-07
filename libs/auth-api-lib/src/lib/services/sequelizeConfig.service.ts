@@ -18,14 +18,14 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
   createSequelizeOptions(): SequelizeModuleOptions {
     let config
     switch (process.env.NODE_ENV) {
-      case 'test':
-        config = databaseConfig.test
+      case 'development':
+        config = databaseConfig.development
         break
       case 'production':
         config = databaseConfig.production
         break
       default:
-        config = databaseConfig.development
+        throw new Error('No database configuration found')
     }
 
     return {

@@ -7,7 +7,6 @@ import {
   UpdatedAt,
   ForeignKey,
   PrimaryKey,
-  BelongsTo,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { ApiScope } from './api-scope.model'
@@ -24,9 +23,6 @@ export class ApiScopeUserClaim extends Model<ApiScopeUserClaim> {
   @ForeignKey(() => ApiScope)
   @ApiProperty()
   apiScopeName!: string
-
-  @BelongsTo(() => ApiScope)
-  apiScope!: ApiScope
 
   @PrimaryKey
   @Column({

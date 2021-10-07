@@ -11,15 +11,13 @@ const createRandomNationalRegistryUser = (): Einstaklingsupplysingar => {
   const name = `${firstName} ${middleName} ${lastName}`
 
   return {
-    kennitala: faker.datatype
-      .number({ min: 1000000000, max: 9999999999 })
-      .toString(),
+    kennitala: faker.helpers.replaceSymbolWithNumber('##########'),
     nafn: name,
     eiginnafn: firstName,
     millinafn: middleName,
     kenninafn: lastName,
     fulltNafn: name,
-    kynkodi: faker.datatype.number({ min: 1, max: 1 }).toString(),
+    kynkodi: faker.datatype.number({ min: 1, max: 8 }).toString(),
     bannmerking: faker.datatype.boolean(),
     faedingardagur: faker.date.past(),
     logheimili: {

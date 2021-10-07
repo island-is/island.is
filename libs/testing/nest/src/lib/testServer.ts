@@ -1,19 +1,7 @@
-import {
-  Type,
-  ValidationPipe,
-  ExecutionContext,
-  INestApplication,
-} from '@nestjs/common'
+import { ValidationPipe, INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
-import {
-  IdsAuthGuard,
-  IdsUserGuard,
-  ScopesGuard,
-  getRequest,
-  User,
-} from '@island.is/auth-nest-tools'
 import { InfraModule } from '@island.is/infra-nest-server'
 
 let app: INestApplication

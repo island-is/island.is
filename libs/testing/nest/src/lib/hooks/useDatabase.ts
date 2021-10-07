@@ -1,16 +1,18 @@
-import {
-  getConnectionToken,
-  SequelizeModuleOptions,
-  SequelizeOptionsFactory,
-} from '@nestjs/sequelize'
+import { getConnectionToken, SequelizeModuleOptions } from '@nestjs/sequelize'
 import { INestApplication, Type } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
+import { Dialect } from 'sequelize/types'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
-type DatabaseType = 'sqlite' | 'postgres'
+type Database = Extract<Dialect, 'postgres' | 'sqlite'>
+
+const Dialect: Record<string, Database> = {
+  Postgres: 'postgres',
+  SQLite: 'sqlite',
+}
 
 interface UseDatabase {
-  type: DatabaseType
+  type: Database
   provider: any
   skipTruncate?: boolean
 }
@@ -33,23 +35,22 @@ const sharedConfig: SequelizeModuleOptions = {
   },
   logging: false,
   autoLoadModels: true,
+  synchronize: true,
 }
 
-const config: Record<DatabaseType, SequelizeModuleOptions> = {
+const config: Record<Database, SequelizeModuleOptions> = {
   sqlite: {
-    dialect: 'sqlite',
+    dialect: Dialect.SQLite,
     database: ':memory:',
-    synchronize: true,
     ...sharedConfig,
   },
   postgres: {
+    dialect: Dialect.Postgres,
     username: 'test_db',
     password: 'test_db',
     database: 'test_db',
     host: 'localhost',
-    dialect: 'postgres',
     port: 5433,
-    synchronize: false,
     ...sharedConfig,
   },
 }
@@ -92,10 +93,12 @@ export default ({ type, provider, skipTruncate = false }: UseDatabase) => ({
       if (!skipTruncate) {
         await truncate()
       }
-    } catch {}
+    } catch (e) {
+      // ignore
+    }
 
     try {
-      await sequelize.sync({ logging: false })
+      await sequelize.sync({ logging: false, force: true })
     } catch (err) {
       console.log('Sync error', err)
     }

@@ -7,7 +7,6 @@ import {
   UpdatedAt,
   ForeignKey,
   PrimaryKey,
-  BelongsTo,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { ApiResource } from './api-resource.model'
@@ -24,9 +23,6 @@ export class ApiResourceUserClaim extends Model<ApiResourceUserClaim> {
   @ForeignKey(() => ApiResource)
   @ApiProperty()
   apiResourceName!: string
-
-  @BelongsTo(() => ApiResource)
-  apiResource!: ApiResource
 
   @PrimaryKey
   @Column({

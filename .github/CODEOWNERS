@@ -20,7 +20,7 @@
 /.github/                                                                                     @island-is/core
 /handbook/                                                                                    @island-is/core
 /libs/api/domains/identity/                                                                   @island-is/core
-/libs/testing/                                                                                @island-is/core
+/libs/testing/                                                                                @island-is/core @island-is/vice-versa
 
 /apps/services/endorsements/                                                                  @island-is/kosmos-kaos
 /apps/services/temporary-voter-registry-api/                                                  @island-is/kosmos-kaos

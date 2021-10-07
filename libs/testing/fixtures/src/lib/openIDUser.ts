@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 import * as faker from 'faker'
 import { User } from 'oidc-client'
 
@@ -15,9 +17,7 @@ const createRandomOpenIDUser = (): User => {
     scope: faker.random.word(),
     profile: {
       name: `${firstName} ${middleName} ${lastName}`,
-      nationalId: faker.datatype
-        .number({ min: 1000000000, max: 9999999999 })
-        .toString(),
+      nationalId: faker.helpers.replaceSymbolWithNumber('##########'),
       given_name: firstName,
       family_name: lastName,
       nickname: faker.name.firstName(),

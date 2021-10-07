@@ -1,5 +1,5 @@
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
-import { ExecutionContext, INestApplication } from '@nestjs/common'
+import { ExecutionContext } from '@nestjs/common'
 
 import {
   IdsAuthGuard,

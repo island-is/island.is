@@ -10,9 +10,7 @@ interface CreateCurrentUser {
 }
 
 const createRandomCurrentUser = (): User => ({
-  nationalId: faker.datatype
-    .number({ min: 1000000000, max: 9999999999 })
-    .toString(),
+  nationalId: faker.helpers.replaceSymbolWithNumber('##########'),
   scope: [],
   authorization: faker.random.word(),
   client: faker.random.word(),
