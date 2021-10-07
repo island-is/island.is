@@ -1,6 +1,6 @@
 import React, { useContext, useState, useCallback, ChangeEvent } from 'react'
 
-import * as styles from './Input.treat'
+import * as styles from './NumberInput.treat'
 
 interface Props {
   maximumInputLength: number

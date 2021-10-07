@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -14,11 +14,9 @@ import {
   ApplicationState,
   FileType,
 } from '@island.is/financial-aid/shared/lib'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import {
   CreateApplicationEventQuery,
-  GetApplicationEventsQuery,
-  GetApplicationQuery,
   UpdateApplicationMutation,
 } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
@@ -27,26 +25,10 @@ import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
 import { Routes } from '@island.is/financial-aid/shared/lib'
 import cn from 'classnames'
 
-interface ApplicantData {
-  application: Application
-}
-
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
   const router = useRouter()
   const { uploadFiles } = useFileUpload(form.otherFiles)
-
-  // const { data, loading } = useQuery<ApplicantData>(GetApplicationEventsQuery, {
-  //   variables: { input: { id: router.query.id } },
-  //   fetchPolicy: 'no-cache',
-  //   errorPolicy: 'all',
-  // })
-
-  // const currentApplication = useMemo(() => {
-  //   if (data?.application.applicationEvents) {
-  //     return data.application.applicationEvents[0]
-  //   }
-  // }, [data])
 
   const [error, setError] = useState(false)
 

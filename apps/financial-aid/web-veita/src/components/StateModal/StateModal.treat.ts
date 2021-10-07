@@ -51,8 +51,6 @@ export const activeState = style({
 export const container = style({
   display: 'flex',
   width: '100%',
-  // transition: 'transform 250ms ease',
-  // transform: ' translate3d(0px, 0px, 0px)',
 })
 
 export const showInput = style({

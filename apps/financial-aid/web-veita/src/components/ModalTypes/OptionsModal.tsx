@@ -25,8 +25,7 @@ const OptionsModal = ({ activeState, onClick }: Props) => {
 
   return (
     <motion.div
-      key="optionsModal"
-      // className={styles.container}
+      layoutId="modal"
       data-testid="optionsModal"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}

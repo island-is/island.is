@@ -75,13 +75,6 @@ export const GetApplicationQuery = gql`
       amount
       rejection
       created
-      applicationEvents {
-        id
-        applicationId
-        eventType
-        comment
-        created
-      }
     }
   }
 `
