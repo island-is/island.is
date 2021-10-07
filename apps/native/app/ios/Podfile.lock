@@ -578,7 +578,6 @@ DEPENDENCIES:
   - EXFileSystem (from `../../node_modules/expo-file-system/ios`)
   - EXHaptics (from `../../node_modules/expo-haptics/ios`)
   - EXImageLoader (from `../../node_modules/expo-image-loader/ios`)
-  - EXLinearGradient (from `../../node_modules/expo-linear-gradient/ios`)
   - EXLocalAuthentication (from `../../node_modules/expo-local-authentication/ios`)
   - EXNotifications (from `../../node_modules/expo-notifications/ios`)
   - ExpoModulesCore (from `../../node_modules/expo-modules-core/ios`)
@@ -722,8 +721,6 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/expo-haptics/ios"
   EXImageLoader:
     :path: "../../node_modules/expo-image-loader/ios"
-  EXLinearGradient:
-    :path: "../../node_modules/expo-linear-gradient/ios"
   EXLocalAuthentication:
     :path: "../../node_modules/expo-local-authentication/ios"
   EXNotifications:

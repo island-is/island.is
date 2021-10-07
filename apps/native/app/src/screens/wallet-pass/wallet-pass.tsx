@@ -230,6 +230,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   }
 
   const fields = data?.payload?.data ?? []
+  const hasPkpass = data?.license?.pkpass || false
 
   return (
     <View style={{ flex: 1 }}>
@@ -237,7 +238,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       <Information contentInset={{ bottom: 162 }}>
         <SafeAreaView style={{ marginHorizontal: 16 }}>
           {!data?.payload?.data && licenseRes.loading ? (
-            <ActivityIndicator size="large" color="#0061FF" style={{ marginTop: 32 }} />
+            <ActivityIndicator
+              size="large"
+              color="#0061FF"
+              style={{ marginTop: 32 }}
+            />
           ) : (
             <FieldRender data={fields} />
           )}
@@ -268,33 +273,43 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           agencyLogo={agencyLogo}
         />
       </SafeAreaView>
-      <SafeAreaView
-        style={{
-          position: 'absolute',
-          bottom: 24,
-          left: 0,
-          right: 0,
-          marginHorizontal: 16,
-          zIndex: 100,
-        }}
-      >
-        {Platform.OS === 'ios' ? (
-          <AddPassButton
-            style={{ height: 52 }}
-            addPassButtonStyle={
-              theme.isDark
-                ? PassKit.AddPassButtonStyle.blackOutline
-                : PassKit.AddPassButtonStyle.black
-            }
-            onPress={onAddPkPass}
-          />
-        ) : (
-          <Button title="Add to Wallet" onPress={onAddPkPass} color="#111111" />
-        )}
-      </SafeAreaView>
+      {hasPkpass && (
+        <SafeAreaView
+          style={{
+            position: 'absolute',
+            bottom: 24,
+            left: 0,
+            right: 0,
+            marginHorizontal: 16,
+            zIndex: 100,
+          }}
+        >
+          {Platform.OS === 'ios' ? (
+            <AddPassButton
+              style={{ height: 52 }}
+              addPassButtonStyle={
+                theme.isDark
+                  ? PassKit.AddPassButtonStyle.blackOutline
+                  : PassKit.AddPassButtonStyle.black
+              }
+              onPress={onAddPkPass}
+            />
+          ) : (
+            <Button
+              title="Add to Wallet"
+              onPress={onAddPkPass}
+              color="#111111"
+            />
+          )}
+        </SafeAreaView>
+      )}
       {addingToWallet && (
         <LoadingOverlay>
-          <ActivityIndicator size="large" color="#0061FF" style={{ marginTop: 32 }} />
+          <ActivityIndicator
+            size="large"
+            color="#0061FF"
+            style={{ marginTop: 32 }}
+          />
         </LoadingOverlay>
       )}
     </View>
