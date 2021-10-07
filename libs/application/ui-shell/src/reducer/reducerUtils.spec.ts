@@ -6,6 +6,8 @@ import {
   buildSection,
   buildSubSection,
   buildTextField,
+  CustomField,
+  buildCustomField,
 } from '@island.is/application/core'
 
 import {
@@ -48,6 +50,25 @@ describe('reducerUtils', () => {
       isNavigable,
       sectionIndex,
       subSectionIndex,
+    })
+
+    const buildCustomScreen = (
+      id: string,
+      isNavigable = true,
+      options: Omit<
+        CustomField,
+        'id' | 'type' | 'component' | 'title' | 'children'
+      > = {},
+    ) => ({
+      ...buildCustomField({
+        id,
+        title: 'Custom Title',
+        component: 'CustomComponent',
+      }),
+      ...options,
+      isNavigable,
+      sectionIndex: -1,
+      subSectionIndex: -1,
     })
 
     const convertScreens = (
@@ -435,6 +456,15 @@ describe('reducerUtils', () => {
         it('should never require answer for a description field', () => {
           expect(screenRequiresAnswer(buildIntroScreen('intro'))).toBe(false)
         })
+
+        it('should require an answer for custom unless doesNotRequireAnswer is set to true', () => {
+          expect(screenRequiresAnswer(buildCustomScreen('custom'))).toBe(true)
+          expect(
+            screenRequiresAnswer(
+              buildCustomScreen('custom', true, { doesNotRequireAnswer: true }),
+            ),
+          ).toBe(false)
+        })
       })
 
       describe('screenHasBeenAnswered', () => {
@@ -575,6 +605,48 @@ describe('reducerUtils', () => {
           expect(
             screenHasBeenAnswered(buildMultiFieldForTest(), answers6, true),
           ).toBe(true)
+        })
+
+        it('should look up answers for custom fields by id as long as childInputIds is not set', () => {
+          const normalCustomScreen = buildCustomScreen(
+            'customWithNoChildInputIds',
+          )
+          const customWithChildInputIds = buildCustomScreen(
+            'customWithNoChildInputIds',
+            true,
+            {
+              childInputIds: ['a', 'b', 'c'],
+            },
+          )
+
+          const answers0 = {}
+          const answers1 = { customWithNoChildInputIds: 'answer' }
+          const answers2 = { a: 'answer' }
+          const answers3 = { a: 'answer', b: 'answer' }
+          const answers4 = { a: 'answer', b: 'answer', c: 'answer' }
+
+          expect(screenHasBeenAnswered(normalCustomScreen, answers0)).toBe(
+            false,
+          )
+          expect(screenHasBeenAnswered(customWithChildInputIds, answers0)).toBe(
+            false,
+          )
+
+          expect(screenHasBeenAnswered(normalCustomScreen, answers1)).toBe(true)
+          expect(screenHasBeenAnswered(customWithChildInputIds, answers1)).toBe(
+            false,
+          )
+
+          expect(screenHasBeenAnswered(customWithChildInputIds, answers2)).toBe(
+            false,
+          )
+          expect(screenHasBeenAnswered(customWithChildInputIds, answers3)).toBe(
+            false,
+          )
+
+          expect(screenHasBeenAnswered(customWithChildInputIds, answers4)).toBe(
+            true,
+          )
         })
       })
     })

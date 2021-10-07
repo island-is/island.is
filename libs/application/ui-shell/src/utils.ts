@@ -26,6 +26,10 @@ export function verifyExternalData(
   return true
 }
 
+export function answerIsMissing(answer: unknown) {
+  return answer === undefined
+}
+
 export function getFieldsWithNoAnswer(
   screen: FormScreen,
   answers: FormValue,
@@ -45,7 +49,7 @@ export function getFieldsWithNoAnswer(
   } else if (screen.type !== FormItemTypes.REPEATER && screen.isNavigable) {
     const screenId = screen.id!
     const screenAnswer = getValueViaPath(answers, screenId)
-    const hasBeenAnswered = screenAnswer !== undefined && screenAnswer !== null
+    const hasBeenAnswered = !answerIsMissing(screenAnswer)
     const shouldBeAnswered = !get(screen, 'doesNotRequireAnswer')
 
     if (!hasBeenAnswered && shouldBeAnswered) {

@@ -8,6 +8,7 @@ import {
   findSubSectionIndex,
   Form,
   FormItemTypes,
+  FieldTypes,
   FormLeaf,
   FormNode,
   FormValue,
@@ -29,6 +30,7 @@ import {
   MultiFieldScreen,
   RepeaterScreen,
 } from '../types'
+import { answerIsMissing } from '../utils'
 
 export const screenRequiresAnswer = (screen: FormScreen) => {
   if (!screen.isNavigable) {
@@ -67,7 +69,7 @@ export const screenHasBeenAnswered = (
   }
 
   const answer = getValueViaPath(answers, screen.id)
-  const answerHasValue = answer !== undefined
+  const answerHasValue = !answerIsMissing(answer)
 
   if (screen.type === FormItemTypes.REPEATER) {
     // We do not need to check all individual screens here like we do
@@ -97,6 +99,19 @@ export const screenHasBeenAnswered = (
     }
 
     return numberOfAnswers === numberOfRequiredAnswers
+  } else if (
+    screen.type === FieldTypes.CUSTOM &&
+    screen.childInputIds &&
+    screen.childInputIds.length > 0
+  ) {
+    const hasAnyMissingAnswer = screen.childInputIds.some((childInputId) => {
+      const childAnswer = getValueViaPath(answers, childInputId)
+      const missingChildAnswer = answerIsMissing(childAnswer)
+
+      return missingChildAnswer
+    })
+
+    return !hasAnyMissingAnswer
   }
 
   return answerHasValue
