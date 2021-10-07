@@ -110,7 +110,7 @@ export const CaseQuery = gql`
       notifications {
         type
       }
-      files {
+      caseFiles {
         id
         name
         size
@@ -119,6 +119,7 @@ export const CaseQuery = gql`
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
+      isMasked
     }
   }
 `

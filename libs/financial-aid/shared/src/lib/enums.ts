@@ -23,9 +23,9 @@ export enum ApplicationState {
 }
 
 export enum ApplicationStateUrl {
-  NEW = 'nymal',
-  INPROGRESS = 'vinnslu',
-  PROCESSED = 'afgreidd',
+  NEW = 'New',
+  INPROGRESS = 'InProgress',
+  PROCESSED = 'Processed',
 }
 
 export enum ApplicationEventType {
@@ -42,12 +42,6 @@ export enum ApplicationEventType {
 export enum RolesRule {
   OSK = 'osk',
   VEITA = 'veita',
-}
-
-export enum ReturnUrl {
-  APPLICATION = '/umsokn',
-  MYPAGE = '/stada',
-  ADMIN = '/nymal',
 }
 
 export enum FileType {
