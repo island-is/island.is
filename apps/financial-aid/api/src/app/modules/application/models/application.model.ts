@@ -29,8 +29,8 @@ export class ApplicationModel implements Application {
   @Field()
   readonly name!: string
 
-  @Field()
-  readonly phoneNumber!: string
+  @Field({ nullable: true })
+  readonly phoneNumber?: string
 
   @Field()
   readonly email!: string

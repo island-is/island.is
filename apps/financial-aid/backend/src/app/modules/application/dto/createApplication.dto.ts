@@ -27,7 +27,7 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly name: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiProperty()
   readonly phoneNumber: string

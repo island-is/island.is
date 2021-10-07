@@ -155,18 +155,16 @@ const OverviewForm: React.FC<Props> = (props) => {
                   </Text>
                 </Box>
               )}
-              {workingCase.type !== CaseType.CUSTODY &&
-                workingCase.type !== CaseType.TRAVEL_BAN &&
-                workingCase.requestProsecutorOnlySession && (
+              {workingCase.requestProsecutorOnlySession && (
+                <Box marginBottom={2}>
                   <Box marginBottom={2}>
-                    <Box marginBottom={2}>
-                      <Text variant="h5" as="h5">
-                        Beiðni um dómþing að varnaraðila fjarstöddum
-                      </Text>
-                    </Box>
-                    <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
+                    <Text variant="h5" as="h5">
+                      Beiðni um dómþing að varnaraðila fjarstöddum
+                    </Text>
                   </Box>
-                )}
+                  <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
+                </Box>
+              )}
             </AccordionItem>
             {(Boolean(workingCase.comments) ||
               Boolean(workingCase.caseFilesComments)) && (
@@ -202,14 +200,14 @@ const OverviewForm: React.FC<Props> = (props) => {
             <AccordionItem
               id="id_6"
               label={`Rannsóknargögn ${`(${
-                workingCase.files ? workingCase.files.length : 0
+                workingCase.caseFiles ? workingCase.caseFiles.length : 0
               })`}`}
               labelVariant="h3"
             >
               <Box marginY={3}>
                 <CaseFileList
                   caseId={workingCase.id}
-                  files={workingCase.files ?? []}
+                  files={workingCase.caseFiles ?? []}
                 />
               </Box>
             </AccordionItem>

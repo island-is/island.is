@@ -56,7 +56,7 @@ let server: request.SuperTest<request.Test>
 
 beforeAll(async () => {
   app = await setup({
-    override: (builder) => {
+    override: (builder) =>
       builder
         .overrideProvider(ContentfulRepository)
         .useClass(MockContentfulRepository)
@@ -68,9 +68,7 @@ beforeAll(async () => {
             nationalId,
             scope: [ApplicationScope.read, ApplicationScope.write],
           }),
-        )
-        .compile()
-    },
+        ),
   })
 
   server = request(app.getHttpServer())
