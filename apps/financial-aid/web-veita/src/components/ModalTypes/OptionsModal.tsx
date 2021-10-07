@@ -4,6 +4,7 @@ import * as styles from './ModalTypes.treat'
 import cn from 'classnames'
 
 import { getState, ApplicationState } from '@island.is/financial-aid/shared/lib'
+import { motion } from 'framer-motion'
 
 interface Props {
   activeState: ApplicationState
@@ -23,7 +24,14 @@ const OptionsModal = ({ activeState, onClick }: Props) => {
   ]
 
   return (
-    <>
+    <motion.div
+      key="optionsModal"
+      // className={styles.container}
+      data-testid="optionsModal"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       {statusOptions.map((item, index) => {
         return (
           <button
@@ -38,7 +46,7 @@ const OptionsModal = ({ activeState, onClick }: Props) => {
           </button>
         )
       })}
-    </>
+    </motion.div>
   )
 }
 

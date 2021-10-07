@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { ModalBase, Text, Box } from '@island.is/island-ui/core'
+import { AnimateSharedLayout } from 'framer-motion'
 
 import * as styles from './StateModal.treat'
 
@@ -8,7 +9,6 @@ import {
   RejectModal,
   AcceptModal,
   DataNeededModal,
-  InputModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import {
@@ -128,74 +128,76 @@ const StateModal = ({
             </Text>
           </Box>
           <Box display="block" width="full" padding={4}>
-            {selected === undefined && (
-              <OptionsModal
-                activeState={currentState}
-                onClick={(e, stateOption) => {
-                  e.stopPropagation()
+            <AnimateSharedLayout type="crossfade">
+              {selected === undefined && (
+                <OptionsModal
+                  activeState={currentState}
+                  onClick={(e, stateOption) => {
+                    e.stopPropagation()
 
-                  const goToNextWindow = stateNeedInput.find(
-                    (item) => stateOption === item.state,
-                  )
-                  if (goToNextWindow) {
-                    setSelected(stateOption)
-                    return
-                  }
+                    const goToNextWindow = stateNeedInput.find(
+                      (item) => stateOption === item.state,
+                    )
+                    if (goToNextWindow) {
+                      setSelected(stateOption)
+                      return
+                    }
 
-                  saveStateApplication(applicationId, stateOption)
-                }}
-              />
-            )}
+                    saveStateApplication(applicationId, stateOption)
+                  }}
+                />
+              )}
 
-            {selected === ApplicationState.DATANEEDED && (
-              <DataNeededModal
-                onCancel={onClickCancel}
-                onSaveApplication={(comment?: string) => {
-                  if (!comment) {
-                    setSelected(undefined)
-                    return
-                  }
-                  saveStateApplication(
-                    applicationId,
-                    selected,
-                    undefined,
-                    undefined,
-                    comment,
-                  )
-                }}
-              />
-            )}
+              {selected === ApplicationState.DATANEEDED && (
+                <DataNeededModal
+                  onCancel={onClickCancel}
+                  onSaveApplication={(comment?: string) => {
+                    if (!comment) {
+                      setSelected(undefined)
+                      return
+                    }
+                    saveStateApplication(
+                      applicationId,
+                      selected,
+                      undefined,
+                      undefined,
+                      comment,
+                    )
+                  }}
+                />
+              )}
 
-            {selected === ApplicationState.APPROVED && (
-              <AcceptModal
-                onCancel={onClickCancel}
-                onSaveApplication={(amount: number) => {
-                  if (amount < 0) {
-                    setSelected(undefined)
-                    return
-                  }
-                  saveStateApplication(applicationId, selected, amount)
-                }}
-              />
-            )}
+              {selected === ApplicationState.APPROVED && (
+                <AcceptModal
+                  onCancel={onClickCancel}
+                  onSaveApplication={(amount: number) => {
+                    if (amount < 0) {
+                      setSelected(undefined)
+                      return
+                    }
+                    saveStateApplication(applicationId, selected, amount)
+                  }}
+                />
+              )}
 
-            {selected === ApplicationState.REJECTED && (
-              <RejectModal
-                onCancel={onClickCancel}
-                onSaveApplication={(reasonForRejection?: string) => {
-                  if (!reasonForRejection) {
-                    setSelected(undefined)
-                    return
-                  }
-                  saveStateApplication(
-                    applicationId,
-                    selected,
-                    undefined,
-                    reasonForRejection,
-                  )
-                }}
-              />
-            )}
+              {selected === ApplicationState.REJECTED && (
+                <RejectModal
+                  onCancel={onClickCancel}
+                  onSaveApplication={(reasonForRejection?: string) => {
+                    if (!reasonForRejection) {
+                      setSelected(undefined)
+                      return
+                    }
+                    saveStateApplication(
+                      applicationId,
+                      selected,
+                      undefined,
+                      reasonForRejection,
+                    )
+                  }}
+                />
+              )}
+            </AnimateSharedLayout>
           </Box>
         </Box>
       </Box>
