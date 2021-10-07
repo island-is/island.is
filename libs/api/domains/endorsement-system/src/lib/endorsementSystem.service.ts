@@ -101,9 +101,12 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
-  async endorsementListControllerFindEndorsements(auth: Auth) {
+  async endorsementListControllerFindEndorsements(
+    auth: Auth,
+    input: EndorsementControllerFindAllRequest, // ?
+  ) {
     return await this.endorsementListApiWithAuth(auth)
-      .endorsementListControllerFindEndorsements()
+      .endorsementListControllerFindEndorsements(input)
       .catch(this.handleError.bind(this))
   }
 

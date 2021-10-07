@@ -13,6 +13,8 @@ import {
   CaseState,
   CaseType,
   NotificationType,
+  isRestrictionCase,
+  isInvestigationCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
@@ -471,8 +473,7 @@ export class NotificationService {
     ]
 
     if (
-      (existingCase.type === CaseType.CUSTODY ||
-        existingCase.type === CaseType.TRAVEL_BAN ||
+      (isRestrictionCase(existingCase.type) ||
         existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) &&
       existingCase.defenderEmail
     ) {
@@ -583,10 +584,7 @@ export class NotificationService {
   private async sendRulingNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
-    if (
-      existingCase.type !== CaseType.CUSTODY &&
-      existingCase.type !== CaseType.TRAVEL_BAN
-    ) {
+    if (isInvestigationCase(existingCase.type)) {
       return {
         notificationSent: false,
       }

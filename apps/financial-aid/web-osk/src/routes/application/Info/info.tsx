@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { Text, Icon, Box, Checkbox } from '@island.is/island-ui/core'
 
 import {
@@ -17,8 +17,6 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
-import { GetMunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql'
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
 const ApplicationInfo = () => {
   const router = useRouter()

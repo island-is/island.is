@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   Decision,
@@ -52,14 +52,12 @@ const ConclusionDraft: React.FC<Props> = (props) => {
               : ''
           }hafnað`}
           partiallyAcceptedLabelText={`${
-            workingCase.type === CaseType.CUSTODY ||
-            workingCase.type === CaseType.TRAVEL_BAN
+            isRestrictionCase(workingCase.type)
               ? 'Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann'
               : 'Krafa tekin til greina að hluta'
           }`}
           dismissLabelText={
-            workingCase.type === CaseType.CUSTODY ||
-            workingCase.type === CaseType.TRAVEL_BAN
+            isRestrictionCase(workingCase.type)
               ? formatMessage(rcRulingStepOne.sections.decision.dismissLabel, {
                   caseType:
                     workingCase.type === CaseType.CUSTODY
