@@ -148,6 +148,9 @@ export interface CreateApplication {
   state?: ApplicationState
   files: CreateApplicationFile[]
   amount?: number
+  spouseNationalId?: string
+  spouseEmail?: string
+  familyStatus: FamilyStatus
 }
 
 export interface ApplicationFilters {
@@ -186,6 +189,9 @@ export interface Application {
   rejection?: string
   staff?: Staff
   applicationEvents?: ApplicationEvent[]
+  spouseNationalId?: string
+  spouseEmail?: string
+  familyStatus: FamilyStatus
 }
 
 export interface GetSignedUrlForId {

@@ -10,8 +10,6 @@ import cn from 'classnames'
 import { useRouter } from 'next/router'
 
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
-import { signIn } from 'next-auth/client'
-import { identityServerId, Routes } from '@island.is/financial-aid/shared/lib'
 
 interface PageProps {
   children: ReactNode
