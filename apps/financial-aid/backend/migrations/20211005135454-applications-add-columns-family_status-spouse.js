@@ -8,7 +8,15 @@ module.exports = {
           'applications',
           'family_status',
           {
-            type: Sequelize.ENUM('Unknown', 'Single', 'Cohabitation', 'UnregisteredCohabitation', 'Married', 'MarriedNotLivingTogether', 'NotInformed'),
+            type: Sequelize.ENUM(
+              'Unknown',
+              'Single',
+              'Cohabitation',
+              'UnregisteredCohabitation',
+              'Married',
+              'MarriedNotLivingTogether',
+              'NotInformed',
+            ),
             allowNull: false,
             defaultValue: 'Unknown',
           },

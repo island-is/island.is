@@ -5,7 +5,7 @@ import {
   HomeCircumstances,
   Employment,
   ApplicationState,
-  ApplicationFilters,
+  FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
 import { ApplicationFileModel } from '../../file'
@@ -101,6 +101,6 @@ export class ApplicationModel implements Application {
   @Field({ nullable: true })
   readonly spouseEmail?: string
 
-  // @Field(() => String)
-  // readonly familyStatus: FamilyStatus
+  @Field(() => String)
+  readonly familyStatus!: FamilyStatus
 }

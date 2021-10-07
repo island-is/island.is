@@ -17,6 +17,7 @@ import {
   Employment,
   ApplicationState,
   Application,
+  FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
 import { ApplicationEventModel } from '../../applicationEvent/models'
@@ -202,13 +203,13 @@ export class ApplicationModel extends Model<Application> {
   @ApiProperty({ type: StaffModel })
   staff?: StaffModel
 
-  // @Column({
-  //   type: DataType.ENUM,
-  //   allowNull: false,
-  //   values: Object.values(Employment),
-  // })
-  // @ApiProperty({ enum: Employment })
-  // familyStatus: Fami
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(FamilyStatus),
+  })
+  @ApiProperty({ enum: FamilyStatus })
+  familyStatus: FamilyStatus
 
   @Column({
     type: DataType.STRING,
