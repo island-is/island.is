@@ -4,9 +4,10 @@ import * as styles from './ModalTypes.treat'
 import cn from 'classnames'
 
 import { getState, ApplicationState } from '@island.is/financial-aid/shared/lib'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 
 interface Props {
+  isModalVisable: boolean
   activeState: ApplicationState
   onClick(
     event: React.MouseEvent<HTMLButtonElement>,
@@ -14,7 +15,7 @@ interface Props {
   ): void
 }
 
-const OptionsModal = ({ activeState, onClick }: Props) => {
+const OptionsModal = ({ activeState, onClick, isModalVisable }: Props) => {
   const statusOptions = [
     ApplicationState.NEW,
     ApplicationState.INPROGRESS,
@@ -24,27 +25,31 @@ const OptionsModal = ({ activeState, onClick }: Props) => {
   ]
 
   return (
-    <motion.div
-      layoutId="modal"
-      data-testid="optionsModal"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
-      {statusOptions.map((item, index) => {
-        return (
-          <button
-            key={'statusoptions-' + index}
-            className={cn({
-              [`${styles.statusOptions}`]: true,
-              [`${styles.activeState}`]: item === activeState,
-            })}
-            onClick={(e) => onClick(e, item)}
-          >
-            {getState[item]}
-          </button>
-        )
-      })}
-    </motion.div>
+    <>
+      {isModalVisable && (
+        <motion.div
+          layoutId="modal"
+          data-testid="optionsModal"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          {statusOptions.map((item, index) => {
+            return (
+              <button
+                key={'statusoptions-' + index}
+                className={cn({
+                  [`${styles.statusOptions}`]: true,
+                  [`${styles.activeState}`]: item === activeState,
+                })}
+                onClick={(e) => onClick(e, item)}
+              >
+                {getState[item]}
+              </button>
+            )
+          })}
+        </motion.div>
+      )}
+    </>
   )
 }
 

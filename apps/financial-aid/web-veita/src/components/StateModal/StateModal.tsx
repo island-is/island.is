@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ModalBase, Text, Box } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import { AnimateSharedLayout } from 'framer-motion'
 
 import * as styles from './StateModal.treat'
@@ -16,6 +16,7 @@ import {
   ApplicationState,
 } from '@island.is/financial-aid/shared/lib'
 import { useApplicationState } from '../../utils/useApplicationState'
+import StateModalContainer from './StateModalContainer'
 
 interface Props {
   isVisible: boolean
@@ -46,6 +47,7 @@ const StateModal = ({
     comment?: string,
   ) => {
     setIsLoading(true)
+
     onVisibilityChange((isVisible) => !isVisible)
 
     await changeApplicationState(
@@ -92,116 +94,99 @@ const StateModal = ({
   ]
 
   const headingText = (state?: ApplicationState): string => {
-    const header = stateNeedInput.find((item) => state === item.state)
-      ?.modalHeader
+    const header =
+      stateNeedInput.find((item) => state === item.state)?.modalHeader ??
+      'Stöðubreyting'
 
-    return header ?? 'Stöðubreyting'
+    return header
   }
 
   return (
-    <ModalBase
-      baseId="changeStatus"
+    <StateModalContainer
       isVisible={isVisible}
-      onVisibilityChange={(visibility) => {
-        if (visibility !== isVisible) {
-          onVisibilityChange(visibility)
-        }
-      }}
-      className={styles.modalBase}
+      onVisibilityChange={onVisibilityChange}
+      closeModal={closeModal}
     >
-      <Box onClick={closeModal} className={styles.modalContainer}>
-        <Box
-          position="relative"
-          borderRadius="large"
-          overflow="hidden"
-          background="white"
-          className={styles.modal}
-        >
-          <Box
-            paddingLeft={4}
-            paddingY={2}
-            background="blue400"
-            className={styles.modalHeadline}
-          >
-            <Text fontWeight="semiBold" color="white">
-              {headingText(selected)}
-            </Text>
-          </Box>
-          <Box display="block" width="full" padding={4}>
-            <AnimateSharedLayout type="crossfade">
-              {selected === undefined && (
-                <OptionsModal
-                  activeState={currentState}
-                  onClick={(e, stateOption) => {
-                    e.stopPropagation()
-
-                    const goToNextWindow = stateNeedInput.find(
-                      (item) => stateOption === item.state,
-                    )
-                    if (goToNextWindow) {
-                      setSelected(stateOption)
-                      return
-                    }
-
-                    saveStateApplication(applicationId, stateOption)
-                  }}
-                />
-              )}
-
-              {selected === ApplicationState.DATANEEDED && (
-                <DataNeededModal
-                  onCancel={onClickCancel}
-                  onSaveApplication={(comment?: string) => {
-                    if (!comment) {
-                      setSelected(undefined)
-                      return
-                    }
-                    saveStateApplication(
-                      applicationId,
-                      selected,
-                      undefined,
-                      undefined,
-                      comment,
-                    )
-                  }}
-                />
-              )}
-
-              {selected === ApplicationState.APPROVED && (
-                <AcceptModal
-                  onCancel={onClickCancel}
-                  onSaveApplication={(amount: number) => {
-                    if (amount < 0) {
-                      setSelected(undefined)
-                      return
-                    }
-                    saveStateApplication(applicationId, selected, amount)
-                  }}
-                />
-              )}
-
-              {selected === ApplicationState.REJECTED && (
-                <RejectModal
-                  onCancel={onClickCancel}
-                  onSaveApplication={(reasonForRejection?: string) => {
-                    if (!reasonForRejection) {
-                      setSelected(undefined)
-                      return
-                    }
-                    saveStateApplication(
-                      applicationId,
-                      selected,
-                      undefined,
-                      reasonForRejection,
-                    )
-                  }}
-                />
-              )}
-            </AnimateSharedLayout>
-          </Box>
-        </Box>
+      <Box
+        paddingLeft={4}
+        paddingY={2}
+        background="blue400"
+        className={styles.modalHeadline}
+      >
+        <Text fontWeight="semiBold" color="white">
+          {headingText(selected)}
+        </Text>
       </Box>
-    </ModalBase>
+
+      <Box display="block" width="full" padding={4}>
+        <AnimateSharedLayout type="crossfade">
+          <OptionsModal
+            isModalVisable={selected === undefined}
+            activeState={currentState}
+            onClick={(e, stateOption) => {
+              e.stopPropagation()
+
+              const goToNextWindow = stateNeedInput.find(
+                (item) => stateOption === item.state,
+              )
+              if (goToNextWindow) {
+                setSelected(stateOption)
+                return
+              }
+
+              saveStateApplication(applicationId, stateOption)
+            }}
+          />
+
+          <DataNeededModal
+            isModalVisable={selected === ApplicationState.DATANEEDED}
+            onCancel={onClickCancel}
+            onSaveApplication={(comment?: string) => {
+              if (!comment || !selected) {
+                setSelected(undefined)
+                return
+              }
+              saveStateApplication(
+                applicationId,
+                selected,
+                undefined,
+                undefined,
+                comment,
+              )
+            }}
+          />
+
+          <AcceptModal
+            isModalVisable={selected === ApplicationState.APPROVED}
+            onCancel={onClickCancel}
+            onSaveApplication={(amount: number) => {
+              if (amount < 0 || !selected) {
+                setSelected(undefined)
+                return
+              }
+              saveStateApplication(applicationId, selected, amount)
+            }}
+          />
+
+          <RejectModal
+            isModalVisable={selected === ApplicationState.REJECTED}
+            onCancel={onClickCancel}
+            onSaveApplication={(reasonForRejection?: string) => {
+              if (!reasonForRejection || !selected) {
+                setSelected(undefined)
+                return
+              }
+              saveStateApplication(
+                applicationId,
+                selected,
+                undefined,
+                reasonForRejection,
+              )
+            }}
+          />
+        </AnimateSharedLayout>
+      </Box>
+    </StateModalContainer>
   )
 }
 

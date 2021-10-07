@@ -9,9 +9,14 @@ import { Input, Box } from '@island.is/island-ui/core'
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
   onSaveApplication: (amount: number) => void
+  isModalVisable: boolean
 }
 
-const AcceptModal = ({ onCancel, onSaveApplication }: Props) => {
+const AcceptModal = ({
+  onCancel,
+  onSaveApplication,
+  isModalVisable,
+}: Props) => {
   const maximumInputLength = 6
   const [amount, setAmount] = useState<number>(0)
 
@@ -21,6 +26,7 @@ const AcceptModal = ({ onCancel, onSaveApplication }: Props) => {
       onCancel={onCancel}
       onSubmit={() => onSaveApplication(amount)}
       submitButtonText="Samþykkja"
+      isModalVisable={isModalVisable}
     >
       <NumberInput
         placeholder="Skrifaðu upphæð útborgunar"

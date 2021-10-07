@@ -6,9 +6,14 @@ import { Input, Text, Box } from '@island.is/island-ui/core'
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
   onSaveApplication: (comment?: string) => void
+  isModalVisable: boolean
 }
 
-const RejectModal = ({ onCancel, onSaveApplication }: Props) => {
+const RejectModal = ({
+  onCancel,
+  onSaveApplication,
+  isModalVisable,
+}: Props) => {
   const [comment, setComment] = useState<string>()
 
   return (
@@ -19,6 +24,7 @@ const RejectModal = ({ onCancel, onSaveApplication }: Props) => {
         onSaveApplication(comment)
       }}
       submitButtonText="Synja og senda á umsækjanda"
+      isModalVisable={isModalVisable}
     >
       <Box marginBottom={5}>
         <Input

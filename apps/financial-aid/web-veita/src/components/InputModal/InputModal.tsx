@@ -1,6 +1,6 @@
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 interface Props {
   headline: string
@@ -8,6 +8,7 @@ interface Props {
   children: ReactNode
   onSubmit: () => void
   submitButtonText: string
+  isModalVisable: boolean
 }
 
 const InputModal = ({
@@ -16,27 +17,32 @@ const InputModal = ({
   onCancel,
   onSubmit,
   submitButtonText,
+  isModalVisable,
 }: Props) => {
   return (
-    <motion.div
-      layoutId="inputmodal"
-      data-testid="modal"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
-      <Text variant="h3" marginBottom={2}>
-        {headline}
-      </Text>
+    <>
+      {isModalVisable && (
+        <motion.div
+          layoutId="inputmodal"
+          data-testid="modal"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <Text variant="h3" marginBottom={2}>
+            {headline}
+          </Text>
 
-      {children}
+          {children}
 
-      <Box display="flex" justifyContent="spaceBetween" marginTop={5}>
-        <Button variant="ghost" onClick={onCancel}>
-          Hætta við
-        </Button>
-        <Button onClick={onSubmit}>{submitButtonText}</Button>
-      </Box>
-    </motion.div>
+          <Box display="flex" justifyContent="spaceBetween" marginTop={5}>
+            <Button variant="ghost" onClick={onCancel}>
+              Hætta við
+            </Button>
+            <Button onClick={onSubmit}>{submitButtonText}</Button>
+          </Box>
+        </motion.div>
+      )}
+    </>
   )
 }
 
