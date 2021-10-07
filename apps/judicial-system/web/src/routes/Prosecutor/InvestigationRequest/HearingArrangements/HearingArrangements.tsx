@@ -123,9 +123,9 @@ const HearingArrangements = () => {
     }
   }
 
-  const setProsecutor = (prosecutorId: string) => {
+  const setProsecutor = async (prosecutorId: string) => {
     if (workingCase) {
-      setAndSendToServer(
+      return setAndSendToServer(
         'prosecutorId',
         prosecutorId,
         workingCase,
@@ -225,9 +225,11 @@ const HearingArrangements = () => {
               secondaryButtonText={formatMessage(
                 m.prosecutorAccessModal.secondaryButtonText,
               )}
-              handlePrimaryButtonClick={() => {
-                substituteProsecutorId && setProsecutor(substituteProsecutorId)
-                router.push(Constants.REQUEST_LIST_ROUTE)
+              handlePrimaryButtonClick={async () => {
+                if (substituteProsecutorId) {
+                  await setProsecutor(substituteProsecutorId)
+                  router.push(Constants.REQUEST_LIST_ROUTE)
+                }
               }}
               handleSecondaryButtonClick={() => {
                 setIsProsecutorAccessModalVisible(false)
