@@ -55,11 +55,15 @@ describe('openEndorsementList', () => {
       nationalId: authNationalId,
       scope: [EndorsementsScope.main],
     })
+    const closedDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
+    const newDate = {
+      closedDate: closedDate,
+    }
     const response = await request(app.getHttpServer())
       .put('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba018/open')
-      .send()
+      .send(newDate)
       .expect(200)
 
-    expect(response.body).toMatchObject({ closedDate: null })
+    expect(response.body).toMatchObject({ closedDate: closedDate })
   })
 })
