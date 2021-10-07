@@ -1,0 +1,48 @@
+diff --git a/node_modules/cbor/lib/tagged.js b/node_modules/cbor/lib/tagged.js
+index 826fe7a..d37bad4 100644
+--- a/node_modules/cbor/lib/tagged.js
++++ b/node_modules/cbor/lib/tagged.js
+@@ -157,7 +157,7 @@ const TAGS = {
+     //    only 1 alphabet character in the last block of 4 (where
+     //    alphabet is defined by Section 5 of [RFC4648] for tag number 33
+     //    and Section 4 of [RFC4648] for tag number 34), or
+-    const m = v.match(/^[a-zA-Z0-9+/]+(?<padding>={0,2})$/)
++    const m = v.match(/^[a-zA-Z0-9+/]+(\=+)$/)
+     if (!m) {
+       throw new Error('Invalid base64 characters')
+     }
+@@ -165,12 +165,12 @@ const TAGS = {
+       throw new Error('Invalid base64 length')
+     }
+     // -  the padding bits in a 2- or 3-character block are not 0, or
+-    if (m.groups.padding === '=') {
++    if (m[1] === '=') {
+       // The last 4 bits of the last character need to be zero.
+       if ('AQgw'.indexOf(v[v.length - 2]) === -1) {
+         throw new Error('Invalid base64 padding')
+       }
+-    } else if (m.groups.padding === '==') {
++    } else if (m[1] === '==') {
+       // The last 2 bits of the last character need to be zero.
+       if ('AEIMQUYcgkosw048'.indexOf(v[v.length - 3]) === -1) {
+         throw new Error('Invalid base64 padding')
+diff --git a/node_modules/cbor/lib/utils.js b/node_modules/cbor/lib/utils.js
+index c7e6863..4a8df55 100644
+--- a/node_modules/cbor/lib/utils.js
++++ b/node_modules/cbor/lib/utils.js
+@@ -218,12 +218,12 @@ exports.cborValueToString = function cborValueToString(val, float_bytes = -1) {
+       // On node10, Symbol doesn't have description.  Parse it out of the
+       // toString value, which looks like `Symbol(foo)`.
+       const s = val.toString()
+-      const m = s.match(/^Symbol\((?<name>.*)\)/)
++      const m = s.match(/^Symbol\((.*)\)/)
+       /* istanbul ignore if */
+-      if (m && m.groups.name) {
++      if (m && m[1]) {
+         // Impossible in node 12+
+         /* istanbul ignore next */
+-        return m.groups.name
++        return m[1]
+       }
+       return 'Symbol'
+     }

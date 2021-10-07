@@ -2,8 +2,10 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@nrwl/react-native/nx_post_install'
 require_relative '../../node_modules/react-native-unimodules/cocoapods.rb'
+# require_relative '../../node_modules/expo-modules-core/scripts/autolinking.rb'
 
 $RNFirebaseAnalyticsWithoutAdIdSupport = true
+$ExpoUseSources = ['@unimodules/core', '@unimodules/react-native-adapter']
 
 platform :ios, '11.0'
 
@@ -11,9 +13,9 @@ target 'IslandApp' do
   use_unimodules!(
     modules_paths: ['../../node_modules'],
     exclude: [
-      'unimodules-sensors-interface',
-      'unimodules-face-detector-interface',
-      'unimodules-task-manager-interface'
+      # 'unimodules-sensors-interface',
+      # 'unimodules-face-detector-interface',
+      # 'unimodules-task-manager-interface'
     ]
   )
 
@@ -26,7 +28,6 @@ target 'IslandApp' do
   pod 'CodePush', :path => '../../node_modules/react-native-code-push'
   pod 'RNSentry', path: '../../node_modules/@sentry/react-native'
   pod 'RNKeychain', :path => '../../node_modules/react-native-keychain'
-  pod 'RNLocalize', :path => '../../node_modules/react-native-localize'
   pod 'RNFBApp', :path => '../../node_modules/@react-native-firebase/app'
   pod 'RNFBPerf', :path => '../../node_modules/@react-native-firebase/perf'
   pod 'RNFBMessaging', :path => '../../node_modules/@react-native-firebase/messaging'
@@ -35,19 +36,23 @@ target 'IslandApp' do
   pod 'ReactNativeKeyboardManager', :path => '../../node_modules/react-native-keyboard-manager'
   pod 'ReactNativeNavigation', :path => '../../node_modules/react-native-navigation'
   pod 'Interactable', :path => '../../node_modules/react-native-interactable'
+  pod 'react-native-randombytes', :path => '../../node_modules/react-native-randombytes'
   pod 'react-native-cookies', :path => '../../node_modules/@react-native-community/react-native-cookies/ios'
-  pod 'react-native-segmented-control', :path => '../../node_modules/@react-native-segmented-control/segmented-control'
   pod 'react-native-webview', :path => '../../node_modules/react-native-webview'
   pod 'react-native-app-auth', :path => '../../node_modules/react-native-app-auth'
   pod 'react-native-ultimate-config', :path => '../../node_modules/react-native-ultimate-config'
   pod 'react-native-passkit-wallet', path: '../../node_modules/react-native-passkit-wallet'
   pod 'react-native-spotlight-search', path: '../../node_modules/react-native-spotlight-search'
   pod 'react-native-flipper', path: '../../node_modules/react-native-flipper'
+  pod 'react-native-pdf', path: '../../node_modules/react-native-pdf'
+  pod 'rn-fetch-blob', path: '../../node_modules/rn-fetch-blob'
+  pod 'react-native-progress-view', path: '../../node_modules/@react-native-community/progress-view'
+  pod 'RNShare', path: '../../node_modules/react-native-share'
 
   use_flipper!({
-    'Flipper-Folly' => '2.5.3',
-    'Flipper' => '0.87.0',
-    'Flipper-RSocket' => '1.3.1'
+    'Flipper' => '0.92.0',
+    'Flipper-Folly' => '2.6.7',
+    'Flipper-RSocket' => '1.4.3'
   })
 
   # Define find-and-replace function
@@ -71,7 +76,7 @@ target 'IslandApp' do
     #
     # Note that if you have use_frameworks! enabled, Flipper will not work and
     # you should disable this next line.
-    flipper_post_install(installer)
+    # flipper_post_install(installer)
 
     nx_post_install(installer)
 
@@ -79,16 +84,21 @@ target 'IslandApp' do
       target.build_configurations.each do |config|
         # skip arm64 for ios simulators
         config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11.0'
+        # config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11.0'
       end
     end
 
-    system('chmod +rw Pods/RCT-Folly/folly/synchronization/DistributedMutex-inl.h')
 
-    find_and_replace("Pods/RCT-Folly/folly/synchronization/DistributedMutex-inl.h",
-    "atomic_notify_one(state)", "folly::atomic_notify_one(state)")
+    # We need to make one crude patch to RCT-Folly - set `__IPHONE_10_0` to our iOS target + 1
+    # https://github.com/facebook/flipper/issues/834 - 84 comments and still going...
+    `sed -i -e  $'s/__IPHONE_10_0/__IPHONE_12_0/' Pods/RCT-Folly/folly/portability/Time.h`
 
-    find_and_replace("Pods/RCT-Folly/folly/synchronization/DistributedMutex-inl.h",
-    "atomic_wait_until(&state, previous | data, deadline)", "folly::atomic_wait_until(&state, previous | data, deadline)")
+    # system('chmod +rw Pods/RCT-Folly/folly/synchronization/DistributedMutex-inl.h')
+
+    # find_and_replace("Pods/RCT-Folly/folly/synchronization/DistributedMutex-inl.h",
+    # "atomic_notify_one(state)", "folly::atomic_notify_one(state)")
+
+    # find_and_replace("Pods/RCT-Folly/folly/synchronization/DistributedMutex-inl.h",
+    # "atomic_wait_until(&state, previous | data, deadline)", "folly::atomic_wait_until(&state, previous | data, deadline)")
   end
 end

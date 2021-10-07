@@ -45,12 +45,12 @@ const {
       ...({
         accessibilityLabel: intl.formatMessage({ id: 'home.screenTitle' }),
       } as any),
-      selectedIconColor: null as any,
-      iconColor: null as any,
+      // selectedIconColor: null as any,
+      // iconColor: null as any,
       textColor: initialized
         ? Platform.OS === 'android'
           ? theme.shade.foreground
-          : DynamicColorIOS({ light: 'black', dark: 'white' })
+          : { light: 'black', dark: 'white' }
         : theme.shade.background,
       icon: initialized
         ? require('../../assets/icons/tabbar-home.png')
@@ -76,6 +76,8 @@ const {
       iconInsets,
       disableIconTint: false,
       disableSelectedIconTint: true,
+      iconColor: null as any,
+      selectedIconColor: null as any,
     },
   },
 )

@@ -118,7 +118,7 @@ export function Skeleton(props: SkeletonProps) {
       <Swoosh
         style={{
           height,
-          top: -Math.floor(height + height * 0.1),
+          top: -Math.floor(height + height * 0.5),
           shadowOffset: {
             width: 0,
             height: Math.floor(height),

@@ -3,11 +3,11 @@ rootProject.name = 'IslandApp'
 apply from: '../../node_modules/react-native-unimodules/gradle.groovy';
 includeUnimodulesProjects([
   modulesPaths: ['../../../node_modules'],
-  exclude: [
-    'unimodules-sensors-interface',
-    'unimodules-face-detector-interface',
-    'unimodules-task-manager-interface'
-  ]
+  // exclude: [
+  //   'unimodules-sensors-interface',
+  //   'unimodules-face-detector-interface',
+  //   'unimodules-task-manager-interface'
+  // ]
 ])
 
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
@@ -31,9 +31,6 @@ project(':react-native-dialogs').projectDir = new File(rootProject.projectDir, '
 include ':react-native-keychain'
 project(':react-native-keychain').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-keychain/android')
 
-include ':react-native-localize'
-project(':react-native-localize').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-localize/android')
-
 include ':react-native-navigation'
 project(':react-native-navigation').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-navigation/lib/android/app')
 
@@ -55,6 +52,21 @@ project(':react-native-interactable').projectDir = new File(rootProject.projectD
 include ':react-native-quick-actions'
 project(':react-native-quick-actions').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-quick-actions/android')
 
+include ':react-native-randombytes'
+project(':react-native-randombytes').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-randombytes/android')
+
+include ':react-native-pdf'
+project(':react-native-pdf').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-pdf/android')
+
+include ':rn-fetch-blob'
+project(':rn-fetch-blob').projectDir = new File(rootProject.projectDir, '../../node_modules/rn-fetch-blob/android')
+
+include ':progress-bar-android'
+project(':progress-bar-android').projectDir = new File(rootProject.projectDir, '../../node_modules/@react-native-community/progress-bar-android/android')
+
+include ':progress-view'
+project(':progress-view').projectDir = new File(rootProject.projectDir, '../../node_modules/@react-native-community/progress-view/android')
+
 include ':@react-native-firebase_app'
 project(':@react-native-firebase_app').projectDir = new File(rootProject.projectDir, '../../node_modules/@react-native-firebase/app/android')
 
@@ -63,5 +75,8 @@ project(':@react-native-firebase_messaging').projectDir = new File(rootProject.p
 
 include ':@react-native-firebase_perf'
 project(':@react-native-firebase_perf').projectDir = new File(rootProject.projectDir, '../../node_modules/@react-native-firebase/perf/android')
+
+include ':react-native-share'
+project(':react-native-share').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-share/android')
 
 include ':app'

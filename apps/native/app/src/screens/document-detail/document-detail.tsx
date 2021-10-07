@@ -1,16 +1,18 @@
 import { useQuery } from '@apollo/client'
 import { dynamicColor, Header, Loader } from '@island.is/island-ui-native'
+import { theme } from '@island.is/island-ui/theme'
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import { Animated, Platform, Share, StyleSheet, View } from 'react-native'
+import { Animated, Platform, StyleSheet, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
   useNavigationComponentDidDisappear,
 } from 'react-native-navigation-hooks/dist'
+import Pdf from 'react-native-pdf'
+import Share from 'react-native-share'
 import WebView from 'react-native-webview'
-import PDFReader from 'rn-pdf-reader-js'
 import styled from 'styled-components/native'
 import { client } from '../../graphql/client'
 import {
@@ -22,7 +24,7 @@ import {
   LIST_DOCUMENTS_QUERY,
 } from '../../graphql/queries/list-documents.query'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
-import { authStore, useAuthStore } from '../../stores/auth-store'
+import { authStore } from '../../stores/auth-store'
 import { inboxStore } from '../../stores/inbox-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { ButtonRegistry } from '../../utils/component-registry'
@@ -38,6 +40,11 @@ const Border = styled.View`
     dark: props.theme.shades.dark.shade200,
     light: props.theme.color.blue100,
   }))};
+`
+
+const PdfWrapper = styled.View`
+  flex: 1;
+  background-color: ${dynamicColor('background')};
 `
 
 const {
@@ -75,7 +82,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId)
   const intl = useIntl()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
-  const [accessToken, setAccessToken] = useState<string>();
+  const [accessToken, setAccessToken] = useState<string>()
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
     client,
@@ -96,21 +103,21 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   const [visible, setVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const [pdfUrl, setPdfUrl] = useState('')
+  const hasPdf = Document.fileType! === 'pdf'
 
   useNavigationButtonPress(
     (e) => {
       if (Platform.OS === 'android') {
         authStore.setState({ noLockScreenUntilNextAppStateActive: true })
       }
-      Share.share(
-        {
-          title: Document.subject,
-          url: `data:application/pdf;base64,${Document?.content!}`,
-        },
-        {
-          subject: Document.subject,
-        },
-      )
+      Share.open({
+        title: Document.subject!,
+        subject: Document.subject!,
+        message: `${Document.senderName!} \n ${Document.subject!}`,
+        type: hasPdf ? 'application/pdf' : undefined,
+        url: hasPdf ? `file://${pdfUrl}` : Document.url!,
+      })
     },
     componentId,
     ButtonRegistry.ShareButton,
@@ -132,18 +139,20 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   }, [res.data])
 
   useEffect(() => {
-    const { authorizeResult, refresh } = authStore.getState();
-    const isExpired = new Date(authorizeResult?.accessTokenExpirationDate!).getTime() < Date.now();
+    const { authorizeResult, refresh } = authStore.getState()
+    const isExpired =
+      new Date(authorizeResult?.accessTokenExpirationDate!).getTime() <
+      Date.now()
     if (isExpired) {
       refresh().then(() => {
-        setAccessToken(authStore.getState().authorizeResult?.accessToken);
+        setAccessToken(authStore.getState().authorizeResult?.accessToken)
       })
     } else {
-      setAccessToken(authorizeResult?.accessToken);
+      setAccessToken(authorizeResult?.accessToken)
     }
   }, [])
 
-  const loading = res.loading || !accessToken;
+  const loading = res.loading || !accessToken
 
   const fadeAnim = useRef(new Animated.Value(0)).current
 
@@ -175,36 +184,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           flex: 1,
         }}
       >
-        {visible && accessToken &&
-          Platform.select({
-            android: (
-              <Animated.View
-                style={{
-                  flex: 1,
-                  opacity: fadeAnim,
-                }}
-              >
-                <PDFReader
-                  onLoadEnd={() => {
-                    setLoaded(true)
-                  }}
-                  source={{
-                    base64: `data:application/pdf;base64,${Document.content!}`,
-                  }}
-                />
-              </Animated.View>
-            ),
-            ios: (
-              <Animated.View
-                style={{
-                  flex: 1,
-                  opacity: fadeAnim,
-                }}
-              >
-                <WebView
-                  onLoadEnd={() => {
-                    setLoaded(true)
-                  }}
+        {visible && accessToken && (
+          <Animated.View
+            style={{
+              flex: 1,
+              opacity: fadeAnim,
+            }}
+          >
+            {hasPdf ? (
+              <PdfWrapper>
+                <Pdf
                   source={{
                     uri: Document.url!,
                     headers: {
@@ -213,10 +202,30 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                     body: `documentId=${Document.id}&__accessToken=${accessToken}`,
                     method: 'POST',
                   }}
+                  onLoadComplete={(numberOfPages, filePath) => {
+                    setPdfUrl(filePath)
+                    setLoaded(true)
+                  }}
+                  style={{
+                    flex: 1,
+                    backgroundColor: 'transparent',
+                  }}
+                  activityIndicatorProps={{
+                    color: theme.color.blue400,
+                    progressTintColor: theme.color.blue200,
+                  }}
                 />
-              </Animated.View>
-            ),
-          })}
+              </PdfWrapper>
+            ) : (
+              <WebView
+                source={{ uri: Document.url! }}
+                onLoadEnd={() => {
+                  setLoaded(true)
+                }}
+              />
+            )}
+          </Animated.View>
+        )}
         {(!loaded || !accessToken) && (
           <View
             style={[

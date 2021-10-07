@@ -4,7 +4,8 @@ import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.View`
-  width: 100%;
+  margin-left: -${({ theme }) => theme.spacing[2]}px;;
+  margin-right: -${({ theme }) => theme.spacing[2]}px;;
   height: ${({ theme }) => theme.spacing[8]}px;
   align-items: center;
   justify-content: center;

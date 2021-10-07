@@ -4,7 +4,7 @@ import {
   ListItem,
   ListItemSkeleton,
   SearchHeader,
-  TopLine,
+  TopLine
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -16,16 +16,16 @@ import {
   Image,
   Platform,
   RefreshControl,
-  View,
+  View
 } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
 import {
   Navigation,
-  NavigationFunctionComponent,
+  NavigationFunctionComponent
 } from 'react-native-navigation'
 import {
   useNavigationSearchBarCancelPress,
-  useNavigationSearchBarUpdate,
+  useNavigationSearchBarUpdate
 } from 'react-native-navigation-hooks/dist'
 import { useTheme } from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
@@ -35,7 +35,7 @@ import { client } from '../../graphql/client'
 import { IDocument } from '../../graphql/fragments/document.fragment'
 import {
   ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY,
+  LIST_DOCUMENTS_QUERY
 } from '../../graphql/queries/list-documents.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
@@ -63,6 +63,7 @@ const {
       searchBar: {
         placeholder: intl.formatMessage({ id: 'inbox.searchPlaceholder' }),
         tintColor: theme.color.blue400,
+        backgroundColor: 'transparent',
       },
       rightButtons: initialized ? getRightButtons({ theme } as any) : [],
     },
@@ -245,7 +246,6 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
           fulltext: `${item.subject.toLocaleLowerCase()} ${item.senderName.toLocaleLowerCase()}`,
         }
       })
-
       setIndexedItems(indexedItems)
     }
   }, [res.data, res.loading])
@@ -254,7 +254,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   useEffect(() => {
     setSearchLoading(false)
     const q = ui.inboxQuery.toLocaleLowerCase().trim()
-    if (q !== '') {
+    if (ui.inboxQuery.trim() !== '') {
       setInboxItems(indexedItems.filter((item) => item.fulltext.includes(q)))
     } else {
       setInboxItems([...indexedItems])

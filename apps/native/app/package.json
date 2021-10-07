@@ -6,7 +6,8 @@
     "nx": "cd ../.. && yarn nx",
     "start": "../../../node_modules/react-native/cli.js start --port 8081",
     "run-ios": "../../../node_modules/react-native/cli.js run-ios --configuration Debug --simulator iPhone X --port 8081 --no-packager",
-    "build:env": "node ../node_modules/.bin/rnuc --libRoot ../node_modules/react-native-ultimate-config"
+    "build:env": "node ../node_modules/.bin/rnuc --libRoot ../node_modules/react-native-ultimate-config",
+    "preinstall": "exit 1"
   },
   "dependencies": {
     "react-native": "*",

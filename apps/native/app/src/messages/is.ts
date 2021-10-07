@@ -154,11 +154,14 @@ export const is = {
   'walletPass.lastUpdate': 'Síðast uppfært',
 
   // license scanner
-  'licenseScanner.title': 'Ökuskírteina skanni',
+  'licenseScanner.title': 'Skilríkjaskanni',
   'licenseScanner.helperMessage': 'Snúðu símanum að strikamerkinu',
   'licenseScanner.awaitingPermission': 'Bið um leyfi til að nota myndavél',
   'licenseScanner.noCameraAccess': 'Myndavél ekki aðgengileg',
   'licenseScannerDetail.driverLicenseNumber': 'Númer ökuskírteinis',
+  'licenseScannerDetail.invalidBarcode': 'Ógilt strikamerki',
+  'licenseScannerResult.androidHelp': 'Smellið á hnapp neðan við skírteini til þess að fá uppfært strikamerki.',
+  'licenseScannerResult.iosHelp': 'Smellið á hnapp með þremur punktum fyrir neðan skírteinið. Dragið því næst niður með fingur á miðjum skjánum til þess að uppfæra strikamerkið.',
 
   // license scan detail
   'licenseScanDetail.errorUnknown': 'Óþekkt villa',
@@ -184,7 +187,7 @@ export const is = {
   // applications screen
   'applications.title': 'Umsóknir á Ísland.is',
   'applications.bottomTabText': 'Umsóknir',
-  'applications.searchPlaceholder': 'Leita að skjölum...',
+  'applications.searchPlaceholder': 'Leita að umsóknum...',
   'applications.loadingText': 'Leita í skjölum...',
   'applications.resultText': 'niðurstöður fundust',
   'applications.singleResultText': 'niðurstaða fannst',

@@ -22,6 +22,10 @@ export function getDefaultOptions(
         fontFamily: 'IBMPlexSans-SemiBold',
         fontSize: 19,
       },
+      scrollEdgeAppearance: {
+        active: true,
+        noBorder: true,
+      },
       noBorder: true,
       animateRightButtons: false,
       animateLeftButtons: false,
@@ -32,19 +36,22 @@ export function getDefaultOptions(
       backgroundColor: theme.shade.background,
       visible: true,
     },
-    statusBar: Platform.OS === 'android' ? {
-      animated: true,
-      backgroundColor: theme.shade.background,
-      style: theme.isDark ? 'light' : 'dark',
-    } : undefined,
+    statusBar:
+      Platform.OS === 'android'
+        ? {
+            animated: true,
+            backgroundColor: theme.shade.background,
+            style: theme.isDark ? 'light' : 'dark',
+          }
+        : undefined,
     window: {
       backgroundColor:
         Platform.OS === 'android'
           ? theme.shade.background
-          : DynamicColorIOS({
+          : {
               dark: theme.shades.dark.background,
               light: theme.shades.light.background,
-            }),
+            },
     },
     layout:
       Platform.OS === 'android'

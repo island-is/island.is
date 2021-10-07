@@ -152,11 +152,14 @@ export const en: TranslatedMessages = {
   'walletPass.lastUpdate': 'Last updated',
 
   // license scanner
-  'licenseScanner.title': 'Scan driver license',
+  'licenseScanner.title': 'Scan barcode',
   'licenseScanner.helperMessage': 'Point device at barcode',
   'licenseScanner.awaitingPermission': 'Asking for camera permissions',
   'licenseScanner.noCameraAccess': 'Camera not available',
   'licenseScannerDetail.driverLicenseNumber': 'Driver license number',
+  'licenseScannerDetail.invalidBarcode': 'Invalid barcode',
+  'licenseScannerResult.androidHelp': 'Press button below the license to get updated barcode.',
+  'licenseScannerResult.iosHelp': 'Press three-dot button below the license. Next, refresh the screen by pulling down from the center to update the barcode.',
 
   // license scan detail
   'licenseScanDetail.errorUnknown': 'Unknown error',
@@ -166,7 +169,7 @@ export const en: TranslatedMessages = {
   // license scan results
   'licenseScannerResult.loading': 'Loading data',
   'licenseScannerResult.error': 'Error in scanning',
-  'licenseScannerResult.valid': 'Is vaild',
+  'licenseScannerResult.valid': 'Is valid',
   'licenseScannerResult.title': 'Driver license (IS)',
   'licenseScannerResult.errorMessage': 'Error message',
   'licenseScannerResult.name': 'Name',

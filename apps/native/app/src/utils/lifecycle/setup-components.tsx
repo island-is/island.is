@@ -50,7 +50,7 @@ export function registerAllComponents() {
   registerComponent(CR.LicenseScanDetailScreen, LicenseScanDetailScreen);
 
   // ui components
-  if (Platform.OS === 'android') {
+  // if (Platform.OS === 'android') {
     Navigation.registerComponent(CR.AndroidSearchBar, () => AndroidSearchBar)
-  }
+  // }
 }
