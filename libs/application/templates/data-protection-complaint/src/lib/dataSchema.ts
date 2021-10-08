@@ -111,12 +111,9 @@ export const DataProtectionComplaintSchema = z.object({
     z.object({
       name: z.string().refine((x) => !!x, { params: error.required }),
       address: z.string().refine((x) => !!x, { params: error.required }),
-      nationalId: z
-        .string()
-        .nonempty(error.required.defaultMessage)
-        .refine((x) => (x ? kennitala.isValid(x) : false), {
-          params: error.nationalId,
-        }),
+      nationalId: z.string().refine((x) => (x ? kennitala.isValid(x) : true), {
+        params: error.nationalId,
+      }),
       operatesWithinEurope: z.enum([YES, NO]),
       countryOfOperation: z.string().optional(),
     }),
