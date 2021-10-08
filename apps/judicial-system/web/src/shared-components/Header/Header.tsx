@@ -40,9 +40,7 @@ const Header: React.FC = () => {
         data-testid="link-to-home"
       >
         <Box display="flex" alignItems="center" cursor="pointer">
-          <div className={styles.islandIsApplicationLogoWrapper}>
-            <Logo width={146} />
-          </div>
+          <Logo width={146} />
           {router.pathname !== '/' && (
             <>
               {/* Text does not allow className prop so we need to do this on a separate span */}

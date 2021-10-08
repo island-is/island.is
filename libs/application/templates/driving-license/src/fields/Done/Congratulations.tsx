@@ -1,6 +1,11 @@
 import React from 'react'
 
-import { Box, ContentBlock, AlertMessage } from '@island.is/island-ui/core'
+import {
+  Box,
+  ContentBlock,
+  Text,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   CustomField,
@@ -9,6 +14,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import WarningSection, { Step } from './WarningSection'
+import { hasYes } from '../../utils'
 
 interface ReasonsProps {
   key: string
@@ -49,24 +55,23 @@ interface PropTypes extends FieldBaseProps {
   field: CustomField
 }
 
-interface name {
+interface Name {
   fullName: string
 }
 
-const Congratulations = ({
-  error,
-  field,
-  application,
-}: PropTypes): JSX.Element => {
-  const name = application.externalData.nationalRegistry?.data as name
+export const Congratulations = ({ application }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
   const { answers } = application
-  const picture = answers.willBringQualityPhoto === 'yes'
-  const certificate = Object.values(answers?.healthDeclaration).includes('yes')
+
+  const name = application.externalData.nationalRegistry?.data as Name
+  const picture = hasYes(answers?.willBringQualityPhoto)
+  const certificate = hasYes(answers?.healthDeclaration)
+
   const reasons = [
     { key: 'picture', requirementMet: picture },
     { key: 'certificate', requirementMet: certificate },
   ]
+
   const steps = extractReasons(reasons)
 
   if (!picture && !certificate) {
@@ -91,9 +96,16 @@ const Congratulations = ({
         </Box>
       </Box>
     )
-  } else {
-    return (
-      <Box marginTop={7} marginBottom={8}>
+  }
+
+  return (
+    <>
+      <Box paddingTop={2}>
+        <Text>
+          {formatText(m.congratulationsHelpText, application, formatMessage)}
+        </Text>
+      </Box>
+      <Box marginTop={5} marginBottom={8}>
         {steps.map(
           (step, index) =>
             step.state && (
@@ -105,8 +117,6 @@ const Congratulations = ({
             ),
         )}
       </Box>
-    )
-  }
+    </>
+  )
 }
-
-export default Congratulations
