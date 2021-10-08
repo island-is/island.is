@@ -105,8 +105,8 @@ export class EndorsementSystemService {
 
   async endorsementListControllerFindEndorsements(
     auth: Auth,
-    input: EndorsementListControllerFindEndorsementsRequest
-    ) {
+    input: EndorsementListControllerFindEndorsementsRequest,
+  ) {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerFindEndorsements(input)
       .catch(this.handleError.bind(this))
@@ -130,15 +130,9 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
-  async getRabbz(
-    input: PaginationInput,
-    auth: Auth,
-  ) {
+  async getRabbz(input: PaginationInput, auth: Auth) {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerGetRabbz(input)
       .catch(this.handleError.bind(this))
   }
-  
-  
 }
-

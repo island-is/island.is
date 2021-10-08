@@ -3,7 +3,6 @@ import { IsString, IsNumber, IsOptional } from 'class-validator'
 
 @InputType()
 export class PaginationInput {
-
   @Field({ nullable: true })
   @IsNumber()
   @IsOptional()
