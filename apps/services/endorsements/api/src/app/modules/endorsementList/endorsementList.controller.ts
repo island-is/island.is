@@ -40,17 +40,6 @@ export class FindTagPaginationCombo extends IntersectionType(
   PaginationDto,
 ) {}
 
-///////////// teste endpoint
-import { ApiProperty } from '@nestjs/swagger'
-export class FooBarDto {
-  @ApiProperty()
-  foo!: number
-  @ApiProperty()
-  bar!: string
-  @ApiProperty()
-  bob!: string
-}
-
 @Audit({
   namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
 })
@@ -62,32 +51,6 @@ export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
   ) {}
-
-  ////////////////////// new test point
-
-  // @Scopes(EndorsementsScope.main)
-  // @ApiOperation({
-  //   summary: 'getRabbz',
-  // })
-  // @ApiOkResponse({ type: FooBarDto })
-  // @Get('/getRabbz')
-  // @BypassAuth()
-  @ApiOperation({
-    summary: 'getRabbz',
-  })
-  @ApiOkResponse({ type: FooBarDto })
-  @Get('/getRabbz/:bob')
-  @BypassAuth()
-  async getRabbz(
-    @Query() query: PaginationDto,
-    @Param('bob') bob: string,
-  ): Promise<FooBarDto> {
-    return {
-      foo: 4,
-      bar: 'bar',
-      bob: bob,
-    }
-  }
 
   @ApiOperation({
     summary: 'Finds all endorsement lists belonging to given tags',
