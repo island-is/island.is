@@ -13,7 +13,7 @@ import { ApiProperty } from '@nestjs/swagger'
   tableName: 'translation',
   indexes: [
     {
-      fields: ['language', 'className', 'key', 'property'],
+      fields: ['language', 'class_name', 'key', 'property'],
     },
   ],
 })

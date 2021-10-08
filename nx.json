@@ -686,6 +686,12 @@
     "system-e2e": {
       "tags": []
     },
+    "testing-fixtures": {
+      "tags": []
+    },
+    "testing-nest": {
+      "tags": []
+    },
     "web": {
       "tags": []
     },
