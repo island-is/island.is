@@ -59,7 +59,7 @@ interface Name {
   fullName: string
 }
 
-const Congratulations = ({ application }: PropTypes): JSX.Element => {
+export const Congratulations = ({ application }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
   const { answers } = application
 
@@ -120,5 +120,3 @@ const Congratulations = ({ application }: PropTypes): JSX.Element => {
     </>
   )
 }
-
-export default Congratulations
