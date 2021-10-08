@@ -15,7 +15,7 @@ export const paymentPlanTable = {
       },
       payment: {
         id: `pdpp.application:paymentPlanTable.table.head.payment`,
-        defaultMessage: 'Innborgun',
+        defaultMessage: 'Til greiðslu',
         description: 'Payment plan table payment amount',
       },
       totalPayment: {
