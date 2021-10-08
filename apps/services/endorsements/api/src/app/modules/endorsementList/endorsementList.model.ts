@@ -49,7 +49,7 @@ export class EndorsementList extends Model<EndorsementList> {
   description!: string | null
 
   @ApiProperty({
-    type: String,
+    type: Date,
     nullable: false,
   })
   @Column({
@@ -58,7 +58,7 @@ export class EndorsementList extends Model<EndorsementList> {
   openedDate!: Date
 
   @ApiProperty({
-    type: String,
+    type: Date,
     nullable: false,
   })
   @Column({

@@ -46,14 +46,10 @@ export class CreateEndorsementListDto {
   @IsOptional()
   meta!: object | null
 
-  @Field()
-  @IsDate()
-  @Type(() => Date)
+  @Field(() => Date)
   closedDate!: Date
 
-  @Field()
-  @IsDate()
-  @Type(() => Date)
+  @Field(() => Date)
   openedDate!: Date
 
   @Field()

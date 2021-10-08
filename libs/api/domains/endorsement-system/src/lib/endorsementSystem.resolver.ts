@@ -5,6 +5,7 @@ import { UseGuards } from '@nestjs/common'
 import { Endorsement } from './models/endorsement.model'
 import { EndorsementSystemService } from './endorsementSystem.service'
 import { FindEndorsementListInput } from './dto/findEndorsementList.input'
+import { CreateEndorsementInput } from './dto/createEndorsement.input'
 import { EndorsementList } from './models/endorsementList.model'
 import { CreateEndorsementListDto } from './dto/createEndorsementList.input'
 import { BulkEndorseListInput } from './dto/bulkEndorseList.input'
@@ -27,7 +28,7 @@ export class EndorsementSystemResolver {
     @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
   ): Promise<Endorsement> {
-    return await this.endorsementSystemService.endorsementControllerFindByAuth(
+    return  await this.endorsementSystemService.endorsementControllerFindByAuth(
       input,
       user,
     )
@@ -47,10 +48,10 @@ export class EndorsementSystemResolver {
 
   @Mutation(() => Endorsement)
   async endorsementSystemEndorseList(
-    @Args('input') input: FindEndorsementListInput,
+    @Args('input') input: CreateEndorsementInput,
     @CurrentUser() user: User,
   ): Promise<Endorsement> {
-    return await this.endorsementSystemService.endorsementControllerCreate(
+    return  await this.endorsementSystemService.endorsementControllerCreate(
       input,
       user,
     )

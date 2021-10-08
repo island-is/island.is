@@ -9,7 +9,6 @@ export class PaginatedEndorsementInput {
 
   @Field()
   @IsNumber()
-  // @IsOptional()
   limit!: number
 
   @Field({ nullable: true })

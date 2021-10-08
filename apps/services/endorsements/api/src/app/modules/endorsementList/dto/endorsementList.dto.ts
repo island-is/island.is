@@ -48,12 +48,12 @@ export class EndorsementListDto {
   @IsObject()
   meta = {}
 
-  @ApiProperty({ type: String })
+  @ApiProperty({ type: Date })
   @IsDate()
   @Type(() => Date)
   closedDate!: Date
 
-  @ApiProperty({ type: String })
+  @ApiProperty({ type: Date })
   @IsDate()
   @Type(() => Date)
   openedDate!: Date
