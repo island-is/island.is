@@ -107,7 +107,6 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
             formatMessage,
           )}
           error={errors && getErrorViaPath(errors, nationalIdField)}
-          required
           backgroundColor="blue"
           defaultValue=""
         />
@@ -122,7 +121,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
         largeButtons
         options={[
           { value: YES, label: formatMessage(sharedFields.yes) },
-          { value: NO, label: formatMessage(sharedFields.no) },
+          { value: NO, label: formatMessage(sharedFields.noIdontKnow) },
         ]}
         split="1/2"
         onSelect={handleOnSelect}
