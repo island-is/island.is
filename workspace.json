@@ -2258,6 +2258,94 @@
         }
       }
     },
+    "application-templates-general-petition": {
+      "root": "libs/application/templates/general-petition",
+      "sourceRoot": "libs/application/templates/general-petition/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/general-petition/tsconfig.lib.json",
+              "libs/application/templates/general-petition/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/general-petition/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/general-petition/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/application/templates/general-petition"]
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/general-petition/src/lib/messages.ts'"
+          }
+        },
+        "dev/init": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run application-system-api:dev-services",
+              "yarn nx run application-system-api:migrate",
+              "yarn nx run services-endorsements-api:migrate",
+              "yarn nx run application-templates-general-petition:schemas/external-openapi-generator --skip-nx-cache",
+              "yarn nx run application-templates-general-petition:schemas/codegen --skip-nx-cache",
+              "yarn nx run application-system-api:schemas/build-openapi --skip-nx-cache",
+              "yarn nx run api-domains-application:schemas/openapi-generator --skip-nx-cache"
+            ],
+            "parallel": false
+          }
+        },
+        "dev": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
+              "yarn start application-system-api &",
+              "yarn start application-system-form &",
+              "yarn start services-endorsements-api &",
+              "yarn start services-temporary-voter-registry-api &",
+              "yarn start services-party-letter-registry-api &"
+            ],
+            "parallel": true
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/general-petition/codegen.yml"
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run services-endorsements-api:schemas/external-openapi-generator $NX_OPTIONS",
+              "nx run services-endorsements-api:schemas/build-openapi $NX_OPTIONS",
+              "nx run application-templates-general-petition:schemas/openapi-generator $NX_OPTIONS"
+            ],
+            "parallel": false
+          }
+        },
+        "schemas/openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/general-petition/gen/fetch/endorsements -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+          }
+        }
+      }
+    },
     "application-templates-health-insurance": {
       "root": "libs/application/templates/health-insurance",
       "sourceRoot": "libs/application/templates/health-insurance/src",

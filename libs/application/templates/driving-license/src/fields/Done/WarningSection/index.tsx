@@ -7,9 +7,9 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
-import { Bullets } from '../../'
-import * as styles from './WarningSection.treat'
 import { MessageDescriptor } from '@formatjs/intl'
+
+import * as styles from './WarningSection.treat'
 
 export interface Step {
   key: string
