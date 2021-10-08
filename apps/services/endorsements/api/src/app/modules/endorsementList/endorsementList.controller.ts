@@ -14,13 +14,15 @@ import {
   ApiOkResponse,
   ApiParam,
   ApiTags,
+  ApiExtraModels,
+  ApiOperation,
+  IntersectionType,
 } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
-import { Endorsement } from '../endorsement/models/endorsement.model'
 import { BypassAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
 import { environment } from '../../../environments'
@@ -29,49 +31,59 @@ import type { User } from '@island.is/auth-nest-tools'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
 
+import { PaginationDto } from '@island.is/nest/pagination'
+import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
+import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
+
+export class FindTagPaginationCombo extends IntersectionType(
+  FindEndorsementListByTagsDto,
+  PaginationDto,
+) {}
+
 @Audit({
   namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
 })
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
 @ApiOAuth2([])
+@ApiExtraModels(FindTagPaginationCombo, PaginatedEndorsementListDto)
 export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
   ) {}
-
-  @ApiOkResponse({
-    description: 'Finds all endorsement lists belonging to given tags',
-    type: [EndorsementList],
+  @ApiOperation({
+    summary: 'Finds all endorsement lists belonging to given tags',
   })
+  @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get()
   @BypassAuth()
   async findByTags(
-    @Query() { tags }: FindEndorsementListByTagsDto,
-  ): Promise<EndorsementList[]> {
-    // TODO: Add pagination
+    @Query() query: FindTagPaginationCombo,
+  ): Promise<PaginatedEndorsementListDto> {
     return await this.endorsementListService.findListsByTags(
-      !Array.isArray(tags) ? [tags] : tags, // query parameters of length one are not arrays, we normalize all tags input to arrays here
+      // query parameters of length one are not arrays, we normalize all tags input to arrays here
+      !Array.isArray(query.tags) ? [query.tags] : query.tags,
+      query,
     )
   }
 
-  /**
-   * This exists so we can return all endorsements for user across all lists
-   */
-  @ApiOkResponse({
-    description: 'Finds all endorsements for the currently authenticated user',
-    type: [Endorsement],
-  })
   @Scopes(EndorsementsScope.main)
-  @Get('/endorsements')
-  @Audit<Endorsement[]>({
-    resources: (endorsement) => endorsement.map((e) => e.id),
-    meta: (endorsement) => ({ count: endorsement.length }),
+  @ApiOperation({
+    summary: 'Finds all endorsements for the currently authenticated user',
   })
-  async findEndorsements(@CurrentUser() user: User): Promise<Endorsement[]> {
-    // TODO: Add pagination
+  @ApiOkResponse({ type: PaginatedEndorsementDto })
+  @Get('/endorsements')
+  @Audit<PaginatedEndorsementDto>({
+    resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
+    meta: ({ data: endorsement }) => ({ count: endorsement.length }),
+  })
+  async findEndorsements(
+    @CurrentUser() user: User,
+    @Query() query: PaginationDto,
+  ): Promise<PaginatedEndorsementDto> {
     return await this.endorsementListService.findAllEndorsementsByNationalId(
       user.nationalId,
+      query,
     )
   }
 
@@ -79,6 +91,7 @@ export class EndorsementListController {
     description: 'Finds a single endorsements list by id',
     type: EndorsementList,
   })
+  @ApiOperation({ summary: 'Finds a single endorsements list by id' })
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
   @Get(':listId')
@@ -95,7 +108,7 @@ export class EndorsementListController {
   ): Promise<EndorsementList> {
     return endorsementList
   }
-
+  @ApiOperation({ summary: 'Close a single endorsements list by id' })
   @ApiOkResponse({
     description: 'Close a single endorsements list by id',
     type: EndorsementList,
@@ -118,6 +131,7 @@ export class EndorsementListController {
     return await this.endorsementListService.close(endorsementList)
   }
 
+  @ApiOperation({ summary: 'Open a single endorsements list by id' })
   @ApiOkResponse({
     description: 'Open a single endorsements list by id',
     type: EndorsementList,
@@ -139,7 +153,7 @@ export class EndorsementListController {
   ): Promise<EndorsementList> {
     return await this.endorsementListService.open(endorsementList)
   }
-
+  @ApiOperation({ summary: 'Create an endorsements list' })
   @ApiOkResponse({
     description: 'Create an endorsements list',
     type: EndorsementList,

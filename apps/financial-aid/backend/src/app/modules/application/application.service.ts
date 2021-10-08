@@ -61,7 +61,7 @@ export class ApplicationService {
 
     const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
 
-    return this.applicationModel.findOne({
+    return await this.applicationModel.findOne({
       where: {
         nationalId,
         created: { [Op.gte]: firstDateOfMonth },
@@ -189,6 +189,10 @@ export class ApplicationService {
     })
 
     await this.setFilesToApplication(id, updatedApplication)
+
+    const events = await this.applicationEventService.findById(id)
+
+    updatedApplication?.setDataValue('applicationEvents', events)
 
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({

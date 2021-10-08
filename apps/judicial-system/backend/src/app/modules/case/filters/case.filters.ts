@@ -3,9 +3,9 @@ import { literal, Op, WhereOptions } from 'sequelize'
 import {
   CaseAppealDecision,
   CaseState,
-  CaseType,
   hasCaseBeenAppealed,
   InstitutionType,
+  restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User, Case as TCase } from '@island.is/judicial-system/types'
@@ -47,10 +47,10 @@ function isStateHiddenFromRole(
 }
 
 function isProsecutorsOfficeCaseHiddenFromUser(
-  prosecutorInstitutionId: string | undefined,
   user: User,
   forUpdate: boolean,
-  sharedWithProsecutorsOfficeId: string | undefined,
+  prosecutorInstitutionId?: string,
+  sharedWithProsecutorsOfficeId?: string,
 ): boolean {
   return (
     prosecutorsOfficeMustMatchUserInstitution(user.role) &&
@@ -63,10 +63,10 @@ function isProsecutorsOfficeCaseHiddenFromUser(
 }
 
 function isCourtCaseHiddenFromUser(
-  courtId: string | undefined,
   user: User,
   forUpdate: boolean,
   hasCaseBeenAppealed: boolean,
+  courtId?: string,
 ): boolean {
   return (
     courtMustMatchUserIInstitution(user.role) &&
@@ -78,6 +78,19 @@ function isCourtCaseHiddenFromUser(
   )
 }
 
+function isHightenedSecurityCaseHiddenFromUser(
+  user: User,
+  isHeightenedSecurityLevel?: boolean,
+  creatingProsecutorId?: string,
+  prosecutorId?: string,
+): boolean {
+  return (
+    Boolean(isHeightenedSecurityLevel) &&
+    user.id !== creatingProsecutorId &&
+    user.id !== prosecutorId
+  )
+}
+
 export function isCaseBlockedFromUser(
   theCase: Case,
   user: User,
@@ -86,16 +99,22 @@ export function isCaseBlockedFromUser(
   return (
     isStateHiddenFromRole(theCase.state, user.role, user.institution?.type) ||
     isProsecutorsOfficeCaseHiddenFromUser(
-      theCase.prosecutor?.institutionId,
       user,
       forUpdate,
+      theCase.creatingProsecutor?.institutionId,
       theCase.sharedWithProsecutorsOfficeId,
     ) ||
     isCourtCaseHiddenFromUser(
-      theCase.courtId,
       user,
       forUpdate,
       hasCaseBeenAppealed((theCase as unknown) as TCase),
+      theCase.courtId,
+    ) ||
+    isHightenedSecurityCaseHiddenFromUser(
+      user,
+      theCase.isHeightenedSecurityLevel,
+      theCase.creatingProsecutor?.id,
+      theCase.prosecutor?.id,
     )
   )
 }
@@ -105,7 +124,8 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     [Op.not]: { state: getBlockedStates(user.role, user.institution?.type) },
   }
 
-  const blockOld = [
+  // Old cases are only filtered from case lists
+  const hideOld = [
     {
       [Op.not]: {
         [Op.and]: [
@@ -117,7 +137,22 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     {
       [Op.not]: {
         [Op.and]: [
-          { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
+          {
+            state: [
+              CaseState.NEW,
+              CaseState.DRAFT,
+              CaseState.SUBMITTED,
+              CaseState.RECEIVED,
+            ],
+          },
+          { created: { [Op.lt]: literal('current_date - 90') } },
+        ],
+      },
+    },
+    {
+      [Op.not]: {
+        [Op.and]: [
+          { type: restrictionCases },
           { state: CaseState.ACCEPTED },
           { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
         ],
@@ -126,7 +161,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     {
       [Op.not]: {
         [Op.and]: [
-          { [Op.not]: { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] } },
+          { [Op.not]: { type: restrictionCases } },
           { state: CaseState.ACCEPTED },
           { ruling_date: { [Op.lt]: literal('current_date - 90') } },
         ],
@@ -138,8 +173,8 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     user.role === UserRole.PROSECUTOR
       ? {
           [Op.or]: [
-            { prosecutor_id: { [Op.is]: null } },
-            { '$prosecutor.institution_id$': user.institution?.id },
+            { creating_prosecutor_id: { [Op.is]: null } },
+            { '$creatingProsecutor.institution_id$': user.institution?.id },
             { shared_with_prosecutors_office_id: user.institution?.id },
           ],
         }
@@ -159,5 +194,26 @@ export function getCasesQueryFilter(user: User): WhereOptions {
           ],
         }
 
-  return { [Op.and]: [blockStates, ...blockOld, blockInstitutions] }
+  const blockHightenedSecurity =
+    user.role === UserRole.PROSECUTOR
+      ? [
+          {
+            [Op.or]: [
+              { is_heightened_security_level: { [Op.is]: null } },
+              { is_heightened_security_level: false },
+              { creating_prosecutor_id: user.id },
+              { prosecutor_id: user.id },
+            ],
+          },
+        ]
+      : []
+
+  return {
+    [Op.and]: [
+      blockStates,
+      ...hideOld,
+      blockInstitutions,
+      ...blockHightenedSecurity,
+    ],
+  }
 }

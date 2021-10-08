@@ -3824,10 +3824,10 @@
   resolved "https://registry.yarnpkg.com/@hugsmidjan/qj/-/qj-4.7.0.tgz#ef2793bf1f349bc01b2118dc2d20d6f22163fa84"
   integrity sha512-/kIAN1WvMTlzmtKXgIRl57KbTpAd9UmNgPfcO0NtZNllwhfKDRVOrN9c6ZeBxnrfWsYBP6/BFldYur1aBDBO2g==
 
-"@hugsmidjan/regulations-editor@0.3.6":
-  version "0.3.6"
-  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.3.6.tgz#fbb8c4a8b623d86e69cc195e6a7d6cd1acd675d6"
-  integrity sha512-jzXSxqwT7ZKlPH0mhO6jWfN0GjeeToj2dg9STOreapCqGiPhmYzSHKGl8gxpNQafDAfFbPnaoXnUWycifVem8Q==
+"@hugsmidjan/regulations-editor@0.4.5":
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.4.5.tgz#4aab80c01b1301c3b02e950d4d43e5ad1df6c176"
+  integrity sha512-G8jco4WdXZ9Nuxa9MJzP6/U6jMCcy3kfXQKFdEVlJloef73DqceuO4B5R7i/KkxuLC6t6JQ5BzXbe5MKqVKC/Q==
   dependencies:
     "@hugsmidjan/qj" "^4.7.0"
     "@tinymce/tinymce-react" "^3.8.4"
@@ -20317,11 +20317,6 @@ nano-css@^5.2.1:
     stacktrace-js "^2.0.2"
     stylis "^4.0.6"
 
-nanocolors@^0.2.2:
-  version "0.2.10"
-  resolved "https://registry.yarnpkg.com/nanocolors/-/nanocolors-0.2.10.tgz#a712df4d3c1bf12d9b4fb8b5aa61b5ba31337503"
-  integrity sha512-i+EDWGsJClQwR/bhLIG/CObZZwaYaS5qt+yjxZbfV+77QiNHNzE9nj4d9Ut1TGZ0R0eSwPcQWzReASzXuw/7oA==
-
 nanoid@3.1.20:
   version "3.1.20"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.20.tgz#badc263c6b1dcf14b71efaa85f6ab4c1d6cfc788"
@@ -22075,6 +22070,11 @@ physical-cpu-count@^2.0.0:
   resolved "https://registry.yarnpkg.com/physical-cpu-count/-/physical-cpu-count-2.0.0.tgz#18de2f97e4bf7a9551ad7511942b5496f7aba660"
   integrity sha1-GN4vl+S/epVRrXURlCtUlverpmA=
 
+picocolors@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-0.2.1.tgz#570670f793646851d1ba135996962abad587859f"
+  integrity sha512-cMlDqaLEqfSaW8Z7N5Jw+lyIW869EzT73/F5lhtY9cLGoVxSXznfgfXMO0Z5K0o0Q2TkTXq+0KFsdnSe3jDViA==
+
 picomatch@^2.0.4, picomatch@^2.0.5, picomatch@^2.2.1, picomatch@^2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.2.2.tgz#21f333e9b6b8eaff02468f5146ea406d345f4dad"
@@ -22727,11 +22727,11 @@ postcss@8.1.1, postcss@8.2.10, postcss@8.2.4, postcss@^8.1.10:
     source-map "^0.6.1"
 
 postcss@^7.0.26:
-  version "7.0.38"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-7.0.38.tgz#5365a9c5126643d977046ad239f60eadda2491d6"
-  integrity sha512-wNrSHWjHDQJR/IZL5IKGxRtFgrYNaAA/UrkW2WqbtZO6uxSLMxMN+s2iqUMwnAWm3fMROlDYZB41dr0Mt7vBwQ==
+  version "7.0.39"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-7.0.39.tgz#9624375d965630e2e1f2c02a935c82a59cb48309"
+  integrity sha512-yioayjNbHn6z1/Bywyb2Y4s3yvDAeXGOyxqD+LnVOinq6Mdmd++SW2wUNVzavyyHxd6+DxzWGIuosg6P1Rj8uA==
   dependencies:
-    nanocolors "^0.2.2"
+    picocolors "^0.2.1"
     source-map "^0.6.1"
 
 postcss@^7.0.36:

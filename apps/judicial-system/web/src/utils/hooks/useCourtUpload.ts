@@ -35,7 +35,7 @@ export const useCourtUpload = (
   const [uploadFileToCourtMutation] = useMutation(UploadFileToCourtMutation)
 
   useEffect(() => {
-    const files = workingCase.files as CaseFile[]
+    const files = workingCase.caseFiles as CaseFile[]
 
     files
       ?.filter((file) => file.status !== 'error' && file.status !== 'uploading')
@@ -87,7 +87,7 @@ export const useCourtUpload = (
     status: CaseFileStatus,
     state: CaseFileState,
   ) => {
-    const files = workingCase.files as CaseFile[]
+    const files = workingCase.caseFiles as CaseFile[]
 
     if (files) {
       const fileIndexToUpdate = files.findIndex((f) => f.id === file.id)

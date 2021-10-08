@@ -85,6 +85,7 @@
 
 /apps/financial-aid/                                                                          @island-is/kolibri-robin-hood
 /libs/financial-aid/                                                                          @island-is/kolibri-robin-hood
+/libs/next-ids-auth/                                                                          @island-is/kolibri-robin-hood
 
 /apps/service-portal*/                                                                        @island-is/hugsmidjan
 /apps/services/user-profile/                                                                  @island-is/hugsmidjan

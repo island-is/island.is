@@ -227,7 +227,7 @@ export class CaseResolver {
   }
 
   @ResolveField(() => [CaseFile])
-  async files(
+  async caseFiles(
     @Parent() existingCase: Case,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<CaseFile[]> {

@@ -112,6 +112,7 @@ export interface Case {
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   defenderIsSpokesperson?: boolean
+  isHeightenedSecurityLevel?: boolean
   court?: Institution
   leadInvestigator?: string
   arrestDate?: string
@@ -130,6 +131,7 @@ export interface Case {
   prosecutorOnlySessionRequest?: string
   comments?: string
   caseFilesComments?: string
+  creatingProsecutor?: User
   prosecutor?: User
   sharedWithProsecutorsOffice?: Institution
   courtCaseNumber?: string
@@ -171,7 +173,8 @@ export interface Case {
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
-  files?: CaseFile[]
+  caseFiles?: CaseFile[]
+  isMasked?: boolean
 }
 
 export interface CreateCase {
@@ -203,6 +206,7 @@ export interface UpdateCase {
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   defenderIsSpokesperson?: boolean
+  isHeightenedSecurityLevel?: boolean
   courtId?: string
   leadInvestigator?: string
   arrestDate?: string
@@ -276,6 +280,16 @@ export interface CreateCourtCase {
   type: CaseType
   policeCaseNumber: string
   isExtension: boolean
+}
+
+export const restrictionCases = [CaseType.CUSTODY, CaseType.TRAVEL_BAN]
+
+export function isRestrictionCase(type?: CaseType): boolean {
+  return Boolean(type && restrictionCases.includes(type))
+}
+
+export function isInvestigationCase(type?: CaseType): boolean {
+  return Boolean(type && !restrictionCases.includes(type))
 }
 
 export const completedCaseStates = [

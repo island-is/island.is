@@ -67,8 +67,10 @@ export const DateOfAccident: FC<FieldBaseProps> = ({
         label={accidentDetails.labels.date.defaultMessage}
         placeholder={accidentDetails.placeholder.date.defaultMessage}
         id={id}
+        defaultValue={dateOfAccident}
         backgroundColor="blue"
         onChange={handleDateChange}
+        maxDate={new Date()}
       />
 
       <Box hidden>

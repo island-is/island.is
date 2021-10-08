@@ -11,16 +11,16 @@ import {
   FormContentContainer,
   CourtCaseFactsAndLegalArgumentsAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   formatDate,
   formatCustodyRestrictions,
   formatAlternativeTravelBanRestrictions,
   formatAccusedByGender,
   NounCases,
+  formatAppeal,
+  capitalize,
 } from '@island.is/judicial-system/formatters'
 import {
-  AppealDecisionRole,
   CaseData,
   JudgeSubsections,
   Sections,
@@ -213,17 +213,16 @@ export const Confirmation: React.FC = () => {
               </Box>
               <Box marginBottom={1}>
                 <Text variant="h4">
-                  {getAppealDecisionText(
-                    AppealDecisionRole.ACCUSED,
-                    workingCase.accusedAppealDecision,
-                    workingCase.accusedGender,
+                  {formatAppeal(
+                    workingCase.prosecutorAppealDecision,
+                    'Sækjandi',
                   )}
                 </Text>
               </Box>
               <Text variant="h4">
-                {getAppealDecisionText(
-                  AppealDecisionRole.PROSECUTOR,
-                  workingCase.prosecutorAppealDecision,
+                {formatAppeal(
+                  workingCase.accusedAppealDecision,
+                  capitalize(formatAccusedByGender(workingCase.accusedGender)),
                   workingCase.accusedGender,
                 )}
               </Text>

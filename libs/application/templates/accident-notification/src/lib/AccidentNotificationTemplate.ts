@@ -10,7 +10,7 @@ import {
 } from '@island.is/application/core'
 import set from 'lodash/set'
 import { assign } from 'xstate'
-import * as z from 'zod'
+// import * as z from 'zod'
 import { States } from '../constants'
 import { ApiActions } from '../shared'
 import {
@@ -21,6 +21,7 @@ import { hasMissingDocuments } from '../utils/hasMissingDocuments'
 import { isReportingOnBehalfSelf } from '../utils/isReportingBehalfOfSelf'
 import { application } from './messages'
 
+// Uncomment for empty data schema
 const AccidentNotificationSchema = z.object({})
 
 enum Roles {
