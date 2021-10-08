@@ -1,11 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsUUID, IsString, IsNumber, IsOptional } from 'class-validator'
+import { IsString, IsNumber, IsOptional } from 'class-validator'
 
 @InputType()
-export class PaginatedEndorsementInput {
-  @Field()
-  @IsUUID(4)
-  listId!: string
+export class PaginationInput {
 
   @Field({ nullable: true })
   @IsNumber()

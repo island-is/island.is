@@ -15,6 +15,7 @@ import { PaginatedEndorsementResponse } from './dto/paginatedEndorsement.respons
 
 import { PaginatedEndorsementListInput } from './dto/paginatedEndorsementList.input'
 import { PaginatedEndorsementListResponse } from './dto/paginatedEndorsementList.response'
+import { PaginationInput } from './dto/pagination.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver('EndorsementSystemResolver')
@@ -104,16 +105,27 @@ export class EndorsementSystemResolver {
     )
   }
 
-  @Query(() => PaginatedEndorsementResponse)
-  async endorsementSystemUserEndorsements(
+  @Query(() => EndorsementList, { nullable: true })
+  async getRabbz(
+    @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
-    @Args('input') input: PaginatedEndorsementInput,
-  ): Promise<PaginatedEndorsementResponse> {
-    return await this.endorsementSystemService.endorsementListControllerFindEndorsements(
-      user,
+  ): Promise<EndorsementList> {
+    return await this.endorsementSystemService.endorsementListControllerFindOne(
       input,
+      user,
     )
   }
+
+  // @Query(() => PaginatedEndorsementResponse)
+  // async endorsementSystemUserEndorsements(
+  //   @CurrentUser() user: User,
+  //   @Args('input') input: PaginationInput,
+  // ): Promise<PaginatedEndorsementResponse> {
+  //   return await this.endorsementSystemService.endorsementListControllerFindEndorsements(
+  //     user,
+  //     input,
+  //   )
+  // }
 
   @Mutation(() => EndorsementList)
   async endorsementSystemCreateEndorsementList(
