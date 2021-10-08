@@ -7,6 +7,7 @@ const paymentPlanSchema = z
     id: z.string().nonempty(),
     amountPerMonth: z.number().optional(),
     numberOfMonths: z.number().optional(),
+    distribution: z.string().optional(),
     paymentMode: z.enum([AMOUNT, MONTHS]).refine((x) => x !== null, {
       params: error.paymentMode,
     }),
