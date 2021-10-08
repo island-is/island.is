@@ -297,7 +297,7 @@ describe('when constructing a new period', () => {
     })
   })
 
-  it('should not be able to have a lower ratio than 10%', () => {
+  it('should not be able to have a lower ratio than 1%', () => {
     expect(
       createValidationResultForPeriod({
         firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
@@ -306,7 +306,7 @@ describe('when constructing a new period', () => {
         endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
         days: '30',
         percentage: '50',
-        ratio: '9',
+        ratio: '0',
       }),
     ).toStrictEqual({
       message: errorMessages.periodsRatioBelowMinimum,
