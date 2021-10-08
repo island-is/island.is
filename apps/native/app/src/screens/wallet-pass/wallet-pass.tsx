@@ -231,6 +231,23 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   const fields = data?.payload?.data ?? []
   const hasPkpass = data?.license?.pkpass || false
+  let hasValidPkpass = false
+
+
+  // quick fix until this will be handled in api
+  // fint out if licence was given out before 15 águst 1997 then it should not be possible to add licence to wallet
+
+  try {
+    const startDateForValidPkpass = Date.parse('1997-08-15T00:00:00')
+    const parsedData = JSON.parse(data?.payload?.rawData)
+    const issuedAt = parsedData?.utgafuDagsetning
+    const hasImage = !!parsedData?.mynd?.id
+
+    hasValidPkpass = Date.parse(issuedAt) > startDateForValidPkpass || !hasImage;
+
+  } catch (error) {
+    // noop
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -273,7 +290,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           agencyLogo={agencyLogo}
         />
       </SafeAreaView>
-      {hasPkpass && (
+      {hasPkpass && hasValidPkpass && (
         <SafeAreaView
           style={{
             position: 'absolute',

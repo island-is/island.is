@@ -141,7 +141,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useActiveTabItemPress(2, () => {
     flatListRef.current?.scrollToOffset({
-      offset: -100,
+      offset: -150,
       animated: true,
     })
   })
@@ -271,6 +271,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
         scrollEventThrottle={16}
+        scrollToOverflowEnabled={true}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           {

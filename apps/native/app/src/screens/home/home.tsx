@@ -90,7 +90,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const ui = useUiStore()
 
   useActiveTabItemPress(1, () => {
-    flatListRef.current?.scrollToOffset({ offset: -100, animated: true })
+    flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
   })
 
   const applicationsRes = useQuery<ListApplicationsResponse>(
@@ -152,6 +152,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         renderItem={renderItem}
         style={{ flex: 1 }}
         scrollEventThrottle={16}
+        scrollToOverflowEnabled={true}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           {

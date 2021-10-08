@@ -22,6 +22,9 @@ export function getDefaultOptions(
         fontFamily: 'IBMPlexSans-SemiBold',
         fontSize: 19,
       },
+      largeTitle: {
+        fontFamily: 'IBMPlexSans-SemiBold',
+      },
       scrollEdgeAppearance: {
         active: true,
         noBorder: true,

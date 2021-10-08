@@ -4,7 +4,7 @@ import {
   ListItem,
   ListItemSkeleton,
   SearchHeader,
-  TopLine
+  TopLine,
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -16,16 +16,16 @@ import {
   Image,
   Platform,
   RefreshControl,
-  View
+  View,
 } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
 import {
   Navigation,
-  NavigationFunctionComponent
+  NavigationFunctionComponent,
 } from 'react-native-navigation'
 import {
   useNavigationSearchBarCancelPress,
-  useNavigationSearchBarUpdate
+  useNavigationSearchBarUpdate,
 } from 'react-native-navigation-hooks/dist'
 import { useTheme } from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
@@ -35,7 +35,7 @@ import { client } from '../../graphql/client'
 import { IDocument } from '../../graphql/fragments/document.fragment'
 import {
   ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY
+  LIST_DOCUMENTS_QUERY,
 } from '../../graphql/queries/list-documents.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
@@ -212,7 +212,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useActiveTabItemPress(0, () => {
     flatListRef.current?.scrollToOffset({
-      offset: -100,
+      offset: -200,
       animated: true,
     })
   })
@@ -337,6 +337,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
       <Animated.FlatList
         ref={flatListRef}
         scrollEventThrottle={16}
+        scrollToOverflowEnabled={true}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           {
