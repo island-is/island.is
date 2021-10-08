@@ -320,7 +320,7 @@ const Screen: FC<ScreenProps> = ({
     }
 
     return {
-      errors: newData.errors,
+      errors: newData?.errors,
     }
   }
 

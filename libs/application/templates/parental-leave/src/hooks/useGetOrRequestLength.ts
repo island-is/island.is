@@ -1,25 +1,24 @@
 import { useCallback, useState } from 'react'
+import parseISO from 'date-fns/parseISO'
 
 import { Application } from '@island.is/application/core'
-
-import { calculateDaysToPercentage } from '../lib/parentalLeaveUtils'
-import { useLazyParentalLeavePeriodLength } from './useLazyParentalLeavePeriodLength'
+import { getAvailableRightsInDays } from '../lib/parentalLeaveUtils'
 import { useDaysAlreadyUsed } from './useDaysAlreadyUsed'
+import {
+  calculatePeriodLength,
+  calculateMaxPercentageForPeriod,
+} from '../lib/directorateOfLabour.utils'
 
 const loadedLengths = new Map<string, { length: number; percentage: number }>()
 
 export const useGetOrRequestLength = (application: Application) => {
-  const lazyGetLength = useLazyParentalLeavePeriodLength()
   const [loading, setLoading] = useState(false)
+  const rights = getAvailableRightsInDays(application)
   const daysAlreadyUsed = useDaysAlreadyUsed(application)
+  const remainingRights = rights - daysAlreadyUsed
 
-  /**
-   * We call the API multiple times, because we don't know the final value at first, we start with temporary values before able to request with final parameters
-   */
   const getLength = useCallback(
     async ({ startDate, endDate }: { startDate: string; endDate: string }) => {
-      setLoading(true)
-
       const id = `${startDate}/${endDate}`
 
       if (loadedLengths.has(id)) {
@@ -29,62 +28,26 @@ export const useGetOrRequestLength = (application: Application) => {
         return loadedLengths.get(id)!
       }
 
-      const { data: temporaryLength } = await lazyGetLength({
-        input: {
-          startDate,
-          endDate,
-          percentage: '100',
-        },
-      })
+      const start = parseISO(startDate)
+      const end = parseISO(endDate)
 
-      const startToEndDatesLength =
-        temporaryLength?.getParentalLeavesPeriodLength?.periodLength
-
-      if (!startToEndDatesLength) {
-        setLoading(false)
-
-        throw new Error(
-          `VMST: Cannot calculate length between start and end dates, startDate/${startDate} endDate/${endDate} startToEndDatesLength/${startToEndDatesLength}`,
-        )
-      }
-
-      const computedPercentage = calculateDaysToPercentage(
-        application,
-        startToEndDatesLength,
-        daysAlreadyUsed,
+      const maxPercentage = calculateMaxPercentageForPeriod(
+        start,
+        end,
+        remainingRights,
       )
+      const length = calculatePeriodLength(start, end, maxPercentage)
 
-      const { data: lengthData } = await lazyGetLength({
-        input: {
-          startDate,
-          endDate,
-          percentage: String(computedPercentage),
-        },
-      })
-
-      const lazyLength = lengthData?.getParentalLeavesPeriodLength?.periodLength
-
-      if (!lazyLength) {
-        setLoading(false)
-
-        throw new Error(
-          `VMST: Cannot calculate length for end date, startDate/${startDate} endDate/${endDate} startToEndDatesLength/${startToEndDatesLength} lazyLength/${lazyLength}`,
-        )
+      const result = {
+        percentage: maxPercentage * 100,
+        length,
       }
 
-      loadedLengths.set(id, {
-        length: lazyLength,
-        percentage: computedPercentage,
-      })
+      loadedLengths.set(id, result)
 
-      setLoading(false)
-
-      return {
-        length: lazyLength,
-        percentage: computedPercentage,
-      }
+      return result
     },
-    [application, daysAlreadyUsed, lazyGetLength],
+    [remainingRights],
   )
 
   return {

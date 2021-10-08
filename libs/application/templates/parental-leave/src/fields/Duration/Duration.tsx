@@ -16,12 +16,10 @@ import {
 } from '../../lib/parentalLeaveUtils'
 import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
-import { StartDateOptions } from '../../constants'
-import { monthsToDays } from '../../lib/directorateOfLabour.utils'
+import { StartDateOptions, DATE_FORMAT } from '../../constants'
 import { useGetOrRequestEndDates } from '../../hooks/useGetOrRequestEndDates'
 import * as styles from './Duration.treat'
 
-const df = 'yyyy-MM-dd'
 const DEFAULT_PERIOD_LENGTH = usageMinMonths
 
 export const Duration: FC<FieldBaseProps> = ({
@@ -60,13 +58,11 @@ export const Duration: FC<FieldBaseProps> = ({
     (errors as RecordObject<string>)?.[id]
 
   const monthsToEndDate = useCallback(
-    async (duration: number) => {
+    async (lengthInMonths: number) => {
       try {
-        const days = monthsToDays(duration)
-
         const endDateResult = await getEndDate({
           startDate: currentStartDateAnswer,
-          length: days,
+          lengthInMonths,
         })
 
         if (!endDateResult || !endDateResult.date) {
@@ -77,10 +73,10 @@ export const Duration: FC<FieldBaseProps> = ({
           return
         }
 
-        const date = new Date(endDateResult.date)
+        const { date, percentage } = endDateResult
 
         setChosenEndDate(date.toISOString())
-        setPercent(endDateResult.percentage)
+        setPercent(percentage)
         setDurationInDays(endDateResult.days)
 
         return date
@@ -108,7 +104,7 @@ export const Duration: FC<FieldBaseProps> = ({
     const date = await monthsToEndDate(months)
 
     if (date) {
-      onChange(format(date, df))
+      onChange(format(date, DATE_FORMAT))
     }
   }
 

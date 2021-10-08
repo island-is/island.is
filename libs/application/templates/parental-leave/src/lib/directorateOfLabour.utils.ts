@@ -1,7 +1,10 @@
+import round from 'lodash/round'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInCalendarMonths from 'date-fns/differenceInCalendarMonths'
+import differenceInDays from 'date-fns/differenceInDays'
 import isSameMonth from 'date-fns/isSameMonth'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
+import addDays from 'date-fns/addDays'
 import isSameDay from 'date-fns/isSameDay'
 import {
   ParentalLeave,
@@ -140,4 +143,85 @@ export const calculateRemainingNumberOfDays = (
   const existingDays = calculateExistingNumberOfDays(application.periods)
 
   return availableDays - existingDays
+}
+
+const getParentalLeaveMultiplierForDaysInMonth = (daysInMonth: number) => {
+  return 30 / daysInMonth
+}
+
+export const calculatePeriodLength = (
+  start: Date,
+  end: Date,
+  percentage = 1,
+) => {
+  if (end < start) {
+    throw new Error('calculateDaysForStartEnd: end date < start date')
+  }
+
+  if (start === end) {
+    throw new Error('calculateDaysForStartEnd: start date equals end date')
+  }
+
+  let currentDate = start
+
+  let cost = 0
+  let parentalLeaveDaysUsed = 0
+  let daysInMonth = 0
+  let daysLeftOfMonth = 0
+  let realDaysToParentalLeaveDaysMultiplier = 0
+
+  while (currentDate < end) {
+    daysInMonth = getDaysInMonth(currentDate)
+    realDaysToParentalLeaveDaysMultiplier = getParentalLeaveMultiplierForDaysInMonth(
+      daysInMonth,
+    )
+    const daysLeftToEnd = differenceInDays(end, currentDate)
+
+    daysLeftOfMonth =
+      Math.min(
+        daysInMonth - currentDate.getDate(),
+        differenceInDays(end, currentDate),
+      ) + 1
+
+    parentalLeaveDaysUsed = Math.round(
+      Math.round(daysLeftOfMonth * realDaysToParentalLeaveDaysMultiplier) *
+        percentage,
+    )
+    daysLeftOfMonth = Math.min(daysLeftOfMonth, daysLeftToEnd)
+
+    cost += parentalLeaveDaysUsed
+
+    currentDate = addDays(currentDate, daysLeftOfMonth)
+  }
+
+  currentDate = addDays(currentDate, -daysLeftOfMonth)
+  currentDate = addDays(
+    currentDate,
+    (1 / realDaysToParentalLeaveDaysMultiplier) * parentalLeaveDaysUsed,
+  )
+
+  return cost
+}
+
+export const calculateMaxPercentageForPeriod = (
+  start: Date,
+  end: Date,
+  rights: number,
+) => {
+  const fullLength = calculatePeriodLength(start, end)
+
+  if (fullLength <= rights) {
+    return 1
+  }
+
+  let ratio = Math.round((rights / fullLength) * 100) / 100
+  let lengthWithRatio = calculatePeriodLength(start, end, ratio)
+
+  while (lengthWithRatio > rights && ratio > 0) {
+    ratio -= 0.01
+
+    lengthWithRatio = calculatePeriodLength(start, end, ratio)
+  }
+
+  return ratio
 }

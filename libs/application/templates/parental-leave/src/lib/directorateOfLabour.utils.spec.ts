@@ -3,8 +3,10 @@ import getDaysInMonth from 'date-fns/getDaysInMonth'
 import {
   calculateNumberOfDaysForOnePeriod,
   calculateRemainingNumberOfDays,
+  calculatePeriodLength,
   daysToMonths,
   DAYS_IN_MONTH,
+  calculateMaxPercentageForPeriod,
 } from './directorateOfLabour.utils'
 
 describe('monthsToDays', () => {
@@ -370,5 +372,109 @@ describe('calculateRemainingNumberOfDays', () => {
     expect(
       calculateRemainingNumberOfDays(thirdDob, parentalLeaves, availableRights),
     ).toBe(135)
+  })
+})
+
+describe('calculatePeriodLength', () => {
+  it('should calculate a whole year correctly', () => {
+    expect(
+      calculatePeriodLength(new Date(2022, 2, 14), new Date(2023, 2, 13)),
+    ).toBe(360)
+  })
+
+  it('should handle multiple collected edge cases', () => {
+    expect(
+      calculatePeriodLength(
+        new Date(2022, 2, 14),
+        new Date(2023, 2, 13),
+        0.983,
+      ),
+    ).toBe(349)
+
+    expect(
+      calculatePeriodLength(new Date(2022, 2, 14), new Date(2023, 2, 13), 0.99),
+    ).toBe(360)
+
+    expect(
+      calculatePeriodLength(new Date(2022, 2, 14), new Date(2023, 2, 13), 0.04),
+    ).toBe(13)
+
+    expect(
+      calculatePeriodLength(new Date(2022, 2, 14), new Date(2023, 2, 13), 0.02),
+    ).toBe(11)
+
+    expect(
+      calculatePeriodLength(new Date(2022, 4, 14), new Date(2023, 0, 2), 0.53),
+    ).toBe(122)
+
+    expect(
+      calculatePeriodLength(new Date(2021, 1, 12), new Date(2022, 2, 13), 0.42),
+    ).toBe(169)
+
+    expect(
+      calculatePeriodLength(new Date(2021, 0, 15), new Date(2021, 5, 7), 0.69),
+    ).toBe(100)
+
+    expect(
+      calculatePeriodLength(new Date(2022, 2, 14), new Date(2023, 2, 13), 0.5),
+    ).toBe(181)
+
+    expect(
+      calculatePeriodLength(
+        new Date(2022, 2, 14),
+        new Date(2023, 2, 13),
+        0.499999999,
+      ),
+    ).toBe(179)
+  })
+})
+
+describe('calculateMaxPercentageForPeriod', () => {
+  it('should calculate 100% for 6 months with full normal rights', () => {
+    const fullRights = 30 * 6
+
+    expect(
+      calculateMaxPercentageForPeriod(
+        new Date(2022, 2, 14),
+        new Date(2022, 2 + 6, 13),
+        fullRights,
+      ),
+    ).toBe(1)
+  })
+
+  it('should calculate 100% for 7.5 months with full normal rights plus 45 requested days', () => {
+    const fullRightsWithMaxRequestedDays = 30 * 6 + 45
+
+    expect(
+      calculateMaxPercentageForPeriod(
+        new Date(2022, 2, 14),
+        new Date(2022, 2 + 6, 28),
+        fullRightsWithMaxRequestedDays,
+      ),
+    ).toBe(1)
+  })
+
+  it('should calculate 49% for full year with a full normal rights', () => {
+    const fullRights = 30 * 6
+
+    expect(
+      calculateMaxPercentageForPeriod(
+        new Date(2022, 2, 14),
+        new Date(2023, 2, 13),
+        fullRights,
+      ),
+    ).toBe(0.49)
+  })
+
+  it('should calculate 61% for full year with a full normal rights', () => {
+    const fullRightsWithMaxRequestedDays = 30 * 6 + 45
+
+    expect(
+      calculateMaxPercentageForPeriod(
+        new Date(2022, 2, 14),
+        new Date(2023, 2, 13),
+        fullRightsWithMaxRequestedDays,
+      ),
+    ).toBe(0.61)
   })
 })
