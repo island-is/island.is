@@ -419,6 +419,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn móttekin',
     description: 'Confirmation',
   },
+  applicationDenied: {
+    id: 'dl.application:applicationDenied',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'Application denied',
+  },
   overviewPaymentCharge: {
     id: 'dl.application:overview.paymentcharge',
     defaultMessage: 'Greiðsla',
@@ -756,5 +761,25 @@ export const m = defineMessages({
       'Umsókn um almenn ökuréttindi í B flokki (fólksbifreið). Fyrsta ökuskírteinið er bráðabirgðaskírteini sem gildir í 3 ár.',
     description:
       'Option description for selecting to apply for temporary driving license',
+  },
+  declinedHelpText: {
+    id: 'dl.application:declinedHelpText',
+    defaultMessage: '[declinedHelpText]',
+    description: '[declinedHelpText]',
+  },
+  declinedOtherCountryTitle: {
+    id: 'dl.application:declinedOtherCountryTitle',
+    defaultMessage: '[declinedOtherCountryTitle]',
+    description: '[declinedOtherCountryTitle]',
+  },
+  declinedOtherCountryDescription: {
+    id: 'dl.application:declinedOtherCountryDescription',
+    defaultMessage: '[declinedOtherCountryDescription]',
+    description: '[declinedOtherCountryDescription]',
+  },
+  nationalCommissionerOfPolice: {
+    id: 'dl.application:nationalCommissionerOfPolice',
+    defaultMessage: 'Ríkislögreglustjóri',
+    description: 'National Commissioner of Police',
   },
 })

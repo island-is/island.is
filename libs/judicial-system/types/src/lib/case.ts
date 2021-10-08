@@ -112,6 +112,7 @@ export interface Case {
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   defenderIsSpokesperson?: boolean
+  isHeightenedSecurityLevel?: boolean
   court?: Institution
   leadInvestigator?: string
   arrestDate?: string
@@ -130,6 +131,7 @@ export interface Case {
   prosecutorOnlySessionRequest?: string
   comments?: string
   caseFilesComments?: string
+  creatingProsecutor?: User
   prosecutor?: User
   sharedWithProsecutorsOffice?: Institution
   courtCaseNumber?: string
@@ -204,6 +206,7 @@ export interface UpdateCase {
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   defenderIsSpokesperson?: boolean
+  isHeightenedSecurityLevel?: boolean
   courtId?: string
   leadInvestigator?: string
   arrestDate?: string
