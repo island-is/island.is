@@ -158,7 +158,8 @@ export const Overview: React.FC = () => {
                   {
                     title: 'Embætti',
                     value: `${
-                      workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
+                      workingCase.creatingProsecutor?.institution?.name ??
+                      'Ekki skráð'
                     }`,
                   },
                   {
@@ -344,14 +345,14 @@ export const Overview: React.FC = () => {
                 <AccordionItem
                   id="id_6"
                   label={`Rannsóknargögn ${`(${
-                    workingCase.files ? workingCase.files.length : 0
+                    workingCase.caseFiles ? workingCase.caseFiles.length : 0
                   })`}`}
                   labelVariant="h3"
                 >
                   <Box marginY={3}>
                     <CaseFileList
                       caseId={workingCase.id}
-                      files={workingCase.files ?? []}
+                      files={workingCase.caseFiles ?? []}
                     />
                   </Box>
                 </AccordionItem>

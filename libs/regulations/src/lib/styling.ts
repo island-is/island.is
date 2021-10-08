@@ -57,6 +57,7 @@ export const regulationContentStyling = (wrapper: string) => {
 
     '@media': {
       print: {
+        lineHeight: '1.2em',
         fontFamily: '"Times New Roman", "Times", serif',
         fontSize: '12pt',
       },
@@ -64,6 +65,8 @@ export const regulationContentStyling = (wrapper: string) => {
   })
 
   styleRegulation(' *', {
+    fontWeight: typography.light,
+
     '@media': {
       print: {
         fontFamily: 'inherit',
@@ -74,9 +77,13 @@ export const regulationContentStyling = (wrapper: string) => {
   styleRegulation('p,ul,ol,table,blockquote', {
     fontFamily: 'inherit',
     marginBottom: typography.baseLineHeight + 'em',
+
+    '@media': { print: { marginBottom: '1em' } },
   })
   styleRegulation('li', {
     marginBottom: '1em',
+
+    '@media': { print: { marginBottom: '.5em' } },
   })
   styleRegulation(
     `
@@ -90,10 +97,12 @@ export const regulationContentStyling = (wrapper: string) => {
     `,
     {
       marginBottom: '1em',
+      '@media': { print: { marginBottom: '.5em' } },
     },
   )
   styleRegulation('ul,ol,blockquote', {
-    marginLeft: '3em',
+    marginLeft: '2em',
+    // '@media': { print: { marginBottom: '2em' } },
   })
   styleRegulation('ul', {
     listStyle: 'disc',
@@ -156,6 +165,12 @@ export const regulationContentStyling = (wrapper: string) => {
     verticalAlign: 'top',
     width: 'auto',
     border: `1px solid ${color.dark300}`,
+
+    '@media': {
+      print: {
+        pageBreakInside: 'avoid',
+      },
+    },
   })
   styleRegulation(
     `
@@ -216,6 +231,15 @@ export const regulationContentStyling = (wrapper: string) => {
     textAlign: 'center',
   })
 
+  styleRegulation('h1,h2,h3,h4,h5,h6', {
+    '@media': {
+      print: {
+        pageBreakAfter: 'avoid',
+        pageBreakInside: 'avoid',
+      },
+    },
+  })
+
   styleRegulation('h1, h2,', {
     // color: 'red',
     marginTop: '2em',
@@ -243,8 +267,9 @@ export const regulationContentStyling = (wrapper: string) => {
     textAlign: 'center',
     fontSize: '1em',
     fontWeight: typography.regular,
-    lineHeight: '2em',
     textTransform: 'uppercase',
+    lineHeight: '2em',
+    '@media': { print: { lineHeight: 'inherit' } },
   })
   styleRegulation('.section__title:first-child', {
     marginTop: '0',
@@ -260,6 +285,7 @@ export const regulationContentStyling = (wrapper: string) => {
     fontSize: '1em',
     fontWeight: typography.regular,
     lineHeight: '2em',
+    '@media': { print: { lineHeight: 'inherit' } },
   })
   styleRegulation(
     `
@@ -278,11 +304,12 @@ export const regulationContentStyling = (wrapper: string) => {
 
   styleRegulation('.article__title', {
     marginTop: '2em',
-    marginBottom: '1.5em',
     textAlign: 'center',
     fontSize: '1em',
     fontWeight: typography.regular,
+    marginBottom: '1.5em',
     lineHeight: '2em',
+    '@media': { print: { marginBottom: '1em', lineHeight: 'inherit' } },
   })
   styleRegulation('.article__title--provisional', {
     fontWeight: typography.headingsFontWeight,

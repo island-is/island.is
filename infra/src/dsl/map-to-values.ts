@@ -33,6 +33,27 @@ export const serializeService: SerializeMethod = (
   uberChart: UberChartType,
 ) => {
   let allErrors: string[] = []
+  const checkCollisions = (
+    target: { [name: string]: string },
+    source: { [name: string]: string },
+  ) => {
+    const targetKeys = Object.keys(target)
+    addToErrors(
+      Object.keys(source)
+        .filter((srcKey) => targetKeys.includes(srcKey))
+        .map((key) => `Collisions for environment or secrets for key ${key}`),
+    )
+  }
+  const mergeObjects = (
+    target: { [name: string]: string },
+    source: { [name: string]: string },
+  ) => {
+    checkCollisions(target, source)
+    Object.assign(target, source)
+  }
+  const addToErrors = (errors: string[]) => {
+    allErrors.push(...errors)
+  }
   const serviceDef = service.serviceDef
   const {
     grantNamespaces,
@@ -103,7 +124,7 @@ export const serializeService: SerializeMethod = (
       uberChart,
       serviceDef.extraAttributes,
     )
-    allErrors = allErrors.concat(errors)
+    addToErrors(errors)
     result.extra = envs
   }
 
@@ -119,13 +140,13 @@ export const serializeService: SerializeMethod = (
       uberChart,
       serviceDef.env,
     )
-    allErrors = allErrors.concat(errors)
-    result.env = { ...result.env, ...envs }
+    addToErrors(errors)
+    mergeObjects(result.env, envs)
   }
 
   // secrets
   if (Object.keys(serviceDef.secrets).length > 0) {
-    result.secrets = serviceDef.secrets
+    result.secrets = { ...serviceDef.secrets }
   }
 
   const {
@@ -133,9 +154,9 @@ export const serializeService: SerializeMethod = (
     errors: featureErrors,
     secrets: featureSecrets,
   } = addFeaturesConfig(serviceDef.features, uberChart, service)
-  result.env = { ...result.env, ...featureEnvs }
-  allErrors = allErrors.concat(featureErrors)
-  result.secrets = { ...result.secrets, ...featureSecrets }
+  mergeObjects(result.env, featureEnvs)
+  addToErrors(featureErrors)
+  mergeObjects(result.secrets, featureSecrets)
 
   // service account
   if (serviceDef.serviceAccountEnabled) {
@@ -170,27 +191,23 @@ export const serializeService: SerializeMethod = (
           uberChart,
           serviceDef.initContainers.envs,
         )
-        allErrors = allErrors.concat(errors)
-        result.initContainer.env = { ...result.initContainer.env, ...envs }
+        addToErrors(errors)
+        mergeObjects(result.initContainer.env, envs)
       }
       if (typeof serviceDef.initContainers.secrets !== 'undefined') {
         result.initContainer.secrets = serviceDef.initContainers.secrets
       }
       if (serviceDef.initContainers.postgres) {
-        const { env, secrets, envErros, secretErrors } = serializePostgres(
+        const { env, secrets, errors } = serializePostgres(
           serviceDef,
           uberChart,
           service,
           serviceDef.initContainers.postgres,
         )
 
-        result.initContainer.env = { ...result.initContainer.env, ...env }
-        result.initContainer.secrets = {
-          ...result.initContainer.secrets,
-          ...secrets,
-        }
-        allErrors = allErrors.concat(envErros)
-        allErrors = allErrors.concat(secretErrors)
+        mergeObjects(result.initContainer.env, env)
+        mergeObjects(result.initContainer.secrets, secrets)
+        addToErrors(errors)
       }
       if (serviceDef.initContainers.features) {
         const {
@@ -203,18 +220,13 @@ export const serializeService: SerializeMethod = (
           service,
         )
 
-        result.initContainer.env = {
-          ...result.initContainer.env,
-          ...featureEnvs,
-        }
-        allErrors = allErrors.concat(featureErrors)
-        result.initContainer.secrets = {
-          ...result.initContainer.secrets,
-          ...featureSecrets,
-        }
+        mergeObjects(result.initContainer.env, featureEnvs)
+        addToErrors(featureErrors)
+        mergeObjects(result.initContainer.secrets, featureSecrets)
       }
+      checkCollisions(result.initContainer.secrets, result.initContainer.env)
     } else {
-      allErrors.push('No containers to run defined in initContainers')
+      addToErrors(['No containers to run defined in initContainers'])
     }
   }
 
@@ -234,7 +246,7 @@ export const serializeService: SerializeMethod = (
             [`${ingressName}-alb`]: ingress,
           }
         } catch (e) {
-          allErrors.push(e.message)
+          addToErrors([e.message])
           return acc
         }
       },
@@ -243,18 +255,19 @@ export const serializeService: SerializeMethod = (
   }
 
   if (serviceDef.postgres) {
-    const { env, secrets, envErros, secretErrors } = serializePostgres(
+    const { env, secrets, errors } = serializePostgres(
       serviceDef,
       uberChart,
       service,
       serviceDef.postgres,
     )
 
-    result.env = { ...result.env, ...env }
-    result.secrets = { ...result.secrets, ...secrets }
-    allErrors = allErrors.concat(envErros)
-    allErrors = allErrors.concat(secretErrors)
+    mergeObjects(result.env, env)
+    mergeObjects(result.secrets, secrets)
+    addToErrors(errors)
   }
+
+  checkCollisions(result.secrets, result.env)
 
   return allErrors.length === 0
     ? { type: 'success', serviceDef: result }
@@ -338,34 +351,21 @@ function serializePostgres(
   service: Service,
   postgres: PostgresInfo,
 ) {
-  const existingEnvVars = ['DB_USER', 'DB_NAME', 'DB_HOST'].filter((v) =>
-    Object.keys(serviceDef.env).includes(v),
-  )
-  const envErros = existingEnvVars.map(
-    (v) =>
-      `You have already defined an environment variable ${v} which is interfering with the Postgres definion`,
-  )
-  const existingSecrets = ['DB_PASS'].filter((v) =>
-    Object.keys(serviceDef.secrets).includes(v),
-  )
-  const secretErrors = existingSecrets.map(
-    (v) =>
-      `You have already defined a secret variable ${v} which is interfering with the Postgres definion`,
-  )
   const env: { [name: string]: string } = {}
   const secrets: { [name: string]: string } = {}
+  const errors: string[] = []
   env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
   try {
     env['DB_HOST'] = resolveDbHost(postgres, uberChart, service)
   } catch (e) {
-    envErros.push(
+    errors.push(
       `Could not resolve DB_HOST variable for service: ${serviceDef.name}`,
     )
   }
   secrets['DB_PASS'] =
     postgres.passwordSecret ?? `/k8s/${serviceDef.name}/DB_PASSWORD`
-  return { env, secrets, envErros, secretErrors }
+  return { env, secrets, errors }
 }
 
 function serializeIngress(
@@ -466,7 +466,7 @@ function serializeEnvironmentVariables(
   service: Service,
   uberChart: UberChartType,
   envs: EnvironmentVariables,
-): { errors: string[]; envs: { [name: string]: string } } {
+): { errors: string[]; envs: ContainerEnvironmentVariables } {
   return Object.entries(envs).reduce(
     (acc, [name, value]) => {
       const r = resolveVariable(value, uberChart, service)
@@ -488,7 +488,7 @@ function serializeEnvironmentVariables(
           }
       }
     },
-    { errors: [] as string[], envs: {} },
+    { errors: [] as string[], envs: {} as ContainerEnvironmentVariables },
   )
 }
 

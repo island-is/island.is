@@ -50,7 +50,7 @@ describe('/krafa/fyrirtaka/:id', () => {
   it('should have a info bubble that explains the what setting a prosecutor does', () => {
     cy.getByTestid('prosecutor-tooltip').trigger('mouseover')
     cy.contains(
-      'Sá saksóknari sem valinn er hér er skráður fyrir kröfunni í öllum upplýsingaskeytum og skjölum sem tengjast kröfunni, og flytur málið fyrir dómstólum fyrir hönd síns embættis.',
+      'Sá ákærandi sem valinn er hér er skráður fyrir kröfunni í öllum upplýsingaskeytum og skjölum sem tengjast kröfunni, og flytur málið fyrir dómstólum fyrir hönd síns embættis.',
     )
   })
 

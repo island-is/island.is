@@ -16,7 +16,6 @@ export const CasesQuery = gql`
       id
       created
       type
-      description
       state
       policeCaseNumber
       accusedNationalId
@@ -57,6 +56,7 @@ export const ExtendCaseMutation = gql`
       defenderPhoneNumber
       sendRequestToDefender
       defenderIsSpokesperson
+      isHeightenedSecurityLevel
       court {
         id
         type
@@ -79,6 +79,10 @@ export const ExtendCaseMutation = gql`
       prosecutorOnlySessionRequest
       comments
       caseFilesComments
+      creatingProsecutor {
+        name
+        title
+      }
       prosecutor {
         name
         title

@@ -16,7 +16,10 @@ import {
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import { IntegratedCourts } from '@island.is/judicial-system/consts'
-import { CaseType, SessionArrangements } from '@island.is/judicial-system/types'
+import {
+  isRestrictionCase,
+  SessionArrangements,
+} from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
@@ -45,6 +48,11 @@ const standardIncludes: Includeable[] = [
   {
     model: Institution,
     as: 'court',
+  },
+  {
+    model: User,
+    as: 'creatingProsecutor',
+    include: [{ model: Institution, as: 'institution' }],
   },
   {
     model: User,
@@ -232,8 +240,7 @@ export class CaseService {
 
     if (
       existingCase.defenderEmail &&
-      (existingCase.type === CaseType.CUSTODY ||
-        existingCase.type === CaseType.TRAVEL_BAN ||
+      (isRestrictionCase(existingCase.type) ||
         existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT)
     ) {
       promises.push(
@@ -304,6 +311,7 @@ export class CaseService {
 
     return this.caseModel.create({
       ...caseToCreate,
+      creatingProsecutorId: user?.id,
       prosecutorId: user?.id,
     })
   }
@@ -455,6 +463,7 @@ export class CaseService {
       legalArguments: existingCase.legalArguments,
       requestProsecutorOnlySession: existingCase.requestProsecutorOnlySession,
       prosecutorOnlySessionRequest: existingCase.prosecutorOnlySessionRequest,
+      creatingProsecutorId: user.id,
       prosecutorId: user.id,
       parentCaseId: existingCase.id,
     })
