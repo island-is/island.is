@@ -16,7 +16,6 @@ import {
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
-import { EndorsementPaginationInput } from './dto/endorsementPagination.input'
 
 @Injectable()
 export class EndorsementSystemService {
@@ -127,12 +126,6 @@ export class EndorsementSystemService {
   ) {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerCreate(endorsementList)
-      .catch(this.handleError.bind(this))
-  }
-
-  async getRabbz(input: EndorsementPaginationInput, auth: Auth) {
-    return await this.endorsementListApiWithAuth(auth)
-      .endorsementListControllerGetRabbz(input)
       .catch(this.handleError.bind(this))
   }
 }
