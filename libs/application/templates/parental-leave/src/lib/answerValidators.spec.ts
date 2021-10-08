@@ -6,10 +6,7 @@ import {
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 
-import {
-  minPeriodDays,
-  minimumPeriodStartBeforeExpectedDateOfBirth,
-} from '../config'
+import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
 import { ParentalRelations } from '../constants'
 import { answerValidators, VALIDATE_LATEST_PERIOD } from './answerValidators'
 import { errorMessages } from './messages'

@@ -24,7 +24,7 @@ import {
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States } from '../../constants'
-import { minPeriodDays, daysInMonth } from '../../config'
+import { daysInMonth } from '../../config'
 import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
 
 type FieldProps = FieldBaseProps & {
@@ -142,7 +142,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
 
   const hasAddedPeriods = periods?.length > 0
   const remainingDays = rights - daysAlreadyUsed
-  const canAddAnotherPeriod = remainingDays >= minPeriodDays
+  const canAddAnotherPeriod = remainingDays >= 1
 
   const monthsAlreadyUsed = round(daysAlreadyUsed / daysInMonth, 1)
   const monthsInRights = round(rights / daysInMonth, 1)
@@ -201,18 +201,6 @@ const PeriodsRepeater: FC<ScreenProps> = ({
               <Tooltip
                 placement="bottom"
                 text={formatMessage(parentalLeaveFormMessages.leavePlan.limit)}
-              />
-            )}
-            {remainingDays > 0 && !canAddAnotherPeriod && (
-              <Tooltip
-                placement="bottom"
-                text={formatMessage(
-                  parentalLeaveFormMessages.leavePlan.cannotCreatePeriod,
-                  {
-                    daysLeft: rights - daysAlreadyUsed,
-                    minimumNumberOfDays: minPeriodDays,
-                  },
-                )}
               />
             )}
           </Inline>

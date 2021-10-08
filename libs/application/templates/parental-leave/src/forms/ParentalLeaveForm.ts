@@ -800,7 +800,10 @@ export const ParentalLeaveForm: Form = buildForm({
                       const latestStartDate =
                         rawPeriods[rawPeriods.length - 1].startDate
 
-                      return addDays(new Date(latestStartDate), minPeriodDays)
+                      return addDays(
+                        new Date(latestStartDate),
+                        minPeriodDays + 1,
+                      )
                     },
                     excludeDates: (application: Application) => {
                       const { periods } = getApplicationAnswers(
