@@ -18,4 +18,9 @@ export class PaginationInput {
   @IsString()
   @IsOptional()
   after?: string
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  bob!: string
 }

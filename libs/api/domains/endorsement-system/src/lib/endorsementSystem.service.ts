@@ -12,9 +12,11 @@ import {
   EndorsementControllerFindAllRequest,
   EndorsementControllerFindByAuthRequest,
   EndorsementListControllerFindByTagsRequest,
+  EndorsementListControllerFindEndorsementsRequest,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
+import { PaginationInput } from './dto/pagination.input'
 
 @Injectable()
 export class EndorsementSystemService {
@@ -103,8 +105,8 @@ export class EndorsementSystemService {
 
   async endorsementListControllerFindEndorsements(
     auth: Auth,
-    input: EndorsementControllerFindAllRequest, // ?
-  ) {
+    input: EndorsementListControllerFindEndorsementsRequest
+    ) {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerFindEndorsements(input)
       .catch(this.handleError.bind(this))
@@ -127,4 +129,16 @@ export class EndorsementSystemService {
       .endorsementListControllerCreate(endorsementList)
       .catch(this.handleError.bind(this))
   }
+
+  async getRabbz(
+    input: PaginationInput,
+    auth: Auth,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerGetRabbz(input)
+      .catch(this.handleError.bind(this))
+  }
+  
+  
 }
+
