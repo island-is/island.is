@@ -97,8 +97,8 @@ export class PartyApplicationService {
   }: TemplateApiModuleActionProps) {
     const listId = (application.externalData?.createEndorsementList.data as any)
       .id
-
-    const defaultDate = '1992-05-01'
+    // TODO: change this date when new election
+    const defaultDate = new Date('1992-05-01')
 
     return this.endorsementListApiWithAuth(auth)
       .endorsementListControllerOpen({

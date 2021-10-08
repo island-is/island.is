@@ -25,8 +25,8 @@ const CREATE_ENDORSEMENT_LIST_QUERY = `
     }
   }
 `
-
-const defaultClosedDate = '2021-09-15T00:00:00.000Z'
+// TODO: change this date when new election
+const defaultClosedDate = new Date('2021-09-15T00:00:00.000Z')
 
 type ErrorResponse = {
   errors: {

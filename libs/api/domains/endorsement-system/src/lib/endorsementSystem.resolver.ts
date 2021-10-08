@@ -28,7 +28,7 @@ export class EndorsementSystemResolver {
     @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
   ): Promise<Endorsement> {
-    return  await this.endorsementSystemService.endorsementControllerFindByAuth(
+    return await this.endorsementSystemService.endorsementControllerFindByAuth(
       input,
       user,
     )
@@ -51,7 +51,7 @@ export class EndorsementSystemResolver {
     @Args('input') input: CreateEndorsementInput,
     @CurrentUser() user: User,
   ): Promise<Endorsement> {
-    return  await this.endorsementSystemService.endorsementControllerCreate(
+    return await this.endorsementSystemService.endorsementControllerCreate(
       input,
       user,
     )
