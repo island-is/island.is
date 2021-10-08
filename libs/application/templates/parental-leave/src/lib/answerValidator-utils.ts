@@ -213,10 +213,8 @@ export const validatePeriod = (
     const dayValue = Number(days)
     const percentageValue = Number(percentage)
 
-    if (dayValue < minPeriodDays) {
-      return buildError('days', errorMessages.periodsEndDateMinimumPeriod, {
-        minPeriodDays: minPeriodDays - 1,
-      })
+    if (dayValue < 1) {
+      return buildError('days', errorMessages.periodsRatioBelowMinimum)
     }
 
     if (ratioValue > percentageValue) {

@@ -732,7 +732,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     usage: {
       id: 'pl.application:period.usage',
-      defaultMessage: '{alreadyUsed} af {rights} mánuðum nýttir',
+      defaultMessage: 'Þú hefur notað {alreadyUsed} af {rights} dögum',
       description: 'Copy of how many days are being used and how many are left',
     },
     cannotCreatePeriod: {
@@ -1631,7 +1631,7 @@ export const errorMessages = defineMessages({
   },
   periodsRatioBelowMinimum: {
     id: 'pl.application:answerValidators.periodsRatioBelowMinimum',
-    defaultMessage: 'Minnsta mögulega nýting er 10%',
+    defaultMessage: 'Minnsta mögulega nýting er 1%',
     description:
       'Copy for when user is attempting to choose a ratio below minimum ratio',
   },

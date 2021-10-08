@@ -1,4 +1,5 @@
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+import parseISO from 'date-fns/parseISO'
 
 import {
   Application,
@@ -23,7 +24,10 @@ import {
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
-import { daysToMonths } from '../lib/directorateOfLabour.utils'
+import {
+  calculatePeriodLength,
+  daysToMonths,
+} from '../lib/directorateOfLabour.utils'
 import {
   ChildInformation,
   ChildrenAndExistingApplications,
@@ -681,9 +685,12 @@ export const getLastValidPeriodEndDate = (
 export const calculateDaysUsedByPeriods = (periods: Period[]) =>
   Math.round(
     periods.reduce((total, period) => {
-      const days = period?.days ? Number(period.days) : 0
-      const ratio = (period?.ratio ? Number(period.ratio) : 100) / 100
+      const start = parseISO(period.startDate)
+      const end = parseISO(period.endDate)
+      const percentage = Number(period.ratio) / 100
 
-      return total + days * ratio
+      const calculatedLength = calculatePeriodLength(start, end, percentage)
+
+      return total + calculatedLength
     }, 0),
   )

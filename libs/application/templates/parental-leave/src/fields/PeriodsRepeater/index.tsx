@@ -1,6 +1,5 @@
 import React, { FC, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
-import round from 'lodash/round'
 
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { RepeaterProps, FieldBaseProps } from '@island.is/application/core'
@@ -24,8 +23,8 @@ import {
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States } from '../../constants'
-import { daysInMonth } from '../../config'
 import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
+import { useRemainingRights } from '../../hooks/useRemainingRights'
 
 type FieldProps = FieldBaseProps & {
   field?: {
@@ -55,6 +54,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   const { formatMessage, locale } = useLocale()
   const rights = getAvailableRightsInDays(application)
   const daysAlreadyUsed = useDaysAlreadyUsed(application)
+  const remainingRights = useRemainingRights(application)
   const { rawPeriods, periods } = getApplicationAnswers(application.answers)
 
   useEffect(() => {
@@ -141,11 +141,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   const dobDate = new Date(dob)
 
   const hasAddedPeriods = periods?.length > 0
-  const remainingDays = rights - daysAlreadyUsed
-  const canAddAnotherPeriod = remainingDays >= 1
-
-  const monthsAlreadyUsed = round(daysAlreadyUsed / daysInMonth, 1)
-  const monthsInRights = round(rights / daysInMonth, 1)
+  const canAddAnotherPeriod = remainingRights >= 1
 
   return (
     <Box>
@@ -211,8 +207,8 @@ const PeriodsRepeater: FC<ScreenProps> = ({
           description={formatMessage(
             parentalLeaveFormMessages.leavePlan.usage,
             {
-              alreadyUsed: monthsAlreadyUsed,
-              rights: monthsInRights,
+              alreadyUsed: daysAlreadyUsed,
+              rights: rights,
             },
           )}
         />

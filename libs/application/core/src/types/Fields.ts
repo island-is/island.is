@@ -41,9 +41,9 @@ export interface Option {
   disabled?: boolean
 }
 
-interface SelectOption {
+export interface SelectOption<T = string | number> {
   label: string
-  value: string | number
+  value: T
 }
 
 export interface BaseField extends FormItem {

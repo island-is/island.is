@@ -214,14 +214,27 @@ export const calculateMaxPercentageForPeriod = (
     return 1
   }
 
-  let ratio = Math.round((rights / fullLength) * 100) / 100
-  let lengthWithRatio = calculatePeriodLength(start, end, ratio)
+  let percentage = Math.round((rights / fullLength) * 100)
+  let lengthWithPercentage = calculatePeriodLength(start, end, percentage)
 
-  while (lengthWithRatio > rights && ratio > 0) {
-    ratio -= 0.01
+  while (lengthWithPercentage > rights && percentage > 0) {
+    percentage -= 1
 
-    lengthWithRatio = calculatePeriodLength(start, end, ratio)
+    lengthWithPercentage = calculatePeriodLength(start, end, percentage / 100)
   }
 
-  return ratio
+  return percentage / 100
+}
+
+export const calculateMinPercentageForPeriod = (start: Date, end: Date) => {
+  let percentage = 1
+  let lengthWithPercentage = calculatePeriodLength(start, end, percentage / 100)
+
+  while (lengthWithPercentage <= 0 || percentage === 100) {
+    percentage += 1
+
+    lengthWithPercentage = calculatePeriodLength(start, end, percentage / 100)
+  }
+
+  return percentage / 100
 }
