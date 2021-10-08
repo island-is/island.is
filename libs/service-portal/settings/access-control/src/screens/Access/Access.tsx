@@ -317,7 +317,7 @@ function Access() {
             </Inline>
           </Box>
 
-          <div className={styles.tempTableDatePickerFix}>
+          <div className={styles.datePickerFix}>
             <T.Table>
               <T.Head>
                 <T.Row>

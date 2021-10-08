@@ -12,10 +12,10 @@ export class PaginatedEndorsementListInput {
   @IsEnum(EndorsementListControllerFindByTagsTagsEnum, { each: true })
   tags!: EndorsementListControllerFindByTagsTagsEnum[]
 
-  @Field()
+  @Field({ nullable: true })
   @IsNumber()
-  // @IsOptional()
-  limit!: number
+  @IsOptional()
+  limit?: number
 
   @Field({ nullable: true })
   @IsString()
