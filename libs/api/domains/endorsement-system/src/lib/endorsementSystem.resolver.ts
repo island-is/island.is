@@ -18,7 +18,6 @@ import { PaginatedEndorsementListInput } from './dto/paginatedEndorsementList.in
 import { PaginatedEndorsementListResponse } from './dto/paginatedEndorsementList.response'
 
 import { PaginationInput } from './dto/pagination.input'
-import { FooBar } from './models/fooBar.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver('EndorsementSystemResolver')
@@ -108,32 +107,7 @@ export class EndorsementSystemResolver {
     )
   }
 
-  @Query(() => FooBar, { nullable: true })
-  async getRabbz(
-    @Args('pagination') pagination: PaginationInput,
-    @CurrentUser() user: User,
-  ): Promise<FooBar> {
-    return await this.endorsementSystemService.getRabbz(
-      pagination,
-      user,
-    )
-    // return {
-    //   "foo": 4,
-    //   "bar": "bar",
-    //   "bob": "111asdf"
-    // }
-  }
 
-  // @Query(() => PaginatedEndorsementResponse)
-  // async endorsementSystemUserEndorsements(
-  //   @CurrentUser() user: User,
-  //   @Args('input') input: PaginationInput,
-  // ): Promise<PaginatedEndorsementResponse> {
-  //   return await this.endorsementSystemService.endorsementListControllerFindEndorsements(
-  //     user,
-  //     input,
-  //   )
-  // }
   @Query(() => PaginatedEndorsementResponse)
   async endorsementSystemUserEndorsements(
     @CurrentUser() user: User,
