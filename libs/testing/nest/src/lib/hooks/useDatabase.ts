@@ -99,11 +99,7 @@ export default ({ type, provider, skipTruncate = false }: UseDatabase) => ({
       // ignore
     }
 
-    try {
-      await sequelize.sync({ logging: false, force: true })
-    } catch (err) {
-      console.log('Sync error', err)
-    }
+    await sequelize.sync({ logging: false, force: true })
 
     return () => {
       if (sequelize?.options.dialect === Dialect.Postgres) {
