@@ -1,15 +1,12 @@
-import { Type, ValidationPipe, ExecutionContext } from '@nestjs/common'
-import { Test, TestingModule } from '@nestjs/testing'
-import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
-
 import {
   IdsAuthGuard,
   IdsUserGuard,
   ScopesGuard,
-  getRequest,
-  User,
 } from '@island.is/auth-nest-tools'
+import { Type, ValidationPipe } from '@nestjs/common'
 import { InfraModule } from './infra/infra.module'
+import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
 export type TestServerOptions = {
   /**
@@ -45,35 +42,17 @@ export const testServer = async (options: TestServerOptions) => {
 export const testServerActivateAuthGuards = async (
   options: TestServerOptions,
 ) => {
-  const user = {
-    nationalId: '0101303019', // Gervimadur Afrika
-    scope: [],
-    authorization: '',
-    client: '',
-  }
-
-  const builder = Test.createTestingModule({
+  const moduleFixture = await Test.createTestingModule({
     imports: [InfraModule.forRoot(options.appModule)],
   })
     .overrideGuard(IdsAuthGuard)
     .useValue({ canActivate: () => true })
     .overrideGuard(IdsUserGuard)
-    .useValue({
-      canActivate: (context: ExecutionContext) => {
-        const request = getRequest(context)
-        request.user = user
-        return true
-      },
-      user,
-    })
+    .useValue({ canActivate: () => true })
     .overrideGuard(ScopesGuard)
     .useValue({ canActivate: () => true })
+    .compile()
 
-  if (options.override) {
-    options.override(builder)
-  }
-
-  const moduleFixture = await builder.compile()
   const app = moduleFixture.createNestApplication()
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
