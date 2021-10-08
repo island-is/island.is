@@ -49,14 +49,18 @@ function AccessCard({
           </Text>
           <Text fontWeight="light">{description}</Text>
         </Stack>
-        {validTo && (
-          <Inline space="smallGutter">
-            <Icon size="small" icon="time" color="blue400" type="outline" />
-            <Text variant="small">
-              {format(new Date(validTo), 'dd.MM.yyyy')}
-            </Text>
-          </Inline>
-        )}
+        <Inline space="smallGutter">
+          <Icon size="small" icon="time" color="blue400" type="outline" />
+          <Text variant="small">
+            {validTo
+              ? format(new Date(validTo), 'dd.MM.yyyy')
+              : formatMessage({
+                  id:
+                    'service.portal.settings.accessControl:home-view-undefined',
+                  defaultMessage: 'Óskilgreint',
+                })}
+          </Text>
+        </Inline>
       </Box>
       <Box marginTop={2}>
         <Box display="flex" justifyContent="spaceBetween">
