@@ -230,38 +230,20 @@ const Screen: FC<ScreenProps> = ({
         }
       }
     } else {
-      try {
-        const missingAnswerMessage = formatMessage(
-          coreErrorMessages.missingAnswer,
-        )
-        const fieldsWithNoAnswer = getFieldsWithNoAnswer(
-          screen,
-          data,
-          missingAnswerMessage,
-        )
-        const missingFields = Object.keys(fieldsWithNoAnswer)
+      const extractedAnswers = extractAnswersToSubmitFromScreen(
+        mergeAnswers(formValue, data),
+        screen,
+      )
 
-        if (missingFields.length > 0) {
-          setBeforeSubmitError(fieldsWithNoAnswer)
-        } else {
-          const extractedAnswers = extractAnswersToSubmitFromScreen(
-            mergeAnswers(formValue, data),
-            screen,
-          )
-
-          response = await updateApplication({
-            variables: {
-              input: {
-                id: applicationId,
-                answers: extractedAnswers,
-              },
-              locale,
-            },
-          })
-        }
-      } catch (e) {
-        handleError((e as Error).message, formatMessage)
-      }
+      response = await updateApplication({
+        variables: {
+          input: {
+            id: applicationId,
+            answers: extractedAnswers,
+          },
+          locale,
+        },
+      })
     }
 
     if (response?.data) {
