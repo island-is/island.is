@@ -12,6 +12,7 @@ describe('/domur/krafa/:id', () => {
     const caseData = makeCase()
     const caseDataAddition: Case = {
       ...caseData,
+      creatingProsecutor: makeProsecutor(),
       prosecutor: makeProsecutor(),
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       arrestDate: '2020-09-16T19:50:08.033Z',

@@ -1,28 +1,28 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import type { Case } from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
 import { ValueType } from 'react-select'
 import { Option } from '@island.is/island-ui/core'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { useIntl } from 'react-intl'
 import { selectProsecutor as m } from '@island.is/judicial-system-web/messages/Core/selectProsecutor'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   prosecutors: ReactSelectOption[]
+  onChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
 }
 
 const SelectProsecutor: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, prosecutors } = props
-  const { updateCase } = useCase()
+  const { workingCase, prosecutors, onChange } = props
   const { formatMessage } = useIntl()
+  const [selectedProsecutor, setSelectedProsecutor] = useState<
+    ValueType<Option>
+  >({
+    label: workingCase.prosecutor?.name || '',
+    value: workingCase.prosecutor?.id || '',
+  })
 
-  const defaultProsecutor = prosecutors?.find(
-    (prosecutor: Option) => prosecutor.value === workingCase.prosecutor?.id,
-  )
   return (
     <>
       <Box marginBottom={3}>
@@ -36,17 +36,11 @@ const SelectProsecutor: React.FC<Props> = (props) => {
       <Select
         name="prosecutor"
         label={formatMessage(m.label)}
-        defaultValue={defaultProsecutor}
+        value={selectedProsecutor}
         options={prosecutors}
-        onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-          setAndSendToServer(
-            'prosecutorId',
-            (selectedOption as ReactSelectOption).value.toString(),
-            workingCase,
-            setWorkingCase,
-            updateCase,
-          )
-        }
+        onChange={(selectedOption) => {
+          onChange(selectedOption) && setSelectedProsecutor(selectedOption)
+        }}
         required
       />
     </>
