@@ -230,6 +230,8 @@
   - [Shared Translations](libs/shared/translations/README.md)
   - [Types](libs/shared/types/README.md)
   - [Utils](libs/shared/utils/README.md)
+  - [Testing Fixtures](libs/testing/fixtures/README.md)
+  - [Testing Nest](libs/testing/nest/README.md)
 
 ## Misc
 
