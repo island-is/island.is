@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { motion } from 'framer-motion'
+import cn from 'classnames'
 
 interface Props {
   headline: string
@@ -9,6 +10,8 @@ interface Props {
   onSubmit: () => void
   submitButtonText: string
   isModalVisable: boolean
+  hasError: boolean
+  errorMessage: string
 }
 
 const InputModal = ({
@@ -18,6 +21,8 @@ const InputModal = ({
   onSubmit,
   submitButtonText,
   isModalVisable,
+  hasError,
+  errorMessage,
 }: Props) => {
   return (
     <>
@@ -33,6 +38,17 @@ const InputModal = ({
           </Text>
 
           {children}
+
+          <div
+            className={cn({
+              [`errorMessage `]: true,
+              [`showErrorMessage`]: hasError,
+            })}
+          >
+            <Text color="red600" fontWeight="semiBold" variant="small">
+              {errorMessage}
+            </Text>
+          </div>
 
           <Box display="flex" justifyContent="spaceBetween" marginTop={5}>
             <Button variant="ghost" onClick={onCancel}>

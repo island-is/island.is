@@ -21,9 +21,7 @@ const StateModalContainer = ({
       baseId="changeStatus"
       isVisible={isVisible}
       onVisibilityChange={(visibility) => {
-        if (visibility !== isVisible) {
-          onVisibilityChange(visibility)
-        }
+        onVisibilityChange(visibility)
       }}
       className={styles.modalBase}
     >

@@ -101,6 +101,18 @@ const StateModal = ({
     return header
   }
 
+  const saveOrNextWindow = (stateOption: ApplicationState) => {
+    const goToNextWindow = stateNeedInput.find(
+      (item) => stateOption === item.state,
+    )
+    if (goToNextWindow) {
+      setSelected(stateOption)
+      return
+    }
+
+    saveStateApplication(applicationId, stateOption)
+  }
+
   return (
     <StateModalContainer
       isVisible={isVisible}
@@ -126,15 +138,7 @@ const StateModal = ({
             onClick={(e, stateOption) => {
               e.stopPropagation()
 
-              const goToNextWindow = stateNeedInput.find(
-                (item) => stateOption === item.state,
-              )
-              if (goToNextWindow) {
-                setSelected(stateOption)
-                return
-              }
-
-              saveStateApplication(applicationId, stateOption)
+              saveOrNextWindow(stateOption)
             }}
           />
 
@@ -142,8 +146,7 @@ const StateModal = ({
             isModalVisable={selected === ApplicationState.DATANEEDED}
             onCancel={onClickCancel}
             onSaveApplication={(comment?: string) => {
-              if (!comment || !selected) {
-                setSelected(undefined)
+              if (!selected) {
                 return
               }
               saveStateApplication(
@@ -160,8 +163,7 @@ const StateModal = ({
             isModalVisable={selected === ApplicationState.APPROVED}
             onCancel={onClickCancel}
             onSaveApplication={(amount: number) => {
-              if (amount < 0 || !selected) {
-                setSelected(undefined)
+              if (!selected) {
                 return
               }
               saveStateApplication(applicationId, selected, amount)
@@ -172,8 +174,7 @@ const StateModal = ({
             isModalVisable={selected === ApplicationState.REJECTED}
             onCancel={onClickCancel}
             onSaveApplication={(reasonForRejection?: string) => {
-              if (!reasonForRejection || !selected) {
-                setSelected(undefined)
+              if (!selected) {
                 return
               }
               saveStateApplication(

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 
 import { InputModal } from '@island.is/financial-aid-web/veita/src/components'
 import { Input, Text, Box } from '@island.is/island-ui/core'
+import cn from 'classnames'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
@@ -15,16 +16,23 @@ const RejectModal = ({
   isModalVisable,
 }: Props) => {
   const [comment, setComment] = useState<string>()
+  const [hasError, setHasError] = useState(false)
 
   return (
     <InputModal
       headline="Umsókn þinni um aðstoð hefur verið synjað"
       onCancel={onCancel}
       onSubmit={() => {
+        if (!comment) {
+          setHasError(true)
+          return
+        }
         onSaveApplication(comment)
       }}
       submitButtonText="Synja og senda á umsækjanda"
       isModalVisable={isModalVisable}
+      hasError={hasError && !comment}
+      errorMessage="Þú þarft að senda lýsingu"
     >
       <Box marginBottom={5}>
         <Input
@@ -38,6 +46,7 @@ const RejectModal = ({
           onChange={(event) => {
             setComment(event.target.value)
           }}
+          hasError={hasError && !comment}
         />
       </Box>
 
