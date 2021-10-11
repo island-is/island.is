@@ -5,6 +5,7 @@ export enum UserRole {
   REGISTRAR = 'REGISTRAR',
   JUDGE = 'JUDGE',
   ADMIN = 'ADMIN',
+  STAFF = 'STAFF',
 }
 
 export interface User {
