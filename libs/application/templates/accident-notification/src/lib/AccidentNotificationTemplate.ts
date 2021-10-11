@@ -19,10 +19,11 @@ import {
 } from '../utils'
 import { hasMissingDocuments } from '../utils/hasMissingDocuments'
 import { isReportingOnBehalfSelf } from '../utils/isReportingBehalfOfSelf'
+import { AccidentNotificationSchema } from './dataSchema'
 import { application } from './messages'
 
 // Uncomment for empty data schema
-const AccidentNotificationSchema = z.object({})
+// const AccidentNotificationSchema = z.object({})
 
 enum Roles {
   APPLICANT = 'applicant',
