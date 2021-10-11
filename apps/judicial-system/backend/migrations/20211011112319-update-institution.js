@@ -52,24 +52,25 @@ module.exports = {
 
   down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
-      replaceEnum({
-        queryInterface,
-        tableName: 'institution',
-        columnName: 'type',
-        newValues: ['PROSECUTORS_OFFICE', 'COURT', 'HIGH_COURT'],
-        enumName: 'enum_institution_type',
-      })
+      queryInterface
+        .bulkDelete(
+          'institution',
+          {
+            id: [
+              'c9b3b124-2a85-11ec-8d3d-0242ac130003',
+              'c9b3b3ae-2a85-11ec-8d3d-0242ac130003',
+            ],
+          },
+          { transaction: t },
+        )
         .then(() => {
-          queryInterface.bulkDelete(
-            'institution',
-            {
-              id: [
-                'c9b3b124-2a85-11ec-8d3d-0242ac130003',
-                'c9b3b3ae-2a85-11ec-8d3d-0242ac130003',
-              ],
-            },
-            { transaction: t },
-          )
+          return replaceEnum({
+            queryInterface,
+            tableName: 'institution',
+            columnName: 'type',
+            newValues: ['PROSECUTORS_OFFICE', 'COURT', 'HIGH_COURT'],
+            enumName: 'enum_institution_type',
+          })
         })
         .then(() => {
           return replaceEnum({
