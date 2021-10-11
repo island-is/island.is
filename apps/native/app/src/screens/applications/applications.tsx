@@ -48,7 +48,7 @@ const {
         text: intl.formatMessage({ id: 'applications.title' }),
       },
       searchBar: {
-        placeholder: intl.formatMessage({ id: 'inbox.searchPlaceholder' }),
+        placeholder: intl.formatMessage({ id: 'applications.searchPlaceholder' }),
         tintColor: theme.color.blue400,
         backgroundColor: 'transparent',
       },
@@ -93,7 +93,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const keyboardRef = useRef(false)
   const intl = useIntl()
   const [page, setPage] = useState(1)
-  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [isLoadingMore, setIsLoadingMore] = useState(true)
   const scrollY = useRef(new Animated.Value(0)).current
 
   const input = {
@@ -197,7 +197,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
               visible: true,
               focus: true,
               placeholder: intl.formatMessage({
-                id: 'inbox.searchPlaceholder',
+                id: 'applications.searchPlaceholder',
               }),
             },
           },
@@ -212,7 +212,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
               searchBar: {
                 visible: false,
                 placeholder: intl.formatMessage({
-                  id: 'inbox.searchPlaceholder',
+                  id: 'applications.searchPlaceholder',
                 }),
               },
             },
@@ -309,10 +309,10 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         renderItem={renderItem}
         onEndReached={() => !isLoading && setPage((p) => p + 1)}
         onEndReachedThreshold={0.5}
-        refreshing={res.networkStatus === 4}
-        onRefresh={() => res.refetch()}
+        refreshing={res?.networkStatus === 4}
+        onRefresh={() => res?.refetch()}
         ListFooterComponent={() =>
-          !isEmptyView && isSearch && isLoadingMore && (
+          !isEmptyView && !isSearch && !isLoading && isLoadingMore && (
             <View style={{ paddingVertical: 20 }}>
               <ActivityIndicator size="large" color="#0061FF" />
             </View>

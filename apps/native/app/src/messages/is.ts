@@ -187,7 +187,7 @@ export const is = {
   // applications screen
   'applications.title': 'Umsóknir á Ísland.is',
   'applications.bottomTabText': 'Umsóknir',
-  'applications.searchPlaceholder': 'Leita að skjölum...',
+  'applications.searchPlaceholder': 'Leita að umsóknum...',
   'applications.loadingText': 'Leita í skjölum...',
   'applications.resultText': 'niðurstöður fundust',
   'applications.singleResultText': 'niðurstaða fannst',

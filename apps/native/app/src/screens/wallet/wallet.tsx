@@ -4,6 +4,7 @@ import {
   EmptyList,
   LicenceCard,
   Skeleton,
+  TopLine,
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -68,6 +69,15 @@ const {
     },
   }),
   {
+    topBar: {
+      largeTitle: {
+        visible: true,
+      },
+      scrollEdgeAppearance: {
+        active: true,
+        noBorder: true,
+      },
+    },
     bottomTab: {
       testID: testIDs.TABBAR_TAB_WALLET,
       iconInsets: {
@@ -81,31 +91,33 @@ const {
 
 const WalletItem = React.memo(({ item }: { item: IGenericUserLicense }) => {
   return (
-    <TouchableHighlight
-      style={{ marginBottom: 16, borderRadius: 16 }}
-      onPress={() =>
-        navigateTo(`/wallet/${item.license.type}`, {
-          item,
-          fromId: `license-${item.license.type}_source`,
-          toId: `license-${item.license.type}_destination`,
-        })
-      }
-    >
-      <SafeAreaView>
-        <LicenceCard
-          nativeID={`license-${item.license.type}_source`}
-          title={item.license.type}
-          type={item.license.type as LicenseType}
-          date={new Date(Number(item.fetch.updated))}
-          status={
-            item.license.status === GenericUserLicenseStatus.HasLicense
-              ? LicenseStatus.VALID
-              : LicenseStatus.NOT_VALID
-          }
-          agencyLogo={agencyLogo}
-        />
-      </SafeAreaView>
-    </TouchableHighlight>
+    <View style={{ paddingHorizontal: 16 }}>
+      <TouchableHighlight
+        style={{ marginBottom: 16, borderRadius: 16 }}
+        onPress={() =>
+          navigateTo(`/wallet/${item.license.type}`, {
+            item,
+            fromId: `license-${item.license.type}_source`,
+            toId: `license-${item.license.type}_destination`,
+          })
+        }
+      >
+        <SafeAreaView>
+          <LicenceCard
+            nativeID={`license-${item.license.type}_source`}
+            title={item.license.type}
+            type={item.license.type as LicenseType}
+            date={new Date(Number(item.fetch.updated))}
+            status={
+              item.license.status === GenericUserLicenseStatus.HasLicense
+                ? LicenseStatus.VALID
+                : LicenseStatus.NOT_VALID
+            }
+            agencyLogo={agencyLogo}
+          />
+        </SafeAreaView>
+      </TouchableHighlight>
+    </View>
   )
 })
 
@@ -125,10 +137,11 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const isSkeleton = res.loading && !res.data
   const loadingTimeout = useRef<number>()
   const intl = useIntl()
+  const scrollY = useRef(new Animated.Value(0)).current
 
   useActiveTabItemPress(2, () => {
     flatListRef.current?.scrollToOffset({
-      offset: -100,
+      offset: -150,
       animated: true,
     })
   })
@@ -180,23 +193,25 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const renderItem = useCallback(({ item }) => {
     if (item.type === 'skeleton') {
       return (
-        <Skeleton
-          active
-          backgroundColor={theme.color.blue100}
-          overlayColor={theme.color.blue200}
-          overlayOpacity={1}
-          height={111}
-          style={{
-            borderRadius: 16,
-            marginBottom: 16,
-          }}
-        />
+        <View style={{ paddingHorizontal: 16 }}>
+          <Skeleton
+            active
+            backgroundColor={theme.color.blue100}
+            overlayColor={theme.color.blue200}
+            overlayOpacity={1}
+            height={111}
+            style={{
+              borderRadius: 16,
+              marginBottom: 16,
+            }}
+          />
+        </View>
       )
     }
 
     if (item.type === 'empty') {
       return (
-        <View style={{ marginTop: 80 }}>
+        <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
           <EmptyList
             title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
             description={intl.formatMessage({
@@ -205,6 +220,21 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
             image={<Image source={illustrationSrc} height={198} width={146} />}
           />
         </View>
+      )
+    }
+
+    if (item.type === 'alert') {
+      return (
+        Platform.OS === 'ios' ? (
+          <View style={{ marginBottom: 16 }}>
+            <Alert
+              visible={alertVisible}
+              type="info"
+              message={intl.formatMessage({ id: 'wallet.alertMessage' })}
+              onClose={() => dismiss('howToUseCertificates')}
+            />
+          </View>
+        ) : null
       )
     }
 
@@ -221,43 +251,39 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     id,
     type: 'skeleton',
   }))
+  const alertItems = [{ id: '99', type: 'alert' }];
 
   const isEmpty =
     licenseItems.length === 0 || licenseItems?.[0]?.fetch?.status === 'Error'
 
   return (
     <>
-      <BottomTabsIndicator index={2} total={3} />
-      <>
-        {Platform.OS === 'ios' && (
-          <Alert
-            visible={alertVisible}
-            type="info"
-            message={intl.formatMessage({ id: 'wallet.alertMessage' })}
-            onClose={() => dismiss('howToUseCertificates')}
-          />
+      <Animated.FlatList
+        ref={flatListRef}
+        testID={testIDs.SCREEN_HOME}
+        style={{
+          zIndex: 9,
+        }}
+        contentInset={{
+          bottom: 32,
+        }}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }
+        scrollEventThrottle={16}
+        scrollToOverflowEnabled={true}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          {
+            useNativeDriver: true,
+          },
         )}
-        <Animated.FlatList
-          ref={flatListRef}
-          testID={testIDs.SCREEN_HOME}
-          style={{
-            paddingTop: 16,
-            paddingHorizontal: 16,
-            zIndex: 9,
-          }}
-          contentInset={{
-            bottom: 32,
-          }}
-          refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={onRefresh} />
-          }
-          data={
-            isSkeleton ? skeletonItems : isEmpty ? emptyItems : licenseItems
-          }
-          keyExtractor={keyExtractor}
-          renderItem={renderItem}
-        />
-      </>
+        data={isSkeleton ? skeletonItems : isEmpty ? emptyItems : [...alertItems, ...licenseItems]}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+      />
+      <TopLine scrollY={scrollY} />
+      <BottomTabsIndicator index={2} total={3} />
     </>
   )
 }
