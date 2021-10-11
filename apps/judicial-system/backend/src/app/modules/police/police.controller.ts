@@ -11,9 +11,9 @@ import {
 import { UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
-import { PoliceService } from './police.service'
 import { CaseService } from '../case'
-import { PoliceCaseFile } from './policeFile.model'
+import { PoliceCaseFile } from './policeCaseFile.model'
+import { PoliceService } from './police.service'
 
 // Allows prosecutors to perform any action
 const prosecutorRule = UserRole.PROSECUTOR as RolesRule
