@@ -107,6 +107,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
             formatMessage,
           )}
           error={errors && getErrorViaPath(errors, nationalIdField)}
+          required
           backgroundColor="blue"
           defaultValue=""
         />
