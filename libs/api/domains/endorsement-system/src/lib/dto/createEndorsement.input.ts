@@ -1,11 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsUUID, IsBoolean } from 'class-validator'
-
-class EndorsementDto {
-  @Field()
-  @IsBoolean()
-  showName!: boolean
-}
+import { EndorsementInput } from './endorsement.input'
 
 @InputType()
 export class CreateEndorsementInput {
@@ -14,5 +9,5 @@ export class CreateEndorsementInput {
   listId!: string
 
   @Field()
-  endorsementDto!: EndorsementDto
+  endorsementDto!: EndorsementInput
 }
