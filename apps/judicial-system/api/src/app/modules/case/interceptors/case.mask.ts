@@ -31,6 +31,7 @@ export function maskCase(theCase: Case): Case {
       decision: theCase.decision,
       validToDate: theCase.validToDate,
       isValidToDateInThePast: theCase.isValidToDateInThePast,
+      creatingProsecutor: theCase.creatingProsecutor,
       prosecutor: theCase.prosecutor,
       rulingDate: theCase.rulingDate,
       accusedAppealDecision: theCase.accusedAppealDecision,
