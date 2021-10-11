@@ -10,7 +10,11 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import { ExportAsCSV } from '@island.is/application/ui-components'
-import { useGetSinglePetition, UnendorseList, useGetSingleEndorsement } from '../queries'
+import {
+  useGetSinglePetition,
+  UnendorseList,
+  useGetSingleEndorsement,
+} from '../queries'
 import { pages, PAGE_SIZE, paginate } from './pagination'
 import { useMutation } from '@apollo/client'
 import { list } from '../mocks'
@@ -69,7 +73,9 @@ const ViewPetition = () => {
         },
       },
     }).catch(() => {
-      toast.error('Ekki tókst að taka nafn þitt af lista. Vinsamlegast reyndu aftur síðar')
+      toast.error(
+        'Ekki tókst að taka nafn þitt af lista. Vinsamlegast reyndu aftur síðar',
+      )
     })
 
     if (success) {
@@ -128,11 +134,7 @@ const ViewPetition = () => {
                 title="Ertu viss um að vilja taka nafn þitt af lista?"
                 ariaLabel="modal to confirm that user is willing to close the petition list"
                 disclosureElement={
-                  <Button
-                    loading={isLoading}
-                    variant="primary"
-                    icon="close"
-                  >
+                  <Button loading={isLoading} variant="primary" icon="close">
                     Taka nafn mitt af þessum lista
                   </Button>
                 }
@@ -148,12 +150,14 @@ const ViewPetition = () => {
                 variant="primary"
                 icon="arrowForward"
                 onClick={() =>
-                  window.open(`${baseUrlForm}/medmaelendalisti/3deeab21-cbdf-4414-adcd-381e3232f41b`)
+                  window.open(
+                    `${baseUrlForm}/medmaelendalisti/3deeab21-cbdf-4414-adcd-381e3232f41b`,
+                  )
                 }
               >
                 Setja nafn mitt á lista
               </Button>
-          </Box>
+            </Box>
           )}
         </Box>
       )}

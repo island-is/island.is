@@ -8,15 +8,11 @@ import {
 
 import { useQuery } from '@apollo/client'
 
-export type RegionsPetitionList = Pick<
-  EndorsementList,
-  'id'
-> & { tags: EndorsementListOpenTagsEnum[] }
+export type RegionsPetitionList = Pick<EndorsementList, 'id'> & {
+  tags: EndorsementListOpenTagsEnum[]
+}
 
-export type UserEndorsement = Pick<
-  Endorsement,
-  'id'
->
+export type UserEndorsement = Pick<Endorsement, 'id'>
 export type UserVoterRegion = Pick<
   TemporaryVoterRegistry,
   'regionNumber' | 'regionName'
@@ -36,7 +32,9 @@ interface SingleEndorsement {
 }
 
 const GET_SINGLE_ENDORSEMENT = gql`
-  query endorsementSystemGetSingleEndorsement($input: FindEndorsementListInput!) {
+  query endorsementSystemGetSingleEndorsement(
+    $input: FindEndorsementListInput!
+  ) {
     endorsementSystemGetSingleEndorsement(input: $input) {
       id
       endorser
@@ -171,12 +169,15 @@ export const useGetSinglePetition = (listId: string) => {
 }
 
 export const useGetSingleEndorsement = (listId: string) => {
-  const { data: endorsement } = useQuery<SingleEndorsement>(GET_SINGLE_ENDORSEMENT, {
-    variables: {
-      input: {
-        listId: listId,
+  const { data: endorsement } = useQuery<SingleEndorsement>(
+    GET_SINGLE_ENDORSEMENT,
+    {
+      variables: {
+        input: {
+          listId: listId,
+        },
       },
     },
-  })
+  )
   return endorsement
 }
