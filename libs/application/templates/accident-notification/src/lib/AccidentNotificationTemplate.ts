@@ -8,14 +8,14 @@ import {
   ApplicationTypes,
   DefaultEvents,
 } from '@island.is/application/core'
-import * as z from 'zod'
+// import * as z from 'zod'
 import { States } from '../constants'
 import { ApiActions } from '../shared'
-// import { AccidentNotificationSchema } from './dataSchema'
+import { AccidentNotificationSchema } from './dataSchema'
 import { application } from './messages'
 
 // Uncomment for empty data schema
-const AccidentNotificationSchema = z.object({})
+// const AccidentNotificationSchema = z.object({})
 
 enum Roles {
   APPLICANT = 'applicant',
