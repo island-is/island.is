@@ -1,5 +1,11 @@
 import { months } from './const'
-import React from 'react'
+import {
+  DocumentNode,
+  OperationVariables,
+  useApolloClient,
+} from '@apollo/client'
+
+import React, { useCallback } from 'react'
 
 export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)
@@ -52,4 +58,19 @@ export const decodeToken = (token: string) => {
   const base64Url = token.split('.')[1]
   const base64 = base64Url.replace('-', '+').replace('_', '/')
   return JSON.parse(Buffer.from(base64, 'base64').toString('binary'))
+}
+
+export const useLazyQuery = <TData, TVariables = OperationVariables>(
+  query: DocumentNode,
+) => {
+  const client = useApolloClient()
+
+  return useCallback(
+    (variables: TVariables) =>
+      client.query<TData, TVariables>({
+        query,
+        variables,
+      }),
+    [client],
+  )
 }

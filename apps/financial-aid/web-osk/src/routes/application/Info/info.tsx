@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Text, Icon, Box, Checkbox } from '@island.is/island-ui/core'
 
 import {
@@ -14,15 +14,40 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFor
 import {
   getNextPeriod,
   NavigationProps,
+  useLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
+import { NationalRegistryUserQuery } from '@island.is/financial-aid-web/osk/graphql'
+import { UserContext } from '../../../components/UserProvider/UserProvider'
 
 const ApplicationInfo = () => {
   const router = useRouter()
+  const { user } = useContext(UserContext)
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
+
+  const nationalRegistryQuery = useLazyQuery<
+    {
+      nationalRegistryUserV2: {
+        nationalId: string
+        fullName: string
+        address: {
+          streetName: string
+          postalCode: string
+          city: string
+          municipalityCode: string
+        }
+        spouse: {
+          nationalId: string
+          maritalStatus: string
+          name: string
+        }
+      }
+    },
+    { input: { ssn: string } }
+  >(NationalRegistryUserQuery)
 
   const logOut = useLogOut()
 
@@ -30,11 +55,17 @@ const ApplicationInfo = () => {
     router.pathname,
   ) as NavigationProps
 
-  const errorCheck = () => {
+  const errorCheck = async () => {
     if (!accept) {
       setHasError(true)
       return
     }
+
+    const data = await nationalRegistryQuery({
+      input: { ssn: '0901951589' },
+    })
+
+    console.log('user data', data)
 
     if (navigation?.nextUrl) {
       router.push(navigation?.nextUrl)

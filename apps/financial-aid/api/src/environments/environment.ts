@@ -33,7 +33,7 @@ const devConfig = {
     url: 'http://localhost:3344',
   },
   nationalRegistryXRoad: {
-    xRoadBasePathWithEnv: 'http://localhost:8081/r1/IS-DEV',
+    xRoadBasePathWithEnv: 'http://localhost:5050/r1/IS-DEV',
     xRoadTjodskraMemberCode: '10001',
     xRoadTjodskraApiPath: '/SKRA-Protected/Einstaklingar-v1',
     xRoadClientId: 'IS-DEV/MUN/10023/samband-sveitarfelaga-client',

@@ -87,7 +87,7 @@ export const UpdateApplicationMutation = gql`
   }
 `
 
-export const getNationalRegistryUserQuery = gql`
+export const NationalRegistryUserQuery = gql`
   query getNationalRegistryUserQuery {
     nationalRegistryUserV2 {
       nationalId
