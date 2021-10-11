@@ -96,11 +96,7 @@ export class ApplicationService {
           separate: true,
           where: {
             eventType: {
-              [Op.in]: [
-                ApplicationEventType.APPROVED,
-                ApplicationEventType.DATANEEDED,
-                ApplicationEventType.REJECTED,
-              ],
+              [Op.in]: [ApplicationEventType.DATANEEDED],
             },
           },
           order: [['created', 'DESC']],

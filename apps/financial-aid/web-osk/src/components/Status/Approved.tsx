@@ -9,10 +9,15 @@ import {
 
 interface Props {
   state: ApplicationState
+  amount?: number
 }
 
-const Approved = ({ state }: Props) => {
+const Approved = ({ state, amount }: Props) => {
   const currentMonth = getMonth(new Date().getMonth())
+
+  if (state !== ApplicationState.APPROVED) {
+    return null
+  }
 
   return (
     <>
@@ -20,10 +25,13 @@ const Approved = ({ state }: Props) => {
         Umsókn {getState[state].toLowerCase()}
       </Text>
       <Text variant="intro">
-        Umsóknin þín um fjárhagsaðstoð í {currentMonth} er samþykkt en athugaðu
-        að hún byggir á tekjum og öðrum þáttum sem kunna að koma upp í{' '}
-        {currentMonth} og getur því tekið breytingum.
+        Umsóknin þín um fjárhagsaðstoð í {currentMonth} er samþykkt.
       </Text>
+
+      <Text as="h3" variant="h3" marginBottom={2}>
+        Veitt aðstoð :{amount?.toLocaleString('de-DE') + ' kr.'}
+      </Text>
+
       {/* //TODO estimated aid, need approval */}
     </>
   )

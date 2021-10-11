@@ -17,7 +17,10 @@ import {
   Timeline,
 } from '@island.is/financial-aid-web/osk/src/components'
 
-import { getActiveTypeForStatus } from '@island.is/financial-aid/shared/lib'
+import {
+  getActiveTypeForStatus,
+  getCommentFromLatestEvent,
+} from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
@@ -35,19 +38,21 @@ const MainPage = () => {
           Aðstoðin þín
         </Text>
 
-        {myApplication && (
+        {myApplication && myApplication?.state && (
           <>
             {getActiveTypeForStatus[myApplication.state] === 'InProgress' && (
               <InProgress currentApplication={myApplication} />
             )}
 
-            {getActiveTypeForStatus[myApplication.state] === 'Approved' && (
-              <Approved state={myApplication.state} />
-            )}
+            <Approved
+              state={myApplication.state}
+              amount={myApplication.amount}
+            />
 
-            {getActiveTypeForStatus[myApplication.state] === 'Rejected' && (
-              <Rejected state={myApplication.state} />
-            )}
+            <Rejected
+              state={myApplication.state}
+              rejectionComment={myApplication?.rejection}
+            />
 
             <Timeline
               state={myApplication.state}

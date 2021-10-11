@@ -5,6 +5,7 @@ import {
   ApplicationEventType,
   ApplicationStateUrl,
 } from './enums'
+import { ApplicationEvent } from './interfaces'
 import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -119,4 +120,11 @@ export const aidCalculator = (
     default:
       return aid.withParents
   }
+}
+
+export const getCommentFromLatestEvent = (
+  applicationEvents: ApplicationEvent[],
+  findState: ApplicationEventType,
+) => {
+  return applicationEvents.find((el) => el.eventType === findState)
 }

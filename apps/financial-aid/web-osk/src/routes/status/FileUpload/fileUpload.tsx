@@ -13,6 +13,7 @@ import {
   ApplicationEventType,
   ApplicationState,
   FileType,
+  getCommentFromLatestEvent,
 } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
 import {
@@ -32,8 +33,9 @@ const FileUpload = () => {
 
   const fileComment = useMemo(() => {
     if (myApplication?.applicationEvents) {
-      return myApplication?.applicationEvents.find(
-        (el) => el.eventType === ApplicationEventType.DATANEEDED,
+      return getCommentFromLatestEvent(
+        myApplication?.applicationEvents,
+        ApplicationEventType.DATANEEDED,
       )
     }
     return
