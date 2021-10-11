@@ -11,8 +11,8 @@ export class RskCompanySearchItem {
   @Field(() => String)
   name?: string
 
-  @Field(() => String)
-  dateOfRegistration?: string
+  @Field(() => Date)
+  dateOfRegistration?: Date
 
   @Field(() => String)
   status?: string
@@ -20,8 +20,8 @@ export class RskCompanySearchItem {
   @Field(() => [RskCompanyVat], { nullable: true })
   vat?: RskCompanyVat[]
 
-  @Field(() => String)
-  lastUpdated?: string
+  @Field(() => Date)
+  lastUpdated?: Date
 
   @Field(() => RskCompany, { nullable: true })
   companyInfo?: RskCompany

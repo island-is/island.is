@@ -28,8 +28,8 @@ export class RskCompany {
   @Field(() => String)
   name!: string
 
-  @Field(() => String)
-  dateOfRegistration!: string
+  @Field(() => Date)
+  dateOfRegistration!: Date
 
   @Field(() => String)
   status!: string
@@ -37,8 +37,8 @@ export class RskCompany {
   @Field(() => String)
   vatNumber?: string
 
-  @Field(() => String)
-  lastUpdated?: string
+  @Field(() => Date)
+  lastUpdated?: Date
 
   @Field(() => RskCompanyInfo, { nullable: true })
   companyInfo?: RskCompanyInfo

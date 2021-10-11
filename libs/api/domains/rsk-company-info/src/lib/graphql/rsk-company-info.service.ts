@@ -30,7 +30,7 @@ export class RskCompanyInfoService {
     return {
       nationalId: company.kennitala,
       name: company.nafn,
-      dateOfRegistration: company.skrad,
+      dateOfRegistration: new Date(company.skrad),
       status: company.stada,
       companyInfo: {
         formOfOperation: company.rekstrarform?.map((item) => {
@@ -60,9 +60,9 @@ export class RskCompanyInfoService {
         vat: company.virdisaukaskattur?.map((item) => {
           return {
             vatNumber: item.vskNumer,
-            dateOfRegistration: item.skrad,
+            dateOfRegistration: new Date(item.skrad),
             status: item.stada,
-            deregistration: item.afskraning,
+            dateOfDeregistration: new Date(item.afskraning),
             classification: item.flokkun?.map(
               (classification) =>
                 ({
@@ -75,7 +75,9 @@ export class RskCompanyInfoService {
           } as RskCompanyVat
         }),
       },
-      lastUpdated: company.sidastUppfaert,
+      lastUpdated: company.sidastUppfaert
+        ? new Date(company.sidastUppfaert)
+        : undefined,
     }
   }
 
@@ -99,10 +101,12 @@ export class RskCompanyInfoService {
       return {
         name: item.nafn,
         status: item.stada,
-        dateOfRegistration: item.skrad,
+        dateOfRegistration: item.skrad ? new Date(item.skrad) : undefined,
         nationalId: item.kennitala,
         vatNumber: item.vskNumer,
-        lastUpdated: item.sidastUppfaert,
+        lastUpdated: item.sidastUppfaert
+          ? new Date(item.sidastUppfaert)
+          : undefined,
       } as RskCompany
     })
 

@@ -6,14 +6,14 @@ export class RskCompanyVat {
   @Field(() => String, { nullable: true })
   vatNumber?: string
 
-  @Field(() => String, { nullable: true })
-  dateOfRegistration?: string
+  @Field(() => Date, { nullable: true })
+  dateOfRegistration?: Date
 
   @Field(() => String, { nullable: true })
   status?: string
 
-  @Field(() => String, { nullable: true })
-  deregistration?: string
+  @Field(() => Date, { nullable: true })
+  dateOfDeregistration?: Date
 
   @Field(() => [RskCompanyClassification], { nullable: true })
   classification?: RskCompanyClassification[]
