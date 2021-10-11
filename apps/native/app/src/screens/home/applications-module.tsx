@@ -1,9 +1,11 @@
 import {
   Badge,
   EmptyCard,
-  Heading, LinkText, StatusCard,
+  Heading,
+  LinkText,
+  StatusCard,
   StatusCardSkeleton,
-  ViewPager
+  ViewPager,
 } from '@island.is/island-ui-native'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -70,9 +72,11 @@ export const ApplicationsModule = React.memo(
 
     return (
       <SafeAreaView style={{ marginHorizontal: 16 }}>
-        <Heading>
-          {intl.formatMessage({ id: 'home.applicationsStatus' })}
-        </Heading>
+        <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
+          <Heading>
+            {intl.formatMessage({ id: 'home.applicationsStatus' })}
+          </Heading>
+        </TouchableOpacity>
         {loading ? (
           <StatusCardSkeleton />
         ) : (

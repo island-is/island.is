@@ -20,6 +20,9 @@ PODS:
     - UMCore
     - ZXingObjC/OneD
     - ZXingObjC/PDF417
+  - EXCamera (11.2.2):
+    - ExpoModulesCore
+    - UMCore
   - EXConstants (11.0.2):
     - ExpoModulesCore
     - UMCore
@@ -570,6 +573,7 @@ DEPENDENCIES:
   - DoubleConversion (from `../../../../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - EXApplication (from `../../node_modules/expo-application/ios`)
   - EXBarCodeScanner (from `../../node_modules/expo-barcode-scanner/ios`)
+  - EXCamera (from `../../node_modules/expo-camera/ios`)
   - EXConstants (from `../../node_modules/expo-constants/ios`)
   - EXFileSystem (from `../../node_modules/expo-file-system/ios`)
   - EXHaptics (from `../../node_modules/expo-haptics/ios`)
@@ -707,6 +711,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/expo-application/ios"
   EXBarCodeScanner:
     :path: "../../node_modules/expo-barcode-scanner/ios"
+  EXCamera:
+    :path: "../../node_modules/expo-camera/ios"
   EXConstants:
     :path: "../../node_modules/expo-constants/ios"
   EXFileSystem:
@@ -841,6 +847,7 @@ SPEC CHECKSUMS:
   DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
   EXApplication: 9ff2a206009d6e55bca6c20b3f33d07986b51ef3
   EXBarCodeScanner: ea326d0d2f0b84d4fa2fb833d17e28eaff7f831b
+  EXCamera: 042b334f6ee9b918855fe4c4f155d4c372300a5f
   EXConstants: 4cb52b6d8f636c767104a44bf7db3873e9c01a6f
   EXFileSystem: 0a04aba8da751b9ac954065911bcf166503f8267
   EXHaptics: 6dc4307ab0794fe7a87ec8d7d1c299cf103d6cb3

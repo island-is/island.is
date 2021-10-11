@@ -205,7 +205,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useActiveTabItemPress(0, () => {
     flatListRef.current?.scrollToOffset({
-      offset: -100,
+      offset: -300,
       animated: true,
     })
   })
@@ -337,6 +337,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
             useNativeDriver: true,
           },
         )}
+        scrollToOverflowEnabled={true}
         style={{ marginHorizontal: 0, flex: 1 }}
         data={
           isSkeltonView ? skeletonItems : isEmptyView ? emptyItems : inboxItems

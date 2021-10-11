@@ -268,6 +268,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           agencyLogo={agencyLogo}
         />
       </SafeAreaView>
+      {hasPkPass && (
+        <>
       <SafeAreaView
         style={{
           position: 'absolute',
@@ -296,7 +298,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         <LoadingOverlay>
           <ActivityIndicator size="large" color="#0061FF" style={{ marginTop: 32 }} />
         </LoadingOverlay>
-      )}
+      )}</>)}
     </View>
   )
 }

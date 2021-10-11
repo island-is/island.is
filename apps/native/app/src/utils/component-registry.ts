@@ -35,6 +35,7 @@ export const ButtonRegistry = {
   NotificationsButton: `${prefix}.button.NotificationsButton`,
   ShareButton: `${prefix}.button.ShareButton`,
   ScanLicenseButton: `${prefix}.button.ScanLicenseButton`,
+  ScanLicenseDoneButton: `${prefix}.button.ScanLicenseDoneButton`,
 }
 
 export const StackRegistry = {
