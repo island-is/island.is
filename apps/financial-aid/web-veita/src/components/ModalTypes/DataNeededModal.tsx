@@ -31,7 +31,7 @@ const DataNeededModal = ({
       }}
       submitButtonText="Senda á umsækjanda"
       isModalVisable={isModalVisable}
-      hasError={hasError && !comment}
+      hasError={hasError}
       errorMessage="Þú þarft að senda lýsingu"
     >
       <Box marginBottom={12}>
@@ -45,9 +45,10 @@ const DataNeededModal = ({
           backgroundColor="blue"
           onChange={(event) => {
             event.stopPropagation()
+            setHasError(false)
             setComment(event.currentTarget.value)
           }}
-          hasError={hasError && !comment}
+          hasError={hasError}
         />
       </Box>
     </InputModal>

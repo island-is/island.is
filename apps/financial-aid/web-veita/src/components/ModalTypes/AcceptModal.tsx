@@ -35,12 +35,15 @@ const AcceptModal = ({
       }}
       submitButtonText="Samþykkja"
       isModalVisable={isModalVisable}
-      hasError={hasError && amount <= 0}
+      hasError={hasError}
       errorMessage="Þú þarft að setja inn upphæð"
     >
       <NumberInput
         placeholder="Skrifaðu upphæð útborgunar"
-        onUpdate={setAmount}
+        onUpdate={(input) => {
+          setHasError(false)
+          setAmount(input)
+        }}
         maximumInputLength={maximumInputLength}
       />
     </InputModal>

@@ -16,14 +16,6 @@ interface Props {
 }
 
 const OptionsModal = ({ activeState, onClick, isModalVisable }: Props) => {
-  const statusOptions = [
-    ApplicationState.NEW,
-    ApplicationState.INPROGRESS,
-    ApplicationState.DATANEEDED,
-    ApplicationState.APPROVED,
-    ApplicationState.REJECTED,
-  ]
-
   return (
     <>
       {isModalVisable && (
@@ -33,7 +25,7 @@ const OptionsModal = ({ activeState, onClick, isModalVisable }: Props) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          {statusOptions.map((item, index) => {
+          {Object.values(ApplicationState).map((item, index) => {
             return (
               <button
                 key={'statusoptions-' + index}

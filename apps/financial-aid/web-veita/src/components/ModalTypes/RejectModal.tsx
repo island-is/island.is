@@ -31,7 +31,7 @@ const RejectModal = ({
       }}
       submitButtonText="Synja og senda á umsækjanda"
       isModalVisable={isModalVisable}
-      hasError={hasError && !comment}
+      hasError={hasError}
       errorMessage="Þú þarft að senda lýsingu"
     >
       <Box marginBottom={5}>
@@ -45,8 +45,9 @@ const RejectModal = ({
           backgroundColor="blue"
           onChange={(event) => {
             setComment(event.target.value)
+            setHasError(false)
           }}
-          hasError={hasError && !comment}
+          hasError={hasError}
         />
       </Box>
 

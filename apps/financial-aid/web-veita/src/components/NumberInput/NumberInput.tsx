@@ -27,6 +27,7 @@ export default function NumberInput({
       if (sanitizeNumber(value).length > maximumInputLength) {
         return
       }
+
       setText(formattedValue)
       onUpdate(Number(sanitizeNumber(value)))
     },
