@@ -55,3 +55,5 @@ export type {
   SignatureConfirmationResponse,
   CreateCourtCase,
 } from './lib/case'
+
+export { PoliceCaseFile } from './lib/policeFile'
