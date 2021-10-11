@@ -85,6 +85,7 @@ function isHightenedSecurityCaseHiddenFromUser(
   prosecutorId?: string,
 ): boolean {
   return (
+    user.role === UserRole.PROSECUTOR &&
     Boolean(isHeightenedSecurityLevel) &&
     user.id !== creatingProsecutorId &&
     user.id !== prosecutorId
