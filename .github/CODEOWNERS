@@ -88,6 +88,7 @@
 /libs/financial-aid/                                                                          @island-is/kolibri-robin-hood
 /libs/next-ids-auth/                                                                          @island-is/kolibri-robin-hood
 
+/apps/download-service/                                                                       @island-is/hugsmidjan
 /apps/service-portal*/                                                                        @island-is/hugsmidjan
 /apps/services/user-profile/                                                                  @island-is/hugsmidjan
 /apps/web/screens/Regulations/                                                                @island-is/hugsmidjan
@@ -101,7 +102,6 @@
 /libs/clients/regulations/                                                                    @island-is/hugsmidjan
 /libs/api/domains/regulations/                                                                @island-is/hugsmidjan
 
-/apps/download-service/                                                                       @island-is/sendiradid
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
 /libs/application/templates/institution-collaboration/                                        @island-is/sendiradid
 /libs/application/templates/login-service/                                                    @island-is/sendiradid
