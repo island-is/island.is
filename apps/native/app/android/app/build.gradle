@@ -127,6 +127,21 @@ def jscFlavor = 'org.webkit:android-jsc:+'
  */
 def enableHermes = project.ext.react.get("enableHermes", false);
 
+
+def getPassword(String currentUser, String keyChain) {
+  def stdout = new ByteArrayOutputStream()
+  def stderr = new ByteArrayOutputStream()
+  exec {
+    commandLine 'security', '-q', 'find-generic-password', '-a', currentUser, '-s', keyChain, '-w'
+    standardOutput = stdout
+    errorOutput = stderr
+    ignoreExitValue true
+  }
+  stdout.toString().trim()
+}
+
+def pass = getPassword("island.is","island_upload_key")
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
@@ -135,8 +150,8 @@ android {
         applicationId "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14
-        versionName "1.0.0"
+        versionCode 15
+        versionName "1.0.2"
         manifestPlaceholders = [
             appAuthRedirectScheme: "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
         ]
@@ -159,9 +174,9 @@ android {
         release {
             if (project.hasProperty('ISLANDAPP_UPLOAD_STORE_FILE')) {
                 storeFile file(ISLANDAPP_UPLOAD_STORE_FILE)
-                storePassword project.config.get("ISLANDAPP_UPLOAD_PASSWORD")
+                storePassword pass
                 keyAlias ISLANDAPP_UPLOAD_KEY_ALIAS
-                keyPassword project.config.get("ISLANDAPP_UPLOAD_PASSWORD")
+                keyPassword pass
             }
         }
     }

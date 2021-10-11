@@ -72,9 +72,11 @@ export const ApplicationsModule = React.memo(
 
     return (
       <SafeAreaView style={{ marginHorizontal: 16 }}>
-        <Heading>
-          {intl.formatMessage({ id: 'home.applicationsStatus' })}
-        </Heading>
+        <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
+          <Heading>
+            {intl.formatMessage({ id: 'home.applicationsStatus' })}
+          </Heading>
+        </TouchableOpacity>
         {loading ? (
           <StatusCardSkeleton />
         ) : (

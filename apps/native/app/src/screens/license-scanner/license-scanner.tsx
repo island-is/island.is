@@ -1,5 +1,5 @@
 import { Bubble } from '@island.is/island-ui-native'
-import { BarCodeEvent } from 'expo-barcode-scanner'
+import { BarCodeEvent, Constants } from 'expo-barcode-scanner'
 import { Camera } from 'expo-camera'
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -89,6 +89,19 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
     })
   }, [])
 
+  useEffect(() => {
+    Navigation.events().registerNavigationButtonPressedListener(e =>{
+      if (e.buttonId === 'LICENSE_SCANNER_DONE') {
+        Navigation.dismissModal(componentId)
+      }
+    });
+    Navigation.events().registerComponentWillAppearListener((e) => {
+      if (e.componentId === componentId) {
+        setActive(true);
+      }
+    });
+  }, []);
+
   const onFlashlightPress = useCallback(() => {
     setTorch((v) => !v)
   }, [])
@@ -99,56 +112,43 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
       clearTimeout(invalidTimeout.current)
     }
 
-    if (!data.includes('TGLJZW')) {
-      invalidTimeout.current = setTimeout(() => {
-        setInvalid(false)
-      }, 2000)
-      return setInvalid(true)
-    }
+    if (type === Constants.BarCodeType.pdf417) {
+      if (!data.includes('TGLJZW')) {
+        invalidTimeout.current = setTimeout(() => {
+          setInvalid(false)
+        }, 2000)
+        return setInvalid(true)
+      }
 
-    if (data.includes('expires')) {
-      try {
-        const { expires } = JSON.parse(data)
-        const startDate = new Date(expires)
-        const seconds = (Date.now() - startDate.getTime()) / 1000
-        isExpired = seconds > 0
-      } catch (error) {
-        // noop
+      if (data.includes('expires')) {
+        try {
+          const { expires } = JSON.parse(data)
+          const startDate = new Date(expires)
+          const seconds = (Date.now() - startDate.getTime()) / 1000
+          isExpired = seconds > 0
+        } catch (error) {
+          // noop
+        }
       }
     }
 
     impactAsync(ImpactFeedbackStyle.Heavy)
     setInvalid(false)
     setActive(false)
-    Navigation.showModal({
-      stack: {
-        children: [
-          {
-            component: {
-              name: ComponentRegistry.LicenseScanDetailScreen,
-              passProps: { type, data, isExpired },
-              options: {
-                topBar: {
-                  visible: true,
-                  title: {
-                    text: intl.formatMessage({ id: 'licenseScanner.title' }),
-                  },
-                },
-              },
+    Navigation.push(componentId, {
+      component: {
+        name: ComponentRegistry.LicenseScanDetailScreen,
+        passProps: { type, data, isExpired },
+        options: {
+          topBar: {
+            visible: true,
+            title: {
+              text: intl.formatMessage({ id: 'licenseScanner.title' }),
             },
           },
-        ],
-      },
-    }).then((modalComponentId) => {
-      const modal = Navigation.events().registerModalDismissedListener(
-        (evt) => {
-          if (evt.componentId === modalComponentId) {
-            setActive(true)
-            modal.remove()
-          }
         },
-      )
-    })
+      },
+    });
   }, [])
 
   const prepareRatio = async () => {
