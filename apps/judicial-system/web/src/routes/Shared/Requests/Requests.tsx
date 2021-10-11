@@ -89,14 +89,14 @@ export const Requests: React.FC = () => {
       caseToDelete.state === CaseState.SUBMITTED ||
       caseToDelete.state === CaseState.RECEIVED
     ) {
-      const caseDeleted = await transitionCase(
-        caseToDelete,
-        CaseTransition.DELETE,
+      const notificationSent = await sendNotification(
+        caseToDelete.id,
+        NotificationType.REVOKED,
       )
 
-      if (caseDeleted) {
+      if (notificationSent) {
         // No need to wait
-        sendNotification(caseToDelete.id, NotificationType.REVOKED)
+        transitionCase(caseToDelete, CaseTransition.DELETE)
 
         setTimeout(() => {
           setActiveCases(
