@@ -80,7 +80,7 @@ export const GetApplicationQuery = gql`
 `
 
 export const GetApplicationEventsQuery = gql`
-  query GetApplicationQuery($input: ApplicationInput!) {
+  query GetApplicationEventsQuery($input: ApplicationInput!) {
     application(input: $input) {
       applicationEvents {
         id
