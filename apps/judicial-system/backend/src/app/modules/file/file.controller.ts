@@ -15,7 +15,6 @@ import {
   CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
-  RolesRule,
   RolesRules,
 } from '@island.is/judicial-system/auth'
 import {
@@ -27,6 +26,7 @@ import {
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
+import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import { Case, CaseService } from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
 import {
@@ -37,15 +37,6 @@ import {
   UploadFileToCourtResponse,
 } from './models'
 import { FileService } from './file.service'
-
-// Allows prosecutors to perform any action
-const prosecutorRule = UserRole.PROSECUTOR as RolesRule
-
-// Allows judges to perform any action
-const judgeRule = UserRole.JUDGE as RolesRule
-
-// Allows registrars to perform any action
-const registrarRule = UserRole.REGISTRAR as RolesRule
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId')
