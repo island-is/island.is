@@ -8,12 +8,13 @@ import {
   ApplicationTypes,
   DefaultEvents,
 } from '@island.is/application/core'
-import * as z from 'zod'
+// import * as z from 'zod'
 import { States } from '../constants'
+import { AccidentNotificationSchema } from './dataSchema'
 import { application } from './messages'
-// import { AccidentNotificationSchema } from './dataSchema'
 
-const AccidentNotificationSchema = z.object({})
+// Uncomment for empty data schema
+// const AccidentNotificationSchema = z.object({})
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -58,7 +59,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/AccidentNotificationForm').then((val) =>
+                import('../forms/AccidentNotificationForm/index').then((val) =>
                   Promise.resolve(val.AccidentNotificationForm),
                 ),
               actions: [

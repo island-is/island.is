@@ -70,6 +70,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly isHeightenedSecurityLevel?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
   readonly courtId?: string
 
   @Allow()
@@ -162,6 +166,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly courtLocation?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly courtRoom?: string
 
   @Allow()
@@ -171,6 +179,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly courtEndTime?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly isClosedCourtHidden?: boolean
 
   @Allow()
   @Field({ nullable: true })
@@ -186,7 +198,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly isAccusedAbsent?: boolean
+  readonly isAccusedRightsHidden?: boolean
 
   @Allow()
   @Field(() => String, { nullable: true })

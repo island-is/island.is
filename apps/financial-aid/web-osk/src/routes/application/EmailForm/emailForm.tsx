@@ -4,13 +4,15 @@ import { Text, Input, Box } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
-import { NavigationProps } from '@island.is/financial-aid/shared/lib'
+import {
+  NavigationProps,
+  isEmailValid,
+} from '@island.is/financial-aid/shared/lib'
 
 const EmailForm = () => {
   const router = useRouter()
@@ -22,18 +24,13 @@ const EmailForm = () => {
     router.pathname,
   ) as NavigationProps
 
-  const isValid = (emailAddress: string) => {
-    let re = /\S+@\S+\.\S+/
-    return re.test(emailAddress)
-  }
-
   const errorCheck = () => {
     if (form?.emailAddress === undefined) {
       setHasError(true)
       return
     }
 
-    if (!isValid(form?.emailAddress)) {
+    if (!isEmailValid(form?.emailAddress)) {
       setHasError(true)
       return
     }
@@ -44,10 +41,7 @@ const EmailForm = () => {
   }
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Samskipti
@@ -60,15 +54,15 @@ const EmailForm = () => {
 
         <Box marginBottom={[1, 1, 2]}>
           <Input
+            autoFocus={true}
             name="email"
             label="Netfang"
             placeholder="Sláðu inn netfang"
             type="email"
             value={form?.emailAddress}
             onChange={(event) => {
-              if (hasError) {
-                setHasError(false)
-              }
+              setHasError(false)
+
               updateForm({ ...form, emailAddress: event.target.value })
             }}
             backgroundColor="blue"
@@ -82,7 +76,7 @@ const EmailForm = () => {
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
-    </FormLayout>
+    </>
   )
 }
 

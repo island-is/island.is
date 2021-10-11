@@ -10,7 +10,6 @@ import {
 
 import {
   ContentContainer,
-  FormLayout,
   Footer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
@@ -41,7 +40,7 @@ const Confirmation = () => {
   }, [])
 
   return (
-    <FormLayout activeSection={navigation?.activeSectionIndex}>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
           Staðfesting
@@ -116,7 +115,7 @@ const Confirmation = () => {
         nextButtonIcon={'close'}
         onNextButtonClick={() => logOut()}
       />
-    </FormLayout>
+    </>
   )
 }
 

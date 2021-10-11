@@ -15,6 +15,8 @@ import {
   PartyApplicationService,
   PayableDummyTemplateService,
   AccidentNotificationService,
+  PublicDebtPaymentPlanTemplateService,
+  GeneralPetitionService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -49,6 +51,8 @@ export class TemplateAPIService {
     private readonly partyApplicationService: PartyApplicationService,
     private readonly payableDummyTemplateService: PayableDummyTemplateService,
     private readonly accidentNotificationService: AccidentNotificationService,
+    private readonly publicDebtPaymentPlanService: PublicDebtPaymentPlanTemplateService,
+    private readonly generalPetitionService: GeneralPetitionService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -65,7 +69,9 @@ export class TemplateAPIService {
       | DrivingLicenseSubmissionService
       | PartyApplicationService
       | PayableDummyTemplateService
-      | AccidentNotificationService,
+      | AccidentNotificationService
+      | PublicDebtPaymentPlanTemplateService
+      | GeneralPetitionService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -160,6 +166,16 @@ export class TemplateAPIService {
       case ApplicationTypes.ACCIDENT_NOTIFICATION:
         return this.tryRunningActionOnService(
           this.accidentNotificationService,
+          action,
+        )
+      case ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN:
+        return this.tryRunningActionOnService(
+          this.publicDebtPaymentPlanService,
+          action,
+        )
+      case ApplicationTypes.GENERAL_PETITION:
+        return this.tryRunningActionOnService(
+          this.generalPetitionService,
           action,
         )
     }

@@ -47,7 +47,7 @@ export class DocumentProviderOnboardingService {
 
   async applicationApproved({
     application,
-    authorization,
+    auth,
   }: TemplateApiModuleActionProps) {
     try {
       const applicant = (get(
@@ -74,7 +74,7 @@ export class DocumentProviderOnboardingService {
           technicalContact: { ...techContact },
           helpdesk: { ...helpdesk },
         },
-        authorization,
+        authorization: auth.authorization,
       }
 
       await this.organisationsApi.organisationControllerCreateOrganisation(dto)

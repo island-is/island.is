@@ -1,17 +1,20 @@
-import React, { useContext, useEffect } from 'react'
-
-import { Login } from '@island.is/financial-aid-web/osk/src/components'
+import { Routes } from '@island.is/financial-aid/shared/lib'
+import { useRouter } from 'next/router'
+import { useContext, useEffect } from 'react'
+import { UserContext } from '../src/components/UserProvider/UserProvider'
 
 const Index = () => {
+  const { isAuthenticated } = useContext(UserContext)
+  const router = useRouter()
   useEffect(() => {
     document.title = 'Umsókn um fjárhagsaðstoð'
   }, [])
 
-  return (
-    <div className="">
-      <Login headline="Skráðu þig inn" />
-    </div>
-  )
+  if (isAuthenticated) {
+    router.push(Routes.application)
+  }
+
+  return null
 }
 
 export default Index

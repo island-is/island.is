@@ -9,7 +9,13 @@ import {
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
-import { setPageNumbers } from './pdfHelpers'
+import {
+  baseFontSize,
+  hugeFontSize,
+  largeFontSize,
+  mediumFontSize,
+  setPageNumbers,
+} from './pdfHelpers'
 import { writeFile } from './writeFile'
 
 export async function getCustodyNoticePdfAsString(
@@ -34,10 +40,10 @@ export async function getCustodyNoticePdfAsString(
 
   doc
     .font('Helvetica-Bold')
-    .fontSize(26)
+    .fontSize(hugeFontSize)
     .lineGap(8)
     .text('Vistunarseðill', { align: 'center' })
-    .fontSize(18)
+    .fontSize(largeFontSize)
     .text('Úrskurður um gæsluvarðhald', { align: 'center' })
     .font('Helvetica')
     .text(
@@ -51,10 +57,10 @@ export async function getCustodyNoticePdfAsString(
     })
     .text(' ')
     .font('Helvetica-Bold')
-    .fontSize(14)
+    .fontSize(mediumFontSize)
     .lineGap(8)
     .text('Sakborningur')
-    .fontSize(12)
+    .fontSize(baseFontSize)
     .text(existingCase.accusedName ?? 'Nafn ekki skráð')
     .font('Helvetica')
     .text(`kt. ${formatNationalId(existingCase.accusedNationalId)}`)
@@ -62,11 +68,11 @@ export async function getCustodyNoticePdfAsString(
     .text(' ')
     .text(' ')
     .font('Helvetica-Bold')
-    .fontSize(14)
+    .fontSize(mediumFontSize)
     .lineGap(8)
     .text('Úrskurður um gæsluvarðhald')
     .font('Helvetica')
-    .fontSize(12)
+    .fontSize(baseFontSize)
     .text(
       `${existingCase.court?.name}, ${formatDate(
         existingCase.courtStartDate,
@@ -121,26 +127,27 @@ export async function getCustodyNoticePdfAsString(
           }`
         : 'Ekki skráður',
     )
-    .text(' ')
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text('Tilhögun gæsluvarðhalds')
-    .font('Helvetica')
-    .fontSize(12)
-    .text(
-      formatCustodyRestrictions(
-        existingCase.accusedGender,
-        existingCase.custodyRestrictions,
-        existingCase.validToDate,
-        existingCase.isolationToDate,
-      ),
-      {
+
+  const custodyRestrictions = formatCustodyRestrictions(
+    existingCase.accusedGender,
+    existingCase.custodyRestrictions,
+  )
+
+  if (custodyRestrictions) {
+    doc
+      .text(' ')
+      .text(' ')
+      .font('Helvetica-Bold')
+      .fontSize(mediumFontSize)
+      .lineGap(8)
+      .text('Tilhögun gæsluvarðhalds')
+      .font('Helvetica')
+      .fontSize(baseFontSize)
+      .text(custodyRestrictions, {
         lineGap: 6,
         paragraphGap: 0,
-      },
-    )
+      })
+  }
 
   setPageNumbers(doc)
 

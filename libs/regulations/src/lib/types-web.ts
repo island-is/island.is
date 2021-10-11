@@ -149,7 +149,9 @@ export type Regulation = {
   ministry?: RegulationMinistry
   /** Law chapters that this regulation is linked to */
   lawChapters: ReadonlyArray<RegulationLawChapter>
-  // TODO: add link to original DOC/PDF file in Stjórnartíðindi's data store.
+
+  /** URL linking to the originally published document as published in Stjórnartíðindi */
+  originalDoc?: string | null
 
   /** Regulations are roughly classified based on whether they contain
    * any original text/stipulations, or whether they **only**  prescribe

@@ -108,7 +108,24 @@ export const RulingStepTwo: React.FC = () => {
 
       autofill(
         'conclusion',
-        theCase.decision === CaseDecision.REJECTING
+        theCase.decision === CaseDecision.DISMISSING
+          ? formatMessage(
+              rcRulingStepTwo.sections.conclusion.dismissingAutofill,
+              {
+                genderedAccused: formatAccusedByGender(theCase.accusedGender),
+                accusedName: theCase.accusedName,
+                extensionSuffix:
+                  theCase.parentCase !== undefined &&
+                  theCase.parentCase?.decision === CaseDecision.ACCEPTING
+                    ? ' áframhaldandi'
+                    : '',
+                caseType:
+                  theCase.type === CaseType.CUSTODY
+                    ? 'gæsluvarðhaldi'
+                    : 'farbanni',
+              },
+            )
+          : theCase.decision === CaseDecision.REJECTING
           ? formatMessage(
               rcRulingStepTwo.sections.conclusion.rejectingAutofill,
               {

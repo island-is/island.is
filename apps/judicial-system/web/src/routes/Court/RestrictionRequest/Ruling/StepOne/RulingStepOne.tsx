@@ -169,12 +169,14 @@ export const RulingStepOne: React.FC = () => {
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <AccordionItem
                   id="caseFileList"
-                  label={`Rannsóknargögn (${workingCase.files?.length ?? 0})`}
+                  label={`Rannsóknargögn (${
+                    workingCase.caseFiles?.length ?? 0
+                  })`}
                   labelVariant="h3"
                 >
                   <CaseFileList
                     caseId={workingCase.id}
-                    files={workingCase.files ?? []}
+                    files={workingCase.caseFiles ?? []}
                     canOpenFiles={
                       workingCase.judge !== null &&
                       workingCase.judge?.id === user?.id
@@ -301,6 +303,15 @@ export const RulingStepOne: React.FC = () => {
                       : 'farbann'
                   } hafnað`}
                   partiallyAcceptedLabelText="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
+                  dismissLabelText={formatMessage(
+                    rcRulingStepOne.sections.decision.dismissLabel,
+                    {
+                      caseType:
+                        workingCase.type === CaseType.CUSTODY
+                          ? 'gæsluvarðhald'
+                          : 'farbann',
+                    },
+                  )}
                 />
               </Box>
             </Box>
@@ -388,6 +399,11 @@ export const RulingStepOne: React.FC = () => {
                     <DateTime
                       name="isolationToDate"
                       datepickerLabel="Einangrun til"
+                      disabled={
+                        !workingCase.custodyRestrictions?.includes(
+                          CaseCustodyRestrictions.ISOLATION,
+                        )
+                      }
                       selectedDate={
                         workingCase.isolationToDate
                           ? new Date(workingCase.isolationToDate)

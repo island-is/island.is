@@ -6,14 +6,10 @@ const devConfig = {
   name: 'local',
   baseApiUrl: 'http://localhost:4444',
   redis: {
-    urls: [
-      'localhost:7000',
-      'localhost:7001',
-      'localhost:7002',
-      'localhost:7003',
-      'localhost:7004',
-      'localhost:7005',
-    ],
+    urls: (
+      process.env.REDIS_NODES ??
+      'localhost:7000,localhost:7001,localhost:7002,localhost:7003,localhost:7004,localhost:7005'
+    ).split(','),
   },
   audit: {
     defaultNamespace: '@island.is/applications',
@@ -72,6 +68,9 @@ const devConfig = {
       partyLetterRegistryApiBasePath: 'http://localhost:4251',
       endorsementsApiBasePath: 'http://localhost:4246',
     },
+    generalPetition: {
+      endorsementsApiBasePath: 'http://localhost:4246',
+    },
     partyApplication: {
       endorsementsApiBasePath: 'http://localhost:4246',
       options: {
@@ -108,7 +107,9 @@ const prodConfig = {
   name: process.env.name,
   baseApiUrl: process.env.GRAPHQL_API_URL,
   redis: {
-    urls: [process.env.REDIS_URL_NODE_01],
+    urls: (process.env.REDIS_NODES ?? process.env.REDIS_URL_NODE_01)?.split(
+      ',',
+    ),
   },
   audit: {
     defaultNamespace: '@island.is/applications',
@@ -166,6 +167,9 @@ const prodConfig = {
     partyLetter: {
       partyLetterRegistryApiBasePath:
         process.env.PARTY_LETTER_REGISTRY_API_BASE_PATH,
+      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
+    },
+    generalPetition: {
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
     },
     partyApplication: {

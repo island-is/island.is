@@ -12,7 +12,6 @@ import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/
 import {
   CustomerChargeType,
   CustomerRecords,
-  CustomerRecordsDetails,
 } from './FinanceTransactionsData.types'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { m } from '@island.is/service-portal/core'
@@ -36,12 +35,18 @@ import { transactionFilter } from '../../utils/simpleFilter'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
-const allChargeTypes = { label: 'Allar færslur', value: ALL_CHARGE_TYPES }
 
 const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
 
+  const allChargeTypes = {
+    label: formatMessage({
+      id: 'sp.finance-transactions:all-selection',
+      defaultMessage: 'Allir gjaldflokkar',
+    }),
+    value: ALL_CHARGE_TYPES,
+  }
   const [fromDate, setFromDate] = useState<Date>()
   const [toDate, setToDate] = useState<Date>()
   const [q, setQ] = useState<string>('')
@@ -211,13 +216,7 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
               variant="error"
             />
           )}
-          {!called && !loading && (
-            <AlertBanner
-              description={formatMessage(m.selectForResults)}
-              variant="info"
-            />
-          )}
-          {loading && (
+          {(loading || !called) && (
             <Box padding={3}>
               <SkeletonLoader space={1} height={40} repeat={5} />
             </Box>

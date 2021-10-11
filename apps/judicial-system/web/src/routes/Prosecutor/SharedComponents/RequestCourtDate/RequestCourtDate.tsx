@@ -33,7 +33,9 @@ const RequestCourtDate: React.FC<Props> = (props) => {
         }
         onChange={onChange}
         timeLabel={formatMessage(m.dateInput.timeLabel)}
-        locked={workingCase.courtDate !== null}
+        locked={
+          workingCase.courtDate !== null && workingCase.courtDate !== undefined
+        }
         minDate={new Date()}
         required
       />

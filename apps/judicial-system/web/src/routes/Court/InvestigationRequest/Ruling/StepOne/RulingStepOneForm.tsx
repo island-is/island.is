@@ -81,12 +81,12 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <AccordionItem
               id="caseFileList"
-              label={`Rannsóknargögn (${workingCase.files?.length ?? 0})`}
+              label={`Rannsóknargögn (${workingCase.caseFiles?.length ?? 0})`}
               labelVariant="h3"
             >
               <CaseFileList
                 caseId={workingCase.id}
-                files={workingCase.files ?? []}
+                files={workingCase.caseFiles ?? []}
                 canOpenFiles={
                   workingCase.judge !== null &&
                   workingCase.judge?.id === user?.id
@@ -205,6 +205,9 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               acceptedLabelText="Krafa samþykkt"
               rejectedLabelText="Kröfu hafnað"
               partiallyAcceptedLabelText="Krafa tekin til greina að hluta"
+              dismissLabelText={formatMessage(
+                icRulingStepOne.sections.decision.dismissLabel,
+              )}
             />
           </Box>
         </Box>

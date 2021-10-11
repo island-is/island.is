@@ -22,6 +22,12 @@ export enum ApplicationState {
   APPROVED = 'Approved',
 }
 
+export enum ApplicationStateUrl {
+  NEW = 'New',
+  INPROGRESS = 'InProgress',
+  PROCESSED = 'Processed',
+}
+
 export enum ApplicationEventType {
   NEW = 'New',
   INPROGRESS = 'InProgress',
@@ -38,12 +44,6 @@ export enum RolesRule {
   VEITA = 'veita',
 }
 
-export enum ReturnUrl {
-  APPLICATION = '/umsokn',
-  MYPAGE = '/stada',
-  ADMIN = '/nymal',
-}
-
 export enum FileType {
   TAXRETURN = 'TaxReturn',
   INCOME = 'Income',
@@ -53,4 +53,14 @@ export enum FileType {
 export enum StaffRole {
   ADMIN = 'Admin',
   EMPLOYEE = 'Employee',
+}
+
+export enum FamilyStatus {
+  UNKNOWN = 'Unknown',
+  SINGLE = 'Single',
+  COHABITATION = 'Cohabitation',
+  UNREGISTERED_COBAHITATION = 'UnregisteredCohabitation',
+  MARRIED = 'Married',
+  MARRIED_NOT_LIVING_TOGETHER = 'MarriedNotLivingTogether',
+  NOT_INFORMED = 'NotInformed',
 }

@@ -4,14 +4,15 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
+  capitalize,
   formatAccusedByGender,
   formatAlternativeTravelBanRestrictions,
+  formatAppeal,
   formatCustodyRestrictions,
   NounCases,
 } from '@island.is/judicial-system/formatters'
@@ -24,6 +25,17 @@ interface Props {
 const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
   const { user } = useContext(UserContext)
 
+  const custodyRestrictions = formatCustodyRestrictions(
+    workingCase.accusedGender,
+    workingCase.custodyRestrictions,
+  )
+
+  const alternativeTravelBanRestrictions = formatAlternativeTravelBanRestrictions(
+    workingCase.accusedGender,
+    workingCase.custodyRestrictions,
+    workingCase.otherRestrictions,
+  )
+
   return (
     <AccordionItem
       id="id_3"
@@ -35,6 +47,22 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           <Text as="h4" variant="h4">
             Úrskurður Héraðsdóms
           </Text>
+        </Box>
+        <Box marginBottom={1}>
+          <Text variant="eyebrow" color="blue400">
+            Greinargerð um málsatvik
+          </Text>
+        </Box>
+        <Box marginBottom={2}>
+          <Text>{workingCase.courtCaseFacts}</Text>
+        </Box>
+        <Box marginBottom={1}>
+          <Text variant="eyebrow" color="blue400">
+            Greinargerð um lagarök
+          </Text>
+        </Box>
+        <Box marginBottom={2}>
+          <Text>{workingCase.courtLegalArguments}</Text>
         </Box>
         <Box marginBottom={7}>
           <Text variant="eyebrow" color="blue400">
@@ -76,22 +104,28 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             þennan til Landsréttar innan þriggja sólarhringa.
           </Text>
         </Box>
-        <Box marginBottom={1}>
+        {workingCase.prosecutorAppealDecision !==
+          CaseAppealDecision.NOT_APPLICABLE && (
+          <Box marginBottom={1}>
+            <Text variant="h4">
+              {formatAppeal(workingCase.prosecutorAppealDecision, 'Sækjandi')}
+            </Text>
+          </Box>
+        )}
+        {workingCase.accusedAppealDecision !==
+          CaseAppealDecision.NOT_APPLICABLE && (
           <Text variant="h4">
-            {getAppealDecisionText(
-              AppealDecisionRole.ACCUSED,
+            {formatAppeal(
               workingCase.accusedAppealDecision,
-              workingCase.accusedGender,
+              isRestrictionCase(workingCase.type)
+                ? capitalize(formatAccusedByGender(workingCase.accusedGender))
+                : 'Varnaraðili',
+              isRestrictionCase(workingCase.type)
+                ? workingCase.accusedGender
+                : undefined,
             )}
           </Text>
-        </Box>
-        <Text variant="h4">
-          {getAppealDecisionText(
-            AppealDecisionRole.PROSECUTOR,
-            workingCase.prosecutorAppealDecision,
-            workingCase.accusedGender,
-          )}
-        </Text>
+        )}
       </Box>
       {(workingCase.accusedAppealAnnouncement ||
         workingCase.prosecutorAppealAnnouncement) && (
@@ -120,8 +154,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             )}
         </Box>
       )}
-      {(workingCase.type === CaseType.CUSTODY ||
-        workingCase.type === CaseType.TRAVEL_BAN) &&
+      {workingCase.type === CaseType.CUSTODY &&
         workingCase.decision === CaseDecision.ACCEPTING && (
           <Box>
             <Box marginBottom={1}>
@@ -129,58 +162,49 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
                 Tilhögun gæsluvarðhalds
               </Text>
             </Box>
-            <Box marginBottom={2}>
-              <Text>
-                {formatCustodyRestrictions(
-                  workingCase.accusedGender,
-                  workingCase.custodyRestrictions,
-                  workingCase.validToDate,
-                  workingCase.isolationToDate,
-                )}
-              </Text>
-            </Box>
+            {custodyRestrictions && (
+              <Box marginBottom={2}>
+                <Text>{custodyRestrictions}</Text>
+              </Box>
+            )}
             <Text>
               Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
               bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
             </Text>
           </Box>
         )}
-      {workingCase.decision ===
-        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN && (
-        <Box>
-          <Box marginBottom={1}>
-            <Text as="h3" variant="h3">
-              Tilhögun farbanns
-            </Text>
-          </Box>
-          <Box marginBottom={2}>
-            <Text>
-              {formatAlternativeTravelBanRestrictions(
-                workingCase.accusedGender,
-                workingCase.custodyRestrictions,
-                workingCase.otherRestrictions,
-              )
-                .split('\n')
-                .map((str, index) => {
-                  return (
-                    <div key={index}>
-                      <Text>{str}</Text>
-                    </div>
-                  )
-                })}
-            </Text>
-          </Box>
-          {workingCase.otherRestrictions && (
-            <Box marginBottom={2}>
-              <Text>{workingCase.otherRestrictions}</Text>
+      {(workingCase.type === CaseType.CUSTODY &&
+        workingCase.decision ===
+          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) ||
+        (workingCase.type === CaseType.TRAVEL_BAN &&
+          workingCase.decision === CaseDecision.ACCEPTING && (
+            <Box>
+              <Box marginBottom={1}>
+                <Text as="h3" variant="h3">
+                  Tilhögun farbanns
+                </Text>
+              </Box>
+              {alternativeTravelBanRestrictions && (
+                <Box marginBottom={2}>
+                  <Text>
+                    {alternativeTravelBanRestrictions
+                      .split('\n')
+                      .map((str, index) => {
+                        return (
+                          <div key={index}>
+                            <Text>{str}</Text>
+                          </div>
+                        )
+                      })}
+                  </Text>
+                </Box>
+              )}
+              <Text>
+                Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
+                bera atriði er lúta að framkvæmd farbannsins undir dómara.
+              </Text>
             </Box>
-          )}
-          <Text>
-            Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera
-            atriði er lúta að framkvæmd farbannsins undir dómara.
-          </Text>
-        </Box>
-      )}
+          ))}
     </AccordionItem>
   )
 }
