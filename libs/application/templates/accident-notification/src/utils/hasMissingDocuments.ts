@@ -12,9 +12,9 @@ const hasAttachment = (attachment: FileType[] | undefined) =>
   attachment && attachment.length > 0
 
 export const hasMissingInjuryCertificate = (answers: FormValue) => {
+  console.log(answers)
   const injuryCertificate = (answers as AccidentNotification).injuryCertificate
-    .answer
-  return injuryCertificate === AttachmentsEnum.SENDCERTIFICATELATER
+  return injuryCertificate?.answer === AttachmentsEnum.SENDCERTIFICATELATER
 }
 
 export const hasMissingDeathCertificate = (answers: FormValue) => {

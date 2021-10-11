@@ -13,11 +13,9 @@ type InReviewStepsProps = {
 }
 
 export const ReviewForm: FC<FieldBaseProps & InReviewStepsProps> = (props) => {
-  const { application, refetch, field } = props
+  const { application, field } = props
   const isAssignee = field.props.isAssignee || false
   const [state, setState] = useState('inReviewSteps')
-  console.log(isAssignee)
-  console.log(state)
 
   const ShowScreen = () => {
     switch (state) {
@@ -37,9 +35,21 @@ export const ReviewForm: FC<FieldBaseProps & InReviewStepsProps> = (props) => {
           />
         )
       case 'overview':
-        return <FormOverviewInReview setState={setState} {...props} />
+        return (
+          <FormOverviewInReview
+            setState={setState}
+            isAssignee={isAssignee}
+            props={props}
+          />
+        )
       default:
-        return null
+        return (
+          <InReviewSteps
+            application={application}
+            isAssignee={isAssignee}
+            setState={setState}
+          />
+        )
     }
   }
 

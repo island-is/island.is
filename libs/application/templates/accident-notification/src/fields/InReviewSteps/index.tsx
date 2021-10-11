@@ -25,10 +25,11 @@ type StatesMap = {
 const statesMap: StatesMap = {
   representative: {
     [States.REVIEW]: ReviewSectionState.missing,
-    [States.NEEDS_DOCUMENT]: ReviewSectionState.approved,
+    [States.IN_FINAL_REVIEW]: ReviewSectionState.received,
   },
   sjukratrygging: {
     [States.REVIEW]: ReviewSectionState.pending,
+    [States.IN_FINAL_REVIEW]: ReviewSectionState.inProgress,
   },
 }
 
@@ -44,9 +45,6 @@ export const InReviewSteps: FC<InReviewStepsProps> = ({
   setState,
 }) => {
   const { formatMessage } = useLocale()
-
-  console.log(application)
-  console.log(isAssignee)
 
   const showMissingDocumentsMessage = (answers: FormValue) => {
     if (
@@ -65,10 +63,6 @@ export const InReviewSteps: FC<InReviewStepsProps> = ({
 
   const goToOverview = () => {
     setState('overview')
-  }
-
-  const onForwardButtonClick = () => {
-    setState('uploadDocuments')
   }
 
   const answers = application.answers as AccidentNotification
@@ -103,9 +97,7 @@ export const InReviewSteps: FC<InReviewStepsProps> = ({
       state: statesMap['representative'][application.state],
       title: formatMessage(inReview.representative.title),
       description: formatMessage(inReview.representative.summary),
-      hasActionMessage:
-        application.state === States.NEEDS_DOCUMENT_AND_REVIEW ||
-        application.state === States.NEEDS_REVIEW,
+      hasActionMessage: isAssignee,
       action: {
         title: formatMessage(inReview.action.representative.title),
         description: formatMessage(inReview.action.representative.description),

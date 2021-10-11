@@ -42,6 +42,12 @@ export const addDocuments = {
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Definition of upload button label',
     },
+    additionalDocumentsDescription: {
+      id: 'an.application:addDocuments.general.additionalDocumentsDescription',
+      defaultMessage:
+        'Ef þú hefur auka skjöl sem þú villt koma til skila eins og ljósmyndir af slysstað, skýrsla til vinnueftirlitsins eða önnnur gögn teng slysinu, þá vinsamlegast bættu þeim við hér að neðan.',
+      description: 'Additional documents description',
+    },
   }),
   injuryCertificate: defineMessages({
     uploadHeader: {

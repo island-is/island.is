@@ -4,7 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { FileUploadController } from '@island.is/shared/form-fields'
 import React, { FC } from 'react'
 import { UPLOAD_ACCEPT } from '../../constants'
-import { addDocuments } from '../../lib/messages'
+import { addDocuments, inReview } from '../../lib/messages'
 import { hasMissingInjuryCertificate } from '../../utils'
 
 type UploadAttachmentsInReviewProps = {
@@ -44,9 +44,7 @@ export const UploadAttachmentsInReview: FC<UploadAttachmentsInReviewProps> = ({
       )}
       <Box marginTop={5} paddingBottom={10}>
         <Text variant="default" marginBottom={5}>
-          Ef þú hefur auka skjöl sem þú villt koma til skila eins og ljósmyndir
-          af slysstað, skýrsla til vinnueftirlitsins eða önnnur gögn teng
-          slysinu, þá vinsamlegast bættu þeim við hér að neðan.
+          {formatMessage(addDocuments.general.additionalDocumentsDescription)}
         </Text>
         <FileUploadController
           application={application}
@@ -60,10 +58,10 @@ export const UploadAttachmentsInReview: FC<UploadAttachmentsInReviewProps> = ({
       <Divider />
       <Box display="flex" justifyContent="spaceBetween" paddingY={5}>
         <Button variant="ghost" onClick={onBackButtonClick}>
-          Til baka
+          {formatMessage(inReview.buttons.backButton)}
         </Button>
         <Button icon="arrowForward" onClick={onForwardButtonClick}>
-          Halda áfram
+          {formatMessage(inReview.buttons.forwardButton)}
         </Button>
       </Box>
     </>

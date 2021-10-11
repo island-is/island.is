@@ -7,7 +7,6 @@ import { ReviewGroup } from '@island.is/application/ui-components'
 import {
   AlertMessage,
   Box,
-  Button,
   GridColumn,
   GridRow,
   Text,
@@ -494,7 +493,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           <GridColumn span={['12/12', '12/12', '12/12']}>
             <FileValueLine label={overview.labels.attachments} files={files} />
             {missingDocuments.length !== 0 && (
-              <Box marginBottom={4}>
+              <Box marginBottom={2}>
                 <AlertMessage
                   type="warning"
                   title={formatMessage(overview.alertMessage.title)}
@@ -509,17 +508,6 @@ export const FormOverview: FC<FieldBaseProps> = ({
                 />
               </Box>
             )}
-            {States.REVIEW === application.state ? (
-              <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  icon="attach"
-                  variant="utility"
-                  onClick={goToAttachmentScreen}
-                >
-                  {formatMessage(overview.labels.missingDocumentsButton)}
-                </Button>
-              </Box>
-            ) : null}
           </GridColumn>
         </GridRow>
       </ReviewGroup>

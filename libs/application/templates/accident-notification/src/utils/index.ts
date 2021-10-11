@@ -48,14 +48,14 @@ export const returnMissingDocumentsList = (
   answers: AccidentNotification,
   formatMessage: MessageFormatter,
 ) => {
-  const injuryCertificate = answers.injuryCertificate.answer
+  const injuryCertificate = answers.injuryCertificate
   const whoIsTheNotificationFor = answers.whoIsTheNotificationFor.answer
   const wasTheAccidentFatal = answers.wasTheAccidentFatal
   const powerOfAttorneyType = answers.powerOfAttorney?.type
   const missingDocuments = []
 
   if (
-    injuryCertificate === AttachmentsEnum.SENDCERTIFICATELATER &&
+    injuryCertificate?.answer === AttachmentsEnum.SENDCERTIFICATELATER &&
     !hasAttachment(answers.attachments?.injuryCertificateFile)
   ) {
     missingDocuments.push(

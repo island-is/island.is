@@ -150,4 +150,21 @@ export const inReview = {
       },
     }),
   },
+  buttons: defineMessages({
+    backButton: {
+      id: 'an.application:overview.buttons.backButton',
+      defaultMessage: 'Til baka',
+      description: 'Review back button',
+    },
+    forwardButton: {
+      id: 'an.application:overview.buttons.forwardButton',
+      defaultMessage: 'Halda áfram',
+      description: 'Review forward button',
+    },
+    updateButton: {
+      id: 'an.application:overview.buttons.updateButton',
+      defaultMessage: 'Uppfæra tilkynningu',
+      description: 'Review update button',
+    },
+  }),
 }
