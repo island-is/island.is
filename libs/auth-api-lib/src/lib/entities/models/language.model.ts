@@ -11,11 +11,6 @@ import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
   tableName: 'language',
-  indexes: [
-    {
-      fields: ['iso_key'],
-    },
-  ],
 })
 export class Language extends Model<Language> {
   @PrimaryKey

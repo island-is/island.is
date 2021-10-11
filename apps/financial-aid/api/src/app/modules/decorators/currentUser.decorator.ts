@@ -1,5 +1,4 @@
 import {
-  decodeToken,
   IDENTITY_SERVER_SESSION_TOKEN_COOKIE_NAME,
   User,
 } from '@island.is/financial-aid/shared/lib'
@@ -7,6 +6,7 @@ import {
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 import { AuthenticationError } from 'apollo-server-express'
 import { GqlExecutionContext } from '@nestjs/graphql'
+import { decode } from 'jsonwebtoken'
 
 export const CurrentUser = createParamDecorator(
   (_: unknown, context: ExecutionContext): User => {
@@ -20,7 +20,7 @@ export const CurrentUser = createParamDecorator(
       throw new AuthenticationError('Invalid user')
     }
 
-    const decodedToken = decodeToken(sessionToken)
+    const decodedToken = decode(sessionToken) as User
 
     return {
       name: decodedToken.name,

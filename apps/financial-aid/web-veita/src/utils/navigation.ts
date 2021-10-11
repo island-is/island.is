@@ -1,7 +1,4 @@
-import {
-  ApplicationState,
-  ApplicationStateUrl,
-} from '@island.is/financial-aid/shared/lib'
+import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 export const navigationItems = [
   {
