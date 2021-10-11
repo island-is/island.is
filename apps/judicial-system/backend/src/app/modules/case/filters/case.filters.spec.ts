@@ -273,6 +273,33 @@ describe('isCaseBlockedFromUser', () => {
       expect(isWriteBlocked).toBe(false)
       expect(isReadBlocked).toBe(false)
     })
+
+    it('should not block a hightened security case from own court', () => {
+      // Arrange
+      const theCase = {
+        state,
+        isHeightenedSecurityLevel: true,
+        courtId: 'Court',
+        creatingProsecutor: {
+          id: 'Creating Prosecutor',
+          institution: { id: 'Prosecutors Office' },
+        },
+        prosecutor: { id: 'Assigned Prosecutor' },
+      } as Case
+      const user = {
+        id: 'Court User',
+        role,
+        institution: { id: 'Court', type: InstitutionType.COURT },
+      } as User
+
+      // Act
+      const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+      const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+      // Assert
+      expect(isWriteBlocked).toBe(false)
+      expect(isReadBlocked).toBe(false)
+    })
   })
 
   each`
