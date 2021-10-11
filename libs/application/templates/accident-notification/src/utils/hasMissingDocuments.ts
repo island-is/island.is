@@ -12,7 +12,6 @@ const hasAttachment = (attachment: FileType[] | undefined) =>
   attachment && attachment.length > 0
 
 export const hasMissingInjuryCertificate = (answers: FormValue) => {
-  console.log(answers)
   const injuryCertificate = (answers as AccidentNotification).injuryCertificate
   return injuryCertificate?.answer === AttachmentsEnum.SENDCERTIFICATELATER
 }

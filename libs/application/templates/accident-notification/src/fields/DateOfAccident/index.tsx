@@ -42,7 +42,6 @@ export const DateOfAccident: FC<FieldBaseProps> = ({
     if (dateOfAccident !== undefined) {
       getIsHealhInsuredCallback({ date: dateOfAccident })
         .then((res) => {
-          console.log('hallo')
           setValue(
             'accidentDetails.isHealthInsured',
             res?.healthInsuranceIsHealthInsured ? YES : NO,
