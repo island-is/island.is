@@ -23,5 +23,10 @@ export class UpdateApplicationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
+  readonly comment: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
   staffId: string
 }
