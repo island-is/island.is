@@ -40,9 +40,7 @@ const MainPage = () => {
 
         {myApplication && myApplication?.state && (
           <>
-            {getActiveTypeForStatus[myApplication.state] === 'InProgress' && (
-              <InProgress currentApplication={myApplication} />
-            )}
+            <InProgress currentApplication={myApplication} />
 
             <Approved
               state={myApplication.state}

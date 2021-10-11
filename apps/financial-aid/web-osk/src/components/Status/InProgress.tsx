@@ -21,6 +21,12 @@ interface Props {
 const InProgress = ({ currentApplication }: Props) => {
   const router = useRouter()
 
+  if (
+    currentApplication.state === ApplicationState.APPROVED ||
+    currentApplication.state === ApplicationState.REJECTED
+  ) {
+    return null
+  }
   return (
     <>
       <Text as="h2" variant="h3" color="blue400" marginBottom={[4, 4, 5]}>

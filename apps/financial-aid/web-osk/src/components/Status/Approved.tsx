@@ -21,7 +21,7 @@ const Approved = ({ state, amount }: Props) => {
 
   return (
     <>
-      <Text as="h2" variant="h3" color="mint600" marginBottom={[4, 4, 7]}>
+      <Text as="h2" variant="h3" color="mint600" marginBottom={[3, 3, 5]}>
         Umsókn {getState[state].toLowerCase()}
       </Text>
       <Text variant="intro">
