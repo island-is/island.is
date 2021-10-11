@@ -49,7 +49,7 @@ const IncomeForm = () => {
     <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
-          Hefur þú fengið tekjur í þessum eða síðasta mánuði?
+          Hefur þú fengið tekjur í þessum eða síðustu tvo mánuði?
         </Text>
 
         <RadioButtonContainer
