@@ -15,10 +15,9 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  Field,
   Form,
   FormModes,
-  SelectField,
+  NO_ANSWER,
 } from '@island.is/application/core'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -27,11 +26,9 @@ import {
   getOtherParentOptions,
   getAllPeriodDates,
   getSelectedChild,
-  createRange,
   requiresOtherParentApproval,
   getApplicationAnswers,
   allowOtherParent,
-  getPeriodPercentage,
   getLastValidPeriodEndDate,
 } from '../lib/parentalLeaveUtils'
 import {
@@ -58,18 +55,6 @@ import {
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
-
-const percentOptions = createRange<{ label: string; value: string }>(
-  10,
-  (i) => {
-    const ii = (i + 1) * 10
-
-    return {
-      label: `${ii}%`,
-      value: `${ii}`,
-    }
-  },
-).sort((a, b) => Number(b.value) - Number(a.value))
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -713,6 +698,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.startDate.title,
                   description: parentalLeaveFormMessages.startDate.description,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
+                  defaultValue: NO_ANSWER,
                   condition: (answers) => {
                     const { periods, rawPeriods } = getApplicationAnswers(
                       answers,
@@ -759,6 +745,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'useLength',
                   title: parentalLeaveFormMessages.duration.title,
                   description: parentalLeaveFormMessages.duration.description,
+                  defaultValue: NO_ANSWER,
                   options: [
                     {
                       label: parentalLeaveFormMessages.duration.monthsOption,
@@ -814,38 +801,23 @@ export const ParentalLeaveForm: Form = buildForm({
                     },
                   },
                 ),
-                buildMultiField({
-                  id: 'ratioContainer',
+                // buildMultiField({
+                //   id: 'ratio',
+                //   title: parentalLeaveFormMessages.ratio.title,
+                //   description: parentalLeaveFormMessages.ratio.description,
+                //   children: [
+                //     buildCustomField({
+                //       id: 'ratio',
+                //       title: parentalLeaveFormMessages.ratio.label,
+                //       component: 'PeriodPercentage',
+                //     }),
+                //   ],
+                // }),
+                buildCustomField({
+                  id: 'ratio',
                   title: parentalLeaveFormMessages.ratio.title,
                   description: parentalLeaveFormMessages.ratio.description,
-                  children: [
-                    buildSelectField({
-                      id: 'ratio',
-                      title: parentalLeaveFormMessages.ratio.label,
-                      placeholder: parentalLeaveFormMessages.ratio.placeholder,
-                      defaultValue: (
-                        application: Application,
-                        field: SelectField,
-                      ) => getPeriodPercentage(application.answers, field),
-                      options: (application: Application, field: Field) => {
-                        const percentage = getPeriodPercentage(
-                          application.answers,
-                          field,
-                        )
-                        const existingOptions = percentOptions.filter(
-                          (option) => Number(option.value) < Number(percentage),
-                        )
-
-                        return [
-                          {
-                            label: `${percentage}%`,
-                            value: `${percentage}`,
-                          },
-                          ...existingOptions,
-                        ]
-                      },
-                    }),
-                  ],
+                  component: 'PeriodPercentage',
                 }),
               ],
             }),

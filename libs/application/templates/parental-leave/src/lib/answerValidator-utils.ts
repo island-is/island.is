@@ -1,13 +1,15 @@
-import {
-  AnswerValidationError,
-  Application,
-  StaticTextObject,
-} from '@island.is/application/core'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import parseISO from 'date-fns/parseISO'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
 import subtractDays from 'date-fns/subDays'
+import isValid from 'date-fns/isValid'
+import {
+  AnswerValidationError,
+  Application,
+  StaticTextObject,
+  NO_ANSWER,
+} from '@island.is/application/core'
 import { StartDateOptions, YES, NO } from '../constants'
 import { getExpectedDateOfBirth } from './parentalLeaveUtils'
 import {
@@ -20,6 +22,8 @@ import {
 import { errorMessages } from './messages'
 
 import { Period } from '../types'
+
+const hasBeenAnswered = (answer: unknown) => answer !== undefined
 
 export const dateIsWithinOtherPeriods = (
   date: Date,
@@ -81,16 +85,7 @@ export const validatePeriod = (
   const maximumStartDate = addMonths(dob, usageMaxMonths - usageMinMonths)
   const maximumEndDate = addMonths(dob, usageMaxMonths)
 
-  const {
-    firstPeriodStart,
-    startDate,
-    useLength,
-    duration,
-    percentage,
-    endDate,
-    days,
-    ratio,
-  } = period
+  const { firstPeriodStart, startDate, useLength, endDate, ratio } = period
 
   if (isFirstPeriod) {
     if (!firstPeriodStart) {
@@ -111,7 +106,9 @@ export const validatePeriod = (
   }
 
   let startDateValue: Date | undefined
-  if (startDate !== undefined) {
+  if (startDate === NO_ANSWER) {
+    return buildError('startDate', errorMessages.periodsStartMissing)
+  } else if (hasBeenAnswered(startDate)) {
     if (isFirstPeriod) {
       startDateValue =
         firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH ||
@@ -120,6 +117,10 @@ export const validatePeriod = (
           : parseISO(startDate)
     } else {
       startDateValue = parseISO(startDate)
+    }
+
+    if (!isValid(startDateValue)) {
+      return buildError('startDate', errorMessages.periodsStartDate)
     }
 
     if (startDateValue < minimumStartDate) {
@@ -137,26 +138,24 @@ export const validatePeriod = (
         usageMaxMonths: usageMaxMonths - usageMinMonths,
       })
     }
-  } else {
-    return buildError('startDate', errorMessages.periodsStartMissing)
   }
 
-  if (endDate === '') {
+  const useLengthIsValid = useLength === YES || useLength === NO
+
+  if (hasBeenAnswered(useLength) && !useLengthIsValid) {
+    return buildError(
+      'useLength',
+      errorMessages.periodsEndDateDefinitionMissing,
+    )
+  }
+
+  if (hasBeenAnswered(endDate) && !isValid(parseISO(endDate))) {
     return buildError('endDate', errorMessages.periodsEndDateRequired)
-  }
-
-  if (endDate !== undefined) {
-    if (useLength !== YES && useLength !== NO) {
+  } else if (hasBeenAnswered(endDate)) {
+    if (!useLengthIsValid) {
       return buildError(
         'endDate',
         errorMessages.periodsEndDateDefinitionMissing,
-      )
-    }
-
-    if (useLength === YES && duration === undefined) {
-      return buildError(
-        'endDate',
-        errorMessages.periodsEndDateDefinitionInvalid,
       )
     }
 
@@ -181,6 +180,10 @@ export const validatePeriod = (
       )
     }
 
+    if (startDateValue === undefined || !isValid(startDateValue)) {
+      return buildError('startDate', errorMessages.periodsStartMissing)
+    }
+
     if (endDateValue < startDateValue) {
       return buildError(
         useLength === YES ? 'endDateDuration' : 'endDate',
@@ -199,30 +202,19 @@ export const validatePeriod = (
     }
   }
 
-  if (ratio !== undefined) {
+  if (hasBeenAnswered(ratio) && ratio === NO_ANSWER) {
+    return buildError('ratio', errorMessages.periodsRatioDaysMissing)
+  } else if (hasBeenAnswered(ratio)) {
     const ratioValue = Number(ratio)
 
-    if (days === undefined) {
+    if (isNaN(ratioValue)) {
       return buildError('ratio', errorMessages.periodsRatioDaysMissing)
-    }
-
-    if (percentage === undefined) {
-      return buildError('ratio', errorMessages.periodsRatioPercentageMissing)
-    }
-
-    const dayValue = Number(days)
-    const percentageValue = Number(percentage)
-
-    if (dayValue < 1) {
-      return buildError('days', errorMessages.periodsRatioBelowMinimum)
-    }
-
-    if (ratioValue > percentageValue) {
-      return buildError('ratio', errorMessages.periodsRatioExceedsMaximum)
     }
 
     if (ratioValue < minimumRatio * 100) {
       return buildError('ratio', errorMessages.periodsRatioBelowMinimum)
+    } else if (ratioValue > 100) {
+      return buildError('ratio', errorMessages.periodsRatioAboveMaximum)
     }
   }
 }

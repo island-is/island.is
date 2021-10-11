@@ -1613,14 +1613,12 @@ export const errorMessages = defineMessages({
   periodsRatioDaysMissing: {
     id: 'pl.application:answerValidators.periodsRatioDaysMissing',
     defaultMessage: 'Ekki tókst að reikna út fjölda daga fyrir tímabil',
-    description:
-      'Copy when days to be used by period is missing (caused by API not being able to calculate)',
+    description: 'Copy when days to be used by period is missing',
   },
   periodsRatioPercentageMissing: {
     id: 'pl.application:answerValidators.periodsRatioPercentageMissing',
     defaultMessage: 'Ekki tókst að reikna út hámarksnýtingu fyrir tímabil',
-    description:
-      'Copy when maximum ratio for period is missing (caused by API not being able to calculate)',
+    description: 'Copy when maximum ratio for period is missing',
   },
   periodsRatioExceedsMaximum: {
     id: 'pl.application:answerValidators.periodsRatioExceedsMaximum',
@@ -1634,6 +1632,12 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Minnsta mögulega nýting er 1%',
     description:
       'Copy for when user is attempting to choose a ratio below minimum ratio',
+  },
+  periodsRatioAboveMaximum: {
+    id: 'pl.application:answerValidators.periodsRatioAboveMaximum',
+    defaultMessage: 'Mesta mögulega nýting er 100%',
+    description:
+      'Copy for when user is attempting to choose a ratio above maximum ratio',
   },
   periodsNotAList: {
     id: 'pl.application:answerValidators.periodsNotAList',

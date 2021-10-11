@@ -207,7 +207,7 @@ export const calculateMaxPercentageForPeriod = (
   start: Date,
   end: Date,
   rights: number,
-) => {
+): number | null => {
   const fullLength = calculatePeriodLength(start, end)
 
   if (fullLength <= rights) {
@@ -223,17 +223,28 @@ export const calculateMaxPercentageForPeriod = (
     lengthWithPercentage = calculatePeriodLength(start, end, percentage / 100)
   }
 
+  if (lengthWithPercentage > rights) {
+    return null
+  }
+
   return percentage / 100
 }
 
-export const calculateMinPercentageForPeriod = (start: Date, end: Date) => {
+export const calculateMinPercentageForPeriod = (
+  start: Date,
+  end: Date,
+): number | null => {
   let percentage = 1
   let lengthWithPercentage = calculatePeriodLength(start, end, percentage / 100)
 
-  while (lengthWithPercentage <= 0 || percentage === 100) {
+  while (lengthWithPercentage <= 0 || percentage >= 100) {
     percentage += 1
 
     lengthWithPercentage = calculatePeriodLength(start, end, percentage / 100)
+  }
+
+  if (lengthWithPercentage === 0) {
+    return null
   }
 
   return percentage / 100

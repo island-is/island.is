@@ -3,7 +3,12 @@ import { Controller, useFormContext } from 'react-hook-form'
 import format from 'date-fns/format'
 import * as Sentry from '@sentry/react'
 
-import { FieldBaseProps, RecordObject } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  RecordObject,
+  extractRepeaterIndexFromField,
+  NO_ANSWER,
+} from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
@@ -25,7 +30,6 @@ const DEFAULT_PERIOD_LENGTH = usageMinMonths
 export const Duration: FC<FieldBaseProps> = ({
   field,
   application,
-  setFieldLoadingState,
   errors,
 }) => {
   const { id } = field
@@ -34,12 +38,12 @@ export const Duration: FC<FieldBaseProps> = ({
   const { answers } = application
   const { rawPeriods } = getApplicationAnswers(answers)
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
-  const currentIndex = rawPeriods.length - 1
+  const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
   const currentStartDateAnswer = currentPeriod.startDate ?? expectedDateOfBirth
 
   const [chosenEndDate, setChosenEndDate] = useState<string | undefined>(
-    currentPeriod.endDate,
+    currentPeriod.endDate ?? NO_ANSWER,
   )
   const [chosenDuration, setChosenDuration] = useState<number>(
     currentPeriod.duration
@@ -52,7 +56,7 @@ export const Duration: FC<FieldBaseProps> = ({
   const [percent, setPercent] = useState<number>(
     currentPeriod.percentage ? Number(currentPeriod.percentage) : 100,
   )
-  const { getEndDate, loading } = useGetOrRequestEndDates(application)
+  const { getEndDate } = useGetOrRequestEndDates(application)
   const errorMessage =
     (errors?.component as RecordObject<string>)?.message ||
     (errors as RecordObject<string>)?.[id]
@@ -107,10 +111,6 @@ export const Duration: FC<FieldBaseProps> = ({
       onChange(format(date, DATE_FORMAT))
     }
   }
-
-  useEffect(() => {
-    setFieldLoadingState?.(loading)
-  }, [loading, setFieldLoadingState])
 
   useEffect(() => {
     const init = async () => {

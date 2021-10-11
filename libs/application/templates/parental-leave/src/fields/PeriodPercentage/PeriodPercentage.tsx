@@ -10,6 +10,7 @@ import {
   FieldTypes,
   SelectOption,
   StaticTextObject,
+  extractRepeaterIndexFromField,
 } from '@island.is/application/core'
 import { SelectFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
@@ -22,10 +23,7 @@ import {
   calculatePeriodLength,
 } from '../../lib/directorateOfLabour.utils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import {
-  getApplicationAnswers,
-  getPeriodIndex,
-} from '../../lib/parentalLeaveUtils'
+import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
 
 export const PeriodPercentage: FC<FieldBaseProps & CustomField> = ({
@@ -36,7 +34,7 @@ export const PeriodPercentage: FC<FieldBaseProps & CustomField> = ({
   const { formatMessage } = useLocale()
   const { description } = field
   const { rawPeriods } = getApplicationAnswers(application.answers)
-  const currentIndex = getPeriodIndex(field)
+  const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
   const [options, setOptions] = useState<SelectOption<string>[]>([])
 
@@ -55,14 +53,23 @@ export const PeriodPercentage: FC<FieldBaseProps & CustomField> = ({
     const start = parseISO(currentPeriod.startDate)
     const end = parseISO(currentPeriod.endDate)
 
-    const minPercentage = Math.round(
-      calculateMinPercentageForPeriod(start, end) * 100,
-    )
-    const maxPercentage = Math.round(
-      calculateMaxPercentageForPeriod(start, end, remainingRights) * 100,
+    const rawMinPercentage = calculateMinPercentageForPeriod(start, end)
+    const rawMaxPercentage = calculateMaxPercentageForPeriod(
+      start,
+      end,
+      remainingRights,
     )
 
+    if (rawMinPercentage === null || rawMaxPercentage === null) {
+      // TODO set error
+      return
+    }
+
+    const minPercentage = Math.round(rawMinPercentage) * 100
+    const maxPercentage = Math.round(rawMaxPercentage) * 100
+
     if (maxPercentage < minPercentage) {
+      // TODO: set error
       return
     }
 

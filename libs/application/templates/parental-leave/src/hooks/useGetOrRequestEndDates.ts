@@ -1,16 +1,15 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import parseISO from 'date-fns/parseISO'
 
 import { Application } from '@island.is/application/core'
 
-import { getAvailableRightsInDays } from '../lib/parentalLeaveUtils'
 import {
   calculateMaxPercentageForPeriod,
   calculatePeriodLength,
 } from '../lib/directorateOfLabour.utils'
-import { useDaysAlreadyUsed } from './useDaysAlreadyUsed'
+import { useRemainingRights } from './useRemainingRights'
 
 const loadedEndDates = new Map<
   string,
@@ -22,16 +21,10 @@ const loadedEndDates = new Map<
 >()
 
 export const useGetOrRequestEndDates = (application: Application) => {
-  const [loading, setLoading] = useState(false)
-  const rights = getAvailableRightsInDays(application)
-  const daysAlreadyUsed = useDaysAlreadyUsed(application)
-  const remainingRights = rights - daysAlreadyUsed
+  const remainingRights = useRemainingRights(application)
 
-  /**
-   * We call the API multiple times, because we don't know the final value at first, we start with temporary values before able to request with final parameters
-   */
   const getEndDate = useCallback(
-    async ({
+    ({
       startDate,
       lengthInMonths,
     }: {
@@ -41,8 +34,6 @@ export const useGetOrRequestEndDates = (application: Application) => {
       const id = `${startDate}/${lengthInMonths}`
 
       if (loadedEndDates.has(id)) {
-        setLoading(false)
-
         return loadedEndDates.get(id)
       }
 
@@ -59,6 +50,13 @@ export const useGetOrRequestEndDates = (application: Application) => {
         end,
         remainingRights,
       )
+
+      if (maxPercentage === null) {
+        throw new Error(
+          `Cannot calculate max percentage for period ${start} to ${end} with remaining rights = ${remainingRights}`,
+        )
+      }
+
       const length = calculatePeriodLength(start, end, maxPercentage)
 
       const result = {
@@ -75,6 +73,5 @@ export const useGetOrRequestEndDates = (application: Application) => {
 
   return {
     getEndDate,
-    loading,
   }
 }
