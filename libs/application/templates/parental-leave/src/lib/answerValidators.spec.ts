@@ -210,21 +210,6 @@ describe('when constructing a new period', () => {
     ).toEqual(undefined)
   })
 
-  it('should not be able to pass in endDate with useLength = YES without having a duration', () => {
-    expect(
-      createValidationResultForPeriod({
-        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
-        startDate: DEFAULT_DOB,
-        useLength: YES,
-        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
-      }),
-    ).toStrictEqual({
-      message: errorMessages.periodsEndDateDefinitionInvalid,
-      path: 'periods[0].endDate',
-      values: {},
-    })
-  })
-
   it('should not be able to pass in endDate more than 2 years from expected date of birth', () => {
     expect(
       createValidationResultForPeriod({
@@ -236,32 +221,29 @@ describe('when constructing a new period', () => {
     ).toEqual(undefined)
   })
 
-  it('should not be able to pass in ratio before saving days and ratio', () => {
+  it('should not be able to pass in ratio before start and end dates', () => {
     expect(
       createValidationResultForPeriod({
         firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
-        startDate: DEFAULT_DOB,
         useLength: NO,
         endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
         ratio: '100',
       }),
     ).toStrictEqual({
-      message: errorMessages.periodsRatioDaysMissing,
-      path: 'periods[0].ratio',
+      message: errorMessages.periodsStartMissing,
+      path: 'periods[0].startDate',
       values: {},
     })
 
     expect(
       createValidationResultForPeriod({
         firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
-        startDate: DEFAULT_DOB,
+        startDate: formatDate(addDays(DEFAULT_DOB_DATE, 10)),
         useLength: NO,
-        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
-        days: '30',
         ratio: '100',
       }),
     ).toStrictEqual({
-      message: errorMessages.periodsRatioPercentageMissing,
+      message: errorMessages.periodsEndDateRequired,
       path: 'periods[0].ratio',
       values: {},
     })
@@ -277,24 +259,6 @@ describe('when constructing a new period', () => {
         ratio: '100',
       }),
     ).toEqual(undefined)
-  })
-
-  it('should not be able to have a higher ratio than percentage', () => {
-    expect(
-      createValidationResultForPeriod({
-        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
-        startDate: DEFAULT_DOB,
-        useLength: NO,
-        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
-        days: '30',
-        percentage: '50',
-        ratio: '100',
-      }),
-    ).toStrictEqual({
-      message: errorMessages.periodsRatioExceedsMaximum,
-      path: 'periods[0].ratio',
-      values: {},
-    })
   })
 
   it('should not be able to have a lower ratio than 1%', () => {
