@@ -52,6 +52,7 @@ export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
   ) {}
+
   @ApiOperation({
     summary: 'Finds all endorsement lists belonging to given tags',
   })

@@ -7,9 +7,10 @@ export class PaginatedEndorsementInput {
   @IsUUID(4)
   listId!: string
 
-  @Field()
+  @Field({ nullable: true })
   @IsNumber()
-  limit!: number
+  @IsOptional()
+  limit?: number
 
   @Field({ nullable: true })
   @IsString()
