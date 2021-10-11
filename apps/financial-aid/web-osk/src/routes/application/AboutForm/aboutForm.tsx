@@ -74,6 +74,15 @@ const AboutForm = () => {
                 underlineVisibility="always"
               >
                 lífeyrissjóðir
+              </Link>
+              {', '}
+              <Link
+                href="https://www.sjukra.is/"
+                color="blue400"
+                underline="small"
+                underlineVisibility="always"
+              >
+                Sjúkratryggingar Íslands
               </Link>{' '}
               og sjúkrasjóðir stéttarfélaga.
             </Bullet>
