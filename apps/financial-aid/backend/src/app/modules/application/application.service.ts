@@ -164,13 +164,11 @@ export class ApplicationService {
   ): Promise<ApplicationModel> {
     const appModel = await this.applicationModel.create(application)
 
-    //Create applicationEvent
     await this.applicationEventService.create({
       applicationId: appModel.id,
       eventType: ApplicationEventType[appModel.state.toUpperCase()],
     })
 
-    //Create file
     if (appModel.files) {
       const promises = application.files.map((f) => {
         return this.fileService.createFile({
@@ -208,6 +206,15 @@ export class ApplicationService {
       update.staffId = null
     }
 
+    const eventModel = await this.applicationEventService.create({
+      applicationId: id,
+      eventType: ApplicationEventType[update.state.toUpperCase()],
+      comment:
+        update?.rejection ||
+        update?.amount?.toLocaleString('de-DE') ||
+        update?.comment,
+    })
+
     const [
       numberOfAffectedRows,
       [updatedApplication],
@@ -221,13 +228,6 @@ export class ApplicationService {
     const events = await this.applicationEventService.findById(id)
 
     updatedApplication?.setDataValue('applicationEvents', events)
-
-    //Create applicationEvent
-    const eventModel = await this.applicationEventService.create({
-      applicationId: id,
-      eventType: ApplicationEventType[update.state.toUpperCase()],
-      comment: update?.rejection || update?.amount?.toLocaleString('de-DE'),
-    })
 
     return { numberOfAffectedRows, updatedApplication }
   }

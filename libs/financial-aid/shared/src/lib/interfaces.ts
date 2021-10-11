@@ -71,6 +71,7 @@ export interface UpdateApplication {
   state: ApplicationState
   amount?: number
   rejection?: string
+  comment?: string
   staffId?: string
 }
 

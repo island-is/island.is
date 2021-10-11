@@ -24,19 +24,21 @@ export const useApplicationState = () => {
   const { admin } = useContext(AdminContext)
 
   const changeApplicationState = async (
-    application: Application,
+    applicationId: string,
     state: ApplicationState,
     amount?: number,
     rejection?: string,
+    comment?: string,
   ) => {
-    if (saveLoading === false && application) {
+    if (saveLoading === false && applicationId) {
       const { data } = await updateApplicationMutation({
         variables: {
           input: {
-            id: application.id,
+            id: applicationId,
             state,
             amount,
             rejection,
+            comment,
             staffId: admin?.staff?.id,
           },
         },

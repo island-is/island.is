@@ -86,6 +86,20 @@ export const GetMyApplicationQuery = gql`
   }
 `
 
+export const GetApplicationEventsQuery = gql`
+  query GetApplicationEventsQuery($input: ApplicationInput!) {
+    application(input: $input) {
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
+    }
+  }
+`
+
 export const UpdateApplicationMutation = gql`
   mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
     updateApplication(input: $input) {
