@@ -27,5 +27,9 @@ export class UpdateApplicationInput implements UpdateApplication {
 
   @Allow()
   @Field({ nullable: true })
+  readonly comment?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly staffId?: string
 }
