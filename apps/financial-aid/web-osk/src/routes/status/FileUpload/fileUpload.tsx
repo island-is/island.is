@@ -24,9 +24,12 @@ import { Box, Input, Text } from '@island.is/island-ui/core'
 
 import { Routes } from '@island.is/financial-aid/shared/lib'
 import cn from 'classnames'
+import { ApplicationContext } from '../../../components/ApplicationProvider/ApplicationProvider'
 
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
+  const { myApplication } = useContext(ApplicationContext)
+
   const router = useRouter()
   const { uploadFiles } = useFileUpload(form.otherFiles)
 

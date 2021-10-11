@@ -112,6 +112,23 @@ export class ApplicationController {
     return application
   }
 
+  @UseGuards(ApplicationGuard)
+  @Get('myApplications/:id')
+  @ApiOkResponse({
+    type: ApplicationModel,
+    description: 'Get your application',
+  })
+  async getMyApplicationById(@Param('id') id: string) {
+    this.logger.debug(`Application controller: Getting application by id ${id}`)
+    const application = await this.applicationService.findMyApplicationById(id)
+
+    if (!application) {
+      throw new NotFoundException(`application ${id} not found`)
+    }
+
+    return application
+  }
+
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.VEITA)
   @Get('applicationFilters')

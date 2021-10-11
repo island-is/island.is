@@ -56,6 +56,17 @@ export class ApplicationResolver {
     return backendApi.getApplication(input.id)
   }
 
+  @Query(() => ApplicationModel, { nullable: false })
+  myApplication(
+    @Args('input', { type: () => ApplicationInput })
+    input: ApplicationInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Application> {
+    this.logger.debug(`Getting my application ${input.id}`)
+
+    return backendApi.getMyApplication(input.id)
+  }
+
   @Mutation(() => ApplicationModel, { nullable: true })
   createApplication(
     @Args('input', { type: () => CreateApplicationInput })

@@ -65,9 +65,9 @@ export const CurrentUserQuery = gql`
   }
 `
 
-export const GetApplicationQuery = gql`
-  query GetApplicationQuery($input: ApplicationInput!) {
-    application(input: $input) {
+export const GetMyApplicationQuery = gql`
+  query GetMyApplicationQuery($input: ApplicationInput!) {
+    myApplication(input: $input) {
       id
       homeCircumstances
       usePersonalTaxCredit
@@ -75,6 +75,13 @@ export const GetApplicationQuery = gql`
       amount
       rejection
       created
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
     }
   }
 `

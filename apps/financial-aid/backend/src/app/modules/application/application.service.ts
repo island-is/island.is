@@ -85,6 +85,34 @@ export class ApplicationService {
     application?.setDataValue('files', files)
   }
 
+  async findMyApplicationById(id: string): Promise<ApplicationModel | null> {
+    const application = await this.applicationModel.findOne({
+      where: { id },
+      include: [
+        { model: StaffModel, as: 'staff' },
+        {
+          model: ApplicationEventModel,
+          as: 'applicationEvents',
+          separate: true,
+          where: {
+            eventType: {
+              [Op.in]: [
+                ApplicationState.APPROVED,
+                ApplicationState.DATANEEDED,
+                ApplicationState.REJECTED,
+              ],
+            },
+          },
+          order: [['created', 'DESC']],
+        },
+      ],
+    })
+
+    await this.setFilesToApplication(id, application)
+
+    return application
+  }
+
   async findById(id: string): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },

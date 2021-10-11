@@ -1,4 +1,5 @@
 export { default as Header } from './Header/Header'
+export { default as ApplicationProvider } from './ApplicationProvider/ApplicationProvider'
 export { default as FormProvider } from './FormProvider/FormProvider'
 export { default as UserProvider } from './UserProvider/UserProvider'
 export { default as MunicipalityProvider } from './MunicipalityProvider/MunicipalityProvider'

@@ -1,10 +1,9 @@
-import React, { useMemo } from 'react'
+import React, { useContext, useMemo } from 'react'
 import {
   Text,
   Box,
   BulletList,
   Bullet,
-  Button,
   LoadingDots,
   Link,
 } from '@island.is/island-ui/core'
@@ -18,38 +17,16 @@ import {
   Timeline,
 } from '@island.is/financial-aid-web/osk/src/components'
 
-import {
-  Application,
-  getActiveTypeForStatus,
-} from '@island.is/financial-aid/shared/lib'
+import { getActiveTypeForStatus } from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
-import { useQuery } from '@apollo/client'
-import { useRouter } from 'next/router'
-import { GetApplicationQuery } from '@island.is/financial-aid-web/osk/graphql'
 
-interface ApplicantData {
-  application: Application
-}
+import { ApplicationContext } from '../../../components/ApplicationProvider/ApplicationProvider'
 
 const MainPage = () => {
-  const router = useRouter()
   const logOut = useLogOut()
 
-  const { data, error, loading } = useQuery<ApplicantData>(
-    GetApplicationQuery,
-    {
-      variables: { input: { id: router.query.id } },
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
-
-  const currentApplication = useMemo(() => {
-    if (data?.application) {
-      return data.application
-    }
-  }, [data])
+  const { myApplication, loading, fetchError } = useContext(ApplicationContext)
 
   return (
     <>
@@ -58,23 +35,27 @@ const MainPage = () => {
           Aðstoðin þín
         </Text>
 
-        {currentApplication && (
+        {myApplication && (
           <>
-            {getActiveTypeForStatus[currentApplication.state] ===
-              'InProgress' && (
-              <InProgress currentApplication={currentApplication} />
+            {getActiveTypeForStatus[myApplication.state] === 'InProgress' && (
+              <InProgress currentApplication={myApplication} />
             )}
 
-            {getActiveTypeForStatus[currentApplication.state] ===
-              'Approved' && <Approved state={currentApplication.state} />}
+            {getActiveTypeForStatus[myApplication.state] === 'Approved' && (
+              <Approved state={myApplication.state} />
+            )}
 
-            {getActiveTypeForStatus[currentApplication.state] ===
-              'Rejected' && <Rejected state={currentApplication.state} />}
+            {getActiveTypeForStatus[myApplication.state] === 'Rejected' && (
+              <Rejected state={myApplication.state} />
+            )}
 
-            <Timeline state={currentApplication.state} />
+            <Timeline
+              state={myApplication.state}
+              created={myApplication.created}
+            />
           </>
         )}
-        {error && (
+        {fetchError && (
           <Text>
             Umsókn ekki fundin eða einhvað fór úrskeiðis <br />
             vinsamlegast reyndu síðar

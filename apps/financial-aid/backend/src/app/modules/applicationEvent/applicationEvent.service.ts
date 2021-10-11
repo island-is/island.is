@@ -8,7 +8,7 @@ import { CreateApplicationEventDto } from '../application/dto'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { ApplicationService } from '../application'
+import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 @Injectable()
 export class ApplicationEventService {
