@@ -1,6 +1,6 @@
 import React, { useContext, useState, useCallback, ChangeEvent } from 'react'
 
-import * as styles from './Input.treat'
+import * as styles from './NumberInput.treat'
 
 interface Props {
   maximumInputLength: number
@@ -27,6 +27,7 @@ export default function NumberInput({
       if (sanitizeNumber(value).length > maximumInputLength) {
         return
       }
+
       setText(formattedValue)
       onUpdate(Number(sanitizeNumber(value)))
     },
