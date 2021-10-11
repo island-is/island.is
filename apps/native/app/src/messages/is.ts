@@ -198,6 +198,7 @@ export const is = {
 
   // cards
   'applicationStatusCard.openButtonLabel': 'Opna umsókn',
+  'applicationStatusCard.seeMoreApplications': 'Skoða umsóknir',
   'applicationStatusCard.state': `{
     state,
     select,
