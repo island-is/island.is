@@ -1,24 +1,16 @@
-import React, {
-  createContext,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { createContext, ReactNode, useEffect, useState } from 'react'
 
 import { Application } from '@island.is/financial-aid/shared/lib'
-import { UploadFile } from '@island.is/island-ui/core'
+
 import { GetMyApplicationQuery } from '@island.is/financial-aid-web/osk/graphql'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
-import { GraphQLError } from 'graphql'
+import { ApolloError } from 'apollo-client'
 
 interface ApplicationProvider {
   myApplication?: Application
-  updateApplication?: any
-  initializeFormProvider?: any
   loading: boolean
-  fetchError?: GraphQLError[]
+  fetchError?: ApolloError
 }
 
 interface Props {
@@ -29,7 +21,9 @@ interface ApplicantData {
   myApplication?: Application
 }
 
-export const ApplicationContext = createContext<ApplicationProvider>({})
+export const ApplicationContext = createContext<ApplicationProvider>({
+  loading: true,
+})
 
 const ApplicationProvider = ({ children }: Props) => {
   const router = useRouter()
@@ -38,7 +32,7 @@ const ApplicationProvider = ({ children }: Props) => {
 
   const [myApplication, updateApplication] = useState<Application>()
 
-  const { data, fetchError, loading } = useQuery<ApplicantData>(
+  const { data, error: fetchError, loading } = useQuery<ApplicantData>(
     GetMyApplicationQuery,
     {
       variables: { input: { id: router.query.id } },

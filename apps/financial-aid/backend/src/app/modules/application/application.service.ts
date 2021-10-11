@@ -97,9 +97,9 @@ export class ApplicationService {
           where: {
             eventType: {
               [Op.in]: [
-                ApplicationState.APPROVED,
-                ApplicationState.DATANEEDED,
-                ApplicationState.REJECTED,
+                ApplicationEventType.APPROVED,
+                ApplicationEventType.DATANEEDED,
+                ApplicationEventType.REJECTED,
               ],
             },
           },

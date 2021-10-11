@@ -21,7 +21,7 @@ import { getActiveTypeForStatus } from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
-import { ApplicationContext } from '../../../components/ApplicationProvider/ApplicationProvider'
+import { ApplicationContext } from '@island.is/financial-aid-web/osk/src/components/ApplicationProvider/ApplicationProvider'
 
 const MainPage = () => {
   const logOut = useLogOut()

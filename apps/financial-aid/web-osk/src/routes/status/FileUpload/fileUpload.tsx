@@ -24,7 +24,7 @@ import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
 
 import { Routes } from '@island.is/financial-aid/shared/lib'
 import cn from 'classnames'
-import { ApplicationContext } from '../../../components/ApplicationProvider/ApplicationProvider'
+import { ApplicationContext } from '@island.is/financial-aid-web/osk/src/components/ApplicationProvider/ApplicationProvider'
 
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
@@ -124,7 +124,7 @@ const FileUpload = () => {
           umsókn.
         </Text>
 
-        {fileComment && (
+        {fileComment?.comment && (
           <Box marginBottom={[3, 3, 5]}>
             <AlertMessage
               type="warning"
