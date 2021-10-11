@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -29,6 +29,15 @@ import { ApplicationContext } from '../../../components/ApplicationProvider/Appl
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
   const { myApplication } = useContext(ApplicationContext)
+
+  const fileComment = useMemo(() => {
+    if (myApplication?.applicationEvents) {
+      return myApplication?.applicationEvents.find(
+        (el) => el.eventType === ApplicationEventType.DATANEEDED,
+      )
+    }
+    return
+  }, [myApplication])
 
   const router = useRouter()
   const { uploadFiles } = useFileUpload(form.otherFiles)
@@ -115,13 +124,15 @@ const FileUpload = () => {
           umsókn.
         </Text>
 
-        <Box marginBottom={[3, 3, 5]}>
-          <AlertMessage
-            type="warning"
-            title="Athugasemd frá vinnsluaðila"
-            message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in."
-          />
-        </Box>
+        {fileComment && (
+          <Box marginBottom={[3, 3, 5]}>
+            <AlertMessage
+              type="warning"
+              title="Athugasemd frá vinnsluaðila"
+              message={fileComment.comment}
+            />
+          </Box>
+        )}
 
         <Files
           header="Senda inn gögn"
