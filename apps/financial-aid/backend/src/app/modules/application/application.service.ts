@@ -178,7 +178,7 @@ export class ApplicationService {
     if (update.state === ApplicationState.NEW) {
       update.staffId = null
     }
-    //Create applicationEvent
+
     const eventModel = await this.applicationEventService.create({
       applicationId: id,
       eventType: ApplicationEventType[update.state.toUpperCase()],
