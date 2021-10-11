@@ -10,12 +10,12 @@ import { useQuery } from '@apollo/client'
 
 export type RegionsPetitionList = Pick<
   EndorsementList,
-  'data'
+  'id'
 > & { tags: EndorsementListOpenTagsEnum[] }
 
 export type UserEndorsement = Pick<
   Endorsement,
-  'data'
+  'id'
 >
 export type UserVoterRegion = Pick<
   TemporaryVoterRegistry,
@@ -23,17 +23,29 @@ export type UserVoterRegion = Pick<
 >
 
 interface UserEndorsementsResponse {
-  endorsementSystemUserEndorsements: UserEndorsement[]
+  endorsementSystemUserEndorsements: any
 }
 interface PetitionListResponse {
-  endorsementSystemFindEndorsementLists: RegionsPetitionList[]
+  endorsementSystemFindEndorsementLists: any
 }
 interface SinglePetition {
   endorsementSystemGetSingleEndorsementList?: EndorsementList
 }
+interface SingleEndorsement {
+  endorsementSystemGetSingleEndorsement?: Endorsement
+}
+
+const GET_SINGLE_ENDORSEMENT = gql`
+  query endorsementSystemGetSingleEndorsement($input: FindEndorsementListInput!) {
+    endorsementSystemGetSingleEndorsement(input: $input) {
+      id
+      endorser
+    }
+  }
+`
 
 const GET_USER_ENDORSEMENTS = gql`
-  query endorsementSystemUserEndorsements($input: PaginatedEndorsementInput!) {
+  query endorsementSystemUserEndorsements($input: EndorsementPaginationInput!) {
     endorsementSystemUserEndorsements(input: $input) {
       totalCount
       pageInfo {
@@ -138,7 +150,6 @@ export const useGetUserLists = () => {
     {
       variables: {
         input: {
-          listId: '3e2a9818-accb-4e8a-b476-adfa0c8d0c1f',
           limit: 5,
         },
       },
@@ -157,4 +168,15 @@ export const useGetSinglePetition = (listId: string) => {
     },
   })
   return petition?.endorsementSystemGetSingleEndorsementList
+}
+
+export const useGetSingleEndorsement = (listId: string) => {
+  const { data: endorsement } = useQuery<SingleEndorsement>(GET_SINGLE_ENDORSEMENT, {
+    variables: {
+      input: {
+        listId: listId,
+      },
+    },
+  })
+  return endorsement
 }

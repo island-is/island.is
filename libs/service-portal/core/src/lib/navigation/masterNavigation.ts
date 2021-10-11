@@ -78,11 +78,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             navHide: true,
             path: ServicePortalPath.FamilyRoot,
           },
-          {
-            // Medmaeli
-            name: m.endorsements,
-            path: ServicePortalPath.Endorsements,
-          },
         ],
       },
 

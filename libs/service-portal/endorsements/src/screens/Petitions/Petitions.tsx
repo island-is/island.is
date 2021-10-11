@@ -97,7 +97,7 @@ const Petitions = () => {
         )}
       </Box>
 
-      <Box marginTop={4}>
+      {/*<Box marginTop={4}>
         <Text as="p" variant="h3" marginBottom={2}>
           {'Lokaðir listar sem ég hef mælt með'}
         </Text>
@@ -134,8 +134,8 @@ const Petitions = () => {
               )
             })}
           </Stack>
-        )}
-      </Box>
+          )}
+      </Box>*/}
     </Box>
   )
 }

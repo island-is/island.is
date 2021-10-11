@@ -28,11 +28,10 @@ export enum ServicePortalPath {
   FamilyMember = '/min-gogn/fjolskyldan/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
-  Endorsements = '/min-gogn/medmaeli',
-  Petitions = '/min-gogn/undirskriftalistar',
-  PetitionsAdminView = '/min-gogn/undirskriftalistar-admin',
-  PetitionList = '/min-gogn/undirskriftalistar/:listId',
-  PetitionListAdmin = '/min-gogn/undirskriftalistar-admin/:listId',
+  Petitions = '/min-gogn/medmaeli',
+  PetitionsAdminView = '/min-gogn/medmaeli-admin',
+  PetitionList = '/min-gogn/medmaeli/:listId',
+  PetitionListAdmin = '/min-gogn/medmaeli-admin/:listId',
 
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 

@@ -10,10 +10,22 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import { ExportAsCSV } from '@island.is/application/ui-components'
-import { useGetSinglePetition, UnendorseList, EndorseList } from '../queries'
+import { useGetSinglePetition, UnendorseList, useGetSingleEndorsement } from '../queries'
 import { pages, PAGE_SIZE, paginate } from './pagination'
 import { useMutation } from '@apollo/client'
 import { list } from '../mocks'
+
+const isLocalhost = window.location.origin.includes('localhost')
+const isDev = window.location.origin.includes('beta.dev01.devland.is')
+const isStaging = window.location.origin.includes('beta.staging01.devland.is')
+
+const baseUrlForm = isLocalhost
+  ? 'http://localhost:4242/umsoknir'
+  : isDev
+  ? 'https://beta.dev01.devland.is/umsoknir'
+  : isStaging
+  ? 'https://beta.staging01.devland.is/umsoknir'
+  : 'https://island.is/umsoknir'
 
 const mapToCSVFile = (petitions: any) => {
   return petitions.map((pet: any) => {
@@ -33,8 +45,10 @@ const ViewPetition = () => {
   const [totalPages, setTotalPages] = useState(0)
   const [pagePetitions, setPetitions] = useState(list.signedPetitions)
 
+  const userHasSigned = useGetSingleEndorsement(location.state?.listId)
+  const [hasSigned, setHasSigned] = useState(userHasSigned ? true : false)
+
   const [unendorseList, { loading: isLoading }] = useMutation(UnendorseList)
-  const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
 
   const handlePagination = (page: number, petitions: any) => {
     setPage(page)
@@ -44,7 +58,8 @@ const ViewPetition = () => {
 
   useEffect(() => {
     handlePagination(1, list.signedPetitions)
-  }, [])
+    setHasSigned(userHasSigned ? true : false)
+  }, [userHasSigned])
 
   const onUnendorse = async () => {
     const success = await unendorseList({
@@ -54,27 +69,12 @@ const ViewPetition = () => {
         },
       },
     }).catch(() => {
-      toast.error('error! semja texta hér')
+      toast.error('Ekki tókst að taka nafn þitt af lista. Vinsamlegast reyndu aftur síðar')
     })
 
     if (success) {
-      toast.success('DONE')
-    }
-  }
-
-  const onEndorse = async () => {
-    const success = await createEndorsement({
-      variables: {
-        input: {
-          listId: location.state?.listId,
-        },
-      },
-    }).catch(() => {
-      toast.error('error! semja texta hér')
-    })
-
-    if (success) {
-      toast.success('DONE')
+      toast.success('Tókst að taka nafn þitt af lista')
+      setHasSigned(false)
     }
   }
 
@@ -120,49 +120,42 @@ const ViewPetition = () => {
       </Box>
 
       {!viewTypeEdit && (
-        <>
-          <Box marginBottom={5} width="half">
-            <DialogPrompt
-              baseId="demo_dialog"
-              title="Ertu viss um að vilja taka nafn þitt af lista?"
-              ariaLabel="modal to confirm that user is willing to close the petition list"
-              disclosureElement={
-                <Button
-                  loading={isLoading}
-                  variant="primary"
-                  icon="close"
-                  //onClick={() => onUnendorse()}
-                >
-                  {/*<Link
-                    style={{ textDecoration: 'none' }}
-                    key={petition?.id}
-                    to={ServicePortalPath.Petitions}
-                  >*/}
-                  Taka nafn mitt af þessum lista
-                </Button>
-              }
-              onConfirm={() => console.log('Confirmed')}
-              onCancel={() => console.log('Cancelled')}
-              buttonTextConfirm="Já"
-              buttonTextCancel="Hætta við"
-            />
+        <Box>
+          {hasSigned ? (
+            <Box marginBottom={5} width="half">
+              <DialogPrompt
+                baseId="demo_dialog"
+                title="Ertu viss um að vilja taka nafn þitt af lista?"
+                ariaLabel="modal to confirm that user is willing to close the petition list"
+                disclosureElement={
+                  <Button
+                    loading={isLoading}
+                    variant="primary"
+                    icon="close"
+                  >
+                    Taka nafn mitt af þessum lista
+                  </Button>
+                }
+                onConfirm={() => onUnendorse()}
+                onCancel={() => console.log('Cancelled')}
+                buttonTextConfirm="Já"
+                buttonTextCancel="Hætta við"
+              />
+            </Box>
+          ) : (
+            <Box marginBottom={5} width="half">
+              <Button
+                variant="primary"
+                icon="arrowForward"
+                onClick={() =>
+                  window.open(`${baseUrlForm}/medmaelendalisti/3deeab21-cbdf-4414-adcd-381e3232f41b`)
+                }
+              >
+                Setja nafn mitt á lista
+              </Button>
           </Box>
-          <Box marginBottom={5} width="half">
-            <Button
-              loading={submitLoad}
-              variant="primary"
-              icon="arrowForward"
-              onClick={() => onEndorse()}
-            >
-              {/*<Link
-              style={{ textDecoration: 'none' }}
-              key={petition?.id}
-              to={ServicePortalPath.Petitions}
-            >*/}
-              Setja nafn mitt á lista
-            </Button>
-          </Box>
-        </>
+          )}
+        </Box>
       )}
 
       {location.state.type === 'edit' && (
@@ -211,11 +204,11 @@ const ViewPetition = () => {
               title="Sækja lista"
               variant="text"
             />
-            <Box marginLeft={5}>
+            {/*<Box marginLeft={5}>
               <Button icon="mail" iconType="outline" variant="text">
                 Senda lista
               </Button>
-            </Box>
+            </Box>*/}
           </Box>
         </Box>
       )}
