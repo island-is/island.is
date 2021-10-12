@@ -366,6 +366,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
               }
               count={inboxItems.length}
               loading={searchLoading}
+              isAndroid={Platform.OS === 'android'}
             />
           ) : undefined
         }
@@ -394,7 +395,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
         }
       />
       <BottomTabsIndicator index={0} total={3} />
-      <TopLine scrollY={scrollY} />
+      {!isSearch && <TopLine scrollY={scrollY} />}
     </>
   )
 }

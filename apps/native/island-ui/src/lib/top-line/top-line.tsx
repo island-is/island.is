@@ -17,7 +17,7 @@ interface TopLineProps {
 
 export function TopLine({ scrollY, offset = 0 }: TopLineProps) {
   return (
-    <SafeAreaView style={{ width: '100%', position: 'absolute', top: 0 }}>
+    <SafeAreaView style={{ width: '100%', position: 'absolute', top: 0, zIndex: 10 }}>
       <Host
         style={{
           flex: 1,
