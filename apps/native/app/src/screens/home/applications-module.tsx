@@ -96,7 +96,11 @@ export const ApplicationsModule = React.memo(
                 }
                 link={
                   <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
-                    <LinkText>Skoða umsóknir</LinkText>
+                    <LinkText>
+                      {intl.formatMessage({
+                        id: 'applicationStatusCard.seeMoreApplications',
+                      })}
+                    </LinkText>
                   </TouchableOpacity>
                 }
               />
