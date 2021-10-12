@@ -13,13 +13,15 @@ export class FrontpageSyncService implements CmsSyncProvider<IFrontpage> {
       .filter(
         (entry: Entry<any>): entry is IFrontpage =>
           entry.sys.contentType.sys.id === 'frontpage',
-        // Avoids recursive deep linking from references in slide links
-        // by limiting imports to only required fields
       )
       .map((entry) => {
         if (entry.fields?.slides) {
           entry.fields.slides = entry.fields.slides.map((slide) => {
             if (slide.fields?.link?.fields) {
+              // Avoids recursive deep linking from references in slide links
+              // by limiting imports to only required fields, slug and title
+              // since the model has since been augmented to accept pages
+              // with variable content
               slide.fields.link.fields = {
                 slug: slide.fields.link.fields.slug,
                 title: slide.fields.link.fields.title,
