@@ -58,6 +58,16 @@ export const m: MessageDir = {
       defaultMessage: 'Listar stofnaðir af mér',
       description: 'Section title for your petition lists',
     },
+    petitionListsOngoing: {
+      id: 'sp.petitions:petition-lists-ongoing',
+      defaultMessage: 'Virkir listar',
+      description: 'Section title for ongoing petition lists',
+    },
+    petitionListsClosed: {
+      id: 'sp.petitions:petition-lists-closed',
+      defaultMessage: 'Lokaðir listar',
+      description: 'Section title for closed petition lists',
+    },
     petitionListsSignedByMe: {
       id: 'sp.petitions:petition-lists-signed-by-me',
       defaultMessage: 'Virkir listar ég hef mælt með',

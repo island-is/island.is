@@ -10,6 +10,7 @@ const Petitions = () => {
   const { formatMessage } = useLocale()
   const petitionLists = useGetPetitionLists() //all existing lists
   const userLists = useGetUserLists() //petitions that user has signed
+  console.log(userLists)
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -100,12 +101,12 @@ const Petitions = () => {
         )}
       </Box>
 
-      {/*<Box marginTop={4}>
+      <Box marginTop={4}>
         <Text as="p" variant="h3" marginBottom={2}>
           {formatMessage(m.petition.closedListsSignedByMe)}
         </Text>
 
-        {!!userLists.length && (
+        {/*{!!userLists.length && (
           <Stack space={4}>
             {userLists.map((list: any) => {
               return (
@@ -137,8 +138,8 @@ const Petitions = () => {
               )
             })}
           </Stack>
-          )}
-      </Box>*/}
+          )}*/}
+      </Box>
     </Box>
   )
 }

@@ -3,8 +3,6 @@ import { DatePicker } from '@island.is/island-ui/core'
 import {
   Box,
   Button,
-  Table as T,
-  Pagination,
   Input,
   Stack,
   DialogPrompt,
@@ -12,8 +10,10 @@ import {
 import { useLocation } from 'react-router-dom'
 import { ExportAsCSV } from '@island.is/application/ui-components'
 import { useGetSinglePetition } from '../queries'
-import { pages, PAGE_SIZE, paginate } from './pagination'
 import { list } from '../mocks'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
+import PetitionsTable from '../PetitionsTable'
 
 const mapToCSVFile = (petitions: any) => {
   return petitions.map((pet: any) => {
@@ -25,29 +25,16 @@ const mapToCSVFile = (petitions: any) => {
 }
 
 const ViewPetitionAdmin = () => {
+  const { formatMessage } = useLocale()
   const location: any = useLocation()
   const petition = useGetSinglePetition(location.state?.listId)
 
   const [title, setTitle] = useState(petition?.title)
   const [description, setDescription] = useState(petition?.description)
 
-  const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(0)
-  const [pagePetitions, setPetitions] = useState(list.signedPetitions)
-
-  const handlePagination = (page: number, petitions: any) => {
-    setPage(page)
-    setTotalPages(pages(petitions?.length))
-    setPetitions(paginate(petitions, PAGE_SIZE, page))
-  }
-
   useEffect(() => {
-    handlePagination(1, list.signedPetitions)
-
     setTitle(petition?.title)
-    setDescription(
-      'Við undirrituð mótmælum þeirri ákvörðun ríkisstjórnarinnar að setja alla sem til Íslands koma í sóttkví og viðbótarskimun, burtséð frá því hvort fólk er smitað eða ekki. Í sumar hafa minna en 0.1% ferðamanna reynst smitaðir. Seinni skimun mun því litlu við bæta en mun aftur á móti valda óásættanlegum skaða. Aðgerðin mun orsaka atvinnuleysi tugþúsunda Íslendinga með tilheyrandi efnahagslegum hamförum af mannavöldum. Við krefjumst því þess að yfirvöld falli frá þessari skaðlegu stefnu og beiti aðeins sóttvarnaraðgerðum sem hægt er að viðhalda til langs tíma án þess að valda óbætanlegu samfélagstjóni.',
-    )
+    setDescription(list.description)
   }, [petition])
 
   return (
@@ -95,82 +82,50 @@ const ViewPetitionAdmin = () => {
         <Input
           name={list.owner}
           value={list.owner}
-          onChange={(e) => {
-            //setTitle(e.target.value)
-          }}
-          label={'Ábyrgðamaður'}
+          label={formatMessage(m.viewPetition.listOwner)}
         />
 
         <Box
           display="flex"
           justifyContent="spaceBetween"
           marginTop={5}
-          marginBottom={5}
+          marginBottom={7}
         >
           <DialogPrompt
             baseId="demo_dialog"
-            title="Ertu viss um að vilja loka lista?"
-            ariaLabel="modal to confirm that user is willing to close the petition list"
+            title={formatMessage(m.viewPetition.dialogPromptCloseListTitle)}
+            ariaLabel={formatMessage(m.viewPetition.dialogPromptCloseListTitle)}
             disclosureElement={
               <Button
                 icon="lockClosed"
                 iconType="outline"
                 colorScheme="destructive"
               >
-                Loka lista
+                {formatMessage(m.viewPetition.closeListButton)}
               </Button>
             }
             onConfirm={() => console.log('Confirmed')}
             onCancel={() => console.log('Cancelled')}
-            buttonTextConfirm="Já"
-            buttonTextCancel="Hætta við"
+            buttonTextConfirm={formatMessage(
+              m.viewPetition.dialogPromptConfirm,
+            )}
+            buttonTextCancel={formatMessage(m.viewPetition.dialogPromptCancel)}
           />
           <Button icon="reload" iconType="outline">
-            Uppfæra lista
+            {formatMessage(m.viewPetition.updateListButton)}
           </Button>
         </Box>
 
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>Dags skráð</T.HeadData>
-              <T.HeadData>Nafn</T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {pagePetitions.map((petition) => {
-              return (
-                <T.Row key={petition.kt}>
-                  <T.Data>{petition.signed}</T.Data>
-                  <T.Data>{petition.name}</T.Data>
-                </T.Row>
-              )
-            })}
-          </T.Body>
-        </T.Table>
+        <PetitionsTable />
 
-        {!!list.signedPetitions?.length && (
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            renderLink={(page, className, children) => (
-              <Box
-                cursor="pointer"
-                className={className}
-                onClick={() => handlePagination(page, list.signedPetitions)}
-              >
-                {children}
-              </Box>
-            )}
+        <Box marginTop={3}>
+          <ExportAsCSV
+            data={mapToCSVFile(list.signedPetitions) as object[]}
+            filename="Meðmælalisti"
+            title="Sækja lista"
+            variant="ghost"
           />
-        )}
-
-        <ExportAsCSV
-          data={mapToCSVFile(list.signedPetitions) as object[]}
-          filename="Meðmælalisti"
-          title="Sækja lista"
-          variant="ghost"
-        />
+        </Box>
       </Stack>
     </Box>
   )

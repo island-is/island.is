@@ -3,25 +3,28 @@ import { Box, Text, ActionCard, Stack } from '@island.is/island-ui/core'
 import { useGetPetitionLists } from '../queries'
 import { Link } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 const PetitionsAdmin = () => {
+  const { formatMessage } = useLocale()
   const petitionLists = useGetPetitionLists() //all existing lists
 
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
         <Text variant="h1" as="h1">
-          {'Meðmæli'}
+          {formatMessage(m.petition.introTitle)}
         </Text>
 
         <Text as="p" variant="intro">
-          {'Yfirlit yfir meðmæli og meðmælendalista í þinni umsjá'}
+          {formatMessage(m.petition.intro)}
         </Text>
       </Stack>
 
-      <Box marginTop={4}>
-        <Text as="p" variant="h3" marginBottom={3} marginTop={7}>
-          {'Virkir listar'}
+      <Box marginTop={10} marginBottom={7}>
+        <Text as="p" variant="h3" marginBottom={2}>
+          {formatMessage(m.petition.petitionListsOngoing)}
         </Text>
 
         {!!petitionLists.data && (
@@ -44,7 +47,7 @@ const PetitionsAdmin = () => {
                     heading={list.title}
                     text={list.description as string}
                     cta={{
-                      label: 'Sýsla með lista',
+                      label: formatMessage(m.petition.editList),
                       variant: 'text',
                       icon: 'arrowForward',
                     }}
@@ -56,7 +59,7 @@ const PetitionsAdmin = () => {
         )}
 
         <Text as="p" variant="h3" marginBottom={3} marginTop={7}>
-          {'Lokaðir listar'}
+          {formatMessage(m.petition.petitionListsClosed)}
         </Text>
 
         {!!petitionLists.length && (
@@ -79,7 +82,7 @@ const PetitionsAdmin = () => {
                     heading={list.title}
                     text={list.description as string}
                     cta={{
-                      label: 'Sýsla með lista',
+                      label: formatMessage(m.petition.editList),
                       variant: 'text',
                       icon: 'arrowForward',
                     }}
