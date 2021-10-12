@@ -162,30 +162,23 @@ export const calculatePeriodLength = (
   let cost = 0
 
   while (currentDate < end) {
-    let parentalLeaveDaysUsed = 0
-
     const daysInMonth = getDaysInMonth(currentDate)
-
     const dayOfMonth = currentDate.getDate()
     const daysTillEndOfMonth = daysInMonth - dayOfMonth
     const daysLeftToEnd = differenceInDays(end, currentDate)
+    const daysLeft = Math.min(daysTillEndOfMonth, daysLeftToEnd)
+    const dateAtEndOfIteration = addDays(currentDate, daysLeft)
 
-    const daysLeftOfMonth = Math.min(daysTillEndOfMonth, daysLeftToEnd) + 1
+    let costOfMonth = 0
 
-    const dateAtEndOfMonth = addDays(currentDate, daysLeftOfMonth - 1)
-    const dateAtEnd = addDays(currentDate, daysLeftOfMonth)
-
-    if (dateAtEndOfMonth.getDate() === daysInMonth) {
-      parentalLeaveDaysUsed = 30 - dayOfMonth + 1
+    if (dateAtEndOfIteration.getDate() === daysInMonth) {
+      costOfMonth = 30 - dayOfMonth + 1
     } else {
-      parentalLeaveDaysUsed = end.getDate() - dayOfMonth + 1
+      costOfMonth = end.getDate() - dayOfMonth + 1
     }
 
-    parentalLeaveDaysUsed = Math.round(parentalLeaveDaysUsed * percentage)
-
-    cost += parentalLeaveDaysUsed
-
-    currentDate = dateAtEnd
+    cost += Math.round(costOfMonth * percentage)
+    currentDate = addDays(currentDate, daysTillEndOfMonth + 1)
   }
 
   return cost

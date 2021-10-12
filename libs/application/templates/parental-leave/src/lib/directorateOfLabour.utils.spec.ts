@@ -426,6 +426,10 @@ describe('calculatePeriodLength', () => {
         0.499999999,
       ),
     ).toBe(179)
+
+    expect(
+      calculatePeriodLength(new Date(2022, 0, 25), new Date(2022, 6, 24), 0.75),
+    ).toBe(138)
   })
 })
 
