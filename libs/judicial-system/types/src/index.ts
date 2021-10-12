@@ -40,6 +40,7 @@ export {
   AccusedPleaDecision,
   SessionArrangements,
   restrictionCases,
+  investigationCases,
   isRestrictionCase,
   isInvestigationCase,
   completedCaseStates,

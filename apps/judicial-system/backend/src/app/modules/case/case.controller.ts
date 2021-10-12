@@ -43,7 +43,12 @@ import {
   TokenGuard,
 } from '@island.is/judicial-system/auth'
 
-import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
+import {
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  staffRule,
+} from '../../guards'
 import { CaseFile } from '../file/models/file.model'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
@@ -464,7 +469,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:id/custodyNotice')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
