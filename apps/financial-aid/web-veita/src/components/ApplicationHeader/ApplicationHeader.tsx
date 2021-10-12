@@ -123,6 +123,7 @@ const ApplicationHeader = ({
             <Box marginRight={1}>
               <Text variant="small">{application.staff.name}</Text>
             </Box>
+            <button className={styles.button}>Sjá um</button>
             <Text variant="small">·</Text>
           </Box>
         )}
