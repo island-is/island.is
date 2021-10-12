@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
 import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
 import parseISO from 'date-fns/parseISO'
 
@@ -20,7 +19,6 @@ import { Box } from '@island.is/island-ui/core'
 import {
   calculateMaxPercentageForPeriod,
   calculateMinPercentageForPeriod,
-  calculatePeriodLength,
 } from '../../lib/directorateOfLabour.utils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
@@ -40,10 +38,6 @@ export const PeriodPercentage: FC<FieldBaseProps & CustomField> = ({
 
   const remainingRights = useRemainingRights(application)
 
-  const { register } = useFormContext()
-  const [length, setLength] = useState<string>(
-    currentPeriod?.days ? currentPeriod.days : '0',
-  )
   const fieldId = `periods[${currentIndex}].ratio`
   const error =
     (errors as FieldErrors<FieldValues>)?.periods?.[currentIndex]?.ratio
@@ -65,8 +59,8 @@ export const PeriodPercentage: FC<FieldBaseProps & CustomField> = ({
       return
     }
 
-    const minPercentage = Math.round(rawMinPercentage) * 100
-    const maxPercentage = Math.round(rawMaxPercentage) * 100
+    const minPercentage = Math.round(rawMinPercentage * 100)
+    const maxPercentage = Math.round(rawMaxPercentage * 100)
 
     if (maxPercentage < minPercentage) {
       // TODO: set error
@@ -82,21 +76,6 @@ export const PeriodPercentage: FC<FieldBaseProps & CustomField> = ({
 
     setOptions(options)
   }, [currentPeriod, remainingRights])
-
-  const onSelect = (item: SelectOption) => {
-    const start = parseISO(currentPeriod.startDate)
-    const end = parseISO(currentPeriod.endDate)
-
-    const selectedPercentage = Number(item.value) / 100
-
-    const calculatedLength = calculatePeriodLength(
-      start,
-      end,
-      selectedPercentage,
-    )
-
-    setLength(calculatedLength.toString())
-  }
 
   if (currentIndex < 0) {
     return null
@@ -121,19 +100,10 @@ export const PeriodPercentage: FC<FieldBaseProps & CustomField> = ({
           placeholder: parentalLeaveFormMessages.ratio.placeholder,
           id: fieldId,
           children: undefined,
-          onSelect: onSelect,
           options,
           backgroundColor: 'blue',
           defaultValue: null,
         }}
-      />
-
-      <input
-        readOnly
-        ref={register}
-        type="hidden"
-        value={length}
-        name={`periods[${currentIndex}].days`}
       />
     </>
   )

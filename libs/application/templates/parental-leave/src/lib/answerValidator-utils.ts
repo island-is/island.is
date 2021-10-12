@@ -203,7 +203,7 @@ export const validatePeriod = (
   }
 
   if (hasBeenAnswered(ratio) && ratio === NO_ANSWER) {
-    return buildError('ratio', errorMessages.periodsRatioDaysMissing)
+    return buildError('ratio', errorMessages.periodsRatioMissing)
   } else if (hasBeenAnswered(ratio)) {
     if (!hasBeenAnswered(startDate)) {
       return buildError('ratio', errorMessages.periodsStartMissing)
@@ -216,7 +216,7 @@ export const validatePeriod = (
     const ratioValue = Number(ratio)
 
     if (isNaN(ratioValue)) {
-      return buildError('ratio', errorMessages.periodsRatioDaysMissing)
+      return buildError('ratio', errorMessages.periodsRatioInvalid)
     }
 
     if (ratioValue < minimumRatio * 100) {

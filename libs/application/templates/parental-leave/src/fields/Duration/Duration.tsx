@@ -50,21 +50,15 @@ export const Duration: FC<FieldBaseProps> = ({
       ? Number(currentPeriod.duration)
       : DEFAULT_PERIOD_LENGTH,
   )
-  const [durationInDays, setDurationInDays] = useState<number>(
-    chosenDuration * 30,
-  )
-  const [percent, setPercent] = useState<number>(
-    currentPeriod.percentage ? Number(currentPeriod.percentage) : 100,
-  )
   const { getEndDate } = useGetOrRequestEndDates(application)
   const errorMessage =
     (errors?.component as RecordObject<string>)?.message ||
     (errors as RecordObject<string>)?.[id]
 
   const monthsToEndDate = useCallback(
-    async (lengthInMonths: number) => {
+    (lengthInMonths: number) => {
       try {
-        const endDateResult = await getEndDate({
+        const endDateResult = getEndDate({
           startDate: currentStartDateAnswer,
           lengthInMonths,
         })
@@ -77,11 +71,9 @@ export const Duration: FC<FieldBaseProps> = ({
           return
         }
 
-        const { date, percentage } = endDateResult
+        const { date } = endDateResult
 
         setChosenEndDate(date.toISOString())
-        setPercent(percentage)
-        setDurationInDays(endDateResult.days)
 
         return date
       } catch (e) {
@@ -205,30 +197,6 @@ export const Duration: FC<FieldBaseProps> = ({
         type="hidden"
         value={chosenEndDate}
         name={`periods[${currentIndex}].endDate`}
-      />
-
-      <input
-        readOnly
-        ref={register}
-        type="hidden"
-        value={chosenDuration}
-        name={`periods[${currentIndex}].duration`}
-      />
-
-      <input
-        readOnly
-        ref={register}
-        type="hidden"
-        value={durationInDays}
-        name={`periods[${currentIndex}].days`}
-      />
-
-      <input
-        readOnly
-        ref={register}
-        type="hidden"
-        value={percent}
-        name={`periods[${currentIndex}].percentage`}
       />
     </Box>
   )

@@ -759,7 +759,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   ],
                 }),
                 buildCustomField({
-                  id: 'endDateDuration',
+                  id: 'endDate',
                   condition: (answers) => {
                     const { rawPeriods } = getApplicationAnswers(answers)
 

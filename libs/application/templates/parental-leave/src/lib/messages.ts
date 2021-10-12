@@ -1610,9 +1610,14 @@ export const errorMessages = defineMessages({
       'Lágmarkið er {minPeriodDays} dagar í orlofi, þú hefur valið {diff} daga á {ratio}% sem endar sem aðeins {diffWithRatio} daga leyfi.',
     description: 'Copy when ratio is invalid',
   },
-  periodsRatioDaysMissing: {
-    id: 'pl.application:answerValidators.periodsRatioDaysMissing',
-    defaultMessage: 'Ekki tókst að reikna út fjölda daga fyrir tímabil',
+  periodsRatioMissing: {
+    id: 'pl.application:answerValidators.periodsRatioMissing',
+    defaultMessage: 'Ekkert hlutfall hefur verið valið',
+    description: 'Copy when days to be used by period is missing',
+  },
+  periodsRatioInvalid: {
+    id: 'pl.application:answerValidators.periodsRatioInvalid',
+    defaultMessage: 'Valið hlutfall er ekki gilt.',
     description: 'Copy when days to be used by period is missing',
   },
   periodsRatioPercentageMissing: {
