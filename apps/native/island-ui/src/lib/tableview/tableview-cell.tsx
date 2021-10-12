@@ -1,6 +1,6 @@
 import React from 'react'
 import { SafeAreaView } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { css } from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
@@ -42,10 +42,18 @@ const Cell = styled.View<{ border: boolean; disabled: boolean }>`
   flex-direction: row;
   min-height: 71px;
   border-bottom-width: ${(props) => (props.border ? 1 : 0)}px;
-  border-bottom-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shades.dark.shade200,
-    light: theme.color.blue100,
-  }))};
+  border-bottom-color: ${dynamicColor(
+    ({ theme }) => ({
+      dark: theme.shades.dark.shade200,
+      light: theme.color.blue100,
+    }),
+    true,
+  )};
+
+  // dynamicColor(({ theme }) => ({
+  //   dark: theme.shades.dark.shade200,
+  //   light: theme.color.blue100,
+  // }))};
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
 `
 
@@ -154,4 +162,4 @@ export const TableViewCell = React.memo((props: TableViewCellProps) => {
       </Cell>
     </SafeAreaView>
   )
-});
+})

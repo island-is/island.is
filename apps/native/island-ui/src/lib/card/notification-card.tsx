@@ -27,10 +27,13 @@ const Title = styled.View`
 
 const ActionsContainer = styled.View`
   border-top-width: ${({ theme }) => theme.border.width.standard}px;
-  border-top-color: ${dynamicColor((props) => ({
-    dark: 'shade200',
-    light: props.theme.color.blueberry200,
-  }))};
+  border-top-color: ${dynamicColor(
+    (props) => ({
+      dark: 'shade200',
+      light: props.theme.color.blueberry200,
+    }),
+    true,
+  )};
   flex-direction: row;
 `
 
@@ -40,10 +43,13 @@ const ActionButton = styled.TouchableOpacity<{ border: boolean }>`
   justify-content: center;
   padding: ${({ theme }) => theme.spacing[2]}px;
   border-left-width: ${({ theme }) => theme.border.width.standard}px;
-  border-left-color: ${dynamicColor((props) => ({
-    dark: !props.border ? 'transparent' : 'shade200',
-    light: !props.border ? 'transparent' : props.theme.color.blueberry200,
-  }))};
+  border-left-color: ${dynamicColor(
+    (props) => ({
+      dark: !props.border ? 'transparent' : 'shade200',
+      light: !props.border ? 'transparent' : props.theme.color.blueberry200,
+    }),
+    true,
+  )};
 `
 
 const ActionText = styled.Text`
@@ -112,7 +118,7 @@ const Dot = styled.View`
 interface CardProps {
   id: string
   icon: ImageSourcePropType
-  category?: string;
+  category?: string
   date: Date
   title: string
   message: string

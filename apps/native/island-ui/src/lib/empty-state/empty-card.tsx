@@ -11,10 +11,13 @@ const Host = styled.View`
   margin-bottom: 16px;
   border-radius: 8px;
   border-width: 1px;
-  border-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue200,
-    dark: theme.shades.dark.shade300
-  }))};
+  border-color: ${dynamicColor(
+    ({ theme }) => ({
+      light: theme.color.blue200,
+      dark: theme.shades.dark.shade300,
+    }),
+    true,
+  )};
   align-items: center;
   justify-content: space-between;
 `
@@ -26,7 +29,7 @@ const Text = styled.Text`
   ${font({
     fontWeight: '400',
     lineHeight: 16,
-    fontSize: 12
+    fontSize: 12,
   })}
 `
 

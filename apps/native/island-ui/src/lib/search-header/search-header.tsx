@@ -4,15 +4,18 @@ import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.View`
-  margin-left: -${({ theme }) => theme.spacing[2]}px;;
-  margin-right: -${({ theme }) => theme.spacing[2]}px;;
+  margin-left: -${({ theme }) => theme.spacing[2]}px;
+  margin-right: -${({ theme }) => theme.spacing[2]}px;
   height: ${({ theme }) => theme.spacing[8]}px;
   align-items: center;
   justify-content: center;
-  border-bottom-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shades.dark.shade200,
-    light: theme.color.blue200
-  }))};
+  border-bottom-color: ${dynamicColor(
+    ({ theme }) => ({
+      dark: theme.shades.dark.shade200,
+      light: theme.color.blue200,
+    }),
+    true,
+  )};
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
   background-color: ${dynamicColor('background')};
 `

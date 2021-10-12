@@ -9,10 +9,13 @@ const Host = styled.View`
   width: 100%;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shades.dark.shade300,
-    light: theme.color.blue200,
-  }))};
+  border-color: ${dynamicColor(
+    ({ theme }) => ({
+      dark: theme.shades.dark.shade300,
+      light: theme.color.blue200,
+    }),
+    true,
+  )};
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
   padding: ${({ theme }) => theme.spacing[2]}px;
 `

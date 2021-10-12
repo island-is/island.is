@@ -10,7 +10,10 @@ interface CancelProps extends TouchableOpacityProps {
 
 const Host = styled.TouchableOpacity`
   border-bottom-width: 1px;
-  border-bottom-color: ${dynamicColor(({ theme }) => theme.color.blue400)};
+  border-bottom-color: ${dynamicColor(
+    ({ theme }) => theme.color.blue400,
+    true,
+  )};
 `
 
 const Wrapper = styled.View`

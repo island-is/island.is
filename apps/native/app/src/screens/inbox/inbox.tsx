@@ -344,7 +344,6 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
             useNativeDriver: true,
           },
         )}
-        scrollToOverflowEnabled={true}
         style={{ marginHorizontal: 0, flex: 1 }}
         data={
           isSkeltonView ? skeletonItems : isEmptyView ? emptyItems : inboxItems

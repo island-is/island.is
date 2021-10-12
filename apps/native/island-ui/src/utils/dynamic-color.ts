@@ -47,12 +47,13 @@ const androidShape = (shape: SimpleColorShape, props: StyledProps<any>) => {
 
 const FORCE_NORMAL = false
 
-export function dynamicColor<T>(dynamicProps: DynamicColorProps<T>) {
+export function dynamicColor<T>(dynamicProps: DynamicColorProps<T>, onlyAuto = false) {
   // fix typing of (string & {})
   const input: string | DynamicColorFn<T> | SimpleColorShape = dynamicProps
 
   return (props: StyledProps<T>) => {
-    if (Platform.OS === 'android' || FORCE_NORMAL) {
+    const force = FORCE_NORMAL || onlyAuto && props.theme.appearanceMode !== 'automatic';
+    if (Platform.OS === 'android' || force) {
       if (typeof input === 'string') {
         return processString(input, props)
       } else if (typeof input === 'function') {
