@@ -223,6 +223,12 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
       />
       <input
         type="hidden"
+        value={payment.totalAmount}
+        ref={register({ required: true })}
+        name={`${entry}.totalAmount`}
+      />
+      <input
+        type="hidden"
         value={JSON.stringify(distributionData?.payments || '')}
         ref={register({ required: true })}
         name={`${entry}.distribution`}

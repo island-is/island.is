@@ -42,10 +42,25 @@ export const overview = defineMessages({
     defaultMessage: 'Kennitala vinnuveitanda',
     description: 'Overview employer ssn',
   },
+  wageDeduction: {
+    id: `pdpp.application:application.overview.wageDeduction`,
+    defaultMessage: 'Kröfur til launagreiðanda',
+    description: 'Overview wage deduction label',
+  },
+  bankClaims: {
+    id: `pdpp.application:application.overview.bankClaims`,
+    defaultMessage: 'Kröfur í heimabanka',
+    description: 'Overview bank claims label',
+  },
   monthlyPayments: {
     id: `pdpp.application:application.overview.monthlyPayments`,
     defaultMessage: 'Mánaðarlegar greiðslur',
     description: 'Overview monthly payments',
+  },
+  totalAmount: {
+    id: `pdpp.application:application.overview.totalAmount`,
+    defaultMessage: 'Heildarupphæð: ',
+    description: 'Total amount on all debts',
   },
   infoBoxTitle: {
     id: `pdpp.application:application.overview.infoBoxTitle`,
@@ -55,7 +70,7 @@ export const overview = defineMessages({
   infoBoxSummary: {
     id: `pdpp.application:application.overview.infoBoxSummary`,
     defaultMessage:
-      'Hafir þú athugasemdir við niðurstöður umsóknarinnar er þér bent á að hafa samband við innheimtumann í þínu umdæmi.',
+      'Staðfesting á greiðsluáætlun rýfur fyrningu á þeim sköttum gjöldum sem eru í greiðsluáætlun, sbr. 1. mgr. 12. gr. laga um innheimtu opinberra skatta og gjalda, nr. 150/2019. Hafir þú athugasemdir við niðurstöður umsóknarinnar er þér bent á að hafa samband við innheimtumann í þínu umdæmi. ',
     description: 'Overview info box summary at bottom of the screen',
   },
   submitButton: {
