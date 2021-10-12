@@ -20,19 +20,39 @@ import {
   GeneratedProfile,
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
+import { useApplicationState } from '../../utils/useApplicationState'
 
 interface ApplicantProps {
   application: Application
   onClickApplicationState: () => void
+  setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ApplicationHeader = ({
   application,
   onClickApplicationState,
+  setIsLoading,
+  setApplication,
 }: ApplicantProps) => {
   const router = useRouter()
 
   const [prevUrl, setPrevUrl] = useState<NavigationElement | undefined>()
+  const changeApplicationState = useApplicationState()
+
+  const assignEmployee = async () => {
+    setIsLoading(true)
+
+    await changeApplicationState(application.id, application.state)
+      .then((updatedApplication) => {
+        setApplication(updatedApplication)
+        setIsLoading(false)
+      })
+      .catch(() => {
+        // TODO: Error
+        setIsLoading(false)
+      })
+  }
 
   const findPrevUrl = (
     state: ApplicationState,
@@ -123,7 +143,9 @@ const ApplicationHeader = ({
             <Box marginRight={1}>
               <Text variant="small">{application.staff.name}</Text>
             </Box>
-            <button className={styles.button}>Sjá um</button>
+            <button onClick={() => assignEmployee()} className={styles.button}>
+              Sjá um
+            </button>
             <Text variant="small">·</Text>
           </Box>
         )}

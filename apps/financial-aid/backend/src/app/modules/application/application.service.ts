@@ -5,11 +5,7 @@ import { CurrentApplicationModel, ApplicationModel } from './models'
 
 import { Op } from 'sequelize'
 
-import {
-  CreateApplicationDto,
-  CreateApplicationEventDto,
-  UpdateApplicationDto,
-} from './dto'
+import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import {
   ApplicationEventType,
   ApplicationFilters,
@@ -23,10 +19,9 @@ import {
   ApplicationEventService,
   ApplicationEventModel,
 } from '../applicationEvent'
-import { StaffModel } from '../staff'
+import { StaffModel, StaffService } from '../staff'
 
 import { EmailService } from '@island.is/email-service'
-import { environment } from '../../../environments'
 
 interface Recipient {
   name: string
@@ -41,6 +36,7 @@ export class ApplicationService {
     private readonly fileService: FileService,
     private readonly applicationEventService: ApplicationEventService,
     private readonly emailService: EmailService,
+    private readonly staffService: StaffService,
   ) {}
 
   async hasAccessToApplication(
@@ -178,7 +174,7 @@ export class ApplicationService {
       update.staffId = null
     }
 
-    const eventModel = await this.applicationEventService.create({
+    await this.applicationEventService.create({
       applicationId: id,
       eventType: ApplicationEventType[update.state.toUpperCase()],
       comment:
@@ -198,8 +194,10 @@ export class ApplicationService {
     await this.setFilesToApplication(id, updatedApplication)
 
     const events = await this.applicationEventService.findById(id)
+    const staff = await this.staffService.findById(updatedApplication.staffId)
 
     updatedApplication?.setDataValue('applicationEvents', events)
+    updatedApplication?.setDataValue('staff', staff)
 
     return { numberOfAffectedRows, updatedApplication }
   }
