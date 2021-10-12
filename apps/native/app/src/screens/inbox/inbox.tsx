@@ -40,6 +40,7 @@ import {
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { navigateTo } from '../../lib/deep-linking'
+import { lowerCase } from '../../lib/lowercase'
 import { inboxStore, useInboxStore } from '../../stores/inbox-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
@@ -243,7 +244,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
       const indexedItems = items.map((item) => {
         return {
           ...item,
-          fulltext: `${item.subject.toLocaleLowerCase()} ${item.senderName.toLocaleLowerCase()}`,
+          fulltext: `${lowerCase(item.subject)} ${lowerCase(item.senderName)}`,
         }
       })
       setIndexedItems(indexedItems)
@@ -253,8 +254,8 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   // search query updates
   useEffect(() => {
     setSearchLoading(false)
-    const q = ui.inboxQuery.toLocaleLowerCase().trim()
-    if (ui.inboxQuery.trim() !== '') {
+    const q = lowerCase(ui.inboxQuery.trim())
+    if (q !== '') {
       setInboxItems(indexedItems.filter((item) => item.fulltext.includes(q)))
     } else {
       setInboxItems([...indexedItems])

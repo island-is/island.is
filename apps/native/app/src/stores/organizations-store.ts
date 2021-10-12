@@ -7,6 +7,7 @@ import islandLogoSrc from '../../assets/logo/logo-64w.png'
 import { client } from '../graphql/client'
 import { GET_ORGANIZATIONS_QUERY } from '../graphql/queries/get-organizations.query'
 import { ImageSourcePropType } from 'react-native'
+import { lowerCase } from '../lib/lowercase'
 
 interface Organization {
   id: string
@@ -35,7 +36,7 @@ interface OrganizationsStore extends State {
 function processItems(items: Omit<Organization, 'query'>[]) {
   return items.map((item) => ({
     ...(item || {}),
-    query: item.title.toLocaleLowerCase(),
+    query: lowerCase(item.title),
   }))
 }
 
@@ -52,7 +53,7 @@ export const organizationsStore = create<OrganizationsStore>(
 
         let c = logoCache.get(forName)
         if (!c) {
-          const qs = String(forName).trim().toLocaleLowerCase()
+          const qs = lowerCase(String(forName).trim())
           const orgs = get().organizations
           const match =
             orgs.find((o) => o.query === qs) ||
