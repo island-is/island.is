@@ -35,8 +35,8 @@ const useNavigationTree = (hasIncome: boolean) => {
             { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
             {
               type: 'SUB_SECTION',
-              name: 'Skattframtal',
-              url: '/umsokn/skattframtal',
+              name: 'Skattagögn',
+              url: '/umsokn/skattagogn',
             },
             {
               type: 'SUB_SECTION',
@@ -54,8 +54,8 @@ const useNavigationTree = (hasIncome: boolean) => {
             { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
             {
               type: 'SUB_SECTION',
-              name: 'Skattframtal',
-              url: '/umsokn/skattframtal',
+              name: 'Skattagögn',
+              url: '/umsokn/skattagogn',
             },
             {
               type: 'SUB_SECTION',
