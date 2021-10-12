@@ -54,6 +54,13 @@ export interface NewDrivingLicenseInput {
   needsToPresentQualityPhoto: boolean
 }
 
+export interface NewTemporaryDrivingLicenseInput {
+  juristictionId: number
+  needsToPresentHealthCertificate: boolean
+  needsToPresentQualityPhoto: boolean
+  teacherNationalId: string
+}
+
 export interface NewDrivingLicenseResult {
   success: boolean
   errorMessage: string | null

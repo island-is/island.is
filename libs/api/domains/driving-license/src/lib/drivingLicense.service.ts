@@ -47,6 +47,7 @@ import {
   DrivingLicenseApplicationFor,
   DrivingSchool,
   NeedsQualityPhoto,
+  NewTemporaryDrivingLicenseInput,
 } from '..'
 
 @Injectable()
@@ -327,6 +328,39 @@ export class DrivingLicenseService {
     return {
       success: true,
       errorMessage: null,
+    }
+  }
+
+  async newTemporaryDrivingLicense(
+    nationalId: User['nationalId'],
+    input: NewTemporaryDrivingLicenseInput,
+  ): Promise<NewDrivingLicenseResult> {
+    const response = await this.drivingLicenseApi.apiOkuskirteiniApplicationsNewTemporaryPost(
+      {
+        postTemporaryLicense: {
+          kemurMedLaeknisvottord: input.needsToPresentHealthCertificate,
+          kennitala: nationalId,
+          kemurMedNyjaMynd: input.needsToPresentQualityPhoto,
+          embaetti: input.juristictionId,
+          kennitalaOkukennara: input.teacherNationalId,
+          sendaSkirteiniIPosti: false,
+        },
+      },
+    )
+
+    // Service returns empty string on success (actually different but the generated
+    // client forces it to)
+    const success = '' + response === DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE
+
+    const errorMessage = success
+      ? null
+      : typeof response === 'string'
+      ? (response as string)
+      : 'Result not 1 when creating temporary license'
+
+    return {
+      success,
+      errorMessage,
     }
   }
 
