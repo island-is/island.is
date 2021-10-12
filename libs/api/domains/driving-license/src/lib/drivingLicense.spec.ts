@@ -18,18 +18,19 @@ import {
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
+import _fetch from 'isomorphic-fetch'
 
 startMocking(requestHandlers)
 
 const MockOkuskirteiniApiV1 = new OkuskirteiniApiV1(
   new Configuration({
-    fetchApi: fetch,
+    fetchApi: _fetch,
   }),
 )
 
 const MockOkuskirteiniApiV2 = new OkuskirteiniApiV2(
   new ConfigurationV2({
-    fetchApi: fetch,
+    fetchApi: _fetch,
   }),
 )
 
