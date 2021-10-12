@@ -46,6 +46,7 @@ import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { RolesGuard } from '../../guards'
 import { CurrentUser, RolesRules } from '../../decorators'
 import { ApplicationGuard } from '../../guards/application.guard'
+import { StaffService } from '../staff'
 
 @UseGuards(IdsUserGuard)
 @Controller(apiBasePath)
@@ -56,6 +57,7 @@ export class ApplicationController {
     private readonly applicationEventService: ApplicationEventService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly staffService: StaffService,
   ) {}
 
   @UseGuards(RolesGuard)
@@ -182,6 +184,9 @@ export class ApplicationController {
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Application ${id} does not exist`)
     }
+
+    const staff = await this.staffService.findById(updatedApplication.staffId)
+    updatedApplication?.setDataValue('staff', staff)
 
     return {
       application: updatedApplication,

@@ -19,7 +19,7 @@ import {
   ApplicationEventService,
   ApplicationEventModel,
 } from '../applicationEvent'
-import { StaffModel, StaffService } from '../staff'
+import { StaffModel } from '../staff'
 
 import { EmailService } from '@island.is/email-service'
 
@@ -36,7 +36,6 @@ export class ApplicationService {
     private readonly fileService: FileService,
     private readonly applicationEventService: ApplicationEventService,
     private readonly emailService: EmailService,
-    private readonly staffService: StaffService,
   ) {}
 
   async hasAccessToApplication(
@@ -194,10 +193,8 @@ export class ApplicationService {
     await this.setFilesToApplication(id, updatedApplication)
 
     const events = await this.applicationEventService.findById(id)
-    const staff = await this.staffService.findById(updatedApplication.staffId)
 
     updatedApplication?.setDataValue('applicationEvents', events)
-    updatedApplication?.setDataValue('staff', staff)
 
     return { numberOfAffectedRows, updatedApplication }
   }
