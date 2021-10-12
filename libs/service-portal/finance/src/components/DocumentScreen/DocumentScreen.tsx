@@ -19,6 +19,7 @@ import {
   Pagination,
   Input,
   LoadingDots,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
@@ -114,49 +115,74 @@ const DocumentScreen: FC<Props> = ({
             <Text variant="intro">{intro}</Text>
           </Column>
         </Columns>
-        <Box marginTop={[1, 1, 2, 2, 5]}>
-          <GridRow>
-            <GridColumn span={['1/1', '6/12', '6/12', '6/12', '4/12']}>
-              <DatePicker
-                backgroundColor="blue"
-                handleChange={(d) => setFromDate(d)}
-                icon="calendar"
-                iconType="outline"
+        <Hidden print={true}>
+          <Box marginTop={[1, 1, 2, 2, 5]}>
+            <GridRow>
+              <GridColumn
+                span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+                order={[2, 2, 2, 2, 0]}
+              >
+                <DatePicker
+                  backgroundColor="blue"
+                  handleChange={(d) => setFromDate(d)}
+                  icon="calendar"
+                  iconType="outline"
+                  size="sm"
+                  label={formatMessage(m.dateFrom)}
+                  selected={fromDate}
+                  locale="is"
+                  placeholderText={formatMessage(m.chooseDate)}
+                />
+              </GridColumn>
+              <GridColumn
+                paddingTop={[2, 0]}
+                span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+                order={[3, 3, 3, 3, 0]}
+              >
+                <DatePicker
+                  backgroundColor="blue"
+                  handleChange={(d) => setToDate(d)}
+                  icon="calendar"
+                  iconType="outline"
+                  size="sm"
+                  label={formatMessage(m.dateTo)}
+                  selected={toDate}
+                  locale="is"
+                  placeholderText={formatMessage(m.chooseDate)}
+                />
+              </GridColumn>
+              <GridColumn
+                paddingTop={[2, 0]}
+                paddingBottom={2}
+                span={['1/1', '12/12', '12/12', '12/12', '4/12']}
+                order={[1, 1, 1, 1, 3]}
+              >
+                <Button
+                  colorScheme="default"
+                  icon="print"
+                  iconType="filled"
+                  onClick={() => window.print()}
+                  preTextIconType="filled"
+                  size="default"
+                  type="button"
+                  variant="utility"
+                >
+                  {formatMessage(m.print)}
+                </Button>
+              </GridColumn>
+            </GridRow>
+            <Box marginTop={3}>
+              <Input
+                label="Leit"
+                name="Search1"
+                placeholder="Sláðu inn leitarorð"
                 size="sm"
-                label={formatMessage(m.dateFrom)}
-                selected={fromDate}
-                locale="is"
-                placeholderText={formatMessage(m.chooseDate)}
+                onChange={(e) => setQ(e.target.value)}
+                value={q}
               />
-            </GridColumn>
-            <GridColumn
-              paddingTop={[2, 0]}
-              span={['1/1', '6/12', '6/12', '6/12', '4/12']}
-            >
-              <DatePicker
-                backgroundColor="blue"
-                handleChange={(d) => setToDate(d)}
-                icon="calendar"
-                iconType="outline"
-                size="sm"
-                label={formatMessage(m.dateTo)}
-                selected={toDate}
-                locale="is"
-                placeholderText={formatMessage(m.chooseDate)}
-              />
-            </GridColumn>
-          </GridRow>
-          <Box marginTop={3}>
-            <Input
-              label="Leit"
-              name="Search1"
-              placeholder="Sláðu inn leitarorð"
-              size="sm"
-              onChange={(e) => setQ(e.target.value)}
-              value={q}
-            />
+            </Box>
           </Box>
-        </Box>
+        </Hidden>
         <Box marginTop={2}>
           {error && (
             <AlertBanner
