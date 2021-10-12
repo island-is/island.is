@@ -37,10 +37,6 @@ const AboutForm = () => {
         <Box marginBottom={5}>
           <BulletList type={'ul'} space={2}>
             <Bullet>
-              Fjárhagsaðstoð sveitarfélaga er ætluð fólki sem er ekki með vinnu,
-              í óstyrkhæfu námi og hefur ekki rétt á örorkubótum.
-            </Bullet>
-            <Bullet>
               Til að eiga rétt á fjárhagsaðstoð þurfa tekjur og eignir þínar að
               vera undir ákveðnum viðmiðunarmörkum.
             </Bullet>
