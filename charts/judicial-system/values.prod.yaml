@@ -20,7 +20,7 @@ judicial-system-api:
     AUTH_AUDIENCE: 'rettarvorslugatt.island.is'
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    HIDDEN_FEATURES: ''
+    HIDDEN_FEATURES: 'POLICE_CASE_FILES'
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=rettarvorslugatt.prod'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
