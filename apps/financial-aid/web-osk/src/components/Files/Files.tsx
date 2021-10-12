@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react'
-import { InputFileUpload, UploadFile, Text } from '@island.is/island-ui/core'
+import { InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 
 import { FileUploadContainer } from '@island.is/financial-aid-web/osk/src/components'
 
