@@ -1,24 +1,32 @@
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
 
-import { Application } from '@island.is/financial-aid/shared/lib'
+import { Application, Municipality } from '@island.is/financial-aid/shared/lib'
 
-import { GetApplicationQuery } from '@island.is/financial-aid-web/osk/graphql'
+import {
+  GetApplicationQuery,
+  GetMunicipalityQuery,
+} from '@island.is/financial-aid-web/osk/graphql'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { ApolloError } from 'apollo-client'
 
+interface ApplicantData {
+  application?: Application
+}
+interface MunicipalityData {
+  municipality: Municipality
+}
+
 interface ApplicationProvider {
   myApplication?: Application
   loading: boolean
-  fetchError?: ApolloError
+  error?: ApolloError
+  municipality?: Municipality
+  setMunicipality?: any
 }
 
 interface Props {
   children: ReactNode
-}
-
-interface ApplicantData {
-  application?: Application
 }
 
 export const ApplicationContext = createContext<ApplicationProvider>({
@@ -28,11 +36,22 @@ export const ApplicationContext = createContext<ApplicationProvider>({
 const ApplicationProvider = ({ children }: Props) => {
   const router = useRouter()
 
+  const [municipality, setMunicipality] = useState<Municipality>()
+
+  const { data: municipalityData } = useQuery<MunicipalityData>(
+    GetMunicipalityQuery,
+    {
+      variables: { input: { id: 'hfj' } },
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  )
+
   const storageKey = 'myCurrentApplication'
 
   const [myApplication, updateApplication] = useState<Application>()
 
-  const { data, error: fetchError, loading } = useQuery<ApplicantData>(
+  const { data, error, loading } = useQuery<ApplicantData>(
     GetApplicationQuery,
     {
       variables: { input: { id: router.query.id } },
@@ -59,7 +78,7 @@ const ApplicationProvider = ({ children }: Props) => {
   }, [myApplication, data])
 
   return (
-    <ApplicationContext.Provider value={{ myApplication, fetchError, loading }}>
+    <ApplicationContext.Provider value={{ myApplication, error, loading }}>
       {children}
     </ApplicationContext.Provider>
   )

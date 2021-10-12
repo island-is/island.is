@@ -1,21 +1,16 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Button, Text, Box } from '@island.is/island-ui/core'
 
-import {
-  getState,
-  ApplicationState,
-  ApplicationEvent,
-  ApplicationEventType,
-  getCommentFromLatestEvent,
-} from '@island.is/financial-aid/shared/lib'
+import { getState, ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   state: ApplicationState
   rejectionComment?: string
+  isStateVisable: boolean
 }
 
-const Rejected = ({ state, rejectionComment }: Props) => {
-  if (state !== ApplicationState.REJECTED) {
+const Rejected = ({ state, rejectionComment, isStateVisable }: Props) => {
+  if (!isStateVisable) {
     return null
   }
 

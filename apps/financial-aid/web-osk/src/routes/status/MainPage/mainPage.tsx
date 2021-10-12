@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext } from 'react'
 import {
   Text,
   Box,
@@ -17,10 +17,7 @@ import {
   Timeline,
 } from '@island.is/financial-aid-web/osk/src/components'
 
-import {
-  getActiveTypeForStatus,
-  getCommentFromLatestEvent,
-} from '@island.is/financial-aid/shared/lib'
+import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
@@ -29,7 +26,7 @@ import { ApplicationContext } from '@island.is/financial-aid-web/osk/src/compone
 const MainPage = () => {
   const logOut = useLogOut()
 
-  const { myApplication, loading, fetchError } = useContext(ApplicationContext)
+  const { myApplication, loading, error } = useContext(ApplicationContext)
 
   return (
     <>
@@ -43,11 +40,13 @@ const MainPage = () => {
             <InProgress currentApplication={myApplication} />
 
             <Approved
+              isStateVisable={myApplication.state === ApplicationState.APPROVED}
               state={myApplication.state}
               amount={myApplication.amount}
             />
 
             <Rejected
+              isStateVisable={myApplication.state === ApplicationState.REJECTED}
               state={myApplication.state}
               rejectionComment={myApplication?.rejection}
             />
@@ -58,7 +57,7 @@ const MainPage = () => {
             />
           </>
         )}
-        {fetchError && (
+        {error && (
           <Text>
             Umsókn ekki fundin eða einhvað fór úrskeiðis <br />
             vinsamlegast reyndu síðar
