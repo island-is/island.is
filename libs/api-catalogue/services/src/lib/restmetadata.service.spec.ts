@@ -1,9 +1,7 @@
 import { ProviderType } from '@island.is/api-catalogue/consts'
-import { Provider, XroadIdentifier } from '@island.is/api-catalogue/types'
-import { Test } from '@nestjs/testing'
+import { Provider } from '@island.is/api-catalogue/types'
 import {
   GetOpenAPIRequest,
-  ListMethodsRequest,
   MethodList,
   RestMetaservicesApi,
   ServiceId,
