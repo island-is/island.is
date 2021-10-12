@@ -26,8 +26,8 @@ const createApplication = (): Application => ({
     periods: [
       {
         ratio: '100',
+        useLength: 'no',
         endDate: '2022-01-01',
-        duration: '7.5',
         startDate: '2021-05-17',
       },
     ],

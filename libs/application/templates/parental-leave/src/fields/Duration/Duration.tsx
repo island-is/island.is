@@ -16,13 +16,13 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 
 import Slider from '../components/Slider'
 import {
-  getExpectedDateOfBirth,
   getApplicationAnswers,
+  calculateEndDateForPeriodWithStartAndLength,
+  calculatePeriodLengthInMonths,
 } from '../../lib/parentalLeaveUtils'
 import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
 import { StartDateOptions, DATE_FORMAT } from '../../constants'
-import { useGetOrRequestEndDates } from '../../hooks/useGetOrRequestEndDates'
 import * as styles from './Duration.treat'
 
 const DEFAULT_PERIOD_LENGTH = usageMinMonths
@@ -37,20 +37,21 @@ export const Duration: FC<FieldBaseProps> = ({
   const { formatMessage, formatDateFns } = useLocale()
   const { answers } = application
   const { rawPeriods } = getApplicationAnswers(answers)
-  const expectedDateOfBirth = getExpectedDateOfBirth(application)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
-  const currentStartDateAnswer = currentPeriod.startDate ?? expectedDateOfBirth
+  const currentStartDateAnswer = currentPeriod.startDate
 
   const [chosenEndDate, setChosenEndDate] = useState<string | undefined>(
     currentPeriod.endDate ?? NO_ANSWER,
   )
   const [chosenDuration, setChosenDuration] = useState<number>(
-    currentPeriod.duration
-      ? Number(currentPeriod.duration)
+    currentPeriod.endDate
+      ? calculatePeriodLengthInMonths(
+          currentPeriod.startDate,
+          currentPeriod.endDate,
+        )
       : DEFAULT_PERIOD_LENGTH,
   )
-  const { getEndDate } = useGetOrRequestEndDates(application)
   const errorMessage =
     (errors?.component as RecordObject<string>)?.message ||
     (errors as RecordObject<string>)?.[id]
@@ -58,24 +59,14 @@ export const Duration: FC<FieldBaseProps> = ({
   const monthsToEndDate = useCallback(
     (lengthInMonths: number) => {
       try {
-        const endDateResult = getEndDate({
-          startDate: currentStartDateAnswer,
+        const calculatedEndDate = calculateEndDateForPeriodWithStartAndLength(
+          currentStartDateAnswer,
           lengthInMonths,
-        })
+        )
 
-        if (!endDateResult || !endDateResult.date) {
-          setError('component', {
-            type: 'error',
-            message: formatMessage(errorMessages.durationPeriods),
-          })
-          return
-        }
+        setChosenEndDate(calculatedEndDate.toISOString())
 
-        const { date } = endDateResult
-
-        setChosenEndDate(date.toISOString())
-
-        return date
+        return calculatedEndDate
       } catch (e) {
         Sentry.captureException((e as Error).message)
 
@@ -85,7 +76,7 @@ export const Duration: FC<FieldBaseProps> = ({
         })
       }
     },
-    [currentStartDateAnswer, formatMessage, getEndDate, setError],
+    [currentStartDateAnswer, formatMessage, setError],
   )
 
   const handleChange = async (months: number) => {

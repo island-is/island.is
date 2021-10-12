@@ -6,9 +6,6 @@ export interface Period {
   startDate: string
   endDate: string
   ratio: string
-  duration: string
-  days: string
-  percentage: string
   firstPeriodStart?: string
   useLength?: YesOrNo
   rawIndex?: number

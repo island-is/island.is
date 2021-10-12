@@ -1,5 +1,10 @@
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
 import parseISO from 'date-fns/parseISO'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import differenceInDays from 'date-fns/differenceInDays'
+import round from 'lodash/round'
 
 import {
   Application,
@@ -78,13 +83,18 @@ export function formatPeriods(
     const isActualDob =
       index === 0 && firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
 
+    const calculatedLength = calculatePeriodLengthInMonths(
+      period.startDate,
+      period.endDate,
+    ).toString()
+
     if (isActualDob) {
       timelinePeriods.push({
         actualDob: isActualDob,
         startDate: period.startDate,
         endDate: period.endDate,
         ratio: period.ratio,
-        duration: period.duration,
+        duration: calculatedLength,
         canDelete: true,
         title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
           index: index + 1,
@@ -99,7 +109,7 @@ export function formatPeriods(
         startDate: period.startDate,
         endDate: period.endDate,
         ratio: period.ratio,
-        duration: period.duration,
+        duration: calculatedLength,
         canDelete: true,
         title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
           index: index + 1,
@@ -655,3 +665,31 @@ export const calculateDaysUsedByPeriods = (periods: Period[]) =>
       return total + calculatedLength
     }, 0),
   )
+
+export const calculateEndDateForPeriodWithStartAndLength = (
+  startDate: string,
+  lengthInMonths: number,
+) => {
+  const start = parseISO(startDate)
+
+  const wholeMonthsToAdd = Math.floor(lengthInMonths)
+  const daysToAdd =
+    (Math.round((lengthInMonths - wholeMonthsToAdd) * 100) / 100) * 28
+
+  return addDays(addMonths(start, wholeMonthsToAdd), daysToAdd - 1)
+}
+
+export const calculatePeriodLengthInMonths = (
+  startDate: string,
+  endDate: string,
+) => {
+  const start = parseISO(startDate)
+  const end = parseISO(endDate)
+
+  const diffMonths = differenceInMonths(end, start)
+  const diffDays = differenceInDays(addMonths(end, -diffMonths), start)
+
+  const roundedDays = Math.min((diffDays / 28) * 100, 100) / 100
+
+  return round(diffMonths + roundedDays, 1)
+}
