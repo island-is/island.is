@@ -185,7 +185,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       android: NativeModules.IslandModule,
     })
     const canAddPass = await canAddPasses()
-    if (Platform.OS === 'android' || canAddPass) {
+    if (canAddPass) {
       try {
         setAddingToWallet(true)
         const { data } = await client.mutate({
@@ -225,7 +225,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         console.error(err)
       }
     } else {
-      alert('You cannot add passes on this device')
+      if (Platform.OS === 'android') {
+        alert('You cannot add passes. Please make sure you have Snjallveskið installed on your device.')
+      } else {
+        alert('You cannot add passes on this device')
+      }
     }
   }
 

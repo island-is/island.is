@@ -18,6 +18,7 @@ declare module 'styled-components' {
   export interface DefaultTheme extends Theme {
     colorScheme: string;
     isDark: boolean;
+    appearanceMode?: string;
     shade: Shade;
     shades: {
       dark: Shade;

@@ -8,10 +8,13 @@ const Host = styled.View<{ isAndroid?: boolean }>`
   height: ${({ theme }) => theme.spacing[8]}px;
   align-items: center;
   justify-content: center;
-  border-bottom-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shades.dark.shade200,
-    light: theme.color.blue200
-  }))};
+  border-bottom-color: ${dynamicColor(
+    ({ theme }) => ({
+      dark: theme.shades.dark.shade200,
+      light: theme.color.blue200,
+    }),
+    true,
+  )};
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
   background-color: ${dynamicColor('background')};
   ${(props) => props.isAndroid && 'margin-top: -16px;'}

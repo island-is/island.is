@@ -10,19 +10,25 @@ const Host = styled.View`
   width: 100%;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shades.dark.shade300,
-    light: theme.color.blue200,
-  }))};
+  border-color: ${dynamicColor(
+    ({ theme }) => ({
+      dark: theme.shades.dark.shade300,
+      light: theme.color.blue200,
+    }),
+    true,
+  )};
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const ActionsContainer = styled.View`
   border-top-width: ${({ theme }) => theme.border.width.standard}px;
-  border-top-color: ${dynamicColor((props) => ({
-    light: props.theme.color.blue200,
-    dark: 'shade300',
-  }))};
+  border-top-color: ${dynamicColor(
+    (props) => ({
+      light: props.theme.color.blue200,
+      dark: 'shade300',
+    }),
+    true,
+  )};
   flex-direction: row;
 `
 
@@ -32,8 +38,9 @@ const ActionButton = styled.TouchableOpacity<{ border: boolean }>`
   justify-content: center;
   padding: ${({ theme }) => theme.spacing[2]}px;
   border-left-width: ${({ theme }) => theme.border.width.standard}px;
-  border-left-color: ${dynamicColor(({ theme, border }) =>
-    !border ? 'transparent' : theme.color.blue200,
+  border-left-color: ${dynamicColor(
+    ({ theme, border }) => (!border ? 'transparent' : theme.color.blue200),
+    true,
   )};
 `
 

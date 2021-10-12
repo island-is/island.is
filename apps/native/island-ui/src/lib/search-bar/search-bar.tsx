@@ -29,7 +29,7 @@ const Input = styled.TextInput`
   border-color: ${dynamicColor(({ theme }) => ({
     dark: theme.shades.dark.shade300,
     light: theme.color.blue200,
-  }))};
+  }), true)};
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-radius: ${({ theme }) => theme.spacing[1]}px;
   padding: ${({ theme }) => theme.spacing[1]}px

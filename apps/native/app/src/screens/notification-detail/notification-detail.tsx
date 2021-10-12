@@ -40,7 +40,7 @@ const Actions = styled.View`
   border-top-color: ${dynamicColor((props) => ({
     dark: props.theme.shades.dark.shade200,
     light: props.theme.color.blue100,
-  }))};
+  }), true)};
 `
 
 const Action = styled.Button`
