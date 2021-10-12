@@ -12,9 +12,10 @@ interface Props {
   header: string
   uploadFiles: UploadFile[]
   fileKey: UploadFileType
+  hasError: boolean
 }
 
-const Files = ({ header, uploadFiles, fileKey }: Props) => {
+const Files = ({ header, uploadFiles, fileKey, hasError = false }: Props) => {
   const { form, updateForm } = useContext(FormContext)
 
   const {
@@ -46,7 +47,7 @@ const Files = ({ header, uploadFiles, fileKey }: Props) => {
   }, [files])
 
   return (
-    <FileUploadContainer>
+    <FileUploadContainer hasError={hasError}>
       <InputFileUpload
         fileList={files}
         header={header}

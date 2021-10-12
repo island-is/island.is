@@ -140,4 +140,14 @@ export const icHearingArrangements = {
         'Notaður sem texti í takkanum í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
     },
   }),
+  footer: defineMessages({
+    infoPanelForRestrictedAccess: {
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.footer.info_panel_for_restricted_access',
+      defaultMessage:
+        'Aðeins skráður dómari og dómritari geta haldið áfram í þingbók og úrskurð fyrir rannsóknarheimildir.',
+      description:
+        'Notaður sem texti sem birtist í staðinn fyrir halda áfram takka á fyrirtöku skrefi í rannsóknarheimildum ef notandi hefur ekki aðgang að málinu.',
+    },
+  }),
 }

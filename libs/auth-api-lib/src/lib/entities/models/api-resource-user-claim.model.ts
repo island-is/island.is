@@ -13,11 +13,6 @@ import { ApiResource } from './api-resource.model'
 
 @Table({
   tableName: 'api_resource_user_claim',
-  indexes: [
-    {
-      fields: ['api_resource_id', 'claim_name'],
-    },
-  ],
 })
 export class ApiResourceUserClaim extends Model<ApiResourceUserClaim> {
   @PrimaryKey
