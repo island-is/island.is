@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react'
-import { InputFileUpload, UploadFile } from '@island.is/island-ui/core'
+import { InputFileUpload, UploadFile, Text } from '@island.is/island-ui/core'
 
 import { FileUploadContainer } from '@island.is/financial-aid-web/osk/src/components'
 
@@ -12,9 +12,10 @@ interface Props {
   header: string
   uploadFiles: UploadFile[]
   fileKey: UploadFileType
+  hasError: boolean
 }
 
-const Files = ({ header, uploadFiles, fileKey }: Props) => {
+const Files = ({ header, uploadFiles, fileKey, hasError = false }: Props) => {
   const { form, updateForm } = useContext(FormContext)
 
   const {
@@ -46,7 +47,7 @@ const Files = ({ header, uploadFiles, fileKey }: Props) => {
   }, [files])
 
   return (
-    <FileUploadContainer>
+    <FileUploadContainer hasError={hasError}>
       <InputFileUpload
         fileList={files}
         header={header}
