@@ -20,7 +20,7 @@ const FilesListWithHeaderContainer = ({ applicationFiles }: Props) => {
         </Text>
       </Box>
       <FilesListWithHeader
-        heading="Skattframtal"
+        heading="Skattagögn"
         files={applicationFiles?.filter((f) => f.type === FileType.TAXRETURN)}
       />
       <FilesListWithHeader

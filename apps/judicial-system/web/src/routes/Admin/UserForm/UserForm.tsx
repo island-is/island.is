@@ -239,7 +239,7 @@ export const UserForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="role"
                 id="roleStaff"
-                label="Starfsmaður"
+                label="Fangelsisyfirvöld"
                 checked={user.role === UserRole.STAFF}
                 onChange={() => setUser({ ...user, role: UserRole.STAFF })}
                 large
