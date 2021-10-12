@@ -100,7 +100,6 @@ export class DrivingLicenseService {
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
-    console.log(this.drivingLicenseApiV2, this.drivingLicenseApi)
     const drivingLicense = await this.drivingLicenseApi.apiOkuskirteiniKennitalaAllGet(
       {
         kennitala: nationalId,
@@ -273,11 +272,13 @@ export class DrivingLicenseService {
           requirementMet: (hasFinishedSchoolResult.hefurLokidOkugerdi ?? 0) > 0,
         },
       )
-    } else {
+    } else if (type === 'B-temp') {
       requirements.push({
         key: RequirementKey.localResidency,
         requirementMet: true,
       })
+    } else {
+      throw new Error('unknown type')
     }
 
     requirements.push({
@@ -297,20 +298,28 @@ export class DrivingLicenseService {
   }
 
   async canApplyFor(nationalId: string, type: DrivingLicenseApplicationFor) {
-    let canApplyResult
     if (type === 'B-full') {
-      canApplyResult = (await this.drivingLicenseApi.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
+      const canApplyResult = await this.drivingLicenseApiV2.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
         {
+          apiVersion: DRIVING_LICENSE_API_VERSION_V2,
           kennitala: nationalId,
           category: 'B',
         },
-      )) as unknown
-    } else if (type === 'B-temp') {
-      // TODO: API seems to not be there as of yet
-      canApplyResult = '0'
-    }
+      )
 
-    return parseInt(canApplyResult as string, 10) > 0
+      // TODO: Use error codes from v2 api
+      return !!canApplyResult.result
+    } else if (type === 'B-temp') {
+      const canApplyResult = await this.drivingLicenseApi.apiOkuskirteiniKennitalaCanapplyforTemporaryGet(
+        {
+          kennitala: nationalId,
+        },
+      )
+
+      return !!canApplyResult.result
+    } else {
+      throw new Error('unhandled license type')
+    }
   }
 
   async newDrivingAssessment(

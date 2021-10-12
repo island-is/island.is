@@ -207,6 +207,27 @@ describe('DrivingLicenseService', () => {
       })
     })
 
+    it('all checks should pass for applicable students for temporary license', async () => {
+      const response = await service.getApplicationEligibility(
+        MOCK_NATIONAL_ID,
+        'B-temp',
+      )
+
+      expect(response).toStrictEqual({
+        isEligible: true,
+        requirements: [
+          {
+            key: 'LocalResidency',
+            requirementMet: true,
+          },
+          {
+            key: 'DeniedByService',
+            requirementMet: true,
+          },
+        ],
+      })
+    })
+
     it('checks should fail for non-applicable students', async () => {
       const response = await service.getApplicationEligibility(
         MOCK_NATIONAL_ID_EXPIRED,
@@ -277,6 +298,38 @@ describe('DrivingLicenseService', () => {
           juristictionId: 11,
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
+        })
+        .catch((e) => expect(e).toBeTruthy())
+    })
+  })
+
+  describe('newTemporaryDrivingLicense', () => {
+    it('should handle driving license creation', async () => {
+      const response = await service.newTemporaryDrivingLicense(
+        MOCK_NATIONAL_ID,
+        {
+          juristictionId: 11,
+          needsToPresentHealthCertificate: false,
+          needsToPresentQualityPhoto: false,
+          teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
+        },
+      )
+
+      expect(response).toStrictEqual({
+        success: true,
+        errorMessage: null,
+      })
+    })
+
+    it('should handle error responses when creating a license', async () => {
+      expect.assertions(1)
+
+      return service
+        .newTemporaryDrivingLicense(MOCK_NATIONAL_ID_NO_ASSESSMENT, {
+          juristictionId: 11,
+          needsToPresentHealthCertificate: false,
+          needsToPresentQualityPhoto: true,
+          teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
         })
         .catch((e) => expect(e).toBeTruthy())
     })

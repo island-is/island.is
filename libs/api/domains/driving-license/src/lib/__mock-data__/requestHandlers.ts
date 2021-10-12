@@ -5,10 +5,13 @@ import Juristictions from './juristictions.json'
 import DrivingAssessment from './drivingAssessment.json'
 import FinishedSchool from './finishedSchool.json'
 import NotFinishedSchool from './notFinishedSchool.json'
+import CanApplyWithResultSuccess from './canApplyWithResultSuccess.json'
+import CanApplyWithResultFail from './canApplyWithResultFail.json'
 import Teachers from './teachers.json'
 import {
   AkstursmatDto,
   PostNewFinalLicense,
+  PostTemporaryLicense,
 } from '@island.is/clients/driving-license-v1'
 
 export const MOCK_NATIONAL_ID = '0'
@@ -75,7 +78,22 @@ export const requestHandlers = [
     (req, res, ctx) => {
       const canApply = req.params.nationalId === MOCK_NATIONAL_ID
 
-      return res(ctx.status(200), ctx.text(canApply ? '1' : '0'))
+      return res(
+        ctx.status(200),
+        ctx.json(canApply ? CanApplyWithResultSuccess : CanApplyWithResultFail),
+      )
+    },
+  ),
+
+  rest.get(
+    url('/api/okuskirteini/:nationalId/canapplyfor/temporary'),
+    (req, res, ctx) => {
+      const canApply = req.params.nationalId === MOCK_NATIONAL_ID
+
+      return res(
+        ctx.status(200),
+        ctx.json(canApply ? CanApplyWithResultSuccess : CanApplyWithResultFail),
+      )
     },
   ),
 
@@ -101,6 +119,20 @@ export const requestHandlers = [
       return res(ctx.status(400), ctx.text('error message'))
     }
   }),
+
+  rest.post(
+    url('/api/okuskirteini/applications/new/temporary'),
+    (req, res, ctx) => {
+      const body = req.body as PostTemporaryLicense
+      const canApply = body.kennitala !== MOCK_NATIONAL_ID_NO_ASSESSMENT
+
+      if (canApply) {
+        return res(ctx.status(200), ctx.text(''))
+      } else {
+        return res(ctx.status(400), ctx.text('error message'))
+      }
+    },
+  ),
 
   rest.get(url('/api/okuskirteini/:nationalId'), (req, res, ctx) => {
     const response =
