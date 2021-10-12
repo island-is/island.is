@@ -19,10 +19,6 @@ export interface Config {
 @Module({})
 export class DrivingLicenseModule {
   static register(config: Config): DynamicModule {
-    if (!config.v1 || !config.v2) {
-      throw new Error('v1 or v2 config missing')
-    }
-
     return {
       module: DrivingLicenseModule,
       providers: [MainResolver, DrivingLicenseService],
