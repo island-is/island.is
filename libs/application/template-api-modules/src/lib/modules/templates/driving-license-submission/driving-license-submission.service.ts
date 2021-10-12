@@ -7,7 +7,7 @@ import {
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
-import { FormValue, getValueViaPath } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/core'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')

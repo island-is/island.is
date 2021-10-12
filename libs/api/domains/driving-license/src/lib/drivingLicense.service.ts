@@ -19,6 +19,10 @@ import {
   QualityPhotoResult,
   StudentAssessment,
   Teacher,
+  DrivingLicenseApplicationType,
+  DrivingSchool,
+  NeedsQualityPhoto,
+  NewTemporaryDrivingLicenseInput,
 } from './drivingLicense.type'
 import {
   AkstursmatDto,
@@ -43,12 +47,6 @@ import {
   DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE,
 } from './util/constants'
 import sortTeachers from './util/sortTeachers'
-import {
-  DrivingLicenseApplicationFor,
-  DrivingSchool,
-  NeedsQualityPhoto,
-  NewTemporaryDrivingLicenseInput,
-} from '..'
 
 @Injectable()
 export class DrivingLicenseService {
@@ -246,7 +244,7 @@ export class DrivingLicenseService {
 
   async getApplicationEligibility(
     nationalId: string,
-    type: DrivingLicenseApplicationFor,
+    type: DrivingLicenseApplicationType,
   ): Promise<ApplicationEligibility> {
     const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
     const hasFinishedSchoolResult: HefurLokidOkugerdiDto = await this.drivingLicenseApi.apiOkuskirteiniKennitalaFinishedokugerdiGet(
@@ -297,7 +295,7 @@ export class DrivingLicenseService {
     }
   }
 
-  async canApplyFor(nationalId: string, type: DrivingLicenseApplicationFor) {
+  async canApplyFor(nationalId: string, type: 'B-full' | 'B-temp') {
     if (type === 'B-full') {
       const canApplyResult = await this.drivingLicenseApiV2.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
         {

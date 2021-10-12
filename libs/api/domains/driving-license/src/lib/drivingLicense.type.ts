@@ -33,7 +33,7 @@ export interface DrivingLicenseType {
   name: string
 }
 
-export type DrivingLicenseApplicationFor = 'B-full' | 'B-temp'
+export type DrivingLicenseApplicationType = 'B-full' | 'B-temp'
 
 export interface RemarkType {
   id: number
