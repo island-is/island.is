@@ -1,5 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
+import React, { FC, useEffect } from 'react'
 import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
 import * as Sentry from '@sentry/react'
 
