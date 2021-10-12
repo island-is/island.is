@@ -1,21 +1,26 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, Icon } from '@island.is/island-ui/core'
 
-import { ApplicationEventType } from '@island.is/financial-aid/shared/lib'
+import * as styles from '../History/History.treat'
 
 interface Props {
-  eventType: ApplicationEventType
+  isVisable: boolean
   comment?: string
 }
 
-const ChatElement = ({ eventType, comment }: Props) => {
-  if (eventType !== ApplicationEventType.STAFFCOMMENT) {
+const ChatElement = ({ isVisable, comment }: Props) => {
+  if (!isVisable) {
     return null
   }
 
   return (
-    <Box paddingLeft={3} marginBottom={2}>
-      <Text variant="small">{comment}</Text>
+    <Box paddingLeft={3} marginBottom={2} className={styles.timelineMessages}>
+      {comment && (
+        <>
+          <Icon icon="chatbubble" type="outline" />{' '}
+          <Text marginBottom={2}>„{comment}“</Text>
+        </>
+      )}
     </Box>
   )
 }

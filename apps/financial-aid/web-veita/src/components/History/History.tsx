@@ -4,7 +4,10 @@ import { Text, Box } from '@island.is/island-ui/core'
 import * as styles from './History.treat'
 import cn from 'classnames'
 
-import { ApplicationEvent } from '@island.is/financial-aid/shared/lib'
+import {
+  ApplicationEvent,
+  ApplicationEventType,
+} from '@island.is/financial-aid/shared/lib'
 
 import {
   ChatElement,
@@ -41,12 +44,17 @@ const History = ({ className, applicantName, applicationEvents }: Props) => {
                 created={item.created}
               >
                 <StaffComment
-                  eventType={item.eventType}
+                  isVisable={
+                    item.eventType === ApplicationEventType.STAFFCOMMENT
+                  }
                   comment={item.comment}
                 />
 
                 <ChatElement
-                  eventType={item.eventType}
+                  isVisable={
+                    item.eventType === ApplicationEventType.FILEUPLOAD ||
+                    item.eventType === ApplicationEventType.DATANEEDED
+                  }
                   comment={item.comment}
                 />
               </TimeLineContainer>
