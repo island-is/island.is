@@ -788,4 +788,52 @@ describe('getCasesQueryFilter', () => {
       })
     })
   })
+
+  it('should get prison staff filter', () => {
+    // Arrange
+    const user = {
+      id: 'Staff Id',
+      role: UserRole.STAFF,
+      institution: {
+        id: 'Prison Id',
+        type: InstitutionType.PRISON,
+      },
+    }
+
+    // Act
+    const res = getCasesQueryFilter(user as User)
+
+    // Assert
+    expect(res).toStrictEqual({
+      [Op.and]: [
+        { state: CaseState.ACCEPTED },
+        { type: CaseType.CUSTODY },
+        { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
+      ],
+    })
+  })
+
+  it('should get prison admin staff filter', () => {
+    // Arrange
+    const user = {
+      id: 'Staff Id',
+      role: UserRole.STAFF,
+      institution: {
+        id: 'Prison Id',
+        type: InstitutionType.PRISON_ADMIN,
+      },
+    }
+
+    // Act
+    const res = getCasesQueryFilter(user as User)
+
+    // Assert
+    expect(res).toStrictEqual({
+      [Op.and]: [
+        { state: CaseState.ACCEPTED },
+        { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
+        { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
+      ],
+    })
+  })
 })

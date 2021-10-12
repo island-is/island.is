@@ -174,7 +174,28 @@ export function isCaseBlockedFromUser(
   )
 }
 
+function getStaffCasesQueryFilter(
+  institutionType?: InstitutionType,
+): WhereOptions {
+  return {
+    [Op.and]: [
+      { state: CaseState.ACCEPTED },
+      {
+        type:
+          institutionType === InstitutionType.PRISON_ADMIN
+            ? [CaseType.CUSTODY, CaseType.TRAVEL_BAN]
+            : CaseType.CUSTODY,
+      },
+      { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
+    ],
+  }
+}
+
 export function getCasesQueryFilter(user: User): WhereOptions {
+  if (user.role === UserRole.STAFF) {
+    return getStaffCasesQueryFilter(user.institution?.type)
+  }
+
   const blockStates = {
     [Op.not]: { state: getBlockedStates(user.role, user.institution?.type) },
   }
