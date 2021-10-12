@@ -52,7 +52,7 @@ export class PoliceController {
 
     if (completedCaseStates.includes(existingCase.state)) {
       throw new ForbiddenException(
-        'Cannot get police case ffiles for a completed case',
+        'Cannot get police case files for a completed case',
       )
     }
 
