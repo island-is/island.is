@@ -263,15 +263,6 @@ export const getAllPeriodDates = (periods: Period[]) => {
   return dates.map((d) => new Date(d))
 }
 
-export const createRange = <T>(
-  length: number,
-  output: (index: number) => T,
-): T[] => {
-  return Array(length)
-    .fill(1)
-    .map((_, i) => output(i))
-}
-
 export const getSelectedChild = (
   answers: FormValue,
   externalData: ExternalData,
@@ -302,27 +293,6 @@ export const isEligibleForParentalLeave = (
   )
 }
 
-export const calculateDaysToPercentage = (
-  application: Application,
-  days: number,
-  alreadySpent = 0,
-) => {
-  const numberOfDaysInRights = getAvailableRightsInDays(application)
-
-  if (days + alreadySpent <= numberOfDaysInRights) {
-    return 100
-  }
-
-  const nextPeriodMaximum = (numberOfDaysInRights - alreadySpent) / days
-
-  return Math.min(
-    100,
-    // We don't want to over estimate the percentage and end up with
-    // invalid period length
-    Math.floor(nextPeriodMaximum * 100),
-  )
-}
-
 export const getPeriodIndex = (field?: Field) => {
   const id = field?.id
 
@@ -335,15 +305,6 @@ export const getPeriodIndex = (field?: Field) => {
   }
 
   return parseInt(id.substring(id.indexOf('[') + 1, id.indexOf(']')), 10)
-}
-
-export const getPeriodPercentage = (
-  answers: Application['answers'],
-  field: Field,
-) => {
-  const { rawPeriods } = getApplicationAnswers(answers)
-
-  return rawPeriods?.[rawPeriods.length - 1]?.percentage ?? '100'
 }
 
 const getOrFallback = (
