@@ -12,9 +12,7 @@
   "paths": {
     "/api/okuskirteini/svipting/{kennitala}": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get for current licence revoke",
         "parameters": [
           {
@@ -73,9 +71,7 @@
     },
     "/api/okuskirteini/{kennitala}": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get for person driver licence",
         "operationId": "GetCurrentLicenseV2",
         "parameters": [
@@ -165,9 +161,7 @@
     },
     "/api/okuskirteini/{kennitala}/canapplyfor/{category}/full": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Check if person can apply for full drivers license for a specific category",
         "parameters": [
           {
@@ -235,9 +229,7 @@
     },
     "/api/okuskirteini/applications/new/{category}": {
       "post": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Apply for drivers license for a category",
         "parameters": [
           {
