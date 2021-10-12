@@ -3,9 +3,8 @@ import styled from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
-const Host = styled.View`
-  margin-left: -${({ theme }) => theme.spacing[2]}px;;
-  margin-right: -${({ theme }) => theme.spacing[2]}px;;
+const Host = styled.View<{ isAndroid?: boolean }>`
+  width: 100%;
   height: ${({ theme }) => theme.spacing[8]}px;
   align-items: center;
   justify-content: center;
@@ -15,6 +14,7 @@ const Host = styled.View`
   }))};
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
   background-color: ${dynamicColor('background')};
+  ${(props) => props.isAndroid && 'margin-top: -16px;'}
 `
 
 const Text = styled.Text`
@@ -28,6 +28,7 @@ interface SearchHeaderProps {
   loading: boolean
   loadingText: string
   resultText: string
+  isAndroid?: boolean
 }
 
 export function SearchHeader({
@@ -35,9 +36,10 @@ export function SearchHeader({
   loading,
   loadingText,
   resultText,
+  isAndroid
 }: SearchHeaderProps) {
   return (
-    <Host>
+    <Host isAndroid={isAndroid}>
       <Text>
         {loading ? loadingText : `${count > 0 ? count : ''} ${resultText}`}
       </Text>

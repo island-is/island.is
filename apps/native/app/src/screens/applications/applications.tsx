@@ -156,7 +156,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const renderItem = useCallback(({ item }) => {
     if (item.type === 'loading') {
       return (
-        <View style={{ paddingVertical: 20 }}>
+        <View style={{ paddingVertical: 20, paddingHorizontal: 16 }}>
           <ActivityIndicator size="large" color="#0061FF" />
         </View>
       )
@@ -164,7 +164,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
     if (item.type === 'empty') {
       return (
-        <View style={{ marginTop: 80 }}>
+        <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
           <EmptyList
             title={intl.formatMessage({ id: 'applications.emptyListTitle' })}
             description={intl.formatMessage({
@@ -179,6 +179,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     return (
       <TouchableOpacity
         key={item.id}
+        style={{paddingHorizontal: 16}}
         onPress={() =>
           openBrowser(`http://island.is/${item.slug}`, componentId)
         }
@@ -246,7 +247,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   // search query updates
   useEffect(() => {
     setSearchLoading(false)
-    const q = ui.applicationQuery.toLocaleLowerCase().trim()
+    const q = ui.applicationQuery.trim()
 
     if (q !== '') {
       setQueryString(q)
@@ -278,7 +279,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
             useNativeDriver: true,
           },
         )}
-        style={{ paddingHorizontal: 16, zIndex: 9 }}
+        style={{ zIndex: 9 }}
         keyExtractor={keyExtractor}
         keyboardDismissMode="on-drag"
         stickyHeaderIndices={[0]}
@@ -302,6 +303,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
               }
               count={items.length}
               loading={searchLoading}
+              isAndroid={Platform.OS === 'android'}
             />
           ) : <View />
         }
@@ -319,7 +321,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
           )
         }
       />
-      <TopLine scrollY={scrollY} />
+      {!isSearch && <TopLine scrollY={scrollY} />}
     </>
   )
 }
