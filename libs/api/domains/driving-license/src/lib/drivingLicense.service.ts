@@ -131,9 +131,9 @@ export class DrivingLicenseService {
   async getDeprivationTypes(): Promise<DeprevationType[]> {
     // I believe the API is wrong again, and this is still an array of TegSviptingaDto.. however
     // the openapi doc says that it's a single object now
-    const types = (await this.drivingLicenseApi.apiOkuskirteiniTegundirsviptingaGet(
+    const types = await this.drivingLicenseApi.apiOkuskirteiniTegundirsviptingaGet(
       {},
-    )) as TegSviptingaDto[]
+    )
 
     return types.map(
       (type: TegSviptingaDto) =>
@@ -145,9 +145,9 @@ export class DrivingLicenseService {
   }
 
   async getDrivingLicenseTypes(): Promise<DrivingLicenseType[]> {
-    const types = (await this.drivingLicenseApi.apiOkuskirteiniTegundirrettindaGet(
+    const types = await this.drivingLicenseApi.apiOkuskirteiniTegundirrettindaGet(
       {},
-    )) as TegundRettindaDto[]
+    )
 
     return types.map(
       (type: TegundRettindaDto) =>
@@ -159,9 +159,9 @@ export class DrivingLicenseService {
   }
 
   async getRemarkTypes(): Promise<RemarkType[]> {
-    const types = (await this.drivingLicenseApi.apiOkuskirteiniTegundirathugasemdaGet(
+    const types = await this.drivingLicenseApi.apiOkuskirteiniTegundirathugasemdaGet(
       {},
-    )) as TegundAthugasemdaDto[]
+    )
 
     return types.map(
       (type: TegundAthugasemdaDto) =>
