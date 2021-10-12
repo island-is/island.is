@@ -22,7 +22,7 @@ const PdfButton: React.FC<Props> = ({ caseId, title, pdfType, disabled }) => {
       iconType="outline"
       disabled={disabled}
       onClick={() =>
-        window.open(`${api.apiUrl}/api/case/${caseId}/${pdfType}`, '_ blank')
+        window.open(`${api.apiUrl}/api/case/${caseId}/${pdfType}`, '_blank')
       }
     >
       {title}
