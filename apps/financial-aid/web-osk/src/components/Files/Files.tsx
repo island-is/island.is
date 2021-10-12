@@ -12,7 +12,7 @@ interface Props {
   header: string
   uploadFiles: UploadFile[]
   fileKey: UploadFileType
-  hasError: boolean
+  hasError?: boolean
 }
 
 const Files = ({ header, uploadFiles, fileKey, hasError = false }: Props) => {
