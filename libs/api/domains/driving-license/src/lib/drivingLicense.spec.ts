@@ -18,19 +18,27 @@ import {
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
-import _fetch from 'isomorphic-fetch'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { createLogger } from 'winston'
 
 startMocking(requestHandlers)
 
+const fetch = createEnhancedFetch({
+  name: 'api-domains-driving-license-test-run',
+  logger: createLogger({
+    silent: true,
+  }),
+})
+
 const MockOkuskirteiniApiV1 = new OkuskirteiniApiV1(
   new Configuration({
-    fetchApi: _fetch,
+    fetchApi: fetch,
   }),
 )
 
 const MockOkuskirteiniApiV2 = new OkuskirteiniApiV2(
   new ConfigurationV2({
-    fetchApi: _fetch,
+    fetchApi: fetch,
   }),
 )
 
