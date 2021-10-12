@@ -18,6 +18,8 @@ import {
 import { pages, PAGE_SIZE, paginate } from './pagination'
 import { useMutation } from '@apollo/client'
 import { list } from '../mocks'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 const isLocalhost = window.location.origin.includes('localhost')
 const isDev = window.location.origin.includes('beta.dev01.devland.is')
@@ -41,6 +43,7 @@ const mapToCSVFile = (petitions: any) => {
 }
 
 const ViewPetition = () => {
+  const { formatMessage } = useLocale()
   const location: any = useLocation()
   const petition = useGetSinglePetition(location.state?.listId)
   const viewTypeEdit = location.state?.type === 'edit'
@@ -73,13 +76,11 @@ const ViewPetition = () => {
         },
       },
     }).catch(() => {
-      toast.error(
-        'Ekki tókst að taka nafn þitt af lista. Vinsamlegast reyndu aftur síðar',
-      )
+      toast.error(formatMessage(m.viewPetition.toastError))
     })
 
     if (success) {
-      toast.success('Tókst að taka nafn þitt af lista')
+      toast.success(formatMessage(m.viewPetition.toastSuccess))
       setHasSigned(false)
     }
   }
@@ -102,14 +103,16 @@ const ViewPetition = () => {
         {!viewTypeEdit && (
           <>
             <Box>
-              <Text variant="h4">Undirskriftalistinn er opinn:</Text>
+              <Text variant="h4">{formatMessage(m.viewPetition.openTil)}</Text>
               <Text variant="default" marginBottom={3}>
                 {list.til}
               </Text>
             </Box>
 
             <Box>
-              <Text variant="h4">Ábyrgðarmaður:</Text>
+              <Text variant="h4">
+                {formatMessage(m.viewPetition.listOwner)}
+              </Text>
               <Text variant="default" marginBottom={3}>
                 {list.owner}
               </Text>
@@ -118,7 +121,7 @@ const ViewPetition = () => {
         )}
 
         <Box>
-          <Text variant="h4">Fjöldi skráðir:</Text>
+          <Text variant="h4">{formatMessage(m.viewPetition.numberSigned)}</Text>
           <Text variant="default" marginBottom={3}>
             {list.signedPetitions.length}
           </Text>
@@ -130,18 +133,25 @@ const ViewPetition = () => {
           {hasSigned ? (
             <Box marginBottom={5} width="half">
               <DialogPrompt
-                baseId="demo_dialog"
-                title="Ertu viss um að vilja taka nafn þitt af lista?"
-                ariaLabel="modal to confirm that user is willing to close the petition list"
+                baseId="dialog"
+                title={formatMessage(
+                  m.viewPetition.dialogPromptRemoveNameTitle,
+                )}
+                ariaLabel={formatMessage(
+                  m.viewPetition.dialogPromptRemoveNameTitle,
+                )}
                 disclosureElement={
                   <Button loading={isLoading} variant="primary" icon="close">
-                    Taka nafn mitt af þessum lista
+                    {formatMessage(m.viewPetition.removeMyPetitionButton)}
                   </Button>
                 }
                 onConfirm={() => onUnendorse()}
-                onCancel={() => console.log('Cancelled')}
-                buttonTextConfirm="Já"
-                buttonTextCancel="Hætta við"
+                buttonTextConfirm={formatMessage(
+                  m.viewPetition.dialogPromptConfirm,
+                )}
+                buttonTextCancel={formatMessage(
+                  m.viewPetition.dialogPromptCancel,
+                )}
               />
             </Box>
           ) : (
@@ -155,7 +165,7 @@ const ViewPetition = () => {
                   )
                 }
               >
-                Setja nafn mitt á lista
+                {formatMessage(m.viewPetition.signPetitionButton)}
               </Button>
             </Box>
           )}
@@ -179,25 +189,31 @@ const ViewPetition = () => {
           >
             <DialogPrompt
               baseId="demo_dialog"
-              title="Ertu viss um að vilja loka lista?"
-              ariaLabel="modal to confirm that user is willing to close the petition list"
+              title={formatMessage(m.viewPetition.dialogPromptCloseListTitle)}
+              ariaLabel={formatMessage(
+                m.viewPetition.dialogPromptCloseListTitle,
+              )}
               disclosureElement={
                 <Button
                   icon="lockClosed"
                   iconType="outline"
                   colorScheme="destructive"
                 >
-                  Loka lista
+                  {formatMessage(m.viewPetition.closeListButton)}
                 </Button>
               }
               onConfirm={() => console.log('Confirmed')}
               onCancel={() => console.log('Cancelled')}
-              buttonTextConfirm="Já"
-              buttonTextCancel="Hætta við"
+              buttonTextConfirm={formatMessage(
+                m.viewPetition.dialogPromptConfirm,
+              )}
+              buttonTextCancel={formatMessage(
+                m.viewPetition.dialogPromptCancel,
+              )}
             />
 
             <Button icon="reload" iconType="outline">
-              Uppfæra lista
+              {formatMessage(m.viewPetition.updateListButton)}
             </Button>
           </Box>
 
@@ -220,8 +236,8 @@ const ViewPetition = () => {
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData>Dags skráð</T.HeadData>
-            <T.HeadData>Nafn</T.HeadData>
+            <T.HeadData>{formatMessage(m.viewPetition.dateSigned)}</T.HeadData>
+            <T.HeadData>{formatMessage(m.viewPetition.name)}</T.HeadData>
           </T.Row>
         </T.Head>
         <T.Body>

@@ -3,8 +3,11 @@ import { Box, Text, ActionCard, Stack } from '@island.is/island-ui/core'
 import { useGetPetitionLists, useGetUserLists } from '../queries'
 import { Link } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 const Petitions = () => {
+  const { formatMessage } = useLocale()
   const petitionLists = useGetPetitionLists() //all existing lists
   const userLists = useGetUserLists() //petitions that user has signed
 
@@ -12,17 +15,17 @@ const Petitions = () => {
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
         <Text variant="h1" as="h1">
-          {'Meðmæli'}
+          {formatMessage(m.petition.introTitle)}
         </Text>
 
         <Text as="p" variant="intro">
-          {'Yfirlit yfir meðmæli og meðmælendalista í þinni umsjá'}
+          {formatMessage(m.petition.intro)}
         </Text>
       </Stack>
 
       <Box marginTop={10} marginBottom={7}>
         <Text as="p" variant="h3" marginBottom={2}>
-          {'Listar stofnaðir af mér'}
+          {formatMessage(m.petition.petitionListsIown)}
         </Text>
 
         {!!petitionLists.data && (
@@ -43,9 +46,9 @@ const Petitions = () => {
                   <ActionCard
                     backgroundColor="blue"
                     heading={pl.title}
-                    text={'Tímabil lista: '}
+                    text={formatMessage(m.petition.listPeriod)}
                     cta={{
-                      label: 'Sýsla með lista',
+                      label: formatMessage(m.petition.editList),
                       variant: 'text',
                       icon: 'arrowForward',
                     }}
@@ -59,7 +62,7 @@ const Petitions = () => {
 
       <Box marginTop={4}>
         <Text as="p" variant="h3" marginBottom={2}>
-          {'Virkir listar sem ég hef mælt með'}
+          {formatMessage(m.petition.petitionListsSignedByMe)}
         </Text>
 
         {!!userLists.data && (
@@ -83,9 +86,9 @@ const Petitions = () => {
                   <ActionCard
                     backgroundColor="white"
                     heading={list.endorsementList?.title}
-                    text={'Tímabil lista: '}
+                    text={formatMessage(m.petition.listPeriod)}
                     cta={{
-                      label: 'Skoða nánar',
+                      label: formatMessage(m.petition.viewList),
                       variant: 'text',
                       icon: 'arrowForward',
                     }}
@@ -99,7 +102,7 @@ const Petitions = () => {
 
       {/*<Box marginTop={4}>
         <Text as="p" variant="h3" marginBottom={2}>
-          {'Lokaðir listar sem ég hef mælt með'}
+          {formatMessage(m.petition.closedListsSignedByMe)}
         </Text>
 
         {!!userLists.length && (
