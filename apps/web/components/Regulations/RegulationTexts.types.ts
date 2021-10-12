@@ -59,6 +59,7 @@ export type RegulationPageTexts = Partial<
     | 'statusCurrentUpdated' // 'Reglugerð með breytingum'
     | 'statusCurrent_amended' // 'síðast uppfærð ${date}'
     | 'statusRepealed' // 'Brottfelld reglugerð'
+    | 'statusOgildWat' // 'Ógild reglugerð'
     | 'statusRepealed_on' // 'féll úr gildi ${date}'
     | 'statusOriginal' // 'Upprunaleg útgáfa reglugerðar'
     | 'statusHistoric' // 'Eldri útgáfa reglugerðar'
@@ -91,6 +92,7 @@ export type RegulationPageTexts = Partial<
     | 'infoboxEffectiveDate' // 'Tók fyrst gildi'
     | 'infoboxLastAmended' // 'Síðast breytt'
     | 'infoboxRepealed' // 'Féll úr gildi'
+    | 'infoboxOgildWat' // 'Ógild reglugerð'
     | 'viewAffectingRegulation', // 'Skoða ${title}'
     string
   >

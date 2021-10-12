@@ -29,13 +29,14 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
     timelineDate,
     lastAmendDate,
     effectiveDate,
+    repealed,
     repealedDate,
     history,
   } = regulation
 
   const today = new Date().toISOString().substr(0, 10) as ISODate
 
-  const color: BallColor = repealedDate
+  const color: BallColor = repealed
     ? 'red'
     : type === 'amending'
     ? 'yellow'
@@ -59,12 +60,10 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
   }
 
   const renderLinkToCurrent = () => {
-    const textKey = !repealedDate
-      ? 'statusLinkToCurrent'
-      : 'statusLinkToRepealed'
-    const labelKey = !repealedDate
-      ? 'statusLinkToCurrent_long'
-      : 'statusLinkToRepealed_long'
+    const textKey = repealed ? 'statusLinkToRepealed' : 'statusLinkToCurrent'
+    const labelKey = repealed
+      ? 'statusLinkToRepealed_long'
+      : 'statusLinkToCurrent_long'
     return (
       <small className={s.linkToCurrent}>
         <Link href={linkToRegulation(name)} aria-label={txt(labelKey)}>
@@ -73,6 +72,8 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
       </small>
     )
   }
+
+  const isOgildWAT = repealed && !repealedDate // Don't ask. Magic data!
 
   return (
     <>
@@ -95,6 +96,18 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
                   })}
                 </small>
               )}
+            </>
+          ) : isOgildWAT ? (
+            <>
+              {txt('statusOgildWat') + ' '}
+              {onDateText ||
+                (lastAmendDate && (
+                  <small className={s.metaDate}>
+                    {interpolate(txt('statusCurrent_amended'), {
+                      date: formatDate(lastAmendDate),
+                    })}
+                  </small>
+                ))}
             </>
           ) : !lastAmendDate ? (
             <>

@@ -98,6 +98,10 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
             {formatDate(regulation.repealedDate)}
           </span>
         </Text>
+      ) : regulation.repealed ? (
+        <Text marginBottom={3}>
+          <strong>{txt('infoboxOgildWat')}</strong>
+        </Text>
       ) : (
         regulation.lastAmendDate && (
           <Text marginBottom={3}>

@@ -44,9 +44,11 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
 
   const name = prettyName(regulation.name)
 
-  const { timelineDate, lastAmendDate, repealedDate } = regulation
+  const { timelineDate, lastAmendDate, repealedDate, repealed } = regulation
 
   const isRepealed = !!repealedDate
+  const isOgildWAT = repealed && !repealedDate // Don't ask. Magic data!
+
   const isCurrent =
     (!isRepealed && !timelineDate) || timelineDate === lastAmendDate
   const isUpcoming =
@@ -58,6 +60,8 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
 
   const waterMarkClass = isRepealed
     ? s.repealedWarning
+    : isOgildWAT
+    ? s.ogildWatWarning
     : !isCurrent
     ? s.oudatedWarning + (isUpcoming ? ' ' + s.upcomingWarning : '')
     : undefined
