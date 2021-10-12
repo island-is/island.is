@@ -9,10 +9,27 @@ import { mapFrontpage } from '../../models/frontpage.model'
 @Injectable()
 export class FrontpageSyncService implements CmsSyncProvider<IFrontpage> {
   processSyncData(entries: processSyncDataInput<IFrontpage>) {
-    return entries.filter(
-      (entry: Entry<any>): entry is IFrontpage =>
-        entry.sys.contentType.sys.id === 'frontpage',
-    )
+    return entries
+      .filter(
+        (entry: Entry<any>): entry is IFrontpage =>
+          entry.sys.contentType.sys.id === 'frontpage',
+        // Avoids recursive deep linking from references in slide links
+        // by limiting imports to only required fields
+      )
+      .map((entry) => {
+        if (entry.fields?.slides) {
+          entry.fields.slides = entry.fields.slides.map((slide) => {
+            if (slide.fields?.link?.fields) {
+              slide.fields.link.fields = {
+                slug: slide.fields.link.fields.slug,
+                title: slide.fields.link.fields.title,
+              }
+            }
+            return slide
+          })
+        }
+        return entry
+      })
   }
 
   doMapping(entries: IFrontpage[]) {
