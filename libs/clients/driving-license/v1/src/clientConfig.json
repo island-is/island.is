@@ -149,27 +149,42 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegSviptingaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegSviptingaDto"
+                  }
                 }
               },
               "application/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegSviptingaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegSviptingaDto"
+                  }
                 }
               },
               "text/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegSviptingaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegSviptingaDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegSviptingaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegSviptingaDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegSviptingaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegSviptingaDto"
+                  }
                 }
               }
             }
@@ -198,27 +213,42 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegundRettindaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundRettindaDto"
+                  }
                 }
               },
               "application/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegundRettindaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundRettindaDto"
+                  }
                 }
               },
               "text/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegundRettindaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundRettindaDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegundRettindaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundRettindaDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegundRettindaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundRettindaDto"
+                  }
                 }
               }
             }
@@ -305,27 +335,42 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  }
                 }
               },
               "application/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  }
                 }
               },
               "text/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  }
                 }
               }
             }
