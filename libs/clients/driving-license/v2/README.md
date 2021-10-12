@@ -6,4 +6,4 @@ This library implements a client to use Ríkislögreglustjóri's Driver's licens
 
 Please see the documentation for V1 for further information.
 
-(@clients/driving-license-v1 docs)[../v1/README.md]
+[@clients/driving-license-v1 docs](../v1/README.md)
