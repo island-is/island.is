@@ -101,26 +101,9 @@ export class ApplicationController {
     type: ApplicationModel,
     description: 'Get application',
   })
-  async getById(@Param('id') id: string) {
+  async getById(@Param('id') id: string, @CurrentUser() user: User) {
     this.logger.debug(`Application controller: Getting application by id ${id}`)
-    const application = await this.applicationService.findById(id)
-
-    if (!application) {
-      throw new NotFoundException(`application ${id} not found`)
-    }
-
-    return application
-  }
-
-  @UseGuards(ApplicationGuard)
-  @Get('myApplications/:id')
-  @ApiOkResponse({
-    type: ApplicationModel,
-    description: 'Get your application',
-  })
-  async getMyApplicationById(@Param('id') id: string) {
-    this.logger.debug(`Application controller: Getting application by id ${id}`)
-    const application = await this.applicationService.findMyApplicationById(id)
+    const application = await this.applicationService.findById(id, user)
 
     if (!application) {
       throw new NotFoundException(`application ${id} not found`)
@@ -226,11 +209,13 @@ export class ApplicationController {
   })
   async createEvent(
     @Body() applicationEvent: CreateApplicationEventDto,
+    @CurrentUser() user: User,
   ): Promise<ApplicationModel> {
     await this.applicationEventService.create(applicationEvent)
 
     const application = await this.applicationService.findById(
       applicationEvent.applicationId,
+      user,
     )
 
     if (!application) {

@@ -2,7 +2,7 @@ import React, { createContext, ReactNode, useEffect, useState } from 'react'
 
 import { Application } from '@island.is/financial-aid/shared/lib'
 
-import { GetMyApplicationQuery } from '@island.is/financial-aid-web/osk/graphql'
+import { GetApplicationQuery } from '@island.is/financial-aid-web/osk/graphql'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { ApolloError } from 'apollo-client'
@@ -18,7 +18,7 @@ interface Props {
 }
 
 interface ApplicantData {
-  myApplication?: Application
+  application?: Application
 }
 
 export const ApplicationContext = createContext<ApplicationProvider>({
@@ -33,7 +33,7 @@ const ApplicationProvider = ({ children }: Props) => {
   const [myApplication, updateApplication] = useState<Application>()
 
   const { data, error: fetchError, loading } = useQuery<ApplicantData>(
-    GetMyApplicationQuery,
+    GetApplicationQuery,
     {
       variables: { input: { id: router.query.id } },
       fetchPolicy: 'no-cache',
@@ -52,9 +52,9 @@ const ApplicationProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (data) {
-      updateApplication(data.myApplication)
+      updateApplication(data.application)
       // Watches the user state and writes it to local storage on change
-      sessionStorage.setItem(storageKey, JSON.stringify(data.myApplication))
+      sessionStorage.setItem(storageKey, JSON.stringify(data.application))
     }
   }, [myApplication, data])
 

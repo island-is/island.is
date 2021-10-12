@@ -65,9 +65,9 @@ export const CurrentUserQuery = gql`
   }
 `
 
-export const GetMyApplicationQuery = gql`
-  query GetMyApplicationQuery($input: ApplicationInput!) {
-    myApplication(input: $input) {
+export const GetApplicationQuery = gql`
+  query GetApplicationQuery($input: ApplicationInput!) {
+    application(input: $input) {
       id
       homeCircumstances
       usePersonalTaxCredit

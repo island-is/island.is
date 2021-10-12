@@ -5,16 +5,13 @@ import { CurrentApplicationModel, ApplicationModel } from './models'
 
 import { Op } from 'sequelize'
 
-import {
-  CreateApplicationDto,
-  CreateApplicationEventDto,
-  UpdateApplicationDto,
-} from './dto'
+import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import {
   ApplicationEventType,
   ApplicationFilters,
   ApplicationState,
   ApplicationStateUrl,
+  getEventTypesFromService,
   getStateFromUrl,
   User,
 } from '@island.is/financial-aid/shared/lib'
@@ -26,7 +23,6 @@ import {
 import { StaffModel } from '../staff'
 
 import { EmailService } from '@island.is/email-service'
-import { environment } from '../../../environments'
 
 interface Recipient {
   name: string
@@ -85,7 +81,7 @@ export class ApplicationService {
     application?.setDataValue('files', files)
   }
 
-  async findMyApplicationById(id: string): Promise<ApplicationModel | null> {
+  async findById(id: string, user: User): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
       include: [
@@ -96,28 +92,9 @@ export class ApplicationService {
           separate: true,
           where: {
             eventType: {
-              [Op.in]: [ApplicationEventType.DATANEEDED],
+              [Op.in]: getEventTypesFromService[user.service],
             },
           },
-          order: [['created', 'DESC']],
-        },
-      ],
-    })
-
-    await this.setFilesToApplication(id, application)
-
-    return application
-  }
-
-  async findById(id: string): Promise<ApplicationModel | null> {
-    const application = await this.applicationModel.findOne({
-      where: { id },
-      include: [
-        { model: StaffModel, as: 'staff' },
-        {
-          model: ApplicationEventModel,
-          as: 'applicationEvents',
-          separate: true,
           order: [['created', 'DESC']],
         },
       ],
