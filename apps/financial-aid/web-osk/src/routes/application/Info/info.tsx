@@ -72,16 +72,9 @@ const ApplicationInfo = () => {
         </Text>
 
         <Text as="h3" variant="h5" color="blue400">
-          Upplýsingar um styrki og bætur
+          Þjóðskrá Íslands
         </Text>
-        <Text marginBottom={2}>
-          T.a.m. hjá Vinnumálastofnun, Sjúkratryggingum Íslands, o.fl.
-        </Text>
-
-        <Text as="h3" variant="h5" color="blue400">
-          Upplýsingar um stöðu og eignir
-        </Text>
-        <Text marginBottom={[4, 4, 5]}>T.a.m. hjá þjóðskrá og Skattinum.</Text>
+        <Text marginBottom={[4, 4, 5]}>Lögheimili, hjúskaparstaða</Text>
 
         <Box marginBottom={[5, 5, 10]} cursor="pointer">
           <Checkbox
