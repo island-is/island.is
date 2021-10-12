@@ -174,8 +174,8 @@ const DocumentScreen: FC<Props> = ({
             <Box marginTop={3}>
               <Input
                 label="Leit"
-                name="Search1"
-                placeholder="Sláðu inn leitarorð"
+                name="Search"
+                placeholder={formatMessage(m.searchPlaceholder)}
                 size="sm"
                 onChange={(e) => setQ(e.target.value)}
                 value={q}
