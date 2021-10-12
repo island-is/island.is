@@ -1,4 +1,10 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  ForbiddenException,
+  Get,
+  Param,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -8,7 +14,7 @@ import {
   RolesRule,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { UserRole } from '@island.is/judicial-system/types'
+import { completedCaseStates, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
 import { CaseService } from '../case'
@@ -43,6 +49,12 @@ export class PoliceController {
       user,
       false,
     )
+
+    if (completedCaseStates.includes(existingCase.state)) {
+      throw new ForbiddenException(
+        'Cannot get police case ffiles for a completed case',
+      )
+    }
 
     return this.policeService.getAllPoliceCaseFiles(existingCase.id)
   }

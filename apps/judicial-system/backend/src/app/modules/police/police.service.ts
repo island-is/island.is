@@ -61,10 +61,8 @@ export class PoliceService {
     }
 
     if (!res.ok) {
-      this.logger.info(`Failed to get police case files for case ${caseId}`)
-
       throw new NotFoundException(
-        `Failed to get police case files for case ${caseId}`,
+        `No police case files found for case ${caseId}`,
       )
     }
 
