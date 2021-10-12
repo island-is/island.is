@@ -34,7 +34,7 @@ const MainPage = () => {
   return (
     <>
       <ContentContainer>
-        <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
+        <Text as="h1" variant="h2" marginBottom={1}>
           Aðstoðin þín
         </Text>
 

@@ -21,11 +21,8 @@ const Approved = ({ state, amount }: Props) => {
 
   return (
     <>
-      <Text as="h2" variant="h3" color="mint600" marginBottom={[3, 3, 5]}>
+      <Text as="h2" variant="h3" color="mint600" marginBottom={[4, 4, 5]}>
         Umsókn {getState[state].toLowerCase()}
-      </Text>
-      <Text variant="intro">
-        Umsóknin þín um fjárhagsaðstoð í {currentMonth} er samþykkt.
       </Text>
 
       <Text as="h3" variant="h3" marginBottom={2}>
