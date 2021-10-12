@@ -77,11 +77,17 @@ const History = ({ className, applicantName, applicationEvents }: Props) => {
                     </Box>
                   )}
 
-                  {/* TODO if staff sents comment to applicant */}
-                  {/* <Icon icon="checkmark" />{' '}
-                      <Text fontWeight="semiBold">
-                        Skilaboð send á umsækjanda
-                      </Text> */}
+                  {item.eventType === ApplicationEventType.DATANEEDED &&
+                    item.comment && (
+                      <Box
+                        paddingLeft={3}
+                        marginBottom={2}
+                        className={styles.timelineMessages}
+                      >
+                        <Icon icon="chatbubble" type="outline" />{' '}
+                        <Text marginBottom={2}>„{item.comment}“</Text>
+                      </Box>
+                    )}
 
                   <Text variant="small" color="dark300" marginBottom={5}>
                     {format(new Date(item.created), 'dd/MM/yyyy HH:MM')}
