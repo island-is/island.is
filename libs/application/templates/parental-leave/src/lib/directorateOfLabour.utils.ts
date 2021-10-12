@@ -145,10 +145,6 @@ export const calculateRemainingNumberOfDays = (
   return availableDays - existingDays
 }
 
-const getParentalLeaveMultiplierForDaysInMonth = (daysInMonth: number) => {
-  return 30 / daysInMonth
-}
-
 export const calculatePeriodLength = (
   start: Date,
   end: Date,
@@ -163,42 +159,34 @@ export const calculatePeriodLength = (
   }
 
   let currentDate = start
-
   let cost = 0
-  let parentalLeaveDaysUsed = 0
-  let daysInMonth = 0
-  let daysLeftOfMonth = 0
-  let realDaysToParentalLeaveDaysMultiplier = 0
 
   while (currentDate < end) {
-    daysInMonth = getDaysInMonth(currentDate)
-    realDaysToParentalLeaveDaysMultiplier = getParentalLeaveMultiplierForDaysInMonth(
-      daysInMonth,
-    )
+    let parentalLeaveDaysUsed = 0
+
+    const daysInMonth = getDaysInMonth(currentDate)
+
+    const dayOfMonth = currentDate.getDate()
+    const daysTillEndOfMonth = daysInMonth - dayOfMonth
     const daysLeftToEnd = differenceInDays(end, currentDate)
 
-    daysLeftOfMonth =
-      Math.min(
-        daysInMonth - currentDate.getDate(),
-        differenceInDays(end, currentDate),
-      ) + 1
+    const daysLeftOfMonth = Math.min(daysTillEndOfMonth, daysLeftToEnd) + 1
 
-    parentalLeaveDaysUsed = Math.round(
-      Math.round(daysLeftOfMonth * realDaysToParentalLeaveDaysMultiplier) *
-        percentage,
-    )
-    daysLeftOfMonth = Math.min(daysLeftOfMonth, daysLeftToEnd)
+    const dateAtEndOfMonth = addDays(currentDate, daysLeftOfMonth - 1)
+    const dateAtEnd = addDays(currentDate, daysLeftOfMonth)
+
+    if (dateAtEndOfMonth.getDate() === daysInMonth) {
+      parentalLeaveDaysUsed = 30 - dayOfMonth + 1
+    } else {
+      parentalLeaveDaysUsed = end.getDate() - dayOfMonth + 1
+    }
+
+    parentalLeaveDaysUsed = Math.round(parentalLeaveDaysUsed * percentage)
 
     cost += parentalLeaveDaysUsed
 
-    currentDate = addDays(currentDate, daysLeftOfMonth)
+    currentDate = dateAtEnd
   }
-
-  currentDate = addDays(currentDate, -daysLeftOfMonth)
-  currentDate = addDays(
-    currentDate,
-    (1 / realDaysToParentalLeaveDaysMultiplier) * parentalLeaveDaysUsed,
-  )
 
   return cost
 }
