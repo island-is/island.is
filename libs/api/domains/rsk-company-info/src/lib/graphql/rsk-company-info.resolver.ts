@@ -27,7 +27,7 @@ export class RskCompanyInfoResolver {
     @Args('input', { type: () => RskCompanyInfoInput })
     input: RskCompanyInfoInput,
   ): Promise<RskCompany | null> {
-    this.logger.debug(`Getting company ${input.nationalId}`)
+    this.logger.debug(`Getting company information`)
     const company = await this.rskCompanyInfoService.getCompanyInformationWithExtra(
       input.nationalId,
     )
