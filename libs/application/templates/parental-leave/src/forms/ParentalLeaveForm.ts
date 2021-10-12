@@ -801,18 +801,6 @@ export const ParentalLeaveForm: Form = buildForm({
                     },
                   },
                 ),
-                // buildMultiField({
-                //   id: 'ratio',
-                //   title: parentalLeaveFormMessages.ratio.title,
-                //   description: parentalLeaveFormMessages.ratio.description,
-                //   children: [
-                //     buildCustomField({
-                //       id: 'ratio',
-                //       title: parentalLeaveFormMessages.ratio.label,
-                //       component: 'PeriodPercentage',
-                //     }),
-                //   ],
-                // }),
                 buildCustomField({
                   id: 'ratio',
                   title: parentalLeaveFormMessages.ratio.title,
