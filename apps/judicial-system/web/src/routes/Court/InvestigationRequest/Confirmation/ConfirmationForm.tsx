@@ -8,6 +8,7 @@ import {
   FormFooter,
   PdfButton,
   PoliceRequestAccordionItem,
+  RulingAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   CaseAppealDecision,
@@ -62,6 +63,7 @@ const Confirmation: React.FC<Props> = (props) => {
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <CourtRecordAccordionItem workingCase={workingCase} />
+            <RulingAccordionItem workingCase={workingCase} />
           </Accordion>
         </Box>
         <Box component="section" marginBottom={8}>

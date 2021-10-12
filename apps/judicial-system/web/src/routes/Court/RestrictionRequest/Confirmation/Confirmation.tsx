@@ -10,6 +10,7 @@ import {
   PageLayout,
   FormContentContainer,
   CourtCaseFactsAndLegalArgumentsAccordionItem,
+  RulingAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   formatDate,
@@ -154,6 +155,7 @@ export const Confirmation: React.FC = () => {
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <CourtRecordAccordionItem workingCase={workingCase} />
+                <RulingAccordionItem workingCase={workingCase} />
                 <CourtCaseFactsAndLegalArgumentsAccordionItem
                   workingCase={workingCase}
                 />

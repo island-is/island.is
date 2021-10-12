@@ -4,6 +4,7 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
+  isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -64,7 +65,18 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         <Box marginBottom={2}>
           <Text>{workingCase.courtLegalArguments}</Text>
         </Box>
-        <Box marginBottom={7}>
+        {isInvestigationCase(workingCase.type) &&
+          workingCase.requestProsecutorOnlySession && (
+            <Box marginY={2}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Beiðni um dómþing að varnaraðila fjarstöddum
+                </Text>
+              </Box>
+              <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
+            </Box>
+          )}
+        <Box marginBottom={5}>
           <Text variant="eyebrow" color="blue400">
             Niðurstaða
           </Text>
