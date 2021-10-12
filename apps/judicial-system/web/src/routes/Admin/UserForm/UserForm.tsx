@@ -27,6 +27,7 @@ interface Props {
   user: User
   allCourts: Institution[]
   prosecutorsOffices: Institution[]
+  prisonInstitutions: Institution[]
   onSave: (user: User) => void
   loading: boolean
 }
@@ -45,6 +46,8 @@ export const UserForm: React.FC<Props> = (props) => {
 
   const selectInstitutions = (user.role === UserRole.PROSECUTOR
     ? props.prosecutorsOffices
+    : user.role === UserRole.STAFF
+    ? props.prisonInstitutions
     : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
     ? props.allCourts
     : []
@@ -110,6 +113,9 @@ export const UserForm: React.FC<Props> = (props) => {
       : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
       ? user.institution?.type === InstitutionType.COURT ||
         user.institution?.type === InstitutionType.HIGH_COURT
+      : user.role === UserRole.STAFF
+      ? user.institution?.type === InstitutionType.PRISON ||
+        user.institution?.type === InstitutionType.PRISON_ADMIN
       : false
   }
 
@@ -224,6 +230,18 @@ export const UserForm: React.FC<Props> = (props) => {
                 label="Dómritari"
                 checked={user.role === UserRole.REGISTRAR}
                 onChange={() => setUser({ ...user, role: UserRole.REGISTRAR })}
+                large
+              />
+            </Box>
+          </Box>
+          <Box marginBottom={2} className={styles.roleContainer}>
+            <Box className={styles.roleColumn}>
+              <RadioButton
+                name="role"
+                id="roleStaff"
+                label="Starfsmaður"
+                checked={user.role === UserRole.STAFF}
+                onChange={() => setUser({ ...user, role: UserRole.STAFF })}
                 large
               />
             </Box>
