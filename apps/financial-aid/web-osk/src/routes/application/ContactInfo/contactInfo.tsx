@@ -18,21 +18,24 @@ const ContactInfo = () => {
   const router = useRouter()
 
   const { form, updateForm } = useContext(FormContext)
-  const [hasEmailError, setHasEmailError] = useState(false)
-  const [hasPhoneNumberError, setHasPhoneNumberError] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
   ) as NavigationProps
 
-  const errorCheck = () => {
-    if (form?.emailAddress === undefined || !isEmailValid(form?.emailAddress)) {
-      setHasEmailError(true)
-      return
-    }
+  const isInputInvalid = () => {
+    return (
+      form?.emailAddress === undefined ||
+      !isEmailValid(form?.emailAddress) ||
+      form?.phoneNumber === undefined ||
+      form?.phoneNumber.length !== 7
+    )
+  }
 
-    if (form?.phoneNumber === undefined || form?.phoneNumber.length !== 7) {
-      setHasPhoneNumberError(true)
+  const errorCheck = () => {
+    if (isInputInvalid()) {
+      setHasError(true)
       return
     }
 
@@ -62,13 +65,13 @@ const ContactInfo = () => {
             type="email"
             value={form?.emailAddress}
             onChange={(event) => {
-              setHasEmailError(false)
+              setHasError(false)
 
               updateForm({ ...form, emailAddress: event.target.value })
             }}
             backgroundColor="blue"
             errorMessage="Athugaðu hvort netfang sé rétt slegið inn"
-            hasError={hasEmailError}
+            hasError={hasError && !isEmailValid(form?.emailAddress)}
           />
         </Box>
 
@@ -81,13 +84,13 @@ const ContactInfo = () => {
             type="tel"
             value={form?.phoneNumber}
             onChange={(event) => {
-              setHasPhoneNumberError(false)
+              setHasError(false)
 
               updateForm({ ...form, phoneNumber: event.target.value })
             }}
             backgroundColor="blue"
             errorMessage="Athugaðu hvort símanúmer sé rétt slegið inn, gilt símanúmer eru 7 stafir"
-            hasError={hasPhoneNumberError}
+            hasError={hasError && form?.phoneNumber?.length !== 7}
           />
         </Box>
       </ContentContainer>
