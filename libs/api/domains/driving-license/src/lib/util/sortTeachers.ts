@@ -1,4 +1,4 @@
-import { OkukennariDto } from '@island.is/clients/driving-license'
+import { OkukennariDto } from '@island.is/clients/driving-license-v1'
 
 const order =
   '0123456789aAáÁbBcCdDeEéÉfFgGhHiIíÍjJkKlLmMnNoOóÓpPqQrRsStTuUúÚvVwWxXyYýÝzZþÞæÆöÖ'
