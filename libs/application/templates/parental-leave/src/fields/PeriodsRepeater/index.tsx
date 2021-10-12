@@ -202,7 +202,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
           </Inline>
         </Box>
       )}
-      {hasAddedPeriods && canAddAnotherPeriod && (
+      {editable && hasAddedPeriods && canAddAnotherPeriod && (
         <FieldDescription
           description={formatMessage(
             parentalLeaveFormMessages.leavePlan.usage,
