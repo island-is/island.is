@@ -64,6 +64,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
     let paymentPlan = ''
     const distributions = Object.entries(paymentPlans)
       .map(([key, value]) => {
+        if (value === undefined) return []
         const distribution = JSON.parse(
           value.distribution || '',
         ) as Array<PaymentSchedulePayment>
