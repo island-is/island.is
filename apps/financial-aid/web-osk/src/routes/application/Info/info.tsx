@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { Text, Icon, Box, Checkbox } from '@island.is/island-ui/core'
 
 import {
@@ -17,8 +17,6 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
-import { GetMunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql'
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
 const ApplicationInfo = () => {
   const router = useRouter()
@@ -74,16 +72,9 @@ const ApplicationInfo = () => {
         </Text>
 
         <Text as="h3" variant="h5" color="blue400">
-          Upplýsingar um styrki og bætur
+          Þjóðskrá Íslands
         </Text>
-        <Text marginBottom={2}>
-          T.a.m. hjá Vinnumálastofnun, Sjúkratryggingum Íslands, o.fl.
-        </Text>
-
-        <Text as="h3" variant="h5" color="blue400">
-          Upplýsingar um stöðu og eignir
-        </Text>
-        <Text marginBottom={[4, 4, 5]}>T.a.m. hjá þjóðskrá og Skattinum.</Text>
+        <Text marginBottom={[4, 4, 5]}>Lögheimili, hjúskaparstaða</Text>
 
         <Box marginBottom={[5, 5, 10]} cursor="pointer">
           <Checkbox
@@ -93,9 +84,8 @@ const ApplicationInfo = () => {
             large
             checked={accept}
             onChange={(event) => {
-              if (hasError) {
-                setHasError(false)
-              }
+              setHasError(false)
+
               setAccept(event.target.checked)
             }}
             hasError={hasError}

@@ -78,9 +78,8 @@ const EmploymentForm = () => {
           }}
           onChange={(value: Employment) => {
             updateForm({ ...form, employment: value })
-            if (hasError) {
-              setHasError(false)
-            }
+
+            setHasError(false)
           }}
         />
 

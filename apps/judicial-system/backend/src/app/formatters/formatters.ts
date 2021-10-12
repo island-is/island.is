@@ -5,12 +5,14 @@ import {
   laws,
   formatGender,
   caseTypes,
+  formatAppeal,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseCustodyProvisions,
   CaseDecision,
   CaseType,
+  isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import type {
@@ -65,22 +67,6 @@ export function formatCustodyProvisions(
     : legalBasis
     ? legalBasis
     : 'Lagaákvæði ekki skráð'
-}
-
-export function formatAppeal(
-  appealDecision: CaseAppealDecision | undefined,
-  stakeholder: string,
-): string {
-  switch (appealDecision) {
-    case CaseAppealDecision.APPEAL:
-      return `${stakeholder} lýsir því yfir að hann kæri úrskurðinn til Landsréttar.`
-    case CaseAppealDecision.ACCEPT:
-      return `${stakeholder} unir úrskurðinum.`
-    case CaseAppealDecision.POSTPONE:
-      return `${stakeholder} lýsir því yfir að hann taki sér lögbundinn kærufrest.`
-    default:
-      return ''
-  }
 }
 
 export function formatCourtHeadsUpSmsNotification(
@@ -145,12 +131,11 @@ export function formatProsecutorReceivedByCourtSmsNotification(
   court?: string,
   courtCaseNumber?: string,
 ): string {
-  const receivedCaseText =
-    type === CaseType.CUSTODY || type === CaseType.TRAVEL_BAN
-      ? `${caseTypes[type]}`
-      : type === CaseType.OTHER
-      ? 'rannsóknarheimild'
-      : `rannsóknarheimild (${caseTypes[type]})`
+  const receivedCaseText = isRestrictionCase(type)
+    ? `${caseTypes[type]}`
+    : type === CaseType.OTHER
+    ? 'rannsóknarheimild'
+    : `rannsóknarheimild (${caseTypes[type]})`
 
   return `${court} hefur móttekið kröfu um ${receivedCaseText} sem þú sendir og úthlutað málsnúmerinu ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.`
 }

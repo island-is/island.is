@@ -16,6 +16,7 @@ import {
   Header,
   UseGuards,
   BadRequestException,
+  ParseBoolPipe,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -28,6 +29,7 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
+  isInvestigationCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -41,6 +43,7 @@ import {
   TokenGuard,
 } from '@island.is/judicial-system/auth'
 
+import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import { CaseFile } from '../file/models/file.model'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
@@ -48,15 +51,6 @@ import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
 import { CaseService } from './case.service'
-
-// Allows prosecutors to perform any action
-const prosecutorRule = UserRole.PROSECUTOR as RolesRule
-
-// Allows judges to perform any action
-const judgeRule = UserRole.JUDGE as RolesRule
-
-// Allows registrars to perform any action
-const registrarRule = UserRole.REGISTRAR as RolesRule
 
 // Allows prosecutors to update a specific set of fields
 const prosecutorUpdateRule = {
@@ -74,6 +68,7 @@ const prosecutorUpdateRule = {
     'defenderEmail',
     'defenderPhoneNumber',
     'sendRequestToDefender',
+    'isHeightenedSecurityLevel',
     'courtId',
     'leadInvestigator',
     'arrestDate',
@@ -265,9 +260,18 @@ export class CaseController {
       await this.validateAssignedUser(
         caseToUpdate.prosecutorId,
         UserRole.PROSECUTOR,
-        existingCase.prosecutor?.institutionId,
+        existingCase.creatingProsecutor?.institutionId,
       )
+
+      // If the case was created via xRoad, then there is no creating prosecutor
+      if (!existingCase.creatingProsecutor) {
+        caseToUpdate = {
+          ...caseToUpdate,
+          creatingProsecutorId: caseToUpdate.prosecutorId,
+        } as UpdateCaseDto
+      }
     }
+
     if (caseToUpdate.judgeId) {
       await this.validateAssignedUser(
         caseToUpdate.judgeId,
@@ -275,6 +279,7 @@ export class CaseController {
         existingCase.courtId,
       )
     }
+
     if (caseToUpdate.registrarId) {
       await this.validateAssignedUser(
         caseToUpdate.registrarId,
@@ -394,6 +399,17 @@ export class CaseController {
   ) {
     const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
+    if (
+      isInvestigationCase(existingCase.type) &&
+      ((user.role === UserRole.JUDGE && user.id !== existingCase.judge?.id) ||
+        (user.role === UserRole.REGISTRAR &&
+          user.id !== existingCase.registrar?.id))
+    ) {
+      throw new ForbiddenException(
+        'Only the assigned judge and registrar can get the request pdf for investigation cases',
+      )
+    }
+
     const pdf = await this.caseService.getRequestPdf(existingCase)
 
     const stream = new ReadableStreamBuffer({
@@ -417,12 +433,24 @@ export class CaseController {
   })
   async getRulingPdf(
     @Param('id') id: string,
+    @Query('shortVersion', ParseBoolPipe) shortVersion: boolean,
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
     const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
-    const pdf = await this.caseService.getRulingPdf(existingCase)
+    if (
+      isInvestigationCase(existingCase.type) &&
+      ((user.role === UserRole.JUDGE && user.id !== existingCase.judge?.id) ||
+        (user.role === UserRole.REGISTRAR &&
+          user.id !== existingCase.registrar?.id))
+    ) {
+      throw new ForbiddenException(
+        'Only the assigned judge and registrar can get the ruling pdf for investigation cases',
+      )
+    }
+
+    const pdf = await this.caseService.getRulingPdf(existingCase, shortVersion)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,

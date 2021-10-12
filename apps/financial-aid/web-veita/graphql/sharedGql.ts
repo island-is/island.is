@@ -93,44 +93,90 @@ export const GetApplicationQuery = gql`
 `
 export const UpdateApplicationMutation = gql`
   mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
-    updateApplication(input: $input) {
-      id
-      nationalId
-      created
-      modified
-      name
-      phoneNumber
-      email
-      homeCircumstances
-      student
-      employment
-      hasIncome
-      usePersonalTaxCredit
-      bankNumber
-      ledger
-      accountNumber
-      interview
-      employmentCustom
-      homeCircumstancesCustom
-      files {
+    updateApplicationRes(input: $input) {
+      application {
         id
-        applicationId
-        name
-        size
+        nationalId
         created
-        type
-      }
-      state
-      formComment
-      studentCustom
-      amount
-      rejection
-      staff {
+        modified
         name
+        phoneNumber
+        email
+        homeCircumstances
+        student
+        employment
+        hasIncome
+        usePersonalTaxCredit
+        bankNumber
+        ledger
+        accountNumber
+        interview
+        employmentCustom
+        homeCircumstancesCustom
+        files {
+          id
+          applicationId
+          name
+          size
+          created
+          type
+        }
+        state
+        formComment
+        studentCustom
+        amount
+        rejection
+        applicationEvents {
+          id
+          applicationId
+          eventType
+          comment
+          created
+        }
+        staff {
+          name
+        }
+      }
+      filters {
+        New
+        InProgress
+        DataNeeded
+        Rejected
+        Approved
       }
     }
   }
 `
+
+export const UpdateApplicationTableMutation = gql`
+  mutation UpdateApplicationTableMutation(
+    $input: UpdateApplicationInputTable!
+  ) {
+    updateApplicationTable(input: $input) {
+      applications {
+        id
+        nationalId
+        name
+        phoneNumber
+        email
+        modified
+        created
+        state
+        staff {
+          name
+        }
+      }
+      filters {
+        New
+        InProgress
+        DataNeeded
+        Rejected
+        Approved
+      }
+    }
+  }
+`
+
 export const GetApplicationsQuery = gql`
   query GetApplicationsQuery($input: AllApplicationInput!) {
     applications(input: $input) {
