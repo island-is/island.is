@@ -14,24 +14,25 @@ import {
   isEmailValid,
 } from '@island.is/financial-aid/shared/lib'
 
-const EmailForm = () => {
+const ContactInfo = () => {
   const router = useRouter()
 
   const { form, updateForm } = useContext(FormContext)
-  const [hasError, setHasError] = useState(false)
+  const [hasEmailError, setHasEmailError] = useState(false)
+  const [hasPhoneNumberError, setHasPhoneNumberError] = useState(false)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
   ) as NavigationProps
 
   const errorCheck = () => {
-    if (form?.emailAddress === undefined) {
-      setHasError(true)
+    if (form?.emailAddress === undefined || !isEmailValid(form?.emailAddress)) {
+      setHasEmailError(true)
       return
     }
 
-    if (!isEmailValid(form?.emailAddress)) {
-      setHasError(true)
+    if (form?.phoneNumber === undefined || form?.phoneNumber.length !== 7) {
+      setHasPhoneNumberError(true)
       return
     }
 
@@ -47,12 +48,12 @@ const EmailForm = () => {
           Samskipti
         </Text>
         <Text marginBottom={[3, 3, 4]}>
-          Vinsamlegast staðfestu eða uppfærðu netfangið þitt svo öll samskipti
+          Vinsamlegast sláðu inn netfang þitt og símanúmer svo öll samskipti
           milli þín og sveitarfélagsins gangi greiðlega fyrir sig í
           umsóknarferlinu.
         </Text>
 
-        <Box marginBottom={[1, 1, 2]}>
+        <Box marginBottom={[2, 2, 3]}>
           <Input
             autoFocus={true}
             name="email"
@@ -61,13 +62,32 @@ const EmailForm = () => {
             type="email"
             value={form?.emailAddress}
             onChange={(event) => {
-              setHasError(false)
+              setHasEmailError(false)
 
               updateForm({ ...form, emailAddress: event.target.value })
             }}
             backgroundColor="blue"
             errorMessage="Athugaðu hvort netfang sé rétt slegið inn"
-            hasError={hasError}
+            hasError={hasEmailError}
+          />
+        </Box>
+
+        <Box marginBottom={[2, 2, 3]}>
+          <Input
+            name="phoneNumber"
+            maxLength={7}
+            label="Símanúmer"
+            placeholder="Sláðu inn símanúmer"
+            type="tel"
+            value={form?.phoneNumber}
+            onChange={(event) => {
+              setHasPhoneNumberError(false)
+
+              updateForm({ ...form, phoneNumber: event.target.value })
+            }}
+            backgroundColor="blue"
+            errorMessage="Athugaðu hvort símanúmer sé rétt slegið inn"
+            hasError={hasPhoneNumberError}
           />
         </Box>
       </ContentContainer>
@@ -80,4 +100,4 @@ const EmailForm = () => {
   )
 }
 
-export default EmailForm
+export default ContactInfo
