@@ -61,27 +61,16 @@ const ApplicationInfo = () => {
           </Text>
         </Box>
 
-        <Text marginBottom={2}>
+        <Text marginBottom={3}>
           Við þurfum að afla gagna frá eftirfarandi opinberum aðilum til að
           einfalda umsóknarferlið, staðfesta réttleika upplýsinga og reikna út
           áætlaðar greiðslur.
         </Text>
-        <Text marginBottom={3}>
-          Í lokin velurðu að senda inn umsóknina eða eyða henni og öllum tengdum
-          gögnum.
-        </Text>
 
         <Text as="h3" variant="h5" color="blue400">
-          Upplýsingar um styrki og bætur
+          Þjóðskrá Íslands
         </Text>
-        <Text marginBottom={2}>
-          T.a.m. hjá Vinnumálastofnun, Sjúkratryggingum Íslands, o.fl.
-        </Text>
-
-        <Text as="h3" variant="h5" color="blue400">
-          Upplýsingar um stöðu og eignir
-        </Text>
-        <Text marginBottom={3}>T.a.m. hjá þjóðskrá og Skattinum.</Text>
+        <Text marginBottom={3}>Lögheimili, hjúskaparstaða</Text>
 
         <Text marginBottom={[4, 4, 5]}>
           Við þurfum að fá þig til að renna yfir nokkur atriði varðandi þína

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { Text, BulletList, Bullet, Box } from '@island.is/island-ui/core'
 
 import {
@@ -81,11 +81,15 @@ const IncomeForm = () => {
         <Text as="h2" variant="h3" marginBottom={2} marginTop={[3, 3, 5]}>
           Dæmi um tekjur
         </Text>
-        <Box marginBottom={5}>
+        <Box className={styles.container} marginBottom={5}>
           <BulletList type={'ul'} space={2}>
-            <Bullet>Launaseðlar</Bullet>
+            <Bullet>Greiðslur frá atvinnurekanda</Bullet>
             <Bullet>Greiðslur frá Vinnumálastofnun</Bullet>
             <Bullet>Greiðslur frá Tryggingastofnun</Bullet>
+          </BulletList>
+          <BulletList type={'ul'} space={2}>
+            <Bullet>Greiðslur frá fæðingarorlofssjóði</Bullet>
+            <Bullet>Greiðslur frá Sjúkratryggingum Íslands</Bullet>
             <Bullet>Styrkir frá lífeyrissjóðum</Bullet>
           </BulletList>
         </Box>
