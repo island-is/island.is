@@ -86,7 +86,7 @@ const ContactInfo = () => {
               updateForm({ ...form, phoneNumber: event.target.value })
             }}
             backgroundColor="blue"
-            errorMessage="Athugaðu hvort símanúmer sé rétt slegið inn"
+            errorMessage="Athugaðu hvort símanúmer sé rétt slegið inn, gilt símanúmer eru 7 stafir"
             hasError={hasPhoneNumberError}
           />
         </Box>
