@@ -19,6 +19,7 @@ import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { closedCourt } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
 import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
+import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
 
 interface Props {
   workingCase: Case
@@ -103,8 +104,9 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
               : 'varnaraðila',
           })}
         >
-          <Text>
-            {formatMessage(m.sections.accusedRights.text, {
+          <MarkdownWrapper
+            text={m.sections.accusedRights.text}
+            format={{
               genderedAccused: isRestrictionCase(workingCase.type)
                 ? capitalize(
                     formatAccusedByGender(
@@ -113,8 +115,8 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
                     ),
                   )
                 : 'Varnaraðila',
-            })}
-          </Text>
+            }}
+          />
         </AccordionListItem>
       )}
       {workingCase.accusedAppealDecision !==
