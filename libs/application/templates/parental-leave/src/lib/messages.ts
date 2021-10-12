@@ -1620,6 +1620,20 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Valið hlutfall er ekki gilt.',
     description: 'Copy when days to be used by period is missing',
   },
+  periodsRatioImpossible: {
+    id: 'pl.application:answerValidators.periodsRatioImpossible',
+    defaultMessage:
+      'Ekki næg réttindi til þess að reikna út nýtingu fyrir valið tímabil. Vinsamlegast veldu annað tímabil.',
+    description:
+      'Copy when remaining rights are insufficient to calculate min / max percentages for chosen period',
+  },
+  periodsRatioCalculationImpossible: {
+    id: 'pl.application:answerValidators.periodsRatioCalculationImpossible',
+    defaultMessage:
+      'Ekki er hægt að reikna út hámarks- og lágmarksnýtingu fyrir valið tímabil. Vinsamlegast veldu annað tímabil.',
+    description:
+      'Copy when it is not possible to calculate maxi- and minimum percentage',
+  },
   periodsRatioPercentageMissing: {
     id: 'pl.application:answerValidators.periodsRatioPercentageMissing',
     defaultMessage: 'Ekki tókst að reikna út hámarksnýtingu fyrir tímabil',

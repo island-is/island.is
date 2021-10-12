@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
 import parseISO from 'date-fns/parseISO'
+import { useFormContext } from 'react-hook-form'
 
 import {
   FieldBaseProps,
@@ -20,16 +21,23 @@ import {
   calculateMaxPercentageForPeriod,
   calculateMinPercentageForPeriod,
 } from '../../lib/directorateOfLabour.utils'
-import { parentalLeaveFormMessages } from '../../lib/messages'
+import { parentalLeaveFormMessages, errorMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
 
-export const PeriodPercentage: FC<FieldBaseProps & CustomField> = ({
+type FieldBaseAndCustomField = FieldBaseProps & CustomField
+
+interface PeriodPercentageField extends FieldBaseAndCustomField {
+  errors: FieldErrors<FieldValues>
+}
+
+export const PeriodPercentage: FC<PeriodPercentageField> = ({
   field,
   application,
   errors,
 }) => {
   const { formatMessage } = useLocale()
+  const { setError } = useFormContext()
   const { description } = field
   const { rawPeriods } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
@@ -39,9 +47,14 @@ export const PeriodPercentage: FC<FieldBaseProps & CustomField> = ({
   const remainingRights = useRemainingRights(application)
 
   const fieldId = `periods[${currentIndex}].ratio`
-  const error =
-    (errors as FieldErrors<FieldValues>)?.periods?.[currentIndex]?.ratio
-      ?.message ?? (errors?.[fieldId] as string)
+
+  let error
+
+  if (errors?.periods?.[currentIndex]?.ratio?.message) {
+    error = errors?.periods?.[currentIndex]?.ratio?.message
+  } else if (errors?.[fieldId]) {
+    error = errors?.[fieldId]
+  }
 
   useEffect(() => {
     const start = parseISO(currentPeriod.startDate)
@@ -55,7 +68,10 @@ export const PeriodPercentage: FC<FieldBaseProps & CustomField> = ({
     )
 
     if (rawMinPercentage === null || rawMaxPercentage === null) {
-      // TODO set error
+      setError(fieldId, {
+        type: 'error',
+        message: formatMessage(errorMessages.periodsRatioImpossible),
+      })
       return
     }
 
@@ -63,7 +79,10 @@ export const PeriodPercentage: FC<FieldBaseProps & CustomField> = ({
     const maxPercentage = Math.round(rawMaxPercentage * 100)
 
     if (maxPercentage < minPercentage) {
-      // TODO: set error
+      setError(fieldId, {
+        type: 'error',
+        message: formatMessage(errorMessages.periodsRatioCalculationImpossible),
+      })
       return
     }
 
@@ -75,7 +94,7 @@ export const PeriodPercentage: FC<FieldBaseProps & CustomField> = ({
       }))
 
     setOptions(options)
-  }, [currentPeriod, remainingRights])
+  }, [])
 
   if (currentIndex < 0) {
     return null
