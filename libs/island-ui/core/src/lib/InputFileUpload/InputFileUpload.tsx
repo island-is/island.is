@@ -111,7 +111,7 @@ export const UploadedFile = ({
   }
 
   const truncateInMiddle = (str: string) => {
-    if (str.length > 80) {
+    if (str.length > 70) {
       const nrOfCharacters = width / 25
       return `${str.slice(0, nrOfCharacters)}...${str.slice(-nrOfCharacters)}`
     } else {
