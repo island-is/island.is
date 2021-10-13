@@ -23,3 +23,4 @@ export { default as EditsInReviewSteps } from './InReviewSteps/EditsInReviewStep
 export { default as EditsRequireAction } from './EditsRequireAction'
 export { default as EmployerApprovalExtraInformation } from './EmployerApprovalExtraInformation'
 export { PeriodEndDate } from './PeriodEndDate/PeriodEndDate'
+export { PeriodPercentage } from './PeriodPercentage/PeriodPercentage'
