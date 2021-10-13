@@ -26,6 +26,12 @@ export class AssetsModule {
       providers: [AssetsXRoadResolver, AssetsXRoadService],
       imports: [
         AssetsClientModule.register({
+          xRoadPath: createXRoadAPIPath(
+            config.xRoadBasePathWithEnv,
+            XRoadMemberClass.GovernmentInstitution,
+            config.xRoadAssetsMemberCode,
+            config.xRoadAssetsApiPath,
+          ),
           xRoadClient: config.xRoadClientId,
         }),
         AuthModule,

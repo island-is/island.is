@@ -204,10 +204,10 @@ const autoSchemaFile = environment.production
       xroadClientId: environment.xroad.clientId,
     }),
     AssetsModule.register({
-      xRoadBasePathWithEnv: '',
-      xRoadAssetsMemberCode: '',
-      xRoadAssetsApiPath: '',
-      xRoadClientId: '',
+      xRoadBasePathWithEnv: environment.propertiesXRoad.url,
+      xRoadAssetsMemberCode: environment.propertiesXRoad.memberCode,
+      xRoadAssetsApiPath: environment.propertiesXRoad.apiPath,
+      xRoadClientId: environment.propertiesXRoad.clientId,
     }),
     NationalRegistryXRoadModule.register({
       xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,

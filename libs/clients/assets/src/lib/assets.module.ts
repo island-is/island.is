@@ -13,12 +13,17 @@ export interface ModuleConfig {
 
 export class AssetsClientModule {
   static register(config: ModuleConfig): DynamicModule {
+    const headers = {
+      'X-Road-Client': config.xRoadClient,
+      Accept: 'application/json',
+    }
     const providerConfiguration = new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-assets',
         ...config.fetch,
       }),
-      //   basePath: config.xRoadPath,
+      basePath: config.xRoadPath,
+      headers,
     })
 
     const exportedApis = [FasteignirApi]
