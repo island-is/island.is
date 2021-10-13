@@ -6,14 +6,63 @@ import {
   FieldBaseProps,
 } from '@island.is/application/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { Box, Button, Link, ModalBase, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Icon,
+  Link,
+  ModalBase,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import * as Sentry from '@sentry/react'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { errorModal } from '../../lib/messages'
-import { formatIsk } from '../../lib/paymentPlanUtils'
 import { PaymentPlanExternalData } from '../../types'
 import * as styles from './PrerequisitesErrorModal.treat'
+
+interface ErrorMessageProps {
+  title: string
+  summary: string
+  linkOne: string
+  linkOneName: string
+  linkTwo: string
+  linkTwoName: string
+}
+
+const ErrorMessage = ({
+  title,
+  summary,
+  linkOne,
+  linkOneName,
+  linkTwo,
+  linkTwoName,
+}: ErrorMessageProps) => {
+  return (
+    <Box marginBottom={7}>
+      <Text variant="h1" marginBottom={2}>
+        {title}
+      </Text>
+      <Text variant="intro" marginBottom={3}>
+        {summary}
+      </Text>
+      <Stack space={2}>
+        <Link href={linkOne} newTab={true}>
+          <Button variant="text" icon="open" iconType="outline">
+            {linkOneName}
+          </Button>
+        </Link>
+        <Link href={linkTwo} newTab={true}>
+          <Button variant="text" icon="open" iconType="outline">
+            {linkTwoName}
+          </Button>
+        </Link>
+      </Stack>
+    </Box>
+  )
+}
 
 export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
@@ -23,8 +72,7 @@ export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
     SUBMIT_APPLICATION,
     {
       onError: (e) => {
-        // TODO: Log to Sentry
-        throw new Error(e.message)
+        throw Sentry.captureException(e.message)
       },
     },
   )
@@ -47,7 +95,57 @@ export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
   const prerequisites = (application.externalData as PaymentPlanExternalData)
     .paymentPlanPrerequisites?.data?.conditions as PaymentScheduleConditions
 
-  if (!prerequisites.maxDebt) return null
+  const ShowErrorMessage = () => {
+    if (prerequisites.maxDebt)
+      return (
+        <ErrorMessage
+          title={formatMessage(errorModal.maxDebtModal.title)}
+          summary={formatMessage(errorModal.maxDebtModal.summary)}
+          linkOne={formatMessage(errorModal.maxDebtModal.linkOne)}
+          linkOneName={formatMessage(errorModal.maxDebtModal.linkOneName)}
+          linkTwo={formatMessage(errorModal.maxDebtModal.linkTwo)}
+          linkTwoName={formatMessage(errorModal.maxDebtModal.linkTwoName)}
+        />
+      )
+    if (
+      !prerequisites.taxReturns ||
+      !prerequisites.vatReturns ||
+      !prerequisites.citReturns ||
+      !prerequisites.accommodationTaxReturns ||
+      !prerequisites.withholdingTaxReturns ||
+      !prerequisites.wageReturns
+    )
+      return (
+        <ErrorMessage
+          title={formatMessage(errorModal.estimationOfReturns.title)}
+          summary={formatMessage(errorModal.estimationOfReturns.summary)}
+          linkOne={formatMessage(errorModal.estimationOfReturns.linkOne)}
+          linkOneName={formatMessage(
+            errorModal.estimationOfReturns.linkOneName,
+          )}
+          linkTwo={formatMessage(errorModal.estimationOfReturns.linkTwo)}
+          linkTwoName={formatMessage(
+            errorModal.estimationOfReturns.linkTwoName,
+          )}
+        />
+      )
+    // This happens if prerequisites.collectionActions || !prerequisites.doNotOwe
+    // or by some magic the user gets through with other error
+    return (
+      <ErrorMessage
+        title={formatMessage(errorModal.defaultPaymentCollection.title)}
+        summary={formatMessage(errorModal.defaultPaymentCollection.summary)}
+        linkOne={formatMessage(errorModal.defaultPaymentCollection.linkOne)}
+        linkOneName={formatMessage(
+          errorModal.defaultPaymentCollection.linkOneName,
+        )}
+        linkTwo={formatMessage(errorModal.defaultPaymentCollection.linkTwo)}
+        linkTwoName={formatMessage(
+          errorModal.defaultPaymentCollection.linkTwoName,
+        )}
+      />
+    )
+  }
 
   return (
     <ModalBase
@@ -57,27 +155,22 @@ export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
       modalLabel="Error prompt"
       hideOnClickOutside={false}
     >
+      <Box
+        className={styles.close}
+        onClick={() => submitAndMoveToApplicationScreen()}
+      >
+        <Icon icon="close" size="large" color="blue400" />
+      </Box>
       <Box background="white" padding={10}>
-        <Text variant="h1" marginBottom={2}>
-          {formatMessage(errorModal.maxDebtTitle)}
-        </Text>
-        <Text variant="intro" marginBottom={7}>
-          {formatMessage(errorModal.maxDebtDescription, {
-            maxDebtAmount: formatIsk(prerequisites.maxDebtAmount),
-          })}
-        </Text>
-        <Box display="flex" justifyContent="spaceBetween">
+        {<ShowErrorMessage />}
+        <Box display="flex" justifyContent="flexStart">
           <Button
-            colorScheme="destructive"
             variant="ghost"
             loading={loadingSubmit}
             onClick={() => submitAndMoveToApplicationScreen()}
           >
-            {formatMessage(errorModal.closeModal)}
+            {formatMessage(errorModal.labels.closeModal)}
           </Button>
-          <Link href="https://www.skatturinn.is/" newTab={true}>
-            <Button>{formatMessage(errorModal.moreInformation)}</Button>
-          </Link>
         </Box>
       </Box>
     </ModalBase>
