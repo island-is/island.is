@@ -625,7 +625,7 @@ export const aboutTheAccidentSection = buildSection({
           title: attachments.general.heading,
           children: [
             buildRadioField({
-              id: 'attachments.injuryCertificate',
+              id: 'injuryCertificate.answer',
               title: '',
               description: attachments.general.description,
               options: (application) =>

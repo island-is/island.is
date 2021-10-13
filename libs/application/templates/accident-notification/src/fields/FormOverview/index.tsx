@@ -1,16 +1,12 @@
-import { useMutation } from '@apollo/client'
 import {
-  DefaultEvents,
   FieldBaseProps,
   formatText,
   FormValue,
 } from '@island.is/application/core'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import {
   AlertMessage,
   Box,
-  Button,
   GridColumn,
   GridRow,
   Text,
@@ -55,18 +51,10 @@ import { FileValueLine, ValueLine } from './ValueLine'
 
 export const FormOverview: FC<FieldBaseProps> = ({
   application,
-  refetch,
   goToScreen,
 }) => {
   const answers = application.answers as AccidentNotification
   const { formatMessage } = useLocale()
-
-  const [submitApplication, { loading: loadingSubmit }] = useMutation(
-    SUBMIT_APPLICATION,
-    {
-      onError: (e) => console.error(e.message),
-    },
-  )
 
   const files = getAttachmentTitles(answers)
   const missingDocuments = returnMissingDocumentsList(answers, formatMessage)
@@ -93,7 +81,11 @@ export const FormOverview: FC<FieldBaseProps> = ({
           formatMessage,
         )}
       </Text>
-      <ReviewGroup isLast editAction={() => changeScreens('applicant')}>
+      <ReviewGroup
+        isLast
+        editAction={() => changeScreens('applicant')}
+        isEditable={States.DRAFT === application.state}
+      >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
@@ -150,6 +142,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           <ReviewGroup
             isLast
             editAction={() => changeScreens('injuredPersonInformation')}
+            isEditable={States.DRAFT === application.state}
           >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -195,6 +188,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           <ReviewGroup
             isLast
             editAction={() => changeScreens('childInCustody.fields')}
+            isEditable={States.DRAFT === application.state}
           >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -242,6 +236,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           <ReviewGroup
             isLast
             editAction={() => changeScreens('juridicalPerson.company')}
+            isEditable={States.DRAFT === application.state}
           >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -273,6 +268,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           <ReviewGroup
             isLast
             editAction={() => changeScreens('locationAndPurpose')}
+            isEditable={States.DRAFT === application.state}
           >
             <GridRow>
               <GridColumn span="12/12">
@@ -298,6 +294,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           <ReviewGroup
             isLast
             editAction={() => changeScreens(workplaceData.screenId)}
+            isEditable={States.DRAFT === application.state}
           >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -376,6 +373,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
               <ReviewGroup
                 isLast
                 editAction={() => changeScreens(workplaceData.screenId)}
+                isEditable={States.DRAFT === application.state}
               >
                 <GridRow>
                   <GridColumn span="12/12">
@@ -449,7 +447,11 @@ export const FormOverview: FC<FieldBaseProps> = ({
       <Text variant="h4" paddingTop={6} paddingBottom={3}>
         {formatMessage(accidentDetails.general.sectionTitle)}
       </Text>
-      <ReviewGroup isLast editAction={() => changeScreens('accidentDetails')}>
+      <ReviewGroup
+        isLast
+        editAction={() => changeScreens('accidentDetails')}
+        isEditable={States.DRAFT === application.state}
+      >
         <GridRow>
           <GridColumn span="12/12">
             <ValueLine
@@ -486,7 +488,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           <GridColumn span={['12/12', '12/12', '12/12']}>
             <FileValueLine label={overview.labels.attachments} files={files} />
             {missingDocuments.length !== 0 && (
-              <Box marginBottom={4}>
+              <Box marginBottom={2}>
                 <AlertMessage
                   type="warning"
                   title={formatMessage(overview.alertMessage.title)}
@@ -501,39 +503,6 @@ export const FormOverview: FC<FieldBaseProps> = ({
                 />
               </Box>
             )}
-            {States.OVERVIEW === application.state ||
-            States.ADD_DOCUMENTS === application.state ? (
-              <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  icon="attach"
-                  variant="utility"
-                  loading={loadingSubmit}
-                  disabled={loadingSubmit}
-                  onClick={
-                    States.OVERVIEW === application.state
-                      ? async () => {
-                          const res = await submitApplication({
-                            variables: {
-                              input: {
-                                id: application.id,
-                                event: DefaultEvents.EDIT,
-                                answers: application.answers,
-                              },
-                            },
-                          })
-
-                          if (res?.data) {
-                            // Takes them to the next state (which loads the relevant form)
-                            refetch?.()
-                          }
-                        }
-                      : () => changeScreens('attachments.multifield')
-                  }
-                >
-                  {formatMessage(overview.labels.missingDocumentsButton)}
-                </Button>
-              </Box>
-            ) : null}
           </GridColumn>
         </GridRow>
       </ReviewGroup>

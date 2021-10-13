@@ -44,12 +44,12 @@ describe('getWorkplaceData', () => {
 
   it('should return employee information for professional athlete accidents', () => {
     expect(
-      getWorkplaceData(professionalAthleteAccident)?.info.employee?.radioButton,
+      getWorkplaceData(professionalAthleteAccident)?.info.onPayRoll?.answer,
     ).toBe(YES)
   })
 
   it('should not return employee information for general workplace accident', () => {
-    expect(getWorkplaceData(generalWorkplaceAccident)?.info.employee).toBe(
+    expect(getWorkplaceData(generalWorkplaceAccident)?.info.onPayRoll).toBe(
       undefined,
     )
   })
