@@ -1,20 +1,35 @@
 import React, { FC, useEffect } from 'react'
-
-import { useLocale } from '@island.is/localization'
-import format from 'date-fns/format'
 import { m } from '../../lib/messages'
-
-import { FieldBaseProps } from '@island.is/application/core'
-import { Box } from '@island.is/island-ui/core'
+import type { Application, FieldBaseProps } from '@island.is/application/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import ReviewSection, { ReviewSectionState, Step } from './ReviewSection'
 import { ApplicationEligibility, RequirementKey } from '../../types/schema'
 import { useFormContext } from 'react-hook-form'
+import { useQuery, gql } from '@apollo/client'
+import {
+  DrivingLicenseFakeData,
+  DrivingLicenseApplicationFor,
+  B_FULL,
+  YES,
+} from '../../lib/constants'
 
 const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
   return eligibility.requirements.map(({ key, requirementMet }) =>
     requirementKeyToStep(key, requirementMet),
   )
 }
+
+const QUERY = gql`
+  query EligibilityQuery($input: ApplicationEligibilityInput!) {
+    drivingLicenseApplicationEligibility(input: $input) {
+      isEligible
+      requirements {
+        key
+        requirementMet
+      }
+    }
+  }
+`
 
 // TODO: we need a better way of getting the translated string in here, outside
 // of react. Possibly we should just make a more flexible results screen.
@@ -46,23 +61,112 @@ const requirementKeyToStep = (key: string, isRequirementMet: boolean): Step => {
         title: m.requirementUnmetDeniedByServiceTitle,
         description: m.requirementUnmetDeniedByServiceDescription,
       }
+    case RequirementKey.LocalResidency:
+      return {
+        ...step,
+        title: m.requirementUnmetLocalResidencyTitle,
+        description: m.requirementUnmetLocalResidencyDescription,
+      }
     default:
       throw new Error('Unknown requirement reason - should not happen')
   }
 }
 
+interface UseEligibilityResult {
+  error?: Error
+  eligibility?: ApplicationEligibility
+  loading: boolean
+}
+
+const fakeEligibility = (
+  applicationFor: DrivingLicenseApplicationFor,
+): ApplicationEligibility => {
+  return {
+    isEligible: true,
+    requirements: [
+      ...(applicationFor === B_FULL
+        ? [
+            {
+              key: RequirementKey.DrivingAssessmentMissing,
+              requirementMet: true,
+            },
+            {
+              key: RequirementKey.DrivingSchoolMissing,
+              requirementMet: true,
+            },
+          ]
+        : [
+            {
+              key: RequirementKey.LocalResidency,
+              requirementMet: true,
+            },
+          ]),
+      {
+        key: RequirementKey.DeniedByService,
+        requirementMet: true,
+      },
+    ],
+  }
+}
+
+const useEligibility = (
+  answers: Application['answers'],
+): UseEligibilityResult => {
+  const fakeData = answers.fakeData as DrivingLicenseFakeData | undefined
+  const usingFakeData = fakeData?.useFakeData === YES
+
+  const applicationFor =
+    (answers.applicationFor as DrivingLicenseApplicationFor) || B_FULL
+
+  const { data = {}, error, loading } = useQuery(QUERY, {
+    skip: usingFakeData,
+    variables: {
+      input: {
+        applicationFor,
+      },
+    },
+  })
+
+  if (usingFakeData) {
+    return {
+      loading: false,
+      eligibility: fakeEligibility(applicationFor),
+    }
+  }
+
+  if (error) {
+    console.error(error)
+    // TODO: m.
+    return {
+      loading: false,
+      error: error,
+    }
+  }
+
+  return {
+    loading,
+    eligibility: data.drivingLicenseApplicationEligibility,
+  }
+}
+
 const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
-  const {
-    eligibility: { data: eligibilityData },
-  } = application.externalData
+  const { eligibility, loading, error } = useEligibility(application.answers)
+
   const { setValue } = useFormContext()
 
-  const eligibility = (eligibilityData as unknown) as ApplicationEligibility
-  const steps = extractReasons(eligibility)
-
   useEffect(() => {
-    setValue('requirementsMet', eligibility.isEligible)
-  }, [eligibility, setValue])
+    setValue('requirementsMet', eligibility?.isEligible || false)
+  }, [eligibility?.isEligible, setValue])
+
+  if (loading) {
+    return <Text>Sæki upplýsingar...</Text>
+  }
+
+  if (error || !eligibility) {
+    return <Text>Villa kom upp við að sækja upplýsingar</Text>
+  }
+
+  const requirements = extractReasons(eligibility)
 
   return (
     <Box marginBottom={10}>
@@ -70,15 +174,14 @@ const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
         display={['block', 'block', 'block', 'flex']}
         justifyContent="spaceBetween"
       ></Box>
-
       <Box marginTop={7} marginBottom={8}>
-        {steps.map((step, i) => {
+        {requirements.map((requirement, i) => {
           return (
             <ReviewSection
               key={i}
               application={application}
               index={i + 1}
-              step={step}
+              step={requirement}
             />
           )
         })}

@@ -5,6 +5,7 @@ import Juristictions from './juristictions.json'
 import DrivingAssessment from './drivingAssessment.json'
 import FinishedSchool from './finishedSchool.json'
 import NotFinishedSchool from './notFinishedSchool.json'
+import Teachers from './teachers.json'
 import {
   AkstursmatDto,
   PostNewFinalLicense,
@@ -22,6 +23,10 @@ const url = (path: string) => {
 export const requestHandlers = [
   rest.get(url('/api/okuskirteini/embaetti'), (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(Juristictions))
+  }),
+
+  rest.get(url('/api/okuskirteini/okukennarar'), (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(Teachers))
   }),
 
   rest.get(url('/api/okuskirteini/:nationalId/all'), (req, res, ctx) => {
