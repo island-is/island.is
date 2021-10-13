@@ -7,9 +7,11 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import get from 'lodash/get'
 import { useMutation } from '@apollo/client'
 import {
   Application,
+  Answer,
   ExternalData,
   FormItemTypes,
   FormModes,
@@ -19,7 +21,10 @@ import {
   MessageFormatter,
   mergeAnswers,
   coreMessages,
+  coreErrorMessages,
   BeforeSubmitCallback,
+  getValueViaPath,
+  RecordObject,
 } from '@island.is/application/core'
 import {
   Box,
@@ -47,6 +52,7 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import {
   extractAnswersToSubmitFromScreen,
   findSubmitField,
+  getFieldsWithNoAnswer,
   isJSONObject,
   parseMessage,
 } from '../utils'
@@ -123,30 +129,29 @@ const Screen: FC<ScreenProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const refetch = useContext<() => void>(RefetchContext)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [updateApplication, { loading, error }] = useMutation(
-    UPDATE_APPLICATION,
-    {
-      onError: (e) => {
-        // We only show the error message if it doesn't contains a json data object
-        if (!isJSONObject(e.message)) {
-          return handleError(e.message, formatMessage)
-        }
-      },
+  const [
+    updateApplication,
+    { loading, error: updateApplicationError },
+  ] = useMutation(UPDATE_APPLICATION, {
+    onError: (e) => {
+      // We only show the error message if it doesn't contains a json data object
+      if (!isJSONObject(e.message)) {
+        return handleError(e.message, formatMessage)
+      }
     },
-  )
+  })
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
       onError: (e) => handleError(e.message, formatMessage),
     },
   )
-  const { handleSubmit, errors, reset } = hookFormData
+  const { handleSubmit, errors: formErrors, reset } = hookFormData
   const submitField = useMemo(() => findSubmitField(screen), [screen])
-  const dataSchemaOrApiErrors = isJSONObject(error?.message)
-    ? parseMessage(error?.message)
-    : errors ?? {}
 
+  const [beforeSubmitError, setBeforeSubmitError] = useState({})
   const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
+
   const setBeforeSubmitCallback = useCallback(
     (callback: BeforeSubmitCallback | null) => {
       beforeSubmitCallback.current = callback
@@ -154,24 +159,39 @@ const Screen: FC<ScreenProps> = ({
     [beforeSubmitCallback],
   )
 
+  const parsedUpdateApplicationError =
+    updateApplicationError && isJSONObject(updateApplicationError?.message)
+      ? parseMessage(updateApplicationError.message)
+      : {}
+
+  const dataSchemaOrApiErrors = {
+    ...parsedUpdateApplicationError,
+    ...beforeSubmitError,
+    ...formErrors,
+  }
+
   const goBack = useCallback(() => {
     // using deepmerge to prevent some weird react-hook-form read-only bugs
     reset(deepmerge({}, formValue))
-    setBeforeSubmitCallback(null)
     prevScreen()
-  }, [formValue, prevScreen, reset, setBeforeSubmitCallback])
+  }, [formValue, prevScreen, reset])
 
   const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
     let response
 
     setIsSubmitting(true)
+    setBeforeSubmitError({})
 
     if (typeof beforeSubmitCallback.current === 'function') {
-      const [canContinue] = await beforeSubmitCallback.current()
+      const [canContinue, possibleError] = await beforeSubmitCallback.current()
 
       if (!canContinue) {
         setIsSubmitting(false)
-        // TODO set error message
+
+        if (typeof possibleError === 'string' && screen && screen.id) {
+          setBeforeSubmitError({ [screen.id]: possibleError })
+        }
+
         return
       }
     }
@@ -210,14 +230,16 @@ const Screen: FC<ScreenProps> = ({
         }
       }
     } else {
+      const extractedAnswers = extractAnswersToSubmitFromScreen(
+        mergeAnswers(formValue, data),
+        screen,
+      )
+
       response = await updateApplication({
         variables: {
           input: {
             id: applicationId,
-            answers: extractAnswersToSubmitFromScreen(
-              mergeAnswers(formValue, data),
-              screen,
-            ),
+            answers: extractedAnswers,
           },
           locale,
         },
@@ -226,7 +248,6 @@ const Screen: FC<ScreenProps> = ({
 
     if (response?.data) {
       answerAndGoToNextScreen(data)
-      setBeforeSubmitCallback(null)
     }
 
     setIsSubmitting(false)
@@ -246,7 +267,44 @@ const Screen: FC<ScreenProps> = ({
   useEffect(() => {
     const target = isMobile ? headerHeight : 0
     window.scrollTo(0, target)
-  }, [activeScreenIndex, isMobile])
+
+    if (beforeSubmitCallback.current !== null) {
+      setBeforeSubmitCallback(null)
+    }
+  }, [activeScreenIndex, isMobile, setBeforeSubmitCallback])
+
+  const onUpdateRepeater = async (newRepeaterItems: unknown[]) => {
+    if (!screen.id) {
+      return {}
+    }
+
+    const newData = await updateApplication({
+      variables: {
+        input: {
+          id: applicationId,
+          answers: { [screen.id]: newRepeaterItems },
+        },
+        locale,
+      },
+    })
+
+    if (!!newData && !newData.errors) {
+      answerQuestions(newData.data.updateApplication.answers)
+      reset(
+        deepmerge(
+          {},
+          {
+            ...formValue,
+            [screen.id]: newRepeaterItems as Answer[],
+          },
+        ),
+      )
+    }
+
+    return {
+      errors: newData?.errors,
+    }
+  }
 
   const isLoadingOrPending =
     fieldLoadingState || loading || loadingSubmit || isSubmitting
@@ -275,21 +333,10 @@ const Screen: FC<ScreenProps> = ({
                 application={application}
                 errors={dataSchemaOrApiErrors}
                 expandRepeater={expandRepeater}
+                setBeforeSubmitCallback={setBeforeSubmitCallback}
+                setFieldLoadingState={setFieldLoadingState}
                 repeater={screen}
-                onRemoveRepeaterItem={async (newRepeaterItems) => {
-                  const newData = await updateApplication({
-                    variables: {
-                      input: {
-                        id: applicationId,
-                        answers: { [screen.id]: newRepeaterItems },
-                      },
-                      locale,
-                    },
-                  })
-                  if (!newData.errors) {
-                    answerQuestions(newData.data.updateApplication.answers)
-                  }
-                }}
+                onUpdateRepeater={onUpdateRepeater}
               />
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField
