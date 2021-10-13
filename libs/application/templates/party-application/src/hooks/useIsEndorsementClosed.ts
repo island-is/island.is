@@ -18,6 +18,6 @@ export const useIsClosed = (endorsementListId: string) => {
       },
     },
   )
-  // TODO: change to check if closed date is bigger thann date now
-  return !!endorsement?.endorsementSystemGetSingleEndorsementList?.closedDate
+  const closedDate = endorsement?.endorsementSystemGetSingleEndorsementList?.closedDate
+  return closedDate ? new Date(closedDate) > new Date() : true
 }

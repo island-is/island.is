@@ -16,6 +16,7 @@ import {
 
 import type { Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { environment } from '../../../environments'
 
 const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
 
@@ -98,12 +99,11 @@ export class PartyApplicationService {
     const listId = (application.externalData?.createEndorsementList.data as any)
       .id
     // TODO: change this date when new election
-    const defaultDate = new Date('1992-05-01')
 
     return this.endorsementListApiWithAuth(auth)
       .endorsementListControllerOpen({
         listId,
-        changeEndorsmentListClosedDateDto: { closedDate: defaultDate },
+        changeEndorsmentListClosedDateDto: { closedDate: environment.defaultclosedDate },
       })
       .then(async () => {
         await this.sharedTemplateAPIService.sendEmail(

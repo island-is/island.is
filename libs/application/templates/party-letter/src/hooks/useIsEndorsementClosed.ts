@@ -18,6 +18,6 @@ export const useIsClosed = (endorsementListId: string) => {
       },
     },
   )
-  // TODO: change to check if date now inbetween opened and closed date
-  return !!endorsement?.endorsementSystemGetSingleEndorsementList?.closedDate
+  const closedDate = endorsement?.endorsementSystemGetSingleEndorsementList?.closedDate
+  return closedDate ? new Date(closedDate) > new Date() : true
 }

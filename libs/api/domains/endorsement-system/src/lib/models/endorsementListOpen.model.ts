@@ -6,11 +6,11 @@ export class EndorsementListOpen {
   @Field(() => ID, { nullable: true })
   id?: string
 
-  @Field({ nullable: true })
-  title?: string | null
+  @Field()
+  title!: string
 
   @Field({ nullable: true })
-  description?: string | null
+  description!: string | null
 
   @Field(() => [EndorsementListOpenTagsEnum], { nullable: true })
   tags?: EndorsementListOpenTagsEnum[]

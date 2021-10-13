@@ -15,6 +15,7 @@ import {
   EndorsementListTagsEnum,
 } from './gen/fetch/endorsements'
 import { User, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { environment } from '../../../environments'
 
 const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
 
@@ -25,8 +26,6 @@ const CREATE_ENDORSEMENT_LIST_QUERY = `
     }
   }
 `
-// TODO: change this date when new election
-const defaultClosedDate = new Date('2021-09-15T00:00:00.000Z')
 
 type ErrorResponse = {
   errors: {
@@ -91,7 +90,7 @@ export class PartyLetterService {
     return this.endorsementListApiWithAuth(auth)
       .endorsementListControllerOpen({
         listId,
-        changeEndorsmentListClosedDateDto: { closedDate: defaultClosedDate },
+        changeEndorsmentListClosedDateDto: { closedDate: environment.defaultclosedDate},
       })
       .then(async () => {
         // if we succeed in creating the party letter let the applicant know

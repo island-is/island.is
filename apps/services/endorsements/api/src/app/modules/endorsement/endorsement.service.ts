@@ -174,7 +174,7 @@ export class EndorsementService {
       // this removes validation fields fetched by meta service
       meta: {
         ...meta, // add all allowed metadata fields
-        ...(showName ? {} : { fullName: '' }), // if hideName is true overwrite full name field),
+        ...(showName ? {} : { fullName: '' }), // if showName is false overwrite full name field),
         bulkEndorsement: false, // defaults to false we overwrite this value in bulk import
         showName: showName,
       },
