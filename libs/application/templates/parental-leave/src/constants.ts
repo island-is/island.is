@@ -51,3 +51,5 @@ export enum States {
   VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 }
+
+export const DATE_FORMAT = 'yyyy-MM-dd'

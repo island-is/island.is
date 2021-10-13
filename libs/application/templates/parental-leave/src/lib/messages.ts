@@ -696,12 +696,22 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Hér er tilhögun fæðingarorlofsins þíns',
       description: 'Here is your current leave plan',
     },
+    emptyDescription: {
+      id: 'pl.application:leave.plan.emptyDescription',
+      defaultMessage: 'Nú er komið að því að velja tímabil',
+      description: 'Description when no period has been added',
+    },
     description: {
       id: 'pl.application:leave.plan.description',
       defaultMessage:
         'Þetta eru þau tímabil sem þú hefur nú þegar valið til að haga fæðingarorlofinu þínu. Ef hitt foreldrið hefur samþykkt að deila upplýsingum um tilhögun fæðingarorlofsins síns með þér, þá sjást þau tímabil einnig.',
       description:
         'These are your already selected parental leave periods. If the other parent has agreed to share their period leave information, then those period leaves are visible below.',
+    },
+    addFirst: {
+      id: 'pl.application:periods.add.first',
+      defaultMessage: 'Búa til fyrsta tímabilið',
+      description: 'Create first period',
     },
     addAnother: {
       id: 'pl.application:periods.add.another',
@@ -719,6 +729,23 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Þú hefur náð þeim mörkum sem þú getur tekið fyrir fæðingarorlofinu þínu',
       description:
         'You reached the limit of days you can take for your parental leave',
+    },
+    usage: {
+      id: 'pl.application:period.usage',
+      defaultMessage: 'Þú hefur notað {alreadyUsed} af {rights} dögum',
+      description: 'Copy of how many days are being used and how many are left',
+    },
+    cannotCreatePeriod: {
+      id: 'pl.application:period.cannotCreatePeriod',
+      defaultMessage:
+        'Þú átt bara eftir {daysLeft} daga og lágmarkslengd tímabils eru {minimumNumberOfDays} dagar',
+      description:
+        'Copy to explain why a user cannot add a new period even though there are some days left of rights but they are < minimum number of days',
+    },
+    empty: {
+      id: 'pl.application:period.empty',
+      defaultMessage: 'Ekkert tímabil valið',
+      description: 'Copy when no period has been added',
     },
   }),
 
@@ -1483,10 +1510,30 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Ekki tókst að sækja upplýsingar um börn',
     description: 'Could not fetch child data',
   },
+  periodsFirstPeriodStartDateDefinitionMissing: {
+    id:
+      'pl.application:answerValidators.periodsFirstPeriodStartDateDefinitionMissing',
+    defaultMessage:
+      'Ekki er búið að skilgreina hvernig á að hefja fyrsta tímabil.',
+    description:
+      'Copy for when user has not chosen how to start the first period (expected dob, dob, specific date)',
+  },
+  periodsFirstPeriodStartDateDefinitionInvalid: {
+    id:
+      'pl.application:answerValidators.periodsFirstPeriodStartDateDefinitionInvalid',
+    defaultMessage: 'Skilgreining á upphafi fyrsta tímabils ógild.',
+    description:
+      'Copy for when user has chosen how to start the period but it is invalid',
+  },
   periodsStartDate: {
     id: 'pl.application:answerValidators.periodsStartDate',
     defaultMessage: 'Upphafsdagsetningin er ekki gild.',
     description: 'Copy for invalid start date of the period',
+  },
+  periodsStartMissing: {
+    id: 'pl.application:answerValidators.periodsStartMissing',
+    defaultMessage: 'Upphafsdagsetninginu vantar.',
+    description: 'Copy for when start date is missing',
   },
   periodsStartDateBeforeDob: {
     id: 'pl.application:answerValidators.periodsStartDateBeforeDob',
@@ -1503,6 +1550,25 @@ export const errorMessages = defineMessages({
     id: 'pl.application:answerValidators.periodsStartDateRequired',
     defaultMessage: 'Vinsamlegast veldu upphafsdagsetningu',
     description: 'Start date can not be empty',
+  },
+  periodsStartDateTooLate: {
+    id: 'pl.application:answerValidators.periodsStartDateTooLate',
+    defaultMessage:
+      'Upphafsdagsetning getur ekki verið meira en 23.5 mánuðum eftir áætlaðan fæðingardag',
+    description:
+      'Copy for when end date is more than 23.5 months away from expected date of birth',
+  },
+  periodsEndDateDefinitionMissing: {
+    id: 'pl.application:answerValidators.periodsEndDateDefinitionMissing',
+    defaultMessage: 'Ekki er búið að skilgreina hvernig á að enda tímabil.',
+    description:
+      'Copy for when user has not chosen how to end a period (length or specific date)',
+  },
+  periodsEndDateDefinitionInvalid: {
+    id: 'pl.application:answerValidators.periodsEndDateDefinitionMissing',
+    defaultMessage: 'Ógild skilgreining á endalokum tímabils.',
+    description:
+      'Copy for when user has chosen how to end a period but it was an invalid choice',
   },
   periodsEndDate: {
     id: 'pl.application:answerValidators.periodsEndDate',
@@ -1531,11 +1597,94 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Vinsamlegast veldu lokadagsetningu',
     description: 'End date can not be empty',
   },
+  periodsEndDateTooLate: {
+    id: 'pl.application:answerValidators.periodsEndDateTooLate',
+    defaultMessage:
+      'Endadagsetning getur ekki verið meira en 24 mánuðum eftir áætlaðan fæðingardag',
+    description:
+      'Copy for when end date is more than 24 months away from expected date of birth',
+  },
   periodsRatio: {
     id: 'pl.application:answerValidators.periodsRatio',
     defaultMessage:
       'Lágmarkið er {minPeriodDays} dagar í orlofi, þú hefur valið {diff} daga á {ratio}% sem endar sem aðeins {diffWithRatio} daga leyfi.',
     description: 'Copy when ratio is invalid',
+  },
+  periodsRatioMissing: {
+    id: 'pl.application:answerValidators.periodsRatioMissing',
+    defaultMessage: 'Ekkert hlutfall hefur verið valið',
+    description: 'Copy when days to be used by period is missing',
+  },
+  periodsRatioInvalid: {
+    id: 'pl.application:answerValidators.periodsRatioInvalid',
+    defaultMessage: 'Valið hlutfall er ekki gilt.',
+    description: 'Copy when days to be used by period is missing',
+  },
+  periodsRatioImpossible: {
+    id: 'pl.application:answerValidators.periodsRatioImpossible',
+    defaultMessage:
+      'Ekki næg réttindi til þess að reikna út nýtingu fyrir valið tímabil. Vinsamlegast veldu annað tímabil.',
+    description:
+      'Copy when remaining rights are insufficient to calculate min / max percentages for chosen period',
+  },
+  periodsRatioCalculationImpossible: {
+    id: 'pl.application:answerValidators.periodsRatioCalculationImpossible',
+    defaultMessage:
+      'Ekki er hægt að reikna út hámarks- og lágmarksnýtingu fyrir valið tímabil. Vinsamlegast veldu annað tímabil.',
+    description:
+      'Copy when it is not possible to calculate maxi- and minimum percentage',
+  },
+  periodsRatioPercentageMissing: {
+    id: 'pl.application:answerValidators.periodsRatioPercentageMissing',
+    defaultMessage: 'Ekki tókst að reikna út hámarksnýtingu fyrir tímabil',
+    description: 'Copy when maximum ratio for period is missing',
+  },
+  periodsRatioExceedsMaximum: {
+    id: 'pl.application:answerValidators.periodsRatioExceedsMaximum',
+    defaultMessage:
+      'Nýtingarhlutfall hærra en möguleg hámarksnýting fyrir valið tímabil.',
+    description:
+      'Copy for when user is trying to use a ratio greater than maximum calculated ratio for period.',
+  },
+  periodsRatioBelowMinimum: {
+    id: 'pl.application:answerValidators.periodsRatioBelowMinimum',
+    defaultMessage: 'Minnsta mögulega nýting er 1%',
+    description:
+      'Copy for when user is attempting to choose a ratio below minimum ratio',
+  },
+  periodsRatioAboveMaximum: {
+    id: 'pl.application:answerValidators.periodsRatioAboveMaximum',
+    defaultMessage: 'Mesta mögulega nýting er 100%',
+    description:
+      'Copy for when user is attempting to choose a ratio above maximum ratio',
+  },
+  periodsNotAList: {
+    id: 'pl.application:answerValidators.periodsNotAList',
+    defaultMessage: 'Svar þarf að vera listi af tímabilum',
+    description: 'Copy when periods is not a list',
+  },
+  periodsEmpty: {
+    id: 'pl.application:answerValidators.periodsEmpty',
+    defaultMessage: 'Þú þarft að velja tímabil',
+    description:
+      'Copy when periods list is empty and user is trying to continue',
+  },
+  periodsCouldNotContinue: {
+    id: 'pl.application:answerValidators.periodsCouldNotContinue',
+    defaultMessage: 'Þú þarft að velja tímabil',
+    description:
+      'Copy when periods list is empty and user is trying to continue',
+  },
+  periodsUnexpectedError: {
+    id: 'pl.application:answerValidators.periodsUnexpectedError',
+    defaultMessage: 'Óvænt villa kom upp',
+    description: 'Copy when an unexpected error occurs',
+  },
+  periodsExceedRights: {
+    id: 'pl.application:answerValidators.periodsExceedRights',
+    defaultMessage:
+      'Valin tímabil fara yfir réttindi ({daysUsedByPeriods} > {rights} dagar)',
+    description: 'Copy when total number of days used by periods exceed rights',
   },
   requiredAttachment: {
     id: 'pl.application:errors.required.attachment',
