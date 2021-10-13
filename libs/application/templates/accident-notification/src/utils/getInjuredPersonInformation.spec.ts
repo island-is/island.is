@@ -4,8 +4,8 @@ import { getInjuredPersonInformation } from './getInjuredPersonInformation'
 describe('getInjuredPersonInformation', () => {
   const injuredPersonInformation: FormValue = {
     injuredPersonInformation: {
-      email: 'sigrun@sendiradid.is',
-      name: 'Sigrún Tinna',
+      email: 'kalli@palli.is',
+      name: 'Kalli',
     },
   }
 
@@ -19,12 +19,12 @@ describe('getInjuredPersonInformation', () => {
   it('should return an array of length 4 when submitting on behalf of employee', () => {
     expect(
       getInjuredPersonInformation(injuredPersonInformation)?.email,
-    ).toEqual('sigrun@sendiradid.is')
+    ).toEqual('kalli@palli.is')
   })
 
   it('should return an array of length 5 when not submitting on behalf of employee', () => {
     expect(getInjuredPersonInformation(injuredPersonInformation)?.name).toEqual(
-      'Sigrún Tinna',
+      'Kalli',
     )
   })
 

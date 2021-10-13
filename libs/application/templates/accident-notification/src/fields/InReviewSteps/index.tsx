@@ -9,8 +9,8 @@ import { ReviewSectionState } from '../../types'
 import {
   hasMissingDocuments,
   isHomeActivitiesAccident,
+  isInjuredAndRepresentativeOfCompanyOrInstitute,
   isReportingOnBehalfOfInjured,
-  isRepresentativeOfCompanyOrInstitute,
   returnMissingDocumentsList,
 } from '../../utils'
 import ReviewSection from './ReviewSection'
@@ -47,14 +47,11 @@ export const InReviewSteps: FC<InReviewStepsProps> = ({
   const { formatMessage } = useLocale()
 
   const showMissingDocumentsMessage = (answers: FormValue) => {
-    if (
+    return !!(
       hasMissingDocuments(answers) &&
       ((isReportingOnBehalfOfInjured(answers) && isAssignee) ||
         (!isReportingOnBehalfOfInjured(answers) && !isAssignee))
-    ) {
-      return true
-    }
-    return false
+    )
   }
 
   const goToScreenFunction = (id: string) => {
@@ -80,7 +77,7 @@ export const InReviewSteps: FC<InReviewStepsProps> = ({
         : ReviewSectionState.received,
       title: formatMessage(inReview.documents.title),
       description: formatMessage(inReview.documents.summary),
-      hasActionMessage: showMissingDocumentsMessage(application.answers),
+      hasActionMessage: hasMissingDocuments(answers),
       action: {
         title: formatMessage(inReview.action.documents.title),
         description: formatMessage(inReview.action.documents.description),
@@ -107,7 +104,7 @@ export const InReviewSteps: FC<InReviewStepsProps> = ({
       },
       visible:
         !isHomeActivitiesAccident(application.answers) ||
-        !isRepresentativeOfCompanyOrInstitute(application.answers),
+        !isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers),
     },
     {
       state: statesMap['sjukratrygging'][application.state],

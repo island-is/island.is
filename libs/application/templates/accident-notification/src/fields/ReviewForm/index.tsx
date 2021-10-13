@@ -14,7 +14,7 @@ type InReviewStepsProps = {
 
 export const ReviewForm: FC<FieldBaseProps & InReviewStepsProps> = (props) => {
   const { application, field } = props
-  const isAssignee = field.props.isAssignee || false
+  const isAssignee = !!field.props.isAssignee
   const [state, setState] = useState('inReviewSteps')
 
   const ShowScreen = () => {
