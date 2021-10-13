@@ -38,6 +38,7 @@ const SummaryForm = () => {
   const { user } = useContext(UserContext)
 
   const [isVisible, setIsVisible] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const [formError, setFormError] = useState({
     status: false,
@@ -87,20 +88,22 @@ const SummaryForm = () => {
     if (!form || !user) {
       return
     }
-
+    setIsLoading(true)
     await createApplication(form, user, updateForm)
-      .then((res) => {
+      .then(() => {
+        setIsLoading(false)
         if (navigation?.nextUrl) {
           router.push(navigation.nextUrl)
         }
       })
       .catch((e) => {
+        setIsLoading(false)
         setFormError({
           status: true,
           message: 'Obbobbob einhvað fór úrskeiðis',
         })
 
-        if (e.networkError.statusCode === 400) {
+        if (e.networkError?.statusCode === 400) {
           const findErrorInFormInfo = formInfoOverview.find(
             (el) => el.info === undefined,
           )
@@ -180,7 +183,8 @@ const SummaryForm = () => {
         }}
         previousIsDestructive={true}
         prevButtonText="Hætta við"
-        nextButtonText="Senda umsókn"
+        nextIsLoading={isLoading}
+        nextButtonText={'Senda umsókn'}
         onNextButtonClick={handleNextButtonClick}
       />
     </>

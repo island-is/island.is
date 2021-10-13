@@ -1,9 +1,13 @@
 import React, { useContext } from 'react'
+import { useIntl } from 'react-intl'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
+  isInvestigationCase,
+  isRestrictionCase,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
@@ -15,6 +19,8 @@ import {
   formatCustodyRestrictions,
   NounCases,
 } from '@island.is/judicial-system/formatters'
+import { rulingAccordion as m } from '@island.is/judicial-system-web/messages/Core/rulingAccordion'
+import { rcConfirmation } from '@island.is/judicial-system-web/messages'
 import * as style from './RulingAccordionItem.treat'
 
 interface Props {
@@ -23,6 +29,7 @@ interface Props {
 
 const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
 
   const custodyRestrictions = formatCustodyRestrictions(
     workingCase.accusedGender,
@@ -63,7 +70,18 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         <Box marginBottom={2}>
           <Text>{workingCase.courtLegalArguments}</Text>
         </Box>
-        <Box marginBottom={7}>
+        {isInvestigationCase(workingCase.type) &&
+          workingCase.requestProsecutorOnlySession && (
+            <Box marginY={2}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Beiðni um dómþing að varnaraðila fjarstöddum
+                </Text>
+              </Box>
+              <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
+            </Box>
+          )}
+        <Box marginBottom={5}>
           <Text variant="eyebrow" color="blue400">
             Niðurstaða
           </Text>
@@ -84,12 +102,19 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </Box>
         </Box>
         <Box marginBottom={1}>
-          <Text variant="h3">
+          <Text variant="h5">
             {workingCase?.judge
               ? `${workingCase.judge.name} ${workingCase.judge.title}`
               : `${user?.name} ${user?.title}`}
           </Text>
         </Box>
+        {(isRestrictionCase(workingCase.type) ||
+          workingCase.sessionArrangements !==
+            SessionArrangements.REMOTE_SESSION) && (
+          <Text>
+            Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
+          </Text>
+        )}
       </Box>
       <Box component="section" marginBottom={3}>
         <Box marginBottom={1}>
@@ -98,10 +123,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </Text>
         </Box>
         <Box marginBottom={2}>
-          <Text>
-            Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð
-            þennan til Landsréttar innan þriggja sólarhringa.
-          </Text>
+          <Text>{formatMessage(m.sections.appealDecision.disclaimer)}</Text>
         </Box>
         {workingCase.prosecutorAppealDecision !==
           CaseAppealDecision.NOT_APPLICABLE && (
@@ -116,10 +138,10 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           <Text variant="h4">
             {formatAppeal(
               workingCase.accusedAppealDecision,
-              [CaseType.CUSTODY, CaseType.TRAVEL_BAN].includes(workingCase.type)
+              isRestrictionCase(workingCase.type)
                 ? capitalize(formatAccusedByGender(workingCase.accusedGender))
                 : 'Varnaraðili',
-              [CaseType.CUSTODY, CaseType.TRAVEL_BAN].includes(workingCase.type)
+              isRestrictionCase(workingCase.type)
                 ? workingCase.accusedGender
                 : undefined,
             )}
@@ -136,6 +158,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
                   {`Yfirlýsing um kæru ${formatAccusedByGender(
                     workingCase.accusedGender,
                     NounCases.GENITIVE,
+                    isInvestigationCase(workingCase.type),
                   )}`}
                 </Text>
                 <Text>{workingCase.accusedAppealAnnouncement}</Text>
@@ -167,8 +190,12 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
               </Box>
             )}
             <Text>
-              Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
-              bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+              {formatMessage(
+                rcConfirmation.sections.custodyRestrictions.disclaimer,
+                {
+                  caseType: 'gæsluvarðhaldsins',
+                },
+              )}
             </Text>
           </Box>
         )}
@@ -199,8 +226,12 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
                 </Box>
               )}
               <Text>
-                Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
-                bera atriði er lúta að framkvæmd farbannsins undir dómara.
+                {formatMessage(
+                  rcConfirmation.sections.custodyRestrictions.disclaimer,
+                  {
+                    caseType: 'farbannsins',
+                  },
+                )}
               </Text>
             </Box>
           ))}

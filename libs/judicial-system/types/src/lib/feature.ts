@@ -1,4 +1,4 @@
 export enum Feature {
   NONE = 'NONE', // must be at least one
-  R_CASES = 'R_CASES',
+  POLICE_CASE_FILES = 'POLICE_CASE_FILES',
 }

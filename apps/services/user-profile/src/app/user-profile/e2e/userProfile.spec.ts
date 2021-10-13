@@ -24,17 +24,13 @@ const mockProfile = {
 
 beforeAll(async () => {
   app = await setup({
-    override: (builder) => {
-      builder
-        .overrideGuard(IdsUserGuard)
-        .useValue(
-          new MockAuthGuard({
-            nationalId: mockProfile.nationalId,
-            scope: [UserProfileScope.read, UserProfileScope.write],
-          }),
-        )
-        .compile()
-    },
+    override: (builder) =>
+      builder.overrideGuard(IdsUserGuard).useValue(
+        new MockAuthGuard({
+          nationalId: mockProfile.nationalId,
+          scope: [UserProfileScope.read, UserProfileScope.write],
+        }),
+      ),
   })
 
   emailService = app.get<EmailService>(EmailService)

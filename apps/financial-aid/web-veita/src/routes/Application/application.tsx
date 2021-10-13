@@ -156,7 +156,7 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Sími',
-        content: formatPhoneNumber(application.phoneNumber),
+        content: formatPhoneNumber(application.phoneNumber ?? ''),
         link: 'tel:' + application.phoneNumber,
       },
       {
@@ -271,7 +271,8 @@ const ApplicationProfile = () => {
               setStateModalVisible(isVisibleBoolean)
             }}
             setApplication={setApplication}
-            application={application}
+            applicationId={application.id}
+            currentState={application.state}
             setIsLoading={setIsLoading}
           />
         )}

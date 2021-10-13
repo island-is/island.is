@@ -174,6 +174,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
                 size="small"
                 onClick={cta.onClick}
                 disabled={cta.disabled}
+                icon={cta.icon}
               >
                 {cta.label}
               </Button>

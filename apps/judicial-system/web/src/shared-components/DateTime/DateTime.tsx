@@ -45,7 +45,10 @@ const DateTime: React.FC<Props> = (props) => {
 
   const getTimeFromDate = (date: Date | undefined): string =>
     date
-      ? `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`
+      ? `${date
+          .getHours()
+          .toString()
+          .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
       : ''
 
   const [currentDate, setCurrentDate] = useState(selectedDate)

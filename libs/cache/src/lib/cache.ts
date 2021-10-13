@@ -53,6 +53,7 @@ const getRedisClusterOptions = (
   return {
     keyPrefix: options.noPrefix ? undefined : `${options.name}:`,
     slotsRefreshTimeout: 2000,
+    slotsRefreshInterval: 10000,
     connectTimeout: 5000,
     // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls
     dnsLookup: (address, callback) => callback(null, address, 0),
@@ -77,12 +78,8 @@ const getRedisClusterOptions = (
   }
 }
 
-export const createCache = (options: Options) => {
-  const nodes = parseNodes(options.nodes)
-  logger.info(`Making caching connection with nodes: `, nodes)
-  const client = new Redis.Cluster(nodes, getRedisClusterOptions(options))
-  return new Cache(client)
-}
+export const createCache = (options: Options) =>
+  new Cache(createRedisCluster(options))
 
 export const createApolloCache = (options: Options) => {
   const nodes = parseNodes(options.nodes)

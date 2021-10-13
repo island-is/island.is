@@ -33,6 +33,7 @@ export const NewUser: React.FC = () => {
   const {
     allCourts,
     prosecutorsOffices,
+    prisonInstitutions,
     loading: institutionLoading,
     loaded: institutionLoaded,
   } = useInstitution()
@@ -73,6 +74,7 @@ export const NewUser: React.FC = () => {
           user={user}
           allCourts={allCourts}
           prosecutorsOffices={prosecutorsOffices}
+          prisonInstitutions={prisonInstitutions}
           onSave={createUser}
           loading={createLoading}
         />

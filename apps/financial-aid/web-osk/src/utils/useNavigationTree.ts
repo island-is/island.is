@@ -18,6 +18,11 @@ const useNavigationTree = (hasIncome: boolean) => {
     {
       name: 'Persónuhagir',
       children: [
+        {
+          type: 'SUB_SECTION',
+          name: 'Hjúskaparstaða',
+          url: '/umsokn/hjuskaparstada',
+        },
         { type: 'SUB_SECTION', name: 'Búseta', url: '/umsokn/buseta' },
         { type: 'SUB_SECTION', name: 'Nám', url: '/umsokn/nam' },
         { type: 'SUB_SECTION', name: 'Atvinna', url: '/umsokn/atvinna' },
@@ -30,8 +35,8 @@ const useNavigationTree = (hasIncome: boolean) => {
             { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
             {
               type: 'SUB_SECTION',
-              name: 'Skattframtal',
-              url: '/umsokn/skattframtal',
+              name: 'Skattagögn',
+              url: '/umsokn/skattagogn',
             },
             {
               type: 'SUB_SECTION',
@@ -49,8 +54,8 @@ const useNavigationTree = (hasIncome: boolean) => {
             { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
             {
               type: 'SUB_SECTION',
-              name: 'Skattframtal',
-              url: '/umsokn/skattframtal',
+              name: 'Skattagögn',
+              url: '/umsokn/skattagogn',
             },
             {
               type: 'SUB_SECTION',

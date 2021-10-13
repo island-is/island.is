@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "charts": "scripts/generate-chart-values.sh"
+    "charts": "scripts/generate-chart-values.sh",
+    "cli": "ts-node src/cli/cli.ts"
   },
   "license": "MIT",
   "devDependencies": {
@@ -20,6 +21,6 @@
   "dependencies": {
     "aws-sdk": "2.813.0",
     "js-yaml": "4.0.0",
-    "yargs": "16.2.0"
+    "yargs": "17.2.1"
   }
 }

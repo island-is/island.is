@@ -26,7 +26,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
   const router = useRouter()
 
   return (
-    <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
+    <Box display="flex" justifyContent="spaceBetween" alignItems="center">
       <Button
         variant="ghost"
         disabled={props.previousIsDisabled}

@@ -1,63 +1,64 @@
-import React, { useState } from 'react'
-import { Box, Button } from '@island.is/island-ui/core'
-
-import {
-  NumberInput,
-  CommentInput,
-} from '@island.is/financial-aid-web/veita/src/components'
-
-import { ApplicationState } from '@island.is/financial-aid/shared/lib'
+import React, { ReactNode } from 'react'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { motion } from 'framer-motion'
+import cn from 'classnames'
 
 interface Props {
-  onShowInputChange(event: React.MouseEvent<HTMLButtonElement>): void
-  type: ApplicationState | undefined
-  onSaveState(
-    event: React.MouseEvent<HTMLButtonElement>,
-    amount: number,
-    comment?: string,
-  ): void
+  headline: string
+  onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
+  children: ReactNode
+  onSubmit: () => void
+  submitButtonText: string
+  isModalVisable: boolean
+  hasError: boolean
+  errorMessage: string
 }
 
-const InputModal = ({ onShowInputChange, type, onSaveState }: Props) => {
-  const maximumInputLength = 6
-  const [amount, setAmount] = useState<number>(0)
-
-  const [comment, setComment] = useState<string>()
-
-  const submitButtonText = (
-    type: ApplicationState | undefined,
-  ): string | undefined => {
-    switch (type) {
-      case ApplicationState.REJECTED:
-        return 'Synja'
-      case ApplicationState.APPROVED:
-        return 'Samþykkja'
-    }
-  }
-
+const InputModal = ({
+  headline,
+  children,
+  onCancel,
+  onSubmit,
+  submitButtonText,
+  isModalVisable,
+  hasError,
+  errorMessage,
+}: Props) => {
   return (
-    <Box display="block" width="full" padding={4}>
-      {type === ApplicationState.APPROVED && (
-        <NumberInput
-          placeholder="Skrifaðu upphæð útborgunar"
-          onUpdate={setAmount}
-          maximumInputLength={maximumInputLength}
-        />
-      )}
+    <>
+      {isModalVisable && (
+        <motion.div
+          layoutId="inputmodal"
+          data-testid="modal"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <Text variant="h3" marginBottom={2}>
+            {headline}
+          </Text>
 
-      {type === ApplicationState.REJECTED && (
-        <CommentInput placeholder="Skrifaðu athugasemd" onUpdate={setComment} />
-      )}
+          {children}
 
-      <Box display="flex" justifyContent="spaceBetween" marginTop={5}>
-        <Button variant="ghost" onClick={onShowInputChange}>
-          Hætta við
-        </Button>
-        <Button onClick={(e) => onSaveState(e, amount, comment)}>
-          {submitButtonText(type)}
-        </Button>
-      </Box>
-    </Box>
+          <div
+            className={cn({
+              [`errorMessage `]: true,
+              [`showErrorMessage`]: hasError,
+            })}
+          >
+            <Text color="red600" fontWeight="semiBold" variant="small">
+              {errorMessage}
+            </Text>
+          </div>
+
+          <Box display="flex" justifyContent="spaceBetween" marginTop={5}>
+            <Button variant="ghost" onClick={onCancel}>
+              Hætta við
+            </Button>
+            <Button onClick={onSubmit}>{submitButtonText}</Button>
+          </Box>
+        </motion.div>
+      )}
+    </>
   )
 }
 
