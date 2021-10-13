@@ -146,3 +146,5 @@ export type RepeaterProps = {
   repeater: Repeater
   removeRepeaterItem: (index: number) => void
 }
+
+export type ValidationRecord = { [key: string]: string | ValidationRecord }

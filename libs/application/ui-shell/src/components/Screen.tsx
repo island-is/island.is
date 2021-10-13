@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { useMutation } from '@apollo/client'
+import { ApolloError, useMutation } from '@apollo/client'
 import {
   Application,
   ExternalData,
@@ -37,6 +37,11 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
+import { handleServerError } from '@island.is/application/ui-components'
 
 import { FormScreen, ResolverContext } from '../types'
 import FormMultiField from './FormMultiField'
@@ -70,26 +75,14 @@ type ScreenProps = {
   goToScreen: (id: string) => void
 }
 
-function parseErrorMessage(error: string) {
-  if (!error) {
-    return 'Unknown error'
+const getServerValidationErrors = (error: ApolloError | undefined) => {
+  const problem = findProblemInApolloError(error, [
+    ProblemType.VALIDATION_PROBLEM,
+  ])
+  if (problem && problem.type === ProblemType.VALIDATION_PROBLEM) {
+    return problem.fields
   }
-
-  if (isJSONObject(error)) {
-    const errorObj = JSON.parse(error)
-
-    return errorObj.message ?? error
-  }
-
-  return error
-}
-
-function handleError(error: string, formatMessage: MessageFormatter): void {
-  toast.error(
-    formatMessage(coreMessages.updateOrSubmitError, {
-      error: parseErrorMessage(error),
-    }),
-  )
+  return null
 }
 
 const Screen: FC<ScreenProps> = ({
@@ -127,24 +120,25 @@ const Screen: FC<ScreenProps> = ({
     UPDATE_APPLICATION,
     {
       onError: (e) => {
-        // We only show the error message if it doesn't contains a json data object
-        if (!isJSONObject(e.message)) {
-          return handleError(e.message, formatMessage)
+        // We handle validation problems separately.
+        const problem = findProblemInApolloError(e)
+        if (problem?.type === ProblemType.VALIDATION_PROBLEM) {
+          return
         }
+
+        return handleServerError(e, formatMessage)
       },
     },
   )
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
-      onError: (e) => handleError(e.message, formatMessage),
+      onError: (e) => handleServerError(e, formatMessage),
     },
   )
   const { handleSubmit, errors, reset } = hookFormData
   const submitField = useMemo(() => findSubmitField(screen), [screen])
-  const dataSchemaOrApiErrors = isJSONObject(error?.message)
-    ? parseMessage(error?.message)
-    : errors ?? {}
+  const dataSchemaOrApiErrors = getServerValidationErrors(error) ?? errors ?? {}
 
   const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
   const setBeforeSubmitCallback = useCallback(
