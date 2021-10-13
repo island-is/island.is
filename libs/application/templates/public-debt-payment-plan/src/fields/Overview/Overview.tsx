@@ -36,7 +36,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
     paymentPlan: string
     distribution: Array<PaymentSchedulePayment>
   }>({ paymentPlan: 'one', distribution: [] })
-  const [bankClaimsTotalAmount, setBankClaimsTotlaAmount] = useState<number>(0)
+  const [bankClaimsTotalAmount, setBankClaimsTotalAmount] = useState<number>(0)
   const [
     wageDeductionTotalAmount,
     setWageDeductionTotalAmount,
@@ -80,7 +80,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
         return distribution
       })
       .sort((x, y) => y.length - x.length)
-    setBankClaimsTotlaAmount(totalAmount)
+    setBankClaimsTotalAmount(totalAmount)
     if (distributions) {
       let claimsToTheEmployerDistribution = distributions[0]
       for (const [index, distribution] of distributions.entries()) {
@@ -189,12 +189,12 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
         <AccordionItem
           id="payment-plan-overview-table"
           labelVariant="h3"
-          label="Samtals skuldir"
+          label={formatMessage(overview.accordionItemLabel)}
           visibleContent={
             <>
               <span className={styles.fontWeight}>
-                {formatMessage(overview.totalAmount)}
-              </span>{' '}
+                {formatMessage(overview.accordionTotalAmount)}
+              </span>
               {formatIsk(wageDeductionTotalAmount + bankClaimsTotalAmount)}
             </>
           }

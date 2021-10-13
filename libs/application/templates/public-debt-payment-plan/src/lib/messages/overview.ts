@@ -57,8 +57,13 @@ export const overview = defineMessages({
     defaultMessage: 'Mánaðarlegar greiðslur',
     description: 'Overview monthly payments',
   },
-  totalAmount: {
-    id: `pdpp.application:application.overview.totalAmount`,
+  accordionItemLabel: {
+    id: `pdpp.application:application.overview.accordionItemLabel`,
+    defaultMessage: 'Samtals skuldir',
+    description: 'Accordion item label in the overview',
+  },
+  accordionTotalAmount: {
+    id: `pdpp.application:application.overview.accordionTotalAmount`,
     defaultMessage: 'Heildarupphæð: ',
     description: 'Total amount on all debts',
   },
