@@ -1,6 +1,4 @@
-import { useMutation } from '@apollo/client'
-import { Application, DefaultEvents } from '@island.is/application/core'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { Application } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import React, { FC } from 'react'
@@ -23,8 +21,9 @@ type ReviewSectionProps = {
   description: string
   state?: ReviewSectionState
   hasActionMessage: boolean
-  refetch?: () => void
+  goToScreen: (id: string) => void
   action?: ActionProps
+  visible?: boolean
 }
 
 const ReviewSection: FC<ReviewSectionProps> = ({
@@ -34,14 +33,13 @@ const ReviewSection: FC<ReviewSectionProps> = ({
   state,
   hasActionMessage,
   action,
-  refetch,
+  goToScreen,
+  visible = true,
 }) => {
-  const [submitApplication, { loading: loadingSubmit }] = useMutation(
-    SUBMIT_APPLICATION,
-    {
-      onError: (e) => console.error(e.message),
-    },
-  )
+  const handleButtonClick = () =>
+    goToScreen(action?.showAlways ? 'uploadDocuments' : 'overview')
+
+  if (!visible) return null
 
   return (
     <Box
@@ -75,24 +73,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
                   size="small"
                   type="button"
                   variant="text"
-                  loading={loadingSubmit}
-                  disabled={loadingSubmit}
-                  onClick={async () => {
-                    const res = await submitApplication({
-                      variables: {
-                        input: {
-                          id: application.id,
-                          event: DefaultEvents.EDIT,
-                          answers: application.answers,
-                        },
-                      },
-                    })
-
-                    if (res?.data) {
-                      // Takes them to the next state (which loads the relevant form)
-                      refetch?.()
-                    }
-                  }}
+                  onClick={handleButtonClick}
                 >
                   {action.actionButtonTitle}
                 </Button>
@@ -130,26 +111,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
                 size="small"
                 type="button"
                 variant="text"
-                loading={loadingSubmit}
-                disabled={loadingSubmit}
-                onClick={async () => {
-                  const res = await submitApplication({
-                    variables: {
-                      input: {
-                        id: application.id,
-                        event: action.showAlways
-                          ? DefaultEvents.EDIT
-                          : DefaultEvents.SUBMIT,
-                        answers: application.answers,
-                      },
-                    },
-                  })
-
-                  if (res?.data) {
-                    // Takes them to the next state (which loads the relevant form)
-                    refetch?.()
-                  }
-                }}
+                onClick={handleButtonClick}
               >
                 {action.actionButtonTitle}
               </Button>
