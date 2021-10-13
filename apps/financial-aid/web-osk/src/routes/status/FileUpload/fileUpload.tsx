@@ -25,11 +25,11 @@ import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
 
 import { Routes } from '@island.is/financial-aid/shared/lib'
 import cn from 'classnames'
-import { ApplicationContext } from '@island.is/financial-aid-web/osk/src/components/ApplicationProvider/ApplicationProvider'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
-  const { myApplication } = useContext(ApplicationContext)
+  const { myApplication } = useContext(AppContext)
 
   const fileComment = useMemo(() => {
     if (myApplication?.applicationEvents) {

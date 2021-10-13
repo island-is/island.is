@@ -8,10 +8,10 @@ import {
 import * as styles from './summary.treat'
 import cn from 'classnames'
 
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const UserInfo = () => {
-  const { user } = useContext(UserContext)
+  const { user } = useContext(AppContext)
 
   // TODO when þjóðskrá is up and running
   return (

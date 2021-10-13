@@ -21,12 +21,12 @@ import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
-import { ApplicationContext } from '@island.is/financial-aid-web/osk/src/components/ApplicationProvider/ApplicationProvider'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const MainPage = () => {
   const logOut = useLogOut()
 
-  const { myApplication, loading, error } = useContext(ApplicationContext)
+  const { myApplication, loading, error } = useContext(AppContext)
 
   return (
     <>
