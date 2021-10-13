@@ -44,7 +44,7 @@ const useApplication = () => {
             input: {
               nationalId: user?.nationalId,
               name: user?.name,
-              phoneNumber: user?.phoneNumber,
+              phoneNumber: form?.phoneNumber,
               email: form?.emailAddress,
               homeCircumstances: form?.homeCircumstances,
               homeCircumstancesCustom: form?.homeCircumstancesCustom,

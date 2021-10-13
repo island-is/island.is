@@ -140,6 +140,7 @@ const FileUpload = () => {
           header="Senda inn gögn"
           fileKey="otherFiles"
           uploadFiles={form.otherFiles}
+          hasError={error && form?.otherFiles.length <= 0}
         />
 
         <Text as="h2" variant="h3" marginBottom={[2, 2, 3]}>
@@ -163,17 +164,6 @@ const FileUpload = () => {
             }}
           />
         </Box>
-
-        <div
-          className={cn({
-            [`errorMessage`]: true,
-            [`showErrorMessage`]: error && form?.otherFiles.length <= 0,
-          })}
-        >
-          <Text color="red600" fontWeight="semiBold" variant="small">
-            Það vantar gögn
-          </Text>
-        </div>
       </ContentContainer>
 
       <Footer
