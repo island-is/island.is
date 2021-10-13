@@ -1,5 +1,6 @@
 import {
   Application,
+  ApplicationEventType,
   ApplicationState,
   getState,
 } from '@island.is/financial-aid/shared/lib'
@@ -43,7 +44,11 @@ const ApplicationHeader = ({
   const assignEmployee = async () => {
     setIsLoading(true)
 
-    await changeApplicationState(application.id, application.state)
+    await changeApplicationState(
+      application.id,
+      application.state,
+      ApplicationEventType.ASSIGNCASE,
+    )
       .then((updatedApplication) => {
         setApplication(updatedApplication)
         setIsLoading(false)

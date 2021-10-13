@@ -13,7 +13,9 @@ import {
 
 import {
   Application,
+  ApplicationEventType,
   ApplicationState,
+  eventTypeFromApplicationState,
 } from '@island.is/financial-aid/shared/lib'
 import { useApplicationState } from '../../utils/useApplicationState'
 import StateModalContainer from './StateModalContainer'
@@ -53,6 +55,7 @@ const StateModal = ({
     await changeApplicationState(
       applicationId,
       state,
+      eventTypeFromApplicationState[state],
       amount,
       rejection,
       comment,
