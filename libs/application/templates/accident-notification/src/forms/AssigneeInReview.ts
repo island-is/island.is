@@ -7,8 +7,8 @@ import {
 import Logo from '../assets/Logo'
 import { inReview } from '../lib/messages'
 
-export const InReview: Form = buildForm({
-  id: 'InReview',
+export const AssigneeInReview: Form = buildForm({
+  id: 'AssigneeInReview',
   title: inReview.general.formTitle,
   logo: Logo,
   children: [
@@ -16,11 +16,16 @@ export const InReview: Form = buildForm({
       id: 'review',
       title: '',
       children: [
-        buildCustomField({
-          id: 'ReviewForm',
-          title: '',
-          component: 'ReviewForm',
-        }),
+        buildCustomField(
+          {
+            id: 'ReviewForm',
+            title: '',
+            component: 'ReviewForm',
+          },
+          {
+            isAssignee: true,
+          },
+        ),
       ],
     }),
   ],
