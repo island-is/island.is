@@ -1,4 +1,4 @@
-import { Application, FormValue } from '@island.is/application/core'
+import { Application } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
@@ -10,7 +10,6 @@ import {
   hasMissingDocuments,
   isHomeActivitiesAccident,
   isInjuredAndRepresentativeOfCompanyOrInstitute,
-  isReportingOnBehalfOfInjured,
   returnMissingDocumentsList,
 } from '../../utils'
 import ReviewSection from './ReviewSection'
@@ -46,14 +45,6 @@ export const InReviewSteps: FC<InReviewStepsProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  const showMissingDocumentsMessage = (answers: FormValue) => {
-    return !!(
-      hasMissingDocuments(answers) &&
-      ((isReportingOnBehalfOfInjured(answers) && isAssignee) ||
-        (!isReportingOnBehalfOfInjured(answers) && !isAssignee))
-    )
-  }
-
   const goToScreenFunction = (id: string) => {
     setState(id)
   }
@@ -77,7 +68,7 @@ export const InReviewSteps: FC<InReviewStepsProps> = ({
         : ReviewSectionState.received,
       title: formatMessage(inReview.documents.title),
       description: formatMessage(inReview.documents.summary),
-      hasActionMessage: hasMissingDocuments(answers),
+      hasActionMessage: hasMissingDocuments(application.answers),
       action: {
         title: formatMessage(inReview.action.documents.title),
         description: formatMessage(inReview.action.documents.description),
