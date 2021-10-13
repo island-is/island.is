@@ -13,6 +13,7 @@ import {
   NotificationType,
   isRestrictionCase,
   UserRole,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -35,9 +36,9 @@ export const Requests: React.FC = () => {
   const isJudge = user?.role === UserRole.JUDGE
   const isRegistrar = user?.role === UserRole.REGISTRAR
   const isHighCourtUser = user?.institution?.type === InstitutionType.HIGH_COURT
-  const isPrisonStaffUser =
-    user?.institution?.type === InstitutionType.PRISON_ADMIN ||
-    user?.institution?.type === InstitutionType.PRISON
+  const isPrisonAdminUser =
+    user?.institution?.type === InstitutionType.PRISON_ADMIN
+  const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
 
   const { data, error, loading } = useQuery(CasesQuery, {
     fetchPolicy: 'no-cache',
@@ -66,8 +67,11 @@ export const Requests: React.FC = () => {
             : // Judges and registrars should see all cases except cases with status code NEW.
             isJudge || isRegistrar
             ? ![...completedCaseStates, CaseState.NEW].includes(c.state)
-            : isPrisonStaffUser
-            ? [CaseState.ACCEPTED].includes(c.state) &&
+            : isPrisonAdminUser
+            ? c.state === CaseState.ACCEPTED && !c.isValidToDateInThePast
+            : isPrisonUser
+            ? c.type === CaseType.CUSTODY &&
+              c.state === CaseState.ACCEPTED &&
               !c.isValidToDateInThePast
             : null
         }),
@@ -75,7 +79,7 @@ export const Requests: React.FC = () => {
 
       setPastCases(
         casesWithoutDeleted.filter((c: Case) => {
-          return isPrisonStaffUser
+          return isPrisonAdminUser
             ? [CaseState.ACCEPTED].includes(c.state) && c.isValidToDateInThePast
             : completedCaseStates.includes(c.state)
         }),
@@ -88,7 +92,8 @@ export const Requests: React.FC = () => {
     isJudge,
     isRegistrar,
     resCases,
-    isPrisonStaffUser,
+    isPrisonAdminUser,
+    isPrisonUser,
   ])
 
   const deleteCase = async (caseToDelete: Case) => {
@@ -201,7 +206,7 @@ export const Requests: React.FC = () => {
               </Box>
               <Box marginBottom={15}>
                 {activeCases && activeCases.length > 0 ? (
-                  isPrisonStaffUser ? (
+                  isPrisonUser || isPrisonAdminUser ? (
                     <PastRequests
                       cases={activeCases}
                       onRowClick={() => {
