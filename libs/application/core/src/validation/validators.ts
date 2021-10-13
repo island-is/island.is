@@ -158,7 +158,7 @@ export const buildValidationError = (
 ): ((
   message: StaticText,
   field?: string,
-  values?: RecordObject<any>,
+  values?: RecordObject<unknown>,
 ) => AnswerValidationError) => (message, field, values) => {
   if (field && isNumber(index)) {
     return {

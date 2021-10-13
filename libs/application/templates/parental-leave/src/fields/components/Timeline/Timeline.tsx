@@ -17,6 +17,7 @@ export interface TimelinePeriod {
   title: string
   color?: string
   canDelete?: boolean
+  rawIndex: number
 }
 
 interface TimelineProps {
@@ -26,14 +27,14 @@ interface TimelineProps {
   spanInMonths?: number
   title: string
   titleSmall?: string
-  onDeletePeriod?: (index: number) => void
+  onDeletePeriod?: (startDate: string) => void
 }
 
 export const Timeline: FC<TimelineProps> = ({
   editable = true,
   initDate,
   periods,
-  spanInMonths = 18,
+  spanInMonths = 24,
   title,
   titleSmall,
   onDeletePeriod,
