@@ -35,6 +35,7 @@ export interface Form {
   fileUploadComment?: string
   familyStatus?: FamilyStatus
   spouse?: Spouse
+  phoneNumber?: string
 }
 
 export const initialState = {
