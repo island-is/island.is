@@ -1,25 +1,19 @@
 import gql from 'graphql-tag'
 import {
   EndorsementList,
-  EndorsementListOpenTagsEnum,
   Endorsement,
   TemporaryVoterRegistry,
 } from '../types/schema'
 
 import { useQuery } from '@apollo/client'
 
-export type RegionsPetitionList = Pick<EndorsementList, 'id'> & {
-  tags: EndorsementListOpenTagsEnum[]
-}
-
-export type UserEndorsement = Pick<Endorsement, 'id'>
 export type UserVoterRegion = Pick<
   TemporaryVoterRegistry,
   'regionNumber' | 'regionName'
 >
 
 interface UserEndorsementsResponse {
-  endorsementSystemUserEndorsements: any
+  endorsementSystemUserEndorsements: any //TODO: update with new schemes when they are ready
 }
 interface PetitionListResponse {
   endorsementSystemFindEndorsementLists: any

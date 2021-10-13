@@ -106,7 +106,7 @@ const Petitions = () => {
           {formatMessage(m.petition.closedListsSignedByMe)}
         </Text>
 
-        {/*{!!userLists.length && (
+        {!!userLists.length && (
           <Stack space={4}>
             {userLists.map((list: any) => {
               return (
@@ -138,7 +138,7 @@ const Petitions = () => {
               )
             })}
           </Stack>
-          )}*/}
+          )}
       </Box>
     </Box>
   )

@@ -200,11 +200,6 @@ const ViewPetition = () => {
               title="Sækja lista"
               variant="text"
             />
-            {/*<Box marginLeft={5}>
-              <Button icon="mail" iconType="outline" variant="text">
-                Senda lista
-              </Button>
-            </Box>*/}
           </Box>
         </Box>
       )}
