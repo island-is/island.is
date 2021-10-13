@@ -9,9 +9,9 @@ import {
 import { useRouter } from 'next/router'
 import { ApolloError } from 'apollo-client'
 
-import useMuncipality from '@island.is/financial-aid-web/osk/src/utils/useMuncipality'
-import useMyApplication from '@island.is/financial-aid-web/osk/src/utils/useMyApplication'
-import useUser from '@island.is/financial-aid-web/osk/src/utils/useUser'
+import useMuncipality from '@island.is/financial-aid-web/osk/src/utils/hooks/useMuncipality'
+import useMyApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useMyApplication'
+import useUser from '@island.is/financial-aid-web/osk/src/utils/hooks/useUser'
 import { ServiceCenter } from '@island.is/financial-aid/shared/data'
 
 interface AppProvider {

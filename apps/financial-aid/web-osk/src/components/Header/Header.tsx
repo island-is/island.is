@@ -11,7 +11,7 @@ import Link from 'next/link'
 
 import * as styles from './Header.treat'
 
-import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { Routes } from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 

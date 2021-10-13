@@ -17,11 +17,11 @@ import { useRouter } from 'next/router'
 import * as styles from './summaryForm.treat'
 import cn from 'classnames'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
-import useApplication from '@island.is/financial-aid-web/osk/src/utils/useApplication'
+import useApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useApplication'
 
 import {
   Employment,

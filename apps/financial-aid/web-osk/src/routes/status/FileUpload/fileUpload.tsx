@@ -7,7 +7,7 @@ import {
   ContentContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/useFileUpload'
+import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/hooks/useFileUpload'
 import {
   Application,
   ApplicationEventType,
