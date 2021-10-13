@@ -176,12 +176,12 @@ export const ThirdPartyFormOverview: FC<FieldBaseProps> = ({
                 />
               </GridColumn>
               {isProfessionalAthleteAccident(answers as FormValue) &&
-                workplaceData.info.employee && (
+                workplaceData.info.onPayRoll && (
                   <GridColumn span="12/12">
                     <ValueLine
                       label={sportsClubInfo.employee.sectionTitle}
                       value={
-                        workplaceData.info.employee.radioButton === YES
+                        workplaceData.info.onPayRoll.answer === YES
                           ? applicationMessages.general.yesOptionLabel
                           : applicationMessages.general.noOptionLabel
                       }
