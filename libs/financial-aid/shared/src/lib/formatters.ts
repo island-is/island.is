@@ -4,6 +4,7 @@ import {
   Employment,
   ApplicationEventType,
   ApplicationStateUrl,
+  FileType,
 } from './enums'
 import type { KeyMapping } from './types'
 
@@ -94,6 +95,12 @@ export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
   InProgress: 'InProgress',
   Rejected: 'Rejected',
   Approved: 'Approved',
+}
+
+export const getFileTypeName: KeyMapping<FileType, string> = {
+  TaxReturn: 'Skattframtal',
+  Income: 'Tekjugögn',
+  Other: 'Innsend gögn',
 }
 
 export const aidCalculator = (

@@ -141,7 +141,7 @@ export class ApplicationService {
       eventType: ApplicationEventType[appModel.state.toUpperCase()],
     })
 
-    if (appModel.files) {
+    if (application.files) {
       const promises = application.files.map((f) => {
         return this.fileService.createFile({
           applicationId: appModel.id,
