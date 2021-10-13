@@ -1,4 +1,4 @@
-# Service Portal Íslykill settings
+# Service Portal Íslykill Settings
 
 This library was generated with [Nx](https://nx.dev).
 
