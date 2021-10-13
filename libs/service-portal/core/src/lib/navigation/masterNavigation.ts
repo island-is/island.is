@@ -53,7 +53,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.endorsementsAdmin,
         path: ServicePortalPath.PetitionsAdminView,
         icon: {
-          type: 'filled',
+          type: 'outline',
           icon: 'document',
         },
       },

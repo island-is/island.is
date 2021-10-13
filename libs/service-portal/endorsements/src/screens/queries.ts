@@ -93,6 +93,7 @@ const GET_REGION_ENDORSEMENTS = gql`
     }
   }
 `
+
 export const GetSinglePetitionList = gql`
   query endorsementSystemGetSingleEndorsementList(
     $input: FindEndorsementListInput!
@@ -101,6 +102,7 @@ export const GetSinglePetitionList = gql`
       meta
       title
       description
+      owner
     }
   }
 `

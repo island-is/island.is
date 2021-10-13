@@ -1,8 +1,8 @@
 export const list = {
   til: '05.08.2021',
-  owner: 'Ábyrgðamaður Jónsson',
+  owner: 'Ábyrgðarmaður Jónsson',
   description:
-    'Við undirrituð mótmælum þeirri ákvörðun ríkisstjórnarinnar að setja alla sem til Íslands koma í sóttkví og viðbótarskimun, burtséð frá því hvort fólk er smitað eða ekki. Í sumar hafa minna en 0.1% ferðamanna reynst smitaðir. Seinni skimun mun því litlu við bæta en mun aftur á móti valda óásættanlegum skaða. Aðgerðin mun orsaka atvinnuleysi tugþúsunda Íslendinga með tilheyrandi efnahagslegum hamförum af mannavöldum. Við krefjumst því þess að yfirvöld falli frá þessari skaðlegu stefnu og beiti aðeins sóttvarnaraðgerðum sem hægt er að viðhalda til langs tíma án þess að valda óbætanlegu samfélagstjóni.',
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis bibendum in turpis in egestas. Donec egestas congue egestas. Fusce eu nulla imperdiet, rhoncus eros id, mattis urna. Pellentesque nec nibh nunc. Nullam erat augue, pretium dignissim lorem vitae, accumsan consectetur turpis. Suspendisse a luctus eros. Vivamus varius sapien ac venenatis tincidunt. Maecenas sed luctus tellus, a elementum neque. Donec ultricies orci congue, rutrum sapien quis, suscipit neque. Mauris ac finibus purus.',
   signedPetitions: [
     {
       kt: 1,
@@ -12,17 +12,17 @@ export const list = {
     {
       kt: 2,
       signed: '23.01.2021',
-      name: 'Elín Eddudóttir',
+      name: 'Meðmælandi 2',
     },
     {
       kt: 3,
       signed: '23.01.2021',
-      name: 'Ari Jónsson	',
+      name: 'Meðmælandi 3',
     },
     {
       kt: 4,
       signed: '23.01.2021',
-      name: 'Anita Valgeirs',
+      name: 'Meðmælandi 4',
     },
   ],
 }

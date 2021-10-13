@@ -82,29 +82,26 @@ const ViewPetition = () => {
         width={viewTypeEdit ? 'half' : 'full'}
       >
         {!viewTypeEdit && (
-          <>
-            <Box>
-              <Text variant="h4">{formatMessage(m.viewPetition.openTil)}</Text>
-              <Text variant="default" marginBottom={3}>
-                {list.til}
-              </Text>
-            </Box>
-
-            <Box>
-              <Text variant="h4">
-                {formatMessage(m.viewPetition.listOwner)}
-              </Text>
-              <Text variant="default" marginBottom={3}>
-                {list.owner}
-              </Text>
-            </Box>
-          </>
+          <Box>
+            <Text variant="h4">{formatMessage(m.viewPetition.openTil)}</Text>
+            <Text variant="default" marginBottom={3}>
+              {list.til}
+            </Text>
+          </Box>
         )}
 
         <Box>
           <Text variant="h4">{formatMessage(m.viewPetition.numberSigned)}</Text>
           <Text variant="default" marginBottom={3}>
             {list.signedPetitions.length}
+          </Text>
+        </Box>
+        <Box>
+          <Text variant="h4">
+            {formatMessage(m.viewPetition.listOwner)}
+          </Text>
+          <Text variant="default" marginBottom={3}>
+            {list.owner}
           </Text>
         </Box>
       </Box>
