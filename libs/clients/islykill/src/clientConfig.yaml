@@ -5,7 +5,7 @@ info:
   description: Islyklar API
   contact:
     name: Islyklar API
-    url: 'https://island.is'
+    url: https://island.is
     email: island@island.is
   version: v1
 host: profun.island.is
@@ -17,7 +17,7 @@ consumes:
 produces:
   - application/json
 paths:
-  '/api/Islyklar/{ssn}':
+  /api/Islyklar/{ssn}:
     get:
       tags:
         - Islyklar
@@ -68,6 +68,32 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResult'
   /api/Islyklar:
+    put:
+      tags:
+        - Islyklar
+      operationId: Islyklar_Put
+      parameters:
+        - name: user
+          in: body
+          schema:
+            $ref: '#/definitions/PublicUser'
+          x-nullable: true
+      responses:
+        '200':
+          x-nullable: false
+          description: ''
+          schema:
+            $ref: '#/definitions/PublicUser'
+        '400':
+          x-nullable: false
+          description: ''
+          schema:
+            $ref: '#/definitions/ErrorResult'
+        '404':
+          x-nullable: false
+          description: ''
+          schema:
+            $ref: '#/definitions/ErrorResult'
     post:
       tags:
         - Islyklar
@@ -86,35 +112,9 @@ paths:
           description: ''
           schema:
             $ref: '#/definitions/ErrorResult'
-        '404':
-          x-nullable: false
-          description: ''
-          schema:
-            $ref: '#/definitions/ErrorResult'
-    put:
-      tags:
-        - Islyklar
-      operationId: Islyklar_Put
-      parameters:
-        - name: user
-          in: body
-          schema:
-            $ref: '#/definitions/PublicUser'
-          x-nullable: true
-      responses:
-        '200':
-          description: ''
-        '400':
-          x-nullable: false
-          description: ''
-          schema:
-            $ref: '#/definitions/ErrorResult'
 definitions:
   PublicUser:
     type: object
-    required:
-      - CanNudge
-      - OnlyCert
     properties:
       Ssn:
         type: string

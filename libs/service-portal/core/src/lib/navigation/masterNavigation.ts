@@ -249,10 +249,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             ],
           },
           {
-            name: defineMessage({
-              id: 'service.portal:islykill',
-              defaultMessage: 'Íslykill',
-            }),
+            name: m.islykill,
             path: ServicePortalPath.SettingsIslykill,
           },
         ],

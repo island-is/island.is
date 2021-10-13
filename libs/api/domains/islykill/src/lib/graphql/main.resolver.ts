@@ -30,7 +30,7 @@ export class IslykillSettings {
   @Field({ description: 'Bank info', nullable: true })
   bankInfo?: string
 
-  @Field({ description: 'Datetime of last login' })
+  @Field({ description: 'Datetime of last login', nullable: true })
   lastLogin?: string
 
   @Field({ description: 'Datetime of next to last login', nullable: true })

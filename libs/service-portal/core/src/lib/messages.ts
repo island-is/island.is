@@ -561,4 +561,8 @@ export const m = defineMessages({
     id: 'service.portal:endpoint',
     defaultMessage: 'Endapunktur',
   },
+  islykill: {
+    id: 'service.portal:islykill',
+    defaultMessage: 'Íslykill',
+  },
 })
