@@ -241,7 +241,7 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
           size: PERPAGE,
           page,
           fuzzy: true,
-          fuzzyFactor: 2,
+          fuzzyFactor: 3,
         },
       },
     }),
