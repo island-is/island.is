@@ -57,7 +57,7 @@ export const LanguageToggler = ({
           return Router.push(linkResolver(type, [slug], otherLanguage).href)
         }
 
-        return Router.push(linkResolver('homepage').href)
+        return Router.push(linkResolver('homepage', [], otherLanguage).href)
       })
     }
   }
