@@ -9,14 +9,15 @@ import { RskCompanyClassification } from './models/rskCompanyClassification.mode
 import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 import { fromCursorHash, toCursorHash } from '../rsk-company-info.utils'
 import { PageResult } from './types/pageResult'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @Injectable()
 export class RskCompanyInfoService {
   constructor(
     private rskCompanyInfoApi: CompanyApi,
     @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
+    private logger: Logger,
   ) {}
 
   async getCompanyInformationWithExtra(

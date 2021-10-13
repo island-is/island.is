@@ -7,7 +7,8 @@ import { RskCompanyInfoService } from './rsk-company-info.service'
 import { RskCompanyInfoInput } from './dto/RskCompanyInfo.input'
 import { RskCompanyInfoSearchInput } from './dto/RskCompanyInfoSearch.input'
 import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => RskCompany)
@@ -15,14 +16,14 @@ export class RskCompanyInfoResolver {
   constructor(
     private rskCompanyInfoService: RskCompanyInfoService,
     @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
+    private logger: Logger,
   ) {}
 
   @Query(() => RskCompany, {
     name: 'rskCompany',
     nullable: true,
   })
-  @Audit()
+  // @Audit()
   async companyInformation(
     @Args('input', { type: () => RskCompanyInfoInput })
     input: RskCompanyInfoInput,
