@@ -12,7 +12,7 @@ describe('getWorkplaceData', () => {
 
   const professionalAthleteAccident: FormValue = {
     accidentType: { radioButton: AccidentTypeEnum.SPORTS },
-    sportsClubInfo: { employee: { radioButton: YES } },
+    sportsClubInfo: { onPayRoll: { answer: YES } },
   }
 
   const rescueWorkAccident: FormValue = {
