@@ -90,7 +90,9 @@ export class PartyLetterService {
     return this.endorsementListApiWithAuth(auth)
       .endorsementListControllerOpen({
         listId,
-        changeEndorsmentListClosedDateDto: { closedDate: environment.defaultclosedDate},
+        changeEndorsmentListClosedDateDto: {
+          closedDate: environment.defaultclosedDate,
+        },
       })
       .then(async () => {
         // if we succeed in creating the party letter let the applicant know

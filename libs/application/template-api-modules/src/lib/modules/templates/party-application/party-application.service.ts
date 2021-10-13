@@ -103,7 +103,9 @@ export class PartyApplicationService {
     return this.endorsementListApiWithAuth(auth)
       .endorsementListControllerOpen({
         listId,
-        changeEndorsmentListClosedDateDto: { closedDate: environment.defaultclosedDate },
+        changeEndorsmentListClosedDateDto: {
+          closedDate: environment.defaultclosedDate,
+        },
       })
       .then(async () => {
         await this.sharedTemplateAPIService.sendEmail(
