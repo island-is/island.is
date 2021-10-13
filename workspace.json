@@ -3415,7 +3415,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
             "tsConfig": [
