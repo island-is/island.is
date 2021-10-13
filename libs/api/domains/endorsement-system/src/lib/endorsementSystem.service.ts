@@ -124,7 +124,7 @@ async endorsementControllerGetGeneralPetitionEndorsements(
   input: EndorsementListControllerGetGeneralPetitionListRequest,
   ) {
   return await this.endorsementApi
-    .endorsementControllerFindAll(input)
+    .endorsementControllerFind(input)
     .catch(this.handleError.bind(this))
   }
 
