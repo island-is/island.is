@@ -1,4 +1,10 @@
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
+import parseISO from 'date-fns/parseISO'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import differenceInDays from 'date-fns/differenceInDays'
+import round from 'lodash/round'
 
 import {
   Application,
@@ -23,7 +29,10 @@ import {
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
-import { daysToMonths } from '../lib/directorateOfLabour.utils'
+import {
+  calculatePeriodLength,
+  daysToMonths,
+} from '../lib/directorateOfLabour.utils'
 import {
   ChildInformation,
   ChildrenAndExistingApplications,
@@ -60,24 +69,24 @@ export function getNameAndIdOfSpouse(
   return [spouse.fullName, spouse.nationalId]
 }
 
-export function getEstimatedMonthlyPay(application: Application): number {
-  // TODO read this value from external data when APIs have arrived
-  return 384000
-}
-
 // TODO: Once we have the data, add the otherParentPeriods here.
 export function formatPeriods(
   application: Application,
   formatMessage: FormatMessage,
 ): TimelinePeriod[] {
-  const { periods } = getApplicationAnswers(application.answers)
+  const { periods, firstPeriodStart } = getApplicationAnswers(
+    application.answers,
+  )
   const timelinePeriods: TimelinePeriod[] = []
 
   periods?.forEach((period, index) => {
     const isActualDob =
-      index === 0 &&
-      application.answers.firstPeriodStart ===
-        StartDateOptions.ACTUAL_DATE_OF_BIRTH
+      index === 0 && firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
+
+    const calculatedLength = calculatePeriodLengthInMonths(
+      period.startDate,
+      period.endDate,
+    ).toString()
 
     if (isActualDob) {
       timelinePeriods.push({
@@ -85,12 +94,13 @@ export function formatPeriods(
         startDate: period.startDate,
         endDate: period.endDate,
         ratio: period.ratio,
-        duration: period.duration,
+        duration: calculatedLength,
         canDelete: true,
         title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
           index: index + 1,
           ratio: period.ratio,
         }),
+        rawIndex: period.rawIndex ?? index,
       })
     }
 
@@ -99,12 +109,13 @@ export function formatPeriods(
         startDate: period.startDate,
         endDate: period.endDate,
         ratio: period.ratio,
-        duration: period.duration,
+        duration: calculatedLength,
         canDelete: true,
         title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
           index: index + 1,
           ratio: period.ratio,
         }),
+        rawIndex: period.rawIndex ?? index,
       })
     }
   })
@@ -262,15 +273,6 @@ export const getAllPeriodDates = (periods: Period[]) => {
   return dates.map((d) => new Date(d))
 }
 
-export const createRange = <T>(
-  length: number,
-  output: (index: number) => T,
-): T[] => {
-  return Array(length)
-    .fill(1)
-    .map((_, i) => output(i))
-}
-
 export const getSelectedChild = (
   answers: FormValue,
   externalData: ExternalData,
@@ -301,24 +303,6 @@ export const isEligibleForParentalLeave = (
   )
 }
 
-export const calculateDaysToPercentage = (
-  application: Application,
-  days: number,
-) => {
-  const numberOfDaysInRights = getAvailableRightsInDays(application)
-
-  if (days <= numberOfDaysInRights) {
-    return 100
-  }
-
-  return Math.min(
-    100,
-    // We don't want to over estimate the percentage and end up with
-    // invalid period length
-    Math.floor((numberOfDaysInRights / days) * 100),
-  )
-}
-
 export const getPeriodIndex = (field?: Field) => {
   const id = field?.id
 
@@ -331,16 +315,6 @@ export const getPeriodIndex = (field?: Field) => {
   }
 
   return parseInt(id.substring(id.indexOf('[') + 1, id.indexOf(']')), 10)
-}
-
-export const getPeriodPercentage = (
-  answers: Application['answers'],
-  field: Field,
-) => {
-  const { periods } = getApplicationAnswers(answers)
-  const index = getPeriodIndex(field)
-
-  return periods?.[index]?.percentage ?? '100'
 }
 
 const getOrFallback = (
@@ -520,12 +494,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'applicant.phoneNumber',
   ) as string
 
-  const periods = getValueViaPath(answers, 'periods') as Period[]
+  const rawPeriods = getValueViaPath(answers, 'periods', []) as Period[]
+  const periods = filterValidPeriods(rawPeriods)
 
-  const firstPeriodStart = getValueViaPath(
-    answers,
-    'firstPeriodStart',
-  ) as SchemaFormValues['firstPeriodStart']
+  const firstPeriodStart =
+    periods.length > 0 ? periods[0].firstPeriodStart : undefined
 
   return {
     otherParent,
@@ -557,6 +530,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     applicantEmail,
     applicantPhoneNumber,
     periods,
+    rawPeriods,
     firstPeriodStart,
   }
 }
@@ -634,4 +608,88 @@ export const getOtherParentId = (application: Application): string | null => {
   }
 
   return otherParentId
+}
+
+interface IncompletePeriod {
+  startDate?: string
+  endDate?: string
+  ratio?: string
+}
+
+export const filterValidPeriods = (
+  periods: (IncompletePeriod | Period)[],
+): Period[] => {
+  const filtered = periods
+    .map((period, index) => ({
+      ...period,
+      rawIndex: index,
+    }))
+    .filter((period) => {
+      const hasStartDate = !!period?.startDate
+      const hasEndDate = !!period?.endDate
+      const hasRatio = !!period?.ratio
+
+      return hasStartDate && hasEndDate && hasRatio
+    })
+
+  return filtered as Period[]
+}
+
+export const getLastValidPeriodEndDate = (
+  application: Application,
+): Date | null => {
+  const { periods } = getApplicationAnswers(application.answers)
+
+  if (periods.length === 0) {
+    return null
+  }
+
+  const lastPeriodEndDate = periods[periods.length - 1]?.endDate
+
+  if (!lastPeriodEndDate) {
+    return null
+  }
+
+  return new Date(lastPeriodEndDate)
+}
+
+export const calculateDaysUsedByPeriods = (periods: Period[]) =>
+  Math.round(
+    periods.reduce((total, period) => {
+      const start = parseISO(period.startDate)
+      const end = parseISO(period.endDate)
+      const percentage = Number(period.ratio) / 100
+
+      const calculatedLength = calculatePeriodLength(start, end, percentage)
+
+      return total + calculatedLength
+    }, 0),
+  )
+
+export const calculateEndDateForPeriodWithStartAndLength = (
+  startDate: string,
+  lengthInMonths: number,
+) => {
+  const start = parseISO(startDate)
+
+  const wholeMonthsToAdd = Math.floor(lengthInMonths)
+  const daysToAdd =
+    (Math.round((lengthInMonths - wholeMonthsToAdd) * 100) / 100) * 28
+
+  return addDays(addMonths(start, wholeMonthsToAdd), daysToAdd - 1)
+}
+
+export const calculatePeriodLengthInMonths = (
+  startDate: string,
+  endDate: string,
+) => {
+  const start = parseISO(startDate)
+  const end = parseISO(endDate)
+
+  const diffMonths = differenceInMonths(end, start)
+  const diffDays = differenceInDays(addMonths(end, -diffMonths), start)
+
+  const roundedDays = Math.min((diffDays / 28) * 100, 100) / 100
+
+  return round(diffMonths + roundedDays, 1)
 }

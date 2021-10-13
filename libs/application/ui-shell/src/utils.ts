@@ -4,10 +4,13 @@ import {
   FieldTypes,
   FormItemTypes,
   FormValue,
+  getValueViaPath,
+  RecordObject,
   SubmitField,
 } from '@island.is/application/core'
 import { FormScreen } from './types'
 import pick from 'lodash/pick'
+import get from 'lodash/get'
 
 export function verifyExternalData(
   externalData: ExternalData,
@@ -21,6 +24,40 @@ export function verifyExternalData(
     }
   }
   return true
+}
+
+export function answerIsMissing(answer: unknown) {
+  return answer === undefined
+}
+
+export function getFieldsWithNoAnswer(
+  screen: FormScreen,
+  answers: FormValue,
+  errorMessage: string,
+): RecordObject<string> {
+  let missingAnswers: RecordObject<string> = {}
+
+  if (screen.type === FormItemTypes.MULTI_FIELD) {
+    const { children } = screen
+
+    for (const child of children) {
+      missingAnswers = {
+        ...missingAnswers,
+        ...getFieldsWithNoAnswer(child, answers, errorMessage),
+      }
+    }
+  } else if (screen.type !== FormItemTypes.REPEATER && screen.isNavigable) {
+    const screenId = screen.id!
+    const screenAnswer = getValueViaPath(answers, screenId)
+    const hasBeenAnswered = !answerIsMissing(screenAnswer)
+    const shouldBeAnswered = !get(screen, 'doesNotRequireAnswer')
+
+    if (!hasBeenAnswered && shouldBeAnswered) {
+      missingAnswers[screenId] = errorMessage
+    }
+  }
+
+  return missingAnswers
 }
 
 export function findSubmitField(screen: FormScreen): SubmitField | undefined {
@@ -80,7 +117,6 @@ export function extractAnswersToSubmitFromScreen(
     case FormItemTypes.EXTERNAL_DATA_PROVIDER:
     case FormItemTypes.REPEATER:
       return {}
-
     default:
       return pick(data, [screenId])
   }
