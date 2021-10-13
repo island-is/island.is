@@ -92,7 +92,7 @@ export class EndorsementListController {
     summary: 'Finds all endorsement lists owned by the currently authenticated user',
   })
   @ApiOkResponse({ type: PaginatedEndorsementDto })
-  @Get('/endorsements')
+  @Get('/endorsementLists')
   @Audit<PaginatedEndorsementDto>({
     resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),

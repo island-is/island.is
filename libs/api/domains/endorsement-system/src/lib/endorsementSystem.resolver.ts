@@ -118,6 +118,17 @@ export class EndorsementSystemResolver {
     )
   }
 
+  @Query(() => PaginatedEndorsementResponse)
+  async endorsementSystemUserEndorsementLists(
+    @CurrentUser() user: User,
+    @Args('input') input: EndorsementPaginationInput,
+  ): Promise<PaginatedEndorsementResponse> {
+    return await this.endorsementSystemService.endorsementListControllerFindEndorsementLists(
+      user,
+      input,
+    )
+  }
+
   @Mutation(() => EndorsementList)
   async endorsementSystemCreateEndorsementList(
     @Args('input') input: CreateEndorsementListDto,
