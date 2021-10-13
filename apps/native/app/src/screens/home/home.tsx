@@ -1,12 +1,10 @@
 import { useQuery } from '@apollo/client'
-import { dynamicColor, TopLine } from '@island.is/island-ui-native'
+import { TopLine } from '@island.is/island-ui-native'
 import React, { useCallback, useRef, useState } from 'react'
 import {
-  Animated,
-  DynamicColorIOS,
-  FlatList,
+  Animated, FlatList,
   Platform,
-  RefreshControl,
+  RefreshControl
 } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -14,7 +12,7 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import { client } from '../../graphql/client'
 import {
   ListApplicationsResponse,
-  LIST_APPLICATIONS_QUERY,
+  LIST_APPLICATIONS_QUERY
 } from '../../graphql/queries/list-applications.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
@@ -69,7 +67,7 @@ const {
       scrollEdgeAppearance: {
         active: true,
         noBorder: true,
-      }
+      },
     },
     bottomTab: {
       testID: testIDs.TABBAR_TAB_HOME,

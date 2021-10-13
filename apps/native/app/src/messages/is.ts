@@ -166,7 +166,17 @@ export const is = {
   // license scan detail
   'licenseScanDetail.errorUnknown': 'Óþekkt villa',
   'licenseScanDetail.errorNetwork': 'Net villa',
+  'licenseScanDetail.errorCodeMessage': `{
+    errorCode,
+    select,
+    1 {Skírteini í gildi}
+    2 {Skírteini ekki í gildi}
+    3 {Strikamerki óþekkt eða útrunnið, prófið að endurhlaða skírteini og skanna aftur}
+    4 {Strikamerki ógilt}
+    other {Óþekkt villa}
+  }`,
   'licenseScanDetail.errorTryToRefresh': 'Villa við að sannreyna ökuskírteinið. Uppfærið skírteinið og reynið aftur.',
+  'licenseScanDetail.barcodeExpired': 'Útrunnið strikamerki. Uppfærið skírteinið og reynið aftur.',
 
    // license scan results
    'licenseScannerResult.loading': 'Hleð upplýsingum',
@@ -176,6 +186,7 @@ export const is = {
    'licenseScannerResult.errorMessage': 'Villuskilaboð',
    'licenseScannerResult.name': 'Nafn',
    'licenseScannerResult.birthDate': 'Fæðingardagur',
+   'licenseScannerResult.nationalId': 'Kennitala',
    'licenseScannerResult.driverLicenseNumber': 'Númer ökuskírteinis',
 
   // notifications

@@ -246,7 +246,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     const parsedData = JSON.parse(data?.payload?.rawData)
     const issuedAt = parsedData?.utgafuDagsetning
     const hasImage = !!parsedData?.mynd?.id
-
     hasValidPkpass = Date.parse(issuedAt) > startDateForValidPkpass || hasImage;
 
   } catch (error) {

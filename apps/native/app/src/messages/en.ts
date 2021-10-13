@@ -164,7 +164,17 @@ export const en: TranslatedMessages = {
   // license scan detail
   'licenseScanDetail.errorUnknown': 'Unknown error',
   'licenseScanDetail.errorNetwork': 'Network error',
-  'licenseScanDetail.errorTryToRefresh': 'Failed to validate driving license. Try to refresh the barcode and scan again',
+  'licenseScanDetail.errorCodeMessage': `{
+    errorCode,
+    select,
+    1 {License OK}
+    2 {License barcode expired, Try to refresh the barcode and scan again}
+    3 {No license info found}
+    4 {Request contains some field errors}
+    other {Unknown error}
+  }`,
+  'licenseScanDetail.errorTryToRefresh': 'Failed to validate driving license. Try to refresh the barcode and scan again.',
+  'licenseScanDetail.barcodeExpired': 'License barcode expired. Try to refresh the barcode and scan again.',
 
   // license scan results
   'licenseScannerResult.loading': 'Loading data',
@@ -173,6 +183,7 @@ export const en: TranslatedMessages = {
   'licenseScannerResult.title': 'Driver license (IS)',
   'licenseScannerResult.errorMessage': 'Error message',
   'licenseScannerResult.name': 'Name',
+  'licenseScannerResult.nationalId': 'National ID',
   'licenseScannerResult.birthDate': 'Birthdate',
   'licenseScannerResult.driverLicenseNumber': 'Driver license number',
 

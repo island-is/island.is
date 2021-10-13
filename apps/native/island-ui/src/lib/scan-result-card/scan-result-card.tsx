@@ -151,6 +151,7 @@ const Copy = styled.Text`
     fontSize: 14,
     lineHeight: 18,
     fontWeight: '300',
+    color: '#000',
   })}
   margin-bottom: 8px;
 `
@@ -291,7 +292,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
                 {loading ? (
                   <Placeholder style={{ width: 120 }} />
                 ) : (
-                  <Value>{nationalId ?? `---`}</Value>
+                  <Value>{nationalId ? `${nationalId?.substr(0,6)}-${nationalId?.substr(-4)}` : `---`}</Value>
                 )}
               </LabelGroup>
               {data?.map(({ key, value }) => {
