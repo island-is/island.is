@@ -58,6 +58,10 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   const { rawPeriods, periods } = getApplicationAnswers(application.answers)
 
   useEffect(() => {
+    if (!editable) {
+      return
+    }
+
     const syncPeriods = async () => {
       setFieldLoadingState?.(true)
       await setRepeaterItems(periods)
