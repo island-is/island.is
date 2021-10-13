@@ -71,9 +71,7 @@ const StateModal = ({
   }
 
   const closeModal = (): void => {
-    if (selected === undefined) {
-      onVisibilityChange(false)
-    }
+    onVisibilityChange(false)
   }
 
   const onClickCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -133,7 +131,7 @@ const StateModal = ({
         </Text>
       </Box>
 
-      <Box display="block" width="full" padding={4}>
+      <Box padding={4}>
         <AnimateSharedLayout type="crossfade">
           <OptionsModal
             isModalVisable={selected === undefined}
