@@ -6,11 +6,11 @@ import { getState, ApplicationState } from '@island.is/financial-aid/shared/lib'
 interface Props {
   state: ApplicationState
   rejectionComment?: string
-  isStateVisable: boolean
+  isStateVisible: boolean
 }
 
-const Rejected = ({ state, rejectionComment, isStateVisable }: Props) => {
-  if (!isStateVisable) {
+const Rejected = ({ state, rejectionComment, isStateVisible }: Props) => {
+  if (!isStateVisible) {
     return null
   }
 

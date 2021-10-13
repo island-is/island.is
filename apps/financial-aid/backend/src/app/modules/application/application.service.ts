@@ -13,6 +13,7 @@ import {
   ApplicationStateUrl,
   getEventTypesFromService,
   getStateFromUrl,
+  RolesRule,
   User,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
@@ -81,7 +82,10 @@ export class ApplicationService {
     application?.setDataValue('files', files)
   }
 
-  async findById(id: string, user: User): Promise<ApplicationModel | null> {
+  async findById(
+    id: string,
+    service: RolesRule,
+  ): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
       include: [
@@ -92,7 +96,7 @@ export class ApplicationService {
           separate: true,
           where: {
             eventType: {
-              [Op.in]: getEventTypesFromService[user.service],
+              [Op.in]: getEventTypesFromService[service],
             },
           },
           order: [['created', 'DESC']],

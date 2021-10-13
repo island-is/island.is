@@ -40,13 +40,13 @@ const MainPage = () => {
             <InProgress currentApplication={myApplication} />
 
             <Approved
-              isStateVisable={myApplication.state === ApplicationState.APPROVED}
+              isStateVisible={myApplication.state === ApplicationState.APPROVED}
               state={myApplication.state}
               amount={myApplication.amount}
             />
 
             <Rejected
-              isStateVisable={myApplication.state === ApplicationState.REJECTED}
+              isStateVisible={myApplication.state === ApplicationState.REJECTED}
               state={myApplication.state}
               rejectionComment={myApplication?.rejection}
             />

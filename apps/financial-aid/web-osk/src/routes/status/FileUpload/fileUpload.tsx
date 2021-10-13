@@ -38,7 +38,6 @@ const FileUpload = () => {
         ApplicationEventType.DATANEEDED,
       )
     }
-    return
   }, [myApplication])
 
   const router = useRouter()

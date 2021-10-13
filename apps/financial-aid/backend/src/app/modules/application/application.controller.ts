@@ -103,7 +103,7 @@ export class ApplicationController {
   })
   async getById(@Param('id') id: string, @CurrentUser() user: User) {
     this.logger.debug(`Application controller: Getting application by id ${id}`)
-    const application = await this.applicationService.findById(id, user)
+    const application = await this.applicationService.findById(id, user.service)
 
     if (!application) {
       throw new NotFoundException(`application ${id} not found`)
@@ -215,7 +215,7 @@ export class ApplicationController {
 
     const application = await this.applicationService.findById(
       applicationEvent.applicationId,
-      user,
+      user.service,
     )
 
     if (!application) {

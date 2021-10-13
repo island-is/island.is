@@ -10,13 +10,13 @@ import {
 interface Props {
   state: ApplicationState
   amount?: number
-  isStateVisable: boolean
+  isStateVisible: boolean
 }
 
-const Approved = ({ state, amount, isStateVisable }: Props) => {
+const Approved = ({ state, amount, isStateVisible }: Props) => {
   const currentMonth = getMonth(new Date().getMonth())
 
-  if (!isStateVisable) {
+  if (!isStateVisible) {
     return null
   }
 
