@@ -57,9 +57,22 @@ export const HistoryStepper = memo((props: HistoryStepperProps) => {
     return null
   }
 
+  const nextContent = (
+    <>
+      <span className={s.historyStepperLinkText}>{txt('nextVersion')}</span>{' '}
+      <Icon icon="arrowForward" size="small" />
+    </>
+  )
+  const prevContent = (
+    <>
+      <Icon icon="arrowBack" size="small" />{' '}
+      <span className={s.historyStepperLinkText}>{txt('previousVersion')}</span>
+    </>
+  )
+
   return (
     <div className={s.historyStepper}>
-      {nextDate && (
+      {nextDate ? (
         <Link
           href={linkToRegulation(name, {
             diff: !!showingDiff,
@@ -69,15 +82,18 @@ export const HistoryStepper = memo((props: HistoryStepperProps) => {
           color="blue400"
           underline="small"
         >
-          <span className={s.historyStepperLinkText}>{txt('nextVersion')}</span>{' '}
-          <Icon icon="arrowForward" size="small" />
+          {nextContent}
         </Link>
+      ) : (
+        <span className={s.historyStepperLink} aria-hidden="true">
+          {nextContent}
+        </span>
       )}
       {'  '}
-      {previousDate && (
+      {previousDate ? (
         <Link
           href={linkToRegulation(name, {
-            diff: !!showingDiff,
+            diff: !!showingDiff && previousDate !== 'original',
             ...(previousDate === 'original'
               ? { original: true }
               : { d: previousDate }),
@@ -86,11 +102,12 @@ export const HistoryStepper = memo((props: HistoryStepperProps) => {
           className={s.historyStepperLink}
           underline="small"
         >
-          <Icon icon="arrowBack" size="small" />{' '}
-          <span className={s.historyStepperLinkText}>
-            {txt('previousVersion')}
-          </span>
+          {prevContent}
         </Link>
+      ) : (
+        <span className={s.historyStepperLink} aria-hidden="true">
+          {prevContent}
+        </span>
       )}
     </div>
   )

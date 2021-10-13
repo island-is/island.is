@@ -28,8 +28,16 @@ export const statusHeader = style({
   top: 0,
   marginTop: -spacing[3] - 4,
   paddingTop: spacing[3] + 4,
-  paddingBottom: spacing[2],
+  paddingBottom: spacing[1],
   backgroundColor: color.white,
+
+  '::after': {
+    content: '""',
+    clear: 'both',
+    display: 'block',
+    width: '100%',
+    height: 0,
+  },
 
   selectors: {
     [`${scrolled} &`]: {
@@ -61,17 +69,21 @@ export const diffInfo = style({
 })
 
 export const historyStepper = style({
-  position: 'relative',
-  top: spacing[1],
   marginTop: spacing[1],
   fontSize: '.75em',
   display: 'flex',
   flexFlow: 'row-reverse',
+  float: 'right',
+  clear: 'right',
+  position: 'relative',
+  zIndex: 1,
 })
 export const historyStepperLink = style({
+  marginLeft: spacing[2],
   selectors: {
-    '&:not(:first-child)': {
-      marginRight: spacing[2],
+    'span&': {
+      opacity: 0.1,
+      userSelect: 'none',
     },
   },
 })

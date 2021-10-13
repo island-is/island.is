@@ -82,13 +82,13 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
               texts={texts}
               urlDate={urlDate}
             />
+            <HistoryStepper regulation={regulation} texts={texts} />
             <RegulationStatus
               regulation={regulation}
               urlDate={props.urlDate}
               texts={texts}
             />
             <AffectingRegulations regulation={regulation} texts={texts} />
-            <HistoryStepper regulation={regulation} texts={texts} />
           </div>
 
           <div className={waterMarkClass}>
