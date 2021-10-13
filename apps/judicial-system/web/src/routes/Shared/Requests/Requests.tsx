@@ -189,10 +189,7 @@ export const Requests: React.FC = () => {
         <>
           {!isHighCourtUser && (
             <>
-              <Box
-                marginBottom={3}
-                className={styles.activeRequestsTableCaption}
-              >
+              <Box marginBottom={3}>
                 {/**
                  * This should be a <caption> tag inside the table but
                  * Safari has a bug that doesn't allow that. See more
@@ -202,24 +199,36 @@ export const Requests: React.FC = () => {
                   Kröfur í vinnslu
                 </Text>
               </Box>
-              {activeCases && activeCases.length > 0 ? (
-                <ActiveRequests
-                  cases={activeCases}
-                  onRowClick={handleRowClick}
-                  onDeleteCase={deleteCase}
-                />
-              ) : (
-                <div className={styles.activeRequestsTableInfo}>
-                  <AlertMessage
-                    title="Engar kröfur í vinnslu."
-                    message="Allar kröfur hafa verið afgreiddar."
-                    type="info"
-                  />
-                </div>
-              )}
+              <Box marginBottom={15}>
+                {activeCases && activeCases.length > 0 ? (
+                  isPrisonStaffUser ? (
+                    <PastRequests
+                      cases={activeCases}
+                      onRowClick={() => {
+                        throw new Error('Function not implemented.')
+                      }}
+                      isHighCourtUser={false}
+                    />
+                  ) : (
+                    <ActiveRequests
+                      cases={activeCases}
+                      onRowClick={handleRowClick}
+                      onDeleteCase={deleteCase}
+                    />
+                  )
+                ) : (
+                  <div className={styles.infoContainer}>
+                    <AlertMessage
+                      title="Engar kröfur í vinnslu."
+                      message="Allar kröfur hafa verið afgreiddar."
+                      type="info"
+                    />
+                  </div>
+                )}
+              </Box>
             </>
           )}
-          <Box marginBottom={3} className={styles.pastRequestsTableCaption}>
+          <Box marginBottom={3}>
             {/**
              * This should be a <caption> tag inside the table but
              * Safari has a bug that doesn't allow that. See more
@@ -236,7 +245,7 @@ export const Requests: React.FC = () => {
               isHighCourtUser={isHighCourtUser}
             />
           ) : (
-            <div className={styles.activeRequestsTableInfo}>
+            <div className={styles.infoContainer}>
               <AlertMessage
                 title="Engar kröfur hafa verið afgreiddar."
                 message="Allar kröfur eru í vinnslu."
@@ -247,7 +256,7 @@ export const Requests: React.FC = () => {
         </>
       ) : error ? (
         <div
-          className={styles.requestsError}
+          className={styles.infoContainer}
           data-testid="custody-requests-error"
         >
           <AlertMessage
@@ -257,7 +266,7 @@ export const Requests: React.FC = () => {
           />
         </div>
       ) : loading ? (
-        <Box className={styles.activeRequestsTable}>
+        <Box className={styles.table}>
           <Loading />
         </Box>
       ) : null}
