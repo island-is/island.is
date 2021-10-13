@@ -7,7 +7,7 @@ export const getDefaultValue = (field: BaseField, application: Application) => {
     return ''
   }
 
-  if (!defaultValue) {
+  if (defaultValue === undefined) {
     return undefined
   }
 
