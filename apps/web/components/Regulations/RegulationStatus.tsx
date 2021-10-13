@@ -65,8 +65,12 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
       ? 'statusLinkToRepealed_long'
       : 'statusLinkToCurrent_long'
     return (
-      <small className={s.linkToCurrent}>
-        <Link href={linkToRegulation(name)} aria-label={txt(labelKey)}>
+      <small className={s.toCurrent}>
+        <Link
+          className={s.linkToCurrent}
+          href={linkToRegulation(name)}
+          aria-label={txt(labelKey)}
+        >
           {txt(textKey)}
         </Link>
       </small>
@@ -82,7 +86,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
           {txt('printedDate')} {formatDate(today)}
         </Text>
       </div>
-      <Text>
+      <div className={s.statusText}>
         <Ball type={color} />
 
         {!timelineDate || timelineDate === lastAmendDate ? (
@@ -159,7 +163,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
             {renderLinkToCurrent()}
           </>
         )}
-      </Text>
+      </div>
     </>
   )
 }
