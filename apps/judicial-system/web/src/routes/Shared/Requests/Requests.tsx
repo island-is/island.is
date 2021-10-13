@@ -35,6 +35,9 @@ export const Requests: React.FC = () => {
   const isJudge = user?.role === UserRole.JUDGE
   const isRegistrar = user?.role === UserRole.REGISTRAR
   const isHighCourtUser = user?.institution?.type === InstitutionType.HIGH_COURT
+  const isPrisonStaffUser =
+    user?.institution?.type === InstitutionType.PRISON_ADMIN ||
+    user?.institution?.type === InstitutionType.PRISON
 
   const { data, error, loading } = useQuery(CasesQuery, {
     fetchPolicy: 'no-cache',
@@ -63,13 +66,18 @@ export const Requests: React.FC = () => {
             : // Judges and registrars should see all cases except cases with status code NEW.
             isJudge || isRegistrar
             ? ![...completedCaseStates, CaseState.NEW].includes(c.state)
+            : isPrisonStaffUser
+            ? [CaseState.ACCEPTED].includes(c.state) &&
+              !c.isValidToDateInThePast
             : null
         }),
       )
 
       setPastCases(
         casesWithoutDeleted.filter((c: Case) => {
-          return completedCaseStates.includes(c.state)
+          return isPrisonStaffUser
+            ? [CaseState.ACCEPTED].includes(c.state) && c.isValidToDateInThePast
+            : completedCaseStates.includes(c.state)
         }),
       )
     }
@@ -80,6 +88,7 @@ export const Requests: React.FC = () => {
     isJudge,
     isRegistrar,
     resCases,
+    isPrisonStaffUser,
   ])
 
   const deleteCase = async (caseToDelete: Case) => {
