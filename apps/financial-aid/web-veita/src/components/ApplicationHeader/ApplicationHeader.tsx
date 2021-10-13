@@ -148,7 +148,7 @@ const ApplicationHeader = ({
             <Box marginRight={1}>
               <Text variant="small">{application.staff.name}</Text>
             </Box>
-            <button onClick={() => assignEmployee()} className={styles.button}>
+            <button onClick={assignEmployee} className={styles.button}>
               Sjá um
             </button>
             <Text variant="small">·</Text>
