@@ -4,6 +4,7 @@ import each from 'jest-each'
 import {
   CaseAppealDecision,
   CaseState,
+  CaseType,
   InstitutionType,
   restrictionCases,
   UserRole,
@@ -21,16 +22,30 @@ describe('isCaseBlockedFromUser', () => {
     ${CaseState.DELETED}   | ${UserRole.JUDGE}      | ${InstitutionType.COURT}
     ${CaseState.DELETED}   | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}
     ${CaseState.DELETED}   | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}
+    ${CaseState.DELETED}   | ${UserRole.STAFF}      | ${InstitutionType.PRISON}
+    ${CaseState.DELETED}   | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}
     ${CaseState.NEW}       | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}
     ${CaseState.NEW}       | ${UserRole.JUDGE}      | ${InstitutionType.COURT}
     ${CaseState.NEW}       | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}
     ${CaseState.NEW}       | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}
+    ${CaseState.NEW}       | ${UserRole.STAFF}      | ${InstitutionType.PRISON}
+    ${CaseState.NEW}       | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}
     ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}
     ${CaseState.DRAFT}     | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}
+    ${CaseState.DRAFT}     | ${UserRole.STAFF}      | ${InstitutionType.PRISON}
+    ${CaseState.DRAFT}     | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}
     ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}
     ${CaseState.SUBMITTED} | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}
+    ${CaseState.SUBMITTED} | ${UserRole.STAFF}      | ${InstitutionType.PRISON}
+    ${CaseState.SUBMITTED} | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}
     ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}
     ${CaseState.RECEIVED}  | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}
+    ${CaseState.RECEIVED}  | ${UserRole.STAFF}      | ${InstitutionType.PRISON}
+    ${CaseState.RECEIVED}  | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}
+    ${CaseState.REJECTED}  | ${UserRole.STAFF}      | ${InstitutionType.PRISON}
+    ${CaseState.REJECTED}  | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}
+    ${CaseState.DISMISSED} | ${UserRole.STAFF}      | ${InstitutionType.PRISON}
+    ${CaseState.DISMISSED} | ${UserRole.STAFF}      | ${InstitutionType.PRISON_ADMIN}
   `.it(
     'should block $state case from $role at $institutionType',
     ({ state, role, institutionType }) => {
@@ -401,15 +416,15 @@ describe('isCaseBlockedFromUser', () => {
 
       each`
         accusedAppealDecision  | prosecutorAppealDecision
-        ${CaseAppealDecision.ACCEPT}  | ${CaseAppealDecision.ACCEPT}
-        ${CaseAppealDecision.ACCEPT}  | ${CaseAppealDecision.NOT_APPLICABLE}
-        ${CaseAppealDecision.ACCEPT}  | ${CaseAppealDecision.POSTPONE}
+        ${CaseAppealDecision.ACCEPT}          | ${CaseAppealDecision.ACCEPT}
+        ${CaseAppealDecision.ACCEPT}          | ${CaseAppealDecision.NOT_APPLICABLE}
+        ${CaseAppealDecision.ACCEPT}          | ${CaseAppealDecision.POSTPONE}
         ${CaseAppealDecision.NOT_APPLICABLE}  | ${CaseAppealDecision.ACCEPT}
         ${CaseAppealDecision.NOT_APPLICABLE}  | ${CaseAppealDecision.NOT_APPLICABLE}
         ${CaseAppealDecision.NOT_APPLICABLE}  | ${CaseAppealDecision.POSTPONE}
-        ${CaseAppealDecision.POSTPONE}  | ${CaseAppealDecision.ACCEPT}
-        ${CaseAppealDecision.POSTPONE}  | ${CaseAppealDecision.NOT_APPLICABLE}
-        ${CaseAppealDecision.POSTPONE}  | ${CaseAppealDecision.POSTPONE}
+        ${CaseAppealDecision.POSTPONE}        | ${CaseAppealDecision.ACCEPT}
+        ${CaseAppealDecision.POSTPONE}        | ${CaseAppealDecision.NOT_APPLICABLE}
+        ${CaseAppealDecision.POSTPONE}        | ${CaseAppealDecision.POSTPONE}
       `.it(
         'should block the case if it has not been appealed',
         ({ accusedAppealDecision, prosecutorAppealDecision }) => {
@@ -434,6 +449,115 @@ describe('isCaseBlockedFromUser', () => {
           expect(isReadBlocked).toBe(true)
         },
       )
+    },
+  )
+
+  each`
+    type
+    ${CaseType.SEARCH_WARRANT}
+    ${CaseType.BANKING_SECRECY_WAIVER}
+    ${CaseType.PHONE_TAPPING}
+    ${CaseType.TELECOMMUNICATIONS}
+    ${CaseType.TRACKING_EQUIPMENT}
+    ${CaseType.PSYCHIATRIC_EXAMINATION}
+    ${CaseType.SOUND_RECORDING_EQUIPMENT}
+    ${CaseType.AUTOPSY}
+    ${CaseType.BODY_SEARCH}
+    ${CaseType.INTERNET_USAGE}
+    ${CaseType.OTHER}
+  `.describe('given an accepted $type case', ({ type }) => {
+    each`
+      institutionType
+      ${InstitutionType.PRISON}
+      ${InstitutionType.PRISON_ADMIN}
+    `.it(
+      'it should block the case from staff at $institution',
+      ({ institutionType }) => {
+        // Arrange
+        const theCase = {
+          type,
+          state: CaseState.ACCEPTED,
+        } as Case
+        const user = {
+          role: UserRole.STAFF,
+          institution: { type: institutionType },
+        } as User
+
+        // Act
+        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+        // Assert
+        expect(isWriteBlocked).toBe(true)
+        expect(isReadBlocked).toBe(true)
+      },
+    )
+  })
+
+  it('it should block an accepted travel ban case from prison staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.TRAVEL_BAN,
+      state: CaseState.ACCEPTED,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON },
+    } as User
+
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(isWriteBlocked).toBe(true)
+    expect(isReadBlocked).toBe(true)
+  })
+
+  it('it should not read block an accepted travel ban case from prison admin staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.TRAVEL_BAN,
+      state: CaseState.ACCEPTED,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON_ADMIN },
+    } as User
+
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(isWriteBlocked).toBe(true)
+    expect(isReadBlocked).toBe(false)
+  })
+
+  each`
+    institutionType
+    ${InstitutionType.PRISON}
+    ${InstitutionType.PRISON_ADMIN}
+  `.it(
+    'it should not read block an accepted custody case from staff at $institutionType',
+    ({ institutionType }) => {
+      // Arrange
+      const theCase = {
+        type: CaseType.CUSTODY,
+        state: CaseState.ACCEPTED,
+      } as Case
+      const user = {
+        role: UserRole.STAFF,
+        institution: { type: institutionType },
+      } as User
+
+      // Act
+      const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+      const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+      // Assert
+      expect(isWriteBlocked).toBe(true)
+      expect(isReadBlocked).toBe(false)
     },
   )
 })
@@ -662,6 +786,54 @@ describe('getCasesQueryFilter', () => {
           },
         ],
       })
+    })
+  })
+
+  it('should get prison staff filter', () => {
+    // Arrange
+    const user = {
+      id: 'Staff Id',
+      role: UserRole.STAFF,
+      institution: {
+        id: 'Prison Id',
+        type: InstitutionType.PRISON,
+      },
+    }
+
+    // Act
+    const res = getCasesQueryFilter(user as User)
+
+    // Assert
+    expect(res).toStrictEqual({
+      [Op.and]: [
+        { state: CaseState.ACCEPTED },
+        { type: CaseType.CUSTODY },
+        { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
+      ],
+    })
+  })
+
+  it('should get prison admin staff filter', () => {
+    // Arrange
+    const user = {
+      id: 'Staff Id',
+      role: UserRole.STAFF,
+      institution: {
+        id: 'Prison Id',
+        type: InstitutionType.PRISON_ADMIN,
+      },
+    }
+
+    // Act
+    const res = getCasesQueryFilter(user as User)
+
+    // Assert
+    expect(res).toStrictEqual({
+      [Op.and]: [
+        { state: CaseState.ACCEPTED },
+        { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
+        { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
+      ],
     })
   })
 })

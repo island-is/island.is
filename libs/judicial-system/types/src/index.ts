@@ -40,6 +40,7 @@ export {
   AccusedPleaDecision,
   SessionArrangements,
   restrictionCases,
+  investigationCases,
   isRestrictionCase,
   isInvestigationCase,
   completedCaseStates,
@@ -55,3 +56,5 @@ export type {
   SignatureConfirmationResponse,
   CreateCourtCase,
 } from './lib/case'
+
+export type { PoliceCaseFile } from './lib/policeFile'
