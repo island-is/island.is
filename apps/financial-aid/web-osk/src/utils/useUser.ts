@@ -13,7 +13,6 @@ import {
 
 const useUser = () => {
   const router = useRouter()
-  const storageKey = 'user'
 
   const [user, setUser] = useState<User>()
   const [session] = useSession()
@@ -30,16 +29,6 @@ const useUser = () => {
   const loggedInUser = data?.currentUser
 
   useEffect(() => {
-    const storedFormJson = sessionStorage.getItem(storageKey)
-    if (storedFormJson === null) {
-      return
-    }
-    const storedState = JSON.parse(storedFormJson)
-    setUser(storedState)
-    setIsAuthenticated(true)
-  }, [])
-
-  useEffect(() => {
     if (loggedInUser && !user) {
       if (loggedInUser.currentApplication) {
         router.push(
@@ -49,8 +38,6 @@ const useUser = () => {
 
       setUser(loggedInUser)
       setIsAuthenticated(true)
-
-      sessionStorage.setItem(storageKey, JSON.stringify(loggedInUser))
 
       setUserServiceCenter(
         serviceCenters.find((serviceCenter) =>

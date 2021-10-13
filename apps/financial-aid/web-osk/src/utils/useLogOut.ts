@@ -12,6 +12,8 @@ export const useLogOut = () => {
 
   const logOut = () => {
     setUser && setUser(undefined)
+    sessionStorage.clear()
+
     initializeFormProvider()
     signOut({
       callbackUrl: signOutUrl(window, session?.idToken),
