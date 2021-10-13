@@ -61,27 +61,23 @@ const ApplicationInfo = () => {
           </Text>
         </Box>
 
-        <Text marginBottom={2}>
-          Við þurfum að fá þig til að renna yfir nokkur atriði og gefa
-          upplýsingar um búsetu og laun yfir síðustu 2 mánuði, ef einhver, til
-          að reikna út aðstoð til útgreiðslu í byrjun {getNextPeriod.month}.
-        </Text>
         <Text marginBottom={3}>
-          Í lokin velurðu að senda inn umsóknina eða eyða henni og öllum tengdum
-          gögnum.
+          Við þurfum að afla gagna frá eftirfarandi opinberum aðilum til að
+          einfalda umsóknarferlið, staðfesta réttleika upplýsinga og reikna út
+          áætlaðar greiðslur.
         </Text>
 
         <Text as="h3" variant="h5" color="blue400">
-          Upplýsingar um styrki og bætur
+          Þjóðskrá Íslands
         </Text>
-        <Text marginBottom={2}>
-          T.a.m. hjá Vinnumálastofnun, Sjúkratryggingum Íslands, o.fl.
-        </Text>
+        <Text marginBottom={3}>Lögheimili, hjúskaparstaða</Text>
 
-        <Text as="h3" variant="h5" color="blue400">
-          Upplýsingar um stöðu og eignir
+        <Text marginBottom={[4, 4, 5]}>
+          Við þurfum að fá þig til að renna yfir nokkur atriði varðandi þína
+          persónuhagi og fjármál til að reikna út fjárhagsaðstoð til útgreiðslu
+          í byrjun {getNextPeriod.month}. Í lok umsóknar getur þú sent hana inn
+          eða eytt henni og öllum tengdum gögnum.
         </Text>
-        <Text marginBottom={[4, 4, 5]}>T.a.m. hjá þjóðskrá og Skattinum.</Text>
 
         <Box marginBottom={[5, 5, 10]} cursor="pointer">
           <Checkbox

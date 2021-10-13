@@ -54,8 +54,8 @@ const InProgress = ({ currentApplication }: Props) => {
             <span className={styles.taxReturn}>
               eingöngu til viðmiðunar og getur tekið breytingum.
             </span>{' '}
-            Þú færð skilaboð þegar frekari útreikningur liggur fyrir. Niðurstaða
-            umsóknar þinnar ætti að liggja fyrir innan X virkra daga.
+            Þú færð skilaboð þegar frekari útreikningur liggur fyrir. Umsóknin
+            verður afgreidd eins fljótt og auðið er.
           </Text>
         }
       />
