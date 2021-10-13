@@ -8,7 +8,7 @@ import {
   Input,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { CaseType } from '@island.is/judicial-system/types'
+import { PoliceCaseFile } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -27,10 +27,11 @@ import MarkdownWrapper from '@island.is/judicial-system-web/src/shared-component
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  policeCaseFiles: PoliceCaseFile[]
 }
 
 export const StepFiveForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase } = props
+  const { workingCase, setWorkingCase, policeCaseFiles } = props
   const { formatMessage } = useIntl()
 
   const {
@@ -68,6 +69,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box marginBottom={10}>
+          {policeCaseFiles && <Text>policeCaseFiles</Text>}
           <ContentBlock>
             <InputFileUpload
               fileList={files}
