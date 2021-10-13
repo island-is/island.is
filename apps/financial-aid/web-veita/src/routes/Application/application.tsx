@@ -1,11 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import {
-  LoadingDots,
-  Text,
-  Box,
-  Divider,
-  Button,
-} from '@island.is/island-ui/core'
+import { Text, Box, Button } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 import * as styles from './application.treat'
@@ -24,38 +18,28 @@ import {
   Employment,
   insertAt,
   ApplicationState,
-  getState,
   Municipality,
   aidCalculator,
-  months,
+  getMonth,
   calculateAidFinalAmount,
   formatPhoneNumber,
-  FileType,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
 
-import {
-  calcDifferenceInDate,
-  calcAge,
-  getTagByState,
-} from '@island.is/financial-aid-web/veita/src/utils/formHelper'
-
-import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
+import { calcAge } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 import {
-  GeneratedProfile,
-  GenerateName,
   Profile,
-  Files,
-  AdminLayout,
   StateModal,
   AidAmountModal,
   History,
   CommentSection,
+  ApplicationHeader,
+  FilesListWithHeaderContainer,
+  ApplicationSkeleton,
+  LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
-
-import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
 interface ApplicantData {
   application: Application
@@ -72,13 +56,7 @@ const ApplicationProfile = () => {
 
   const [isAidModalVisible, setAidModalVisible] = useState(false)
 
-  const [prevUrl, setPrevUrl] = useState<NavigationElement | undefined>()
-
-  const findPrevUrl = (
-    state: ApplicationState,
-  ): React.SetStateAction<NavigationElement | undefined> => {
-    return navigationItems.find((i) => i.applicationState.includes(state))
-  }
+  const [isLoading, setIsLoading] = useState(false)
 
   const { data, loading } = useQuery<ApplicantData>(GetApplicationQuery, {
     variables: { input: { id: router.query.id } },
@@ -101,7 +79,7 @@ const ApplicationProfile = () => {
     if (application && dataMunicipality && application.homeCircumstances) {
       return aidCalculator(
         application.homeCircumstances,
-        dataMunicipality?.municipality.settings.aid,
+        dataMunicipality?.municipality.aid,
       )
     }
   }, [application, dataMunicipality])
@@ -109,8 +87,6 @@ const ApplicationProfile = () => {
   useEffect(() => {
     if (data?.application) {
       setApplication(data.application)
-
-      setPrevUrl(findPrevUrl(data.application.state))
     }
   }, [data])
 
@@ -121,7 +97,7 @@ const ApplicationProfile = () => {
       {
         title: 'Tímabil',
         content:
-          months[parseInt(format(new Date(application.created), 'M'))] +
+          getMonth(new Date(application.created).getMonth()) +
           format(new Date(application.created), ' y'),
       },
       {
@@ -162,7 +138,7 @@ const ApplicationProfile = () => {
     const applicant = [
       {
         title: 'Nafn',
-        content: data?.application.name,
+        content: application.name,
       },
       {
         title: 'Aldur',
@@ -175,26 +151,26 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Netfang',
-        content: data?.application.email,
-        link: 'mailto:' + data?.application.email,
+        content: application.email,
+        link: 'mailto:' + application.email,
       },
       {
         title: 'Sími',
-        content: formatPhoneNumber(application.phoneNumber),
+        content: formatPhoneNumber(application.phoneNumber ?? ''),
         link: 'tel:' + application.phoneNumber,
       },
       {
         title: 'Bankareikningur',
         content:
-          data?.application.bankNumber +
+          application.bankNumber +
           '-' +
-          data?.application.ledger +
+          application.ledger +
           '-' +
-          data?.application.accountNumber,
+          application.accountNumber,
       },
       {
         title: 'Nota persónuafslátt',
-        content: data?.application.usePersonalTaxCredit ? 'Já' : 'Nei',
+        content: application.usePersonalTaxCredit ? 'Já' : 'Nei',
       },
       {
         title: 'Ríkisfang',
@@ -213,10 +189,6 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Maki',
-        content: '??',
-      },
-      {
-        title: 'Fjöldi barna',
         content: '??',
       },
       {
@@ -248,93 +220,20 @@ const ApplicationProfile = () => {
     ]
 
     return (
-      <AdminLayout>
+      <LoadingContainer isLoading={isLoading} loader={<ApplicationSkeleton />}>
         <Box
           marginTop={10}
           marginBottom={15}
           className={`${styles.applicantWrapper}`}
         >
-          <Box className={`contentUp   ${styles.widtAlmostFull} `}>
-            <Box
-              marginBottom={3}
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              width="full"
-            >
-              {prevUrl && (
-                <Button
-                  colorScheme="default"
-                  iconType="filled"
-                  onClick={() => {
-                    router.push(prevUrl.link)
-                  }}
-                  preTextIcon="arrowBack"
-                  preTextIconType="filled"
-                  size="small"
-                  type="button"
-                  variant="text"
-                >
-                  Til baka
-                </Button>
-              )}
-
-              {application.state && (
-                <div className={`tags ${getTagByState(application.state)}`}>
-                  {getState[application.state]}
-                </div>
-              )}
-            </Box>
-
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              width="full"
-              paddingY={3}
-            >
-              <Box display="flex" alignItems="center">
-                <Box marginRight={2}>
-                  <GeneratedProfile
-                    size={48}
-                    nationalId={application.nationalId}
-                  />
-                </Box>
-
-                <Text as="h2" variant="h1">
-                  {GenerateName(application.nationalId)}
-                </Text>
-              </Box>
-
-              <Button
-                colorScheme="default"
-                icon="pencil"
-                iconType="filled"
-                onClick={() => {
-                  setStateModalVisible(!isStateModalVisible)
-                }}
-                preTextIconType="filled"
-                size="small"
-                type="button"
-                variant="ghost"
-              >
-                Breyta stöðu
-              </Button>
-            </Box>
-
-            <Divider />
-
-            <Box display="flex" marginBottom={8} marginTop={4}>
-              <Box marginRight={1}>
-                <Text variant="small" fontWeight="semiBold" color="dark300">
-                  Aldur umsóknar
-                </Text>
-              </Box>
-              <Text variant="small">
-                {calcDifferenceInDate(application.created)}
-              </Text>
-            </Box>
-          </Box>
+          <ApplicationHeader
+            application={application}
+            onClickApplicationState={() => {
+              setStateModalVisible(
+                (isStateModalVisible) => !isStateModalVisible,
+              )
+            }}
+          />
 
           <Profile
             heading="Umsókn"
@@ -351,58 +250,30 @@ const ApplicationProfile = () => {
             info={applicantMoreInfo}
             className={`contentUp delay-100`}
           />
-          <>
-            <Box
-              marginBottom={[2, 2, 3]}
-              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
-            >
-              <Text as="h2" variant="h3" color="dark300">
-                Gögn frá umsækjanda
-              </Text>
-            </Box>
-            <Files
-              heading="Skattframtal"
-              filesArray={application.files?.filter(
-                (f) => f.type === FileType.TAXRETURN,
-              )}
-              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
-            />
-            <Files
-              heading="Tekjugögn"
-              filesArray={application.files?.filter(
-                (f) => f.type === FileType.INCOME,
-              )}
-              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
-            />
-            <Files
-              heading="Innsend gögn"
-              filesArray={application.files?.filter(
-                (f) => f.type === FileType.OTHER,
-              )}
-              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
-            />
-          </>
+
+          <FilesListWithHeaderContainer applicationFiles={application.files} />
 
           <CommentSection
-            className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+            className={`contentUp delay-125 ${styles.widthAlmostFull}`}
+            setApplication={setApplication}
           />
 
-          <History />
+          <History
+            applicantName={application.name}
+            applicationEvents={application.applicationEvents}
+          />
         </Box>
 
         {application.state && (
           <StateModal
             isVisible={isStateModalVisible}
-            onVisiblityChange={(isVisibleBoolean) => {
+            onVisibilityChange={(isVisibleBoolean) => {
               setStateModalVisible(isVisibleBoolean)
             }}
-            onStateChange={(applicationState: ApplicationState) => {
-              setApplication({
-                ...application,
-                state: applicationState,
-              })
-            }}
-            application={application}
+            setApplication={setApplication}
+            applicationId={application.id}
+            currentState={application.state}
+            setIsLoading={setIsLoading}
           />
         )}
 
@@ -416,24 +287,18 @@ const ApplicationProfile = () => {
             }}
           />
         )}
-      </AdminLayout>
+      </LoadingContainer>
     )
   }
-  if (loading) {
-    return (
-      <AdminLayout>
-        <LoadingDots />
-      </AdminLayout>
-    )
-  }
+
   return (
-    <AdminLayout>
+    <LoadingContainer isLoading={loading} loader={<ApplicationSkeleton />}>
       <Box>
         <Button
           colorScheme="default"
           iconType="filled"
           onClick={() => {
-            router.push('/')
+            router.push('/nymal')
           }}
           preTextIcon="arrowBack"
           preTextIconType="filled"
@@ -447,7 +312,7 @@ const ApplicationProfile = () => {
       <Text color="red400" fontWeight="semiBold" marginTop={4}>
         Abbabab Notendi ekki fundinn, farðu tilbaka og reyndu vinsamlegast aftur{' '}
       </Text>
-    </AdminLayout>
+    </LoadingContainer>
   )
 }
 

@@ -15,14 +15,14 @@ export const useS3Upload = (workingCase?: Case) => {
   const filesRef = useRef<UploadFile[]>(files)
 
   useEffect(() => {
-    const uploadCaseFiles = workingCase?.files?.map((caseFile) => {
+    const uploadCaseFiles = workingCase?.caseFiles?.map((caseFile) => {
       const uploadCaseFile = caseFile as UploadFile
       uploadCaseFile.status = 'done'
       return uploadCaseFile
     })
 
     setFilesRefAndState(uploadCaseFiles ?? [])
-  }, [workingCase?.files])
+  }, [workingCase?.caseFiles])
 
   useMemo(() => {
     setAllFilesUploaded(
@@ -38,9 +38,16 @@ export const useS3Upload = (workingCase?: Case) => {
   // File upload spesific functions
   const createPresignedPost = async (
     filename: string,
+    type: string,
   ): Promise<PresignedPost> => {
     const { data: presignedPostData } = await createPresignedPostMutation({
-      variables: { input: { caseId: workingCase?.id, fileName: filename } },
+      variables: {
+        input: {
+          caseId: workingCase?.id,
+          fileName: filename,
+          type,
+        },
+      },
     })
 
     return presignedPostData?.createPresignedPost
@@ -150,6 +157,7 @@ export const useS3Upload = (workingCase?: Case) => {
         variables: {
           input: {
             caseId: workingCase.id,
+            type: file.type,
             key: file.key,
             size: file.size,
           },
@@ -180,7 +188,10 @@ export const useS3Upload = (workingCase?: Case) => {
     }
 
     newUploadFiles.forEach(async (file) => {
-      const presignedPost = await createPresignedPost(file.name).catch(() =>
+      const presignedPost = await createPresignedPost(
+        file.name.normalize(),
+        file.type ?? '',
+      ).catch(() =>
         setUploadErrorMessage(
           'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
         ),

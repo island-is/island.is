@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { Box, Text, Input } from '@island.is/island-ui/core'
 import {
   formatAccusedByGender,
@@ -31,6 +32,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
 
 interface Props {
   workingCase: Case
@@ -51,19 +53,20 @@ const StepThreeForm: React.FC<Props> = (props) => {
   )
 
   const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
 
   return (
     <>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Dómkröfur og lagagrundvöllur
+            {formatMessage(rcDemands.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Dómkröfur
+              {formatMessage(rcDemands.sections.demands.heading)}
             </Text>
             {workingCase.parentCase && (
               <Box marginTop={1}>
@@ -113,17 +116,21 @@ const StepThreeForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={7}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Lagaákvæði sem brot varða við
+              {formatMessage(rcDemands.sections.lawsBroken.heading)}
             </Text>
           </Box>
           <Input
             data-testid="lawsBroken"
             name="lawsBroken"
-            label={`Lagaákvæði sem ætluð brot ${formatAccusedByGender(
-              workingCase?.accusedGender,
-              NounCases.GENITIVE,
-            )} þykja varða við`}
-            placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
+            label={formatMessage(rcDemands.sections.lawsBroken.label, {
+              defendant: formatAccusedByGender(
+                workingCase?.accusedGender,
+                NounCases.GENITIVE,
+              ),
+            })}
+            placeholder={formatMessage(
+              rcDemands.sections.lawsBroken.placeholder,
+            )}
             defaultValue={workingCase?.lawsBroken}
             errorMessage={lawsBrokenErrorMessage}
             hasError={lawsBrokenErrorMessage !== ''}
@@ -156,29 +163,62 @@ const StepThreeForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Lagaákvæði sem krafan er byggð á{' '}
+              {formatMessage(rcDemands.sections.legalBasis.heading)}{' '}
               <Text as="span" color={'red600'} fontWeight="semiBold">
                 *
               </Text>
             </Text>
           </Box>
           <BlueBox>
-            <CheckboxList
-              checkboxes={
-                workingCase.type === CaseType.CUSTODY
-                  ? custodyProvisions
-                  : travelBanProvisions
-              }
-              selected={workingCase.custodyProvisions}
-              onChange={(id) =>
-                setCheckboxAndSendToServer(
-                  'custodyProvisions',
-                  id,
+            <Box marginBottom={2}>
+              <CheckboxList
+                checkboxes={
+                  workingCase.type === CaseType.CUSTODY
+                    ? custodyProvisions
+                    : travelBanProvisions
+                }
+                selected={workingCase.custodyProvisions}
+                onChange={(id) =>
+                  setCheckboxAndSendToServer(
+                    'custodyProvisions',
+                    id,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+              />
+            </Box>
+            <Input
+              data-testid="legalBasis"
+              name="legalBasis"
+              label={formatMessage(
+                rcDemands.sections.legalBasis.legalBasisLabel,
+              )}
+              placeholder={formatMessage(
+                rcDemands.sections.legalBasis.legalBasisPlaceholder,
+              )}
+              defaultValue={workingCase?.legalBasis}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'legalBasis',
+                  event,
+                  [],
                   workingCase,
                   setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'legalBasis',
+                  event.target.value,
+                  [],
+                  workingCase,
                   updateCase,
                 )
               }
+              textarea
+              rows={7}
             />
           </BlueBox>
         </Box>
@@ -187,10 +227,22 @@ const StepThreeForm: React.FC<Props> = (props) => {
             <Box marginBottom={3}>
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">
-                  Takmarkanir og tilhögun gæslu
+                  {formatMessage(
+                    rcDemands.sections.custodyRestrictions.heading,
+                    {
+                      caseType: 'gæslu',
+                    },
+                  )}
                 </Text>
               </Box>
-              <Text>Ef ekkert er valið er gæsla án takmarkana</Text>
+              <Text>
+                {formatMessage(
+                  rcDemands.sections.custodyRestrictions.subHeading,
+                  {
+                    caseType: 'gæsla',
+                  },
+                )}
+              </Text>
             </Box>
             <BlueBox>
               <CheckboxList
@@ -213,9 +265,18 @@ const StepThreeForm: React.FC<Props> = (props) => {
           <Box component="section" marginBottom={4}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Takmarkanir og tilhögun farbanns
+                {formatMessage(rcDemands.sections.custodyRestrictions.heading, {
+                  caseType: 'farbanns',
+                })}
               </Text>
-              <Text>Ef ekkert er valið er farbann án takmarkana.</Text>
+              <Text>
+                {formatMessage(
+                  rcDemands.sections.custodyRestrictions.subHeading,
+                  {
+                    caseType: 'farbann',
+                  },
+                )}
+              </Text>
             </Box>
             <BlueBox>
               <Box marginBottom={3}>
@@ -236,9 +297,13 @@ const StepThreeForm: React.FC<Props> = (props) => {
               <Input
                 name="requestedOtherRestrictions"
                 data-testid="requestedOtherRestrictions"
-                label="Nánari útlistun eða aðrar takmarkanir"
+                label={formatMessage(
+                  rcDemands.sections.custodyRestrictions.label,
+                )}
                 defaultValue={workingCase.requestedOtherRestrictions}
-                placeholder="Til dæmis hvernig tilkynningarskyldu sé háttað..."
+                placeholder={formatMessage(
+                  rcDemands.sections.custodyRestrictions.placeholder,
+                )}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'requestedOtherRestrictions',
@@ -271,8 +336,9 @@ const StepThreeForm: React.FC<Props> = (props) => {
           nextIsDisabled={
             !validate(workingCase.lawsBroken ?? '', 'empty').isValid ||
             !requestedValidToDateIsValid ||
-            !workingCase.custodyProvisions ||
-            workingCase.custodyProvisions?.length === 0
+            ((!workingCase.custodyProvisions ||
+              workingCase.custodyProvisions?.length === 0) &&
+              !workingCase.legalBasis)
           }
         />
       </FormContentContainer>

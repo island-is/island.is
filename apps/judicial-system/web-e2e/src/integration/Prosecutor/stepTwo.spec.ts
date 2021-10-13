@@ -1,7 +1,16 @@
+import { Case } from '@island.is/judicial-system/types'
+import { makeCase, makeCourt } from '../../fixtures/testDataFactory'
+import { intercept } from '../../utils'
+
 describe('/krafa/fyrirtaka/:id', () => {
   beforeEach(() => {
+    const caseData = makeCase()
+    const caseDataAddition = { ...caseData, court: makeCourt() }
+
     cy.stubAPIResponses()
     cy.visit('/krafa/fyrirtaka/test_id')
+
+    intercept(caseDataAddition)
   })
 
   it('should require a valid arrest time', () => {
@@ -41,7 +50,7 @@ describe('/krafa/fyrirtaka/:id', () => {
   it('should have a info bubble that explains the what setting a prosecutor does', () => {
     cy.getByTestid('prosecutor-tooltip').trigger('mouseover')
     cy.contains(
-      'Sá saksóknari sem valinn er hér er skráður fyrir kröfunni í öllum upplýsingaskeytum og skjölum sem tengjast kröfunni, og flytur málið fyrir dómstólum fyrir hönd síns embættis.',
+      'Sá ákærandi sem valinn er hér er skráður fyrir kröfunni í öllum upplýsingaskeytum og skjölum sem tengjast kröfunni, og flytur málið fyrir dómstólum fyrir hönd síns embættis.',
     )
   })
 

@@ -1,4 +1,6 @@
+const isProductionEnvironment = process.env.NODE_ENV === 'production'
 const devConfig = {
+  production: isProductionEnvironment,
   metadataProvider: {
     nationalRegistry: {
       baseSoapUrl: 'https://localhost:8443',
@@ -24,6 +26,7 @@ const devConfig = {
 }
 
 const prodConfig = {
+  production: isProductionEnvironment,
   metadataProvider: {
     nationalRegistry: {
       baseSoapUrl: process.env.SOFFIA_SOAP_URL,
@@ -50,4 +53,4 @@ const prodConfig = {
   },
 }
 
-export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
+export default isProductionEnvironment ? prodConfig : devConfig

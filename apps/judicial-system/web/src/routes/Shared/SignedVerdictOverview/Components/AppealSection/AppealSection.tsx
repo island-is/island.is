@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { Box, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  InstitutionType,
+} from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import * as styles from './AppealSection.treat'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
@@ -19,6 +22,7 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 interface Props {
   workingCase: Case
@@ -37,6 +41,8 @@ const AppealSection: React.FC<Props> = (props) => {
     withdrawProsecutorAppealDate,
   } = props
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
+  const isHighCourt = user?.institution?.type === InstitutionType.HIGH_COURT
 
   const [isInitialMount, setIsInitialMount] = useState<boolean>(true)
 
@@ -51,26 +57,19 @@ const AppealSection: React.FC<Props> = (props) => {
           Ákvörðun um kæru
         </Text>
       </Box>
-      {!workingCase.isAppealDeadlineExpired && workingCase.rulingDate && (
-        <Box marginBottom={2}>
-          <Text>{`Kærufrestur rennur út ${getAppealEndDate(
-            workingCase.rulingDate,
-          )}`}</Text>
-        </Box>
-      )}
-      {workingCase.isAppealDeadlineExpired && workingCase.rulingDate && (
-        <div className={styles.appealContainer}>
-          <BlueBox>
-            <InfoBox
-              text={`Kærufrestur rann út ${getAppealEndDate(
-                workingCase.rulingDate,
-              )}`}
-              fluid
-              light
-            />
-          </BlueBox>
-        </div>
-      )}
+
+      {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+        workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
+        workingCase.rulingDate &&
+        !isHighCourt && (
+          <Box marginBottom={3}>
+            <Text>
+              {`Kærufrestur ${
+                workingCase.isAppealDeadlineExpired ? 'rann' : 'rennur'
+              } út ${getAppealEndDate(workingCase.rulingDate)}`}
+            </Text>
+          </Box>
+        )}
       {workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
         <div className={styles.appealContainer}>
           <BlueBox>
@@ -80,9 +79,9 @@ const AppealSection: React.FC<Props> = (props) => {
                   formatAccusedByGender(workingCase.accusedGender),
                 ),
                 courtEndTime: `${formatDate(
-                  workingCase.courtEndTime,
+                  workingCase.rulingDate,
                   'PP',
-                )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
+                )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
               })}
               fluid
               light
@@ -130,7 +129,7 @@ const AppealSection: React.FC<Props> = (props) => {
                     <AccusedAppealInfo
                       workingCase={workingCase}
                       withdrawAccusedAppealDate={
-                        workingCase.isAppealGracePeriodExpired
+                        workingCase.isAppealGracePeriodExpired || isHighCourt
                           ? undefined
                           : withdrawAccusedAppealDate
                       }
@@ -161,7 +160,7 @@ const AppealSection: React.FC<Props> = (props) => {
                       workingCase.prosecutorPostponedAppealDate
                     }
                     withdrawProsecutorAppealDate={
-                      workingCase.isAppealGracePeriodExpired
+                      workingCase.isAppealGracePeriodExpired || isHighCourt
                         ? undefined
                         : withdrawProsecutorAppealDate
                     }

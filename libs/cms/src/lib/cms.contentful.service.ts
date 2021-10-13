@@ -6,14 +6,12 @@ import sortBy from 'lodash/sortBy'
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
 import { ContentSlug, mapContentSlug } from './models/contentSlug.model'
-import { AboutPage, mapAboutPage } from './models/aboutPage.model'
 import { GenericPage, mapGenericPage } from './models/genericPage.model'
 import {
   GenericOverviewPage,
   mapGenericOverviewPage,
 } from './models/genericOverviewPage.model'
 import { News, mapNews } from './models/news.model'
-import { Pagination } from './models/pagination.model'
 import {
   AdgerdirFrontpage,
   mapAdgerdirFrontpage,
@@ -21,7 +19,6 @@ import {
 import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirPage, mapAdgerdirPage } from './models/adgerdirPage.model'
 import { GetContentSlugInput } from './dto/getContentSlug.input'
-import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { Namespace, mapNamespace } from './models/namespace.model'
@@ -64,17 +61,17 @@ import {
 import { GetOpenDataSubpageInput } from './dto/getOpenDataSubpage.input'
 import { mapProjectPage, ProjectPage } from './models/projectPage.model'
 import { IProjectPage } from './generated/contentfulTypes'
-
-const makePage = (
-  page: number,
-  perPage: number,
-  totalResults: number,
-): Pagination => ({
-  page,
-  perPage,
-  totalResults,
-  totalPages: Math.ceil(totalResults / perPage),
-})
+import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
+import { mapSupportQNA, SupportQNA } from './models/supportQNA.model'
+import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
+import {
+  mapSupportCategory,
+  SupportCategory,
+} from './models/supportCategory.model'
+import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
+import { GetSupportFormInOrganizationInput } from './dto/getSupportFormInOrganization.input'
+import { mapSupportForm, SupportForm } from './models/supportForm.model'
+import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -398,20 +395,6 @@ export class CmsContentfulService {
     return (result.items as types.INews[]).map(mapNews)[0] ?? null
   }
 
-  async getAboutPage({ lang }: GetAboutPageInput): Promise<AboutPage | null> {
-    const params = {
-      ['content_type']: 'page',
-      include: 10,
-      order: '-sys.createdAt',
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IPageFields>(lang, params)
-      .catch(errorHandler('getAboutPage'))
-
-    return (result.items as types.IPage[]).map(mapAboutPage)[0] ?? null
-  }
-
   async getAboutSubPage({
     lang,
     url,
@@ -642,6 +625,99 @@ export class CmsContentfulService {
       .catch(errorHandler('getSubpageHeader'))
 
     return (result.items as types.ISubpageHeader[]).map(mapSubpageHeader)[0]
+  }
+
+  async getSupportQNAs({ lang }: GetSupportQNAsInput): Promise<SupportQNA[]> {
+    const params = {
+      ['content_type']: 'supportQNA',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ISupportQnaFields>(lang, params)
+      .catch(errorHandler('getSupportQNAs'))
+
+    return (result.items as types.ISupportQna[]).map(mapSupportQNA)
+  }
+
+  async getSupportQNAsInCategory({
+    lang,
+    slug,
+  }: GetSupportQNAsInCategoryInput): Promise<SupportQNA[]> {
+    const params = {
+      ['content_type']: 'supportQNA',
+      'fields.category.sys.contentType.sys.id': 'supportCategory',
+      'fields.category.fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ISupportQnaFields>(lang, params)
+      .catch(errorHandler('getSupportQNAsInCategory'))
+
+    return (result.items as types.ISupportQna[]).map(mapSupportQNA)
+  }
+
+  async getSupportCategory({
+    lang,
+    slug,
+  }: GetSupportCategoryInput): Promise<SupportCategory> {
+    const params = {
+      ['content_type']: 'supportCategory',
+      'fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ISupportCategoryFields>(lang, params)
+      .catch(errorHandler('getSupportCategory'))
+
+    return (result.items as types.ISupportCategory[]).map(mapSupportCategory)[0]
+  }
+
+  async getSupportCategories({
+    lang,
+  }: GetSupportCategoriesInput): Promise<SupportCategory[]> {
+    const params = {
+      ['content_type']: 'supportCategory',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ISupportCategoryFields>(lang, params)
+      .catch(errorHandler('getSupportCategories'))
+
+    return (result.items as types.ISupportCategory[]).map(mapSupportCategory)
+  }
+
+  async getSupportCategoriesInOrganization({
+    lang,
+    slug,
+  }: GetSupportFormInOrganizationInput): Promise<SupportCategory[]> {
+    const params = {
+      ['content_type']: 'supportCategory',
+      'fields.organization.sys.contentType.sys.id': 'organization',
+      'fields.organization.fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ISupportCategoryFields>(lang, params)
+      .catch(errorHandler('getSupportFormInOrganization'))
+
+    return (result.items as types.ISupportCategory[]).map(mapSupportCategory)
+  }
+
+  async getSupportFormInOrganization({
+    lang,
+    slug,
+  }: GetSupportFormInOrganizationInput): Promise<SupportForm[]> {
+    const params = {
+      ['content_type']: 'supportForm',
+      'fields.organization.sys.contentType.sys.id': 'organization',
+      'fields.organization.fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ISupportFormFields>(lang, params)
+      .catch(errorHandler('getSupportFormInOrganization'))
+
+    return (result.items as types.ISupportForm[]).map(mapSupportForm)
   }
 
   async getOpenDataPage({ lang }: GetOpenDataPageInput): Promise<OpenDataPage> {

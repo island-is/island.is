@@ -1,7 +1,10 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -13,14 +16,19 @@ import {
   HomeCircumstances,
   Employment,
   ApplicationState,
-} from '@island.is/financial-aid/shared'
+  Application,
+  FamilyStatus,
+} from '@island.is/financial-aid/shared/lib'
+
+import { ApplicationEventModel } from '../../applicationEvent/models'
 import { ApplicationFileModel } from '../../file/models'
+import { StaffModel } from '../../staff'
 
 @Table({
   tableName: 'applications',
   timestamps: true,
 })
-export class ApplicationModel extends Model<ApplicationModel> {
+export class ApplicationModel extends Model<Application> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -54,7 +62,7 @@ export class ApplicationModel extends Model<ApplicationModel> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty()
   phoneNumber: string
@@ -182,4 +190,42 @@ export class ApplicationModel extends Model<ApplicationModel> {
   })
   @ApiProperty()
   rejection: string
+
+  @ForeignKey(() => StaffModel)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  staffId: string
+
+  @BelongsTo(() => StaffModel, 'staffId')
+  @ApiProperty({ type: StaffModel })
+  staff?: StaffModel
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(FamilyStatus),
+  })
+  @ApiProperty({ enum: FamilyStatus })
+  familyStatus: FamilyStatus
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spouseNationalId?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spouseEmail?: string
+
+  @HasMany(() => ApplicationEventModel, 'applicationId')
+  @ApiProperty({ type: ApplicationEventModel, isArray: true })
+  applicationEvents?: ApplicationEventModel[]
 }

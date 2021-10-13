@@ -1,6 +1,6 @@
 import {
+  CaseAppealDecision,
   CaseCustodyRestrictions,
-  CaseDecision,
   CaseGender,
   CaseType,
 } from '@island.is/judicial-system/types'
@@ -13,8 +13,7 @@ import {
   formatGender,
   formatCustodyRestrictions,
   formatAlternativeTravelBanRestrictions,
-  formatProsecutorDemands,
-  formatConclusion,
+  formatAppeal,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -148,38 +147,24 @@ describe('formatCustodyRestrictions', () => {
     // Arrange
     const accusedGender = CaseGender.MALE
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
-    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
-    expect(res).toBe('Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.')
+    expect(res).toBe('')
   })
 
   test('should return formatted restrictions for isolation only', () => {
     // Arrange
     const accusedGender = CaseGender.MALE
     const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
-    const validToDate = new Date('2021-07-22T11:23')
-    const isolationToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-      isolationToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
-    expect(res).toBe(
-      'Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur.',
-    )
+    expect(res).toBe('')
   })
 
   test('should return formatted restrictions for isolation and one other restriction', () => {
@@ -189,20 +174,13 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ]
-    const validToDate = new Date('2021-07-22T11:23')
-    const isolationToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-      isolationToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur og að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
   })
 
@@ -214,14 +192,9 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.MEDIA,
       CaseCustodyRestrictions.VISITAION,
     ]
-    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
@@ -237,39 +210,13 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.VISITAION,
       CaseCustodyRestrictions.COMMUNICATION,
     ]
-    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-    )
+    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
     expect(res).toBe(
       'Sækjandi tekur fram að gæsluvarðhaldið verði með bréfaskoðun og símabanni, fjölmiðlabanni og heimsóknarbanni skv. 99. gr. laga nr. 88/2008.',
-    )
-  })
-
-  test('should return formatted restrictions for isolation shorter than custody', () => {
-    // Arrange
-    const accusedGender = CaseGender.MALE
-    const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
-    const validToDate = new Date('2021-07-22T11:23')
-    const isolationToDate = new Date('2021-06-30T16:00')
-
-    // Act
-    const res = formatCustodyRestrictions(
-      accusedGender,
-      custodyRestrictions,
-      validToDate,
-      isolationToDate,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Sækjandi tekur fram að kærði skuli sæta einangrun ekki lengur en til miðvikudagsins 30. júní 2021, kl. 16:00.',
     )
   })
 })
@@ -287,7 +234,7 @@ describe('formatAlternativeTravelBanRestrictions', () => {
     )
 
     // Assert
-    expect(res).toBe('Sækjandi tekur fram að farbannið sé án takmarkana.')
+    expect(res).toBe('')
   })
 
   test('should return formatted restrictions for one restriction', () => {
@@ -381,150 +328,6 @@ describe('capitalize', () => {
   })
 })
 
-describe('formatProsecutorDemands', () => {
-  test('should format prosecutor demands with isolation', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '010101-0000'
-    const accusedName = 'Glanni Glæpur'
-    const court = 'Héraðsdómur Reykjavíkur'
-    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
-    const isolation = true
-    const isExtension = false
-
-    // Act
-    const res = formatProsecutorDemands(
-      type,
-      accusedNationalId,
-      accusedName,
-      court,
-      requestedValidToDate,
-      isolation,
-      isExtension,
-      undefined,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Þess er krafist að Glanni Glæpur, kt. 010101-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til mánudagsins 16. nóvember 2020, kl. 19:30, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
-    )
-  })
-
-  test('should format prosecutor demands without isolation', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const court = 'Héraðsdómur Reykjavíkur'
-    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
-    const isolation = false
-    const isExtension = false
-
-    // Act
-    const res = formatProsecutorDemands(
-      type,
-      accusedNationalId,
-      accusedName,
-      court,
-      requestedValidToDate,
-      isolation,
-      isExtension,
-      undefined,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Þess er krafist að Glanni Glæpur, kt. 010101-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til mánudagsins 16. nóvember 2020, kl. 19:30.',
-    )
-  })
-
-  test('should format extended prosecutor demands', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '011101-0000'
-    const accusedName = 'Siggi Sýra'
-    const court = 'Héraðsdómur Kjósarskarðs'
-    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
-    const isolation = false
-    const isExtension = true
-    const previousDecision = CaseDecision.ACCEPTING
-
-    // Act
-    const res = formatProsecutorDemands(
-      type,
-      accusedNationalId,
-      accusedName,
-      court,
-      requestedValidToDate,
-      isolation,
-      isExtension,
-      previousDecision,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Þess er krafist að Siggi Sýra, kt. 011101-0000, sæti áframhaldandi gæsluvarðhaldi með úrskurði Héraðsdóms Kjósarskarðs, til mánudagsins 16. nóvember 2020, kl. 19:30.',
-    )
-  })
-
-  test('should format extended prosecutor demands when previous travel ban', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '011101-0000'
-    const accusedName = 'Siggi Sýra'
-    const court = 'Héraðsdómur Kjósarskarðs'
-    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
-    const isolation = false
-    const isExtension = true
-    const previousDecision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-
-    // Act
-    const res = formatProsecutorDemands(
-      type,
-      accusedNationalId,
-      accusedName,
-      court,
-      requestedValidToDate,
-      isolation,
-      isExtension,
-      previousDecision,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Þess er krafist að Siggi Sýra, kt. 011101-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Kjósarskarðs, til mánudagsins 16. nóvember 2020, kl. 19:30.',
-    )
-  })
-
-  test('should format prosecutor demands for travel ban', () => {
-    // Arrange
-    const type = CaseType.TRAVEL_BAN
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const court = 'Héraðsdómur Reykjavíkur'
-    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
-    const isolation = false
-    const isExtension = false
-
-    // Act
-    const res = formatProsecutorDemands(
-      type,
-      accusedNationalId,
-      accusedName,
-      court,
-      requestedValidToDate,
-      isolation,
-      isExtension,
-      undefined,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Þess er krafist að Glanni Glæpur, kt. 010101-0000, sæti farbanni með úrskurði Héraðsdóms Reykjavíkur, til mánudagsins 16. nóvember 2020, kl. 19:30.',
-    )
-  })
-})
-
 describe('formatGender', () => {
   test('should format male', () => {
     // Arrange
@@ -560,401 +363,59 @@ describe('formatGender', () => {
   })
 })
 
-describe('formatConclusion', () => {
-  test('should format conclusion for a rejected case', () => {
+describe('formatAppeal', () => {
+  test('should format appeal', () => {
     // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const accusedGender = CaseGender.MALE
-    const decision = CaseDecision.REJECTING
-    const validToDate = new Date('2020-12-22T11:23')
-    const isolation = false
-    const isExtension = false
+    const appealDecision = CaseAppealDecision.APPEAL
+    const stakeholder = 'Aðili'
 
     // Act
-    const res = formatConclusion(
-      type,
-      accusedNationalId,
-      accusedName,
-      accusedGender,
-      decision,
-      validToDate,
-      isolation,
-      isExtension,
-      undefined,
-    )
+    const res = formatAppeal(appealDecision, stakeholder)
 
     // Assert
     expect(res).toBe(
-      'Kröfu um að kærði, Glanni Glæpur, kt. 010101-0000, sæti gæsluvarðhaldi er hafnað.',
+      'Aðili lýsir því yfir að hann kæri úrskurðinn til Landsréttar.',
     )
   })
 
-  test('should format conclusion for an accepted case without isolation', () => {
+  test('should format acceptance', () => {
     // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const accusedGender = CaseGender.MALE
-    const decision = CaseDecision.ACCEPTING
-    const validToDate = new Date('2020-12-22T11:23')
-    const isolation = false
-    const isExtension = false
+    const appealDecision = CaseAppealDecision.ACCEPT
+    const stakeholder = 'Aðili'
 
     // Act
-    const res = formatConclusion(
-      type,
-      accusedNationalId,
-      accusedName,
-      accusedGender,
-      decision,
-      validToDate,
-      isolation,
-      isExtension,
-      undefined,
-    )
+    const res = formatAppeal(appealDecision, stakeholder)
+
+    // Assert
+    expect(res).toBe('Aðili unir úrskurðinum.')
+  })
+
+  test('should format postponement', () => {
+    // Arrange
+    const appealDecision = CaseAppealDecision.POSTPONE
+    const stakeholder = 'Aðili'
+
+    // Act
+    const res = formatAppeal(appealDecision, stakeholder)
 
     // Assert
     expect(res).toBe(
-      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23.',
+      'Aðili lýsir því yfir að hann taki sér lögbundinn kærufrest.',
     )
   })
 
-  test('should format conclusion for an accepted case with isolation', () => {
+  test('should format gender pronouns if gender is set', () => {
     // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const accusedGender = CaseGender.MALE
-    const decision = CaseDecision.ACCEPTING
-    const validToDate = new Date('2020-12-22T11:23')
-    const isolation = true
-    const isExtension = false
+    const appealDecision = CaseAppealDecision.POSTPONE
+    const stakeholder = 'Kærða'
+    const stakeholderGender = CaseGender.FEMALE
 
     // Act
-    const res = formatConclusion(
-      type,
-      accusedNationalId,
-      accusedName,
-      accusedGender,
-      decision,
-      validToDate,
-      isolation,
-      isExtension,
-      undefined,
-    )
+    const res = formatAppeal(appealDecision, stakeholder, stakeholderGender)
 
     // Assert
     expect(res).toBe(
-      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.',
-    )
-  })
-
-  test('should format conclusion for an accepted case with isolation and the isolation ends before the custody does', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const accusedGender = CaseGender.MALE
-    const decision = CaseDecision.ACCEPTING
-    const validToDate = new Date('2020-12-22T11:23')
-    const isolation = true
-    const isExtension = false
-    const isolationToDate = new Date('2020-12-20T15:39')
-
-    // Act
-    const res = formatConclusion(
-      type,
-      accusedNationalId,
-      accusedName,
-      accusedGender,
-      decision,
-      validToDate,
-      isolation,
-      isExtension,
-      undefined,
-      isolationToDate,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23. Kærði skal sæta einangrun ekki lengur en til sunnudagsins 20. desember 2020, kl. 15:39.',
-    )
-  })
-
-  test('should format conclusion for a case where custody is rejected, but alternative travel ban accepted', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const accusedGender = CaseGender.MALE
-    const decision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-    const validToDate = new Date('2021-01-29T13:03')
-    const isolation = false
-    const isExtension = false
-
-    // Act
-    const res = formatConclusion(
-      type,
-      accusedNationalId,
-      accusedName,
-      accusedGender,
-      decision,
-      validToDate,
-      isolation,
-      isExtension,
-      undefined,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta farbanni, þó ekki lengur en til föstudagsins 29. janúar 2021, kl. 13:03.',
-    )
-  })
-
-  test('should format conclusion for rejected extension', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const accusedGender = CaseGender.MALE
-    const decision = CaseDecision.REJECTING
-    const validToDate = new Date('2020-12-22T11:23')
-    const isolation = false
-    const isExtension = true
-    const previousDecision = CaseDecision.ACCEPTING
-
-    // Act
-    const res = formatConclusion(
-      type,
-      accusedNationalId,
-      accusedName,
-      accusedGender,
-      decision,
-      validToDate,
-      isolation,
-      isExtension,
-      previousDecision,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Kröfu um að kærði, Glanni Glæpur, kt. 010101-0000, sæti áframhaldandi gæsluvarðhaldi er hafnað.',
-    )
-  })
-
-  test('should format conclusion for rejected extension when previous ruling was travel ban', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const accusedGender = CaseGender.MALE
-    const decision = CaseDecision.REJECTING
-    const validToDate = new Date('2020-12-22T11:23')
-    const isolation = false
-    const isExtension = true
-    const previousDecision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-
-    // Act
-    const res = formatConclusion(
-      type,
-      accusedNationalId,
-      accusedName,
-      accusedGender,
-      decision,
-      validToDate,
-      isolation,
-      isExtension,
-      previousDecision,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Kröfu um að kærði, Glanni Glæpur, kt. 010101-0000, sæti gæsluvarðhaldi er hafnað.',
-    )
-  })
-
-  test('should format conclusion for accepted extension', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const accusedGender = CaseGender.MALE
-    const decision = CaseDecision.ACCEPTING
-    const validToDate = new Date('2020-12-22T11:23')
-    const isolation = false
-    const isExtension = true
-    const previousDecision = CaseDecision.ACCEPTING
-
-    // Act
-    const res = formatConclusion(
-      type,
-      accusedNationalId,
-      accusedName,
-      accusedGender,
-      decision,
-      validToDate,
-      isolation,
-      isExtension,
-      previousDecision,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta áframhaldandi gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23.',
-    )
-  })
-
-  test('should format conclusion for accepted extension when previous ruling was travel ban', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const accusedGender = CaseGender.MALE
-    const decision = CaseDecision.ACCEPTING
-    const validToDate = new Date('2020-12-22T11:23')
-    const isolation = false
-    const isExtension = true
-    const previousDecision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-
-    // Act
-    const res = formatConclusion(
-      type,
-      accusedNationalId,
-      accusedName,
-      accusedGender,
-      decision,
-      validToDate,
-      isolation,
-      isExtension,
-      previousDecision,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23.',
-    )
-  })
-
-  test('should format conclusion for rejected extension when alternative travel ban accepted', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const accusedGender = CaseGender.MALE
-    const decision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-    const validToDate = new Date('2020-12-22T11:23')
-    const isolation = false
-    const isExtension = true
-    const previousDecision = CaseDecision.ACCEPTING
-
-    // Act
-    const res = formatConclusion(
-      type,
-      accusedNationalId,
-      accusedName,
-      accusedGender,
-      decision,
-      validToDate,
-      isolation,
-      isExtension,
-      previousDecision,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta farbanni, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23.',
-    )
-  })
-
-  test('should format conclusion for rejected extension when alternative travel ban accepted and previous ruling was travel ban', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const accusedGender = CaseGender.MALE
-    const decision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-    const validToDate = new Date('2020-12-22T11:23')
-    const isolation = false
-    const isExtension = true
-    const previousDecision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-
-    // Act
-    const res = formatConclusion(
-      type,
-      accusedNationalId,
-      accusedName,
-      accusedGender,
-      decision,
-      validToDate,
-      isolation,
-      isExtension,
-      previousDecision,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta áframhaldandi farbanni, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23.',
-    )
-  })
-  test('should format conclusion for a rejected travel ban', () => {
-    // Arrange
-    const type = CaseType.TRAVEL_BAN
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const accusedGender = CaseGender.MALE
-    const decision = CaseDecision.REJECTING
-    const validToDate = new Date('2020-12-22T11:23')
-    const isolation = false
-    const isExtension = false
-
-    // Act
-    const res = formatConclusion(
-      type,
-      accusedNationalId,
-      accusedName,
-      accusedGender,
-      decision,
-      validToDate,
-      isolation,
-      isExtension,
-      undefined,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Kröfu um að kærði, Glanni Glæpur, kt. 010101-0000, sæti farbanni er hafnað.',
-    )
-  })
-
-  test('should format conclusion for an accepted case without isolation', () => {
-    // Arrange
-    const type = CaseType.TRAVEL_BAN
-    const accusedNationalId = '0101010000'
-    const accusedName = 'Glanni Glæpur'
-    const accusedGender = CaseGender.MALE
-    const decision = CaseDecision.ACCEPTING
-    const validToDate = new Date('2020-12-22T11:23')
-    const isolation = false
-    const isExtension = false
-
-    // Act
-    const res = formatConclusion(
-      type,
-      accusedNationalId,
-      accusedName,
-      accusedGender,
-      decision,
-      validToDate,
-      isolation,
-      isExtension,
-      undefined,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta farbanni, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23.',
+      'Kærða lýsir því yfir að hún taki sér lögbundinn kærufrest.',
     )
   })
 })

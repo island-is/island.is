@@ -215,6 +215,9 @@
     "application-templates-funding-government-projects": {
       "tags": []
     },
+    "application-templates-general-petition": {
+      "tags": []
+    },
     "application-templates-health-insurance": {
       "tags": []
     },
@@ -382,9 +385,6 @@
     "financial-aid-api": {
       "tags": []
     },
-    "financial-aid-auth": {
-      "tags": []
-    },
     "financial-aid-backend": {
       "tags": []
     },
@@ -513,7 +513,13 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-pagination": {
+      "tags": []
+    },
     "nest-validators": {
+      "tags": []
+    },
+    "next-ids-auth": {
       "tags": []
     },
     "nova-sms": {
@@ -640,6 +646,9 @@
     "shared-babel": {
       "tags": []
     },
+    "shared-components": {
+      "tags": []
+    },
     "shared-connected": {
       "tags": []
     },
@@ -650,6 +659,9 @@
       "tags": []
     },
     "shared-mocking": {
+      "tags": []
+    },
+    "shared-translations": {
       "tags": []
     },
     "shared-types": {
@@ -675,6 +687,12 @@
       "tags": []
     },
     "system-e2e": {
+      "tags": []
+    },
+    "testing-fixtures": {
+      "tags": []
+    },
+    "testing-nest": {
       "tags": []
     },
     "web": {

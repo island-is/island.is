@@ -1,11 +1,18 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import type { Case, Institution } from '@island.is/judicial-system/types'
+import { ValueType } from 'react-select'
+import type {
+  Case,
+  Institution,
+  UpdateCase,
+  User,
+} from '@island.is/judicial-system/types'
 import {
+  BlueBox,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
@@ -14,28 +21,33 @@ import {
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import { icRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
+import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  user: User
   prosecutors: ReactSelectOption[]
   courts: Institution[]
   isLoading: boolean
-  handleNextButtonClick: () => Promise<void>
+  onNextButtonClick: () => Promise<void>
+  onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
+  updateCase: (id: string, updateCase: UpdateCase) => Promise<Case | undefined>
 }
 
 const HearingArrangementsForms: React.FC<Props> = (props) => {
   const {
     workingCase,
     setWorkingCase,
+    user,
     prosecutors,
     courts,
     isLoading,
-    handleNextButtonClick,
+    onNextButtonClick,
+    onProsecutorChange,
+    updateCase,
   } = props
 
   const { formatMessage } = useIntl()
@@ -54,29 +66,54 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
   const [, setRequestedCourtDateIsValid] = useState<boolean>(
     workingCase.requestedCourtDate !== null,
   )
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
-
-  const { updateCase } = useCase()
+  const {
+    isValid,
+    setField,
+    validateAndSendToServer,
+    setAndSendToServer,
+  } = useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   return (
     <>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(icRequestedHearingArrangements.heading)}
+            {formatMessage(m.heading)}
           </Text>
         </Box>
         {prosecutors && (
           <Box component="section" marginBottom={5}>
-            <SelectProsecutor
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              prosecutors={prosecutors}
-            />
+            <BlueBox>
+              <Box marginBottom={2}>
+                <SelectProsecutor
+                  workingCase={workingCase}
+                  prosecutors={prosecutors}
+                  onChange={onProsecutorChange}
+                />
+              </Box>
+              <Checkbox
+                name="isHeightenedSecurityLevel"
+                label={formatMessage(
+                  m.sections.prosecutor.heightenSecurityLevelLabel,
+                )}
+                tooltip={formatMessage(
+                  m.sections.prosecutor.heightenSecurityLevelInfo,
+                )}
+                disabled={
+                  user.id !== workingCase.creatingProsecutor?.id &&
+                  user.id !==
+                    (((workingCase as unknown) as { prosecutorId: string })
+                      .prosecutorId === undefined
+                      ? workingCase.prosecutor?.id
+                      : ((workingCase as unknown) as { prosecutorId: string })
+                          .prosecutorId)
+                }
+                checked={workingCase.isHeightenedSecurityLevel}
+                onChange={(event) => setAndSendToServer(event.target)}
+                large
+                filled
+              />
+            </BlueBox>
           </Box>
         )}
         {courts && (
@@ -88,7 +125,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={5}>
           <RequestCourtDate
             workingCase={workingCase}
             onChange={(date: Date | undefined, valid: boolean) =>
@@ -104,11 +141,28 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
             }
           />
         </Box>
+        <Box component="section" marginBottom={10}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.translator.heading)}
+            </Text>
+          </Box>
+          <Input
+            data-testid="translator"
+            name="translator"
+            autoComplete="off"
+            label={formatMessage(m.sections.translator.label)}
+            placeholder={formatMessage(m.sections.translator.placeholder)}
+            defaultValue={workingCase.translator}
+            onChange={(event) => setField(event.target)}
+            onBlur={(event) => validateAndSendToServer(event.target)}
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.IC_DEFENDANT_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={async () => await handleNextButtonClick()}
+          onNextButtonClick={async () => await onNextButtonClick()}
           nextIsDisabled={!isValid}
           nextIsLoading={isLoading}
         />

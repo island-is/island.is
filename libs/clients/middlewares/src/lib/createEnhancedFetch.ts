@@ -6,7 +6,7 @@ import fetch from 'node-fetch'
 import { Logger } from 'winston'
 import { logger as defaultLogger } from '@island.is/logging'
 
-type FetchAPI = WindowOrWorkerGlobalScope['fetch']
+export type FetchAPI = WindowOrWorkerGlobalScope['fetch']
 
 interface FetchProblem {
   type: string

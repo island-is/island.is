@@ -1,6 +1,17 @@
 import { defineMessages } from 'react-intl'
 
 export const overview = defineMessages({
+  title: {
+    id: `pdpp.application:application.overview.title`,
+    defaultMessage: 'Yfirlit',
+    description: 'Overview title',
+  },
+  description: {
+    id: `pdpp.application:application.overview.description`,
+    defaultMessage:
+      'Vinsamlega farið yfir niðurstöður umsóknar um greiðsluáætlun áður en umsóknin er staðfest.',
+    description: 'Overview description',
+  },
   name: {
     id: `pdpp.application:application.overview.name`,
     defaultMessage: 'Nafn',
@@ -31,9 +42,45 @@ export const overview = defineMessages({
     defaultMessage: 'Kennitala vinnuveitanda',
     description: 'Overview employer ssn',
   },
+  wageDeduction: {
+    id: `pdpp.application:application.overview.wageDeduction`,
+    defaultMessage: 'Kröfur til launagreiðanda',
+    description: 'Overview wage deduction label',
+  },
+  bankClaims: {
+    id: `pdpp.application:application.overview.bankClaims`,
+    defaultMessage: 'Kröfur í heimabanka',
+    description: 'Overview bank claims label',
+  },
   monthlyPayments: {
     id: `pdpp.application:application.overview.monthlyPayments`,
     defaultMessage: 'Mánaðarlegar greiðslur',
     description: 'Overview monthly payments',
+  },
+  accordionItemLabel: {
+    id: `pdpp.application:application.overview.accordionItemLabel`,
+    defaultMessage: 'Samtals skuldir',
+    description: 'Accordion item label in the overview',
+  },
+  accordionTotalAmount: {
+    id: `pdpp.application:application.overview.accordionTotalAmount`,
+    defaultMessage: 'Heildarupphæð: ',
+    description: 'Total amount on all debts',
+  },
+  infoBoxTitle: {
+    id: `pdpp.application:application.overview.infoBoxTitle`,
+    defaultMessage: 'Athugið',
+    description: 'Overview info box title at bottom of the screen',
+  },
+  infoBoxSummary: {
+    id: `pdpp.application:application.overview.infoBoxSummary`,
+    defaultMessage:
+      'Staðfesting á greiðsluáætlun rýfur fyrningu á þeim sköttum gjöldum sem eru í greiðsluáætlun, sbr. 1. mgr. 12. gr. laga um innheimtu opinberra skatta og gjalda, nr. 150/2019. Hafir þú athugasemdir við niðurstöður umsóknarinnar er þér bent á að hafa samband við innheimtumann í þínu umdæmi. ',
+    description: 'Overview info box summary at bottom of the screen',
+  },
+  submitButton: {
+    id: `pdpp.application:application.overview.submitButton`,
+    defaultMessage: 'Staðfesta',
+    description: 'Overview submit button',
   },
 })

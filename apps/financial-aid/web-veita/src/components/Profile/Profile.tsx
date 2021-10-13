@@ -33,7 +33,7 @@ const Profile = ({ heading, info, className }: Props) => {
       </Box>
       <div
         className={cn({
-          [`${styles.container}`]: true,
+          [`${styles.container} hideScrollBar`]: true,
           [`${className}`]: true,
         })}
       >

@@ -1,4 +1,7 @@
-import type { Okuskirteini } from '@island.is/clients/driving-license'
+import type {
+  OkukennariDto,
+  Okuskirteini,
+} from '@island.is/clients/driving-license'
 
 export interface Eligibility {
   id: string
@@ -29,6 +32,8 @@ export interface DrivingLicenseType {
   id: string
   name: string
 }
+
+export type DrivingLicenseApplicationFor = 'B-full' | 'B-temp'
 
 export interface RemarkType {
   id: number
@@ -78,6 +83,7 @@ export enum RequirementKey {
   drivingAssessmentMissing = 'DrivingAssessmentMissing',
   drivingSchoolMissing = 'DrivingSchoolMissing',
   deniedByService = 'DeniedByService',
+  localResidency = 'LocalResidency',
 }
 
 export interface ApplicationEligibilityRequirement {
@@ -108,4 +114,18 @@ export interface QualityPhotoResult {
   success: boolean
   qualityPhoto: string | null
   errorMessage: string | null
+}
+
+export interface StudentAssessment {
+  studentNationalId: string | null
+  teacherNationalId: string | null
+  teacherName: string | null
+}
+
+export interface DrivingSchool {
+  hasFinishedSchool: boolean
+}
+export interface Teacher {
+  nationalId: OkukennariDto['kennitala']
+  name: OkukennariDto['nafn']
 }

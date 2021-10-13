@@ -195,6 +195,7 @@ const Layout: NextComponentType<
           {preloadedFonts.map((href, index) => {
             return (
               <link
+                key={index}
                 rel="preload"
                 href={href}
                 as="font"

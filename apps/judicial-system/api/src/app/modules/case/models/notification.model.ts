@@ -20,8 +20,5 @@ export class Notification implements TNotification {
   readonly type!: NotificationType
 
   @Field({ nullable: true })
-  readonly condition?: string
-
-  @Field({ nullable: true })
   readonly recipients?: string
 }

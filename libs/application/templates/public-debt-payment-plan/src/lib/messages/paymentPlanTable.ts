@@ -18,10 +18,25 @@ export const paymentPlanTable = {
         defaultMessage: 'Innborgun',
         description: 'Payment plan table payment amount',
       },
+      finalOverviewPayment: {
+        id: `pdpp.application:paymentPlanTable.table.head.finalOverviewPayment`,
+        defaultMessage: 'Til greiðslu',
+        description: 'Payment plan table payment amount on the overview page',
+      },
       totalPayment: {
         id: `pdpp.application:paymentPlanTable.table.head.totalPayment`,
-        defaultMessage: 'Greiðsla alls',
+        defaultMessage: 'Innborgun alls',
         description: 'Payment plan table totalPayment amount',
+      },
+      wageDeduction: {
+        id: `pdpp.application:paymentPlanTable.table.head.wageDeduction`,
+        defaultMessage: 'Launaafdráttur',
+        description: 'Payment plan table wage deduction amount',
+      },
+      totalWageDeduction: {
+        id: `pdpp.application:paymentPlanTable.table.head.totalWageDeduction`,
+        defaultMessage: 'Launaafdráttur alls',
+        description: 'Payment plan table total wage deduction amount',
       },
     }),
     labels: defineMessages({

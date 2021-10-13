@@ -17,12 +17,14 @@ import {
   DrivingLicenseCategory,
   NeedsHealhCertificate,
   QualityPhotoResult,
-  NeedsQualityPhoto,
+  StudentAssessment,
+  Teacher,
 } from './drivingLicense.type'
 import {
   AkstursmatDto,
   EmbaettiDto,
   HefurLokidOkugerdiDto,
+  OkukennariDto,
   OkuskirteiniApi,
   Rettindi,
   TegSviptingaDto,
@@ -30,10 +32,17 @@ import {
   TegundRettindaDto,
 } from '@island.is/clients/driving-license'
 import {
+  BLACKLISTED_JURISTICTION,
   DRIVING_ASSESSMENT_MAX_AGE,
   DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE,
   LICENSE_RESPONSE_API_VERSION,
 } from './util/constants'
+import sortTeachers from './util/sortTeachers'
+import {
+  DrivingLicenseApplicationFor,
+  DrivingSchool,
+  NeedsQualityPhoto,
+} from '..'
 
 @Injectable()
 export class DrivingLicenseService {
@@ -80,21 +89,34 @@ export class DrivingLicenseService {
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
-    const drivingLicense = await this.getLicense(nationalId)
+    const drivingLicense = await this.drivingLicenseApi.apiOkuskirteiniKennitalaAllGet(
+      {
+        kennitala: nationalId,
+      },
+    )
 
-    if (!drivingLicense) {
-      return null
-    }
+    const licenseWithName = drivingLicense.find(({ nafn }) => !!nafn)
 
-    const expiryDate = drivingLicense.expires
-
-    if (!expiryDate || expiryDate < new Date()) {
+    if (!licenseWithName) {
       return null
     }
 
     return {
-      name: drivingLicense.name,
+      name: licenseWithName.nafn as string,
     }
+  }
+
+  async getTeachers(): Promise<Teacher[]> {
+    const teachers = await this.drivingLicenseApi.apiOkuskirteiniOkukennararGet(
+      {},
+    )
+
+    return teachers
+      .sort(sortTeachers)
+      .map(({ nafn, kennitala }: OkukennariDto) => ({
+        name: nafn,
+        nationalId: kennitala,
+      }))
   }
 
   async getDeprivationTypes(): Promise<DeprevationType[]> {
@@ -182,11 +204,13 @@ export class DrivingLicenseService {
   async getListOfJuristictions(): Promise<Juristiction[]> {
     const embaetti = await this.drivingLicenseApi.apiOkuskirteiniEmbaettiGet({})
 
-    return embaetti.map(({ nr, postnumer, nafn }: EmbaettiDto) => ({
-      id: nr || 0,
-      zip: postnumer || 0,
-      name: nafn || '',
-    }))
+    return embaetti
+      .map(({ nr, postnumer, nafn }: EmbaettiDto) => ({
+        id: nr || 0,
+        zip: postnumer || 0,
+        name: nafn || '',
+      }))
+      .filter(({ id }) => id !== BLACKLISTED_JURISTICTION)
   }
 
   private async getDrivingAssessmentResult(
@@ -199,7 +223,7 @@ export class DrivingLicenseService {
         },
       )
     } catch (e) {
-      if (e.status === 404) {
+      if (e?.status === 404) {
         return null
       }
 
@@ -209,7 +233,7 @@ export class DrivingLicenseService {
 
   async getApplicationEligibility(
     nationalId: string,
-    type: DrivingLicenseType['id'],
+    type: DrivingLicenseApplicationFor,
   ): Promise<ApplicationEligibility> {
     const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
     const hasFinishedSchoolResult: HefurLokidOkugerdiDto = await this.drivingLicenseApi.apiOkuskirteiniKennitalaFinishedokugerdiGet(
@@ -218,29 +242,34 @@ export class DrivingLicenseService {
       },
     )
 
-    const canApplyResult = ((await this.drivingLicenseApi.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
-      {
-        kennitala: nationalId,
-        category: type,
-      },
-    )) as unknown) as string
+    const canApply = await this.canApplyFor(nationalId, type)
 
-    const requirements = [
-      {
-        key: RequirementKey.drivingAssessmentMissing,
-        requirementMet:
-          (assessmentResult?.dagsetningMats ?? 0) >
-          Date.now() - DRIVING_ASSESSMENT_MAX_AGE,
-      },
-      {
-        key: RequirementKey.drivingSchoolMissing,
-        requirementMet: (hasFinishedSchoolResult.hefurLokidOkugerdi ?? 0) > 0,
-      },
-      {
-        key: RequirementKey.deniedByService,
-        requirementMet: parseInt(canApplyResult, 10) > 0,
-      },
-    ]
+    const requirements = []
+
+    if (type === 'B-full') {
+      requirements.push(
+        {
+          key: RequirementKey.drivingAssessmentMissing,
+          requirementMet:
+            (assessmentResult?.dagsetningMats ?? 0) >
+            Date.now() - DRIVING_ASSESSMENT_MAX_AGE,
+        },
+        {
+          key: RequirementKey.drivingSchoolMissing,
+          requirementMet: (hasFinishedSchoolResult.hefurLokidOkugerdi ?? 0) > 0,
+        },
+      )
+    } else {
+      requirements.push({
+        key: RequirementKey.localResidency,
+        requirementMet: true,
+      })
+    }
+
+    requirements.push({
+      key: RequirementKey.deniedByService,
+      requirementMet: canApply,
+    })
 
     // only eligible if we dont find an unmet requirement
     const isEligible = !requirements.find(
@@ -251,6 +280,23 @@ export class DrivingLicenseService {
       requirements,
       isEligible,
     }
+  }
+
+  async canApplyFor(nationalId: string, type: DrivingLicenseApplicationFor) {
+    let canApplyResult
+    if (type === 'B-full') {
+      canApplyResult = (await this.drivingLicenseApi.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
+        {
+          kennitala: nationalId,
+          category: 'B',
+        },
+      )) as unknown
+    } else if (type === 'B-temp') {
+      // TODO: API seems to not be there as of yet
+      canApplyResult = '0'
+    }
+
+    return parseInt(canApplyResult as string, 10) > 0
   }
 
   async newDrivingAssessment(
@@ -275,10 +321,6 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
     input: NewDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
-    // TODO: insert the following into body
-    // needsToPresentQualityPhoto: input.needsToPresentQualityPhoto
-    // ? NeedsQualityPhoto.TRUE
-    // : NeedsQualityPhoto.FALSE,
     const response: unknown = await this.drivingLicenseApi.apiOkuskirteiniApplicationsNewCategoryPost(
       {
         category: DrivingLicenseCategory.B,
@@ -288,6 +330,11 @@ export class DrivingLicenseService {
             ? NeedsHealhCertificate.TRUE
             : NeedsHealhCertificate.FALSE,
           personIdNumber: nationalId,
+          bringsNewPhoto: input.needsToPresentQualityPhoto
+            ? NeedsQualityPhoto.TRUE
+            : NeedsQualityPhoto.FALSE,
+          sendLicenseInMail: 0,
+          sendToAddress: '',
         },
       },
     )
@@ -328,6 +375,46 @@ export class DrivingLicenseService {
       success: result > 0,
       qualityPhoto: image,
       errorMessage: null,
+    }
+  }
+
+  async getDrivingAssessment(
+    nationalId: string,
+  ): Promise<StudentAssessment | null> {
+    const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
+
+    if (!assessmentResult) {
+      return null
+    }
+
+    let teacherName: string | null
+    if (assessmentResult.kennitalaOkukennara) {
+      const teacherLicense = await this.getLicense(
+        assessmentResult.kennitalaOkukennara,
+      )
+      teacherName = teacherLicense?.name || null
+    } else {
+      teacherName = null
+    }
+
+    return {
+      studentNationalId: assessmentResult.kennitala ?? null,
+      teacherNationalId: assessmentResult.kennitalaOkukennara ?? null,
+      teacherName,
+    }
+  }
+
+  async getDrivingSchool(nationalId: string): Promise<DrivingSchool | null> {
+    const result: HefurLokidOkugerdiDto = await this.drivingLicenseApi.apiOkuskirteiniKennitalaFinishedokugerdiGet(
+      {
+        kennitala: nationalId,
+      },
+    )
+
+    const hasFinishedSchool = (result?.hefurLokidOkugerdi || 0) > 0
+
+    return {
+      hasFinishedSchool,
     }
   }
 }

@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { Case, Institution } from '@island.is/judicial-system/types'
-import { Box, Text } from '@island.is/island-ui/core'
-import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { Box, Input, Text } from '@island.is/island-ui/core'
+import {
+  newSetAndSendDateToServer,
+  setAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -15,6 +18,7 @@ import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/m
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
+import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 
 interface Props {
   workingCase: Case
@@ -42,6 +46,11 @@ const StepTwoForm: React.FC<Props> = (props) => {
 
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
+  const { validateAndSendToServer, setField } = useCaseFormHelper(
+    workingCase,
+    setWorkingCase,
+    {},
+  )
 
   return (
     <>
@@ -54,8 +63,18 @@ const StepTwoForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <SelectProsecutor
             workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
             prosecutors={prosecutors}
+            onChange={(selectedOption) => {
+              setAndSendToServer(
+                'prosecutorId',
+                (selectedOption as ReactSelectOption).value.toString(),
+                workingCase,
+                setWorkingCase,
+                updateCase,
+              )
+
+              return true
+            }}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -96,7 +115,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={5}>
           <RequestCourtDate
             workingCase={workingCase}
             onChange={(date: Date | undefined, valid: boolean) =>
@@ -110,6 +129,29 @@ const StepTwoForm: React.FC<Props> = (props) => {
                 updateCase,
               )
             }
+          />
+        </Box>
+        <Box component="section" marginBottom={10}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(
+                rcRequestedHearingArrangements.sections.translator.heading,
+              )}
+            </Text>
+          </Box>
+          <Input
+            data-testid="translator"
+            name="translator"
+            autoComplete="off"
+            label={formatMessage(
+              rcRequestedHearingArrangements.sections.translator.label,
+            )}
+            placeholder={formatMessage(
+              rcRequestedHearingArrangements.sections.translator.placeholder,
+            )}
+            defaultValue={workingCase.translator}
+            onChange={(event) => setField(event.target)}
+            onBlur={(event) => validateAndSendToServer(event.target)}
           />
         </Box>
       </FormContentContainer>

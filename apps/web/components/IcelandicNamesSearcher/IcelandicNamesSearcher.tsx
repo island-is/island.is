@@ -24,7 +24,6 @@ import {
   ButtonProps,
   Icon,
   Input,
-  ResponsiveSpace,
   Link,
   Hidden,
   Tooltip,
@@ -115,8 +114,6 @@ type NameType = Pick<
   | 'description'
   | 'url'
 >
-
-const paddingTop = [3, 3, 3, 3, 0] as ResponsiveSpace
 
 export const IcelandicNamesSearcher = () => {
   const [searchQuery, setSearchQuery] = useState<string>('')

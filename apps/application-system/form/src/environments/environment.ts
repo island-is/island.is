@@ -10,6 +10,7 @@ const devConfig = {
     dsn:
       'https://22093678b2b24a0cad25111c1806a8d7@o406638.ingest.sentry.io/5530607',
   },
+  featureFlagSdkKey: 'YcfYCOwBTUeI04mWOWpPdA/KgCHhUk0_k2BdiKMaNh3qA',
 }
 
 const prodConfig = {
@@ -22,6 +23,7 @@ const prodConfig = {
     dsn:
       'https://22093678b2b24a0cad25111c1806a8d7@o406638.ingest.sentry.io/5530607',
   },
+  featureFlagSdkKey: getStaticEnv('SI_PUBLIC_CONFIGCAT_SDK_KEY'),
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

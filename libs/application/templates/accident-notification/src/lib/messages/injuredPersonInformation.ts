@@ -4,7 +4,7 @@ export const injuredPersonInformation = {
   general: defineMessages({
     sectionTitle: {
       id: 'an.application:injuredPersonInformation.general.sectionTitle',
-      defaultMessage: 'Upplýsingar um þann slasaða',
+      defaultMessage: 'Hinn slasaði',
       description: 'Section title for injured person information person',
     },
     heading: {
@@ -46,6 +46,13 @@ export const injuredPersonInformation = {
       id: 'an.application:injuredPersonInformation.labels.tel',
       defaultMessage: 'Símanúmer',
       description: 'Telephone number',
+    },
+  }),
+  upload: defineMessages({
+    uploadHeader: {
+      id: 'an.application:powerOfAttorney.upload.uploadHeader',
+      defaultMessage: 'Dragðu áverkavottorð hingað til að hlaða upp',
+      description: 'Definition of upload header',
     },
   }),
 }

@@ -10,6 +10,8 @@ export type {
   SendNotificationResponse,
 } from './lib/notification'
 
+export { CaseFileState } from './lib/file'
+
 export type {
   PresignedPost,
   CreatePresignedPost,
@@ -17,11 +19,13 @@ export type {
   DeleteFileResponse,
   GetSignedUrl,
   SignedUrl,
+  UploadFileToCourt,
+  UploadFileToCourtResponse,
   CaseFile,
   CreateFile,
 } from './lib/file'
 
-export { UserRole } from './lib/user'
+export { UserRole, courtRoles } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
 export {
@@ -35,6 +39,13 @@ export {
   CaseDecision,
   AccusedPleaDecision,
   SessionArrangements,
+  restrictionCases,
+  investigationCases,
+  isRestrictionCase,
+  isInvestigationCase,
+  completedCaseStates,
+  hasCaseBeenAppealed,
+  isAccusedRightsHidden,
 } from './lib/case'
 export type {
   Case,
@@ -45,3 +56,5 @@ export type {
   SignatureConfirmationResponse,
   CreateCourtCase,
 } from './lib/case'
+
+export type { PoliceCaseFile } from './lib/policeFile'

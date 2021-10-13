@@ -57,7 +57,7 @@ export const LanguageToggler = ({
           return Router.push(linkResolver(type, [slug], otherLanguage).href)
         }
 
-        return Router.push(linkResolver('homepage').href)
+        return Router.push(linkResolver('homepage', [], otherLanguage).href)
       })
     }
   }
@@ -86,24 +86,21 @@ export const LanguageToggler = ({
     </Button>
   )
 
-  const LanguageButton = (
-    <>
-      {otherLanguage === 'en' ? (
-        <DialogPrompt
-          baseId={dialogId}
-          title={gn('switchToEnglishModalTitle')}
-          description={gn('switchToEnglishModalText')}
-          ariaLabel="Confirm switching to english"
-          disclosureElement={Disclosure}
-          onConfirm={onClick}
-          buttonTextConfirm="Confirm"
-          buttonTextCancel="Cancel"
-        />
-      ) : (
-        Disclosure
-      )}
-    </>
-  )
+  const LanguageButton =
+    otherLanguage === 'en' ? (
+      <DialogPrompt
+        baseId={dialogId}
+        title={gn('switchToEnglishModalTitle')}
+        description={gn('switchToEnglishModalText')}
+        ariaLabel="Confirm switching to english"
+        disclosureElement={Disclosure}
+        onConfirm={onClick}
+        buttonTextConfirm="Confirm"
+        buttonTextCancel="Cancel"
+      />
+    ) : (
+      Disclosure
+    )
 
   return !hideWhenMobile ? (
     LanguageButton

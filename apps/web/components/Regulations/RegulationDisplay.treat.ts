@@ -2,8 +2,10 @@ import { style, globalStyle } from 'treat'
 import {
   regulationContentStyling,
   diffStyling,
+  regulationTitleStyling,
 } from '@island.is/regulations/styling'
 import { theme, spacing } from '@island.is/island-ui/theme'
+import { STICKY_NAV_HEIGHT } from '@island.is/web/constants'
 const { color, typography, border, shadows } = theme
 
 export const scrolled = style({})
@@ -11,7 +13,7 @@ export const scrolled = style({})
 export const breadCrumbs = style({
   position: 'sticky',
   top: 0,
-  zIndex: 1,
+  zIndex: 2,
 })
 
 globalStyle(`${scrolled} ${breadCrumbs} nav > div:not(:last-child)`, {
@@ -22,6 +24,7 @@ globalStyle(`${scrolled} ${breadCrumbs} nav > div:not(:last-child)`, {
 
 export const statusHeader = style({
   position: 'sticky',
+  zIndex: 1,
   top: 0,
   marginTop: -spacing[3] - 4,
   paddingTop: spacing[3] + 4,
@@ -39,6 +42,15 @@ export const statusHeader = style({
       boxShadow: '0 20px 20px -20px  rgba(28, 28, 28, .15)',
     },
   },
+
+  '@media': {
+    print: {
+      position: 'relative',
+      marginTop: 0,
+      paddingTop: 0,
+      paddingBottom: spacing[1],
+    },
+  },
 })
 
 export const diffInfo = style({
@@ -46,6 +58,26 @@ export const diffInfo = style({
   fontSize: '.75em',
   // color: color.dark300,
   opacity: 0.67,
+})
+
+export const historyStepper = style({
+  position: 'relative',
+  top: spacing[1],
+  marginTop: spacing[1],
+  fontSize: '.75em',
+  display: 'flex',
+  flexFlow: 'row-reverse',
+})
+export const historyStepperLink = style({
+  selectors: {
+    '&:not(:first-child)': {
+      marginRight: spacing[2],
+    },
+  },
+})
+export const historyStepperLinkText = style({
+  display: 'inline-block',
+  verticalAlign: 'top',
 })
 
 const makeWatermark = (text: string, size = 1, opacity = 1) => {
@@ -60,7 +92,7 @@ export const repealedWarning = style({
   backgroundPosition: 'top center',
 })
 export const oudatedWarning = style({
-  backgroundImage: makeWatermark('Úrelt', 1, 0.5),
+  backgroundImage: makeWatermark('Úrelt', 1, 0.6),
   backgroundSize: '100% auto',
   backgroundPosition: 'top center',
 })
@@ -70,7 +102,35 @@ export const upcomingWarning = style({
 
 // ---------------------------------------------------------------------------
 
+export const diffText = style({})
+export const titleText = style({})
 export const bodyText = style({})
 
 regulationContentStyling(bodyText)
-diffStyling(bodyText)
+regulationTitleStyling(titleText)
+diffStyling(diffText)
+
+// ---------------------------------------------------------------------------
+
+export const disclaimer = style({
+  // …
+})
+export const disclaimerParagraph = style({
+  fontSize: 16,
+  lineHeight: typography.baseLineHeight,
+
+  selectors: {
+    '&:not(:first-child)': {
+      marginTop: theme.spacing[2],
+    },
+  },
+})
+
+// ---------------------------------------------------------------------------
+
+export const sidebarScroller = style({
+  overflowY: 'auto',
+  // maxHeight: 'calc(100vh - var(--FixedNav-height-spaced))',
+  maxHeight: `calc(100vh - ${STICKY_NAV_HEIGHT + spacing[1]}px)`,
+  paddingBottom: spacing[4],
+})

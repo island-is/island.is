@@ -12,7 +12,6 @@ import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/
 import {
   CustomerChargeType,
   CustomerRecords,
-  CustomerRecordsDetails,
 } from './FinanceTransactionsData.types'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { m } from '@island.is/service-portal/core'
@@ -30,18 +29,25 @@ import {
   AlertBanner,
   Hidden,
   Input,
+  Button,
 } from '@island.is/island-ui/core'
 import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
 import { transactionFilter } from '../../utils/simpleFilter'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
-const allChargeTypes = { label: 'Allar færslur', value: ALL_CHARGE_TYPES }
 
 const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
 
+  const allChargeTypes = {
+    label: formatMessage({
+      id: 'sp.finance-transactions:all-selection',
+      defaultMessage: 'Allir gjaldflokkar',
+    }),
+    value: ALL_CHARGE_TYPES,
+  }
   const [fromDate, setFromDate] = useState<Date>()
   const [toDate, setToDate] = useState<Date>()
   const [q, setQ] = useState<string>('')
@@ -123,12 +129,26 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
             </Text>
           </Column>
         </Columns>
-        <Box marginTop={[1, 1, 2, 2, 5]}>
-          {recordsDataArray.length > 0 ? (
-            <GridRow>
-              <GridColumn paddingBottom={2} span={['1/1', '12/12']}>
-                <Hidden print={true}>
+        <Hidden print={true}>
+          <Box marginTop={[1, 1, 2, 2, 5]}>
+            {recordsDataArray.length > 0 ? (
+              <GridRow>
+                <GridColumn paddingBottom={2} span={['1/1', '12/12']}>
                   <Columns space="p2" align="right">
+                    <Column width="content">
+                      <Button
+                        colorScheme="default"
+                        icon="print"
+                        iconType="filled"
+                        onClick={() => window.print()}
+                        preTextIconType="filled"
+                        size="default"
+                        type="button"
+                        variant="utility"
+                      >
+                        {formatMessage(m.print)}
+                      </Button>
+                    </Column>
                     <Column width="content">
                       <DropdownExport
                         onGetCSV={() =>
@@ -140,70 +160,70 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
                       />
                     </Column>
                   </Columns>
-                </Hidden>
+                </GridColumn>
+              </GridRow>
+            ) : null}
+            <GridRow>
+              <GridColumn
+                paddingBottom={[1, 0]}
+                span={['1/1', '1/1', '1/1', '1/1', '4/12']}
+              >
+                <Select
+                  name="faerslur"
+                  backgroundColor="blue"
+                  placeholder={formatMessage(m.transactions)}
+                  label={formatMessage(m.transactionsLabel)}
+                  defaultValue={allChargeTypes}
+                  size="sm"
+                  options={[allChargeTypes, ...chargeTypeSelect]}
+                  onChange={(sel) => onDropdownSelect(sel)}
+                />
+              </GridColumn>
+              <GridColumn
+                paddingTop={[2, 2, 2, 2, 0]}
+                span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+              >
+                <DatePicker
+                  backgroundColor="blue"
+                  handleChange={(d) => setFromDate(d)}
+                  selected={fromDate}
+                  icon="calendar"
+                  iconType="outline"
+                  size="sm"
+                  label={formatMessage(m.dateFrom)}
+                  locale="is"
+                  placeholderText={formatMessage(m.chooseDate)}
+                />
+              </GridColumn>
+              <GridColumn
+                paddingTop={[2, 2, 2, 2, 0]}
+                span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+              >
+                <DatePicker
+                  backgroundColor="blue"
+                  handleChange={(d) => setToDate(d)}
+                  selected={toDate}
+                  icon="calendar"
+                  iconType="outline"
+                  size="sm"
+                  label={formatMessage(m.dateTo)}
+                  locale="is"
+                  placeholderText={formatMessage(m.chooseDate)}
+                />
               </GridColumn>
             </GridRow>
-          ) : null}
-          <GridRow>
-            <GridColumn
-              paddingBottom={[1, 0]}
-              span={['1/1', '1/1', '1/1', '1/1', '4/12']}
-            >
-              <Select
-                name="faerslur"
-                backgroundColor="blue"
-                placeholder={formatMessage(m.transactions)}
-                label={formatMessage(m.transactionsLabel)}
-                defaultValue={allChargeTypes}
+            <Box marginTop={3}>
+              <Input
+                label="Leit"
+                name="Search"
+                placeholder={formatMessage(m.searchPlaceholder)}
                 size="sm"
-                options={[allChargeTypes, ...chargeTypeSelect]}
-                onChange={(sel) => onDropdownSelect(sel)}
+                onChange={(e) => setQ(e.target.value)}
+                value={q}
               />
-            </GridColumn>
-            <GridColumn
-              paddingTop={[2, 2, 2, 2, 0]}
-              span={['1/1', '6/12', '6/12', '6/12', '4/12']}
-            >
-              <DatePicker
-                backgroundColor="blue"
-                handleChange={(d) => setFromDate(d)}
-                selected={fromDate}
-                icon="calendar"
-                iconType="outline"
-                size="sm"
-                label={formatMessage(m.dateFrom)}
-                locale="is"
-                placeholderText={formatMessage(m.chooseDate)}
-              />
-            </GridColumn>
-            <GridColumn
-              paddingTop={[2, 2, 2, 2, 0]}
-              span={['1/1', '6/12', '6/12', '6/12', '4/12']}
-            >
-              <DatePicker
-                backgroundColor="blue"
-                handleChange={(d) => setToDate(d)}
-                selected={toDate}
-                icon="calendar"
-                iconType="outline"
-                size="sm"
-                label={formatMessage(m.dateTo)}
-                locale="is"
-                placeholderText={formatMessage(m.chooseDate)}
-              />
-            </GridColumn>
-          </GridRow>
-          <Box marginTop={3}>
-            <Input
-              label="Leit"
-              name="Search1"
-              placeholder="Sláðu inn leitarorð"
-              size="sm"
-              onChange={(e) => setQ(e.target.value)}
-              value={q}
-            />
+            </Box>
           </Box>
-        </Box>
+        </Hidden>
         <Box marginTop={2}>
           {error && (
             <AlertBanner
@@ -211,13 +231,7 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
               variant="error"
             />
           )}
-          {!called && !loading && (
-            <AlertBanner
-              description={formatMessage(m.selectForResults)}
-              variant="info"
-            />
-          )}
-          {loading && (
+          {(loading || !called) && (
             <Box padding={3}>
               <SkeletonLoader space={1} height={40} repeat={5} />
             </Box>

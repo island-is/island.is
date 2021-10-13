@@ -81,6 +81,11 @@ export class UpdateCaseDto {
   readonly defenderIsSpokesperson?: boolean
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly isHeightenedSecurityLevel?: boolean
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly courtId?: string
@@ -99,6 +104,11 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly requestedCourtDate?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly translator?: string
 
   @IsOptional()
   @IsString()
@@ -193,6 +203,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly courtLocation?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly courtRoom?: string
 
   @IsOptional()
@@ -204,6 +219,11 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly courtEndTime?: Date
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly isClosedCourtHidden?: boolean
 
   @IsOptional()
   @IsString()
@@ -223,7 +243,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
-  readonly isAccusedAbsent?: boolean
+  readonly isAccusedRightsHidden?: boolean
 
   @IsOptional()
   @IsEnum(AccusedPleaDecision)

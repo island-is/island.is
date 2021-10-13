@@ -44,7 +44,6 @@ export const NewsCard: React.FC<NewsCardProps> = ({
   if (mini) {
     return (
       <FocusableBox
-        ref={ref}
         href={href}
         paddingX={[0, 2, 5]}
         paddingY={[2, 2, 3]}
@@ -71,7 +70,6 @@ export const NewsCard: React.FC<NewsCardProps> = ({
 
   return (
     <FocusableBox
-      ref={ref}
       href={href}
       paddingX={[2, 2, 5, 5]}
       paddingY={[3, 3, 5, 5]}

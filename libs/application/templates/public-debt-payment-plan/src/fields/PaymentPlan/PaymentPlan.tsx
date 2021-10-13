@@ -3,7 +3,12 @@ import {
   PaymentScheduleDistribution,
 } from '@island.is/api/schema'
 import { FieldBaseProps } from '@island.is/application/core'
-import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import {
+  AccordionItem,
+  AlertMessage,
+  Box,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RadioController } from '@island.is/shared/form-fields'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -41,6 +46,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     distributionData,
     setDistributionData,
   ] = useState<PaymentScheduleDistribution | null>(null)
+  const [displayInfo, setDisplayInfo] = useState(false)
 
   const externalData = application.externalData as PaymentPlanExternalData
   const answers = application.answers as PublicDebtPaymentPlan
@@ -108,7 +114,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
             ? debouncedAmount === undefined
               ? initialMinMaxData?.minPayment
               : debouncedAmount
-            : null,
+            : initialMinMaxData?.minPayment,
         monthCount:
           paymentMode === MONTHS
             ? debouncedMonths === undefined
@@ -121,6 +127,16 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
         .then((response) => {
           setDistributionData(response?.paymentScheduleDistribution || null)
           setIsLoading(false)
+
+          const monthlyPayments =
+            response?.paymentScheduleDistribution.payments[0].payment
+          const finalMonthPayment =
+            response?.paymentScheduleDistribution.payments[
+              response?.paymentScheduleDistribution.payments.length - 1
+            ].payment
+
+          if (monthlyPayments && finalMonthPayment)
+            setDisplayInfo(monthlyPayments < finalMonthPayment)
         })
         .catch((error) => {
           console.error(
@@ -205,6 +221,18 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
         ref={register({ required: true })}
         name={`${entry}.id`}
       />
+      <input
+        type="hidden"
+        value={payment.totalAmount}
+        ref={register({ required: true })}
+        name={`${entry}.totalAmount`}
+      />
+      <input
+        type="hidden"
+        value={JSON.stringify(distributionData?.payments || '')}
+        ref={register({ required: true })}
+        name={`${entry}.distribution`}
+      />
       <Text marginBottom={5}>
         {formatMessage(paymentPlan.general.paymentPlanDescription)}
       </Text>
@@ -279,6 +307,15 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
               totalAmount={payment.totalAmount}
             />
           </AccordionItem>
+        </Box>
+      )}
+      {displayInfo && (
+        <Box marginTop={3}>
+          <AlertMessage
+            type="info"
+            title={formatMessage(paymentPlan.labels.infoTitle)}
+            message={formatMessage(paymentPlan.labels.infoDescription)}
+          />
         </Box>
       )}
     </div>

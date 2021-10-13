@@ -7,7 +7,7 @@ import {
   User,
   ApplicationState,
   FileType,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 import { Form } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { UploadFile } from '@island.is/island-ui/core'
 
@@ -29,7 +29,11 @@ const useApplication = () => {
   }
 
   const createApplication = useMemo(
-    () => async (form: Form, user: User): Promise<string | undefined> => {
+    () => async (
+      form: Form,
+      user: User,
+      updateForm?: any,
+    ): Promise<string | undefined> => {
       if (isCreatingApplication === false) {
         const files = formatFiles(form.taxReturnFiles, FileType.TAXRETURN)
           .concat(formatFiles(form.incomeFiles, FileType.INCOME))
@@ -40,7 +44,7 @@ const useApplication = () => {
             input: {
               nationalId: user?.nationalId,
               name: user?.name,
-              phoneNumber: user?.phoneNumber,
+              phoneNumber: form?.phoneNumber,
               email: form?.emailAddress,
               homeCircumstances: form?.homeCircumstances,
               homeCircumstancesCustom: form?.homeCircumstancesCustom,
@@ -57,12 +61,16 @@ const useApplication = () => {
               formComment: form?.formComment,
               state: ApplicationState.NEW,
               files: files,
+              spouseNationalId: form?.spouse?.nationalId,
+              spouseEmail: form?.spouse?.email,
+              familyStatus: form?.familyStatus,
             },
           },
         })
 
         if (data) {
-          return data?.id
+          updateForm({ ...form, applicationId: data.createApplication.id })
+          return data
         }
       }
     },

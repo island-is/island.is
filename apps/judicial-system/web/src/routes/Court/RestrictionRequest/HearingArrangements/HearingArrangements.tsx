@@ -17,11 +17,18 @@ import {
   CaseNumbers,
   BlueBox,
   FormContentContainer,
+  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  NotificationType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
@@ -48,7 +55,7 @@ import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
 export const HearingArrangements: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
+  const [modalVisible, setModalVisible] = useState(false)
   const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState('')
   const [
     defenderPhoneNumberErrorMessage,
@@ -59,7 +66,12 @@ export const HearingArrangements: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { updateCase, autofill } = useCase()
+  const {
+    updateCase,
+    autofill,
+    sendNotification,
+    isSendingNotification,
+  } = useCase()
   const { formatMessage } = useIntl()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -122,10 +134,6 @@ export const HearingArrangements: React.FC = () => {
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
       {
-        value: workingCase?.courtRoom ?? '',
-        validations: ['empty'],
-      },
-      {
         value: workingCase?.defenderEmail ?? '',
         validations: ['email-format'],
       },
@@ -167,6 +175,18 @@ export const HearingArrangements: React.FC = () => {
       const registrar = userData?.users.find((r) => r.id === id)
 
       setWorkingCase({ ...workingCase, registrar: registrar })
+    }
+  }
+
+  const handleNextButtonClick = () => {
+    if (
+      workingCase?.notifications?.find(
+        (notification) => notification.type === NotificationType.COURT_DATE,
+      )
+    ) {
+      router.push(`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
+    } else {
+      setModalVisible(true)
     }
   }
 
@@ -296,26 +316,20 @@ export const HearingArrangements: React.FC = () => {
                       removeTabsValidateAndSet(
                         'courtRoom',
                         event,
-                        ['empty'],
+                        [],
                         workingCase,
                         setWorkingCase,
-                        courtroomErrorMessage,
-                        setCourtroomErrorMessage,
                       )
                     }
                     onBlur={(event) =>
                       validateAndSendToServer(
                         'courtRoom',
                         event.target.value,
-                        ['empty'],
+                        [],
                         workingCase,
                         updateCase,
-                        setCourtroomErrorMessage,
                       )
                     }
-                    errorMessage={courtroomErrorMessage}
-                    hasError={courtroomErrorMessage !== ''}
-                    required
                   />
                 </BlueBox>
               </Box>
@@ -427,7 +441,7 @@ export const HearingArrangements: React.FC = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
-              nextUrl={`${Constants.COURT_RECORD_ROUTE}/${id}`}
+              onNextButtonClick={handleNextButtonClick}
               nextIsDisabled={
                 workingCase.state === CaseState.DRAFT ||
                 isStepIllegal ||
@@ -435,6 +449,40 @@ export const HearingArrangements: React.FC = () => {
               }
             />
           </FormContentContainer>
+          {modalVisible && (
+            <Modal
+              title={formatMessage(
+                workingCase.type === CaseType.CUSTODY
+                  ? rcHearingArrangements.modal.custodyCases.heading
+                  : rcHearingArrangements.modal.travelBanCases.heading,
+              )}
+              text={formatMessage(
+                workingCase.type === CaseType.CUSTODY
+                  ? rcHearingArrangements.modal.custodyCases.text
+                  : rcHearingArrangements.modal.travelBanCases.text,
+              )}
+              isPrimaryButtonLoading={isSendingNotification}
+              handleSecondaryButtonClick={() => {
+                router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+              }}
+              handlePrimaryButtonClick={async () => {
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  NotificationType.COURT_DATE,
+                )
+
+                if (notificationSent) {
+                  router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+                }
+              }}
+              primaryButtonText={formatMessage(
+                rcHearingArrangements.modal.shared.primaryButtonText,
+              )}
+              secondaryButtonText={formatMessage(
+                rcHearingArrangements.modal.shared.secondaryButtonText,
+              )}
+            />
+          )}
         </>
       ) : null}
     </PageLayout>

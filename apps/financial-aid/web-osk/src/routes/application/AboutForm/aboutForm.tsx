@@ -4,13 +4,15 @@ import { Text, BulletList, Bullet, Box, Link } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import { NavigationProps } from '@island.is/financial-aid/shared'
+import {
+  NavigationProps,
+  currentMonth,
+} from '@island.is/financial-aid/shared/lib'
 
 const AboutForm = () => {
   const router = useRouter()
@@ -20,26 +22,20 @@ const AboutForm = () => {
   ) as NavigationProps
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Varðandi rétt til fjárhagsaðstoðar
         </Text>
 
         <Text variant="h3" fontWeight="light" marginBottom={3}>
-          Þú ert að sækja um <strong>fjárhagsaðstoð hjá Hafnarfirði</strong>.
-          Áður en þú heldur áfram er gott að hafa eftirfarandi í huga:
+          Þú ert að sækja um <strong>fjárhagsaðstoð hjá Hafnarfirði</strong>{' '}
+          fyrir {currentMonth()}. Áður en þú heldur áfram er gott að hafa
+          eftirfarandi í huga:
         </Text>
 
         <Box marginBottom={5}>
           <BulletList type={'ul'} space={2}>
-            <Bullet>
-              Fjárhagsaðstoð sveitarfélaga er ætluð fólki sem er ekki með vinnu,
-              í óstyrkhæfu námi og hefur ekki rétt á örorkubótum.
-            </Bullet>
             <Bullet>
               Til að eiga rétt á fjárhagsaðstoð þurfa tekjur og eignir þínar að
               vera undir ákveðnum viðmiðunarmörkum.
@@ -74,6 +70,15 @@ const AboutForm = () => {
                 underlineVisibility="always"
               >
                 lífeyrissjóðir
+              </Link>
+              {', '}
+              <Link
+                href="https://www.sjukra.is/"
+                color="blue400"
+                underline="small"
+                underlineVisibility="always"
+              >
+                Sjúkratryggingar Íslands
               </Link>{' '}
               og sjúkrasjóðir stéttarfélaga.
             </Bullet>
@@ -94,7 +99,7 @@ const AboutForm = () => {
       </ContentContainer>
 
       <Footer previousUrl={navigation?.prevUrl} nextUrl={navigation?.nextUrl} />
-    </FormLayout>
+    </>
   )
 }
 

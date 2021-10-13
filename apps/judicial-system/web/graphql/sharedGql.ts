@@ -19,6 +19,7 @@ export const CaseQuery = gql`
       defenderPhoneNumber
       sendRequestToDefender
       defenderIsSpokesperson
+      isHeightenedSecurityLevel
       court {
         id
         name
@@ -27,6 +28,7 @@ export const CaseQuery = gql`
       leadInvestigator
       arrestDate
       requestedCourtDate
+      translator
       requestedValidToDate
       demands
       lawsBroken
@@ -40,6 +42,15 @@ export const CaseQuery = gql`
       prosecutorOnlySessionRequest
       comments
       caseFilesComments
+      creatingProsecutor {
+        id
+        name
+        title
+        institution {
+          id
+          name
+        }
+      }
       prosecutor {
         id
         name
@@ -57,13 +68,15 @@ export const CaseQuery = gql`
       courtCaseNumber
       sessionArrangements
       courtDate
+      courtLocation
       courtRoom
       courtStartDate
       courtEndTime
+      isClosedCourtHidden
       courtAttendees
       prosecutorDemands
       courtDocuments
-      isAccusedAbsent
+      isAccusedRightsHidden
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
@@ -107,14 +120,16 @@ export const CaseQuery = gql`
       notifications {
         type
       }
-      files {
+      caseFiles {
         id
         name
         size
         created
+        state
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
+      isMasked
     }
   }
 `
@@ -153,6 +168,14 @@ export const GetSignedUrlQuery = gql`
   query GetSignedUrlQuery($input: GetSignedUrlInput!) {
     getSignedUrl(input: $input) {
       url
+    }
+  }
+`
+
+export const UploadFileToCourtMutation = gql`
+  mutation UploadFileToCourtMutation($input: UploadFileToCourtInput!) {
+    uploadFileToCourt(input: $input) {
+      success
     }
   }
 `

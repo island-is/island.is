@@ -2,7 +2,7 @@ import * as RSBStyles from './RegulationsSidebarBox.treat'
 import * as s from './RegulationInfoBox.treat'
 
 import React, { useState } from 'react'
-import { Button, Hidden, Text } from '@island.is/island-ui/core'
+import { Button, Hidden, Link, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import {
@@ -44,19 +44,20 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
   }
 
   return (
-    <RegulationsSidebarBox title={txt('infoboxTitle')} colorScheme="dark">
+    <RegulationsSidebarBox
+      title={txt('infoboxTitle')}
+      colorScheme="dark"
+      className={s.container}
+    >
       {ministry && (
         <Text marginBottom={2}>
           <strong>{txt('infoboxMinistry')}:</strong>
-          <ul>
-            <li>
-              <RegulationsSidebarLink
-                href={linkToRegulationSearch({ rn: ministry.slug })}
-              >
-                <span className={RSBStyles.smallText}>{ministry.name}</span>
-              </RegulationsSidebarLink>
-            </li>
-          </ul>
+          <br />
+          <RegulationsSidebarLink
+            href={linkToRegulationSearch({ rn: ministry.slug })}
+          >
+            <span className={RSBStyles.smallText}>{ministry.name}</span>
+          </RegulationsSidebarLink>
         </Text>
       )}
 
@@ -110,16 +111,27 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
       )}
 
       <Hidden print={true}>
-        {/*
-          TODO: Add "download as PDF/Doc" link
-        */}
+        {regulation.originalDoc && (
+          <Text marginBottom={1}>
+            <Button
+              icon="document"
+              iconType="outline"
+              size="small"
+              type="button"
+              variant="text"
+            >
+              <Link href={regulation.originalDoc}>
+                {txt('originalDocLink')}
+              </Link>
+            </Button>
+          </Text>
+        )}
 
         <Text marginBottom={1}>
           <Button
             icon="print"
             iconType="outline"
             size="small"
-            type="button"
             variant="text"
             onClick={() => {
               window.print()
@@ -131,6 +143,8 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
 
         <Text marginBottom={2}>
           <Button
+            icon="arrowBack"
+            iconType="outline"
             size="small"
             type="button"
             variant="text"

@@ -8,8 +8,14 @@ import {
   generateApplicationApprovedEmail,
   GenerateAssignSupremeCourtApplicationEmailOptions,
 } from './emailGenerators'
-import { EndorsementListApi, EndorsementListTagsEnum } from './gen/fetch'
+import {
+  EndorsementListApi,
+  EndorsementListTagsEnum,
+  EndorsementMetadataDtoFieldEnum,
+} from './gen/fetch'
+
 import type { Logger } from '@island.is/logging'
+import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
 
@@ -49,31 +55,6 @@ interface PartyLetterData {
   partyLetter: string
 }
 
-/**
- * We proxy the auth header to the subsystem where it is resolved.
- */
-interface FetchParams {
-  url: string
-  init: RequestInit
-}
-
-interface RequestContext {
-  init: RequestInit
-}
-
-interface Middleware {
-  pre?(context: RequestContext): Promise<FetchParams | void>
-}
-class ForwardAuthHeaderMiddleware implements Middleware {
-  constructor(private bearerToken: string) {}
-
-  async pre(context: RequestContext) {
-    context.init.headers = Object.assign({}, context.init.headers, {
-      authorization: this.bearerToken,
-    })
-  }
-}
-
 @Injectable()
 export class PartyApplicationService {
   constructor(
@@ -84,20 +65,18 @@ export class PartyApplicationService {
     private options: PartyApplicationServiceOptions,
   ) {}
 
-  endorsementListApiWithAuth(token: string) {
-    return this.endorsementListApi.withMiddleware(
-      new ForwardAuthHeaderMiddleware(token),
-    )
+  endorsementListApiWithAuth(auth: User) {
+    return this.endorsementListApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async assignSupremeCourt({
     application,
-    authorization,
+    auth,
   }: TemplateApiModuleActionProps) {
     const listId = (application.externalData?.createEndorsementList.data as any)
       .id
 
-    return this.endorsementListApiWithAuth(authorization)
+    return this.endorsementListApiWithAuth(auth)
       .endorsementListControllerClose({ listId })
       .then(async () => {
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
@@ -114,12 +93,12 @@ export class PartyApplicationService {
 
   async applicationRejected({
     application,
-    authorization,
+    auth,
   }: TemplateApiModuleActionProps) {
     const listId = (application.externalData?.createEndorsementList.data as any)
       .id
 
-    return this.endorsementListApiWithAuth(authorization)
+    return this.endorsementListApiWithAuth(auth)
       .endorsementListControllerOpen({ listId })
       .then(async () => {
         await this.sharedTemplateAPIService.sendEmail(
@@ -142,16 +121,27 @@ export class PartyApplicationService {
 
   async createEndorsementList({
     application,
-    authorization,
+    auth,
   }: TemplateApiModuleActionProps) {
     const partyLetter = application.externalData.partyLetterRegistry
       ?.data as PartyLetterData
     const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
+      .makeGraphqlQuery(auth.authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
         input: {
           title: partyLetter.partyName,
           description: partyLetter.partyLetter,
-          endorsementMeta: ['fullName', 'address', 'signedTags'],
+          endorsementMetadata: [
+            { field: EndorsementMetadataDtoFieldEnum.fullName },
+            { field: EndorsementMetadataDtoFieldEnum.signedTags },
+            {
+              field: EndorsementMetadataDtoFieldEnum.address,
+              keepUpToDate: true,
+            },
+            {
+              field: EndorsementMetadataDtoFieldEnum.voterRegion,
+              keepUpToDate: true,
+            },
+          ],
           tags: [application.answers.constituency as EndorsementListTagsEnum],
           validationRules: [
             {

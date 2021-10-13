@@ -29,8 +29,9 @@ export const closeButton = style({
   zIndex: 2,
 })
 
-export const tempTableDatePickerFix = style({})
+export const datePickerFix = style({})
 
-globalStyle(`${tempTableDatePickerFix} > div > table`, {
-  marginBottom: '200px',
+globalStyle(`${datePickerFix} > div`, {
+  marginBottom: theme.spacing['10'],
+  overflow: 'visible',
 })

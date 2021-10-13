@@ -4,7 +4,6 @@ import { Text, Input, Box } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
@@ -17,7 +16,7 @@ import {
   NavigationProps,
   getHomeCircumstances,
   HomeCircumstances,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 const HomeCircumstancesForm = () => {
   const router = useRouter()
@@ -67,10 +66,7 @@ const HomeCircumstancesForm = () => {
   }
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Hvernig býrðu?
@@ -84,9 +80,8 @@ const HomeCircumstancesForm = () => {
           }}
           onChange={(value: HomeCircumstances) => {
             updateForm({ ...form, homeCircumstances: value })
-            if (hasError) {
-              setHasError(false)
-            }
+
+            setHasError(false)
           }}
         />
 
@@ -133,7 +128,7 @@ const HomeCircumstancesForm = () => {
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
-    </FormLayout>
+    </>
   )
 }
 

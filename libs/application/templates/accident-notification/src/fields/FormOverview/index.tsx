@@ -25,10 +25,13 @@ import { States, YES } from '../../constants'
 import { AccidentNotification } from '../../lib/dataSchema'
 import {
   accidentDetails,
+  accidentLocation,
   accidentType,
   applicantInformation,
   application as applicationMessages,
   childInCustody,
+  fatalAccident,
+  fishingCompanyInfo,
   injuredPersonInformation,
   juridicalPerson,
   locationAndPurpose,
@@ -36,7 +39,10 @@ import {
   sportsClubInfo,
 } from '../../lib/messages'
 import {
+  getAttachmentTitles,
   getWorkplaceData,
+  isFishermanAccident,
+  isHomeActivitiesAccident,
   isMachineRelatedAccident,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfChild,
@@ -62,25 +68,13 @@ export const FormOverview: FC<FieldBaseProps> = ({
     },
   )
 
+  const files = getAttachmentTitles(answers)
   const missingDocuments = returnMissingDocumentsList(answers, formatMessage)
+  const workplaceData = getWorkplaceData(application.answers)
 
   const { timeOfAccident, dateOfAccident } = answers.accidentDetails
   const time = `${timeOfAccident.slice(0, 2)}:${timeOfAccident.slice(2, 4)}`
   const date = format(parseISO(dateOfAccident), 'dd.MM.yy', { locale: is })
-
-  const workplaceData = getWorkplaceData(application.answers)
-
-  const attachments = [
-    ...(answers.attachments.deathCertificateFile
-      ? answers.attachments.deathCertificateFile
-      : []),
-    ...(answers.attachments.injuryCertificateFile
-      ? answers.attachments.injuryCertificateFile
-      : []),
-    ...(answers.attachments.powerOfAttorneyFile
-      ? answers.attachments.powerOfAttorneyFile
-      : []),
-  ]
 
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
@@ -99,7 +93,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
           formatMessage,
         )}
       </Text>
-      <ReviewGroup isLast editAction={() => null}>
+      <ReviewGroup isLast editAction={() => changeScreens('applicant')}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
@@ -153,7 +147,10 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('injuredPersonInformation')}
+          >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -173,12 +170,14 @@ export const FormOverview: FC<FieldBaseProps> = ({
                   value={answers.injuredPersonInformation.email}
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine
-                  label={injuredPersonInformation.labels.tel}
-                  value={answers.injuredPersonInformation.phoneNumber ?? ''}
-                />
-              </GridColumn>
+              {answers.injuredPersonInformation.phoneNumber && (
+                <GridColumn span={['12/12', '12/12', '6/12']}>
+                  <ValueLine
+                    label={injuredPersonInformation.labels.tel}
+                    value={answers.injuredPersonInformation.phoneNumber}
+                  />
+                </GridColumn>
+              )}
             </GridRow>
           </ReviewGroup>
         </>
@@ -193,7 +192,10 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('childInCustody.fields')}
+          >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -237,7 +239,10 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('juridicalPerson.company')}
+          >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -265,18 +270,15 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('locationAndPurpose')}
+          >
             <GridRow>
               <GridColumn span="12/12">
                 <ValueLine
                   label={locationAndPurpose.labels.location}
                   value={answers.locationAndPurpose.location}
-                />
-              </GridColumn>
-              <GridColumn span="12/12">
-                <ValueLine
-                  label={locationAndPurpose.labels.purpose}
-                  value={answers.locationAndPurpose.purpose}
                 />
               </GridColumn>
             </GridRow>
@@ -293,14 +295,11 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens(workplaceData.screenId)}
+          >
             <GridRow>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine
-                  label={workplaceData.labels.companyName}
-                  value={workplaceData.info.companyName}
-                />
-              </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
                   label={workplaceData.labels.nationalId}
@@ -322,6 +321,48 @@ export const FormOverview: FC<FieldBaseProps> = ({
                 )}
             </GridRow>
           </ReviewGroup>
+          {isFishermanAccident(answers as FormValue) && (
+            <>
+              <Text variant="h4" paddingTop={6} paddingBottom={3}>
+                {formatMessage(
+                  fishingCompanyInfo.general.informationAboutShipTitle,
+                )}
+              </Text>
+              <ReviewGroup
+                isLast
+                editAction={() => changeScreens('fishingShipInfo')}
+              >
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.shipName}
+                      value={answers.fishingShipInfo.shipName}
+                    ></ValueLine>
+                  </GridColumn>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.shipCharacters}
+                      value={answers.fishingShipInfo.shipCharacters}
+                    ></ValueLine>
+                  </GridColumn>
+                </GridRow>
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.homePort}
+                      value={answers.fishingShipInfo.homePort}
+                    ></ValueLine>
+                  </GridColumn>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={fishingCompanyInfo.labels.shipRegisterNumber}
+                      value={answers.fishingShipInfo.shipRegisterNumber}
+                    ></ValueLine>
+                  </GridColumn>
+                </GridRow>
+              </ReviewGroup>
+            </>
+          )}
 
           {answers.isRepresentativeOfCompanyOrInstitue?.toString() !== YES && (
             <>
@@ -332,7 +373,10 @@ export const FormOverview: FC<FieldBaseProps> = ({
                   formatMessage,
                 )}
               </Text>
-              <ReviewGroup isLast editAction={() => null}>
+              <ReviewGroup
+                isLast
+                editAction={() => changeScreens(workplaceData.screenId)}
+              >
                 <GridRow>
                   <GridColumn span="12/12">
                     <ValueLine
@@ -346,12 +390,14 @@ export const FormOverview: FC<FieldBaseProps> = ({
                       value={workplaceData.info.email}
                     />
                   </GridColumn>
-                  <GridColumn span={['12/12', '12/12', '6/12']}>
-                    <ValueLine
-                      label={workplaceData.labels.tel}
-                      value={workplaceData.info.phoneNumber}
-                    />
-                  </GridColumn>
+                  {workplaceData.info.phoneNumber && (
+                    <GridColumn span={['12/12', '12/12', '6/12']}>
+                      <ValueLine
+                        label={workplaceData.labels.tel}
+                        value={workplaceData.info.phoneNumber}
+                      />
+                    </GridColumn>
+                  )}
                 </GridRow>
               </ReviewGroup>
             </>
@@ -359,19 +405,62 @@ export const FormOverview: FC<FieldBaseProps> = ({
         </>
       )}
 
+      {isHomeActivitiesAccident(answers as FormValue) && (
+        <>
+          <Text variant="h4" paddingTop={6} paddingBottom={3}>
+            {formatMessage(accidentLocation.homeAccidentLocation.title)}
+          </Text>
+          <ReviewGroup
+            isLast
+            editAction={() => changeScreens('accidentLocation.homeAccident')}
+          >
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.address}
+                  value={answers.homeAccident.address}
+                ></ValueLine>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.postalCode}
+                  value={answers.homeAccident.postalCode}
+                ></ValueLine>
+              </GridColumn>
+            </GridRow>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.community}
+                  value={answers.homeAccident.community}
+                ></ValueLine>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={accidentLocation.homeAccidentLocation.moreDetails}
+                  value={answers.homeAccident.moreDetails || ''}
+                ></ValueLine>
+              </GridColumn>
+            </GridRow>
+          </ReviewGroup>
+        </>
+      )}
+
       <Text variant="h4" paddingTop={6} paddingBottom={3}>
-        {formatText(
-          accidentDetails.general.sectionTitle,
-          application,
-          formatMessage,
-        )}
+        {formatMessage(accidentDetails.general.sectionTitle)}
       </Text>
-      <ReviewGroup isLast editAction={() => null}>
+      <ReviewGroup isLast editAction={() => changeScreens('accidentDetails')}>
         <GridRow>
           <GridColumn span="12/12">
             <ValueLine
               label={overview.labels.accidentType}
-              value={accidentType.labels[answers.accidentType.radioButton]}
+              value={`${formatMessage(
+                accidentType.labels[answers.accidentType.radioButton],
+              )}${
+                answers.wasTheAccidentFatal === YES
+                  ? `, ${formatMessage(fatalAccident.labels.fatalAccident)}`
+                  : ''
+              }`}
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -395,10 +484,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '12/12']}>
-            <FileValueLine
-              label={overview.labels.attachments}
-              files={attachments}
-            />
+            <FileValueLine label={overview.labels.attachments} files={files} />
             {missingDocuments.length !== 0 && (
               <Box marginBottom={4}>
                 <AlertMessage

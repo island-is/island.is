@@ -19,6 +19,9 @@ import {
   DrivingLicenseDeprevationType,
   DrivingLicenseRemarkType,
   QualityPhoto,
+  StudentAssessment,
+  ApplicationEligibilityInput,
+  Teacher,
 } from './models'
 import { AuditService } from '@island.is/nest/audit'
 
@@ -43,6 +46,11 @@ export class MainResolver {
       },
       this.drivingLicenseService.getDrivingLicense(user.nationalId),
     )
+  }
+
+  @Query(() => [Teacher])
+  drivingLicenseTeachers() {
+    return this.drivingLicenseService.getTeachers()
   }
 
   @Query(() => [DrivingLicenseDeprevationType])
@@ -110,11 +118,11 @@ export class MainResolver {
   @Query(() => ApplicationEligibility)
   drivingLicenseApplicationEligibility(
     @CurrentUser() user: User,
-    @Args('type') type: string,
+    @Args('input') input: ApplicationEligibilityInput,
   ) {
     return this.drivingLicenseService.getApplicationEligibility(
       user.nationalId,
-      type,
+      input.applicationFor,
     )
   }
 
@@ -126,5 +134,10 @@ export class MainResolver {
   @Query(() => QualityPhoto)
   qualityPhoto(@CurrentUser() user: User) {
     return this.drivingLicenseService.getQualityPhoto(user.nationalId)
+  }
+
+  @Query(() => StudentAssessment)
+  drivingLicenseStudentAssessment(@CurrentUser() user: User) {
+    return this.drivingLicenseService.getDrivingAssessment(user.nationalId)
   }
 }

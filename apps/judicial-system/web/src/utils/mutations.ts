@@ -16,7 +16,6 @@ export const CasesQuery = gql`
       id
       created
       type
-      description
       state
       policeCaseNumber
       accusedNationalId
@@ -27,6 +26,10 @@ export const CasesQuery = gql`
       courtCaseNumber
       rulingDate
       courtEndTime
+      accusedAppealDecision
+      prosecutorAppealDecision
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       parentCase {
         id
       }
@@ -53,6 +56,7 @@ export const ExtendCaseMutation = gql`
       defenderPhoneNumber
       sendRequestToDefender
       defenderIsSpokesperson
+      isHeightenedSecurityLevel
       court {
         id
         type
@@ -61,6 +65,7 @@ export const ExtendCaseMutation = gql`
       leadInvestigator
       arrestDate
       requestedCourtDate
+      translator
       requestedValidToDate
       demands
       lawsBroken
@@ -74,6 +79,10 @@ export const ExtendCaseMutation = gql`
       prosecutorOnlySessionRequest
       comments
       caseFilesComments
+      creatingProsecutor {
+        name
+        title
+      }
       prosecutor {
         name
         title
@@ -86,13 +95,15 @@ export const ExtendCaseMutation = gql`
       courtCaseNumber
       sessionArrangements
       courtDate
+      courtLocation
       courtRoom
       courtStartDate
       courtEndTime
+      isClosedCourtHidden
       courtAttendees
       prosecutorDemands
       courtDocuments
-      isAccusedAbsent
+      isAccusedRightsHidden
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations

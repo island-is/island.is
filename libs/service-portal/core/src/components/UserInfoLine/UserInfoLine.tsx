@@ -12,6 +12,7 @@ import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { Link } from 'react-router-dom'
 import { servicePortalOutboundLink } from '@island.is/plausible'
+import { sharedMessages } from '@island.is/shared/translations'
 
 import * as styles from './UserInfoLine.treat'
 
@@ -109,10 +110,7 @@ export const UserInfoLine: FC<Props> = ({
                   >
                     {editLink.title
                       ? formatMessage(editLink.title)
-                      : formatMessage({
-                          id: 'global:edit',
-                          defaultMessage: 'Breyta',
-                        })}
+                      : formatMessage(sharedMessages.edit)}
                   </Button>
                 </a>
               ) : (
@@ -120,10 +118,7 @@ export const UserInfoLine: FC<Props> = ({
                   <Button variant="text" size="small">
                     {editLink.title
                       ? formatMessage(editLink.title)
-                      : formatMessage({
-                          id: 'global:edit',
-                          defaultMessage: 'Breyta',
-                        })}
+                      : formatMessage(sharedMessages.edit)}
                   </Button>
                 </Link>
               )}

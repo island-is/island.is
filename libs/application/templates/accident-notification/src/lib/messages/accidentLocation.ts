@@ -130,13 +130,13 @@ export const accidentLocation = {
     },
     toOrFromRescue: {
       id: 'an.application:accidentLocation.rescueWorkAccident.toOrFromRescue',
-      defaultMessage: 'Á leið til eða frá vinnustað',
+      defaultMessage: 'Á leið til eða frá björgunaraðgerðum',
       description:
         'Label for the to or from the rescue in rescue work accident location',
     },
     other: {
       id: 'an.application:accidentLocation.rescueWorkAccident.other',
-      defaultMessage: 'Annars staðar',
+      defaultMessage: 'Annarsstaðar í vinnu fyrir björgunaraðgerðir',
       description: 'Label for the other in rescue work accident location',
     },
     description: {
@@ -161,12 +161,6 @@ export const accidentLocation = {
       id: 'an.application:accidentLocation.studiesAccidentLocation.atTheSchool',
       defaultMessage: 'Í kennslustofu eða skólahúsnæði',
       description: 'Label for at the school location',
-    },
-    duringStudies: {
-      id:
-        'an.application:accidentLocation.studiesAccidentLocation.duringStudies',
-      defaultMessage: 'Á meðan verið var að sinna námi',
-      description: 'Label for at the during studies location',
     },
     other: {
       id: 'an.application:accidentLocation.studiesAccidentLocation.other',
@@ -205,6 +199,47 @@ export const accidentLocation = {
       defaultMessage:
         'Vinsamlegast skráðu staðsetningu skips þegar slysið átti sér stað',
       description: 'Fisherman accident location description',
+    },
+  }),
+  homeAccidentLocation: defineMessages({
+    title: {
+      id: 'an.application:accidentLocation.homeAccidentLocation.title',
+      defaultMessage: 'Staðsetning á slysi',
+      description: 'Home accident location title',
+    },
+    description: {
+      id: 'an.application:accidentLocation.homeAccidentLocation.description',
+      defaultMessage:
+        'Vinsamlegast fylltu inn upplýsingar um hvar slysið átti sér stað.',
+      description: 'Home accident location description',
+    },
+    address: {
+      id: 'an.application:accidentLocation.homeAccidentLocation.address',
+      defaultMessage: 'Heimili / póstfang',
+      description: 'Home accident location address input field',
+    },
+    postalCode: {
+      id:
+        'an.application:accidentLocation.fishermanAccidentLocation.postalCode',
+      defaultMessage: 'Póstnúmer',
+      description: 'Home accident location postal code input field',
+    },
+    community: {
+      id: 'an.application:accidentLocation.homeAccidentLocation.community',
+      defaultMessage: 'Sveitarfélag',
+      description: 'Home accident location community input field',
+    },
+    moreDetails: {
+      id: 'an.application:accidentLocation.homeAccidentLocation.moreDetails',
+      defaultMessage: 'Nánar',
+      description: 'Home accident location more details textarea field',
+    },
+    moreDetailsPlaceholder: {
+      id:
+        'an.application:accidentLocation.homeAccidentLocation.moreDetailsPlaceholder',
+      defaultMessage: 'T.d hæð 2, íbúð 101 eða sumarbústaður',
+      description:
+        'Home accident location more details placeholder in textarea field',
     },
   }),
 }

@@ -1,20 +1,21 @@
 import React, { useEffect, useContext } from 'react'
-import { Text, InputFileUpload } from '@island.is/island-ui/core'
+import { InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 
-import {
-  ContentContainer,
-  FileUploadContainer,
-} from '@island.is/financial-aid-web/osk/src/components'
+import { FileUploadContainer } from '@island.is/financial-aid-web/osk/src/components'
 
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFileUpload'
+import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/useFileUpload'
+
+import { UploadFileType } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
-  headline: string
-  about: string
+  header: string
+  uploadFiles: UploadFile[]
+  fileKey: UploadFileType
+  hasError?: boolean
 }
 
-const Files = ({ headline, about }: Props) => {
+const Files = ({ header, uploadFiles, fileKey, hasError = false }: Props) => {
   const { form, updateForm } = useContext(FormContext)
 
   const {
@@ -23,34 +24,42 @@ const Files = ({ headline, about }: Props) => {
     onChange,
     onRemove,
     onRetry,
-  } = useFileUpload(form.otherFiles)
+  } = useFileUpload(uploadFiles)
+
+  const stringifyFile = (file: UploadFile) => {
+    return {
+      key: file.key,
+      name: file.name,
+      size: file.size,
+      status: file.status,
+      percent: file?.percent,
+    }
+  }
 
   useEffect(() => {
-    const formFiles = files.filter((f) => f.status === 'done')
+    const formFiles = files
+      .filter((f) => f.status === 'done')
+      .map((f) => {
+        return stringifyFile(f)
+      })
 
-    updateForm({ ...form, otherFiles: formFiles })
+    updateForm({ ...form, [fileKey]: formFiles })
   }, [files])
 
   return (
-    <ContentContainer>
-      <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
-        {headline}
-      </Text>
-      <Text marginBottom={[3, 3, 5]}>{about}</Text>
-      <FileUploadContainer>
-        <InputFileUpload
-          fileList={files}
-          header="Dragðu gögn hingað"
-          description="Tekið er við öllum hefðbundnum skráargerðum"
-          buttonLabel="Bættu við gögnum"
-          showFileSize={true}
-          errorMessage={uploadErrorMessage}
-          onChange={onChange}
-          onRemove={onRemove}
-          onRetry={onRetry}
-        />
-      </FileUploadContainer>
-    </ContentContainer>
+    <FileUploadContainer hasError={hasError}>
+      <InputFileUpload
+        fileList={files}
+        header={header}
+        description="Tekið er við öllum hefðbundnum skráargerðum"
+        buttonLabel="Bættu við gögnum"
+        showFileSize={true}
+        errorMessage={uploadErrorMessage}
+        onChange={onChange}
+        onRemove={onRemove}
+        onRetry={onRetry}
+      />
+    </FileUploadContainer>
   )
 }
 

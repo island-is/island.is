@@ -1,10 +1,11 @@
 import {
   HomeCircumstances,
-  Employment,
-  KeyMapping,
   ApplicationState,
+  Employment,
   ApplicationEventType,
-} from './types'
+  ApplicationStateUrl,
+} from './enums'
+import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
   Unknown: 'Óþekkt',
@@ -30,16 +31,50 @@ export const getState: KeyMapping<ApplicationState, string> = {
   Approved: 'Samþykkt',
 }
 
+export const getStateFromUrl: KeyMapping<
+  ApplicationStateUrl,
+  ApplicationState[]
+> = {
+  New: [ApplicationState.NEW],
+  InProgress: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+  Processed: [ApplicationState.REJECTED, ApplicationState.APPROVED],
+}
+
+export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
+  '/': ApplicationStateUrl.NEW,
+  '/nymal': ApplicationStateUrl.NEW,
+  '/vinnslu': ApplicationStateUrl.INPROGRESS,
+  '/afgreidd': ApplicationStateUrl.PROCESSED,
+}
+
 export const getEventType: KeyMapping<
   ApplicationEventType,
-  { header: string; text: string }
+  { header: string; text: string; isStaff: boolean }
 > = {
-  New: { header: 'Ný umsókn', text: 'sendi inn umsókn' },
-  DataNeeded: { header: 'Vantar gögn', text: 'óskaði eftir gögnum' },
-  InProgress: { header: 'Í vinnslu', text: 'breytti stöðu' },
-  Rejected: { header: 'Synjað', text: 'synjaði umsókn' },
-  Approved: { header: 'Samþykkt', text: 'samþykkti umsókn' },
-  StaffComment: { header: 'Athugasemd', text: 'skrifaði athugasemd' },
+  New: { header: 'Ný umsókn', text: 'sendi inn umsókn', isStaff: false },
+  DataNeeded: {
+    header: 'Vantar gögn',
+    text: 'óskaði eftir gögnum',
+    isStaff: true,
+  },
+  InProgress: { header: 'Í vinnslu', text: 'breytti stöðu', isStaff: true },
+  Rejected: { header: 'Synjað', text: 'synjaði umsókn', isStaff: true },
+  Approved: { header: 'Samþykkt', text: 'samþykkti umsókn', isStaff: true },
+  StaffComment: {
+    header: 'Athugasemd',
+    text: 'skrifaði athugasemd',
+    isStaff: true,
+  },
+  UserComment: {
+    header: 'Athugasemd',
+    text: 'skrifaði athugasemd',
+    isStaff: false,
+  },
+  FileUpload: {
+    header: 'Ný gögn',
+    text: 'sendi inn gögn',
+    isStaff: false,
+  },
 }
 
 export const getActiveSectionForTimeline: KeyMapping<
@@ -60,37 +95,6 @@ export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
   Rejected: 'Rejected',
   Approved: 'Approved',
 }
-
-// export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
-
-export const insertAt = (str: string, sub: string, pos: number) =>
-  `${str.slice(0, pos)}${sub}${str.slice(pos)}`
-
-export const formatPhoneNumber = (phoneNumber: string) => {
-  if (phoneNumber.length <= 10) {
-    return insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
-  }
-
-  return insertAt(phoneNumber.replace('-', ''), '-', 4) || '-'
-}
-
-export const formatNationalId = (nationalId: string) =>
-  insertAt(nationalId.replace('-', ''), '-', 6) || '-'
-
-export const months = [
-  'Janúar',
-  'Febrúar',
-  'Mars',
-  'Apríl',
-  'Maí',
-  'Júní',
-  'Júlí',
-  'Ágúst',
-  'September',
-  'Október',
-  'Nóvember',
-  'Desember',
-]
 
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import {
   CaseDecision,
@@ -7,6 +6,7 @@ import {
   CaseTransition,
   CaseType,
   NotificationType,
+  isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import type {
   Case,
@@ -23,6 +23,7 @@ import {
   rcConfirmation,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 
 interface SigningModalProps {
   workingCase: Case
@@ -44,7 +45,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
   ] = useState<SignatureConfirmationResponse>()
 
   const { transitionCase, sendNotification } = useCase()
-  const { formatMessage } = useIntl()
 
   const { data } = useQuery(SignatureConfirmationQuery, {
     variables: {
@@ -63,19 +63,20 @@ const SigningModal: React.FC<SigningModalProps> = ({
     const completeSigning = async (
       resSignatureConfirmationResponse: SignatureConfirmationResponse,
     ) => {
-      if (resSignatureConfirmationResponse.documentSigned) {
+      if (
+        resSignatureConfirmationResponse.documentSigned &&
+        workingCase.state === CaseState.RECEIVED
+      ) {
         try {
-          const caseCompleted =
-            workingCase.state === CaseState.RECEIVED
-              ? await transitionCase(
-                  workingCase,
-                  workingCase.decision === CaseDecision.REJECTING
-                    ? CaseTransition.REJECT
-                    : CaseTransition.ACCEPT,
-                  setWorkingCase,
-                )
-              : workingCase.state === CaseState.REJECTED ||
-                workingCase.state === CaseState.ACCEPTED
+          const caseCompleted = await transitionCase(
+            workingCase,
+            workingCase.decision === CaseDecision.REJECTING
+              ? CaseTransition.REJECT
+              : workingCase.decision === CaseDecision.DISMISSING
+              ? CaseTransition.DISMISS
+              : CaseTransition.ACCEPT,
+            setWorkingCase,
+          )
 
           if (caseCompleted) {
             await sendNotification(workingCase.id, NotificationType.RULING)
@@ -119,9 +120,11 @@ const SigningModal: React.FC<SigningModalProps> = ({
   }
 
   const renderSuccessText = (caseType: CaseType) => {
-    return caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
-      ? formatMessage(rcConfirmation.modal.text)
-      : formatMessage(icConfirmation.modal.text)
+    return isInvestigationCase(caseType)
+      ? icConfirmation.modal.text
+      : caseType === CaseType.CUSTODY
+      ? rcConfirmation.modal.custodyCases.text
+      : rcConfirmation.modal.travelBanCases.text
   }
 
   return (
@@ -136,11 +139,13 @@ const SigningModal: React.FC<SigningModalProps> = ({
           : 'Undirritun tókst ekki'
       }
       text={
-        !signatureConfirmationResponse
-          ? renderControlCode()
-          : signatureConfirmationResponse.documentSigned
-          ? renderSuccessText(workingCase.type)
-          : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
+        !signatureConfirmationResponse ? (
+          renderControlCode()
+        ) : signatureConfirmationResponse.documentSigned ? (
+          <MarkdownWrapper text={renderSuccessText(workingCase.type)} />
+        ) : (
+          'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
+        )
       }
       secondaryButtonText={
         !signatureConfirmationResponse

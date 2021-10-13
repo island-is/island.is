@@ -12,7 +12,6 @@ import {
   FormContentContainer,
   DateTime,
   HideableText,
-  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -21,11 +20,7 @@ import {
   formatAccusedByGender,
   NounCases,
 } from '@island.is/judicial-system/formatters'
-import {
-  AccusedPleaDecision,
-  CaseType,
-  NotificationType,
-} from '@island.is/judicial-system/types'
+import { AccusedPleaDecision, CaseType } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
@@ -44,18 +39,18 @@ import { validate } from '../../../../utils/validate'
 import {
   accusedRights,
   rcCourtRecord,
-  rcHearingArrangements,
+  closedCourt,
 } from '@island.is/judicial-system-web/messages'
 import * as styles from './CourtRecord.treat'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const CourtRecord: React.FC = () => {
-  const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [
     courtRecordStartDateIsValid,
     setCourtRecordStartDateIsValid,
   ] = useState(true)
-  const [courtAttendeesErrorMessage, setCourtAttendeesMessage] = useState('')
+  const [courtLocationErrorMessage, setCourtLocationMessage] = useState('')
   const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] = useState(
     '',
   )
@@ -69,7 +64,7 @@ export const CourtRecord: React.FC = () => {
   ] = useState('')
 
   const router = useRouter()
-  const { updateCase, sendNotification, autofill } = useCase()
+  const { updateCase, autofill } = useCase()
   const { formatMessage } = useIntl()
 
   const id = router.query.id
@@ -86,10 +81,6 @@ export const CourtRecord: React.FC = () => {
     const defaultCourtAttendees = (wc: Case): string => {
       let attendees = ''
 
-      if (wc.registrar) {
-        attendees += `${wc.registrar.name} ${wc.registrar.title}\n`
-      }
-
       if (wc.prosecutor && wc.accusedName) {
         attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
           wc.accusedName
@@ -105,6 +96,10 @@ export const CourtRecord: React.FC = () => {
         )}`
       }
 
+      if (wc.translator) {
+        attendees += `\n${wc.translator} túlkur`
+      }
+
       return attendees
     }
 
@@ -113,7 +108,21 @@ export const CourtRecord: React.FC = () => {
 
       autofill('courtStartDate', new Date().toString(), theCase)
 
-      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      if (theCase.court) {
+        autofill(
+          'courtLocation',
+          `í ${
+            theCase.court.name.indexOf('dómur') > -1
+              ? theCase.court.name.replace('dómur', 'dómi')
+              : theCase.court.name
+          }`,
+          theCase,
+        )
+      }
+
+      if (theCase.courtAttendees !== '') {
+        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      }
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
@@ -140,25 +149,6 @@ export const CourtRecord: React.FC = () => {
     }
   }, [workingCase, updateCase, setWorkingCase, data, autofill])
 
-  useEffect(() => {
-    const notifyCourtDate = async (id: string) => {
-      const notificationSent = await sendNotification(
-        id,
-        NotificationType.COURT_DATE,
-      )
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (notificationSent && !window.Cypress) {
-        setModalVisible(true)
-      }
-    }
-
-    if (workingCase?.id) {
-      notifyCourtDate(workingCase.id)
-    }
-  }, [sendNotification, workingCase?.courtDate, workingCase?.id])
-
   return (
     <PageLayout
       activeSection={
@@ -183,37 +173,97 @@ export const CourtRecord: React.FC = () => {
               <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
               <CaseNumbers workingCase={workingCase} />
             </Box>
-            <Box component="section" marginBottom={8}>
-              <Box marginBottom={3}>
-                <DateTime
-                  name="courtStartDate"
-                  datepickerLabel="Dagsetning þinghalds"
-                  timeLabel="Þinghald hófst (kk:mm)"
-                  maxDate={new Date()}
-                  selectedDate={
-                    workingCase.courtStartDate
-                      ? new Date(workingCase.courtStartDate)
-                      : new Date()
-                  }
-                  onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
-                      'courtStartDate',
-                      date,
-                      valid,
+            <Box component="section" marginBottom={3}>
+              <BlueBox>
+                <Box marginBottom={3}>
+                  <DateTime
+                    name="courtStartDate"
+                    datepickerLabel="Dagsetning þinghalds"
+                    timeLabel="Þinghald hófst (kk:mm)"
+                    maxDate={new Date()}
+                    selectedDate={
+                      workingCase.courtStartDate
+                        ? new Date(workingCase.courtStartDate)
+                        : new Date()
+                    }
+                    onChange={(date: Date | undefined, valid: boolean) => {
+                      newSetAndSendDateToServer(
+                        'courtStartDate',
+                        date,
+                        valid,
+                        workingCase,
+                        setWorkingCase,
+                        setCourtRecordStartDateIsValid,
+                        updateCase,
+                      )
+                    }}
+                    blueBox={false}
+                    required
+                  />
+                </Box>
+                <Input
+                  data-testid="courtLocation"
+                  name="courtLocation"
+                  tooltip={formatMessage(
+                    rcCourtRecord.sections.courtLocation.tooltip,
+                  )}
+                  label={formatMessage(
+                    rcCourtRecord.sections.courtLocation.label,
+                  )}
+                  defaultValue={workingCase.courtLocation}
+                  placeholder={formatMessage(
+                    rcCourtRecord.sections.courtLocation.placeholder,
+                  )}
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'courtLocation',
+                      event,
+                      ['empty'],
                       workingCase,
                       setWorkingCase,
-                      setCourtRecordStartDateIsValid,
+                      courtLocationErrorMessage,
+                      setCourtLocationMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'courtLocation',
+                      event.target.value,
+                      ['empty'],
+                      workingCase,
+                      updateCase,
+                      setCourtLocationMessage,
+                    )
+                  }
+                  errorMessage={courtLocationErrorMessage}
+                  hasError={courtLocationErrorMessage !== ''}
+                  autoComplete="off"
+                  required
+                />
+              </BlueBox>
+            </Box>
+            <Box component="section" marginBottom={8}>
+              <Box marginBottom={3}>
+                <HideableText
+                  text={formatMessage(closedCourt.text)}
+                  isHidden={workingCase.isClosedCourtHidden}
+                  onToggleVisibility={(isVisible: boolean) =>
+                    setAndSendToServer(
+                      'isClosedCourtHidden',
+                      isVisible,
+                      workingCase,
+                      setWorkingCase,
                       updateCase,
                     )
-                  }}
-                  required
+                  }
+                  tooltip={formatMessage(closedCourt.tooltip)}
                 />
               </Box>
               <Box marginBottom={3}>
                 <Input
                   data-testid="courtAttendees"
                   name="courtAttendees"
-                  label="Viðstaddir og hlutverk þeirra"
+                  label="Mættir eru"
                   defaultValue={workingCase.courtAttendees}
                   placeholder="Skrifa hér..."
                   onChange={(event) =>
@@ -223,25 +273,16 @@ export const CourtRecord: React.FC = () => {
                       ['empty'],
                       workingCase,
                       setWorkingCase,
-                      courtAttendeesErrorMessage,
-                      setCourtAttendeesMessage,
                     )
                   }
                   onBlur={(event) =>
-                    validateAndSendToServer(
-                      'courtAttendees',
-                      event.target.value,
-                      ['empty'],
-                      workingCase,
-                      updateCase,
-                      setCourtAttendeesMessage,
+                    updateCase(
+                      workingCase.id,
+                      parseString('courtAttendees', event.target.value),
                     )
                   }
-                  errorMessage={courtAttendeesErrorMessage}
-                  hasError={courtAttendeesErrorMessage !== ''}
                   textarea
                   rows={7}
-                  required
                 />
               </Box>
               <Input
@@ -313,10 +354,10 @@ export const CourtRecord: React.FC = () => {
               <Box marginBottom={2}>
                 <HideableText
                   text={formatMessage(accusedRights.text)}
-                  isHidden={workingCase.isAccusedAbsent}
+                  isHidden={workingCase.isAccusedRightsHidden}
                   onToggleVisibility={(isVisible: boolean) =>
                     setAndSendToServer(
-                      'isAccusedAbsent',
+                      'isAccusedRightsHidden',
                       isVisible,
                       workingCase,
                       setWorkingCase,
@@ -478,7 +519,7 @@ export const CourtRecord: React.FC = () => {
               nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
               nextIsDisabled={
                 !courtRecordStartDateIsValid ||
-                !validate(workingCase.courtAttendees ?? '', 'empty').isValid ||
+                !validate(workingCase.courtLocation ?? '', 'empty').isValid ||
                 !validate(workingCase.prosecutorDemands ?? '', 'empty')
                   .isValid ||
                 !validate(workingCase.litigationPresentations ?? '', 'empty')
@@ -487,16 +528,6 @@ export const CourtRecord: React.FC = () => {
               }
             />
           </FormContentContainer>
-          {modalVisible && (
-            <Modal
-              title={formatMessage(rcHearingArrangements.modal.heading)}
-              text={formatMessage(rcHearingArrangements.modal.text)}
-              handlePrimaryButtonClick={() => {
-                setModalVisible(false)
-              }}
-              primaryButtonText="Loka glugga"
-            />
-          )}
         </>
       ) : null}
     </PageLayout>

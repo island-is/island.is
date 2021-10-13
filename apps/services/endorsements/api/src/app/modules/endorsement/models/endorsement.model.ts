@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Type } from 'class-transformer'
 import {
   BelongsTo,
   Column,
@@ -31,6 +30,13 @@ export class Endorsement extends Model<Endorsement> {
     defaultValue: DataType.UUIDV4,
   })
   id!: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.NUMBER,
+    allowNull: true,
+  })
+  counter!: number
 
   @ApiProperty()
   @Column({

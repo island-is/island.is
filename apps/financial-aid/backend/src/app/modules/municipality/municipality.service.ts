@@ -3,9 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { MunicipalityModel } from './models'
 
-import { Municipality } from '@island.is/financial-aid/shared'
-
-import { MunicipalityQueryInput } from './dto'
+import { Municipality } from '@island.is/financial-aid/shared/lib'
 
 @Injectable()
 export class MunicipalityService {
@@ -18,13 +16,12 @@ export class MunicipalityService {
     const mockApplication: Municipality = {
       id: id,
       name: 'Hafnarfjörður',
-      settings: {
-        aid: {
-          ownApartmentOrLease: 197200,
-          withOthersOrUnknow: 157760,
-          withParents: 98600,
-        },
+      aid: {
+        ownApartmentOrLease: 197200,
+        withOthersOrUnknow: 157760,
+        withParents: 98600,
       },
+      homePage: 'https://www.hafnarfjordur.is/',
     }
     return Promise.resolve(mockApplication)
   }

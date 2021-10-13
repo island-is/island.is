@@ -6,7 +6,7 @@ import { Select } from '../../Select/Select'
 import { Stack } from '../../Stack/Stack'
 import { Text } from '../../Text/Text'
 import { ModalBase } from '../../ModalBase/ModalBase'
-import { UserAvatar } from '../UserAvatar/UserAvatar'
+import { UserAvatar } from '../../UserAvatar/UserAvatar'
 import { Icon } from '../../IconRC/Icon'
 import { GridContainer } from '../../Grid/GridContainer/GridContainer'
 import * as styles from './UserDropdown.treat'
@@ -64,10 +64,10 @@ export const UserDropdown = ({
 
             <Box className={styles.inner}>
               <Stack space={4}>
-                <Box display="flex" alignItems="center">
+                <Box display="flex" flexWrap="nowrap" alignItems="center">
                   <UserAvatar username={username} />
 
-                  <Box marginRight={4}>
+                  <Box marginLeft={1} marginRight={4}>
                     <Text variant="h4" as="h4">
                       {username}
                     </Text>

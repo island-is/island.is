@@ -22,6 +22,7 @@ export const CurrentUserQuery = gql`
       institution {
         id
         name
+        type
       }
     }
   }

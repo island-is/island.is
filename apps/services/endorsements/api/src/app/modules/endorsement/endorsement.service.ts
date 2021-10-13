@@ -19,6 +19,8 @@ import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
 import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 
+import { paginate } from '@island.is/nest/pagination'
+
 interface FindEndorsementInput {
   listId: string
   nationalId: string
@@ -87,11 +89,12 @@ export class EndorsementService {
     const metadataFieldsRequiredByValidation = this.validatorService.getRequiredValidationMetadataFields(
       requestedValidationRules,
     )
+
     // get all metadata required for this endorsement
     return this.metadataService.getMetadata(
       {
         fields: [
-          ...endorsementList.endorsementMeta,
+          ...endorsementList.endorsementMetadata.map(({ field }) => field),
           ...metadataFieldsRequiredByValidation,
         ],
         nationalId,
@@ -159,17 +162,23 @@ export class EndorsementService {
       meta: {
         ...this.metadataService.pruneMetadataFields(
           metadata,
-          endorsementList.endorsementMeta,
+          endorsementList.endorsementMetadata.map(({ field }) => field),
         ),
         bulkEndorsement: false, // defaults to false we overwrite this value in bulk import
       },
     }
   }
 
-  async findEndorsements({ listId }: FindEndorsementsInput) {
+  async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
     this.logger.debug(`Finding endorsements by list id "${listId}"`)
 
-    return await this.endorsementModel.findAll({
+    return await paginate({
+      Model: this.endorsementModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'DESC']],
       where: { endorsementListId: listId },
     })
   }

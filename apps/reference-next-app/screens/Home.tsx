@@ -10,7 +10,7 @@ import { Header, Box, Divider, Page, Link } from '@island.is/island-ui/core'
 import { withLocale, useLocale } from '@island.is/localization'
 
 const welcomeMessage = defineMessage({
-  id: 'global:welcome',
+  id: 'reference:welcome',
   defaultMessage: 'Hæ, {name}!',
   description: 'Welcome message',
 })
@@ -29,15 +29,15 @@ const Home = () => {
           <h2>Strings</h2>
 
           <FormattedMessage
-            id="global:title" // namespace:messageId
-            description="This is a title in the global namespace"
+            id="reference:title" // namespace:messageId
+            description="This is a title in the reference namespace"
             defaultMessage="Island.is"
           />
 
           <p>
             {formatMessage({
-              id: 'global:description',
-              description: 'This is a description in the global namespace',
+              id: 'reference:description',
+              description: 'This is a description in the reference namespace',
               defaultMessage: 'Lýsing',
             })}
           </p>
@@ -83,8 +83,8 @@ const Home = () => {
   )
 }
 
-Home.getInitialProps = async (props) => {
+Home.getInitialProps = async () => {
   return {}
 }
 
-export default withLocale('global')(Home)
+export default withLocale('reference')(Home)

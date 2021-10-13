@@ -5,7 +5,11 @@ import { api } from '@island.is/judicial-system-web/src/services'
 interface Props {
   caseId: string
   title: string
-  pdfType: 'ruling' | 'request'
+  pdfType:
+    | 'ruling?shortVersion=false'
+    | 'ruling?shortVersion=true'
+    | 'request'
+    | 'custodyNotice'
   disabled?: boolean
 }
 
@@ -18,7 +22,7 @@ const PdfButton: React.FC<Props> = ({ caseId, title, pdfType, disabled }) => {
       iconType="outline"
       disabled={disabled}
       onClick={() =>
-        window.open(`${api.apiUrl}/api/case/${caseId}/${pdfType}`, '_ blank')
+        window.open(`${api.apiUrl}/api/case/${caseId}/${pdfType}`, '_blank')
       }
     >
       {title}

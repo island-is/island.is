@@ -4,7 +4,6 @@ import { Text, Input, Box } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
@@ -12,8 +11,9 @@ import * as styles from './bankInfoForm.treat'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
+import { focusOnNextInput } from '@island.is/financial-aid/shared/lib'
 
-import { NavigationProps } from '@island.is/financial-aid/shared'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 interface BankOptionsProps {
   label: string
@@ -83,16 +83,6 @@ const Form = () => {
     },
   ]
 
-  const focusOnNextInput = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    nextInputId: string,
-  ) => {
-    if (event.target.value.length >= event.target.maxLength) {
-      const el = document.getElementById(nextInputId)
-      el?.focus()
-    }
-  }
-
   const saveValue = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     fieldSettings: BankOptionsProps,
@@ -103,10 +93,7 @@ const Form = () => {
   }
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Greiðsla fjárhagsaðstoðar
@@ -129,6 +116,7 @@ const Form = () => {
                 })}
               >
                 <Input
+                  autoFocus={i === 0}
                   backgroundColor="blue"
                   label={item.label}
                   id={item.id}
@@ -165,7 +153,7 @@ const Form = () => {
             : 'Gefa upp seinna'
         }
       />
-    </FormLayout>
+    </>
   )
 }
 

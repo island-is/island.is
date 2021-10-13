@@ -4,35 +4,24 @@ import { Text, Box } from '@island.is/island-ui/core'
 import * as styles from './History.treat'
 import cn from 'classnames'
 
-import { useQuery } from '@apollo/client'
-import { useRouter } from 'next/router'
-
-import { GetApplicationEventQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import {
   ApplicationEvent,
   ApplicationEventType,
-  getEventType,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
-import format from 'date-fns/format'
-
-interface ApplicationEventData {
-  applicationEvents: ApplicationEvent[]
-}
+import {
+  ChatElement,
+  StaffComment,
+  TimeLineContainer,
+} from '@island.is/financial-aid-web/veita/src/components'
 
 interface Props {
   className?: string
+  applicantName: string
+  applicationEvents?: ApplicationEvent[]
 }
 
-const History = ({ className }: Props) => {
-  const router = useRouter()
-
-  const { data } = useQuery<ApplicationEventData>(GetApplicationEventQuery, {
-    variables: { input: { id: router.query.id } },
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-
+const History = ({ className, applicantName, applicationEvents }: Props) => {
   return (
     <Box
       className={cn({
@@ -40,63 +29,35 @@ const History = ({ className }: Props) => {
         [`${className}`]: true,
       })}
     >
-      {data?.applicationEvents && data?.applicationEvents.length > 0 && (
+      {applicationEvents && applicationEvents.length > 0 && (
         <>
           <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
             Saga umsóknar
           </Text>
 
-          {data?.applicationEvents.map((item, index) => {
+          {applicationEvents.map((item, index) => {
             return (
-              <Box
+              <TimeLineContainer
+                eventType={item.eventType}
                 key={'timeline-' + index}
-                className={cn({
-                  [`${styles.timelineContainer}`]: true,
-                  [`${styles.acceptedEvent}`]:
-                    item.eventType === ApplicationEventType.APPROVED,
-                  [`${styles.rejectedEvent}`]:
-                    item.eventType === ApplicationEventType.REJECTED,
-                })}
+                applicantName={applicantName}
+                created={item.created}
               >
-                <Box paddingLeft={3}>
-                  <Text variant="h5">
-                    {getEventType[item.eventType].header}
-                  </Text>
-                  <Text marginBottom={2}>
-                    {' '}
-                    XXX <strong>{getEventType[item.eventType].text} </strong>
-                  </Text>
+                <StaffComment
+                  isVisable={
+                    item.eventType === ApplicationEventType.STAFFCOMMENT
+                  }
+                  comment={item.comment}
+                />
 
-                  {item.eventType === ApplicationEventType.STAFFCOMMENT && (
-                    <Box paddingLeft={3} marginBottom={2}>
-                      <Text variant="small">{item.comment}</Text>
-                    </Box>
-                  )}
-
-                  {/* TODO: if sent meessage */}
-                  {/* <Box
-                    paddingLeft={3}
-                    marginBottom={2}
-                    className={styles.timelineMessages}
-                  >
-                 
-                    <Icon icon="chatbubble" type="outline" />{' '}
-                    <Text marginBottom={2}>
-                      „Hæhæ hér koma gögnin, afsakið þennan misskilning!
-                      Endilega heyrið í mér ef það vantar eitthvað fleira.“` “
-                    </Text>
-               
-                    <Icon icon="checkmark" />{' '}
-                    <Text fontWeight="semiBold">
-                      Skilaboð send á umsækjanda
-                    </Text>
-                  </Box> */}
-
-                  <Text variant="small" color="dark300" marginBottom={5}>
-                    {format(new Date(item.created), 'dd/MM/yyyy HH:MM')}
-                  </Text>
-                </Box>
-              </Box>
+                <ChatElement
+                  isVisable={
+                    item.eventType === ApplicationEventType.FILEUPLOAD ||
+                    item.eventType === ApplicationEventType.DATANEEDED
+                  }
+                  comment={item.comment}
+                />
+              </TimeLineContainer>
             )
           })}
           <Box className={styles.fadeOutLineContainer}>

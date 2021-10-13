@@ -12,7 +12,6 @@ export interface Notification {
   created: string
   caseId: string
   type: NotificationType
-  condition?: string
   recipients?: string
 }
 

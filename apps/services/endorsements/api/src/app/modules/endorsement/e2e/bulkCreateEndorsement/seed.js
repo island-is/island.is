@@ -12,6 +12,11 @@ module.exports = {
       id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c1',
       owner: authNationalId,
       endorsement_meta: ['fullName', 'address', 'voterRegion'],
+      endorsement_metadata: JSON.stringify([
+        { field: 'fullName' },
+        { field: 'address' },
+        { field: 'voterRegion' },
+      ]),
       tags: ['conflictingTag'],
     },
     {

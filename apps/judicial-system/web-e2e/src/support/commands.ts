@@ -16,33 +16,6 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
       return {
         fixture: 'cases',
       }
-    } else if (
-      graphqlRequest.body.hasOwnProperty('variables') &&
-      graphqlRequest.body.query.includes('CaseQuery')
-    ) {
-      if (graphqlRequest.body.variables.input.id === 'test_id') {
-        return {
-          fixture: 'case',
-        }
-      } else if (
-        graphqlRequest.body.variables.input.id === 'test_id_stadfesta'
-      ) {
-        return {
-          fixture: 'confirmCase',
-        }
-      } else if (
-        graphqlRequest.body.variables.input.id === 'test_id_stadfest'
-      ) {
-        return {
-          fixture: 'confirmedCaseJudge',
-        }
-      } else if (
-        graphqlRequest.body.variables.input.id === 'test_id_stadfesting'
-      ) {
-        return {
-          fixture: 'confirmingCaseJudge',
-        }
-      }
     } else if (graphqlRequest.body.query.includes('TransitionCaseMutation')) {
       return {
         fixture: 'transitionCaseMutationResponse',

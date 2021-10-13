@@ -1,78 +1,60 @@
-import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Context, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  AllowedFakeUsers,
-  ApplicationState,
-  CurrentApplication,
-  HomeCircumstances,
-} from '@island.is/financial-aid/shared'
-import type { User } from '@island.is/financial-aid/shared'
-import {
-  CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
-} from '@island.is/financial-aid/auth'
+import type { User } from '@island.is/financial-aid/shared/lib'
 
 import { UserModel } from './user.model'
-import { UserService } from './user.service'
 
 import { CurrentApplicationModel } from '../application'
-import { environment } from '../../../environments'
+import { StaffModel } from '../staff/models'
+import { CurrentUser } from '../decorators'
+import { BackendAPI } from '../../../services'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(IdsUserGuard)
 @Resolver(() => UserModel)
 export class UserResolver {
   constructor(
-    private readonly userService: UserService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
-  @Query(() => UserModel, { nullable: true })
-  async currentUser(
-    @CurrentGraphQlUser() user: User,
-  ): Promise<UserModel | undefined> {
-    this.logger.debug('Getting current user')
+  private async handleNotFoundException<T>(callback: () => Promise<T>) {
+    try {
+      return await callback()
+    } catch (e) {
+      if (e.extensions.response.status === 404) {
+        return undefined
+      }
+      throw e
+    }
+  }
 
+  @Query(() => UserModel, { nullable: true })
+  async currentUser(@CurrentUser() user: User): Promise<UserModel | undefined> {
+    this.logger.debug('Getting current user')
     return user as UserModel
   }
 
   @ResolveField('currentApplication', () => CurrentApplicationModel)
   async currentApplication(
     @Parent() user: User,
-  ): Promise<CurrentApplicationModel | null> {
-    // Local development
-    if (
-      environment.auth.allowFakeUsers &&
-      AllowedFakeUsers.includes(user.nationalId)
-    ) {
-      return this.fakeUser(user.nationalId)
-    }
-    return await this.userService.getCurrentApplication(user.nationalId)
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<CurrentApplicationModel | undefined> {
+    this.logger.debug('Getting current application for nationalId')
+    return await this.handleNotFoundException(() =>
+      backendApi.getCurrentApplication(user.nationalId),
+    )
   }
 
-  fakeUser(nationalId: string) {
-    const fakeUsers: { [key: string]: CurrentApplication } = {
-      '0000000001': {
-        id: '00000',
-        state: ApplicationState.INPROGRESS,
-        homeCircumstances: HomeCircumstances.OWNPLACE,
-        usePersonalTaxCredit: true,
-      },
-      '0000000003': {
-        id: '00000',
-        state: ApplicationState.DATANEEDED,
-        homeCircumstances: HomeCircumstances.OWNPLACE,
-        usePersonalTaxCredit: true,
-      },
-    }
-
-    if (nationalId in fakeUsers) {
-      return fakeUsers[nationalId]
-    }
-
-    return null
+  @ResolveField('staff', () => StaffModel, { name: 'staff', nullable: true })
+  async staff(
+    @Parent() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<StaffModel | undefined> {
+    this.logger.debug('Getting staff for nationalId')
+    return await backendApi.getStaff(user.nationalId)
   }
 }

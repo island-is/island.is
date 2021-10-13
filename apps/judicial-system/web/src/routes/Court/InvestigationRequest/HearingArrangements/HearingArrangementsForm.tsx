@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
   AlertMessage,
@@ -19,9 +20,11 @@ import {
   DateTime,
   FormContentContainer,
   FormFooter,
+  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   CaseState,
+  NotificationType,
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -41,7 +44,7 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
+import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './HearingArrangements.treat'
 
@@ -54,21 +57,19 @@ interface Props {
 
 const HearingArrangementsForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, users } = props
-  const [courtroomEM, setCourtroomEM] = useState('')
+  const [modalVisible, setModalVisible] = useState(false)
   const [defenderEmailEM, setDefenderEmailEM] = useState('')
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
   const [courtDateIsValid, setCourtDateIsValid] = useState(true)
-  const { updateCase } = useCase()
+  const { updateCase, sendNotification, isSendingNotification } = useCase()
   const { formatMessage } = useIntl()
+  const router = useRouter()
 
   const validations: FormSettings = {
     judge: {
       validations: ['empty'],
     },
     registrar: {
-      validations: ['empty'],
-    },
-    courtRoom: {
       validations: ['empty'],
     },
   }
@@ -132,6 +133,19 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   const defaultRegistrar = registrars?.find(
     (registrar: Option) => registrar.value === workingCase?.registrar?.id,
   )
+
+  const handleNextButtonClick = () => {
+    if (
+      workingCase.notifications?.find(
+        (notification) => notification.type === NotificationType.COURT_DATE,
+      )
+    ) {
+      router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+    } else {
+      setModalVisible(true)
+    }
+  }
+
   return (
     <>
       <FormContentContainer>
@@ -157,11 +171,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Dómari{' '}
-              <Tooltip
-                text={formatMessage(
-                  icHearingArrangements.sections.setJudge.tooltip,
-                )}
-              />
+              <Tooltip text={formatMessage(m.sections.setJudge.tooltip)} />
             </Text>
           </Box>
           <Select
@@ -180,11 +190,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Dómritari{' '}
-              <Tooltip
-                text={formatMessage(
-                  icHearingArrangements.sections.setRegistrar.tooltip,
-                )}
-              />
+              <Tooltip text={formatMessage(m.sections.setRegistrar.tooltip)} />
             </Text>
           </Box>
           <Select
@@ -204,13 +210,9 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(
-                icHearingArrangements.sections.sessionArrangements.heading,
-              )} `}
+              {`${formatMessage(m.sections.sessionArrangements.heading)} `}
               <Tooltip
-                text={formatMessage(
-                  icHearingArrangements.sections.sessionArrangements.tooltip,
-                )}
+                text={formatMessage(m.sections.sessionArrangements.tooltip)}
               />
             </Text>
           </Box>
@@ -220,8 +222,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 name="session-arrangements-all-present"
                 id="session-arrangements-all-present"
                 label={formatMessage(
-                  icHearingArrangements.sections.sessionArrangements.options
-                    .allPresent,
+                  m.sections.sessionArrangements.options.allPresent,
                 )}
                 checked={
                   workingCase.sessionArrangements ===
@@ -242,11 +243,34 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             </Box>
             <Box marginBottom={2}>
               <RadioButton
+                name="session-arrangements-all-present_spokesperson"
+                id="session-arrangements-all-present_spokesperson"
+                label={formatMessage(
+                  m.sections.sessionArrangements.options.allPresentSpokesperson,
+                )}
+                checked={
+                  workingCase.sessionArrangements ===
+                  SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                }
+                onChange={() => {
+                  setAndSendToServer(
+                    'sessionArrangements',
+                    SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <RadioButton
                 name="session-arrangements-prosecutor-present"
                 id="session-arrangements-prosecutor-present"
                 label={formatMessage(
-                  icHearingArrangements.sections.sessionArrangements.options
-                    .prosecutorPresent,
+                  m.sections.sessionArrangements.options.prosecutorPresent,
                 )}
                 checked={
                   workingCase.sessionArrangements ===
@@ -269,8 +293,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
               name="session-arrangements-remote-session"
               id="session-arrangements-remote-session"
               label={formatMessage(
-                icHearingArrangements.sections.sessionArrangements.options
-                  .remoteSession,
+                m.sections.sessionArrangements.options.remoteSession,
               )}
               checked={
                 workingCase.sessionArrangements ===
@@ -333,26 +356,20 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   removeTabsValidateAndSet(
                     'courtRoom',
                     event,
-                    ['empty'],
+                    [],
                     workingCase,
                     setWorkingCase,
-                    courtroomEM,
-                    setCourtroomEM,
                   )
                 }
                 onBlur={(event) =>
                   validateAndSendToServer(
                     'courtRoom',
                     event.target.value,
-                    ['empty'],
+                    [],
                     workingCase,
                     updateCase,
-                    setCourtroomEM,
                   )
                 }
-                errorMessage={courtroomEM}
-                hasError={courtroomEM !== ''}
-                required
               />
             </BlueBox>
           </Box>
@@ -506,12 +523,75 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isLoading}
           nextIsDisabled={!isValid || !courtDateIsValid}
-          nextButtonText="Staðfesta og senda"
+          hideNextButton={workingCase.isMasked}
+          infoBoxText={
+            workingCase.isMasked
+              ? formatMessage(m.footer.infoPanelForRestrictedAccess)
+              : undefined
+          }
         />
       </FormContentContainer>
+      {modalVisible && (
+        <Modal
+          title={formatMessage(
+            workingCase.sessionArrangements ===
+              SessionArrangements.REMOTE_SESSION
+              ? m.modal.remoteSessionHeading
+              : m.modal.heading,
+          )}
+          text={formatMessage(
+            workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+              ? m.modal.allPresentText
+              : workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+              ? m.modal.allPresentSpokespersonText
+              : workingCase.sessionArrangements ===
+                SessionArrangements.PROSECUTOR_PRESENT
+              ? m.modal.prosecutorPresentText
+              : m.modal.remoteSessionText,
+          )}
+          handlePrimaryButtonClick={async () => {
+            if (
+              workingCase.sessionArrangements ===
+              SessionArrangements.REMOTE_SESSION
+            ) {
+              router.push(
+                `${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
+              )
+            } else {
+              const notificationSent = await sendNotification(
+                workingCase.id,
+                NotificationType.COURT_DATE,
+              )
+
+              if (notificationSent) {
+                router.push(
+                  `${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
+                )
+              }
+            }
+          }}
+          handleSecondaryButtonClick={() => {
+            router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+          }}
+          primaryButtonText={formatMessage(
+            workingCase.sessionArrangements ===
+              SessionArrangements.REMOTE_SESSION
+              ? m.modal.primaryButtonRemoteSessionText
+              : m.modal.primaryButtonText,
+          )}
+          secondaryButtonText={
+            workingCase.sessionArrangements ===
+            SessionArrangements.REMOTE_SESSION
+              ? undefined
+              : formatMessage(m.modal.secondaryButtonText)
+          }
+          isPrimaryButtonLoading={isSendingNotification}
+        />
+      )}
     </>
   )
 }

@@ -1,6 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
-import { EndorsementListEndorsementMetaEnum } from '../enums/endorsementListEndorsementMeta.enum'
 import { EndorsementListTagsEnum } from '../enums/endorsementListTags.enum'
 import { Endorsement } from './endorsement.model'
 import { ValidationRule } from './validationRule.model'
@@ -18,9 +17,6 @@ export class EndorsementList {
 
   @Field({ nullable: true })
   closedDate!: string | null
-
-  @Field(() => [EndorsementListEndorsementMetaEnum])
-  endorsementMeta!: EndorsementListEndorsementMetaEnum[]
 
   @Field(() => [EndorsementListTagsEnum])
   tags!: EndorsementListTagsEnum[]

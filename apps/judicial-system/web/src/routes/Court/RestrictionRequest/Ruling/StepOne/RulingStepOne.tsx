@@ -169,12 +169,14 @@ export const RulingStepOne: React.FC = () => {
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <AccordionItem
                   id="caseFileList"
-                  label={`Rannsóknargögn (${workingCase.files?.length ?? 0})`}
+                  label={`Rannsóknargögn (${
+                    workingCase.caseFiles?.length ?? 0
+                  })`}
                   labelVariant="h3"
                 >
                   <CaseFileList
                     caseId={workingCase.id}
-                    files={workingCase.files ?? []}
+                    files={workingCase.caseFiles ?? []}
                     canOpenFiles={
                       workingCase.judge !== null &&
                       workingCase.judge?.id === user?.id
@@ -301,6 +303,15 @@ export const RulingStepOne: React.FC = () => {
                       : 'farbann'
                   } hafnað`}
                   partiallyAcceptedLabelText="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
+                  dismissLabelText={formatMessage(
+                    rcRulingStepOne.sections.decision.dismissLabel,
+                    {
+                      caseType:
+                        workingCase.type === CaseType.CUSTODY
+                          ? 'gæsluvarðhald'
+                          : 'farbann',
+                    },
+                  )}
                 />
               </Box>
             </Box>
@@ -316,49 +327,50 @@ export const RulingStepOne: React.FC = () => {
                 isRequired
               />
             </Box>
-            {workingCase.decision !== CaseDecision.REJECTING && (
-              <Box
-                component="section"
-                marginBottom={7}
-                data-testid="caseDecisionSection"
-              >
-                <Box marginBottom={2}>
-                  <Text as="h3" variant="h3">
-                    {workingCase.type === CaseType.CUSTODY &&
-                    workingCase.decision === CaseDecision.ACCEPTING
-                      ? 'Gæsluvarðhald'
-                      : 'Farbann'}
-                  </Text>
+            {workingCase.decision &&
+              workingCase.decision !== CaseDecision.REJECTING && (
+                <Box
+                  component="section"
+                  marginBottom={7}
+                  data-testid="caseDecisionSection"
+                >
+                  <Box marginBottom={2}>
+                    <Text as="h3" variant="h3">
+                      {workingCase.type === CaseType.CUSTODY &&
+                      workingCase.decision === CaseDecision.ACCEPTING
+                        ? 'Gæsluvarðhald'
+                        : 'Farbann'}
+                    </Text>
+                  </Box>
+                  <DateTime
+                    name="validToDate"
+                    datepickerLabel={
+                      workingCase.type === CaseType.CUSTODY &&
+                      workingCase.decision === CaseDecision.ACCEPTING
+                        ? 'Gæsluvarðhald til'
+                        : 'Farbann til'
+                    }
+                    selectedDate={
+                      workingCase.validToDate
+                        ? new Date(workingCase.validToDate)
+                        : undefined
+                    }
+                    minDate={new Date()}
+                    onChange={(date: Date | undefined, valid: boolean) => {
+                      newSetAndSendDateToServer(
+                        'validToDate',
+                        date,
+                        valid,
+                        workingCase,
+                        setWorkingCase,
+                        setValidToDateIsValid,
+                        updateCase,
+                      )
+                    }}
+                    required
+                  />
                 </Box>
-                <DateTime
-                  name="validToDate"
-                  datepickerLabel={
-                    workingCase.type === CaseType.CUSTODY &&
-                    workingCase.decision === CaseDecision.ACCEPTING
-                      ? 'Gæsluvarðhald til'
-                      : 'Farbann til'
-                  }
-                  selectedDate={
-                    workingCase.validToDate
-                      ? new Date(workingCase.validToDate)
-                      : undefined
-                  }
-                  minDate={new Date()}
-                  onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
-                      'validToDate',
-                      date,
-                      valid,
-                      workingCase,
-                      setWorkingCase,
-                      setValidToDateIsValid,
-                      updateCase,
-                    )
-                  }}
-                  required
-                />
-              </Box>
-            )}
+              )}
             {workingCase.type === CaseType.CUSTODY &&
               workingCase.decision === CaseDecision.ACCEPTING && (
                 <Box component="section" marginBottom={8}>
@@ -387,6 +399,11 @@ export const RulingStepOne: React.FC = () => {
                     <DateTime
                       name="isolationToDate"
                       datepickerLabel="Einangrun til"
+                      disabled={
+                        !workingCase.custodyRestrictions?.includes(
+                          CaseCustodyRestrictions.ISOLATION,
+                        )
+                      }
                       selectedDate={
                         workingCase.isolationToDate
                           ? new Date(workingCase.isolationToDate)

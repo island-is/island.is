@@ -60,6 +60,10 @@ const devConfig = {
       process.env.COURTS_CREDENTIALS ?? '{}',
     ) as CourtClientServiceOptions,
   },
+  policeServiceOptions: {
+    apiPath: process.env.XROAD_POLICE_API_PATH ?? '',
+    memberCode: process.env.XROAD_POLICE_MEMBER_CODE ?? '',
+  },
   events: {
     url: process.env.EVENT_URL,
   },
@@ -147,6 +151,12 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.XROAD_COURT_MEMBER_CODE) {
     throw new Error('Missing XROAD_COURT_MEMBER_CODE environment.')
   }
+  if (!process.env.XROAD_POLICE_API_PATH) {
+    throw new Error('Missing XROAD_POLICE_API_PATH environment.')
+  }
+  if (!process.env.XROAD_POLICE_MEMBER_CODE) {
+    throw new Error('Missing XROAD_POLICE_MEMBER_CODE environment.')
+  }
   if (!process.env.COURTS_CREDENTIALS) {
     throw new Error('Missing COURTS_CREDENTIALS environment.')
   }
@@ -210,6 +220,10 @@ const prodConfig = {
     serviceOptions: JSON.parse(
       process.env.COURTS_CREDENTIALS ?? '{}',
     ) as CourtClientServiceOptions,
+  },
+  policeServiceOptions: {
+    apiPath: process.env.XROAD_POLICE_API_PATH ?? '',
+    memberCode: process.env.XROAD_POLICE_MEMBER_CODE ?? '',
   },
   events: {
     url: process.env.EVENT_URL,

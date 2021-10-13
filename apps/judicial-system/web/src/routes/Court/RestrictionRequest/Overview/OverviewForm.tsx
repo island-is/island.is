@@ -21,7 +21,7 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 
 interface Props {
@@ -85,7 +85,8 @@ const OverviewForm: React.FC<Props> = (props) => {
             {
               title: 'Embætti',
               value: `${
-                workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
+                workingCase.creatingProsecutor?.institution?.name ??
+                'Ekki skráð'
               }`,
             },
             {
@@ -171,6 +172,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                 )
               },
             )}
+            {workingCase.legalBasis && <Text>{workingCase.legalBasis}</Text>}
           </Box>
         </div>
         <div className={styles.infoSection} data-testid="custodyRestrictions">
@@ -274,13 +276,13 @@ const OverviewForm: React.FC<Props> = (props) => {
           <Box marginBottom={1}>
             <Text as="h2" variant="h3">
               {`Rannsóknargögn (${
-                workingCase.files ? workingCase.files.length : 0
+                workingCase.caseFiles ? workingCase.caseFiles.length : 0
               })`}
             </Text>
           </Box>
           <CaseFileList
             caseId={workingCase.id}
-            files={workingCase.files ?? []}
+            files={workingCase.caseFiles ?? []}
             canOpenFiles={
               workingCase.judge !== null && workingCase.judge?.id === user?.id
             }
@@ -289,7 +291,7 @@ const OverviewForm: React.FC<Props> = (props) => {
         <Box marginBottom={3}>
           <PdfButton
             caseId={workingCase.id}
-            title="Opna PDF kröfu"
+            title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
         </Box>

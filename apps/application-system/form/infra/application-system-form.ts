@@ -13,6 +13,9 @@ export const serviceSetup = (services: {}): ServiceBuilder<'application-system-f
         prod: 'https://innskra.island.is',
       },
     })
+    .secrets({
+      SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
+    })
     .ingress({
       primary: {
         host: {

@@ -16,6 +16,7 @@ interface Option {
   tooltip?: React.ReactNode
   excludeOthers?: boolean
   illustration?: React.FC
+  disabled?: boolean
 }
 
 interface Props {
@@ -55,7 +56,7 @@ export const RadioController: FC<Props> = ({
         <GridRow>
           {options.map((option, index) => (
             <GridColumn
-              span={[smallScreenSplit, '1/1', split]}
+              span={[smallScreenSplit, split]}
               paddingBottom={2}
               key={`option-${option.value}`}
             >
@@ -75,7 +76,7 @@ export const RadioController: FC<Props> = ({
                 label={option.label}
                 subLabel={option.subLabel}
                 value={option.value}
-                disabled={disabled}
+                disabled={disabled || option.disabled}
                 hasError={error !== undefined}
                 backgroundColor={backgroundColor}
                 illustration={option.illustration}

@@ -11,13 +11,16 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { ApplicationModel } from '../../application'
 
-import { ApplicationEventType } from '@island.is/financial-aid/shared'
+import {
+  ApplicationEventType,
+  ApplicationEvent,
+} from '@island.is/financial-aid/shared/lib'
 
 @Table({
   tableName: 'application_events',
   timestamps: false,
 })
-export class ApplicationEventModel extends Model<ApplicationEventModel> {
+export class ApplicationEventModel extends Model<ApplicationEvent> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

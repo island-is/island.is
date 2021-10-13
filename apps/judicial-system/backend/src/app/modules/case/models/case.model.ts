@@ -195,6 +195,17 @@ export class Case extends Model<Case> {
   defenderIsSpokesperson?: boolean
 
   /**********
+   * Indicates whether the secutity level of the case has been heightened -
+   * optional
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  isHeightenedSecurityLevel?: boolean
+
+  /**********
    * The surrogate key of the court assigned to the case
    **********/
   @Column({
@@ -243,6 +254,16 @@ export class Case extends Model<Case> {
   requestedCourtDate?: Date
 
   /**********
+   * The translator assigned to the case
+   **********/
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  translator?: string
+
+  /**********
    * The prosecutor's requested ruling expiration date and time - example: the end of custody
    * in custody cases - optional for some case types
    **********/
@@ -275,7 +296,8 @@ export class Case extends Model<Case> {
   lawsBroken?: string
 
   /**********
-   * The laws on which the demands are based - not used for custody and travel ban cases
+   * The laws on which the demands are based. Used as additional custody
+   * provisions in custody and travel ban cases.
    **********/
   @Column({
     type: DataType.STRING,
@@ -382,6 +404,24 @@ export class Case extends Model<Case> {
   caseFilesComments?: string
 
   /**********
+   * The surrogate key of the prosecutor that created the case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  creatingProsecutorId?: string
+
+  /**********
+   * The prosecutor that created the case
+   **********/
+  @BelongsTo(() => User, 'creatingProsecutorId')
+  @ApiProperty({ type: User })
+  creatingProsecutor?: User
+
+  /**********
    * The surrogate key of the prosecutor assigned to the case
    **********/
   @ForeignKey(() => User)
@@ -449,6 +489,16 @@ export class Case extends Model<Case> {
   courtDate?: Date
 
   /**********
+   * The location of the court session
+   **********/
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtLocation?: string
+
+  /**********
    * The assigned court room for the court session
    **********/
   @Column({
@@ -477,6 +527,16 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   courtEndTime?: Date
+
+  /**********
+   * Indicates whether the closed court announcement is hidden from the court record - optional
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  isClosedCourtHidden?: boolean
 
   /**********
    * The court attendees
@@ -509,14 +569,14 @@ export class Case extends Model<Case> {
   courtDocuments?: string[]
 
   /**********
-   * Indicates whether the accused was present during the court session - optional
+   * Indicates whether the accused rights are hidden from the court record - optional
    **********/
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
   @ApiProperty()
-  isAccusedAbsent?: boolean
+  isAccusedRightsHidden?: boolean
 
   /**********
    * The accused's plea decision - example: REJECT

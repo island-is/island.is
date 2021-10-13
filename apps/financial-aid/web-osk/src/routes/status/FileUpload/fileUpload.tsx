@@ -1,77 +1,167 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
   Footer,
-  StatusLayout,
   Files,
+  ContentContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
-import { FormContext } from '@island.is/financial-aid-web/osksrc/components/FormProvider/FormProvider'
-import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFileUpload'
-import { UserContext } from '@island.is/financial-aid-web/osksrc/components/UserProvider/UserProvider'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/useFileUpload'
 import {
   Application,
+  ApplicationEventType,
   ApplicationState,
   FileType,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
-import { UpdateApplicationMutation } from '@island.is/financial-aid-web/oskgraphql/sharedGql'
+import {
+  CreateApplicationEventQuery,
+  UpdateApplicationMutation,
+} from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+
+import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
+
+import { Routes } from '@island.is/financial-aid/shared/lib'
+import cn from 'classnames'
 
 const FileUpload = () => {
-  const { form } = useContext(FormContext)
+  const { form, updateForm } = useContext(FormContext)
   const router = useRouter()
-  const [nextButtonText, setNextButtonText] = useState('Senda gögn')
   const { uploadFiles } = useFileUpload(form.otherFiles)
-  const { user } = useContext(UserContext)
 
-  const currentApplication = useMemo(() => {
-    if (user?.currentApplication) {
-      return user.currentApplication
-    }
-  }, [user])
+  const [error, setError] = useState(false)
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const [updateApplicationMutation] = useMutation<{ application: Application }>(
     UpdateApplicationMutation,
   )
 
-  const proceed = async () => {
-    if (form?.otherFiles.length <= 0 || currentApplication === undefined) {
-      setNextButtonText('Engar skrár til staðar')
-      return
+  const [createApplicationEventMutation] = useMutation(
+    CreateApplicationEventQuery,
+  )
+
+  useEffect(() => {
+    if (error) {
+      setError(false)
     }
+  }, [form?.otherFiles])
+
+  const sendFiles = async () => {
+    setIsLoading(true)
 
     try {
-      await uploadFiles(currentApplication.id, FileType.OTHER).then(
+      await uploadFiles(router.query.id as string, FileType.OTHER).then(
         async () => {
           await updateApplicationMutation({
             variables: {
               input: {
-                id: currentApplication.id,
+                id: router.query.id,
                 state: ApplicationState.INPROGRESS,
               },
             },
           })
-          setNextButtonText('Skrám hefur verið hlaðið upp')
+
+          updateForm({
+            ...form,
+            status: ApplicationState.INPROGRESS,
+          })
+
+          router.push(
+            `${Routes.statusFileUploadSuccess(router.query.id as string)}`,
+          )
         },
       )
     } catch (e) {
-      setNextButtonText('Ekki tókst að hlaða upp skrám')
+      router.push(
+        `${Routes.statusFileUploadFailure(router.query.id as string)}`,
+      )
+    }
+
+    setIsLoading(false)
+  }
+
+  const sendUserComment = async () => {
+    try {
+      await createApplicationEventMutation({
+        variables: {
+          input: {
+            applicationId: router.query.id,
+            comment: form.fileUploadComment,
+            eventType: ApplicationEventType.FILEUPLOAD,
+          },
+        },
+      })
+    } catch (e) {
+      router.push(
+        `${Routes.statusFileUploadFailure(router.query.id as string)}`,
+      )
     }
   }
 
   return (
-    <StatusLayout>
-      <Files
-        headline="Senda inn gögn"
-        about="Þú getur alltaf sent okkur gögn sem þú telur hjálpa umsókninni, t.d.
-        launagögn"
-      />
+    <>
+      <ContentContainer>
+        <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
+          Senda inn gögn
+        </Text>
+
+        <Text marginBottom={[3, 3, 4]}>
+          Hér getur þú sent okkur gögn ef vantar svo hægt sé að vinna þína
+          umsókn.
+        </Text>
+
+        <Box marginBottom={[3, 3, 5]}>
+          <AlertMessage
+            type="warning"
+            title="Athugasemd frá vinnsluaðila"
+            message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in."
+          />
+        </Box>
+
+        <Files
+          header="Senda inn gögn"
+          fileKey="otherFiles"
+          uploadFiles={form.otherFiles}
+          hasError={error && form?.otherFiles.length <= 0}
+        />
+
+        <Text as="h2" variant="h3" marginBottom={[2, 2, 3]}>
+          Viltu láta fylgja með athugasemd?
+        </Text>
+
+        <Box marginBottom={[4, 4, 10]}>
+          <Input
+            label="Athugasemd"
+            name="fileUploadComment"
+            value={form.fileUploadComment}
+            placeholder="Skrifaðu hér"
+            rows={7}
+            textarea
+            backgroundColor="blue"
+            onChange={(event) => {
+              updateForm({
+                ...form,
+                fileUploadComment: event.currentTarget.value,
+              })
+            }}
+          />
+        </Box>
+      </ContentContainer>
+
       <Footer
-        previousUrl={`/${router.query.id}`}
-        nextButtonText={nextButtonText}
-        onNextButtonClick={() => proceed()}
+        previousUrl={Routes.statusPage(router.query.id as string)}
+        nextButtonText={'Senda gögn'}
+        nextIsLoading={isLoading}
+        onNextButtonClick={() => {
+          if (form?.otherFiles.length <= 0 || router.query.id === undefined) {
+            return setError(true)
+          }
+          Promise.all([sendFiles(), sendUserComment()])
+        }}
       />
-    </StatusLayout>
+    </>
   )
 }
 

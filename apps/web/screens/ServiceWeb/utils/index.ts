@@ -1,0 +1,1 @@
+export { getSlugPart } from './getSlugPart'
