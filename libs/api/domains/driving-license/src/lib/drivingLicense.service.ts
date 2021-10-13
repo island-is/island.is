@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   DrivingLicense,
@@ -29,8 +29,7 @@ import {
   EmbaettiDto,
   HefurLokidOkugerdiDto,
   OkukennariDto,
-  IDrivingLicenseApiV1,
-  OkuskirteiniApi as OkuskirteiniApiV1,
+  OkuskirteiniApiV1,
   Rettindi,
   TegSviptingaDto,
   TegundAthugasemdaDto,
@@ -38,8 +37,7 @@ import {
 } from '@island.is/clients/driving-license-v1'
 import {
   DRIVING_LICENSE_API_VERSION_V2,
-  IDrivingLicenseApiV2,
-  OkuskirteiniApi as OkuskirteiniApiV2,
+  OkuskirteiniApiV2,
 } from '@island.is/clients/driving-license-v2'
 import {
   BLACKLISTED_JURISTICTION,
@@ -51,9 +49,7 @@ import sortTeachers from './util/sortTeachers'
 @Injectable()
 export class DrivingLicenseService {
   constructor(
-    @Inject(IDrivingLicenseApiV1)
     private readonly drivingLicenseApi: OkuskirteiniApiV1,
-    @Inject(IDrivingLicenseApiV2)
     private readonly drivingLicenseApiV2: OkuskirteiniApiV2,
   ) {}
 

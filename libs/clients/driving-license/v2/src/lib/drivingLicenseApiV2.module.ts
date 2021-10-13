@@ -1,9 +1,8 @@
 import { DynamicModule } from '@nestjs/common'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import {
-  Configuration,
-  OkuskirteiniApi as OkuskirteiniApiV2,
-} from '../../gen/fetch'
+import { Configuration, OkuskirteiniApi } from '../../gen/fetch'
+
+export class OkuskirteiniApiV2 extends OkuskirteiniApi {}
 
 export interface DrivingLicenseV2Config {
   xroadBaseUrl: string
@@ -13,7 +12,6 @@ export interface DrivingLicenseV2Config {
 }
 
 export const DRIVING_LICENSE_API_VERSION_V2 = '2.0'
-export const IDrivingLicenseApiV2 = Symbol('IDrivingLicenseApiV2')
 
 const configFactory = (config: DrivingLicenseV2Config) => ({
   fetchApi: createEnhancedFetch({
@@ -35,12 +33,12 @@ export class DrivingLicenseApiV2Module {
       module: DrivingLicenseApiV2Module,
       providers: [
         {
-          provide: IDrivingLicenseApiV2,
+          provide: OkuskirteiniApiV2,
           useFactory: () =>
             new OkuskirteiniApiV2(new Configuration(configFactory(config))),
         },
       ],
-      exports: [IDrivingLicenseApiV2],
+      exports: [OkuskirteiniApiV2],
     }
   }
 }

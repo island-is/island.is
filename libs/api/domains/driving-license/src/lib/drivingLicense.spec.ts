@@ -2,13 +2,11 @@ import { Test } from '@nestjs/testing'
 import { DrivingLicenseService } from './drivingLicense.service'
 import {
   Configuration,
-  IDrivingLicenseApiV1,
-  OkuskirteiniApi as OkuskirteiniApiV1,
+  OkuskirteiniApiV1,
 } from '@island.is/clients/driving-license-v1'
 import {
   Configuration as ConfigurationV2,
-  IDrivingLicenseApiV2,
-  OkuskirteiniApi as OkuskirteiniApiV2,
+  OkuskirteiniApiV2,
 } from '@island.is/clients/driving-license-v2'
 import {
   MOCK_NATIONAL_ID,
@@ -49,11 +47,11 @@ describe('DrivingLicenseService', () => {
     const module = await Test.createTestingModule({
       providers: [
         {
-          provide: IDrivingLicenseApiV1,
+          provide: OkuskirteiniApiV1,
           useValue: MockOkuskirteiniApiV1,
         },
         {
-          provide: IDrivingLicenseApiV2,
+          provide: OkuskirteiniApiV2,
           useValue: MockOkuskirteiniApiV2,
         },
         DrivingLicenseService,
