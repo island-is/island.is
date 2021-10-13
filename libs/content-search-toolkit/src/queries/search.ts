@@ -17,11 +17,16 @@ export const searchQuery = ({
   const should = []
   const must: TagQuery[] = []
   let minimumShouldMatch = 1
+  let wordLengthRequiredForFuzz = 5
 
   if (fuzzy) {
     queryString = queryString
       .split(' ')
-      .map((term) => `${term}~${fuzzyFactor}`)
+      .map((term) =>
+        term.length >= wordLengthRequiredForFuzz
+          ? `${term}~${fuzzyFactor}`
+          : term,
+      )
       .join(' ')
   }
 
