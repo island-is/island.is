@@ -15,6 +15,7 @@ import {
   InstitutionModule,
   CourtModule,
   FeatureModule,
+  PoliceModule,
 } from './modules/'
 
 const debug = !environment.production
@@ -46,6 +47,7 @@ const autoSchemaFile = environment.production
     CourtModule,
     FeatureModule,
     CmsTranslationsModule,
+    PoliceModule,
   ],
   providers: [BackendAPI],
 })
