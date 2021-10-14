@@ -16,7 +16,6 @@ import {
   apiBasePath,
   ApplicationStateUrl,
   UpdateApplicationTableResponseType,
-  UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -68,13 +67,6 @@ class BackendAPI extends RESTDataSource {
     updateApplication: UpdateApplication,
   ): Promise<UpdateApplicationTableResponseType> {
     return this.put(`applications/${id}/${stateUrl}`, updateApplication)
-  }
-
-  updateApplicationRes(
-    id: string,
-    updateApplication: UpdateApplication,
-  ): Promise<UpdateApplicationResponseType> {
-    return this.put(`updateApplication/${id}`, updateApplication)
   }
 
   getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {

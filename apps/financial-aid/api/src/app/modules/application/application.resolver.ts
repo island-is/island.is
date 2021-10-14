@@ -1,4 +1,11 @@
-import { Query, Resolver, Context, Mutation, Args } from '@nestjs/graphql'
+import {
+  Query,
+  Resolver,
+  Context,
+  Mutation,
+  Args,
+  ResolveField,
+} from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -8,7 +15,6 @@ import {
   ApplicationFiltersModel,
   ApplicationModel,
   UpdateApplicationTableResponse,
-  UpdateApplicationResponse,
 } from './models'
 import {
   CreateApplicationInput,
@@ -22,9 +28,11 @@ import {
   Application,
   ApplicationFilters,
   UpdateApplicationTableResponseType,
-  UpdateApplicationResponseType,
+  User,
 } from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { StaffModel } from '../staff'
+import { CurrentUser } from '../decorators'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => ApplicationModel)
@@ -71,23 +79,10 @@ export class ApplicationResolver {
     @Args('input', { type: () => UpdateApplicationInput })
     input: UpdateApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApplicationModel> {
+  ): Promise<Application> {
     const { id, ...updateApplication } = input
     this.logger.debug(`updating application ${id}`)
     return backendApi.updateApplication(id, updateApplication)
-  }
-
-  @Mutation(() => UpdateApplicationResponse, { nullable: true })
-  updateApplicationRes(
-    @Args('input', { type: () => UpdateApplicationInput })
-    input: UpdateApplicationInput,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<UpdateApplicationResponseType> {
-    const { id, ...updateApplication } = input
-
-    this.logger.debug(`updating application ${id}`)
-
-    return backendApi.updateApplicationRes(id, updateApplication)
   }
 
   @Mutation(() => UpdateApplicationTableResponse, { nullable: true })
@@ -102,8 +97,7 @@ export class ApplicationResolver {
 
     return backendApi.updateApplicationTable(id, stateUrl, updateApplication)
   }
-
-  @Query(() => ApplicationFiltersModel, { nullable: false })
+  @Mutation(() => ApplicationFiltersModel, { nullable: false })
   applicationFilters(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<ApplicationFilters> {
@@ -121,5 +115,14 @@ export class ApplicationResolver {
     this.logger.debug('Creating application event')
 
     return backendApi.createApplicationEvent(input)
+  }
+
+  @ResolveField('staff', () => StaffModel, { name: 'staff', nullable: true })
+  async staff(
+    @CurrentUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<StaffModel | undefined> {
+    this.logger.debug('Getting staff for nationalId')
+    return await backendApi.getStaff(user.nationalId)
   }
 }

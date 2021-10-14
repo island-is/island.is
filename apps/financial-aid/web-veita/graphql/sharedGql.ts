@@ -91,62 +91,6 @@ export const GetApplicationQuery = gql`
     }
   }
 `
-export const UpdateApplicationMutation = gql`
-  mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
-    updateApplicationRes(input: $input) {
-      application {
-        id
-        nationalId
-        created
-        modified
-        name
-        phoneNumber
-        email
-        homeCircumstances
-        student
-        employment
-        hasIncome
-        usePersonalTaxCredit
-        bankNumber
-        ledger
-        accountNumber
-        interview
-        employmentCustom
-        homeCircumstancesCustom
-        files {
-          id
-          applicationId
-          name
-          size
-          created
-          type
-        }
-        state
-        formComment
-        studentCustom
-        amount
-        rejection
-        applicationEvents {
-          id
-          applicationId
-          eventType
-          comment
-          created
-        }
-        staff {
-          name
-        }
-      }
-      filters {
-        New
-        InProgress
-        DataNeeded
-        Rejected
-        Approved
-      }
-    }
-  }
-`
 
 export const UpdateApplicationTableMutation = gql`
   mutation UpdateApplicationTableMutation(
@@ -195,8 +139,9 @@ export const GetApplicationsQuery = gql`
   }
 `
 
+// Is defined as a mutation to be callable but is a query.
 export const GetApplicationFiltersQuery = gql`
-  query GetApplicationFiltersQuery {
+  mutation GetApplicationFiltersQuery {
     applicationFilters {
       New
       InProgress
@@ -300,6 +245,54 @@ export const CurrentUserQuery = gql`
         phoneNumber
         role
         active
+      }
+    }
+  }
+`
+
+export const UpdateApplicationMutation = gql`
+  mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
+    updateApplication(input: $input) {
+      id
+      nationalId
+      created
+      modified
+      name
+      phoneNumber
+      email
+      homeCircumstances
+      student
+      employment
+      hasIncome
+      usePersonalTaxCredit
+      bankNumber
+      ledger
+      accountNumber
+      interview
+      employmentCustom
+      homeCircumstancesCustom
+      files {
+        id
+        applicationId
+        name
+        size
+        created
+        type
+      }
+      state
+      formComment
+      studentCustom
+      amount
+      rejection
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
+      staff {
+        name
       }
     }
   }
