@@ -89,7 +89,8 @@ export class EndorsementListController {
   }
 
   @ApiOperation({
-    summary: 'Finds all endorsement lists owned by the currently authenticated user',
+    summary:
+      'Finds all endorsement lists owned by the currently authenticated user',
   })
   @ApiOkResponse({ type: PaginatedEndorsementDto })
   @Get('/endorsementLists')
