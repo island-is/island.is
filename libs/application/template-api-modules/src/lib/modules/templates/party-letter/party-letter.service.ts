@@ -15,7 +15,6 @@ import {
   EndorsementListTagsEnum,
 } from './gen/fetch/endorsements'
 import { User, AuthMiddleware } from '@island.is/auth-nest-tools'
-import { environment } from '../../../environments'
 
 const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
 
@@ -26,6 +25,8 @@ const CREATE_ENDORSEMENT_LIST_QUERY = `
     }
   }
 `
+
+export const DEFAULT_CLOSED_DATE = 'default closed date'
 
 type ErrorResponse = {
   errors: {
@@ -48,6 +49,7 @@ export class PartyLetterService {
     private endorsementListApi: EndorsementListApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    @Inject(DEFAULT_CLOSED_DATE) private dateConfig: Date,
   ) {}
 
   partyLetterRegistryApiWithAuth(auth: User) {
@@ -91,7 +93,7 @@ export class PartyLetterService {
       .endorsementListControllerOpen({
         listId,
         changeEndorsmentListClosedDateDto: {
-          closedDate: environment.defaultclosedDate,
+          closedDate: this.dateConfig,
         },
       })
       .then(async () => {

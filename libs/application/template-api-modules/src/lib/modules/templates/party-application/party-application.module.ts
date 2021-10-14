@@ -4,6 +4,7 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 import {
   PartyApplicationService,
   PARTY_APPLICATION_SERVICE_OPTIONS,
+  DEFAULT_CLOSED_DATE
 } from './party-application.service'
 import {
   Configuration as endorsementConfig,
@@ -30,6 +31,10 @@ export class PartyApplicationModule {
         {
           provide: PARTY_APPLICATION_SERVICE_OPTIONS,
           useFactory: () => config.partyApplication.options,
+        },
+        {
+          provide: DEFAULT_CLOSED_DATE,
+          useValue: config.partyLetter.defaultClosedDate,
         },
       ],
       exports: [PartyApplicationService],

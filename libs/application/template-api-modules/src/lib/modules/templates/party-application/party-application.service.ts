@@ -31,6 +31,8 @@ const CREATE_ENDORSEMENT_LIST_QUERY = `
   }
 `
 
+export const DEFAULT_CLOSED_DATE = 'default closed date'
+
 interface ErrorResponse {
   errors: {
     message: string
@@ -64,6 +66,7 @@ export class PartyApplicationService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(PARTY_APPLICATION_SERVICE_OPTIONS)
     private options: PartyApplicationServiceOptions,
+    @Inject(DEFAULT_CLOSED_DATE) private dateConfig: Date,
   ) {}
 
   endorsementListApiWithAuth(auth: User) {
@@ -104,7 +107,7 @@ export class PartyApplicationService {
       .endorsementListControllerOpen({
         listId,
         changeEndorsmentListClosedDateDto: {
-          closedDate: environment.defaultclosedDate,
+          closedDate: this.dateConfig,
         },
       })
       .then(async () => {
