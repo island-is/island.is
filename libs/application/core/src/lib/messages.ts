@@ -219,4 +219,9 @@ export const coreErrorMessages = defineMessages({
     description:
       'There are errors related to the application and it has been reported',
   },
+  missingAnswer: {
+    id: 'application.system:missing.answer',
+    defaultMessage: 'Svar vantar',
+    description: 'Copy when answer is missing',
+  },
 })

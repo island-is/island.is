@@ -9,14 +9,14 @@ import {
 import * as styles from './info.treat'
 import { useRouter } from 'next/router'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import {
   getNextPeriod,
   NavigationProps,
 } from '@island.is/financial-aid/shared/lib'
 
-import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 
 const ApplicationInfo = () => {
   const router = useRouter()

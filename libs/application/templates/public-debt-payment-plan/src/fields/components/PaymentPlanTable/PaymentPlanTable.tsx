@@ -10,15 +10,13 @@ import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import React, { useState } from 'react'
 import { paymentPlanTable } from '../../../lib/messages'
+import { formatIsk } from '../../../lib/paymentPlanUtils'
 
 interface Props {
   isLoading: boolean
   data: PaymentScheduleDistribution
   totalAmount: number
 }
-
-const formatIsk = (value: number): string =>
-  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
 const TableRow = ({
   dueDate,

@@ -13,7 +13,17 @@ import {
   schoolInfo,
   sportsClubInfo,
 } from '../lib/messages'
-import { AccidentTypeEnum, CompanyInfo, WorkAccidentTypeEnum } from '../types'
+import {
+  AccidentTypeEnum,
+  CompanyInfo,
+  WorkAccidentTypeEnum,
+  YesOrNo,
+} from '../types'
+
+const getSportsClubInfo = (answers: FormValue) => ({
+  ...(answers as { sportsClubInfo: CompanyInfo }).sportsClubInfo,
+  ...(answers as { onPayRoll: { answer: YesOrNo } }).onPayRoll,
+})
 
 export const getWorkplaceData = (answers: FormValue) => {
   if (isGeneralWorkplaceAccident(answers))
@@ -45,7 +55,7 @@ export const getWorkplaceData = (answers: FormValue) => {
 
   if (isProfessionalAthleteAccident(answers))
     return {
-      info: (answers as { sportsClubInfo: CompanyInfo }).sportsClubInfo,
+      info: getSportsClubInfo(answers),
       general: sportsClubInfo.general,
       labels: sportsClubInfo.labels,
       type: AccidentTypeEnum.SPORTS,

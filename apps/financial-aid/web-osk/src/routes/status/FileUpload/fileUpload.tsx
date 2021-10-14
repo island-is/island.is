@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -7,12 +7,13 @@ import {
   ContentContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/useFileUpload'
+import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/hooks/useFileUpload'
 import {
   Application,
   ApplicationEventType,
   ApplicationState,
   FileType,
+  getCommentFromLatestEvent,
 } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
 import {
@@ -24,9 +25,21 @@ import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
 
 import { Routes } from '@island.is/financial-aid/shared/lib'
 import cn from 'classnames'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
+  const { myApplication } = useContext(AppContext)
+
+  const fileComment = useMemo(() => {
+    if (myApplication?.applicationEvents) {
+      return getCommentFromLatestEvent(
+        myApplication?.applicationEvents,
+        ApplicationEventType.DATANEEDED,
+      )
+    }
+  }, [myApplication])
+
   const router = useRouter()
   const { uploadFiles } = useFileUpload(form.otherFiles)
 
@@ -112,13 +125,15 @@ const FileUpload = () => {
           umsókn.
         </Text>
 
-        <Box marginBottom={[3, 3, 5]}>
-          <AlertMessage
-            type="warning"
-            title="Athugasemd frá vinnsluaðila"
-            message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in."
-          />
-        </Box>
+        {fileComment?.comment && (
+          <Box marginBottom={[3, 3, 5]}>
+            <AlertMessage
+              type="warning"
+              title="Athugasemd frá vinnsluaðila"
+              message={fileComment.comment}
+            />
+          </Box>
+        )}
 
         <Files
           header="Senda inn gögn"
