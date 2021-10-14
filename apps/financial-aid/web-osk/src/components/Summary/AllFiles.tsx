@@ -62,7 +62,7 @@ const AllFiles = () => {
         iconType="filled"
         variant="utility"
         onClick={() => {
-          router.push(Routes.filesPage)
+          router.push(Routes.filesPage(form?.hasIncome))
         }}
       >
         Breyta
