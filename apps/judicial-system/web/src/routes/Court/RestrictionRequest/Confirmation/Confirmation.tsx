@@ -130,7 +130,7 @@ export const Confirmation: React.FC = () => {
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <CourtRecordAccordionItem workingCase={workingCase} />
-                <RulingAccordionItem workingCase={workingCase} />
+                <RulingAccordionItem workingCase={workingCase} startExpanded />
               </Accordion>
             </Box>
             <Box marginBottom={3}>

@@ -1,74 +1,74 @@
-import { useMutation } from '@apollo/client'
-import { DefaultEvents, FieldBaseProps } from '@island.is/application/core'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Application } from '@island.is/application/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { States } from '../../constants'
 import { AccidentNotification } from '../../lib/dataSchema'
 import { inReview } from '../../lib/messages'
 import { ReviewSectionState } from '../../types'
-import { returnMissingDocumentsList } from '../../utils'
+import {
+  hasMissingDocuments,
+  isHomeActivitiesAccident,
+  isInjuredAndRepresentativeOfCompanyOrInstitute,
+  returnMissingDocumentsList,
+} from '../../utils'
 import ReviewSection from './ReviewSection'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 
 type StatesMap = {
-  application: StateMapEntry
-  documents: StateMapEntry
   representative: StateMapEntry
   sjukratrygging: StateMapEntry
 }
 
 const statesMap: StatesMap = {
-  application: {
-    [States.NEEDS_DOCUMENT_AND_REVIEW]: ReviewSectionState.received,
-    [States.NEEDS_REVIEW]: ReviewSectionState.received,
-    [States.NEEDS_DOCUMENT]: ReviewSectionState.received,
-  },
-  documents: {
-    [States.NEEDS_DOCUMENT_AND_REVIEW]: ReviewSectionState.missing,
-    [States.NEEDS_REVIEW]: ReviewSectionState.received,
-    [States.NEEDS_DOCUMENT]: ReviewSectionState.missing,
-  },
   representative: {
-    [States.NEEDS_DOCUMENT_AND_REVIEW]: ReviewSectionState.missing,
-    [States.NEEDS_REVIEW]: ReviewSectionState.missing,
-    [States.NEEDS_DOCUMENT]: ReviewSectionState.approved,
+    [States.REVIEW]: ReviewSectionState.missing,
+    [States.IN_FINAL_REVIEW]: ReviewSectionState.received,
   },
   sjukratrygging: {
-    [States.NEEDS_DOCUMENT_AND_REVIEW]: ReviewSectionState.pending,
-    [States.NEEDS_REVIEW]: ReviewSectionState.pending,
-    [States.NEEDS_DOCUMENT]: ReviewSectionState.pending,
+    [States.REVIEW]: ReviewSectionState.pending,
+    [States.IN_FINAL_REVIEW]: ReviewSectionState.inProgress,
   },
 }
 
-export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
+type InReviewStepsProps = {
+  application: Application
+  isAssignee: boolean
+  setState: React.Dispatch<React.SetStateAction<string>>
+}
+
+export const InReviewSteps: FC<InReviewStepsProps> = ({
+  application,
+  isAssignee,
+  setState,
+}) => {
   const { formatMessage } = useLocale()
 
-  const [submitApplication, { loading: loadingSubmit }] = useMutation(
-    SUBMIT_APPLICATION,
-    {
-      onError: (e) => console.error(e.message),
-    },
-  )
+  const goToScreenFunction = (id: string) => {
+    setState(id)
+  }
+
+  const goToOverview = () => {
+    setState('overview')
+  }
 
   const answers = application.answers as AccidentNotification
 
   const steps = [
     {
-      state: statesMap['application'][application.state],
+      state: ReviewSectionState.received,
       title: formatMessage(inReview.application.title),
       description: formatMessage(inReview.application.summary),
       hasActionMessage: false,
     },
     {
-      state: statesMap['documents'][application.state],
+      state: hasMissingDocuments(application.answers)
+        ? ReviewSectionState.missing
+        : ReviewSectionState.received,
       title: formatMessage(inReview.documents.title),
       description: formatMessage(inReview.documents.summary),
-      hasActionMessage:
-        application.state === States.NEEDS_DOCUMENT_AND_REVIEW ||
-        application.state === States.NEEDS_DOCUMENT,
+      hasActionMessage: hasMissingDocuments(application.answers),
       action: {
         title: formatMessage(inReview.action.documents.title),
         description: formatMessage(inReview.action.documents.description),
@@ -80,13 +80,12 @@ export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
         showAlways: true,
       },
     },
+    // If this was a home activity accident than we don't want the user to see this step
     {
       state: statesMap['representative'][application.state],
       title: formatMessage(inReview.representative.title),
       description: formatMessage(inReview.representative.summary),
-      hasActionMessage:
-        application.state === States.NEEDS_DOCUMENT_AND_REVIEW ||
-        application.state === States.NEEDS_REVIEW,
+      hasActionMessage: isAssignee,
       action: {
         title: formatMessage(inReview.action.representative.title),
         description: formatMessage(inReview.action.representative.description),
@@ -94,6 +93,9 @@ export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
           inReview.action.representative.actionButtonTitle,
         ),
       },
+      visible:
+        !isHomeActivitiesAccident(application.answers) ||
+        !isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers),
     },
     {
       state: statesMap['sjukratrygging'][application.state],
@@ -105,13 +107,9 @@ export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
 
   return (
     <Box marginBottom={10}>
-      {/* TODO: We need to do this some other way!
-       application.state === States.DOCUMENTS_HAVE_BEEN_DELIVERED && (
-        <AlertMessage
-          type="success"
-          title={formatMessage(inReview.infoMessages.applicationUpdated)}
-        />
-      ) */}
+      <Text variant="h1" marginBottom={2}>
+        {formatMessage(inReview.general.title)}
+      </Text>
       <Box marginTop={4} display="flex" justifyContent="flexEnd">
         <Button
           colorScheme="default"
@@ -119,24 +117,7 @@ export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
           size="small"
           type="button"
           variant="text"
-          loading={loadingSubmit}
-          disabled={loadingSubmit}
-          onClick={async () => {
-            const res = await submitApplication({
-              variables: {
-                input: {
-                  id: application.id,
-                  event: DefaultEvents.SUBMIT,
-                  answers: application.answers,
-                },
-              },
-            })
-
-            if (res?.data) {
-              // Takes them to the next state (which loads the relevant form)
-              refetch?.()
-            }
-          }}
+          onClick={goToOverview}
         >
           {formatMessage(inReview.general.viewApplicationButton)}
         </Button>
@@ -146,7 +127,7 @@ export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
           <ReviewSection
             key={index}
             application={application}
-            refetch={refetch}
+            goToScreen={goToScreenFunction}
             {...step}
           />
         ))}
