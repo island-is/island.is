@@ -4,6 +4,7 @@ import {
   Employment,
   ApplicationEventType,
   ApplicationStateUrl,
+  FileType,
   RolesRule,
   FamilyStatus,
 } from './enums'
@@ -125,6 +126,12 @@ export const getFamilyStatus: KeyMapping<FamilyStatus, string> = {
   MarriedNotLivingTogether: 'Hjón ekki í samvistum',
   NotInformed: 'Óupplýst',
   UnregisteredCohabitation: 'Óstaðfestri sambúð?',
+}
+
+export const getFileTypeName: KeyMapping<FileType, string> = {
+  TaxReturn: 'Skattagögn',
+  Income: 'Tekjugögn',
+  Other: 'Innsend gögn',
 }
 
 export const aidCalculator = (
