@@ -272,4 +272,7 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withMainLayout(ServiceSearch, { showHeader: false })
+export default withMainLayout(ServiceSearch, {
+  showHeader: false,
+  showFooter: false,
+})

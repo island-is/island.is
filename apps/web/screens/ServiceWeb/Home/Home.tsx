@@ -12,7 +12,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_QUERY,
+  GET_SERVICE_WEB_ORGANIZATION,
   GET_SUPPORT_CATEGORIES,
   GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
 } from '../../queries'
@@ -30,6 +30,9 @@ import {
   SimpleStackedSlider,
   ServiceWebSearchSection,
   ServiceWebHeader,
+  OrganizationFooter,
+  footerEnabled,
+  ServiceWebFooter,
 } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import ContactBanner from '../ContactBanner/ContactBanner'
@@ -117,6 +120,16 @@ const Home: Screen<HomeProps> = ({ organization, supportCategories }) => {
           </GridRow>
         </GridContainer>
       </Box>
+      {footerEnabled.includes(institutionSlug) ? (
+        <OrganizationFooter organizations={[organization]} />
+      ) : (
+        <ServiceWebFooter
+          title={organization.title}
+          logoSrc={organization.logo.url}
+          contactLink="/s/stafraent-island/hafa-samband"
+          phone={organization.phone}
+        />
+      )}
     </>
   )
 }
@@ -127,7 +140,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const [organization, namespace, supportCategories] = await Promise.all([
     !!slug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
-        query: GET_ORGANIZATION_QUERY,
+        query: GET_SERVICE_WEB_ORGANIZATION,
         variables: {
           input: {
             slug,
@@ -188,4 +201,5 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
 
 export default withMainLayout(Home, {
   showHeader: false,
+  showFooter: false,
 })

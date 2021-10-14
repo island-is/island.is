@@ -242,4 +242,5 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
 
 export default withMainLayout(SubPage, {
   showHeader: false,
+  showFooter: false,
 })

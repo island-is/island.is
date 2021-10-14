@@ -214,4 +214,5 @@ SyslumennFormsPage.getInitialProps = async ({
 
 export default withMainLayout(SyslumennFormsPage, {
   showHeader: false,
+  showFooter: false,
 })
