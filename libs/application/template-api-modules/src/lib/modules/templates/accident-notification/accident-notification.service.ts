@@ -1,7 +1,14 @@
-import { utils } from '@island.is/application/templates/accident-notification'
+import {
+  AccidentNotificationAnswers,
+  utils,
+} from '@island.is/application/templates/accident-notification'
+import { DocumentApi } from '@island.is/clients/health-insurance-v2'
 import { Inject, Injectable } from '@nestjs/common'
+import { Exception } from 'handlebars'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
+import { AttachmentProvider } from './accident-notification-attachments.provider'
+import { applictionAnswersToXml } from './accident-notification.utils'
 import type { AccidentNotificationConfig } from './config'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import {
@@ -17,12 +24,38 @@ export class AccidentNotificationService {
     @Inject(ACCIDENT_NOTIFICATION_CONFIG)
     private accidentConfig: AccidentNotificationConfig,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly attachmentProvider: AttachmentProvider,
+    private readonly documentApi: DocumentApi,
   ) {}
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     const shouldRequestReview =
       !utils.isHomeActivitiesAccident(application.answers) ||
       !utils.isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
+
+    const attachments = await this.attachmentProvider.gatherAllAttachments(
+      application,
+    )
+
+    const answers = application.answers as AccidentNotificationAnswers
+    console.log('answers', answers)
+    const xml = applictionAnswersToXml(answers, attachments)
+
+    console.log('XML OBJEJCJTWS', xml)
+    //
+
+    const {
+      success,
+      errorDesc,
+      errorList,
+      ihiDocumentID,
+      numberIHI,
+    } = await this.documentApi.v1DocumentPost({
+      document: { doc: xml, documentType: 801 },
+    })
+
+    throw new Exception('STOP THIS APPLICATION FROM SUBMITTTING !!!!!!"""!!!')
+    //TODO SEND XML
 
     // Send confirmation email to applicant
     await this.sharedTemplateAPIService.sendEmail(

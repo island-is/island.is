@@ -1,0 +1,702 @@
+openapi: 3.0.1
+info:
+  title: Icelandic Health Insurance (IHI) - Island.is - Swagger
+  description: Webservices for Island.is.
+  contact:
+    name: Icelandic Health Insurance (IHI)
+    url: https://sjukra.is
+    email: hjalp@sjukra.is
+  version: v1.0.0
+servers:
+  - url: /islandrg
+paths:
+  /v1/document:
+    post:
+      tags:
+        - Document
+      summary: >-
+        Post function for invoices. This function creates new document in IHI
+        systems.
+      parameters:
+        - name: authHeader
+          in: header
+          description: Request header includes UserName, Password and Sender
+          schema:
+            $ref: '#/components/schemas/SIRestHeader'
+      requestBody:
+        description: >-
+          Instance of Document witch includes a XML string representing the
+          actual document.
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/Document'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Document'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/Document'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/Document'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Document'
+          text/xml:
+            schema:
+              $ref: '#/components/schemas/Document'
+          application/*+xml:
+            schema:
+              $ref: '#/components/schemas/Document'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentType'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/document/{ihiDocumentID}/documentattachment:
+    post:
+      tags:
+        - Document
+      summary: Post function for attachment.
+      operationId: DocumentAttachment
+      parameters:
+        - name: authHeader
+          in: header
+          description: Request header includes UserName, Password and Sender
+          schema:
+            $ref: '#/components/schemas/SIRestHeader'
+        - name: ihiDocumentID
+          in: path
+          description: >-
+            Unique ID of document in IHI systems. ( Einkvæmt skjalanúmer úr
+            kerfum SÍ )
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        description: >-
+          Body parameter of type DocumentAttachment. Includes attachment type,
+          title and the attachment content as a base64 string
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/DocumentAttachment'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentAttachment'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/DocumentAttachment'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/DocumentAttachment'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/DocumentAttachment'
+          text/xml:
+            schema:
+              $ref: '#/components/schemas/DocumentAttachment'
+          application/*+xml:
+            schema:
+              $ref: '#/components/schemas/DocumentAttachment'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentAttachmentType'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/document/{ihiDocumentID}/getaccidentstatus:
+    get:
+      tags:
+        - Document
+      summary: Service returns the status of certain accident report.
+      operationId: GetAccidentStatus
+      parameters:
+        - name: authHeader
+          in: header
+          description: Request header includes UserName, Password and Sender
+          schema:
+            $ref: '#/components/schemas/SIRestHeader'
+        - name: ihiDocumentID
+          in: path
+          description: >-
+            Unique ID of document in IHI systems. ( Einkvæmt skjalanúmer úr
+            kerfum SÍ )
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAccidentStatusType'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/document/{ihiDocumentID}/sendconfirmation/{confirmationType}:
+    post:
+      tags:
+        - Document
+      summary: ''
+      operationId: SendConfirmation
+      parameters:
+        - name: authHeader
+          in: header
+          description: ''
+          schema:
+            $ref: '#/components/schemas/SIRestHeader'
+        - name: ihiDocumentID
+          in: path
+          description: >-
+            Unique ID of document in IHI systems. ( Einkvæmt skjalanúmer úr
+            kerfum SÍ )
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: confirmationType
+          in: path
+          description: 1 = Injured or representative party, 2 = Company party
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PingType'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/person/{nationalID}/ishealthinsured/{date}:
+    get:
+      tags:
+        - Person
+      summary: sefsef
+      operationId: IsHealthInsured
+      parameters:
+        - name: authHeader
+          in: header
+          description: Request header includes UserName, Password and Sender
+          schema:
+            $ref: '#/components/schemas/SIRestHeader'
+        - name: nationalID
+          in: path
+          description: Person's national ID (Kennitala)
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: path
+          description: Date to check whether the person is insured on or not.
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IsHealthInsuredType'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/person/{nationalID}/gethealthinsuranceapplications:
+    get:
+      tags:
+        - Person
+      summary: This service returns all the person's health insurance applications.
+      operationId: GetHealthInsuranceApplications
+      parameters:
+        - name: authHeader
+          in: header
+          description: Request header includes UserName, Password and Sender
+          schema:
+            $ref: '#/components/schemas/SIRestHeader'
+        - name: nationalID
+          in: path
+          description: Person's national ID (Kennitala)
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetHealthInsuranceApplicationType'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/test/ping:
+    get:
+      tags:
+        - Test
+      summary: >-
+        This is a test service to check if the islandrg services are up and
+        running or not.
+      parameters:
+        - name: authHeader
+          in: header
+          description: Request header includes UserName, Password and Sender
+          schema:
+            $ref: '#/components/schemas/SIRestHeader'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PingType'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    AttachmentInfo:
+      type: object
+      properties:
+        isReceived:
+          type: integer
+          description: 1 = Attachment has been received by IHI, 0 = Not
+          format: int32
+        attachmentType:
+          type: integer
+          description: "Attachment type\r\n1 = Áverkavottorð, 2 = Umboðsskjal, 3 = Lögregluskýrsla"
+          format: int32
+      additionalProperties: false
+    ConfirmationInfo:
+      type: object
+      properties:
+        isReceived:
+          type: integer
+          description: 1 = Attachment has been received by IHI, 0 = Not
+          format: int32
+        confirmationType:
+          type: integer
+          description: "Confirmation type\r\n1 = Injured or representative party, 2 = Company party"
+          format: int32
+      additionalProperties: false
+    Document:
+      type: object
+      properties:
+        documentType:
+          type: integer
+          description: >-
+            Type of document being sent, i.e. 104 for aids, 570 for insurance
+            application and 801 for accident.
+          format: int32
+        doc:
+          type: string
+          description: This is the actual document as XML string.
+          nullable: true
+      additionalProperties: false
+      description: >-
+        An instance of the Document class. Includes type of document and the
+        document itself as XML string.
+    DocumentAttachment:
+      type: object
+      properties:
+        attachmentType:
+          type: integer
+          description: >-
+            Unique number for the type of attachement. This number is unique for
+            each system.
+          format: int32
+        title:
+          type: string
+          description: The attachment title
+          nullable: true
+        attachmentBody:
+          type: string
+          description: The attachment body in base64 string
+          nullable: true
+      additionalProperties: false
+      description: One instance of document attachment
+    DocumentAttachmentType:
+      type: object
+      properties:
+        success:
+          type: integer
+          description: 1 = Yes, 0 = No
+          format: int32
+        numberIHI:
+          type: integer
+          description: Unique ID for the request from IHI database.
+          format: int32
+      additionalProperties: false
+      description: Return type for attachement Post function
+    DocumentError:
+      type: object
+      properties:
+        lineNumber:
+          type: integer
+          description: >-
+            If the document includes many lines of errors, this indicates for
+            which line error refers to.
+          format: int32
+        isError:
+          type: integer
+          description: 1 = Yes, 0 = No
+          format: int32
+        errorType:
+          type: string
+          description: Indicates which type of error this is.
+          nullable: true
+        errorDesc:
+          type: string
+          description: Description of the error.
+          nullable: true
+      additionalProperties: false
+      description: "When IHI receives a document, it goes through some checks to see if the document is valid. If it's not valid for some reason, an error will be sent to the sender.\r\nThe document could possibly have more than one error, therefore a list of the DocumentError class will be included in the response."
+    DocumentType:
+      type: object
+      properties:
+        success:
+          type: integer
+          description: 1 if success, else 0
+          format: int32
+        errorDesc:
+          type: string
+          description: Description of the error if any.
+          nullable: true
+        numberIHI:
+          type: integer
+          description: Unique ID for the request from IHI database.
+          format: int32
+        ihiDocumentID:
+          type: integer
+          description: Unique ID of document in IHI systems.
+          format: int32
+        errorList:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentError'
+          description: >-
+            List of DocumentError class which includes the errors from the
+            database checks if any.
+          nullable: true
+      additionalProperties: false
+      description: Return type for Post function in Document service (vistaskjal).
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Http status.
+          format: int32
+        message:
+          type: string
+          description: Error messages.
+          nullable: true
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+          description: List of error items.
+          nullable: true
+      additionalProperties: false
+      description: Information about an error.
+    ErrorItem:
+      type: object
+      properties:
+        param:
+          type: string
+          description: Name of parameter.
+          nullable: true
+        code:
+          type: integer
+          description: Internal error code.
+          format: int32
+        message:
+          type: string
+          description: Error message in english.
+          nullable: true
+        icelandicMessage:
+          type: string
+          description: Error message in icelandic.
+          nullable: true
+        trackingId:
+          type: string
+          description: Internal tracking id of the error.
+          nullable: true
+        help:
+          type: string
+          description: Error help message.
+          nullable: true
+      additionalProperties: false
+      description: Information about an error item.
+    GetAccidentStatusType:
+      type: object
+      properties:
+        numberIHI:
+          type: integer
+          description: Unique number for the request from IHI database.
+          format: int32
+        status:
+          type: integer
+          description: "Status of the accident notification within IHI. ( Staða tilkynningar hjá Sjúkratryggingum Íslands ) \r\n0 = Accepted, 1 = Refused, 2 = In progress, 3 = In progress - waiting for attachments"
+          format: int32
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttachmentInfo'
+          description: >-
+            Information list about the attachments. Says whether the attachment
+            has been received and what type it is
+          nullable: true
+        confirmations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfirmationInfo'
+          description: >-
+            Confirmations list. Says whether confirmations has been received or
+            not
+          nullable: true
+      additionalProperties: false
+    GetHealthInsuranceApplicationType:
+      type: object
+      properties:
+        numberIHI:
+          type: integer
+          description: Unique number for the request from IHI database.
+          format: int32
+        applications:
+          type: array
+          items:
+            $ref: '#/components/schemas/HealthInsuranceApplication'
+          description: List of person's health insurance applications in IHI systems
+          nullable: true
+      additionalProperties: false
+    HealthInsuranceApplication:
+      type: object
+      properties:
+        ihiDocumentID:
+          type: number
+          description: Unique ID of document in IHI systems.
+          format: double
+        status:
+          type: integer
+          description: >-
+            Application's status in IHI system. 0 = Accepted, 1 = Denied, 2 = In
+            wait, 3 = Not valid, 4 = In progress
+          format: int32
+      additionalProperties: false
+      description: Instance of
+    IsHealthInsuredType:
+      type: object
+      properties:
+        numberIHI:
+          type: integer
+          description: Unique number for the request from IHI database.
+          format: int32
+        isHealthInsured:
+          type: integer
+          description: Is person health insured in Iceland? 1 = Yes, 0 = No.
+          format: int32
+        date:
+          type: string
+          description: "If person is health insured, this applies to the date when the insurance started.\r\nIf person is not insured, this applies to the date when he was last insured\r\nIf person has always lived in Iceland then this will be empty."
+          format: date-time
+          nullable: true
+        isOnWaitPeriod:
+          type: integer
+          description: Is person on a 6 month waiting period? 1 = Yes, 0 = No.
+          format: int32
+      additionalProperties: false
+      description: Return values from the IsHealthInsured (Sjúkratryggdur) service.
+    PingType:
+      type: object
+      properties:
+        numberIHI:
+          type: integer
+          description: >-
+            If ping is successful it returns a unique id for the request from
+            IHI database.
+          format: int32
+      additionalProperties: false
+      description: Return instance for the Ping service int the Test services.
+    SIRestHeader:
+      required:
+        - password
+        - userName
+      type: object
+      properties:
+        authorization:
+          type: string
+          nullable: true
+        userName:
+          type: string
+        password:
+          type: string
+        sender:
+          type: string
+          nullable: true
+      additionalProperties: false

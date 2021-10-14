@@ -8865,6 +8865,12 @@
             "jestConfig": "libs/clients/health-insurance-v2/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/health-insurance-v2/gen/fetch -i libs/clients/health-insurance-v2/src/openapi.yml"
+          }
         }
       }
     }

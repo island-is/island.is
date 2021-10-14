@@ -1,2 +1,2 @@
-export { HealthInsuranceV2Module } from './lib/rsk-company-info-module'
-export { HealthInsuranceV2InfoService } from './lib/graphql/rsk-company-info.service'
+export { HealthInsuranceV2Module } from './lib/clients-health-insurance-v2.module'
+export { DocumentApi } from '../gen/fetch'
