@@ -1,3 +1,3 @@
-import EmailForm from '@island.is/financial-aid-web/osk/src/routes/application/EmailForm/emailForm'
+import ContactInfo from '@island.is/financial-aid-web/osk/src/routes/application/ContactInfo/contactInfo'
 
-export default EmailForm
+export default ContactInfo

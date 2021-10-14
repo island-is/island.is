@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box, Icon } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './History.treat'
 import cn from 'classnames'
@@ -7,14 +7,17 @@ import cn from 'classnames'
 import {
   ApplicationEvent,
   ApplicationEventType,
-  getEventType,
 } from '@island.is/financial-aid/shared/lib'
 
-import format from 'date-fns/format'
+import {
+  ChatElement,
+  StaffComment,
+  TimeLineContainer,
+} from '@island.is/financial-aid-web/veita/src/components'
 
 interface Props {
   className?: string
-  applicantName?: string
+  applicantName: string
   applicationEvents?: ApplicationEvent[]
 }
 
@@ -34,60 +37,27 @@ const History = ({ className, applicantName, applicationEvents }: Props) => {
 
           {applicationEvents.map((item, index) => {
             return (
-              <Box
+              <TimeLineContainer
+                eventType={item.eventType}
                 key={'timeline-' + index}
-                className={cn({
-                  [`${styles.timelineContainer}`]: true,
-                  [`${styles.acceptedEvent}`]:
-                    item.eventType === ApplicationEventType.APPROVED,
-                  [`${styles.rejectedEvent}`]:
-                    item.eventType === ApplicationEventType.REJECTED,
-                })}
+                applicantName={applicantName}
+                created={item.created}
               >
-                <Box paddingLeft={3}>
-                  <Text variant="h5">
-                    {getEventType[item.eventType].header}
-                  </Text>
-                  <Text marginBottom={2}>
-                    {' '}
-                    {getEventType[item.eventType].isStaff
-                      ? 'Starfsmaður'
-                      : `Umsækjandi ${applicantName}`}{' '}
-                    <strong>{getEventType[item.eventType].text} </strong>
-                  </Text>
+                <StaffComment
+                  isVisable={
+                    item.eventType === ApplicationEventType.STAFFCOMMENT
+                  }
+                  comment={item.comment}
+                />
 
-                  {item.eventType === ApplicationEventType.STAFFCOMMENT && (
-                    <Box paddingLeft={3} marginBottom={2}>
-                      <Text variant="small">{item.comment}</Text>
-                    </Box>
-                  )}
-
-                  {item.eventType === ApplicationEventType.FILEUPLOAD && (
-                    <Box
-                      paddingLeft={3}
-                      marginBottom={2}
-                      className={styles.timelineMessages}
-                    >
-                      {item.comment && (
-                        <>
-                          <Icon icon="chatbubble" type="outline" />{' '}
-                          <Text marginBottom={2}>„{item.comment}“</Text>
-                        </>
-                      )}
-                    </Box>
-                  )}
-
-                  {/* TODO if staff sents comment to applicant */}
-                  {/* <Icon icon="checkmark" />{' '}
-                      <Text fontWeight="semiBold">
-                        Skilaboð send á umsækjanda
-                      </Text> */}
-
-                  <Text variant="small" color="dark300" marginBottom={5}>
-                    {format(new Date(item.created), 'dd/MM/yyyy HH:MM')}
-                  </Text>
-                </Box>
-              </Box>
+                <ChatElement
+                  isVisable={
+                    item.eventType === ApplicationEventType.FILEUPLOAD ||
+                    item.eventType === ApplicationEventType.DATANEEDED
+                  }
+                  comment={item.comment}
+                />
+              </TimeLineContainer>
             )
           })}
           <Box className={styles.fadeOutLineContainer}>
