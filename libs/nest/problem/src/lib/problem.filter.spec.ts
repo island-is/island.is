@@ -1,10 +1,10 @@
-import { ValidationProblem } from './ValidationProblem'
+import { ValidationFailed } from './ValidationFailed'
 import { CreateRequest, setup } from './test/setup'
 import { expectGraphqlProblem } from './test/expectGraphqlProblem'
 import { ProblemType } from '@island.is/shared/problem'
 
 const handler = () => {
-  throw new ValidationProblem({ field: 'error' })
+  throw new ValidationFailed({ field: 'error' })
 }
 
 describe('ProblemFilter', () => {
@@ -28,8 +28,8 @@ describe('ProblemFilter', () => {
           "field": "error",
         },
         "status": 400,
-        "title": "Validation failed",
-        "type": "https://docs.devland.is/reference/problems/validation-problem",
+        "title": "Validation Failed",
+        "type": "https://docs.devland.is/reference/problems/validation-failed",
       }
     `)
   })
@@ -45,8 +45,8 @@ describe('ProblemFilter', () => {
         field: 'error',
       },
       status: 400,
-      title: 'Validation failed',
-      type: ProblemType.VALIDATION_PROBLEM,
+      title: 'Validation Failed',
+      type: ProblemType.VALIDATION_FAILED,
     })
   })
 })

@@ -1,10 +1,10 @@
 import {
   HttpInternalServerErrorProblem,
   HttpProblem,
-  ValidationProblem,
+  ValidationFailedProblem,
 } from './problems'
 
 export type Problem =
   | HttpProblem
   | HttpInternalServerErrorProblem
-  | ValidationProblem
+  | ValidationFailedProblem

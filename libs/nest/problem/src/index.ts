@@ -1,3 +1,3 @@
 export * from './lib/ProblemError'
-export * from './lib/ValidationProblem'
+export * from './lib/ValidationFailed'
 export * from './lib/problem.module'

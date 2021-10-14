@@ -13,7 +13,7 @@ import {
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { Unwrap } from '@island.is/shared/types'
 import { logger } from '@island.is/logging'
-import { ValidationProblem } from '@island.is/nest/problem'
+import { ValidationFailed } from '@island.is/nest/problem'
 
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
@@ -87,7 +87,7 @@ export async function validateApplicationSchema(
 
   if (schemaFormValidationError) {
     logger.error('Failed to validate schema', schemaFormValidationError)
-    throw new ValidationProblem(schemaFormValidationError)
+    throw new ValidationFailed(schemaFormValidationError)
   }
 }
 
@@ -156,7 +156,7 @@ export async function validateIncomingAnswers(
       formatMessage,
     )
     if (errorMap) {
-      throw new ValidationProblem(errorMap)
+      throw new ValidationFailed(errorMap)
     }
   } catch (error) {
     logger.error('Failed to validate answers', error)

@@ -14,10 +14,10 @@ export interface HttpInternalServerErrorProblem extends BaseProblem {
   stack?: string
 }
 
-export type ValidationProblemFields = {
-  [key: string]: string | ValidationProblemFields
+export type ValidationFailedFields = {
+  [key: string]: string | ValidationFailedFields
 }
-export interface ValidationProblem extends BaseProblem {
-  type: ProblemType.VALIDATION_PROBLEM
-  fields: ValidationProblemFields
+export interface ValidationFailedProblem extends BaseProblem {
+  type: ProblemType.VALIDATION_FAILED
+  fields: ValidationFailedFields
 }

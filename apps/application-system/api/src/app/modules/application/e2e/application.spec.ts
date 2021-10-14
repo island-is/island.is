@@ -156,8 +156,8 @@ describe('Application system API', () => {
           ],
         },
         "status": 400,
-        "title": "Validation failed",
-        "type": "https://docs.devland.is/reference/problems/validation-problem",
+        "title": "Validation Failed",
+        "type": "https://docs.devland.is/reference/problems/validation-failed",
       }
     `)
   })

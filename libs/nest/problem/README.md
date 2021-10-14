@@ -48,7 +48,7 @@ throw new ProblemError({
 
 The following sub-classes are available for your convenience:
 
-- new ValidationError(fields) - accepts a record of validation issues.
+- new ValidationFailed(fields) - accepts a record of validation issues.
 
 ## Custom problems
 

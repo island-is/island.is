@@ -70,9 +70,9 @@ type ScreenProps = {
 
 const getServerValidationErrors = (error: ApolloError | undefined) => {
   const problem = findProblemInApolloError(error, [
-    ProblemType.VALIDATION_PROBLEM,
+    ProblemType.VALIDATION_FAILED,
   ])
-  if (problem && problem.type === ProblemType.VALIDATION_PROBLEM) {
+  if (problem && problem.type === ProblemType.VALIDATION_FAILED) {
     return problem.fields
   }
   return null
@@ -116,7 +116,7 @@ const Screen: FC<ScreenProps> = ({
     onError: (e) => {
       // We handle validation problems separately.
       const problem = findProblemInApolloError(e)
-      if (problem?.type === ProblemType.VALIDATION_PROBLEM) {
+      if (problem?.type === ProblemType.VALIDATION_FAILED) {
         return
       }
 
