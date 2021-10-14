@@ -16,7 +16,7 @@ import { ProblemType, findProblemInApolloError } from '@island.is/shared/problem
 const [callApi, { error }] = useMutation(MUTATION)
 const problem = findProblemInApolloError(error) // undefined | Problem
 
-if (problem && problem.type === ProblemType.) {
+if (problem && problem.type === ProblemType.SOMETHING) {
   // oh no
 }
 ```

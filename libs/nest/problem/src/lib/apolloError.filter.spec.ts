@@ -4,7 +4,7 @@ import { CreateRequest, setup } from './test/setup'
 import { expectGraphqlProblem } from './test/expectGraphqlProblem'
 
 const handler = () => {
-  throw new ForbiddenError('Forbidden')
+  throw new ForbiddenError('User does not access.')
 }
 
 describe('ApolloErrorFilter', () => {

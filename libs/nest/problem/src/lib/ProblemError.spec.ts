@@ -69,7 +69,7 @@ describe('ProblemError', () => {
     expect(problemError).toMatchObject({
       message: 'Bad Request - This happened',
       problem: {
-        type: 'https://httpstatuses.com/400',
+        type: ProblemType.HTTP_BAD_REQUEST,
         title: 'Bad Request',
         detail: 'This happened',
         status: 400,

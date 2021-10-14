@@ -35,7 +35,7 @@ describe('ErrorFilter', () => {
       stack: expect.stringContaining('Test error'),
       status: 500,
       title: 'Internal server error',
-      type: 'https://httpstatuses.com/500',
+      type: ProblemType.HTTP_INTERNAL_SERVER_ERROR,
     })
   })
 

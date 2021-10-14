@@ -39,7 +39,9 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
 
     response.setHeader('Content-Language', 'en')
     response.setHeader('Content-Type', 'application/problem+json')
-    response.status(problem.status || 500).json(problem)
+    response.status(problem.status || 500)
+    response.statusMessage = problem.title
+    response.json(problem)
   }
 
   abstract getProblem(error: Error): Problem

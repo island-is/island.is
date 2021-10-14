@@ -1,8 +1,5 @@
 import { Catch } from '@nestjs/common'
-import {
-  HttpInternalServerErrorProblem,
-  Problem,
-} from '@island.is/shared/problem'
+import { Problem, ProblemType } from '@island.is/shared/problem'
 import { BaseProblemFilter } from './base-problem.filter'
 
 @Catch(Error)
@@ -17,9 +14,9 @@ export class ErrorFilter extends BaseProblemFilter {
 
     return {
       status: 500,
-      type: 'https://httpstatuses.com/500',
+      type: ProblemType.HTTP_INTERNAL_SERVER_ERROR,
       title: 'Internal server error',
       ...extraDetails,
-    } as HttpInternalServerErrorProblem
+    }
   }
 }
