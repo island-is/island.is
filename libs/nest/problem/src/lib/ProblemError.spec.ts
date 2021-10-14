@@ -51,7 +51,7 @@ describe('ProblemError', () => {
     expect(problemError).toMatchObject({
       message: 'Test',
       problem: {
-        type: 'https://httpstatuses.com/500',
+        type: ProblemType.HTTP_INTERNAL_SERVER_ERROR,
         title: 'Test',
         status: 500,
       },
