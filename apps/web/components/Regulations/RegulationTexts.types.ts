@@ -53,6 +53,11 @@ export type RegulationPageTexts = Partial<
     //   Reglugerðir eru birtar í B-deild Stjórnartíðinda skv. 3. gr. laga um Stjórnartíðindi og Lögbirtingablað, nr. 15/2005, sbr. reglugerð um útgáfu Stjórnartíðinda nr. 958/2005.\n\n
     //   Sé misræmi milli þess texta sem birtist hér í safninu og þess sem birtur er í útgáfu B-deildar Stjórnartíðinda skal sá síðarnefndi ráða.
     // '
+    | 'indexLegend' // 'Efnisyfirlit'
+    | 'indexToggler_open' // 'Birta efnisyfirlit'
+    | 'indexToggler_close' // 'Fela efnisyfirlit'
+    | 'indexItem_regulation' // 'Reglugerð'
+    | 'indexItem_comments' // 'Athugasemdir ritstjóra'
     | 'printedDate' // 'Prentað þann'
     | 'statusCurrentBase' // 'Stofnreglugerð'
     | 'statusCurrentAmending' // 'Breytingareglugerð'

@@ -1,6 +1,6 @@
 import * as s from './RegulationDisplay.treat'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ISODate, prettyName } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
@@ -21,6 +21,8 @@ import { AffectingRegulations } from './AffectingRegulations'
 import { RegulationTimeline } from './RegulationTimeline'
 import { DiffModeToggle } from './DiffModeToggle'
 import { HistoryStepper } from './HistoryStepper'
+import { useRegulationIndexer } from './useRegulationIndexer'
+import { RegulationIndex } from './RegulationIndex'
 
 const getKey = (regulation: RegulationMaybeDiff): string => {
   const { name, timelineDate, showingDiff } = regulation
@@ -35,6 +37,8 @@ export type RegulationDisplayProps = {
   urlDate?: ISODate
   texts: RegulationPageTexts
 }
+
+let lastTxt: any
 
 export const RegulationDisplay = (props: RegulationDisplayProps) => {
   const { regulation, texts, urlDate } = props
@@ -70,8 +74,11 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
 
   const [showTimeline, setShowTimeline] = useState(false)
 
+  const { index, text, appendixes } = useRegulationIndexer(regulation, txt)
+
   return (
     <RegulationLayout
+      key={key}
       name={regulation.name}
       texts={props.texts}
       main={
@@ -106,15 +113,14 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
                 <span className={s.titleText}>{regulation.title}</span>
               )}
             </Text>
-            <HTMLBox
-              className={s.bodyText + ' ' + s.diffText}
-              html={regulation.text}
-            />
+
+            {index && <RegulationIndex index={index} txt={txt} />}
+
+            <HTMLBox className={s.bodyText + ' ' + s.diffText} html={text} />
             <Appendixes
-              key={key}
               legend={txt('appendixesTitle')}
               genericTitle={txt('appendixGenericTitle')}
-              appendixes={regulation.appendixes}
+              appendixes={appendixes}
               diffing={!!regulation.showingDiff}
             />
             <CommentsBox

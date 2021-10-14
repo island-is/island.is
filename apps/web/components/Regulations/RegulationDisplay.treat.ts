@@ -60,6 +60,7 @@ export const statusHeader = style({
     },
   },
 })
+// ---------------------------------------------------------------------------
 
 export const diffInfo = style({
   marginTop: spacing[1],
@@ -67,6 +68,8 @@ export const diffInfo = style({
   // color: color.dark300,
   opacity: 0.67,
 })
+
+// ---------------------------------------------------------------------------
 
 export const historyStepper = style({
   marginTop: spacing[1],
@@ -91,6 +94,48 @@ export const historyStepperLinkText = style({
   display: 'inline-block',
   verticalAlign: 'top',
 })
+
+// ---------------------------------------------------------------------------
+
+export const indexWrapper = style({
+  position: 'relative',
+  top: -spacing[1],
+  marginTop: -spacing[1],
+
+  '::after': {
+    content: '""',
+    clear: 'both',
+    display: 'block',
+    height: 0,
+  },
+
+  '@media': { print: { display: 'none' } },
+})
+export const indexToggler = style({
+  marginTop: spacing[1],
+  float: 'right',
+})
+export const index = style({
+  fontSize: '.75em',
+})
+export const indexList = style({
+  selectors: {
+    'li > &': {
+      paddingLeft: spacing[3],
+    },
+  },
+})
+export const indexItem = style({
+  marginTop: spacing[1],
+})
+export const indexLink = style({
+  color: color.blue600,
+  ':hover': {
+    color: color.blue400,
+  },
+})
+
+// ---------------------------------------------------------------------------
 
 const makeWatermark = (text: string, size = 1, opacity = 1, height = 1) => {
   const fontSize = size * 200
