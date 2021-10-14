@@ -44,8 +44,8 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: '',
-        prod: '',
+        staging: 'POLICE_CASE_FILES',
+        prod: 'POLICE_CASE_FILES',
       },
     })
     .secrets({

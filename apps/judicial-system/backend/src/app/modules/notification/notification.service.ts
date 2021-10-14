@@ -13,6 +13,8 @@ import {
   CaseState,
   CaseType,
   NotificationType,
+  isRestrictionCase,
+  isInvestigationCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
@@ -401,7 +403,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = 'Krafa um gæsluvarðhald í vinnslu' // Always custody
     const html = formatPrisonCourtDateEmailNotification(
-      existingCase.prosecutor?.institution?.name,
+      existingCase.creatingProsecutor?.institution?.name,
       existingCase.court?.name,
       existingCase.courtDate,
       existingCase.accusedName,
@@ -471,8 +473,7 @@ export class NotificationService {
     ]
 
     if (
-      (existingCase.type === CaseType.CUSTODY ||
-        existingCase.type === CaseType.TRAVEL_BAN ||
+      (isRestrictionCase(existingCase.type) ||
         existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) &&
       existingCase.defenderEmail
     ) {
@@ -583,10 +584,7 @@ export class NotificationService {
   private async sendRulingNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
-    if (
-      existingCase.type !== CaseType.CUSTODY &&
-      existingCase.type !== CaseType.TRAVEL_BAN
-    ) {
+    if (isInvestigationCase(existingCase.type)) {
       return {
         notificationSent: false,
       }
@@ -636,7 +634,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = 'Gæsluvarðhaldskrafa afturkölluð' // Always custody
     const html = formatPrisonRevokedEmailNotification(
-      existingCase.prosecutor?.institution?.name,
+      existingCase.creatingProsecutor?.institution?.name,
       existingCase.court?.name,
       existingCase.courtDate,
       existingCase.accusedName,

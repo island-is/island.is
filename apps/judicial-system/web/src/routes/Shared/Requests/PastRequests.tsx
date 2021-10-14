@@ -7,6 +7,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  isInvestigationCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -122,14 +123,10 @@ const PastRequests: React.FC<Props> = (props) => {
           }
         }
       }) => {
-        const isInvestigationCase =
-          row.row.original.type !== CaseType.CUSTODY &&
-          row.row.original.type !== CaseType.TRAVEL_BAN
-
         const tagVariant = mapCaseStateToTagVariant(
           row.row.original.state,
           isCourtRole,
-          isInvestigationCase,
+          isInvestigationCase(row.row.original.type),
           row.row.original.isValidToDateInThePast,
         )
 

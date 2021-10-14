@@ -16,7 +16,7 @@ const ApplicationSkeleton = () => {
 
       {[...Array(4)].map((_, i) => {
         return (
-          <>
+          <span key={'skeleton-' + i}>
             <Box marginY={3}>
               <h2>
                 <SkeletonLoader width={150} />
@@ -24,7 +24,7 @@ const ApplicationSkeleton = () => {
             </Box>
 
             <SkeletonLoader repeat={i === 0 ? 2 : 4} space={2} />
-          </>
+          </span>
         )
       })}
     </Box>

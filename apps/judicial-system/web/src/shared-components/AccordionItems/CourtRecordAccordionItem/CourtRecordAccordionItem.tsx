@@ -12,13 +12,14 @@ import {
 import {
   AccusedPleaDecision,
   CaseAppealDecision,
-  CaseType,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { closedCourt } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
 import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
+import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
 
 interface Props {
   workingCase: Case
@@ -26,10 +27,6 @@ interface Props {
 
 const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
   const { formatMessage } = useIntl()
-
-  const isRestrictionCase =
-    workingCase.type === CaseType.CUSTODY ||
-    workingCase.type === CaseType.TRAVEL_BAN
 
   return (
     <AccordionItem id="id_2" label="Þingbók" labelVariant="h3">
@@ -73,7 +70,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       )}
       <AccordionListItem title={formatMessage(m.sections.courtDocuments.title)}>
         <Text>{`Krafa ${
-          isRestrictionCase
+          isRestrictionCase(workingCase.type)
             ? `um ${caseTypes[workingCase.type]}`
             : `- ${capitalize(caseTypes[workingCase.type])}`
         } þingmerkt nr. 1.`}</Text>
@@ -99,38 +96,34 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       {!workingCase.isAccusedRightsHidden && (
         <AccordionListItem
           title={formatMessage(m.sections.accusedRights.title, {
-            accusedType:
-              workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.TRAVEL_BAN
-                ? formatAccusedByGender(
-                    workingCase.accusedGender,
-                    NounCases.GENITIVE,
-                  )
-                : 'varnaraðila',
+            accusedType: isRestrictionCase(workingCase.type)
+              ? formatAccusedByGender(
+                  workingCase.accusedGender,
+                  NounCases.GENITIVE,
+                )
+              : 'varnaraðila',
           })}
         >
-          <Text>
-            {formatMessage(m.sections.accusedRights.text, {
-              genderedAccused:
-                workingCase.type === CaseType.CUSTODY ||
-                workingCase.type === CaseType.TRAVEL_BAN
-                  ? capitalize(
-                      formatAccusedByGender(
-                        workingCase.accusedGender,
-                        NounCases.GENITIVE,
-                      ),
-                    )
-                  : 'Varnaraðila',
-            })}
-          </Text>
+          <MarkdownWrapper
+            text={m.sections.accusedRights.text}
+            format={{
+              genderedAccused: isRestrictionCase(workingCase.type)
+                ? capitalize(
+                    formatAccusedByGender(
+                      workingCase.accusedGender,
+                      NounCases.GENITIVE,
+                    ),
+                  )
+                : 'Varnaraðila',
+            }}
+          />
         </AccordionListItem>
       )}
       {workingCase.accusedAppealDecision !==
         CaseAppealDecision.NOT_APPLICABLE && (
         <AccordionListItem
           title={`Afstaða ${
-            workingCase.type === CaseType.CUSTODY ||
-            workingCase.type === CaseType.TRAVEL_BAN
+            isRestrictionCase(workingCase.type)
               ? formatAccusedByGender(
                   workingCase.accusedGender,
                   NounCases.GENITIVE,
@@ -143,15 +136,13 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             {`${
               workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
                 ? `${capitalize(
-                    workingCase.type === CaseType.CUSTODY ||
-                      workingCase.type === CaseType.TRAVEL_BAN
+                    isRestrictionCase(workingCase.type)
                       ? formatAccusedByGender(workingCase.accusedGender)
                       : 'varnaraðili',
                   )} hafnar kröfunni. `
                 : workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
                 ? `${capitalize(
-                    workingCase.type === CaseType.CUSTODY ||
-                      workingCase.type === CaseType.TRAVEL_BAN
+                    isRestrictionCase(workingCase.type)
                       ? formatAccusedByGender(workingCase.accusedGender)
                       : 'varnaraðili',
                   )} samþykkir kröfuna. `

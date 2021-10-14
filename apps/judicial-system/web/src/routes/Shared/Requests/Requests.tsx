@@ -8,10 +8,10 @@ import {
 import {
   CaseState,
   CaseTransition,
-  CaseType,
   completedCaseStates,
   InstitutionType,
   NotificationType,
+  isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -89,25 +89,14 @@ export const Requests: React.FC = () => {
       caseToDelete.state === CaseState.SUBMITTED ||
       caseToDelete.state === CaseState.RECEIVED
     ) {
-      const caseDeleted = await transitionCase(
-        caseToDelete,
-        CaseTransition.DELETE,
+      await sendNotification(caseToDelete.id, NotificationType.REVOKED)
+      await transitionCase(caseToDelete, CaseTransition.DELETE)
+
+      setActiveCases(
+        activeCases?.filter((c: Case) => {
+          return c !== caseToDelete
+        }),
       )
-
-      if (caseDeleted) {
-        // No need to wait
-        sendNotification(caseToDelete.id, NotificationType.REVOKED)
-
-        setTimeout(() => {
-          setActiveCases(
-            activeCases?.filter((c: Case) => {
-              return c !== caseToDelete
-            }),
-          )
-        }, 800)
-
-        clearTimeout()
-      }
     }
   }
 
@@ -127,10 +116,7 @@ export const Requests: React.FC = () => {
     ) {
       router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`)
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
-      if (
-        caseToOpen.type === CaseType.CUSTODY ||
-        caseToOpen.type === CaseType.TRAVEL_BAN
-      ) {
+      if (isRestrictionCase(caseToOpen.type)) {
         router.push(
           `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${caseToOpen.id}`,
         )
@@ -138,10 +124,7 @@ export const Requests: React.FC = () => {
         router.push(`${Constants.IC_OVERVIEW_ROUTE}/${caseToOpen.id}`)
       }
     } else {
-      if (
-        caseToOpen.type === CaseType.CUSTODY ||
-        caseToOpen.type === CaseType.TRAVEL_BAN
-      ) {
+      if (isRestrictionCase(caseToOpen.type)) {
         if (
           caseToOpen.state === CaseState.RECEIVED ||
           caseToOpen.state === CaseState.SUBMITTED

@@ -168,6 +168,9 @@
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
       ],
+      "@island.is/application/templates/general-petition": [
+        "libs/application/templates/general-petition/src/index.ts"
+      ],
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
       ],
@@ -276,7 +279,6 @@
       "@island.is/financial-aid-web/veita/*": [
         "apps/financial-aid/web-veita/*"
       ],
-      "@island.is/financial-aid/auth": ["libs/financial-aid/auth/src/index.ts"],
       "@island.is/financial-aid/shared/components": [
         "libs/financial-aid/shared/src/components/index.ts"
       ],
@@ -334,7 +336,9 @@
       "@island.is/logging": ["libs/logging/src/index.ts"],
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
+      "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
+      "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
@@ -426,6 +430,8 @@
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
+      "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
+      "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"]
     }
