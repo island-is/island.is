@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import cn from 'classnames'
 import LogoSvg from './LogoSvg'
-import { MunicipalityContext } from '../MunicipalityProvider/MunicipalityProvider'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 interface LogoProps {
   className?: string
 }
 
 const Logo = ({ className }: LogoProps) => {
-  const { municipality } = useContext(MunicipalityContext)
+  const { municipality } = useContext(AppContext)
 
   return (
     <a

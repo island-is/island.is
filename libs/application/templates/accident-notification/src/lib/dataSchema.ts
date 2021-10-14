@@ -61,6 +61,12 @@ export const AccidentNotificationSchema = z.object({
       date: z.string(),
       status: z.enum(['success', 'failure']),
     }),
+    userProfile: z.object({
+      data: z.object({
+        email: z.string(),
+        mobilePhoneNumber: z.string(),
+      }),
+    }),
   }),
   approveExternalData: z.boolean().refine((p) => p),
   info: z.object({
@@ -85,13 +91,15 @@ export const AccidentNotificationSchema = z.object({
       WhoIsTheNotificationForEnum.CHILDINCUSTODY,
     ]),
   }),
-  attachments: z.object({
-    injuryCertificate: z.enum([
+  injuryCertificate: z.object({
+    answer: z.enum([
       AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
       AttachmentsEnum.INJURYCERTIFICATE,
       AttachmentsEnum.SENDCERTIFICATELATER,
       AttachmentsEnum.INJUREDSENDSCERTIFICATE,
     ]),
+  }),
+  attachments: z.object({
     injuryCertificateFile: z.array(FileSchema).optional(),
     deathCertificateFile: z.array(FileSchema).optional(),
     powerOfAttorneyFile: z.array(FileSchema).optional(),
@@ -110,13 +118,16 @@ export const AccidentNotificationSchema = z.object({
   companyInfo: CompanyInfoSchema,
   schoolInfo: CompanyInfoSchema,
   fishingCompanyInfo: CompanyInfoSchema,
-  sportsClubInfo: CompanyInfoSchema,
   rescueSquadInfo: CompanyInfoSchema,
+  sportsClubInfo: CompanyInfoSchema,
   fishingShipInfo: z.object({
     shipName: z.string().min(1),
     shipCharacters: z.string().min(1),
     homePort: z.string().min(1),
     shipRegisterNumber: z.string().min(1),
+  }),
+  onPayRoll: z.object({
+    answer: z.enum([YES, NO]),
   }),
   locationAndPurpose: z.object({
     location: z.string().min(1),
@@ -219,6 +230,9 @@ export const AccidentNotificationSchema = z.object({
   }),
   comment: z.object({
     description: z.string().optional(),
+  }),
+  overview: z.object({
+    custom: z.string().optional(),
   }),
 })
 
