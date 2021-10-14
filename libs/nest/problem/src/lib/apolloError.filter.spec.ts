@@ -23,6 +23,7 @@ describe('ApolloErrorFilter', () => {
     )
     expect(response.body).toMatchInlineSnapshot(`
       Object {
+        "detail": "User does not access.",
         "status": 403,
         "title": "Forbidden",
         "type": "https://httpstatuses.com/403",
@@ -36,6 +37,7 @@ describe('ApolloErrorFilter', () => {
 
     // Assert
     expectGraphqlProblem(response, {
+      detail: 'User does not access.',
       status: 403,
       title: 'Forbidden',
       type: ProblemType.HTTP_FORBIDDEN,
