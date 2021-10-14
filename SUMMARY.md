@@ -235,6 +235,11 @@
   - [Testing Fixtures](libs/testing/fixtures/README.md)
   - [Testing Nest](libs/testing/nest/README.md)
 
+## Reference
+
+- [Problems](handbook/reference/problems/README.md)
+  - [400 Validation Failed](handbook/reference/problems/validation-failed.md)
+
 ## Misc
 
 - [GitBook Template](handbook/misc/gitbook-template.md)

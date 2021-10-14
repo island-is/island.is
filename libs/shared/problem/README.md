@@ -10,7 +10,10 @@ This library includes a utility to handle Problems on the client side:
 
 ```typescript
 import { useMutation } from '@apollo/client'
-import { ProblemType, findProblemInApolloError } from '@island.is/shared/problem'
+import {
+  ProblemType,
+  findProblemInApolloError,
+} from '@island.is/shared/problem'
 
 // In some component:
 const [callApi, { error }] = useMutation(MUTATION)
@@ -45,7 +48,9 @@ export interface NewProblem extends BaseProblem {
 }
 ```
 
-Finally, add your problem interface to the [Problem](src/Problem.ts) union type.
+Add your problem interface to the [Problem](src/Problem.ts) union type.
+
+Finally, add the new problem type to our [docs](../../../handbook/reference/problems/README.md). Make sure the documentation URL matches your problem type URL.
 
 Check out the [`@island.is/nest/problem`](../../nest/problem/README.md#custom-problems) docs on how to return your new custom problem.
 
