@@ -215,6 +215,9 @@
     "application-templates-funding-government-projects": {
       "tags": []
     },
+    "application-templates-general-petition": {
+      "tags": []
+    },
     "application-templates-health-insurance": {
       "tags": []
     },
@@ -681,6 +684,12 @@
       "tags": []
     },
     "system-e2e": {
+      "tags": []
+    },
+    "testing-fixtures": {
+      "tags": []
+    },
+    "testing-nest": {
       "tags": []
     },
     "web": {

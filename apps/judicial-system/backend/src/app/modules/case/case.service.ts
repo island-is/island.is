@@ -51,6 +51,11 @@ const standardIncludes: Includeable[] = [
   },
   {
     model: User,
+    as: 'creatingProsecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
     as: 'prosecutor',
     include: [{ model: Institution, as: 'institution' }],
   },
@@ -306,6 +311,7 @@ export class CaseService {
 
     return this.caseModel.create({
       ...caseToCreate,
+      creatingProsecutorId: user?.id,
       prosecutorId: user?.id,
     })
   }
@@ -457,6 +463,7 @@ export class CaseService {
       legalArguments: existingCase.legalArguments,
       requestProsecutorOnlySession: existingCase.requestProsecutorOnlySession,
       prosecutorOnlySessionRequest: existingCase.prosecutorOnlySessionRequest,
+      creatingProsecutorId: user.id,
       prosecutorId: user.id,
       parentCaseId: existingCase.id,
     })

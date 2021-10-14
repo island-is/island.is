@@ -19,7 +19,8 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
     let config
     switch (process.env.NODE_ENV) {
       case 'test':
-        config = databaseConfig.test
+        this.logger.error('Please use @island.is/testing for testing purposes')
+        config = databaseConfig.development
         break
       case 'production':
         config = databaseConfig.production

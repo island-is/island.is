@@ -13,11 +13,6 @@ import { IdentityResource } from './identity-resource.model'
 
 @Table({
   tableName: 'identity_resource_user_claim',
-  indexes: [
-    {
-      fields: ['identity_resource_id', 'claim_name'],
-    },
-  ],
 })
 export class IdentityResourceUserClaim extends Model<IdentityResourceUserClaim> {
   @PrimaryKey

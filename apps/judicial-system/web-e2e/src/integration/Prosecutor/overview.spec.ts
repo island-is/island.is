@@ -18,6 +18,7 @@ describe('/krafa/stadfesta/:id', () => {
       demands:
         'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
       court: makeCourt(),
+      creatingProsecutor: makeProsecutor(),
       prosecutor: makeProsecutor(),
     }
 

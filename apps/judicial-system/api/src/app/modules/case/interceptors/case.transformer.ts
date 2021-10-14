@@ -12,6 +12,7 @@ export function transformCase(theCase: Case): Case {
     defenderIsSpokesperson: theCase.defenderIsSpokesperson ?? false,
     requestProsecutorOnlySession: theCase.requestProsecutorOnlySession ?? false,
     isClosedCourtHidden: theCase.isClosedCourtHidden ?? false,
+    isHeightenedSecurityLevel: theCase.isHeightenedSecurityLevel ?? false,
     isMasked: theCase.isMasked ?? false,
     isAccusedRightsHidden: isAccusedRightsHidden(theCase),
     isValidToDateInThePast: theCase.validToDate

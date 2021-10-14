@@ -44,7 +44,7 @@ const useApplication = () => {
             input: {
               nationalId: user?.nationalId,
               name: user?.name,
-              phoneNumber: user?.phoneNumber,
+              phoneNumber: form?.phoneNumber,
               email: form?.emailAddress,
               homeCircumstances: form?.homeCircumstances,
               homeCircumstancesCustom: form?.homeCircumstancesCustom,
@@ -61,6 +61,9 @@ const useApplication = () => {
               formComment: form?.formComment,
               state: ApplicationState.NEW,
               files: files,
+              spouseNationalId: form?.spouse?.nationalId,
+              spouseEmail: form?.spouse?.email,
+              familyStatus: form?.familyStatus,
             },
           },
         })
