@@ -65,8 +65,7 @@ describe('EndorsementList', () => {
     await expect(endorsementList.validate()).resolves.not.toThrow()
   })
 
-  
-   // general petition tests
+  // general petition tests
   it(`GET /endorsement-list/general-petition-list/{listId} should return 200 and a list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
@@ -78,8 +77,8 @@ describe('EndorsementList', () => {
       )
       .send()
       .expect(200)
-      const endorsementList = new EndorsementList({ ...response.body })
-      await expect(endorsementList.validate()).resolves.not.toThrow()
+    const endorsementList = new EndorsementList({ ...response.body })
+    await expect(endorsementList.validate()).resolves.not.toThrow()
   })
 
   // gp try to get non gp list and fail
@@ -94,6 +93,5 @@ describe('EndorsementList', () => {
       )
       .send()
       .expect(404)
-  })  
-
+  })
 })

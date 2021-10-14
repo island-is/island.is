@@ -50,13 +50,11 @@ describe('findByTagsEndorsementList', () => {
   // general petition tests
   it(`GET /endorsement-list/general-petition-lists should return 200 and 2 lists`, async () => {
     const response = await request(app.getHttpServer())
-      .get(
-        `/endorsement-list/general-petition-lists?limit=5`,
-      )
+      .get(`/endorsement-list/general-petition-lists?limit=5`)
       .send()
       .expect(200)
-      expect(response.body.data).toHaveLength(5)
-      expect(response.body.pageInfo.hasNextPage).toBeTruthy()
-      expect(response.body.pageInfo.hasPreviousPage).toBeFalsy()
+    expect(response.body.data).toHaveLength(5)
+    expect(response.body.pageInfo.hasNextPage).toBeTruthy()
+    expect(response.body.pageInfo.hasPreviousPage).toBeFalsy()
   })
 })

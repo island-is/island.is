@@ -66,14 +66,16 @@ describe('findAllEndorsement', () => {
     const response: { body: PaginatedEndorsementDto } = await request(
       app.getHttpServer(),
     )
-      .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c8/endorsement/general-petition')
+      .get(
+        '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c8/endorsement/general-petition',
+      )
       .send()
       .expect(404)
 
-      await expect(response.body).toMatchObject({
-        ...errorExpectedStructure,
-        statusCode: 404,
-      })
+    await expect(response.body).toMatchObject({
+      ...errorExpectedStructure,
+      statusCode: 404,
+    })
   })
 
   it(`GET /endorsement-list/:listId/endorsement should return 200 and a list of endorsements`, async () => {
@@ -84,7 +86,9 @@ describe('findAllEndorsement', () => {
     const response: { body: PaginatedEndorsementDto } = await request(
       app.getHttpServer(),
     )
-      .get('/endorsement-list/aa042d38-9ff8-45b7-b0b2-9ca1d9cec543/endorsement/general-petition?limit=2')
+      .get(
+        '/endorsement-list/aa042d38-9ff8-45b7-b0b2-9ca1d9cec543/endorsement/general-petition?limit=2',
+      )
       .send()
       .expect(200)
 
@@ -98,5 +102,4 @@ describe('findAllEndorsement', () => {
     expect(response.body.pageInfo.hasNextPage).toBeTruthy()
     expect(response.body.pageInfo.hasPreviousPage).toBeFalsy()
   })
-
 })
