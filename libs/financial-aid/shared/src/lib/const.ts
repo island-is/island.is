@@ -11,7 +11,8 @@ export const Routes = {
       : '/api/auth/login?nationalId=',
   apiLoginRouteForRealUsers: (id: string) =>
     id ? `/api/auth/login?applicationId=${id}` : '/api/auth/login',
-  filesPage: '/umsokn/skattframtal',
+  filesPage: (hasIncome?: boolean) =>
+    `/umsokn/${hasIncome ? 'skattagogn' : 'gogn'}`,
   newCases: '/nymal',
 }
 

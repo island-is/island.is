@@ -98,7 +98,7 @@ export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
 }
 
 export const getFileTypeName: KeyMapping<FileType, string> = {
-  TaxReturn: 'Skattframtal',
+  TaxReturn: 'Skattagögn',
   Income: 'Tekjugögn',
   Other: 'Innsend gögn',
 }
