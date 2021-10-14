@@ -82,48 +82,47 @@ export class EndorsementSystemResolver {
     )
   }
 
-   
- // lists by tag - bypassauth
- @Query(() => PaginatedEndorsementListResponse)
- @BypassAuth()
- async endorsementSystemFindEndorsementLists(
-   @Args('input') input: PaginatedEndorsementListInput,
- ): Promise<PaginatedEndorsementListResponse> {
-   return await this.endorsementSystemService.endorsementListControllerFindLists(
-     input
-   )
- }
- 
- // GP lists - bypassauth
- @Query(() => PaginatedEndorsementListResponse)
- @BypassAuth()
- async endorsementSystemGetGeneralPetitionLists(
-   @Args('input') input: EndorsementPaginationInput,
- ): Promise<PaginatedEndorsementListResponse> {
-   return await this.endorsementSystemService.endorsementListControllerGetGeneralPetitionLists(
-     input
-   )
- }
- // GP list - bypassauth
-@Query(() => EndorsementList)
-@BypassAuth()
-async endorsementSystemGetGeneralPetitionList(
-  @Args('input') input: FindEndorsementListInput,
-): Promise<EndorsementList | void> {
-  return await this.endorsementSystemService.endorsementListControllerGetGeneralPetitionList(
-    input
-  )
-}
-// GP list endorsements - bypassauth
-@Query(() => PaginatedEndorsementResponse, { nullable: true })
-@BypassAuth()
-async endorsementSystemGetGeneralPetitionEndorsements(
-  @Args('input') input: PaginatedEndorsementInput,
-): Promise<PaginatedEndorsementResponse> {
-  return await this.endorsementSystemService.endorsementControllerGetGeneralPetitionEndorsements(
-    input  )
-}
+  // lists by tag - bypassauth
+  @Query(() => PaginatedEndorsementListResponse)
+  @BypassAuth()
+  async endorsementSystemFindEndorsementLists(
+    @Args('input') input: PaginatedEndorsementListInput,
+  ): Promise<PaginatedEndorsementListResponse> {
+    return await this.endorsementSystemService.endorsementListControllerFindLists(
+      input,
+    )
+  }
 
+  // GP lists - bypassauth
+  @Query(() => PaginatedEndorsementListResponse)
+  @BypassAuth()
+  async endorsementSystemGetGeneralPetitionLists(
+    @Args('input') input: EndorsementPaginationInput,
+  ): Promise<PaginatedEndorsementListResponse> {
+    return await this.endorsementSystemService.endorsementListControllerGetGeneralPetitionLists(
+      input,
+    )
+  }
+  // GP list - bypassauth
+  @Query(() => EndorsementList)
+  @BypassAuth()
+  async endorsementSystemGetGeneralPetitionList(
+    @Args('input') input: FindEndorsementListInput,
+  ): Promise<EndorsementList | void> {
+    return await this.endorsementSystemService.endorsementListControllerGetGeneralPetitionList(
+      input,
+    )
+  }
+  // GP list endorsements - bypassauth
+  @Query(() => PaginatedEndorsementResponse, { nullable: true })
+  @BypassAuth()
+  async endorsementSystemGetGeneralPetitionEndorsements(
+    @Args('input') input: PaginatedEndorsementInput,
+  ): Promise<PaginatedEndorsementResponse> {
+    return await this.endorsementSystemService.endorsementControllerGetGeneralPetitionEndorsements(
+      input,
+    )
+  }
 
   @Query(() => EndorsementList, { nullable: true })
   async endorsementSystemGetSingleEndorsementList(

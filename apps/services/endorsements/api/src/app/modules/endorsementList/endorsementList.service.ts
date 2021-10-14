@@ -8,8 +8,8 @@ import { EndorsementListDto } from './dto/endorsementList.dto'
 import { Endorsement } from '../endorsement/models/endorsement.model'
 
 import { paginate } from '@island.is/nest/pagination'
+import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
-export const GENERAL_PETITION_TAGS = ['generalPetition']
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -109,7 +109,7 @@ export class EndorsementListService {
   async findOpenListsTaggedGeneralPetition(query: any) {
     try {
       const where = {
-        tags: { [Op.eq]: GENERAL_PETITION_TAGS },
+        tags: { [Op.eq]: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS },
         closedDate: null, // [Op.between]: ['openedDate', 'closedDate']
       }
       return await this.findListsGenericQuery(query, where)
@@ -124,7 +124,7 @@ export class EndorsementListService {
       const result = await this.endorsementListModel.findOne({
         where: {
           id: listId,
-          tags: GENERAL_PETITION_TAGS,
+          tags: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
           closedDate: null, // [Op.between]: ['openedDate', 'closedDate']
         },
       })

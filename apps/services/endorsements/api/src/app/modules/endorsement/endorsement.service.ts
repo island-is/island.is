@@ -20,7 +20,8 @@ import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 
 import { paginate } from '@island.is/nest/pagination'
-export const GENERAL_PETITION_TAGS = ['generalPetition']
+import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
+
 
 
 interface FindEndorsementInput {
@@ -189,7 +190,7 @@ export class EndorsementService {
     const result = await this.endorsementListModel.findOne({
       where: { 
         id: listId,
-        tags: { [Op.eq]: GENERAL_PETITION_TAGS },
+        tags: { [Op.eq]: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS },
       },
     })
     if (!result) {
