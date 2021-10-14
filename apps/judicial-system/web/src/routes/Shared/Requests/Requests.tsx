@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
+import { useIntl } from 'react-intl'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   DropdownMenu,
@@ -25,6 +26,7 @@ import PastRequests from './PastRequests'
 import router from 'next/router'
 import * as styles from './Requests.treat'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const Requests: React.FC = () => {
@@ -46,6 +48,7 @@ export const Requests: React.FC = () => {
   })
 
   const { transitionCase, sendNotification } = useCase()
+  const { formatMessage } = useIntl()
 
   const resCases = data?.cases
 
@@ -201,7 +204,14 @@ export const Requests: React.FC = () => {
                  * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
                  */}
                 <Text variant="h3" id="activeRequestsTableCaption">
-                  Kröfur í vinnslu
+                  {formatMessage(
+                    isPrisonUser
+                      ? m.sections.activeRequests.prisonStaffUsers.title
+                      : isPrisonAdminUser
+                      ? m.sections.activeRequests.prisonStaffUsers
+                          .prisonAdminTitle
+                      : m.sections.activeRequests.title,
+                  )}
                 </Text>
               </Box>
               <Box marginBottom={15}>
@@ -224,8 +234,18 @@ export const Requests: React.FC = () => {
                 ) : (
                   <div className={styles.infoContainer}>
                     <AlertMessage
-                      title="Engar kröfur í vinnslu."
-                      message="Allar kröfur hafa verið afgreiddar."
+                      title={formatMessage(
+                        isPrisonUser || isPrisonAdminUser
+                          ? m.sections.activeRequests.prisonStaffUsers
+                              .infoContainerTitle
+                          : m.sections.activeRequests.infoContainerTitle,
+                      )}
+                      message={formatMessage(
+                        isPrisonUser || isPrisonAdminUser
+                          ? m.sections.activeRequests.prisonStaffUsers
+                              .infoContainerText
+                          : m.sections.activeRequests.infoContainerText,
+                      )}
                       type="info"
                     />
                   </div>
@@ -240,7 +260,15 @@ export const Requests: React.FC = () => {
              * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
              */}
             <Text variant="h3" id="activeRequestsTableCaption">
-              {isHighCourtUser ? 'Kærðir úrskurðir' : 'Afgreiddar kröfur'}
+              {formatMessage(
+                isHighCourtUser
+                  ? m.sections.pastRequests.highCourtUsers.title
+                  : isPrisonUser
+                  ? m.sections.pastRequests.prisonStaffUsers.title
+                  : isPrisonAdminUser
+                  ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
+                  : m.sections.pastRequests.title,
+              )}
             </Text>
           </Box>
           {pastCases && pastCases.length > 0 ? (
@@ -252,8 +280,18 @@ export const Requests: React.FC = () => {
           ) : (
             <div className={styles.infoContainer}>
               <AlertMessage
-                title="Engar kröfur hafa verið afgreiddar."
-                message="Allar kröfur eru í vinnslu."
+                title={formatMessage(
+                  isPrisonAdminUser || isPrisonUser
+                    ? m.sections.activeRequests.prisonStaffUsers
+                        .infoContainerTitle
+                    : m.sections.pastRequests.infoContainerTitle,
+                )}
+                message={formatMessage(
+                  isPrisonAdminUser || isPrisonUser
+                    ? m.sections.activeRequests.prisonStaffUsers
+                        .infoContainerText
+                    : m.sections.pastRequests.infoContainerText,
+                )}
                 type="info"
               />
             </div>
