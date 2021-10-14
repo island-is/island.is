@@ -16,7 +16,6 @@ import {
 
 import type { Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { environment } from '../../../environments'
 
 const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
 
