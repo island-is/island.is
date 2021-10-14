@@ -10,7 +10,6 @@ import { Endorsement } from '../endorsement/models/endorsement.model'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
-
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
@@ -121,16 +120,16 @@ export class EndorsementListService {
   async findSingleOpenListTaggedGeneralPetition(
     listId: string,
   ): Promise<EndorsementList | null> {
-      const result = await this.endorsementListModel.findOne({
-        where: {
-          id: listId,
-          tags: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
-          closedDate: null, // [Op.between]: ['openedDate', 'closedDate']
-        },
-      })
-      if(!result){
-        throw new NotFoundException()
-      }
-      return result
+    const result = await this.endorsementListModel.findOne({
+      where: {
+        id: listId,
+        tags: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
+        closedDate: null, // [Op.between]: ['openedDate', 'closedDate']
+      },
+    })
+    if (!result) {
+      throw new NotFoundException()
+    }
+    return result
   }
 }

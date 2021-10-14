@@ -1,4 +1,9 @@
-import { BypassAuth, CurrentAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
+import {
+  BypassAuth,
+  CurrentAuth,
+  CurrentUser,
+  Scopes,
+} from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
@@ -36,8 +41,6 @@ import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
-
-
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @Audit({
@@ -84,11 +87,13 @@ export class EndorsementController {
     )
   }
 
-  @ApiOperation({ summary: 'Finds all endorsements in a given general petition list' })
+  @ApiOperation({
+    summary: 'Finds all endorsements in a given general petition list',
+  })
   @ApiParam({ name: 'listId', type: String })
   @Get('/general-petition')
   @ApiOkResponse({ type: PaginatedEndorsementDto })
-  @ApiResponse({status: 200})
+  @ApiResponse({ status: 200 })
   @BypassAuth()
   async find(
     @Param(

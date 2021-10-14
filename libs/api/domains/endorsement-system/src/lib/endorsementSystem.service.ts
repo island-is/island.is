@@ -94,40 +94,39 @@ export class EndorsementSystemService {
     return Boolean(result)
   }
 
-   // Auth removed - Tags
- async endorsementListControllerFindLists(
-  input: EndorsementListControllerFindByTagsRequest,
-) {
-  return await this.endorsementListApi
-    .endorsementListControllerFindByTags(input)
-    .catch(this.handleError.bind(this))
-}
-
-// Auth removed - gp lists
-async endorsementListControllerGetGeneralPetitionLists(
-  input: EndorsementListControllerGetGeneralPetitionListsRequest,
-) {
-  return await this.endorsementListApi
-    .endorsementListControllerGetGeneralPetitionLists(input)
-    .catch(this.handleError.bind(this))
-}
-// Auth removed - pg list
-async endorsementListControllerGetGeneralPetitionList(
-input: EndorsementListControllerGetGeneralPetitionListRequest,
-) {
-return await this.endorsementListApi
-  .endorsementListControllerGetGeneralPetitionList(input)
-  .catch(this.handleError.bind(this))
-}
-// Auth removed - pg endorements
-async endorsementControllerGetGeneralPetitionEndorsements(
-  input: EndorsementListControllerGetGeneralPetitionListRequest,
+  // Auth removed - Tags
+  async endorsementListControllerFindLists(
+    input: EndorsementListControllerFindByTagsRequest,
   ) {
-  return await this.endorsementApi
-    .endorsementControllerFind(input)
-    .catch(this.handleError.bind(this))
+    return await this.endorsementListApi
+      .endorsementListControllerFindByTags(input)
+      .catch(this.handleError.bind(this))
   }
 
+  // Auth removed - gp lists
+  async endorsementListControllerGetGeneralPetitionLists(
+    input: EndorsementListControllerGetGeneralPetitionListsRequest,
+  ) {
+    return await this.endorsementListApi
+      .endorsementListControllerGetGeneralPetitionLists(input)
+      .catch(this.handleError.bind(this))
+  }
+  // Auth removed - pg list
+  async endorsementListControllerGetGeneralPetitionList(
+    input: EndorsementListControllerGetGeneralPetitionListRequest,
+  ) {
+    return await this.endorsementListApi
+      .endorsementListControllerGetGeneralPetitionList(input)
+      .catch(this.handleError.bind(this))
+  }
+  // Auth removed - pg endorements
+  async endorsementControllerGetGeneralPetitionEndorsements(
+    input: EndorsementListControllerGetGeneralPetitionListRequest,
+  ) {
+    return await this.endorsementApi
+      .endorsementControllerFind(input)
+      .catch(this.handleError.bind(this))
+  }
 
   async endorsementListControllerFindEndorsements(
     auth: Auth,
