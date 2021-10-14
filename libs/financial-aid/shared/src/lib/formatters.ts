@@ -5,6 +5,7 @@ import {
   ApplicationEventType,
   ApplicationStateUrl,
   RolesRule,
+  FamilyStatus,
 } from './enums'
 import { ApplicationEvent } from './interfaces'
 import type { KeyMapping } from './types'
@@ -104,6 +105,16 @@ export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
   InProgress: 'InProgress',
   Rejected: 'Rejected',
   Approved: 'Approved',
+}
+
+export const isSpouseDataNeeded: KeyMapping<FamilyStatus, boolean> = {
+  Unknown: false,
+  Single: false,
+  Cohabitation: true,
+  UnregisteredCohabitation: false,
+  Married: true,
+  MarriedNotLivingTogether: true,
+  NotInformed: false,
 }
 
 export const aidCalculator = (

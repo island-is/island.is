@@ -1,5 +1,10 @@
-import React, { useState, useContext } from 'react'
-import { Text } from '@island.is/island-ui/core'
+import React, { useState, useContext, useEffect } from 'react'
+import {
+  Box,
+  Checkbox,
+  Text,
+  ToggleSwitchCheckbox,
+} from '@island.is/island-ui/core'
 
 import {
   ContentContainer,
@@ -17,6 +22,7 @@ import * as styles from './relationshipStatusForm.treat'
 import {
   FamilyStatus,
   isEmailValid,
+  isSpouseDataNeeded,
   NavigationProps,
   Spouse,
 } from '@island.is/financial-aid/shared/lib'
@@ -32,7 +38,9 @@ const RelationshipStatusForm = () => {
   ) as NavigationProps
 
   const [hasError, setHasError] = useState(false)
-
+  const [isMarried, setIsMarried] = useState(
+    isSpouseDataNeeded[form?.familyStatus ?? FamilyStatus.UNKNOWN],
+  )
   const [acceptData, setAcceptData] = useState(false)
 
   const options = [
@@ -69,6 +77,13 @@ const RelationshipStatusForm = () => {
       }
     }
 
+    if (form?.familyStatus === FamilyStatus.MARRIED) {
+      if (!acceptData) {
+        setHasError(true)
+        return
+      }
+    }
+
     router.push(navigation?.nextUrl)
   }
 
@@ -79,46 +94,71 @@ const RelationshipStatusForm = () => {
           Hjúskaparstaða þín
         </Text>
 
+        <Text variant="intro" marginBottom={[2, 2, 3]}>
+          {isSpouseDataNeeded[form?.familyStatus ?? FamilyStatus.UNKNOWN]
+            ? 'Þar sem þú ert í sambúð þarft þú að skila inn umsókn um fjárhagsaðstoð og maki þinn að skila inn upplýsingum um tekjur.'
+            : 'Samkvæmt upplýsingum frá Þjóðskrá ert þú ekki í staðfestri sambúð. En sért þú í óstaðfestri sambúð þarft bæði þú og maki þinn að skila innumsókn.'}
+        </Text>
         <Text marginBottom={[3, 3, 4]}>
-          Samkvæmt upplýsingum frá Þjóðskrá ert þú ekki í staðfestri sambúð. En
-          sért þú í óstaðfestri sambúð þarft þú og maki þinn bæði að skila inn
-          umsókn um fjárhagsaðstoð.
+          Hvað þýðir það? Þú klárar að fylla út þína umsókn um fjárhagsaðstoð
+          hér og maki þinn notar sín rafrænu skilríki til að skila inn
+          nauðsynlegum gögnum.
+          <br />
+          <br />
+          Úrvinnsla umsóknarinnar hefst þegar öll gögn hafa borist.
         </Text>
 
-        <Text as="h3" variant="h3" marginBottom={[3, 3, 4]}>
-          Ert þú í óstaðfestri sambúð?
-        </Text>
-
-        <RadioButtonContainer
-          options={options}
-          error={hasError && !form?.familyStatus}
-          isChecked={(value: FamilyStatus) => {
-            return value === form?.familyStatus
-          }}
-          onChange={(value: FamilyStatus) => {
-            updateForm({ ...form, familyStatus: value })
-
-            setHasError(false)
-          }}
-        />
-
-        <div
-          className={cn({
-            [`${styles.infoContainer}`]: true,
-            [`${styles.showInfoContainer}`]:
-              FamilyStatus.UNREGISTERED_COBAHITATION === form?.familyStatus,
-          })}
-        >
-          <SpouseInfo
-            hasError={hasError}
-            acceptData={acceptData}
-            setAcceptData={(event: React.ChangeEvent<HTMLInputElement>) => {
+        {isSpouseDataNeeded[form?.familyStatus ?? FamilyStatus.UNKNOWN] ? (
+          <Checkbox
+            name={'accept'}
+            backgroundColor="blue"
+            label="Ég skil að maki minn þarf líka að skila inn umsókn áður en úrvinnsla hefst"
+            large
+            checked={acceptData}
+            onChange={(event) => {
               setHasError(false)
+
               setAcceptData(event.target.checked)
             }}
-            removeError={() => setHasError(false)}
+            hasError={hasError}
+            errorMessage={'Þú þarft að samþykkja'}
           />
-        </div>
+        ) : (
+          <>
+            <Text as="h3" variant="h3" marginBottom={[3, 3, 4]}>
+              Ert þú í óstaðfestri sambúð?
+            </Text>
+            <RadioButtonContainer
+              options={options}
+              error={hasError && !form?.familyStatus}
+              isChecked={(value: FamilyStatus) => {
+                return value === form?.familyStatus
+              }}
+              onChange={(value: FamilyStatus) => {
+                updateForm({ ...form, familyStatus: value })
+
+                setHasError(false)
+              }}
+            />
+            <div
+              className={cn({
+                [`${styles.infoContainer}`]: true,
+                [`${styles.showInfoContainer}`]:
+                  FamilyStatus.UNREGISTERED_COBAHITATION === form?.familyStatus,
+              })}
+            >
+              <SpouseInfo
+                hasError={hasError}
+                acceptData={acceptData}
+                setAcceptData={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setHasError(false)
+                  setAcceptData(event.target.checked)
+                }}
+                removeError={() => setHasError(false)}
+              />
+            </div>
+          </>
+        )}
 
         <div
           className={cn({
@@ -130,6 +170,21 @@ const RelationshipStatusForm = () => {
             Þú þarft að fylla út alla reiti
           </Text>
         </div>
+
+        <Box position="absolute" bottom={0}>
+          <ToggleSwitchCheckbox
+            label={isMarried ? 'Aðili giftur' : 'ekki giftur'}
+            checked={isMarried}
+            onChange={(newChecked) => {
+              setIsMarried(newChecked)
+              if (newChecked) {
+                updateForm({ ...form, familyStatus: FamilyStatus.MARRIED })
+              } else {
+                updateForm({ ...form, familyStatus: FamilyStatus.NOT_INFORMED })
+              }
+            }}
+          />
+        </Box>
       </ContentContainer>
 
       <Footer
