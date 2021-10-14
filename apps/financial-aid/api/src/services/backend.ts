@@ -33,7 +33,7 @@ class BackendAPI extends RESTDataSource {
   }
 
   getApplications(stateUrl: ApplicationStateUrl): Promise<Application[]> {
-    return this.get(`allApplications/${stateUrl}`)
+    return this.get(`applications/${stateUrl}`)
   }
 
   getApplication(id: string): Promise<Application> {
@@ -41,7 +41,7 @@ class BackendAPI extends RESTDataSource {
   }
 
   getApplicationFilters(): Promise<ApplicationFilters> {
-    return this.get('applicationFilters')
+    return this.get('application/filters')
   }
 
   getMunicipality(id: string): Promise<Municipality> {
@@ -77,14 +77,10 @@ class BackendAPI extends RESTDataSource {
     return this.get(`file/url/${id}`)
   }
 
-  getApplicationEvents(id: string): Promise<ApplicationEvent[]> {
-    return this.get(`applicationEvents/${id}`)
-  }
-
   createApplicationEvent(
     createApplicationEvent: CreateApplicationEvent,
   ): Promise<Application> {
-    return this.post('applicationEvent', createApplicationEvent)
+    return this.post('application-event', createApplicationEvent)
   }
 
   createApplicationFiles(
@@ -94,7 +90,7 @@ class BackendAPI extends RESTDataSource {
   }
 
   getCurrentApplication(nationalId: string): Promise<CurrentApplicationModel> {
-    return this.get(`currentApplication/${nationalId}`)
+    return this.get(`application/${nationalId}`)
   }
 
   getStaff(nationalId: string): Promise<StaffModel> {

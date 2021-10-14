@@ -1,50 +1,6 @@
 import { gql } from '@apollo/client'
 
-const application = `
-id
-nationalId
-created
-modified
-name
-phoneNumber
-email
-homeCircumstances
-student
-employment
-hasIncome
-usePersonalTaxCredit
-bankNumber
-ledger
-accountNumber
-interview
-employmentCustom
-homeCircumstancesCustom
-files {
-  id
-  applicationId
-  name
-  size
-  created
-  type
-}
-state
-formComment
-studentCustom
-amount
-rejection
-staff {
-  name
-}
-applicationEvents {
-  id
-  applicationId
-  eventType
-  comment
-  created
-}
-`
-
-export const GetApplicationQuery = gql`
+export const ApplicationQuery = gql`
   query GetApplicationQuery($input: ApplicationInput!) {
     application(input: $input) {
       id
@@ -121,7 +77,7 @@ export const UpdateApplicationTableMutation = gql`
   }
 `
 
-export const GetApplicationsQuery = gql`
+export const ApplicationsQuery = gql`
   query GetApplicationsQuery($input: AllApplicationInput!) {
     applications(input: $input) {
       id
@@ -139,8 +95,8 @@ export const GetApplicationsQuery = gql`
   }
 `
 
-// Is defined as a mutation to be callable but is a query.
-export const GetApplicationFiltersQuery = gql`
+// Is defined as a mutation to be callable but is a query, that is doesn't mutate anything.
+export const ApplicationFiltersMutation = gql`
   mutation GetApplicationFiltersQuery {
     applicationFilters {
       New
@@ -152,7 +108,7 @@ export const GetApplicationFiltersQuery = gql`
   }
 `
 
-export const CreateApplicationQuery = gql`
+export const CreateApplicationMutation = gql`
   mutation CreateApplication($input: CreateApplicationInput!) {
     createApplication(input: $input) {
       id
@@ -160,7 +116,7 @@ export const CreateApplicationQuery = gql`
   }
 `
 
-export const CreateApplicationEventQuery = gql`
+export const ApplicationEventMutation = gql`
   mutation CreateApplicationEvent($input: CreateApplicationEventInput!) {
     createApplicationEvent(input: $input) {
       id
@@ -208,7 +164,7 @@ export const CreateApplicationEventQuery = gql`
   }
 `
 
-export const GetMunicipalityQuery = gql`
+export const MunicipalityQuery = gql`
   query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
     municipality(input: $input) {
       id
@@ -222,8 +178,8 @@ export const GetMunicipalityQuery = gql`
   }
 `
 
-export const GetMunacipalityHomePageQuery = gql`
-  query GetMunacipalityHomePageQuery($input: MunicipalityQueryInput!) {
+export const MunicipalityHomePageQuery = gql`
+  query GetMunicipalityHomePageQuery($input: MunicipalityQueryInput!) {
     municipality(input: $input) {
       id
       homePage

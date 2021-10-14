@@ -59,7 +59,7 @@ export class ApplicationController {
 
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.OSK)
-  @Get('currentApplication')
+  @Get('application/:nationalId')
   @ApiOkResponse({
     type: CurrentApplicationModel,
     description: 'Checks if user has a current application for this period',
@@ -81,7 +81,7 @@ export class ApplicationController {
 
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.VEITA)
-  @Get('allApplications/:stateUrl')
+  @Get('applications/:stateUrl')
   @ApiOkResponse({
     type: ApplicationModel,
     isArray: true,
@@ -113,7 +113,7 @@ export class ApplicationController {
 
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.VEITA)
-  @Get('applicationFilters')
+  @Get('application/filters')
   @ApiOkResponse({
     description: 'Gets all existing applications filters',
   })
@@ -177,7 +177,7 @@ export class ApplicationController {
     return this.applicationService.create(application, user)
   }
 
-  @Post('applicationEvent')
+  @Post('application-event')
   @ApiCreatedResponse({
     type: ApplicationEventModel,
     description: 'Creates a new application event',

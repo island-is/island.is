@@ -16,8 +16,8 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
 import {
-  CreateApplicationEventQuery,
-  UpdateApplicationMutation,
+  ApplicationEventMutation,
+  ApplicationMutation,
 } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
@@ -35,12 +35,10 @@ const FileUpload = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const [updateApplicationMutation] = useMutation<{ application: Application }>(
-    UpdateApplicationMutation,
+    ApplicationMutation,
   )
 
-  const [createApplicationEventMutation] = useMutation(
-    CreateApplicationEventQuery,
-  )
+  const [createApplicationEventMutation] = useMutation(ApplicationEventMutation)
 
   useEffect(() => {
     if (error) {

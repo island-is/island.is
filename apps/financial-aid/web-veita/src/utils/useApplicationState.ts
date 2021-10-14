@@ -10,7 +10,7 @@ import { ApplicationFiltersContext } from '../components/ApplicationFiltersProvi
 import { AdminContext } from '../components/AdminProvider/AdminProvider'
 import {
   UpdateApplicationMutation,
-  GetApplicationFiltersQuery,
+  ApplicationFiltersMutation,
 } from '../../graphql/sharedGql'
 
 export const useApplicationState = () => {
@@ -20,7 +20,7 @@ export const useApplicationState = () => {
 
   const [applicationFiltersQuery, { loading: loadingFilters }] = useMutation<{
     applicationFilters: ApplicationFilters
-  }>(GetApplicationFiltersQuery)
+  }>(ApplicationFiltersMutation)
 
   const { setApplicationFilters } = useContext(ApplicationFiltersContext)
 

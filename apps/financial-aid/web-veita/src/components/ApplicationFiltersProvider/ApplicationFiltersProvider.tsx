@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { ApplicationFilters } from '@island.is/financial-aid/shared/lib'
 
-import { GetApplicationFiltersQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+import { ApplicationFiltersMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 interface ApplicationFiltersData {
   applicationFilters?: ApplicationFilters
@@ -45,7 +45,7 @@ const ApplicationFiltersProvider = ({ children }: PageProps) => {
   const [
     applicationFiltersQuery,
     { loading },
-  ] = useMutation<ApplicationFiltersData>(GetApplicationFiltersQuery, {
+  ] = useMutation<ApplicationFiltersData>(ApplicationFiltersMutation, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
