@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { Text, Box, Button } from '@island.is/island-ui/core'
+import { Text, Box, Button, Icon } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 import * as styles from './application.treat'
@@ -117,6 +117,13 @@ const ApplicationProfile = () => {
         onclick: () => {
           setAidModalVisible(!isAidModalVisible)
         },
+      },
+    ]
+
+    const spouseInfo = [
+      {
+        title: 'Maki hefur skilað gögnum',
+        content: `Já eða nei`,
       },
     ]
 
@@ -240,6 +247,13 @@ const ApplicationProfile = () => {
             info={applicationInfo}
             className={`contentUp delay-50`}
           />
+
+          <Profile
+            heading="Makaumsókn"
+            info={spouseInfo}
+            className={`contentUp delay-50`}
+          />
+
           <Profile
             heading="Umsækjandi"
             info={applicant}
