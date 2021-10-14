@@ -47,10 +47,7 @@ import FormField from './FormField'
 import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
 import FormExternalDataProvider from './FormExternalDataProvider'
-import {
-  extractAnswersToSubmitFromScreen,
-  findSubmitField,
-} from '../utils'
+import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
 
