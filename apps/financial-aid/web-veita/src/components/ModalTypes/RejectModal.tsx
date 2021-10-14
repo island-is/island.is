@@ -34,7 +34,7 @@ const RejectModal = ({
       hasError={hasError}
       errorMessage="Þú þarft að senda lýsingu"
     >
-      <Box marginBottom={5}>
+      <Box marginBottom={2}>
         <Input
           label="Ástæða synjunar"
           name="reasonForRejection"
@@ -51,15 +51,10 @@ const RejectModal = ({
         />
       </Box>
 
-      <Text variant="h3" marginBottom={2}>
-        Smelltu á hlekkinn hér fyrir neðan til að kynna þér reglur um
-        fjárhagsaðstoð.
-      </Text>
-
-      <Text variant="small" marginBottom={10}>
-        Afritaðu og límdu hlekk á reglur um fjárhagsaðstoð hjá því sveitarfélagi
-        sem umsækjandi er að sækja um fjárhagsaðstoð hjá. Þessi hlekkur verður
-        aðgengilegur umsækjanda á stöðusíðu umsóknarinnar.
+      <Text variant="small">
+        Þegar umsóknum er synjað er hlekkur á slóð um reglur um fjárhagsaðstoð
+        sveitarfélagsins birtur í tölvupósti sem er sendur á umsækjanda. Í
+        ástæðu synjunar er því óhætt að vísa til reglna um fjárhagsaðstoð.
       </Text>
     </InputModal>
   )

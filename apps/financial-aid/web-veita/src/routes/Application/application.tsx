@@ -120,6 +120,7 @@ const ApplicationProfile = () => {
       },
     ]
 
+    //Todo þegar fall kemur
     const spouseInfo = [
       {
         title: 'Maki hefur skilað gögnum',
