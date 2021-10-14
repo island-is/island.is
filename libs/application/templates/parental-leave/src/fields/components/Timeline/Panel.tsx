@@ -16,7 +16,7 @@ export const Panel: FC<{
   titleSmall: string
   periods: TimelinePeriod[]
   isMobile: boolean
-  onDeletePeriod?: (index: number) => void
+  onDeletePeriod?: (startDate: string) => void
 }> = ({
   editable = true,
   initDate,
@@ -53,7 +53,7 @@ export const Panel: FC<{
           {p.canDelete && editable && onDeletePeriod && (
             <Box
               className={styles.deleteIcon}
-              onClick={() => onDeletePeriod(index)}
+              onClick={() => onDeletePeriod(p.startDate)}
             >
               <Icon
                 color="dark200"

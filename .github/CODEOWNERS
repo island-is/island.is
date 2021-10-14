@@ -143,11 +143,11 @@
 infra/                                                                                        @island-is/devops
 /charts                                                                                       @island-is/devops
 
-/apps/services/xroad-collector/                                                               @island-is/advania
+/apps/services/xroad-collector/                                                               @island-is/advania @island-is/core
 /apps/services/documents                                                                      @island-is/advania @island-is/core
 /libs/api/domains/api-catalogue/                                                              @island-is/advania
 /libs/api/domains/document-provider/                                                          @island-is/advania
-/libs/api-catalogue/                                                                          @island-is/advania
+/libs/api-catalogue/                                                                          @island-is/advania @island-is/core
 /libs/application/templates/document-provider-onboarding/                                     @island-is/advania
 /libs/service-portal/document-provider/                                                       @island-is/advania
 /libs/clients/document-provider/                                                              @island-is/advania @island-is/core

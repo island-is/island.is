@@ -88,6 +88,24 @@ export class EndorsementListService {
     })
   }
 
+  async findAllEndorsementListsByNationalId(nationalId: string, query: any) {
+    this.logger.debug(
+      `Finding endorsement lists created by single national id ${nationalId}`,
+    )
+
+    return await paginate({
+      Model: this.endorsementListModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'ASC']],
+      where: {
+        owner: nationalId,
+      },
+    })
+  }
+
   async close(endorsementList: EndorsementList): Promise<EndorsementList> {
     this.logger.info(`Closing endorsement list: ${endorsementList.id}`)
     return await endorsementList.update({ closedDate: new Date() })
