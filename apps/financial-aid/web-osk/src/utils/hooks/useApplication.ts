@@ -7,6 +7,7 @@ import {
   User,
   ApplicationState,
   FileType,
+  FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 import { Form } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { UploadFile } from '@island.is/island-ui/core'
@@ -63,7 +64,9 @@ const useApplication = () => {
               files: files,
               spouseNationalId: form?.spouse?.nationalId,
               spouseEmail: form?.spouse?.email,
-              familyStatus: form?.familyStatus,
+              familyStatus: form?.familyStatus
+                ? form?.familyStatus
+                : FamilyStatus.UNKNOWN,
             },
           },
         })
