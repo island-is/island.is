@@ -115,6 +115,9 @@
     "api-domains-health-insurance": {
       "tags": []
     },
+    "api-domains-health-insurance-v2": {
+      "tags": []
+    },
     "api-domains-icelandic-names-registry": {
       "tags": []
     },
@@ -299,6 +302,9 @@
       "tags": []
     },
     "clients-finance": {
+      "tags": []
+    },
+    "clients-health-insurance-v2": {
       "tags": []
     },
     "clients-middlewares": {

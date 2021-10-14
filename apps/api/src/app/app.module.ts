@@ -17,6 +17,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
+import { HealthInsuranceModuleV2 } from '@island.is/api/domains/health-insurance-v2'
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { HealthController } from './health.controller'
@@ -157,6 +158,13 @@ const autoSchemaFile = environment.production
       password: environment.healthInsurance.password,
       clientID: environment.healthInsurance.clientID,
       xroadID: environment.healthInsurance.xroadID,
+    }),
+    HealthInsuranceModuleV2.register({
+      xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl,
+      xRoadProviderId: environment.healthInsuranceV2.xRoadProviderId,
+      xRoadClientId: environment.healthInsuranceV2.xRoadClientId,
+      username: environment.healthInsuranceV2.username,
+      password: environment.healthInsuranceV2.password,
     }),
     UserProfileModule.register({
       userProfileServiceBasePath:

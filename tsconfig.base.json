@@ -81,6 +81,9 @@
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
       ],
+      "@island.is/api/domains/health-insurance-v2": [
+        "libs/api/domains/health-insurance-v2/src/index.ts"
+      ],
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
@@ -231,6 +234,9 @@
         "libs/clients/driving-license/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
+      "@island.is/clients/health-insurance-v2": [
+        "libs/clients/health-insurance-v2/src/index.ts"
+      ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
