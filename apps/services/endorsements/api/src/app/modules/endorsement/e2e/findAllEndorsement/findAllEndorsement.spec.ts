@@ -57,7 +57,7 @@ describe('findAllEndorsement', () => {
     expect(response.body.data).toHaveLength(2)
   })
 
-  // gp endpoints can only return gp data
+  // general petition tests
   it(`GET /endorsement-list/:listId/endorsement/general-petition should return 404 requesting a non gp list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
@@ -76,7 +76,6 @@ describe('findAllEndorsement', () => {
       })
   })
 
-  // find gp list and gp endorsements
   it(`GET /endorsement-list/:listId/endorsement should return 200 and a list of endorsements`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
@@ -90,7 +89,7 @@ describe('findAllEndorsement', () => {
       .expect(200)
 
     for (const endorsementResponse of response.body.data) {
-      const endorsement = new Endorsement(endorsementResponse) // we know we have at least one endorsement
+      const endorsement = new Endorsement(endorsementResponse)
       await expect(endorsement.validate()).resolves.not.toThrow()
     }
 
