@@ -1,10 +1,21 @@
-import { Injectable } from '@nestjs/common'
+import { PaymentScheduleApi } from '@island.is/clients/payment-schedule'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 
 @Injectable()
 export class PublicDebtPaymentPlanTemplateService {
+  constructor(
+    private paymentScheduleApi: PaymentScheduleApi,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+  ) {}
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     // Does nothing for now
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    /*this.paymentScheduleApi.schedulesnationalIdPOST6({
+      email: '',
+      phoneNumber: '',
+      nationalId: '',
+    })*/
   }
 }

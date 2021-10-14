@@ -16,11 +16,13 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
+import { PaymentScheduleApi } from '@island.is/clients/payment-schedule'
+import { PaymentScheduleService } from '../payment-schedule.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class PaymentScheduleResolver {
-  constructor(private paymentScheduleClientApi: PaymentScheduleAPI) {}
+  constructor(private paymentScheduleService: PaymentScheduleService) {}
 
   @Query(() => PaymentScheduleConditions, {
     name: 'paymentScheduleConditions',
@@ -30,7 +32,7 @@ export class PaymentScheduleResolver {
   async conditions(
     @CurrentUser() user: User,
   ): Promise<PaymentScheduleConditions> {
-    return await this.paymentScheduleClientApi.getConditions(user.nationalId)
+    return await this.paymentScheduleService.getConditions(user.nationalId)
   }
 
   @Query(() => [PaymentScheduleDebts], {
@@ -39,7 +41,7 @@ export class PaymentScheduleResolver {
   })
   @Audit()
   async debts(@CurrentUser() user: User): Promise<PaymentScheduleDebts[]> {
-    return await this.paymentScheduleClientApi.getDebts(user.nationalId)
+    return await this.paymentScheduleService.getDebts(user.nationalId)
   }
 
   @Query(() => PaymentScheduleEmployer, {
@@ -48,13 +50,7 @@ export class PaymentScheduleResolver {
   })
   @Audit()
   async employer(@CurrentUser() user: User): Promise<PaymentScheduleEmployer> {
-    const employerResponse = await this.paymentScheduleClientApi.getCurrentEmployer(
-      user.nationalId,
-    )
-    return {
-      name: employerResponse.employerName,
-      nationalId: employerResponse.employerNationalId,
-    }
+    return await this.paymentScheduleService.getCurrentEmployer(user.nationalId)
   }
 
   @Query(() => PaymentScheduleInitialSchedule, {
@@ -67,10 +63,10 @@ export class PaymentScheduleResolver {
     @Args('input', { type: () => GetInitialScheduleInput })
     input: GetInitialScheduleInput,
   ): Promise<PaymentScheduleInitialSchedule> {
-    return await this.paymentScheduleClientApi.getInitalSchedule({
-      nationalId: user.nationalId,
-      ...input,
-    })
+    return await this.paymentScheduleService.getInitalSchedule(
+      user.nationalId,
+      input,
+    )
   }
 
   @Query(() => PaymentScheduleDistribution, {
@@ -83,9 +79,9 @@ export class PaymentScheduleResolver {
     @Args('input', { type: () => GetScheduleDistributionInput })
     input: GetScheduleDistributionInput,
   ): Promise<PaymentScheduleDistribution> {
-    return await this.paymentScheduleClientApi.getPaymentDistribtion({
-      nationalId: user.nationalId,
-      ...input,
-    })
+    return await this.paymentScheduleService.getPaymentDistribution(
+      user.nationalId,
+      input,
+    )
   }
 }
