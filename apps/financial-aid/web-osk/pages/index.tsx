@@ -1,10 +1,10 @@
 import { Routes } from '@island.is/financial-aid/shared/lib'
 import { useRouter } from 'next/router'
 import { useContext, useEffect } from 'react'
-import { UserContext } from '../src/components/UserProvider/UserProvider'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const Index = () => {
-  const { isAuthenticated } = useContext(UserContext)
+  const { isAuthenticated } = useContext(AppContext)
   const router = useRouter()
   useEffect(() => {
     document.title = 'Umsókn um fjárhagsaðstoð'
