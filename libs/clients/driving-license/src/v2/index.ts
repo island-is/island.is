@@ -1,5 +1,5 @@
-export * from './gen/fetch'
-import { OkuskirteiniApi, Configuration } from './gen/fetch'
+export * from '../../gen/fetch/v2'
+import { OkuskirteiniApi, Configuration } from '../../gen/fetch/v2'
 
 export const DRIVING_LICENSE_API_VERSION_V2 = '2.0'
 

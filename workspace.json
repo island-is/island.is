@@ -3318,8 +3318,8 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "yarn openapi-generator -o libs/clients/driving-license/gen/v1/fetch -i libs/clients/driving-license/src/v1/clientConfig.json",
-              "yarn openapi-generator -o libs/clients/driving-license/gen/v2/fetch -i libs/clients/driving-license/src/v2/clientConfig.json"
+              "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v1 -i libs/clients/driving-license/src/v1/clientConfig.json",
+              "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v2 -i libs/clients/driving-license/src/v2/clientConfig.json"
             ]
           }
         }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { ApiV1 } from '../v1'
-import { ApiV2 } from '../v2'
+import { ApiV1 } from './v1'
+import { ApiV2 } from './v2'
 
 @Injectable()
 export class DrivingLicenseApi {
