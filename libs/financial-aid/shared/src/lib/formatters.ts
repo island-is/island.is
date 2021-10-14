@@ -4,7 +4,10 @@ import {
   Employment,
   ApplicationEventType,
   ApplicationStateUrl,
+  FileType,
+  RolesRule,
 } from './enums'
+import { ApplicationEvent } from './interfaces'
 import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -38,6 +41,14 @@ export const getStateFromUrl: KeyMapping<
   New: [ApplicationState.NEW],
   InProgress: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
   Processed: [ApplicationState.REJECTED, ApplicationState.APPROVED],
+}
+
+export const getEventTypesFromService: KeyMapping<
+  RolesRule,
+  ApplicationEventType[]
+> = {
+  osk: [ApplicationEventType.DATANEEDED],
+  veita: Object.values(ApplicationEventType),
 }
 
 export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
@@ -96,6 +107,12 @@ export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
   Approved: 'Approved',
 }
 
+export const getFileTypeName: KeyMapping<FileType, string> = {
+  TaxReturn: 'Skattagögn',
+  Income: 'Tekjugögn',
+  Other: 'Innsend gögn',
+}
+
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,
   aid: {
@@ -119,4 +136,11 @@ export const aidCalculator = (
     default:
       return aid.withParents
   }
+}
+
+export const getCommentFromLatestEvent = (
+  applicationEvents: ApplicationEvent[],
+  findState: ApplicationEventType,
+) => {
+  return applicationEvents.find((el) => el.eventType === findState)
 }

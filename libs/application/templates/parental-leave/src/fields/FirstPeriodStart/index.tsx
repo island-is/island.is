@@ -1,7 +1,11 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  NO_ANSWER,
+  extractRepeaterIndexFromField,
+} from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import {
   FieldDescription,
@@ -9,7 +13,10 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
-import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
+import {
+  getExpectedDateOfBirth,
+  getApplicationAnswers,
+} from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { StartDateOptions } from '../../constants'
 
@@ -20,22 +27,37 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   field,
   application,
 }) => {
-  const { register } = useFormContext()
+  const { register, unregister, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
-  const currentAnswer = getValueViaPath(
-    application.answers,
-    field.id,
-    undefined,
-  ) as ValidAnswers
-  const currentStartDateAnswer = getValueViaPath(
-    application.answers,
-    'periods[0].startDate',
-    expectedDateOfBirth,
-  ) as string
-  const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
-    currentAnswer,
+  const { rawPeriods } = getApplicationAnswers(application.answers)
+  const currentIndex = extractRepeaterIndexFromField(field)
+  const currentPeriod = rawPeriods[currentIndex]
+
+  const [statefulAnswer, setStatefulAnswer] = useState<
+    ValidAnswers | undefined
+  >(
+    currentPeriod?.firstPeriodStart
+      ? (currentPeriod.firstPeriodStart as ValidAnswers)
+      : undefined,
   )
+
+  const onSelect = (answer: string) => {
+    setStatefulAnswer(answer as ValidAnswers)
+  }
+
+  const renderHiddenStartDateInput =
+    statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
+    statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH
+
+  const startDateFieldId = `periods[${currentIndex}].startDate`
+
+  useEffect(() => {
+    if (!renderHiddenStartDateInput) {
+      unregister(startDateFieldId)
+      setValue(startDateFieldId, undefined)
+    }
+  }, [renderHiddenStartDateInput, startDateFieldId, unregister, setValue])
 
   return (
     <Box marginY={3} key={field.id}>
@@ -49,7 +71,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
           id={field.id}
           error={error}
           defaultValue={
-            statefulAnswer !== undefined ? [statefulAnswer] : undefined
+            statefulAnswer !== undefined ? [statefulAnswer] : NO_ANSWER
           }
           options={[
             {
@@ -76,21 +98,23 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
               value: StartDateOptions.SPECIFIC_DATE,
             },
           ]}
-          onSelect={(newAnswer) => setStatefulAnswer(newAnswer as ValidAnswers)}
+          onSelect={onSelect}
           largeButtons
         />
 
-        <input
-          type="hidden"
-          value={
-            statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
-            statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH
-              ? expectedDateOfBirth
-              : currentStartDateAnswer
-          }
-          ref={register}
-          name="periods[0].startDate"
-        />
+        {renderHiddenStartDateInput && (
+          <input
+            type="hidden"
+            ref={register}
+            value={
+              statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
+              statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH
+                ? expectedDateOfBirth
+                : undefined
+            }
+            name={startDateFieldId}
+          />
+        )}
       </Box>
     </Box>
   )
