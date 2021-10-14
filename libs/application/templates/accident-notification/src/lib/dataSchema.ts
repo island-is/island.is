@@ -118,13 +118,16 @@ export const AccidentNotificationSchema = z.object({
   companyInfo: CompanyInfoSchema,
   schoolInfo: CompanyInfoSchema,
   fishingCompanyInfo: CompanyInfoSchema,
-  sportsClubInfo: CompanyInfoSchema,
   rescueSquadInfo: CompanyInfoSchema,
+  sportsClubInfo: CompanyInfoSchema,
   fishingShipInfo: z.object({
     shipName: z.string().min(1),
     shipCharacters: z.string().min(1),
     homePort: z.string().min(1),
     shipRegisterNumber: z.string().min(1),
+  }),
+  onPayRoll: z.object({
+    answer: z.enum([YES, NO]),
   }),
   locationAndPurpose: z.object({
     location: z.string().min(1),

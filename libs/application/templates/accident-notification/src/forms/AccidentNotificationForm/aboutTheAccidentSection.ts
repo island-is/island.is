@@ -218,6 +218,7 @@ export const aboutTheAccidentSection = buildSection({
     }),
     // Location Subsection
     buildSubSection({
+      id: 'location.subSection',
       title: 'Staðsetning',
       children: [
         buildMultiField({
@@ -226,7 +227,7 @@ export const aboutTheAccidentSection = buildSection({
           condition: (formValue) => isProfessionalAthleteAccident(formValue),
           children: [
             buildRadioField({
-              id: 'sportsClubInfo.employee.radioButton',
+              id: 'onPayRoll.answer',
               width: 'half',
               title: '',
               options: [
@@ -778,6 +779,7 @@ export const aboutTheAccidentSection = buildSection({
 
     // Company information if work accident without the injured being a fisherman
     buildSubSection({
+      id: 'companyInfo.subSection',
       title: companyInfo.general.title,
       condition: (formValue) =>
         isGeneralWorkplaceAccident(formValue) &&
@@ -853,6 +855,7 @@ export const aboutTheAccidentSection = buildSection({
     }),
     // School information if school accident
     buildSubSection({
+      id: 'schoolInfo.subSection',
       title: schoolInfo.general.title,
       condition: (formValue) =>
         isStudiesAccident(formValue) &&
@@ -928,6 +931,7 @@ export const aboutTheAccidentSection = buildSection({
     }),
     // fishery information if fisherman
     buildSubSection({
+      id: 'fishingCompanyInfo.subSection',
       title: fishingCompanyInfo.general.title,
       condition: (formValue) => isFishermanAccident(formValue),
       children: [
@@ -1038,6 +1042,7 @@ export const aboutTheAccidentSection = buildSection({
     }),
     // Sports club information when the injured has a sports related accident
     buildSubSection({
+      id: 'sportsClubInfo.subSection',
       title: sportsClubInfo.general.title,
       condition: (formValue) =>
         isProfessionalAthleteAccident(formValue) &&
@@ -1113,6 +1118,7 @@ export const aboutTheAccidentSection = buildSection({
     }),
     // Rescue squad information when accident is related to rescue squad
     buildSubSection({
+      id: 'rescueSquadInfo.subSection',
       title: rescueSquadInfo.general.title,
       condition: (formValue) =>
         isRescueWorkAccident(formValue) &&
