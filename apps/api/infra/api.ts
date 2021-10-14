@@ -175,6 +175,8 @@ export const serviceSetup = (services: {
       DOCUMENT_PROVIDER_ADMINS:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS',
       XROAD_FINANCES_PATH: '/k8s/service-portal/XROAD_FINANCES_PATH',
+      XROAD_PROPERTIES_API_PATH:
+        '/k8s/service-portal/XROAD_PROPERTIES_API_PATH',
       PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
       PKPASS_API_URL: '/k8s/api/PKPASS_API_URL',
       PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES',
