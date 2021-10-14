@@ -77,23 +77,19 @@ export class EndorsementListService {
 
   async findAllEndorsementListsByNationalId(nationalId: string, query: any) {
     this.logger.debug(
-      `Finding endorsements for single national id ${nationalId}`,
+      `Finding endorsement lists created by single national id ${nationalId}`,
     )
 
     return await paginate({
-      Model: this.endorsementModel,
+      Model: this.endorsementListModel,
       limit: query.limit || 10,
       after: query.after,
       before: query.before,
       primaryKeyField: 'counter',
-      orderOption: [['counter', 'DESC']],
-      where: { owner: nationalId },
-      include: [
-        {
-          model: EndorsementList,
-          attributes: ['id', 'title', 'description', 'tags', 'closedDate'],
-        },
-      ],
+      orderOption: [['counter', 'ASC']],
+      where: {
+        owner: nationalId,
+      },
     })
   }
   
