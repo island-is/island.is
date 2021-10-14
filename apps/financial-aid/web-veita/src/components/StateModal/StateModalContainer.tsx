@@ -20,8 +20,6 @@ const StateModalContainer = ({
     <ModalBase
       baseId="changeStatus"
       isVisible={isVisible}
-      hideOnClickOutside={true}
-      hideOnEsc={true}
       onVisibilityChange={(visibility) => {
         onVisibilityChange(visibility)
       }}

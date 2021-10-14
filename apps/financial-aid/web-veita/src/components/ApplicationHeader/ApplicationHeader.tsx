@@ -21,7 +21,7 @@ import {
   GeneratedProfile,
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { useApplicationState } from '../../utils/useApplicationState'
+import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
 
 interface ApplicantProps {
   application: Application
