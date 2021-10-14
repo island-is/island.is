@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from 'react'
 import useNavigationTree, {
   FormStepperSection,
-} from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
+} from '@island.is/financial-aid-web/osk/src/utils/hooks/useNavigationTree'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 interface NavigationInfoProps {

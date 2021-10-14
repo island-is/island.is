@@ -5,17 +5,15 @@ import { CurrentApplicationModel, ApplicationModel } from './models'
 
 import { Op } from 'sequelize'
 
-import {
-  CreateApplicationDto,
-  CreateApplicationEventDto,
-  UpdateApplicationDto,
-} from './dto'
+import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import {
   ApplicationEventType,
   ApplicationFilters,
   ApplicationState,
   ApplicationStateUrl,
+  getEventTypesFromService,
   getStateFromUrl,
+  RolesRule,
   User,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
@@ -26,7 +24,7 @@ import {
 import { StaffModel } from '../staff'
 
 import { EmailService } from '@island.is/email-service'
-import { environment } from '../../../environments'
+
 import { ApplicationFileModel } from '../file/models'
 
 interface Recipient {
@@ -80,7 +78,10 @@ export class ApplicationService {
     })
   }
 
-  async findById(id: string): Promise<ApplicationModel | null> {
+  async findById(
+    id: string,
+    service: RolesRule,
+  ): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
       include: [
@@ -89,6 +90,11 @@ export class ApplicationService {
           model: ApplicationEventModel,
           as: 'applicationEvents',
           separate: true,
+          where: {
+            eventType: {
+              [Op.in]: getEventTypesFromService[service],
+            },
+          },
           order: [['created', 'DESC']],
         },
         {
