@@ -39,7 +39,7 @@ const RelationshipStatusForm = () => {
 
   const [hasError, setHasError] = useState(false)
   const [isMarried, setIsMarried] = useState(
-    isSpouseDataNeeded[form?.familyStatus ?? FamilyStatus.UNKNOWN],
+    isSpouseDataNeeded[form?.familyStatus as FamilyStatus],
   )
   const [acceptData, setAcceptData] = useState(false)
 
@@ -95,7 +95,7 @@ const RelationshipStatusForm = () => {
         </Text>
 
         <Text variant="intro" marginBottom={[2, 2, 3]}>
-          {isSpouseDataNeeded[form?.familyStatus ?? FamilyStatus.UNKNOWN]
+          {isSpouseDataNeeded[form?.familyStatus as FamilyStatus]
             ? 'Þar sem þú ert í sambúð þarft þú að skila inn umsókn um fjárhagsaðstoð og maki þinn að skila inn upplýsingum um tekjur.'
             : 'Samkvæmt upplýsingum frá Þjóðskrá ert þú ekki í staðfestri sambúð. En sért þú í óstaðfestri sambúð þarft bæði þú og maki þinn að skila innumsókn.'}
         </Text>
@@ -108,7 +108,7 @@ const RelationshipStatusForm = () => {
           Úrvinnsla umsóknarinnar hefst þegar öll gögn hafa borist.
         </Text>
 
-        {isSpouseDataNeeded[form?.familyStatus ?? FamilyStatus.UNKNOWN] ? (
+        {isSpouseDataNeeded[form?.familyStatus as FamilyStatus] ? (
           <Checkbox
             name={'accept'}
             backgroundColor="blue"

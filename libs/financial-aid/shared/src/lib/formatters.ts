@@ -117,6 +117,16 @@ export const isSpouseDataNeeded: KeyMapping<FamilyStatus, boolean> = {
   NotInformed: false,
 }
 
+export const getFamilyStatus: KeyMapping<FamilyStatus, string> = {
+  Unknown: 'Óþekkt',
+  Cohabitation: 'Í sambúð',
+  Married: 'Gift',
+  Single: 'Einstæð',
+  MarriedNotLivingTogether: 'Hjón ekki í samvistum',
+  NotInformed: 'Óupplýst',
+  UnregisteredCohabitation: 'Óstaðfestri sambúð?',
+}
+
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,
   aid: {
