@@ -13,7 +13,7 @@ import * as styles from './addressForm.treat'
 import cn from 'classnames'
 
 import { useRouter } from 'next/router'
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
