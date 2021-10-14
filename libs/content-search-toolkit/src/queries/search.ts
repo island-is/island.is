@@ -17,7 +17,7 @@ export const searchQuery = ({
   const should = []
   const must: TagQuery[] = []
   let minimumShouldMatch = 1
-  let wordLengthRequiredForFuzz = 5
+  const wordLengthRequiredForFuzz = 5
 
   if (fuzzy) {
     queryString = queryString
