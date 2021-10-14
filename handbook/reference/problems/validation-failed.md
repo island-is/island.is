@@ -29,4 +29,4 @@ Content-Type: application/problem+json
     "email": "Email address must contain @."
   }
 }
-``` 
+```

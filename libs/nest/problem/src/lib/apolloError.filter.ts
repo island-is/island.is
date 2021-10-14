@@ -3,7 +3,7 @@ import { ApolloError } from 'apollo-server-express'
 import { HttpProblem } from '@island.is/shared/problem'
 import { BaseProblemFilter } from './base-problem.filter'
 
-const errorInfo: Record<string, { title: string, status: number }> = {
+const errorInfo: Record<string, { title: string; status: number }> = {
   // These titles are changed to be consistent with the default title for NestJS HttpException errors.
   UNAUTHENTICATED: { title: 'Unauthorized', status: 401 },
   FORBIDDEN: { title: 'Forbidden', status: 403 },

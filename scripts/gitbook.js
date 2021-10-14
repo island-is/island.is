@@ -207,7 +207,10 @@ const generateSummary = async () => {
     await fromDir('./handbook/misc'),
   ])
 
-  fs.writeFileSync('SUMMARY.md', printContent(apps, libs, overview, repo, reference, misc))
+  fs.writeFileSync(
+    'SUMMARY.md',
+    printContent(apps, libs, overview, repo, reference, misc),
+  )
 }
 
 const run = async () => {
