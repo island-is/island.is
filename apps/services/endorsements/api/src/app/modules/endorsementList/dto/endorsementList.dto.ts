@@ -5,6 +5,8 @@ import {
   ValidateNested,
   IsArray,
   IsObject,
+  IsBoolean,
+  IsDate,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ValidationRuleDto } from './validationRule.dto'
@@ -45,4 +47,18 @@ export class EndorsementListDto {
   @IsOptional()
   @IsObject()
   meta = {}
+
+  @ApiProperty({ type: Date })
+  @IsDate()
+  @Type(() => Date)
+  closedDate!: Date
+
+  @ApiProperty({ type: Date })
+  @IsDate()
+  @Type(() => Date)
+  openedDate!: Date
+
+  @ApiProperty({ type: Boolean })
+  @IsBoolean()
+  adminLock!: boolean
 }
