@@ -12,5 +12,25 @@ module.exports = {
       ...getGenericEndorsementList(),
       tags: ['partyApplicationSudurkjordaemi2021'],
     },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
+    },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
+    },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
+    },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
+    },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
+    },
   ],
 }

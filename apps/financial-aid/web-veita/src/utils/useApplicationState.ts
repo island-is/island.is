@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { useMutation } from '@apollo/client'
 import {
-  Application,
+  ApplicationEventType,
   ApplicationState,
   UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
@@ -26,6 +26,7 @@ export const useApplicationState = () => {
   const changeApplicationState = async (
     applicationId: string,
     state: ApplicationState,
+    event: ApplicationEventType,
     amount?: number,
     rejection?: string,
     comment?: string,
@@ -40,6 +41,7 @@ export const useApplicationState = () => {
             rejection,
             comment,
             staffId: admin?.staff?.id,
+            event,
           },
         },
       })
