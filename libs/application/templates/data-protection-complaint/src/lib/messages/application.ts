@@ -119,6 +119,11 @@ export const sharedFields = defineMessages({
     defaultMessage: 'Nei',
     description: 'Used to give a negative response',
   },
+  noIdontKnow: {
+    id: 'dpac.application:sharedFields.noIdontKnow',
+    defaultMessage: 'Nei / Veit það ekki',
+    description: 'Used to give a negative / I dont know response',
+  },
   edit: {
     id: 'dpac.application:sharedFields.edit',
     defaultMessage: 'Breyta',
