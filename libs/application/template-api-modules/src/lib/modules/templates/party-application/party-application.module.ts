@@ -4,7 +4,7 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 import {
   PartyApplicationService,
   PARTY_APPLICATION_SERVICE_OPTIONS,
-  DEFAULT_CLOSED_DATE
+  DEFAULT_CLOSED_DATE,
 } from './party-application.service'
 import {
   Configuration as endorsementConfig,
