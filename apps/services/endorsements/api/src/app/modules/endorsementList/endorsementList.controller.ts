@@ -120,16 +120,16 @@ export class EndorsementListController {
     summary:
       'Finds all endorsement lists owned by the currently authenticated user',
   })
-  @ApiOkResponse({ type: PaginatedEndorsementDto })
+  @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get('/endorsementLists')
-  @Audit<PaginatedEndorsementDto>({
+  @Audit<PaginatedEndorsementListDto>({
     resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),
   })
   async findEndorsementLists(
     @CurrentUser() user: User,
     @Query() query: PaginationDto,
-  ): Promise<PaginatedEndorsementDto> {
+  ): Promise<PaginatedEndorsementListDto> {
     return await this.endorsementListService.findAllEndorsementListsByNationalId(
       user.nationalId,
       query,
