@@ -158,6 +158,8 @@ export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
       <Box
         className={styles.close}
         onClick={() => submitAndMoveToApplicationScreen()}
+        role="button"
+        aria-label="close button"
       >
         <Icon icon="close" size="large" color="blue400" />
       </Box>
