@@ -7,11 +7,9 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
-  isAccusedRightsHidden,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import type { Case as TCase } from '@island.is/judicial-system/types'
 import {
   capitalize,
   formatDate,
@@ -53,7 +51,7 @@ function constructRestrictionRulingPdf(
   })
 
   if (doc.info) {
-    doc.info['Title'] = 'Úrskurður'
+    doc.info['Title'] = shortVersion ? 'Þingbók' : 'Úrskurður'
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
@@ -426,7 +424,7 @@ function constructInvestigationRulingPdf(
   })
 
   if (doc.info) {
-    doc.info['Title'] = 'Úrskurður'
+    doc.info['Title'] = shortVersion ? 'Þingbók' : 'Úrskurður'
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
