@@ -10,6 +10,7 @@ import {
 } from '@island.is/application/core'
 // import * as z from 'zod'
 import { States } from '../constants'
+import { ApiActions } from '../shared'
 import { AccidentNotificationSchema } from './dataSchema'
 import { application } from './messages'
 
@@ -24,9 +25,8 @@ enum Roles {
 type AccidentNotificationEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.EDIT }
   | { type: DefaultEvents.REJECT }
-  | { type: 'COMMENT' }
+  | { type: DefaultEvents.ASSIGN }
 
 const AccidentNotificationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -52,9 +52,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 3600 * 1000,
           },
-          /* onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          }, */
           roles: [
             {
               id: Roles.APPLICANT,
@@ -70,19 +67,22 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: States.NEEDS_DOCUMENT_AND_REVIEW,
+          [DefaultEvents.SUBMIT]: {
+            target: States.REVIEW,
           },
         },
       },
-      [States.NEEDS_DOCUMENT_AND_REVIEW]: {
+      [States.REVIEW]: {
         meta: {
-          name: States.NEEDS_DOCUMENT_AND_REVIEW,
-          progress: 0.4,
+          name: States.REVIEW,
+          progress: 0.6,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: 3600 * 1000,
+          },
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
           },
           roles: [
             {
@@ -90,121 +90,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
-                ),
-              read: 'all',
-              write: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.EDIT]: {
-            target: States.ADD_DOCUMENTS,
-          },
-          [DefaultEvents.SUBMIT]: {
-            target: States.OVERVIEW,
-          },
-        },
-      },
-      [States.NEEDS_DOCUMENT]: {
-        meta: {
-          name: States.NEEDS_DOCUMENT,
-          progress: 0.6,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
-          },
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.EDIT]: {
-            target: States.ADD_DOCUMENTS,
-          },
-          [DefaultEvents.SUBMIT]: {
-            target: States.OVERVIEW,
-          },
-        },
-      },
-      [States.NEEDS_REVIEW]: {
-        meta: {
-          name: States.NEEDS_REVIEW,
-          progress: 0.6,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
-          },
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.EDIT]: {
-            target: States.ADD_DOCUMENTS,
-          },
-          [DefaultEvents.SUBMIT]: {
-            target: States.OVERVIEW,
-          },
-        },
-      },
-      [States.ADD_DOCUMENTS]: {
-        meta: {
-          name: States.ADD_DOCUMENTS,
-          progress: 0.6,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
-          },
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/AddDocuments').then((val) =>
-                  Promise.resolve(val.AddDocuments),
-                ),
-              read: 'all',
-              write: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.NEEDS_REVIEW,
-          },
-        },
-      },
-      [States.THIRD_PARTY_COMMENT]: {
-        meta: {
-          name: States.THIRD_PARTY_COMMENT,
-          progress: 0.6,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
-          },
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/ThirdPartyComment').then((val) =>
-                  Promise.resolve(val.ThirdPartyComment),
                 ),
               read: 'all',
               write: 'all',
@@ -212,8 +97,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/ThirdPartyComment').then((val) =>
-                  Promise.resolve(val.ThirdPartyComment),
+                import('../forms/AssigneeInReview').then((val) =>
+                  Promise.resolve(val.AssigneeInReview),
                 ),
               read: 'all',
               write: 'all',
@@ -221,68 +106,18 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: {
-            target: States.ADD_DOCUMENTS,
+          [DefaultEvents.ASSIGN]: {
+            target: States.REVIEW,
           },
-          COMMENT: {
-            target: States.THIRD_PARTY_COMMENT,
-          },
-          // TODO: Add rejected review state
           [DefaultEvents.REJECT]: {
-            target: States.NEEDS_REVIEW,
+            target: States.IN_FINAL_REVIEW,
           },
           [DefaultEvents.APPROVE]: {
             target: States.IN_FINAL_REVIEW,
           },
         },
       },
-      [States.OVERVIEW]: {
-        meta: {
-          name: States.OVERVIEW,
-          progress: 0.6,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
-          },
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Overview').then((val) =>
-                  Promise.resolve(val.Overview),
-                ),
-              read: 'all',
-            },
-            {
-              id: Roles.ASSIGNEE,
-              formLoader: () =>
-                import('../forms/ThirdPartyOverview').then((val) =>
-                  Promise.resolve(val.ThirdPartyOverview),
-                ),
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.NEEDS_REVIEW,
-          },
-          [DefaultEvents.EDIT]: {
-            target: States.ADD_DOCUMENTS,
-          },
-          COMMENT: {
-            target: States.THIRD_PARTY_COMMENT,
-          },
-          // TODO: Add rejected review state
-          [DefaultEvents.REJECT]: {
-            target: States.NEEDS_REVIEW,
-          },
-          [DefaultEvents.APPROVE]: {
-            target: States.IN_FINAL_REVIEW,
-          },
-        },
-      },
+      // State when assignee has approved or reject the appliction
       [States.IN_FINAL_REVIEW]: {
         meta: {
           name: States.IN_FINAL_REVIEW,
@@ -295,6 +130,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
