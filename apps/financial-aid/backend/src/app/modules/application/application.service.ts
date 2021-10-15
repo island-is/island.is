@@ -180,7 +180,7 @@ export class ApplicationService {
   async update(
     id: string,
     update: UpdateApplicationDto,
-    userName?: string,
+    userName: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
@@ -212,16 +212,14 @@ export class ApplicationService {
     const files = await this.fileService.getAllApplicationFiles(id)
     updatedApplication?.setDataValue('files', files)
 
-    if (userName) {
-      await this.sendEmail(
-        {
-          name: userName,
-          address: updatedApplication.email,
-        },
-        updatedApplication.id,
-        getEmailTextFromState[update.state],
-      )
-    }
+    await this.sendEmail(
+      {
+        name: userName,
+        address: updatedApplication.email,
+      },
+      updatedApplication.id,
+      getEmailTextFromState[update.state],
+    )
 
     return { numberOfAffectedRows, updatedApplication }
   }
