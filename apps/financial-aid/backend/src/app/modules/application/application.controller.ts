@@ -129,6 +129,7 @@ export class ApplicationController {
     description: 'Updates an existing application',
   })
   async update(
+    @CurrentUser() user: User,
     @Param('id') id: string,
     @Body() applicationToUpdate: UpdateApplicationDto,
   ): Promise<ApplicationModel> {
@@ -138,7 +139,7 @@ export class ApplicationController {
     const {
       numberOfAffectedRows,
       updatedApplication,
-    } = await this.applicationService.update(id, applicationToUpdate)
+    } = await this.applicationService.update(id, applicationToUpdate, user.name)
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Application ${id} does not exist`)
@@ -171,13 +172,14 @@ export class ApplicationController {
     description: 'Updates an existing application',
   })
   async updateApplication(
+    @CurrentUser() user: User,
     @Param('id') id: string,
     @Body() applicationToUpdate: UpdateApplicationDto,
   ): Promise<UpdateApplicationResponse> {
     const {
       numberOfAffectedRows,
       updatedApplication,
-    } = await this.applicationService.update(id, applicationToUpdate)
+    } = await this.applicationService.update(id, applicationToUpdate, user.name)
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Application ${id} does not exist`)
