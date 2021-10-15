@@ -44,7 +44,7 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
+import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './HearingArrangements.treat'
 
@@ -53,10 +53,11 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   isLoading: boolean
   users: UserData
+  user: User
 }
 
 const HearingArrangementsForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading, users } = props
+  const { workingCase, setWorkingCase, isLoading, users, user } = props
   const [modalVisible, setModalVisible] = useState(false)
   const [defenderEmailEM, setDefenderEmailEM] = useState('')
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
@@ -171,11 +172,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Dómari{' '}
-              <Tooltip
-                text={formatMessage(
-                  icHearingArrangements.sections.setJudge.tooltip,
-                )}
-              />
+              <Tooltip text={formatMessage(m.sections.setJudge.tooltip)} />
             </Text>
           </Box>
           <Select
@@ -194,11 +191,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Dómritari{' '}
-              <Tooltip
-                text={formatMessage(
-                  icHearingArrangements.sections.setRegistrar.tooltip,
-                )}
-              />
+              <Tooltip text={formatMessage(m.sections.setRegistrar.tooltip)} />
             </Text>
           </Box>
           <Select
@@ -218,13 +211,9 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(
-                icHearingArrangements.sections.sessionArrangements.heading,
-              )} `}
+              {`${formatMessage(m.sections.sessionArrangements.heading)} `}
               <Tooltip
-                text={formatMessage(
-                  icHearingArrangements.sections.sessionArrangements.tooltip,
-                )}
+                text={formatMessage(m.sections.sessionArrangements.tooltip)}
               />
             </Text>
           </Box>
@@ -234,8 +223,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 name="session-arrangements-all-present"
                 id="session-arrangements-all-present"
                 label={formatMessage(
-                  icHearingArrangements.sections.sessionArrangements.options
-                    .allPresent,
+                  m.sections.sessionArrangements.options.allPresent,
                 )}
                 checked={
                   workingCase.sessionArrangements ===
@@ -259,8 +247,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 name="session-arrangements-all-present_spokesperson"
                 id="session-arrangements-all-present_spokesperson"
                 label={formatMessage(
-                  icHearingArrangements.sections.sessionArrangements.options
-                    .allPresentSpokesperson,
+                  m.sections.sessionArrangements.options.allPresentSpokesperson,
                 )}
                 checked={
                   workingCase.sessionArrangements ===
@@ -284,8 +271,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 name="session-arrangements-prosecutor-present"
                 id="session-arrangements-prosecutor-present"
                 label={formatMessage(
-                  icHearingArrangements.sections.sessionArrangements.options
-                    .prosecutorPresent,
+                  m.sections.sessionArrangements.options.prosecutorPresent,
                 )}
                 checked={
                   workingCase.sessionArrangements ===
@@ -308,8 +294,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
               name="session-arrangements-remote-session"
               id="session-arrangements-remote-session"
               label={formatMessage(
-                icHearingArrangements.sections.sessionArrangements.options
-                  .remoteSession,
+                m.sections.sessionArrangements.options.remoteSession,
               )}
               checked={
                 workingCase.sessionArrangements ===
@@ -542,6 +527,16 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isLoading}
           nextIsDisabled={!isValid || !courtDateIsValid}
+          hideNextButton={
+            user.id !== workingCase.judge?.id &&
+            user.id !== workingCase.registrar?.id
+          }
+          infoBoxText={
+            user.id !== workingCase.judge?.id &&
+            user.id !== workingCase.registrar?.id
+              ? formatMessage(m.footer.infoPanelForRestrictedAccess)
+              : undefined
+          }
         />
       </FormContentContainer>
       {modalVisible && (
@@ -549,19 +544,19 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           title={formatMessage(
             workingCase.sessionArrangements ===
               SessionArrangements.REMOTE_SESSION
-              ? icHearingArrangements.modal.remoteSessionHeading
-              : icHearingArrangements.modal.heading,
+              ? m.modal.remoteSessionHeading
+              : m.modal.heading,
           )}
           text={formatMessage(
             workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
-              ? icHearingArrangements.modal.allPresentText
+              ? m.modal.allPresentText
               : workingCase.sessionArrangements ===
                 SessionArrangements.ALL_PRESENT_SPOKESPERSON
-              ? icHearingArrangements.modal.allPresentSpokespersonText
+              ? m.modal.allPresentSpokespersonText
               : workingCase.sessionArrangements ===
                 SessionArrangements.PROSECUTOR_PRESENT
-              ? icHearingArrangements.modal.prosecutorPresentText
-              : icHearingArrangements.modal.remoteSessionText,
+              ? m.modal.prosecutorPresentText
+              : m.modal.remoteSessionText,
           )}
           handlePrimaryButtonClick={async () => {
             if (
@@ -590,14 +585,14 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           primaryButtonText={formatMessage(
             workingCase.sessionArrangements ===
               SessionArrangements.REMOTE_SESSION
-              ? icHearingArrangements.modal.primaryButtonRemoteSessionText
-              : icHearingArrangements.modal.primaryButtonText,
+              ? m.modal.primaryButtonRemoteSessionText
+              : m.modal.primaryButtonText,
           )}
           secondaryButtonText={
             workingCase.sessionArrangements ===
             SessionArrangements.REMOTE_SESSION
               ? undefined
-              : formatMessage(icHearingArrangements.modal.secondaryButtonText)
+              : formatMessage(m.modal.secondaryButtonText)
           }
           isPrimaryButtonLoading={isSendingNotification}
         />

@@ -19,7 +19,7 @@ export const buildOpenApi = async ({
   try {
     logger.info('Creating openapi.yaml file ...', { path })
 
-    const app = await NestFactory.create(InfraModule.forRoot(appModule), {
+    const app = await NestFactory.create(InfraModule.forRoot({ appModule }), {
       logger: LoggingModule.createLogger(),
     })
     const document = SwaggerModule.createDocument(app, openApi)

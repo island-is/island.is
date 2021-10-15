@@ -7,6 +7,7 @@ import {
   RolesRule,
   StaffRole,
   ApplicationStateUrl,
+  FamilyStatus,
 } from './enums'
 
 export interface GetSignedUrl {
@@ -50,6 +51,11 @@ export interface NavigationProps {
   nextUrl: string | undefined
 }
 
+export interface Spouse {
+  nationalId?: string
+  email?: string
+}
+
 export interface User {
   nationalId: string
   name: string
@@ -65,6 +71,7 @@ export interface UpdateApplication {
   state: ApplicationState
   amount?: number
   rejection?: string
+  comment?: string
   staffId?: string
 }
 
@@ -141,6 +148,9 @@ export interface CreateApplication {
   state?: ApplicationState
   files: CreateApplicationFile[]
   amount?: number
+  spouseNationalId?: string
+  spouseEmail?: string
+  familyStatus: FamilyStatus
 }
 
 export interface ApplicationFilters {
@@ -179,6 +189,9 @@ export interface Application {
   rejection?: string
   staff?: Staff
   applicationEvents?: ApplicationEvent[]
+  spouseNationalId?: string
+  spouseEmail?: string
+  familyStatus: FamilyStatus
 }
 
 export interface GetSignedUrlForId {

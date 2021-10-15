@@ -3,7 +3,7 @@ import { Text, Box, Button, ModalBase, Icon } from '@island.is/island-ui/core'
 
 import * as styles from './CancelModal.treat'
 
-import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 
 interface Props {
   isVisible: boolean

@@ -1,5 +1,7 @@
+import { environment } from './environment/environment'
+
 export const IDENTITY_SERVER_SESSION_TOKEN_COOKIE_NAME =
-  'next-auth.session-token'
+  environment.idsCookieName
 
 export const identityServerId = 'identity-server'
 
@@ -9,6 +11,6 @@ export const signOutUrl = (window: Window, idToken: string) =>
 export const identityServerConfig = {
   id: identityServerId,
   name: 'Iceland authentication service',
-  scope: 'openid profile @island.is/samband/userinfo',
+  scope: 'openid profile @island.is/samband/userinfo offline_access',
   clientId: '@samband_islenskra_sveitarfelaga/fjarhagur',
 }
