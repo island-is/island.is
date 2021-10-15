@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import {
   EndorsementList,
   Endorsement,
-  TemporaryVoterRegistry,
+  TemporaryVoterRegistry
 } from '../types/schema'
 
 import { useQuery } from '@apollo/client'
@@ -15,6 +15,11 @@ export type UserVoterRegion = Pick<
 interface UserEndorsementsResponse {
   endorsementSystemUserEndorsements: any //TODO: update with new schemes when they are ready
 }
+
+interface UserEndorsementsListsResponse {
+  endorsementSystemUserEndorsementLists: any //TODO: update with new schemes when they are ready
+}
+
 interface PetitionListResponse {
   endorsementSystemFindEndorsementLists: any
 }
@@ -54,6 +59,7 @@ const GET_USER_ENDORSEMENTS = gql`
           title
           description
           tags
+          meta
           closedDate
         }
         meta {
@@ -66,6 +72,7 @@ const GET_USER_ENDORSEMENTS = gql`
     }
   }
 `
+
 const GET_REGION_ENDORSEMENTS = gql`
   query endorsementSystemFindEndorsementLists(
     $input: PaginatedEndorsementListInput!
@@ -120,6 +127,27 @@ export const EndorseList = gql`
     }
   }
 `
+export const EndorsementListsUserOwns = gql`
+  query endorsementSystemUserEndorsementLists(
+    $input: PaginatedEndorsementListInput!
+  ) {
+    endorsementSystemUserEndorsementLists(input: $input) {
+      totalCount
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        startCursor
+        endCursor
+      }
+      data {
+        id
+        title
+        description
+        closedDate
+      }
+    }
+  }
+`
 
 export const useGetPetitionLists = () => {
   const { data: endorsementListsResponse } = useQuery<PetitionListResponse>(
@@ -127,7 +155,7 @@ export const useGetPetitionLists = () => {
     {
       variables: {
         input: {
-          tags: 'partyLetter2021',
+          tags: 'generalPetition',
           limit: 5,
         },
       },
@@ -151,6 +179,22 @@ export const useGetUserLists = () => {
     },
   )
   return endorsementResponse?.endorsementSystemUserEndorsements ?? []
+}
+
+export const useListsUserOwns = () => {
+  const { data: endorsementResponse } = useQuery<UserEndorsementsListsResponse>(
+    EndorsementListsUserOwns,
+    {
+      variables: {
+        input: {
+          tags: 'generalPetition',
+          limit: 5,
+        },
+      },
+      pollInterval: 20000,
+    },
+  )
+  return endorsementResponse?.endorsementSystemUserEndorsementLists ?? []
 }
 
 export const useGetSinglePetition = (listId: string) => {

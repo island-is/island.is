@@ -137,7 +137,7 @@ const ViewPetition = () => {
                 icon="arrowForward"
                 onClick={() =>
                   window.open(
-                    `${baseUrlForm}/medmaelendalisti/3deeab21-cbdf-4414-adcd-381e3232f41b`,
+                    `${baseUrlForm}/medmaelendalisti/${location.state?.listId}`,
                   )
                 }
               >

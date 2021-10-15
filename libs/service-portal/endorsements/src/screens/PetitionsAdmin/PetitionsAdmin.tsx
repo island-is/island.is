@@ -23,74 +23,78 @@ const PetitionsAdmin = () => {
       </Stack>
 
       <Box marginTop={10} marginBottom={7}>
-        <Text as="p" variant="h3" marginBottom={2}>
-          {formatMessage(m.petition.petitionListsOngoing)}
-        </Text>
-
         {!!petitionLists.data && (
-          <Stack space={4}>
-            {petitionLists.data.map((list: any) => {
-              return (
-                <Link
-                  style={{ textDecoration: 'none' }}
-                  key={list.id}
-                  to={{
-                    pathname: ServicePortalPath.PetitionListAdmin.replace(
-                      ':listId',
-                      list.id,
-                    ),
-                    state: { type: 'unendorse', listId: list.id },
-                  }}
-                >
-                  <ActionCard
-                    backgroundColor="white"
-                    heading={list.title}
-                    text={list.description as string}
-                    cta={{
-                      label: formatMessage(m.petition.editList),
-                      variant: 'text',
-                      icon: 'arrowForward',
+          <>
+            <Text as="p" variant="h3" marginBottom={2}>
+              {formatMessage(m.petition.petitionListsOngoing)}
+            </Text>
+
+            <Stack space={4}>
+              {petitionLists.data.map((list: any) => {
+                return (
+                  <Link
+                    style={{ textDecoration: 'none' }}
+                    key={list.id}
+                    to={{
+                      pathname: ServicePortalPath.PetitionListAdmin.replace(
+                        ':listId',
+                        list.id,
+                      ),
+                      state: { type: 'unendorse', listId: list.id },
                     }}
-                  />
-                </Link>
-              )
-            })}
-          </Stack>
+                  >
+                    <ActionCard
+                      backgroundColor="white"
+                      heading={list.title}
+                      text={list.description as string}
+                      cta={{
+                        label: formatMessage(m.petition.editList),
+                        variant: 'text',
+                        icon: 'arrowForward',
+                      }}
+                    />
+                  </Link>
+                )
+              })}
+            </Stack>
+          </>
         )}
 
-        <Text as="p" variant="h3" marginBottom={3} marginTop={7}>
-          {formatMessage(m.petition.petitionListsClosed)}
-        </Text>
+        {!!petitionLists.data && (
+          <>
+            <Text as="p" variant="h3" marginBottom={3} marginTop={7}>
+              {formatMessage(m.petition.petitionListsClosed)}
+            </Text>
 
-        {!!petitionLists.length && (
-          <Stack space={4}>
-            {petitionLists.data.map((list: any) => {
-              return (
-                <Link
-                  style={{ textDecoration: 'none' }}
-                  key={list.id}
-                  to={{
-                    pathname: ServicePortalPath.PetitionListAdmin.replace(
-                      ':listId',
-                      list.id,
-                    ),
-                    state: { type: 'unendorse', listId: list.id },
-                  }}
-                >
-                  <ActionCard
-                    backgroundColor="red"
-                    heading={list.title}
-                    text={list.description as string}
-                    cta={{
-                      label: formatMessage(m.petition.editList),
-                      variant: 'text',
-                      icon: 'arrowForward',
+            <Stack space={4}>
+              {petitionLists.data.map((list: any) => {
+                return (
+                  <Link
+                    style={{ textDecoration: 'none' }}
+                    key={list.id}
+                    to={{
+                      pathname: ServicePortalPath.PetitionListAdmin.replace(
+                        ':listId',
+                        list.id,
+                      ),
+                      state: { type: 'unendorse', listId: list.id },
                     }}
-                  />
-                </Link>
-              )
-            })}
-          </Stack>
+                  >
+                    <ActionCard
+                      backgroundColor="red"
+                      heading={list.title}
+                      text={list.description as string}
+                      cta={{
+                        label: formatMessage(m.petition.editList),
+                        variant: 'text',
+                        icon: 'arrowForward',
+                      }}
+                    />
+                  </Link>
+                )
+              })}
+            </Stack>
+          </>
         )}
       </Box>
     </Box>

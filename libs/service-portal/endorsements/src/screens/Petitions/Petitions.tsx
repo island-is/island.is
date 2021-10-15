@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Text, ActionCard, Stack } from '@island.is/island-ui/core'
-import { useGetPetitionLists, useGetUserLists } from '../queries'
+import { useGetUserLists, useListsUserOwns } from '../queries'
 import { Link } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
@@ -8,8 +8,8 @@ import { m } from '../../lib/messages'
 
 const Petitions = () => {
   const { formatMessage } = useLocale()
-  const petitionLists = useGetPetitionLists() //all existing lists
-  const userLists = useGetUserLists() //petitions that user has signed
+  const petitionListsUserOwns = useListsUserOwns()
+  const userLists = useGetUserLists()
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -28,9 +28,9 @@ const Petitions = () => {
           {formatMessage(m.petition.petitionListsIown)}
         </Text>
 
-        {!!petitionLists.data && (
+        {!!petitionListsUserOwns.data && (
           <Stack space={4}>
-            {petitionLists.data.map((pl: any) => {
+            {petitionListsUserOwns.data.map((pl: any) => {
               return (
                 <Link
                   style={{ textDecoration: 'none' }}
@@ -68,6 +68,7 @@ const Petitions = () => {
         {!!userLists.data && (
           <Stack space={4}>
             {userLists.data.map((list: any) => {
+              console.log(list)
               return (
                 <Link
                   style={{ textDecoration: 'none' }}

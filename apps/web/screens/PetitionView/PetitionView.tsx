@@ -14,8 +14,23 @@ import { list } from './mocks'
 import { PAGE_SIZE, pages, paginate } from './pagination'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
+import { useRouter } from 'next/router'
+
+const isLocalhost = window.location.origin.includes('localhost')
+const isDev = window.location.origin.includes('beta.dev01.devland.is')
+const isStaging = window.location.origin.includes('beta.staging01.devland.is')
+
+const baseUrlForm = isLocalhost
+  ? 'http://localhost:4242/umsoknir'
+  : isDev
+  ? 'https://beta.dev01.devland.is/umsoknir'
+  : isStaging
+  ? 'https://beta.staging01.devland.is/umsoknir'
+  : 'https://island.is/umsoknir'
 
 const PetitionView = () => {
+  const router = useRouter()
+
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
   const [pagePetitions, setPetitions] = useState(list.signedPetitions)
@@ -65,7 +80,15 @@ const PetitionView = () => {
             </GridRow>
             <GridRow marginTop={5}>
               <GridColumn span={['12/12', '6/12', '6/12']}>
-                <Button variant="primary" icon="arrowForward">
+                <Button
+                  variant="primary"
+                  icon="arrowForward"
+                  onClick={() =>
+                    window.open(
+                      `${baseUrlForm}/medmaelendalisti/${router.query.slug}`,
+                    )
+                  }
+                >
                   Setja nafn mitt á þennan lista
                 </Button>
               </GridColumn>

@@ -101,7 +101,8 @@ export const m: MessageDir = {
     },
     aboutListPlaceholder: {
       id: 'gpt.application:information.aboutListPlaceholder',
-      defaultMessage: 'Texti sem birtist með meðmælendalista. Ekki er hægt að breyta texta eftir að meðmælendalisti hefur verið birtur',
+      defaultMessage:
+        'Texti sem birtist með meðmælendalista. Ekki er hægt að breyta texta eftir að meðmælendalisti hefur verið birtur',
       description: 'About list placeholder',
     },
     dateTitle: {
