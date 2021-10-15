@@ -30,6 +30,7 @@ export interface Staff {
   municipalityId: string
   role: StaffRole
   active: boolean
+  municipalityName: string
   phoneNumber?: string
 }
 

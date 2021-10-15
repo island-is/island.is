@@ -47,6 +47,13 @@ export class StaffModel extends Model<Staff> {
   municipalityId: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  municipalityName: string
+
+  @Column({
     type: DataType.ENUM,
     allowNull: false,
     values: Object.values(StaffRole),
