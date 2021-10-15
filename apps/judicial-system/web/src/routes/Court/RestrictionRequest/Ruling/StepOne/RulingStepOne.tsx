@@ -50,7 +50,7 @@ import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { rcRulingStepOne } from '@island.is/judicial-system-web/messages'
+import { rcRulingStepOne as m } from '@island.is/judicial-system-web/messages'
 
 export const RulingStepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -188,11 +188,9 @@ export const RulingStepOne: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  Greinargerð um málsatvik{' '}
+                  {formatMessage(m.sections.courtCaseFacts.title)}{' '}
                   <Tooltip
-                    text={formatMessage(
-                      rcRulingStepOne.sections.courtCaseFacts.tooltip,
-                    )}
+                    text={formatMessage(m.sections.courtCaseFacts.tooltip)}
                   />
                 </Text>
               </Box>
@@ -235,11 +233,9 @@ export const RulingStepOne: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  Greinargerð um lagarök{' '}
+                  {formatMessage(m.sections.courtLegalArguments.title)}{' '}
                   <Tooltip
-                    text={formatMessage(
-                      rcRulingStepOne.sections.courtLegalArguments.tooltip,
-                    )}
+                    text={formatMessage(m.sections.courtLegalArguments.tooltip)}
                   />
                 </Text>
               </Box>
@@ -304,7 +300,7 @@ export const RulingStepOne: React.FC = () => {
                   } hafnað`}
                   partiallyAcceptedLabelText="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
                   dismissLabelText={formatMessage(
-                    rcRulingStepOne.sections.decision.dismissLabel,
+                    m.sections.decision.dismissLabel,
                     {
                       caseType:
                         workingCase.type === CaseType.CUSTODY
