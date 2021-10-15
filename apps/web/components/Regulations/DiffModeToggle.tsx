@@ -35,8 +35,6 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
   }
   const isDiffable = timelineDate !== effectiveDate
 
-  console.log({ showingDiff, history })
-
   const diffView = !!showingDiff
   const showSecondaryButton =
     !!showingDiff && showingDiff.to !== history[0].date
