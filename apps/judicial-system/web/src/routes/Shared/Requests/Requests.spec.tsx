@@ -7,12 +7,13 @@ import { MockedProvider } from '@apollo/client/testing'
 
 import {
   CaseAppealDecision,
-  CaseDecision,
   CaseState,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import {
   mockHighCourtQuery,
   mockJudgeQuery,
+  mockPrisonUserQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
@@ -102,6 +103,42 @@ const mockCasesQuery = [
             accusedNationalId: '012345-6789',
             accusedName: 'Moe',
             validToDate: '2020-11-11T12:31:00.000Z',
+          },
+        ],
+      },
+    },
+  },
+]
+
+const mockPrisonUserCasesQuery = [
+  {
+    request: {
+      query: CasesQuery,
+    },
+    result: {
+      data: {
+        cases: [
+          {
+            id: 'test_id_1',
+            type: CaseType.CUSTODY,
+            created: '2020-05-16T19:50:08.033Z',
+            modified: '2020-09-16T19:51:39.466Z',
+            state: CaseState.ACCEPTED,
+            policeCaseNumber: '008-2020-X',
+            accusedNationalId: '012345-6789',
+            accusedName: 'Mikki Refur',
+            isValidToDateInThePast: true,
+          },
+          {
+            id: 'test_id_2',
+            type: CaseType.CUSTODY,
+            created: '2020-05-16T19:50:08.033Z',
+            modified: '2020-09-16T19:51:39.466Z',
+            state: CaseState.ACCEPTED,
+            policeCaseNumber: '008-2020-X',
+            accusedNationalId: '012345-6789',
+            accusedName: 'Mikki Refur',
+            isValidToDateInThePast: false,
           },
         ],
       },
@@ -275,6 +312,27 @@ describe('Requests', () => {
 
       expect(await waitFor(() => screen.getAllByRole('table').length)).toEqual(
         1,
+      )
+    })
+  })
+
+  describe('Prison users', () => {
+    test('should list active and past cases in separate tables based on validToDate', async () => {
+      render(
+        <MockedProvider
+          mocks={[...mockPrisonUserCasesQuery, ...mockPrisonUserQuery]}
+          addTypename={false}
+        >
+          <UserProvider authenticated={true}>
+            <LocaleProvider locale="is" messages={{}}>
+              <Requests />
+            </LocaleProvider>
+          </UserProvider>
+        </MockedProvider>,
+      )
+
+      expect(await waitFor(() => screen.getAllByRole('table').length)).toEqual(
+        2,
       )
     })
   })

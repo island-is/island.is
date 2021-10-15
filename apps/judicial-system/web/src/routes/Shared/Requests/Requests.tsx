@@ -14,7 +14,6 @@ import {
   NotificationType,
   isRestrictionCase,
   UserRole,
-  CaseType,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -70,20 +69,16 @@ export const Requests: React.FC = () => {
             : // Judges and registrars should see all cases except cases with status code NEW.
             isJudge || isRegistrar
             ? ![...completedCaseStates, CaseState.NEW].includes(c.state)
-            : isPrisonAdminUser
-            ? c.state === CaseState.ACCEPTED && !c.isValidToDateInThePast
-            : isPrisonUser
-            ? c.type === CaseType.CUSTODY &&
-              c.state === CaseState.ACCEPTED &&
-              !c.isValidToDateInThePast
+            : isPrisonAdminUser || isPrisonUser
+            ? !c.isValidToDateInThePast
             : null
         }),
       )
 
       setPastCases(
         casesWithoutDeleted.filter((c: Case) => {
-          return isPrisonAdminUser
-            ? [CaseState.ACCEPTED].includes(c.state) && c.isValidToDateInThePast
+          return isPrisonAdminUser || isPrisonUser
+            ? c.isValidToDateInThePast
             : completedCaseStates.includes(c.state)
         }),
       )
@@ -164,8 +159,6 @@ export const Requests: React.FC = () => {
       }
     }
   }
-
-  console.log(resCases)
 
   return (
     <div className={styles.requestsContainer}>
