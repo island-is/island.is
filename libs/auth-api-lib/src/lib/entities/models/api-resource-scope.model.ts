@@ -13,11 +13,6 @@ import { ApiResource } from './api-resource.model'
 
 @Table({
   tableName: 'api_resource_scope',
-  indexes: [
-    {
-      fields: ['api_resource_id', 'scope_name'],
-    },
-  ],
 })
 export class ApiResourceScope extends Model<ApiResourceScope> {
   @PrimaryKey

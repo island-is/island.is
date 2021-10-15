@@ -5965,6 +5965,27 @@
         }
       }
     },
+    "nest-problem": {
+      "root": "libs/nest/problem",
+      "sourceRoot": "libs/nest/problem/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/problem/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/problem"],
+          "options": {
+            "jestConfig": "libs/nest/problem/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-validators": {
       "root": "libs/nest/validators",
       "sourceRoot": "libs/nest/validators/src",
@@ -8287,6 +8308,27 @@
         }
       }
     },
+    "shared-problem": {
+      "root": "libs/shared/problem",
+      "sourceRoot": "libs/shared/problem/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/problem/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/problem"],
+          "options": {
+            "jestConfig": "libs/shared/problem/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "shared-translations": {
       "root": "libs/shared/translations",
       "sourceRoot": "libs/shared/translations/src",
@@ -8660,6 +8702,48 @@
           }
         },
         "docker-cypress": {}
+      }
+    },
+    "testing-fixtures": {
+      "root": "libs/testing/fixtures",
+      "sourceRoot": "libs/testing/fixtures/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/testing/fixtures/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/testing/fixtures"],
+          "options": {
+            "jestConfig": "libs/testing/fixtures/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "testing-nest": {
+      "root": "libs/testing/nest",
+      "sourceRoot": "libs/testing/nest/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/testing/nest/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/testing/nest"],
+          "options": {
+            "jestConfig": "libs/testing/nest/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
       }
     },
     "web": {

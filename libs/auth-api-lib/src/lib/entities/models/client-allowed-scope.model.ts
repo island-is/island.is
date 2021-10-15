@@ -13,11 +13,6 @@ import { Client } from './client.model'
 
 @Table({
   tableName: 'client_allowed_scope',
-  indexes: [
-    {
-      fields: ['client_id'],
-    },
-  ],
 })
 export class ClientAllowedScope extends Model<ClientAllowedScope> {
   @PrimaryKey

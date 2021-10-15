@@ -8,7 +8,7 @@ import {
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 import * as styles from './bankInfoForm.treat'
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
 import { focusOnNextInput } from '@island.is/financial-aid/shared/lib'

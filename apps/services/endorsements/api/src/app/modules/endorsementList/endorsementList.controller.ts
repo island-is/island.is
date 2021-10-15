@@ -51,6 +51,7 @@ export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
   ) {}
+
   @ApiOperation({
     summary: 'Finds all endorsement lists belonging to given tags',
   })
@@ -82,6 +83,26 @@ export class EndorsementListController {
     @Query() query: PaginationDto,
   ): Promise<PaginatedEndorsementDto> {
     return await this.endorsementListService.findAllEndorsementsByNationalId(
+      user.nationalId,
+      query,
+    )
+  }
+
+  @ApiOperation({
+    summary:
+      'Finds all endorsement lists owned by the currently authenticated user',
+  })
+  @ApiOkResponse({ type: PaginatedEndorsementDto })
+  @Get('/endorsementLists')
+  @Audit<PaginatedEndorsementDto>({
+    resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
+    meta: ({ data: endorsement }) => ({ count: endorsement.length }),
+  })
+  async findEndorsementLists(
+    @CurrentUser() user: User,
+    @Query() query: PaginationDto,
+  ): Promise<PaginatedEndorsementDto> {
+    return await this.endorsementListService.findAllEndorsementListsByNationalId(
       user.nationalId,
       query,
     )

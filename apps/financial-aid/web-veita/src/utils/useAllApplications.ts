@@ -2,6 +2,7 @@ import { useMutation } from '@apollo/client'
 import {
   ApplicationState,
   ApplicationStateUrl,
+  eventTypeFromApplicationState,
   UpdateApplicationTableResponseType,
 } from '@island.is/financial-aid/shared/lib'
 import { useContext } from 'react'
@@ -35,6 +36,7 @@ export const useAllApplications = () => {
             state,
             staffId: admin?.staff?.id,
             stateUrl,
+            event: eventTypeFromApplicationState[state],
           },
         },
       })

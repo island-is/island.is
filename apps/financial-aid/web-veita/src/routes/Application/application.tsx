@@ -233,6 +233,8 @@ const ApplicationProfile = () => {
                 (isStateModalVisible) => !isStateModalVisible,
               )
             }}
+            setApplication={setApplication}
+            setIsLoading={setIsLoading}
           />
 
           <Profile
@@ -271,7 +273,8 @@ const ApplicationProfile = () => {
               setStateModalVisible(isVisibleBoolean)
             }}
             setApplication={setApplication}
-            application={application}
+            applicationId={application.id}
+            currentState={application.state}
             setIsLoading={setIsLoading}
           />
         )}
