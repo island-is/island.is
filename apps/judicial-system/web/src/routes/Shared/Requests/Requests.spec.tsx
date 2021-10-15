@@ -155,7 +155,9 @@ describe('Requests', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <Requests />
+            <LocaleProvider locale="is" messages={{}}>
+              <Requests />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -174,7 +176,9 @@ describe('Requests', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <Requests />
+            <LocaleProvider locale="is" messages={{}}>
+              <Requests />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -193,7 +197,9 @@ describe('Requests', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <Requests />
+            <LocaleProvider locale="is" messages={{}}>
+              <Requests />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -210,7 +216,9 @@ describe('Requests', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <Requests />
+            <LocaleProvider locale="is" messages={{}}>
+              <Requests />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -229,7 +237,9 @@ describe('Requests', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <Requests />
+            <LocaleProvider locale="is" messages={{}}>
+              <Requests />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -248,7 +258,9 @@ describe('Requests', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <Requests />
+            <LocaleProvider locale="is" messages={{}}>
+              <Requests />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -265,7 +277,9 @@ describe('Requests', () => {
           addTypename={false}
         >
           <UserProvider>
-            <Requests />
+            <LocaleProvider locale="is" messages={{}}>
+              <Requests />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -284,7 +298,9 @@ describe('Requests', () => {
           addTypename={false}
         >
           <UserProvider>
-            <Requests />
+            <LocaleProvider locale="is" messages={{}}>
+              <Requests />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -345,7 +361,9 @@ describe('Requests', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <Requests />
+            <LocaleProvider locale="is" messages={{}}>
+              <Requests />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -370,7 +388,9 @@ describe('Requests', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <Requests />
+            <LocaleProvider locale="is" messages={{}}>
+              <Requests />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -395,7 +415,9 @@ describe('Requests', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <Requests />
+            <LocaleProvider locale="is" messages={{}}>
+              <Requests />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -420,7 +442,9 @@ describe('Requests', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <Requests />
+            <LocaleProvider locale="is" messages={{}}>
+              <Requests />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -455,7 +479,9 @@ describe('Requests', () => {
           addTypename={false}
         >
           <UserProvider>
-            <Requests />
+            <LocaleProvider locale="is" messages={{}}>
+              <Requests />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
