@@ -1,4 +1,9 @@
-import { CurrentAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
+import {
+  BypassAuth,
+  CurrentAuth,
+  CurrentUser,
+  Scopes,
+} from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
@@ -75,6 +80,31 @@ export class EndorsementController {
     @Query() query: PaginationDto,
   ): Promise<PaginatedEndorsementDto> {
     return await this.endorsementService.findEndorsements(
+      {
+        listId: endorsementList.id,
+      },
+      query,
+    )
+  }
+
+  @ApiOperation({
+    summary: 'Finds all endorsements in a given general petition list',
+  })
+  @ApiParam({ name: 'listId', type: String })
+  @Get('/general-petition')
+  @ApiOkResponse({ type: PaginatedEndorsementDto })
+  @ApiResponse({ status: 200 })
+  @BypassAuth()
+  async find(
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+    )
+    endorsementList: EndorsementList,
+    @Query() query: PaginationDto,
+  ): Promise<PaginatedEndorsementDto> {
+    return await this.endorsementService.findEndorsementsGeneralPetition(
       {
         listId: endorsementList.id,
       },
