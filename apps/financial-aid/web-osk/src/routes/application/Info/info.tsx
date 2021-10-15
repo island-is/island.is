@@ -56,13 +56,13 @@ const ApplicationInfo = () => {
   ) as NavigationProps
 
   const errorCheck = async () => {
-    if (!accept) {
+    if (!accept || !user) {
       setHasError(true)
       return
     }
 
     const data = await nationalRegistryQuery({
-      input: { ssn: '0901951589' },
+      input: { ssn: user?.nationalId },
     })
 
     console.log('user data', data)
