@@ -38,26 +38,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
-      // Endorsements
-      {
-        name: m.endorsements,
-        path: ServicePortalPath.Petitions,
-        icon: {
-          type: 'outline',
-          icon: 'document',
-        },
-      },
-
-      // Endorsements - admin
-      {
-        name: m.endorsementsAdmin,
-        path: ServicePortalPath.PetitionsAdminView,
-        icon: {
-          type: 'outline',
-          icon: 'document',
-        },
-      },
-
       // Min Gogn
       {
         heading: m.myInfo,
@@ -77,6 +57,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.family,
             navHide: true,
             path: ServicePortalPath.FamilyRoot,
+          },
+          {
+            // Petitions
+            name: m.endorsements,
+            path: ServicePortalPath.Petitions,
+          },
+          {
+            // Petitions Admin
+            name: m.endorsementsAdmin,
+            path: ServicePortalPath.PetitionsAdminView,
           },
         ],
       },

@@ -331,7 +331,7 @@ export const m = defineMessages({
   },
   endorsementsAdmin: {
     id: 'service.portal:endorsements-admin',
-    defaultMessage: 'Meðmæli Admin',
+    defaultMessage: 'Meðmæli - Admin',
   },
   educationLicense: {
     id: 'service.portal:educationLicense',

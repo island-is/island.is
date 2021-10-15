@@ -12,6 +12,18 @@ export const endorsementsModule: ServicePortalModule = {
     {
       name: m.endorsements,
       path: ServicePortalPath.Petitions,
+      render: () => lazy(() => import('./screens/Endorsements')),
+    },
+  ],
+}
+
+export const petitionsModule: ServicePortalModule = {
+  name: 'Almennir undirskriftalistar',
+  widgets: () => [],
+  routes: () => [
+    {
+      name: m.endorsements,
+      path: ServicePortalPath.Petitions,
       render: () => lazy(() => import('./screens/Petitions')),
     },
     {

@@ -90,8 +90,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   const bgr =
     backgroundColor === 'white'
       ? 'white'
-      : backgroundColor === 'blue'
-      ? 'blue100'
       : backgroundColor === 'red'
       ? 'red100'
       : 'blue100'
