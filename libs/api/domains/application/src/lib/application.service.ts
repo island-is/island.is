@@ -20,20 +20,6 @@ import { ApplicationApplicationsInput } from './dto/applicationApplications.inpu
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import { ApplicationPayment } from './application.model'
 
-const handleError = async (error: any) => {
-  logger.error(JSON.stringify(error))
-
-  if (error.json) {
-    const json = await error.json()
-
-    logger.error(json)
-
-    throw new ApolloError(JSON.stringify(json), error.status)
-  }
-
-  throw new ApolloError('Failed to resolve request', error.status)
-}
-
 @Injectable()
 export class ApplicationService {
   constructor(
@@ -50,12 +36,12 @@ export class ApplicationService {
   }
 
   async findOne(id: string, auth: Auth, locale: Locale) {
-    return await this.applicationApiWithAuth(auth)
-      .applicationControllerFindOne({
+    return await this.applicationApiWithAuth(auth).applicationControllerFindOne(
+      {
         id,
         locale,
-      })
-      .catch(handleError)
+      },
+    )
   }
 
   async getPaymentStatus(
@@ -63,12 +49,12 @@ export class ApplicationService {
     auth: Auth,
     locale: Locale,
   ): Promise<ApplicationPayment> {
-    return await this.paymentApiWithAuth(auth)
-      .paymentControllerGetPaymentStatus({
-        applicationId,
-        locale,
-      })
-      .catch(handleError)
+    return await this.paymentApiWithAuth(
+      auth,
+    ).paymentControllerGetPaymentStatus({
+      applicationId,
+      locale,
+    })
   }
 
   async createCharge(
@@ -76,13 +62,11 @@ export class ApplicationService {
     auth: Auth,
     chargeItemCode: string,
   ) {
-    return this.paymentApiWithAuth(auth)
-      .paymentControllerCreateCharge({
-        applicationId: applicationId,
-        body: { chargeItemCode: chargeItemCode },
-        authorization: auth.authorization,
-      })
-      .catch(handleError)
+    return this.paymentApiWithAuth(auth).paymentControllerCreateCharge({
+      applicationId: applicationId,
+      body: { chargeItemCode: chargeItemCode },
+      authorization: auth.authorization,
+    })
   }
 
   async findAll(
@@ -90,56 +74,52 @@ export class ApplicationService {
     locale: Locale,
     input?: ApplicationApplicationsInput,
   ) {
-    return await this.applicationApiWithAuth(user)
-      .applicationControllerFindAll({
+    return await this.applicationApiWithAuth(user).applicationControllerFindAll(
+      {
         nationalId: user.nationalId,
         locale,
         typeId: input?.typeId?.join(','),
         status: input?.status?.join(','),
-      })
-      .catch(handleError)
+      },
+    )
   }
 
   async create(input: CreateApplicationInput, auth: Auth) {
-    return this.applicationApiWithAuth(auth)
-      .applicationControllerCreate({
-        createApplicationDto: input,
-      })
-      .catch(handleError)
+    return this.applicationApiWithAuth(auth).applicationControllerCreate({
+      createApplicationDto: input,
+    })
   }
 
   async update(input: UpdateApplicationInput, auth: Auth, locale: Locale) {
     const { id, ...updateApplicationDto } = input
 
-    return await this.applicationApiWithAuth(auth)
-      .applicationControllerUpdate({
-        id,
-        updateApplicationDto,
-        locale,
-      })
-      .catch(handleError)
+    return await this.applicationApiWithAuth(auth).applicationControllerUpdate({
+      id,
+      updateApplicationDto,
+      locale,
+    })
   }
 
   async addAttachment(input: AddAttachmentInput, auth: Auth) {
     const { id, ...addAttachmentDto } = input
 
-    return await this.applicationApiWithAuth(auth)
-      .applicationControllerAddAttachment({
-        id,
-        addAttachmentDto,
-      })
-      .catch(handleError)
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerAddAttachment({
+      id,
+      addAttachmentDto,
+    })
   }
 
   async deleteAttachment(input: DeleteAttachmentInput, auth: Auth) {
     const { id, ...deleteAttachmentDto } = input
 
-    return await this.applicationApiWithAuth(auth)
-      .applicationControllerDeleteAttachment({
-        id,
-        deleteAttachmentDto,
-      })
-      .catch(handleError)
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerDeleteAttachment({
+      id,
+      deleteAttachmentDto,
+    })
   }
 
   async updateExternalData(
@@ -149,71 +129,71 @@ export class ApplicationService {
   ) {
     const { id, ...populateExternalDataDto } = input
 
-    return this.applicationApiWithAuth(auth)
-      .applicationControllerUpdateExternalData({
-        id,
-        populateExternalDataDto,
-        locale,
-      })
-      .catch(handleError)
+    return this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerUpdateExternalData({
+      id,
+      populateExternalDataDto,
+      locale,
+    })
   }
 
   async submitApplication(input: SubmitApplicationInput, auth: Auth) {
     const { id, ...updateApplicationStateDto } = input
-    return this.applicationApiWithAuth(auth)
-      .applicationControllerSubmitApplication({
-        id,
-        updateApplicationStateDto,
-      })
-      .catch(handleError)
+    return this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerSubmitApplication({
+      id,
+      updateApplicationStateDto,
+    })
   }
 
   async assignApplication(input: AssignApplicationInput, auth: Auth) {
-    return this.applicationApiWithAuth(auth)
-      .applicationControllerAssignApplication({
-        assignApplicationDto: input,
-      })
-      .catch(handleError)
+    return this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerAssignApplication({
+      assignApplicationDto: input,
+    })
   }
 
   async generatePdfPresignedUrl(input: GeneratePdfInput, auth: Auth) {
     const { id, ...generatePdfDto } = input
-    return await this.applicationApiWithAuth(auth)
-      .applicationControllerGeneratePdf({
-        id,
-        generatePdfDto,
-      })
-      .catch(handleError)
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerGeneratePdf({
+      id,
+      generatePdfDto,
+    })
   }
 
   async requestFileSignature(input: RequestFileSignatureInput, auth: Auth) {
     const { id, ...requestFileSignatureDto } = input
-    return await this.applicationApiWithAuth(auth)
-      .applicationControllerRequestFileSignature({
-        id,
-        requestFileSignatureDto,
-      })
-      .catch(handleError)
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerRequestFileSignature({
+      id,
+      requestFileSignatureDto,
+    })
   }
 
   async uploadSignedFile(input: UploadSignedFileInput, auth: Auth) {
     const { id, ...uploadSignedFileDto } = input
-    return await this.applicationApiWithAuth(auth)
-      .applicationControllerUploadSignedFile({
-        id,
-        uploadSignedFileDto,
-      })
-      .catch(handleError)
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerUploadSignedFile({
+      id,
+      uploadSignedFileDto,
+    })
   }
 
   async presignedUrl(input: GetPresignedUrlInput, auth: Auth) {
     const { id, type } = input
 
-    return await this.applicationApiWithAuth(auth)
-      .applicationControllerGetPresignedUrl({
-        id,
-        pdfType: type,
-      })
-      .catch(handleError)
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerGetPresignedUrl({
+      id,
+      pdfType: type,
+    })
   }
 }

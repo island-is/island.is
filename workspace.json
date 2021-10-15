@@ -5965,6 +5965,27 @@
         }
       }
     },
+    "nest-problem": {
+      "root": "libs/nest/problem",
+      "sourceRoot": "libs/nest/problem/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/problem/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/problem"],
+          "options": {
+            "jestConfig": "libs/nest/problem/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-validators": {
       "root": "libs/nest/validators",
       "sourceRoot": "libs/nest/validators/src",
@@ -8262,6 +8283,27 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/shared/mocking"]
+        }
+      }
+    },
+    "shared-problem": {
+      "root": "libs/shared/problem",
+      "sourceRoot": "libs/shared/problem/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/problem/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/problem"],
+          "options": {
+            "jestConfig": "libs/shared/problem/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },
