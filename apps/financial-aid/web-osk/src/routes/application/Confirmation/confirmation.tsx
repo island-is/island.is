@@ -14,10 +14,10 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 import { NavigationProps, Routes } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 
 const Confirmation = () => {
   const router = useRouter()
@@ -30,7 +30,7 @@ const Confirmation = () => {
   const logOut = useLogOut()
 
   const nextSteps = [
-    'Vinnsluaðili sveitarfélagsins vinnur úr umsókninni. Afgreiðsla umsóknarinnar tekur 1–3 virka daga.',
+    'Vinnsluaðili sveitarfélagsins vinnur úr umsókninni. Umsóknin verður afgreidd eins fljótt og auðið er.',
     'Staðfesting verður send á þig í tölvupósti',
     'Ef þörf er á frekari upplýsingum eða gögnum mun vinnsluaðili sveitarfélagsins hafa samband.',
   ]

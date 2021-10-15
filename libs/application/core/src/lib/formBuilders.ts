@@ -1,85 +1,39 @@
 import { MessageDescriptor } from 'react-intl'
-import type { BoxProps } from '@island.is/island-ui/core/types'
 
-import { Field } from '../types/Fields'
-import { Condition } from '../types/Condition'
 import {
   Form,
-  FormChildren,
   FormItemTypes,
-  FormLeaf,
   MultiField,
   ExternalDataProvider,
   Repeater,
   Section,
-  SectionChildren,
   SubSection,
   DataProviderItem,
-  FormModes,
-  FormText,
 } from '../types/Form'
 
-export function buildForm(data: {
-  id: string
-  title: MessageDescriptor | string
-  logo?: React.FC
-  mode?: FormModes
-  children: FormChildren[]
-  renderLastScreenButton?: boolean
-  renderLastScreenBackButton?: boolean
-  icon?: string
-}): Form {
+export function buildForm(data: Omit<Form, 'type'>): Form {
   return { ...data, type: FormItemTypes.FORM }
 }
 
-export function buildMultiField(data: {
-  id?: string
-  condition?: Condition
-  title: FormText
-  description?: FormText
-  space?: BoxProps['paddingTop']
-  children: Field[]
-}): MultiField {
+export function buildMultiField(data: Omit<MultiField, 'type'>): MultiField {
   return { ...data, type: FormItemTypes.MULTI_FIELD }
 }
 
-export function buildRepeater(data: {
-  id: string
-  condition?: Condition
-  component: string
-  title: MessageDescriptor | string
-  children: FormLeaf[]
-}): Repeater {
+export function buildRepeater(data: Omit<Repeater, 'type'>): Repeater {
   return { ...data, type: FormItemTypes.REPEATER }
 }
 
-export function buildSection(data: {
-  id?: string
-  condition?: Condition
-  title: FormText
-  children: SectionChildren[]
-}): Section {
+export function buildSection(data: Omit<Section, 'type'>): Section {
   return { ...data, type: FormItemTypes.SECTION }
 }
 
-export function buildSubSection(data: {
-  id?: string
-  condition?: Condition
-  title: MessageDescriptor | string
-  children: FormLeaf[]
-}): SubSection {
+export function buildSubSection(data: Omit<SubSection, 'type'>): SubSection {
   return { ...data, type: FormItemTypes.SUB_SECTION }
 }
 
-export function buildExternalDataProvider(data: {
-  title: MessageDescriptor | string
-  subTitle?: MessageDescriptor | string
-  description?: MessageDescriptor | string
-  checkboxLabel?: MessageDescriptor | string
-  id: string
-  condition?: Condition
-  dataProviders: DataProviderItem[]
-}): ExternalDataProvider {
+export function buildExternalDataProvider(
+  data: Omit<ExternalDataProvider, 'type' | 'isPartOfRepeater' | 'children'>,
+): ExternalDataProvider {
   return {
     ...data,
     isPartOfRepeater: false,
@@ -88,13 +42,11 @@ export function buildExternalDataProvider(data: {
   }
 }
 
-export function buildDataProviderItem(data: {
-  id: string
-  type: string | undefined
-  title: MessageDescriptor | string
-  subTitle?: MessageDescriptor | string
-  source?: string
-  parameters?: any
-}): DataProviderItem {
+export function buildDataProviderItem(
+  data: DataProviderItem & {
+    title: MessageDescriptor | string
+    subTitle?: MessageDescriptor | string
+  },
+): DataProviderItem {
   return data
 }

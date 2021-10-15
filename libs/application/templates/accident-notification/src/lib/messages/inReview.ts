@@ -5,7 +5,7 @@ export const inReview = {
     formTitle: {
       id: 'an.application:inReview.general.formTitle',
       defaultMessage: 'Tilkynning um slys',
-      description: 'Parental Leave',
+      description: 'In review form title',
     },
     title: {
       id: 'an.application:inReview.general.titleInReview',
@@ -150,4 +150,21 @@ export const inReview = {
       },
     }),
   },
+  buttons: defineMessages({
+    backButton: {
+      id: 'an.application:overview.buttons.backButton',
+      defaultMessage: 'Til baka',
+      description: 'Review back button',
+    },
+    forwardButton: {
+      id: 'an.application:overview.buttons.forwardButton',
+      defaultMessage: 'Halda áfram',
+      description: 'Review forward button',
+    },
+    updateButton: {
+      id: 'an.application:overview.buttons.updateButton',
+      defaultMessage: 'Uppfæra tilkynningu',
+      description: 'Review update button',
+    },
+  }),
 }

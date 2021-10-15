@@ -1,4 +1,4 @@
-import { ValidationPipe, INestApplication } from '@nestjs/common'
+import { ValidationPipe, INestApplication, Type } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
@@ -17,13 +17,13 @@ export type TestServerOptions<AppModule> = {
   }[]
 }
 
-export const testServer = async <AppModule>({
+export const testServer = async <AppModule extends Type<any>>({
   appModule,
   hooks = [],
   override,
 }: TestServerOptions<AppModule>): Promise<TestApp> => {
   let builder = Test.createTestingModule({
-    imports: [InfraModule.forRoot(appModule as any)],
+    imports: [InfraModule.forRoot({ appModule })],
   })
 
   if (override) {
