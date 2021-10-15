@@ -1,6 +1,11 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
+export const activeState = style({
+  color: theme.color.blue400,
+  cursor: 'initial',
+})
+
 export const statusOptions = style({
   display: 'block',
   width: '100%',
@@ -12,13 +17,9 @@ export const statusOptions = style({
   fontWeight: 'lighter',
   transition: 'background-color ease 250ms, font-weight ease 50ms',
   selectors: {
-    '&:hover': {
+    [`&:not(${activeState}):hover`]: {
       backgroundColor: theme.color.blue100,
       fontWeight: 'bold',
     },
   },
-})
-
-export const activeState = style({
-  color: theme.color.blue400,
 })

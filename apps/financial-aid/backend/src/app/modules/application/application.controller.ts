@@ -46,6 +46,7 @@ import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { RolesGuard } from '../../guards'
 import { CurrentUser, RolesRules } from '../../decorators'
 import { ApplicationGuard } from '../../guards/application.guard'
+import { StaffService } from '../staff'
 
 @UseGuards(IdsUserGuard)
 @Controller(apiBasePath)
@@ -56,6 +57,7 @@ export class ApplicationController {
     private readonly applicationEventService: ApplicationEventService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly staffService: StaffService,
   ) {}
 
   @UseGuards(RolesGuard)
@@ -101,9 +103,9 @@ export class ApplicationController {
     type: ApplicationModel,
     description: 'Get application',
   })
-  async getById(@Param('id') id: string) {
+  async getById(@Param('id') id: string, @CurrentUser() user: User) {
     this.logger.debug(`Application controller: Getting application by id ${id}`)
-    const application = await this.applicationService.findById(id)
+    const application = await this.applicationService.findById(id, user.service)
 
     if (!application) {
       throw new NotFoundException(`application ${id} not found`)
@@ -183,6 +185,9 @@ export class ApplicationController {
       throw new NotFoundException(`Application ${id} does not exist`)
     }
 
+    const staff = await this.staffService.findById(updatedApplication.staffId)
+    updatedApplication?.setDataValue('staff', staff)
+
     return {
       application: updatedApplication,
       filters: await this.applicationService.getAllFilters(),
@@ -209,11 +214,13 @@ export class ApplicationController {
   })
   async createEvent(
     @Body() applicationEvent: CreateApplicationEventDto,
+    @CurrentUser() user: User,
   ): Promise<ApplicationModel> {
     await this.applicationEventService.create(applicationEvent)
 
     const application = await this.applicationService.findById(
       applicationEvent.applicationId,
+      user.service,
     )
 
     if (!application) {

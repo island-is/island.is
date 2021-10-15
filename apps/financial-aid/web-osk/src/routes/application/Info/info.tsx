@@ -9,7 +9,7 @@ import {
 import * as styles from './info.treat'
 import { useRouter } from 'next/router'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import {
   getNextPeriod,
@@ -17,13 +17,13 @@ import {
   useLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
 
-import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 import { NationalRegistryUserQuery } from '@island.is/financial-aid-web/osk/graphql'
-import { UserContext } from '../../../components/UserProvider/UserProvider'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const ApplicationInfo = () => {
   const router = useRouter()
-  const { user } = useContext(UserContext)
+  const { user } = useContext(AppContext)
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
