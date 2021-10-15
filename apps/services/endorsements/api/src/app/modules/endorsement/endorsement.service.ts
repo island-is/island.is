@@ -20,6 +20,7 @@ import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 
 import { paginate } from '@island.is/nest/pagination'
+import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
 interface FindEndorsementInput {
   listId: string
@@ -193,6 +194,23 @@ export class EndorsementService {
       orderOption: [['counter', 'DESC']],
       where: { endorsementListId: listId },
     })
+  }
+
+  async findEndorsementsGeneralPetition(
+    { listId }: FindEndorsementsInput,
+    query: any,
+  ) {
+    // check if list exists and belongs to general petitions
+    const result = await this.endorsementListModel.findOne({
+      where: {
+        id: listId,
+        tags: { [Op.eq]: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS },
+      },
+    })
+    if (!result) {
+      throw new NotFoundException(['Not found - not a General Petition List'])
+    }
+    return this.findEndorsements({ listId }, query)
   }
 
   async findSingleUserEndorsement({

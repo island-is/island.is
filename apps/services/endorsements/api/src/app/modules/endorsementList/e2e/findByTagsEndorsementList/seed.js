@@ -12,5 +12,25 @@ module.exports = {
       ...getGenericEndorsementList(),
       tags: ['generalPetition'],
     },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
+    },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
+    },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
+    },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
+    },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
+    },
   ],
 }

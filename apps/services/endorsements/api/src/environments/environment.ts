@@ -56,3 +56,6 @@ const prodConfig = {
 }
 
 export default isProductionEnvironment ? prodConfig : devConfig
+
+// global settings for endorsementsystem
+export const ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS = ['generalPetition']
