@@ -9,9 +9,12 @@ import { useRouter } from 'next/router'
 const SCROLL_OFFSET = 150
 const scrollToElm = (id?: string): boolean => {
   const elm = id && document.getElementById(id)
-  if (!elm) {
+  if (!elm || !id) {
     return false
   }
+  const beforePos = window.pageYOffset
+  document.location.hash = id
+  window.scrollTo({ top: beforePos, behavior: 'auto' })
   const y = elm.getBoundingClientRect().top + window.pageYOffset - SCROLL_OFFSET
   window.scrollTo({ top: y, behavior: 'smooth' })
   return true
