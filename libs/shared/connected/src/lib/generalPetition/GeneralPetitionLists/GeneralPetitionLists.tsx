@@ -10,10 +10,10 @@ export const GeneralPetitionLists = () => {
   return (
     <>
       <Box marginBottom={3}>
-        <Text variant="h4">{'Undirskriftalistar'}</Text>
+        <Text variant="h4">{'Meðmælendalistar'}</Text>
       </Box>
       <Stack space={4}>
-        {petitionLists.map((petition: any) => {
+        {petitionLists?.data?.map((petition: any) => {
           return (
             <ActionCard
               key={petition.title}

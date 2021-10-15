@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import {
   EndorsementList,
   Endorsement,
-  TemporaryVoterRegistry
+  TemporaryVoterRegistry,
 } from '../types/schema'
 
 import { useQuery } from '@apollo/client'
@@ -59,7 +59,6 @@ const GET_USER_ENDORSEMENTS = gql`
           title
           description
           tags
-          meta
           closedDate
         }
         meta {

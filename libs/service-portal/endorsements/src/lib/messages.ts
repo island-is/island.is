@@ -70,12 +70,12 @@ export const m: MessageDir = {
     },
     petitionListsSignedByMe: {
       id: 'sp.petitions:petition-lists-signed-by-me',
-      defaultMessage: 'Virkir listar ég hef mælt með',
+      defaultMessage: 'Virkir listar sem ég hef mælt með',
       description: 'Section title for petitions you signed',
     },
     closedListsSignedByMe: {
       id: 'sp.petitions:closed-lists-signed-by-me',
-      defaultMessage: 'Lokaðir listar ég hef mælt með',
+      defaultMessage: 'Lokaðir listar sem ég hef mælt með',
       description: 'Section title for petitions you signed that are now closed',
     },
     listPeriod: {

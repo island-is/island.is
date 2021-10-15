@@ -68,7 +68,6 @@ const Petitions = () => {
         {!!userLists.data && (
           <Stack space={4}>
             {userLists.data.map((list: any) => {
-              console.log(list)
               return (
                 <Link
                   style={{ textDecoration: 'none' }}
@@ -90,46 +89,6 @@ const Petitions = () => {
                     text={formatMessage(m.petition.listPeriod)}
                     cta={{
                       label: formatMessage(m.petition.viewList),
-                      variant: 'text',
-                      icon: 'arrowForward',
-                    }}
-                  />
-                </Link>
-              )
-            })}
-          </Stack>
-        )}
-      </Box>
-
-      <Box marginTop={4}>
-        <Text as="p" variant="h3" marginBottom={2}>
-          {formatMessage(m.petition.closedListsSignedByMe)}
-        </Text>
-
-        {!!userLists.length && (
-          <Stack space={4}>
-            {userLists.map((list: any) => {
-              return (
-                <Link
-                  style={{ textDecoration: 'none' }}
-                  key={list.id}
-                  to={{
-                    pathname: ServicePortalPath.PetitionList.replace(
-                      ':listId',
-                      list.id,
-                    ),
-                    state: {
-                      type: 'unendorse',
-                      listId: list.endorsementList?.id,
-                    },
-                  }}
-                >
-                  <ActionCard
-                    backgroundColor="red"
-                    heading={list.endorsementList?.title}
-                    text={'Tímabil lista: '}
-                    cta={{
-                      label: 'Skoða nánar',
                       variant: 'text',
                       icon: 'arrowForward',
                     }}
