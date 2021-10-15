@@ -146,7 +146,6 @@ export class ApplicationController {
       throw new NotFoundException(`Application ${id} does not exist`)
     }
 
-    // Applicant should not see staff info
     if (user.service === RolesRule.VEITA) {
       const staff = await this.staffService.findById(updatedApplication.staffId)
       updatedApplication?.setDataValue('staff', staff)

@@ -11,7 +11,7 @@ import { AdminContext } from '../components/AdminProvider/AdminProvider'
 import {
   UpdateApplicationMutation,
   ApplicationFiltersMutation,
-} from '../../graphql/sharedGql'
+} from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 export const useApplicationState = () => {
   const [updateApplicationMutation, { loading: saveLoading }] = useMutation<{
