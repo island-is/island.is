@@ -6,6 +6,15 @@ export const modalBase = style({
   display: 'block',
 })
 
+export const closeModalBackground = style({
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  display: 'block',
+  left: 0,
+  right: 0,
+})
+
 export const modalContainer = style({
   height: '100%',
   display: 'flex',

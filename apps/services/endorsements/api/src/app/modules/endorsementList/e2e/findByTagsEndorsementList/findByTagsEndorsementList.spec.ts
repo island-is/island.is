@@ -1,5 +1,7 @@
 import { INestApplication } from '@nestjs/common'
+import { Console } from 'console'
 import request from 'supertest'
+import { ConsoleTransportOptions } from 'winston/lib/winston/transports'
 import { setup } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { EndorsementTag } from '../../constants'
@@ -43,5 +45,16 @@ describe('findByTagsEndorsementList', () => {
     expect(Array.isArray(response.body.data)).toBeTruthy()
     expect(response.body.data).toHaveLength(2)
     expect(response.body.totalCount).toEqual(2)
+  })
+
+  // general petition tests
+  it(`GET /endorsement-list/general-petition-lists should return 200 and 2 lists`, async () => {
+    const response = await request(app.getHttpServer())
+      .get(`/endorsement-list/general-petition-lists?limit=5`)
+      .send()
+      .expect(200)
+    expect(response.body.data).toHaveLength(5)
+    expect(response.body.pageInfo.hasNextPage).toBeTruthy()
+    expect(response.body.pageInfo.hasPreviousPage).toBeFalsy()
   })
 })

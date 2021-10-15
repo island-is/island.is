@@ -185,7 +185,7 @@ export class ApplicationService {
 
     await this.applicationEventService.create({
       applicationId: id,
-      eventType: ApplicationEventType[update.state.toUpperCase()],
+      eventType: update.event,
       comment:
         update?.rejection ||
         update?.amount?.toLocaleString('de-DE') ||
