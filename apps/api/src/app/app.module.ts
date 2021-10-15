@@ -85,17 +85,12 @@ const autoSchemaFile = environment.production
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
-      v1: {
+      clientConfig: {
         xroadBaseUrl: environment.xroad.baseUrl,
         xroadClientId: environment.xroad.clientId,
         secret: environment.drivingLicense.secret,
-        xroadPath: environment.drivingLicense.v1.xroadPath,
-      },
-      v2: {
-        xroadBaseUrl: environment.xroad.baseUrl,
-        xroadClientId: environment.xroad.clientId,
-        secret: environment.drivingLicense.secret,
-        xroadPath: environment.drivingLicense.v2.xroadPath,
+        xroadPathV1: environment.drivingLicense.v1.xroadPath,
+        xroadPathV2: environment.drivingLicense.v2.xroadPath,
       },
     }),
     EducationModule.register({

@@ -42,19 +42,14 @@ const devConfig = {
       password: process.env.NOVA_PASSWORD,
     },
     drivingLicense: {
-      v1: {
+      clientConfig: {
         secret: process.env.DRIVING_LICENSE_SECRET,
         xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
-        xroadPath:
+        xroadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
+        xroadPathV1:
           'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
-        xroadBaseUrl: 'http://localhost:8081',
-      },
-      v2: {
-        secret: process.env.DRIVING_LICENSE_SECRET,
-        xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
-        xroadPath:
+        xroadPathV2:
           'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
-        xroadBaseUrl: 'http://localhost:8081',
       },
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
@@ -166,18 +161,12 @@ const prodConfig = {
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     drivingLicense: {
-      v1: {
+      clientConfig: {
         secret: process.env.DRIVING_LICENSE_SECRET,
         xroadClientId: process.env.XROAD_CLIENT_ID,
         xroadBaseUrl: process.env.XROAD_BASE_PATH,
-        xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH_V1,
-      },
-
-      v2: {
-        secret: process.env.DRIVING_LICENSE_SECRET,
-        xroadClientId: process.env.XROAD_CLIENT_ID,
-        xroadBaseUrl: process.env.XROAD_BASE_PATH,
-        xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH_V2,
+        xroadPathV1: process.env.DRIVING_LICENSE_XROAD_PATH_V1,
+        xroadPathV2: process.env.DRIVING_LICENSE_XROAD_PATH_V2,
       },
     },
     paymentOptions: {
