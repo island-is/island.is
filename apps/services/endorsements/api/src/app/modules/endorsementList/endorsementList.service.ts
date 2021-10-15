@@ -167,10 +167,12 @@ export class EndorsementListService {
 
   // generic get open lists
   async findOpenListsTaggedGeneralPetition(query: any) {
+    const date_ob = new Date()
     try {
       const where = {
         tags: { [Op.eq]: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS },
-        closedDate: null, // [Op.between]: ['openedDate', 'closedDate']
+        openedDate: { [Op.lt]: date_ob },
+        closedDate: { [Op.gt]: date_ob },
       }
       return await this.findListsGenericQuery(query, where)
     } catch (error) {
@@ -181,11 +183,13 @@ export class EndorsementListService {
   async findSingleOpenListTaggedGeneralPetition(
     listId: string,
   ): Promise<EndorsementList | null> {
+    const date_ob = new Date()
     const result = await this.endorsementListModel.findOne({
       where: {
         id: listId,
         tags: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
-        closedDate: null, // [Op.between]: ['openedDate', 'closedDate']
+        openedDate: { [Op.lt]: date_ob },
+        closedDate: { [Op.gt]: date_ob },
       },
     })
     if (!result) {
