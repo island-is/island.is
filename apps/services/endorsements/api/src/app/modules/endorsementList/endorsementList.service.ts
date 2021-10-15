@@ -107,4 +107,19 @@ export class EndorsementListService {
     this.logger.info(`Creating endorsement list: ${list.title}`)
     return this.endorsementListModel.create(list)
   }
+
+  // generic search open lists
+  async searchOpenListsTaggedGeneralPetition(query: any) {
+    const where = {
+      tags: { [Op.eq]: OPEN_ENDORSEMENT_LIST_TAGS }, // move to main query ?
+      closedDate: null, // [Op.between]: ['openedDate', 'closedDate']
+      title: {
+        [Op.iLike]: `%${query.search_query}%`// ilike ?
+      }
+    }
+    return await this.findListsGenericQuery(
+      query,
+      where
+    )
+  }
 }
