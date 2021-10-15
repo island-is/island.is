@@ -82,6 +82,11 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
     .readiness('/liveness')
     .postgres(postgresInfo)
     .resources({
-      requests: { cpu: '750m', memory: '750Mi' },
-      limits: { cpu: '1000m', memory: '1Gi' },
+      requests: { cpu: '100m', memory: '256Mi' },
+      limits: { cpu: '400m', memory: '512Mii' },
+    })
+    .replicaCount({
+      min: 4,
+      max: 10,
+      default: 4,
     })
