@@ -14,6 +14,7 @@ import { Endorsement } from '../endorsement/models/endorsement.model'
 import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
 
 import { paginate } from '@island.is/nest/pagination'
+import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -149,5 +150,47 @@ export class EndorsementListService {
     }
     this.logger.info(`Creating endorsement list: ${list.title}`)
     return this.endorsementListModel.create(list)
+  }
+
+  // generic reusable query with pagination defaults
+  async findListsGenericQuery(query: any, where: any = {}) {
+    return await paginate({
+      Model: this.endorsementListModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'DESC']],
+      where: where,
+    })
+  }
+
+  // generic get open lists
+  async findOpenListsTaggedGeneralPetition(query: any) {
+    try {
+      const where = {
+        tags: { [Op.eq]: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS },
+        closedDate: null, // [Op.between]: ['openedDate', 'closedDate']
+      }
+      return await this.findListsGenericQuery(query, where)
+    } catch (error) {
+      throw new NotFoundException()
+    }
+  }
+
+  async findSingleOpenListTaggedGeneralPetition(
+    listId: string,
+  ): Promise<EndorsementList | null> {
+    const result = await this.endorsementListModel.findOne({
+      where: {
+        id: listId,
+        tags: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
+        closedDate: null, // [Op.between]: ['openedDate', 'closedDate']
+      },
+    })
+    if (!result) {
+      throw new NotFoundException()
+    }
+    return result
   }
 }
