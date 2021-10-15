@@ -48,7 +48,7 @@ export const section = defineMessages({
   },
   agreement: {
     id: 'dpac.application:section.agreement',
-    defaultMessage: 'Samþykki',
+    defaultMessage: 'Upplýsingar um málsmeðferð',
     description: 'Agreement section title',
   },
   info: {
