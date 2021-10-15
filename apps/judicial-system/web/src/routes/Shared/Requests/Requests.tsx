@@ -165,6 +165,8 @@ export const Requests: React.FC = () => {
     }
   }
 
+  console.log(resCases)
+
   return (
     <div className={styles.requestsContainer}>
       {user && (

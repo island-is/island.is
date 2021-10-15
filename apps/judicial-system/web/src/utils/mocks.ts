@@ -25,6 +25,12 @@ export const mockCourt = {
   name: 'Héraðsdómur Reykjavíkur',
 }
 
+export const mockHighCourt = {
+  id: 'high_court_id',
+  type: InstitutionType.HIGH_COURT,
+  name: 'Landsréttur',
+}
+
 export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
   name: 'Batman Robinson',
@@ -51,6 +57,14 @@ export const mockJudge = {
   name: 'Wonder Woman',
   title: 'héraðsdómari',
   institution: mockCourt,
+} as User
+
+export const mockHighCourtUser = {
+  id: 'hc_1',
+  role: UserRole.JUDGE,
+  name: 'Lalli Landsréttardómari',
+  title: 'dómari',
+  institution: mockHighCourt,
 } as User
 
 export const mockJudgeBatman = {
@@ -791,6 +805,19 @@ export const mockJudgeQuery = [
   },
 ]
 
+export const mockHighCourtQuery = [
+  {
+    request: {
+      query: CurrentUserQuery,
+    },
+    result: {
+      data: {
+        currentUser: mockHighCourtUser,
+      },
+    },
+  },
+]
+
 export const mockProsecutorWonderWomanQuery = [
   {
     request: {
@@ -837,7 +864,7 @@ export const mockUsersQuery = [
     },
     result: {
       data: {
-        users: [mockProsecutor, mockJudge, mockRegistrar],
+        users: [mockProsecutor, mockJudge, mockRegistrar, mockHighCourtUser],
       },
     },
   },
