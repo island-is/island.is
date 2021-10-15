@@ -21,12 +21,19 @@ export type TestServerOptions = {
   override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
 }
 
-export const testServer = async (options: TestServerOptions) => {
+export const testServer = async ({
+  appModule,
+  override,
+}: TestServerOptions) => {
   let builder = Test.createTestingModule({
-    imports: [InfraModule.forRoot(options.appModule)],
+    imports: [
+      InfraModule.forRoot({
+        appModule,
+      }),
+    ],
   })
-  if (options.override) {
-    builder = options.override(builder)
+  if (override) {
+    builder = override(builder)
   }
 
   const moduleRef = await builder.compile()
@@ -39,11 +46,15 @@ export const testServer = async (options: TestServerOptions) => {
 }
 
 // Sets up a test environment that ignores various Guards on controllers
-export const testServerActivateAuthGuards = async (
-  options: TestServerOptions,
-) => {
+export const testServerActivateAuthGuards = async ({
+  appModule,
+}: TestServerOptions) => {
   const moduleFixture = await Test.createTestingModule({
-    imports: [InfraModule.forRoot(options.appModule)],
+    imports: [
+      InfraModule.forRoot({
+        appModule,
+      }),
+    ],
   })
     .overrideGuard(IdsAuthGuard)
     .useValue({ canActivate: () => true })
