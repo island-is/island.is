@@ -1,14 +1,17 @@
 const faker = require('faker')
+const today = new Date()
 
 module.exports = {
-  getGenericEndorsementList: () => ({
+  getGenericEndorsementList: (tags) => ({
     id: faker.random.uuid(),
     title: faker.lorem.words(2),
     description: faker.lorem.paragraph(1),
-    closed_date: null,
+    opened_date: today,
+    closed_date: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000),
+    admin_lock: false,
     endorsement_meta: '{}', // default empty array in postgres
     endorsement_metadata: '[]', // default empty array in postgres
-    tags: '{}', // default empty array in postgres
+    tags: tags ?? '{}', // default empty array in postgres
     validation_rules: '[]',
     meta: '{}',
     owner: faker.phone.phoneNumber('##########'),
