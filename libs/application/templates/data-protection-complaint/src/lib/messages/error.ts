@@ -82,7 +82,7 @@ export const errorCards = defineMessages({
   concernsMediaCoverageDescription: {
     id: 'dpac.application:error.concernsMediaCoverage.card.description',
     defaultMessage:
-      'Eftir atvikum er hægt að leita til Fjölmiðlanefndar eða siðanefndar Blaðamannafélags Íslands',
+      'Eftir atvikum er hægt að leita til Fjölmiðlanefndar eða siðanefndar Blaðamannafélags Íslands. Nánari skýringu má finna hér að neðan.',
     description:
       'Shown in a card when concernsMediaCoverage has been answered as yes',
   },

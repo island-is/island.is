@@ -49,7 +49,7 @@ const RulingAccordionItem: React.FC<Props> = ({
   return (
     <AccordionItem
       id="id_3"
-      label="Úrskurður Héraðsdóms Reykjavíkur"
+      label={formatMessage(m.heading)}
       labelVariant="h3"
       startExpanded={startExpanded}
     >

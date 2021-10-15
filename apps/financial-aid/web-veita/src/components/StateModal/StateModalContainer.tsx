@@ -25,7 +25,8 @@ const StateModalContainer = ({
       }}
       className={styles.modalBase}
     >
-      <Box onClick={closeModal} className={styles.modalContainer}>
+      <Box className={styles.closeModalBackground} onClick={closeModal}></Box>
+      <Box className={styles.modalContainer}>
         <Box
           position="relative"
           borderRadius="large"

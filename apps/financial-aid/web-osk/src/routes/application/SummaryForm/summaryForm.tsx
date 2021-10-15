@@ -158,7 +158,7 @@ const SummaryForm = () => {
           <Divider />
         </Box>
 
-        <UserInfo />
+        <UserInfo phoneNumber={form?.phoneNumber} />
 
         <FormInfo info={formInfoOverview} error={formError.status} />
 

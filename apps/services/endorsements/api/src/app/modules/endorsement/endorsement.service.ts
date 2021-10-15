@@ -20,6 +20,7 @@ import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 
 import { paginate } from '@island.is/nest/pagination'
+import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
 interface FindEndorsementInput {
   listId: string
@@ -27,6 +28,12 @@ interface FindEndorsementInput {
 }
 
 interface EndorsementInput {
+  endorsementList: EndorsementList
+  nationalId: string
+  showName: boolean
+}
+
+interface DeleteEndorsementInput {
   endorsementList: EndorsementList
   nationalId: string
 }
@@ -57,6 +64,7 @@ interface FindUserEndorsementsByTagsInput {
 interface ProcessEndorsementInput {
   nationalId: string
   endorsementList: EndorsementList
+  showName: boolean
 }
 
 export interface NationalIdError {
@@ -135,7 +143,7 @@ export class EndorsementService {
   }
 
   private processEndorsement = async (
-    { nationalId, endorsementList }: ProcessEndorsementInput,
+    { nationalId, endorsementList, showName }: ProcessEndorsementInput,
     auth: Auth,
   ) => {
     // get metadata for this national id
@@ -155,16 +163,21 @@ export class EndorsementService {
       nationalId,
     })
 
+    const meta = this.metadataService.pruneMetadataFields(
+      // apply metadata service pruning logic
+      metadata, // the metadata we have e.g. {fullName: 'Some name', lastName: 'SomeOtherName'}
+      endorsementList.endorsementMetadata.map(({ field }) => field), // the fields we want to keep e.g. ['fullName']
+    )
+
     return {
       endorser: nationalId,
       endorsementListId: endorsementList.id,
       // this removes validation fields fetched by meta service
       meta: {
-        ...this.metadataService.pruneMetadataFields(
-          metadata,
-          endorsementList.endorsementMetadata.map(({ field }) => field),
-        ),
+        ...meta, // add all allowed metadata fields
+        ...(showName ? {} : { fullName: '' }), // if showName is false overwrite full name field),
         bulkEndorsement: false, // defaults to false we overwrite this value in bulk import
+        showName: showName,
       },
     }
   }
@@ -181,6 +194,23 @@ export class EndorsementService {
       orderOption: [['counter', 'DESC']],
       where: { endorsementListId: listId },
     })
+  }
+
+  async findEndorsementsGeneralPetition(
+    { listId }: FindEndorsementsInput,
+    query: any,
+  ) {
+    // check if list exists and belongs to general petitions
+    const result = await this.endorsementListModel.findOne({
+      where: {
+        id: listId,
+        tags: { [Op.eq]: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS },
+      },
+    })
+    if (!result) {
+      throw new NotFoundException(['Not found - not a General Petition List'])
+    }
+    return this.findEndorsements({ listId }, query)
   }
 
   async findSingleUserEndorsement({
@@ -222,13 +252,13 @@ export class EndorsementService {
 
   // FIXME: Find a way to combine with create bulk endorsements
   async createEndorsementOnList(
-    { endorsementList, nationalId }: EndorsementInput,
+    { endorsementList, nationalId, showName }: EndorsementInput,
     auth: User,
   ) {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
     // we don't allow endorsements on closed lists
-    if (endorsementList.closedDate) {
+    if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
 
@@ -236,6 +266,7 @@ export class EndorsementService {
       {
         nationalId: auth.nationalId,
         endorsementList,
+        showName: showName,
       },
       auth,
     )
@@ -263,7 +294,7 @@ export class EndorsementService {
     this.logger.debug('Creating resource with nationalIds:', nationalIds)
 
     // we don't allow endorsements on closed lists
-    if (endorsementList.closedDate) {
+    if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
 
@@ -276,6 +307,7 @@ export class EndorsementService {
           {
             nationalId,
             endorsementList,
+            showName: true,
           },
           auth,
         ).catch((error: Error) => {
@@ -321,13 +353,13 @@ export class EndorsementService {
   async deleteFromListByNationalId({
     nationalId,
     endorsementList,
-  }: EndorsementInput) {
+  }: DeleteEndorsementInput) {
     this.logger.debug(
       `Removing endorsement from list "${endorsementList.id}" by nationalId "${nationalId}"`,
     )
 
     // we don't allow endorsements on closed lists
-    if (endorsementList.closedDate) {
+    if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException([
         'Unable to remove endorsement form closed list',
       ])
