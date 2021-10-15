@@ -1,12 +1,12 @@
 import { Case } from '../models'
 import { CaseController } from '../case.controller'
-import { createCaseController } from './createCaseController'
+import { createTestingCaseModule } from './createTestingCaseModule'
 
 describe('get by id', () => {
   let caseController: CaseController
 
   beforeEach(async () => {
-    caseController = await createCaseController(caseController)
+    ;({ caseController } = await createTestingCaseModule())
   })
 
   describe('case exists', () => {
@@ -18,7 +18,7 @@ describe('get by id', () => {
     })
 
     it('should return the case', () => {
-      expect(returnedCase).toBe(null)
+      expect(returnedCase).toBe(mockCase)
     })
   })
 })
