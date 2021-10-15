@@ -29,6 +29,7 @@ const OptionsModal = ({ activeState, onClick, isModalVisable }: Props) => {
             return (
               <button
                 key={'statusoptions-' + index}
+                disabled={item === activeState}
                 className={cn({
                   [`${styles.statusOptions}`]: true,
                   [`${styles.activeState}`]: item === activeState,

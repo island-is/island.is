@@ -1,9 +1,15 @@
 import { defineMessage, defineMessages } from 'react-intl'
 
 export const rulingAccordion = {
+  heading: defineMessage({
+    id: 'judicial.system.core:ruling_accordion.heading',
+    defaultMessage: 'Úrskurður héraðsdóms',
+    description:
+      'Notaður sem yfirfyrirsögn fyrir úrskurðar fellilista í öllum málategundum.',
+  }),
   title: defineMessage({
     id: 'judicial.system.core:ruling_accordion.title',
-    defaultMessage: 'Úrskurður Héraðsdóms',
+    defaultMessage: 'Úrskurður dómara',
     description:
       'Notaður sem titill fyrir úrskurðar fellilista í öllum málategundum.',
   }),

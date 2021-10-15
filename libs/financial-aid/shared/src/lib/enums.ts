@@ -37,6 +37,7 @@ export enum ApplicationEventType {
   STAFFCOMMENT = 'StaffComment',
   USERCOMMENT = 'UserComment',
   FILEUPLOAD = 'FileUpload',
+  ASSIGNCASE = 'AssignCase',
 }
 
 export enum RolesRule {
