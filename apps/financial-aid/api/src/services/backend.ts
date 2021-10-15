@@ -9,7 +9,6 @@ import {
   CreateApplication,
   GetSignedUrl,
   SignedUrl,
-  ApplicationEvent,
   CreateApplicationEvent,
   ApplicationFilters,
   CreateFilesResponse,
@@ -33,11 +32,11 @@ class BackendAPI extends RESTDataSource {
   }
 
   getApplications(stateUrl: ApplicationStateUrl): Promise<Application[]> {
-    return this.get(`applications/${stateUrl}`)
+    return this.get(`application/state/${stateUrl}`)
   }
 
   getApplication(id: string): Promise<Application> {
-    return this.get(`applications/${id}`)
+    return this.get(`application/id/${id}`)
   }
 
   getApplicationFilters(): Promise<ApplicationFilters> {
@@ -58,7 +57,7 @@ class BackendAPI extends RESTDataSource {
     id: string,
     updateApplication: UpdateApplication,
   ): Promise<Application> {
-    return this.put(`applications/${id}`, updateApplication)
+    return this.put(`application/id/${id}`, updateApplication)
   }
 
   updateApplicationTable(
@@ -66,7 +65,7 @@ class BackendAPI extends RESTDataSource {
     stateUrl: ApplicationStateUrl,
     updateApplication: UpdateApplication,
   ): Promise<UpdateApplicationTableResponseType> {
-    return this.put(`applications/${id}/${stateUrl}`, updateApplication)
+    return this.put(`application/${id}/${stateUrl}`, updateApplication)
   }
 
   getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
@@ -80,7 +79,7 @@ class BackendAPI extends RESTDataSource {
   createApplicationEvent(
     createApplicationEvent: CreateApplicationEvent,
   ): Promise<Application> {
-    return this.post('application-event', createApplicationEvent)
+    return this.post('application/event', createApplicationEvent)
   }
 
   createApplicationFiles(
@@ -90,7 +89,7 @@ class BackendAPI extends RESTDataSource {
   }
 
   getCurrentApplication(nationalId: string): Promise<CurrentApplicationModel> {
-    return this.get(`application/${nationalId}`)
+    return this.get(`application/nationalId/${nationalId}`)
   }
 
   getStaff(nationalId: string): Promise<StaffModel> {

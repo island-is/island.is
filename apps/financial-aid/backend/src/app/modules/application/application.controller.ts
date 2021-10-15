@@ -45,21 +45,23 @@ import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { RolesGuard } from '../../guards'
 import { CurrentUser, RolesRules } from '../../decorators'
 import { ApplicationGuard } from '../../guards/application.guard'
+import { StaffService } from '../staff'
 
 @UseGuards(IdsUserGuard)
-@Controller(apiBasePath)
-@ApiTags('applications')
+@Controller(`${apiBasePath}/application`)
+@ApiTags('application')
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationEventService: ApplicationEventService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly staffService: StaffService,
   ) {}
 
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.OSK)
-  @Get('application/:nationalId')
+  @Get('nationalId/:nationalId')
   @ApiOkResponse({
     type: CurrentApplicationModel,
     description: 'Checks if user has a current application for this period',
@@ -81,7 +83,7 @@ export class ApplicationController {
 
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.VEITA)
-  @Get('applications/:stateUrl')
+  @Get('state/:stateUrl')
   @ApiOkResponse({
     type: ApplicationModel,
     isArray: true,
@@ -95,7 +97,7 @@ export class ApplicationController {
   }
 
   @UseGuards(ApplicationGuard)
-  @Get('applications/:id')
+  @Get('id/:id')
   @ApiOkResponse({
     type: ApplicationModel,
     description: 'Get application',
@@ -113,7 +115,7 @@ export class ApplicationController {
 
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.VEITA)
-  @Get('application/filters')
+  @Get('filters')
   @ApiOkResponse({
     description: 'Gets all existing applications filters',
   })
@@ -122,7 +124,7 @@ export class ApplicationController {
     return this.applicationService.getAllFilters()
   }
 
-  @Put('applications/:id')
+  @Put('id/:id')
   @ApiOkResponse({
     type: ApplicationModel,
     description: 'Updates an existing application',
@@ -130,6 +132,7 @@ export class ApplicationController {
   async update(
     @Param('id') id: string,
     @Body() applicationToUpdate: UpdateApplicationDto,
+    @CurrentUser() user: User,
   ): Promise<ApplicationModel> {
     this.logger.debug(
       `Application controller: Updating application with id ${id}`,
@@ -143,10 +146,16 @@ export class ApplicationController {
       throw new NotFoundException(`Application ${id} does not exist`)
     }
 
+    // Applicant should not see staff info
+    if (user.service === RolesRule.VEITA) {
+      const staff = await this.staffService.findById(updatedApplication.staffId)
+      updatedApplication?.setDataValue('staff', staff)
+    }
+
     return updatedApplication
   }
 
-  @Put('applications/:id/:stateUrl')
+  @Put(':id/:stateUrl')
   @ApiOkResponse({
     type: UpdateApplicationTableResponse,
     description:
@@ -164,7 +173,7 @@ export class ApplicationController {
     }
   }
 
-  @Post('application')
+  @Post('')
   @ApiCreatedResponse({
     type: ApplicationModel,
     description: 'Creates a new application',
@@ -177,7 +186,7 @@ export class ApplicationController {
     return this.applicationService.create(application, user)
   }
 
-  @Post('application-event')
+  @Post('event')
   @ApiCreatedResponse({
     type: ApplicationEventModel,
     description: 'Creates a new application event',

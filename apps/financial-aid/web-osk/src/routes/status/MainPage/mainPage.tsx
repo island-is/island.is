@@ -26,7 +26,7 @@ import {
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
-import { GetApplicationQuery } from '@island.is/financial-aid-web/osk/graphql'
+import { ApplicationQuery } from '@island.is/financial-aid-web/osk/graphql'
 
 interface ApplicantData {
   application: Application
@@ -36,14 +36,11 @@ const MainPage = () => {
   const router = useRouter()
   const logOut = useLogOut()
 
-  const { data, error, loading } = useQuery<ApplicantData>(
-    GetApplicationQuery,
-    {
-      variables: { input: { id: router.query.id } },
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const { data, error, loading } = useQuery<ApplicantData>(ApplicationQuery, {
+    variables: { input: { id: router.query.id } },
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   const currentApplication = useMemo(() => {
     if (data?.application) {

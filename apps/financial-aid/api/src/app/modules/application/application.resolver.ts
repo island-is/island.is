@@ -1,11 +1,4 @@
-import {
-  Query,
-  Resolver,
-  Context,
-  Mutation,
-  Args,
-  ResolveField,
-} from '@nestjs/graphql'
+import { Query, Resolver, Context, Mutation, Args } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -28,11 +21,8 @@ import {
   Application,
   ApplicationFilters,
   UpdateApplicationTableResponseType,
-  User,
 } from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { StaffModel } from '../staff'
-import { CurrentUser } from '../decorators'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => ApplicationModel)
@@ -115,14 +105,5 @@ export class ApplicationResolver {
     this.logger.debug('Creating application event')
 
     return backendApi.createApplicationEvent(input)
-  }
-
-  @ResolveField('staff', () => StaffModel, { name: 'staff', nullable: true })
-  async staff(
-    @CurrentUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<StaffModel | undefined> {
-    this.logger.debug('Getting staff for nationalId')
-    return await backendApi.getStaff(user.nationalId)
   }
 }
