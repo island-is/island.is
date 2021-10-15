@@ -34,11 +34,18 @@ import { AccessGroup } from '../../guards/accessGuard/access.enum'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
+import { SearchQueryDto } from './dto/searchQuery.dto'
 
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
   PaginationDto,
 ) {}
+
+export class SearchPaginationComboDto extends IntersectionType(
+  SearchQueryDto,
+  PaginationDto,
+) {}
+
 
 @Audit({
   namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
@@ -123,7 +130,7 @@ export class EndorsementListController {
    @ApiOkResponse({ type: PaginatedEndorsementListDto })
    @BypassAuth() ///***************+REMOVE LATER */
    async searchOpenLists(
-     @Query() query: SearchAndPaginationDto,
+     @Query() query: SearchPaginationComboDto,
    ): Promise<PaginatedEndorsementListDto> {
      return await this.endorsementListService.searchOpenListsTaggedGeneralPetition(query)
    }
