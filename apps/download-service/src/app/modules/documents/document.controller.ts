@@ -11,7 +11,6 @@ import {
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { GetDocumentDto } from './dto/getDocument.dto'
 import { Response } from 'express'
-import { ReadableStreamBuffer } from 'stream-buffers'
 import { DocumentClient } from '@island.is/clients/documents'
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
@@ -43,21 +42,13 @@ export class DocumentController {
       authenticationType: 'HIGH',
     })
 
-    if (!rawDocumentDTO) {
-      res.end()
-      return
+    if (!rawDocumentDTO || !rawDocumentDTO.content) {
+      return res.end()
     }
 
-    const pdf = rawDocumentDTO.content ?? ''
+    const buffer = Buffer.from(rawDocumentDTO.content, 'base64')
 
-    const stream = new ReadableStreamBuffer({
-      frequency: 10,
-      chunkSize: 2048,
-    })
-
-    stream.put(pdf, 'base64')
-
-    res.header('Content-length', pdf.length.toString())
+    res.header('Content-length', buffer.length.toString())
     res.header(
       'Content-Disposition',
       `inline; filename=${resource.documentId}.pdf`,
@@ -66,8 +57,6 @@ export class DocumentController {
     res.header('Cache-Control: no-cache')
     res.header('Cache-Control: nmax-age=0')
 
-    stream.pipe(res)
-    stream.stop()
-    return
+    return res.end(buffer)
   }
 }

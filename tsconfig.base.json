@@ -335,6 +335,7 @@
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
+      "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
       "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
@@ -416,6 +417,7 @@
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
       "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
+      "@island.is/shared/problem": ["libs/shared/problem/src/index.ts"],
       "@island.is/shared/table": ["libs/shared/table/src/index.ts"],
       "@island.is/shared/translations": [
         "libs/shared/translations/src/index.ts"
@@ -428,6 +430,8 @@
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
+      "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
+      "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"]
     }

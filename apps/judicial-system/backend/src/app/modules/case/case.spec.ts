@@ -15,6 +15,7 @@ import { IntlService } from '@island.is/cms-translations'
 import {
   CaseState,
   CaseType,
+  InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -127,30 +128,34 @@ describe('CaseController', () => {
       const id = uuid()
       const mockCase = { id, type: CaseType.CUSTODY }
       each`
-        state                  | role
-        ${CaseState.NEW}       | ${UserRole.PROSECUTOR}
-        ${CaseState.DRAFT}     | ${UserRole.PROSECUTOR}
-        ${CaseState.DRAFT}     | ${UserRole.JUDGE}
-        ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}
-        ${CaseState.SUBMITTED} | ${UserRole.PROSECUTOR}
-        ${CaseState.SUBMITTED} | ${UserRole.JUDGE}
-        ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}
-        ${CaseState.RECEIVED}  | ${UserRole.PROSECUTOR}
-        ${CaseState.RECEIVED}  | ${UserRole.JUDGE}
-        ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}
-        ${CaseState.REJECTED}  | ${UserRole.PROSECUTOR}
-        ${CaseState.REJECTED}  | ${UserRole.JUDGE}
-        ${CaseState.REJECTED}  | ${UserRole.REGISTRAR}
-        ${CaseState.DISMISSED} | ${UserRole.PROSECUTOR}
-        ${CaseState.DISMISSED} | ${UserRole.JUDGE}
-        ${CaseState.DISMISSED} | ${UserRole.REGISTRAR}
+        state                  | role                   | institutionType
+        ${CaseState.NEW}       | ${UserRole.PROSECUTOR} | ${InstitutionType.PROSECUTORS_OFFICE}
+        ${CaseState.DRAFT}     | ${UserRole.PROSECUTOR} | ${InstitutionType.PROSECUTORS_OFFICE}
+        ${CaseState.DRAFT}     | ${UserRole.JUDGE}      | ${InstitutionType.COURT}
+        ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}
+        ${CaseState.SUBMITTED} | ${UserRole.PROSECUTOR} | ${InstitutionType.PROSECUTORS_OFFICE}
+        ${CaseState.SUBMITTED} | ${UserRole.JUDGE}      | ${InstitutionType.COURT}
+        ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}
+        ${CaseState.RECEIVED}  | ${UserRole.PROSECUTOR} | ${InstitutionType.PROSECUTORS_OFFICE}
+        ${CaseState.RECEIVED}  | ${UserRole.JUDGE}      | ${InstitutionType.COURT}
+        ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}
+        ${CaseState.REJECTED}  | ${UserRole.PROSECUTOR} | ${InstitutionType.PROSECUTORS_OFFICE}
+        ${CaseState.REJECTED}  | ${UserRole.JUDGE}      | ${InstitutionType.COURT}
+        ${CaseState.REJECTED}  | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}
+        ${CaseState.REJECTED}  | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}
+        ${CaseState.REJECTED}  | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}
+        ${CaseState.DISMISSED} | ${UserRole.PROSECUTOR} | ${InstitutionType.PROSECUTORS_OFFICE}
+        ${CaseState.DISMISSED} | ${UserRole.JUDGE}      | ${InstitutionType.COURT}
+        ${CaseState.DISMISSED} | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}
+        ${CaseState.DISMISSED}  | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}
+        ${CaseState.DISMISSED}  | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}
       `.it(
         'should throw if the case has not been accepted',
-        async ({ state, role }) => {
+        async ({ state, role, institutionType }) => {
           // RolesGuard blocks access for the ADMIN role. Also, mockFindByIdAndUser
           // blocks access for some roles to some cases. This is not relevant in
           // this test.
-          const user = { role } as User
+          const user = { role, institution: { type: institutionType } } as User
 
           caseModel.findOne.mockResolvedValueOnce({ ...mockCase, state })
 
@@ -161,11 +166,13 @@ describe('CaseController', () => {
           ).rejects.toThrow(BadRequestException)
         },
       )
+
       each`
         role
         ${UserRole.PROSECUTOR}
         ${UserRole.JUDGE}
         ${UserRole.REGISTRAR}
+        ${UserRole.STAFF}
       `.it(
         'should get the custody notice pdf if the case has been accepted',
         async ({ role }) => {

@@ -76,6 +76,24 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
           SUBMIT: {
             target: States.submitted,
           },
+          [DefaultEvents.ABORT]: {
+            target: States.closed,
+          },
+        },
+      },
+      [States.closed]: {
+        meta: {
+          name: States.closed,
+          actionCard: {
+            title: application.name,
+            description: application.description,
+          },
+          progress: 1,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 0,
+          },
         },
       },
       [States.submitted]: {

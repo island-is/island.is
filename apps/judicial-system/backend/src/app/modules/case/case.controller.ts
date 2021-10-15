@@ -43,6 +43,12 @@ import {
   TokenGuard,
 } from '@island.is/judicial-system/auth'
 
+import {
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  staffRule,
+} from '../../guards'
 import { CaseFile } from '../file/models/file.model'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
@@ -50,15 +56,6 @@ import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
 import { CaseService } from './case.service'
-
-// Allows prosecutors to perform any action
-const prosecutorRule = UserRole.PROSECUTOR as RolesRule
-
-// Allows judges to perform any action
-const judgeRule = UserRole.JUDGE as RolesRule
-
-// Allows registrars to perform any action
-const registrarRule = UserRole.REGISTRAR as RolesRule
 
 // Allows prosecutors to update a specific set of fields
 const prosecutorUpdateRule = {
@@ -370,7 +367,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('cases')
   @ApiOkResponse({
     type: Case,
@@ -382,7 +379,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:id')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
   getById(
@@ -432,7 +429,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -472,7 +469,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:id/custodyNotice')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
