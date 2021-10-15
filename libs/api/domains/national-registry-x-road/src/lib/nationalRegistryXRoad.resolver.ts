@@ -1,6 +1,15 @@
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Query, ResolveField, Parent, Context } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
+import {
+  Args,
+  Resolver,
+  Query,
+  ResolveField,
+  Parent,
+  Context,
+  Field,
+  InputType,
+} from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -12,9 +21,16 @@ import {
 import { Audit } from '@island.is/nest/audit'
 
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
+import { NationalRegistryStatus } from '../models/nationalRegistryStatus.model'
 import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
+
+@InputType()
+export class GetNationalRegistryPersonLoadTestInput {
+  @Field(() => String)
+  nationalId!: string
+}
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
@@ -75,5 +91,40 @@ export class NationalRegistryXRoadResolver {
       user,
       person.nationalId,
     )
+  }
+
+  @Query(() => NationalRegistryStatus, {
+    name: 'nationalRegistryPersonLoadTest',
+  })
+  @Audit()
+  async nationalRegistryPersonLoadTest(
+    @CurrentUser() user: User,
+    @Args('input') input: GetNationalRegistryPersonLoadTestInput,
+  ): Promise<NationalRegistryStatus | undefined> {
+    const person = await this.nationalRegistryXRoadService.getNationalRegistryPerson(
+      input.nationalId,
+      user.authorization,
+    )
+    return {
+      status: '200',
+      data: [person.fullName],
+    }
+  }
+
+  @Query(() => NationalRegistryStatus, {
+    name: 'nationalRegistryCustodyLoadTest',
+  })
+  @Audit()
+  async nationalRegistryCustodyLoadTest(
+    @CurrentUser() user: User,
+  ): Promise<NationalRegistryStatus | undefined> {
+    const custody = await this.nationalRegistryXRoadService.getCustody(
+      user.nationalId,
+      user.authorization,
+    )
+    return {
+      status: '200',
+      data: custody,
+    }
   }
 }

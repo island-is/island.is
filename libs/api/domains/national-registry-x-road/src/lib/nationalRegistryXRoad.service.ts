@@ -72,6 +72,16 @@ export class NationalRegistryXRoadService {
     )
   }
 
+  async getCustody(
+    parentNationalId: string,
+    authToken: string,
+  ): Promise<string[]> {
+    return await this.nationalRegistryFetch<string[]>(
+      `/${parentNationalId}/forsja`,
+      authToken,
+    )
+  }
+
   async getChildrenCustodyInformation(
     user: User,
     parentNationalId: string,
