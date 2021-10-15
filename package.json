@@ -313,7 +313,7 @@
     "@storybook/react": "6.3.1",
     "@storybook/source-loader": "6.3.1",
     "@storybook/theming": "6.3.1",
-    "@testing-library/dom": "7.29.1",
+    "@testing-library/dom": "8.9.1",
     "@testing-library/jest-dom": "5.11.4",
     "@testing-library/react": "11.1.2",
     "@testing-library/react-hooks": "5.0.3",
@@ -401,7 +401,7 @@
   },
   "resolutions": {
     "@graphql-tools/git-loader": "6.2.6",
-    "@testing-library/dom": "7.29.1",
+    "@testing-library/dom": "8.9.1",
     "axios": "0.21.4",
     "immer": "8.0.1",
     "marked": "2.0.0",
