@@ -1,8 +1,11 @@
 import { DynamicModule } from '@nestjs/common'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import {
+  createEnhancedFetch,
+  EnhancedFetchOptions,
+} from '@island.is/clients/middlewares'
 import { DrivingLicenseApi } from './drivingLicenseApi.service'
-import { ApiV1, ConfigV1 } from './v1'
-import { ApiV2, ConfigV2 } from './v2'
+import { ApiV1, ConfigV1 } from '../v1'
+import { ApiV2, ConfigV2 } from '../v2'
 
 export interface DrivingLicenseApiConfig {
   xroadBaseUrl: string
@@ -10,11 +13,13 @@ export interface DrivingLicenseApiConfig {
   secret: string
   xroadPathV1: string
   xroadPathV2: string
+  fetchOptions?: Partial<EnhancedFetchOptions>
 }
 
-const configFactory = (config: DrivingLicenseApiConfig, xroadPath: string) => ({
+const configFactory = (config: DrivingLicenseApiConfig, basePath: string) => ({
   fetchApi: createEnhancedFetch({
-    name: 'clients-driving-license-v1',
+    name: 'clients-driving-license',
+    ...config.fetchOptions,
   }),
   headers: {
     'X-Road-Client': config.xroadClientId,
@@ -22,7 +27,7 @@ const configFactory = (config: DrivingLicenseApiConfig, xroadPath: string) => ({
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
-  basePath: `${config.xroadBaseUrl}/${xroadPath}`,
+  basePath,
 })
 
 export class DrivingLicenseApiModule {
@@ -34,10 +39,20 @@ export class DrivingLicenseApiModule {
           provide: DrivingLicenseApi,
           useFactory: () => {
             const apiV1 = new ApiV1(
-              new ConfigV1(configFactory(config, config.xroadPathV1)),
+              new ConfigV1(
+                configFactory(
+                  config,
+                  `${config.xroadBaseUrl}/${config.xroadPathV1}`,
+                ),
+              ),
             )
             const apiV2 = new ApiV2(
-              new ConfigV2(configFactory(config, config.xroadPathV2)),
+              new ConfigV2(
+                configFactory(
+                  config,
+                  `${config.xroadBaseUrl}/${config.xroadPathV2}`,
+                ),
+              ),
             )
 
             return new DrivingLicenseApi(apiV1, apiV2)

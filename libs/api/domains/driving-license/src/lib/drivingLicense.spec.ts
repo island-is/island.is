@@ -1,13 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { DrivingLicenseService } from './drivingLicense.service'
-import {
-  Configuration,
-  OkuskirteiniApiV1,
-} from '@island.is/clients/driving-license-v1'
-import {
-  Configuration as ConfigurationV2,
-  OkuskirteiniApiV2,
-} from '@island.is/clients/driving-license-v2'
+import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 import {
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_EXPIRED,
@@ -16,47 +9,30 @@ import {
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { createLogger } from 'winston'
 
 startMocking(requestHandlers)
-
-const fetch = createEnhancedFetch({
-  name: 'api-domains-driving-license-test-run',
-  logger: createLogger({
-    silent: true,
-  }),
-})
-
-const MockOkuskirteiniApiV1 = new OkuskirteiniApiV1(
-  new Configuration({
-    fetchApi: fetch,
-  }),
-)
-
-const MockOkuskirteiniApiV2 = new OkuskirteiniApiV2(
-  new ConfigurationV2({
-    fetchApi: fetch,
-  }),
-)
 
 describe('DrivingLicenseService', () => {
   let service: DrivingLicenseService
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      providers: [
-        {
-          provide: OkuskirteiniApiV1,
-          useValue: MockOkuskirteiniApiV1,
-        },
-        {
-          provide: OkuskirteiniApiV2,
-          useValue: MockOkuskirteiniApiV2,
-        },
-        DrivingLicenseService,
-        { provide: 'CONFIG', useValue: {} },
+      imports: [
+        DrivingLicenseApiModule.register({
+          secret: '',
+          xroadBaseUrl: 'http://localhost',
+          xroadClientId: '',
+          xroadPathV1: 'v1',
+          xroadPathV2: 'v2',
+          fetchOptions: {
+            logger: createLogger({
+              silent: true,
+            }),
+          },
+        }),
       ],
+      providers: [DrivingLicenseService, { provide: 'CONFIG', useValue: {} }],
     }).compile()
 
     service = module.get(DrivingLicenseService)

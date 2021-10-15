@@ -1,29 +1,3 @@
-import type {
-  OkukennariDto,
-  Okuskirteini,
-} from '@island.is/clients/driving-license-v1'
-
-export interface Eligibility {
-  id: string
-  issued?: Date | null
-  expires?: Date | null
-  comment: string
-}
-
-export interface DrivingLicense {
-  id: Okuskirteini['id']
-  name: string
-  issued?: Date | null
-  expires?: Date | null
-  isProvisional: boolean | undefined
-  eligibilities: Eligibility[]
-}
-
-export interface DeprevationType {
-  id: number
-  name: string
-}
-
 export interface StudentInformation {
   name: string
 }
@@ -34,19 +8,6 @@ export interface DrivingLicenseType {
 }
 
 export type DrivingLicenseApplicationType = 'B-full' | 'B-temp'
-
-export interface RemarkType {
-  id: number
-  remark: boolean
-  for: string
-  name: string
-  description: string
-}
-
-export interface PenaltyPointStatus {
-  nationalId: string
-  isPenaltyPointsOk: boolean
-}
 
 export interface NewDrivingLicenseInput {
   juristictionId: number
@@ -131,8 +92,4 @@ export interface StudentAssessment {
 
 export interface DrivingSchool {
   hasFinishedSchool: boolean
-}
-export interface Teacher {
-  nationalId: OkukennariDto['kennitala']
-  name: OkukennariDto['nafn']
 }
