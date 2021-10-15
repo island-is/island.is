@@ -79,7 +79,7 @@ export const FormOverviewInReview: FC<FormOverviewInReviewProps> = ({
         <Button variant="ghost" onClick={onBackButtonClick}>
           {formatMessage(inReview.buttons.backButton)}
         </Button>
-        {!isAssignee ? (
+        {isAssignee ? (
           <Box display="flex" justifyContent="spaceBetween">
             <Button
               icon="warning"

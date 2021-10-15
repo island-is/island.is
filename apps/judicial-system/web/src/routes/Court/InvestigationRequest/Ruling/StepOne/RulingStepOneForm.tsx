@@ -29,7 +29,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icRulingStepOne } from '@island.is/judicial-system-web/messages'
+import { icRulingStepOne as m } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -98,11 +98,9 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Greinargerð um málsatvik{' '}
+              {formatMessage(m.sections.courtCaseFacts.title)}{' '}
               <Tooltip
-                text={formatMessage(
-                  icRulingStepOne.sections.courtCaseFacts.tooltip,
-                )}
+                text={formatMessage(m.sections.courtCaseFacts.tooltip)}
               />
             </Text>
           </Box>
@@ -145,11 +143,9 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Greinargerð um lagarök{' '}
+              {formatMessage(m.sections.courtLegalArguments.title)}{' '}
               <Tooltip
-                text={formatMessage(
-                  icRulingStepOne.sections.courtLegalArguments.tooltip,
-                )}
+                text={formatMessage(m.sections.courtLegalArguments.tooltip)}
               />
             </Text>
           </Box>
@@ -205,9 +201,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               acceptedLabelText="Krafa samþykkt"
               rejectedLabelText="Kröfu hafnað"
               partiallyAcceptedLabelText="Krafa tekin til greina að hluta"
-              dismissLabelText={formatMessage(
-                icRulingStepOne.sections.decision.dismissLabel,
-              )}
+              dismissLabelText={formatMessage(m.sections.decision.dismissLabel)}
             />
           </Box>
         </Box>

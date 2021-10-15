@@ -6,8 +6,8 @@ export type CompanyInfo = {
   email: string
   phoneNumber: string
   type: AccidentTypeEnum | WorkAccidentTypeEnum
-  employee?: {
-    radioButton: YesOrNo
+  onPayRoll?: {
+    answer: YesOrNo
   }
 }
 
