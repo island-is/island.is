@@ -36,7 +36,7 @@ export type RegulationPageTexts = Partial<
     | 'goBack' // 'Til baka'
     | 'goHome' // 'Yfirlit reglugerða'
     | 'originalDocLink' // 'Skjal í Stjórnartíðindum'
-    | 'printThisVersion' // 'Prenta þessa útgáfu'
+    | 'downloadPdf' // 'Þessi útgáfa á PDF formi'
     | 'copyPermaLink' // "Afrita hlekk á þessa útgáfu"
     | 'redirectText' // 'Þessi reglugerð er enn sem komið er hýst á eldri vefslóð:'
     | 'showDiff' // 'Sýna breytingar'

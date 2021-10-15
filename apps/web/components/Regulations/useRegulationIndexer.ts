@@ -117,6 +117,7 @@ type IndexerRet<Reg extends RegulationMaybeDiff> = {
   index?: IndexTree
   text: HTMLText
   appendixes: Reg['appendixes']
+  comments: HTMLText
 }
 
 function useRegulationIndexer<Reg extends RegulationMaybeDiff>(
@@ -134,6 +135,7 @@ function useRegulationIndexer<Reg extends RegulationMaybeDiff>(
         return {
           text: regulation.text,
           appendixes: regulation.appendixes,
+          comments: regulation.comments,
         }
       }
       const flatIndex: FlatIndex = []
@@ -180,6 +182,7 @@ function useRegulationIndexer<Reg extends RegulationMaybeDiff>(
       return {
         text,
         appendixes,
+        comments: regulation.comments,
         index: doRenderIndex ? flatIndexToTree(flatIndex) : undefined,
       }
     },
@@ -189,3 +192,29 @@ function useRegulationIndexer<Reg extends RegulationMaybeDiff>(
 }
 
 export { useRegulationIndexer }
+
+// ===========================================================================
+
+// TODO: FIXME: Change this to a proper, locally-proxied URL.
+// This hack is just for pre-launch UI demonstration purposes.
+const TEMP_IMAGE_SERVER = 'https://reglugerdir-api.herokuapp.com/'
+
+const prefixImageSrcs = (html: HTMLText): HTMLText =>
+  html.replace(/ src="\//g, ' src="' + TEMP_IMAGE_SERVER) as HTMLText
+
+export const useImageSrcRewriter = <Reg extends RegulationMaybeDiff>(
+  props: IndexerRet<Reg>,
+): IndexerRet<Reg> =>
+  useMemo(
+    () => ({
+      text: prefixImageSrcs(props.text),
+      appendixes: (props.appendixes as Regulation['appendixes']).map(
+        ({ title, text }) => ({
+          title,
+          text: prefixImageSrcs(text),
+        }),
+      ),
+      comments: prefixImageSrcs(props.comments),
+    }),
+    [props],
+  )

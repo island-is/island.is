@@ -21,8 +21,13 @@ import { AffectingRegulations } from './AffectingRegulations'
 import { RegulationTimeline } from './RegulationTimeline'
 import { DiffModeToggle } from './DiffModeToggle'
 import { HistoryStepper } from './HistoryStepper'
-import { useRegulationIndexer } from './useRegulationIndexer'
+import {
+  useRegulationIndexer,
+  useImageSrcRewriter,
+} from './useRegulationIndexer'
 import { RegulationIndex } from './RegulationIndex'
+
+// ---------------------------------------------------------------------------
 
 const getKey = (regulation: RegulationMaybeDiff): string => {
   const { name, timelineDate, showingDiff } = regulation
@@ -74,7 +79,10 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
 
   const [showTimeline, setShowTimeline] = useState(false)
 
-  const { index, text, appendixes } = useRegulationIndexer(regulation, txt)
+  const indexedProps = useRegulationIndexer(regulation, txt)
+  const { index } = indexedProps
+
+  const { text, appendixes, comments } = useImageSrcRewriter(indexedProps)
 
   return (
     <RegulationLayout
@@ -123,10 +131,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
               appendixes={appendixes}
               diffing={!!regulation.showingDiff}
             />
-            <CommentsBox
-              title={txt('commentsTitle')}
-              content={regulation.comments}
-            />
+            <CommentsBox title={txt('commentsTitle')} content={comments} />
           </div>
           <Disclaimer
             title={txt('disclaimerTitle')}
