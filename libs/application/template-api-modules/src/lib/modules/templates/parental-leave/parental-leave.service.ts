@@ -208,7 +208,10 @@ export class ParentalLeaveService {
       } else if (isUsingTransferredRights) {
         // We know all of the period will be using transferred rights
         periods.push({
-          from: period.startDate,
+          from:
+            isFirstPeriod && isActualDateOfBirth
+              ? apiConstants.actualDateOfBirth
+              : period.startDate,
           to: period.endDate,
           ratio: Number(period.ratio),
           approved: false,
