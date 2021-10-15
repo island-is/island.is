@@ -231,6 +231,7 @@ export const AccidentNotificationSchema = z.object({
   overview: z.object({
     custom: z.string().optional(),
   }),
+  reviewerApproved: z.boolean().optional(),
 })
 
 export type AccidentNotification = z.TypeOf<typeof AccidentNotificationSchema>

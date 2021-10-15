@@ -1,10 +1,11 @@
-import { FieldBaseProps } from '@island.is/application/core'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/core'
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { inReview, overview, thirdPartyComment } from '../../lib/messages'
 import { FormOverview } from '../FormOverview'
+import { ConfirmationModal } from './ConfirmationModal'
 
 type FormOverviewInReviewProps = {
   props: FieldBaseProps
@@ -18,6 +19,13 @@ export const FormOverviewInReview: FC<FormOverviewInReviewProps> = ({
   isAssignee,
 }) => {
   const { formatMessage } = useLocale()
+  const { application, refetch } = props
+  const [rejectModalVisibility, setRejectModalVisibility] = useState<boolean>(
+    false,
+  )
+  const [approveModalVisibility, setApproveModalVisibility] = useState<boolean>(
+    false,
+  )
 
   const onBackButtonClick = () => {
     setState('uploadDocuments')
@@ -27,6 +35,12 @@ export const FormOverviewInReview: FC<FormOverviewInReviewProps> = ({
   }
   const goToAttachmentScreen = () => {
     setState('uploadDocuments')
+  }
+  const openRejectModal = () => {
+    setRejectModalVisibility(true)
+  }
+  const openApproveModal = () => {
+    setApproveModalVisibility(true)
   }
   return (
     <>
@@ -65,21 +79,17 @@ export const FormOverviewInReview: FC<FormOverviewInReviewProps> = ({
         <Button variant="ghost" onClick={onBackButtonClick}>
           {formatMessage(inReview.buttons.backButton)}
         </Button>
-        {isAssignee ? (
+        {!isAssignee ? (
           <Box display="flex" justifyContent="spaceBetween">
-            {/** TODO:
-             * Create modal when buttons have been clicked and
-             * add submit functionality to go to next step.
-             */}
             <Button
               icon="warning"
               colorScheme="destructive"
-              onClick={onForwardButtonClick}
+              onClick={openRejectModal}
             >
               {formatMessage(thirdPartyComment.buttons.reject)}
             </Button>
-            <Box marginLeft={7}>
-              <Button icon="checkmarkCircle" onClick={onForwardButtonClick}>
+            <Box marginLeft={3}>
+              <Button icon="checkmarkCircle" onClick={openApproveModal}>
                 {formatMessage(thirdPartyComment.buttons.approve)}
               </Button>
             </Box>
@@ -90,6 +100,30 @@ export const FormOverviewInReview: FC<FormOverviewInReviewProps> = ({
           </Button>
         )}
       </Box>
+      <ConfirmationModal
+        visibility={rejectModalVisibility}
+        setVisibility={setRejectModalVisibility}
+        title={formatMessage(inReview.confirmationModal.reject.title)}
+        text={formatMessage(inReview.confirmationModal.reject.text)}
+        buttonText={formatMessage(inReview.confirmationModal.reject.buttonText)}
+        buttonColorScheme="destructive"
+        defaultEvent={DefaultEvents.REJECT}
+        application={application}
+        refetch={refetch}
+      />
+      <ConfirmationModal
+        visibility={approveModalVisibility}
+        setVisibility={setApproveModalVisibility}
+        title={formatMessage(inReview.confirmationModal.approve.title)}
+        text={formatMessage(inReview.confirmationModal.approve.text)}
+        buttonText={formatMessage(
+          inReview.confirmationModal.approve.buttonText,
+        )}
+        buttonColorScheme="default"
+        defaultEvent={DefaultEvents.APPROVE}
+        application={application}
+        refetch={refetch}
+      />
     </>
   )
 }
