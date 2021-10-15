@@ -230,11 +230,11 @@ export class ApplicationTemplateHelper<
     const validators = this.template.answerValidators
 
     if (!validators) {
-      return Promise.resolve(undefined)
+      return
     }
 
     let hasError = false
-    const errorMap: Record<string, StaticText | null> = {}
+    const errorMap: Record<string, string> = {}
     const validatorPaths = Object.keys(validators)
 
     for (const validatorPath of validatorPaths) {
@@ -257,9 +257,7 @@ export class ApplicationTemplateHelper<
     }
 
     if (hasError) {
-      return Promise.reject(errorMap)
+      return errorMap
     }
-
-    return Promise.resolve(undefined)
   }
 }
