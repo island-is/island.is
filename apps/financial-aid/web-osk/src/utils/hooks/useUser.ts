@@ -1,30 +1,17 @@
+import { useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
-import React, { createContext, ReactNode, useEffect, useState } from 'react'
-import { Routes, User } from '@island.is/financial-aid/shared/lib'
+
 import { CurrentUserQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+
+import { Routes, User } from '@island.is/financial-aid/shared/lib'
+import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/client'
 import {
-  serviceCenters,
   ServiceCenter,
+  serviceCenters,
 } from '@island.is/financial-aid/shared/data'
-import { useRouter } from 'next/router'
 
-interface UserProvider {
-  isAuthenticated?: boolean
-  user?: User
-  setUser: React.Dispatch<React.SetStateAction<User | undefined>>
-  userServiceCenter?: ServiceCenter
-}
-
-interface Props {
-  children: ReactNode
-}
-
-export const UserContext = createContext<UserProvider>({
-  setUser: () => undefined,
-})
-
-const UserProvider = ({ children }: Props) => {
+const useUser = () => {
   const router = useRouter()
 
   const [user, setUser] = useState<User>()
@@ -60,13 +47,12 @@ const UserProvider = ({ children }: Props) => {
     }
   }, [setUser, loggedInUser, user])
 
-  return (
-    <UserContext.Provider
-      value={{ isAuthenticated, user, setUser, userServiceCenter }}
-    >
-      {children}
-    </UserContext.Provider>
-  )
+  return {
+    isAuthenticated,
+    user,
+    setUser,
+    userServiceCenter,
+  }
 }
 
-export default UserProvider
+export default useUser

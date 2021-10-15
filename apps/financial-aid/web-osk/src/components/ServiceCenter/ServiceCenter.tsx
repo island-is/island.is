@@ -7,7 +7,7 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { ServiceCenter as IServiceCenter } from '@island.is/financial-aid/shared/data'
-import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 
 interface Props {
   serviceCenter?: IServiceCenter

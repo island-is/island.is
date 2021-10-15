@@ -3,6 +3,13 @@ import { defineMessages } from 'react-intl'
 export const icRulingStepOne = {
   sections: {
     courtCaseFacts: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.court_case_facts.title',
+        defaultMessage: 'Greinargerð um málsatvik',
+        description:
+          'Notaður sem titill fyrir "greinargerð um málsatvik" hlutann á úrskurðar skrefi í rannsóknarheimildum.',
+      },
       tooltip: {
         id:
           'judicial.system.investigation_cases:ruling_step_one.court_case_facts.tooltip',
@@ -13,6 +20,13 @@ export const icRulingStepOne = {
       },
     }),
     courtLegalArguments: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.court_legal_arguments.title',
+        defaultMessage: 'Greinargerð um lagarök',
+        description:
+          'Notaður sem titill fyrir "Greinargerð um lagarök" hlutann á úrskurðar skrefi í rannsóknarheimildum.',
+      },
       tooltip: {
         id:
           'judicial.system.investigation_cases:ruling_step_one.court_legal_arguments.tooltip',

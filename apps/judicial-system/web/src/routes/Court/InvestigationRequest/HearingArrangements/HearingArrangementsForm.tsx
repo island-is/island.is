@@ -53,10 +53,11 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   isLoading: boolean
   users: UserData
+  user: User
 }
 
 const HearingArrangementsForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading, users } = props
+  const { workingCase, setWorkingCase, isLoading, users, user } = props
   const [modalVisible, setModalVisible] = useState(false)
   const [defenderEmailEM, setDefenderEmailEM] = useState('')
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
@@ -526,9 +527,13 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isLoading}
           nextIsDisabled={!isValid || !courtDateIsValid}
-          hideNextButton={workingCase.isMasked}
+          hideNextButton={
+            user.id !== workingCase.judge?.id &&
+            user.id !== workingCase.registrar?.id
+          }
           infoBoxText={
-            workingCase.isMasked
+            user.id !== workingCase.judge?.id &&
+            user.id !== workingCase.registrar?.id
               ? formatMessage(m.footer.infoPanelForRestrictedAccess)
               : undefined
           }

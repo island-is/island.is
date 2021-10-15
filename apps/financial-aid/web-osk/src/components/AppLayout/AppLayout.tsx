@@ -9,15 +9,15 @@ import {
   ServiceCenter,
 } from '@island.is/financial-aid-web/osk/src/components'
 
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import cn from 'classnames'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 interface Props {
   children: ReactNode
 }
 
 const AppLayout = ({ children }: Props) => {
-  const { isAuthenticated, user, userServiceCenter } = useContext(UserContext)
+  const { isAuthenticated, user, userServiceCenter } = useContext(AppContext)
 
   useEffect(() => {
     document.title = 'Fjárhagsaðstoð'

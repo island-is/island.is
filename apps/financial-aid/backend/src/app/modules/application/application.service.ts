@@ -5,17 +5,15 @@ import { CurrentApplicationModel, ApplicationModel } from './models'
 
 import { Op } from 'sequelize'
 
-import {
-  CreateApplicationDto,
-  CreateApplicationEventDto,
-  UpdateApplicationDto,
-} from './dto'
+import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import {
   ApplicationEventType,
   ApplicationFilters,
   ApplicationState,
   ApplicationStateUrl,
+  getEventTypesFromService,
   getStateFromUrl,
+  RolesRule,
   User,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
@@ -26,7 +24,8 @@ import {
 import { StaffModel } from '../staff'
 
 import { EmailService } from '@island.is/email-service'
-import { environment } from '../../../environments'
+
+import { ApplicationFileModel } from '../file/models'
 
 interface Recipient {
   name: string
@@ -79,13 +78,10 @@ export class ApplicationService {
     })
   }
 
-  async setFilesToApplication(id: string, application: ApplicationModel) {
-    const files = await this.fileService.getAllApplicationFiles(id)
-
-    application?.setDataValue('files', files)
-  }
-
-  async findById(id: string): Promise<ApplicationModel | null> {
+  async findById(
+    id: string,
+    service: RolesRule,
+  ): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
       include: [
@@ -94,12 +90,21 @@ export class ApplicationService {
           model: ApplicationEventModel,
           as: 'applicationEvents',
           separate: true,
+          where: {
+            eventType: {
+              [Op.in]: getEventTypesFromService[service],
+            },
+          },
+          order: [['created', 'DESC']],
+        },
+        {
+          model: ApplicationFileModel,
+          as: 'files',
+          separate: true,
           order: [['created', 'DESC']],
         },
       ],
     })
-
-    await this.setFilesToApplication(id, application)
 
     return application
   }
@@ -141,7 +146,7 @@ export class ApplicationService {
       eventType: ApplicationEventType[appModel.state.toUpperCase()],
     })
 
-    if (appModel.files) {
+    if (application.files) {
       const promises = application.files.map((f) => {
         return this.fileService.createFile({
           applicationId: appModel.id,
@@ -178,7 +183,7 @@ export class ApplicationService {
       update.staffId = null
     }
 
-    const eventModel = await this.applicationEventService.create({
+    await this.applicationEventService.create({
       applicationId: id,
       eventType: ApplicationEventType[update.state.toUpperCase()],
       comment:
@@ -192,14 +197,15 @@ export class ApplicationService {
       [updatedApplication],
     ] = await this.applicationModel.update(update, {
       where: { id },
+
       returning: true,
     })
 
-    await this.setFilesToApplication(id, updatedApplication)
-
     const events = await this.applicationEventService.findById(id)
-
     updatedApplication?.setDataValue('applicationEvents', events)
+
+    const files = await this.fileService.getAllApplicationFiles(id)
+    updatedApplication?.setDataValue('files', files)
 
     return { numberOfAffectedRows, updatedApplication }
   }
@@ -212,12 +218,12 @@ export class ApplicationService {
     try {
       await this.emailService.sendEmail({
         from: {
-          name: 'no-reply@svg.is',
-          address: 'Samband íslenskra sveitarfélaga',
+          name: 'Samband íslenskra sveitarfélaga',
+          address: 'no-reply@svg.is',
         },
         replyTo: {
-          name: 'no-reply@svg.is',
-          address: 'Samband íslenskra sveitarfélaga',
+          name: 'Samband íslenskra sveitarfélaga',
+          address: 'no-reply@svg.is',
         },
         to,
         subject: `Umsókn fyrir fjárhagsaðstoð móttekin ~ ${applicationId}`,
