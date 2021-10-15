@@ -22796,7 +22796,7 @@ postcss-value-parser@^4.0.0, postcss-value-parser@^4.0.2, postcss-value-parser@^
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.1.0.tgz#443f6a20ced6481a2bda4fa8532a6e55d789a2cb"
   integrity sha512-97DXOFbQJhk71ne5/Mt6cOu6yxsSfM0QGQyl0L25Gca4yGWEGJaig7l7gbCX623VqTBNGLRLaVUCnNkcedlRSQ==
 
-postcss@6.0.1, postcss@7.0.21, postcss@7.0.32, postcss@^6.0.1, postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.11, postcss@^7.0.14, postcss@^7.0.17, postcss@^7.0.18, postcss@^7.0.23, postcss@^7.0.27, postcss@^7.0.32, postcss@^7.0.5, postcss@^7.0.6, "postcss@npm:@island.is/postcss@107.0.37":
+postcss@6.0.1, postcss@7.0.21, postcss@7.0.32, postcss@^6.0.1, postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.11, postcss@^7.0.17, postcss@^7.0.18, postcss@^7.0.23, postcss@^7.0.27, postcss@^7.0.32, postcss@^7.0.5, postcss@^7.0.6, "postcss@npm:@island.is/postcss@107.0.37":
   version "107.0.37"
   resolved "https://registry.yarnpkg.com/@island.is/postcss/-/postcss-107.0.37.tgz#a44726fc177162da56de2cbfc0e8c5d03f4c7c1e"
   integrity sha512-CE6vDYTERTdeW6Adj8C2Oo36TTpiyhe4gCbtKoKt+tsxNFhWCr4wJ6ZC1ud3BCq5q4ft2pgJ99OssXFqeOZxWA==
@@ -22805,7 +22805,7 @@ postcss@6.0.1, postcss@7.0.21, postcss@7.0.32, postcss@^6.0.1, postcss@^7.0.0, p
     source-map "^0.6.1"
     supports-color "^6.1.0"
 
-postcss@8.1.1, postcss@8.2.10, postcss@8.2.4, postcss@^8.1.10:
+postcss@8.1.1, postcss@8.2.10, postcss@8.2.4, postcss@^7.0.14, postcss@^8.1.10:
   version "8.2.10"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.2.10.tgz#ca7a042aa8aff494b334d0ff3e9e77079f6f702b"
   integrity sha512-b/h7CPV7QEdrqIxtAf2j31U5ef05uBDuvoXv6L51Q4rcS1jdlXAVKJv+atCFdUXYl9dyTHGyoMzIepwowRJjFw==
