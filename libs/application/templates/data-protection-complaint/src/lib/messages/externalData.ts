@@ -9,7 +9,7 @@ export const externalData = {
     },
     subTitle: {
       id: 'dpac.application:section.externalData.subTitle',
-      defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki.',
+      defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt.',
       description: 'externalData page sub title',
     },
     checkboxLabel: {

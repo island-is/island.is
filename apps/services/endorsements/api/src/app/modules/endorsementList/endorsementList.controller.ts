@@ -68,6 +68,33 @@ export class EndorsementListController {
     )
   }
 
+  // get gp lists - relay
+  @ApiOperation({ summary: 'Gets General Petition Lists' })
+  @ApiOkResponse({ type: PaginatedEndorsementListDto })
+  @Get('general-petition-lists')
+  @BypassAuth()
+  async getGeneralPetitionLists(
+    @Query() query: PaginationDto,
+  ): Promise<PaginatedEndorsementListDto> {
+    return await this.endorsementListService.findOpenListsTaggedGeneralPetition(
+      query,
+    )
+  }
+
+  // get gp list  - relay
+  @ApiOperation({ summary: 'Gets a General Petition List by Id' })
+  @ApiOkResponse({ type: EndorsementList })
+  @ApiParam({ name: 'listId', type: 'string' })
+  @Get('general-petition-list/:listId')
+  @BypassAuth()
+  async getGeneralPetitionList(
+    @Param('listId') listId: string,
+  ): Promise<EndorsementList | null> {
+    return await this.endorsementListService.findSingleOpenListTaggedGeneralPetition(
+      listId,
+    )
+  }
+
   @Scopes(EndorsementsScope.main)
   @ApiOperation({
     summary: 'Finds all endorsements for the currently authenticated user',
@@ -83,6 +110,26 @@ export class EndorsementListController {
     @Query() query: PaginationDto,
   ): Promise<PaginatedEndorsementDto> {
     return await this.endorsementListService.findAllEndorsementsByNationalId(
+      user.nationalId,
+      query,
+    )
+  }
+
+  @ApiOperation({
+    summary:
+      'Finds all endorsement lists owned by the currently authenticated user',
+  })
+  @ApiOkResponse({ type: PaginatedEndorsementDto })
+  @Get('/endorsementLists')
+  @Audit<PaginatedEndorsementDto>({
+    resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
+    meta: ({ data: endorsement }) => ({ count: endorsement.length }),
+  })
+  async findEndorsementLists(
+    @CurrentUser() user: User,
+    @Query() query: PaginationDto,
+  ): Promise<PaginatedEndorsementDto> {
+    return await this.endorsementListService.findAllEndorsementListsByNationalId(
       user.nationalId,
       query,
     )

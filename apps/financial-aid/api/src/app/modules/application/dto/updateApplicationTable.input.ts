@@ -6,6 +6,7 @@ import {
   UpdateApplicationTable,
   ApplicationState,
   ApplicationStateUrl,
+  ApplicationEventType,
 } from '@island.is/financial-aid/shared/lib'
 
 @InputType()
@@ -17,6 +18,10 @@ export class UpdateApplicationInputTable implements UpdateApplicationTable {
   @Allow()
   @Field(() => String)
   readonly state!: ApplicationState
+
+  @Allow()
+  @Field(() => String)
+  readonly event!: ApplicationEventType
 
   @Allow()
   @Field()

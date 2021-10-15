@@ -44,7 +44,6 @@ const DataNeededModal = ({
           textarea
           backgroundColor="blue"
           onChange={(event) => {
-            event.stopPropagation()
             setHasError(false)
             setComment(event.currentTarget.value)
           }}
