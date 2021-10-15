@@ -377,6 +377,10 @@ export const m = defineMessages({
     id: 'service.portal:finance-local-tax',
     defaultMessage: 'Útsvar',
   },
+  searchPlaceholder: {
+    id: 'service.portal:search-placeholder',
+    defaultMessage: 'Sláðu inn leitarorð',
+  },
   actions: {
     id: 'service.portal:actions',
     defaultMessage: 'Aðgerðir',

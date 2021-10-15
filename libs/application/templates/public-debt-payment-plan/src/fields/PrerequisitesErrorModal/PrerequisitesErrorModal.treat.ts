@@ -1,5 +1,5 @@
-import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+import { style } from 'treat'
 
 export const background = style({
   filter: `drop-shadow(0 4px 70px rgba(0, 97, 255, 0.1))`,
@@ -11,6 +11,7 @@ export const close = style({
   right: theme.spacing[4],
   lineHeight: 0,
   padding: theme.spacing[2],
+  cursor: 'pointer',
   outline: 0,
   ':before': {
     content: '""',
