@@ -59,7 +59,7 @@ export class NationalRegistryXRoadResolver {
     )
   }
 
-  @ResolveField('spouse', () => [NationalRegistrySpouse])
+  @ResolveField('spouse', () => NationalRegistrySpouse)
   @Audit()
   async resolveSpouse(
     @Context('req') { user }: { user: User },

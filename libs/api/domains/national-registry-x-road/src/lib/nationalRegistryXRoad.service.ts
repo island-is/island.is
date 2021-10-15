@@ -89,6 +89,7 @@ export class NationalRegistryXRoadService {
       `/${nationalId}`,
       authToken,
     )
+
     return {
       nationalId: nationalId,
       fullName: person.nafn,
@@ -96,6 +97,7 @@ export class NationalRegistryXRoadService {
         streetName: person.logheimili?.heiti || undefined,
         postalCode: person.logheimili?.postnumer || undefined,
         city: person.logheimili?.stadur || undefined,
+        municipalityCode: person.logheimili?.sveitarfelagsnumer || undefined,
       },
     }
   }
@@ -193,6 +195,7 @@ export class NationalRegistryXRoadService {
       `/${nationalId}/hjuskapur`,
       authToken,
     )
+
     return {
       nationalId: spouse.kennitalaMaka || undefined,
       name: spouse.nafnMaka || undefined,
