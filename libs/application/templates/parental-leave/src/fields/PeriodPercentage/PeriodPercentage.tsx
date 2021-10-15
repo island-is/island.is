@@ -24,6 +24,7 @@ import {
 import { parentalLeaveFormMessages, errorMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { StartDateOptions } from '../../constants'
 
 type FieldBaseAndCustomField = FieldBaseProps & CustomField
 
@@ -37,7 +38,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
   errors,
 }) => {
   const { formatMessage } = useLocale()
-  const { setError } = useFormContext()
+  const { setError, register } = useFormContext()
   const { description } = field
   const { rawPeriods } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
@@ -124,6 +125,14 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
           defaultValue: null,
         }}
       />
+      {currentPeriod.firstPeriodStart === undefined && (
+        <input
+          type="hidden"
+          ref={register}
+          name={`periods[${currentIndex}].firstPeriodStart`}
+          value={StartDateOptions.SPECIFIC_DATE}
+        />
+      )}
     </>
   )
 }
