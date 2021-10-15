@@ -47,7 +47,6 @@ export type ModuleKeys =
   | 'assets'
   | 'applications'
   | 'licenses'
-  | 'petitions'
   | 'wip'
   | 'petitions'
 
@@ -58,7 +57,6 @@ export const featureFlaggedModules: ModuleKeys[] = [
   'educationLicense',
   'educationCareer',
   'endorsements',
-  'petitions',
   'icelandicNamesRegistry',
   'finance',
   'personalInformation',
@@ -77,7 +75,6 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   educationLicense: educationLicenseModule,
   petitions: petitionsModule,
   endorsements: endorsementsModule,
-  petitions: endorsementsModule,
   educationCareer: educationCareerModule,
   educationStudentAssessment: educationStudentAssessmentModule,
   assets: assetsModule,
