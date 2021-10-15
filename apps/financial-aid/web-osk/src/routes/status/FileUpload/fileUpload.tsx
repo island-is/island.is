@@ -72,6 +72,7 @@ const FileUpload = () => {
               input: {
                 id: router.query.id,
                 state: ApplicationState.INPROGRESS,
+                event: ApplicationEventType.INPROGRESS,
               },
             },
           })
