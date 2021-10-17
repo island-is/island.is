@@ -10,7 +10,7 @@ export const GeneralPetitionLists = () => {
   return (
     <>
       <Box marginBottom={3}>
-        <Text variant="h4">{'Meðmælendalistar'}</Text>
+        <Text variant="h4">{'Virkir meðmælendalistar'}</Text>
       </Box>
       <Stack space={4}>
         {petitionLists?.data?.map((petition: any) => {
@@ -26,7 +26,7 @@ export const GeneralPetitionLists = () => {
                 icon: 'arrowForward',
                 onClick: () =>
                   router.push(
-                    '/undirskriftalistar/' + petition.meta.applicationId,
+                    '/undirskriftalistar/' + petition.id,
                   ),
               }}
             />

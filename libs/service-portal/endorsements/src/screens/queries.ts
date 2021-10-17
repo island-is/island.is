@@ -155,7 +155,7 @@ export const useGetPetitionLists = () => {
       variables: {
         input: {
           tags: 'generalPetition',
-          limit: 5,
+          limit: 20,
         },
       },
       pollInterval: 20000,
@@ -171,7 +171,7 @@ export const useGetUserLists = () => {
     {
       variables: {
         input: {
-          limit: 5,
+          limit: 20,
         },
       },
       pollInterval: 20000,
@@ -187,7 +187,7 @@ export const useListsUserOwns = () => {
       variables: {
         input: {
           tags: 'generalPetition',
-          limit: 5,
+          limit: 20,
         },
       },
       pollInterval: 20000,
