@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
-import { GetApplicationQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { ApplicationQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import { Application } from '@island.is/financial-aid/shared/lib'
 import { useRouter } from 'next/router'
@@ -16,14 +16,11 @@ const useMyApplication = () => {
 
   const [myApplication, updateApplication] = useState<Application>()
 
-  const { data, error, loading } = useQuery<ApplicantData>(
-    GetApplicationQuery,
-    {
-      variables: { input: { id: router.query.id } },
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const { data, error, loading } = useQuery<ApplicantData>(ApplicationQuery, {
+    variables: { input: { id: router.query.id } },
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   useEffect(() => {
     const storedFormJson = sessionStorage.getItem(storageKey)

@@ -294,6 +294,7 @@ export class ParentalLeaveService {
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
+    const { isSelfEmployed } = getApplicationAnswers(application.answers)
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
@@ -322,12 +323,11 @@ export class ParentalLeaveService {
         )
       }
 
-      const employer = getEmployer(application)
-      const isEmployed = employer.nationalRegistryId !== application.applicant
+      const selfEmployed = isSelfEmployed === YES
 
-      if (isEmployed) {
+      if (!selfEmployed) {
         // Only needs to send an email if being approved by employer
-        // If self employed applicant was aware of the approval
+        // Self employed applicant was aware of the approval
         await this.sharedTemplateAPIService.sendEmail(
           generateApplicationApprovedByEmployerEmail,
           application,

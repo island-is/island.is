@@ -69,6 +69,7 @@ export interface User {
 
 export interface UpdateApplication {
   state: ApplicationState
+  event: ApplicationEventType
   amount?: number
   rejection?: string
   comment?: string
@@ -79,6 +80,7 @@ export interface UpdateApplicationTable {
   state: ApplicationState
   staffId: string
   stateUrl: ApplicationStateUrl
+  event: ApplicationEventType
 }
 
 export interface CreateApplicationEvent {
@@ -201,9 +203,4 @@ export interface GetSignedUrlForId {
 export interface UpdateApplicationTableResponseType {
   applications: Application[]
   filters: ApplicationFilters
-}
-
-export interface UpdateApplicationResponseType {
-  application: Application
-  filters?: ApplicationFilters
 }

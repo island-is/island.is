@@ -7,11 +7,9 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
-  isAccusedRightsHidden,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import type { Case as TCase } from '@island.is/judicial-system/types'
 import {
   capitalize,
   formatDate,
@@ -53,7 +51,7 @@ function constructRestrictionRulingPdf(
   })
 
   if (doc.info) {
-    doc.info['Title'] = 'Úrskurður'
+    doc.info['Title'] = shortVersion ? 'Þingbók' : 'Úrskurður'
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
@@ -177,9 +175,8 @@ function constructRestrictionRulingPdf(
     })
   }
 
-  doc
-    .text(' ')
-    .text(
+  if (!existingCase.isAccusedRightsHidden) {
+    doc.text(' ').text(
       formatMessage(ruling.accusedDemandsIntro, {
         accused: capitalize(
           formatAccusedByGender(existingCase.accusedGender, NounCases.DATIVE),
@@ -189,6 +186,9 @@ function constructRestrictionRulingPdf(
         paragraphGap: 1,
       },
     )
+  }
+
+  doc
     .text(' ')
     .text(
       `${
@@ -424,7 +424,7 @@ function constructInvestigationRulingPdf(
   })
 
   if (doc.info) {
-    doc.info['Title'] = 'Úrskurður'
+    doc.info['Title'] = shortVersion ? 'Þingbók' : 'Úrskurður'
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
@@ -543,15 +543,15 @@ function constructInvestigationRulingPdf(
     ),
   )
 
-  if (!isAccusedRightsHidden((existingCase as unknown) as TCase)) {
-    doc.text(' ').text(formatMessage(ruling.accusedRights), {
-      paragraphGap: 1,
-    })
-  }
-
-  // Only show accused plea if applicable
-  if (existingCase.accusedPleaDecision !== AccusedPleaDecision.NOT_APPLICABLE) {
+  if (
+    existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT &&
+    !existingCase.isAccusedRightsHidden
+  ) {
     doc
+      .text(' ')
+      .text(formatMessage(ruling.accusedRights), {
+        paragraphGap: 1,
+      })
       .text(' ')
       .text(
         formatMessage(ruling.accusedDemandsIntro, {
@@ -563,23 +563,26 @@ function constructInvestigationRulingPdf(
           paragraphGap: 1,
         },
       )
-      .text(' ')
-      .text(
-        `${
-          existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
-            ? formatMessage(ruling.accusedPlea.accept, {
-                accused: 'Varnaraðili',
-              })
-            : existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
-            ? formatMessage(ruling.accusedPlea.reject, {
-                accused: 'Varnaraðili',
-              })
-            : ''
-        }${existingCase.accusedPleaAnnouncement ?? ''}`,
-        {
-          paragraphGap: 1,
-        },
-      )
+  }
+
+  // Only show accused plea if applicable
+  if (existingCase.accusedPleaDecision !== AccusedPleaDecision.NOT_APPLICABLE) {
+    doc.text(' ').text(
+      `${
+        existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
+          ? formatMessage(ruling.accusedPlea.accept, {
+              accused: 'Varnaraðili',
+            })
+          : existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
+          ? formatMessage(ruling.accusedPlea.reject, {
+              accused: 'Varnaraðili',
+            })
+          : ''
+      }${existingCase.accusedPleaAnnouncement ?? ''}`,
+      {
+        paragraphGap: 1,
+      },
+    )
   }
 
   doc
