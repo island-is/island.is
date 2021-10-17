@@ -2,15 +2,15 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  UnauthorizedException,
   BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common'
 
 import type { User } from '@island.is/judicial-system/types'
 import { CaseService } from '../case.service'
 
 @Injectable()
-export class CaseGuard implements CanActivate {
+export class CaseExistsGuard implements CanActivate {
   constructor(private caseService: CaseService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -19,7 +19,7 @@ export class CaseGuard implements CanActivate {
     const user: User = request.user
 
     if (!user) {
-      throw new UnauthorizedException('Unauthorized')
+      throw new InternalServerErrorException('Missing user')
     }
 
     const caseId = request.params.caseId

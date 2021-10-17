@@ -52,7 +52,7 @@ import {
 import { CaseFile } from '../file/models/file.model'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
-import { CaseGuard, CurrentCase } from './guards'
+import { CaseExistsGuard, CurrentCase } from './guards'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
@@ -379,7 +379,7 @@ export class CaseController {
     return this.caseService.getAll(user)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })

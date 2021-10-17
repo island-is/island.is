@@ -1,0 +1,116 @@
+jest.mock('isomorphic-fetch', () => jest.fn())
+import fetch from 'isomorphic-fetch'
+import { uuid } from 'uuidv4'
+
+import { BadGatewayException, NotFoundException } from '@nestjs/common'
+
+import { PoliceCaseFile } from '@island.is/judicial-system/types'
+
+import { Case } from '../../case'
+import { createTestingPoliceModule } from './createTestingPoliceModule'
+
+interface Then {
+  result: PoliceCaseFile[]
+  error: Error
+}
+
+type GivenWhenThen = (theCase: Case) => Promise<Then>
+
+describe('PoliceController - Get all', () => {
+  let givenWhenThen: GivenWhenThen
+
+  beforeEach(async () => {
+    const policeController = await createTestingPoliceModule()
+
+    givenWhenThen = async (theCase: Case): Promise<Then> => {
+      const then = {} as Then
+
+      await policeController
+        .getAll(theCase)
+        .then((result) => (then.result = result))
+        .catch((error) => (then.error = error))
+
+      return then
+    }
+  })
+
+  describe('remote call', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(theCase)
+    })
+
+    it('should request police files for the correct case', () =>
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining(caseId),
+        expect.anything(),
+      ))
+  })
+
+  describe('police files found', () => {
+    const theCase = {} as Case
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as jest.Mock
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => [
+          { rvMalSkjolMals_ID: 'Id 1', heitiSkjals: 'Name 1' },
+          { rvMalSkjolMals_ID: 'Id 2', heitiSkjals: 'Name 2' },
+        ],
+      })
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('should return police case files', () => {
+      expect(then.result).toEqual([
+        { id: 'Id 1', name: 'Name 1' },
+        { id: 'Id 2', name: 'Name 2' },
+      ])
+    })
+  })
+
+  describe('police files not found', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as jest.Mock
+      mockFetch.mockResolvedValueOnce({ ok: false })
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('should throw not found exception', () => {
+      expect(then.error).toBeInstanceOf(NotFoundException)
+      expect(then.error.message).toBe(
+        `No police case files found for case ${caseId}`,
+      )
+    })
+  })
+
+  describe('remote call fails', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as jest.Mock
+      mockFetch.mockRejectedValueOnce(new Error('Some error'))
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('should throw bad gateway exception', () => {
+      expect(then.error).toBeInstanceOf(BadGatewayException)
+      expect(then.error.message).toBe(
+        `Failed to get police case files for case ${caseId}`,
+      )
+    })
+  })
+})

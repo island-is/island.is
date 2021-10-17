@@ -2,23 +2,23 @@ import { Case } from '../models'
 import { CaseController } from '../case.controller'
 import { createTestingCaseModule } from './createTestingCaseModule'
 
-describe('get by id', () => {
+describe('CaseController - Get by id', () => {
   let caseController: CaseController
 
   beforeEach(async () => {
-    ;({ caseController } = await createTestingCaseModule())
+    caseController = await createTestingCaseModule()
   })
 
   describe('case exists', () => {
-    const mockCase = {} as Case
-    let returnedCase: Case
+    const theCase = {} as Case
+    let result: Case
 
     beforeEach(async () => {
-      returnedCase = await caseController.getById(mockCase)
+      result = await caseController.getById(theCase)
     })
 
     it('should return the case', () => {
-      expect(returnedCase).toBe(mockCase)
+      expect(result).toBe(theCase)
     })
   })
 })
