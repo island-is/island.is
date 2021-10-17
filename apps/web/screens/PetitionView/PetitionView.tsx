@@ -26,8 +26,10 @@ const formatDate = (date: string) => {
 const PetitionView = () => {
   const router = useRouter()
 
-  const list = useGetPetitionList(router.query.slug as string) 
-  const listEndorsements = useGetPetitionListEndorsements(router.query.slug as string) 
+  const list = useGetPetitionList(router.query.slug as string)
+  const listEndorsements = useGetPetitionListEndorsements(
+    router.query.slug as string,
+  )
 
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
@@ -36,8 +38,10 @@ const PetitionView = () => {
   const getBaseUrl = () => {
     const isLocalhost = window?.location.origin.includes('localhost')
     const isDev = window?.location.origin.includes('beta.dev01.devland.is')
-    const isStaging = window?.location.origin.includes('beta.staging01.devland.is')
-    
+    const isStaging = window?.location.origin.includes(
+      'beta.staging01.devland.is',
+    )
+
     const baseUrlForm = isLocalhost
       ? 'http://localhost:4242/umsoknir'
       : isDev
@@ -46,7 +50,7 @@ const PetitionView = () => {
       ? 'https://beta.staging01.devland.is/umsoknir'
       : 'https://island.is/umsoknir'
 
-      return baseUrlForm
+    return baseUrlForm
   }
 
   const handlePagination = (page, petitions) => {
@@ -78,9 +82,7 @@ const PetitionView = () => {
             <GridRow>
               <GridColumn span={['12/12', '4/12', '4/12']}>
                 <Text variant="h4">Meðmælendalistinn er opinn:</Text>
-                <Text variant="default">
-                  {formatDate(list.created)}
-                </Text>
+                <Text variant="default">{formatDate(list.created)}</Text>
               </GridColumn>
               <GridColumn span={['12/12', '4/12', '4/12']}>
                 <Text variant="h4">Ábyrgðarmaður:</Text>
@@ -98,7 +100,9 @@ const PetitionView = () => {
                   icon="arrowForward"
                   onClick={() =>
                     window?.open(
-                      `${getBaseUrl()}/medmaelendalisti/${list.meta.applicationId}`,
+                      `${getBaseUrl()}/medmaelendalisti/${
+                        list.meta.applicationId
+                      }`,
                     )
                   }
                 >
@@ -119,10 +123,10 @@ const PetitionView = () => {
                     {pagePetitions?.map((petition) => {
                       return (
                         <T.Row key={petition.id}>
+                          <T.Data>{formatDate(list.created)}</T.Data>
                           <T.Data>
-                            {formatDate(list.created)}
+                            {petition.meta.fullName ?? petition.endorser}
                           </T.Data>
-                          <T.Data>{petition.meta.fullName ?? petition.endorser}</T.Data>
                         </T.Row>
                       )
                     })}

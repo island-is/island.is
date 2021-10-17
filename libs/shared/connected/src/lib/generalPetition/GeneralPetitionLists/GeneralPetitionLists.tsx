@@ -25,9 +25,7 @@ export const GeneralPetitionLists = () => {
                 variant: 'text',
                 icon: 'arrowForward',
                 onClick: () =>
-                  router.push(
-                    '/undirskriftalistar/' + petition.id,
-                  ),
+                  router.push('/undirskriftalistar/' + petition.id),
               }}
             />
           )

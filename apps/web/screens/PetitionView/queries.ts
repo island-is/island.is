@@ -26,8 +26,7 @@ const GetGeneralPetitionList = gql`
 `
 
 const GetGeneralPetitionListEndorsements = gql`
-  query endorsementSystemGetGeneralPetitionEndorsements
-  (
+  query endorsementSystemGetGeneralPetitionEndorsements(
     $input: PaginatedEndorsementInput!
   ) {
     endorsementSystemGetGeneralPetitionEndorsements(input: $input) {
@@ -56,13 +55,13 @@ export const useGetPetitionList = (listId: string) => {
     },
   )
 
-  return (
-    endorsementListsResponse?.endorsementSystemGetGeneralPetitionList ?? []
-  )
+  return endorsementListsResponse?.endorsementSystemGetGeneralPetitionList ?? []
 }
 
 export const useGetPetitionListEndorsements = (listId: string) => {
-  const { data: endorsementListsResponse } = useQuery<PetitionListEndorsementsResponse>(
+  const {
+    data: endorsementListsResponse,
+  } = useQuery<PetitionListEndorsementsResponse>(
     GetGeneralPetitionListEndorsements,
     {
       variables: {
@@ -74,6 +73,7 @@ export const useGetPetitionListEndorsements = (listId: string) => {
   )
 
   return (
-    endorsementListsResponse?.endorsementSystemGetGeneralPetitionEndorsements ?? []
+    endorsementListsResponse?.endorsementSystemGetGeneralPetitionEndorsements ??
+    []
   )
 }
