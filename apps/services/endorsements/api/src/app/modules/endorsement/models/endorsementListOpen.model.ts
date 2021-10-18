@@ -20,8 +20,14 @@ export class EndorsementListOpen {
   tags?: EndorsementTag[]
 
   @ApiProperty({
-    type: String,
-    nullable: true,
+    type: Date,
+    nullable: false,
   })
-  closedDate!: Date | null
+  closedDate!: Date
+
+  @ApiProperty({
+    type: Date,
+    nullable: false,
+  })
+  openedDate!: Date
 }
