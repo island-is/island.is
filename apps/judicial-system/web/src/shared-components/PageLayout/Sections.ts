@@ -168,7 +168,7 @@ export const getCourtSections = (
       {
         type: 'SUB_SECTION',
         name: 'Yfirlit kröfu',
-        href: `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${caseId}`,
+        href: `${Constants.COURT_SINGLE_REQUEST_BASE_ROUTE}/${caseId}`,
       },
       {
         type: 'SUB_SECTION',

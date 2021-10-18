@@ -26,7 +26,12 @@ import {
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
-import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
+import {
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  staffRule,
+} from '../../guards'
 import { Case, CaseService } from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
 import {
@@ -69,6 +74,11 @@ export class FileController {
     // Registrars have permission to view files of completed cases
     if (user.role === UserRole.REGISTRAR) {
       return completedCaseStates.includes(existingCase.state)
+    }
+
+    // Prison staff have permission to view files of accepted cases
+    if (user.role === UserRole.STAFF) {
+      return existingCase.state === CaseState.ACCEPTED
     }
 
     // Other users do not have permission to view any case files
@@ -129,7 +139,7 @@ export class FileController {
     return this.fileService.createCaseFile(existingCase.id, createFile)
   }
 
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('files')
   @ApiOkResponse({
     type: CaseFile,
