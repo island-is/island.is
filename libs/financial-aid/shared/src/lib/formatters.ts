@@ -137,6 +137,21 @@ export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
   Approved: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
 }
 
+export const sendEmailConformation: KeyMapping<
+  ApplicationEventType,
+  boolean
+> = {
+  New: true,
+  DataNeeded: true,
+  InProgress: true,
+  Rejected: true,
+  Approved: true,
+  StaffComment: false,
+  UserComment: false,
+  FileUpload: false,
+  AssignCase: false,
+}
+
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,
   aid: {

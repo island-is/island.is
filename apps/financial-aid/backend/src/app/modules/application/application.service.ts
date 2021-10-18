@@ -15,6 +15,7 @@ import {
   getEventTypesFromService,
   getStateFromUrl,
   RolesRule,
+  sendEmailConformation,
   User,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
@@ -212,14 +213,16 @@ export class ApplicationService {
     const files = await this.fileService.getAllApplicationFiles(id)
     updatedApplication?.setDataValue('files', files)
 
-    await this.sendEmail(
-      {
-        name: userName,
-        address: updatedApplication.email,
-      },
-      updatedApplication.id,
-      getEmailTextFromState[update.state],
-    )
+    if (sendEmailConformation[update.event]) {
+      await this.sendEmail(
+        {
+          name: userName,
+          address: updatedApplication.email,
+        },
+        updatedApplication.id,
+        getEmailTextFromState[update.state],
+      )
+    }
 
     return { numberOfAffectedRows, updatedApplication }
   }

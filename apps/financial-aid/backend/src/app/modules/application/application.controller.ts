@@ -130,7 +130,6 @@ export class ApplicationController {
     description: 'Updates an existing application',
   })
   async update(
-    @CurrentUser() user: User,
     @Param('id') id: string,
     @Body() applicationToUpdate: UpdateApplicationDto,
     @CurrentUser() user: User,
@@ -174,7 +173,7 @@ export class ApplicationController {
     }
   }
 
-  @Post('application')
+  @Post('')
   @ApiCreatedResponse({
     type: ApplicationModel,
     description: 'Creates a new application',
