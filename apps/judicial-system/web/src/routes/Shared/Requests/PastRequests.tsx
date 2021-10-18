@@ -230,7 +230,7 @@ const PastRequests: React.FC<Props> = (props) => {
       columns={pastRequestsColumns}
       data={pastRequestsData ?? []}
       handleRowClick={onRowClick}
-      className={styles.pastRequestsTable}
+      className={styles.table}
       sortableColumnIds={sortableColumnIds}
     />
   )

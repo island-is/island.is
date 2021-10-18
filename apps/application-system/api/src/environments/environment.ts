@@ -67,11 +67,19 @@ const devConfig = {
     partyLetter: {
       partyLetterRegistryApiBasePath: 'http://localhost:4251',
       endorsementsApiBasePath: 'http://localhost:4246',
+      defaultClosedDate: new Date(
+        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
+          '2021-09-15T00:00:00.000Z',
+      ),
     },
     generalPetition: {
       endorsementsApiBasePath: 'http://localhost:4246',
     },
     partyApplication: {
+      defaultClosedDate: new Date(
+        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
+          '2021-09-15T00:00:00.000Z',
+      ),
       endorsementsApiBasePath: 'http://localhost:4246',
       options: {
         adminEmails: {
@@ -168,11 +176,19 @@ const prodConfig = {
       partyLetterRegistryApiBasePath:
         process.env.PARTY_LETTER_REGISTRY_API_BASE_PATH,
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
+      defaultClosedDate: new Date(
+        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
+          '2021-09-15T00:00:00.000Z',
+      ),
     },
     generalPetition: {
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
     },
     partyApplication: {
+      defaultClosedDate: new Date(
+        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
+          '2021-09-15T00:00:00.000Z',
+      ),
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
       options: {
         adminEmails: {
