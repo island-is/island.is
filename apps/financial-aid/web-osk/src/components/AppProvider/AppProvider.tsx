@@ -6,7 +6,7 @@ import {
   User,
 } from '@island.is/financial-aid/shared/lib'
 
-import useMunicipality from '@island.is/financial-aid-web/osk/src/utils/hooks/useMunicipality'
+import { useMunicipality } from '@island.is/financial-aid/shared/components'
 import useMyApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useMyApplication'
 import useUser from '@island.is/financial-aid-web/osk/src/utils/hooks/useUser'
 import { ServiceCenter } from '@island.is/financial-aid/shared/data'

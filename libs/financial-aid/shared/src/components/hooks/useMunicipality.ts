@@ -9,17 +9,17 @@ interface MunicipalityData {
   municipality: Municipality
 }
 
-const useMunicipality = () => {
+export const useMunicipality = () => {
   const storageKey = 'currentMunicipality'
 
-  const [municipality, _setMunicipality] = useState<Municipality>()
+  const [municipality, setScopedMunicipality] = useState<Municipality>()
 
   const [getMunicipality] = useLazyQuery<MunicipalityData>(
     GetMunicipalityQuery,
     {
       fetchPolicy: 'no-cache',
       onCompleted: (data: { municipality: Municipality }) => {
-        _setMunicipality(data.municipality)
+        setScopedMunicipality(data.municipality)
       },
       onError: (error) => {
         // TODO: What should happen here?
@@ -34,7 +34,7 @@ const useMunicipality = () => {
       return
     }
     const storedState = JSON.parse(storedFormJson)
-    _setMunicipality(storedState)
+    setScopedMunicipality(storedState)
   }, [])
 
   const setMunicipality = async (municipalityId: string) => {
@@ -45,5 +45,3 @@ const useMunicipality = () => {
 
   return { municipality, setMunicipality }
 }
-
-export default useMunicipality
