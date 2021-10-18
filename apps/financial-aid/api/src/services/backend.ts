@@ -30,7 +30,6 @@ class BackendAPI extends RESTDataSource {
   willSendRequest(req: RequestOptions) {
     req.headers.set('authorization', this.context.req.headers.authorization)
     req.headers.set('cookie', this.context.req.headers.cookie)
-    req.headers.set('Content-type', 'application/json')
   }
 
   getApplications(stateUrl: ApplicationStateUrl): Promise<Application[]> {
