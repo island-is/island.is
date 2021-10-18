@@ -32,9 +32,10 @@ export class EndorsementList {
 
   @Field()
   owner!: string
-
-  @Field(() => [Endorsement])
-  endorsements?: Endorsement[]
+  
+  // turning this off here - we want clients to use the paginated endorsement endpoint - not to embed the data here inside the list object
+  // @Field(() => [Endorsement])
+  // endorsements?: Endorsement[]
 
   @Field(() => graphqlTypeJson)
   meta!: object
