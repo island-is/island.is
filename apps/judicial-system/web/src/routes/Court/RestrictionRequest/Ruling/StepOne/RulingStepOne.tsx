@@ -324,7 +324,8 @@ export const RulingStepOne: React.FC = () => {
               />
             </Box>
             {workingCase.decision &&
-              workingCase.decision !== CaseDecision.REJECTING && (
+              workingCase.decision !== CaseDecision.REJECTING &&
+              workingCase.decision !== CaseDecision.DISMISSING && (
                 <Box
                   component="section"
                   marginBottom={7}
