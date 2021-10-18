@@ -19,8 +19,7 @@ const useMunicipality = () => {
     {
       fetchPolicy: 'no-cache',
       onCompleted: (data: { municipality: Municipality }) => {
-        console.log(data)
-        _setMunicipality(municipality)
+        _setMunicipality(data.municipality)
       },
       onError: (error) => {
         // TODO: What should happen here?

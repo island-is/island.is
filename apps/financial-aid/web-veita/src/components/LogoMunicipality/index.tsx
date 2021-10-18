@@ -10,7 +10,7 @@ import { LoadingContainer } from '@island.is/financial-aid-web/veita/src/compone
 
 interface MunicipalityData {
   municipality: {
-    id: string
+    municipalityId: string
     homepage: string
   }
 }
@@ -22,7 +22,6 @@ interface LogoProps {
 const LogoMunicipality = ({ className }: LogoProps) => {
   const router = useRouter()
 
-  //According to design
   const logoSize = 48
 
   //TODO when more muncipalities have been added to system
@@ -30,7 +29,7 @@ const LogoMunicipality = ({ className }: LogoProps) => {
     ? (router.query.sveitarfelag as string)
     : 'hfj'
 
-  const { data, loading, error } = useQuery<MunicipalityData>(
+  const { data, loading } = useQuery<MunicipalityData>(
     GetMunacipalityHomePageQuery,
     {
       variables: {
@@ -59,7 +58,7 @@ const LogoMunicipality = ({ className }: LogoProps) => {
           rel="noopener noreferrer"
           className={cn({ [`${className}`]: true })}
         >
-          <LogoSvg name={data.municipality.id} />
+          <LogoSvg name={data.municipality.municipalityId} />
         </a>
       )}
     </LoadingContainer>
