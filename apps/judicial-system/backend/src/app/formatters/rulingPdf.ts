@@ -7,11 +7,9 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
-  isAccusedRightsHidden,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import type { Case as TCase } from '@island.is/judicial-system/types'
 import {
   capitalize,
   formatDate,
@@ -53,7 +51,7 @@ function constructRestrictionRulingPdf(
   })
 
   if (doc.info) {
-    doc.info['Title'] = 'Úrskurður'
+    doc.info['Title'] = shortVersion ? 'Þingbók' : 'Úrskurður'
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
@@ -293,15 +291,10 @@ function constructRestrictionRulingPdf(
     })
     .text(' ')
     .font('Times-Bold')
-    .text(
-      `${existingCase.judge?.name ?? formatMessage(core.missing.judge)} ${
-        existingCase.judge?.title ?? ''
-      }`,
-      {
-        align: 'center',
-        paragraphGap: 1,
-      },
-    )
+    .text(existingCase.judge?.name ?? formatMessage(core.missing.judge), {
+      align: 'center',
+      paragraphGap: 1,
+    })
     .text(' ')
     .text(' ')
     .font('Times-Roman')
@@ -426,7 +419,7 @@ function constructInvestigationRulingPdf(
   })
 
   if (doc.info) {
-    doc.info['Title'] = 'Úrskurður'
+    doc.info['Title'] = shortVersion ? 'Þingbók' : 'Úrskurður'
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
@@ -669,15 +662,10 @@ function constructInvestigationRulingPdf(
     })
     .text(' ')
     .font('Times-Bold')
-    .text(
-      `${existingCase.judge?.name ?? formatMessage(core.missing.judge)} ${
-        existingCase.judge?.title ?? ''
-      }`,
-      {
-        align: 'center',
-        paragraphGap: 1,
-      },
-    )
+    .text(existingCase.judge?.name ?? formatMessage(core.missing.judge), {
+      align: 'center',
+      paragraphGap: 1,
+    })
     .text(' ')
     .font('Times-Roman')
 

@@ -204,8 +204,3 @@ export interface UpdateApplicationTableResponseType {
   applications: Application[]
   filters: ApplicationFilters
 }
-
-export interface UpdateApplicationResponseType {
-  application: Application
-  filters?: ApplicationFilters
-}
