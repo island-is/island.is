@@ -16,7 +16,7 @@ type ActionCardProps = {
   heading?: string
   text?: string
   eyebrow?: string
-  backgroundColor?: 'white' | 'blue'
+  backgroundColor?: 'white' | 'blue' | 'red'
   tag?: {
     label: string
     variant?: TagVariant
@@ -87,7 +87,12 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
   const tag = { ...defaultTag, ..._tag }
   const unavailable = { ...defaultUnavailable, ..._unavailable }
-  const bgr = backgroundColor === 'white' ? 'white' : 'blue100'
+  const bgr =
+    backgroundColor === 'white'
+      ? 'white'
+      : backgroundColor === 'red'
+      ? 'red100'
+      : 'blue100'
 
   const renderDisabled = () => {
     const { label, message } = unavailable
@@ -223,7 +228,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     <Box
       display="flex"
       flexDirection="column"
-      borderColor="blue200"
+      borderColor={backgroundColor === 'red' ? 'red200' : 'blue200'}
       borderRadius="large"
       borderWidth="standard"
       paddingX={[3, 3, 4]}

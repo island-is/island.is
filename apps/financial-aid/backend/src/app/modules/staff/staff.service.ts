@@ -18,4 +18,12 @@ export class StaffService {
       },
     })
   }
+
+  async findById(id: string): Promise<StaffModel> {
+    return await this.staffModel.findOne({
+      where: {
+        id,
+      },
+    })
+  }
 }

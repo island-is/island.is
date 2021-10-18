@@ -9,6 +9,7 @@ import School from '../../assets/School'
 
 const ListSubmited: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
+  const createdList = application.externalData.createEndorsementList.data as any
 
   const isLocalhost = window.location.origin.includes('localhost')
   const isDev = window.location.origin.includes('beta.dev01.devland.is')
@@ -33,7 +34,7 @@ const ListSubmited: FC<FieldBaseProps> = ({ application }) => {
       </Text>
       <Box marginBottom={2}>
         <CopyLink
-          linkUrl={baseUrlForm + application.id}
+          linkUrl={baseUrlForm + createdList?.id}
           buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
         />
       </Box>
