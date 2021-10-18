@@ -16,6 +16,9 @@ export class StaffModel implements Staff {
   @Field()
   readonly municipalityId!: string
 
+  @Field()
+  readonly municipalityName!: string
+
   @Field(() => String)
   readonly role!: StaffRole
 

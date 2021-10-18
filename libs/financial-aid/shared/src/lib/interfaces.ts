@@ -8,6 +8,7 @@ import {
   StaffRole,
   ApplicationStateUrl,
   FamilyStatus,
+  AidType,
 } from './enums'
 
 export interface GetSignedUrl {
@@ -34,17 +35,15 @@ export interface Staff {
   phoneNumber?: string
 }
 
-export interface MunicipalitySettings {
-  homePage?: string
-  aid: MunicipalityAid
+export interface Aid {
+  onwPlace: number
+  registeredRenting: number
+  unregisteredRenting: number
+  livesWithParents: number
+  unknown: number
+  municipalityId: string
+  type: AidType
 }
-
-export interface MunicipalityAid {
-  ownApartmentOrLease: number
-  withOthersOrUnknow: number
-  withParents: number
-}
-
 export interface NavigationProps {
   activeSectionIndex: number
   activeSubSectionIndex?: number
@@ -54,6 +53,8 @@ export interface NavigationProps {
 
 export interface Spouse {
   nationalId?: string
+  name?: string
+  maritalStatus?: string
   email?: string
 }
 
@@ -66,6 +67,9 @@ export interface User {
   currentApplication?: CurrentApplication
   staff?: Staff
   postalCode?: number
+  municipalityId?: string
+  city?: string
+  spouse?: Spouse
 }
 
 export interface UpdateApplication {
@@ -101,8 +105,11 @@ export interface ApplicationEvent {
 export interface Municipality {
   id: string
   name: string
+  active: boolean
+  municipalityId: string
+  individualAid: Aid
+  cohabitationAid: Aid
   homePage?: string
-  aid: MunicipalityAid
 }
 
 export interface CurrentApplication {

@@ -23,7 +23,7 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 
 const ApplicationInfo = () => {
   const router = useRouter()
-  const { user } = useContext(AppContext)
+  const { user, setMunicipality } = useContext(AppContext)
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
@@ -66,6 +66,8 @@ const ApplicationInfo = () => {
     })
 
     console.log('user data', data)
+
+    await setMunicipality(data.nationalRegistryUserV2.address.municipalityCode)
 
     if (navigation?.nextUrl) {
       router.push(navigation?.nextUrl)

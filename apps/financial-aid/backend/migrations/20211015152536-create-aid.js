@@ -12,6 +12,10 @@ module.exports = {
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
           },
+          municipality_id: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+          },
           own_place: {
             type: Sequelize.INTEGER,
             allowNull: true,

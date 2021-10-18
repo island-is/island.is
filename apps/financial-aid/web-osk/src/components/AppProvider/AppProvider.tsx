@@ -6,19 +6,18 @@ import {
   User,
 } from '@island.is/financial-aid/shared/lib'
 
-import { useRouter } from 'next/router'
-import { ApolloError } from 'apollo-client'
-
-import useMuncipality from '@island.is/financial-aid-web/osk/src/utils/hooks/useMuncipality'
+import useMunicipality from '@island.is/financial-aid-web/osk/src/utils/hooks/useMunicipality'
 import useMyApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useMyApplication'
 import useUser from '@island.is/financial-aid-web/osk/src/utils/hooks/useUser'
 import { ServiceCenter } from '@island.is/financial-aid/shared/data'
+import { ApolloError } from 'apollo-client'
 
 interface AppProvider {
   myApplication?: Application
   loading: boolean
   error?: ApolloError
   municipality?: Municipality
+  setMunicipality: (municipalityId: string) => Promise<void>
   isAuthenticated?: boolean
   user?: User
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>
@@ -32,10 +31,11 @@ interface Props {
 export const AppContext = createContext<AppProvider>({
   loading: true,
   setUser: () => undefined,
+  setMunicipality: () => Promise.resolve(),
 })
 
 const AppProvider = ({ children }: Props) => {
-  const municipality = useMuncipality()
+  const { municipality, setMunicipality } = useMunicipality()
 
   const { myApplication, error, loading } = useMyApplication()
 
@@ -48,6 +48,7 @@ const AppProvider = ({ children }: Props) => {
         error,
         loading,
         municipality,
+        setMunicipality,
         isAuthenticated,
         user,
         setUser,

@@ -10,6 +10,7 @@ import {
   FileModule,
   StaffModule,
 } from './modules'
+import { AidModule } from './modules/aid'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
@@ -22,6 +23,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     MunicipalityModule,
     FileModule,
     ApplicationEventModule,
+    AidModule,
     StaffModule,
   ],
 })
