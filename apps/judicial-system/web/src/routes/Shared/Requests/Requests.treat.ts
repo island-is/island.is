@@ -2,10 +2,6 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const requestsContainer = style({
-  display: 'grid',
-  gridColumnGap: 24,
-  gridTemplateColumns: 'repeat(12, 1fr)',
-  gridTemplateRows: 'repeat(5, auto)',
   maxWidth: '1440px',
   margin: `${theme.spacing[12]}px auto`,
   padding: `0 ${theme.spacing[6]}px`,
@@ -14,39 +10,10 @@ export const requestsContainer = style({
 export const logoContainer = style({
   display: 'flex',
   justifyContent: 'space-between',
-  gridColumn: '1 / -1',
   marginBottom: theme.spacing[9],
 })
-export const activeRequestsTableCaption = style({
-  gridRow: '2',
-  gridColumn: '1 / -1',
-})
 
-export const activeRequestsTable = style({
-  gridRow: '3',
-  gridColumn: '1 / -1',
-  borderSpacing: 0,
-  borderCollapse: 'collapse',
-  overflow: 'hidden',
-  marginBottom: theme.spacing[15],
-
-  // Needed for Safari.
-  width: '100%',
-})
-
-export const activeRequestsTableInfo = style({
-  gridColumn: '1 / span 6',
-  marginBottom: theme.spacing[10],
-})
-
-export const pastRequestsTableCaption = style({
-  gridRow: '4',
-  gridColumn: '1 / -1',
-})
-
-export const pastRequestsTable = style({
-  gridRow: '5',
-  gridColumn: '1 / -1',
+export const table = style({
   borderSpacing: 0,
   borderCollapse: 'collapse',
   overflow: 'hidden',
@@ -55,9 +22,8 @@ export const pastRequestsTable = style({
   width: '100%',
 })
 
-export const requestsError = style({
-  gridRow: '2',
-  gridColumn: '1 / 5',
+export const infoContainer = style({
+  maxWidth: '50%',
 })
 
 export const thead = style({
