@@ -86,6 +86,22 @@ export const getEventType: KeyMapping<
     text: 'sendi inn gögn',
     isStaff: false,
   },
+  AssignCase: {
+    header: 'Umsjá',
+    text: 'tók að sér málið',
+    isStaff: true,
+  },
+}
+
+export const eventTypeFromApplicationState: KeyMapping<
+  ApplicationState,
+  ApplicationEventType
+> = {
+  New: ApplicationEventType.NEW,
+  DataNeeded: ApplicationEventType.DATANEEDED,
+  InProgress: ApplicationEventType.INPROGRESS,
+  Rejected: ApplicationEventType.REJECTED,
+  Approved: ApplicationEventType.APPROVED,
 }
 
 export const getActiveSectionForTimeline: KeyMapping<

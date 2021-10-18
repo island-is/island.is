@@ -49,7 +49,7 @@ const RulingAccordionItem: React.FC<Props> = ({
   return (
     <AccordionItem
       id="id_3"
-      label="Úrskurður Héraðsdóms Reykjavíkur"
+      label={formatMessage(m.heading)}
       labelVariant="h3"
       startExpanded={startExpanded}
     >
@@ -108,9 +108,7 @@ const RulingAccordionItem: React.FC<Props> = ({
         </Box>
         <Box marginBottom={1}>
           <Text variant="h5">
-            {workingCase?.judge
-              ? `${workingCase.judge.name} ${workingCase.judge.title}`
-              : `${user?.name} ${user?.title}`}
+            {workingCase?.judge ? workingCase.judge.name : user?.name}
           </Text>
         </Box>
         {(isRestrictionCase(workingCase.type) ||
