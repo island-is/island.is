@@ -15,7 +15,6 @@ import {
   getEventTypesFromService,
   getStateFromUrl,
   RolesRule,
-  sendEmailConformation,
   User,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
@@ -186,6 +185,13 @@ export class ApplicationService {
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
   }> {
+    const shouldSendEmail = [
+      ApplicationEventType.NEW,
+      ApplicationEventType.DATANEEDED,
+      ApplicationEventType.REJECTED,
+      ApplicationEventType.INPROGRESS,
+      ApplicationEventType.APPROVED,
+    ]
     if (update.state === ApplicationState.NEW) {
       update.staffId = null
     }
@@ -213,7 +219,7 @@ export class ApplicationService {
     const files = await this.fileService.getAllApplicationFiles(id)
     updatedApplication?.setDataValue('files', files)
 
-    if (sendEmailConformation[update.event]) {
+    if (shouldSendEmail.includes(update.event)) {
       await this.sendEmail(
         {
           name: userName,
