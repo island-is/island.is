@@ -28,24 +28,24 @@ export class EndorsementListService {
     private readonly endorsementListModel: typeof EndorsementList,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    ) {}
-    
-    // generic reusable query with pagination defaults
-    async findListsGenericQuery(query: any, where: any = {}) {
-      return await paginate({
-        Model: this.endorsementListModel,
-        limit: query.limit || 10,
-        after: query.after,
-        before: query.before,
-        primaryKeyField: 'counter',
-        orderOption: [['counter', 'DESC']],
-        where: where,
-      })
-    }
-    
-    async findListsByTags(tags: string[], query: any) {
-      this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
-      // TODO: Add option to get only open endorsement lists
+  ) {}
+
+  // generic reusable query with pagination defaults
+  async findListsGenericQuery(query: any, where: any = {}) {
+    return await paginate({
+      Model: this.endorsementListModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'DESC']],
+      where: where,
+    })
+  }
+
+  async findListsByTags(tags: string[], query: any) {
+    this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
+    // TODO: Add option to get only open endorsement lists
 
     return await paginate({
       Model: this.endorsementListModel,
@@ -171,13 +171,10 @@ export class EndorsementListService {
       tags: { [Op.eq]: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS }, // move to main query ?
       closedDate: null, // [Op.between]: ['openedDate', 'closedDate']
       title: {
-        [Op.iLike]: `%${query.search_query}%`// ilike ?
-      }
+        [Op.iLike]: `%${query.search_query}%`, // ilike ?
+      },
     }
-    return await this.findListsGenericQuery(
-      query,
-      where
-    )
+    return await this.findListsGenericQuery(query, where)
   }
 
   // generic get open lists

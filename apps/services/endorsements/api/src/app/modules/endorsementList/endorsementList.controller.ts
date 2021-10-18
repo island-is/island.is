@@ -47,7 +47,6 @@ export class SearchPaginationComboDto extends IntersectionType(
   PaginationDto,
 ) {}
 
-
 @Audit({
   namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
 })
@@ -123,19 +122,19 @@ export class EndorsementListController {
     )
   }
 
-
-   // SEARCH LISTS
-   @ApiTags('General Petition')
-   @ApiOperation({summary: 'searchOpenLists'})
-   @Get("searchOpenLists")
-   @ApiOkResponse({ type: PaginatedEndorsementListDto })
-   @BypassAuth() ///***************+REMOVE LATER */
-   async searchOpenLists(
-     @Query() query: SearchPaginationComboDto,
-   ): Promise<PaginatedEndorsementListDto> {
-     return await this.endorsementListService.searchOpenListsTaggedGeneralPetition(query)
-   }
-
+  // SEARCH LISTS
+  @ApiTags('General Petition')
+  @ApiOperation({ summary: 'searchOpenLists' })
+  @Get('searchOpenLists')
+  @ApiOkResponse({ type: PaginatedEndorsementListDto })
+  @BypassAuth() ///***************+REMOVE LATER */
+  async searchOpenLists(
+    @Query() query: SearchPaginationComboDto,
+  ): Promise<PaginatedEndorsementListDto> {
+    return await this.endorsementListService.searchOpenListsTaggedGeneralPetition(
+      query,
+    )
+  }
 
   @ApiOperation({
     summary:

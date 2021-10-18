@@ -48,6 +48,7 @@ http://localhost:4246/version
 ```
 
 After making changes to the module code, re-initalize app to autogenerate code for swagger, openapi, fetch client etc.
+
 ```bash
 yarn nx run services-endorsements-api:dev/init
 ```
