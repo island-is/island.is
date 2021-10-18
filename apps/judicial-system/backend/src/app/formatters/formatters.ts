@@ -1,24 +1,17 @@
 import {
   formatDate,
   formatNationalId,
-  formatCustodyRestrictions,
   laws,
   formatGender,
   caseTypes,
-  formatAppeal,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealDecision,
   CaseCustodyProvisions,
-  CaseDecision,
   CaseType,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import type {
-  CaseCustodyRestrictions,
-  CaseGender,
-} from '@island.is/judicial-system/types'
+import type { CaseGender } from '@island.is/judicial-system/types'
 
 function custodyProvisionsOrder(p: CaseCustodyProvisions) {
   switch (p) {
