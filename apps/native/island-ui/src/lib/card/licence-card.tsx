@@ -16,12 +16,10 @@ import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.View`
-  display: flex;
-  width: 100%;
+  padding: 16px 24px;
   min-height: 112px;
   flex-flow: row nowrap;
   justify-content: space-between;
-  padding: 16px 24px;
   border-radius: 16px;
   overflow: hidden;
 `
@@ -38,6 +36,7 @@ const BackgroundImage = styled.ImageBackground<{ color: any }>`
 `
 
 const Content = styled.View`
+  flex-shrink: 1;
   justify-content: center;
 `
 
@@ -73,7 +72,7 @@ const TimeStamp = styled.Text<{ color: any }>`
 `
 
 const ImgWrap = styled.View`
-  display: flex;
+  flex-shrink: 0;
   align-content: center;
   justify-content: center;
 `
@@ -170,7 +169,7 @@ export function LicenceCard({
             <Image
               source={variant.icon as ImageSourcePropType}
               resizeMode="contain"
-              style={{ width: 13, height: 13, marginRight: 8 }}
+              style={{ width: 15, height: 15, marginRight: 8 }}
             />
             <Validation color={textColor}>{variant.text}</Validation>
           </ValidationWrap>
