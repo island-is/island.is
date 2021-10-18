@@ -44,3 +44,13 @@ export const GetEndorsements = gql`
     }
   }
 `
+export const GetSingleEndorsement = gql`
+  query endorsementSystemGetSingleEndorsement(
+    $input: FindEndorsementListInput!
+  ) {
+    endorsementSystemGetSingleEndorsement(input: $input) {
+      id
+      endorser
+    }
+  }
+`
