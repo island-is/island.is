@@ -2,6 +2,7 @@ import { literal, Op, WhereOptions } from 'sequelize'
 
 import {
   CaseAppealDecision,
+  CaseDecision,
   CaseState,
   CaseType,
   hasCaseBeenAppealed,
@@ -94,6 +95,16 @@ function isTypeHiddenFromRole(
   return getBlockedTypes(role, forUpdate, institutionType).includes(type)
 }
 
+function isDecisionHiddenFromInstitution(
+  decision?: CaseDecision,
+  institutionType?: InstitutionType,
+): boolean {
+  return (
+    institutionType === InstitutionType.PRISON &&
+    decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+  )
+}
+
 function isProsecutorsOfficeCaseHiddenFromUser(
   user: User,
   forUpdate: boolean,
@@ -153,6 +164,7 @@ export function isCaseBlockedFromUser(
       forUpdate,
       user.institution?.type,
     ) ||
+    isDecisionHiddenFromInstitution(theCase.decision, user.institution?.type) ||
     isProsecutorsOfficeCaseHiddenFromUser(
       user,
       forUpdate,
@@ -177,18 +189,22 @@ export function isCaseBlockedFromUser(
 function getStaffCasesQueryFilter(
   institutionType?: InstitutionType,
 ): WhereOptions {
-  return {
-    [Op.and]: [
-      { state: CaseState.ACCEPTED },
-      {
-        type:
-          institutionType === InstitutionType.PRISON_ADMIN
-            ? [CaseType.CUSTODY, CaseType.TRAVEL_BAN]
-            : CaseType.CUSTODY,
-      },
-      { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
-    ],
-  }
+  return institutionType === InstitutionType.PRISON_ADMIN
+    ? {
+        [Op.and]: [
+          { state: CaseState.ACCEPTED },
+          { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
+          { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
+        ],
+      }
+    : {
+        [Op.and]: [
+          { state: CaseState.ACCEPTED },
+          { type: CaseType.CUSTODY },
+          { decision: CaseDecision.ACCEPTING },
+          { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
+        ],
+      }
 }
 
 export function getCasesQueryFilter(user: User): WhereOptions {
