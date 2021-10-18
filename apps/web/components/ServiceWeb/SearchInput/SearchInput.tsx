@@ -28,6 +28,19 @@ interface SearchInputProps {
   initialInputValue?: string
 }
 
+const unused = ['.', '?', ':', ',', ';', '!', '-', '_', '#']
+
+export const ModifySearchTerms = (searchTerms: string) =>
+  searchTerms
+    .split(' ')
+    .filter((x) => x)
+    .reduce((sum, cur) => {
+      const s = unused.reduce((a, b) => {
+        return a.replace(b, '')
+      }, cur)
+      return sum ? `${sum}|${s}~` : s ? `${s}~` : ''
+    }, '')
+
 export const SearchInput = ({
   colored = false,
   size = 'large',
@@ -53,13 +66,15 @@ export const SearchInput = ({
   useDebounce(
     () => {
       if (searchTerms) {
+        const queryString = ModifySearchTerms(searchTerms)
+
         if (searchTerms === lastSearchTerms) {
           updateOptions()
         } else {
           fetch({
             variables: {
               query: {
-                queryString: `${searchTerms.trim()}*`,
+                queryString,
                 types: [SearchableContentTypes['WebQna']],
               },
             },
@@ -117,7 +132,10 @@ export const SearchInput = ({
                 padding={2}
                 role="button"
                 background={active ? 'white' : 'blue100'}
-                onClick={() => onSelect(item)}
+                onClick={() => {
+                  setOptions([])
+                  onSelect(item)
+                }}
               >
                 <Text as="span">{item.title}</Text>
               </Box>
@@ -145,6 +163,7 @@ export const SearchInput = ({
         setIsLoading(true)
         setSearchTerms(value)
       }}
+      closeMenuOnSubmit
       onSubmit={(value, selectedOption) => {
         setOptions([])
 

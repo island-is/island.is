@@ -37,7 +37,10 @@ import {
 } from '../../../graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import ContactBanner from '../ContactBanner/ContactBanner'
-import { ServiceWebSearchInput } from '@island.is/web/components/'
+import {
+  ServiceWebSearchInput,
+  ServiceWebModifySearchTerms,
+} from '@island.is/web/components'
 
 import * as sharedStyles from '../shared/styles.treat'
 
@@ -220,10 +223,12 @@ const ServiceSearch: Screen<CategoryProps> = ({
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
 ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const queryString = single(query.q) || ''
+  const q = single(query.q) || ''
   const page = Number(single(query.page)) || 1
 
   const types = ['webQNA' as SearchableContentTypes]
+
+  const queryString = ServiceWebModifySearchTerms(q)
 
   const [
     {
@@ -264,7 +269,7 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 
   return {
-    q: queryString,
+    q,
     searchResults,
     namespace,
     showSearchInHeader: false,
