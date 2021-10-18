@@ -97,6 +97,9 @@ export class GeneralPetitionService {
             applicationTypeId: application.typeId,
             applicationId: application.id,
           },
+          closedDate: application.answers.dateTil,
+          openedDate: application.answers.dateFrom,
+          adminLock: false,
         },
       })
       .then((response) => response.json())
