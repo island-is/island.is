@@ -15,7 +15,11 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import type { User } from '@island.is/judicial-system/types'
+import type {
+  User,
+  Notification as TNotification,
+  CaseFile as TCaseFile,
+} from '@island.is/judicial-system/types'
 import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
@@ -223,7 +227,9 @@ export class CaseResolver {
   ): Promise<Notification[]> {
     const { id } = existingCase
 
-    return backendApi.getCaseNotifications(id)
+    return backendApi
+      .getCaseNotifications(id)
+      .catch(() => [] as TNotification[])
   }
 
   @ResolveField(() => [CaseFile])
@@ -233,6 +239,6 @@ export class CaseResolver {
   ): Promise<CaseFile[]> {
     const { id } = existingCase
 
-    return backendApi.getCaseFiles(id)
+    return backendApi.getCaseFiles(id).catch(() => [] as TCaseFile[])
   }
 }
