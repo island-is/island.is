@@ -20,6 +20,10 @@
       <category android:name="android.intent.category.BROWSABLE" />
       <data android:scheme="https" />
     </intent>
+    <intent>
+      <action android:name="android.intent.action.OPEN_DOCUMENT" />
+      <category android:name="android.intent.category.CATEGORY_OPENABLE" />
+    </intent>
   </queries>
   <!-- END OPTIONAL PERMISSIONS -->
   <application
