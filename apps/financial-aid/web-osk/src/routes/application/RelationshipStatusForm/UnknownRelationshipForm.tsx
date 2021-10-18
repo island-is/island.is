@@ -82,12 +82,12 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
           sért þú í óstaðfestri sambúð þarft bæði þú og maki þinn að skila
           innumsókn.
         </Text>
-        <Text marginBottom={[3, 3, 4]}>
+        <Text marginBottom={2}>
           Hvað þýðir það? Þú klárar að fylla út þína umsókn um fjárhagsaðstoð
           hér og maki þinn notar sín rafrænu skilríki til að skila inn
           nauðsynlegum gögnum.
-          <br />
-          <br />
+        </Text>
+        <Text marginBottom={[3, 3, 4]}>
           Úrvinnsla umsóknarinnar hefst þegar öll gögn hafa borist.
         </Text>
         <Text as="h3" variant="h3" marginBottom={[3, 3, 4]}>

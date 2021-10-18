@@ -48,12 +48,12 @@ const InRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
           Þar sem þú ert í sambúð þarft þú að skila inn umsókn um fjárhagsaðstoð
           og maki þinn að skila inn upplýsingum um tekjur.
         </Text>
-        <Text marginBottom={[3, 3, 4]}>
+        <Text marginBottom={2}>
           Hvað þýðir það? Þú klárar að fylla út þína umsókn um fjárhagsaðstoð
           hér og maki þinn notar sín rafrænu skilríki til að skila inn
           nauðsynlegum gögnum.
-          <br />
-          <br />
+        </Text>
+        <Text marginBottom={[3, 3, 4]}>
           Úrvinnsla umsóknarinnar hefst þegar öll gögn hafa borist.
         </Text>
 
