@@ -66,12 +66,16 @@ export function toISODateTime(
 
 // ---------------------------------------------------------------------------
 
+const THIN_SPACE = ' '
+const HAIR_SPACE = ' '
+const SPACE = HAIR_SPACE
+
 /** Pretty-formats a Regulation `name` for human consumption
  *
- * Chops off leading zeros
+ * Chops off leading zeros and adds a bit of spacing.
  */
-export const prettyName = (regulationName: string): string =>
-  regulationName.replace(/^0+/, '')
+export const prettyName = (regulationName: string) =>
+  regulationName.replace(/^0+/, '').replace('/', SPACE + '/' + SPACE)
 
 // ---------------------------------------------------------------------------
 
@@ -162,3 +166,5 @@ export const useShortState = <S>(
 }
 
 // ---------------------------------------------------------------------------
+
+export * from './buildRegulationApiPath'
