@@ -29,7 +29,11 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
   const { formatMessage } = useIntl()
 
   return (
-    <AccordionItem id="id_2" label="Þingbók" labelVariant="h3">
+    <AccordionItem
+      id="courtRecordAccordionItem"
+      label="Þingbók"
+      labelVariant="h3"
+    >
       <AccordionListItem
         title={formatMessage(m.sections.timeAndLocation.title)}
       >

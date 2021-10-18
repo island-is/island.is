@@ -323,13 +323,13 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           </Box>
         )}
       {user?.role !== UserRole.STAFF && !workingCase.isMasked && (
-        <Box marginBottom={5}>
+        <Box marginBottom={5} data-testid="accordionItems">
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <CourtRecordAccordionItem workingCase={workingCase} />
             <RulingAccordionItem workingCase={workingCase} />
             <AccordionItem
-              id="id_4"
+              id="caseFilesAccordionItem"
               label={
                 <Box display="flex" alignItems="center" overflow="hidden">
                   {`Rannsóknargögn (${
