@@ -14,7 +14,7 @@ import {
   getStateUrlFromRoute,
 } from '@island.is/financial-aid/shared/lib'
 
-import { GetApplicationsQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+import { ApplicationsQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 
@@ -38,7 +38,7 @@ export const ApplicationsOverview = () => {
   const router = useRouter()
 
   const { data, error, loading } = useQuery<ApplicationsProvider>(
-    GetApplicationsQuery,
+    ApplicationsQuery,
     {
       variables: {
         input: { stateUrl: getStateUrlFromRoute[router.pathname] },

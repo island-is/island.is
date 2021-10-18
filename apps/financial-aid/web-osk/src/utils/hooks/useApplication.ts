@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 
-import { CreateApplicationQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { CreateApplicationMutation } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import {
   User,
@@ -15,7 +15,7 @@ const useApplication = () => {
   const [
     createApplicationMutation,
     { loading: isCreatingApplication },
-  ] = useMutation(CreateApplicationQuery)
+  ] = useMutation(CreateApplicationMutation)
 
   const formatFiles = (files: UploadFile[], type: FileType) => {
     return files.map((f) => {

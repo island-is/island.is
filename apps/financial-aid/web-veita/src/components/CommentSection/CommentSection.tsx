@@ -7,7 +7,7 @@ import cn from 'classnames'
 
 import * as styles from './CommentSection.treat'
 import { useMutation } from '@apollo/client'
-import { CreateApplicationEventQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+import { ApplicationEventMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import {
   Application,
   ApplicationEventType,
@@ -27,7 +27,7 @@ const CommentSection = ({ className, setApplication }: Props) => {
   const [
     createApplicationEventMutation,
     { loading: isCreatingApplicationEvent },
-  ] = useMutation(CreateApplicationEventQuery)
+  ] = useMutation(ApplicationEventMutation)
 
   const saveStaffComment = async (staffComment: string | undefined) => {
     if (staffComment) {

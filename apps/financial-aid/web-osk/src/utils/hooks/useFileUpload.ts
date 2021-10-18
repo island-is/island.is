@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
 import {
   CreateSignedUrlMutation,
-  CreateApplicationFiles,
+  ApplicationFilesMutation,
 } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 import { FileType, SignedUrl } from '@island.is/financial-aid/shared/lib'
 
@@ -12,7 +12,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   const filesRef = useRef<UploadFile[]>(files)
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
-  const [createApplicationFiles] = useMutation(CreateApplicationFiles)
+  const [createApplicationFiles] = useMutation(ApplicationFilesMutation)
 
   const requests: { [Key: string]: XMLHttpRequest } = {}
 

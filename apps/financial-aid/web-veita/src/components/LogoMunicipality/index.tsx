@@ -3,7 +3,7 @@ import cn from 'classnames'
 
 import LogoSvg from './LogoSvg'
 import { useQuery } from '@apollo/client'
-import { GetMunacipalityHomePageQuery } from '@island.is/financial-aid-web/veita/graphql'
+import { MunicipalityHomePageQuery } from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { LoadingContainer } from '@island.is/financial-aid-web/veita/src/components'
@@ -31,7 +31,7 @@ const LogoMunicipality = ({ className }: LogoProps) => {
     : 'hfj'
 
   const { data, loading, error } = useQuery<MunicipalityData>(
-    GetMunacipalityHomePageQuery,
+    MunicipalityHomePageQuery,
     {
       variables: {
         input: {
