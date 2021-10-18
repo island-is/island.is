@@ -94,12 +94,8 @@ export class ApplicationController {
   ): Promise<isSpouseRes> {
     this.logger.debug('Application controller: Checking if user is spouse')
 
-    const isSpouse = await this.applicationService.hasSpouseApplied(
-      spouseNationalId,
-    )
-
     return {
-      res: isSpouse,
+      res: await this.applicationService.hasSpouseApplied(spouseNationalId),
     }
   }
 

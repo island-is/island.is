@@ -11,7 +11,6 @@ import {
   ApplicationFilters,
   ApplicationState,
   ApplicationStateUrl,
-  getEmailTextFromState,
   getEventTypesFromService,
   getStateFromUrl,
   RolesRule,
