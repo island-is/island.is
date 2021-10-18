@@ -10,4 +10,5 @@ export interface ISyslumennAuction {
   gerdarbeidendur?: string
   gerdartholar?: string
   lausafjarmunir?: string
+  uppbodStadur?: string
 }

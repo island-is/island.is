@@ -703,40 +703,6 @@ const Auctions: Screen<AuctionsProps> = ({
                       />
                     )}
 
-                  {/* Real Estate auction location info */}
-                  {auction.lotId &&
-                    auction.lotType === LOT_TYPES.REAL_ESTATE &&
-                    auction.auctionType === AUCTION_TYPES.CONTINUATION && (
-                      <Text paddingBottom={1}>
-                        {n(
-                          'auctionRealEstateAuctionContinuationLocation',
-                          'Framhald uppboðs fasteignarinnar verður háð á fasteigninni sjálfri.',
-                        )}
-                      </Text>
-                    )}
-
-                  {/* Real Estate respondents */}
-                  {auctionRespondents &&
-                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
-                      <Text paddingTop={2} paddingBottom={1}>
-                        {auctionRespondents.length > 1
-                          ? 'Þinglýstir eigendur'
-                          : 'Þinglýstur eigandi'}
-                        : {auctionRespondents.join(', ')}
-                      </Text>
-                    )}
-
-                  {/* Real Estate petitioners */}
-                  {auctionPetitioners &&
-                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
-                      <Text paddingBottom={1}>
-                        {auctionPetitioners.length > 1
-                          ? 'Gerðarbeiðendur'
-                          : 'Gerðarbeiðandi'}
-                        : {auctionPetitioners.join(', ')}
-                      </Text>
-                    )}
-
                   {/* Vehicle link */}
                   {auction.lotId && auction.lotType === LOT_TYPES.VEHICLE && (
                     <LotLink
@@ -766,6 +732,36 @@ const Auctions: Screen<AuctionsProps> = ({
                       href={`https://www.samgongustofa.is/siglingar/skrar-og-utgafa/skipaskra/uppfletting?sq=${auction.lotId}`}
                     />
                   )}
+
+                  {/* Auction takes place at */}
+                  {auction.takesPlaceAt && (
+                    <Text paddingBottom={1}>
+                      {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:
+                      {auction.takesPlaceAt}
+                    </Text>
+                  )}
+
+                  {/* Respondents */}
+                  {auctionRespondents &&
+                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
+                      <Text paddingTop={2} paddingBottom={1}>
+                        {auctionRespondents.length > 1
+                          ? n('auctionRespondentsPlural', 'Þinglýstir eigendur')
+                          : n('auctionRespondentsSingle', 'Þinglýstur eigandi')}
+                        : {auctionRespondents.join(', ')}
+                      </Text>
+                    )}
+
+                  {/* Petitioners */}
+                  {auctionPetitioners &&
+                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
+                      <Text paddingBottom={1}>
+                        {auctionPetitioners.length > 1
+                          ? n('auctionPetitionersPlural', 'Gerðarbeiðendur')
+                          : n('auctionPetitionersSingle', 'Gerðarbeiðandi')}
+                        : {auctionPetitioners.join(', ')}
+                      </Text>
+                    )}
 
                   <Box
                     alignItems="flexEnd"
