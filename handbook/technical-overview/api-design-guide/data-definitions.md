@@ -36,36 +36,80 @@ In a response body, you should return a JSON object, not an array, as a top leve
     { "id": "1003", "name": "Valdimar"},
   ]
 }
+```
 
-// With pagination fields
+## Pagination
+
+All services should support pagination from the start, even though the dataset is small. It is harder to add it later on as it would introduce breaking changes to the service interface.
+
+Pagination should be implemented using _Cursor_ as a page reference. Cursor pagination solves the missing or duplication of data problems that the typical offset method has. Cursor pagination returns a cursor in the response, which is a pointer to a specific item in the dataset. This pointer needs to be based on an unique sequential field (or fields).
+
+When implementing a cursor pagination the response object should follow this interface:
+
+```typescript
+interface GetReponse {
+  data: T[]
+  pageInfo: {
+    hasPreviousPage: boolean
+    hasNextPage: boolean
+    startCursor: string
+    endCursor: string
+  }
+  totalCount: number
+}
+```
+
+The name of the data fields is arbitrary, and the developer is free to choose more descriptive name like in the following example:
+
+```json
 {
   "users":[
     { "id": "1001", "name": "Einar"},
     { "id": "1002", "name": "Erlendur"},
     { "id": "1003", "name": "Valdimar"},
   ],
-  "nextCursor": "aWQ6MTAwNA==",
+  "pageInfo": {
+    "hasNextPage": true,
+    "hasPreviousPage": false,
+    "startCursor": "aWQ6MTAwMQ=="
+    "endCursor": "aWQ6MTAwMw==",
+  },
+  "totalCount": 25
 }
 ```
 
-## Pagination
+The `totalCount` field indicates how many total items are available on the server.  
+The `PageInfo` object is described in the following [section](#pageinfo).
 
-All services should support pagination from the start, even though the dataset is small. It is harder to add it later on as it would break the service interface for current users.
+### PageInfo
 
-Pagination should be implemented using _Cursor_. Cursor pagination solves the missing or duplication of data problems that the typical offset method has. Cursor pagination returns a cursor in the response, which is a pointer to a specific item in the dataset. This pointer needs to be a unique sequential field (or fields).
+The `PageInfo` contains details about the pagination. It should follow the interface:
 
-When implementing cursor pagination a field called `nextCursor` is returned in the response object. This field is a Base64 encoded string. Having it encoded makes it uniform while providing flexibility to implement different cursor logic between different endpoints. In the example above the `nextCursor` field is a Base64 encoding the value `id:1004`, meaning the server is using the `id` field of the user object as a pointer to next item.
+```typescript
+interface PageInfo {
+  hasPreviousPage: boolean
+  hasNextPage: boolean
+  startCursor: string
+  endCursor: string
+}
+```
 
-To indicate there are no more results the value of `nextCursor` is set to the empty string: `"nextCursor": ""`.
+The `hasPreviousPage` and `hasNextPage` are boolean flags to indicate if there exists more items before or after the current set of data received.
+The `startCursor` and `endCursor` are `Base64` encoded strings. The client uses these values in following request to get previous or next page, see [query paramters](#pagination-query-parameters).
 
-Optionally, an API can also provide the field `totalCount` to indicate to the client how many results are available.
-
-### Pagination query parameters
+### Pagination Query parameters
 
 For an API to support pagination it needs to support the following query parameters:
 
-- `cursor` - The client provides the value of `nextCursor` from the previous response to set the start of next page of results.
 - `limit` - Limits the number of results in a request. The server should have a default value for this field.
+- `before` - The client provides the value of `startCursor` from the previous response `pageInfo` to query the previous page of `limit` number of data items.
+- `after` - The client provides the value of `endCursor` from the previous response toquery the next page of `limit` number of data items.
+
+The client only sends either `before` or `after` fields in a single request indicating if it wants the previous or next page of data items.
+
+### Monorepo library support
+
+[Island.is monorepo](https://github.com/island-is/island.is) provides a [helper library](https://docs.devland.is/libs/nest/pagination) which contains DTO object for `PageInfo` and `Pagination` query objects. The library also contains an extension for paginated Sequelize queries.
 
 ## National identifier
 
