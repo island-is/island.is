@@ -53,6 +53,21 @@ export class ApplicationService {
     return Boolean(hasApplication)
   }
 
+  async hasSpouseApplied(spouseNationalId: string): Promise<boolean> {
+    const date = new Date()
+
+    const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
+
+    const application = await this.applicationModel.findOne({
+      where: {
+        spouseNationalId: { [Op.eq]: spouseNationalId },
+        created: { [Op.gte]: firstDateOfMonth },
+      },
+    })
+
+    return Boolean(application)
+  }
+
   async getCurrentApplication(
     nationalId: string,
   ): Promise<CurrentApplicationModel | null> {

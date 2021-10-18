@@ -21,6 +21,7 @@ import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CurrentApplicationModel } from '../app/modules/application'
 import { StaffModel } from '../app/modules/staff'
+import { isSpouseRes } from '../app/modules/user/isSpouseRes.model'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -29,6 +30,7 @@ class BackendAPI extends RESTDataSource {
   willSendRequest(req: RequestOptions) {
     req.headers.set('authorization', this.context.req.headers.authorization)
     req.headers.set('cookie', this.context.req.headers.cookie)
+    req.headers.set('Content-type', 'application/json')
   }
 
   getApplications(stateUrl: ApplicationStateUrl): Promise<Application[]> {
@@ -90,6 +92,10 @@ class BackendAPI extends RESTDataSource {
 
   getCurrentApplication(nationalId: string): Promise<CurrentApplicationModel> {
     return this.get(`application/nationalId/${nationalId}`)
+  }
+
+  isSpouse(spouseNationalId: string): Promise<isSpouseRes> {
+    return this.get(`application/spouseNationalId/${spouseNationalId}`)
   }
 
   getStaff(nationalId: string): Promise<StaffModel> {
