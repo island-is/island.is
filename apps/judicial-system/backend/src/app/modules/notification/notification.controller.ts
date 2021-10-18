@@ -12,12 +12,7 @@ import {
   RulesType,
 } from '@island.is/judicial-system/auth'
 
-import {
-  judgeRule,
-  prosecutorRule,
-  registrarRule,
-  staffRule,
-} from '../../guards'
+import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import { CaseService } from '../case'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
@@ -90,7 +85,7 @@ export class NotificationController {
     )
   }
 
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('notifications')
   @ApiOkResponse({
     type: Notification,
