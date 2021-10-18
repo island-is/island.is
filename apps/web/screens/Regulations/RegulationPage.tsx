@@ -8,6 +8,7 @@ import {
   RegulationRedirect,
   RegulationDiff,
   RegulationOriginalDates,
+  RegulationViewTypes,
 } from '@island.is/regulations/web'
 import { RegulationPageTexts } from '../../components/Regulations/RegulationTexts.types'
 
@@ -21,8 +22,7 @@ import { getUiTexts } from '../../components/Regulations/getUiTexts'
 import {
   GetRegulationQuery,
   QueryGetRegulationArgs,
-  RegulationViewTypes,
-  // RegulationViewTypes,
+  RegulationViewTypes as Schema_RegulationViewTypes,
 } from '@island.is/web/graphql/schema'
 import { GET_REGULATION_QUERY } from '../queries'
 
@@ -221,7 +221,7 @@ RegulationPage.getInitialProps = async ({
         query: GET_REGULATION_QUERY,
         variables: {
           input: {
-            viewType,
+            viewType: (viewType as unknown) as Schema_RegulationViewTypes,
             name,
             date,
             isCustomDiff,

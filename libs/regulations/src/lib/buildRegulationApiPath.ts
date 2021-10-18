@@ -1,9 +1,8 @@
 import { ISODate, RegQueryName } from '@hugsmidjan/regulations-editor/types'
 import { RegulationViewTypes, RegulationOriginalDates } from './types-web'
-import { RegulationViewTypes as _RegulationViewTypes } from '@island.is/web/graphql/schema'
 
 export const buildRegulationApiPath = (opts: {
-  viewType: RegulationViewTypes | _RegulationViewTypes
+  viewType: RegulationViewTypes
   name: RegQueryName
   date?: ISODate
   isCustomDiff?: boolean
