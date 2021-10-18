@@ -9,7 +9,6 @@ import { m } from '../../lib/messages'
 const Petitions = () => {
   const { formatMessage } = useLocale()
   const petitionListsUserOwns = useListsUserOwns()
-  console.log(petitionListsUserOwns)
   const userLists = useGetUserLists()
 
   return (
