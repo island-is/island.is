@@ -25,7 +25,7 @@ To run the API locally make sure you:
 yarn nx run services-endorsements-api:dev/init
 ```
 
-## Running locally
+## Run locally
 
 Sign into AWS
 
