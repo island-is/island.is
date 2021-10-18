@@ -535,7 +535,7 @@ describe('isCaseBlockedFromUser', () => {
     expect(isReadBlocked).toBe(false)
   })
 
-  it('it should block an accepted custody case with travel ban ruling from prison staff', () => {
+  it('should block an accepted custody case with travel ban ruling from prison staff', () => {
     // Arrange
     const theCase = {
       type: CaseType.CUSTODY,
