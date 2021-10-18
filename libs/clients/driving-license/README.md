@@ -35,7 +35,7 @@ import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
       xroadBaseUrl: XROAD_BASE_URL,
       xroadClientId: XROAD_CLIENT_ID,
       secret: DRIVING_LICENSE_SECRET,
-      xroadPathV1: DRIVING_LICENSE_XROAD_PATH_V1,
+      xroadPathV1: DRIVING_LICENSE_XROAD_PATH,
       xroadPathV2: DRIVING_LICENSE_XROAD_PATH_V2,
     }),
   ],

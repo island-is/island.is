@@ -14,7 +14,7 @@ const devConfig = {
     secret: process.env.DRIVING_LICENSE_SECRET,
     v1: {
       xroadPath:
-        process.env.DRIVING_LICENSE_XROAD_PATH_V1 ??
+        process.env.DRIVING_LICENSE_XROAD_PATH ??
         'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
     },
     v2: {
@@ -172,7 +172,7 @@ const prodConfig = {
   drivingLicense: {
     secret: process.env.DRIVING_LICENSE_SECRET,
     v1: {
-      xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH_V1,
+      xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH,
     },
     v2: {
       xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH_V2,

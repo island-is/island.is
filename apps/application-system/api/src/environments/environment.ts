@@ -165,7 +165,7 @@ const prodConfig = {
         secret: process.env.DRIVING_LICENSE_SECRET,
         xroadClientId: process.env.XROAD_CLIENT_ID,
         xroadBaseUrl: process.env.XROAD_BASE_PATH,
-        xroadPathV1: process.env.DRIVING_LICENSE_XROAD_PATH_V1,
+        xroadPathV1: process.env.DRIVING_LICENSE_XROAD_PATH,
         xroadPathV2: process.env.DRIVING_LICENSE_XROAD_PATH_V2,
       },
     },
