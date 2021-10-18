@@ -4,6 +4,7 @@ import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Message } from '@island.is/email-service'
 import { PartyApplicationServiceOptions } from '../modules/templates/party-application/party-application.service'
 import { User } from '@island.is/auth-nest-tools'
+import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -46,6 +47,7 @@ export interface BaseTemplateAPIModuleConfig {
   generalPetition: {
     endorsementsApiBasePath: string
   }
+  paymentScheduleConfig: PaymentScheduleServiceOptions
 }
 
 export interface TemplateApiModuleActionProps {
