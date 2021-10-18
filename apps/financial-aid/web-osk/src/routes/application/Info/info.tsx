@@ -61,13 +61,18 @@ const ApplicationInfo = () => {
       return
     }
 
-    const data = await nationalRegistryQuery({
+    const { data } = await nationalRegistryQuery({
       input: { ssn: user?.nationalId },
     })
 
-    console.log('user data', data)
+    if (!data) {
+      setHasError(true)
+      return
+    }
 
-    await setMunicipality(data.nationalRegistryUserV2.address.municipalityCode)
+    await setMunicipality(
+      data.nationalRegistryUserV2.address.municipalityCode ?? '',
+    )
 
     if (navigation?.nextUrl) {
       router.push(navigation?.nextUrl)

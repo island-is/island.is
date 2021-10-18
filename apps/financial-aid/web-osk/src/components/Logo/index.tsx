@@ -13,8 +13,8 @@ const Logo = ({ className }: LogoProps) => {
   return (
     <a
       href={
-        municipality?.homePage
-          ? municipality.homePage
+        municipality?.homepage
+          ? municipality.homepage
           : 'https://www.samband.is/'
       }
       target="_blank"

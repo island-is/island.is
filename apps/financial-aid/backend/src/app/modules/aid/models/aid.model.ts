@@ -38,7 +38,7 @@ export class AidModel extends Model<Aid> {
     allowNull: false,
   })
   @ApiProperty()
-  onwPlace: number
+  ownPlace: number
 
   @Column({
     type: DataType.INTEGER,
@@ -74,7 +74,7 @@ export class AidModel extends Model<Aid> {
     values: Object.values(AidType),
   })
   @ApiProperty({ enum: AidType })
-  familyStatus: AidType
+  type: AidType
 
   @CreatedAt
   @ApiProperty()

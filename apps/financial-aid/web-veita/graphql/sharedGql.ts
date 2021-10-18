@@ -281,7 +281,7 @@ export const GetMunacipalityHomePageQuery = gql`
   query GetMunacipalityHomePageQuery($input: MunicipalityQueryInput!) {
     municipality(input: $input) {
       id
-      homePage
+      homepage
     }
   }
 `

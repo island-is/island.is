@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { MunicipalityModel } from './models'
+import { AidType } from '@island.is/financial-aid/shared/lib'
 import { AidModel } from '../aid'
 
 @Injectable()
@@ -20,19 +21,17 @@ export class MunicipalityService {
         {
           model: AidModel,
           as: 'individualAid',
-          separate: true,
           where: {
             municipalityId,
-            type: 'individual',
+            type: AidType.INDIVIDUAL,
           },
         },
         {
           model: AidModel,
           as: 'cohabitationAid',
-          separate: true,
           where: {
             municipalityId,
-            type: 'cohabitation',
+            type: AidType.COHABITATION,
           },
         },
       ],

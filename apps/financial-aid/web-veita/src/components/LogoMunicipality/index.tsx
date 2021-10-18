@@ -11,7 +11,7 @@ import { LoadingContainer } from '@island.is/financial-aid-web/veita/src/compone
 interface MunicipalityData {
   municipality: {
     id: string
-    homePage: string
+    homepage: string
   }
 }
 
@@ -54,7 +54,7 @@ const LogoMunicipality = ({ className }: LogoProps) => {
     >
       {data && (
         <a
-          href={data.municipality.homePage}
+          href={data.municipality.homepage}
           target="_blank"
           rel="noopener noreferrer"
           className={cn({ [`${className}`]: true })}

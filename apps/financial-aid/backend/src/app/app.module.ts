@@ -1,16 +1,17 @@
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-
 import { environment } from '../environments'
+
 import {
   ApplicationModule,
   MunicipalityModule,
   ApplicationEventModule,
   FileModule,
   StaffModule,
+  AidModule,
 } from './modules'
-import { AidModule } from './modules/aid'
+
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({

@@ -36,7 +36,7 @@ export interface Staff {
 }
 
 export interface Aid {
-  onwPlace: number
+  ownPlace: number
   registeredRenting: number
   unregisteredRenting: number
   livesWithParents: number
@@ -109,7 +109,7 @@ export interface Municipality {
   municipalityId: string
   individualAid: Aid
   cohabitationAid: Aid
-  homePage?: string
+  homepage?: string
 }
 
 export interface CurrentApplication {
