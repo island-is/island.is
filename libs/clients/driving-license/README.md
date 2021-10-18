@@ -1,26 +1,25 @@
 # Clients Driving License V1 / V2
 
-For V2 documentation, please refer to this document
-
 ## About
 
 This library implements a client to use Ríkislögreglustjóri's
-Driver's license API v1
+Driver's license API v1 and v2 through x-road
 
-The client is generated from a copy of the openApi document.
+The client is generated from a copy of the openApi document provided in x-road.
 
 ## Usage
-
-### Regenerating the client:
-
-```sh
-yarn nx run clients-driving-license-v1:schemas/external-openapi-generator
-```
 
 ### Updating the open api definition (clientConfig.json)
 
 ```sh
-yarn nx run clients-driving-license-v1:update-openapi-document
+yarn nx run clients-driving-license:update-openapi-document/v1
+yarn nx run clients-driving-license:update-openapi-document/v2
+```
+
+### Regenerating the client:
+
+```sh
+yarn nx run clients-driving-license:schemas/external-openapi-generator
 ```
 
 ### Import into other NestJS modules
@@ -28,36 +27,32 @@ yarn nx run clients-driving-license-v1:update-openapi-document
 Add the service to your module imports:
 
 ```typescript
-import { DrivingLicenseApiV1Module } from '@island.is/clients/driving-license-v1'
+import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 
 @Module({
   imports: [
-    DrivingLicenseApiV1Module.register({
+    DrivingLicenseApiModule.register({
       xroadBaseUrl: XROAD_BASE_URL,
-      xroadPath: XROAD_PATH,
       xroadClientId: XROAD_CLIENT_ID,
       secret: DRIVING_LICENSE_SECRET,
+      xroadPathV1: DRIVING_LICENSE_XROAD_PATH_V1,
+      xroadPathV2: DRIVING_LICENSE_XROAD_PATH_V2,
     }),
   ],
 })
 ```
 
-Then you'll have access to RLS's Okuskirteini APIs - note that since the two
-clients (v1 / v2) share the same api class name, nest can't deduplicate them
-so you end up having to inject them using the exported symbol:
+Since the generated class names are pretty similar for v1 / v2 of the API, and neither
+is a subset of the other, all the API calls are wrapped, so that they share a uniform API,
+and the intent is that the consumer of the client does not need to be aware of which version
+of the API they are communicating with
 
 ```typescript
-import {
-  OkuskirteiniV1Api,
-  IDrivingLicenseApiV1,
-} from '@island.is/clients/driving-license-v1'
+import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 
 @Injectable()
 export class SomeService {
-  constructor(
-    @Inject(IDrivingLicenseApiV1)
-    private readonly drivingLicenseApi: OkuskirteiniV1Api,
-  ) {}
+  constructor(private readonly drivingLicenseApi: DrivingLicenseApi) {}
 
   // etc...
 }
