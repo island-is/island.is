@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
+import { useIntl } from 'react-intl'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   DropdownMenu,
@@ -24,6 +25,7 @@ import PastRequests from './PastRequests'
 import router from 'next/router'
 import * as styles from './Requests.treat'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const Requests: React.FC = () => {
@@ -35,6 +37,9 @@ export const Requests: React.FC = () => {
   const isJudge = user?.role === UserRole.JUDGE
   const isRegistrar = user?.role === UserRole.REGISTRAR
   const isHighCourtUser = user?.institution?.type === InstitutionType.HIGH_COURT
+  const isPrisonAdminUser =
+    user?.institution?.type === InstitutionType.PRISON_ADMIN
+  const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
 
   const { data, error, loading } = useQuery(CasesQuery, {
     fetchPolicy: 'no-cache',
@@ -42,6 +47,7 @@ export const Requests: React.FC = () => {
   })
 
   const { transitionCase, sendNotification } = useCase()
+  const { formatMessage } = useIntl()
 
   const resCases = data?.cases
 
@@ -63,13 +69,17 @@ export const Requests: React.FC = () => {
             : // Judges and registrars should see all cases except cases with status code NEW.
             isJudge || isRegistrar
             ? ![...completedCaseStates, CaseState.NEW].includes(c.state)
+            : isPrisonAdminUser || isPrisonUser
+            ? !c.isValidToDateInThePast
             : null
         }),
       )
 
       setPastCases(
         casesWithoutDeleted.filter((c: Case) => {
-          return completedCaseStates.includes(c.state)
+          return isPrisonAdminUser || isPrisonUser
+            ? c.isValidToDateInThePast
+            : completedCaseStates.includes(c.state)
         }),
       )
     }
@@ -80,6 +90,8 @@ export const Requests: React.FC = () => {
     isJudge,
     isRegistrar,
     resCases,
+    isPrisonAdminUser,
+    isPrisonUser,
   ])
 
   const deleteCase = async (caseToDelete: Case) => {
@@ -180,44 +192,78 @@ export const Requests: React.FC = () => {
         <>
           {!isHighCourtUser && (
             <>
-              <Box
-                marginBottom={3}
-                className={styles.activeRequestsTableCaption}
-              >
+              <Box marginBottom={3}>
                 {/**
                  * This should be a <caption> tag inside the table but
                  * Safari has a bug that doesn't allow that. See more
                  * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
                  */}
                 <Text variant="h3" id="activeRequestsTableCaption">
-                  Kröfur í vinnslu
+                  {formatMessage(
+                    isPrisonUser
+                      ? m.sections.activeRequests.prisonStaffUsers.title
+                      : isPrisonAdminUser
+                      ? m.sections.activeRequests.prisonStaffUsers
+                          .prisonAdminTitle
+                      : m.sections.activeRequests.title,
+                  )}
                 </Text>
               </Box>
-              {activeCases && activeCases.length > 0 ? (
-                <ActiveRequests
-                  cases={activeCases}
-                  onRowClick={handleRowClick}
-                  onDeleteCase={deleteCase}
-                />
-              ) : (
-                <div className={styles.activeRequestsTableInfo}>
-                  <AlertMessage
-                    title="Engar kröfur í vinnslu."
-                    message="Allar kröfur hafa verið afgreiddar."
-                    type="info"
-                  />
-                </div>
-              )}
+              <Box marginBottom={15}>
+                {activeCases && activeCases.length > 0 ? (
+                  isPrisonUser || isPrisonAdminUser ? (
+                    <PastRequests
+                      cases={activeCases}
+                      onRowClick={() => {
+                        throw new Error('Function not implemented.')
+                      }}
+                      isHighCourtUser={false}
+                    />
+                  ) : (
+                    <ActiveRequests
+                      cases={activeCases}
+                      onRowClick={handleRowClick}
+                      onDeleteCase={deleteCase}
+                    />
+                  )
+                ) : (
+                  <div className={styles.infoContainer}>
+                    <AlertMessage
+                      title={formatMessage(
+                        isPrisonUser || isPrisonAdminUser
+                          ? m.sections.activeRequests.prisonStaffUsers
+                              .infoContainerTitle
+                          : m.sections.activeRequests.infoContainerTitle,
+                      )}
+                      message={formatMessage(
+                        isPrisonUser || isPrisonAdminUser
+                          ? m.sections.activeRequests.prisonStaffUsers
+                              .infoContainerText
+                          : m.sections.activeRequests.infoContainerText,
+                      )}
+                      type="info"
+                    />
+                  </div>
+                )}
+              </Box>
             </>
           )}
-          <Box marginBottom={3} className={styles.pastRequestsTableCaption}>
+          <Box marginBottom={3}>
             {/**
              * This should be a <caption> tag inside the table but
              * Safari has a bug that doesn't allow that. See more
              * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
              */}
             <Text variant="h3" id="activeRequestsTableCaption">
-              {isHighCourtUser ? 'Kærðir úrskurðir' : 'Afgreiddar kröfur'}
+              {formatMessage(
+                isHighCourtUser
+                  ? m.sections.pastRequests.highCourtUsers.title
+                  : isPrisonUser
+                  ? m.sections.pastRequests.prisonStaffUsers.title
+                  : isPrisonAdminUser
+                  ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
+                  : m.sections.pastRequests.title,
+              )}
             </Text>
           </Box>
           {pastCases && pastCases.length > 0 ? (
@@ -227,10 +273,20 @@ export const Requests: React.FC = () => {
               isHighCourtUser={isHighCourtUser}
             />
           ) : (
-            <div className={styles.activeRequestsTableInfo}>
+            <div className={styles.infoContainer}>
               <AlertMessage
-                title="Engar kröfur hafa verið afgreiddar."
-                message="Allar kröfur eru í vinnslu."
+                title={formatMessage(
+                  isPrisonAdminUser || isPrisonUser
+                    ? m.sections.activeRequests.prisonStaffUsers
+                        .infoContainerTitle
+                    : m.sections.pastRequests.infoContainerTitle,
+                )}
+                message={formatMessage(
+                  isPrisonAdminUser || isPrisonUser
+                    ? m.sections.activeRequests.prisonStaffUsers
+                        .infoContainerText
+                    : m.sections.pastRequests.infoContainerText,
+                )}
                 type="info"
               />
             </div>
@@ -238,7 +294,7 @@ export const Requests: React.FC = () => {
         </>
       ) : error ? (
         <div
-          className={styles.requestsError}
+          className={styles.infoContainer}
           data-testid="custody-requests-error"
         >
           <AlertMessage
@@ -248,7 +304,7 @@ export const Requests: React.FC = () => {
           />
         </div>
       ) : loading ? (
-        <Box className={styles.activeRequestsTable}>
+        <Box className={styles.table}>
           <Loading />
         </Box>
       ) : null}

@@ -9,7 +9,10 @@ import { personalInformationModule } from '@island.is/service-portal/settings/pe
 import { accessControlModule } from '@island.is/service-portal/settings/access-control'
 import { educationModule } from '@island.is/service-portal/education'
 import { educationLicenseModule } from '@island.is/service-portal/education-license'
-import { endorsementsModule } from '@island.is/service-portal/endorsements'
+import {
+  endorsementsModule,
+  petitionsModule,
+} from '@island.is/service-portal/endorsements'
 import { educationDegreeModule } from '@island.is/service-portal/education-degree'
 import { educationCareerModule } from '@island.is/service-portal/education-career'
 import { educationStudentAssessmentModule } from '@island.is/service-portal/education-student-assessment'
@@ -45,6 +48,7 @@ export type ModuleKeys =
   | 'applications'
   | 'licenses'
   | 'wip'
+  | 'petitions'
 
 export const featureFlaggedModules: ModuleKeys[] = [
   'accessControl',
@@ -57,6 +61,7 @@ export const featureFlaggedModules: ModuleKeys[] = [
   'finance',
   'personalInformation',
   'licenses',
+  'petitions',
 ]
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
@@ -68,6 +73,7 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   personalInformation: personalInformationModule,
   education: educationModule,
   educationLicense: educationLicenseModule,
+  petitions: petitionsModule,
   endorsements: endorsementsModule,
   educationCareer: educationCareerModule,
   educationStudentAssessment: educationStudentAssessmentModule,
