@@ -3,6 +3,7 @@ import each from 'jest-each'
 
 import {
   CaseAppealDecision,
+  CaseDecision,
   CaseState,
   CaseType,
   InstitutionType,
@@ -534,32 +535,67 @@ describe('isCaseBlockedFromUser', () => {
     expect(isReadBlocked).toBe(false)
   })
 
-  each`
-    institutionType
-    ${InstitutionType.PRISON}
-    ${InstitutionType.PRISON_ADMIN}
-  `.it(
-    'it should not read block an accepted custody case from staff at $institutionType',
-    ({ institutionType }) => {
-      // Arrange
-      const theCase = {
-        type: CaseType.CUSTODY,
-        state: CaseState.ACCEPTED,
-      } as Case
-      const user = {
-        role: UserRole.STAFF,
-        institution: { type: institutionType },
-      } as User
+  it('it should block an accepted custody case with travel ban ruling from prison staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
+      decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON },
+    } as User
 
-      // Act
-      const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-      const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
 
-      // Assert
-      expect(isWriteBlocked).toBe(true)
-      expect(isReadBlocked).toBe(false)
-    },
-  )
+    // Assert
+    expect(isWriteBlocked).toBe(true)
+    expect(isReadBlocked).toBe(true)
+  })
+
+  it('it should not read block an accepted custody case from prison staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
+      decision: CaseDecision.ACCEPTING,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON },
+    } as User
+
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(isWriteBlocked).toBe(true)
+    expect(isReadBlocked).toBe(false)
+  })
+
+  it('it should not read block an accepted custody case from prison admin staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON_ADMIN },
+    } as User
+
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(isWriteBlocked).toBe(true)
+    expect(isReadBlocked).toBe(false)
+  })
 })
 
 describe('getCasesQueryFilter', () => {
@@ -808,6 +844,7 @@ describe('getCasesQueryFilter', () => {
       [Op.and]: [
         { state: CaseState.ACCEPTED },
         { type: CaseType.CUSTODY },
+        { decision: CaseDecision.ACCEPTING },
         { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
       ],
     })
