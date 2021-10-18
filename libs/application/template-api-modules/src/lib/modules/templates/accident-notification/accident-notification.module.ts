@@ -25,7 +25,7 @@ export class AccidentNotificationModule {
       imports: [
         SharedTemplateAPIModule.register(config),
         FileStorageModule.register({}),
-        HealthInsuranceV2Module,
+        HealthInsuranceV2Module.register(config.healthInsuranceV2),
       ],
       providers: [
         AttachmentProvider,
