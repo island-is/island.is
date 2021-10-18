@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client'
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { Municipality } from '@island.is/financial-aid/shared/lib'
 
-import { GetMunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { MunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 interface MunicipalityData {
   municipality: Municipality
@@ -22,7 +22,7 @@ export const MunicipalityContext = createContext<MunicipalityProvider>({})
 const MunicipalityProvider = ({ children }: Props) => {
   const [municipality, setMunicipality] = useState<Municipality>()
 
-  const { data } = useQuery<MunicipalityData>(GetMunicipalityQuery, {
+  const { data } = useQuery<MunicipalityData>(MunicipalityQuery, {
     variables: { input: { id: 'hfj' } },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
