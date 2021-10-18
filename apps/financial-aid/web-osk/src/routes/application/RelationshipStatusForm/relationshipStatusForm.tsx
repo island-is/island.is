@@ -1,10 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { Box, Text, ToggleSwitchCheckbox } from '@island.is/island-ui/core'
-
-import {
-  ContentContainer,
-  Footer,
-} from '@island.is/financial-aid-web/osk/src/components'
+import { Box, ToggleSwitchCheckbox } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 
@@ -16,9 +11,10 @@ import {
   NavigationProps,
 } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-
-import InRelationshipForm from './InRelationshipForm'
-import UnknownRelationshipForm from './UnknownRelationshipForm'
+import {
+  InRelationshipForm,
+  UnknownRelationshipForm,
+} from '@island.is/financial-aid-web/osk/src/routes/application/RelationshipStatusForm'
 
 const RelationshipStatusForm = () => {
   const router = useRouter()

@@ -28,11 +28,9 @@ const InRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
       return
     }
 
-    if (form?.familyStatus === FamilyStatus.MARRIED) {
-      if (!acceptData) {
-        setHasError(true)
-        return
-      }
+    if (form?.familyStatus === FamilyStatus.MARRIED && !acceptData) {
+      setHasError(true)
+      return
     }
 
     router.push(nextUrl)
@@ -63,8 +61,8 @@ const InRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
           label="Ég skil að maki minn þarf líka að skila inn umsókn áður en úrvinnsla hefst"
           large
           checked={acceptData}
-          onChange={() => {
-            setAcceptData(!acceptData)
+          onChange={(event) => {
+            setAcceptData(event.target.checked)
             setHasError(false)
           }}
           hasError={hasError}

@@ -51,21 +51,21 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
   }
 
   const errorCheck = () => {
-    if (form?.familyStatus === undefined || !nextUrl) {
+    if (
+      form?.familyStatus === undefined ||
+      !nextUrl ||
+      form?.familyStatus === FamilyStatus.NOT_INFORMED
+    ) {
       setHasError(true)
       return
     }
 
-    if (form?.familyStatus === FamilyStatus.NOT_INFORMED) {
+    if (
+      form?.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION &&
+      isInputAndRadioValid(acceptData, form?.spouse)
+    ) {
       setHasError(true)
       return
-    }
-
-    if (form?.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION) {
-      if (isInputAndRadioValid(acceptData, form?.spouse)) {
-        setHasError(true)
-        return
-      }
     }
 
     router.push(nextUrl)
@@ -95,7 +95,7 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
         </Text>
         <RadioButtonContainer
           options={options}
-          error={hasError && !form?.familyStatus}
+          error={hasError}
           isChecked={(value: FamilyStatus) => {
             return value === form?.familyStatus
           }}
