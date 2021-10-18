@@ -129,6 +129,14 @@ export const getFileTypeName: KeyMapping<FileType, string> = {
   Other: 'Innsend gögn',
 }
 
+export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
+  New: 'Umsókn þín er móttekin',
+  DataNeeded: 'Okkur vantar gögn til að klára að vinna úr umsókninni',
+  InProgress: 'Umsókn þín er móttekin og er nú í vinnslu',
+  Rejected: 'Umsókn þinni um aðstoð hefur verið synjað',
+  Approved: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+}
+
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,
   aid: {
