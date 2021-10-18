@@ -51,7 +51,6 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
   }
 
   const errorCheck = () => {
-    console.log(form.familyStatus)
     if (form?.familyStatus === undefined || !nextUrl) {
       setHasError(true)
       return
@@ -69,7 +68,7 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
       }
     }
 
-    return
+    router.push(nextUrl)
   }
 
   return (
@@ -122,6 +121,17 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
             }}
             removeError={() => setHasError(false)}
           />
+        </div>
+
+        <div
+          className={cn({
+            [`errorMessage`]: true,
+            [`showErrorMessage`]: hasError,
+          })}
+        >
+          <Text color="red600" fontWeight="semiBold" variant="small">
+            Þú þarft að fylla út alla reiti
+          </Text>
         </div>
       </ContentContainer>
       <Footer
