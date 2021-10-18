@@ -21,8 +21,6 @@ import {
 } from '@island.is/island-ui/core'
 import { Organizations, SupportCategory } from '@island.is/api/schema'
 
-import GhostForm from './GhostForm'
-
 type FormState = {
   message: string
   name: string
@@ -316,7 +314,7 @@ export const SyslumennForms = ({
         <GridContainer>
           <GridRow marginTop={8}>
             <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
-              <GhostForm />
+              nothing
             </GridColumn>
           </GridRow>
         </GridContainer>

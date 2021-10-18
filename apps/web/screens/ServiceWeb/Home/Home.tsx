@@ -30,10 +30,8 @@ import {
   SimpleStackedSlider,
   ServiceWebSearchSection,
   ServiceWebHeader,
-  OrganizationFooter,
-  footerEnabled,
-  ServiceWebFooter,
 } from '@island.is/web/components'
+import Footer from '../shared/Footer'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import { getSlugPart } from '../utils'
@@ -120,16 +118,7 @@ const Home: Screen<HomeProps> = ({ organization, supportCategories }) => {
           </GridRow>
         </GridContainer>
       </Box>
-      {footerEnabled.includes(institutionSlug) ? (
-        <OrganizationFooter organizations={[organization]} />
-      ) : (
-        <ServiceWebFooter
-          title={organization.title}
-          logoSrc={organization.logo.url}
-          contactLink="/s/stafraent-island/hafa-samband"
-          phone={organization.phone}
-        />
-      )}
+      <Footer institutionSlug={institutionSlug} organization={organization} />
     </>
   )
 }

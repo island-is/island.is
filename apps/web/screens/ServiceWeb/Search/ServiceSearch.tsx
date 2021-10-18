@@ -19,6 +19,7 @@ import {
   GridColumn,
   GridRow,
 } from '@island.is/island-ui/core'
+import Footer from '../shared/Footer'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   GET_NAMESPACE_QUERY,
@@ -41,6 +42,7 @@ import {
   ServiceWebSearchInput,
   ServiceWebModifySearchTerms,
 } from '@island.is/web/components'
+import { getSlugPart } from '../utils'
 
 import * as sharedStyles from '../shared/styles.treat'
 
@@ -62,6 +64,8 @@ const ServiceSearch: Screen<CategoryProps> = ({
   const Router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+
+  const institutionSlug = getSlugPart(Router.asPath, 2)
 
   const searchResultsItems = (searchResults.items as Array<SupportQna>).map(
     (item) => ({
@@ -216,6 +220,7 @@ const ServiceSearch: Screen<CategoryProps> = ({
           </GridRow>
         </GridContainer>
       </Box>
+      <Footer institutionSlug={institutionSlug} organization={organization} />
     </>
   )
 }

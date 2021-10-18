@@ -17,35 +17,44 @@ import {
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { ServiceWebHeader, SyslumennForms } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Organizations, Query, SupportCategory } from '@island.is/api/schema'
 import {
+  Query,
+  Organizations,
   ContentLanguage,
   QueryGetNamespaceArgs,
-  QueryGetOrganizationsArgs,
+  QueryGetOrganizationArgs,
   QueryGetSupportCategoriesInOrganizationArgs,
   SyslumennFormsMutation,
   SyslumennFormsMutationVariables,
+  SupportCategory,
+  Organization,
+  QueryGetOrganizationsArgs,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATIONS_QUERY,
+  GET_SERVICE_WEB_ORGANIZATION,
   GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
   SYSLUMENN_FORMS_MUTATION,
 } from '../../queries'
 import { Screen } from '../../../types'
+import Footer from '../shared/Footer'
 
 import * as sharedStyles from '../shared/styles.treat'
 
 interface SyslumennFormsPageProps {
   syslumenn?: Organizations['items']
+  organization?: Organization
   supportCategories?: SupportCategory[]
   namespace: Query['getNamespace']
-  slug: string | string[]
+  institutionSlug: string
 }
 
 const SyslumennFormsPage: Screen<SyslumennFormsPageProps> = ({
   syslumenn,
   supportCategories,
+  institutionSlug,
+  organization,
 }) => {
   const { linkResolver } = useLinkResolver()
   const [submit, { data, loading, error }] = useMutation<
@@ -154,6 +163,7 @@ const SyslumennFormsPage: Screen<SyslumennFormsPageProps> = ({
           </GridRow>
         </GridContainer>
       </Box>
+      <Footer institutionSlug={institutionSlug} organization={organization} />
       <ToastContainer closeButton={true} useKeyframeStyles={false} />
     </>
   )
@@ -166,11 +176,25 @@ SyslumennFormsPage.getInitialProps = async ({
 }) => {
   const slug = query.slug ? (query.slug as string) : 'stafraent-island'
 
-  const [organizations, supportCategories, namespace] = await Promise.all([
+  const [
+    organizations,
+    organization,
+    supportCategories,
+    namespace,
+  ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationsArgs>({
       query: GET_ORGANIZATIONS_QUERY,
       variables: {
         input: {
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetOrganizationArgs>({
+      query: GET_SERVICE_WEB_ORGANIZATION,
+      variables: {
+        input: {
+          slug,
           lang: locale as ContentLanguage,
         },
       },
@@ -205,10 +229,11 @@ SyslumennFormsPage.getInitialProps = async ({
     syslumenn: organizations?.data?.getOrganizations?.items?.filter((x) =>
       x.slug.startsWith('syslumadurinn'),
     ),
+    organization: organization?.data?.getOrganization,
     supportCategories:
       supportCategories?.data?.getSupportCategoriesInOrganization,
+    institutionSlug: slug,
     namespace,
-    slug,
   }
 }
 

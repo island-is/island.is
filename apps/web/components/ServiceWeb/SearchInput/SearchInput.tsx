@@ -28,7 +28,7 @@ interface SearchInputProps {
   initialInputValue?: string
 }
 
-const unused = ['.', '?', ':', ',', ';', '!', '-', '_', '#']
+const unused = ['.', '?', ':', ',', ';', '!', '-', '_', '#', '~', '|']
 
 export const ModifySearchTerms = (searchTerms: string) =>
   searchTerms
@@ -114,35 +114,54 @@ export const SearchInput = ({
   }
 
   const updateOptions = () => {
-    setOptions(
-      ((data?.searchResults?.items as Array<SupportQna>) || []).map(
-        (item, index) => ({
-          label: item.title,
-          value: item.slug,
-          component: ({ active }) => {
-            if (active) {
-              setActiveItem(item)
-            }
+    const options = (
+      (data?.searchResults?.items as Array<SupportQna>) || []
+    ).map((item, index) => ({
+      label: item.title,
+      value: item.slug,
+      component: ({ active }) => {
+        if (active) {
+          setActiveItem(item)
+        }
 
-            return (
-              <Box
-                key={index}
-                cursor="pointer"
-                outline="none"
-                padding={2}
-                role="button"
-                background={active ? 'white' : 'blue100'}
-                onClick={() => {
-                  setOptions([])
-                  onSelect(item)
-                }}
-              >
-                <Text as="span">{item.title}</Text>
-              </Box>
-            )
-          },
-        }),
-      ),
+        return (
+          <Box
+            key={index}
+            cursor="pointer"
+            outline="none"
+            padding={2}
+            role="button"
+            background={active ? 'white' : 'blue100'}
+            onClick={() => {
+              setOptions([])
+              onSelect(item)
+            }}
+          >
+            <Text as="span">{item.title}</Text>
+          </Box>
+        )
+      },
+    }))
+
+    setOptions(
+      options.length
+        ? options
+        : [
+            {
+              label: searchTerms,
+              value: searchTerms,
+              component: () => (
+                <Box
+                  padding={2}
+                  background="blue100"
+                  disabled
+                  onClick={() => null}
+                >
+                  <Text as="span">Ekkert fannst</Text>
+                </Box>
+              ),
+            },
+          ],
     )
     setIsLoading(false)
   }
