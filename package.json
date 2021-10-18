@@ -65,7 +65,7 @@
     "@formatjs/intl-locale": "2.4.33",
     "@formatjs/intl-numberformat": "7.1.5",
     "@hookform/error-message": "0.0.5",
-    "@hugsmidjan/regulations-editor": "0.4.5",
+    "@hugsmidjan/regulations-editor": "0.4.7",
     "@island.is/login": "1.2.1",
     "@nestjs/bull": "0.1.2",
     "@nestjs/common": "7.4.4",

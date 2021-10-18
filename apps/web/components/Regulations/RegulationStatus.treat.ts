@@ -1,5 +1,5 @@
 import { style, globalStyle } from 'treat'
-import { spacing } from '@island.is/island-ui/theme'
+import { spacing, theme } from '@island.is/island-ui/theme'
 
 export const printText = style({
   '@media': {
@@ -18,6 +18,11 @@ globalStyle(`${printText} > p`, {
   fontSize: 'inherit',
 })
 
+export const statusText = style({
+  fontWeight: theme.typography.light,
+  marginBottom: 0.5 * spacing[1],
+})
+
 export const metaDate = style({
   display: 'inline-block',
   fontSize: '.75em',
@@ -27,10 +32,18 @@ export const metaDate = style({
     content: '" –  "',
   },
 })
-export const linkToCurrent = style({
+export const toCurrent = style({
   display: 'inline-block',
   fontSize: '.75em',
 
   '::before': { content: '"("' },
   '::after': { content: '")"' },
+})
+
+export const linkToCurrent = style({
+  color: theme.color.blue600,
+  ':hover': {
+    color: theme.color.blue400,
+    textDecoration: 'underline',
+  },
 })
