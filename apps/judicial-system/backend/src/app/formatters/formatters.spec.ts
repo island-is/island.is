@@ -850,128 +850,14 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 describe('formatPrisonRulingEmailNotification', () => {
   test('should format prison ruling notification', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
-    const court = 'Héraðsdómur Vesturlands'
-    const prosecutorName = 'Siggi Sakó'
     const courtEndTime = new Date('2020-12-20T13:32')
-    const defenderName = 'Skúli Skjöldur'
-    const defenderEmail = 'shield@defend.is'
-    const decision = CaseDecision.ACCEPTING
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.ISOLATION,
-      CaseCustodyRestrictions.MEDIA,
-    ]
-    const accusedAppealDecision = CaseAppealDecision.APPEAL
-    const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
-    const judgeName = 'Dalli Dómari'
-    const judgeTitle = 'aðal dómarinn'
-    const conclusion =
-      'Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021, kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
 
     // Act
-    const res = formatPrisonRulingEmailNotification(
-      accusedGender,
-      court,
-      prosecutorName,
-      courtEndTime,
-      defenderName,
-      defenderEmail,
-      decision,
-      custodyRestrictions,
-      accusedAppealDecision,
-      prosecutorAppealDecision,
-      judgeName,
-      judgeTitle,
-      conclusion,
-    )
+    const res = formatPrisonRulingEmailNotification(courtEndTime)
 
     // Assert
     expect(res).toBe(
-      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Þinghaldi lauk kl. 13:32.<br /><br />Ákærandi: Siggi Sakó.<br />Verjandi: Skúli Skjöldur, shield@defend.is.<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021, kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.<br /><br /><strong>Ákvörðun um kæru</strong><br />Sækjandi unir úrskurðinum.<br />Varnaraðili lýsir því yfir að hann kæri úrskurðinn til Landsréttar.<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />Sækjandi tekur fram að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.<br /><br />Dalli Dómari aðal dómarinn',
-    )
-  })
-
-  test('should format prison ruling notification for a rejected case', () => {
-    // Arrange
-    const accusedGender = CaseGender.MALE
-    const court = 'Héraðsdómur Vesturlands'
-    const prosecutorName = 'Siggi Sakó'
-    const courtEndTime = new Date('2020-12-20T14:30')
-    const defenderName = 'Skúli Skjöldur'
-    const defenderEmail = 'shield@defend.is'
-    const decision = CaseDecision.REJECTING
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.ISOLATION,
-      CaseCustodyRestrictions.MEDIA,
-    ]
-    const accusedAppealDecision = CaseAppealDecision.APPEAL
-    const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
-    const judgeName = 'Dalli Dómari'
-    const judgeTitle = 'aðal dómarinn'
-    const conclusion =
-      'Kröfu um að kærði, Biggi Börgler, kt. 241101-8760, sæti gæsluvarðhaldi er hafnað.'
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      accusedGender,
-      court,
-      prosecutorName,
-      courtEndTime,
-      defenderName,
-      defenderEmail,
-      decision,
-      custodyRestrictions,
-      accusedAppealDecision,
-      prosecutorAppealDecision,
-      judgeName,
-      judgeTitle,
-      conclusion,
-    )
-
-    // Assert
-    expect(res).toBe(
-      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Þinghaldi lauk kl. 14:30.<br /><br />Ákærandi: Siggi Sakó.<br />Verjandi: Skúli Skjöldur, shield@defend.is.<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kröfu um að kærði, Biggi Börgler, kt. 241101-8760, sæti gæsluvarðhaldi er hafnað.<br /><br /><strong>Ákvörðun um kæru</strong><br />Sækjandi unir úrskurðinum.<br />Varnaraðili lýsir því yfir að hann kæri úrskurðinn til Landsréttar.<br /><br />Dalli Dómari aðal dómarinn',
-    )
-  })
-
-  test('should format prison ruling notification when a defender has not been set', () => {
-    // Arrange
-    const accusedGender = CaseGender.MALE
-    const court = 'Héraðsdómur Vesturlands'
-    const prosecutorName = 'Siggi Sakó'
-    const courtEndTime = new Date('2020-12-20T13:32')
-    const decision = CaseDecision.ACCEPTING
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.ISOLATION,
-      CaseCustodyRestrictions.MEDIA,
-    ]
-    const accusedAppealDecision = CaseAppealDecision.APPEAL
-    const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
-    const judgeName = 'Dalli Dómari'
-    const judgeTitle = 'aðal dómarinn'
-    const conclusion =
-      'Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021, kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      accusedGender,
-      court,
-      prosecutorName,
-      courtEndTime,
-      undefined,
-      undefined,
-      decision,
-      custodyRestrictions,
-      accusedAppealDecision,
-      prosecutorAppealDecision,
-      judgeName,
-      judgeTitle,
-      conclusion,
-    )
-
-    // Assert
-    expect(res).toBe(
-      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Þinghaldi lauk kl. 13:32.<br /><br />Ákærandi: Siggi Sakó.<br />Verjandi: Hefur ekki verið skráður.<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021, kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.<br /><br /><strong>Ákvörðun um kæru</strong><br />Sækjandi unir úrskurðinum.<br />Varnaraðili lýsir því yfir að hann kæri úrskurðinn til Landsréttar.<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />Sækjandi tekur fram að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.<br /><br />Dalli Dómari aðal dómarinn',
+      'Meðfylgjandi er vistunarseðill gæsluvarðhaldsfanga sem var úrskurðaður í gæsluvarðhald í héraðsdómi 20. desember 2020.',
     )
   })
 })
