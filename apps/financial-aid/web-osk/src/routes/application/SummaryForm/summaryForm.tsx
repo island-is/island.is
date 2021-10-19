@@ -19,7 +19,11 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import { NavigationProps } from '@island.is/financial-aid/shared/lib'
+import {
+  FamilyStatus,
+  getFamilyStatus,
+  NavigationProps,
+} from '@island.is/financial-aid/shared/lib'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useApplication'
 
@@ -48,6 +52,12 @@ const SummaryForm = () => {
   const { createApplication } = useApplication()
 
   const formInfoOverview = [
+    {
+      id: 'familyStatus',
+      label: 'Hjúskaparstaða',
+      url: 'hjuskaparstada',
+      info: getFamilyStatus[form?.familyStatus as FamilyStatus],
+    },
     {
       id: 'homeCircumstances',
       label: 'Búseta',
