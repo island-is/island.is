@@ -85,19 +85,19 @@ export class NationalRegistryXRoadService {
     nationalId: string,
     authToken: string,
   ): Promise<NationalRegistryPerson> {
-    // const person = await this.nationalRegistryFetch<Einstaklingsupplysingar>(
-    //   `/${nationalId}`,
-    //   authToken,
-    // )
+    const person = await this.nationalRegistryFetch<Einstaklingsupplysingar>(
+      `/${nationalId}`,
+      authToken,
+    )
 
     return {
-      nationalId: '2001884039',
-      fullName: 'Rikki',
+      nationalId: nationalId,
+      fullName: person.nafn,
       address: {
-        streetName: 'blablabla 1',
-        postalCode: '220',
-        city: 'Hafnarfjörður',
-        municipalityCode: '1000',
+        streetName: person.logheimili?.heiti || undefined,
+        postalCode: person.logheimili?.postnumer || undefined,
+        city: person.logheimili?.stadur || undefined,
+        municipalityCode: person.logheimili?.sveitarfelagsnumer || undefined,
       },
     }
   }
@@ -191,15 +191,15 @@ export class NationalRegistryXRoadService {
     nationalId: string,
     authToken: string,
   ): Promise<NationalRegistrySpouse> {
-    // const spouse = await this.nationalRegistryFetch<Hjuskapur>(
-    //   `/${nationalId}/hjuskapur`,
-    //   authToken,
-    // )
+    const spouse = await this.nationalRegistryFetch<Hjuskapur>(
+      `/${nationalId}/hjuskapur`,
+      authToken,
+    )
 
     return {
-      nationalId: '1010102210',
-      name: 'halllló',
-      maritalStatus: '1',
+      nationalId: spouse.kennitalaMaka || undefined,
+      name: spouse.nafnMaka || undefined,
+      maritalStatus: spouse.hjuskaparkodi || undefined,
     }
   }
 
