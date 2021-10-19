@@ -81,8 +81,8 @@ const PetitionView = () => {
             </GridRow>
             <GridRow>
               <GridColumn span={['12/12', '4/12', '4/12']}>
-                <Text variant="h4">Meðmælendalistinn er opinn:</Text>
-                <Text variant="default">{formatDate(list.created)}</Text>
+                <Text variant="h4">Meðmælendalistinn er opinn til:</Text>
+                <Text variant="default">{formatDate(list.closedDate)}</Text>
               </GridColumn>
               <GridColumn span={['12/12', '4/12', '4/12']}>
                 <Text variant="h4">Ábyrgðarmaður:</Text>
