@@ -50,8 +50,8 @@ export class EndorsementSystemService {
     return this.endorsementListApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getOwnerName(list: {owner: string}) {
-    if (!list.owner){
+  async getOwnerName(list: { owner: string }) {
+    if (!list.owner) {
       return null
     }
     return (await this.nationalRegistryApi.getUser(list.owner)).Fulltnafn

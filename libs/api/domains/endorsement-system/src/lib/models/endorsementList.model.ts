@@ -3,7 +3,7 @@ import graphqlTypeJson from 'graphql-type-json'
 import { EndorsementListTagsEnum } from '../enums/endorsementListTags.enum'
 import { Endorsement } from './endorsement.model'
 import { ValidationRule } from './validationRule.model'
-import { stringHash } from '@island.is/web/utils/stringHash';
+import { stringHash } from '@island.is/web/utils/stringHash'
 
 @ObjectType()
 export class EndorsementList {
