@@ -25,6 +25,7 @@ import {
   RegulationViewTypes as Schema_RegulationViewTypes,
 } from '@island.is/web/graphql/schema'
 import { GET_REGULATION_QUERY } from '../queries'
+import { Text } from '@island.is/island-ui/core'
 
 // ---------------------------------------------------------------------------
 
@@ -41,6 +42,9 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
     return (
       <div>
         <meta httpEquiv="refresh" content={`0;url=${props.redirect}`} />
+        <Text as="p" marginY={6}>
+          <strong>Sæki PDF skrá</strong>
+        </Text>
       </div>
     )
   }
