@@ -14,18 +14,15 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
-import { NavigationProps, Routes } from '@island.is/financial-aid/shared/lib'
+import { Routes } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
+import { AppContext } from '../../../components/AppProvider/AppProvider'
 
 const Confirmation = () => {
   const router = useRouter()
   const { form } = useContext(FormContext)
-
-  const navigation: NavigationProps = useFormNavigation(
-    router.pathname,
-  ) as NavigationProps
+  const { municipality } = useContext(AppContext)
 
   const logOut = useLogOut()
 
@@ -95,11 +92,7 @@ const Confirmation = () => {
               preTextIconType="filled"
               size="small"
               onClick={() => {
-                // TODO when there more muncipality
-                window.open(
-                  'https://www.hafnarfjordur.is/ibuar/felagsleg-adstod/fjarhagsadstod/"',
-                  '_ blank',
-                )
+                window.open(municipality?.homepage, '_ blank')
               }}
               type="button"
               variant="text"

@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import cn from 'classnames'
 
 import LogoSvg from './LogoSvg'
-import { useQuery } from '@apollo/client'
-import { GetMunacipalityHomePageQuery } from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { LoadingContainer } from '@island.is/financial-aid-web/veita/src/components'
+import { AdminContext } from '../AdminProvider/AdminProvider'
+import { logoKeyFromMunicipalityCode } from '@island.is/financial-aid/shared/lib'
 
 interface MunicipalityData {
   municipality: {
@@ -22,43 +22,31 @@ interface LogoProps {
 const LogoMunicipality = ({ className }: LogoProps) => {
   const router = useRouter()
 
+  const { admin } = useContext(AdminContext)
+
   const logoSize = 48
-
-  //TODO when more muncipalities have been added to system
-  const municipaliyId = router.query.sveitarfelag
-    ? (router.query.sveitarfelag as string)
-    : 'hfj'
-
-  const { data, loading } = useQuery<MunicipalityData>(
-    GetMunacipalityHomePageQuery,
-    {
-      variables: {
-        input: {
-          id: municipaliyId,
-        },
-      },
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
 
   return (
     <LoadingContainer
-      isLoading={loading}
+      isLoading={admin === undefined}
       loader={
         <Box>
           <SkeletonLoader display="block" height={logoSize} width={logoSize} />
         </Box>
       }
     >
-      {data && (
+      {admin && (
         <a
-          href={data.municipality.homepage}
+          href={'hafnarfjordur.is'}
           target="_blank"
           rel="noopener noreferrer"
           className={cn({ [`${className}`]: true })}
         >
-          <LogoSvg name={data.municipality.municipalityId} />
+          <LogoSvg
+            name={
+              logoKeyFromMunicipalityCode[admin.staff?.municipalityId ?? '']
+            }
+          />
         </a>
       )}
     </LoadingContainer>

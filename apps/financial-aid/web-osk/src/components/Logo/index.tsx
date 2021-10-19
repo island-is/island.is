@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import cn from 'classnames'
 import LogoSvg from './LogoSvg'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
+import { logoKeyFromMunicipalityCode } from '@island.is/financial-aid/shared/lib'
 
 interface LogoProps {
   className?: string
@@ -21,7 +22,9 @@ const Logo = ({ className }: LogoProps) => {
       className={cn({ [`${className}`]: true })}
       rel="noreferrer noopener"
     >
-      <LogoSvg name={municipality?.municipalityId} />
+      <LogoSvg
+        name={logoKeyFromMunicipalityCode[municipality?.municipalityId ?? '']}
+      />
     </a>
   )
 }

@@ -50,5 +50,9 @@ export const focusOnNextInput = (
   }
 }
 
-export const formatHomeAddress = (nationalRegistryData: NationalRegistryData) =>
-  `${nationalRegistryData.address.streetName}, ${nationalRegistryData.address.postalCode} ${nationalRegistryData.address.city}`
+export const formatHomeAddress = (
+  nationalRegistryData?: NationalRegistryData,
+) =>
+  nationalRegistryData
+    ? `${nationalRegistryData.address.streetName}, ${nationalRegistryData.address.postalCode} ${nationalRegistryData.address.city}`
+    : undefined

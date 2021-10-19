@@ -160,3 +160,8 @@ export const getCommentFromLatestEvent = (
 ) => {
   return applicationEvents.find((el) => el.eventType === findState)
 }
+
+export const logoKeyFromMunicipalityCode: KeyMapping<string, string> = {
+  '': 'sis.svg',
+  '1000': 'hfj.svg',
+}

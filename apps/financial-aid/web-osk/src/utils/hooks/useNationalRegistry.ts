@@ -14,7 +14,7 @@ const useNationalRegistry = () => {
         ? JSON.parse(sessionStorage.getItem(storageKey) as string)
         : undefined,
     )
-  })
+  }, [])
 
   const setNationalRegistryData = (data: NationalRegistryData) => {
     _setNationalRegistryData(data)

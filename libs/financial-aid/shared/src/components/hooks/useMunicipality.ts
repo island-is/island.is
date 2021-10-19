@@ -20,6 +20,7 @@ export const useMunicipality = () => {
       fetchPolicy: 'no-cache',
       onCompleted: (data: { municipality: Municipality }) => {
         setScopedMunicipality(data.municipality)
+        sessionStorage.setItem(storageKey, JSON.stringify(data.municipality))
       },
       onError: (error) => {
         // TODO: What should happen here?
@@ -29,12 +30,11 @@ export const useMunicipality = () => {
   )
 
   useEffect(() => {
-    const storedFormJson = sessionStorage.getItem(storageKey)
-    if (storedFormJson === null) {
-      return
-    }
-    const storedState = JSON.parse(storedFormJson)
-    setScopedMunicipality(storedState)
+    setScopedMunicipality(
+      sessionStorage.getItem(storageKey)
+        ? JSON.parse(sessionStorage.getItem(storageKey) as string)
+        : undefined,
+    )
   }, [])
 
   const setMunicipality = async (municipalityId: string) => {

@@ -26,7 +26,7 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 const MainPage = () => {
   const logOut = useLogOut()
 
-  const { myApplication, loading, error } = useContext(AppContext)
+  const { myApplication, loading, error, municipality } = useContext(AppContext)
 
   return (
     <>
@@ -72,7 +72,7 @@ const MainPage = () => {
           <BulletList type={'ul'} space={2}>
             <Bullet>
               <Link
-                href="https://www.hafnarfjordur.is/ibuar/felagsleg-adstod/fjarhagsadstod/"
+                href={municipality?.homepage ?? ''}
                 color="blue400"
                 underline="normal"
                 underlineVisibility="always"

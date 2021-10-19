@@ -277,15 +277,6 @@ export const GetMunicipalityQuery = gql`
   }
 `
 
-export const GetMunacipalityHomePageQuery = gql`
-  query GetMunacipalityHomePageQuery($input: MunicipalityQueryInput!) {
-    municipality(input: $input) {
-      id
-      homepage
-    }
-  }
-`
-
 export const CurrentUserQuery = gql`
   query CurrentUserQuery {
     currentUser {
