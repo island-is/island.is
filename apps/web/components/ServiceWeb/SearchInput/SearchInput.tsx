@@ -26,6 +26,7 @@ interface SearchInputProps {
   logoUrl?: string
   colored?: boolean
   initialInputValue?: string
+  placeholder?: string
 }
 
 const unused = ['.', '?', ':', ',', ';', '!', '-', '_', '#', '~', '|']
@@ -38,13 +39,16 @@ export const ModifySearchTerms = (searchTerms: string) =>
       const s = unused.reduce((a, b) => {
         return a.replace(b, '')
       }, cur)
-      return sum ? `${sum}|${s}~` : s ? `${s}~` : ''
+      const f = s.length > 3 ? Math.floor(0.3 * s.length) : ''
+      const add = s ? `${s}~${f ? f : ''}|${s}` : ''
+      return sum ? `${sum}|${add}` : add
     }, '')
 
 export const SearchInput = ({
   colored = false,
   size = 'large',
   initialInputValue = '',
+  placeholder = 'Leitaðu á þjónustuvefnum',
 }: SearchInputProps) => {
   const [searchTerms, setSearchTerms] = useState<string>('')
   const [activeItem, setActiveItem] = useState<SupportQna>()
@@ -68,7 +72,7 @@ export const SearchInput = ({
       if (searchTerms) {
         const queryString = ModifySearchTerms(searchTerms)
 
-        if (searchTerms === lastSearchTerms) {
+        if (searchTerms.trim() === lastSearchTerms.trim()) {
           updateOptions()
         } else {
           fetch({
@@ -134,6 +138,7 @@ export const SearchInput = ({
             background={active ? 'white' : 'blue100'}
             onClick={() => {
               setOptions([])
+              // setSearchTerms('')
               onSelect(item)
             }}
           >
@@ -173,7 +178,7 @@ export const SearchInput = ({
       size={size}
       colored={colored}
       key="island-helpdesk"
-      placeholder="Leitaðu á þjónustuvefnum"
+      placeholder={placeholder}
       options={options}
       loading={busy}
       initialInputValue={initialInputValue}

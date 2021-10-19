@@ -15,7 +15,10 @@ import {
   AlertBanner,
 } from '@island.is/island-ui/core'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { ServiceWebHeader, SyslumennForms } from '@island.is/web/components'
+import {
+  ServiceWebHeader,
+  ServiceWebStandardForm,
+} from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   Query,
@@ -145,7 +148,8 @@ const SyslumennFormsPage: Screen<SyslumennFormsPageProps> = ({
                     />
                   </Box>
                 ) : (
-                  <SyslumennForms
+                  <ServiceWebStandardForm
+                    institutionSlug={institutionSlug}
                     supportCategories={supportCategories}
                     syslumenn={syslumenn}
                     loading={loading}
@@ -203,7 +207,7 @@ SyslumennFormsPage.getInitialProps = async ({
       query: GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: slug,
           lang: locale as ContentLanguage,
         },
       },

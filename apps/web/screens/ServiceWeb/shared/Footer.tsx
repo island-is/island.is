@@ -1,6 +1,7 @@
 import React from 'react'
 import { Organization } from '@island.is/web/graphql/schema'
 
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   OrganizationFooter,
   footerEnabled,
@@ -13,9 +14,15 @@ interface FooterProps {
 }
 
 const Footer = ({ organization, institutionSlug }: FooterProps) => {
+  const { linkResolver } = useLinkResolver()
+
   if (!organization || !institutionSlug) {
     return null
   }
+
+  const contactLink = `${
+    linkResolver('helpdesk').href
+  }/${institutionSlug}/hafa-samband`
 
   return footerEnabled.includes(institutionSlug) ? (
     <OrganizationFooter organizations={[organization]} />
@@ -23,8 +30,8 @@ const Footer = ({ organization, institutionSlug }: FooterProps) => {
     <ServiceWebFooter
       title={organization.title}
       logoSrc={organization.logo.url}
-      contactLink="/s/stafraent-island/hafa-samband"
       phone={organization.phone}
+      contactLink={contactLink}
     />
   )
 }

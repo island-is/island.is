@@ -17,6 +17,11 @@ export class SyslumennFormsInput {
   subject?: string = 'N/A'
 
   @Field()
+  @IsOptional()
+  @IsString()
+  phone?: string = 'N/A'
+
+  @Field()
   @IsString()
   syslumadur: string
 

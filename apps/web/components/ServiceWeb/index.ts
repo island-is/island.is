@@ -4,5 +4,5 @@ export {
   ServiceWebSearchInput,
   ServiceWebModifySearchTerms,
 } from './SearchInput'
-export { SyslumennForms } from './Forms'
+export { ServiceWebStandardForm } from './Forms'
 export { ServiceWebFooter } from './Footer'
