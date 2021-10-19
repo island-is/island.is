@@ -2,35 +2,46 @@ import { useContext } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   Application,
+  ApplicationEventType,
+  ApplicationFilters,
   ApplicationState,
-  UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
-import { UpdateApplicationMutation } from '../../graphql'
 import { ApplicationFiltersContext } from '../components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 import { AdminContext } from '../components/AdminProvider/AdminProvider'
-
-interface SaveData {
-  updateApplicationRes: UpdateApplicationResponseType
-}
+import {
+  UpdateApplicationMutation,
+  ApplicationFiltersMutation,
+} from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 export const useApplicationState = () => {
-  const [
-    updateApplicationMutation,
-    { loading: saveLoading },
-  ] = useMutation<SaveData>(UpdateApplicationMutation)
+  const [updateApplicationMutation, { loading: saveLoading }] = useMutation<{
+    updateApplication: Application
+  }>(UpdateApplicationMutation)
+
+  const [applicationFiltersQuery, { loading: loadingFilters }] = useMutation<{
+    applicationFilters: ApplicationFilters
+  }>(ApplicationFiltersMutation)
 
   const { setApplicationFilters } = useContext(ApplicationFiltersContext)
 
   const { admin } = useContext(AdminContext)
 
+  const fetchAndSetFilters = async () => {
+    const { data } = await applicationFiltersQuery()
+    if (data) {
+      setApplicationFilters(data.applicationFilters)
+    }
+  }
+
   const changeApplicationState = async (
     applicationId: string,
     state: ApplicationState,
+    event: ApplicationEventType,
     amount?: number,
     rejection?: string,
     comment?: string,
   ) => {
-    if (saveLoading === false && applicationId) {
+    if (saveLoading === false && loadingFilters === false && applicationId) {
       const { data } = await updateApplicationMutation({
         variables: {
           input: {
@@ -40,15 +51,14 @@ export const useApplicationState = () => {
             rejection,
             comment,
             staffId: admin?.staff?.id,
+            event,
           },
         },
       })
 
       if (data) {
-        if (data.updateApplicationRes.filters) {
-          setApplicationFilters(data.updateApplicationRes.filters)
-        }
-        return data.updateApplicationRes.application
+        await fetchAndSetFilters()
+        return data.updateApplication
       }
     }
   }

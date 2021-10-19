@@ -37,6 +37,9 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
       variables: {
         input: {
           listId: endorsementListId,
+          endorsementDto: {
+            showName: true,
+          },
         },
       },
     }).catch(() => {

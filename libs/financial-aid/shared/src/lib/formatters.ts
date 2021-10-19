@@ -6,6 +6,7 @@ import {
   ApplicationStateUrl,
   FileType,
   RolesRule,
+  FamilyStatus,
 } from './enums'
 import { ApplicationEvent } from './interfaces'
 import type { KeyMapping } from './types'
@@ -86,6 +87,22 @@ export const getEventType: KeyMapping<
     text: 'sendi inn gögn',
     isStaff: false,
   },
+  AssignCase: {
+    header: 'Umsjá',
+    text: 'tók að sér málið',
+    isStaff: true,
+  },
+}
+
+export const eventTypeFromApplicationState: KeyMapping<
+  ApplicationState,
+  ApplicationEventType
+> = {
+  New: ApplicationEventType.NEW,
+  DataNeeded: ApplicationEventType.DATANEEDED,
+  InProgress: ApplicationEventType.INPROGRESS,
+  Rejected: ApplicationEventType.REJECTED,
+  Approved: ApplicationEventType.APPROVED,
 }
 
 export const getActiveSectionForTimeline: KeyMapping<
@@ -107,10 +124,38 @@ export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
   Approved: 'Approved',
 }
 
+export const isSpouseDataNeeded: KeyMapping<FamilyStatus, boolean> = {
+  Unknown: false,
+  Single: false,
+  Cohabitation: true,
+  UnregisteredCohabitation: false,
+  Married: true,
+  MarriedNotLivingTogether: true,
+  NotInformed: false,
+}
+
+export const getFamilyStatus: KeyMapping<FamilyStatus, string> = {
+  Unknown: 'Óþekkt',
+  Cohabitation: 'Í sambúð',
+  Married: 'Gift',
+  Single: 'Einstæð',
+  MarriedNotLivingTogether: 'Hjón ekki í samvistum',
+  NotInformed: 'Óupplýst',
+  UnregisteredCohabitation: 'Óstaðfestri sambúð?',
+}
+
 export const getFileTypeName: KeyMapping<FileType, string> = {
   TaxReturn: 'Skattagögn',
   Income: 'Tekjugögn',
   Other: 'Innsend gögn',
+}
+
+export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
+  New: 'Umsókn þín er móttekin',
+  DataNeeded: 'Okkur vantar gögn til að klára að vinna úr umsókninni',
+  InProgress: 'Umsókn þín er móttekin og er nú í vinnslu',
+  Rejected: 'Umsókn þinni um aðstoð hefur verið synjað',
+  Approved: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
 }
 
 export const aidCalculator = (
