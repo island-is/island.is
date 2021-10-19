@@ -1,7 +1,7 @@
 import * as s from './RegulationStatus.treat'
 
 import React from 'react'
-import { ISODate, interpolate } from '@island.is/regulations'
+import { ISODate, interpolate, toISODate } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { Hidden, Link, Text } from '@island.is/island-ui/core'
 import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
@@ -34,7 +34,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
     history,
   } = regulation
 
-  const today = new Date().toISOString().substr(0, 10) as ISODate
+  const today = toISODate(new Date())
 
   const color: BallColor = repealed
     ? 'red'
