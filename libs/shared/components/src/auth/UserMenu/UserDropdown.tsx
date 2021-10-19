@@ -12,7 +12,10 @@ import {
   GridContainer,
   Option,
 } from '@island.is/island-ui/core'
+import { Link } from 'react-router-dom'
 import { Locale, User } from '@island.is/shared/types'
+import { ServicePortalPath } from '@island.is/service-portal/core'
+import { useIslykillSettings } from '@island.is/service-portal/graphql'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
 import * as styles from './UserMenu.treat'
@@ -41,6 +44,8 @@ export const UserDropdown = ({
   const onClose = () => {
     setDropdownState('closed')
   }
+
+  const { data: settings } = useIslykillSettings()
 
   const isDelegation = Boolean(user.profile.actor)
   const username = user.profile.actor
@@ -110,6 +115,42 @@ export const UserDropdown = ({
                     {formatMessage(userMessages.backToMyself)}
                   </Button>
                 </Box>
+              )}
+              {settings?.email && (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  marginBottom={1}
+                  className={styles.breakWord}
+                >
+                  <Box display="flex" alignItems="center" marginRight={2}>
+                    <Icon type="outline" icon="mail" color="blue300" />
+                  </Box>
+                  <Text>{settings.email}</Text>
+                </Box>
+              )}
+              {settings?.mobile && (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  marginBottom={2}
+                  className={styles.breakWord}
+                >
+                  <Box display="flex" alignItems="center" marginRight={2}>
+                    <Icon type="outline" icon="call" color="blue300" />
+                  </Box>
+                  <Text>{settings?.mobile}</Text>
+                </Box>
+              )}
+              {(settings?.email || settings?.mobile) && (
+                <Link
+                  to={ServicePortalPath.SettingsRoot}
+                  onClick={() => setDropdownState('closed')}
+                >
+                  <Button variant="text" icon="arrowForward" size="small">
+                    {formatMessage(sharedMessages.edit)}
+                  </Button>
+                </Link>
               )}
               <Box>
                 <Button
