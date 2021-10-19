@@ -106,23 +106,17 @@ export class FileController {
   }
 
   @RolesRules(prosecutorRule)
+  @UseGuards(CaseExistsForUpdateGuard, CaseNotCompletedGuard)
   @Post('file')
   @ApiCreatedResponse({
     type: CaseFile,
     description: 'Creates a new case file',
   })
   async createCaseFile(
-    @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
     @Body() createFile: CreateFileDto,
   ): Promise<CaseFile> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
-
-    if (completedCaseStates.includes(existingCase.state)) {
-      throw new ForbiddenException('Files cannot be added to a completed case')
-    }
-
-    return this.fileService.createCaseFile(existingCase.id, createFile)
+    return this.fileService.createCaseFile(theCase.id, createFile)
   }
 
   @RolesRules(prosecutorRule, judgeRule, registrarRule)

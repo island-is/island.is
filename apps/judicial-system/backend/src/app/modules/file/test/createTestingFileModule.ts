@@ -53,14 +53,17 @@ export const createTestingFileModule = async () => {
       },
       {
         provide: getModelToken(CaseFile),
-        useValue: jest.fn(() => ({})),
+        useValue: { create: jest.fn() },
       },
       FileService,
     ],
   }).compile()
 
   const awsS3Service = fileModule.get<AwsS3Service>(AwsS3Service)
+  const fileModel = await fileModule.resolve<typeof CaseFile>(
+    getModelToken(CaseFile),
+  )
   const fileController = fileModule.get<FileController>(FileController)
 
-  return { awsS3Service, fileController }
+  return { awsS3Service, fileModel, fileController }
 }
