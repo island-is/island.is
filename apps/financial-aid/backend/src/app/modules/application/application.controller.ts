@@ -46,6 +46,7 @@ import { RolesGuard } from '../../guards'
 import { CurrentUser, RolesRules } from '../../decorators'
 import { ApplicationGuard } from '../../guards/application.guard'
 import { StaffService } from '../staff'
+import { IsSpouseResponse } from './models/isSpouse.response'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/application`)
@@ -79,6 +80,25 @@ export class ApplicationController {
     }
 
     return currentApplication
+  }
+
+  @UseGuards(RolesGuard)
+  @RolesRules(RolesRule.OSK)
+  @Get('spouse/:spouseNationalId')
+  @ApiOkResponse({
+    type: IsSpouseResponse,
+    description: 'Checking if user is spouse',
+  })
+  async isSpouse(
+    @Param('spouseNationalId') spouseNationalId: string,
+  ): Promise<IsSpouseResponse> {
+    this.logger.debug('Application controller: Checking if user is spouse')
+
+    return {
+      HasApplied: await this.applicationService.hasSpouseApplied(
+        spouseNationalId,
+      ),
+    }
   }
 
   @UseGuards(RolesGuard)
