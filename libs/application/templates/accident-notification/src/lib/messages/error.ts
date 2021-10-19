@@ -12,4 +12,9 @@ export const error = defineMessages({
     description:
       'Error message when a required field has not pressed checkmark',
   },
+  requiredFile: {
+    id: 'an.application:error.requiredFile',
+    defaultMessage: 'Skylda er að hlaða upp skjali áður en haldið er áfram',
+    description: 'Error message when a required file field has not been filled',
+  },
 })

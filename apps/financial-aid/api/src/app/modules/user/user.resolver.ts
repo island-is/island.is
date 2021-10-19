@@ -38,6 +38,15 @@ export class UserResolver {
     return user as UserModel
   }
 
+  @ResolveField('isSpouse', () => Boolean)
+  async isSpouse(
+    @Parent() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Boolean> {
+    const isSpouse = await backendApi.isSpouse(user.nationalId)
+    return isSpouse.HasApplied
+  }
+
   @ResolveField('currentApplication', () => CurrentApplicationModel)
   async currentApplication(
     @Parent() user: User,

@@ -55,6 +55,7 @@ export const CurrentUserQuery = gql`
       name
       phoneNumber
       postalCode
+      isSpouse
       currentApplication {
         id
         state
