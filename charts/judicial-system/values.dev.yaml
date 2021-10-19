@@ -132,7 +132,7 @@ judicial-system-backend:
   resources:
     limits:
       cpu: '400m'
-      memory: '512Mii'
+      memory: '512Mi'
     requests:
       cpu: '100m'
       memory: '256Mi'
