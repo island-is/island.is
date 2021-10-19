@@ -8,9 +8,12 @@ import { environment } from '../../../../environments'
 import { CourtService } from '../../court'
 import { CaseService } from '../../case'
 import { CaseFile } from '../models'
+import { AwsS3Service } from '../awsS3.service'
 import { FileService } from '../file.service'
 import { FileController } from '../file.controller'
-import { AwsS3Service } from '../awsS3.service'
+
+jest.mock('../../court/court.service.ts')
+jest.mock('../../case/case.service.ts')
 
 export const createTestingFileModule = async () => {
   const fileModule = await Test.createTestingModule({
@@ -23,32 +26,12 @@ export const createTestingFileModule = async () => {
     ],
     controllers: [FileController],
     providers: [
-      {
-        provide: CaseService,
-        useClass: jest.fn(() => ({})),
-      },
-      {
-        provide: CourtService,
-        useClass: jest.fn(() => ({})),
-      },
+      CaseService,
+      CourtService,
       {
         provide: AwsS3Service,
         useClass: jest.fn(() => ({
-          createPresignedPost: (key: string) =>
-            Promise.resolve({
-              url:
-                'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
-              fields: {
-                key,
-                bucket: 'island-is-dev-upload-judicial-system',
-                'X-Amz-Algorithm': 'Some Algorithm',
-                'X-Amz-Credential': 'Some Credentials',
-                'X-Amz-Date': 'Some Date',
-                'X-Amz-Security-Token': 'Some Token',
-                Policy: 'Some Policy',
-                'X-Amz-Signature': 'Some Signature',
-              },
-            }),
+          createPresignedPost: jest.fn(async () => ({})),
         })),
       },
       {

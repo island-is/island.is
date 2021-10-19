@@ -47,21 +47,15 @@ describe('FileController - Create presigned post', () => {
       fileName: 'test.txt',
       type: 'text/plain',
     }
-    let mockCreatePresignedPost: jest.SpyInstance<
-      Promise<PresignedPost>,
-      [key: string, type: string]
-    >
+    let mockCreatePresignedPost: jest.Mock
 
     beforeEach(async () => {
-      mockCreatePresignedPost = jest.spyOn(
-        mockAwsS3Service,
-        'createPresignedPost',
-      )
+      mockCreatePresignedPost = mockAwsS3Service.createPresignedPost as jest.Mock
 
       await givenWhenThen(theCase, createPresignedPost)
     })
 
-    it('should request a presigned post', () => {
+    it('should request a presigned post from AWS S3', () => {
       expect(mockCreatePresignedPost).toHaveBeenCalledWith(
         expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
         'text/plain',
@@ -79,7 +73,24 @@ describe('FileController - Create presigned post', () => {
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(theCase, createPresignedPost)
+      const mockCreatePresignedPost = mockAwsS3Service.createPresignedPost as jest.Mock
+      mockCreatePresignedPost.mockImplementationOnce((key: string) =>
+        Promise.resolve({
+          url:
+            'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
+          fields: {
+            key,
+            bucket: 'island-is-dev-upload-judicial-system',
+            'X-Amz-Algorithm': 'Some Algorithm',
+            'X-Amz-Credential': 'Some Credentials',
+            'X-Amz-Date': 'Some Date',
+            'X-Amz-Security-Token': 'Some Token',
+            Policy: 'Some Policy',
+            'X-Amz-Signature': 'Some Signature',
+          },
+        }),
+      ),
+        (then = await givenWhenThen(theCase, createPresignedPost))
     })
 
     it('should return a presigned post', () => {
@@ -114,9 +125,8 @@ describe('FileController - Create presigned post', () => {
     let then: Then
 
     beforeEach(async () => {
-      jest
-        .spyOn(mockAwsS3Service, 'createPresignedPost')
-        .mockRejectedValueOnce(new Error('Some error'))
+      const mockCreatePresignedPost = mockAwsS3Service.createPresignedPost as jest.Mock
+      mockCreatePresignedPost.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(theCase, createPresignedPost)
     })

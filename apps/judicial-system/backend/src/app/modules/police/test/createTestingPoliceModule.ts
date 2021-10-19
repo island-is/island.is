@@ -8,6 +8,8 @@ import { CaseService } from '../../case'
 import { PoliceService } from '../police.service'
 import { PoliceController } from '../police.controller'
 
+jest.mock('../../case/case.service.ts')
+
 export const createTestingPoliceModule = async () => {
   const policeModule = await Test.createTestingModule({
     imports: [
@@ -18,13 +20,7 @@ export const createTestingPoliceModule = async () => {
       }),
     ],
     controllers: [PoliceController],
-    providers: [
-      {
-        provide: CaseService,
-        useClass: jest.fn(() => ({})),
-      },
-      PoliceService,
-    ],
+    providers: [CaseService, PoliceService],
   }).compile()
 
   return policeModule.get<PoliceController>(PoliceController)

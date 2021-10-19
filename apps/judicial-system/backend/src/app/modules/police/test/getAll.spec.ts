@@ -1,4 +1,3 @@
-jest.mock('isomorphic-fetch', () => jest.fn())
 import fetch from 'isomorphic-fetch'
 import { uuid } from 'uuidv4'
 
@@ -8,6 +7,8 @@ import { PoliceCaseFile } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
 import { createTestingPoliceModule } from './createTestingPoliceModule'
+
+jest.mock('isomorphic-fetch')
 
 interface Then {
   result: PoliceCaseFile[]

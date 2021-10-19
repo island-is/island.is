@@ -15,6 +15,13 @@ import { Case } from '../models'
 import { CaseService } from '../case.service'
 import { CaseController } from '../case.controller'
 
+jest.mock('@island.is/dokobit-signing')
+jest.mock('@island.is/email-service')
+jest.mock('@island.is/cms-translations')
+jest.mock('../../court/court.service.ts')
+jest.mock('../../event/event.service.ts')
+jest.mock('../../user/user.service.ts')
+
 export const createTestingCaseModule = async (): Promise<CaseController> => {
   const caseModule = await Test.createTestingModule({
     imports: [
@@ -26,30 +33,12 @@ export const createTestingCaseModule = async (): Promise<CaseController> => {
     ],
     controllers: [CaseController],
     providers: [
-      {
-        provide: CourtService,
-        useClass: jest.fn(() => ({})),
-      },
-      {
-        provide: UserService,
-        useClass: jest.fn(() => ({})),
-      },
-      {
-        provide: EventService,
-        useClass: jest.fn(() => ({})),
-      },
-      {
-        provide: SigningService,
-        useClass: jest.fn(() => ({})),
-      },
-      {
-        provide: EmailService,
-        useClass: jest.fn(() => ({})),
-      },
-      {
-        provide: IntlService,
-        useClass: jest.fn(() => ({})),
-      },
+      CourtService,
+      UserService,
+      EventService,
+      SigningService,
+      EmailService,
+      IntlService,
       {
         provide: getModelToken(Case),
         useValue: jest.fn(() => ({})),
