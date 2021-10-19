@@ -1,10 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { DrivingLicenseService } from './drivingLicense.service'
-import type { Config } from './drivingLicense.module'
-import {
-  Configuration,
-  OkuskirteiniApi,
-} from '@island.is/clients/driving-license'
+import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 import {
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_EXPIRED,
@@ -13,30 +9,30 @@ import {
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
+import { createLogger } from 'winston'
 
 startMocking(requestHandlers)
-
-const config = {} as Config
-
-const MockOkuskirteiniApi = new OkuskirteiniApi(
-  new Configuration({
-    fetchApi: fetch,
-  }),
-)
 
 describe('DrivingLicenseService', () => {
   let service: DrivingLicenseService
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      providers: [
-        {
-          provide: OkuskirteiniApi,
-          useValue: MockOkuskirteiniApi,
-        },
-        DrivingLicenseService,
-        { provide: 'CONFIG', useValue: config },
+      imports: [
+        DrivingLicenseApiModule.register({
+          secret: '',
+          xroadBaseUrl: 'http://localhost',
+          xroadClientId: '',
+          xroadPathV1: 'v1',
+          xroadPathV2: 'v2',
+          fetchOptions: {
+            logger: createLogger({
+              silent: true,
+            }),
+          },
+        }),
       ],
+      providers: [DrivingLicenseService, { provide: 'CONFIG', useValue: {} }],
     }).compile()
 
     service = module.get(DrivingLicenseService)
@@ -194,6 +190,27 @@ describe('DrivingLicenseService', () => {
       })
     })
 
+    it('all checks should pass for applicable students for temporary license', async () => {
+      const response = await service.getApplicationEligibility(
+        MOCK_NATIONAL_ID,
+        'B-temp',
+      )
+
+      expect(response).toStrictEqual({
+        isEligible: true,
+        requirements: [
+          {
+            key: 'LocalResidency',
+            requirementMet: true,
+          },
+          {
+            key: 'DeniedByService',
+            requirementMet: true,
+          },
+        ],
+      })
+    })
+
     it('checks should fail for non-applicable students', async () => {
       const response = await service.getApplicationEligibility(
         MOCK_NATIONAL_ID_EXPIRED,
@@ -264,6 +281,38 @@ describe('DrivingLicenseService', () => {
           juristictionId: 11,
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
+        })
+        .catch((e) => expect(e).toBeTruthy())
+    })
+  })
+
+  describe('newTemporaryDrivingLicense', () => {
+    it('should handle driving license creation', async () => {
+      const response = await service.newTemporaryDrivingLicense(
+        MOCK_NATIONAL_ID,
+        {
+          juristictionId: 11,
+          needsToPresentHealthCertificate: false,
+          needsToPresentQualityPhoto: false,
+          teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
+        },
+      )
+
+      expect(response).toStrictEqual({
+        success: true,
+        errorMessage: null,
+      })
+    })
+
+    it('should handle error responses when creating a license', async () => {
+      expect.assertions(1)
+
+      return service
+        .newTemporaryDrivingLicense(MOCK_NATIONAL_ID_NO_ASSESSMENT, {
+          juristictionId: 11,
+          needsToPresentHealthCertificate: false,
+          needsToPresentQualityPhoto: true,
+          teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
         })
         .catch((e) => expect(e).toBeTruthy())
     })

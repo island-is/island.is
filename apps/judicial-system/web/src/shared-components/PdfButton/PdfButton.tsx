@@ -16,6 +16,13 @@ interface Props {
 const PdfButton: React.FC<Props> = ({ caseId, title, pdfType, disabled }) => {
   return (
     <Button
+      data-testid={
+        pdfType === 'ruling?shortVersion=true'
+          ? 'rulingSVPDFButton'
+          : pdfType === 'ruling?shortVersion=false'
+          ? 'rulingPDFButton'
+          : `${pdfType}PDFButton`
+      }
       variant="ghost"
       size="small"
       icon="open"
