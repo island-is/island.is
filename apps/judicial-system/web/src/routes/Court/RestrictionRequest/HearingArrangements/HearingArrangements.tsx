@@ -440,7 +440,7 @@ export const HearingArrangements: React.FC = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
+              previousUrl={`${Constants.COURT_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
               onNextButtonClick={handleNextButtonClick}
               nextIsDisabled={
                 workingCase.state === CaseState.DRAFT ||
