@@ -21,7 +21,7 @@ import { PaginatedEndorsementListResponse } from './dto/paginatedEndorsementList
 import { EndorsementPaginationInput } from './dto/endorsementPagination.input'
 
 @UseGuards(IdsUserGuard)
-@Resolver('EndorsementSystemResolver')
+@Resolver(() => EndorsementList)
 export class EndorsementSystemResolver {
   constructor(private endorsementSystemService: EndorsementSystemService) {}
 
