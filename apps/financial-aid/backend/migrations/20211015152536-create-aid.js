@@ -18,23 +18,27 @@ module.exports = {
           },
           own_place: {
             type: Sequelize.INTEGER,
-            allowNull: true,
+            allowNull: false,
           },
           registered_renting: {
             type: Sequelize.INTEGER,
-            allowNull: true,
+            allowNull: false,
           },
           unregistered_renting: {
             type: Sequelize.INTEGER,
-            allowNull: true,
+            allowNull: false,
           },
           lives_with_parents: {
             type: Sequelize.INTEGER,
-            allowNull: true,
+            allowNull: false,
+          },
+          with_parents: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
           },
           unknown: {
             type: Sequelize.INTEGER,
-            allowNull: true,
+            allowNull: false,
           },
           type: {
             allowNull: true,

@@ -30,7 +30,7 @@ const Estimation = ({
 
   const aidAmount = useMemo(() => {
     if (municipality && homeCircumstances) {
-      return aidCalculator(homeCircumstances, municipality.aid)
+      return aidCalculator(homeCircumstances, municipality.individualAid) // TODO: Correct martial status
     }
   }, [municipality])
 

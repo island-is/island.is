@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useRouter } from 'next/router'
 import { FileUploadResult } from '@island.is/financial-aid-web/osk/src/components'
 import { Text } from '@island.is/island-ui/core'
 import { Routes } from '@island.is/financial-aid/shared/lib'
 
 import * as styles from './fileUpload.treat'
+import { AppContext } from '../../../components/AppProvider/AppProvider'
 
 const FileUploadFailure = () => {
   const router = useRouter()
+  const { municipality } = useContext(AppContext)
 
   return (
     <FileUploadResult
@@ -21,8 +23,8 @@ const FileUploadFailure = () => {
     >
       <Text marginTop={5}>
         Þú getur reynt aftur síðar eða sent gögnin með tölvupósti á{' '}
-        <a href="mailto: felagsthjonusta@hafnarfjordur.is">
-          <span className={styles.link}>felagsthjonusta@hafnarfjordur.is</span>
+        <a href={`mailto: ${municipality?.email}`}>
+          <span className={styles.link}>{municipality?.email}</span>
         </a>
         . Gættu þess að láta kennitölu þína fylgja með gögnunum ef þú sendir þau
         með tölvupósti.

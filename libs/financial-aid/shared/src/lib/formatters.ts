@@ -8,7 +8,7 @@ import {
   RolesRule,
   FamilyStatus,
 } from './enums'
-import { ApplicationEvent } from './interfaces'
+import { Aid, ApplicationEvent } from './interfaces'
 import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -160,26 +160,22 @@ export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
 
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,
-  aid: {
-    ownApartmentOrLease: number
-    withOthersOrUnknow: number
-    withParents: number
-  },
+  aid: Aid,
 ): number => {
   switch (homeCircumstances) {
     case 'OwnPlace':
-      return aid.ownApartmentOrLease
+      return aid.ownPlace
     case 'RegisteredLease':
-      return aid.ownApartmentOrLease
+      return aid.registeredRenting
     case 'WithOthers':
-      return aid.ownApartmentOrLease
+      return aid.unregisteredRenting
     case 'Other':
     case 'Unknown':
-      return aid.withOthersOrUnknow
+      return aid.unknown
     case 'WithParents':
-      return aid.withParents
+      return aid.livesWithParents
     default:
-      return aid.withParents
+      return aid.unknown
   }
 }
 

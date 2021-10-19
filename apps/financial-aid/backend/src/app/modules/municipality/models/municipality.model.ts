@@ -87,4 +87,11 @@ export class MunicipalityModel extends Model<Municipality> {
   @UpdatedAt
   @ApiProperty()
   modified: Date
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  email: string
 }

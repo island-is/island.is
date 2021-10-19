@@ -82,4 +82,11 @@ export class StaffModel extends Model<Staff> {
   @UpdatedAt
   @ApiProperty()
   modified: Date
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  municipalityHomepage: string
 }

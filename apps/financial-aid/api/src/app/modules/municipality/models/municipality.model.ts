@@ -26,4 +26,7 @@ export class MunicipalityModel implements Municipality {
 
   @Field()
   readonly cohabitationAid!: AidModel
+
+  @Field()
+  readonly email?: string
 }

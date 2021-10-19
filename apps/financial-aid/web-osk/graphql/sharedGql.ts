@@ -32,6 +32,7 @@ export const MunicipalityQuery = gql`
       homepage
       active
       municipalityId
+      email
       individualAid {
         ownPlace
         registeredRenting

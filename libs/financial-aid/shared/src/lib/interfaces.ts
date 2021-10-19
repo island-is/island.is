@@ -33,6 +33,7 @@ export interface Staff {
   active: boolean
   municipalityName: string
   phoneNumber?: string
+  municipalityHomepage?: string
 }
 
 export interface Aid {
@@ -116,6 +117,7 @@ export interface Municipality {
   individualAid: Aid
   cohabitationAid: Aid
   homepage?: string
+  email?: string
 }
 
 export interface CurrentApplication {

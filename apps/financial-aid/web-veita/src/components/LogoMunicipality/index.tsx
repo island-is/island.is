@@ -26,7 +26,7 @@ const LogoMunicipality = ({ className }: LogoProps) => {
     >
       {admin && (
         <a
-          href={'hafnarfjordur.is'}
+          href={admin.staff?.municipalityHomepage}
           target="_blank"
           rel="noopener noreferrer"
           className={cn({ [`${className}`]: true })}

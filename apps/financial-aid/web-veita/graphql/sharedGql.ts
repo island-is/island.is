@@ -36,6 +36,7 @@ export const ApplicationQuery = gql`
       rejection
       staff {
         name
+        municipalityId
       }
       applicationEvents {
         id
@@ -64,6 +65,7 @@ export const UpdateApplicationTableMutation = gql`
         state
         staff {
           name
+          municipalityId
         }
       }
       filters {
@@ -152,6 +154,7 @@ export const ApplicationEventMutation = gql`
       rejection
       staff {
         name
+        municipalityId
       }
       applicationEvents {
         id
@@ -169,10 +172,25 @@ export const MunicipalityQuery = gql`
     municipality(input: $input) {
       id
       name
-      aid {
-        ownApartmentOrLease
-        withOthersOrUnknow
-        withParents
+      homepage
+      active
+      municipalityId
+      email
+      individualAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        type
+      }
+      cohabitationAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        type
       }
     }
   }
@@ -192,6 +210,7 @@ export const CurrentUserQuery = gql`
         phoneNumber
         role
         active
+        municipalityHomepage
       }
     }
   }
@@ -240,6 +259,7 @@ export const UpdateApplicationMutation = gql`
       }
       staff {
         name
+        municipalityId
       }
     }
   }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { GetMunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { MunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import { Municipality } from '@island.is/financial-aid/shared/lib'
 import { useLazyQuery } from '@apollo/client'
@@ -14,20 +14,17 @@ export const useMunicipality = () => {
 
   const [municipality, setScopedMunicipality] = useState<Municipality>()
 
-  const [getMunicipality] = useLazyQuery<MunicipalityData>(
-    GetMunicipalityQuery,
-    {
-      fetchPolicy: 'no-cache',
-      onCompleted: (data: { municipality: Municipality }) => {
-        setScopedMunicipality(data.municipality)
-        sessionStorage.setItem(storageKey, JSON.stringify(data.municipality))
-      },
-      onError: (error) => {
-        // TODO: What should happen here?
-        console.log(error)
-      },
+  const [getMunicipality] = useLazyQuery<MunicipalityData>(MunicipalityQuery, {
+    fetchPolicy: 'no-cache',
+    onCompleted: (data: { municipality: Municipality }) => {
+      setScopedMunicipality(data.municipality)
+      sessionStorage.setItem(storageKey, JSON.stringify(data.municipality))
     },
-  )
+    onError: (error) => {
+      // TODO: What should happen here?
+      console.log(error)
+    },
+  })
 
   useEffect(() => {
     setScopedMunicipality(
