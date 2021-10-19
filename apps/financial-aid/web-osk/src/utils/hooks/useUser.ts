@@ -22,7 +22,7 @@ const useUser = () => {
   )
   const [userServiceCenter, setUserServiceCenter] = useState<ServiceCenter>()
 
-  const { data } = useQuery(CurrentUserQuery, {
+  const { data, loading: loadingUser } = useQuery(CurrentUserQuery, {
     fetchPolicy: 'no-cache',
   })
 
@@ -52,6 +52,7 @@ const useUser = () => {
     user,
     setUser,
     userServiceCenter,
+    loadingUser,
   }
 }
 

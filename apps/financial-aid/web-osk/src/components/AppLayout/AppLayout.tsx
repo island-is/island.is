@@ -7,6 +7,7 @@ import { Logo, Header } from '@island.is/financial-aid-web/osk/src/components'
 import {
   SideBar,
   ServiceCenter,
+  Skeleton,
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import cn from 'classnames'
@@ -17,16 +18,17 @@ interface Props {
 }
 
 const AppLayout = ({ children }: Props) => {
-  const { isAuthenticated, user, userServiceCenter } = useContext(AppContext)
+  const { isAuthenticated, user, userServiceCenter, loadingUser } = useContext(
+    AppContext,
+  )
 
   useEffect(() => {
     document.title = 'Fjárhagsaðstoð'
   }, [])
 
-  if (isAuthenticated === false || user === undefined) {
-    return null
+  if (isAuthenticated === false || user === undefined || loadingUser) {
+    return <Skeleton />
   }
-
   return (
     <>
       <Header />

@@ -22,6 +22,7 @@ interface AppProvider {
   user?: User
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>
   userServiceCenter?: ServiceCenter
+  loadingUser?: boolean
 }
 
 interface Props {
@@ -37,7 +38,13 @@ const AppProvider = ({ children }: Props) => {
 
   const { myApplication, error, loading } = useMyApplication()
 
-  const { isAuthenticated, user, setUser, userServiceCenter } = useUser()
+  const {
+    isAuthenticated,
+    user,
+    setUser,
+    loadingUser,
+    userServiceCenter,
+  } = useUser()
 
   return (
     <AppContext.Provider
@@ -50,6 +57,7 @@ const AppProvider = ({ children }: Props) => {
         user,
         setUser,
         userServiceCenter,
+        loadingUser,
       }}
     >
       {children}
