@@ -15,7 +15,7 @@ import {
   getNextPeriod,
   NationalRegistryData,
   NavigationProps,
-  useLazyQuery,
+  useAsyncLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
 
 import { NationalRegistryUserQuery } from '@island.is/financial-aid-web/osk/graphql'
@@ -34,7 +34,7 @@ const ApplicationInfo = () => {
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
 
-  const nationalRegistryQuery = useLazyQuery<
+  const nationalRegistryQuery = useAsyncLazyQuery<
     {
       nationalRegistryUserV2: NationalRegistryData
     },
