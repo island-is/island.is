@@ -133,33 +133,25 @@ export class FileController {
   }
 
   @RolesRules(prosecutorRule)
+  @UseGuards(CaseExistsForUpdateGuard, CaseNotCompletedGuard)
   @Delete('file/:id')
   @ApiOkResponse({
     type: DeleteFileResponse,
     description: 'Deletes a case file',
   })
   async deleteCaseFile(
-    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
     @Param('id') id: string,
-    @CurrentHttpUser() user: User,
   ): Promise<DeleteFileResponse> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
-
-    if (completedCaseStates.includes(existingCase.state)) {
-      throw new ForbiddenException(
-        'Files cannot be deleted from a completed case',
-      )
-    }
-
-    const file = await this.fileService.findById(id, existingCase.id)
+    const file = await this.fileService.findById(id, theCase.id)
 
     if (!file) {
       throw new NotFoundException(
-        `File ${id} of case ${existingCase.id} does not exist`,
+        `File ${id} of case ${theCase.id} does not exist`,
       )
     }
 
-    return this.fileService.deleteCaseFile(existingCase.id, file)
+    return this.fileService.deleteCaseFile(theCase.id, file)
   }
 
   @RolesRules(prosecutorRule, judgeRule, registrarRule)

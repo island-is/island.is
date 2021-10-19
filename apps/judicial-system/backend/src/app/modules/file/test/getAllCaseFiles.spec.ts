@@ -38,16 +38,16 @@ describe('FileController - Get all case files', () => {
   describe('database query', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
-    let findAll: jest.Mock
+    let mockFindAll: jest.Mock
 
     beforeEach(async () => {
-      findAll = mockFileModel.findAll as jest.Mock
+      mockFindAll = mockFileModel.findAll as jest.Mock
 
       await givenWhenThen(theCase)
     })
 
     it('should request all case files from the database', () => {
-      expect(findAll).toHaveBeenCalledWith({
+      expect(mockFindAll).toHaveBeenCalledWith({
         where: {
           caseId,
           state: { [Op.not]: CaseFileState.DELETED },
@@ -64,8 +64,8 @@ describe('FileController - Get all case files', () => {
     let then: Then
 
     beforeEach(async () => {
-      const findAll = mockFileModel.findAll as jest.Mock
-      findAll.mockResolvedValueOnce(caseFiles)
+      const mockFindAll = mockFileModel.findAll as jest.Mock
+      mockFindAll.mockResolvedValueOnce(caseFiles)
 
       then = await givenWhenThen(theCase)
     })
@@ -81,8 +81,8 @@ describe('FileController - Get all case files', () => {
     let then: Then
 
     beforeEach(async () => {
-      const findAll = mockFileModel.findAll as jest.Mock
-      findAll.mockRejectedValueOnce(new Error('Some error'))
+      const mockFindAll = mockFileModel.findAll as jest.Mock
+      mockFindAll.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(theCase)
     })

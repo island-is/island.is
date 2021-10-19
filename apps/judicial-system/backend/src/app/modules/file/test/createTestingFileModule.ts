@@ -7,8 +7,8 @@ import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { environment } from '../../../../environments'
 import { CourtService } from '../../court'
 import { CaseService } from '../../case'
-import { CaseFile } from '../models'
 import { AwsS3Service } from '../awsS3.service'
+import { CaseFile } from '../models'
 import { FileService } from '../file.service'
 import { FileController } from '../file.controller'
 
@@ -32,7 +32,12 @@ export const createTestingFileModule = async () => {
       AwsS3Service,
       {
         provide: getModelToken(CaseFile),
-        useValue: { create: jest.fn(), findAll: jest.fn() },
+        useValue: {
+          create: jest.fn(),
+          findAll: jest.fn(),
+          findOne: jest.fn(),
+          update: jest.fn(),
+        },
       },
       FileService,
     ],
