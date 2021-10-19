@@ -46,9 +46,19 @@ export const isPlural = (n: number) => n % 10 !== 1 || n % 100 === 11
 
 export function toISODate(date: Date): ISODate
 export function toISODate(date: null | undefined): null
-export function toISODate(date: Date | null | undefined): ISODate | null
+export function toISODate(
+  date: Date | string | null | undefined,
+): ISODate | null
 
-export function toISODate(date: Date | null | undefined): ISODate | null {
+export function toISODate(
+  date: Date | string | null | undefined,
+): ISODate | null {
+  if (typeof date === 'string') {
+    date = new Date(date)
+    if (isNaN(date.getTime())) {
+      date = undefined
+    }
+  }
   return date ? (date.toISOString().substr(0, 10) as ISODate) : null
 }
 
