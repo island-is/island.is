@@ -32,6 +32,7 @@ import {
   CaseNotCompletedGuard,
   CurrentCase,
   CaseService,
+  CaseExistsGuard,
 } from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
 import {
@@ -120,23 +121,15 @@ export class FileController {
   }
 
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @UseGuards(CaseExistsGuard)
   @Get('files')
   @ApiOkResponse({
     type: CaseFile,
     isArray: true,
     description: 'Gets all existing case file',
   })
-  async getAllCaseFiles(
-    @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
-  ): Promise<CaseFile[]> {
-    const existingCase = await this.caseService.findByIdAndUser(
-      caseId,
-      user,
-      false,
-    )
-
-    return this.fileService.getAllCaseFiles(existingCase.id)
+  async getAllCaseFiles(@CurrentCase() theCase: Case): Promise<CaseFile[]> {
+    return this.fileService.getAllCaseFiles(theCase.id)
   }
 
   @RolesRules(prosecutorRule)

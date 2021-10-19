@@ -80,31 +80,25 @@ describe('FileController - Create case file', () => {
     }
     const fileId = uuid()
     const timeStamp = new Date()
+    const caseFile = {
+      type: 'text/plain',
+      key: `${caseId}/${uuId}/test.txt`,
+      size: 99,
+      id: fileId,
+      created: timeStamp,
+      modified: timeStamp,
+    }
     let then: Then
 
     beforeEach(async () => {
       const mockCreate = mockFileModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce({
-        type: 'text/plain',
-        key: `${caseId}/${uuId}/test.txt`,
-        size: 99,
-        id: fileId,
-        created: timeStamp,
-        modified: timeStamp,
-      })
+      mockCreate.mockResolvedValueOnce(caseFile)
 
       then = await givenWhenThen(theCase, createCaseFile)
     })
 
     it('should return a case file', () => {
-      expect(then.result).toEqual({
-        type: 'text/plain',
-        key: `${caseId}/${uuId}/test.txt`,
-        size: 99,
-        id: fileId,
-        created: timeStamp,
-        modified: timeStamp,
-      })
+      expect(then.result).toBe(caseFile)
     })
   })
 
@@ -128,6 +122,30 @@ describe('FileController - Create case file', () => {
       expect(then.error.message).toBe(
         `${caseId}/${uuId}/test.txt is not a valid key`,
       )
+    })
+  })
+
+  describe('database insert fails', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    const uuId = uuid()
+    const createCaseFile: CreateFileDto = {
+      type: 'text/plain',
+      key: `${caseId}/${uuId}/test.txt`,
+      size: 99,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockFileModel.create as jest.Mock
+      mockCreate.mockRejectedValueOnce(new Error('Some error'))
+
+      then = await givenWhenThen(theCase, createCaseFile)
+    })
+
+    it('should throw error', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toBe('Some error')
     })
   })
 })

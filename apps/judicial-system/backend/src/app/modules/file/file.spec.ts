@@ -97,49 +97,6 @@ describe('FileController', () => {
     fileController = fileModule.get<FileController>(FileController)
   })
 
-  describe('when getting all case files', () => {
-    // RolesGuard blocks access for the ADMIN role. Also, mockFindByIdAndUser
-    // blocks access for some roles to some cases. This is not relevant in
-    // this test.
-    const user = {} as User
-
-    describe('given a case', () => {
-      const caseId = uuid()
-
-      it('should get all case files (not deleted)', async () => {
-        const mockFiles = [{ id: uuid() }, { id: uuid() }]
-        fileModel.findAll.mockResolvedValueOnce(mockFiles)
-
-        const files = await fileController.getAllCaseFiles(caseId, user)
-
-        expect(fileModel.findAll).toHaveBeenCalledWith({
-          where: {
-            caseId,
-            state: { [Op.not]: CaseFileState.DELETED },
-          },
-          order: [['created', 'DESC']],
-        })
-
-        expect(files).toStrictEqual(mockFiles)
-      })
-    })
-
-    describe('given a non-existing (or blocked) case', () => {
-      const caseId = uuid()
-
-      beforeEach(() => {
-        const mockFindByIdAndUser = jest.spyOn(caseService, 'findByIdAndUser')
-        mockFindByIdAndUser.mockRejectedValueOnce(new Error('Some error'))
-      })
-
-      it('should throw when getting all case files', async () => {
-        await expect(
-          fileController.getAllCaseFiles(caseId, user),
-        ).rejects.toThrow('Some error')
-      })
-    })
-  })
-
   describe('when removing a case file', () => {
     // RolesGuard blocks access for roles other than PROSECUTOR
     const prosecutor = { role: UserRole.PROSECUTOR } as User

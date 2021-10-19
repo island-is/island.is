@@ -53,7 +53,7 @@ export const createTestingFileModule = async () => {
       },
       {
         provide: getModelToken(CaseFile),
-        useValue: { create: jest.fn() },
+        useValue: { create: jest.fn(), findAll: jest.fn() },
       },
       FileService,
     ],

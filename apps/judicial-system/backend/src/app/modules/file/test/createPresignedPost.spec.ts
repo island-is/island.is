@@ -82,7 +82,7 @@ describe('FileController - Create presigned post', () => {
       then = await givenWhenThen(theCase, createPresignedPost)
     })
 
-    it('should return a presogned post', () => {
+    it('should return a presigned post', () => {
       expect(then.result).toEqual({
         url:
           'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
