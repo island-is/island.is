@@ -28,13 +28,12 @@ import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
 import { QualityPhotoData, ConditionFn } from '../types'
 import { StudentAssessment } from '@island.is/api/schema'
+import { NO, YES } from '../lib/constants'
 import {
   DrivingLicenseApplicationFor,
-  NO,
-  YES,
   B_FULL,
   B_TEMP,
-} from '../lib/constants'
+} from '../shared/constants'
 import { hasYes } from '../utils'
 
 // const ALLOW_FAKE_DATA = todo: serverside feature flag

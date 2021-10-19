@@ -11,11 +11,11 @@ import {
   ApplicationFilters,
   ApplicationState,
   ApplicationStateUrl,
-  getEmailTextFromState,
   getEventTypesFromService,
   getStateFromUrl,
   RolesRule,
   User,
+  getEmailTextFromState,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -35,6 +35,12 @@ interface Recipient {
 
 const linkToStatusPage = (applicationId: string) => {
   return `<a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${applicationId}" target="_blank"> Getur kíkt á stöðu síðuna þína hér</a>`
+}
+
+const firstDateOfMonth = () => {
+  const date = new Date()
+
+  return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
 @Injectable()
@@ -58,17 +64,24 @@ export class ApplicationService {
     return Boolean(hasApplication)
   }
 
+  async hasSpouseApplied(spouseNationalId: string): Promise<boolean> {
+    const application = await this.applicationModel.findOne({
+      where: {
+        spouseNationalId: { [Op.eq]: spouseNationalId },
+        created: { [Op.gte]: firstDateOfMonth() },
+      },
+    })
+
+    return Boolean(application)
+  }
+
   async getCurrentApplication(
     nationalId: string,
   ): Promise<CurrentApplicationModel | null> {
-    const date = new Date()
-
-    const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-
     return await this.applicationModel.findOne({
       where: {
         nationalId,
-        created: { [Op.gte]: firstDateOfMonth },
+        created: { [Op.gte]: firstDateOfMonth() },
       },
     })
   }

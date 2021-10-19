@@ -48,7 +48,7 @@ const RulingAccordionItem: React.FC<Props> = ({
 
   return (
     <AccordionItem
-      id="id_3"
+      id="rulingAccordionItem"
       label={formatMessage(m.heading)}
       labelVariant="h3"
       startExpanded={startExpanded}
