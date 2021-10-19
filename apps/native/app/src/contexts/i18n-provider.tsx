@@ -16,6 +16,7 @@ export const I18nProvider = ({ children }: { children: React.ReactNode }) => {
           console.log(err);
         }
       }}
+      timeZone="Atlantic/Reykjavik"
     >
       {children}
     </IntlProvider>

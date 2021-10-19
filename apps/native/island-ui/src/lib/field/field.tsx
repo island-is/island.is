@@ -51,7 +51,7 @@ export function Field({
   const intl = useIntl()
   const val = String(value ?? '')
     .split(' ')
-    .map((part) => (isJSONDate(part) ? intl.formatDate(part) : part))
+    .map((part) => (isJSONDate(part) ? intl.formatDate(Date.parse(part)) : part))
     .join(' ')
 
   return (
