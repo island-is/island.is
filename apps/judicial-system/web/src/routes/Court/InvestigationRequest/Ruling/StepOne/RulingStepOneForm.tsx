@@ -73,7 +73,6 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
-          <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
           <CaseNumbers workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={5}>
