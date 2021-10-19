@@ -51,6 +51,7 @@ describe('FileController - Create presigned post', () => {
 
     beforeEach(async () => {
       mockCreatePresignedPost = mockAwsS3Service.createPresignedPost as jest.Mock
+      mockCreatePresignedPost.mockResolvedValueOnce({})
 
       await givenWhenThen(theCase, createPresignedPost)
     })

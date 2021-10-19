@@ -14,6 +14,7 @@ import { FileController } from '../file.controller'
 
 jest.mock('../../court/court.service.ts')
 jest.mock('../../case/case.service.ts')
+jest.mock('../awsS3.service.ts')
 
 export const createTestingFileModule = async () => {
   const fileModule = await Test.createTestingModule({
@@ -28,12 +29,7 @@ export const createTestingFileModule = async () => {
     providers: [
       CaseService,
       CourtService,
-      {
-        provide: AwsS3Service,
-        useClass: jest.fn(() => ({
-          createPresignedPost: jest.fn(async () => ({})),
-        })),
-      },
+      AwsS3Service,
       {
         provide: getModelToken(CaseFile),
         useValue: { create: jest.fn(), findAll: jest.fn() },
@@ -43,9 +39,11 @@ export const createTestingFileModule = async () => {
   }).compile()
 
   const awsS3Service = fileModule.get<AwsS3Service>(AwsS3Service)
+
   const fileModel = await fileModule.resolve<typeof CaseFile>(
     getModelToken(CaseFile),
   )
+
   const fileController = fileModule.get<FileController>(FileController)
 
   return { awsS3Service, fileModel, fileController }
