@@ -169,6 +169,10 @@ export interface CreateApplication {
   spouseNationalId?: string
   spouseEmail?: string
   familyStatus: FamilyStatus
+  streetName?: string
+  postalCode?: string
+  city?: string
+  municipalityCode?: string
 }
 
 export interface ApplicationFilters {
@@ -210,6 +214,10 @@ export interface Application {
   spouseNationalId?: string
   spouseEmail?: string
   familyStatus: FamilyStatus
+  streetName?: string
+  postalCode?: string
+  city?: string
+  municipalityCode?: string
 }
 
 export interface GetSignedUrlForId {

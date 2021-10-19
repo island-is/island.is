@@ -79,8 +79,9 @@ const ApplicationProfile = () => {
     if (application && dataMunicipality && application.homeCircumstances) {
       return aidCalculator(
         application.homeCircumstances,
-        dataMunicipality?.municipality.aid,
-      )
+        application.spouseNationalId
+          ? dataMunicipality.municipality.cohabitationAid
+          : dataMunicipality.municipality.individualAid,
     }
   }, [application, dataMunicipality])
 
@@ -181,15 +182,17 @@ const ApplicationProfile = () => {
     const applicantMoreInfo = [
       {
         title: 'Lögheimili',
-        content: 'Hafnarstræti 10',
+        content: application.streetName,
       },
       {
         title: 'Póstnúmer',
-        content: '220',
+        content: application.postalCode,
       },
       {
         title: 'Maki',
-        content: '??',
+        content: application.spouseNationalId
+          ? application.spouseNationalId
+          : 'Enginn maki',
       },
       {
         title: 'Búsetuform',

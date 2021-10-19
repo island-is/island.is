@@ -21,6 +21,10 @@ export const ApplicationQuery = gql`
       interview
       employmentCustom
       homeCircumstancesCustom
+      spouseNationalId
+      city
+      streetName
+      postalCode
       files {
         id
         applicationId
