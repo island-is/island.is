@@ -7,91 +7,63 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { Link, Redirect, useHistory } from 'react-router-dom'
+import { gql, useMutation } from '@apollo/client'
+import { useIslykillSettings } from '@island.is/service-portal/graphql'
+import { Link, Redirect } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
-import {
-  useCreateUserProfile,
-  useResendEmailVerification,
-  useUpdateUserProfile,
-  useUserProfile,
-} from '@island.is/service-portal/graphql'
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { EmailForm, EmailFormData } from '../../components/Forms/EmailForm'
 
-export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
+const UpdateIslykillSettings = gql`
+  mutation updateIslykillSettings($input: UpdateIslykillSettingsInput!) {
+    updateIslykillSettings(input: $input) {
+      nationalId
+    }
+  }
+`
+
+export const EditEmail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.settings')
   const [email, setEmail] = useState('')
-  const { data: userProfile } = useUserProfile()
+  const { data: settings } = useIslykillSettings()
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
     'passive',
   )
+
+  const [updateIslykill, { loading, error }] = useMutation(
+    UpdateIslykillSettings,
+  )
   const { formatMessage } = useLocale()
-  const { createUserProfile } = useCreateUserProfile()
-  const { resendEmailVerification } = useResendEmailVerification()
-  const { updateUserProfile } = useUpdateUserProfile()
-  const history = useHistory()
 
   useEffect(() => {
-    if (!userProfile || !userProfile.email) return
-    if (userProfile.email.length > 0) setEmail(userProfile.email)
-  }, [userProfile])
-
-  const handleResendEmail = async () => {
-    if (userProfile && userProfile.email) {
-      try {
-        await resendEmailVerification()
-        toast.info(
-          formatMessage({
-            id: 'sp.settings:email-confirmation-resent',
-            defaultMessage: 'Þú hefur fengið sendan nýjan staðfestingarpóst',
-          }),
-        )
-        history.push(ServicePortalPath.SettingsPersonalInformation)
-      } catch (err) {
-        toast.error(
-          formatMessage({
-            id: 'sp.settings:email-confirmation-resend-error',
-            defaultMessage:
-              'Ekki tókst að senda nýjan staðfestingarpóst, eitthvað fór úrskeiðis',
-          }),
-        )
-      }
-    }
-  }
+    if (settings?.email) setEmail(settings.email)
+  }, [settings])
 
   const submitFormData = async (formData: EmailFormData) => {
     if (status !== 'passive') setStatus('passive')
+
     try {
       // Update the profile if it exists, otherwise create one
-      if (userProfile) {
-        await updateUserProfile({
-          email: formData.email,
-        })
-      } else {
-        await createUserProfile({
-          email: formData.email,
-        })
-      }
+      await updateIslykill({
+        variables: {
+          input: { email: formData.email, mobile: settings?.mobile },
+        },
+      })
       setStatus('success')
       toast.success(
         formatMessage({
-          id: 'sp.settings:email-confirmed-sent-success-subtext',
-          defaultMessage:
-            'Vinsamlegast athugaðu netpóstinn þinn, staðfestingarpóstur hefur verið sendur á þig',
+          id: 'sp.settings:email-confirmed-saved',
+          defaultMessage: 'Tölvupóstfang vistað',
         }),
       )
     } catch (err) {
       setStatus('error')
     }
-  }
-
-  const handleSubmit = (data: EmailFormData) => {
-    submitFormData(data)
   }
 
   return (
@@ -122,7 +94,6 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <EmailForm
         email={email}
-        onResendEmail={handleResendEmail}
         renderBackButton={() => (
           <Link to={ServicePortalPath.SettingsPersonalInformation}>
             <Button variant="ghost">{formatMessage(m.goBack)}</Button>
@@ -136,11 +107,11 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
             })}
           </Button>
         )}
-        onSubmit={handleSubmit}
+        onSubmit={submitFormData}
       />
-      {status !== 'passive' && (
+      {status !== 'passive' && !loading && (
         <Box marginTop={[5, 7, 15]}>
-          {status === 'error' && (
+          {(status === 'error' || error) && (
             <AlertMessage
               type="error"
               title={formatMessage({
