@@ -2,5 +2,5 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class IsSpouseResponse {
   @ApiProperty()
-  res: boolean
+  HasApplied: boolean
 }

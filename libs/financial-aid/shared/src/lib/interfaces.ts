@@ -202,7 +202,7 @@ export interface GetSignedUrlForId {
 }
 
 export interface HasSpouseApplied {
-  res: boolean
+  HasApplied: boolean
 }
 
 export interface UpdateApplicationTableResponseType {

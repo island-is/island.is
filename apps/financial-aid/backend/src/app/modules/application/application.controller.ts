@@ -95,7 +95,9 @@ export class ApplicationController {
     this.logger.debug('Application controller: Checking if user is spouse')
 
     return {
-      res: await this.applicationService.hasSpouseApplied(spouseNationalId),
+      HasApplied: await this.applicationService.hasSpouseApplied(
+        spouseNationalId,
+      ),
     }
   }
 

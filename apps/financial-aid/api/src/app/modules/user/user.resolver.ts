@@ -44,7 +44,7 @@ export class UserResolver {
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Boolean> {
     const isSpouse = await backendApi.isSpouse(user.nationalId)
-    return isSpouse.res
+    return isSpouse.HasApplied
   }
 
   @ResolveField('currentApplication', () => CurrentApplicationModel)

@@ -4,5 +4,5 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class HasSpouseAppliedModel implements HasSpouseApplied {
   @Field()
-  readonly res!: boolean
+  readonly HasApplied!: boolean
 }
