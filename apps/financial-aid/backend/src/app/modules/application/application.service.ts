@@ -11,6 +11,7 @@ import {
   ApplicationFilters,
   ApplicationState,
   ApplicationStateUrl,
+  getEmailTextFromState,
   getEventTypesFromService,
   getStateFromUrl,
   RolesRule,
@@ -30,6 +31,10 @@ import { ApplicationFileModel } from '../file/models'
 interface Recipient {
   name: string
   address: string
+}
+
+const linkToStatusPage = (applicationId: string) => {
+  return `<a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${applicationId}" target="_blank"> Getur kíkt á stöðu síðuna þína hér</a>`
 }
 
 @Injectable()
@@ -166,7 +171,7 @@ export class ApplicationService {
         address: appModel.email,
       },
       appModel.id,
-      `Umsókn þín er móttekin og er nú í vinnslu. <a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${appModel.id}" target="_blank"> Getur kíkt á stöðu síðuna þína hér</a>`,
+      `Umsókn þín er móttekin og er nú í vinnslu.`,
     )
 
     return appModel
@@ -175,10 +180,18 @@ export class ApplicationService {
   async update(
     id: string,
     update: UpdateApplicationDto,
+    userName: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
   }> {
+    const shouldSendEmail = [
+      ApplicationEventType.NEW,
+      ApplicationEventType.DATANEEDED,
+      ApplicationEventType.REJECTED,
+      ApplicationEventType.INPROGRESS,
+      ApplicationEventType.APPROVED,
+    ]
     if (update.state === ApplicationState.NEW) {
       update.staffId = null
     }
@@ -197,7 +210,6 @@ export class ApplicationService {
       [updatedApplication],
     ] = await this.applicationModel.update(update, {
       where: { id },
-
       returning: true,
     })
 
@@ -207,6 +219,17 @@ export class ApplicationService {
     const files = await this.fileService.getAllApplicationFiles(id)
     updatedApplication?.setDataValue('files', files)
 
+    if (shouldSendEmail.includes(update.event)) {
+      await this.sendEmail(
+        {
+          name: userName,
+          address: updatedApplication.email,
+        },
+        updatedApplication.id,
+        getEmailTextFromState[update.state],
+      )
+    }
+
     return { numberOfAffectedRows, updatedApplication }
   }
 
@@ -215,6 +238,7 @@ export class ApplicationService {
     applicationId: string | undefined,
     body: string,
   ) {
+    const bodyWithLink = body + '<br/>' + linkToStatusPage(applicationId)
     try {
       await this.emailService.sendEmail({
         from: {
@@ -227,8 +251,8 @@ export class ApplicationService {
         },
         to,
         subject: `Umsókn fyrir fjárhagsaðstoð móttekin ~ ${applicationId}`,
-        text: body,
-        html: body,
+        text: bodyWithLink,
+        html: bodyWithLink,
       })
     } catch (error) {
       console.log('failed to send email', error)

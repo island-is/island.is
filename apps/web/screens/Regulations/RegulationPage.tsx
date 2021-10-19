@@ -1,9 +1,14 @@
-import { ISODate, RegQueryName } from '@island.is/regulations'
+import {
+  buildRegulationApiPath,
+  ISODate,
+  RegQueryName,
+} from '@island.is/regulations'
 import {
   Regulation,
   RegulationRedirect,
   RegulationDiff,
   RegulationOriginalDates,
+  RegulationViewTypes,
 } from '@island.is/regulations/web'
 import { RegulationPageTexts } from '../../components/Regulations/RegulationTexts.types'
 
@@ -17,19 +22,29 @@ import { getUiTexts } from '../../components/Regulations/getUiTexts'
 import {
   GetRegulationQuery,
   QueryGetRegulationArgs,
-  RegulationViewTypes,
+  RegulationViewTypes as Schema_RegulationViewTypes,
 } from '@island.is/web/graphql/schema'
 import { GET_REGULATION_QUERY } from '../queries'
 
 // ---------------------------------------------------------------------------
 
-type RegulationPageProps = {
-  regulation: Regulation | RegulationDiff | RegulationRedirect
-  texts: RegulationPageTexts
-  urlDate?: ISODate
-}
+type RegulationPageProps =
+  | {
+      regulation: Regulation | RegulationDiff | RegulationRedirect
+      texts: RegulationPageTexts
+      urlDate?: ISODate
+    }
+  | { redirect: string }
 
 const RegulationPage: Screen<RegulationPageProps> = (props) => {
+  if ('redirect' in props) {
+    return (
+      <div>
+        <meta httpEquiv="refresh" content={`0;url=${props.redirect}`} />
+      </div>
+    )
+  }
+
   const { regulation, texts, urlDate } = props
 
   return 'redirectUrl' in regulation ? (
@@ -122,7 +137,7 @@ const assertEarlierDate = (
   date: ISODate | undefined,
 ): ISODate | RegulationOriginalDates.gqlHack | undefined => {
   if (date) {
-    if (maybeISODate === 'original') {
+    if (maybeISODate === RegulationOriginalDates.api) {
       return RegulationOriginalDates.gqlHack
     }
     const baseDate = maybeISODate ? assertDate(maybeISODate) : undefined
@@ -135,8 +150,17 @@ const assertEarlierDate = (
 
 // ---------------------------------------------------------------------------
 
-RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const params = query.params as Partial<ReadonlyArray<string>>
+RegulationPage.getInitialProps = async ({
+  apolloClient,
+  locale,
+  query,
+  res,
+}) => {
+  const params = query.params as Partial<Array<string>>
+  const isPdf = params[params.length - 1] === 'pdf'
+  if (isPdf) {
+    params.pop()
+  }
   const p = {
     name: params[0] || '',
     viewType: params[1] || '',
@@ -149,14 +173,41 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const viewTypeParam = assertViewType(p.viewType)
   // FIXME: This assertion is technically unsafe but will do until we either stop using
   // an enum, or refactor it into a standalone, shared regulations-types library
-  const viewType = (viewTypeParam === 'on'
-    ? 'd'
-    : viewTypeParam) as RegulationViewTypes
+  const viewType = (viewTypeParam === 'on' ? 'd' : viewTypeParam) as
+    | RegulationViewTypes
+    | undefined // Ugh, enums are pain.
   const date = assertDate(p.date, viewType)
   const isCustomDiff = date ? assertDiff(p.diff) : undefined
   const earlierDate = isCustomDiff
     ? assertEarlierDate(p.earlierDate, date)
     : undefined
+
+  if (!name || !viewType) {
+    throw new CustomNextError(404)
+  }
+
+  if (isPdf) {
+    const pdfUrl =
+      // TODO: FIXME: Change this to a proper, locally-proxied URL.
+      // This hack is just for pre-launch UI demonstration purposes.
+      'https://reglugerdir-api.herokuapp.com/api/v1' +
+      buildRegulationApiPath({
+        viewType,
+        name,
+        date,
+        isCustomDiff,
+        earlierDate,
+      }) +
+      '/pdf'
+
+    if (res) {
+      res.writeHead(302, { Location: pdfUrl })
+      res.end()
+    }
+    return {
+      redirect: pdfUrl,
+    }
+  }
 
   const [texts, regulation] = await Promise.all([
     await getUiTexts<RegulationPageTexts>(
@@ -170,7 +221,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_REGULATION_QUERY,
         variables: {
           input: {
-            viewType,
+            viewType: (viewType as unknown) as Schema_RegulationViewTypes,
             name,
             date,
             isCustomDiff,
