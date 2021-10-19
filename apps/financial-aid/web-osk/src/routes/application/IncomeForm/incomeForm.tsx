@@ -10,7 +10,7 @@ import {
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 import * as styles from './incomeForm.treat'
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 import cn from 'classnames'
 import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
@@ -49,7 +49,7 @@ const IncomeForm = () => {
     <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
-          Hefur þú fengið tekjur í þessum eða síðasta mánuði?
+          Hefur þú fengið tekjur í þessum eða síðustu tvo mánuði?
         </Text>
 
         <RadioButtonContainer

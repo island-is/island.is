@@ -44,9 +44,15 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: '4707171140',
         prod: '4707171140',
       },
+      XROAD_POLICE_MEMBER_CODE: {
+        dev: '10005',
+        staging: '5306972079',
+        prod: '5306972079',
+      },
     })
     .secrets({
       XROAD_COURT_API_PATH: '/k8s/judicial-system/XROAD_COURT_API_PATH',
+      XROAD_POLICE_API_PATH: '/k8s/judicial-system/XROAD_POLICE_API_PATH',
       NOVA_URL: '/k8s/judicial-system/NOVA_URL',
       NOVA_USERNAME: '/k8s/judicial-system/NOVA_USERNAME',
       NOVA_PASSWORD: '/k8s/judicial-system/NOVA_PASSWORD',
@@ -75,3 +81,12 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
     .liveness('/liveness')
     .readiness('/liveness')
     .postgres(postgresInfo)
+    .resources({
+      requests: { cpu: '100m', memory: '256Mi' },
+      limits: { cpu: '400m', memory: '512Mii' },
+    })
+    .replicaCount({
+      min: 4,
+      max: 10,
+      default: 4,
+    })

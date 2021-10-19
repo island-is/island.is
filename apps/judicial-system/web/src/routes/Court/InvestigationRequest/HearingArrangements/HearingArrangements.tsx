@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
 import type { Case } from '@island.is/judicial-system/types'
 import {
@@ -13,9 +13,11 @@ import { useRouter } from 'next/router'
 import HearingArrangementsForm from './HearingArrangementsForm'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 const HearingArrangements = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
+  const { user } = useContext(UserContext)
 
   const router = useRouter()
   const id = router.query.id
@@ -59,12 +61,13 @@ const HearingArrangements = () => {
       caseType={workingCase?.type}
       caseId={workingCase?.id}
     >
-      {workingCase && users && (
+      {workingCase && user && users && (
         <HearingArrangementsForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
           isLoading={loading || userLoading}
           users={users}
+          user={user}
         />
       )}
     </PageLayout>

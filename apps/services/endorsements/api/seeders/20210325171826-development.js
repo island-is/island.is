@@ -4,7 +4,6 @@ const {
   getGenericEndorsementList,
   getGenericEndorsement,
 } = require('../test/seedHelpers')
-
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const fakePeople = [
@@ -33,111 +32,9 @@ module.exports = {
           { field: 'address', keepUpToDate: true },
           { field: 'voterRegion', keepUpToDate: true },
         ]),
-        tags: ['partyApplicationSudurkjordaemi2021'],
-        validation_rules: JSON.stringify([
-          {
-            type: 'minAgeAtDate',
-            value: {
-              date: '2021-04-15T00:00:00Z',
-              age: 18,
-            },
-          },
-        ]),
-        owner: '1111111111',
-        meta: JSON.stringify({
-          applicationId: 'someId',
-        }),
-      },
-      {
-        ...getGenericEndorsementList(),
-        tags: ['partyApplicationNordausturkjordaemi2021'],
-        endorsement_meta: ['fullName'],
-        endorsement_metadata: JSON.stringify([
-          { field: 'fullName' },
-          { field: 'address', keepUpToDate: true },
-          { field: 'voterRegion', keepUpToDate: true },
-        ]),
-        validation_rules: JSON.stringify([
-          {
-            type: 'minAgeAtDate',
-            value: {
-              date: '2021-04-15T00:00:00Z',
-              age: 18,
-            },
-          },
-        ]),
-        owner: '1111111111',
-        meta: JSON.stringify({
-          applicationId: 'someId',
-        }),
-      },
-      {
-        ...getGenericEndorsementList(),
-        closed_date: new Date(),
-        tags: ['partyLetter2021'],
-        endorsement_meta: ['fullName', 'address'],
-        endorsement_metadata: JSON.stringify([
-          { field: 'fullName' },
-          { field: 'address', keepUpToDate: true },
-          { field: 'voterRegion', keepUpToDate: true },
-        ]),
-        validation_rules: JSON.stringify([
-          {
-            type: 'minAgeAtDate',
-            value: {
-              date: '2021-04-15T00:00:00Z',
-              age: 18,
-            },
-          },
-          {
-            type: 'minAge',
-            value: {
-              age: 18,
-            },
-          },
-          {
-            type: 'uniqueWithinTags',
-            value: {
-              tags: ['partyLetter2021'],
-            },
-          },
-        ]),
-        owner: '1111111111',
-        meta: JSON.stringify({
-          applicationId: 'someId',
-        }),
-      },
-      {
-        ...getGenericEndorsementList(),
-        tags: ['partyLetter2021'],
-        endorsement_meta: ['fullName', 'address'],
-        endorsement_metadata: JSON.stringify([
-          { field: 'fullName' },
-          { field: 'address', keepUpToDate: true },
-          { field: 'voterRegion', keepUpToDate: true },
-        ]),
-        validation_rules: JSON.stringify([
-          {
-            type: 'minAgeAtDate',
-            value: {
-              date: '2021-04-15T00:00:00Z',
-              age: 18,
-            },
-          },
-          {
-            type: 'minAge',
-            value: {
-              age: 18,
-            },
-          },
-          {
-            type: 'uniqueWithinTags',
-            value: {
-              tags: ['partyLetter2021'],
-            },
-          },
-        ]),
-        owner: '1111111111',
+        tags: ['generalPetition'],
+        validation_rules: JSON.stringify([]),
+        owner: '0101302399',
         meta: JSON.stringify({
           applicationId: 'someId',
         }),
@@ -145,7 +42,7 @@ module.exports = {
       // lets add some random lists
       ...Array(30)
         .fill()
-        .map(() => getGenericEndorsementList()),
+        .map(() => getGenericEndorsementList(['generalPetition'])),
     ]
 
     await queryInterface.bulkInsert('endorsement_list', endorsementLists)
@@ -173,6 +70,7 @@ module.exports = {
           },
           signedTags: [],
           bulkEndorsement: faker.random.boolean(),
+          showName: true,
           voterRegion: {
             voterRegionNumber: faker.phone.phoneNumber('#'),
             voterRegionName: faker.random.word(),

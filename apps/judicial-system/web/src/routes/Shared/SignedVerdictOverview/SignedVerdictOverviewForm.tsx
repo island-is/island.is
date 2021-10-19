@@ -322,14 +322,14 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-      {!workingCase.isMasked && (
-        <Box marginBottom={5}>
+      {user?.role !== UserRole.STAFF && !workingCase.isMasked && (
+        <Box marginBottom={5} data-testid="accordionItems">
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <CourtRecordAccordionItem workingCase={workingCase} />
             <RulingAccordionItem workingCase={workingCase} />
             <AccordionItem
-              id="id_4"
+              id="caseFilesAccordionItem"
               label={
                 <Box display="flex" alignItems="center" overflow="hidden">
                   {`Rannsóknargögn (${
@@ -417,20 +417,24 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
       )}
       {!workingCase.isMasked && (
         <Box marginBottom={user?.role === UserRole.PROSECUTOR ? 7 : 15}>
-          <Box marginBottom={3}>
-            <PdfButton
-              caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRequest)}
-              pdfType="request"
-            />
-          </Box>
-          <Box marginBottom={3}>
-            <PdfButton
-              caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRuling)}
-              pdfType="ruling?shortVersion=false"
-            />
-          </Box>
+          {user?.role !== UserRole.STAFF && (
+            <>
+              <Box marginBottom={3}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRequest)}
+                  pdfType="request"
+                />
+              </Box>
+              <Box marginBottom={3}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRuling)}
+                  pdfType="ruling?shortVersion=false"
+                />
+              </Box>
+            </>
+          )}
           <Box marginBottom={3}>
             <PdfButton
               caseId={workingCase.id}

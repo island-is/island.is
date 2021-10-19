@@ -43,7 +43,12 @@ import {
   TokenGuard,
 } from '@island.is/judicial-system/auth'
 
-import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
+import {
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  staffRule,
+} from '../../guards'
 import { CaseFile } from '../file/models/file.model'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
@@ -362,7 +367,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('cases')
   @ApiOkResponse({
     type: Case,
@@ -374,7 +379,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:id')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
   getById(
@@ -424,7 +429,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -464,7 +469,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:id/custodyNotice')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({

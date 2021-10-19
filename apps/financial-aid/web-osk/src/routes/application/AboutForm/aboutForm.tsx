@@ -7,7 +7,7 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { useRouter } from 'next/router'
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import {
   NavigationProps,
@@ -36,10 +36,6 @@ const AboutForm = () => {
 
         <Box marginBottom={5}>
           <BulletList type={'ul'} space={2}>
-            <Bullet>
-              Fjárhagsaðstoð sveitarfélaga er ætluð fólki sem er ekki með vinnu,
-              í óstyrkhæfu námi og hefur ekki rétt á örorkubótum.
-            </Bullet>
             <Bullet>
               Til að eiga rétt á fjárhagsaðstoð þurfa tekjur og eignir þínar að
               vera undir ákveðnum viðmiðunarmörkum.

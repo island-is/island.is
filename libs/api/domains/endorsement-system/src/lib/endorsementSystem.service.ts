@@ -13,6 +13,8 @@ import {
   EndorsementControllerFindByAuthRequest,
   EndorsementListControllerFindByTagsRequest,
   EndorsementListControllerFindEndorsementsRequest,
+  EndorsementListControllerGetGeneralPetitionListRequest,
+  EndorsementListControllerGetGeneralPetitionListsRequest,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -92,13 +94,37 @@ export class EndorsementSystemService {
     return Boolean(result)
   }
 
-  // Endorsement list endpoints
+  // Auth removed - Tags
   async endorsementListControllerFindLists(
     input: EndorsementListControllerFindByTagsRequest,
-    auth: Auth,
   ) {
-    return await this.endorsementListApiWithAuth(auth)
+    return await this.endorsementListApi
       .endorsementListControllerFindByTags(input)
+      .catch(this.handleError.bind(this))
+  }
+
+  // Auth removed - gp lists
+  async endorsementListControllerGetGeneralPetitionLists(
+    input: EndorsementListControllerGetGeneralPetitionListsRequest,
+  ) {
+    return await this.endorsementListApi
+      .endorsementListControllerGetGeneralPetitionLists(input)
+      .catch(this.handleError.bind(this))
+  }
+  // Auth removed - pg list
+  async endorsementListControllerGetGeneralPetitionList(
+    input: EndorsementListControllerGetGeneralPetitionListRequest,
+  ) {
+    return await this.endorsementListApi
+      .endorsementListControllerGetGeneralPetitionList(input)
+      .catch(this.handleError.bind(this))
+  }
+  // Auth removed - pg endorements
+  async endorsementControllerGetGeneralPetitionEndorsements(
+    input: EndorsementListControllerGetGeneralPetitionListRequest,
+  ) {
+    return await this.endorsementApi
+      .endorsementControllerFind(input)
       .catch(this.handleError.bind(this))
   }
 
@@ -108,6 +134,15 @@ export class EndorsementSystemService {
   ) {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerFindEndorsements(input)
+      .catch(this.handleError.bind(this))
+  }
+
+  async endorsementListControllerFindEndorsementLists(
+    auth: Auth,
+    input: EndorsementListControllerFindEndorsementsRequest,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerFindEndorsementLists(input)
       .catch(this.handleError.bind(this))
   }
 

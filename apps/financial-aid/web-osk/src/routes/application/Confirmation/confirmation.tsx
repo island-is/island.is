@@ -14,10 +14,10 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 import { NavigationProps, Routes } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 
 const Confirmation = () => {
   const router = useRouter()
@@ -30,9 +30,9 @@ const Confirmation = () => {
   const logOut = useLogOut()
 
   const nextSteps = [
-    'Fjölskylduþjónusta Hafnarfjarðar vinnur úr umsókninni. Afgreiðsla umsóknarinnar tekur 1–3 virka daga.',
+    'Vinnsluaðili sveitarfélagsins vinnur úr umsókninni. Umsóknin verður afgreidd eins fljótt og auðið er.',
     'Staðfesting verður send á þig í tölvupósti',
-    'Ef þörf er á frekari upplýsingum eða gögnum mun fjölskylduþjónusta Hafnarfjarðar hafa samband.',
+    'Ef þörf er á frekari upplýsingum eða gögnum mun vinnsluaðili sveitarfélagsins hafa samband.',
   ]
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const Confirmation = () => {
         <Box marginBottom={[4, 4, 5]}>
           <AlertMessage
             type="success"
-            title="Umsókn þín um fjárhagsaðstoð hjá Hafnarfirði er móttekin"
+            title="Umsókn þín um fjárhagsaðstoð er móttekin"
           />
         </Box>
 
