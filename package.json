@@ -187,7 +187,7 @@
     "mobx": "6.1.7",
     "msw": "0.21.3",
     "nest-winston": "1.4.0",
-    "next": "11.1.0",
+    "next": "11.1.2",
     "next-auth": "3.29.0",
     "next-cookies": "2.0.3",
     "nodemailer": "6.4.16",
