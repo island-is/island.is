@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -42,10 +42,7 @@ module.exports = {
           },
           type: {
             allowNull: true,
-            type: Sequelize.ENUM(
-              'Individual',
-              'Cohabitation',
-            ),
+            type: Sequelize.ENUM('Individual', 'Cohabitation'),
           },
           created: {
             type: 'TIMESTAMP WITH TIME ZONE',
@@ -67,5 +64,5 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.dropTable('aid', { transaction: t }),
     )
-  }
-};
+  },
+}

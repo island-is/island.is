@@ -1,13 +1,40 @@
 import { useEffect, useState } from 'react'
 
-import { MunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
-
 import { Municipality } from '@island.is/financial-aid/shared/lib'
-import { useLazyQuery } from '@apollo/client'
+import { gql, useLazyQuery } from '@apollo/client'
 
 interface MunicipalityData {
   municipality: Municipality
 }
+
+const MunicipalityQuery = gql`
+  query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
+    municipality(input: $input) {
+      id
+      name
+      homepage
+      active
+      municipalityId
+      email
+      individualAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        type
+      }
+      cohabitationAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        type
+      }
+    }
+  }
+`
 
 export const useMunicipality = () => {
   const storageKey = 'currentMunicipality'

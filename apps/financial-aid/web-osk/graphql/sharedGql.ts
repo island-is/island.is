@@ -24,35 +24,6 @@ export const ApplicationFilesMutation = gql`
   }
 `
 
-export const MunicipalityQuery = gql`
-  query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
-    municipality(input: $input) {
-      id
-      name
-      homepage
-      active
-      municipalityId
-      email
-      individualAid {
-        ownPlace
-        registeredRenting
-        unregisteredRenting
-        livesWithParents
-        unknown
-        type
-      }
-      cohabitationAid {
-        ownPlace
-        registeredRenting
-        unregisteredRenting
-        livesWithParents
-        unknown
-        type
-      }
-    }
-  }
-`
-
 export const CreateSignedUrlMutation = gql`
   mutation getSignedUrl($input: GetSignedUrlInput!) {
     getSignedUrl(input: $input) {

@@ -1,5 +1,5 @@
-import { Aid } from '@island.is/financial-aid/shared/lib'
 import { ApiProperty } from '@nestjs/swagger'
+import { AidModel } from '../../aid'
 
 export class MunicipalityResponse {
   @ApiProperty()
@@ -18,8 +18,8 @@ export class MunicipalityResponse {
   homepage: String
 
   @ApiProperty()
-  individualAid: Aid
+  individualAid: AidModel
 
   @ApiProperty()
-  cohabitationAid: Aid
+  cohabitationAid: AidModel
 }
