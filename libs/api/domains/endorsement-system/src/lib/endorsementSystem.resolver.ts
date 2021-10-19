@@ -173,13 +173,13 @@ export class EndorsementSystemResolver {
 
   @Mutation(() => EndorsementList)
   async endorsementSystemUpdateEndorsementList(
-    @Args('input') { listId, newEndorsementList }: UpdateEndorsementListInput,
+    @Args('input') { listId, endorsementList }: UpdateEndorsementListInput,
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {
     return await this.endorsementSystemService.endorsementListControllerUpdate(
       {
         listId,
-        updateEndorsementListDto: newEndorsementList,
+        updateEndorsementListDto: endorsementList,
       },
       user,
     )
