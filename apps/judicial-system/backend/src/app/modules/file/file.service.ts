@@ -106,7 +106,7 @@ export class FileService {
     })
   }
 
-  createCasePresignedPost(
+  createPresignedPost(
     caseId: string,
     createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {

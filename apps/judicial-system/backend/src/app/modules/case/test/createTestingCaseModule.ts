@@ -15,7 +15,7 @@ import { Case } from '../models'
 import { CaseService } from '../case.service'
 import { CaseController } from '../case.controller'
 
-export async function createTestingCaseModule(): Promise<CaseController> {
+export const createTestingCaseModule = async (): Promise<CaseController> => {
   const caseModule = await Test.createTestingModule({
     imports: [
       LoggingModule,

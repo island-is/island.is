@@ -8,19 +8,20 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { prosecutorRule } from '../../guards'
-import { Case, CaseExistsGuard, CaseService } from '../case'
+import {
+  Case,
+  CaseExistsGuard,
+  CaseNotCompletedGuard,
+  CurrentCase,
+} from '../case'
 import { PoliceCaseFile } from './policeCaseFile.model'
 import { PoliceService } from './police.service'
-import { CaseNotCompletedGuard, CurrentCase } from '../case/guards'
 
 @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseNotCompletedGuard)
 @Controller('api/case/:caseId')
 @ApiTags('police files')
 export class PoliceController {
-  constructor(
-    private readonly policeService: PoliceService,
-    private readonly caseService: CaseService,
-  ) {}
+  constructor(private readonly policeService: PoliceService) {}
 
   @RolesRules(prosecutorRule)
   @Get('policeFiles')

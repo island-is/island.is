@@ -117,36 +117,6 @@ describe('FileController', () => {
         )
       })
 
-      it('should create a presigned post', async () => {
-        const fileName = 'test.txt'
-        const type = 'text/plain'
-
-        const presignedPost = await fileController.createCasePresignedPost(
-          caseId,
-          prosecutor,
-          { fileName, type },
-        )
-
-        expect(presignedPost).toStrictEqual({
-          url:
-            'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
-          fields: {
-            key: presignedPost.fields.key,
-            bucket: 'island-is-dev-upload-judicial-system',
-            'X-Amz-Algorithm': 'Some Algorithm',
-            'X-Amz-Credential': 'Some Credentials',
-            'X-Amz-Date': 'Some Date',
-            'X-Amz-Security-Token': 'Some Token',
-            Policy: 'Some Policy',
-            'X-Amz-Signature': 'Some Signature',
-          },
-        })
-
-        expect(presignedPost.fields.key).toMatch(
-          new RegExp(`^${caseId}/.{36}/${fileName}$`),
-        )
-      })
-
       it('should create a case file', async () => {
         const id = uuid()
         const timeStamp = new Date()
@@ -169,9 +139,8 @@ describe('FileController', () => {
             }),
         )
 
-        const presignedPost = await fileController.createCasePresignedPost(
-          caseId,
-          prosecutor,
+        const presignedPost = await fileController.createPresignedPost(
+          { id: caseId, state } as Case,
           { fileName, type },
         )
 
@@ -209,18 +178,6 @@ describe('FileController', () => {
         )
       })
 
-      it('should throw when creating a presigned post', async () => {
-        const fileName = 'test.txt'
-        const type = 'text/plain'
-
-        await expect(
-          fileController.createCasePresignedPost(caseId, prosecutor, {
-            fileName,
-            type,
-          }),
-        ).rejects.toThrow(ForbiddenException)
-      })
-
       it('should throw when creating a case file', async () => {
         const type = 'text/plain'
         const key = `${caseId}/${uuid()}/test.txt`
@@ -242,18 +199,6 @@ describe('FileController', () => {
       beforeEach(() => {
         const mockFindByIdAndUser = jest.spyOn(caseService, 'findByIdAndUser')
         mockFindByIdAndUser.mockRejectedValueOnce(new Error('Some error'))
-      })
-
-      it('should throw when creating a presigned url', async () => {
-        const fileName = 'test.txt'
-        const type = 'text/plain'
-
-        await expect(
-          fileController.createCasePresignedPost(caseId, prosecutor, {
-            fileName,
-            type,
-          }),
-        ).rejects.toThrow('Some error')
       })
 
       it('should throw when creating a case file', async () => {

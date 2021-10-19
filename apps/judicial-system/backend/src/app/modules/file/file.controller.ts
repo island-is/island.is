@@ -26,7 +26,13 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
-import { Case, CaseService } from '../case'
+import {
+  Case,
+  CaseExistsForUpdateGuard,
+  CaseNotCompletedGuard,
+  CurrentCase,
+  CaseService,
+} from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
 import {
   PresignedPost,
@@ -86,26 +92,17 @@ export class FileController {
   }
 
   @RolesRules(prosecutorRule)
+  @UseGuards(CaseExistsForUpdateGuard, CaseNotCompletedGuard)
   @Post('file/url')
   @ApiCreatedResponse({
     type: PresignedPost,
     description: 'Creates a new presigned post',
   })
-  async createCasePresignedPost(
-    @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
+  createPresignedPost(
+    @CurrentCase() theCase: Case,
     @Body() createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
-
-    if (completedCaseStates.includes(existingCase.state)) {
-      throw new ForbiddenException('Files cannot be added to a completed case')
-    }
-
-    return this.fileService.createCasePresignedPost(
-      existingCase.id,
-      createPresignedPost,
-    )
+    return this.fileService.createPresignedPost(theCase.id, createPresignedPost)
   }
 
   @RolesRules(prosecutorRule)
@@ -223,11 +220,7 @@ export class FileController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<UploadFileToCourtResponse> {
-    const existingCase = await this.caseService.findByIdAndUser(
-      caseId,
-      user,
-      true,
-    )
+    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
 
     if (
       !this.doesUserHavePermissionToUploadCaseFilesToCourt(user, existingCase)
