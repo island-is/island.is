@@ -189,6 +189,12 @@ const autoSchemaFile = environment.production
     }),
     EndorsementSystemModule.register({
       baseApiUrl: environment.endorsementSystem.baseApiUrl,
+      nationalRegistry: {
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
+        user: environment.nationalRegistry.user,
+        password: environment.nationalRegistry.password,
+        host: environment.nationalRegistry.host,
+      },
     }),
     TemporaryVoterRegistryModule.register({
       baseApiUrl: environment.temporaryVoterRegistry.baseApiUrl,

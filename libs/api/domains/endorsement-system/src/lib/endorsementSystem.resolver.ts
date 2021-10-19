@@ -1,4 +1,4 @@
-import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
+import { Args, Query, Resolver, Mutation, ResolveField, Parent } from '@nestjs/graphql'
 import { BypassAuth } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
@@ -24,6 +24,12 @@ import { EndorsementPaginationInput } from './dto/endorsementPagination.input'
 @Resolver('EndorsementSystemResolver')
 export class EndorsementSystemResolver {
   constructor(private endorsementSystemService: EndorsementSystemService) {}
+
+
+  @ResolveField('ownerName', () => String, { nullable: true })
+  resolveOwnerName(@Parent() list: EndorsementList): Promise<String|null> {
+    return this.endorsementSystemService.getOwnerName(list)
+  }
 
   @Query(() => Endorsement, { nullable: true })
   async endorsementSystemGetSingleEndorsement(

@@ -44,4 +44,7 @@ export class EndorsementList {
 
   @Field()
   modified!: string
+
+  @Field()
+  ownerName?: string
 }

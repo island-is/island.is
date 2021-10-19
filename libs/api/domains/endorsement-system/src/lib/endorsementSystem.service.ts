@@ -15,15 +15,18 @@ import {
   EndorsementListControllerFindEndorsementsRequest,
   EndorsementListControllerGetGeneralPetitionListRequest,
   EndorsementListControllerGetGeneralPetitionListsRequest,
+  EndorsementList,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
+import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 
 @Injectable()
 export class EndorsementSystemService {
   constructor(
     private readonly endorsementApi: EndorsementApi,
     private readonly endorsementListApi: EndorsementListApi,
+    private readonly nationalRegistryApi: NationalRegistryApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
@@ -45,6 +48,13 @@ export class EndorsementSystemService {
 
   endorsementListApiWithAuth(auth: Auth) {
     return this.endorsementListApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getOwnerName(list: {owner: string}) {
+    if (!list.owner){
+      return null
+    }
+    return (await this.nationalRegistryApi.getUser(list.owner)).Fulltnafn
   }
 
   // Endorsement endpoints
