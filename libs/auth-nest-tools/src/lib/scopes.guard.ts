@@ -3,7 +3,9 @@ import { Observable } from 'rxjs'
 import { Reflector } from '@nestjs/core'
 import { getRequest } from './getRequest'
 import { SCOPES_KEY, ACTOR_SCOPES_KEY } from './scopes.decorator'
+import { trace } from '@theo.gravity/datadog-apm'
 
+@trace()
 @Injectable()
 export class ScopesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}

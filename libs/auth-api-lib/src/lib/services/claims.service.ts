@@ -2,7 +2,9 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Claim } from '../entities/models/claim.model'
 import { Sequelize } from 'sequelize-typescript'
+import { trace } from '@theo.gravity/datadog-apm'
 
+@trace()
 @Injectable()
 export class ClaimsService {
   constructor(
