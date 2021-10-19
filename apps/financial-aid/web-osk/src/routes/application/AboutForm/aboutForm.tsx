@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Text, BulletList, Bullet, Box, Link } from '@island.is/island-ui/core'
 
 import {
@@ -17,9 +17,11 @@ import {
   AboutFormApplicant,
   AboutFormSpouse,
 } from '@island.is/financial-aid-web/osk/src/routes/application/AboutForm'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const AboutForm = () => {
   const router = useRouter()
+  const { user } = useContext(AppContext)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -28,8 +30,7 @@ const AboutForm = () => {
   return (
     <>
       <ContentContainer>
-        {/* <AboutFormApplicant /> */}
-        <AboutFormSpouse />
+        {user?.isSpouse ? <AboutFormSpouse /> : <AboutFormApplicant />}
       </ContentContainer>
 
       <Footer previousUrl={navigation?.prevUrl} nextUrl={navigation?.nextUrl} />

@@ -15,7 +15,7 @@ const SideBar = () => {
 
   return (
     <>
-      {user?.currentApplication || router.route.includes('/stada') ? (
+      {user?.currentApplication && router.route.includes('/stada') ? (
         <Box className={styles.sidebarContent}>
           <Text as="h3" variant="h3" marginBottom={[1, 1, 2]}>
             Umsókn um fjárhagsaðstoð hjá Hafnarfjarðarbæ
