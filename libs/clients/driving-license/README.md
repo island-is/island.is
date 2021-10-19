@@ -12,8 +12,13 @@ The client is generated from a copy of the openApi document provided in x-road.
 ### Updating the open api definition (clientConfig.json)
 
 ```sh
-yarn nx run clients-driving-license:update-openapi-document/v1
-yarn nx run clients-driving-license:update-openapi-document/v2
+yarn nx run clients-driving-license:update-openapi-document --apiVersion=v1
+```
+
+or
+
+```sh
+yarn nx run clients-driving-license:update-openapi-document --apiVersion=v2
 ```
 
 ### Regenerating the client:
