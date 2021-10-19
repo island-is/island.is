@@ -5,9 +5,7 @@ import { useRouter } from 'next/router'
 import * as styles from './application.treat'
 
 import { useQuery } from '@apollo/client'
-import {
-  ApplicationQuery,
-} from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+import { ApplicationQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 import {
   Application,
@@ -22,6 +20,7 @@ import {
   getMonth,
   calculateAidFinalAmount,
   formatPhoneNumber,
+  formatNationalId,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -45,10 +44,6 @@ interface ApplicantData {
   application: Application
 }
 
-interface MunicipalityData {
-  municipality: Municipality
-}
-
 const ApplicationProfile = () => {
   const router = useRouter()
 
@@ -58,7 +53,7 @@ const ApplicationProfile = () => {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const {municipality} = useContext(AdminContext)
+  const { municipality } = useContext(AdminContext)
 
   const { data, loading } = useQuery<ApplicantData>(ApplicationQuery, {
     variables: { input: { id: router.query.id } },
@@ -74,6 +69,7 @@ const ApplicationProfile = () => {
         application.spouseNationalId
           ? municipality.cohabitationAid
           : municipality.individualAid,
+      )
     }
   }, [application, municipality])
 
@@ -183,7 +179,7 @@ const ApplicationProfile = () => {
       {
         title: 'Maki',
         content: application.spouseNationalId
-          ? application.spouseNationalId
+          ? formatNationalId(application.spouseNationalId)
           : 'Enginn maki',
       },
       {
