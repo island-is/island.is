@@ -4,7 +4,9 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { GrantType } from '../entities/models/grant-type.model'
 import { GrantTypeDTO } from '../entities/dto/grant-type.dto'
+import { trace } from '@theo.gravity/datadog-apm'
 
+@trace()
 @Injectable()
 export class GrantTypeService {
   constructor(

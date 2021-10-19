@@ -58,6 +58,7 @@ air-discount-scheme-backend:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'air_discount_scheme_backend'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'air_discount_scheme_backend'
     ENVIRONMENT: 'staging'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379'
@@ -99,6 +100,7 @@ air-discount-scheme-backend:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'air_discount_scheme_backend'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'air_discount_scheme_backend'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -326,6 +328,7 @@ application-system-api:
     DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5608002820/gopro/kvortun-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'application_system_api'
     EMAIL_REGION: 'eu-west-1'
     ENDORSEMENTS_API_BASE_PATH: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
@@ -392,6 +395,7 @@ application-system-api:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'application_system_api'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'application_system_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -584,6 +588,7 @@ endorsement-system-api:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_endorsements_api'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_endorsements_api'
     EMAIL_FROM_ADDRESS: 'development@island.is'
     EMAIL_FROM_NAME: 'devland.is'
@@ -615,6 +620,7 @@ endorsement-system-api:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_endorsements_api'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'services_endorsements_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -658,6 +664,7 @@ icelandic-names-registry-backend:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'icelandic_names_registry_backend'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'icelandic_names_registry_backend'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -691,6 +698,7 @@ icelandic-names-registry-backend:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'icelandic_names_registry_backend'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'icelandic_names_registry_backend'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -916,6 +924,7 @@ service-portal-api:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'service_portal_api'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
     NODE_OPTIONS: '--max-old-space-size=464'
@@ -947,6 +956,7 @@ service-portal-api:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'service_portal_api'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'service_portal_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -989,6 +999,7 @@ services-documents:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_documents'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_documents'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -1016,6 +1027,7 @@ services-documents:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_documents'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'services_documents'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -1077,6 +1089,7 @@ skilavottord-ws:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'skilavottord'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'skilavottord'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -1111,6 +1124,7 @@ skilavottord-ws:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'skilavottord'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'skilavottord'
       SERVERSIDE_FEATURES_ON: ''
     secrets:

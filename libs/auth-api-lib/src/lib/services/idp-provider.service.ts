@@ -5,7 +5,9 @@ import { IdpProvider } from '../entities/models/idp-provider.model'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Sequelize } from 'sequelize'
+import { trace } from '@theo.gravity/datadog-apm'
 
+@trace()
 @Injectable()
 export class IdpProviderService {
   constructor(
