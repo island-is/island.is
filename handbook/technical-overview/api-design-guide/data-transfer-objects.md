@@ -1,4 +1,4 @@
-# Data transfer objects
+# Data Transfer Objects
 
 Data transfer objects, or DTOs, are objects used to wrap resource definitions in request/response objects along with additional information.
 
