@@ -23,9 +23,9 @@ export enum ApplicationState {
 }
 
 export enum ApplicationStateUrl {
-  NEW = 'nymal',
-  INPROGRESS = 'vinnslu',
-  PROCESSED = 'afgreidd',
+  NEW = 'New',
+  INPROGRESS = 'InProgress',
+  PROCESSED = 'Processed',
 }
 
 export enum ApplicationEventType {
@@ -37,17 +37,12 @@ export enum ApplicationEventType {
   STAFFCOMMENT = 'StaffComment',
   USERCOMMENT = 'UserComment',
   FILEUPLOAD = 'FileUpload',
+  ASSIGNCASE = 'AssignCase',
 }
 
 export enum RolesRule {
   OSK = 'osk',
   VEITA = 'veita',
-}
-
-export enum ReturnUrl {
-  APPLICATION = '/umsokn',
-  MYPAGE = '/stada',
-  ADMIN = '/nymal',
 }
 
 export enum FileType {
@@ -59,4 +54,14 @@ export enum FileType {
 export enum StaffRole {
   ADMIN = 'Admin',
   EMPLOYEE = 'Employee',
+}
+
+export enum FamilyStatus {
+  UNKNOWN = 'Unknown',
+  SINGLE = 'Single',
+  COHABITATION = 'Cohabitation',
+  UNREGISTERED_COBAHITATION = 'UnregisteredCohabitation',
+  MARRIED = 'Married',
+  MARRIED_NOT_LIVING_TOGETHER = 'MarriedNotLivingTogether',
+  NOT_INFORMED = 'NotInformed',
 }

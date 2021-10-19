@@ -1,21 +1,32 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
+import { useMutation } from '@apollo/client'
 
-import { RepeaterProps } from '@island.is/application/core'
-import { Box, Button, Inline, Tooltip } from '@island.is/island-ui/core'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { RepeaterProps, FieldBaseProps } from '@island.is/application/core'
+import {
+  Box,
+  Button,
+  Inline,
+  Tooltip,
+  ContentBlock,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
 import { Timeline } from '../components/Timeline/Timeline'
 import {
   formatPeriods,
-  getAvailablePersonalRightsInDays,
+  getAvailableRightsInDays,
   getExpectedDateOfBirth,
+  getApplicationAnswers,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States } from '../../constants'
 import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
+import { useRemainingRights } from '../../hooks/useRemainingRights'
 
-type FieldProps = {
+type FieldProps = FieldBaseProps & {
   field?: {
     props?: {
       showDescription: boolean
@@ -25,32 +36,125 @@ type FieldProps = {
 type ScreenProps = RepeaterProps & FieldProps
 
 const PeriodsRepeater: FC<ScreenProps> = ({
-  removeRepeaterItem,
   application,
   expandRepeater,
   field,
+  error,
+  setRepeaterItems,
+  setBeforeSubmitCallback,
+  setFieldLoadingState,
 }) => {
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const editable =
+    application.state === States.DRAFT ||
+    application.state === States.EDIT_OR_ADD_PERIODS
+
   const showDescription = field?.props?.showDescription ?? true
   const dob = getExpectedDateOfBirth(application)
-  const { formatMessage } = useLocale()
-  const rights = getAvailablePersonalRightsInDays(application)
+  const { formatMessage, locale } = useLocale()
+  const rights = getAvailableRightsInDays(application)
   const daysAlreadyUsed = useDaysAlreadyUsed(application)
+  const remainingRights = useRemainingRights(application)
+  const { rawPeriods, periods } = getApplicationAnswers(application.answers)
+
+  useEffect(() => {
+    if (!editable) {
+      return
+    }
+
+    const syncPeriods = async () => {
+      setFieldLoadingState?.(true)
+      await setRepeaterItems(periods)
+      setFieldLoadingState?.(false)
+    }
+    // Upon entering this screen, if rawPeriods are not in sync with periods, sync them
+    // This means that there is an incomplete period inside answers.periods which we will remove
+    // TODO: real comparison
+    if (rawPeriods.length !== periods.length) {
+      syncPeriods()
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!editable) {
+      return
+    }
+
+    if (rawPeriods.length === 0) {
+      expandRepeater()
+    }
+
+    setBeforeSubmitCallback?.(async () => {
+      try {
+        // Run answer validator on the periods selected by the user
+        const { errors } = await updateApplication({
+          variables: {
+            input: {
+              id: application.id,
+              answers: { validatedPeriods: periods },
+            },
+            locale,
+          },
+        })
+
+        if (errors) {
+          return [
+            false,
+            formatMessage(
+              parentalLeaveFormMessages.errorMessages.periodsCouldNotContinue,
+            ),
+          ]
+        }
+
+        return [true, null]
+      } catch (e) {
+        return [
+          false,
+          (e as Error)?.message ||
+            formatMessage(
+              parentalLeaveFormMessages.errorMessages.periodsUnexpectedError,
+            ),
+        ]
+      }
+    })
+  }, [
+    application,
+    editable,
+    expandRepeater,
+    formatMessage,
+    locale,
+    periods,
+    rawPeriods,
+    setBeforeSubmitCallback,
+    setRepeaterItems,
+    updateApplication,
+  ])
+
+  const onDeletePeriod = async (startDate: string) => {
+    const remainingAfterDelete = periods.filter(
+      (period) => period.startDate !== startDate,
+    )
+
+    await setRepeaterItems(remainingAfterDelete)
+  }
 
   if (!dob) {
     return null
   }
 
   const dobDate = new Date(dob)
-  const editable =
-    application.state === States.DRAFT ||
-    application.state === States.EDIT_OR_ADD_PERIODS
+
+  const hasAddedPeriods = periods?.length > 0
+  const canAddAnotherPeriod = remainingRights >= 1
 
   return (
     <Box>
       {showDescription && (
         <FieldDescription
           description={formatMessage(
-            parentalLeaveFormMessages.leavePlan.description,
+            hasAddedPeriods
+              ? parentalLeaveFormMessages.leavePlan.description
+              : parentalLeaveFormMessages.leavePlan.emptyDescription,
           )}
         />
       )}
@@ -65,9 +169,16 @@ const PeriodsRepeater: FC<ScreenProps> = ({
             parentalLeaveFormMessages.shared.dateOfBirthTitle,
           )}
           periods={formatPeriods(application, formatMessage)}
-          onDeletePeriod={removeRepeaterItem}
+          onDeletePeriod={onDeletePeriod}
           editable={editable}
         />
+        {!hasAddedPeriods && (
+          <FieldDescription
+            description={formatMessage(
+              parentalLeaveFormMessages.leavePlan.empty,
+            )}
+          />
+        )}
       </Box>
 
       {editable && (
@@ -76,10 +187,14 @@ const PeriodsRepeater: FC<ScreenProps> = ({
             <Button
               size="small"
               icon="add"
-              disabled={daysAlreadyUsed >= rights}
+              disabled={!canAddAnotherPeriod}
               onClick={expandRepeater}
             >
-              {formatMessage(parentalLeaveFormMessages.leavePlan.addAnother)}
+              {formatMessage(
+                hasAddedPeriods
+                  ? parentalLeaveFormMessages.leavePlan.addAnother
+                  : parentalLeaveFormMessages.leavePlan.addFirst,
+              )}
             </Button>
 
             {daysAlreadyUsed >= rights && (
@@ -89,6 +204,24 @@ const PeriodsRepeater: FC<ScreenProps> = ({
               />
             )}
           </Inline>
+        </Box>
+      )}
+      {editable && hasAddedPeriods && canAddAnotherPeriod && (
+        <FieldDescription
+          description={formatMessage(
+            parentalLeaveFormMessages.leavePlan.usage,
+            {
+              alreadyUsed: daysAlreadyUsed,
+              rights: rights,
+            },
+          )}
+        />
+      )}
+      {!!error && (
+        <Box marginTop={3}>
+          <ContentBlock>
+            <AlertMessage type="error" title={error} />
+          </ContentBlock>
         </Box>
       )}
     </Box>

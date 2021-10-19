@@ -972,6 +972,29 @@
           },
           "outputs": ["coverage/libs/api/domains/endorsement-system"]
         },
+        "dev/init": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run services-endorsements-api:dev/init $NX_OPTIONS",
+              "yarn nx run services-endorsements-api:schemas/external-openapi-generator $NX_OPTIONS",
+              "yarn nx run services-endorsements-api:schemas/openapi-generator $NX_OPTIONS",
+              "yarn nx run services-endorsements-api:schemas/build-openapi $NX_OPTIONS",
+              "yarn nx run api-domains-endorsement-system:schemas/openapi-generator $NX_OPTIONS"
+            ],
+            "parallel": false
+          }
+        },
+        "dev": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run services-endorsements-api:dev $NX_OPTIONS &",
+              "yarn start api $NX_OPTIONS &"
+            ],
+            "parallel": true
+          }
+        },
         "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -2235,6 +2258,94 @@
         }
       }
     },
+    "application-templates-general-petition": {
+      "root": "libs/application/templates/general-petition",
+      "sourceRoot": "libs/application/templates/general-petition/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/general-petition/tsconfig.lib.json",
+              "libs/application/templates/general-petition/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/general-petition/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/general-petition/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/application/templates/general-petition"]
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/general-petition/src/lib/messages.ts'"
+          }
+        },
+        "dev/init": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run application-system-api:dev-services",
+              "yarn nx run application-system-api:migrate",
+              "yarn nx run services-endorsements-api:migrate",
+              "yarn nx run application-templates-general-petition:schemas/external-openapi-generator --skip-nx-cache",
+              "yarn nx run application-templates-general-petition:schemas/codegen --skip-nx-cache",
+              "yarn nx run application-system-api:schemas/build-openapi --skip-nx-cache",
+              "yarn nx run api-domains-application:schemas/openapi-generator --skip-nx-cache"
+            ],
+            "parallel": false
+          }
+        },
+        "dev": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
+              "yarn start application-system-api &",
+              "yarn start application-system-form &",
+              "yarn start services-endorsements-api &",
+              "yarn start services-temporary-voter-registry-api &",
+              "yarn start services-party-letter-registry-api &"
+            ],
+            "parallel": true
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/general-petition/codegen.yml"
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run services-endorsements-api:schemas/external-openapi-generator $NX_OPTIONS",
+              "nx run services-endorsements-api:schemas/build-openapi $NX_OPTIONS",
+              "nx run application-templates-general-petition:schemas/openapi-generator $NX_OPTIONS"
+            ],
+            "parallel": false
+          }
+        },
+        "schemas/openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/general-petition/gen/fetch/endorsements -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+          }
+        }
+      }
+    },
     "application-templates-health-insurance": {
       "root": "libs/application/templates/health-insurance",
       "sourceRoot": "libs/application/templates/health-insurance/src",
@@ -2601,7 +2712,8 @@
             "commands": [
               "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/party-letter/gen/fetch/party-letter -i apps/services/party-letter-registry-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original",
               "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/party-letter/gen/fetch/endorsements -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
-            ]
+            ],
+            "parallel": false
           }
         }
       }
@@ -3178,10 +3290,26 @@
             "passWithNoTests": true
           }
         },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "[[ '{args.apiVersion}' =~ v1|v2 ]] && >&2 echo \"Missing required --apiVersion, only v1 or v2 are valid\"",
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" -H \"SECRET: $DRIVING_LICENSE_SECRET\" http://localhost:8081/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=RafraentOkuskirteini-{args.apiVersion} -H 'Accept: application/json' > src/{args.apiVersion}/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/{args.apiVersion}/clientConfig.json > _.tmp && mv _.tmp src/{args.apiVersion}/clientConfig.json",
+              "jq '.paths[].post.requestBody.content |= (select(. != null) | with_entries(select(.key == \"application/json\")))' src/{args.apiVersion}/clientConfig.json > _.tmp && mv _.tmp src/{args.apiVersion}/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/driving-license"
+          }
+        },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn openapi-generator -o libs/clients/driving-license/gen/fetch -i libs/clients/driving-license/src/clientConfig.json"
+            "commands": [
+              "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v1 -i libs/clients/driving-license/src/v1/clientConfig.json",
+              "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v2 -i libs/clients/driving-license/src/v2/clientConfig.json"
+            ]
           }
         }
       }
@@ -3974,33 +4102,6 @@
           }
         },
         "docker-express": {}
-      }
-    },
-    "financial-aid-auth": {
-      "root": "libs/financial-aid/auth",
-      "sourceRoot": "libs/financial-aid/auth/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/financial-aid/auth/tsconfig.lib.json",
-              "libs/financial-aid/auth/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/financial-aid/auth/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/financial-aid/auth/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/financial-aid/auth"]
-        }
       }
     },
     "financial-aid-backend": {
@@ -5859,6 +5960,48 @@
         }
       }
     },
+    "nest-pagination": {
+      "root": "libs/nest/pagination",
+      "sourceRoot": "libs/nest/pagination/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/pagination/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/pagination"],
+          "options": {
+            "jestConfig": "libs/nest/pagination/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "nest-problem": {
+      "root": "libs/nest/problem",
+      "sourceRoot": "libs/nest/problem/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/problem/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/problem"],
+          "options": {
+            "jestConfig": "libs/nest/problem/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-validators": {
       "root": "libs/nest/validators",
       "sourceRoot": "libs/nest/validators/src",
@@ -5877,6 +6020,33 @@
             "jestConfig": "libs/nest/validators/jest.config.js",
             "passWithNoTests": true
           }
+        }
+      }
+    },
+    "next-ids-auth": {
+      "root": "libs/next-ids-auth",
+      "sourceRoot": "libs/next-ids-auth/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/next-ids-auth/tsconfig.lib.json",
+              "libs/next-ids-auth/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/next-ids-auth/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/next-ids-auth/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/next-ids-auth"]
         }
       }
     },
@@ -7104,25 +7274,6 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "dist/apps/services/auth-api",
-            "commands": [
-              "nx esbuild services-auth-api",
-              "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
-            ],
-            "parallel": false
-          },
-          "configurations": {
-            "production": {
-              "commands": [
-                "nx esbuild services-auth-api --prod",
-                "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
-              ]
-            }
-          }
-        },
-        "esbuild": {
           "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/services/auth-api",
@@ -7165,7 +7316,7 @@
         "serve": {
           "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "services-auth-api:esbuild"
+            "buildTarget": "services-auth-api:build"
           }
         },
         "lint": {
@@ -7220,10 +7371,7 @@
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": [
-              "sequelize-cli db:seed:all --seeders-path ./seeders/local",
-              "sequelize-cli db:seed:all"
-            ],
+            "commands": ["sequelize-cli db:seed:all"],
             "cwd": "libs/auth-api-lib"
           }
         }
@@ -7455,11 +7603,11 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "yarn nx run services-endorsements-api:dev-services",
+              "yarn nx run services-endorsements-api:dev-services $NX_OPTIONS",
               "echo \"Waiting for databases to start...\" && sleep 2",
-              "yarn nx run services-party-letter-registry-api:migrate",
-              "yarn nx run services-temporary-voter-registry-api:migrate",
-              "yarn nx run services-endorsements-api:migrate"
+              "yarn nx run services-party-letter-registry-api:migrate $NX_OPTIONS",
+              "yarn nx run services-temporary-voter-registry-api:migrate $NX_OPTIONS",
+              "yarn nx run services-endorsements-api:migrate $NX_OPTIONS"
             ],
             "parallel": false
           }
@@ -7469,9 +7617,9 @@
           "options": {
             "commands": [
               "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
-              "yarn start services-party-letter-registry-api &",
-              "yarn start services-temporary-voter-registry-api &",
-              "yarn start services-endorsements-api &"
+              "yarn start services-party-letter-registry-api $NX_OPTIONS &",
+              "yarn start services-temporary-voter-registry-api $NX_OPTIONS &",
+              "yarn start services-endorsements-api $NX_OPTIONS &"
             ],
             "parallel": true
           }
@@ -8154,6 +8302,27 @@
         }
       }
     },
+    "shared-problem": {
+      "root": "libs/shared/problem",
+      "sourceRoot": "libs/shared/problem/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/problem/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/problem"],
+          "options": {
+            "jestConfig": "libs/shared/problem/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "shared-translations": {
       "root": "libs/shared/translations",
       "sourceRoot": "libs/shared/translations/src",
@@ -8527,6 +8696,48 @@
           }
         },
         "docker-cypress": {}
+      }
+    },
+    "testing-fixtures": {
+      "root": "libs/testing/fixtures",
+      "sourceRoot": "libs/testing/fixtures/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/testing/fixtures/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/testing/fixtures"],
+          "options": {
+            "jestConfig": "libs/testing/fixtures/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "testing-nest": {
+      "root": "libs/testing/nest",
+      "sourceRoot": "libs/testing/nest/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/testing/nest/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/testing/nest"],
+          "options": {
+            "jestConfig": "libs/testing/nest/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
       }
     },
     "web": {

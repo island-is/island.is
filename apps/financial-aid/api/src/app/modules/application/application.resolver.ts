@@ -1,34 +1,30 @@
 import { Query, Resolver, Context, Mutation, Args } from '@nestjs/graphql'
-
 import { Inject, UseGuards } from '@nestjs/common'
-
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
 import { BackendAPI } from '../../../services'
 
 import {
   ApplicationFiltersModel,
   ApplicationModel,
-  UpdateApplicationResponse,
+  UpdateApplicationTableResponse,
 } from './models'
 import {
   CreateApplicationInput,
   UpdateApplicationInput,
   CreateApplicationEventInput,
+  UpdateApplicationInputTable,
+  ApplicationInput,
+  AllApplicationInput,
 } from './dto'
-import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
-
-import { ApplicationInput, AllApplicationInput } from './dto'
-
 import {
   Application,
   ApplicationFilters,
-  UpdateApplicationResponseType,
+  UpdateApplicationTableResponseType,
 } from '@island.is/financial-aid/shared/lib'
-import { ApplicationModule } from './application.module'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(IdsUserGuard)
 @Resolver(() => ApplicationModel)
 export class ApplicationResolver {
   constructor(
@@ -73,26 +69,25 @@ export class ApplicationResolver {
     @Args('input', { type: () => UpdateApplicationInput })
     input: UpdateApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApplicationModel> {
+  ): Promise<Application> {
     const { id, ...updateApplication } = input
     this.logger.debug(`updating application ${id}`)
     return backendApi.updateApplication(id, updateApplication)
   }
 
-  @Mutation(() => UpdateApplicationResponse, { nullable: true })
-  updateApplicationRes(
-    @Args('input', { type: () => UpdateApplicationInput })
-    input: UpdateApplicationInput,
+  @Mutation(() => UpdateApplicationTableResponse, { nullable: true })
+  updateApplicationTable(
+    @Args('input', { type: () => UpdateApplicationInputTable })
+    input: UpdateApplicationInputTable,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<UpdateApplicationResponseType> {
-    const { id, ...updateApplication } = input
+  ): Promise<UpdateApplicationTableResponseType> {
+    const { id, stateUrl, ...updateApplication } = input
 
-    this.logger.debug(`updating application ${id}`)
+    this.logger.debug(`updating application table ${id}`)
 
-    return backendApi.updateApplicationRes(id, updateApplication)
+    return backendApi.updateApplicationTable(id, stateUrl, updateApplication)
   }
-
-  @Query(() => ApplicationFiltersModel, { nullable: false })
+  @Mutation(() => ApplicationFiltersModel, { nullable: false })
   applicationFilters(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<ApplicationFilters> {

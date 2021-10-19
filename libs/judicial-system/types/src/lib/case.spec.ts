@@ -1,5 +1,48 @@
-import { CaseAppealDecision, CaseState, hasCaseBeenAppealed } from './case'
+import each from 'jest-each'
+
+import {
+  CaseAppealDecision,
+  CaseState,
+  CaseType,
+  hasCaseBeenAppealed,
+  isInvestigationCase,
+  isRestrictionCase,
+} from './case'
 import type { Case } from './case'
+
+describe('Case Type', () => {
+  each`
+    type
+    ${CaseType.CUSTODY}
+    ${CaseType.TRAVEL_BAN}
+  `.it('should categorize $type as a restriction case', ({ type }) => {
+    expect(isRestrictionCase(type)).toBe(true)
+    expect(isInvestigationCase(type)).toBe(false)
+  })
+
+  each`
+    type
+    ${CaseType.SEARCH_WARRANT}
+    ${CaseType.BANKING_SECRECY_WAIVER}
+    ${CaseType.PHONE_TAPPING}
+    ${CaseType.TELECOMMUNICATIONS}
+    ${CaseType.TRACKING_EQUIPMENT}
+    ${CaseType.PSYCHIATRIC_EXAMINATION}
+    ${CaseType.SOUND_RECORDING_EQUIPMENT}
+    ${CaseType.AUTOPSY}
+    ${CaseType.BODY_SEARCH}
+    ${CaseType.INTERNET_USAGE}
+    ${CaseType.OTHER}
+  `.it('should categorize $type as an investigation case', ({ type }) => {
+    expect(isRestrictionCase(type)).toBe(false)
+    expect(isInvestigationCase(type)).toBe(true)
+  })
+
+  it('should not categorize undefined', () => {
+    expect(isRestrictionCase(undefined)).toBe(false)
+    expect(isInvestigationCase(undefined)).toBe(false)
+  })
+})
 
 describe('isAppealed', () => {
   it('should be true when the accuesed appealed in court', () => {

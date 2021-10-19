@@ -11,7 +11,7 @@ import { FormContext } from '@island.is/financial-aid-web/osk/src/components/For
 import { useRouter } from 'next/router'
 
 import * as styles from './personalTaxCreditForm.treat'
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 import cn from 'classnames'
 
 import { NavigationProps } from '@island.is/financial-aid/shared/lib'
@@ -70,9 +70,8 @@ const PersonalTaxCreditForm = () => {
           }}
           onChange={(value: number | boolean) => {
             updateForm({ ...form, usePersonalTaxCredit: value })
-            if (hasError) {
-              setHasError(false)
-            }
+
+            setHasError(false)
           }}
         />
 

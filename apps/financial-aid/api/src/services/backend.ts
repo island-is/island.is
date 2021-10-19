@@ -9,21 +9,23 @@ import {
   CreateApplication,
   GetSignedUrl,
   SignedUrl,
-  ApplicationEvent,
   CreateApplicationEvent,
   ApplicationFilters,
   CreateFilesResponse,
+  apiBasePath,
   ApplicationStateUrl,
-  UpdateApplicationResponseType,
+  UpdateApplicationTableResponseType,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
-import { ApplicationModule } from '../app/modules'
+import { CurrentApplicationModel } from '../app/modules/application'
+import { StaffModel } from '../app/modules/staff'
+import { HasSpouseAppliedModel } from '../app/modules/user/HasSpouseApplied.model'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
-  baseURL = `${environment.backend.url}/api`
+  baseURL = `${environment.backend.url}/${apiBasePath}`
 
   willSendRequest(req: RequestOptions) {
     req.headers.set('authorization', this.context.req.headers.authorization)
@@ -31,15 +33,15 @@ class BackendAPI extends RESTDataSource {
   }
 
   getApplications(stateUrl: ApplicationStateUrl): Promise<Application[]> {
-    return this.get(`allApplications/${stateUrl}`)
+    return this.get(`application/state/${stateUrl}`)
   }
 
   getApplication(id: string): Promise<Application> {
-    return this.get(`applications/${id}`)
+    return this.get(`application/id/${id}`)
   }
 
   getApplicationFilters(): Promise<ApplicationFilters> {
-    return this.get('applicationFilters')
+    return this.get('application/filters')
   }
 
   getMunicipality(id: string): Promise<Municipality> {
@@ -56,14 +58,15 @@ class BackendAPI extends RESTDataSource {
     id: string,
     updateApplication: UpdateApplication,
   ): Promise<Application> {
-    return this.put(`applications/${id}`, updateApplication)
+    return this.put(`application/id/${id}`, updateApplication)
   }
 
-  updateApplicationRes(
+  updateApplicationTable(
     id: string,
+    stateUrl: ApplicationStateUrl,
     updateApplication: UpdateApplication,
-  ): Promise<UpdateApplicationResponseType> {
-    return this.put(`updateApplication/${id}`, updateApplication)
+  ): Promise<UpdateApplicationTableResponseType> {
+    return this.put(`application/${id}/${stateUrl}`, updateApplication)
   }
 
   getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
@@ -74,20 +77,28 @@ class BackendAPI extends RESTDataSource {
     return this.get(`file/url/${id}`)
   }
 
-  getApplicationEvents(id: string): Promise<ApplicationEvent[]> {
-    return this.get(`applicationEvents/${id}`)
-  }
-
   createApplicationEvent(
     createApplicationEvent: CreateApplicationEvent,
   ): Promise<Application> {
-    return this.post('applicationEvent', createApplicationEvent)
+    return this.post('application/event', createApplicationEvent)
   }
 
   createApplicationFiles(
     createApplicationFiles: CreateApplicationFilesInput,
   ): Promise<CreateFilesResponse> {
     return this.post('file', createApplicationFiles)
+  }
+
+  getCurrentApplication(nationalId: string): Promise<CurrentApplicationModel> {
+    return this.get(`application/nationalId/${nationalId}`)
+  }
+
+  isSpouse(spouseNationalId: string): Promise<HasSpouseAppliedModel> {
+    return this.get(`application/spouse/${spouseNationalId}`)
+  }
+
+  getStaff(nationalId: string): Promise<StaffModel> {
+    return this.get(`staff/${nationalId}`)
   }
 }
 

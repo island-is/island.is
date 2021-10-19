@@ -38,10 +38,15 @@ export interface BaseTemplateAPIModuleConfig {
   partyLetter: {
     partyLetterRegistryApiBasePath: string
     endorsementsApiBasePath: string
+    defaultClosedDate: Date
   }
   partyApplication: {
     endorsementsApiBasePath: string
     options: PartyApplicationServiceOptions
+    defaultClosedDate: Date
+  }
+  generalPetition: {
+    endorsementsApiBasePath: string
   }
 }
 

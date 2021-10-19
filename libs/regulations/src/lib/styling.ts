@@ -41,7 +41,7 @@ export const regulationTitleStyling = (wrapper: string) => {
     '@media': {
       print: {
         fontFamily: '"Times New Roman", "Times", serif',
-        fontSize: '20pt',
+        fontSize: '1.667em',
       },
     },
   })
@@ -56,14 +56,19 @@ export const regulationContentStyling = (wrapper: string) => {
     lineHeight: typography.baseLineHeight + 'em',
 
     '@media': {
+      // FIXME: Tweak styling of Appendixes and Comments accordions
       print: {
+        lineHeight: '1.3em',
         fontFamily: '"Times New Roman", "Times", serif',
-        fontSize: '12pt',
+        fontSize: '11pt',
       },
     },
   })
 
   styleRegulation(' *', {
+    position: 'relative', // Silly hack to enable page-break-* rules. See: https://stackoverflow.com/a/12386608
+    fontWeight: typography.light,
+
     '@media': {
       print: {
         fontFamily: 'inherit',
@@ -71,13 +76,13 @@ export const regulationContentStyling = (wrapper: string) => {
     },
   })
 
-  styleRegulation('p,ul,ol,table,blockquote', {
+  styleRegulation('p,ul,ol,pre,table,blockquote', {
     fontFamily: 'inherit',
     marginBottom: typography.baseLineHeight + 'em',
+
+    '@media': { print: { marginBottom: '.5em' } },
   })
-  styleRegulation('li', {
-    marginBottom: '1em',
-  })
+
   styleRegulation(
     `
     li,
@@ -90,10 +95,32 @@ export const regulationContentStyling = (wrapper: string) => {
     `,
     {
       marginBottom: '1em',
+      '@media': { print: { marginBottom: '.5em' } },
     },
   )
+
+  styleRegulation(
+    `
+    p:last-child,
+    ul:last-child,
+    ol:last-child,
+    table:last-child
+    `,
+    {
+      marginBottom: 0,
+    },
+  )
+
+  styleRegulation('hr', {
+    marginTop: 0,
+    marginBottom: typography.baseLineHeight + 'em',
+
+    '@media': { print: { margin: '0 0 .5em 0' } },
+  })
+
   styleRegulation('ul,ol,blockquote', {
-    marginLeft: '3em',
+    marginLeft: '2em',
+    // '@media': { print: { marginBottom: '2em' } },
   })
   styleRegulation('ul', {
     listStyle: 'disc',
@@ -103,6 +130,9 @@ export const regulationContentStyling = (wrapper: string) => {
   })
   styleRegulation('ul[type="square"]', {
     listStyle: 'square',
+  })
+  styleRegulation('ol:not([type])', {
+    listStyle: 'decimal',
   })
 
   styleRegulation('strong, b', {
@@ -117,11 +147,19 @@ export const regulationContentStyling = (wrapper: string) => {
     fontSize: 14 / 18 + 'em',
     position: 'relative',
     lineHeight: 0,
-    top: '-0.333em',
+    top: '-0.4em',
   })
   styleRegulation('sub', {
-    top: 'auto',
-    bottom: '-0.333em',
+    top: '0.333em',
+  })
+  styleRegulation('u', {
+    textDecoration: 'underline',
+  })
+  styleRegulation('s', {
+    textDecoration: 'overline',
+  })
+  styleRegulation('s u, u s', {
+    textDecoration: 'underline overline',
   })
 
   styleRegulation('img', {
@@ -131,31 +169,27 @@ export const regulationContentStyling = (wrapper: string) => {
     height: 'auto',
   })
 
-  styleRegulation(
-    `
-    p:last-child,
-    ul:last-child,
-    ol:last-child,
-    table:last-child
-    `,
-    {
-      marginBottom: 0,
-    },
-  )
-
   styleRegulation('table', {
     width: '100%',
     borderCollapse: 'separate',
     borderSpacing: 0,
+
+    '@media': { print: { marginBottom: '1em' } },
   })
 
   styleRegulation('th, td', {
-    padding: '0.25em 0.5em',
+    padding: '0.25em 0.33em',
     minWidth: '1.5em',
     textAlign: 'left',
     verticalAlign: 'top',
     width: 'auto',
     border: `1px solid ${color.dark300}`,
+
+    '@media': {
+      print: {
+        pageBreakInside: 'avoid',
+      },
+    },
   })
   styleRegulation(
     `
@@ -200,20 +234,26 @@ export const regulationContentStyling = (wrapper: string) => {
     tfoot > tr:first-child> th
     `,
     {
-      borderTop: '1px solid',
-      borderTopColor: color.dark300,
+      borderTop: `1px solid ${color.dark300}`,
     },
   )
-
-  styleRegulation('ol:not([type])', {
-    listStyle: 'decimal',
-  })
 
   styleRegulation('[align="right"]', {
     textAlign: 'right',
   })
   styleRegulation('[align="center"]', {
     textAlign: 'center',
+  })
+
+  styleRegulation('h1,h2,h3,h4,h5,h6', {
+    fontWeight: typography.headingsFontWeight,
+    '@media': {
+      print: {
+        pageBreakAfter: 'avoid',
+        pageBreakInside: 'avoid',
+        marginBottom: '.5rem',
+      },
+    },
   })
 
   styleRegulation('h1, h2,', {
@@ -243,13 +283,14 @@ export const regulationContentStyling = (wrapper: string) => {
     textAlign: 'center',
     fontSize: '1em',
     fontWeight: typography.regular,
-    lineHeight: '2em',
     textTransform: 'uppercase',
+    lineHeight: '2em',
+    '@media': { print: { lineHeight: 'inherit' } },
   })
   styleRegulation('.section__title:first-child', {
     marginTop: '0',
   })
-  styleRegulation('em.section__name', {
+  styleRegulation('.section__name', {
     display: 'block',
     fontStyle: 'inherit',
   })
@@ -260,6 +301,7 @@ export const regulationContentStyling = (wrapper: string) => {
     fontSize: '1em',
     fontWeight: typography.regular,
     lineHeight: '2em',
+    '@media': { print: { lineHeight: 'inherit' } },
   })
   styleRegulation(
     `
@@ -270,7 +312,7 @@ export const regulationContentStyling = (wrapper: string) => {
       marginTop: '0',
     },
   )
-  styleRegulation('em.chapter__name', {
+  styleRegulation('.chapter__name', {
     display: 'block',
     fontStyle: 'inherit',
     fontWeight: typography.headingsFontWeight,
@@ -278,11 +320,12 @@ export const regulationContentStyling = (wrapper: string) => {
 
   styleRegulation('.article__title', {
     marginTop: '2em',
-    marginBottom: '1.5em',
     textAlign: 'center',
     fontSize: '1em',
     fontWeight: typography.regular,
+    marginBottom: '1.5em',
     lineHeight: '2em',
+    '@media': { print: { marginBottom: '.5em', lineHeight: 'inherit' } },
   })
   styleRegulation('.article__title--provisional', {
     fontWeight: typography.headingsFontWeight,
@@ -297,7 +340,7 @@ export const regulationContentStyling = (wrapper: string) => {
       marginTop: '0',
     },
   )
-  styleRegulation('em.article__name', {
+  styleRegulation('.article__name', {
     display: 'block',
     fontStyle: 'italic',
   })

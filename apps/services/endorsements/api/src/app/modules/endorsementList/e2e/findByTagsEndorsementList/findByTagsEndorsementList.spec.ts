@@ -1,5 +1,7 @@
 import { INestApplication } from '@nestjs/common'
+import { Console } from 'console'
 import request from 'supertest'
+import { ConsoleTransportOptions } from 'winston/lib/winston/transports'
 import { setup } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { EndorsementTag } from '../../constants'
@@ -14,11 +16,10 @@ describe('findByTagsEndorsementList', () => {
   it(`GET /endorsement-list?tags should return validation error when called with a non existing tag`, async () => {
     const response = await request(app.getHttpServer())
       .get(
-        `/endorsement-list?tags[]=thisTagIsUsedInE2ETests&tags[]=${EndorsementTag.PARTY_APPLICATION_SUDVESTURKJORDAEMI_2021}`,
+        `/endorsement-list?tags[]=thisTagIsUsedInE2ETests&tags[]=${EndorsementTag.GENERAL_PETITION}`,
       )
       .send()
       .expect(400)
-
     expect(response.body).toMatchObject({
       ...errorExpectedStructure,
       statusCode: 400,
@@ -27,23 +28,30 @@ describe('findByTagsEndorsementList', () => {
   })
   it(`GET /endorsement-list?tags should return 200 and empty list when no data exists for given tags`, async () => {
     const response = await request(app.getHttpServer())
-      .get(
-        `/endorsement-list?tags=${EndorsementTag.PARTY_APPLICATION_SUDVESTURKJORDAEMI_2021}`,
-      )
+      .get(`/endorsement-list?tags=${EndorsementTag.PARTY_LETTER_2021}`)
       .send()
       .expect(200)
-
-    expect(response.body).toStrictEqual([])
+    expect(response.body.data).toStrictEqual([])
   })
   it(`GET /endorsement-list?tags should return 200 and a list`, async () => {
     const response = await request(app.getHttpServer())
-      .get(
-        `/endorsement-list?tags=${EndorsementTag.PARTY_APPLICATION_SUDURKJORDAEMI_2021}`,
-      )
+      .get(`/endorsement-list?tags=${EndorsementTag.GENERAL_PETITION}`)
       .send()
       .expect(200)
+    expect(Array.isArray(response.body.data)).toBeTruthy()
+    expect(response.body.data.length).toBeGreaterThanOrEqual(2)
+    expect(response.body.totalCount).toBeGreaterThanOrEqual(2)
+    // Create endorsement test does not clear db so there is one more endorsment list than should be when all tests are run together
+  })
 
-    expect(Array.isArray(response.body)).toBeTruthy()
-    expect(response.body).toHaveLength(2)
+  // general petition tests
+  it(`GET /endorsement-list/general-petition-lists should return 200 and 2 lists`, async () => {
+    const response = await request(app.getHttpServer())
+      .get(`/endorsement-list/general-petition-lists?limit=5`)
+      .send()
+      .expect(200)
+    expect(response.body.data).toHaveLength(5)
+    expect(response.body.pageInfo.hasNextPage).toBeTruthy()
+    expect(response.body.pageInfo.hasPreviousPage).toBeFalsy()
   })
 })

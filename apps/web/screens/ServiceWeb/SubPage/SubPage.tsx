@@ -1,5 +1,5 @@
 import React from 'react'
-import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 import cn from 'classnames'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -29,7 +29,8 @@ import {
   AccordionCard,
 } from '@island.is/island-ui/core'
 import { ServiceWebHeader } from '@island.is/web/components'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { getSlugPart } from '../utils'
 
 import * as sharedStyles from '../shared/styles.treat'
 import ContactBanner from '../ContactBanner/ContactBanner'
@@ -48,12 +49,16 @@ const SubPage: Screen<SubPageProps> = ({
   supportQNAs,
   questionSlug,
 }) => {
+  const Router = useRouter()
+
   const { linkResolver } = useLinkResolver()
   const organizationTitle = organization ? organization.title : 'Ísland.is'
   const organizationSlug = organization.slug
   const question = supportQNAs.find(
     (supportQNA) => supportQNA.slug === questionSlug,
   )
+
+  const institutionSlug = getSlugPart(Router.asPath, 2)
 
   const logoTitle = `Þjónustuvefur ${organizationTitle}`
 
@@ -171,7 +176,7 @@ const SubPage: Screen<SubPageProps> = ({
                 </GridRow>
               </GridContainer>
               <Box marginTop={[10, 10, 20]}>
-                <ContactBanner />
+                <ContactBanner slug={institutionSlug} />
               </Box>
             </GridColumn>
           </GridRow>

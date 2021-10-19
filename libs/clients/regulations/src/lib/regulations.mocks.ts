@@ -79,6 +79,9 @@ export const demoRegulation: Regulation = {
     slug: 'ssvrn' as MinistrySlug,
   },
   lawChapters: [],
+  originalDoc: 'https://www.stjornartidindi.is/foobar.pdf',
+
+  repealed: false,
 
   // timelineDate: '2021-03-05' as ISODate,
   // showingDiff: {

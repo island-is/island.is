@@ -40,6 +40,7 @@ const GenericLicensesQuery = gql`
         pkpassVerify
         timeout
         status
+        pkpassStatus
       }
       fetch {
         status
@@ -284,7 +285,9 @@ const LicenseCards = () => {
             <dt>Staða</dt>
             <dd>{license.license.status}</dd>
             <dt>pkpass?</dt>
-            <dd>{license.license.pkpass}</dd>
+            <dd>{license.license.pkpass ? 'Já' : 'Nei'}</dd>
+            <dt>pkpass staða</dt>
+            <dd>{license.license.pkpassStatus}</dd>
             <dt>timeout</dt>
             <dd>{license.license.timeout}</dd>
           </dl>

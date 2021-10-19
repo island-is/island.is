@@ -1,10 +1,18 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
-import { borderColor } from 'libs/island-ui/core/src/lib/Box/useBoxStyles.treat'
 
 export const modalBase = style({
   height: '100%',
   display: 'block',
+})
+
+export const closeModalBackground = style({
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  display: 'block',
+  left: 0,
+  right: 0,
 })
 
 export const modalContainer = style({
@@ -51,12 +59,7 @@ export const activeState = style({
 
 export const container = style({
   display: 'flex',
-  alignItems: 'flex-start',
-  flexShrink: 0,
-  overflow: 'hidden',
-  width: '200%',
-  transition: 'transform 250ms ease',
-  transform: ' translate3d(0px, 0px, 0px)',
+  width: '100%',
 })
 
 export const showInput = style({

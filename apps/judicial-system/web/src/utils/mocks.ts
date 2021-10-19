@@ -25,6 +25,18 @@ export const mockCourt = {
   name: 'Héraðsdómur Reykjavíkur',
 }
 
+export const mockHighCourt = {
+  id: 'high_court_id',
+  type: InstitutionType.HIGH_COURT,
+  name: 'Landsréttur',
+}
+
+export const mockPrison = {
+  id: 'prison_id',
+  type: InstitutionType.PRISON,
+  name: 'Stóra Hraun',
+}
+
 export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
   name: 'Batman Robinson',
@@ -51,6 +63,22 @@ export const mockJudge = {
   name: 'Wonder Woman',
   title: 'héraðsdómari',
   institution: mockCourt,
+} as User
+
+export const mockHighCourtUser = {
+  id: 'hc_1',
+  role: UserRole.JUDGE,
+  name: 'Lalli Landsréttardómari',
+  title: 'dómari',
+  institution: mockHighCourt,
+} as User
+
+export const mockPrisonUser = {
+  id: 'hc_1',
+  role: UserRole.STAFF,
+  name: 'Lalli Landsréttardómari',
+  title: 'dómari',
+  institution: mockPrison,
 } as User
 
 export const mockJudgeBatman = {
@@ -99,6 +127,12 @@ const testCase1 = {
   caseFacts: 'string',
   legalArguments: 'string',
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Áki Ákærandi',
+    institution: {
+      id: '1338',
+    },
+  },
   prosecutor: {
     name: 'Áki Ákærandi',
     institution: {
@@ -128,7 +162,7 @@ const testCase1 = {
   prosecutorAppealAnnouncement: 'prosecutorAppealAnnouncement test',
   judge: null,
   conclusion: null,
-  files: [
+  caseFiles: [
     {
       id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
@@ -160,6 +194,10 @@ const testCase2 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -207,6 +245,7 @@ const testCase3 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: null,
   prosecutor: null,
   courtCaseNumber: null,
   courtDate: '2020-09-16T19:51:28.224Z',
@@ -254,6 +293,10 @@ const testCase4 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -277,7 +320,7 @@ const testCase4 = {
   judge: mockJudgeBatman,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  files: [
+  caseFiles: [
     {
       id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
@@ -314,6 +357,10 @@ const testCase5 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -339,7 +386,7 @@ const testCase5 = {
   judge: mockJudge,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  files: [
+  caseFiles: [
     {
       id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
@@ -376,6 +423,10 @@ const testCase6 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -423,6 +474,10 @@ const testCase7 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -469,6 +524,10 @@ const testCase8 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -498,7 +557,7 @@ const testCase8 = {
   parentCase: {
     validToDate: '2021-01-18T19:50:08.033Z',
   },
-  files: [
+  caseFiles: [
     {
       id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
@@ -554,6 +613,10 @@ const testCase9 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -600,6 +663,10 @@ const testCase10 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -647,6 +714,10 @@ const testCase11 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -693,6 +764,10 @@ const testCase12 = {
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -744,6 +819,32 @@ export const mockJudgeQuery = [
   },
 ]
 
+export const mockHighCourtQuery = [
+  {
+    request: {
+      query: CurrentUserQuery,
+    },
+    result: {
+      data: {
+        currentUser: mockHighCourtUser,
+      },
+    },
+  },
+]
+
+export const mockPrisonUserQuery = [
+  {
+    request: {
+      query: CurrentUserQuery,
+    },
+    result: {
+      data: {
+        currentUser: mockPrisonUser,
+      },
+    },
+  },
+]
+
 export const mockProsecutorWonderWomanQuery = [
   {
     request: {
@@ -790,7 +891,7 @@ export const mockUsersQuery = [
     },
     result: {
       data: {
-        users: [mockProsecutor, mockJudge, mockRegistrar],
+        users: [mockProsecutor, mockJudge, mockRegistrar, mockHighCourtUser],
       },
     },
   },

@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client'
 
-export const CreateApplicationQuery = gql`
+export const CreateApplicationMutation = gql`
   mutation createApplication($input: CreateApplicationInput!) {
     createApplication(input: $input) {
       id
@@ -8,7 +8,7 @@ export const CreateApplicationQuery = gql`
   }
 `
 
-export const CreateApplicationEventQuery = gql`
+export const ApplicationEventMutation = gql`
   mutation createApplicationEvent($input: CreateApplicationEventInput!) {
     createApplicationEvent(input: $input) {
       id
@@ -16,7 +16,7 @@ export const CreateApplicationEventQuery = gql`
   }
 `
 
-export const CreateApplicationFiles = gql`
+export const ApplicationFilesMutation = gql`
   mutation createApplicationFiles($input: CreateApplicationFilesInput!) {
     createApplicationFiles(input: $input) {
       success
@@ -24,7 +24,7 @@ export const CreateApplicationFiles = gql`
   }
 `
 
-export const GetMunicipalityQuery = gql`
+export const MunicipalityQuery = gql`
   query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
     municipality(input: $input) {
       id
@@ -55,6 +55,7 @@ export const CurrentUserQuery = gql`
       name
       phoneNumber
       postalCode
+      isSpouse
       currentApplication {
         id
         state
@@ -65,7 +66,7 @@ export const CurrentUserQuery = gql`
   }
 `
 
-export const GetApplicationQuery = gql`
+export const ApplicationQuery = gql`
   query GetApplicationQuery($input: ApplicationInput!) {
     application(input: $input) {
       id
@@ -75,11 +76,18 @@ export const GetApplicationQuery = gql`
       amount
       rejection
       created
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
     }
   }
 `
 
-export const UpdateApplicationMutation = gql`
+export const ApplicationMutation = gql`
   mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
     updateApplication(input: $input) {
       id

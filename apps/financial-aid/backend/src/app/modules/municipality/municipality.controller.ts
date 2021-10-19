@@ -1,25 +1,21 @@
 import {
-  Body,
   Controller,
   Get,
-  Post,
   NotFoundException,
   Param,
+  UseGuards,
 } from '@nestjs/common'
 
-import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { MunicipalityService } from './municipality.service'
 import { MunicipalityModel } from './models'
 
-import {
-  Municipality,
-  MunicipalitySettings,
-} from '@island.is/financial-aid/shared/lib'
+import { apiBasePath, Municipality } from '@island.is/financial-aid/shared/lib'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-import { MunicipalityQueryInput } from './dto'
-
-@Controller('api')
+@UseGuards(IdsUserGuard)
+@Controller(apiBasePath)
 @ApiTags('municipality')
 export class MunicipalityController {
   constructor(private readonly municipalityService: MunicipalityService) {}
@@ -39,19 +35,3 @@ export class MunicipalityController {
     return municipality
   }
 }
-
-// @UseGuards(JwtAuthGuard)
-// @Get('user/:id')
-// @ApiOkResponse({
-//   type: User,
-//   description: 'Gets an existing user',
-// })
-// async getById(@Param('id') id: string) {
-//   const user = await this.userService.findById(id)
-
-//   if (!user) {
-//     throw new NotFoundException(`User ${id} not found`)
-//   }
-
-//   return user
-// }

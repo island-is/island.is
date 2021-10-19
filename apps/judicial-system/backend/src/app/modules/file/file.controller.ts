@@ -15,18 +15,17 @@ import {
   CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
-  RolesRule,
   RolesRules,
 } from '@island.is/judicial-system/auth'
 import {
   UserRole,
   CaseState,
-  CaseAppealDecision,
   completedCaseStates,
   courtRoles,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
+import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import { Case, CaseService } from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
 import {
@@ -38,15 +37,6 @@ import {
 } from './models'
 import { FileService } from './file.service'
 
-// Allows prosecutors to perform any action
-const prosecutorRule = UserRole.PROSECUTOR as RolesRule
-
-// Allows judges to perform any action
-const judgeRule = UserRole.JUDGE as RolesRule
-
-// Allows registrars to perform any action
-const registrarRule = UserRole.REGISTRAR as RolesRule
-
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId')
 @ApiTags('files')
@@ -55,28 +45,6 @@ export class FileController {
     private readonly fileService: FileService,
     private readonly caseService: CaseService,
   ) {}
-
-  private getAppealDate(existingCase: Case): Date {
-    // Assumption: case has been appealed and the appeal date is in the past
-
-    // If either party appealed in court, then use the ruling date
-    if (
-      existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-      existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
-    ) {
-      return existingCase.rulingDate as Date // We should have date
-    }
-
-    // Otherwise, use the earliest postponed appeal date
-    const prosecutorPostponedAppealDate =
-      existingCase.prosecutorPostponedAppealDate ?? new Date()
-    const accusedPostponedAppealDate =
-      existingCase.accusedPostponedAppealDate ?? new Date()
-
-    return prosecutorPostponedAppealDate < accusedPostponedAppealDate
-      ? prosecutorPostponedAppealDate
-      : accusedPostponedAppealDate
-  }
 
   private doesUserHavePermissionToViewCaseFiles(
     user: User,

@@ -1,28 +1,39 @@
 import React, { useContext } from 'react'
+import { useIntl } from 'react-intl'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
+  isInvestigationCase,
+  isRestrictionCase,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
+  capitalize,
   formatAccusedByGender,
   formatAlternativeTravelBanRestrictions,
+  formatAppeal,
   formatCustodyRestrictions,
   NounCases,
 } from '@island.is/judicial-system/formatters'
+import { rulingAccordion as m } from '@island.is/judicial-system-web/messages/Core/rulingAccordion'
+import { rcConfirmation } from '@island.is/judicial-system-web/messages'
 import * as style from './RulingAccordionItem.treat'
 
 interface Props {
   workingCase: Case
+  startExpanded?: boolean
 }
 
-const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
+const RulingAccordionItem: React.FC<Props> = ({
+  workingCase,
+  startExpanded,
+}: Props) => {
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
 
   const custodyRestrictions = formatCustodyRestrictions(
     workingCase.accusedGender,
@@ -37,19 +48,20 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
 
   return (
     <AccordionItem
-      id="id_3"
-      label="Úrskurður Héraðsdóms Reykjavíkur"
+      id="rulingAccordionItem"
+      label={formatMessage(m.heading)}
       labelVariant="h3"
+      startExpanded={startExpanded}
     >
       <Box component="section" marginBottom={5}>
         <Box marginBottom={2}>
           <Text as="h4" variant="h4">
-            Úrskurður Héraðsdóms
+            {formatMessage(m.title)}
           </Text>
         </Box>
         <Box marginBottom={1}>
           <Text variant="eyebrow" color="blue400">
-            Greinargerð um málsatvik
+            {formatMessage(m.sections.courtCaseFacts.title)}
           </Text>
         </Box>
         <Box marginBottom={2}>
@@ -57,15 +69,26 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </Box>
         <Box marginBottom={1}>
           <Text variant="eyebrow" color="blue400">
-            Greinargerð um lagarök
+            {formatMessage(m.sections.courtLegalArguments.title)}
           </Text>
         </Box>
         <Box marginBottom={2}>
           <Text>{workingCase.courtLegalArguments}</Text>
         </Box>
-        <Box marginBottom={7}>
+        {isInvestigationCase(workingCase.type) &&
+          workingCase.requestProsecutorOnlySession && (
+            <Box marginY={2}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  {formatMessage(m.sections.requestProsecutorOnlySession.title)}
+                </Text>
+              </Box>
+              <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
+            </Box>
+          )}
+        <Box marginBottom={5}>
           <Text variant="eyebrow" color="blue400">
-            Niðurstaða
+            {formatMessage(m.sections.ruling.title)}
           </Text>
           <Text>
             <span className={style.breakSpaces}>{workingCase.ruling}</span>
@@ -75,7 +98,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       <Box component="section" marginBottom={7}>
         <Box marginBottom={2}>
           <Text as="h4" variant="h4">
-            Úrskurðarorð
+            {formatMessage(m.sections.conclusion.title)}
           </Text>
         </Box>
         <Box marginBottom={3}>
@@ -84,12 +107,15 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </Box>
         </Box>
         <Box marginBottom={1}>
-          <Text variant="h3">
-            {workingCase?.judge
-              ? `${workingCase.judge.name} ${workingCase.judge.title}`
-              : `${user?.name} ${user?.title}`}
+          <Text variant="h5">
+            {workingCase?.judge ? workingCase.judge.name : user?.name}
           </Text>
         </Box>
+        {(isRestrictionCase(workingCase.type) ||
+          workingCase.sessionArrangements !==
+            SessionArrangements.REMOTE_SESSION) && (
+          <Text>{formatMessage(m.sections.conclusion.disclaimer)}</Text>
+        )}
       </Box>
       <Box component="section" marginBottom={3}>
         <Box marginBottom={1}>
@@ -98,27 +124,30 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </Text>
         </Box>
         <Box marginBottom={2}>
-          <Text>
-            Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð
-            þennan til Landsréttar innan þriggja sólarhringa.
-          </Text>
+          <Text>{formatMessage(m.sections.appealDecision.disclaimer)}</Text>
         </Box>
-        <Box marginBottom={1}>
+        {workingCase.prosecutorAppealDecision !==
+          CaseAppealDecision.NOT_APPLICABLE && (
+          <Box marginBottom={1}>
+            <Text variant="h4">
+              {formatAppeal(workingCase.prosecutorAppealDecision, 'Sækjandi')}
+            </Text>
+          </Box>
+        )}
+        {workingCase.accusedAppealDecision !==
+          CaseAppealDecision.NOT_APPLICABLE && (
           <Text variant="h4">
-            {getAppealDecisionText(
-              AppealDecisionRole.PROSECUTOR,
-              workingCase.prosecutorAppealDecision,
-              workingCase.accusedGender,
+            {formatAppeal(
+              workingCase.accusedAppealDecision,
+              isRestrictionCase(workingCase.type)
+                ? capitalize(formatAccusedByGender(workingCase.accusedGender))
+                : 'Varnaraðili',
+              isRestrictionCase(workingCase.type)
+                ? workingCase.accusedGender
+                : undefined,
             )}
           </Text>
-        </Box>
-        <Text variant="h4">
-          {getAppealDecisionText(
-            AppealDecisionRole.ACCUSED,
-            workingCase.accusedAppealDecision,
-            workingCase.accusedGender,
-          )}
-        </Text>
+        )}
       </Box>
       {(workingCase.accusedAppealAnnouncement ||
         workingCase.prosecutorAppealAnnouncement) && (
@@ -130,6 +159,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
                   {`Yfirlýsing um kæru ${formatAccusedByGender(
                     workingCase.accusedGender,
                     NounCases.GENITIVE,
+                    isInvestigationCase(workingCase.type),
                   )}`}
                 </Text>
                 <Text>{workingCase.accusedAppealAnnouncement}</Text>
@@ -161,8 +191,12 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
               </Box>
             )}
             <Text>
-              Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
-              bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+              {formatMessage(
+                rcConfirmation.sections.custodyRestrictions.disclaimer,
+                {
+                  caseType: 'gæsluvarðhaldsins',
+                },
+              )}
             </Text>
           </Box>
         )}
@@ -193,8 +227,12 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
                 </Box>
               )}
               <Text>
-                Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
-                bera atriði er lúta að framkvæmd farbannsins undir dómara.
+                {formatMessage(
+                  rcConfirmation.sections.custodyRestrictions.disclaimer,
+                  {
+                    caseType: 'farbannsins',
+                  },
+                )}
               </Text>
             </Box>
           ))}

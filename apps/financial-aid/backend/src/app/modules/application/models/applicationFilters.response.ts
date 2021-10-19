@@ -1,9 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { ApplicationFilters } from '@island.is/financial-aid/shared/lib'
-import { Model } from 'sequelize-typescript'
-
-export class ApplicationFilterModel {
+export class ApplicationFilterResponse {
   @ApiProperty()
   New: number
 

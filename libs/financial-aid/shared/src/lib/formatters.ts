@@ -4,7 +4,11 @@ import {
   Employment,
   ApplicationEventType,
   ApplicationStateUrl,
+  FileType,
+  RolesRule,
+  FamilyStatus,
 } from './enums'
+import { ApplicationEvent } from './interfaces'
 import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -35,9 +39,24 @@ export const getStateFromUrl: KeyMapping<
   ApplicationStateUrl,
   ApplicationState[]
 > = {
-  nymal: [ApplicationState.NEW],
-  vinnslu: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
-  afgreidd: [ApplicationState.REJECTED, ApplicationState.APPROVED],
+  New: [ApplicationState.NEW],
+  InProgress: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+  Processed: [ApplicationState.REJECTED, ApplicationState.APPROVED],
+}
+
+export const getEventTypesFromService: KeyMapping<
+  RolesRule,
+  ApplicationEventType[]
+> = {
+  osk: [ApplicationEventType.DATANEEDED],
+  veita: Object.values(ApplicationEventType),
+}
+
+export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
+  '/': ApplicationStateUrl.NEW,
+  '/nymal': ApplicationStateUrl.NEW,
+  '/vinnslu': ApplicationStateUrl.INPROGRESS,
+  '/afgreidd': ApplicationStateUrl.PROCESSED,
 }
 
 export const getEventType: KeyMapping<
@@ -68,6 +87,22 @@ export const getEventType: KeyMapping<
     text: 'sendi inn gögn',
     isStaff: false,
   },
+  AssignCase: {
+    header: 'Umsjá',
+    text: 'tók að sér málið',
+    isStaff: true,
+  },
+}
+
+export const eventTypeFromApplicationState: KeyMapping<
+  ApplicationState,
+  ApplicationEventType
+> = {
+  New: ApplicationEventType.NEW,
+  DataNeeded: ApplicationEventType.DATANEEDED,
+  InProgress: ApplicationEventType.INPROGRESS,
+  Rejected: ApplicationEventType.REJECTED,
+  Approved: ApplicationEventType.APPROVED,
 }
 
 export const getActiveSectionForTimeline: KeyMapping<
@@ -87,6 +122,40 @@ export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
   InProgress: 'InProgress',
   Rejected: 'Rejected',
   Approved: 'Approved',
+}
+
+export const isSpouseDataNeeded: KeyMapping<FamilyStatus, boolean> = {
+  Unknown: false,
+  Single: false,
+  Cohabitation: true,
+  UnregisteredCohabitation: false,
+  Married: true,
+  MarriedNotLivingTogether: true,
+  NotInformed: false,
+}
+
+export const getFamilyStatus: KeyMapping<FamilyStatus, string> = {
+  Unknown: 'Óþekkt',
+  Cohabitation: 'Í sambúð',
+  Married: 'Gift',
+  Single: 'Einstæð',
+  MarriedNotLivingTogether: 'Hjón ekki í samvistum',
+  NotInformed: 'Óupplýst',
+  UnregisteredCohabitation: 'Óstaðfestri sambúð?',
+}
+
+export const getFileTypeName: KeyMapping<FileType, string> = {
+  TaxReturn: 'Skattagögn',
+  Income: 'Tekjugögn',
+  Other: 'Innsend gögn',
+}
+
+export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
+  New: 'Umsókn þín er móttekin',
+  DataNeeded: 'Okkur vantar gögn til að klára að vinna úr umsókninni',
+  InProgress: 'Umsókn þín er móttekin og er nú í vinnslu',
+  Rejected: 'Umsókn þinni um aðstoð hefur verið synjað',
+  Approved: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
 }
 
 export const aidCalculator = (
@@ -112,4 +181,11 @@ export const aidCalculator = (
     default:
       return aid.withParents
   }
+}
+
+export const getCommentFromLatestEvent = (
+  applicationEvents: ApplicationEvent[],
+  findState: ApplicationEventType,
+) => {
+  return applicationEvents.find((el) => el.eventType === findState)
 }

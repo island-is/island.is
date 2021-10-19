@@ -11,7 +11,7 @@ import { useRouter } from 'next/router'
 
 import * as styles from './studentForm.treat'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 import cn from 'classnames'
 import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
@@ -72,9 +72,8 @@ const StudentForm = () => {
             }}
             onChange={(value: number | boolean) => {
               updateForm({ ...form, student: value })
-              if (hasError) {
-                setHasError(false)
-              }
+
+              setHasError(false)
             }}
           />
         </div>

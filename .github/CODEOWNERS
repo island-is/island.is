@@ -20,6 +20,7 @@
 /.github/                                                                                     @island-is/core
 /handbook/                                                                                    @island-is/core
 /libs/api/domains/identity/                                                                   @island-is/core
+/libs/testing/                                                                                @island-is/core @island-is/vice-versa
 
 /apps/services/endorsements/                                                                  @island-is/kosmos-kaos
 /apps/services/temporary-voter-registry-api/                                                  @island-is/kosmos-kaos
@@ -85,7 +86,9 @@
 
 /apps/financial-aid/                                                                          @island-is/kolibri-robin-hood
 /libs/financial-aid/                                                                          @island-is/kolibri-robin-hood
+/libs/next-ids-auth/                                                                          @island-is/kolibri-robin-hood
 
+/apps/download-service/                                                                       @island-is/hugsmidjan
 /apps/service-portal*/                                                                        @island-is/hugsmidjan
 /apps/services/user-profile/                                                                  @island-is/hugsmidjan
 /apps/web/screens/Regulations/                                                                @island-is/hugsmidjan
@@ -99,7 +102,6 @@
 /libs/clients/regulations/                                                                    @island-is/hugsmidjan
 /libs/api/domains/regulations/                                                                @island-is/hugsmidjan
 
-/apps/download-service/                                                                       @island-is/sendiradid
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
 /libs/application/templates/institution-collaboration/                                        @island-is/sendiradid
 /libs/application/templates/login-service/                                                    @island-is/sendiradid
@@ -141,11 +143,11 @@
 infra/                                                                                        @island-is/devops
 /charts                                                                                       @island-is/devops
 
-/apps/services/xroad-collector/                                                               @island-is/advania
+/apps/services/xroad-collector/                                                               @island-is/advania @island-is/core
 /apps/services/documents                                                                      @island-is/advania @island-is/core
 /libs/api/domains/api-catalogue/                                                              @island-is/advania
 /libs/api/domains/document-provider/                                                          @island-is/advania
-/libs/api-catalogue/                                                                          @island-is/advania
+/libs/api-catalogue/                                                                          @island-is/advania @island-is/core
 /libs/application/templates/document-provider-onboarding/                                     @island-is/advania
 /libs/service-portal/document-provider/                                                       @island-is/advania
 /libs/clients/document-provider/                                                              @island-is/advania @island-is/core

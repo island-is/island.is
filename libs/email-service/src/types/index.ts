@@ -30,9 +30,23 @@ interface ButtonComponent {
   }
 }
 
+interface SubtitleComponent {
+  component: 'Subtitle'
+  context: {
+    copy: string
+    application: string
+  }
+}
+
 export interface Template {
   title: string
-  body: (ImageComponent | HeadingComponent | CopyComponent | ButtonComponent)[]
+  body: (
+    | ImageComponent
+    | HeadingComponent
+    | CopyComponent
+    | ButtonComponent
+    | SubtitleComponent
+  )[]
 }
 
 /**

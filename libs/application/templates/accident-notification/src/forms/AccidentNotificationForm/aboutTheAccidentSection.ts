@@ -51,6 +51,7 @@ import {
   isFishermanAccident,
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
+  isInjuredAndRepresentativeOfCompanyOrInstitute,
   isLocatedOnShipOther,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfEmployee,
@@ -217,6 +218,7 @@ export const aboutTheAccidentSection = buildSection({
     }),
     // Location Subsection
     buildSubSection({
+      id: 'location.subSection',
       title: 'Staðsetning',
       children: [
         buildMultiField({
@@ -225,7 +227,7 @@ export const aboutTheAccidentSection = buildSection({
           condition: (formValue) => isProfessionalAthleteAccident(formValue),
           children: [
             buildRadioField({
-              id: 'sportsClubInfo.employee.radioButton',
+              id: 'onPayRoll.answer',
               width: 'half',
               title: '',
               options: [
@@ -623,50 +625,43 @@ export const aboutTheAccidentSection = buildSection({
           title: attachments.general.heading,
           children: [
             buildRadioField({
-              id: 'attachments.injuryCertificate.default',
+              id: 'injuryCertificate.answer',
               title: '',
               description: attachments.general.description,
-              condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
-              options: [
-                {
-                  value: AttachmentsEnum.INJURYCERTIFICATE,
-                  label: attachments.labels.injuryCertificate,
-                },
-                {
-                  value: AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
-                  label: attachments.labels.hospitalSendsCertificate,
-                },
-                {
-                  value: AttachmentsEnum.SENDCERTIFICATELATER,
-                  label: attachments.labels.sendCertificateLater,
-                },
-              ],
-            }),
-            buildRadioField({
-              id: 'attachments.injuryCertificate',
-              title: '',
-              description: attachments.general.description,
-              condition: (formValue) =>
-                isRepresentativeOfCompanyOrInstitute(formValue),
-              options: [
-                {
-                  value: AttachmentsEnum.INJURYCERTIFICATE,
-                  label: attachments.labels.injuryCertificate,
-                },
-                {
-                  value: AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
-                  label: attachments.labels.hospitalSendsCertificate,
-                },
-                {
-                  value: AttachmentsEnum.INJUREDSENDSCERTIFICATE,
-                  label: attachments.labels.injuredSendsCertificate,
-                },
-                {
-                  value: AttachmentsEnum.SENDCERTIFICATELATER,
-                  label: attachments.labels.sendCertificateLater,
-                },
-              ],
+              options: (application) =>
+                isRepresentativeOfCompanyOrInstitute(application.answers)
+                  ? [
+                      {
+                        value: AttachmentsEnum.INJURYCERTIFICATE,
+                        label: attachments.labels.injuryCertificate,
+                      },
+                      {
+                        value: AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
+                        label: attachments.labels.hospitalSendsCertificate,
+                      },
+                      {
+                        value: AttachmentsEnum.INJUREDSENDSCERTIFICATE,
+                        label: attachments.labels.injuredSendsCertificate,
+                      },
+                      {
+                        value: AttachmentsEnum.SENDCERTIFICATELATER,
+                        label: attachments.labels.sendCertificateLater,
+                      },
+                    ]
+                  : [
+                      {
+                        value: AttachmentsEnum.INJURYCERTIFICATE,
+                        label: attachments.labels.injuryCertificate,
+                      },
+                      {
+                        value: AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
+                        label: attachments.labels.hospitalSendsCertificate,
+                      },
+                      {
+                        value: AttachmentsEnum.SENDCERTIFICATELATER,
+                        label: attachments.labels.sendCertificateLater,
+                      },
+                    ],
             }),
             buildCustomField(
               {
@@ -682,21 +677,21 @@ export const aboutTheAccidentSection = buildSection({
               },
               { type: 'warning' },
             ),
-            buildFileUploadField({
-              id: 'attachments.injuryCertificateFile',
-              title: attachments.general.uploadHeader,
-              uploadAccept: UPLOAD_ACCEPT,
-              uploadHeader: injuredPersonInformation.upload.uploadHeader,
-              uploadDescription: attachments.general.uploadDescription,
-              uploadButtonLabel: attachments.general.uploadButtonLabel,
-              introduction: attachments.general.uploadIntroduction,
-              condition: (formValue) =>
-                (formValue as {
-                  attachments: { injuryCertificate: AttachmentsEnum }
-                }).attachments?.injuryCertificate ===
-                AttachmentsEnum.INJURYCERTIFICATE,
-            }),
           ],
+        }),
+        buildFileUploadField({
+          id: 'attachments.injuryCertificateFile',
+          title: attachments.general.heading,
+          uploadAccept: UPLOAD_ACCEPT,
+          uploadHeader: injuredPersonInformation.upload.uploadHeader,
+          uploadDescription: attachments.general.uploadDescription,
+          uploadButtonLabel: attachments.general.uploadButtonLabel,
+          introduction: attachments.general.uploadIntroduction,
+          condition: (formValue) =>
+            (formValue as {
+              attachments: { injuryCertificate: AttachmentsEnum }
+            }).attachments?.injuryCertificate ===
+            AttachmentsEnum.INJURYCERTIFICATE,
         }),
       ],
     }),
@@ -784,6 +779,7 @@ export const aboutTheAccidentSection = buildSection({
 
     // Company information if work accident without the injured being a fisherman
     buildSubSection({
+      id: 'companyInfo.subSection',
       title: companyInfo.general.title,
       condition: (formValue) =>
         isGeneralWorkplaceAccident(formValue) &&
@@ -821,7 +817,7 @@ export const aboutTheAccidentSection = buildSection({
               titleVariant: 'h5',
               title: companyInfo.labels.descriptionField,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             // These should all be required if the user is not the representative of the company.
             // Should look into if we can require conditionally
@@ -831,7 +827,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'companyInfo.email',
@@ -841,7 +837,7 @@ export const aboutTheAccidentSection = buildSection({
               width: 'half',
               required: true,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'companyInfo.phoneNumber',
@@ -851,7 +847,7 @@ export const aboutTheAccidentSection = buildSection({
               variant: 'tel',
               width: 'half',
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
           ],
         }),
@@ -859,6 +855,7 @@ export const aboutTheAccidentSection = buildSection({
     }),
     // School information if school accident
     buildSubSection({
+      id: 'schoolInfo.subSection',
       title: schoolInfo.general.title,
       condition: (formValue) =>
         isStudiesAccident(formValue) &&
@@ -896,7 +893,7 @@ export const aboutTheAccidentSection = buildSection({
               titleVariant: 'h5',
               title: schoolInfo.labels.descriptionField,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             // These should all be required if the user is not the representative of the company.
             // Should look into if we can require conditionally
@@ -906,7 +903,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'schoolInfo.email',
@@ -916,7 +913,7 @@ export const aboutTheAccidentSection = buildSection({
               width: 'half',
               required: true,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'schoolInfo.phoneNumber',
@@ -926,7 +923,7 @@ export const aboutTheAccidentSection = buildSection({
               variant: 'tel',
               width: 'half',
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
           ],
         }),
@@ -934,6 +931,7 @@ export const aboutTheAccidentSection = buildSection({
     }),
     // fishery information if fisherman
     buildSubSection({
+      id: 'fishingCompanyInfo.subSection',
       title: fishingCompanyInfo.general.title,
       condition: (formValue) => isFishermanAccident(formValue),
       children: [
@@ -1006,7 +1004,7 @@ export const aboutTheAccidentSection = buildSection({
               titleVariant: 'h5',
               title: fishingCompanyInfo.labels.descriptionField,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             // These should all be required if the user is not the representative of the company.
             // Should look into if we can require conditionally
@@ -1016,7 +1014,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'fishingCompanyInfo.email',
@@ -1026,7 +1024,7 @@ export const aboutTheAccidentSection = buildSection({
               variant: 'email',
               required: true,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'fishingCompanyInfo.phoneNumber',
@@ -1036,7 +1034,7 @@ export const aboutTheAccidentSection = buildSection({
               format: '###-####',
               variant: 'tel',
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
           ],
         }),
@@ -1044,6 +1042,7 @@ export const aboutTheAccidentSection = buildSection({
     }),
     // Sports club information when the injured has a sports related accident
     buildSubSection({
+      id: 'sportsClubInfo.subSection',
       title: sportsClubInfo.general.title,
       condition: (formValue) =>
         isProfessionalAthleteAccident(formValue) &&
@@ -1081,7 +1080,7 @@ export const aboutTheAccidentSection = buildSection({
               titleVariant: 'h5',
               title: sportsClubInfo.labels.descriptionField,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             // These should all be required if the user is not the representative of the company.
             // Should look into if we can require conditionally
@@ -1091,7 +1090,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'sportsClubInfo.email',
@@ -1101,7 +1100,7 @@ export const aboutTheAccidentSection = buildSection({
               variant: 'email',
               required: true,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'sportsClubInfo.phoneNumber',
@@ -1111,7 +1110,7 @@ export const aboutTheAccidentSection = buildSection({
               format: '###-####',
               variant: 'tel',
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
           ],
         }),
@@ -1119,6 +1118,7 @@ export const aboutTheAccidentSection = buildSection({
     }),
     // Rescue squad information when accident is related to rescue squad
     buildSubSection({
+      id: 'rescueSquadInfo.subSection',
       title: rescueSquadInfo.general.title,
       condition: (formValue) =>
         isRescueWorkAccident(formValue) &&
@@ -1156,7 +1156,7 @@ export const aboutTheAccidentSection = buildSection({
               titleVariant: 'h5',
               title: rescueSquadInfo.labels.descriptionField,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'rescueSquadInfo.name',
@@ -1164,7 +1164,7 @@ export const aboutTheAccidentSection = buildSection({
               backgroundColor: 'blue',
               required: true,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'rescueSquadInfo.email',
@@ -1174,7 +1174,7 @@ export const aboutTheAccidentSection = buildSection({
               variant: 'email',
               required: true,
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'rescueSquadInfo.phoneNumber',
@@ -1184,7 +1184,7 @@ export const aboutTheAccidentSection = buildSection({
               format: '###-####',
               variant: 'tel',
               condition: (formValue) =>
-                !isRepresentativeOfCompanyOrInstitute(formValue),
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
           ],
         }),

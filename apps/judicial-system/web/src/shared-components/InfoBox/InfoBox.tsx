@@ -13,6 +13,7 @@ interface Props {
 const InfoBox: React.FC<Props> = (props) => {
   return (
     <div
+      data-testid="infobox"
       className={cn(styles.infoBoxContainer, {
         [styles.fluid]: props.fluid,
         [styles.light]: props.light,
