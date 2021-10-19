@@ -20,6 +20,19 @@ export interface TilkynnandiOrSlasadi {
   netfang: string
   simi: string
 }
+export interface SlysVidVinnusjomanna {
+  stadsetningskips: number
+  nafnskips: string
+  einkennisstafirskips: string
+  heimahofnskips?: string
+  skipaskrarnumer?: string
+}
+export interface SlysVidHeimislisstorf {
+  heimili: string
+  postnumer: string
+  sveitarfelag: string
+  nanar?: string
+}
 export interface Slys {
   tegund: string
   dagsetningslys: string
@@ -27,18 +40,21 @@ export interface Slys {
   lysing: string
   banaslys: string
   bilslys: string
-  stadurslysseferindi: string
-  lysingerindis: string
-  nafnhafnar: string
-  stadsetninghafnar: string
+  stadurslysseferindi?: string
+  lysingerindis?: string
+  nafnhafnar?: string
+  stadsetninghafnar?: string
+  undirtegund?: string
+  slysvidheimilisstorf?: SlysVidHeimislisstorf
+  slysvidvinnusjomanna?: SlysVidVinnusjomanna
 }
+
 export interface Atvinnurekandi {
   fyrirtaekikennitala: string
   fyrirtaekinafn: string
-  forsjaradilikennitala: string
   forsjaradilinafn: string
   forsjaradilinetfang: string
-  forsjaradilisimi: string
+  forsjaradilisimi?: string
 }
 export interface Felagstengsl {
   kennitala: string

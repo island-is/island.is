@@ -42,19 +42,28 @@ export class AccidentNotificationService {
     const xml = applictionAnswersToXml(answers, attachments)
 
     console.log('XML OBJEJCJTWS', xml)
-    //
+    try {
+      const {
+        success,
+        errorDesc,
+        errorList,
+        ihiDocumentID,
+        numberIHI,
+      } = await this.documentApi.documentPost({
+        document: { doc: xml, documentType: 801 },
+      })
+      console.log('hahahahaha')
+      console.log('success', success)
+      console.log('errorDesc', errorDesc)
+      console.log('errorList', errorList)
+      console.log('ihiDocumentID', ihiDocumentID)
+      console.log('numberIHI', numberIHI)
+    } catch (error: any) {
+      console.log('error', JSON.parse(error.body))
+      console.log('status', error.status)
+    }
 
-    const {
-      success,
-      errorDesc,
-      errorList,
-      ihiDocumentID,
-      numberIHI,
-    } = await this.documentApi.v1DocumentPost({
-      document: { doc: xml, documentType: 801 },
-    })
-
-    throw new Exception('STOP THIS APPLICATION FROM SUBMITTTING !!!!!!"""!!!')
+    throw new Exception('STOP THIS APPLICATION FROM SUBMITTTING !!!!!!!!!')
     //TODO SEND XML
 
     // Send confirmation email to applicant

@@ -10,8 +10,8 @@ export class HealthInsuranceV2Module {
       xRoadClientId,
       xRoadProviderId,
     } = options
-    const basePath = `${xRoadBaseUrl}/r1/${xRoadProviderId}/paymentSchedule_v1`
-
+    const basePath = `${xRoadBaseUrl}/r1/${xRoadProviderId}/islandis`
+    console.log('config : ', options)
     return {
       module: HealthInsuranceV2Module,
       imports: [],
@@ -24,10 +24,11 @@ export class HealthInsuranceV2Module {
                 fetchApi: fetch,
                 basePath: basePath,
                 headers: {
-                  'Content-Type': 'application/json',
-                  Accept: 'application/json',
                   'X-Road-Client': xRoadClientId,
-                  authHeader: `{"username": "${username}","password": "${password}"}`,
+                  userName: `${username}`,
+                  password: `${password}`,
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
                 },
               }),
             )

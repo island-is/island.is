@@ -43,7 +43,7 @@ export const applictionAnswersToXml = (
       },
       atvinnurekandi: {
         //TODO check if need per type of application
-        forsjaradilikennitala: answers.sportsClubInfo.nationalRegistrationId,
+        //forsjaradilikennitala: answers.sportsClubInfo.nationalRegistrationId,
         forsjaradilinafn: answers.sportsClubInfo.name,
         forsjaradilinetfang: answers.sportsClubInfo.email,
         forsjaradilisimi: answers.sportsClubInfo.phoneNumber || '',
