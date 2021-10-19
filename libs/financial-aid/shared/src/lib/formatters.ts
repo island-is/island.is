@@ -7,6 +7,7 @@ import {
   FileType,
   RolesRule,
   FamilyStatus,
+  MartialStatusType,
 } from './enums'
 import { Aid, ApplicationEvent } from './interfaces'
 import type { KeyMapping } from './types'
@@ -189,4 +190,25 @@ export const getCommentFromLatestEvent = (
 export const logoKeyFromMunicipalityCode: KeyMapping<string, string> = {
   '': 'sis.svg',
   '1000': 'hfj.svg',
+}
+
+export const martialStatusType = (
+  martialCode: string | undefined,
+): MartialStatusType => {
+  switch (martialCode) {
+    case 'L':
+    case 'G':
+    case '8':
+    case '7':
+    case '3':
+    case '0':
+      return MartialStatusType.MARRIED
+    case 'g':
+    case '6':
+    case '5':
+    case '4':
+    case '1':
+    default:
+      return MartialStatusType.SINGLE
+  }
 }

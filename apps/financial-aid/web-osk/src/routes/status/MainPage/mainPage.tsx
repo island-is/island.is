@@ -77,18 +77,16 @@ const MainPage = () => {
                 underline="normal"
                 underlineVisibility="always"
               >
-                {/* TODO: different for muncipality */}
                 <b>Upplýsingar um fjárhagsaðstoð</b>
               </Link>
             </Bullet>
             <Bullet>
               <Link
-                href="mailto: felagsthjonusta@hafnarfjordur.is"
+                href={`mailto: ${municipality?.email}`}
                 color="blue400"
                 underline="normal"
                 underlineVisibility="always"
               >
-                {/* TODO: different for muncipality */}
                 <b> Hafa samband</b>
               </Link>
             </Bullet>

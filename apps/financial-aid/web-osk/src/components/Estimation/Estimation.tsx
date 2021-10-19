@@ -8,6 +8,8 @@ import {
   calulateTaxOfAmount,
   HomeCircumstances,
   getNextPeriod,
+  MartialStatusType,
+  martialStatusType,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -26,11 +28,17 @@ const Estimation = ({
 }: Props) => {
   const currentYear = format(new Date(), 'yyyy')
 
-  const { municipality } = useContext(AppContext)
+  const { municipality, nationalRegistryData } = useContext(AppContext)
 
   const aidAmount = useMemo(() => {
     if (municipality && homeCircumstances) {
-      return aidCalculator(homeCircumstances, municipality.individualAid) // TODO: Correct martial status
+      return aidCalculator(
+        homeCircumstances,
+        martialStatusType(nationalRegistryData?.spouse.maritalStatus) ===
+          MartialStatusType.SINGLE
+          ? municipality.individualAid
+          : municipality.cohabitationAid,
+      )
     }
   }, [municipality])
 

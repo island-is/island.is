@@ -70,3 +70,8 @@ export enum AidType {
   INDIVIDUAL = 'Individual',
   COHABITATION = 'Cohabitation',
 }
+
+export enum MartialStatusType {
+  MARRIED = 'Married',
+  SINGLE = 'Single',
+}
