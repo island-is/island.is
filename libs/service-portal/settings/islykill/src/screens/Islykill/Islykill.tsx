@@ -47,7 +47,7 @@ const CreateIslykillSettings = gql`
 `
 
 const DeleteIslykillSettings = gql`
-  mutation {
+  mutation deleteIslykillSettings {
     deleteIslykillSettings {
       nationalId
       valid

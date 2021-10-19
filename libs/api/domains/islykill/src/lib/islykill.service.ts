@@ -1,7 +1,7 @@
 import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, BadRequestException } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 
 import { IslykillSettings, IslykillUpdateResponse } from './islykill.type'
@@ -15,111 +15,115 @@ export class IslykillService {
 
   async updateIslykillSettings(
     nationalId: User['nationalId'],
-    { email }: { email: string },
+    { email, mobile }: { email: string; mobile?: string },
   ): Promise<IslykillUpdateResponse> {
     const inputUserData: PublicUser = {
       ssn: nationalId,
       email,
+      mobile,
 
       // TODO this should be optional
       canNudge: false,
       onlyCert: false,
     }
-
-    try {
-      // TODO this should be a possible ErrorResult from the service but something is wrong with
-      // how the swagger is setup?
-      await this.islyklarApi.islyklarPut({ user: inputUserData })
-    } catch (e) {
-      this.logger.error('Unable to update islykill settings for user', {
-        category: 'islykill-settings',
-        nationalId,
-        exception: e,
+    const errorMsg = 'Unable to update islykill settings for user'
+    const apiData = await this.islyklarApi
+      .islyklarPut({
+        user: inputUserData,
       })
-      return {
-        nationalId,
-        valid: false,
-      }
-    }
-
-    // TODO error handling
-
-    return {
-      nationalId,
-      valid: true,
-    }
+      .then(() => {
+        return {
+          nationalId,
+          valid: true,
+        }
+      })
+      .catch((e) => {
+        this.logger.error(errorMsg, {
+          category: 'islykill-settings',
+          nationalId,
+          exception: e,
+        })
+        throw new BadRequestException(errorMsg)
+      })
+    return apiData
   }
 
   async getIslykillSettings(
     nationalId: User['nationalId'],
   ): Promise<IslykillSettings> {
-    let userData: PublicUser | undefined
-    try {
-      userData = await this.islyklarApi.islyklarGet({
+    const errorMsg = 'Unable to lookup islykill settings for user'
+    const apiData = await this.islyklarApi
+      .islyklarGet({
         ssn: nationalId,
       })
-    } catch (e) {
-      this.logger.error('Unable to lookup islykill settings for user', {
-        category: 'islykill-settings',
-        nationalId,
-        exception: e,
+      .then((userData: PublicUser) => {
+        return {
+          nationalId,
+          email: userData.email,
+          mobile: userData.mobile,
+          bankInfo: userData.bankInfo,
+          lastLogin: userData.lastLogin,
+          nextLastLogin: userData.nextLastLogin,
+          lastPassChange: userData.lastPassChange,
+          canNudge: userData.canNudge,
+          onlyCert: userData.onlyCert,
+          nudgeLastAsked: userData.nudgeLastAsked,
+        }
       })
-      return {
-        nationalId,
-      }
-    }
-
-    return {
-      nationalId,
-      email: userData.email,
-      mobile: userData.mobile,
-      bankInfo: userData.bankInfo,
-      lastLogin: userData.lastLogin,
-      nextLastLogin: userData.nextLastLogin,
-      lastPassChange: userData.lastPassChange,
-      canNudge: userData.canNudge,
-      onlyCert: userData.onlyCert,
-      nudgeLastAsked: userData.nudgeLastAsked,
-    }
+      .catch((e) => {
+        if (e.status === 404) {
+          return {
+            nationalId,
+            noUserFound: true,
+          }
+        }
+        this.logger.error(errorMsg, {
+          category: 'islykill-settings',
+          nationalId,
+          exception: e,
+        })
+        throw new BadRequestException(errorMsg)
+      })
+    return apiData
   }
 
   async createIslykillSettings(
     nationalId: User['nationalId'],
-    { email }: { email: string },
+    { email, mobile }: { email: string; mobile?: string },
   ) {
     const inputUserData: PublicUser = {
       ssn: nationalId,
       email,
+      mobile,
 
       // TODO this should be optional
       canNudge: false,
       onlyCert: false,
     }
 
-    try {
-      // TODO this should be a possible ErrorResult from the service but something is wrong with
-      // how the swagger is setup?
-      await this.islyklarApi.islyklarPost({ user: inputUserData })
-    } catch (e) {
-      this.logger.error('Unable to create islykill settings for user', {
-        category: 'islykill-settings',
-        nationalId,
-        exception: e,
+    const errorMsg = 'Unable to create islykill settings for user'
+    const apiData = await this.islyklarApi
+      .islyklarPost({
+        user: inputUserData,
       })
-      return {
-        nationalId,
-        valid: false,
-      }
-    }
-
-    // TODO error handling
-
-    return {
-      nationalId,
-      valid: true,
-    }
+      .then(() => {
+        return {
+          nationalId,
+          valid: true,
+        }
+      })
+      .catch((e) => {
+        this.logger.error(errorMsg, {
+          category: 'islykill-settings',
+          nationalId,
+          exception: e,
+        })
+        throw new BadRequestException(errorMsg)
+      })
+    return apiData
   }
 
+  /* THIS SERVICE IS NOT AVAILABLE YET.  */
   async deleteIslykillSettings(nationalId: User['nationalId']) {
     try {
       // TODO this should be a possible ErrorResult from the service but something is wrong with

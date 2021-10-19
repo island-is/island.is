@@ -7,6 +7,7 @@ import {
   InputType,
   Args,
 } from '@nestjs/graphql'
+import { IsEmail, IsOptional } from 'class-validator'
 import { UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -56,6 +57,12 @@ export class IslykillSettings {
     nullable: true,
   })
   nudgeLastAsked?: string
+
+  @Field({
+    description: 'No user with requested ssn found in request',
+    nullable: true,
+  })
+  noUserFound?: boolean
 }
 
 @ObjectType()
@@ -109,13 +116,23 @@ export class DeleteIslykillSettings {
 @InputType()
 export class UpdateIslykillSettingsInput {
   @Field(() => String)
+  @IsEmail()
   email!: string
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  mobile?: string
 }
 
 @InputType()
 export class CreateIslykillSettingsInput {
   @Field(() => String)
+  @IsEmail()
   email!: string
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  mobile?: string
 }
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -137,6 +154,7 @@ export class MainResolver {
   ) {
     return this.islykillService.updateIslykillSettings(user.nationalId, {
       email: input.email,
+      mobile: input.mobile,
     })
   }
 
@@ -147,6 +165,7 @@ export class MainResolver {
   ) {
     return this.islykillService.createIslykillSettings(user.nationalId, {
       email: input.email,
+      mobile: input.mobile,
     })
   }
 

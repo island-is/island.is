@@ -21,4 +21,5 @@ export type IslykillSettings = {
   canNudge?: boolean
   onlyCert?: boolean
   nudgeLastAsked?: string
+  noUserFound?: boolean
 }
