@@ -27,6 +27,13 @@ export class EndorsementList extends Model<EndorsementList> {
 
   @ApiProperty()
   @Column({
+    type: DataType.NUMBER,
+    allowNull: true,
+  })
+  counter!: number
+
+  @ApiProperty()
+  @Column({
     type: DataType.STRING,
     allowNull: false,
   })
@@ -42,13 +49,22 @@ export class EndorsementList extends Model<EndorsementList> {
   description!: string | null
 
   @ApiProperty({
-    type: String,
-    nullable: true,
+    type: Date,
+    nullable: false,
   })
   @Column({
     type: DataType.DATE,
   })
-  closedDate!: Date | null
+  openedDate!: Date
+
+  @ApiProperty({
+    type: Date,
+    nullable: false,
+  })
+  @Column({
+    type: DataType.DATE,
+  })
+  closedDate!: Date
 
   @ApiProperty({ type: [EndorsementMetadataDto] })
   @Column({
@@ -76,6 +92,13 @@ export class EndorsementList extends Model<EndorsementList> {
     allowNull: false,
   })
   owner!: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  adminLock!: boolean
 
   @ApiProperty({ type: () => [Endorsement], required: false })
   @HasMany(() => Endorsement)

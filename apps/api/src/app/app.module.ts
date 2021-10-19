@@ -36,6 +36,7 @@ import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-r
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { AuditModule } from '@island.is/nest/audit'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
+import { ProblemModule } from '@island.is/nest/problem'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 
@@ -244,6 +245,7 @@ const autoSchemaFile = environment.production
       password: environment.paymentSchedule.password,
       username: environment.paymentSchedule.username,
     }),
+    ProblemModule,
   ],
 })
 export class AppModule {}

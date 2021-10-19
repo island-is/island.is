@@ -1,5 +1,6 @@
-import { SessionArrangements } from '@island.is/judicial-system/types'
 import each from 'jest-each'
+
+import { SessionArrangements } from '@island.is/judicial-system/types'
 
 import { Case } from '../models'
 import { transformCase } from './case.transformer'
@@ -55,6 +56,28 @@ describe('transformCase', () => {
 
         // Assert
         expect(res.isClosedCourtHidden).toBe(transformedValue)
+      })
+
+      it(`should transform ${originalValue} isHightenedSecurityLevel to ${transformedValue}`, () => {
+        // Arrange
+        const theCase = { isHeightenedSecurityLevel: originalValue } as Case
+
+        // Act
+        const res = transformCase(theCase)
+
+        // Assert
+        expect(res.isHeightenedSecurityLevel).toBe(transformedValue)
+      })
+
+      it(`should transform ${originalValue} isMasked to ${transformedValue}`, () => {
+        // Arrange
+        const theCase = { isMasked: originalValue } as Case
+
+        // Act
+        const res = transformCase(theCase)
+
+        // Assert
+        expect(res.isMasked).toBe(transformedValue)
       })
     },
   )

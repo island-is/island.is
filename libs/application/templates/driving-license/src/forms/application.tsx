@@ -11,6 +11,7 @@ import {
   buildSelectField,
   buildDividerField,
   buildRadioField,
+  buildTextField,
   Form,
   FormModes,
   DefaultEvents,
@@ -20,19 +21,31 @@ import {
   buildDataProviderItem,
   FormValue,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile } from '../types/schema'
+import { LogreglanLogo } from '../assets'
+import { NationalRegistryUser, Teacher, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
-import { QualityPhotoData } from '../utils'
+import { QualityPhotoData, ConditionFn } from '../types'
 import { StudentAssessment } from '@island.is/api/schema'
-import { NO, YES } from '../lib/constants'
+import {
+  DrivingLicenseApplicationFor,
+  NO,
+  YES,
+  B_FULL,
+  B_TEMP,
+} from '../lib/constants'
+import { hasYes } from '../utils'
 
 // const ALLOW_FAKE_DATA = todo: serverside feature flag
 const ALLOW_FAKE_DATA = false
 
+const ALLOW_LICENSE_SELECTION = false
+
 const allowFakeCondition = (result = YES) => (answers: FormValue) =>
   getValueViaPath(answers, 'fakeData.useFakeData') === result
+
+const allowLicenseSelection = () => ALLOW_LICENSE_SELECTION
 
 const needsHealthCertificateCondition = (result = YES) => (
   answers: FormValue,
@@ -40,9 +53,46 @@ const needsHealthCertificateCondition = (result = YES) => (
   return Object.values(answers?.healthDeclaration || {}).includes(result)
 }
 
+const isVisible = (...fns: ConditionFn[]) => (answers: FormValue) =>
+  fns.reduce((s, fn) => (!s ? false : fn(answers)), true)
+
+const isApplicationForCondition = (result: DrivingLicenseApplicationFor) => (
+  answers: FormValue,
+) => {
+  const applicationFor: string[] = getValueViaPath(answers, 'applicationFor', [
+    B_FULL,
+  ]) as string[]
+  return applicationFor.includes(result)
+}
+
+const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) =>
+  !hasYes(answers?.drivingLicenseInOtherCountry)
+
+const chooseDistrictCommissionerDescription = ({
+  answers,
+}: {
+  answers: FormValue
+}) => {
+  const applicationFor = getValueViaPath(
+    answers,
+    'applicationFor',
+    B_FULL,
+  ) as string
+
+  switch (applicationFor) {
+    case B_TEMP:
+      return m.chooseDistrictCommisionerForTempLicense.defaultMessage
+    case B_FULL:
+      return m.chooseDistrictCommisionerForFullLicense.defaultMessage
+    default:
+      return ''
+  }
+}
+
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
   title: m.applicationName,
+  logo: LogreglanLogo,
   mode: FormModes.APPLYING,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -97,17 +147,17 @@ export const application: Form = buildForm({
                       }),
                       buildRadioField({
                         id: 'fakeData.currentLicense',
-                        title: 'Réttindi umsækjanda',
+                        title: 'Núverandi ökuréttindi umsækjanda',
                         width: 'half',
                         condition: allowFakeCondition(YES),
                         options: [
                           {
                             value: 'student',
-                            label: 'Nemi',
+                            label: 'Engin',
                           },
                           {
                             value: 'temp',
-                            label: 'Bráðabyrgða',
+                            label: 'Bráðabirgðaskírteini',
                           },
                         ],
                       }),
@@ -118,11 +168,11 @@ export const application: Form = buildForm({
                         condition: allowFakeCondition(YES),
                         options: [
                           {
-                            value: 'yes',
+                            value: YES,
                             label: 'Mynd',
                           },
                           {
-                            value: 'no',
+                            value: NO,
                             label: 'Engin mynd',
                           },
                         ],
@@ -152,16 +202,16 @@ export const application: Form = buildForm({
               subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
+              id: 'currentLicense',
+              type: 'CurrentLicenseProvider',
+              title: m.infoFromLicenseRegistry,
+              subTitle: m.confirmationStatusOfEligability,
+            }),
+            buildDataProviderItem({
               id: 'qualityPhoto',
               type: 'QualityPhotoProvider',
               title: '',
               subTitle: '',
-            }),
-            buildDataProviderItem({
-              id: 'eligibility',
-              type: 'EligibilityProvider',
-              title: m.infoFromLicenseRegistry,
-              subTitle: m.confirmationStatusOfEligability,
             }),
             buildDataProviderItem({
               id: 'studentAssessment',
@@ -175,8 +225,49 @@ export const application: Form = buildForm({
             }),
             buildDataProviderItem({
               id: 'payment',
-              type: 'PaymentCatalogProvider',
+              type: 'FeeInfoProvider',
               title: '',
+            }),
+            buildDataProviderItem({
+              id: 'teachers',
+              type: 'TeachersProvider',
+              title: '',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'application',
+      title: m.applicationDrivingLicenseTitle,
+      condition: allowLicenseSelection,
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: m.drivingLicenseApplyingForTitle,
+          children: [
+            buildRadioField({
+              id: 'applicationFor',
+              backgroundColor: 'white',
+              title: '',
+              description: '',
+              space: 0,
+              largeButtons: true,
+              options: [
+                {
+                  label: m.applicationForTempLicenseTitle,
+                  subLabel:
+                    m.applicationForTempLicenseDescription.defaultMessage,
+                  value: B_TEMP,
+                },
+                {
+                  label: m.applicationForFullLicenseTitle,
+                  subLabel:
+                    m.applicationForFullLicenseDescription.defaultMessage,
+                  value: B_FULL,
+                  disabled: true,
+                },
+              ],
             }),
           ],
         }),
@@ -200,8 +291,150 @@ export const application: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'infoStep',
+      title: m.informationTitle,
+      condition: isApplicationForCondition(B_TEMP),
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: m.informationTitle,
+          space: 1,
+          children: [
+            buildKeyValueField({
+              label: m.drivingLicenseTypeRequested,
+              value: 'Almenn ökuréttindi - B flokkur (Fólksbifreið)',
+            }),
+            buildDividerField({
+              title: '',
+              color: 'dark400',
+            }),
+            buildKeyValueField({
+              label: m.informationApplicant,
+              value: ({ externalData: { nationalRegistry } }) =>
+                (nationalRegistry.data as NationalRegistryUser).fullName,
+              width: 'half',
+            }),
+            buildKeyValueField({
+              label: m.informationStreetAddress,
+              value: ({ externalData: { nationalRegistry } }) => {
+                const address = (nationalRegistry.data as NationalRegistryUser)
+                  .address
+
+                if (!address) {
+                  return ''
+                }
+
+                const { streetAddress, city } = address
+
+                return `${streetAddress}${city ? ', ' + city : ''}`
+              },
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'email',
+              title: m.informationYourEmail,
+              placeholder: 'Netfang',
+            }),
+            buildDividerField({
+              title: '',
+              color: 'dark400',
+            }),
+            buildDescriptionField({
+              id: 'drivingInstructorTitle',
+              title: m.drivingInstructor,
+              titleVariant: 'h4',
+              description: m.chooseDrivingInstructor,
+            }),
+            buildSelectField({
+              id: 'drivingInstructor',
+              title: m.drivingInstructor,
+              disabled: false,
+              options: ({
+                externalData: {
+                  teachers: { data },
+                },
+              }) => {
+                return (data as Teacher[]).map(({ name }) => ({
+                  value: name,
+                  label: name,
+                }))
+              },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'otherCountry',
+      title: m.foreignDrivingLicense,
+      condition: isApplicationForCondition(B_TEMP),
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: m.drivingLicenseInOtherCountry,
+          space: 1,
+          children: [
+            buildRadioField({
+              id: 'drivingLicenseInOtherCountry',
+              backgroundColor: 'white',
+              title: '',
+              description: '',
+              space: 0,
+              largeButtons: true,
+              options: [
+                {
+                  label: m.no,
+                  subLabel: '',
+                  value: NO,
+                },
+                {
+                  label: m.yes,
+                  subLabel: '',
+                  value: YES,
+                },
+              ],
+            }),
+            buildCheckboxField({
+              id: 'drivingLicenseDeprivedOrRestrictedInOtherCountry',
+              backgroundColor: 'white',
+              title: '',
+              condition: (answers) =>
+                hasYes(answers?.drivingLicenseInOtherCountry || []),
+              options: [
+                {
+                  value: NO,
+                  label: m.noDeprivedDrivingLicenseInOtherCountryTitle,
+                  subLabel:
+                    m.noDeprivedDrivingLicenseInOtherCountryDescription
+                      .defaultMessage,
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'otherCountrySelected',
+      title: 'Leiðbeiningar',
+      condition: (answer) => hasYes(answer?.drivingLicenseInOtherCountry),
+      children: [
+        buildCustomField({
+          condition: (answers) =>
+            hasYes(answers?.drivingLicenseInOtherCountry || []),
+          title: 'SubmitAndDecline',
+          component: 'SubmitAndDecline',
+          id: 'SubmitAndDecline',
+        }),
+      ],
+    }),
+    buildSection({
       id: 'photoStep',
       title: m.applicationQualityPhotoTitle,
+      condition: isVisible(
+        isApplicationForCondition(B_FULL),
+        hasNoDrivingLicenseInOtherCountry,
+      ),
       children: [
         buildMultiField({
           id: 'info',
@@ -231,20 +464,14 @@ export const application: Form = buildForm({
               id: 'photdesc',
               title: '',
               component: 'Bullets',
-              condition: (answers) => {
-                try {
-                  return answers.willBringQualityPhoto === YES
-                } catch (error) {
-                  return false
-                }
-              },
+              condition: (answers) => hasYes(answers.willBringQualityPhoto),
             }),
           ],
         }),
         buildMultiField({
           id: 'info',
           title: m.qualityPhotoTitle,
-          condition: (_, externalData) => {
+          condition: (answers: FormValue, externalData) => {
             return (
               (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
               false
@@ -275,14 +502,15 @@ export const application: Form = buildForm({
         }),
       ],
     }),
-
     buildSection({
       id: 'user',
       title: m.informationSectionTitle,
+      condition: hasNoDrivingLicenseInOtherCountry,
       children: [
         buildMultiField({
           id: 'info',
           title: m.pickupLocationTitle,
+          space: 1,
           children: [
             buildKeyValueField({
               label: m.informationApplicant,
@@ -295,13 +523,13 @@ export const application: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'afhending',
-              title: 'Afhending',
+              title: m.districtCommisionerTitle,
               titleVariant: 'h4',
-              description: m.chooseDistrictCommisioner,
+              description: chooseDistrictCommissionerDescription,
             }),
             buildSelectField({
               id: 'juristiction',
-              title: 'Afhending',
+              title: m.districtCommisionerPickup,
               disabled: false,
               options: ({
                 externalData: {
@@ -322,6 +550,7 @@ export const application: Form = buildForm({
     buildSection({
       id: 'healthDeclaration',
       title: m.healthDeclarationSectionTitle,
+      condition: hasNoDrivingLicenseInOtherCountry,
       children: [
         buildMultiField({
           id: 'overview',
@@ -436,6 +665,7 @@ export const application: Form = buildForm({
     buildSection({
       id: 'overview',
       title: m.overviewSectionTitle,
+      condition: hasNoDrivingLicenseInOtherCountry,
       children: [
         buildMultiField({
           id: 'overview',
@@ -515,11 +745,7 @@ export const application: Form = buildForm({
                 (studentAssessment.data as StudentAssessment).teacherName,
             }),
             buildDividerField({
-              condition: (answers) => {
-                return Object.values(answers?.healthDeclaration || []).includes(
-                  YES,
-                )
-              },
+              condition: (answers) => hasYes(answers?.healthDeclaration || []),
             }),
             buildDescriptionField({
               id: 'bringalong',
@@ -531,6 +757,8 @@ export const application: Form = buildForm({
             buildCheckboxField({
               id: 'certificate',
               title: '',
+              large: false,
+              backgroundColor: 'white',
               defaultValue: [],
               options: [
                 {
@@ -538,21 +766,24 @@ export const application: Form = buildForm({
                   label: m.overviewBringCertificateData,
                 },
               ],
-              condition: (answers) => {
-                try {
-                  return Object.values(answers?.healthDeclaration).includes(YES)
-                } catch (error) {
-                  return false
-                }
-              },
+              condition: (answers) => hasYes(answers?.healthDeclaration || {}),
             }),
             buildDividerField({}),
             buildKeyValueField({
               label: m.overviewPaymentCharge,
-              value: ({ externalData }) => {
-                const str = Object.values(externalData.payment.data as object)
-                // more refactoring
-                return (parseInt(str[1], 10) + ' kr.') as StaticText
+              value: ({ externalData, answers }) => {
+                const items = externalData.payment.data as {
+                  priceAmount: number
+                  chargeItemCode: string
+                }[]
+                const targetCode =
+                  answers.applicationFor === B_TEMP ? 'AY114' : 'AY110'
+
+                const item = items.find(
+                  ({ chargeItemCode }) => chargeItemCode === targetCode,
+                )
+                return (item?.priceAmount?.toLocaleString('de-DE') +
+                  ' kr.') as StaticText
               },
               width: 'full',
             }),

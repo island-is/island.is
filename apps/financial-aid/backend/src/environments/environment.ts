@@ -18,7 +18,9 @@ const prodConfig = {
     getTimeToLiveMinutes: 5,
   },
   identityServerAuth: {
-    issuer: process.env.IDENTITY_SERVER_DOMAIN ?? '',
+    issuer: process.env.IDENTITY_SERVER_DOMAIN
+      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
+      : '',
     audience: '@samband.is',
   },
   emailOptions: {

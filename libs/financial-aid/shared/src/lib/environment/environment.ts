@@ -1,3 +1,3 @@
 export const environment = {
-  idsCookieName: process.env.idsCookieName ?? 'next-auth.session-token',
+  idsCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
 }

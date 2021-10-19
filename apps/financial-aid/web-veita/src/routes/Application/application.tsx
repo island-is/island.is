@@ -6,8 +6,8 @@ import * as styles from './application.treat'
 
 import { useQuery } from '@apollo/client'
 import {
-  GetApplicationQuery,
-  GetMunicipalityQuery,
+  ApplicationQuery,
+  MunicipalityQuery,
 } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 import {
@@ -58,14 +58,14 @@ const ApplicationProfile = () => {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const { data, loading } = useQuery<ApplicantData>(GetApplicationQuery, {
+  const { data, loading } = useQuery<ApplicantData>(ApplicationQuery, {
     variables: { input: { id: router.query.id } },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
   const { data: dataMunicipality } = useQuery<MunicipalityData>(
-    GetMunicipalityQuery,
+    MunicipalityQuery,
     {
       variables: { input: { id: 'hfj' } },
       fetchPolicy: 'no-cache',
@@ -233,6 +233,8 @@ const ApplicationProfile = () => {
                 (isStateModalVisible) => !isStateModalVisible,
               )
             }}
+            setApplication={setApplication}
+            setIsLoading={setIsLoading}
           />
 
           <Profile
@@ -271,7 +273,8 @@ const ApplicationProfile = () => {
               setStateModalVisible(isVisibleBoolean)
             }}
             setApplication={setApplication}
-            application={application}
+            applicationId={application.id}
+            currentState={application.state}
             setIsLoading={setIsLoading}
           />
         )}

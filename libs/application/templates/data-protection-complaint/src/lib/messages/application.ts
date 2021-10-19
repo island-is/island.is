@@ -53,7 +53,7 @@ export const section = defineMessages({
   },
   agreement: {
     id: 'dpac.application:section.agreement',
-    defaultMessage: 'Samþykki',
+    defaultMessage: 'Upplýsingar um málsmeðferð',
     description: 'Agreement section title',
   },
   info: {
@@ -123,6 +123,11 @@ export const sharedFields = defineMessages({
     id: 'dpac.application:sharedFields.no',
     defaultMessage: 'Nei',
     description: 'Used to give a negative response',
+  },
+  noIdontKnow: {
+    id: 'dpac.application:sharedFields.noIdontKnow',
+    defaultMessage: 'Nei / Veit það ekki',
+    description: 'Used to give a negative / I dont know response',
   },
   edit: {
     id: 'dpac.application:sharedFields.edit',

@@ -167,11 +167,11 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   }
 
   const canCaseFilesBeOpened = () => {
-    const isAppealGracePeriodExpired = workingCase?.isAppealGracePeriodExpired
+    const isAppealGracePeriodExpired = workingCase.isAppealGracePeriodExpired
 
     const isProsecutorWithAccess =
       user?.role === UserRole.PROSECUTOR &&
-      user.institution?.id === workingCase.prosecutor?.institution?.id
+      user.institution?.id === workingCase.creatingProsecutor?.institution?.id
 
     const isCourtRoleWithAccess =
       user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
@@ -263,7 +263,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           </Box>
         </Box>
       </Box>
-      <Box marginBottom={6}>
+      <Box marginBottom={workingCase.isMasked ? 15 : 6}>
         <InfoCard
           data={[
             {
@@ -277,7 +277,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             {
               title: 'Embætti',
               value: `${
-                workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
+                workingCase.creatingProsecutor?.institution?.name ??
+                'Ekki skráð'
               }`,
             },
             { title: 'Dómstóll', value: workingCase.court?.name },
@@ -308,9 +309,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
         workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE ||
         workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) &&
-        workingCase.rulingDate &&
         (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR) &&
-        user?.institution?.type !== InstitutionType.HIGH_COURT && (
+        user?.institution?.type !== InstitutionType.HIGH_COURT &&
+        !workingCase.isMasked && (
           <Box marginBottom={7}>
             <AppealSection
               workingCase={workingCase}
@@ -321,121 +322,136 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-      <Box marginBottom={5}>
-        <Accordion>
-          <PoliceRequestAccordionItem workingCase={workingCase} />
-          <CourtRecordAccordionItem workingCase={workingCase} />
-          <RulingAccordionItem workingCase={workingCase} />
-          <AccordionItem
-            id="id_4"
-            label={
-              <Box display="flex" alignItems="center" overflow="hidden">
-                {`Rannsóknargögn (${
-                  workingCase.files ? workingCase.files.length : 0
-                })`}
+      {user?.role !== UserRole.STAFF && !workingCase.isMasked && (
+        <Box marginBottom={5} data-testid="accordionItems">
+          <Accordion>
+            <PoliceRequestAccordionItem workingCase={workingCase} />
+            <CourtRecordAccordionItem workingCase={workingCase} />
+            <RulingAccordionItem workingCase={workingCase} />
+            <AccordionItem
+              id="caseFilesAccordionItem"
+              label={
+                <Box display="flex" alignItems="center" overflow="hidden">
+                  {`Rannsóknargögn (${
+                    workingCase.caseFiles ? workingCase.caseFiles.length : 0
+                  })`}
 
-                {user &&
-                  [UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role) && (
-                    <AnimatePresence>
-                      {uploadState === UploadState.UPLOAD_ERROR && (
-                        <UploadStateMessage
-                          icon="warning"
-                          iconColor="red600"
-                          message={formatMessage(
-                            signedVerdictOverview.someFilesUploadedToCourtText,
-                          )}
-                        />
-                      )}
-                      {uploadState === UploadState.ALL_UPLOADED && (
-                        <UploadStateMessage
-                          icon="checkmark"
-                          iconColor="blue400"
-                          message={formatMessage(
-                            signedVerdictOverview.allFilesUploadedToCourtText,
-                          )}
-                        />
-                      )}
-                    </AnimatePresence>
-                  )}
-              </Box>
-            }
-            labelVariant="h3"
-          >
-            <CaseFileList
-              caseId={workingCase.id}
-              files={workingCase.files ?? []}
-              canOpenFiles={canCaseFilesBeOpened()}
-              hideIcons={user?.role === UserRole.PROSECUTOR}
-              handleRetryClick={(id: string) =>
-                workingCase.files &&
-                uploadFilesToCourt([
-                  workingCase.files[
-                    workingCase.files.findIndex((file) => file.id === id)
-                  ],
-                ])
+                  {user &&
+                    [UserRole.JUDGE, UserRole.REGISTRAR].includes(
+                      user.role,
+                    ) && (
+                      <AnimatePresence>
+                        {uploadState === UploadState.UPLOAD_ERROR && (
+                          <UploadStateMessage
+                            icon="warning"
+                            iconColor="red600"
+                            message={formatMessage(
+                              signedVerdictOverview.someFilesUploadedToCourtText,
+                            )}
+                          />
+                        )}
+                        {uploadState === UploadState.ALL_UPLOADED && (
+                          <UploadStateMessage
+                            icon="checkmark"
+                            iconColor="blue400"
+                            message={formatMessage(
+                              signedVerdictOverview.allFilesUploadedToCourtText,
+                            )}
+                          />
+                        )}
+                      </AnimatePresence>
+                    )}
+                </Box>
               }
-            />
-            {user && [UserRole.JUDGE, UserRole.REGISTRAR].includes(user?.role) && (
-              <Box display="flex" justifyContent="flexEnd">
-                {uploadState === UploadState.NONE_CAN_BE_UPLOADED ? (
-                  <InfoBox
-                    text={formatMessage(
-                      signedVerdictOverview.uploadToCourtAllBrokenText,
+              labelVariant="h3"
+            >
+              <CaseFileList
+                caseId={workingCase.id}
+                files={workingCase.caseFiles ?? []}
+                canOpenFiles={canCaseFilesBeOpened()}
+                hideIcons={user?.role === UserRole.PROSECUTOR}
+                handleRetryClick={(id: string) =>
+                  workingCase.caseFiles &&
+                  uploadFilesToCourt([
+                    workingCase.caseFiles[
+                      workingCase.caseFiles.findIndex((file) => file.id === id)
+                    ],
+                  ])
+                }
+              />
+              {user &&
+                [UserRole.JUDGE, UserRole.REGISTRAR].includes(user?.role) && (
+                  <Box display="flex" justifyContent="flexEnd">
+                    {(workingCase.caseFiles || []).length ===
+                    0 ? null : uploadState ===
+                      UploadState.NONE_CAN_BE_UPLOADED ? (
+                      <InfoBox
+                        text={formatMessage(
+                          signedVerdictOverview.uploadToCourtAllBrokenText,
+                        )}
+                      />
+                    ) : (
+                      <Button
+                        size="small"
+                        onClick={() =>
+                          uploadFilesToCourt(workingCase.caseFiles)
+                        }
+                        loading={uploadState === UploadState.UPLOADING}
+                        disabled={
+                          uploadState === UploadState.UPLOADING ||
+                          uploadState === UploadState.ALL_UPLOADED
+                        }
+                      >
+                        {formatMessage(
+                          uploadState === UploadState.UPLOAD_ERROR
+                            ? signedVerdictOverview.retryUploadToCourtButtonText
+                            : signedVerdictOverview.uploadToCourtButtonText,
+                        )}
+                      </Button>
                     )}
-                  />
-                ) : (
-                  <Button
-                    size="small"
-                    onClick={() => uploadFilesToCourt(workingCase.files)}
-                    loading={uploadState === UploadState.UPLOADING}
-                    disabled={
-                      uploadState === UploadState.UPLOADING ||
-                      uploadState === UploadState.ALL_UPLOADED
-                    }
-                  >
-                    {formatMessage(
-                      uploadState === UploadState.UPLOAD_ERROR
-                        ? signedVerdictOverview.retryUploadToCourtButtonText
-                        : signedVerdictOverview.uploadToCourtButtonText,
-                    )}
-                  </Button>
+                  </Box>
                 )}
+            </AccordionItem>
+          </Accordion>
+        </Box>
+      )}
+      {!workingCase.isMasked && (
+        <Box marginBottom={user?.role === UserRole.PROSECUTOR ? 7 : 15}>
+          {user?.role !== UserRole.STAFF && (
+            <>
+              <Box marginBottom={3}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRequest)}
+                  pdfType="request"
+                />
               </Box>
-            )}
-          </AccordionItem>
-        </Accordion>
-      </Box>
-      <Box marginBottom={user?.role === UserRole.PROSECUTOR ? 7 : 15}>
-        <Box marginBottom={3}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRequest)}
-            pdfType="request"
-          />
-        </Box>
-        <Box marginBottom={3}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRuling)}
-            pdfType="ruling?shortVersion=false"
-          />
-        </Box>
-        <Box marginBottom={3}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRulingShortVersion)}
-            pdfType="ruling?shortVersion=true"
-          />
-        </Box>
-        {workingCase.type === CaseType.CUSTODY &&
-          workingCase.state === CaseState.ACCEPTED && (
+              <Box marginBottom={3}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRuling)}
+                  pdfType="ruling?shortVersion=false"
+                />
+              </Box>
+            </>
+          )}
+          <Box marginBottom={3}>
             <PdfButton
               caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonCustodyNotice)}
-              pdfType="custodyNotice"
+              title={formatMessage(core.pdfButtonRulingShortVersion)}
+              pdfType="ruling?shortVersion=true"
             />
-          )}
-      </Box>
+          </Box>
+          {workingCase.type === CaseType.CUSTODY &&
+            workingCase.state === CaseState.ACCEPTED && (
+              <PdfButton
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonCustodyNotice)}
+                pdfType="custodyNotice"
+              />
+            )}
+        </Box>
+      )}
       {user?.role === UserRole.PROSECUTOR &&
         user.institution?.id === workingCase.prosecutor?.institution?.id &&
         isRestrictionCase(workingCase.type) && (

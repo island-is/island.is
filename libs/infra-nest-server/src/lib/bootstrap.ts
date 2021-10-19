@@ -60,10 +60,13 @@ type RunServerOptions = {
 
 export const createApp = async ({
   stripNonClassValidatorInputs = true,
+  appModule,
   ...options
 }: RunServerOptions) => {
   const app = await NestFactory.create<NestExpressApplication>(
-    InfraModule.forRoot(options.appModule),
+    InfraModule.forRoot({
+      appModule,
+    }),
     {
       logger: LoggingModule.createLogger(),
     },

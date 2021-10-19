@@ -13,11 +13,6 @@ import { Client } from './client.model'
 
 @Table({
   tableName: 'client_idp_restrictions',
-  indexes: [
-    {
-      fields: ['client_id', 'name'],
-    },
-  ],
 })
 export class ClientIdpRestrictions extends Model<ClientIdpRestrictions> {
   @PrimaryKey

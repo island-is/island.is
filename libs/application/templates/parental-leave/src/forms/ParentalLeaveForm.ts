@@ -15,22 +15,21 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  Field,
   Form,
   FormModes,
-  SelectField,
+  NO_ANSWER,
 } from '@island.is/application/core'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
+  getExpectedDateOfBirth,
   getOtherParentOptions,
   getAllPeriodDates,
   getSelectedChild,
-  createRange,
   requiresOtherParentApproval,
   getApplicationAnswers,
   allowOtherParent,
-  getPeriodPercentage,
+  getLastValidPeriodEndDate,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -46,24 +45,16 @@ import {
   YES,
 } from '../constants'
 import Logo from '../assets/Logo'
-import { defaultMonths, minPeriodDays } from '../config'
+import {
+  defaultMonths,
+  minimumPeriodStartBeforeExpectedDateOfBirth,
+  minPeriodDays,
+} from '../config'
 import {
   GetPensionFundsQuery,
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
-
-const percentOptions = createRange<{ label: string; value: string }>(
-  10,
-  (i) => {
-    const ii = (i + 1) * 10
-
-    return {
-      label: `${ii}%`,
-      value: `${ii}`,
-    }
-  },
-).sort((a, b) => Number(b.value) - Number(a.value))
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -500,6 +491,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     id: 'rightsIntro',
                     title: '',
                     component: 'BoxChart',
+                    doesNotRequireAnswer: true,
                   },
                   {
                     boxes: defaultMonths,
@@ -680,103 +672,10 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'periodsImageScreen',
           title: parentalLeaveFormMessages.shared.periodsImageTitle,
           component: 'PeriodsSectionImage',
+          doesNotRequireAnswer: true,
         }),
         buildSubSection({
-          id: 'firstPeriod',
-          title: parentalLeaveFormMessages.shared.firstPeriodName,
-          children: [
-            buildCustomField({
-              id: 'firstPeriodStart',
-              title: parentalLeaveFormMessages.firstPeriodStart.title,
-              component: 'FirstPeriodStart',
-            }),
-            buildMultiField({
-              id: 'startDate',
-              condition: (formValue) =>
-                formValue.firstPeriodStart === StartDateOptions.SPECIFIC_DATE,
-              title: parentalLeaveFormMessages.startDate.title,
-              description: parentalLeaveFormMessages.startDate.description,
-              children: [
-                buildDateField({
-                  id: 'periods[0].startDate',
-                  title: parentalLeaveFormMessages.startDate.label,
-                  placeholder: parentalLeaveFormMessages.startDate.placeholder,
-                }),
-              ],
-            }),
-            buildRadioField({
-              id: 'confirmLeaveDuration',
-              title: parentalLeaveFormMessages.duration.title,
-              description: parentalLeaveFormMessages.duration.description,
-              options: [
-                {
-                  label: parentalLeaveFormMessages.duration.monthsOption,
-                  value: 'duration',
-                },
-                {
-                  label: parentalLeaveFormMessages.duration.specificDateOption,
-                  value: 'specificDate',
-                },
-              ],
-            }),
-            buildMultiField({
-              id: 'endDate',
-              condition: (formValue) =>
-                formValue.confirmLeaveDuration === 'specificDate',
-              title: parentalLeaveFormMessages.endDate.title,
-              description: parentalLeaveFormMessages.endDate.description,
-              children: [
-                buildCustomField({
-                  id: 'periods',
-                  title: parentalLeaveFormMessages.endDate.label,
-                  component: 'PeriodEndDate',
-                }),
-              ],
-            }),
-            buildCustomField({
-              id: 'periods[0].endDate',
-              condition: (formValue) =>
-                formValue.confirmLeaveDuration === 'duration',
-              title: parentalLeaveFormMessages.duration.title,
-              component: 'Duration',
-            }),
-            buildMultiField({
-              id: 'periods[0].ratio',
-              title: parentalLeaveFormMessages.ratio.title,
-              description: parentalLeaveFormMessages.ratio.description,
-              children: [
-                buildSelectField({
-                  id: 'periods[0].ratio',
-                  title: parentalLeaveFormMessages.ratio.label,
-                  placeholder: parentalLeaveFormMessages.ratio.placeholder,
-                  defaultValue: (
-                    application: Application,
-                    field: SelectField,
-                  ) => getPeriodPercentage(application.answers, field),
-                  options: (application: Application, field: Field) => {
-                    const percentage = getPeriodPercentage(
-                      application.answers,
-                      field,
-                    )
-                    const existingOptions = percentOptions.filter(
-                      (option) => Number(option.value) < Number(percentage),
-                    )
-
-                    return [
-                      {
-                        label: `${percentage}%`,
-                        value: `${percentage}`,
-                      },
-                      ...existingOptions,
-                    ]
-                  },
-                }),
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'addMorePeriods',
+          id: 'addPeriods',
           title: parentalLeaveFormMessages.leavePlan.subSection,
           children: [
             buildRepeater({
@@ -784,11 +683,56 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.leavePlan.title,
               component: 'PeriodsRepeater',
               children: [
+                buildCustomField({
+                  id: 'firstPeriodStart',
+                  title: parentalLeaveFormMessages.firstPeriodStart.title,
+                  condition: (answers) => {
+                    const { periods } = getApplicationAnswers(answers)
+
+                    return periods.length === 0
+                  },
+                  component: 'FirstPeriodStart',
+                }),
                 buildDateField({
                   id: 'startDate',
                   title: parentalLeaveFormMessages.startDate.title,
                   description: parentalLeaveFormMessages.startDate.description,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
+                  defaultValue: NO_ANSWER,
+                  condition: (answers) => {
+                    const { periods, rawPeriods } = getApplicationAnswers(
+                      answers,
+                    )
+                    const currentPeriod = rawPeriods[rawPeriods.length - 1]
+                    const firstPeriodRequestingSpecificStartDate =
+                      currentPeriod?.firstPeriodStart ===
+                      StartDateOptions.SPECIFIC_DATE
+
+                    return (
+                      firstPeriodRequestingSpecificStartDate ||
+                      periods.length !== 0
+                    )
+                  },
+                  minDate: (application: Application) => {
+                    const expectedDateOfBirth = getExpectedDateOfBirth(
+                      application,
+                    )
+
+                    const lastPeriodEndDate = getLastValidPeriodEndDate(
+                      application,
+                    )
+
+                    if (lastPeriodEndDate) {
+                      return lastPeriodEndDate
+                    } else if (expectedDateOfBirth) {
+                      return addDays(
+                        new Date(expectedDateOfBirth),
+                        -minimumPeriodStartBeforeExpectedDateOfBirth,
+                      )
+                    }
+
+                    return new Date()
+                  },
                   excludeDates: (application) => {
                     const { periods } = getApplicationAnswers(
                       application.answers,
@@ -797,73 +741,71 @@ export const ParentalLeaveForm: Form = buildForm({
                     return getAllPeriodDates(periods)
                   },
                 }),
-                buildMultiField({
-                  id: 'endDate',
-                  title: parentalLeaveFormMessages.endDate.title,
-                  description: parentalLeaveFormMessages.endDate.description,
-                  children: [
-                    buildCustomField(
-                      {
-                        id: 'endDate',
-                        title: parentalLeaveFormMessages.endDate.label,
-                        component: 'PeriodEndDate',
-                      },
-                      {
-                        minDate: (application: Application) => {
-                          const { periods } = getApplicationAnswers(
-                            application.answers,
-                          )
-                          const latestStartDate =
-                            periods[periods.length - 1].startDate
-
-                          return addDays(
-                            new Date(latestStartDate),
-                            minPeriodDays,
-                          )
-                        },
-                        excludeDates: (application: Application) => {
-                          const { periods } = getApplicationAnswers(
-                            application.answers,
-                          )
-
-                          return getAllPeriodDates(periods)
-                        },
-                      },
-                    ),
+                buildRadioField({
+                  id: 'useLength',
+                  title: parentalLeaveFormMessages.duration.title,
+                  description: parentalLeaveFormMessages.duration.description,
+                  defaultValue: NO_ANSWER,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.duration.monthsOption,
+                      value: YES,
+                    },
+                    {
+                      label:
+                        parentalLeaveFormMessages.duration.specificDateOption,
+                      value: NO,
+                    },
                   ],
                 }),
-                buildMultiField({
+                buildCustomField({
+                  id: 'endDate',
+                  condition: (answers) => {
+                    const { rawPeriods } = getApplicationAnswers(answers)
+
+                    return rawPeriods[rawPeriods.length - 1].useLength === YES
+                  },
+                  title: parentalLeaveFormMessages.duration.title,
+                  component: 'Duration',
+                }),
+                buildCustomField(
+                  {
+                    id: 'endDate',
+                    title: parentalLeaveFormMessages.endDate.title,
+                    component: 'PeriodEndDate',
+                    condition: (answers) => {
+                      const { rawPeriods } = getApplicationAnswers(answers)
+
+                      return rawPeriods[rawPeriods.length - 1].useLength === NO
+                    },
+                  },
+                  {
+                    minDate: (application: Application) => {
+                      const { rawPeriods } = getApplicationAnswers(
+                        application.answers,
+                      )
+                      const latestStartDate =
+                        rawPeriods[rawPeriods.length - 1].startDate
+
+                      return addDays(
+                        new Date(latestStartDate),
+                        minPeriodDays + 1,
+                      )
+                    },
+                    excludeDates: (application: Application) => {
+                      const { periods } = getApplicationAnswers(
+                        application.answers,
+                      )
+
+                      return getAllPeriodDates(periods)
+                    },
+                  },
+                ),
+                buildCustomField({
                   id: 'ratio',
                   title: parentalLeaveFormMessages.ratio.title,
                   description: parentalLeaveFormMessages.ratio.description,
-                  children: [
-                    buildSelectField({
-                      id: 'ratio',
-                      title: parentalLeaveFormMessages.ratio.label,
-                      placeholder: parentalLeaveFormMessages.ratio.placeholder,
-                      defaultValue: (
-                        application: Application,
-                        field: SelectField,
-                      ) => getPeriodPercentage(application.answers, field),
-                      options: (application: Application, field: Field) => {
-                        const percentage = getPeriodPercentage(
-                          application.answers,
-                          field,
-                        )
-                        const existingOptions = percentOptions.filter(
-                          (option) => Number(option.value) < Number(percentage),
-                        )
-
-                        return [
-                          {
-                            label: `${percentage}%`,
-                            value: `${percentage}`,
-                          },
-                          ...existingOptions,
-                        ]
-                      },
-                    }),
-                  ],
+                  component: 'PeriodPercentage',
                 }),
               ],
             }),

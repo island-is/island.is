@@ -5,21 +5,43 @@ import {
   ApplicationState,
   getActiveSectionForTimeline,
 } from '@island.is/financial-aid/shared/lib'
+import format from 'date-fns/format'
 
 interface Props {
   state: ApplicationState
+  created: string
 }
 
-const Timeline = ({ state }: Props) => {
+const Timeline = ({ state, created }: Props) => {
   const sections = [
     {
       name: 'Umsókn móttekin',
+      children: [
+        {
+          type: 'SUB_SECTION',
+          name: format(new Date(created), 'dd/MM/yyyy hh:mm'),
+        },
+      ],
     },
     {
       name: 'Umsókn í vinnslu',
+      children: [
+        {
+          type: 'SUB_SECTION',
+          name:
+            'Vinnsluaðili verður í sambandi ef þörf er á frekari upplýsingum',
+        },
+      ],
     },
     {
       name: 'Niðurstaða',
+      children: [
+        {
+          type: 'SUB_SECTION',
+          name:
+            'Umsókn verður samþykkt eða synjuð og umsækjandi látinn vita um niðurstöðuna',
+        },
+      ],
     },
   ]
 
