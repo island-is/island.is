@@ -30,6 +30,7 @@ export const GenericUserLicenseFragment = gql`
         id
       }
       pkpass
+      pkpassStatus
       timeout
       status
     }
@@ -72,6 +73,12 @@ export enum GenericUserLicenseStatus {
   NotAvailable = 'NotAvailable',
 }
 
+export enum GenericUserLicensePkPassStatus {
+  Unknown = 'Unknown',
+  Available = 'Available',
+  NotAvailable = 'NotAvailable',
+}
+
 export enum GenericUserLicenseFetchStatus {
   Fetched = 'Fetched',
   NotFetched = 'NotFetched',
@@ -88,6 +95,7 @@ export interface IGenericUserLicense {
       id: string;
     }
     pkpass: boolean;
+    pkpassStatus: GenericUserLicensePkPassStatus;
     timeout: number;
     status: GenericUserLicenseStatus;
   }

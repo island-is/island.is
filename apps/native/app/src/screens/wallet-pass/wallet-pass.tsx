@@ -26,6 +26,7 @@ import { client } from '../../graphql/client'
 import {
   GenericUserLicenseStatus,
   IGenericLicenseDataField,
+  GenericUserLicensePkPassStatus,
   IGenericUserLicense,
 } from '../../graphql/fragments/license.fragment'
 import { GENERATE_PKPASS_MUTATION } from '../../graphql/queries/generate-pkpass.mutation'
@@ -238,20 +239,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   const fields = data?.payload?.data ?? []
   const hasPkpass = data?.license?.pkpass || false
-  let hasValidPkpass = false
-
-  // quick fix until this will be handled in api
-  // fint out if licence was given out before 15 águst 1997 then it should not be possible to add licence to wallet
-
-  try {
-    const startDateForValidPkpass = Date.parse('1997-08-15T00:00:00')
-    const parsedData = JSON.parse(data?.payload?.rawData)
-    const issuedAt = parsedData?.utgafuDagsetning
-    const hasImage = !!parsedData?.mynd?.id
-    hasValidPkpass = Date.parse(issuedAt) > startDateForValidPkpass || hasImage
-  } catch (error) {
-    // noop
-  }
+  const hasValidPkpass = data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available;
 
   return (
     <View style={{ flex: 1 }}>
