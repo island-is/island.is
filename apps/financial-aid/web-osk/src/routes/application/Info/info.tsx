@@ -13,6 +13,7 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/
 
 import {
   getNextPeriod,
+  NationalRegistryData,
   NavigationProps,
   useLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
@@ -23,28 +24,19 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 
 const ApplicationInfo = () => {
   const router = useRouter()
-  const { user, setMunicipality } = useContext(AppContext)
+  const {
+    user,
+    setMunicipality,
+    setUser,
+    setNationalRegistryData,
+  } = useContext(AppContext)
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
 
   const nationalRegistryQuery = useLazyQuery<
     {
-      nationalRegistryUserV2: {
-        nationalId: string
-        fullName: string
-        address: {
-          streetName: string
-          postalCode: string
-          city: string
-          municipalityCode: string
-        }
-        spouse: {
-          nationalId: string
-          maritalStatus: string
-          name: string
-        }
-      }
+      nationalRegistryUserV2: NationalRegistryData
     },
     { input: { ssn: string } }
   >(NationalRegistryUserQuery)
@@ -65,14 +57,13 @@ const ApplicationInfo = () => {
       input: { ssn: user?.nationalId },
     })
 
-    if (!data) {
-      setHasError(true)
+    if (!data || !data.nationalRegistryUserV2.address) {
       return
     }
 
-    await setMunicipality(
-      data.nationalRegistryUserV2.address.municipalityCode ?? '',
-    )
+    await setMunicipality(data.nationalRegistryUserV2.address.municipalityCode)
+
+    setNationalRegistryData(data.nationalRegistryUserV2)
 
     if (navigation?.nextUrl) {
       router.push(navigation?.nextUrl)

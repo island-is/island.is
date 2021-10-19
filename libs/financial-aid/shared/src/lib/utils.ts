@@ -1,6 +1,7 @@
 import { months } from './const'
 
 import React from 'react'
+import { NationalRegistryData } from './interfaces'
 
 export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)
@@ -48,3 +49,6 @@ export const focusOnNextInput = (
     el?.focus()
   }
 }
+
+export const formatHomeAddress = (nationalRegistryData: NationalRegistryData) =>
+  `${nationalRegistryData.address.streetName}, ${nationalRegistryData.address.postalCode} ${nationalRegistryData.address.city}`

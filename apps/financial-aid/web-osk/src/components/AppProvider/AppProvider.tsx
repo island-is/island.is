@@ -3,6 +3,7 @@ import React, { createContext, ReactNode } from 'react'
 import {
   Application,
   Municipality,
+  NationalRegistryData,
   User,
 } from '@island.is/financial-aid/shared/lib'
 
@@ -11,6 +12,7 @@ import useMyApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/u
 import useUser from '@island.is/financial-aid-web/osk/src/utils/hooks/useUser'
 import { ServiceCenter } from '@island.is/financial-aid/shared/data'
 import { ApolloError } from 'apollo-client'
+import useNationalRegistry from '@island.is/financial-aid-web/osk/src/utils/hooks/useNationalRegistry'
 
 interface AppProvider {
   myApplication?: Application
@@ -22,6 +24,8 @@ interface AppProvider {
   user?: User
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>
   userServiceCenter?: ServiceCenter
+  nationalRegistryData?: NationalRegistryData
+  setNationalRegistryData: (data: NationalRegistryData) => void
 }
 
 interface Props {
@@ -32,6 +36,7 @@ export const AppContext = createContext<AppProvider>({
   loading: true,
   setUser: () => undefined,
   setMunicipality: () => Promise.resolve(),
+  setNationalRegistryData: () => {},
 })
 
 const AppProvider = ({ children }: Props) => {
@@ -40,6 +45,11 @@ const AppProvider = ({ children }: Props) => {
   const { myApplication, error, loading } = useMyApplication()
 
   const { isAuthenticated, user, setUser, userServiceCenter } = useUser()
+
+  const {
+    nationalRegistryData,
+    setNationalRegistryData,
+  } = useNationalRegistry()
 
   return (
     <AppContext.Provider
@@ -53,6 +63,8 @@ const AppProvider = ({ children }: Props) => {
         user,
         setUser,
         userServiceCenter,
+        nationalRegistryData,
+        setNationalRegistryData,
       }}
     >
       {children}

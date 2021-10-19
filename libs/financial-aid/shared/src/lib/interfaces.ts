@@ -66,10 +66,15 @@ export interface User {
   service: RolesRule
   currentApplication?: CurrentApplication
   staff?: Staff
-  postalCode?: number
-  municipalityId?: string
-  city?: string
   spouse?: Spouse
+  address?: Address
+}
+
+export interface Address {
+  streetName: string
+  postalCode: string
+  city: string
+  municipalityCode: string
 }
 
 export interface UpdateApplication {
@@ -216,4 +221,20 @@ export interface UpdateApplicationTableResponseType {
 export interface UpdateApplicationResponseType {
   application: Application
   filters?: ApplicationFilters
+}
+
+export interface NationalRegistryData {
+  nationalId: string
+  fullName: string
+  address: {
+    streetName: string
+    postalCode: string
+    city: string
+    municipalityCode: string
+  }
+  spouse: {
+    nationalId: string
+    maritalStatus: string
+    name: string
+  }
 }
