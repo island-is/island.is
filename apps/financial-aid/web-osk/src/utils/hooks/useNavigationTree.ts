@@ -83,7 +83,47 @@ const useNavigationTree = (hasIncome: boolean) => {
     },
   ]
 
-  return section
+  const spouseSection: FormStepperSection[] = [
+    {
+      name: 'Upplýsingar',
+      url: '/umsokn/rettur',
+    },
+    {
+      name: 'Fjármál',
+      children: hasIncome
+        ? [
+            { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Skattagögn',
+              url: '/umsokn/skattagogn',
+            },
+          ]
+        : [
+            { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
+            { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Skattagögn',
+              url: '/umsokn/skattagogn',
+            },
+          ],
+    },
+    {
+      name: 'Samskipti',
+      url: '/umsokn/samskipti',
+    },
+    {
+      name: 'Yfirlit',
+      url: '/umsokn/yfirlit',
+    },
+    {
+      name: 'Staðfesting',
+      url: '/umsokn/stadfesting',
+    },
+  ]
+
+  return spouseSection
 }
 
 export default useNavigationTree

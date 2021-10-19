@@ -128,36 +128,33 @@ const SummaryForm = () => {
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Yfirlit umsóknar
         </Text>
-
-        <Estimation
-          usePersonalTaxCredit={form.usePersonalTaxCredit}
-          homeCircumstances={form.homeCircumstances}
-          aboutText={
-            <Text marginBottom={[2, 2, 3]}>
-              Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og{' '}
-              <span className={styles.taxReturn}>
-                gerir ekki ráð fyrir tekjum eða gögnum úr skattframtali
-              </span>{' '}
-              sem geta haft áhrif á þína aðstoð. Þú færð skilaboð þegar frekari
-              útreikningur liggur fyrir.
-            </Text>
-          }
-        />
-
+        {form.homeCircumstances && (
+          <>
+            <Estimation
+              usePersonalTaxCredit={form.usePersonalTaxCredit}
+              homeCircumstances={form.homeCircumstances}
+              aboutText={
+                <Text marginBottom={[2, 2, 3]}>
+                  Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og{' '}
+                  <span className={styles.taxReturn}>
+                    gerir ekki ráð fyrir tekjum eða gögnum úr skattframtali
+                  </span>{' '}
+                  sem geta haft áhrif á þína aðstoð. Þú færð skilaboð þegar
+                  frekari útreikningur liggur fyrir.
+                </Text>
+              }
+            />
+          </>
+        )}
         <Box marginTop={[4, 4, 5]}>
           <Divider />
         </Box>
 
         <UserInfo phoneNumber={form?.phoneNumber} />
-
         <FormInfo info={formInfoOverview} error={formError.status} />
-
         <Divider />
-
         <AllFiles />
-
         <FormComment />
-
         <div
           className={cn({
             [`errorMessage`]: true,
@@ -168,7 +165,6 @@ const SummaryForm = () => {
             {formError.message}
           </Text>
         </div>
-
         <CancelModal
           isVisible={isVisible}
           setIsVisible={(isVisibleBoolean) => {
