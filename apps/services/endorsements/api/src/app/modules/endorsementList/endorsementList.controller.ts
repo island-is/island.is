@@ -35,6 +35,7 @@ import { AccessGroup } from '../../guards/accessGuard/access.enum'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
+import { OwnerInfoDto } from './dto/ownerInfo.dto';
 
 export class FindTagPaginationCombo extends IntersectionType(
   FindEndorsementListByTagsDto,
@@ -157,6 +158,7 @@ export class EndorsementListController {
   ): Promise<EndorsementList> {
     return endorsementList
   }
+
   @ApiOperation({ summary: 'Close a single endorsements list by id' })
   @ApiOkResponse({
     description: 'Close a single endorsements list by id',
@@ -248,6 +250,7 @@ export class EndorsementListController {
   ): Promise<EndorsementList> {
     return await this.endorsementListService.unlock(endorsementList)
   }
+
   @ApiOperation({ summary: 'Create an endorsements list' })
   @ApiOkResponse({
     description: 'Create an endorsements list',
@@ -271,4 +274,29 @@ export class EndorsementListController {
       owner: user.nationalId,
     })
   }
+
+  @ApiOkResponse({
+    description: 'Finds a single endorsements list by id',
+    type: OwnerInfoDto,
+  })
+  @ApiOperation({ summary: 'Finds a single endorsements list by id' })
+  @ApiParam({ name: 'listId', type: 'string' })
+  @Scopes(EndorsementsScope.main)
+  @Get(':listId')
+  @Audit<EndorsementList>({
+    resources: (endorsementList) => endorsementList.id,
+  })
+  async getOwnerInfo(
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+    )
+    endorsementList: EndorsementList,
+  ): Promise<OwnerInfoDto> {
+    // fetch name from national regestry api from the list owner
+
+    return await this.endorsementListService.getOwnerInfo(endorsementList)
+  }
+  
 }

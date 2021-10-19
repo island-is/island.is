@@ -7,7 +7,7 @@ import {
   EndorsementControllerCreateRequest,
   EndorsementControllerDeleteRequest,
   EndorsementListControllerCreateRequest,
-  EndorsementListControllerFindOneRequest,
+  // EndorsementListControllerFindOneRequest,
   EndorsementControllerBulkCreateRequest,
   EndorsementControllerFindAllRequest,
   EndorsementControllerFindByAuthRequest,
@@ -19,14 +19,12 @@ import {
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
-import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 
 @Injectable()
 export class EndorsementSystemService {
   constructor(
     private readonly endorsementApi: EndorsementApi,
     private readonly endorsementListApi: EndorsementListApi,
-    private readonly nationalRegistryApi: NationalRegistryApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
@@ -50,11 +48,10 @@ export class EndorsementSystemService {
     return this.endorsementListApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getOwnerName(list: { owner: string }) {
-    if (!list.owner) {
-      return null
-    }
-    return (await this.nationalRegistryApi.getUser(list.owner)).Fulltnafn
+  async getOwnerName(input: {listId: string}, auth: Auth,) {
+    return await this.endorsementListApiWithAuth(auth)
+    .endorsementListControllerGetOwnerInfo(input)
+    .catch(this.handleError.bind(this))
   }
 
   // Endorsement endpoints
@@ -156,14 +153,14 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
-  async endorsementListControllerFindOne(
-    input: EndorsementListControllerFindOneRequest,
-    auth: Auth,
-  ) {
-    return await this.endorsementListApiWithAuth(auth)
-      .endorsementListControllerFindOne(input)
-      .catch(this.handleError.bind(this))
-  }
+  // async endorsementListControllerFindOne(
+  //   input: EndorsementListControllerFindOneRequest,
+  //   auth: Auth,
+  // ) {
+  //   return await this.endorsementListApiWithAuth(auth)
+  //     .endorsementListControllerFindOne(input)
+  //     .catch(this.handleError.bind(this))
+  // }
 
   async endorsementListControllerCreate(
     endorsementList: EndorsementListControllerCreateRequest,

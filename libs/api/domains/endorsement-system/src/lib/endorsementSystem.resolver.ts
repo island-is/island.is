@@ -33,8 +33,8 @@ export class EndorsementSystemResolver {
   constructor(private endorsementSystemService: EndorsementSystemService) {}
 
   @ResolveField('ownerName', () => String, { nullable: true })
-  resolveOwnerName(@Parent() list: EndorsementList): Promise<String | null> {
-    return this.endorsementSystemService.getOwnerName(list)
+  resolveOwnerName(@Parent() list: EndorsementList, @CurrentUser() user: User,): Promise<any> {
+    return this.endorsementSystemService.getOwnerName({listId: list.id}, user)
   }
 
   @Query(() => Endorsement, { nullable: true })
@@ -137,16 +137,16 @@ export class EndorsementSystemResolver {
     )
   }
 
-  @Query(() => EndorsementList, { nullable: true })
-  async endorsementSystemGetSingleEndorsementList(
-    @Args('input') input: FindEndorsementListInput,
-    @CurrentUser() user: User,
-  ): Promise<EndorsementList> {
-    return await this.endorsementSystemService.endorsementListControllerFindOne(
-      input,
-      user,
-    )
-  }
+  // @Query(() => EndorsementList, { nullable: true })
+  // async endorsementSystemGetSingleEndorsementList(
+  //   @Args('input') input: FindEndorsementListInput,
+  //   @CurrentUser() user: User,
+  // ): Promise<EndorsementList> {
+  //   return await this.endorsementSystemService.endorsementListControllerFindOne(
+  //     input,
+  //     user,
+  //   )
+  // }
 
   @Query(() => PaginatedEndorsementResponse)
   async endorsementSystemUserEndorsements(

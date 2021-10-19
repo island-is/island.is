@@ -7,14 +7,9 @@ import {
   Configuration,
   EndorsementListApi,
 } from '../../gen/fetch'
-import {
-  NationalRegistryApi,
-  NationalRegistryConfig,
-} from '@island.is/clients/national-registry-v1'
 
 export interface Config {
   baseApiUrl: string
-  nationalRegistry: NationalRegistryConfig
 }
 @Module({})
 export class EndorsementSystemModule {
@@ -43,11 +38,6 @@ export class EndorsementSystemModule {
                 basePath: config.baseApiUrl,
               }),
             ),
-        },
-        {
-          provide: NationalRegistryApi,
-          useFactory: async () =>
-            NationalRegistryApi.instanciateClass(config.nationalRegistry),
         },
       ],
       exports: [],

@@ -15,6 +15,7 @@ import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClo
 
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
+import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -26,6 +27,7 @@ export class EndorsementListService {
     private endorsementModel: typeof Endorsement,
     @InjectModel(EndorsementList)
     private readonly endorsementListModel: typeof EndorsementList,
+    private readonly nationalRegistryApi: NationalRegistryApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -196,5 +198,15 @@ export class EndorsementListService {
       throw new NotFoundException()
     }
     return result
+  }
+
+  async getOwnerInfo(endorsementList: EndorsementList) {
+    try {
+      const fullName = (await this.nationalRegistryApi.getUser(endorsementList.owner)).Fulltnafn
+      return {fullName: fullName}
+
+    }  catch (error) {
+      throw new NotFoundException()
+    }
   }
 }
