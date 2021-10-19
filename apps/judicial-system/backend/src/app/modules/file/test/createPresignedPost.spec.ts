@@ -103,4 +103,27 @@ describe('FileController - Create presigned post', () => {
       )
     })
   })
+
+  describe('remote call fails', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    const createPresignedPost: CreatePresignedPostDto = {
+      fileName: 'test.txt',
+      type: 'text/plain',
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      jest
+        .spyOn(mockAwsS3Service, 'createPresignedPost')
+        .mockRejectedValueOnce(new Error('Some error'))
+
+      then = await givenWhenThen(theCase, createPresignedPost)
+    })
+
+    it('should throw error', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toBe(`Some error`)
+    })
+  })
 })
