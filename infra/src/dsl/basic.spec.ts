@@ -94,6 +94,7 @@ describe('Basic serialization', () => {
       DB_USER: 'api',
       DB_NAME: 'api',
       DB_HOST: 'a',
+      DB_REPLICAS_HOST: 'a',
       NODE_OPTIONS: '--max-old-space-size=464',
       SERVERSIDE_FEATURES_ON: '',
     })

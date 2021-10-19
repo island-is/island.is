@@ -84,6 +84,7 @@ judicial-system-backend:
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'judicial_system'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'judicial_system'
     DOKOBIT_URL: 'https://developers.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
@@ -126,6 +127,7 @@ judicial-system-backend:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'judicial_system'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'judicial_system'
       SERVERSIDE_FEATURES_ON: ''
     secrets:

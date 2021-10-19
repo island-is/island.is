@@ -8,7 +8,9 @@ import { Language } from '../entities/models/language.model'
 import { TranslationDTO } from '../entities/dto/translation.dto'
 import { LanguageDTO } from '../entities/dto/language.dto'
 import { Op } from 'sequelize'
+import { trace } from '@theo.gravity/datadog-apm'
 
+@trace()
 @Injectable()
 export class TranslationService {
   constructor(

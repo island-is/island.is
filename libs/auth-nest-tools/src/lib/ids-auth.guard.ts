@@ -3,7 +3,9 @@ import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { BYPASS_AUTH_KEY } from './bypass-auth.decorator'
 import { getRequest } from './getRequest'
+import { trace } from '@theo.gravity/datadog-apm'
 
+@trace()
 @Injectable()
 export class IdsAuthGuard extends AuthGuard('jwt') {
   getRequest = getRequest

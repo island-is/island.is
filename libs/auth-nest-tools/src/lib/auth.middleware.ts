@@ -1,5 +1,6 @@
 import { Auth } from './auth'
 import fetch from 'isomorphic-fetch'
+import { trace } from '@theo.gravity/datadog-apm'
 // These types are copied from our OpenAPI generated api clients.
 type FetchAPI = WindowOrWorkerGlobalScope['fetch']
 
@@ -34,6 +35,7 @@ export interface TokenExchangeOptions {
 /**
  * Middleware that adds user authorization and information to OpenAPI Client requests.
  */
+
 export class AuthMiddleware implements Middleware {
   constructor(
     private auth: Auth,
@@ -42,6 +44,7 @@ export class AuthMiddleware implements Middleware {
     },
   ) {}
 
+  @trace()
   async pre(context: RequestContext) {
     let bearerToken = this.auth.authorization
 
@@ -69,6 +72,7 @@ export class AuthMiddleware implements Middleware {
     }
   }
 
+  @trace()
   private async exchangeToken(
     accessToken: string,
     context: RequestContext,
