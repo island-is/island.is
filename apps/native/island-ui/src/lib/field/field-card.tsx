@@ -62,6 +62,10 @@ const IconWrap = styled.View`
   margin-left: auto;
 `
 
+const IconImage = styled.Image`
+  tint-color: ${dynamicColor('foreground')};
+`;
+
 interface FieldCardProps {
   code?: string
   title: string
@@ -74,37 +78,37 @@ export function FieldCard(props: FieldCardProps) {
   switch (props.code) {
     case 'A':
       icon = (
-        <Image source={IconA} resizeMode="contain" height={24} width={24} />
+        <IconImage source={IconA} resizeMode="contain" height={24} width={24} />
       )
       break
     case 'B':
       icon = (
-        <Image source={IconB} resizeMode="contain" height={12} width={24} />
+        <IconImage source={IconB} resizeMode="contain" height={12} width={24} />
       )
       break
     case 'BE':
       icon = (
-        <Image source={IconBE} resizeMode="contain" height={15} width={42} />
+        <IconImage source={IconBE} resizeMode="contain" height={15} width={42} />
       )
       break
     case 'C':
       icon = (
-        <Image source={IconC} resizeMode="contain" height={24} width={24} />
+        <IconImage source={IconC} resizeMode="contain" height={24} width={24} />
       )
       break
     case 'CE':
       icon = (
-        <Image source={IconCE} resizeMode="contain" height={15} width={40} />
+        <IconImage source={IconCE} resizeMode="contain" height={15} width={40} />
       )
       break
     case 'DE':
       icon = (
-        <Image source={IconDE} resizeMode="contain" height={15} width={58} />
+        <IconImage source={IconDE} resizeMode="contain" height={15} width={58} />
       )
       break
     case 'D':
       icon = (
-        <Image source={IconD} resizeMode="contain" height={24} width={24} />
+        <IconImage source={IconD} resizeMode="contain" height={24} width={24} />
       )
       break
   }

@@ -5,7 +5,7 @@ import { Skeleton } from '../skeleton/skeleton'
 import { useIntl } from 'react-intl'
 
 const Host = styled.View<{ compact?: boolean }>`
-  ${(props: any) => (props.compact ? '' : 'flex: 1;')}
+  ${(props: any) => (props.compact ? 'width: 50%;' : 'flex: 1;')}
 `
 
 const Content = styled.View`
@@ -48,6 +48,8 @@ export function Field({
   size = 'small',
   style,
 }: FieldProps) {
+  if (value === '') return <></>;
+
   const intl = useIntl()
   const val = String(value ?? '')
     .split(' ')

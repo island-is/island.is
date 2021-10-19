@@ -72,7 +72,7 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/wallet/:passId', async ({ passId, fromId, toId, item }: any) => {
+  addRoute('/wallet/:passId', async ({ passId, fromId, toId, item, ...rest }: any) => {
     selectTab(2)
     await Navigation.popToRoot(StackRegistry.WalletStack)
     Navigation.push(StackRegistry.WalletStack, {
@@ -81,6 +81,7 @@ export function setupRoutes() {
         passProps: {
           id: passId,
           item,
+          ...rest
         },
         options: {
           animations: {

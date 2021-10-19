@@ -90,17 +90,24 @@ const {
 )
 
 const WalletItem = React.memo(({ item }: { item: IGenericUserLicense }) => {
+  let cardHeight = 140
   return (
-    <View style={{ paddingHorizontal: 16 }}>
+    <View
+      style={{ paddingHorizontal: 16 }}
+      onLayout={(e) => {
+        cardHeight = Math.round(e.nativeEvent.layout.height)
+      }}
+    >
       <TouchableHighlight
         style={{ marginBottom: 16, borderRadius: 16 }}
-        onPress={() =>
+        onPress={() => {
           navigateTo(`/wallet/${item.license.type}`, {
             item,
             fromId: `license-${item.license.type}_source`,
             toId: `license-${item.license.type}_destination`,
+            cardHeight: cardHeight,
           })
-        }
+        }}
       >
         <SafeAreaView>
           <LicenceCard
@@ -178,7 +185,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       res
         .refetch()
         .then(() => {
-          (loadingTimeout as any).current = setTimeout(() => {
+          ;(loadingTimeout as any).current = setTimeout(() => {
             setLoading(false)
           }, 1331)
         })
@@ -224,18 +231,16 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     }
 
     if (item.type === 'alert') {
-      return (
-        Platform.OS === 'ios' ? (
-          <View style={{ marginBottom: 16 }}>
-            <Alert
-              visible={alertVisible}
-              type="info"
-              message={intl.formatMessage({ id: 'wallet.alertMessage' })}
-              onClose={() => dismiss('howToUseCertificates')}
-            />
-          </View>
-        ) : null
-      )
+      return Platform.OS === 'ios' ? (
+        <View style={{ marginBottom: 16 }}>
+          <Alert
+            visible={alertVisible}
+            type="info"
+            message={intl.formatMessage({ id: 'wallet.alertMessage' })}
+            onClose={() => dismiss('howToUseCertificates')}
+          />
+        </View>
+      ) : null
     }
 
     return <WalletItem item={item} />
@@ -251,7 +256,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     id,
     type: 'skeleton',
   }))
-  const alertItems = [{ id: '99', type: 'alert' }];
+  const alertItems = [{ id: '99', type: 'alert' }]
 
   const isEmpty =
     licenseItems.length === 0 || licenseItems?.[0]?.fetch?.status === 'Error'
@@ -278,7 +283,13 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
             useNativeDriver: true,
           },
         )}
-        data={isSkeleton ? skeletonItems : isEmpty ? emptyItems : [...alertItems, ...licenseItems]}
+        data={
+          isSkeleton
+            ? skeletonItems
+            : isEmpty
+            ? emptyItems
+            : [...alertItems, ...licenseItems]
+        }
         keyExtractor={keyExtractor}
         renderItem={renderItem}
       />

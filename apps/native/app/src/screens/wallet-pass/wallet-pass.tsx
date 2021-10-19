@@ -120,7 +120,7 @@ const FieldRender = ({ data, level = 1 }: any) => {
                   </FieldGroup>
                 )
               } else {
-                return <Field key={key} label={label} value={value} />
+                return <Field key={key} label={label} value={value} compact />
               }
 
             case 'Group':
@@ -157,7 +157,8 @@ const FieldRender = ({ data, level = 1 }: any) => {
 export const WalletPassScreen: NavigationFunctionComponent<{
   id: string
   item?: any
-}> = ({ id, item, componentId }) => {
+  cardHeight?: number
+}> = ({ id, item, componentId, cardHeight = 140 }) => {
   useNavigationOptions(componentId)
   const theme = useTheme()
   const licenseRes = useQuery<GetLicenseResponse, GetGenericLicenseInput>(
@@ -226,7 +227,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       }
     } else {
       if (Platform.OS === 'android') {
-        alert('You cannot add passes. Please make sure you have Snjallveskið installed on your device.')
+        alert(
+          'You cannot add passes. Please make sure you have Snjallveskið installed on your device.',
+        )
       } else {
         alert('You cannot add passes on this device')
       }
@@ -237,7 +240,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const hasPkpass = data?.license?.pkpass || false
   let hasValidPkpass = false
 
-
   // quick fix until this will be handled in api
   // fint out if licence was given out before 15 águst 1997 then it should not be possible to add licence to wallet
 
@@ -246,15 +248,14 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     const parsedData = JSON.parse(data?.payload?.rawData)
     const issuedAt = parsedData?.utgafuDagsetning
     const hasImage = !!parsedData?.mynd?.id
-    hasValidPkpass = Date.parse(issuedAt) > startDateForValidPkpass || hasImage;
-
+    hasValidPkpass = Date.parse(issuedAt) > startDateForValidPkpass || hasImage
   } catch (error) {
     // noop
   }
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ height: 140 }} />
+      <View style={{ height: cardHeight }} />
       <Information contentInset={{ bottom: 162 }}>
         <SafeAreaView style={{ marginHorizontal: 16 }}>
           {!data?.payload?.data && licenseRes.loading ? (
