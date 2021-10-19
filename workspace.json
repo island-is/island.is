@@ -3290,25 +3290,14 @@
             "passWithNoTests": true
           }
         },
-        "update-openapi-document/v1": {
+        "update-openapi-document": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" -H \"SECRET: $DRIVING_LICENSE_SECRET\" http://localhost:8081/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=RafraentOkuskirteini-v1 -H 'Accept: application/json' > src/v1/clientConfig.json",
-              "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/v1/clientConfig.json > _.tmp && mv _.tmp src/v1/clientConfig.json",
-              "jq '.paths[].post.requestBody.content |= (select(. != null) | with_entries(select(.key == \"application/json\")))' src/v1/clientConfig.json > _.tmp && mv _.tmp src/v1/clientConfig.json"
-            ],
-            "parallel": false,
-            "cwd": "libs/clients/driving-license"
-          }
-        },
-        "update-openapi-document/v2": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" -H \"SECRET: $DRIVING_LICENSE_SECRET\" http://localhost:8081/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=RafraentOkuskirteini-v2 -H 'Accept: application/json' > src/v2/clientConfig.json",
-              "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/v2/clientConfig.json > _.tmp && mv _.tmp src/v2/clientConfig.json",
-              "jq '.paths[].post.requestBody.content |= (select(. != null) | with_entries(select(.key == \"application/json\")))' src/v2/clientConfig.json > _.tmp && mv _.tmp src/v2/clientConfig.json"
+              "[[ '{args.apiVersion}' =~ v1|v2 ]] && >&2 echo \"Missing required --apiVersion, only v1 or v2 are valid\"",
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" -H \"SECRET: $DRIVING_LICENSE_SECRET\" http://localhost:8081/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=RafraentOkuskirteini-{args.apiVersion} -H 'Accept: application/json' > src/{args.apiVersion}/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/{args.apiVersion}/clientConfig.json > _.tmp && mv _.tmp src/{args.apiVersion}/clientConfig.json",
+              "jq '.paths[].post.requestBody.content |= (select(. != null) | with_entries(select(.key == \"application/json\")))' src/{args.apiVersion}/clientConfig.json > _.tmp && mv _.tmp src/{args.apiVersion}/clientConfig.json"
             ],
             "parallel": false,
             "cwd": "libs/clients/driving-license"
