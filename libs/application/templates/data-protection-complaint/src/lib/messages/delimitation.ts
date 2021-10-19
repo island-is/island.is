@@ -34,6 +34,13 @@ export const delimitation = {
         'Ertu að kvarta yfir einhverju sem var sagt eða skrifað um þig á netinu eða á öðrum opinberum vettvangi?',
       description: 'Label for concernsLibel field',
     },
+    concernsPersonalDataConflict: {
+      id:
+        'dpac.application:section.delimitation.labels.concernsPersonalDataConflict',
+      defaultMessage:
+        'Ertu að kvarta yfir því að hafa ekki fengið aðgang að persónuupplýsingum um þig, eða að þær hafi ekki verið leiðréttar eða þeim eytt?',
+      description: 'Label for concernsPersonalDataConflict field',
+    },
     concernsPersonalLettersOrSocialMedia: {
       id:
         'dpac.application:section.delimitation.labels.concernsPersonalLettersOrSocialMedia',

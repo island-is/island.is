@@ -63,6 +63,7 @@ export interface User {
   folder: string
   service: RolesRule
   currentApplication?: CurrentApplication
+  isSpouse?: boolean
   staff?: Staff
   postalCode?: number
 }
@@ -198,6 +199,10 @@ export interface Application {
 
 export interface GetSignedUrlForId {
   id: string
+}
+
+export interface HasSpouseApplied {
+  HasApplied: boolean
 }
 
 export interface UpdateApplicationTableResponseType {
