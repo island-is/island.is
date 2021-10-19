@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useContext } from 'react'
 import { Text, Box, Button } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
@@ -7,7 +7,6 @@ import * as styles from './application.treat'
 import { useQuery } from '@apollo/client'
 import {
   ApplicationQuery,
-  MunicipalityQuery,
 } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 import {
@@ -40,6 +39,7 @@ import {
   ApplicationSkeleton,
   LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
+import { AdminContext } from '../../components/AdminProvider/AdminProvider'
 
 interface ApplicantData {
   application: Application
@@ -58,32 +58,24 @@ const ApplicationProfile = () => {
 
   const [isLoading, setIsLoading] = useState(false)
 
+  const {municipality} = useContext(AdminContext)
+
   const { data, loading } = useQuery<ApplicantData>(ApplicationQuery, {
     variables: { input: { id: router.query.id } },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
-
-  const { data: dataMunicipality } = useQuery<MunicipalityData>(
-    MunicipalityQuery,
-    {
-      variables: { input: { id: 'hfj' } },
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
-
   const [application, setApplication] = useState<Application>()
 
   const aidAmount = useMemo(() => {
-    if (application && dataMunicipality && application.homeCircumstances) {
+    if (application && municipality && application.homeCircumstances) {
       return aidCalculator(
         application.homeCircumstances,
         application.spouseNationalId
-          ? dataMunicipality.municipality.cohabitationAid
-          : dataMunicipality.municipality.individualAid,
+          ? municipality.cohabitationAid
+          : municipality.individualAid,
     }
-  }, [application, dataMunicipality])
+  }, [application, municipality])
 
   useEffect(() => {
     if (data?.application) {
