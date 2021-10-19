@@ -30,7 +30,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
 
   return (
     <AccordionItem
-      id="id_1"
+      id="policeRequestAccordionItem"
       label={`Krafa ${
         isRestrictionCase(workingCase.type)
           ? `um ${caseTypes[workingCase.type]}`

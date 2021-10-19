@@ -505,21 +505,7 @@ export class NotificationService {
     existingCase: Case,
   ): Promise<Recipient[]> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
-    const html = formatPrisonRulingEmailNotification(
-      existingCase.accusedGender,
-      existingCase.court?.name,
-      existingCase.prosecutor?.name,
-      existingCase.courtEndTime,
-      existingCase.defenderName,
-      existingCase.defenderEmail,
-      existingCase.decision,
-      existingCase.custodyRestrictions,
-      existingCase.accusedAppealDecision,
-      existingCase.prosecutorAppealDecision,
-      existingCase.judge?.name,
-      existingCase.judge?.title,
-      existingCase.conclusion,
-    )
+    const html = formatPrisonRulingEmailNotification(existingCase.courtEndTime)
 
     let attachments: Attachment[] | undefined
 
