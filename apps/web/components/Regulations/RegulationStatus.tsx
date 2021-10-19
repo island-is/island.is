@@ -79,6 +79,9 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
 
   const isOgildWAT = repealed && !repealedDate // Don't ask. Magic data!
 
+  const futureDateTo =
+    (timelineDate && timelineDate > today && getNextHistoryDate()) || today
+
   return (
     <>
       <div className={s.printText}>
@@ -138,9 +141,14 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
             {txt('statusUpcoming') + ' '}
             {onDateText || (
               <small className={s.metaDate}>
-                {interpolate(txt('statusUpcoming_on'), {
-                  date: formatDate(timelineDate),
-                })}
+                {futureDateTo === today
+                  ? interpolate(txt('statusUpcoming_on'), {
+                      date: formatDate(timelineDate),
+                    })
+                  : interpolate(txt('statusUpcoming_period'), {
+                      dateFrom: formatDate(timelineDate),
+                      dateTo: futureDateTo,
+                    })}
               </small>
             )}{' '}
             {renderLinkToCurrent()}
