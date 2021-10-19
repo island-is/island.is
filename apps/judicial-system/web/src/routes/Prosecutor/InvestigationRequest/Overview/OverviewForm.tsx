@@ -88,7 +88,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               phoneNumber: workingCase.defenderPhoneNumber,
               defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
-            isRCase
+            isInvestigationCase
           />
         </Box>
         <Box component="section" marginBottom={5}>
