@@ -21,7 +21,7 @@ import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CurrentApplicationModel } from '../app/modules/application'
 import { StaffModel } from '../app/modules/staff'
-import { isSpouseRes } from '../app/modules/user/isSpouseRes.model'
+import { HasSpouseAppliedModel } from '../app/modules/user/HasSpouseApplied.model'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -93,8 +93,8 @@ class BackendAPI extends RESTDataSource {
     return this.get(`application/nationalId/${nationalId}`)
   }
 
-  isSpouse(spouseNationalId: string): Promise<isSpouseRes> {
-    return this.get(`application/spouseNationalId/${spouseNationalId}`)
+  isSpouse(spouseNationalId: string): Promise<HasSpouseAppliedModel> {
+    return this.get(`application/spouse/${spouseNationalId}`)
   }
 
   getStaff(nationalId: string): Promise<StaffModel> {

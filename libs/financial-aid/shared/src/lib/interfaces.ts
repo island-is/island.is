@@ -201,7 +201,7 @@ export interface GetSignedUrlForId {
   id: string
 }
 
-export interface isSpouseResponse {
+export interface HasSpouseApplied {
   res: boolean
 }
 

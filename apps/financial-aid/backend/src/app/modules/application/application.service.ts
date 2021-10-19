@@ -37,6 +37,12 @@ const linkToStatusPage = (applicationId: string) => {
   return `<a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${applicationId}" target="_blank"> Getur kíkt á stöðu síðuna þína hér</a>`
 }
 
+const firstDateOfMonth = () => {
+  const date = new Date()
+
+  return new Date(date.getFullYear(), date.getMonth(), 1)
+}
+
 @Injectable()
 export class ApplicationService {
   constructor(
@@ -59,14 +65,10 @@ export class ApplicationService {
   }
 
   async hasSpouseApplied(spouseNationalId: string): Promise<boolean> {
-    const date = new Date()
-
-    const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-
     const application = await this.applicationModel.findOne({
       where: {
         spouseNationalId: { [Op.eq]: spouseNationalId },
-        created: { [Op.gte]: firstDateOfMonth },
+        created: { [Op.gte]: firstDateOfMonth() },
       },
     })
 
@@ -76,14 +78,10 @@ export class ApplicationService {
   async getCurrentApplication(
     nationalId: string,
   ): Promise<CurrentApplicationModel | null> {
-    const date = new Date()
-
-    const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-
     return await this.applicationModel.findOne({
       where: {
         nationalId,
-        created: { [Op.gte]: firstDateOfMonth },
+        created: { [Op.gte]: firstDateOfMonth() },
       },
     })
   }
