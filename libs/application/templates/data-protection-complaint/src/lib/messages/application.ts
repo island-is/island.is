@@ -46,6 +46,11 @@ export const section = defineMessages({
     defaultMessage: 'Meiðyrði',
     description: 'Complaint regards libel',
   },
+  personalDataConflict: {
+    id: 'dpac.application:section.personalDataConflict',
+    defaultMessage: 'Meðhöndlun gagna',
+    description: 'Complaint regards personal data conflict',
+  },
   agreement: {
     id: 'dpac.application:section.agreement',
     defaultMessage: 'Upplýsingar um málsmeðferð',

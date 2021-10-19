@@ -161,7 +161,6 @@ export const RulingStepOne: React.FC = () => {
               </Text>
             </Box>
             <Box component="section" marginBottom={5}>
-              <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
               <CaseNumbers workingCase={workingCase} />
             </Box>
             <Box component="section" marginBottom={5}>
@@ -324,7 +323,8 @@ export const RulingStepOne: React.FC = () => {
               />
             </Box>
             {workingCase.decision &&
-              workingCase.decision !== CaseDecision.REJECTING && (
+              workingCase.decision !== CaseDecision.REJECTING &&
+              workingCase.decision !== CaseDecision.DISMISSING && (
                 <Box
                   component="section"
                   marginBottom={7}

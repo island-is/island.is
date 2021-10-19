@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { spacing } from '@island.is/island-ui/theme'
+import { spacing, theme } from '@island.is/island-ui/theme'
 
 export const wrapper = style({
   float: 'right',
@@ -7,6 +7,11 @@ export const wrapper = style({
   marginLeft: spacing[2],
   position: 'relative',
   zIndex: 1,
+})
+
+export const wrapperDisabled = style({
+  pointerEvents: 'none',
+  color: theme.color.dark200,
 })
 
 export const toggler = style({
