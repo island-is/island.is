@@ -157,7 +157,7 @@ export const RulingStepOne: React.FC = () => {
           <FormContentContainer>
             <Box marginBottom={7}>
               <Text as="h1" variant="h1">
-                Úrskurður
+                {formatMessage(m.title)}
               </Text>
             </Box>
             <Box component="section" marginBottom={5}>
@@ -188,7 +188,7 @@ export const RulingStepOne: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  {formatMessage(m.sections.courtCaseFacts.title)}{' '}
+                  {`${formatMessage(m.sections.courtCaseFacts.title)} `}
                   <Tooltip
                     text={formatMessage(m.sections.courtCaseFacts.tooltip)}
                   />
@@ -198,9 +198,11 @@ export const RulingStepOne: React.FC = () => {
                 <Input
                   data-testid="courtCaseFacts"
                   name="courtCaseFacts"
-                  label="Málsatvik"
+                  label={formatMessage(m.sections.courtCaseFacts.label)}
                   defaultValue={workingCase.courtCaseFacts}
-                  placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+                  placeholder={formatMessage(
+                    m.sections.courtCaseFacts.placeholder,
+                  )}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'courtCaseFacts',
@@ -233,7 +235,7 @@ export const RulingStepOne: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  {formatMessage(m.sections.courtLegalArguments.title)}{' '}
+                  {`${formatMessage(m.sections.courtLegalArguments.title)} `}
                   <Tooltip
                     text={formatMessage(m.sections.courtLegalArguments.tooltip)}
                   />
@@ -243,9 +245,11 @@ export const RulingStepOne: React.FC = () => {
                 <Input
                   data-testid="courtLegalArguments"
                   name="courtLegalArguments"
-                  label="Lagarök"
+                  label={formatMessage(m.sections.courtLegalArguments.label)}
                   defaultValue={workingCase.courtLegalArguments}
-                  placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+                  placeholder={formatMessage(
+                    m.sections.courtLegalArguments.placeholder,
+                  )}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'courtLegalArguments',
@@ -278,7 +282,7 @@ export const RulingStepOne: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  Úrskurður{' '}
+                  {`${formatMessage(m.sections.decision.title)} `}
                   <Text as="span" fontWeight="semiBold" color="red600">
                     *
                   </Text>
@@ -314,7 +318,7 @@ export const RulingStepOne: React.FC = () => {
             <Box component="section" marginBottom={8}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  Niðurstaða
+                  {formatMessage(m.sections.ruling.title)}
                 </Text>
               </Box>
               <RulingInput
@@ -373,7 +377,7 @@ export const RulingStepOne: React.FC = () => {
                 <Box component="section" marginBottom={8}>
                   <Box marginBottom={2}>
                     <Text as="h3" variant="h3">
-                      Takmarkanir á gæslu
+                      {formatMessage(m.sections.custodyRestrictions.title)}
                     </Text>
                   </Box>
                   <BlueBox>
