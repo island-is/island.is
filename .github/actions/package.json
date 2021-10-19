@@ -10,7 +10,7 @@
     "test": "./node_modules/.bin/jest"
   },
   "dependencies": {
-    "@octokit/action": "^3.17.3",
+    "@octokit/action": "^3.18.0",
     "@octokit/core": "^3.5.1",
     "tslib": "^2.3.1"
   },
