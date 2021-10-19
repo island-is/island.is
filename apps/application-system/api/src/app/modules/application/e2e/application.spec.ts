@@ -56,7 +56,7 @@ let server: request.SuperTest<request.Test>
 
 beforeAll(async () => {
   app = await setup({
-    override: (builder) => {
+    override: (builder) =>
       builder
         .overrideProvider(ContentfulRepository)
         .useClass(MockContentfulRepository)
@@ -68,9 +68,7 @@ beforeAll(async () => {
             nationalId,
             scope: [ApplicationScope.read, ApplicationScope.write],
           }),
-        )
-        .compile()
-    },
+        ),
   })
 
   server = request(app.getHttpServer())
@@ -143,10 +141,25 @@ describe('Application system API', () => {
           careerHistoryCompanies: ['this', 'is', 'not', 'allowed'],
         },
       })
-      .expect(403)
+      .expect(400)
 
     // Assert
-    expect(putResponse.body.message).toBe('Schema validation has failed')
+    expect(putResponse.body).toMatchInlineSnapshot(`
+      Object {
+        "detail": "Found issues in these fields: careerHistoryCompanies",
+        "fields": Object {
+          "careerHistoryCompanies": Array [
+            "Ógilt gildi",
+            "Ógilt gildi",
+            "Ógilt gildi",
+            "Ógilt gildi",
+          ],
+        },
+        "status": 400,
+        "title": "Validation Failed",
+        "type": "https://docs.devland.is/reference/problems/validation-failed",
+      }
+    `)
   })
 
   it('should fail when PUT-ing answers on an application where it is in a state where it is not permitted', async () => {
@@ -189,7 +202,7 @@ describe('Application system API', () => {
       })
       .expect(403)
 
-    expect(failedResponse.body.message).toBe(
+    expect(failedResponse.body.detail).toBe(
       'Current user is not permitted to update the following answers: dreamJob',
     )
   })
@@ -321,7 +334,7 @@ describe('Application system API', () => {
       })
       .expect(400)
 
-    expect(failedResponse.body.message).toBe(
+    expect(failedResponse.body.detail).toBe(
       'Current user is not permitted to update external data in this state: inReview',
     )
   })
@@ -337,10 +350,11 @@ describe('Application system API', () => {
       .expect(404)
 
     // Assert
-    expect(response.body.error).toBe('Not Found')
-    expect(response.body.message).toBe(
-      'An application with the id 98e83b8a-fd75-44b5-a922-0f76c99bdcae does not exist',
-    )
+    expect(response.body).toMatchObject({
+      title: 'Not Found',
+      detail:
+        'An application with the id 98e83b8a-fd75-44b5-a922-0f76c99bdcae does not exist',
+    })
   })
 
   it('should successfully PUT answers to an existing application if said answers comply to the schema', async () => {
@@ -404,7 +418,7 @@ describe('Application system API', () => {
       .expect(400)
 
     // Assert
-    expect(putResponse.body.error).toBe('Bad Request')
+    expect(putResponse.body.title).toBe('Bad Request')
   })
 
   it('GET /users/:nationalId/applications should not return applications that are in an unlisted state', async () => {

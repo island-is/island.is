@@ -7,6 +7,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  isInvestigationCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -122,14 +123,10 @@ const PastRequests: React.FC<Props> = (props) => {
           }
         }
       }) => {
-        const isInvestigationCase =
-          row.row.original.type !== CaseType.CUSTODY &&
-          row.row.original.type !== CaseType.TRAVEL_BAN
-
         const tagVariant = mapCaseStateToTagVariant(
           row.row.original.state,
           isCourtRole,
-          isInvestigationCase,
+          isInvestigationCase(row.row.original.type),
           row.row.original.isValidToDateInThePast,
         )
 
@@ -159,7 +156,10 @@ const PastRequests: React.FC<Props> = (props) => {
         const courtEndDate = row.row.original.courtEndTime
         const state = row.row.original.state
 
-        if (state === CaseState.REJECTED || !validToDate) {
+        if (
+          [CaseState.REJECTED, CaseState.DISMISSED].includes(state) ||
+          !validToDate
+        ) {
           return null
         } else if (rulingDate) {
           return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
@@ -230,7 +230,7 @@ const PastRequests: React.FC<Props> = (props) => {
       columns={pastRequestsColumns}
       data={pastRequestsData ?? []}
       handleRowClick={onRowClick}
-      className={styles.pastRequestsTable}
+      className={styles.table}
       sortableColumnIds={sortableColumnIds}
     />
   )

@@ -12,13 +12,18 @@ services:
       - local
     depends_on:
       - db_application_system
+      - redis_cluster
     environment:
       - TEST_DB_USER=test_db
       - TEST_DB_PASS=test_db
       - TEST_DB_NAME=test_db
       - DB_HOST=db_application_system
+      - REDIS_NODES=redis_cluster:7000,redis_cluster:7001,redis_cluster:7002,redis_cluster:7003,redis_cluster:7004,redis_cluster:7005
     volumes:
       - ../../..:/code
 
   db_application_system:
+    ports: []
+
+  redis_cluster:
     ports: []

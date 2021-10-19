@@ -1,7 +1,11 @@
+import { Sequelize } from 'sequelize-typescript'
+import { execSync } from 'child_process'
 import request from 'supertest'
 
-import { INestApplication } from '@nestjs/common'
+import { getConnectionToken } from '@nestjs/sequelize'
+import { INestApplication, Type } from '@nestjs/common'
 
+import { testServer } from '@island.is/infra-nest-server'
 import {
   CaseState,
   CaseTransition,
@@ -24,17 +28,15 @@ import type {
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
+import { environment } from '../src/environments'
+import { AppModule } from '../src/app'
 import { Institution } from '../src/app/modules/institution'
 import { User } from '../src/app/modules/user'
-import { Case } from '../src/app/modules/case/models'
-import { environment } from '../src/environments'
+import { Case } from '../src/app/modules/case'
 import {
   Notification,
   SendNotificationResponse,
 } from '../src/app/modules/notification/models'
-import { setup } from './setup'
-
-jest.setTimeout(20000)
 
 interface CUser extends TUser {
   institutionId: string
@@ -54,6 +56,7 @@ interface CCase extends TCase {
 }
 
 let app: INestApplication
+let sequelize: Sequelize
 const courtName = 'Héraðsdómur Reykjavíkur'
 let court: TInstitution
 const prosecutorNationalId = '0000000009'
@@ -71,7 +74,16 @@ let admin: CUser
 let adminAuthCookie: string
 
 beforeAll(async () => {
-  app = await setup()
+  app = await testServer({ appModule: AppModule })
+
+  sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
+
+  // Need to use sequelize-cli becuase sequelize.sync does not keep track of completed migrations
+  // await sequelize.sync()
+  execSync('yarn nx run judicial-system-backend:migrate')
+
+  // Seed the database
+  execSync('yarn nx run judicial-system-backend:seed')
 
   const sharedAuthService = await app.resolve(SharedAuthService)
 
@@ -115,6 +127,13 @@ beforeAll(async () => {
       .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
   adminAuthCookie = sharedAuthService.signJwt(admin)
+})
+
+afterAll(async () => {
+  if (app && sequelize) {
+    await app.close()
+    await sequelize.close()
+  }
 })
 
 const minimalCaseData = {
@@ -348,6 +367,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.defenderIsSpokesperson ?? null).toBe(
     caseTwo.defenderIsSpokesperson ?? null,
   )
+  expect(caseOne.isHeightenedSecurityLevel ?? null).toBe(
+    caseTwo.isHeightenedSecurityLevel ?? null,
+  )
   expect(caseOne.courtId ?? null).toBe(caseTwo.courtId ?? null)
   expectInstitutionsToMatch(caseOne.court, caseTwo.court)
   expect(caseOne.leadInvestigator ?? null).toBe(
@@ -505,7 +527,7 @@ describe('Institution', () => {
       .send()
       .expect(200)
       .then((response) => {
-        expect(response.body.length).toBe(6)
+        expect(response.body.length).toBe(8)
       })
   })
 })

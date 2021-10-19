@@ -1,22 +1,17 @@
 import {
   formatDate,
   formatNationalId,
-  formatCustodyRestrictions,
   laws,
   formatGender,
   caseTypes,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealDecision,
   CaseCustodyProvisions,
-  CaseDecision,
   CaseType,
+  isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import type {
-  CaseCustodyRestrictions,
-  CaseGender,
-} from '@island.is/judicial-system/types'
+import type { CaseGender } from '@island.is/judicial-system/types'
 
 function custodyProvisionsOrder(p: CaseCustodyProvisions) {
   switch (p) {
@@ -65,22 +60,6 @@ export function formatCustodyProvisions(
     : legalBasis
     ? legalBasis
     : 'Lagaákvæði ekki skráð'
-}
-
-export function formatAppeal(
-  appealDecision: CaseAppealDecision | undefined,
-  stakeholder: string,
-): string {
-  switch (appealDecision) {
-    case CaseAppealDecision.APPEAL:
-      return `${stakeholder} lýsir því yfir að hann kæri úrskurðinn til Landsréttar.`
-    case CaseAppealDecision.ACCEPT:
-      return `${stakeholder} unir úrskurðinum.`
-    case CaseAppealDecision.POSTPONE:
-      return `${stakeholder} lýsir því yfir að hann taki sér lögbundinn kærufrest.`
-    default:
-      return ''
-  }
 }
 
 export function formatCourtHeadsUpSmsNotification(
@@ -145,12 +124,11 @@ export function formatProsecutorReceivedByCourtSmsNotification(
   court?: string,
   courtCaseNumber?: string,
 ): string {
-  const receivedCaseText =
-    type === CaseType.CUSTODY || type === CaseType.TRAVEL_BAN
-      ? `${caseTypes[type]}`
-      : type === CaseType.OTHER
-      ? 'rannsóknarheimild'
-      : `rannsóknarheimild (${caseTypes[type]})`
+  const receivedCaseText = isRestrictionCase(type)
+    ? `${caseTypes[type]}`
+    : type === CaseType.OTHER
+    ? 'rannsóknarheimild'
+    : `rannsóknarheimild (${caseTypes[type]})`
 
   return `${court} hefur móttekið kröfu um ${receivedCaseText} sem þú sendir og úthlutað málsnúmerinu ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.`
 }
@@ -260,47 +238,12 @@ export function formatDefenderCourtDateEmailNotification(
 
 // This function is only intended for case type CUSTODY
 export function formatPrisonRulingEmailNotification(
-  accusedGender?: CaseGender,
-  court?: string,
-  prosecutorName?: string,
   courtEndTime?: Date,
-  defenderName?: string,
-  defenderEmail?: string,
-  decision?: CaseDecision,
-  custodyRestrictions?: CaseCustodyRestrictions[],
-  accusedAppealDecision?: CaseAppealDecision,
-  prosecutorAppealDecision?: CaseAppealDecision,
-  judgeName?: string,
-  judgeTitle?: string,
-  conclusion?: string,
 ): string {
-  const custodyRestrictionsText = formatCustodyRestrictions(
-    accusedGender,
-    custodyRestrictions,
-  )
-
-  return `<strong>Úrskurður um gæsluvarðhald</strong><br /><br />${court}, ${formatDate(
+  return `Meðfylgjandi er vistunarseðill gæsluvarðhaldsfanga sem var úrskurðaður í gæsluvarðhald í héraðsdómi ${formatDate(
     courtEndTime,
     'PPP',
-  )}.<br /><br />Þinghaldi lauk kl. ${formatDate(
-    courtEndTime,
-    'p',
-  )}.<br /><br />Ákærandi: ${prosecutorName}.<br />Verjandi: ${
-    defenderName
-      ? defenderEmail
-        ? `${defenderName}, ${defenderEmail}`
-        : defenderName
-      : defenderEmail
-      ? defenderEmail
-      : 'Hefur ekki verið skráður'
-  }.<br /><br /><strong>Úrskurðarorð</strong><br /><br />${conclusion}<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
-    prosecutorAppealDecision,
-    'Sækjandi',
-  )}<br />${formatAppeal(accusedAppealDecision, 'Varnaraðili')}${
-    decision === CaseDecision.ACCEPTING && custodyRestrictions
-      ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${custodyRestrictionsText}`
-      : ''
-  }<br /><br />${judgeName} ${judgeTitle}`
+  )}.`
 }
 
 export function formatCourtRevokedSmsNotification(

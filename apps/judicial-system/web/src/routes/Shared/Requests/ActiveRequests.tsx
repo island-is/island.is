@@ -75,7 +75,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
 
   return (
     <table
-      className={styles.activeRequestsTable}
+      className={styles.table}
       data-testid="custody-request-table"
       aria-describedby="activeRequestsTableCaption"
     >

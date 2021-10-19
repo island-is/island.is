@@ -5,8 +5,9 @@ import {
   Employment,
   ApplicationEventType,
   RolesRule,
-  ReturnUrl,
   StaffRole,
+  ApplicationStateUrl,
+  FamilyStatus,
 } from './enums'
 
 export interface GetSignedUrl {
@@ -29,7 +30,7 @@ export interface Staff {
   municipalityId: string
   role: StaffRole
   active: boolean
-  phoneNumber: string
+  phoneNumber?: string
 }
 
 export interface MunicipalitySettings {
@@ -50,23 +51,37 @@ export interface NavigationProps {
   nextUrl: string | undefined
 }
 
+export interface Spouse {
+  nationalId?: string
+  email?: string
+}
+
 export interface User {
   nationalId: string
   name: string
-  phoneNumber: string
+  phoneNumber?: string
   folder: string
   service: RolesRule
   currentApplication?: CurrentApplication
-  returnUrl: ReturnUrl
+  isSpouse?: boolean
   staff?: Staff
   postalCode?: number
 }
 
 export interface UpdateApplication {
   state: ApplicationState
+  event: ApplicationEventType
   amount?: number
   rejection?: string
+  comment?: string
   staffId?: string
+}
+
+export interface UpdateApplicationTable {
+  state: ApplicationState
+  staffId: string
+  stateUrl: ApplicationStateUrl
+  event: ApplicationEventType
 }
 
 export interface CreateApplicationEvent {
@@ -118,7 +133,7 @@ export interface CreateApplicationFile {
 export interface CreateApplication {
   nationalId: string
   name: string
-  phoneNumber: string
+  phoneNumber?: string
   email: string
   homeCircumstances: HomeCircumstances
   student: boolean
@@ -136,6 +151,9 @@ export interface CreateApplication {
   state?: ApplicationState
   files: CreateApplicationFile[]
   amount?: number
+  spouseNationalId?: string
+  spouseEmail?: string
+  familyStatus: FamilyStatus
 }
 
 export interface ApplicationFilters {
@@ -152,7 +170,7 @@ export interface Application {
   modified: string
   nationalId: string
   name: string
-  phoneNumber: string
+  phoneNumber?: string
   email: string
   homeCircumstances: HomeCircumstances
   student: boolean
@@ -174,8 +192,20 @@ export interface Application {
   rejection?: string
   staff?: Staff
   applicationEvents?: ApplicationEvent[]
+  spouseNationalId?: string
+  spouseEmail?: string
+  familyStatus: FamilyStatus
 }
 
 export interface GetSignedUrlForId {
   id: string
+}
+
+export interface HasSpouseApplied {
+  HasApplied: boolean
+}
+
+export interface UpdateApplicationTableResponseType {
+  applications: Application[]
+  filters: ApplicationFilters
 }

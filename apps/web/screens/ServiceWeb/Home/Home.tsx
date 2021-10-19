@@ -1,4 +1,5 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -32,6 +33,7 @@ import {
 } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import ContactBanner from '../ContactBanner/ContactBanner'
+import { getSlugPart } from '../utils'
 
 import * as styles from './Home.treat'
 import * as sharedStyles from '../shared/styles.treat'
@@ -42,10 +44,13 @@ interface HomeProps {
   supportCategories:
     | Query['getSupportCategories']
     | Query['getSupportCategoriesInOrganization']
-  slug: string
 }
 
-const Home: Screen<HomeProps> = ({ organization, supportCategories, slug }) => {
+const Home: Screen<HomeProps> = ({ organization, supportCategories }) => {
+  const Router = useRouter()
+
+  const institutionSlug = getSlugPart(Router.asPath, 2)
+
   const logoTitle =
     organization?.shortTitle ?? organization?.title ?? 'Ísland.is'
 
@@ -106,7 +111,7 @@ const Home: Screen<HomeProps> = ({ organization, supportCategories, slug }) => {
               span={['12/12', '12/12', '12/12', '10/12']}
             >
               <Box marginY={[10, 10, 20]}>
-                <ContactBanner slug={slug} />
+                <ContactBanner slug={institutionSlug} />
               </Box>
             </GridColumn>
           </GridRow>
@@ -178,7 +183,6 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     organization: organization?.data?.getOrganization,
     namespace,
     supportCategories: processedCategories,
-    slug,
   }
 }
 

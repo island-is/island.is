@@ -16,11 +16,6 @@ import { Domain } from './domain.model'
 
 @Table({
   tableName: 'api_scope_group',
-  indexes: [
-    {
-      fields: ['id'],
-    },
-  ],
 })
 export class ApiScopeGroup extends Model<ApiScopeGroup> {
   @PrimaryKey

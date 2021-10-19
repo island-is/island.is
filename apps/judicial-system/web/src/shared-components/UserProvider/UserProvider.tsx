@@ -43,6 +43,7 @@ const UserProvider: React.FC<Props> = ({ children, authenticated = false }) => {
     fetchPolicy: 'no-cache',
     skip: !isAuthenticated || Boolean(user),
   })
+
   const loggedInUser = data?.currentUser
 
   useEffect(() => {

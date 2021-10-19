@@ -12,17 +12,20 @@ import {
   FormComment,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
 
 import * as styles from './summaryForm.treat'
 import cn from 'classnames'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import { NavigationProps } from '@island.is/financial-aid/shared/lib'
+import {
+  FamilyStatus,
+  getFamilyStatus,
+  NavigationProps,
+} from '@island.is/financial-aid/shared/lib'
 
-import useApplication from '@island.is/financial-aid-web/osk/src/utils/useApplication'
+import useApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useApplication'
 
 import {
   Employment,
@@ -30,14 +33,16 @@ import {
   getHomeCircumstances,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const SummaryForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
 
-  const { user } = useContext(UserContext)
+  const { user } = useContext(AppContext)
 
   const [isVisible, setIsVisible] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const [formError, setFormError] = useState({
     status: false,
@@ -47,6 +52,12 @@ const SummaryForm = () => {
   const { createApplication } = useApplication()
 
   const formInfoOverview = [
+    {
+      id: 'familyStatus',
+      label: 'Hjúskaparstaða',
+      url: 'hjuskaparstada',
+      info: getFamilyStatus[form?.familyStatus as FamilyStatus],
+    },
     {
       id: 'homeCircumstances',
       label: 'Búseta',
@@ -87,20 +98,22 @@ const SummaryForm = () => {
     if (!form || !user) {
       return
     }
-
+    setIsLoading(true)
     await createApplication(form, user, updateForm)
-      .then((res) => {
+      .then(() => {
+        setIsLoading(false)
         if (navigation?.nextUrl) {
           router.push(navigation.nextUrl)
         }
       })
       .catch((e) => {
+        setIsLoading(false)
         setFormError({
           status: true,
           message: 'Obbobbob einhvað fór úrskeiðis',
         })
 
-        if (e.networkError.statusCode === 400) {
+        if (e.networkError?.statusCode === 400) {
           const findErrorInFormInfo = formInfoOverview.find(
             (el) => el.info === undefined,
           )
@@ -145,7 +158,7 @@ const SummaryForm = () => {
           <Divider />
         </Box>
 
-        <UserInfo />
+        <UserInfo phoneNumber={form?.phoneNumber} />
 
         <FormInfo info={formInfoOverview} error={formError.status} />
 
@@ -180,7 +193,8 @@ const SummaryForm = () => {
         }}
         previousIsDestructive={true}
         prevButtonText="Hætta við"
-        nextButtonText="Senda umsókn"
+        nextIsLoading={isLoading}
+        nextButtonText={'Senda umsókn'}
         onNextButtonClick={handleNextButtonClick}
       />
     </>

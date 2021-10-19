@@ -1,160 +1,194 @@
-import React, { useContext, useState } from 'react'
-import { ModalBase, Text, Box } from '@island.is/island-ui/core'
+import React, { useState } from 'react'
+import { Text, Box } from '@island.is/island-ui/core'
+import { AnimateSharedLayout } from 'framer-motion'
 
 import * as styles from './StateModal.treat'
-import cn from 'classnames'
-
-import { useMutation } from '@apollo/client'
 
 import {
-  InputModal,
   OptionsModal,
+  RejectModal,
+  AcceptModal,
+  DataNeededModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import {
   Application,
+  ApplicationEventType,
   ApplicationState,
+  eventTypeFromApplicationState,
 } from '@island.is/financial-aid/shared/lib'
 import { useApplicationState } from '../../utils/useApplicationState'
+import StateModalContainer from './StateModalContainer'
 
 interface Props {
   isVisible: boolean
   onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
-  onStateChange: (applicationState: ApplicationState) => void
-  application: Application
-}
-
-interface SaveData {
-  application: Application
-}
-
-interface InputType {
-  show: boolean
-  type: ApplicationState | undefined
+  applicationId: string
+  currentState: ApplicationState
+  setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const StateModal = ({
   isVisible,
   onVisibilityChange,
-  onStateChange,
-  application,
+  applicationId,
+  currentState,
+  setApplication,
+  setIsLoading,
 }: Props) => {
-  const [inputType, setInputType] = useState<InputType>({
-    show: false,
-    type: undefined,
-  })
+  const [selected, setSelected] = useState<ApplicationState | undefined>()
 
   const changeApplicationState = useApplicationState()
 
   const saveStateApplication = async (
-    application: Application,
+    applicationId: string,
     state: ApplicationState,
     amount?: number,
     rejection?: string,
+    comment?: string,
   ) => {
-    changeApplicationState(application, state, amount, rejection)
+    setIsLoading(true)
+
     onVisibilityChange((isVisible) => !isVisible)
-    onStateChange(state)
+
+    await changeApplicationState(
+      applicationId,
+      state,
+      eventTypeFromApplicationState[state],
+      amount,
+      rejection,
+      comment,
+    )
+      .then((updatedApplication) => {
+        setIsLoading(false)
+        setApplication(updatedApplication)
+      })
+      .catch(() => {
+        //TODO ERROR STATE
+        setIsLoading(false)
+      })
   }
 
   const closeModal = (): void => {
-    if (!inputType.show) {
-      onVisibilityChange(false)
-    }
+    onVisibilityChange(false)
   }
 
-  const headingText = (inputType: InputType): string => {
-    if (inputType.show) {
-      switch (inputType.type) {
-        case ApplicationState.REJECTED:
-          return 'Synja umsókn'
-        case ApplicationState.APPROVED:
-          return 'Samþykkja umsókn'
-      }
+  const onClickCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation()
+    setSelected(undefined)
+  }
+
+  const stateNeedInput = [
+    {
+      state: ApplicationState.REJECTED,
+      modalHeader: 'Synja umsókn',
+    },
+    {
+      state: ApplicationState.APPROVED,
+      modalHeader: 'Samþykkja umsókn',
+    },
+    {
+      state: ApplicationState.DATANEEDED,
+      modalHeader: 'Vantar gögn',
+    },
+  ]
+
+  const headingText = (state?: ApplicationState): string => {
+    const header =
+      stateNeedInput.find((item) => state === item.state)?.modalHeader ??
+      'Stöðubreyting'
+
+    return header
+  }
+
+  const saveOrNextWindow = (stateOption: ApplicationState) => {
+    const goToNextWindow = stateNeedInput.find(
+      (item) => stateOption === item.state,
+    )
+    if (goToNextWindow) {
+      setSelected(stateOption)
+      return
     }
-    return 'Stöðubreyting'
+
+    saveStateApplication(applicationId, stateOption)
   }
 
   return (
-    <ModalBase
-      baseId="changeStatus"
+    <StateModalContainer
       isVisible={isVisible}
-      onVisibilityChange={(visibility) => {
-        if (visibility !== isVisible) {
-          onVisibilityChange(visibility)
-        }
-      }}
-      className={styles.modalBase}
+      onVisibilityChange={onVisibilityChange}
+      closeModal={closeModal}
     >
-      <Box onClick={closeModal} className={styles.modalContainer}>
-        <Box
-          position="relative"
-          borderRadius="large"
-          overflow="hidden"
-          background="white"
-          className={styles.modal}
-        >
-          <Box
-            paddingLeft={4}
-            paddingY={2}
-            background="blue400"
-            className={styles.modalHeadline}
-          >
-            <Text fontWeight="semiBold" color="white">
-              {headingText(inputType)}
-            </Text>
-          </Box>
-
-          <Box
-            display="flex"
-            className={cn({
-              [`${styles.container}`]: true,
-              [`${styles.showInput}`]: inputType.show,
-            })}
-          >
-            <OptionsModal
-              state={application.state}
-              onClick={(e, stateOption) => {
-                e.stopPropagation()
-                if (
-                  stateOption === ApplicationState.APPROVED ||
-                  stateOption === ApplicationState.REJECTED
-                ) {
-                  setInputType({
-                    show: !inputType.show,
-                    type: stateOption,
-                  })
-                } else {
-                  saveStateApplication(application, stateOption)
-                }
-              }}
-            />
-
-            <InputModal
-              onShowInputChange={(e) => {
-                e.stopPropagation()
-                setInputType({
-                  ...inputType,
-                  show: false,
-                })
-              }}
-              type={inputType.type}
-              onSaveState={(e, amount, comment) => {
-                e.stopPropagation()
-                if (inputType.type) {
-                  saveStateApplication(
-                    application,
-                    inputType.type,
-                    amount,
-                    comment,
-                  )
-                }
-              }}
-            />
-          </Box>
-        </Box>
+      <Box
+        paddingLeft={4}
+        paddingY={2}
+        background="blue400"
+        className={styles.modalHeadline}
+      >
+        <Text fontWeight="semiBold" color="white">
+          {headingText(selected)}
+        </Text>
       </Box>
-    </ModalBase>
+
+      <Box padding={4}>
+        <AnimateSharedLayout type="crossfade">
+          <OptionsModal
+            isModalVisable={selected === undefined}
+            activeState={currentState}
+            onClick={(e, stateOption) => {
+              e.stopPropagation()
+
+              saveOrNextWindow(stateOption)
+            }}
+          />
+
+          <DataNeededModal
+            isModalVisable={selected === ApplicationState.DATANEEDED}
+            onCancel={onClickCancel}
+            onSaveApplication={(comment?: string) => {
+              if (!selected) {
+                return
+              }
+              saveStateApplication(
+                applicationId,
+                selected,
+                undefined,
+                undefined,
+                comment,
+              )
+            }}
+          />
+
+          <AcceptModal
+            isModalVisable={selected === ApplicationState.APPROVED}
+            onCancel={onClickCancel}
+            onSaveApplication={(amount: number) => {
+              if (!selected) {
+                return
+              }
+              saveStateApplication(applicationId, selected, amount)
+            }}
+          />
+
+          <RejectModal
+            isModalVisable={selected === ApplicationState.REJECTED}
+            onCancel={onClickCancel}
+            onSaveApplication={(reasonForRejection?: string) => {
+              if (!selected) {
+                return
+              }
+              saveStateApplication(
+                applicationId,
+                selected,
+                undefined,
+                reasonForRejection,
+              )
+            }}
+          />
+        </AnimateSharedLayout>
+      </Box>
+    </StateModalContainer>
   )
 }
 

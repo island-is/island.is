@@ -39,6 +39,8 @@ export const Users: React.FC = () => {
         return 'Saksóknari'
       case UserRole.REGISTRAR:
         return 'Dómritari'
+      case UserRole.STAFF:
+        return 'Starfsmaður'
     }
   }
 

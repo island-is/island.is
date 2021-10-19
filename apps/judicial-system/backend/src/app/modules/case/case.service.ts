@@ -16,7 +16,10 @@ import {
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import { IntegratedCourts } from '@island.is/judicial-system/consts'
-import { CaseType, SessionArrangements } from '@island.is/judicial-system/types'
+import {
+  isRestrictionCase,
+  SessionArrangements,
+} from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
@@ -26,6 +29,7 @@ import {
   getRulingPdfAsString,
   getCasefilesPdfAsString,
   writeFile,
+  getCustodyNoticePdfAsString,
 } from '../../formatters'
 import { Institution } from '../institution'
 import { User } from '../user'
@@ -44,6 +48,11 @@ const standardIncludes: Includeable[] = [
   {
     model: Institution,
     as: 'court',
+  },
+  {
+    model: User,
+    as: 'creatingProsecutor',
+    include: [{ model: Institution, as: 'institution' }],
   },
   {
     model: User,
@@ -231,8 +240,7 @@ export class CaseService {
 
     if (
       existingCase.defenderEmail &&
-      (existingCase.type === CaseType.CUSTODY ||
-        existingCase.type === CaseType.TRAVEL_BAN ||
+      (isRestrictionCase(existingCase.type) ||
         existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT)
     ) {
       promises.push(
@@ -244,23 +252,6 @@ export class CaseService {
           existingCase.courtCaseNumber,
           signedRulingPdf,
           `${existingCase.court?.name} hefur sent þér endurrit úr þingbók í máli ${existingCase.courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.`,
-        ),
-      )
-    }
-
-    if (
-      existingCase.type === CaseType.CUSTODY ||
-      existingCase.type === CaseType.TRAVEL_BAN
-    ) {
-      promises.push(
-        this.sendEmail(
-          {
-            name: 'Fangelsismálastofnun',
-            address: environment.notifications.prisonAdminEmail,
-          },
-          existingCase.courtCaseNumber,
-          signedRulingPdf,
-          'Sjá viðhengi',
         ),
       )
     }
@@ -320,6 +311,7 @@ export class CaseService {
 
     return this.caseModel.create({
       ...caseToCreate,
+      creatingProsecutorId: user?.id,
       prosecutorId: user?.id,
     })
   }
@@ -341,19 +333,6 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
-  async getRulingPdf(existingCase: Case): Promise<string> {
-    this.logger.debug(
-      `Getting the ruling for case ${existingCase.id} as a pdf document`,
-    )
-
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    return getRulingPdfAsString(existingCase, intl.formatMessage)
-  }
-
   async getRequestPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
       `Getting the request for case ${existingCase.id} as a pdf document`,
@@ -365,6 +344,30 @@ export class CaseService {
     )
 
     return getRequestPdfAsString(existingCase, intl.formatMessage)
+  }
+
+  async getRulingPdf(
+    existingCase: Case,
+    shortversion = false,
+  ): Promise<string> {
+    this.logger.debug(
+      `Getting the ruling for case ${existingCase.id} as a pdf document`,
+    )
+
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    return getRulingPdfAsString(existingCase, intl.formatMessage, shortversion)
+  }
+
+  async getCustodyPdf(existingCase: Case): Promise<string> {
+    this.logger.debug(
+      `Getting the custody notice for case ${existingCase.id} as a pdf document`,
+    )
+
+    return getCustodyNoticePdfAsString(existingCase)
   }
 
   async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
@@ -460,6 +463,7 @@ export class CaseService {
       legalArguments: existingCase.legalArguments,
       requestProsecutorOnlySession: existingCase.requestProsecutorOnlySession,
       prosecutorOnlySessionRequest: existingCase.prosecutorOnlySessionRequest,
+      creatingProsecutorId: user.id,
       prosecutorId: user.id,
       parentCaseId: existingCase.id,
     })

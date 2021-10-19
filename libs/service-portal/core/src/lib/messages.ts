@@ -329,6 +329,10 @@ export const m = defineMessages({
     id: 'service.portal:endorsements',
     defaultMessage: 'Meðmæli',
   },
+  endorsementsAdmin: {
+    id: 'service.portal:endorsements-admin',
+    defaultMessage: 'Meðmæli - Admin',
+  },
   educationLicense: {
     id: 'service.portal:educationLicense',
     defaultMessage: 'Starfsleyfi',
@@ -372,6 +376,10 @@ export const m = defineMessages({
   financeLocalTax: {
     id: 'service.portal:finance-local-tax',
     defaultMessage: 'Útsvar',
+  },
+  searchPlaceholder: {
+    id: 'service.portal:search-placeholder',
+    defaultMessage: 'Sláðu inn leitarorð',
   },
   actions: {
     id: 'service.portal:actions',

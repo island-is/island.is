@@ -1,11 +1,20 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
+import { json, Op } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { Endorsement } from '../endorsement/models/endorsement.model'
+import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
+
+import { paginate } from '@island.is/nest/pagination'
+import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -21,11 +30,17 @@ export class EndorsementListService {
     private logger: Logger,
   ) {}
 
-  async findListsByTags(tags: string[]) {
+  async findListsByTags(tags: string[], query: any) {
     this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
     // TODO: Add option to get only open endorsement lists
 
-    return this.endorsementListModel.findAll({
+    return await paginate({
+      Model: this.endorsementListModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'ASC']],
       where: {
         tags: { [Op.overlap]: tags },
       },
@@ -45,18 +60,50 @@ export class EndorsementListService {
     return result
   }
 
-  async findAllEndorsementsByNationalId(nationalId: string) {
+  async findAllEndorsementsByNationalId(nationalId: string, query: any) {
     this.logger.debug(
       `Finding endorsements for single national id ${nationalId}`,
     )
-    return this.endorsementModel.findAll({
+
+    return await paginate({
+      Model: this.endorsementModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'DESC']],
       where: { endorser: nationalId },
       include: [
         {
           model: EndorsementList,
-          attributes: ['id', 'title', 'description', 'tags', 'closedDate'],
+          attributes: [
+            'id',
+            'title',
+            'description',
+            'tags',
+            'closedDate',
+            'openedDate',
+          ],
         },
       ],
+    })
+  }
+
+  async findAllEndorsementListsByNationalId(nationalId: string, query: any) {
+    this.logger.debug(
+      `Finding endorsement lists created by single national id ${nationalId}`,
+    )
+
+    return await paginate({
+      Model: this.endorsementListModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'ASC']],
+      where: {
+        owner: nationalId,
+      },
     })
   }
 
@@ -65,13 +112,89 @@ export class EndorsementListService {
     return await endorsementList.update({ closedDate: new Date() })
   }
 
-  async open(endorsementList: EndorsementList): Promise<EndorsementList> {
+  async open(
+    endorsementList: EndorsementList,
+    newDate: ChangeEndorsmentListClosedDateDto,
+  ): Promise<EndorsementList> {
     this.logger.info(`Opening endorsement list: ${endorsementList.id}`)
-    return await endorsementList.update({ closedDate: null })
+    return await endorsementList.update({
+      closedDate: newDate.closedDate,
+    })
+  }
+
+  async lock(endorsementList: EndorsementList): Promise<EndorsementList> {
+    this.logger.info(`Locking endorsement list: ${endorsementList.id}`)
+    return await endorsementList.update({ adminLock: true })
+  }
+
+  async unlock(endorsementList: EndorsementList): Promise<EndorsementList> {
+    this.logger.info(`Unlocking endorsement list: ${endorsementList.id}`)
+    return await endorsementList.update({ adminLock: false })
   }
 
   async create(list: CreateInput) {
+    if (!list.openedDate || !list.closedDate) {
+      throw new BadRequestException([
+        'Body missing openedDate or closedDate value.',
+      ])
+    }
+    if (list.openedDate >= list.closedDate) {
+      throw new BadRequestException([
+        'openedDate can not be bigger than closedDate.',
+      ])
+    }
+    if (new Date() >= list.closedDate) {
+      throw new BadRequestException([
+        'closedDate can not have already passed on creation of Endorsement List',
+      ])
+    }
     this.logger.info(`Creating endorsement list: ${list.title}`)
     return this.endorsementListModel.create(list)
+  }
+
+  // generic reusable query with pagination defaults
+  async findListsGenericQuery(query: any, where: any = {}) {
+    return await paginate({
+      Model: this.endorsementListModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'DESC']],
+      where: where,
+    })
+  }
+
+  // generic get open lists
+  async findOpenListsTaggedGeneralPetition(query: any) {
+    const date_ob = new Date()
+    try {
+      const where = {
+        tags: { [Op.eq]: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS },
+        openedDate: { [Op.lt]: date_ob },
+        closedDate: { [Op.gt]: date_ob },
+      }
+      return await this.findListsGenericQuery(query, where)
+    } catch (error) {
+      throw new NotFoundException()
+    }
+  }
+
+  async findSingleOpenListTaggedGeneralPetition(
+    listId: string,
+  ): Promise<EndorsementList | null> {
+    const date_ob = new Date()
+    const result = await this.endorsementListModel.findOne({
+      where: {
+        id: listId,
+        tags: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
+        openedDate: { [Op.lt]: date_ob },
+        closedDate: { [Op.gt]: date_ob },
+      },
+    })
+    if (!result) {
+      throw new NotFoundException()
+    }
+    return result
   }
 }

@@ -6,8 +6,8 @@ import * as styles from './application.treat'
 
 import { useQuery } from '@apollo/client'
 import {
-  GetApplicationQuery,
-  GetMunicipalityQuery,
+  ApplicationQuery,
+  MunicipalityQuery,
 } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 import {
@@ -56,14 +56,16 @@ const ApplicationProfile = () => {
 
   const [isAidModalVisible, setAidModalVisible] = useState(false)
 
-  const { data, loading } = useQuery<ApplicantData>(GetApplicationQuery, {
+  const [isLoading, setIsLoading] = useState(false)
+
+  const { data, loading } = useQuery<ApplicantData>(ApplicationQuery, {
     variables: { input: { id: router.query.id } },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
   const { data: dataMunicipality } = useQuery<MunicipalityData>(
-    GetMunicipalityQuery,
+    MunicipalityQuery,
     {
       variables: { input: { id: 'hfj' } },
       fetchPolicy: 'no-cache',
@@ -154,7 +156,7 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Sími',
-        content: formatPhoneNumber(application.phoneNumber),
+        content: formatPhoneNumber(application.phoneNumber ?? ''),
         link: 'tel:' + application.phoneNumber,
       },
       {
@@ -218,7 +220,7 @@ const ApplicationProfile = () => {
     ]
 
     return (
-      <>
+      <LoadingContainer isLoading={isLoading} loader={<ApplicationSkeleton />}>
         <Box
           marginTop={10}
           marginBottom={15}
@@ -231,6 +233,8 @@ const ApplicationProfile = () => {
                 (isStateModalVisible) => !isStateModalVisible,
               )
             }}
+            setApplication={setApplication}
+            setIsLoading={setIsLoading}
           />
 
           <Profile
@@ -268,13 +272,10 @@ const ApplicationProfile = () => {
             onVisibilityChange={(isVisibleBoolean) => {
               setStateModalVisible(isVisibleBoolean)
             }}
-            onStateChange={(applicationState: ApplicationState) => {
-              setApplication({
-                ...application,
-                state: applicationState,
-              })
-            }}
-            application={application}
+            setApplication={setApplication}
+            applicationId={application.id}
+            currentState={application.state}
+            setIsLoading={setIsLoading}
           />
         )}
 
@@ -288,7 +289,7 @@ const ApplicationProfile = () => {
             }}
           />
         )}
-      </>
+      </LoadingContainer>
     )
   }
 

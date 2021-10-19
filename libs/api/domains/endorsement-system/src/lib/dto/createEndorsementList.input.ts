@@ -1,5 +1,12 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator'
+import {
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateNested,
+  IsBoolean,
+  IsDate,
+} from 'class-validator'
 import { Type } from 'class-transformer'
 import graphqlTypeJson from 'graphql-type-json'
 import { EndorsementListDtoTagsEnum } from '../../../gen/fetch'
@@ -38,4 +45,14 @@ export class CreateEndorsementListDto {
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsOptional()
   meta!: object | null
+
+  @Field(() => Date)
+  closedDate!: Date
+
+  @Field(() => Date)
+  openedDate!: Date
+
+  @Field()
+  @IsBoolean()
+  adminLock!: boolean
 }

@@ -10,6 +10,7 @@ import {
 
 import { Case } from '../models'
 import { transformCase } from './case.transformer'
+import { maskCase } from './case.mask'
 
 @Injectable()
 export class CasesInterceptor implements NestInterceptor {
@@ -17,7 +18,7 @@ export class CasesInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((cases: Case[]) => {
         return cases.map((retCase) => {
-          return transformCase(retCase)
+          return maskCase(transformCase(retCase))
         })
       }),
     )
