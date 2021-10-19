@@ -9,10 +9,12 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { trace } from '@gamechanger/datadog-apm'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('clients')
 @Controller('clients')
+@trace()
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 

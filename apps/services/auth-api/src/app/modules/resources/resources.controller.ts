@@ -14,10 +14,12 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
+import { trace } from '@gamechanger/datadog-apm'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('resources')
 @Controller()
+@trace()
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 

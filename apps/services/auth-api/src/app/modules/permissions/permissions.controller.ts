@@ -19,9 +19,11 @@ import {
   CurrentUser,
   IdsAuthGuard,
 } from '@island.is/auth-nest-tools'
+import { trace } from '@gamechanger/datadog-apm'
 
 @ApiTags('permissions')
 @Controller('permissions')
+@trace()
 export class PermissionsController {
   constructor(
     private readonly accessService: AccessService,
