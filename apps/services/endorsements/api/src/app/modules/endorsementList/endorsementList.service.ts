@@ -12,7 +12,7 @@ import { EndorsementList } from './endorsementList.model'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { Endorsement } from '../endorsement/models/endorsement.model'
 import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
-
+import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
@@ -131,6 +131,12 @@ export class EndorsementListService {
     this.logger.info(`Unlocking endorsement list: ${endorsementList.id}`)
     return await endorsementList.update({ adminLock: false })
   }
+
+  async updateEndorsementList( endorsementList: EndorsementList,
+    newData: UpdateEndorsementListDto): Promise<EndorsementList> {
+      this.logger.info(`Updating endorsement list: ${endorsementList.id}`)
+      return await endorsementList.update({...endorsementList, ...newData})
+    }
 
   async create(list: CreateInput) {
     if (!list.openedDate || !list.closedDate) {
