@@ -6,7 +6,6 @@ import {
   User,
 } from '@island.is/financial-aid/shared/lib'
 
-import { useRouter } from 'next/router'
 import { ApolloError } from 'apollo-client'
 
 import useMuncipality from '@island.is/financial-aid-web/osk/src/utils/hooks/useMuncipality'
@@ -16,7 +15,7 @@ import { ServiceCenter } from '@island.is/financial-aid/shared/data'
 
 interface AppProvider {
   myApplication?: Application
-  loading: boolean
+  loading?: boolean
   error?: ApolloError
   municipality?: Municipality
   isAuthenticated?: boolean
@@ -30,7 +29,6 @@ interface Props {
 }
 
 export const AppContext = createContext<AppProvider>({
-  loading: true,
   setUser: () => undefined,
 })
 
