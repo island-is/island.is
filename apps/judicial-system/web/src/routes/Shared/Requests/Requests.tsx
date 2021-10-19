@@ -130,7 +130,7 @@ export const Requests: React.FC = () => {
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
       if (isRestrictionCase(caseToOpen.type)) {
         router.push(
-          `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${caseToOpen.id}`,
+          `${Constants.COURT_SINGLE_REQUEST_BASE_ROUTE}/${caseToOpen.id}`,
         )
       } else {
         router.push(`${Constants.IC_OVERVIEW_ROUTE}/${caseToOpen.id}`)
@@ -214,9 +214,7 @@ export const Requests: React.FC = () => {
                   isPrisonUser || isPrisonAdminUser ? (
                     <PastRequests
                       cases={activeCases}
-                      onRowClick={() => {
-                        throw new Error('Function not implemented.')
-                      }}
+                      onRowClick={handleRowClick}
                       isHighCourtUser={false}
                     />
                   ) : (
