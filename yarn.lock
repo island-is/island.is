@@ -3824,10 +3824,10 @@
   resolved "https://registry.yarnpkg.com/@hugsmidjan/qj/-/qj-4.7.0.tgz#ef2793bf1f349bc01b2118dc2d20d6f22163fa84"
   integrity sha512-/kIAN1WvMTlzmtKXgIRl57KbTpAd9UmNgPfcO0NtZNllwhfKDRVOrN9c6ZeBxnrfWsYBP6/BFldYur1aBDBO2g==
 
-"@hugsmidjan/regulations-editor@0.4.5":
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.4.5.tgz#4aab80c01b1301c3b02e950d4d43e5ad1df6c176"
-  integrity sha512-G8jco4WdXZ9Nuxa9MJzP6/U6jMCcy3kfXQKFdEVlJloef73DqceuO4B5R7i/KkxuLC6t6JQ5BzXbe5MKqVKC/Q==
+"@hugsmidjan/regulations-editor@0.4.7":
+  version "0.4.7"
+  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.4.7.tgz#b78fe3ae70535d6d54bdb56d0480d182b7bc7e21"
+  integrity sha512-9GJOqp2P5dMjks6kWgegWtwyExzR8nqw3iZhLRwh6Z+51BKSqbX1mX7mkPTaUacxI0U0WZRxBlStKy1aXJ+LnA==
   dependencies:
     "@hugsmidjan/qj" "^4.7.0"
     "@tinymce/tinymce-react" "^3.8.4"

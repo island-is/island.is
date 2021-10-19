@@ -1,27 +1,16 @@
 import React, { useContext } from 'react'
 import cn from 'classnames'
-
 import LogoSvg from './LogoSvg'
-import { useRouter } from 'next/router'
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { LoadingContainer } from '@island.is/financial-aid-web/veita/src/components'
 import { AdminContext } from '../AdminProvider/AdminProvider'
 import { logoKeyFromMunicipalityCode } from '@island.is/financial-aid/shared/lib'
-
-interface MunicipalityData {
-  municipality: {
-    municipalityId: string
-    homepage: string
-  }
-}
 
 interface LogoProps {
   className?: string
 }
 
 const LogoMunicipality = ({ className }: LogoProps) => {
-  const router = useRouter()
-
   const { admin } = useContext(AdminContext)
 
   const logoSize = 48
