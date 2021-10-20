@@ -7,13 +7,10 @@ import {
 } from '@nestjs/common'
 
 import { completedCaseStates } from '@island.is/judicial-system/types'
-import { CaseService } from '../case.service'
 import { Case } from '../models'
 
 @Injectable()
 export class CaseNotCompletedGuard implements CanActivate {
-  constructor(private caseService: CaseService) {}
-
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
 
