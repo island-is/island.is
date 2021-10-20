@@ -139,9 +139,10 @@ export class ApplicationController {
   @ApiOkResponse({
     description: 'Gets all existing applications filters',
   })
-  getAllFilters(): Promise<ApplicationFilters> {
+  async getAllFilters(@CurrentUser() user: User): Promise<ApplicationFilters> {
     this.logger.debug('Application controller: Getting application filters')
-    return this.applicationService.getAllFilters()
+    const staff = await this.staffService.findByNationalId(user.nationalId)
+    return this.applicationService.getAllFilters(staff.id)
   }
 
   @Put('id/:id')
@@ -187,9 +188,10 @@ export class ApplicationController {
     @Body() applicationToUpdate: UpdateApplicationDto,
   ): Promise<UpdateApplicationTableResponse> {
     await this.applicationService.update(id, applicationToUpdate, user.name)
+    const staff = await this.staffService.findByNationalId(user.nationalId)
     return {
       applications: await this.applicationService.getAll(stateUrl),
-      filters: await this.applicationService.getAllFilters(),
+      filters: await this.applicationService.getAllFilters(staff.id),
     }
   }
 

@@ -22,6 +22,15 @@ export enum ApplicationState {
   APPROVED = 'Approved',
 }
 
+export enum ApplicationFiltersEnum {
+  NEW = 'New',
+  INPROGRESS = 'InProgress',
+  DATANEEDED = 'DataNeeded',
+  REJECTED = 'Rejected',
+  APPROVED = 'Approved',
+  MYCASES = 'MyCases',
+}
+
 export enum ApplicationStateUrl {
   NEW = 'New',
   INPROGRESS = 'InProgress',

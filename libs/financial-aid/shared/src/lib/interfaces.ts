@@ -162,6 +162,7 @@ export interface ApplicationFilters {
   DataNeeded: number
   Rejected: number
   Approved: number
+  MyCases: number
 }
 
 export interface Application {

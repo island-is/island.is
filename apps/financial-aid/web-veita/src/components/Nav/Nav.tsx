@@ -20,7 +20,11 @@ import cn from 'classnames'
 import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/src/components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 
 import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
-import { ApplicationState } from '@island.is/financial-aid/shared/lib'
+import {
+  ApplicationFilters,
+  ApplicationFiltersEnum,
+  ApplicationState,
+} from '@island.is/financial-aid/shared/lib'
 
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 
@@ -90,7 +94,7 @@ const Nav = ({ showInMobile }: Props) => {
                       <Text fontWeight="semiBold">{item.label}</Text>
                       <Text fontWeight="semiBold" color="dark300">
                         {item.applicationState
-                          .map((state: ApplicationState) => {
+                          .map((state: ApplicationFiltersEnum) => {
                             if (applicationFilters) {
                               return applicationFilters[state]
                             }
