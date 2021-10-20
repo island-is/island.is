@@ -63,7 +63,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "TZ"
-            value = "EST"
+            value = "UTC"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
