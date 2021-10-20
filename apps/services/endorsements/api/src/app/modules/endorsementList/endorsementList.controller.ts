@@ -65,13 +65,10 @@ export class EndorsementListController {
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get()
   @BypassAuth()
-  
   async findByTags(
     @Query() query: FindTagPaginationComboDto,
-
   ): Promise<PaginatedEndorsementListDto> {
     return await this.endorsementListService.findListsByTags(
-      
       // query parameters of length one are not arrays, we normalize all tags input to arrays here
       !Array.isArray(query.tags) ? [query.tags] : query.tags,
       query,
@@ -121,19 +118,6 @@ export class EndorsementListController {
   ): Promise<PaginatedEndorsementDto> {
     return await this.endorsementListService.findAllEndorsementsByNationalId(
       user.nationalId,
-      query,
-    )
-  }
-
-  // SEARCH LISTS
-  @ApiOperation({ summary: 'searchOpenLists' })
-  @Get('searchOpenLists')
-  @ApiOkResponse({ type: PaginatedEndorsementListDto })
-  @BypassAuth() ///***************+REMOVE LATER */
-  async searchOpenLists(
-    @Query() query: SearchPaginationComboDto,
-  ): Promise<PaginatedEndorsementListDto> {
-    return await this.endorsementListService.searchOpenListsTaggedGeneralPetition(
       query,
     )
   }

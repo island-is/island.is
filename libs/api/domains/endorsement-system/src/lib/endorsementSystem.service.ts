@@ -168,8 +168,8 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
-   // open close lock unlock
-   async endorsementListControllerClose(
+  // open close lock unlock
+  async endorsementListControllerClose(
     endorsementList: EndorsementListControllerCloseRequest,
     auth: Auth,
   ) {
@@ -178,33 +178,33 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
-    // open close lock unlock
-    async endorsementListControllerOpen(
-      endorsementList: EndorsementListControllerOpenRequest,
-      auth: Auth,
-    ) {
-      return await this.endorsementListApiWithAuth(auth)
-        .endorsementListControllerOpen(endorsementList)
-        .catch(this.handleError.bind(this))
-    }
+  // open close lock unlock
+  async endorsementListControllerOpen(
+    endorsementList: EndorsementListControllerOpenRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerOpen(endorsementList)
+      .catch(this.handleError.bind(this))
+  }
 
-     // open close lock unlock
-     async endorsementListControllerLock(
-      endorsementList: EndorsementListControllerLockRequest,
-      auth: Auth,
-    ) {
-      return await this.endorsementListApiWithAuth(auth)
-        .endorsementListControllerLock(endorsementList)
-        .catch(this.handleError.bind(this))
-    }
+  // open close lock unlock
+  async endorsementListControllerLock(
+    endorsementList: EndorsementListControllerLockRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerLock(endorsementList)
+      .catch(this.handleError.bind(this))
+  }
 
-     // open close lock unlock
-     async endorsementListControllerUnlock(
-      endorsementList: EndorsementListControllerUnlockRequest,
-      auth: Auth,
-    ) {
-      return await this.endorsementListApiWithAuth(auth)
-        .endorsementListControllerUnlock(endorsementList)
-        .catch(this.handleError.bind(this))
-    }
+  // open close lock unlock
+  async endorsementListControllerUnlock(
+    endorsementList: EndorsementListControllerUnlockRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerUnlock(endorsementList)
+      .catch(this.handleError.bind(this))
+  }
 }

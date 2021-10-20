@@ -192,22 +192,21 @@ export class EndorsementSystemResolver {
   ): Promise<EndorsementList> {
     return await this.endorsementSystemService.endorsementListControllerClose(
       input,
-      user
+      user,
     )
   }
 
-
-   // PUT /endorsement-list/{listId}/open
-   @Mutation(() => EndorsementList)
-   async endorsementSystemOpenEndorsementList(
-     @Args('input') input: OpenListInput,
-     @CurrentUser() user: User,
-   ): Promise<EndorsementList> {
-     return await this.endorsementSystemService.endorsementListControllerOpen(
+  // PUT /endorsement-list/{listId}/open
+  @Mutation(() => EndorsementList)
+  async endorsementSystemOpenEndorsementList(
+    @Args('input') input: OpenListInput,
+    @CurrentUser() user: User,
+  ): Promise<EndorsementList> {
+    return await this.endorsementSystemService.endorsementListControllerOpen(
       input,
-      user
-     )
-   }
+      user,
+    )
+  }
 
   // PUT /endorsement-list/{listId}/lock
   @Mutation(() => EndorsementList)
@@ -217,7 +216,7 @@ export class EndorsementSystemResolver {
   ): Promise<EndorsementList> {
     return await this.endorsementSystemService.endorsementListControllerLock(
       input,
-      user
+      user,
     )
   }
 
@@ -229,9 +228,7 @@ export class EndorsementSystemResolver {
   ): Promise<EndorsementList> {
     return await this.endorsementSystemService.endorsementListControllerUnlock(
       input,
-      user
+      user,
     )
   }
-
-
 }

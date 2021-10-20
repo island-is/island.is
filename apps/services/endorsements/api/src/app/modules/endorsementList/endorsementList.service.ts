@@ -165,18 +165,6 @@ export class EndorsementListService {
     return this.endorsementListModel.create(list)
   }
 
-  // generic search open lists
-  async searchOpenListsTaggedGeneralPetition(query: any) {
-    const where = {
-      tags: { [Op.eq]: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS }, // move to main query ?
-      closedDate: null, // [Op.between]: ['openedDate', 'closedDate']
-      title: {
-        [Op.iLike]: `%${query.search_query}%`, // ilike ?
-      },
-    }
-    return await this.findListsGenericQuery(query, where)
-  }
-
   // generic get open lists
   async findOpenListsTaggedGeneralPetition(query: any) {
     const date_ob = new Date()
