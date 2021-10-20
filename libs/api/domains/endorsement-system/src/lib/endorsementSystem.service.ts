@@ -15,6 +15,10 @@ import {
   EndorsementListControllerFindEndorsementsRequest,
   EndorsementListControllerGetGeneralPetitionListRequest,
   EndorsementListControllerGetGeneralPetitionListsRequest,
+  EndorsementListControllerCloseRequest,
+  EndorsementListControllerOpenRequest,
+  EndorsementListControllerLockRequest,
+  EndorsementListControllerUnlockRequest,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -163,4 +167,44 @@ export class EndorsementSystemService {
       .endorsementListControllerCreate(endorsementList)
       .catch(this.handleError.bind(this))
   }
+
+   // open close lock unlock
+   async endorsementListControllerClose(
+    endorsementList: EndorsementListControllerCloseRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerClose(endorsementList)
+      .catch(this.handleError.bind(this))
+  }
+
+    // open close lock unlock
+    async endorsementListControllerOpen(
+      endorsementList: EndorsementListControllerOpenRequest,
+      auth: Auth,
+    ) {
+      return await this.endorsementListApiWithAuth(auth)
+        .endorsementListControllerOpen(endorsementList)
+        .catch(this.handleError.bind(this))
+    }
+
+     // open close lock unlock
+     async endorsementListControllerLock(
+      endorsementList: EndorsementListControllerLockRequest,
+      auth: Auth,
+    ) {
+      return await this.endorsementListApiWithAuth(auth)
+        .endorsementListControllerLock(endorsementList)
+        .catch(this.handleError.bind(this))
+    }
+
+     // open close lock unlock
+     async endorsementListControllerUnlock(
+      endorsementList: EndorsementListControllerUnlockRequest,
+      auth: Auth,
+    ) {
+      return await this.endorsementListApiWithAuth(auth)
+        .endorsementListControllerUnlock(endorsementList)
+        .catch(this.handleError.bind(this))
+    }
 }
