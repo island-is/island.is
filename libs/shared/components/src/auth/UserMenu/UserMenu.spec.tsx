@@ -1,4 +1,5 @@
 import React, { FC, ReactNode } from 'react'
+import { BrowserRouter as Router } from 'react-router-dom'
 import {
   render,
   screen,
@@ -14,6 +15,7 @@ import { MockedAuthenticator, MockUser } from '@island.is/auth/react'
 import { Features, MockedFeatureFlagProvider } from '@island.is/feature-flags'
 import { UserMenu } from './UserMenu'
 import { ACTOR_DELEGATIONS } from './actorDelegations.graphql'
+import { GET_ISLYKILL_SETTINGS } from '@island.is/service-portal/graphql'
 import { ActorDelegationsQuery } from '../../../gen/graphql'
 
 const delegation = {
@@ -35,12 +37,27 @@ const mocks = [
       } as ActorDelegationsQuery,
     },
   },
+  {
+    request: {
+      query: GET_ISLYKILL_SETTINGS,
+    },
+    result: {
+      data: {
+        getIslykillSettings: {
+          email: 'test@test.is',
+          mobile: '0000000',
+        },
+      },
+    },
+  },
 ]
 
 const wrapper: FC = ({ children }) => (
   <MockedFeatureFlagProvider flags={[Features.delegationsEnabled]}>
     <MockedProvider mocks={mocks} addTypename={false}>
-      <LocaleProvider skipPolyfills>{children}</LocaleProvider>
+      <Router>
+        <LocaleProvider skipPolyfills>{children}</LocaleProvider>
+      </Router>
     </MockedProvider>
   </MockedFeatureFlagProvider>
 )
