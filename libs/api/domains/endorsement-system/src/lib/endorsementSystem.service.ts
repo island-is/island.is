@@ -7,7 +7,7 @@ import {
   EndorsementControllerCreateRequest,
   EndorsementControllerDeleteRequest,
   EndorsementListControllerCreateRequest,
-  // EndorsementListControllerFindOneRequest,
+  EndorsementListControllerFindOneRequest,
   EndorsementControllerBulkCreateRequest,
   EndorsementControllerFindAllRequest,
   EndorsementControllerFindByAuthRequest,
@@ -48,8 +48,8 @@ export class EndorsementSystemService {
     return this.endorsementListApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getOwnerName(input: {listId: string}, auth: Auth,) {
-    return await this.endorsementListApiWithAuth(auth)
+  async endorsementListControllerGetOwnerName(input: {listId: string}) {
+    return await this.endorsementListApi
     .endorsementListControllerGetOwnerInfo(input)
     .catch(this.handleError.bind(this))
   }
@@ -153,14 +153,14 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
-  // async endorsementListControllerFindOne(
-  //   input: EndorsementListControllerFindOneRequest,
-  //   auth: Auth,
-  // ) {
-  //   return await this.endorsementListApiWithAuth(auth)
-  //     .endorsementListControllerFindOne(input)
-  //     .catch(this.handleError.bind(this))
-  // }
+  async endorsementListControllerFindOne(
+    input: EndorsementListControllerFindOneRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerFindOne(input)
+      .catch(this.handleError.bind(this))
+  }
 
   async endorsementListControllerCreate(
     endorsementList: EndorsementListControllerCreateRequest,

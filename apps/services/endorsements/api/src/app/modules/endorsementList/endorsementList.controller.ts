@@ -275,17 +275,11 @@ export class EndorsementListController {
     })
   }
 
-  @ApiOkResponse({
-    description: 'Finds a single endorsements list by id',
-    type: OwnerInfoDto,
-  })
-  @ApiOperation({ summary: 'Finds a single endorsements list by id' })
+
+  @ApiOperation({ summary: 'Fetches owner info from national registry' })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.main)
-  @Get(':listId')
-  @Audit<EndorsementList>({
-    resources: (endorsementList) => endorsementList.id,
-  })
+  @BypassAuth()
+  @Get(':listId/ownerInfo')
   async getOwnerInfo(
     @Param(
       'listId',
@@ -294,8 +288,6 @@ export class EndorsementListController {
     )
     endorsementList: EndorsementList,
   ): Promise<OwnerInfoDto> {
-    // fetch name from national regestry api from the list owner
-
     return await this.endorsementListService.getOwnerInfo(endorsementList)
   }
   
