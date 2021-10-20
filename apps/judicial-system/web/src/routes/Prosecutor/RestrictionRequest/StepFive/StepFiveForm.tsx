@@ -7,6 +7,7 @@ import {
   InputFileUpload,
   Input,
   Tooltip,
+  Checkbox,
 } from '@island.is/island-ui/core'
 import { PoliceCaseFile } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -65,11 +66,29 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         </Box>
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
+            {formatMessage(m.sections.policeCaseFiles.heading, {
+              policeCaseNumber: workingCase.policeCaseNumber,
+            })}
+          </Text>
+        </Box>
+        <Box marginBottom={5}>
+          {policeCaseFiles.map((policeCaseFile, index) => {
+            return (
+              <Box marginBottom={index + 1 === policeCaseFiles.length ? 0 : 2}>
+                <Checkbox
+                  backgroundColor="blue"
+                  label={policeCaseFile.heitiSkjals}
+                />
+              </Box>
+            )
+          })}
+        </Box>
+        <Box marginBottom={3}>
+          <Text variant="h3" as="h3">
             {formatMessage(m.sections.files.heading)}
           </Text>
         </Box>
-        <Box marginBottom={10}>
-          {policeCaseFiles && <Text>policeCaseFiles</Text>}
+        <Box marginBottom={5}>
           <ContentBlock>
             <InputFileUpload
               fileList={files}

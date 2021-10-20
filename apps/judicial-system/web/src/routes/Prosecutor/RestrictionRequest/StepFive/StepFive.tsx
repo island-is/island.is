@@ -62,7 +62,40 @@ export const StepFive: React.FC = () => {
         <StepFiveForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
-          policeCaseFiles={policeData?.policeCaseFiles}
+          policeCaseFiles={
+            policeData?.policeCaseFiles || [
+              {
+                fkRMal_ID: '70cdc78c-d5cf-48eb-a2a2-17287a7ed676',
+                rvMalSkjolMals_ID: 327014,
+                heitiSkjals: 'Vettvangsskýrsla - Umferðalagabrot - LokeApp',
+                flokkurSkjals: 'Lögregluskýrsla',
+              },
+              {
+                fkRMal_ID: '70cdc78c-d5cf-48eb-a2a2-17287a7ed676',
+                rvMalSkjolMals_ID: 327116,
+                heitiSkjals: 'Averkavottorð',
+                flokkurSkjals: 'Áverkavottorð',
+              },
+              {
+                fkRMal_ID: '70cdc78c-d5cf-48eb-a2a2-17287a7ed676',
+                rvMalSkjolMals_ID: 327147,
+                heitiSkjals: 'Rafræn sendingargátt',
+                flokkurSkjals: 'Áverkavottorð',
+              },
+              {
+                fkRMal_ID: '70cdc78c-d5cf-48eb-a2a2-17287a7ed676',
+                rvMalSkjolMals_ID: 326932,
+                heitiSkjals: 'alþjóða',
+                flokkurSkjals: 'Vegna verkbeiðni',
+              },
+              {
+                fkRMal_ID: '70cdc78c-d5cf-48eb-a2a2-17287a7ed676',
+                rvMalSkjolMals_ID: 326896,
+                heitiSkjals: 'Afrit af flugmiða_Test skjal_4',
+                flokkurSkjals: 'Sýnaskrá',
+              },
+            ]
+          }
         />
       ) : null}
     </PageLayout>

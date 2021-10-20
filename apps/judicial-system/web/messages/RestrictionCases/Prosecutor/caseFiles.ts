@@ -44,6 +44,15 @@ export const rcCaseFiles = {
           'Notaður sem titill í "velja gögn til að hlaða upp" takka á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
+    policeCaseFiles: defineMessages({
+      heading: {
+        id:
+          'judicial.system.restriction_cases:case_files.police_case_files.heading',
+        defaultMessage: 'Gögn úr LÖKE-máli {policeCaseNumber}',
+        description:
+          'Notaður sem titill fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
     comments: defineMessages({
       heading: {
         id: 'judicial.system.restriction_cases:case_files.comments.heading',
