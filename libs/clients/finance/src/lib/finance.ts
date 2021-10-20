@@ -43,8 +43,10 @@ export class FinanceService extends RESTDataSource {
     request.headers.set('X-Road-Client', this.options.xroadClientId)
   }
 
-  handleError(error: string): any {
-    this.logger.error(error)
+  handleError(error: string, exception: Error): any {
+    this.logger.error(error, {
+      exception,
+    })
     throw new ApolloError('Failed to resolve request', error)
   }
 
@@ -65,7 +67,7 @@ export class FinanceService extends RESTDataSource {
         },
       )
     } catch (e) {
-      return this.handleError('Failed to get finance status')
+      return this.handleError('Failed to get finance status', e)
     }
     return response
   }
@@ -89,7 +91,7 @@ export class FinanceService extends RESTDataSource {
         },
       )
     } catch (e) {
-      return this.handleError('Failed to get finance status details')
+      return this.handleError('Failed to get finance status details', e)
     }
     return response
   }
@@ -114,7 +116,7 @@ export class FinanceService extends RESTDataSource {
         response = null
       }
     } catch (e) {
-      return this.handleError('Failed to get customer charge type')
+      return this.handleError('Failed to get customer charge type', e)
     }
     return response
   }
@@ -141,7 +143,7 @@ export class FinanceService extends RESTDataSource {
         },
       )
     } catch (e) {
-      return this.handleError('Failed to get customer records')
+      return this.handleError('Failed to get customer records', e)
     }
     return response
   }
@@ -166,7 +168,7 @@ export class FinanceService extends RESTDataSource {
         },
       )
     } catch (e) {
-      return this.handleError('Failed to get finance document list')
+      return this.handleError('Failed to get finance document list', e)
     }
     return response
   }
@@ -189,7 +191,7 @@ export class FinanceService extends RESTDataSource {
         },
       )
     } catch (e) {
-      return this.handleError('Failed to get finance document')
+      return this.handleError('Failed to get finance document', e)
     }
     return response
   }
@@ -212,7 +214,7 @@ export class FinanceService extends RESTDataSource {
         },
       )
     } catch (e) {
-      return this.handleError('Failed to get finance annual status document')
+      return this.handleError('Failed to get finance annual status document', e)
     }
     return response
   }
@@ -234,7 +236,7 @@ export class FinanceService extends RESTDataSource {
         },
       )
     } catch (e) {
-      return this.handleError('Failed to get customer tabs')
+      return this.handleError('Failed to get customer tabs', e)
     }
     return response
   }
