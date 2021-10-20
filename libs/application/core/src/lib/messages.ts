@@ -224,4 +224,9 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Svar vantar',
     description: 'Copy when answer is missing',
   },
+  failedDataProvider: {
+    id: 'application.system:fetch.data.error',
+    defaultMessage: 'Villa kom upp við að sækja gögn',
+    description: 'Copy when there was an error in one or more data providers',
+  },
 })
