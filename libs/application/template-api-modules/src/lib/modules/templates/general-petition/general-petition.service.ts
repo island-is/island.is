@@ -82,6 +82,7 @@ export class GeneralPetitionService {
           description: application.answers.aboutList,
           endorsementMetadata: [
             { field: EndorsementMetadataDtoFieldEnum.address },
+            { field: EndorsementMetadataDtoFieldEnum.fullName },
           ],
           tags: [EndorsementListTagsEnum.generalPetition],
           validationRules: [

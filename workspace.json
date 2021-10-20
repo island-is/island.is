@@ -1836,7 +1836,7 @@
             "cypressConfig": "apps/application-system/form-e2e/cypress.json",
             "tsConfig": "apps/application-system/form-e2e/tsconfig.e2e.json",
             "devServerTarget": "application-system-form:serve",
-            "baseUrl": "http://localhost:4200"
+            "baseUrl": "http://localhost:4242"
           },
           "configurations": {
             "production": {
@@ -1847,7 +1847,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n application-system-form-e2e -t react -d dist/apps/application-system/form -c"
+            "command": "yarn e2e-ci -n application-system-form-e2e -t react -p 4242 -d dist/apps/application-system/form -c"
           }
         },
         "lint": {
@@ -3290,10 +3290,26 @@
             "passWithNoTests": true
           }
         },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "[[ '{args.apiVersion}' =~ v1|v2 ]] && >&2 echo \"Missing required --apiVersion, only v1 or v2 are valid\"",
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" -H \"SECRET: $DRIVING_LICENSE_SECRET\" http://localhost:8081/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=RafraentOkuskirteini-{args.apiVersion} -H 'Accept: application/json' > src/{args.apiVersion}/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/{args.apiVersion}/clientConfig.json > _.tmp && mv _.tmp src/{args.apiVersion}/clientConfig.json",
+              "jq '.paths[].post.requestBody.content |= (select(. != null) | with_entries(select(.key == \"application/json\")))' src/{args.apiVersion}/clientConfig.json > _.tmp && mv _.tmp src/{args.apiVersion}/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/driving-license"
+          }
+        },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn openapi-generator -o libs/clients/driving-license/gen/fetch -i libs/clients/driving-license/src/clientConfig.json"
+            "commands": [
+              "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v1 -i libs/clients/driving-license/src/v1/clientConfig.json",
+              "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v2 -i libs/clients/driving-license/src/v2/clientConfig.json"
+            ]
           }
         }
       }
