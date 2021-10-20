@@ -15,6 +15,7 @@ import {
   getNextPeriod,
   NationalRegistryData,
   NavigationProps,
+  Routes,
   useAsyncLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
 
@@ -24,12 +25,9 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 
 const ApplicationInfo = () => {
   const router = useRouter()
-  const {
-    user,
-    setMunicipality,
-    setUser,
-    setNationalRegistryData,
-  } = useContext(AppContext)
+  const { user, setMunicipality, setNationalRegistryData } = useContext(
+    AppContext,
+  )
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
@@ -61,11 +59,21 @@ const ApplicationInfo = () => {
       return
     }
 
-    await setMunicipality(data.nationalRegistryUserV2.address.municipalityCode)
+    const municipality = await setMunicipality(
+      data.nationalRegistryUserV2.address.municipalityCode,
+    )
 
     setNationalRegistryData(data.nationalRegistryUserV2)
 
-    if (navigation?.nextUrl) {
+    console.log(municipality)
+
+    if (municipality === undefined || municipality.active === false) {
+      router.push(
+        Routes.serviceCenter(
+          data.nationalRegistryUserV2.address.municipalityCode,
+        ),
+      )
+    } else if (navigation?.nextUrl) {
       router.push(navigation?.nextUrl)
     }
   }

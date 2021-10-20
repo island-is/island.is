@@ -13,7 +13,7 @@ module.exports = {
             defaultValue: Sequelize.UUIDV4,
           },
           municipality_id: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.STRING,
             allowNull: false,
           },
           own_place: {

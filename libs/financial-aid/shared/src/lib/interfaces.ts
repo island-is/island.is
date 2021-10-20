@@ -253,3 +253,14 @@ export interface NationalRegistryData {
     name: string
   }
 }
+
+export interface ServiceCenter {
+  name: string
+  number: number
+  phone: string
+  address: string
+  addressPostalCode: string
+  postalCodes: number[]
+  active?: boolean
+  link?: string
+}

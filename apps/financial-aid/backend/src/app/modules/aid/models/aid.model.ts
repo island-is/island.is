@@ -25,10 +25,8 @@ export class AidModel extends Model<Aid> {
   id: string
 
   @Column({
-    type: DataType.UUID,
-    primaryKey: true,
+    type: DataType.STRING,
     allowNull: false,
-    defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
   municipalityId: string

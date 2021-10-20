@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 
-import { Municipality } from '@island.is/financial-aid/shared/lib'
-import { gql, useLazyQuery } from '@apollo/client'
-
-interface MunicipalityData {
-  municipality: Municipality
-}
+import {
+  Municipality,
+  useAsyncLazyQuery,
+} from '@island.is/financial-aid/shared/lib'
+import { gql } from '@apollo/client'
 
 const MunicipalityQuery = gql`
   query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
@@ -41,17 +40,12 @@ export const useMunicipality = () => {
 
   const [municipality, setScopedMunicipality] = useState<Municipality>()
 
-  const [getMunicipality] = useLazyQuery<MunicipalityData>(MunicipalityQuery, {
-    fetchPolicy: 'no-cache',
-    onCompleted: (data: { municipality: Municipality }) => {
-      setScopedMunicipality(data.municipality)
-      sessionStorage.setItem(storageKey, JSON.stringify(data.municipality))
+  const getMunicipality = useAsyncLazyQuery<
+    {
+      municipality: Municipality
     },
-    onError: (error) => {
-      // TODO: What should happen here?
-      console.log(error)
-    },
-  })
+    { input: { id: string } }
+  >(MunicipalityQuery)
 
   useEffect(() => {
     setScopedMunicipality(
@@ -62,9 +56,17 @@ export const useMunicipality = () => {
   }, [])
 
   const setMunicipality = async (municipalityId: string) => {
-    getMunicipality({
-      variables: { input: { id: municipalityId } },
-    })
+    try {
+      const { data } = await getMunicipality({
+        input: { id: municipalityId },
+      })
+
+      setScopedMunicipality(data?.municipality)
+      sessionStorage.setItem(storageKey, JSON.stringify(data?.municipality))
+      return data?.municipality
+    } catch {
+      return undefined
+    }
   }
 
   return { municipality, setMunicipality }
