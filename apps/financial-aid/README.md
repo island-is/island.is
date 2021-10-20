@@ -58,7 +58,7 @@ Then you need to turn off web safety, we use the following command: `open -n -a 
 To use national registry service you need to run:
 
 ```bash
-  ./scripts/run-xroad-proxy.sh
+  .api/scripts/run-xroad-proxy.sh
 ```
 
 and make sure the environment variables `XROAD_BASE_PATH_WITH_ENV`, `XROAD_TJODSKRA_MEMBER_CODE`, `XROAD_TJODSKRA_API_PATH` and `XROAD_CLIENT_ID` are available.
