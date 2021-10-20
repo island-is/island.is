@@ -191,7 +191,7 @@ export class FileService {
 
     const success = await this.deleteFileFromDatabase(file.id)
 
-    if (success) {
+    if (success && file.state === CaseFileState.STORED_IN_RVG) {
       // Fire and forget, no need to wait for the result
       this.tryDeleteFileFromS3(file.key)
     }
