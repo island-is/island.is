@@ -3,7 +3,10 @@ import { IsUUID } from 'class-validator'
 import { CreateEndorsementListDto } from './createEndorsementList.input'
 
 @InputType()
-export class UpdateEndorsementListDto extends PickType(CreateEndorsementListDto, ['title', 'description', 'openedDate', 'closedDate'] as const) {}
+export class UpdateEndorsementListDto extends PickType(
+  CreateEndorsementListDto,
+  ['title', 'description', 'openedDate', 'closedDate'] as const,
+) {}
 
 @InputType()
 export class UpdateEndorsementListInput {

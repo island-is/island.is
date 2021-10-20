@@ -132,11 +132,13 @@ export class EndorsementListService {
     return await endorsementList.update({ adminLock: false })
   }
 
-  async updateEndorsementList( endorsementList: EndorsementList,
-    newData: UpdateEndorsementListDto): Promise<EndorsementList> {
-      this.logger.info(`Updating endorsement list: ${endorsementList.id}`)
-      return await endorsementList.update({...endorsementList, ...newData})
-    }
+  async updateEndorsementList(
+    endorsementList: EndorsementList,
+    newData: UpdateEndorsementListDto,
+  ): Promise<EndorsementList> {
+    this.logger.info(`Updating endorsement list: ${endorsementList.id}`)
+    return await endorsementList.update({ ...endorsementList, ...newData })
+  }
 
   async create(list: CreateInput) {
     if (!list.openedDate || !list.closedDate) {

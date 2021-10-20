@@ -251,11 +251,12 @@ export class EndorsementListController {
   }
 
   @ApiOkResponse({
-    description: 'Admin update a single endorsements list by id and request body',
+    description:
+      'Admin update a single endorsements list by id and request body',
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @ApiBody({type: UpdateEndorsementListDto})
+  @ApiBody({ type: UpdateEndorsementListDto })
   @Scopes(EndorsementsScope.main)
   @Put(':listId/update')
   @HasAccessGroup(AccessGroup.Admin)
@@ -271,7 +272,10 @@ export class EndorsementListController {
     )
     endorsementList: EndorsementList,
   ): Promise<EndorsementList> {
-    return await this.endorsementListService.updateEndorsementList(endorsementList, newData)
+    return await this.endorsementListService.updateEndorsementList(
+      endorsementList,
+      newData,
+    )
   }
 
   @ApiOperation({ summary: 'Create an endorsements list' })

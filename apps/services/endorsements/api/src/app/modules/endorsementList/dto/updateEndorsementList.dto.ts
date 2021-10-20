@@ -1,8 +1,4 @@
-import {
-  IsOptional,
-  IsString,
-  IsDate,
-} from 'class-validator'
+import { IsOptional, IsString, IsDate } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -25,5 +21,4 @@ export class UpdateEndorsementListDto {
   @IsDate()
   @Type(() => Date)
   openedDate!: Date
-
 }
