@@ -91,7 +91,7 @@ export class EndorsementSystemResolver {
 
   // GET /endorsement-list ... by tags
   @Query(() => PaginatedEndorsementListResponse)
-  @BypassAuth() // NOTE bypassauth
+  @BypassAuth()
   async endorsementSystemFindEndorsementLists(
     @Args('input') input: PaginatedEndorsementListInput,
   ): Promise<PaginatedEndorsementListResponse> {
@@ -102,7 +102,7 @@ export class EndorsementSystemResolver {
 
   // GET /endorsement-list/general-petition-lists
   @Query(() => PaginatedEndorsementListResponse)
-  @BypassAuth() // NOTE bypassauth
+  @BypassAuth()
   async endorsementSystemGetGeneralPetitionLists(
     @Args('input') input: EndorsementPaginationInput,
   ): Promise<PaginatedEndorsementListResponse> {
@@ -113,7 +113,7 @@ export class EndorsementSystemResolver {
 
   // GET /endorsement-list/general-petition-list/{listId}
   @Query(() => EndorsementList)
-  @BypassAuth() // NOTE bypassauth
+  @BypassAuth()
   async endorsementSystemGetGeneralPetitionList(
     @Args('input') input: FindEndorsementListInput,
   ): Promise<EndorsementList | void> {
@@ -124,7 +124,7 @@ export class EndorsementSystemResolver {
 
   // GET /endorsement-list/{listId}/endorsement/general-petition
   @Query(() => PaginatedEndorsementResponse, { nullable: true })
-  @BypassAuth() // NOTE bypassauth
+  @BypassAuth()
   async endorsementSystemGetGeneralPetitionEndorsements(
     @Args('input') input: PaginatedEndorsementInput,
   ): Promise<PaginatedEndorsementResponse> {
@@ -182,7 +182,6 @@ export class EndorsementSystemResolver {
       user,
     )
   }
-  //////////////////////
 
   // PUT /endorsement-list/{listId}/close
   @Mutation(() => EndorsementList)

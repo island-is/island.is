@@ -168,7 +168,6 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
-  // open close lock unlock
   async endorsementListControllerClose(
     endorsementList: EndorsementListControllerCloseRequest,
     auth: Auth,
@@ -178,7 +177,6 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
-  // open close lock unlock
   async endorsementListControllerOpen(
     endorsementList: EndorsementListControllerOpenRequest,
     auth: Auth,
@@ -188,7 +186,6 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
-  // open close lock unlock
   async endorsementListControllerLock(
     endorsementList: EndorsementListControllerLockRequest,
     auth: Auth,
@@ -198,7 +195,6 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
-  // open close lock unlock
   async endorsementListControllerUnlock(
     endorsementList: EndorsementListControllerUnlockRequest,
     auth: Auth,
