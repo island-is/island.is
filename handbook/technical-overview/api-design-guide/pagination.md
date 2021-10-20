@@ -63,7 +63,7 @@ For an API to support pagination it needs to support the following query paramet
 
 - `limit` - Limits the number of results in a request. The server should have a default value for this field.
 - `before` - The client provides the value of `startCursor` from the previous response `pageInfo` to query the previous page of `limit` number of data items.
-- `after` - The client provides the value of `endCursor` from the previous response toquery the next page of `limit` number of data items.
+- `after` - The client provides the value of `endCursor` from the previous response to query the next page of `limit` number of data items.
 
 The client only sends either `before` or `after` fields in a single request indicating if it wants the previous or next page of data items.
 
