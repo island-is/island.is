@@ -46,6 +46,7 @@ import { RolesGuard } from '../../guards'
 import { CurrentUser, RolesRules } from '../../decorators'
 import { ApplicationGuard } from '../../guards/application.guard'
 import { StaffService } from '../staff'
+import { IsSpouseResponse } from './models/isSpouse.response'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/application`)
@@ -79,6 +80,25 @@ export class ApplicationController {
     }
 
     return currentApplication
+  }
+
+  @UseGuards(RolesGuard)
+  @RolesRules(RolesRule.OSK)
+  @Get('spouse/:spouseNationalId')
+  @ApiOkResponse({
+    type: IsSpouseResponse,
+    description: 'Checking if user is spouse',
+  })
+  async isSpouse(
+    @Param('spouseNationalId') spouseNationalId: string,
+  ): Promise<IsSpouseResponse> {
+    this.logger.debug('Application controller: Checking if user is spouse')
+
+    return {
+      HasApplied: await this.applicationService.hasSpouseApplied(
+        spouseNationalId,
+      ),
+    }
   }
 
   @UseGuards(RolesGuard)
@@ -140,7 +160,7 @@ export class ApplicationController {
     const {
       numberOfAffectedRows,
       updatedApplication,
-    } = await this.applicationService.update(id, applicationToUpdate)
+    } = await this.applicationService.update(id, applicationToUpdate, user.name)
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Application ${id} does not exist`)
@@ -161,11 +181,12 @@ export class ApplicationController {
       'Updates an existing application and returns application table',
   })
   async updateTable(
+    @CurrentUser() user: User,
     @Param('id') id: string,
     @Param('stateUrl') stateUrl: ApplicationStateUrl,
     @Body() applicationToUpdate: UpdateApplicationDto,
   ): Promise<UpdateApplicationTableResponse> {
-    await this.applicationService.update(id, applicationToUpdate)
+    await this.applicationService.update(id, applicationToUpdate, user.name)
     return {
       applications: await this.applicationService.getAll(stateUrl),
       filters: await this.applicationService.getAllFilters(),

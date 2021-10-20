@@ -8,14 +8,20 @@ interface Props {
 
 const CaseNumbers: React.FC<Props> = ({ workingCase }: Props) => {
   return (
-    <Box display="flex">
-      <Box marginRight={5}>
-        <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+    <>
+      <Text
+        variant="h2"
+        as="h2"
+      >{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
+      <Box display="flex">
+        <Box marginRight={5}>
+          <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+        </Box>
+        {workingCase.parentCase && (
+          <Text fontWeight="semiBold">{`Fyrra málsnr. Héraðsdóms ${workingCase.parentCase.courtCaseNumber}`}</Text>
+        )}
       </Box>
-      {workingCase.parentCase && (
-        <Text fontWeight="semiBold">{`Fyrra málsnr. Héraðsdóms ${workingCase.parentCase.courtCaseNumber}`}</Text>
-      )}
-    </Box>
+    </>
   )
 }
 

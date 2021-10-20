@@ -14,13 +14,15 @@ interface Props {
     phoneNumber?: string
     defenderIsSpokesperson?: boolean
   }
-  isRCase?: boolean
+  isInvestigationCase?: boolean
 }
 
 const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
   return (
     <Box className={styles.infoCardContainer} data-testid="infoCard">
-      <Text variant="h4">{props.isRCase ? 'Varnaraðili' : 'Sakborningur'}</Text>
+      <Text variant="h4">
+        {props.isInvestigationCase ? 'Varnaraðili' : 'Sakborningur'}
+      </Text>
       <Box className={styles.infoCardTitleContainer}>
         <Box marginBottom={4}>
           <Text fontWeight="semiBold">

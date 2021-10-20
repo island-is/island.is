@@ -8,6 +8,8 @@ import {
   ApplicationTypes,
   DefaultEvents,
 } from '@island.is/application/core'
+import set from 'lodash/set'
+import { assign } from 'xstate'
 // import * as z from 'zod'
 import { States } from '../constants'
 import { ApiActions } from '../shared'
@@ -111,9 +113,11 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           },
           [DefaultEvents.REJECT]: {
             target: States.IN_FINAL_REVIEW,
+            actions: 'rejectApplication',
           },
           [DefaultEvents.APPROVE]: {
             target: States.IN_FINAL_REVIEW,
+            actions: 'approveApplication',
           },
         },
       },
@@ -147,6 +151,26 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           ],
         },
       },
+    },
+  },
+  stateMachineOptions: {
+    actions: {
+      approveApplication: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'reviewerApproved', true)
+
+        return context
+      }),
+      rejectApplication: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'reviewerApproved', false)
+
+        return context
+      }),
     },
   },
   mapUserToRole(
