@@ -19,12 +19,14 @@ import { PaginatedEndorsementListInput } from './dto/paginatedEndorsementList.in
 import { PaginatedEndorsementListResponse } from './dto/paginatedEndorsementList.response'
 
 import { EndorsementPaginationInput } from './dto/endorsementPagination.input'
+import { OpenListInput } from './dto/openList.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver('EndorsementSystemResolver')
 export class EndorsementSystemResolver {
   constructor(private endorsementSystemService: EndorsementSystemService) {}
 
+  // GET /endorsement-list/{listId}/endorsement/exists
   @Query(() => Endorsement, { nullable: true })
   async endorsementSystemGetSingleEndorsement(
     @Args('input') input: FindEndorsementListInput,
@@ -36,6 +38,7 @@ export class EndorsementSystemResolver {
     )
   }
 
+  // GET /endorsement-list/{listId}/endorsement
   @Query(() => PaginatedEndorsementResponse, { nullable: true })
   async endorsementSystemGetEndorsements(
     @Args('input') input: PaginatedEndorsementInput,
@@ -47,6 +50,7 @@ export class EndorsementSystemResolver {
     )
   }
 
+  // POST /endorsement-list/{listId}/endorsement
   @Mutation(() => Endorsement)
   async endorsementSystemEndorseList(
     @Args('input') input: CreateEndorsementInput,
@@ -58,6 +62,7 @@ export class EndorsementSystemResolver {
     )
   }
 
+  // POST /endorsement-list/{listId}/endorsement/bulk
   @Mutation(() => EndorsementBulkCreate)
   async endorsementSystemBulkEndorseList(
     @Args('input') { listId, nationalIds }: BulkEndorseListInput,
@@ -72,6 +77,7 @@ export class EndorsementSystemResolver {
     )
   }
 
+  // DELETE /endorsement-list/{listId}/endorsement
   @Mutation(() => Boolean)
   async endorsementSystemUnendorseList(
     @Args('input') input: FindEndorsementListInput,
@@ -83,7 +89,7 @@ export class EndorsementSystemResolver {
     )
   }
 
-  // lists by tag - bypassauth
+  // GET /endorsement-list ... by tags
   @Query(() => PaginatedEndorsementListResponse)
   @BypassAuth()
   async endorsementSystemFindEndorsementLists(
@@ -94,7 +100,7 @@ export class EndorsementSystemResolver {
     )
   }
 
-  // GP lists - bypassauth
+  // GET /endorsement-list/general-petition-lists
   @Query(() => PaginatedEndorsementListResponse)
   @BypassAuth()
   async endorsementSystemGetGeneralPetitionLists(
@@ -104,7 +110,8 @@ export class EndorsementSystemResolver {
       input,
     )
   }
-  // GP list - bypassauth
+
+  // GET /endorsement-list/general-petition-list/{listId}
   @Query(() => EndorsementList)
   @BypassAuth()
   async endorsementSystemGetGeneralPetitionList(
@@ -114,7 +121,8 @@ export class EndorsementSystemResolver {
       input,
     )
   }
-  // GP list endorsements - bypassauth
+
+  // GET /endorsement-list/{listId}/endorsement/general-petition
   @Query(() => PaginatedEndorsementResponse, { nullable: true })
   @BypassAuth()
   async endorsementSystemGetGeneralPetitionEndorsements(
@@ -125,6 +133,7 @@ export class EndorsementSystemResolver {
     )
   }
 
+  // GET /endorsement-list/{listId}
   @Query(() => EndorsementList, { nullable: true })
   async endorsementSystemGetSingleEndorsementList(
     @Args('input') input: FindEndorsementListInput,
@@ -136,6 +145,7 @@ export class EndorsementSystemResolver {
     )
   }
 
+  // GET /endorsement-list/endorsements
   @Query(() => PaginatedEndorsementResponse)
   async endorsementSystemUserEndorsements(
     @CurrentUser() user: User,
@@ -147,6 +157,7 @@ export class EndorsementSystemResolver {
     )
   }
 
+  // GET /endorsement-list/endorsementLists
   @Query(() => PaginatedEndorsementListResponse)
   async endorsementSystemUserEndorsementLists(
     @CurrentUser() user: User,
@@ -158,6 +169,7 @@ export class EndorsementSystemResolver {
     )
   }
 
+  // POST /endorsement-list
   @Mutation(() => EndorsementList)
   async endorsementSystemCreateEndorsementList(
     @Args('input') input: CreateEndorsementListDto,
@@ -167,6 +179,54 @@ export class EndorsementSystemResolver {
       {
         endorsementListDto: input,
       },
+      user,
+    )
+  }
+
+  // PUT /endorsement-list/{listId}/close
+  @Mutation(() => EndorsementList)
+  async endorsementSystemCloseEndorsementList(
+    @Args('input') input: FindEndorsementListInput,
+    @CurrentUser() user: User,
+  ): Promise<EndorsementList> {
+    return await this.endorsementSystemService.endorsementListControllerClose(
+      input,
+      user,
+    )
+  }
+
+  // PUT /endorsement-list/{listId}/open
+  @Mutation(() => EndorsementList)
+  async endorsementSystemOpenEndorsementList(
+    @Args('input') input: OpenListInput,
+    @CurrentUser() user: User,
+  ): Promise<EndorsementList> {
+    return await this.endorsementSystemService.endorsementListControllerOpen(
+      input,
+      user,
+    )
+  }
+
+  // PUT /endorsement-list/{listId}/lock
+  @Mutation(() => EndorsementList)
+  async endorsementSystemLockEndorsementList(
+    @Args('input') input: FindEndorsementListInput,
+    @CurrentUser() user: User,
+  ): Promise<EndorsementList> {
+    return await this.endorsementSystemService.endorsementListControllerLock(
+      input,
+      user,
+    )
+  }
+
+  // PUT /endorsement-list/{listId}/unlock
+  @Mutation(() => EndorsementList)
+  async endorsementSystemUnlockEndorsementList(
+    @Args('input') input: FindEndorsementListInput,
+    @CurrentUser() user: User,
+  ): Promise<EndorsementList> {
+    return await this.endorsementSystemService.endorsementListControllerUnlock(
+      input,
       user,
     )
   }
