@@ -175,8 +175,10 @@ export class ApplicationModel extends Model<Application> {
   @ApiProperty({ enum: ApplicationState })
   state: ApplicationState
 
-  @ApiProperty({ type: [ApplicationFileModel] })
+  @HasMany(() => ApplicationFileModel, 'applicationId')
+  @ApiProperty({ type: ApplicationFileModel, isArray: true })
   files: ApplicationFileModel[]
+
   @Column({
     type: DataType.INTEGER,
     allowNull: true,

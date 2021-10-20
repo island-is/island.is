@@ -140,11 +140,21 @@ export type Regulation = {
    * This date is always a past (or current) date
    */
   lastAmendDate?: ISODate | null
+
+  /** True if the regulation is either repealed (and has `repealedDate`, see below)
+   * or has just been arbitrarily classified as "Ógild" (no `repealedDate`).
+   *
+   * NOTE: This value is NOT affected by `timlineDate`, or `showingDiff`
+   */
+  repealed: boolean
   /** Date when (if) this regulation was repealed and became a thing of the past.
    *
    * NOTE: This date is **NEVER** set in the future
+   *
+   * NOTE2: This value is NOT affected by `timlineDate`, or `showingDiff`
    */
   repealedDate?: ISODate | null
+
   /** The ministry this regulation is published by/linked to */
   ministry?: RegulationMinistry
   /** Law chapters that this regulation is linked to */

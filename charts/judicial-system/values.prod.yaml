@@ -82,6 +82,7 @@ judicial-system-backend:
     DB_USER: 'judicial_system'
     DOKOBIT_URL: 'https://ws.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
+    NODE_OPTIONS: '--max-old-space-size=464'
     S3_BUCKET: 'island-is-prod-upload-judicial-system'
     S3_REGION: 'eu-west-1'
     S3_TIME_TO_LIVE_GET: '5'
@@ -123,9 +124,16 @@ judicial-system-backend:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 4
     max: 10
-    min: 2
+    min: 4
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '100m'
+      memory: '256Mi'
   secrets:
     ADMIN_USERS: '/k8s/judicial-system/ADMIN_USERS'
     AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'

@@ -9,9 +9,9 @@ import {
   HomeCircumstances,
   getNextPeriod,
 } from '@island.is/financial-aid/shared/lib'
-import { MunicipalityContext } from '@island.is/financial-aid-web/osk/src/components/MunicipalityProvider/MunicipalityProvider'
 
 import format from 'date-fns/format'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 interface Props {
   aboutText: ReactNode
@@ -26,7 +26,7 @@ const Estimation = ({
 }: Props) => {
   const currentYear = format(new Date(), 'yyyy')
 
-  const { municipality } = useContext(MunicipalityContext)
+  const { municipality } = useContext(AppContext)
 
   const aidAmount = useMemo(() => {
     if (municipality && homeCircumstances) {

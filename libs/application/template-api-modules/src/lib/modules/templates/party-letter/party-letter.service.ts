@@ -26,6 +26,8 @@ const CREATE_ENDORSEMENT_LIST_QUERY = `
   }
 `
 
+export const DEFAULT_CLOSED_DATE = 'default closed date'
+
 type ErrorResponse = {
   errors: {
     message: string
@@ -47,6 +49,7 @@ export class PartyLetterService {
     private endorsementListApi: EndorsementListApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    @Inject(DEFAULT_CLOSED_DATE) private dateConfig: Date,
   ) {}
 
   partyLetterRegistryApiWithAuth(auth: User) {
@@ -83,11 +86,16 @@ export class PartyLetterService {
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const listId = (application.externalData?.createEndorsementList.data as any)
-      .id
+    const listId: string = (application.externalData?.createEndorsementList
+      .data as any).id
 
     return this.endorsementListApiWithAuth(auth)
-      .endorsementListControllerOpen({ listId })
+      .endorsementListControllerOpen({
+        listId,
+        changeEndorsmentListClosedDateDto: {
+          closedDate: this.dateConfig,
+        },
+      })
       .then(async () => {
         // if we succeed in creating the party letter let the applicant know
         await this.sharedTemplateAPIService.sendEmail(

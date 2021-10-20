@@ -37,6 +37,7 @@ import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { IslykillModule } from '@island.is/api/domains/islykill'
 import { AuditModule } from '@island.is/nest/audit'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
+import { ProblemModule } from '@island.is/nest/problem'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 
@@ -85,10 +86,13 @@ const autoSchemaFile = environment.production
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
-      xroadBaseUrl: environment.xroad.baseUrl,
-      xroadClientId: environment.xroad.clientId,
-      secret: environment.drivingLicense.secret,
-      xroadPath: environment.drivingLicense.xroadPath,
+      clientConfig: {
+        xroadBaseUrl: environment.xroad.baseUrl,
+        xroadClientId: environment.xroad.clientId,
+        secret: environment.drivingLicense.secret,
+        xroadPathV1: environment.drivingLicense.v1.xroadPath,
+        xroadPathV2: environment.drivingLicense.v2.xroadPath,
+      },
     }),
     EducationModule.register({
       xroad: {
@@ -226,7 +230,7 @@ const autoSchemaFile = environment.production
       xroad: {
         baseUrl: environment.xroad.baseUrl,
         clientId: environment.xroad.clientId,
-        path: environment.drivingLicense.xroadPath,
+        path: environment.drivingLicense.v1.xroadPath,
         secret: environment.drivingLicense.secret,
       },
       pkpass: {
@@ -249,6 +253,7 @@ const autoSchemaFile = environment.production
       certificateBase64: environment.islykill.certificateBase64,
       passphrase: environment.islykill.passphrase,
     }),
+    ProblemModule,
   ],
 })
 export class AppModule {}

@@ -2,36 +2,46 @@ import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
 
 interface PetitionListResponse {
-  endorsementSystemFindEndorsementLists: any
+  endorsementSystemGetGeneralPetitionLists: any
 }
 
-const GET_REGION_ENDORSEMENTS = gql`
-  query endorsementSystemFindEndorsementLists(
-    $input: FindEndorsementListByTagsDto!
+const GetGeneralPetitionLists = gql`
+  query endorsementSystemGetGeneralPetitionLists(
+    $input: EndorsementPaginationInput!
   ) {
-    endorsementSystemFindEndorsementLists(input: $input) {
-      id
-      title
-      description
-      tags
-      meta
-      closedDate
+    endorsementSystemGetGeneralPetitionLists(input: $input) {
+      totalCount
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        startCursor
+        endCursor
+      }
+      data {
+        id
+        title
+        description
+        closedDate
+        meta
+      }
     }
   }
 `
 
 export const useGetPetitionLists = () => {
   const { data: endorsementListsResponse } = useQuery<PetitionListResponse>(
-    GET_REGION_ENDORSEMENTS,
+    GetGeneralPetitionLists,
     {
       variables: {
         input: {
-          tags: 'generalPetition',
+          limit: 20,
         },
       },
       pollInterval: 20000,
     },
   )
 
-  return endorsementListsResponse?.endorsementSystemFindEndorsementLists ?? []
+  return (
+    endorsementListsResponse?.endorsementSystemGetGeneralPetitionLists ?? []
+  )
 }

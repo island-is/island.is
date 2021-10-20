@@ -73,9 +73,9 @@ const createResponseError = async (response: Response, includeBody = false) => {
   const { url, status, headers, statusText } = response
   Object.assign(error, { url, status, headers, statusText, response })
 
-  const contentType = response.headers.get('content-type')
-  const isJson = contentType === 'application/json'
-  const isProblem = contentType === 'application/problem+json'
+  const contentType = response.headers.get('content-type') || ''
+  const isJson = contentType.startsWith('application/json')
+  const isProblem = contentType.startsWith('application/problem+json')
   const shouldIncludeBody = includeBody && (isJson || isProblem)
   if (isProblem || shouldIncludeBody) {
     const body = await response.clone().json()

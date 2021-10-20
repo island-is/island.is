@@ -25,9 +25,13 @@ import * as style from './RulingAccordionItem.treat'
 
 interface Props {
   workingCase: Case
+  startExpanded?: boolean
 }
 
-const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
+const RulingAccordionItem: React.FC<Props> = ({
+  workingCase,
+  startExpanded,
+}: Props) => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
@@ -44,19 +48,20 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
 
   return (
     <AccordionItem
-      id="id_3"
-      label="Úrskurður Héraðsdóms Reykjavíkur"
+      id="rulingAccordionItem"
+      label={formatMessage(m.heading)}
       labelVariant="h3"
+      startExpanded={startExpanded}
     >
       <Box component="section" marginBottom={5}>
         <Box marginBottom={2}>
           <Text as="h4" variant="h4">
-            Úrskurður Héraðsdóms
+            {formatMessage(m.title)}
           </Text>
         </Box>
         <Box marginBottom={1}>
           <Text variant="eyebrow" color="blue400">
-            Greinargerð um málsatvik
+            {formatMessage(m.sections.courtCaseFacts.title)}
           </Text>
         </Box>
         <Box marginBottom={2}>
@@ -64,7 +69,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </Box>
         <Box marginBottom={1}>
           <Text variant="eyebrow" color="blue400">
-            Greinargerð um lagarök
+            {formatMessage(m.sections.courtLegalArguments.title)}
           </Text>
         </Box>
         <Box marginBottom={2}>
@@ -75,7 +80,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             <Box marginY={2}>
               <Box marginBottom={1}>
                 <Text variant="eyebrow" color="blue400">
-                  Beiðni um dómþing að varnaraðila fjarstöddum
+                  {formatMessage(m.sections.requestProsecutorOnlySession.title)}
                 </Text>
               </Box>
               <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
@@ -83,7 +88,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           )}
         <Box marginBottom={5}>
           <Text variant="eyebrow" color="blue400">
-            Niðurstaða
+            {formatMessage(m.sections.ruling.title)}
           </Text>
           <Text>
             <span className={style.breakSpaces}>{workingCase.ruling}</span>
@@ -93,7 +98,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       <Box component="section" marginBottom={7}>
         <Box marginBottom={2}>
           <Text as="h4" variant="h4">
-            Úrskurðarorð
+            {formatMessage(m.sections.conclusion.title)}
           </Text>
         </Box>
         <Box marginBottom={3}>
@@ -103,17 +108,13 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </Box>
         <Box marginBottom={1}>
           <Text variant="h5">
-            {workingCase?.judge
-              ? `${workingCase.judge.name} ${workingCase.judge.title}`
-              : `${user?.name} ${user?.title}`}
+            {workingCase?.judge ? workingCase.judge.name : user?.name}
           </Text>
         </Box>
         {(isRestrictionCase(workingCase.type) ||
           workingCase.sessionArrangements !==
             SessionArrangements.REMOTE_SESSION) && (
-          <Text>
-            Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
-          </Text>
+          <Text>{formatMessage(m.sections.conclusion.disclaimer)}</Text>
         )}
       </Box>
       <Box component="section" marginBottom={3}>
