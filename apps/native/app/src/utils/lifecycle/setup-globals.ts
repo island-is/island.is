@@ -82,8 +82,10 @@ if (!!(global as any).HermesInternal) {
 }
 
 // overwrite global Intl
-global.Intl = (global as any).IntlPolyfill
-;(global.Intl as any).__disableRegExpRestore()
+if (Platform.OS === 'ios') {
+  global.Intl = (global as any).IntlPolyfill
+  ;(global.Intl as any).__disableRegExpRestore()
+}
 
 export function setupGlobals() {
   // keyboard manager
