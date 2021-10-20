@@ -1,5 +1,8 @@
 import { Inject } from '@nestjs/common'
-import { Base64 } from 'js-base64'
+import { ApolloError } from 'apollo-server-express'
+import type { Logger } from '@island.is/logging'
+import isEmpty from 'lodash/isEmpty'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import {
@@ -27,6 +30,8 @@ export class FinanceService extends RESTDataSource {
   constructor(
     @Inject(FINANCE_OPTIONS)
     private readonly options: FinanceServiceOptions,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {
     super()
     this.baseURL = `${this.options.xroadBaseUrl}/r1/${this.options.xroadApiPath}`
@@ -38,20 +43,30 @@ export class FinanceService extends RESTDataSource {
     request.headers.set('X-Road-Client', this.options.xroadClientId)
   }
 
+  handleError(error: string): any {
+    this.logger.error(error)
+    throw new ApolloError('Failed to resolve request', error)
+  }
+
   async getFinanceStatus(
     nationalID: string,
     authToken: string,
   ): Promise<FinanceStatus | null> {
-    const response = await this.get<FinanceStatus | null>(
-      `/customerStatusByOrganization?nationalID=${nationalID}`,
-      {},
-      {
-        cacheOptions: { ttl: this.options.ttl },
-        headers: {
-          Authorization: authToken,
+    let response
+    try {
+      response = await this.get<FinanceStatus | null>(
+        `/customerStatusByOrganization?nationalID=${nationalID}`,
+        {},
+        {
+          cacheOptions: { ttl: this.options.ttl },
+          headers: {
+            Authorization: authToken,
+          },
         },
-      },
-    )
+      )
+    } catch (e) {
+      return this.handleError('Failed to get finance status')
+    }
     return response
   }
 
@@ -61,16 +76,21 @@ export class FinanceService extends RESTDataSource {
     chargeTypeID: string,
     authToken: string,
   ): Promise<FinanceStatusDetails | null> {
-    const response = await this.get<FinanceStatusDetails | null>(
-      `/customerStatusByOrganizationDetails?nationalID=${nationalID}&OrgID=${OrgID}&chargeTypeID=${chargeTypeID}`,
-      {},
-      {
-        cacheOptions: { ttl: this.options.ttl },
-        headers: {
-          Authorization: authToken,
+    let response
+    try {
+      response = await this.get<FinanceStatusDetails | null>(
+        `/customerStatusByOrganizationDetails?nationalID=${nationalID}&OrgID=${OrgID}&chargeTypeID=${chargeTypeID}`,
+        {},
+        {
+          cacheOptions: { ttl: this.options.ttl },
+          headers: {
+            Authorization: authToken,
+          },
         },
-      },
-    )
+      )
+    } catch (e) {
+      return this.handleError('Failed to get finance status details')
+    }
     return response
   }
 
@@ -78,16 +98,24 @@ export class FinanceService extends RESTDataSource {
     nationalID: string,
     authToken: string,
   ): Promise<CustomerChargeType | null> {
-    const response = await this.get<CustomerChargeType | null>(
-      `/customerChargeType?nationalID=${nationalID}`,
-      {},
-      {
-        cacheOptions: { ttl: this.options.ttl },
-        headers: {
-          Authorization: authToken,
+    let response
+    try {
+      response = await this.get<CustomerChargeType | null>(
+        `/customerChargeType?nationalID=${nationalID}`,
+        {},
+        {
+          cacheOptions: { ttl: this.options.ttl },
+          headers: {
+            Authorization: authToken,
+          },
         },
-      },
-    )
+      )
+      if (isEmpty(response)) {
+        response = null
+      }
+    } catch (e) {
+      return this.handleError('Failed to get customer charge type')
+    }
     return response
   }
 
@@ -100,16 +128,21 @@ export class FinanceService extends RESTDataSource {
   ): Promise<CustomerRecords | null> {
     const chargeTypeArray = chargeTypeID.map((item) => `&chargeTypeID=${item}`)
     const chargeTypeString = chargeTypeArray.join('')
-    const response = await this.get<CustomerRecords | null>(
-      `/customerRecords?nationalID=${nationalID}&dayFrom=${dayFrom}&dayTo=${dayTo}${chargeTypeString}`,
-      {},
-      {
-        cacheOptions: { ttl: this.options.ttl },
-        headers: {
-          Authorization: authToken,
+    let response
+    try {
+      response = await this.get<CustomerRecords | null>(
+        `/customerRecords?nationalID=${nationalID}&dayFrom=${dayFrom}&dayTo=${dayTo}${chargeTypeString}`,
+        {},
+        {
+          cacheOptions: { ttl: this.options.ttl },
+          headers: {
+            Authorization: authToken,
+          },
         },
-      },
-    )
+      )
+    } catch (e) {
+      return this.handleError('Failed to get customer records')
+    }
     return response
   }
 
@@ -120,16 +153,21 @@ export class FinanceService extends RESTDataSource {
     listPath: string,
     authToken: string,
   ): Promise<DocumentsListTypes> {
-    const response = await this.get<DocumentsListTypes>(
-      `/documentsList/${listPath}?nationalID=${nationalID}&dateFrom=${dayFrom}&dateTo=${dayTo}`,
-      {},
-      {
-        cacheOptions: { ttl: this.options.ttl },
-        headers: {
-          Authorization: authToken,
+    let response
+    try {
+      response = await this.get<DocumentsListTypes>(
+        `/documentsList/${listPath}?nationalID=${nationalID}&dateFrom=${dayFrom}&dateTo=${dayTo}`,
+        {},
+        {
+          cacheOptions: { ttl: this.options.ttl },
+          headers: {
+            Authorization: authToken,
+          },
         },
-      },
-    )
+      )
+    } catch (e) {
+      return this.handleError('Failed to get finance document list')
+    }
     return response
   }
 
@@ -138,16 +176,21 @@ export class FinanceService extends RESTDataSource {
     documentID: string,
     authToken: string,
   ): Promise<DocumentTypes> {
-    const response = await this.get<DocumentTypes>(
-      `/document?nationalID=${nationalID}&documentID=${documentID}`,
-      {},
-      {
-        cacheOptions: { ttl: this.options.ttl },
-        headers: {
-          Authorization: authToken,
+    let response
+    try {
+      response = await this.get<DocumentTypes>(
+        `/document?nationalID=${nationalID}&documentID=${documentID}`,
+        {},
+        {
+          cacheOptions: { ttl: this.options.ttl },
+          headers: {
+            Authorization: authToken,
+          },
         },
-      },
-    )
+      )
+    } catch (e) {
+      return this.handleError('Failed to get finance document')
+    }
     return response
   }
 
@@ -156,33 +199,43 @@ export class FinanceService extends RESTDataSource {
     year: string,
     authToken: string,
   ): Promise<AnnualStatusTypes> {
-    const response = await this.get<AnnualStatusTypes>(
-      `/annualStatusDocument?nationalID=${nationalID}&year=${year}`,
-      {},
-      {
-        cacheOptions: { ttl: this.options.ttl },
-        headers: {
-          Authorization: authToken,
+    let response
+    try {
+      response = await this.get<AnnualStatusTypes>(
+        `/annualStatusDocument?nationalID=${nationalID}&year=${year}`,
+        {},
+        {
+          cacheOptions: { ttl: this.options.ttl },
+          headers: {
+            Authorization: authToken,
+          },
         },
-      },
-    )
+      )
+    } catch (e) {
+      return this.handleError('Failed to get finance annual status document')
+    }
     return response
   }
 
   async getCustomerTapControl(
     nationalID: string,
     authToken: string,
-  ): Promise<TapsControlTypes> {
-    const response = await this.get<TapsControlTypes>(
-      `/customerTapsControl?nationalID=${nationalID}`,
-      {},
-      {
-        cacheOptions: { ttl: this.options.ttl },
-        headers: {
-          Authorization: authToken,
+  ): Promise<TapsControlTypes | null> {
+    let response
+    try {
+      response = await this.get<TapsControlTypes>(
+        `/customerTapsControl?nationalID=${nationalID}`,
+        {},
+        {
+          cacheOptions: { ttl: this.options.ttl },
+          headers: {
+            Authorization: authToken,
+          },
         },
-      },
-    )
+      )
+    } catch (e) {
+      return this.handleError('Failed to get customer tabs')
+    }
     return response
   }
 }
