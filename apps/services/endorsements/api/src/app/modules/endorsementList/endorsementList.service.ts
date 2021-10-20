@@ -202,12 +202,9 @@ export class EndorsementListService {
   }
 
   async getOwnerInfo(endorsementList: EndorsementList) {
-    try {
       const fullName = (await this.nationalRegistryApi.getUser(endorsementList.owner)).Fulltnafn
       return {fullName: fullName}
 
-    }  catch (error) {
-      throw new NotFoundException()
-    }
+
   }
 }

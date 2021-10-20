@@ -1,8 +1,6 @@
-import { Field } from '@nestjs/graphql';
-import { IsString } from 'class-validator';
-
+import { Field, ObjectType } from '@nestjs/graphql';
+@ObjectType()
 export class OwnerInfoDto {
-  @Field({nullable: true})
-  @IsString()
+  @Field()
   fullName!: string
 }
