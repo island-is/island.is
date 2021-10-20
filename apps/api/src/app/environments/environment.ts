@@ -156,9 +156,9 @@ const devConfig = {
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
   },
   islykill: {
-    certificateBase64: process.env.ISLYKILL_SERVICE_CERT_BASE64,
+    certificateBase64: process.env.ISLYKILL_SERVICE_CERT_BASE64 ?? '',
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-  }
+  },
 }
 
 const prodConfig = {
@@ -302,7 +302,7 @@ const prodConfig = {
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
   },
   islykill: {
-    certificateBase64: process.env.ISLYKILL_SERVICE_CERT_BASE64,
+    certificateBase64: process.env.ISLYKILL_SERVICE_CERT_BASE64 ?? '',
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
   },
 }
