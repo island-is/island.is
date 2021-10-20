@@ -2,6 +2,7 @@ import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 export const navigationItems = [
   {
+    group: 'Innhólf',
     label: 'Ný mál',
     link: `/nymal`,
     applicationState: [ApplicationState.NEW],
@@ -14,6 +15,7 @@ export const navigationItems = [
     ],
   },
   {
+    group: 'Mitt',
     label: 'Mál í vinnslu',
     link: `/vinnslu`,
     applicationState: [
@@ -24,6 +26,22 @@ export const navigationItems = [
       { title: 'Nafn' },
       { title: 'Staða' },
       { title: 'Síðast uppfært' },
+      { title: 'Tímabil' },
+      { title: 'Unnið af' },
+    ],
+  },
+  {
+    group: 'Teymið',
+    label: 'Öll mál í vinnslu',
+    link: `/teymid`,
+    applicationState: [
+      ApplicationState.INPROGRESS,
+      ApplicationState.DATANEEDED,
+    ],
+    headers: [
+      { title: 'Nafn' },
+      { title: 'Staða' },
+      { title: 'Úrlausnartími' },
       { title: 'Tímabil' },
       { title: 'Unnið af' },
     ],
