@@ -160,7 +160,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   const [indexedItems, setIndexedItems] = useState<IndexedDocument[]>([])
   const [inboxItems, setInboxItems] = useState<IDocument[]>([])
 
-  const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client })
+  const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client, fetchPolicy: 'cache-and-network' })
 
   const isFirstLoad = !res.data
   const isSearch = ui.inboxQuery.length > 0

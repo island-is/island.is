@@ -121,5 +121,10 @@ export const client = new ApolloClient({
     authLink,
     httpLink,
   ]),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: 'cache-and-network',
+    },
+  },
   cache: new InMemoryCache(),
 })
