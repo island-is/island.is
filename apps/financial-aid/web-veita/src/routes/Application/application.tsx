@@ -15,7 +15,6 @@ import {
   Employment,
   insertAt,
   ApplicationState,
-  Municipality,
   aidCalculator,
   getMonth,
   calculateAidFinalAmount,
@@ -275,7 +274,7 @@ const ApplicationProfile = () => {
             aidAmount={aidAmount}
             usePersonalTaxCredit={application.usePersonalTaxCredit}
             isVisible={isAidModalVisible}
-            onVisiblityChange={(isVisibleBoolean) => {
+            onVisibilityChange={(isVisibleBoolean) => {
               setAidModalVisible(isVisibleBoolean)
             }}
           />

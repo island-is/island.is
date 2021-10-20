@@ -4,8 +4,8 @@ import { Text, Box, Divider } from '@island.is/island-ui/core'
 import {
   aidCalculator,
   calculateAidFinalAmount,
-  calulatePersonalTaxAllowanceUsed,
-  calulateTaxOfAmount,
+  calculatePersonalTaxAllowanceUsed,
+  calculateTaxOfAmount,
   HomeCircumstances,
   getNextPeriod,
   MartialStatusType,
@@ -51,14 +51,14 @@ const Estimation = ({
         {
           title: 'Skattur',
           calculation: `- 
-      ${calulateTaxOfAmount(aidAmount, currentYear).toLocaleString(
+      ${calculateTaxOfAmount(aidAmount, currentYear).toLocaleString(
         'de-DE',
       )} kr.`,
         },
         {
           title: 'Persónuafsláttur',
           calculation: `+  
-      ${calulatePersonalTaxAllowanceUsed(
+      ${calculatePersonalTaxAllowanceUsed(
         aidAmount,
         Boolean(usePersonalTaxCredit),
         currentYear,
