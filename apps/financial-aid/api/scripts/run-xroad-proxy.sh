@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash
 
 INSTANCE_ID=$(
     aws ec2 describe-instances \
