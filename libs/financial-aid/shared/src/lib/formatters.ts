@@ -41,6 +41,7 @@ export const getStateFromUrl: KeyMapping<
 > = {
   New: [ApplicationState.NEW],
   InProgress: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+  MyCases: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
   Processed: [ApplicationState.REJECTED, ApplicationState.APPROVED],
 }
 
@@ -55,7 +56,7 @@ export const getEventTypesFromService: KeyMapping<
 export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
   '/': ApplicationStateUrl.NEW,
   '/nymal': ApplicationStateUrl.NEW,
-  '/vinnslu': ApplicationStateUrl.INPROGRESS,
+  '/vinnslu': ApplicationStateUrl.MYCASES,
   '/teymid': ApplicationStateUrl.INPROGRESS,
   '/afgreidd': ApplicationStateUrl.PROCESSED,
 }

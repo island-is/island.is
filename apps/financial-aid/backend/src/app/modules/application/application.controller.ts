@@ -109,11 +109,13 @@ export class ApplicationController {
     isArray: true,
     description: 'Gets all existing applications',
   })
-  getAll(
+  async getAll(
     @Param('stateUrl') stateUrl: ApplicationStateUrl,
+    @CurrentUser() user: User,
   ): Promise<ApplicationModel[]> {
     this.logger.debug('Application controller: Getting all applications')
-    return this.applicationService.getAll(stateUrl)
+    const staff = await this.staffService.findByNationalId(user.nationalId)
+    return this.applicationService.getAll(stateUrl, staff.id)
   }
 
   @UseGuards(ApplicationGuard)
@@ -190,7 +192,7 @@ export class ApplicationController {
     await this.applicationService.update(id, applicationToUpdate, user.name)
     const staff = await this.staffService.findByNationalId(user.nationalId)
     return {
-      applications: await this.applicationService.getAll(stateUrl),
+      applications: await this.applicationService.getAll(stateUrl, staff.id),
       filters: await this.applicationService.getAllFilters(staff.id),
     }
   }

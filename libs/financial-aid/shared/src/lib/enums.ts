@@ -34,6 +34,7 @@ export enum ApplicationFiltersEnum {
 export enum ApplicationStateUrl {
   NEW = 'New',
   INPROGRESS = 'InProgress',
+  MYCASES = 'MyCases',
   PROCESSED = 'Processed',
 }
 

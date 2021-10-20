@@ -86,11 +86,18 @@ export class ApplicationService {
     })
   }
 
-  async getAll(stateUrl: ApplicationStateUrl): Promise<ApplicationModel[]> {
+  async getAll(
+    stateUrl: ApplicationStateUrl,
+    staffId: string,
+  ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
-      where: {
-        state: { [Op.in]: getStateFromUrl[stateUrl] },
-      },
+      where:
+        stateUrl === ApplicationStateUrl.MYCASES
+          ? {
+              state: { [Op.in]: getStateFromUrl[stateUrl] },
+              staffId,
+            }
+          : { state: { [Op.in]: getStateFromUrl[stateUrl] } },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
     })
