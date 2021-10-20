@@ -13,7 +13,7 @@ import {
   NavigationProps,
   currentMonth,
 } from '@island.is/financial-aid/shared/lib'
-import { AppContext } from '../../../components/AppProvider/AppProvider'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const AboutForm = () => {
   const router = useRouter()

@@ -9,7 +9,7 @@ import {
   HomeCircumstances,
   getNextPeriod,
   MartialStatusType,
-  martialStatusType,
+  martialStatusTypeFromMartialCode,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -34,8 +34,9 @@ const Estimation = ({
     if (municipality && homeCircumstances) {
       return aidCalculator(
         homeCircumstances,
-        martialStatusType(nationalRegistryData?.spouse.maritalStatus) ===
-          MartialStatusType.SINGLE
+        martialStatusTypeFromMartialCode(
+          nationalRegistryData?.spouse.maritalStatus,
+        ) === MartialStatusType.SINGLE
           ? municipality.individualAid
           : municipality.cohabitationAid,
       )

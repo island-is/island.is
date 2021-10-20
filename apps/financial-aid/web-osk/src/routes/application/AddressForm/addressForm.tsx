@@ -19,7 +19,7 @@ import {
   formatHomeAddress,
   NavigationProps,
 } from '@island.is/financial-aid/shared/lib'
-import { AppContext } from '../../../components/AppProvider/AppProvider'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const AddressForm = () => {
   const router = useRouter()

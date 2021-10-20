@@ -192,7 +192,7 @@ export const logoKeyFromMunicipalityCode: KeyMapping<string, string> = {
   '1000': 'hfj.svg',
 }
 
-export const martialStatusType = (
+export const martialStatusTypeFromMartialCode = (
   martialCode: string | undefined,
 ): MartialStatusType => {
   switch (martialCode) {

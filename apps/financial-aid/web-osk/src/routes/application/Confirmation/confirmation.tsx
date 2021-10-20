@@ -17,7 +17,7 @@ import { useRouter } from 'next/router'
 import { Routes } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
-import { AppContext } from '../../../components/AppProvider/AppProvider'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const Confirmation = () => {
   const router = useRouter()
@@ -72,7 +72,7 @@ const Confirmation = () => {
                 colorScheme="default"
                 iconType="outline"
                 onClick={() =>
-                  router.push(Routes.statusPage(form?.applicationId as string))
+                  router.push(Routes.statusPage(form.applicationId as string))
                 }
                 preTextIconType="filled"
                 size="small"
@@ -84,22 +84,24 @@ const Confirmation = () => {
             </Box>
           )}
 
-          <Box marginBottom={3}>
-            <Button
-              icon="open"
-              colorScheme="default"
-              iconType="outline"
-              preTextIconType="filled"
-              size="small"
-              onClick={() => {
-                window.open(municipality?.homepage, '_ blank')
-              }}
-              type="button"
-              variant="text"
-            >
-              Upplýsingar um fjárhagsaðstoð
-            </Button>
-          </Box>
+          {municipality?.homepage && (
+            <Box marginBottom={3}>
+              <Button
+                icon="open"
+                colorScheme="default"
+                iconType="outline"
+                preTextIconType="filled"
+                size="small"
+                onClick={() => {
+                  window.open(municipality.homepage, '_ blank')
+                }}
+                type="button"
+                variant="text"
+              >
+                Upplýsingar um fjárhagsaðstoð
+              </Button>
+            </Box>
+          )}
         </Box>
       </ContentContainer>
       <Footer
