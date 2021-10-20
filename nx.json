@@ -22,7 +22,6 @@
           "lint",
           "test",
           "e2e",
-          "schemas/build-openapi",
           "schemas/openapi-generator",
           "schemas/build-graphql-schema",
           "schemas/codegen"
