@@ -49,7 +49,7 @@ export class AccidentNotificationService {
         errorList,
         ihiDocumentID,
         numberIHI,
-      } = await this.documentApi.documentPost({
+      } = await this.documentApi.v1DocumentPost({
         document: { doc: xml, documentType: 801 },
       })
       console.log('hahahahaha')

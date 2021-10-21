@@ -44,7 +44,7 @@ const devConfig = {
     xRoadBaseUrl: 'http://localhost:8080',
     xRoadProviderId:
       process.env.COMPANY_REGISTRY_XROAD_PROVIDER_ID ??
-      'IS-DEV/GOV/10007/SJUKRA-Protected/',
+      'IS-DEV/GOV/10007/SJUKRA-Protected',
     xRoadClientId:
       process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
     username: process.env.HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',

@@ -1,7 +1,7 @@
 import { DynamicModule } from '@nestjs/common'
 import { Configuration, DocumentApi } from '../../gen/fetch'
 import { HealthInsuranceV2Options } from './clients-health-insurance-v2.config'
-export class HealthInsuranceV2Module {
+export class HealthInsuranceV2Client {
   static register(options: HealthInsuranceV2Options): DynamicModule {
     const {
       password,
@@ -13,7 +13,7 @@ export class HealthInsuranceV2Module {
     const basePath = `${xRoadBaseUrl}/r1/${xRoadProviderId}/islandis`
     console.log('config : ', options)
     return {
-      module: HealthInsuranceV2Module,
+      module: HealthInsuranceV2Client,
       imports: [],
       providers: [
         {

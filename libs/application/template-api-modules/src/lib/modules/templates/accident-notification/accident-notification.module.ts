@@ -4,7 +4,7 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { FileStorageModule } from '@island.is/file-storage'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import { AccidentNotificationService } from './accident-notification.service'
-import { HealthInsuranceV2Module } from '@island.is/clients/health-insurance-v2'
+import { HealthInsuranceV2Client } from '@island.is/clients/health-insurance-v2'
 import { AttachmentProvider } from './accident-notification-attachments.provider'
 
 const applicationRecipientName =
@@ -25,7 +25,7 @@ export class AccidentNotificationModule {
       imports: [
         SharedTemplateAPIModule.register(config),
         FileStorageModule.register({}),
-        HealthInsuranceV2Module.register(config.healthInsuranceV2),
+        HealthInsuranceV2Client.register(config.healthInsuranceV2),
       ],
       providers: [
         AttachmentProvider,
