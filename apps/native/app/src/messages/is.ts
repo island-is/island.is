@@ -62,6 +62,8 @@ export const is = {
     'Fá tilkynningar um nýjungar í appinu',
   'settings.communication.applicationsNotifications':
     'Fá tilkynningar um stöðu umsókna',
+  'settings.security.privacyTitle': 'Persónuverndarstefna',
+  'settings.security.privacySubTitle': 'Stafrænt Íslands',
   'settings.security.groupTitle': 'Öryggi og persónuvernd',
   'settings.security.changePinLabel': 'Breyta PIN',
   'settings.security.changePinDescription': 'Veldu nýtt 4 stafa PIN-númer',

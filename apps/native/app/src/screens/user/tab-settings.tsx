@@ -2,46 +2,42 @@ import {
   Alert,
   TableViewAccessory,
   TableViewCell,
-  TableViewGroup,
+  TableViewGroup
 } from '@island.is/island-ui-native'
 import messaging from '@react-native-firebase/messaging'
 import * as Sentry from '@sentry/react-native'
 import {
-  authenticateAsync,
-  AuthenticationType,
-  isEnrolledAsync,
-  supportedAuthenticationTypesAsync,
+  authenticateAsync
 } from 'expo-local-authentication'
 import React, { useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
-  Alert as RNAlert,
-  AppState,
+  Alert as RNAlert, Linking,
   Platform,
   Pressable,
   ScrollView,
   Switch,
-  View,
+  View
 } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 import CodePush, {
-  LocalPackage,
+  LocalPackage
 } from '../../../../node_modules/react-native-code-push'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
-import { useIntl } from 'react-intl'
 import { showPicker } from '../../lib/show-picker'
 import { authStore } from '../../stores/auth-store'
 import {
   PreferencesStore,
   preferencesStore,
-  usePreferencesStore,
+  usePreferencesStore
 } from '../../stores/preferences-store'
+import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { config } from '../../utils/config'
 import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { testIDs } from '../../utils/test-ids'
 import { useBiometricType } from '../onboarding/onboarding-biometrics'
-import { useUiStore } from '../../stores/ui-store'
 
 const PreferencesSwitch = React.memo(
   ({ name }: { name: keyof PreferencesStore }) => {
@@ -82,7 +78,7 @@ export function TabSettings() {
   const [pushToken, setPushToken] = useState('loading...')
   const efficient = useRef<any>({}).current
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
-  const { authenticationTypes, isEnrolledBiometrics } = useUiStore();
+  const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
   const biometricType = useBiometricType(authenticationTypes)
 
   const onLogoutPress = async () => {
@@ -367,6 +363,21 @@ export function TabSettings() {
                 })}
               </TableViewAccessory>
             }
+          />
+        </PressableHighlight>
+
+        <PressableHighlight
+          onPress={() => {
+            Linking.openURL(
+              'https://island.is/personuverndarstefna-stafraent-islands',
+            )
+          }}
+        >
+          <TableViewCell
+            title={intl.formatMessage({ id: 'settings.security.privacyTitle' })}
+            subtitle={intl.formatMessage({
+              id: 'settings.security.privacySubTitle',
+            })}
           />
         </PressableHighlight>
       </TableViewGroup>

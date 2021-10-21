@@ -64,6 +64,8 @@ export const en: TranslatedMessages = {
     'Get notifications about app updates',
   'settings.communication.applicationsNotifications':
     'Get notifications about application status updates',
+  'settings.security.privacyTitle': 'Privacy Policy',
+  'settings.security.privacySubTitle': 'Digital Iceland',
   'settings.security.groupTitle': 'Security and privacy',
   'settings.security.changePinLabel': 'Change PIN',
   'settings.security.changePinDescription': 'Choose a new 4-digit PIN number',
