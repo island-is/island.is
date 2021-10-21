@@ -38,680 +38,6 @@
       }
     }
   },
-  "projects": {
-    "air-discount-scheme-api": {
-      "tags": []
-    },
-    "air-discount-scheme-backend": {
-      "tags": []
-    },
-    "air-discount-scheme-consts": {
-      "tags": []
-    },
-    "air-discount-scheme-types": {
-      "tags": []
-    },
-    "air-discount-scheme-web": {
-      "tags": []
-    },
-    "air-discount-scheme-web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["air-discount-scheme-web"]
-    },
-    "api": {
-      "tags": []
-    },
-    "api-catalogue-consts": {
-      "tags": []
-    },
-    "api-catalogue-elastic": {
-      "tags": []
-    },
-    "api-catalogue-services": {
-      "tags": []
-    },
-    "api-catalogue-types": {
-      "tags": []
-    },
-    "api-domains-api-catalogue": {
-      "tags": []
-    },
-    "api-domains-application": {
-      "tags": []
-    },
-    "api-domains-auth": {
-      "tags": []
-    },
-    "api-domains-communications": {
-      "tags": []
-    },
-    "api-domains-content-search": {
-      "tags": []
-    },
-    "api-domains-directorate-of-labour": {
-      "tags": []
-    },
-    "api-domains-document-provider": {
-      "tags": []
-    },
-    "api-domains-documents": {
-      "tags": []
-    },
-    "api-domains-driving-license": {
-      "tags": []
-    },
-    "api-domains-education": {
-      "tags": []
-    },
-    "api-domains-endorsement-system": {
-      "tags": []
-    },
-    "api-domains-file-upload": {
-      "tags": []
-    },
-    "api-domains-finance": {
-      "tags": []
-    },
-    "api-domains-health-insurance": {
-      "tags": []
-    },
-    "api-domains-icelandic-names-registry": {
-      "tags": []
-    },
-    "api-domains-identity": {
-      "tags": []
-    },
-    "api-domains-license-service": {
-      "tags": []
-    },
-    "api-domains-national-registry": {
-      "tags": []
-    },
-    "api-domains-national-registry-x-road": {
-      "tags": []
-    },
-    "api-domains-party-letter-registry": {
-      "tags": []
-    },
-    "api-domains-payment": {
-      "tags": []
-    },
-    "api-domains-payment-schedule": {
-      "tags": []
-    },
-    "api-domains-regulations": {
-      "tags": []
-    },
-    "api-domains-rsk": {
-      "tags": []
-    },
-    "api-domains-syslumenn": {
-      "tags": []
-    },
-    "api-domains-temporary-voter-registry": {
-      "tags": []
-    },
-    "api-domains-user-profile": {
-      "tags": []
-    },
-    "api-mocks": {
-      "tags": []
-    },
-    "api-schema": {
-      "tags": []
-    },
-    "application-core": {
-      "tags": []
-    },
-    "application-data-providers": {
-      "tags": []
-    },
-    "application-graphql": {
-      "tags": []
-    },
-    "application-system-api": {
-      "tags": []
-    },
-    "application-system-form": {
-      "tags": []
-    },
-    "application-system-form-e2e": {
-      "tags": [],
-      "implicitDependencies": ["application-system-form"]
-    },
-    "application-template-api-modules": {
-      "tags": []
-    },
-    "application-template-loader": {
-      "tags": []
-    },
-    "application-templates-accident-notification": {
-      "tags": []
-    },
-    "application-templates-children-residence-change": {
-      "tags": []
-    },
-    "application-templates-complaints-to-althingi-ombudsman": {
-      "tags": []
-    },
-    "application-templates-data-protection-complaint": {
-      "tags": []
-    },
-    "application-templates-document-provider-onboarding": {
-      "tags": []
-    },
-    "application-templates-driving-assessment-approval": {
-      "tags": []
-    },
-    "application-templates-driving-lessons": {
-      "tags": []
-    },
-    "application-templates-driving-license": {
-      "tags": []
-    },
-    "application-templates-family-matters-core": {
-      "tags": []
-    },
-    "application-templates-funding-government-projects": {
-      "tags": []
-    },
-    "application-templates-general-petition": {
-      "tags": []
-    },
-    "application-templates-health-insurance": {
-      "tags": []
-    },
-    "application-templates-institution-collaboration": {
-      "tags": []
-    },
-    "application-templates-joint-custody-agreement": {
-      "tags": []
-    },
-    "application-templates-login-service": {
-      "tags": []
-    },
-    "application-templates-meta-application": {
-      "tags": []
-    },
-    "application-templates-parental-leave": {
-      "tags": []
-    },
-    "application-templates-party-application": {
-      "tags": []
-    },
-    "application-templates-party-letter": {
-      "tags": []
-    },
-    "application-templates-passport": {
-      "tags": []
-    },
-    "application-templates-payable-dummy-template": {
-      "tags": []
-    },
-    "application-templates-public-debt-payment-plan": {
-      "tags": []
-    },
-    "application-templates-reference-template": {
-      "tags": []
-    },
-    "application-ui-components": {
-      "tags": []
-    },
-    "application-ui-fields": {
-      "tags": []
-    },
-    "application-ui-shell": {
-      "tags": []
-    },
-    "auth-admin-web": {
-      "tags": []
-    },
-    "auth-admin-web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["auth-admin-web"]
-    },
-    "auth-api-lib": {
-      "tags": []
-    },
-    "auth-nest-tools": {
-      "tags": []
-    },
-    "auth-react": {
-      "tags": []
-    },
-    "auth-scopes": {
-      "tags": []
-    },
-    "cache": {
-      "tags": []
-    },
-    "clients-auth-public-api": {
-      "tags": [],
-      "implicitDependencies": ["services-auth-public-api"]
-    },
-    "clients-document-provider": {
-      "tags": []
-    },
-    "clients-documents": {
-      "tags": []
-    },
-    "clients-driving-license": {
-      "tags": []
-    },
-    "clients-finance": {
-      "tags": []
-    },
-    "clients-health-insurance-v2": {
-      "tags": []
-    },
-    "clients-middlewares": {
-      "tags": []
-    },
-    "clients-mms": {
-      "tags": []
-    },
-    "clients-national-registry-v1": {
-      "tags": []
-    },
-    "clients-national-registry-v2": {
-      "tags": []
-    },
-    "clients-payment": {
-      "tags": []
-    },
-    "clients-payment-schedule": {
-      "tags": []
-    },
-    "clients-regulations": {
-      "tags": []
-    },
-    "clients-rsk-v1": {
-      "tags": []
-    },
-    "clients-rsk-v2": {
-      "tags": []
-    },
-    "clients-vmst": {
-      "tags": []
-    },
-    "clients-zendesk": {
-      "tags": []
-    },
-    "cms": {
-      "tags": []
-    },
-    "cms-translations": {
-      "tags": []
-    },
-    "content-search-index-manager": {
-      "tags": []
-    },
-    "content-search-indexer": {
-      "tags": []
-    },
-    "content-search-indexer-types": {
-      "tags": []
-    },
-    "content-search-metrics": {
-      "tags": []
-    },
-    "content-search-toolkit": {
-      "tags": []
-    },
-    "contentful-mideind-extension": {
-      "tags": []
-    },
-    "contentful-parent-slug-extension": {
-      "tags": []
-    },
-    "contentful-translation-extension": {
-      "tags": []
-    },
-    "dokobit-signing": {
-      "tags": []
-    },
-    "download-service": {
-      "tags": []
-    },
-    "email-service": {
-      "tags": []
-    },
-    "feature-flags": {
-      "tags": []
-    },
-    "file-storage": {
-      "tags": []
-    },
-    "financial-aid-api": {
-      "tags": []
-    },
-    "financial-aid-backend": {
-      "tags": []
-    },
-    "financial-aid-shared": {
-      "tags": []
-    },
-    "financial-aid-web-osk": {
-      "tags": []
-    },
-    "financial-aid-web-veita": {
-      "tags": []
-    },
-    "gjafakort-api": {
-      "tags": []
-    },
-    "gjafakort-application": {
-      "tags": []
-    },
-    "gjafakort-consts": {
-      "tags": []
-    },
-    "gjafakort-queue-listener": {
-      "tags": []
-    },
-    "gjafakort-types": {
-      "tags": []
-    },
-    "gjafakort-web": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-api"]
-    },
-    "gjafakort-web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-web"]
-    },
-    "health-insurance": {
-      "tags": []
-    },
-    "icelandic-names-registry-backend": {
-      "tags": []
-    },
-    "icelandic-names-registry-types": {
-      "tags": []
-    },
-    "infra-express-server": {
-      "tags": []
-    },
-    "infra-metrics": {
-      "tags": []
-    },
-    "infra-monitoring": {
-      "tags": []
-    },
-    "infra-nest-server": {
-      "tags": []
-    },
-    "infra-next-server": {
-      "tags": []
-    },
-    "infra-tracing": {
-      "tags": []
-    },
-    "island-ui-contentful": {
-      "tags": []
-    },
-    "island-ui-core": {
-      "tags": [],
-      "implicitDependencies": ["island-ui-theme"]
-    },
-    "island-ui-fonts": {
-      "tags": []
-    },
-    "island-ui-storybook": {
-      "tags": [],
-      "implicitDependencies": ["island-ui-core"]
-    },
-    "island-ui-theme": {
-      "tags": []
-    },
-    "island-ui-utils": {
-      "tags": []
-    },
-    "island-ui-vanilla-extract-utils": {
-      "tags": []
-    },
-    "judicial-system-api": {
-      "tags": []
-    },
-    "judicial-system-audit-trail": {
-      "tags": []
-    },
-    "judicial-system-auth": {
-      "tags": []
-    },
-    "judicial-system-backend": {
-      "tags": []
-    },
-    "judicial-system-consts": {
-      "tags": []
-    },
-    "judicial-system-court-client": {
-      "tags": []
-    },
-    "judicial-system-formatters": {
-      "tags": []
-    },
-    "judicial-system-types": {
-      "tags": []
-    },
-    "judicial-system-web": {
-      "tags": []
-    },
-    "judicial-system-web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["judicial-system-web"]
-    },
-    "judicial-system-xrd-api": {
-      "tags": []
-    },
-    "localization": {
-      "tags": []
-    },
-    "logging": {
-      "tags": []
-    },
-    "message-queue": {
-      "tags": []
-    },
-    "nest-audit": {
-      "tags": []
-    },
-    "nest-pagination": {
-      "tags": []
-    },
-    "nest-problem": {
-      "tags": []
-    },
-    "nest-validators": {
-      "tags": []
-    },
-    "next-ids-auth": {
-      "tags": []
-    },
-    "nova-sms": {
-      "tags": []
-    },
-    "plausible": {
-      "tags": []
-    },
-    "reference-backend": {
-      "tags": []
-    },
-    "reference-next-app": {
-      "tags": []
-    },
-    "regulations": {
-      "tags": []
-    },
-    "service-portal": {
-      "tags": []
-    },
-    "service-portal-applications": {
-      "tags": []
-    },
-    "service-portal-assets": {
-      "tags": []
-    },
-    "service-portal-constants": {
-      "tags": []
-    },
-    "service-portal-core": {
-      "tags": []
-    },
-    "service-portal-document-provider": {
-      "tags": []
-    },
-    "service-portal-documents": {
-      "tags": []
-    },
-    "service-portal-driving-license": {
-      "tags": []
-    },
-    "service-portal-e2e": {
-      "tags": [],
-      "implicitDependencies": ["service-portal"]
-    },
-    "service-portal-education": {
-      "tags": []
-    },
-    "service-portal-education-career": {
-      "tags": []
-    },
-    "service-portal-education-degree": {
-      "tags": []
-    },
-    "service-portal-education-license": {
-      "tags": []
-    },
-    "service-portal-education-student-assessment": {
-      "tags": []
-    },
-    "service-portal-eligibility": {
-      "tags": []
-    },
-    "service-portal-endorsements": {
-      "tags": []
-    },
-    "service-portal-family": {
-      "tags": []
-    },
-    "service-portal-finance": {
-      "tags": []
-    },
-    "service-portal-graphql": {
-      "tags": []
-    },
-    "service-portal-health": {
-      "tags": []
-    },
-    "service-portal-icelandic-names-registry": {
-      "tags": []
-    },
-    "service-portal-licenses": {
-      "tags": []
-    },
-    "service-portal-settings-access-control": {
-      "tags": []
-    },
-    "service-portal-settings-personal-information": {
-      "tags": []
-    },
-    "service-portal-wip": {
-      "tags": []
-    },
-    "services-auth-admin-api": {
-      "tags": []
-    },
-    "services-auth-api": {
-      "tags": []
-    },
-    "services-auth-public-api": {
-      "tags": []
-    },
-    "services-documents": {
-      "tags": []
-    },
-    "services-endorsements-api": {
-      "tags": []
-    },
-    "services-party-letter-registry-api": {
-      "tags": []
-    },
-    "services-search-indexer": {
-      "tags": []
-    },
-    "services-temporary-voter-registry-api": {
-      "tags": []
-    },
-    "services-user-profile": {
-      "tags": []
-    },
-    "services-xroad-collector": {
-      "tags": ["api-catalogue-services"]
-    },
-    "shared-babel": {
-      "tags": []
-    },
-    "shared-components": {
-      "tags": []
-    },
-    "shared-connected": {
-      "tags": []
-    },
-    "shared-constants": {
-      "tags": []
-    },
-    "shared-form-fields": {
-      "tags": []
-    },
-    "shared-mocking": {
-      "tags": []
-    },
-    "shared-problem": {
-      "tags": []
-    },
-    "shared-translations": {
-      "tags": []
-    },
-    "shared-types": {
-      "tags": []
-    },
-    "shared-utils": {
-      "tags": []
-    },
-    "skilavottord-consts": {
-      "tags": []
-    },
-    "skilavottord-types": {
-      "tags": []
-    },
-    "skilavottord-web": {
-      "tags": []
-    },
-    "skilavottord-web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["skilavottord-web"]
-    },
-    "skilavottord-ws": {
-      "tags": []
-    },
-    "system-e2e": {
-      "tags": []
-    },
-    "testing-fixtures": {
-      "tags": []
-    },
-    "testing-nest": {
-      "tags": []
-    },
-    "web": {
-      "tags": []
-    },
-    "web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["web"]
-    }
-  },
   "targetDependencies": {
     "build": [
       {
@@ -719,5 +45,73 @@
         "projects": "dependencies"
       }
     ]
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/react"
+  },
+  "defaultProject": "web",
+  "generators": {
+    "@nrwl/workspace": {
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/cypress": {
+      "cypress-project": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/react": {
+      "application": {
+        "linter": "eslint",
+        "style": "scss",
+        "pascalCaseFiles": true,
+        "babel": true
+      },
+      "component": {
+        "style": "scss"
+      },
+      "library": {
+        "style": "scss",
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/next": {
+      "application": {
+        "style": "scss",
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/web": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/node": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nx-plugin": {
+      "plugin": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nest": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/express": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    }
   }
 }

@@ -1,73 +1,5 @@
 {
   "version": 1,
-  "cli": {
-    "defaultCollection": "@nrwl/react"
-  },
-  "defaultProject": "web",
-  "schematics": {
-    "@nrwl/workspace": {
-      "library": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/cypress": {
-      "cypress-project": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/react": {
-      "application": {
-        "linter": "eslint",
-        "style": "scss",
-        "pascalCaseFiles": true,
-        "babel": true
-      },
-      "component": {
-        "style": "scss"
-      },
-      "library": {
-        "style": "scss",
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/next": {
-      "application": {
-        "style": "scss",
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/web": {
-      "application": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/node": {
-      "application": {
-        "linter": "eslint"
-      },
-      "library": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/nx-plugin": {
-      "plugin": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/nest": {
-      "application": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/express": {
-      "application": {
-        "linter": "eslint"
-      },
-      "library": {
-        "linter": "eslint"
-      }
-    }
-  },
   "projects": {
     "air-discount-scheme-api": {
       "root": "apps/air-discount-scheme/api",
@@ -135,7 +67,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "air-discount-scheme-backend": {
       "root": "apps/air-discount-scheme/backend",
@@ -242,7 +175,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "air-discount-scheme-consts": {
       "root": "libs/air-discount-scheme/consts",
@@ -272,7 +206,8 @@
           },
           "outputs": ["coverage/libs/air-discount-scheme/consts"]
         }
-      }
+      },
+      "tags": []
     },
     "air-discount-scheme-types": {
       "root": "libs/air-discount-scheme/types",
@@ -302,7 +237,8 @@
           },
           "outputs": ["coverage/libs/air-discount-scheme/types"]
         }
-      }
+      },
+      "tags": []
     },
     "air-discount-scheme-web": {
       "root": "apps/air-discount-scheme/web",
@@ -396,7 +332,8 @@
           }
         },
         "docker-next": {}
-      }
+      },
+      "tags": []
     },
     "air-discount-scheme-web-e2e": {
       "root": "apps/air-discount-scheme/web-e2e",
@@ -434,7 +371,9 @@
             ]
           }
         }
-      }
+      },
+      "tags": [],
+      "implicitDependencies": ["air-discount-scheme-web"]
     },
     "api": {
       "root": "apps/api",
@@ -513,7 +452,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "api-catalogue-consts": {
       "root": "libs/api-catalogue/consts",
@@ -540,7 +480,8 @@
           },
           "outputs": ["coverage/libs/api-catalogue/consts"]
         }
-      }
+      },
+      "tags": []
     },
     "api-catalogue-elastic": {
       "root": "libs/api-catalogue/elastic",
@@ -567,7 +508,8 @@
           },
           "outputs": ["coverage/libs/api-catalogue/elastic"]
         }
-      }
+      },
+      "tags": []
     },
     "api-catalogue-services": {
       "root": "libs/api-catalogue/services",
@@ -604,7 +546,8 @@
             ]
           }
         }
-      }
+      },
+      "tags": []
     },
     "api-catalogue-types": {
       "root": "libs/api-catalogue/types",
@@ -631,7 +574,8 @@
           },
           "outputs": ["coverage/libs/api-catalogue/types"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-api-catalogue": {
       "root": "libs/api/domains/api-catalogue",
@@ -661,7 +605,8 @@
           },
           "outputs": ["coverage/libs/api/domains/api-catalogue"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-application": {
       "root": "libs/api/domains/application",
@@ -698,7 +643,8 @@
             "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
           }
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-auth": {
       "root": "libs/api/domains/auth",
@@ -720,7 +666,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-communications": {
       "root": "libs/api/domains/communications",
@@ -750,7 +697,8 @@
           },
           "outputs": ["coverage/libs/api/domains/communications"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-content-search": {
       "root": "libs/api/domains/content-search",
@@ -780,7 +728,8 @@
           },
           "outputs": ["coverage/libs/api/domains/content-search"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-directorate-of-labour": {
       "root": "libs/api/domains/directorate-of-labour",
@@ -810,7 +759,8 @@
           },
           "outputs": ["coverage/libs/api/domains/directorate-of-labour"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-document-provider": {
       "root": "libs/api/domains/document-provider",
@@ -847,7 +797,8 @@
             "command": "yarn openapi-generator -o libs/api/domains/document-provider/gen/fetch -i apps/services/documents/src/openapi.yaml"
           }
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-documents": {
       "root": "libs/api/domains/documents",
@@ -877,7 +828,8 @@
           },
           "outputs": ["coverage/libs/api/domains/documents"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-driving-license": {
       "root": "libs/api/domains/driving-license",
@@ -907,7 +859,8 @@
           },
           "outputs": ["coverage/libs/api/domains/driving-license"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-education": {
       "root": "libs/api/domains/education",
@@ -937,7 +890,8 @@
           },
           "outputs": ["coverage/libs/api/domains/education"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-endorsement-system": {
       "root": "libs/api/domains/endorsement-system",
@@ -997,7 +951,8 @@
             "command": "yarn openapi-generator -o libs/api/domains/endorsement-system/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
           }
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-file-upload": {
       "root": "libs/api/domains/file-upload",
@@ -1027,7 +982,8 @@
           },
           "outputs": ["coverage/libs/api/domains/file-upload"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-finance": {
       "root": "libs/api/domains/finance",
@@ -1049,7 +1005,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-health-insurance": {
       "root": "libs/api/domains/health-insurance",
@@ -1079,7 +1036,8 @@
           },
           "outputs": ["coverage/libs/api/domains/health-insurance"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-icelandic-names-registry": {
       "root": "libs/api/domains/icelandic-names-registry",
@@ -1109,7 +1067,8 @@
           },
           "outputs": ["coverage/libs/api/domains/icelandic-names-registry"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-identity": {
       "root": "libs/api/domains/identity",
@@ -1131,7 +1090,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-license-service": {
       "root": "libs/api/domains/license-service",
@@ -1153,7 +1113,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-national-registry": {
       "root": "libs/api/domains/national-registry",
@@ -1183,7 +1144,8 @@
           },
           "outputs": ["coverage/libs/api/domains/national-registry"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-national-registry-x-road": {
       "root": "libs/api/domains/national-registry-x-road",
@@ -1213,7 +1175,8 @@
           },
           "outputs": ["coverage/libs/api/domains/national-registry-x-road"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-party-letter-registry": {
       "root": "libs/api/domains/party-letter-registry",
@@ -1250,7 +1213,8 @@
             "command": "yarn openapi-generator -o libs/api/domains/party-letter-registry/gen/fetch -i apps/services/party-letter-registry-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
           }
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-payment": {
       "root": "libs/api/domains/payment",
@@ -1277,7 +1241,8 @@
           },
           "outputs": ["coverage/libs/api/domains/payment"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-payment-schedule": {
       "root": "libs/api/domains/payment-schedule",
@@ -1306,7 +1271,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-regulations": {
       "root": "libs/api/domains/regulations",
@@ -1336,7 +1302,8 @@
           },
           "outputs": ["coverage/libs/api/domains/regulations"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-rsk": {
       "root": "libs/api/domains/rsk",
@@ -1363,7 +1330,8 @@
           },
           "outputs": ["coverage/libs/api/domains/rsk"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-syslumenn": {
       "root": "libs/api/domains/syslumenn",
@@ -1393,7 +1361,8 @@
           },
           "outputs": ["coverage/libs/api/domains/syslumenn"]
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-temporary-voter-registry": {
       "root": "libs/api/domains/temporary-voter-registry",
@@ -1430,7 +1399,8 @@
             "command": "yarn openapi-generator -o libs/api/domains/temporary-voter-registry/gen/fetch -i apps/services/temporary-voter-registry-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
           }
         }
-      }
+      },
+      "tags": []
     },
     "api-domains-user-profile": {
       "root": "libs/api/domains/user-profile",
@@ -1467,7 +1437,8 @@
             "command": "yarn openapi-generator -o libs/api/domains/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
           }
         }
-      }
+      },
+      "tags": []
     },
     "api-mocks": {
       "root": "libs/api/mocks",
@@ -1503,7 +1474,8 @@
             ]
           }
         }
-      }
+      },
+      "tags": []
     },
     "api-schema": {
       "root": "libs/api/schema",
@@ -1519,7 +1491,8 @@
             "exclude": ["**/node_modules/**", "!libs/api/schema/**/*"]
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-core": {
       "root": "libs/application/core",
@@ -1552,7 +1525,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/core/src/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-data-providers": {
       "root": "libs/application/data-providers",
@@ -1582,7 +1556,8 @@
           },
           "outputs": ["coverage/libs/application/data-providers"]
         }
-      }
+      },
+      "tags": []
     },
     "application-graphql": {
       "root": "libs/application/graphql",
@@ -1609,7 +1584,8 @@
           },
           "outputs": ["coverage/libs/application/graphql"]
         }
-      }
+      },
+      "tags": []
     },
     "application-system-api": {
       "root": "apps/application-system/api",
@@ -1737,7 +1713,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "application-system-form": {
       "root": "apps/application-system/form",
@@ -1825,7 +1802,8 @@
           }
         },
         "docker-static": {}
-      }
+      },
+      "tags": []
     },
     "application-system-form-e2e": {
       "root": "apps/application-system/form-e2e",
@@ -1863,7 +1841,9 @@
             ]
           }
         }
-      }
+      },
+      "tags": [],
+      "implicitDependencies": ["application-system-form"]
     },
     "application-template-api-modules": {
       "root": "libs/application/template-api-modules",
@@ -1893,7 +1873,8 @@
           },
           "outputs": ["coverage/libs/application/template-api-modules"]
         }
-      }
+      },
+      "tags": []
     },
     "application-template-loader": {
       "root": "libs/application/template-loader",
@@ -1923,7 +1904,8 @@
           },
           "outputs": ["coverage/libs/application/template-loader"]
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-accident-notification": {
       "root": "libs/application/templates/accident-notification",
@@ -1961,7 +1943,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/accident-notification/src/lib/messages/index.ts"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-children-residence-change": {
       "root": "libs/application/templates/family-matters/children-residence-change",
@@ -1989,7 +1972,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/children-residence-change/src/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-complaints-to-althingi-ombudsman": {
       "root": "libs/application/templates/complaints-to-althingi-ombudsman",
@@ -2011,7 +1995,8 @@
             ]
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-data-protection-complaint": {
       "root": "libs/application/templates/data-protection-complaint",
@@ -2049,7 +2034,8 @@
             "coverage/libs/application/templates/data-protection-complaint"
           ]
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-document-provider-onboarding": {
       "root": "libs/application/templates/document-provider-onboarding",
@@ -2087,7 +2073,8 @@
             "command": "yarn ts-node libs/localization/scripts/extract libs/application/templates/document-provider-onboarding/src/forms/messages.ts"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-driving-assessment-approval": {
       "root": "libs/application/templates/driving-assessment-approval",
@@ -2121,7 +2108,8 @@
             "command": "graphql-codegen --config libs/application/templates/driving-assessment-approval/codegen.yml"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-driving-lessons": {
       "root": "libs/application/templates/driving-lessons",
@@ -2157,7 +2145,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/driving-lessons/src/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-driving-license": {
       "root": "libs/application/templates/driving-license",
@@ -2199,7 +2188,8 @@
             "command": "graphql-codegen --config libs/application/templates/driving-license/codegen.yml"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-family-matters-core": {
       "root": "libs/application/templates/family-matters/core",
@@ -2221,7 +2211,8 @@
             ]
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-funding-government-projects": {
       "root": "libs/application/templates/funding-government-projects",
@@ -2258,7 +2249,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/funding-government-projects/src/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-general-petition": {
       "root": "libs/application/templates/general-petition",
@@ -2346,7 +2338,8 @@
             "command": "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/general-petition/gen/fetch/endorsements -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-health-insurance": {
       "root": "libs/application/templates/health-insurance",
@@ -2382,7 +2375,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/health-insurance/src/forms/messages.ts"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-institution-collaboration": {
       "root": "libs/application/templates/institution-collaboration",
@@ -2417,7 +2411,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/institution-collaboration/src/lib/messages.ts"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-joint-custody-agreement": {
       "root": "libs/application/templates/family-matters/joint-custody-agreement",
@@ -2445,7 +2440,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/joint-custody-agreement/src/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-login-service": {
       "root": "libs/application/templates/login-service",
@@ -2475,7 +2471,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/login-service/src/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-meta-application": {
       "root": "libs/application/templates/meta-application",
@@ -2505,7 +2502,8 @@
           },
           "outputs": ["coverage/libs/application/templates/meta-application"]
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-parental-leave": {
       "root": "libs/application/templates/parental-leave",
@@ -2547,7 +2545,8 @@
             "command": "graphql-codegen --config libs/application/templates/parental-leave/codegen.yml"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-party-application": {
       "root": "libs/application/templates/party-application",
@@ -2627,7 +2626,8 @@
             "command": "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/party-application/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-party-letter": {
       "root": "libs/application/templates/party-letter",
@@ -2719,7 +2719,8 @@
             "parallel": false
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-passport": {
       "root": "libs/application/templates/passport",
@@ -2755,7 +2756,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/passport/src/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-payable-dummy-template": {
       "root": "libs/application/templates/payable-dummy-template",
@@ -2793,7 +2795,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/payable-dummy-template/src/lib/messages.ts"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-public-debt-payment-plan": {
       "root": "libs/application/templates/public-debt-payment-plan",
@@ -2825,7 +2828,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/public-debt-payment-plan/src/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-templates-reference-template": {
       "root": "libs/application/templates/reference-template",
@@ -2861,7 +2865,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/reference-template/src/lib/messages.ts"
           }
         }
-      }
+      },
+      "tags": []
     },
     "application-ui-components": {
       "root": "libs/application/ui-components",
@@ -2891,7 +2896,8 @@
           },
           "outputs": ["coverage/libs/application/ui-components"]
         }
-      }
+      },
+      "tags": []
     },
     "application-ui-fields": {
       "root": "libs/application/ui-fields",
@@ -2921,7 +2927,8 @@
           },
           "outputs": ["coverage/libs/application/ui-fields"]
         }
-      }
+      },
+      "tags": []
     },
     "application-ui-shell": {
       "root": "libs/application/ui-shell",
@@ -2954,7 +2961,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/ui-shell/src/{lib,components}/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "auth-admin-web": {
       "root": "apps/auth-admin-web",
@@ -3038,7 +3046,8 @@
           "outputs": ["coverage/apps/auth-admin-web"]
         },
         "docker-next": {}
-      }
+      },
+      "tags": []
     },
     "auth-admin-web-e2e": {
       "root": "apps/auth-admin-web-e2e",
@@ -3073,7 +3082,9 @@
             "exclude": ["**/node_modules/**"]
           }
         }
-      }
+      },
+      "tags": [],
+      "implicitDependencies": ["auth-admin-web"]
     },
     "auth-api-lib": {
       "root": "libs/auth-api-lib",
@@ -3100,7 +3111,8 @@
           },
           "outputs": ["coverage/libs/auth-api-lib"]
         }
-      }
+      },
+      "tags": []
     },
     "auth-nest-tools": {
       "root": "libs/auth-nest-tools",
@@ -3127,7 +3139,8 @@
           },
           "outputs": ["coverage/libs/auth-nest-tools"]
         }
-      }
+      },
+      "tags": []
     },
     "auth-react": {
       "root": "libs/auth/react",
@@ -3149,7 +3162,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "auth-scopes": {
       "root": "libs/auth/scopes",
@@ -3171,7 +3185,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "cache": {
       "root": "libs/cache",
@@ -3198,7 +3213,8 @@
           },
           "outputs": ["coverage/libs/cache"]
         }
-      }
+      },
+      "tags": []
     },
     "clients-auth-public-api": {
       "root": "libs/clients/auth-public-api",
@@ -3227,7 +3243,9 @@
             "command": "yarn openapi-generator -o libs/clients/auth-public-api/gen/fetch -i apps/services/auth-public-api/src/openapi.yaml"
           }
         }
-      }
+      },
+      "tags": [],
+      "implicitDependencies": ["services-auth-public-api"]
     },
     "clients-document-provider": {
       "root": "libs/clients/document-provider",
@@ -3255,7 +3273,8 @@
             "command": "yarn openapi-generator -o libs/clients/document-provider/gen/fetch -i libs/clients/document-provider/src/clientConfig.yaml"
           }
         }
-      }
+      },
+      "tags": []
     },
     "clients-documents": {
       "root": "libs/clients/documents",
@@ -3277,7 +3296,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "clients-driving-license": {
       "root": "libs/clients/driving-license",
@@ -3321,7 +3341,8 @@
             ]
           }
         }
-      }
+      },
+      "tags": []
     },
     "clients-finance": {
       "root": "libs/clients/finance",
@@ -3343,7 +3364,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "clients-health-insurance-v2": {
       "root": "libs/clients/health-insurance-v2",
@@ -3392,7 +3414,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "clients-mms": {
       "root": "libs/clients/mms",
@@ -3414,7 +3437,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "clients-national-registry-v1": {
       "root": "libs/clients/national-registry/v1",
@@ -3436,7 +3460,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "clients-national-registry-v2": {
       "root": "libs/clients/national-registry/v2",
@@ -3464,7 +3489,8 @@
             "command": "yarn openapi-generator -o libs/clients/national-registry/v2/gen/fetch -i libs/clients/national-registry/v2/src/clientConfig.yaml"
           }
         }
-      }
+      },
+      "tags": []
     },
     "clients-payment": {
       "root": "libs/clients/payment",
@@ -3491,7 +3517,8 @@
           },
           "outputs": ["coverage/libs/clients/payment"]
         }
-      }
+      },
+      "tags": []
     },
     "clients-payment-schedule": {
       "root": "libs/clients/payment-schedule",
@@ -3520,7 +3547,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "clients-regulations": {
       "root": "libs/clients/regulations",
@@ -3547,7 +3575,8 @@
           },
           "outputs": ["coverage/libs/clients/regulations"]
         }
-      }
+      },
+      "tags": []
     },
     "clients-rsk-v1": {
       "root": "libs/clients/rsk/v1",
@@ -3574,7 +3603,8 @@
           },
           "outputs": ["coverage/libs/clients/rsk/v1"]
         }
-      }
+      },
+      "tags": []
     },
     "clients-rsk-v2": {
       "root": "libs/clients/rsk/v2",
@@ -3602,7 +3632,8 @@
             "command": "yarn openapi-generator -o libs/clients/rsk/v2/gen/fetch -i libs/clients/rsk/v2/src/companyregistryapi_openapi3.yml"
           }
         }
-      }
+      },
+      "tags": []
     },
     "clients-vmst": {
       "root": "libs/clients/vmst",
@@ -3635,7 +3666,8 @@
             "command": "yarn openapi-generator -o libs/clients/vmst/gen/fetch -i libs/clients/vmst/src/clientConfig.yaml"
           }
         }
-      }
+      },
+      "tags": []
     },
     "clients-zendesk": {
       "root": "libs/clients/zendesk",
@@ -3657,7 +3689,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "cms": {
       "root": "libs/cms",
@@ -3684,7 +3717,8 @@
           },
           "outputs": ["coverage/libs/cms"]
         }
-      }
+      },
+      "tags": []
     },
     "cms-translations": {
       "root": "libs/cms-translations",
@@ -3711,7 +3745,8 @@
           },
           "outputs": ["coverage/libs/cms-translations"]
         }
-      }
+      },
+      "tags": []
     },
     "content-search-index-manager": {
       "root": "libs/content-search-index-manager",
@@ -3741,7 +3776,8 @@
           },
           "outputs": ["coverage/libs/content-search-index-manager"]
         }
-      }
+      },
+      "tags": []
     },
     "content-search-indexer": {
       "root": "libs/content-search-indexer",
@@ -3771,7 +3807,8 @@
           },
           "outputs": ["coverage/libs/content-search-indexer"]
         }
-      }
+      },
+      "tags": []
     },
     "content-search-indexer-types": {
       "root": "libs/content-search-indexer/types",
@@ -3801,7 +3838,8 @@
           },
           "outputs": ["coverage/libs/content-search-indexer/types"]
         }
-      }
+      },
+      "tags": []
     },
     "content-search-metrics": {
       "root": "libs/content-search-metrics",
@@ -3831,7 +3869,8 @@
           },
           "outputs": ["coverage/libs/content-search-metrics"]
         }
-      }
+      },
+      "tags": []
     },
     "content-search-toolkit": {
       "root": "libs/content-search-toolkit",
@@ -3861,7 +3900,8 @@
           },
           "outputs": ["coverage/libs/content-search-toolkit"]
         }
-      }
+      },
+      "tags": []
     },
     "contentful-mideind-extension": {
       "root": "libs/contentful-extensions/mideind-translation",
@@ -3877,7 +3917,8 @@
           },
           "outputs": ["coverage/libs/contentful-mideind-extension"]
         }
-      }
+      },
+      "tags": []
     },
     "contentful-parent-slug-extension": {
       "root": "libs/contentful-extensions/parent-slug",
@@ -3893,7 +3934,8 @@
           },
           "outputs": ["coverage/libs/contentful-parent-slug-extension"]
         }
-      }
+      },
+      "tags": []
     },
     "contentful-translation-extension": {
       "root": "libs/contentful-extensions/translation",
@@ -3926,7 +3968,8 @@
           }
         },
         "docker-static": {}
-      }
+      },
+      "tags": []
     },
     "dokobit-signing": {
       "root": "libs/dokobit-signing",
@@ -3953,7 +3996,8 @@
           },
           "outputs": ["coverage/libs/dokobit-signing"]
         }
-      }
+      },
+      "tags": []
     },
     "download-service": {
       "root": "apps/download-service",
@@ -4000,7 +4044,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "email-service": {
       "root": "libs/email-service",
@@ -4027,7 +4072,8 @@
           },
           "outputs": ["coverage/libs/email-service"]
         }
-      }
+      },
+      "tags": []
     },
     "feature-flags": {
       "root": "libs/feature-flags",
@@ -4054,7 +4100,8 @@
           },
           "outputs": ["coverage/libs/feature-flags"]
         }
-      }
+      },
+      "tags": []
     },
     "file-storage": {
       "root": "libs/file-storage",
@@ -4081,7 +4128,8 @@
           },
           "outputs": ["coverage/libs/file-storage"]
         }
-      }
+      },
+      "tags": []
     },
     "financial-aid-api": {
       "root": "apps/financial-aid/api",
@@ -4146,7 +4194,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "financial-aid-backend": {
       "root": "apps/financial-aid/backend",
@@ -4246,7 +4295,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "financial-aid-shared": {
       "root": "libs/financial-aid/shared",
@@ -4273,7 +4323,8 @@
           },
           "outputs": ["coverage/libs/financial-aid/shared"]
         }
-      }
+      },
+      "tags": []
     },
     "financial-aid-web-osk": {
       "root": "apps/financial-aid/web-osk",
@@ -4367,7 +4418,8 @@
           "outputs": ["coverage/apps/financial-aid/web-osk"]
         },
         "docker-next": {}
-      }
+      },
+      "tags": []
     },
     "financial-aid-web-veita": {
       "root": "apps/financial-aid/web-veita",
@@ -4461,7 +4513,8 @@
           "outputs": ["coverage/apps/financial-aid/web-veita"]
         },
         "docker-next": {}
-      }
+      },
+      "tags": []
     },
     "gjafakort-api": {
       "root": "apps/gjafakort/api",
@@ -4520,7 +4573,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "gjafakort-application": {
       "root": "apps/gjafakort/application",
@@ -4613,7 +4667,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "gjafakort-consts": {
       "root": "libs/gjafakort/consts",
@@ -4640,7 +4695,8 @@
           },
           "outputs": ["coverage/libs/gjafakort/consts"]
         }
-      }
+      },
+      "tags": []
     },
     "gjafakort-queue-listener": {
       "root": "apps/gjafakort/queue-listener",
@@ -4695,7 +4751,8 @@
           "outputs": ["coverage/apps/gjafakort/queue-listener"]
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "gjafakort-types": {
       "root": "libs/gjafakort/types",
@@ -4722,7 +4779,8 @@
           },
           "outputs": ["coverage/libs/gjafakort/types"]
         }
-      }
+      },
+      "tags": []
     },
     "gjafakort-web": {
       "root": "apps/gjafakort/web",
@@ -4813,7 +4871,9 @@
           "outputs": ["coverage/apps/gjafakort/web"]
         },
         "docker-next": {}
-      }
+      },
+      "tags": [],
+      "implicitDependencies": ["gjafakort-api"]
     },
     "gjafakort-web-e2e": {
       "root": "apps/gjafakort/web-e2e",
@@ -4848,7 +4908,9 @@
             "exclude": ["**/node_modules/**", "!apps/gjafakort/web-e2e/**/*"]
           }
         }
-      }
+      },
+      "tags": [],
+      "implicitDependencies": ["gjafakort-web"]
     },
     "health-insurance": {
       "root": "libs/health-insurance",
@@ -4875,7 +4937,8 @@
           },
           "outputs": ["coverage/libs/health-insurance"]
         }
-      }
+      },
+      "tags": []
     },
     "icelandic-names-registry-backend": {
       "root": "apps/icelandic-names-registry/backend",
@@ -4987,7 +5050,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "icelandic-names-registry-types": {
       "root": "libs/icelandic-names-registry/types",
@@ -5017,7 +5081,8 @@
           },
           "outputs": ["coverage/libs/icelandic-names-registry/types"]
         }
-      }
+      },
+      "tags": []
     },
     "infra-express-server": {
       "root": "libs/infra-express-server",
@@ -5044,7 +5109,8 @@
           },
           "outputs": ["coverage/libs/infra-express-server"]
         }
-      }
+      },
+      "tags": []
     },
     "infra-metrics": {
       "root": "libs/infra-metrics",
@@ -5071,7 +5137,8 @@
           },
           "outputs": ["coverage/libs/infra-metrics"]
         }
-      }
+      },
+      "tags": []
     },
     "infra-monitoring": {
       "root": "libs/infra-monitoring",
@@ -5098,7 +5165,8 @@
           },
           "outputs": ["coverage/libs/infra-monitoring"]
         }
-      }
+      },
+      "tags": []
     },
     "infra-nest-server": {
       "root": "libs/infra-nest-server",
@@ -5125,7 +5193,8 @@
           },
           "outputs": ["coverage/libs/infra-nest-server"]
         }
-      }
+      },
+      "tags": []
     },
     "infra-next-server": {
       "root": "libs/infra-next-server",
@@ -5152,7 +5221,8 @@
           },
           "outputs": ["coverage/libs/infra-next-server"]
         }
-      }
+      },
+      "tags": []
     },
     "infra-tracing": {
       "root": "libs/infra-tracing",
@@ -5179,7 +5249,8 @@
           },
           "outputs": ["coverage/libs/infra-tracing"]
         }
-      }
+      },
+      "tags": []
     },
     "island-ui-contentful": {
       "root": "libs/island-ui/contentful",
@@ -5206,7 +5277,8 @@
           },
           "outputs": ["coverage/libs/island-ui/contentful"]
         }
-      }
+      },
+      "tags": []
     },
     "island-ui-core": {
       "root": "libs/island-ui/core",
@@ -5233,12 +5305,15 @@
           },
           "outputs": ["coverage/libs/island-ui/core"]
         }
-      }
+      },
+      "tags": [],
+      "implicitDependencies": ["island-ui-theme"]
     },
     "island-ui-fonts": {
       "root": "libs/island-ui/fonts",
       "projectType": "library",
-      "architect": {}
+      "architect": {},
+      "tags": []
     },
     "island-ui-storybook": {
       "root": "libs/island-ui/storybook",
@@ -5291,7 +5366,9 @@
           "outputs": ["{options.outputPath}"]
         },
         "docker-static": {}
-      }
+      },
+      "tags": [],
+      "implicitDependencies": ["island-ui-core"]
     },
     "island-ui-theme": {
       "root": "libs/island-ui/theme",
@@ -5318,7 +5395,8 @@
           },
           "outputs": ["coverage/libs/island-ui/theme"]
         }
-      }
+      },
+      "tags": []
     },
     "island-ui-utils": {
       "root": "libs/island-ui/utils",
@@ -5345,7 +5423,8 @@
           },
           "outputs": ["coverage/libs/island-ui/utils"]
         }
-      }
+      },
+      "tags": []
     },
     "island-ui-vanilla-extract-utils": {
       "root": "libs/island-ui/vanilla-extract-utils",
@@ -5431,7 +5510,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "judicial-system-audit-trail": {
       "root": "libs/judicial-system/audit-trail",
@@ -5461,7 +5541,8 @@
           },
           "outputs": ["coverage/libs/judicial-system/audit-trail"]
         }
-      }
+      },
+      "tags": []
     },
     "judicial-system-auth": {
       "root": "libs/judicial-system/auth",
@@ -5488,7 +5569,8 @@
           },
           "outputs": ["coverage/libs/judicial-system/auth"]
         }
-      }
+      },
+      "tags": []
     },
     "judicial-system-backend": {
       "root": "apps/judicial-system/backend",
@@ -5606,7 +5688,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/backend/src/app/messages/**/*.ts'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "judicial-system-consts": {
       "root": "libs/judicial-system/consts",
@@ -5636,7 +5719,8 @@
           },
           "outputs": ["coverage/libs/judicial-system/consts"]
         }
-      }
+      },
+      "tags": []
     },
     "judicial-system-court-client": {
       "root": "libs/judicial-system/court-client",
@@ -5672,7 +5756,8 @@
             "command": "yarn openapi-generator -o libs/judicial-system/court-client/gen/fetch -i libs/judicial-system/court-client/src/clientConfig.json"
           }
         }
-      }
+      },
+      "tags": []
     },
     "judicial-system-formatters": {
       "root": "libs/judicial-system/formatters",
@@ -5702,7 +5787,8 @@
           },
           "outputs": ["coverage/libs/judicial-system/formatters"]
         }
-      }
+      },
+      "tags": []
     },
     "judicial-system-types": {
       "root": "libs/judicial-system/types",
@@ -5732,7 +5818,8 @@
           },
           "outputs": ["coverage/libs/judicial-system/types"]
         }
-      }
+      },
+      "tags": []
     },
     "judicial-system-web": {
       "root": "apps/judicial-system/web",
@@ -5822,7 +5909,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/web/messages/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "judicial-system-web-e2e": {
       "root": "apps/judicial-system/web-e2e",
@@ -5861,7 +5949,9 @@
             ]
           }
         }
-      }
+      },
+      "tags": [],
+      "implicitDependencies": ["judicial-system-web"]
     },
     "judicial-system-xrd-api": {
       "root": "apps/judicial-system/xrd-api",
@@ -5922,7 +6012,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "localization": {
       "root": "libs/localization",
@@ -5949,7 +6040,8 @@
           },
           "outputs": ["coverage/libs/localization"]
         }
-      }
+      },
+      "tags": []
     },
     "logging": {
       "root": "libs/logging",
@@ -5976,7 +6068,8 @@
           },
           "outputs": ["coverage/libs/logging"]
         }
-      }
+      },
+      "tags": []
     },
     "message-queue": {
       "root": "libs/message-queue",
@@ -6003,7 +6096,8 @@
           },
           "outputs": ["coverage/libs/message-queue"]
         }
-      }
+      },
+      "tags": []
     },
     "nest-audit": {
       "root": "libs/nest/audit",
@@ -6025,7 +6119,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "nest-pagination": {
       "root": "libs/nest/pagination",
@@ -6046,7 +6141,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "nest-problem": {
       "root": "libs/nest/problem",
@@ -6067,7 +6163,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "nest-validators": {
       "root": "libs/nest/validators",
@@ -6089,7 +6186,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "next-ids-auth": {
       "root": "libs/next-ids-auth",
@@ -6116,7 +6214,8 @@
           },
           "outputs": ["coverage/libs/next-ids-auth"]
         }
-      }
+      },
+      "tags": []
     },
     "nova-sms": {
       "root": "libs/nova-sms",
@@ -6143,7 +6242,8 @@
           },
           "outputs": ["coverage/libs/nova-sms"]
         }
-      }
+      },
+      "tags": []
     },
     "plausible": {
       "root": "libs/plausible",
@@ -6170,7 +6270,8 @@
           },
           "outputs": ["coverage/libs/plausible"]
         }
-      }
+      },
+      "tags": []
     },
     "reference-backend": {
       "root": "apps/reference-backend",
@@ -6267,7 +6368,8 @@
             "cwd": "apps/reference-backend"
           }
         }
-      }
+      },
+      "tags": []
     },
     "reference-next-app": {
       "root": "apps/reference-next-app",
@@ -6355,7 +6457,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/reference-next-app/{screens,pages,components}/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "regulations": {
       "root": "libs/regulations",
@@ -6377,7 +6480,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal": {
       "root": "apps/service-portal",
@@ -6461,7 +6565,8 @@
           }
         },
         "docker-static": {}
-      }
+      },
+      "tags": []
     },
     "service-portal-applications": {
       "root": "libs/service-portal/applications",
@@ -6498,7 +6603,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/applications/src/lib/messages.ts"
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-assets": {
       "root": "libs/service-portal/assets",
@@ -6534,7 +6640,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/assets/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-constants": {
       "root": "libs/service-portal/constants",
@@ -6564,7 +6671,8 @@
           },
           "outputs": ["coverage/libs/service-portal/constants"]
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-core": {
       "root": "libs/service-portal/core",
@@ -6597,7 +6705,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/core/src/{lib,components,helpers,screens}/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-document-provider": {
       "root": "libs/service-portal/document-provider",
@@ -6633,7 +6742,8 @@
             "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/document-provider/src/lib/messages.ts"
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-documents": {
       "root": "libs/service-portal/documents",
@@ -6669,7 +6779,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/documents/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-driving-license": {
       "root": "libs/service-portal/driving-license",
@@ -6699,7 +6810,8 @@
           },
           "outputs": ["coverage/libs/service-portal/driving-license"]
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-e2e": {
       "root": "apps/service-portal-e2e",
@@ -6734,7 +6846,9 @@
             "exclude": ["**/node_modules/**", "!apps/service-portal-e2e/**/*"]
           }
         }
-      }
+      },
+      "tags": [],
+      "implicitDependencies": ["service-portal"]
     },
     "service-portal-education": {
       "root": "libs/service-portal/education",
@@ -6795,7 +6909,8 @@
             "parallel": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-education-career": {
       "root": "libs/service-portal/education-career",
@@ -6825,7 +6940,8 @@
           },
           "outputs": ["coverage/libs/service-portal/education-career"]
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-education-degree": {
       "root": "libs/service-portal/education-degree",
@@ -6855,7 +6971,8 @@
           },
           "outputs": ["coverage/libs/service-portal/education-degree"]
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-education-license": {
       "root": "libs/service-portal/education-license",
@@ -6885,7 +7002,8 @@
           },
           "outputs": ["coverage/libs/service-portal/education-license"]
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-education-student-assessment": {
       "root": "libs/service-portal/education-student-assessment",
@@ -6917,7 +7035,8 @@
             "coverage/libs/service-portal/education-student-assessment"
           ]
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-eligibility": {
       "root": "libs/service-portal/eligibility",
@@ -6947,7 +7066,8 @@
           },
           "outputs": ["coverage/libs/service-portal/eligibility"]
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-endorsements": {
       "root": "libs/service-portal/endorsements",
@@ -6983,7 +7103,8 @@
             "command": "graphql-codegen --config libs/service-portal/endorsements/codegen.yml"
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-family": {
       "root": "libs/service-portal/family",
@@ -7019,7 +7140,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/family/src/{screens,components}/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-finance": {
       "root": "libs/service-portal/finance",
@@ -7055,7 +7177,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/finance/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-graphql": {
       "root": "libs/service-portal/graphql",
@@ -7092,7 +7215,8 @@
             "command": "graphql-codegen --config libs/service-portal/graphql/codegen.yml"
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-health": {
       "root": "libs/service-portal/health",
@@ -7128,7 +7252,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/health/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-icelandic-names-registry": {
       "root": "libs/service-portal/icelandic-names-registry",
@@ -7171,7 +7296,8 @@
             "command": "graphql-codegen --config libs/service-portal/icelandic-names-registry/codegen.yml"
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-licenses": {
       "root": "libs/service-portal/licenses",
@@ -7195,7 +7321,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-settings-access-control": {
       "root": "libs/service-portal/settings/access-control",
@@ -7219,7 +7346,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-settings-personal-information": {
       "root": "libs/service-portal/settings/personal-information",
@@ -7257,7 +7385,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/settings/personal-information/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "service-portal-wip": {
       "root": "libs/service-portal/wip",
@@ -7279,7 +7408,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "services-auth-admin-api": {
       "root": "apps/services/auth-admin-api",
@@ -7335,7 +7465,8 @@
           "outputs": ["coverage/apps/services/auth-admin-api"]
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "services-auth-api": {
       "root": "apps/services/auth-api",
@@ -7445,7 +7576,8 @@
             "cwd": "libs/auth-api-lib"
           }
         }
-      }
+      },
+      "tags": []
     },
     "services-auth-public-api": {
       "root": "apps/services/auth-public-api",
@@ -7499,7 +7631,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "services-documents": {
       "root": "apps/services/documents",
@@ -7597,7 +7730,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "services-endorsements-api": {
       "root": "apps/services/endorsements/api",
@@ -7755,7 +7889,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "services-party-letter-registry-api": {
       "root": "apps/services/party-letter-registry-api",
@@ -7873,7 +8008,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "services-search-indexer": {
       "root": "apps/services/search-indexer",
@@ -7959,7 +8095,8 @@
           "outputs": ["coverage/apps/services/search-indexer"]
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "services-temporary-voter-registry-api": {
       "root": "apps/services/temporary-voter-registry-api",
@@ -8071,7 +8208,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "services-user-profile": {
       "root": "apps/services/user-profile",
@@ -8172,7 +8310,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "services-xroad-collector": {
       "root": "apps/services/xroad-collector",
@@ -8228,7 +8367,8 @@
           "outputs": ["coverage/apps/services/xroad-collector"]
         },
         "docker-express": {}
-      }
+      },
+      "tags": ["api-catalogue-services"]
     },
     "shared-babel": {
       "root": "libs/shared/babel",
@@ -8255,7 +8395,8 @@
           },
           "outputs": ["coverage/libs/shared/babel"]
         }
-      }
+      },
+      "tags": []
     },
     "shared-components": {
       "root": "libs/shared/components",
@@ -8283,7 +8424,8 @@
             "command": "graphql-codegen --config libs/shared/components/codegen.yml"
           }
         }
-      }
+      },
+      "tags": []
     },
     "shared-connected": {
       "root": "libs/shared/connected",
@@ -8310,7 +8452,8 @@
           },
           "outputs": ["coverage/libs/shared/connected"]
         }
-      }
+      },
+      "tags": []
     },
     "shared-constants": {
       "root": "libs/shared/constants",
@@ -8332,7 +8475,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "shared-form-fields": {
       "root": "libs/shared/form-fields",
@@ -8359,7 +8503,8 @@
           },
           "outputs": ["coverage/libs/shared/form-fields"]
         }
-      }
+      },
+      "tags": []
     },
     "shared-mocking": {
       "root": "libs/shared/mocking",
@@ -8386,7 +8531,8 @@
           },
           "outputs": ["coverage/libs/shared/mocking"]
         }
-      }
+      },
+      "tags": []
     },
     "shared-problem": {
       "root": "libs/shared/problem",
@@ -8407,7 +8553,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "shared-translations": {
       "root": "libs/shared/translations",
@@ -8434,7 +8581,8 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/shared/translations/src/lib/*.ts'"
           }
         }
-      }
+      },
+      "tags": []
     },
     "shared-types": {
       "root": "libs/shared/types",
@@ -8461,7 +8609,8 @@
           },
           "outputs": ["coverage/libs/shared/types"]
         }
-      }
+      },
+      "tags": []
     },
     "shared-utils": {
       "root": "libs/shared/utils",
@@ -8483,7 +8632,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "skilavottord-consts": {
       "root": "libs/skilavottord/consts",
@@ -8510,7 +8660,8 @@
           },
           "outputs": ["coverage/libs/skilavottord/consts"]
         }
-      }
+      },
+      "tags": []
     },
     "skilavottord-types": {
       "root": "libs/skilavottord/types",
@@ -8537,7 +8688,8 @@
           },
           "outputs": ["coverage/libs/skilavottord/types"]
         }
-      }
+      },
+      "tags": []
     },
     "skilavottord-web": {
       "root": "apps/skilavottord/web",
@@ -8621,7 +8773,8 @@
           "outputs": ["coverage/apps/skilavottord/web"]
         },
         "docker-next": {}
-      }
+      },
+      "tags": []
     },
     "skilavottord-web-e2e": {
       "root": "apps/skilavottord/web-e2e",
@@ -8656,7 +8809,9 @@
             "exclude": ["**/node_modules/**", "!apps/skilavottord/web-e2e/**/*"]
           }
         }
-      }
+      },
+      "tags": [],
+      "implicitDependencies": ["skilavottord-web"]
     },
     "skilavottord-ws": {
       "root": "apps/skilavottord/ws",
@@ -8758,7 +8913,8 @@
           }
         },
         "docker-express": {}
-      }
+      },
+      "tags": []
     },
     "system-e2e": {
       "root": "apps/system-e2e",
@@ -8783,7 +8939,8 @@
           }
         },
         "docker-cypress": {}
-      }
+      },
+      "tags": []
     },
     "testing-fixtures": {
       "root": "libs/testing/fixtures",
@@ -8804,7 +8961,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "testing-nest": {
       "root": "libs/testing/nest",
@@ -8825,7 +8983,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "web": {
       "root": "apps/web",
@@ -8912,7 +9071,8 @@
           }
         },
         "docker-next": {}
-      }
+      },
+      "tags": []
     },
     "web-e2e": {
       "root": "apps/web-e2e",
@@ -8947,7 +9107,9 @@
             "exclude": ["**/node_modules/**", "!apps/web-e2e/**/*"]
           }
         }
-      }
+      },
+      "tags": [],
+      "implicitDependencies": ["web"]
     }
   }
 }
