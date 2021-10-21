@@ -42,6 +42,13 @@ jobs:
           echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
           echo "::set-output name=node-modules-hash::$NODE_MODULES_HASH"
 
+      - name: Calculate cache key for CodeCov
+        id: calculate_code_cov_hash
+        run: |
+          CODE_COV_HASH=$(curl -s https://uploader.codecov.io/latest/linux/codecov.SHA256SUM | cut -f1 -d" ")
+          echo "CODE_COV_HASH: $CODE_COV_HASH"
+          echo "::set-output name=code-cov-hash::$CODE_COV_HASH"
+
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
         run: |
@@ -92,6 +99,17 @@ jobs:
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
+
+      - name: Cache CodeCov
+        id: code-cov
+        uses: actions/cache@v2
+        with:
+          path: ~/.local/bin/codecov
+          key: code-cov-cache-${{ steps.calculate_code_cov_hash.outputs.code-cov-hash }}
+
+      - name: Install codecov uploader
+        if: steps.code-cov.outputs.cache-hit != 'true'
+        run: ./scripts/install-codecov-uploader.sh
 
       - name: Prepare lint targets
         id: lint_projects
@@ -160,8 +178,19 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
+      - name: Cache CodeCov
+        uses: actions/cache@v2
+        with:
+          path: ~/.local/bin/codecov
+          key: code-cov-cache-
+
+      - name: Set local bin directory to path
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
       - name: Running tests
         run: ./scripts/ci/run-in-parallel.sh 30_test
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   e2e:
     needs:
