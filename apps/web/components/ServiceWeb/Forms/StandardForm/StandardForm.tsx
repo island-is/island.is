@@ -1,4 +1,5 @@
 import React, { ReactNode, useEffect, useState } from 'react'
+import { useLazyQuery } from '@apollo/client'
 import {
   useForm,
   Controller,
@@ -6,8 +7,10 @@ import {
   useFormContext,
   FormProvider,
 } from 'react-hook-form'
+import { useDebounce } from 'react-use'
 import { FormatInputValueFunction } from 'react-number-format'
 
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   Box,
@@ -18,10 +21,21 @@ import {
   Button,
   Option,
   Input,
+  Text,
+  LinkContext,
+  Link,
+  Stack,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { Organizations, SupportCategory } from '@island.is/api/schema'
-
-import GhostForm from './GhostForm'
+import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
+import {
+  GetSupportSearchResultsQuery,
+  GetSupportSearchResultsQueryVariables,
+  SearchableContentTypes,
+  SupportQna,
+} from '@island.is/web/graphql/schema'
+import { ModifySearchTerms } from '../../SearchInput/SearchInput'
 
 type FormState = {
   message: string
@@ -29,13 +43,15 @@ type FormState = {
   email: string
   category: string
   syslumadur: string
+  subject: string
 }
 
-interface SyslumennFormsProps {
+interface StandardFormProps {
   syslumenn?: Organizations['items']
   supportCategories?: SupportCategory[]
   loading: boolean
   onSubmit: (formState: FormState) => Promise<void>
+  institutionSlug: string
 }
 
 type CategoryId =
@@ -86,8 +102,8 @@ type CategoryId =
 
 const labels = {
   syslumadur: 'Sýslumannsembætti',
-  nafn: 'Þitt nafn',
-  email: 'Netfang',
+  nafn: 'Nafn',
+  email: 'Tölvupóstfang',
   malaflokkur: 'Málaflokkur',
   nafn_malsadila: 'Nafn málsaðila',
   kennitala_malsadila: 'Kennitala málsaðila',
@@ -101,6 +117,8 @@ const labels = {
   skraningarnumer_okutaekis: 'Skráningarnúmer ökutækis',
   kennitala_vegna_lausafes: 'Kennitala vegna lausafés',
   erindi: 'Erindi',
+  vidfangsefni: 'Viðfangsefni',
+  phone: 'Símanúmer',
 }
 
 interface BasicInputProps {
@@ -114,6 +132,7 @@ const BasicInput = ({ name, requiredMessage, format }: BasicInputProps) => {
 
   return (
     <InputController
+      backgroundColor="blue"
       id={name}
       name={name}
       label={labels[name]}
@@ -133,12 +152,15 @@ const BasicInput = ({ name, requiredMessage, format }: BasicInputProps) => {
   )
 }
 
-export const SyslumennForms = ({
+const MIN_SEARCH_QUERY_LENGTH = 1
+
+export const StandardForm = ({
   syslumenn,
   supportCategories,
   loading,
   onSubmit,
-}: SyslumennFormsProps) => {
+  institutionSlug,
+}: StandardFormProps) => {
   const useFormMethods = useForm({})
   const {
     handleSubmit,
@@ -147,10 +169,73 @@ export const SyslumennForms = ({
     errors,
     formState: { isSubmitting },
   } = useFormMethods
+  const { linkResolver } = useLinkResolver()
   const [syslumadurId, setSyslumadurId] = useState<string>('')
+  const [subject, setSubject] = useState<string>('')
+  const [showAllSuggestions, setShowAllSuggestions] = useState<boolean>(false)
+  const [lastSubject, setLastSubject] = useState<string>('')
+  const [isChangingSubject, setIsChangingSubject] = useState<boolean>(false)
+  const [suggestions, setSuggestions] = useState<Array<SupportQna>>([])
   const [categoryId, setCategoryId] = useState<string>('')
   const [categoryLabel, setCategoryLabel] = useState<string>('')
   const [addonFields, setAddonFields] = useState<ReactNode | null>()
+
+  const [fetch, { loading: loadingSuggestions, called, data }] = useLazyQuery<
+    GetSupportSearchResultsQuery,
+    GetSupportSearchResultsQueryVariables
+  >(GET_SUPPORT_SEARCH_RESULTS_QUERY, {
+    onCompleted: () => {
+      setIsChangingSubject(false)
+      updateSuggestions()
+    },
+  })
+
+  useDebounce(
+    () => {
+      if (!isChangingSubject) {
+        return false
+      }
+
+      if (subject === '') {
+        setSuggestions([])
+        setIsChangingSubject(false)
+      }
+
+      if (subject.length > MIN_SEARCH_QUERY_LENGTH) {
+        const queryString = ModifySearchTerms(subject)
+
+        if (subject.trim() === lastSubject.trim()) {
+          updateSuggestions()
+          setIsChangingSubject(false)
+        } else {
+          fetch({
+            variables: {
+              query: {
+                queryString,
+                size: 10,
+                types: [SearchableContentTypes['WebQna']],
+              },
+            },
+          })
+        }
+
+        setLastSubject(subject)
+      }
+    },
+    1000,
+    [subject],
+  )
+
+  useEffect(() => {
+    if (subject === '') {
+      setSuggestions([])
+      setIsChangingSubject(false)
+    }
+  }, [subject])
+
+  const updateSuggestions = () => {
+    setSuggestions((data?.searchResults?.items as Array<SupportQna>) || [])
+  }
 
   useEffect(() => {
     let fields = null
@@ -280,11 +365,14 @@ export const SyslumennForms = ({
     return onSubmit({
       email: values.email,
       name: values.nafn,
-      syslumadur: syslumadurId,
+      subject: values.vidfangsefni,
+      syslumadur: syslumadurId || '',
       category: categoryId,
       message,
     })
   }
+
+  const isBusy = loadingSuggestions || isChangingSubject
 
   return (
     <>
@@ -310,21 +398,159 @@ export const SyslumennForms = ({
             />
           </GridColumn>
         </GridRow>
-      </GridContainer>
 
-      {!categoryId ? (
-        <GridContainer>
-          <GridRow marginTop={8}>
+        {categoryId && (
+          <GridRow marginTop={3}>
             <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
-              <GhostForm />
+              <InputController
+                backgroundColor="blue"
+                control={control}
+                id="vidfangsefni"
+                name="vidfangsefni"
+                label={labels.vidfangsefni}
+                error={errors?.vidfangsefni?.message}
+                onChange={(e) => {
+                  if (e?.target?.value?.length > MIN_SEARCH_QUERY_LENGTH) {
+                    setIsChangingSubject(true)
+                  }
+
+                  setSubject(e.target.value)
+                }}
+                rules={{
+                  required: {
+                    value: true,
+                    message: 'Vinsamlegast fylltu út viðfangsefni',
+                  },
+                }}
+                required
+              />
             </GridColumn>
           </GridRow>
-        </GridContainer>
-      ) : (
+        )}
+
+        {(isBusy || !!suggestions.length) && (
+          <Box
+            marginTop={3}
+            borderLeftWidth="standard"
+            borderColor="blue200"
+            paddingX={3}
+            paddingY={3}
+          >
+            {!!suggestions.length && (
+              <Text variant="h5" marginBottom={3}>
+                Við höldum að þetta gæti hjálpað
+              </Text>
+            )}
+            {isBusy ? (
+              <LoadingDots />
+            ) : suggestions.length ? (
+              <Stack space={2}>
+                {suggestions
+                  .slice(0, showAllSuggestions ? 10 : 5)
+                  .map(({ title, slug, organization, category }, index) => {
+                    const organizationSlug = organization?.slug
+                    const categorySlug = category?.slug
+
+                    return (
+                      <LinkContext.Provider
+                        key={index}
+                        value={{
+                          linkRenderer: (href, children) => (
+                            <Link
+                              href={href}
+                              color="blue600"
+                              underline="normal"
+                            >
+                              {children}
+                            </Link>
+                          ),
+                        }}
+                      >
+                        <Text key={index} variant="small" color="blue600">
+                          <a
+                            href={`${
+                              linkResolver('helpdesk').href
+                            }/${organizationSlug}/${categorySlug}?q=${slug}`}
+                          >
+                            {title}
+                          </a>
+                        </Text>
+                      </LinkContext.Provider>
+                    )
+                  })}
+                {suggestions.length > 5 && !showAllSuggestions && (
+                  <Button
+                    onClick={() => setShowAllSuggestions(true)}
+                    variant="text"
+                    size="small"
+                    icon="arrowDown"
+                  >
+                    Sjá meira
+                  </Button>
+                )}
+              </Stack>
+            ) : (
+              <Text variant="small">Ekkert fannst</Text>
+            )}
+          </Box>
+        )}
+
+        <GridRow marginBottom={called ? 0 : 20}></GridRow>
+      </GridContainer>
+
+      {called && (
         <FormProvider {...useFormMethods}>
           <form onSubmit={handleSubmit(submitWithMessage)}>
             <GridContainer>
               <GridRow marginTop={8}>
+                <GridColumn paddingBottom={3} span="12/12">
+                  <Controller
+                    control={control}
+                    name="nafn"
+                    defaultValue=""
+                    rules={
+                      {
+                        required: {
+                          value: true,
+                          message: 'Nafn vantar',
+                        },
+                      } as ValidationRules
+                    }
+                    render={({ onChange, onBlur, value, name }) => (
+                      <Input
+                        backgroundColor="blue"
+                        name={name}
+                        onBlur={onBlur}
+                        label={labels.nafn}
+                        value={value}
+                        hasError={errors.nafn}
+                        errorMessage={errors.nafn?.message}
+                        onChange={onChange}
+                        required
+                      />
+                    )}
+                  />
+                </GridColumn>
+                <GridColumn paddingBottom={3} span="12/12">
+                  <Controller
+                    control={useFormMethods.control}
+                    id="phone"
+                    name="phone"
+                    defaultValue=""
+                    render={({ onChange, onBlur, value, name }) => (
+                      <Input
+                        backgroundColor="blue"
+                        name={name}
+                        onBlur={onBlur}
+                        label={labels.phone}
+                        value={value}
+                        hasError={errors.phone}
+                        errorMessage={errors.phone?.message}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                </GridColumn>
                 <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
                   <GridRow>
                     <GridColumn paddingBottom={3} span="12/12">
@@ -345,6 +571,7 @@ export const SyslumennForms = ({
                         }}
                         render={({ onChange, onBlur, value, name }) => (
                           <Input
+                            backgroundColor="blue"
                             name={name}
                             onBlur={onBlur}
                             label={labels.email}
@@ -357,37 +584,10 @@ export const SyslumennForms = ({
                         )}
                       />
                     </GridColumn>
-                    <GridColumn paddingBottom={3} span="12/12">
-                      <Controller
-                        control={control}
-                        name="nafn"
-                        defaultValue=""
-                        rules={
-                          {
-                            required: {
-                              value: true,
-                              message: 'Nafn vantar',
-                            },
-                          } as ValidationRules
-                        }
-                        render={({ onChange, onBlur, value, name }) => (
-                          <Input
-                            name={name}
-                            onBlur={onBlur}
-                            label={labels.nafn}
-                            value={value}
-                            hasError={errors.nafn}
-                            errorMessage={errors.nafn?.message}
-                            onChange={onChange}
-                            required
-                          />
-                        )}
-                      />
-                    </GridColumn>
                   </GridRow>
                   {addonFields}
                   <GridRow>
-                    <GridColumn span="12/12">
+                    <GridColumn span="12/12" paddingTop={5}>
                       <Controller
                         control={control}
                         id="erindi"
@@ -401,6 +601,7 @@ export const SyslumennForms = ({
                         }}
                         render={({ onChange, onBlur, value, name }) => (
                           <Input
+                            backgroundColor="blue"
                             name={name}
                             onBlur={onBlur}
                             label={labels.erindi}
@@ -421,40 +622,42 @@ export const SyslumennForms = ({
                       span={['12/12', '12/12', '6/12', '6/12']}
                       paddingBottom={3}
                     >
-                      <Controller
-                        control={control}
-                        id="syslumadur"
-                        name="syslumadur"
-                        defaultValue=""
-                        rules={{
-                          required: {
-                            value: true,
-                            message: 'Vinsamlegast veldu sýslumannsembætti',
-                          },
-                        }}
-                        render={({ onChange }) => (
-                          <Select
-                            backgroundColor="blue"
-                            icon="chevronDown"
-                            isSearchable
-                            label="Þinn sýslumaður"
-                            name="syslumadur"
-                            onChange={({ label, value }: Option) => {
-                              onChange(label)
-                              setSyslumadurId(value as string)
-                            }}
-                            hasError={errors.syslumadur}
-                            errorMessage={errors.syslumadur?.message}
-                            options={syslumenn.map((x) => ({
-                              label: x.title,
-                              value: x.id,
-                            }))}
-                            placeholder="Veldu sýslumannsembætti"
-                            size="sm"
-                            required
-                          />
-                        )}
-                      />
+                      {institutionSlug === 'syslumenn' && (
+                        <Controller
+                          control={control}
+                          id="syslumadur"
+                          name="syslumadur"
+                          defaultValue=""
+                          rules={{
+                            required: {
+                              value: true,
+                              message: 'Vinsamlegast veldu sýslumannsembætti',
+                            },
+                          }}
+                          render={({ onChange }) => (
+                            <Select
+                              backgroundColor="blue"
+                              icon="chevronDown"
+                              isSearchable
+                              label="Þinn sýslumaður"
+                              name="syslumadur"
+                              onChange={({ label, value }: Option) => {
+                                onChange(label)
+                                setSyslumadurId(value as string)
+                              }}
+                              hasError={errors.syslumadur}
+                              errorMessage={errors.syslumadur?.message}
+                              options={syslumenn.map((x) => ({
+                                label: x.title,
+                                value: x.id,
+                              }))}
+                              placeholder="Veldu sýslumannsembætti"
+                              size="sm"
+                              required
+                            />
+                          )}
+                        />
+                      )}
                     </GridColumn>
                     <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
                       <Box

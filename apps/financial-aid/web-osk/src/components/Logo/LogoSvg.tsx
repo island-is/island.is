@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import cn from 'classnames'
 
 interface LogoSvgProps {
@@ -6,14 +6,14 @@ interface LogoSvgProps {
   className?: string
 }
 
-const LogoSvg = ({ name = 'sis', className }: LogoSvgProps) => {
+const LogoSvg = ({ name = 'sis.svg', className }: LogoSvgProps) => {
   return (
     <div
       className={cn({
         [`${className}`]: className,
       })}
     >
-      <img src={`../../../svg/${name}.svg`} alt="" />
+      <img src={`../../../svg/${name}`} alt="" />
     </div>
   )
 }

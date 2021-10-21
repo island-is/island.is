@@ -16,7 +16,7 @@ import { Routes } from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const Header = () => {
-  const { isAuthenticated, user } = useContext(AppContext)
+  const { isAuthenticated, user, municipality } = useContext(AppContext)
 
   const logOut = useLogOut()
 
@@ -57,7 +57,7 @@ const Header = () => {
             paddingLeft={[2, 2, 4]}
           >
             <Text fontWeight="semiBold" variant="small">
-              Hafnarfjörður
+              {municipality?.name ?? 'Samband íslenskra sveitarfélaga'}
             </Text>
 
             <span className={styles.desktopText}>

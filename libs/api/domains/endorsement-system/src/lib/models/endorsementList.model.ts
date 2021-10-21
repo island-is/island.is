@@ -33,9 +33,6 @@ export class EndorsementList {
   @Field()
   owner!: string
 
-  @Field(() => [Endorsement])
-  endorsements?: Endorsement[]
-
   @Field(() => graphqlTypeJson)
   meta!: object
 
