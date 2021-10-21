@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common'
 
 import type { User } from '@island.is/judicial-system/types'
+
 import { CaseService } from '../case.service'
 
 @Injectable()

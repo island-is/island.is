@@ -153,18 +153,11 @@ export class FileService {
     })
   }
 
-  async getCaseFileSignedUrl(
-    caseId: string,
-    file: CaseFile,
-  ): Promise<SignedUrl> {
-    this.logger.debug(
-      `Getting a signed url for file ${file.id} of case ${caseId}`,
-    )
+  async getCaseFileSignedUrl(file: CaseFile): Promise<SignedUrl> {
+    this.logger.debug(`Getting a signed url for file ${file.id}`)
 
-    if (file.state === CaseFileState.BOKEN_LINK) {
-      throw new NotFoundException(
-        `File ${file.id} of case ${caseId} does not exists in AWS S3`,
-      )
+    if (file.state !== CaseFileState.STORED_IN_RVG) {
+      throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
     const exists = await this.awsS3Service.objectExists(file.key)
@@ -175,19 +168,14 @@ export class FileService {
         { state: CaseFileState.BOKEN_LINK },
         { where: { id: file.id } },
       )
-      throw new NotFoundException(
-        `File ${file.id} of case ${caseId} does not exists in AWS S3`,
-      )
+      throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
     return this.awsS3Service.getSignedUrl(file.key)
   }
 
-  async deleteCaseFile(
-    caseId: string,
-    file: CaseFile,
-  ): Promise<DeleteFileResponse> {
-    this.logger.debug(`Deleting file ${file.id} of case ${caseId}`)
+  async deleteCaseFile(file: CaseFile): Promise<DeleteFileResponse> {
+    this.logger.debug(`Deleting file ${file.id}`)
 
     const success = await this.deleteFileFromDatabase(file.id)
 
