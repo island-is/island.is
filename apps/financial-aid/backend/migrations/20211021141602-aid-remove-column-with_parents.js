@@ -4,11 +4,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
-        queryInterface.removeColumn(
-          'aid',
-          'with_parents',
-          { transaction: t },
-        ),
+        queryInterface.removeColumn('aid', 'with_parents', { transaction: t }),
       ]),
     )
   },
