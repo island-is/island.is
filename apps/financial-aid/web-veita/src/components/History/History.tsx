@@ -42,6 +42,7 @@ const History = ({ className, applicantName, applicationEvents }: Props) => {
                 key={'timeline-' + index}
                 applicantName={applicantName}
                 created={item.created}
+                staffName={item.staffName}
               >
                 <StaffComment
                   isVisable={

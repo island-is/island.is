@@ -16,6 +16,7 @@ interface Props {
   [key: string]: any
   applicantName: string
   created: string
+  staffName?: string
 }
 
 const TimeLineContainer = ({
@@ -23,6 +24,7 @@ const TimeLineContainer = ({
   applicantName,
   children,
   created,
+  staffName,
 }: Props) => {
   return (
     <Box
@@ -39,7 +41,9 @@ const TimeLineContainer = ({
         <Text marginBottom={2}>
           {' '}
           {getEventType[eventType].isStaff
-            ? 'Starfsmaður'
+            ? staffName
+              ? staffName
+              : 'Starfsmaður'
             : `Umsækjandi ${applicantName}`}{' '}
           <strong>{getEventType[eventType].text} </strong>
         </Text>

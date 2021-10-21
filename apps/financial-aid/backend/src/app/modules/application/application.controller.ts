@@ -160,7 +160,7 @@ export class ApplicationController {
     const {
       numberOfAffectedRows,
       updatedApplication,
-    } = await this.applicationService.update(id, applicationToUpdate, user.name)
+    } = await this.applicationService.update(id, applicationToUpdate, user)
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Application ${id} does not exist`)
@@ -186,7 +186,7 @@ export class ApplicationController {
     @Param('stateUrl') stateUrl: ApplicationStateUrl,
     @Body() applicationToUpdate: UpdateApplicationDto,
   ): Promise<UpdateApplicationTableResponse> {
-    await this.applicationService.update(id, applicationToUpdate, user.name)
+    await this.applicationService.update(id, applicationToUpdate, user)
     return {
       applications: await this.applicationService.getAll(stateUrl),
       filters: await this.applicationService.getAllFilters(),
