@@ -7,22 +7,22 @@ import format from 'date-fns/format'
 
 import {
   calculateAidFinalAmount,
-  calulatePersonalTaxAllowanceUsed,
-  calulateTaxOfAmount,
+  calculatePersonalTaxAllowanceUsed,
+  calculateTaxOfAmount,
 } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   aidAmount: number
   usePersonalTaxCredit: boolean
   isVisible: boolean
-  onVisiblityChange: React.Dispatch<React.SetStateAction<boolean>>
+  onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const AidAmountModal = ({
   aidAmount,
   usePersonalTaxCredit,
   isVisible,
-  onVisiblityChange,
+  onVisibilityChange,
 }: Props) => {
   const currentYear = format(new Date(), 'yyyy')
 
@@ -33,7 +33,7 @@ const AidAmountModal = ({
     },
     {
       title: 'Skattur',
-      calculation: `- ${calulateTaxOfAmount(
+      calculation: `- ${calculateTaxOfAmount(
         aidAmount,
         currentYear,
       ).toLocaleString('de-DE')} kr.`,
@@ -42,7 +42,7 @@ const AidAmountModal = ({
       title: 'Persónuafsláttur',
       calculation: `${
         usePersonalTaxCredit ? '+ ' : ''
-      }${calulatePersonalTaxAllowanceUsed(
+      }${calculatePersonalTaxAllowanceUsed(
         aidAmount,
         usePersonalTaxCredit,
         currentYear,
@@ -57,7 +57,7 @@ const AidAmountModal = ({
   ).toLocaleString('de-DE')} kr.`
 
   const closeModal = (): void => {
-    onVisiblityChange(false)
+    onVisibilityChange(false)
   }
 
   return (
@@ -66,7 +66,7 @@ const AidAmountModal = ({
       isVisible={isVisible}
       onVisibilityChange={(visibility) => {
         if (visibility !== isVisible) {
-          onVisiblityChange(visibility)
+          onVisibilityChange(visibility)
         }
       }}
       className={styles.modalBase}
