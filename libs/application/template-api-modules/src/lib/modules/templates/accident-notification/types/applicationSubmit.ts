@@ -8,16 +8,17 @@ export interface Slysatilkynning {
   slasadi: TilkynnandiOrSlasadi
   slys: Slys
   atvinnurekandi: Atvinnurekandi
-  felagstengsl: Felagstengsl
+  //felagstengsl: Felagstengsl
   fylgiskjol: Fylgiskjol
 }
 export interface TilkynnandiOrSlasadi {
   kennitala: string
   nafn: string
-  heimili: string
-  stadur: string
-  postfang: string
+  stadur?: string
+  postfang?: string
   netfang: string
+  heimili?: string
+  fyrirhvernerveridadtilkynna?: number
   simi: string
 }
 export interface SlysVidVinnusjomanna {
@@ -34,16 +35,16 @@ export interface SlysVidHeimislisstorf {
   nanar?: string
 }
 export interface Slys {
-  tegund: string
+  tegund: number //TODO change to enum
   dagsetningslys: string
   timislys: string
   lysing: string
-  banaslys: string
-  bilslys: string
+  banaslys: number
+  bilslys: number
   stadurslysseferindi?: string
   lysingerindis?: string
-  nafnhafnar?: string
-  stadsetninghafnar?: string
+  //nafnhafnar?: string
+  //stadsetninghafnar?: string
   undirtegund?: string
   slysvidheimilisstorf?: SlysVidHeimislisstorf
   slysvidvinnusjomanna?: SlysVidVinnusjomanna

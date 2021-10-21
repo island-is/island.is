@@ -168,7 +168,7 @@
   - [Auth Public API Client](libs/clients/auth-public-api/README.md)
   - [Clients Document Provider](libs/clients/document-provider/README.md)
   - [Documents (Pósthólf)](libs/clients/documents/README.md)
-  - [Clients Driving License](libs/clients/driving-license/README.md)
+  - [Clients Driving License V1 / V2](libs/clients/driving-license/README.md)
   - [Clients Finance](libs/clients/finance/README.md)
   - [Client Middlewares](libs/clients/middlewares/README.md)
   - [Clients Mms](libs/clients/mms/README.md)
@@ -201,6 +201,7 @@
 - [Nest Modules](libs/nest/README.md)
   - [Audit Module](libs/nest/audit/README.md)
   - [Nest Sequelize Cursor Pagination](libs/nest/pagination/README.md)
+  - [Problem Module](libs/nest/problem/README.md)
 - [Next Ids Auth Lib](libs/next-ids-auth/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)
 - [Plausible](libs/plausible/README.md)
@@ -227,11 +228,17 @@
   - [Constants](libs/shared/constants/README.md)
   - [Form Fields](libs/shared/form-fields/README.md)
   - [Mocking](libs/shared/mocking/README.md)
+  - [Problem Types](libs/shared/problem/README.md)
   - [Shared Translations](libs/shared/translations/README.md)
   - [Types](libs/shared/types/README.md)
   - [Utils](libs/shared/utils/README.md)
   - [Testing Fixtures](libs/testing/fixtures/README.md)
   - [Testing Nest](libs/testing/nest/README.md)
+
+## Reference
+
+- [Problems](handbook/reference/problems/README.md)
+  - [400 Validation Failed](handbook/reference/problems/validation-failed.md)
 
 ## Misc
 

@@ -26,47 +26,48 @@ export const applictionAnswersToXml = (
       tilkynnandi: {
         kennitala: answers.applicant.nationalId,
         nafn: answers.applicant.name,
-        netfang: answers.applicant.email,
         heimili: answers.applicant.address,
-        postfang: answers.applicant.postalCode,
-        simi: answers.applicant.phoneNumber || '',
         stadur: answers.applicant.city,
+        postfang: answers.applicant.postalCode,
+        netfang: answers.applicant.email,
+        fyrirhvernerveridadtilkynna: 1,
+        simi: answers.applicant.phoneNumber || '',
       },
       slasadi: {
-        kennitala: answers.injuredPersonInformation?.nationalId || '',
-        netfang: answers.injuredPersonInformation?.email || '',
-        simi: answers.injuredPersonInformation?.phoneNumber || '',
-        nafn: answers.injuredPersonInformation?.name || '',
-        stadur: '', //not in answers
-        heimili: '', //not n answers
-        postfang: '', //not in answers
+        kennitala: answers.injuredPersonInformation?.nationalId || '2606862759',
+        nafn: answers.injuredPersonInformation?.name || 'Ólafur',
+        netfang:
+          answers.injuredPersonInformation?.email || 'olafur@sendiradid.is',
+        simi: answers.injuredPersonInformation?.phoneNumber || '5555555',
+      },
+      slys: {
+        tegund: 4, //4 is sports answers.accidentType.radioButton,
+        dagsetningslys: answers.accidentDetails.dateOfAccident,
+        timislys: answers.accidentDetails.timeOfAccident,
+        lysing: answers.accidentDetails.descriptionOfAccident,
+        banaslys: 0, // answers.wasTheAccidentFatal,
+        bilslys: 0, //answers.carAccidentHindrance,
+        stadurslysseferindi: 'erindi',
+        lysingerindis: 'lysing ', //TODO find correct field answers.accidentDetails.descriptionOfInjuries,
+        //nafnhafnar: '', // answers.fishermanLocation.answer
+        //stadsetninghafnar: '',
       },
       atvinnurekandi: {
         //TODO check if need per type of application
         //forsjaradilikennitala: answers.sportsClubInfo.nationalRegistrationId,
+        fyrirtaekikennitala: answers.sportsClubInfo.nationalRegistrationId,
+        fyrirtaekinafn: answers.sportsClubInfo.name,
         forsjaradilinafn: answers.sportsClubInfo.name,
         forsjaradilinetfang: answers.sportsClubInfo.email,
         forsjaradilisimi: answers.sportsClubInfo.phoneNumber || '',
-        fyrirtaekikennitala: answers.sportsClubInfo.nationalRegistrationId,
-        fyrirtaekinafn: answers.sportsClubInfo.name,
       },
+      /*
       felagstengsl: {
         kennitala: answers.sportsClubInfo.nationalRegistrationId,
         nafn: answers.sportsClubInfo.name,
         tegundslyss: answers.accidentType.radioButton,
-      },
-      slys: {
-        banaslys: answers.wasTheAccidentFatal,
-        dagsetningslys: answers.accidentDetails.dateOfAccident,
-        bilslys: answers.carAccidentHindrance,
-        lysing: answers.accidentDetails.descriptionOfAccident,
-        lysingerindis: 'lysing ', //TODO find correct field answers.accidentDetails.descriptionOfInjuries,
-        nafnhafnar: '', // answers.fishermanLocation.answer
-        stadsetninghafnar: '',
-        stadurslysseferindi: '',
-        tegund: answers.accidentType.radioButton,
-        timislys: answers.accidentDetails.timeOfAccident,
-      },
+      },*/
+
       fylgiskjol: {
         fylgiskjal: attachments.map((attachment) => {
           return {

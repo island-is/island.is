@@ -43,6 +43,13 @@ describe('prerequisitesFailed', () => {
           data: {
             conditions: {
               maxDebt: true,
+              taxReturns: false,
+              vatReturns: false,
+              citReturns: false,
+              withholdingTaxReturns: false,
+              wageReturns: false,
+              collectionActions: true,
+              doNotOwe: false,
             },
           },
           date: new Date(),
@@ -62,6 +69,14 @@ describe('prerequisitesFailed', () => {
           data: {
             conditions: {
               maxDebt: false,
+              taxReturns: true,
+              vatReturns: true,
+              citReturns: true,
+              accommodationTaxReturns: true,
+              withholdingTaxReturns: true,
+              wageReturns: true,
+              collectionActions: false,
+              doNotOwe: true,
             },
           },
           date: new Date(),

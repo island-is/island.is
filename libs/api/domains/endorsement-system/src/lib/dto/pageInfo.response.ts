@@ -8,9 +8,9 @@ export class PageInfoResponse {
   @Field()
   hasPreviousPage!: boolean
 
-  @Field()
+  @Field({ nullable: true })
   startCursor!: string
 
-  @Field()
+  @Field({ nullable: true })
   endCursor!: string
 }

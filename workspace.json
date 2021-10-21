@@ -3311,10 +3311,26 @@
             "passWithNoTests": true
           }
         },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "[[ '{args.apiVersion}' =~ v1|v2 ]] && >&2 echo \"Missing required --apiVersion, only v1 or v2 are valid\"",
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" -H \"SECRET: $DRIVING_LICENSE_SECRET\" http://localhost:8081/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=RafraentOkuskirteini-{args.apiVersion} -H 'Accept: application/json' > src/{args.apiVersion}/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/{args.apiVersion}/clientConfig.json > _.tmp && mv _.tmp src/{args.apiVersion}/clientConfig.json",
+              "jq '.paths[].post.requestBody.content |= (select(. != null) | with_entries(select(.key == \"application/json\")))' src/{args.apiVersion}/clientConfig.json > _.tmp && mv _.tmp src/{args.apiVersion}/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/driving-license"
+          }
+        },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn openapi-generator -o libs/clients/driving-license/gen/fetch -i libs/clients/driving-license/src/clientConfig.json"
+            "commands": [
+              "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v1 -i libs/clients/driving-license/src/v1/clientConfig.json",
+              "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v2 -i libs/clients/driving-license/src/v2/clientConfig.json"
+            ]
           }
         }
       }
@@ -6013,6 +6029,27 @@
         }
       }
     },
+    "nest-problem": {
+      "root": "libs/nest/problem",
+      "sourceRoot": "libs/nest/problem/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/problem/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/problem"],
+          "options": {
+            "jestConfig": "libs/nest/problem/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-validators": {
       "root": "libs/nest/validators",
       "sourceRoot": "libs/nest/validators/src",
@@ -7285,25 +7322,6 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "dist/apps/services/auth-api",
-            "commands": [
-              "nx esbuild services-auth-api",
-              "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
-            ],
-            "parallel": false
-          },
-          "configurations": {
-            "production": {
-              "commands": [
-                "nx esbuild services-auth-api --prod",
-                "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
-              ]
-            }
-          }
-        },
-        "esbuild": {
           "builder": "@irdnis/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/services/auth-api",
@@ -7346,7 +7364,7 @@
         "serve": {
           "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "services-auth-api:esbuild"
+            "buildTarget": "services-auth-api:build"
           }
         },
         "lint": {
@@ -7401,10 +7419,7 @@
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": [
-              "sequelize-cli db:seed:all --seeders-path ./seeders/local",
-              "sequelize-cli db:seed:all"
-            ],
+            "commands": ["sequelize-cli db:seed:all"],
             "cwd": "libs/auth-api-lib"
           }
         }
@@ -8332,6 +8347,27 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/shared/mocking"]
+        }
+      }
+    },
+    "shared-problem": {
+      "root": "libs/shared/problem",
+      "sourceRoot": "libs/shared/problem/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/problem/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/problem"],
+          "options": {
+            "jestConfig": "libs/shared/problem/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },

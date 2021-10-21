@@ -22,6 +22,7 @@ const devConfig = {
   },
   accessGroups: {
     DMR: process.env.ACCESS_GROUP_DMR ?? '',
+    Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
 }
 
@@ -50,7 +51,11 @@ const prodConfig = {
   },
   accessGroups: {
     DMR: process.env.ACCESS_GROUP_DMR ?? '',
+    Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
 }
 
 export default isProductionEnvironment ? prodConfig : devConfig
+
+// global settings for endorsementsystem
+export const ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS = ['generalPetition']

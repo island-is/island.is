@@ -63,12 +63,14 @@ export interface User {
   folder: string
   service: RolesRule
   currentApplication?: CurrentApplication
+  isSpouse?: boolean
   staff?: Staff
   postalCode?: number
 }
 
 export interface UpdateApplication {
   state: ApplicationState
+  event: ApplicationEventType
   amount?: number
   rejection?: string
   comment?: string
@@ -79,6 +81,7 @@ export interface UpdateApplicationTable {
   state: ApplicationState
   staffId: string
   stateUrl: ApplicationStateUrl
+  event: ApplicationEventType
 }
 
 export interface CreateApplicationEvent {
@@ -198,12 +201,11 @@ export interface GetSignedUrlForId {
   id: string
 }
 
+export interface HasSpouseApplied {
+  HasApplied: boolean
+}
+
 export interface UpdateApplicationTableResponseType {
   applications: Application[]
   filters: ApplicationFilters
-}
-
-export interface UpdateApplicationResponseType {
-  application: Application
-  filters?: ApplicationFilters
 }

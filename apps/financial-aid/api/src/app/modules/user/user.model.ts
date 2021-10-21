@@ -25,6 +25,9 @@ export class UserModel implements User {
   @Field(() => CurrentApplicationModel, { nullable: true })
   readonly currentApplication?: CurrentApplicationModel
 
+  @Field(() => Boolean)
+  readonly isSpouse?: boolean
+
   @Field(() => StaffModel, { nullable: true })
   readonly staff?: StaffModel
 

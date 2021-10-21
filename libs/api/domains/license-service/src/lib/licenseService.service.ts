@@ -18,6 +18,7 @@ import {
   GenericLicenseCached,
   GenericLicenseUserdataExternal,
   PkPassVerification,
+  GenericUserLicensePkPassStatus,
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 
@@ -157,6 +158,7 @@ export class LicenseServiceService {
 
       const licenseUserdata = licenseDataFromService?.data ?? {
         status: GenericUserLicenseStatus.Unknown,
+        pkpassStatus: GenericUserLicensePkPassStatus.Unknown,
       }
 
       const fetch = licenseDataFromService?.fetch ?? {
@@ -202,6 +204,9 @@ export class LicenseServiceService {
       license: {
         ...license,
         status: licenseUserdata?.status ?? GenericUserLicenseStatus.Unknown,
+        pkpassStatus:
+          licenseUserdata?.pkpassStatus ??
+          GenericUserLicensePkPassStatus.Unknown,
       },
       fetch: {
         status: licenseUserdata
