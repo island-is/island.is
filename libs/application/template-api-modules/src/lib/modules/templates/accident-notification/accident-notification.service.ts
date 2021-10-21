@@ -42,7 +42,7 @@ export class AccidentNotificationService {
     console.log('answers', answers)
     const xml = applictionAnswersToXml(answers, attachments)
 
-    console.log('XML OBJEJCJTWS', xml)
+    console.log('XML ', xml)
     try {
       const {
         success,
@@ -66,13 +66,7 @@ export class AccidentNotificationService {
         console.log('error', error.body)
         throw new Exception(error.body.errorDesc)
       }
-      /* console.log('error', error)
-      console.log('error', JSON.parse(error.body))
-      console.log('status', error.status)/*/
     }
-
-    throw new Exception('STOP THIS APPLICATION FROM SUBMITTTING !!!!!!!!!')
-    //TODO SEND XML
 
     // Send confirmation email to applicant
     await this.sharedTemplateAPIService.sendEmail(
