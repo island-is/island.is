@@ -1,27 +1,11 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  ForbiddenException,
-  Get,
-  NotFoundException,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common'
+import { Body, Controller, Delete, Get, Post, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import {
-  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import {
-  completedCaseStates,
-  courtRoles,
-} from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import {
@@ -31,6 +15,7 @@ import {
   CurrentCase,
   CaseService,
   CaseExistsGuard,
+  CaseCompletedGuard,
 } from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
 import {
@@ -55,17 +40,6 @@ export class FileController {
     private readonly fileService: FileService,
     private readonly caseService: CaseService,
   ) {}
-
-  private doesUserHavePermissionToUploadCaseFilesToCourt(
-    user: User,
-    existingCase: Case,
-  ): boolean {
-    // Judges and registrars have permission to upload files of completed cases
-    return (
-      courtRoles.includes(user.role) &&
-      completedCaseStates.includes(existingCase.state)
-    )
-  }
 
   @RolesRules(prosecutorRule)
   @UseGuards(CaseExistsForUpdateGuard, CaseNotCompletedGuard)
@@ -125,7 +99,7 @@ export class FileController {
   }
 
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
-  @UseGuards(CaseExistsGuard, ViewCaseFileGuard)
+  @UseGuards(CaseExistsGuard, ViewCaseFileGuard, CaseFileExistsGuard)
   @Get('file/:fileId/url')
   @ApiOkResponse({
     type: PresignedPost,
@@ -138,39 +112,20 @@ export class FileController {
   }
 
   @RolesRules(judgeRule, registrarRule)
+  @UseGuards(CaseExistsGuard, CaseCompletedGuard, CaseFileExistsGuard)
   @Post('file/:id/court')
   @ApiOkResponse({
     type: PresignedPost,
     description: 'Uploads a case file to court',
   })
   async uploadCaseFileToCourt(
-    @Param('caseId') caseId: string,
-    @Param('id') id: string,
-    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<UploadFileToCourtResponse> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
-
-    if (
-      !this.doesUserHavePermissionToUploadCaseFilesToCourt(user, existingCase)
-    ) {
-      throw new ForbiddenException(
-        `User ${user.id} does not have permission to upload files of case ${existingCase.id} to court`,
-      )
-    }
-
-    const file = await this.fileService.findById(id, existingCase.id)
-
-    if (!file) {
-      throw new NotFoundException(
-        `File ${id} of case ${existingCase.id} does not exist`,
-      )
-    }
-
     return this.fileService.uploadCaseFileToCourt(
-      existingCase.id,
-      existingCase.courtId,
-      existingCase.courtCaseNumber,
-      file,
+      theCase.courtId,
+      theCase.courtCaseNumber,
+      caseFile,
     )
   }
 }

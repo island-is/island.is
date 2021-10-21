@@ -188,23 +188,20 @@ export class FileService {
   }
 
   async uploadCaseFileToCourt(
-    caseId: string,
     courtId: string | undefined,
     courtCaseNumber: string | undefined,
     file: CaseFile,
   ): Promise<UploadFileToCourtResponse> {
-    this.logger.debug(`Uploading file ${file.id} of case ${caseId} to court`)
+    this.logger.debug(`Uploading file ${file.id} to court`)
 
     if (file.state === CaseFileState.STORED_IN_COURT) {
       throw new ForbiddenException(
-        `File ${file.id} of case ${caseId} has already been uploaded to court`,
+        `File ${file.id} has already been uploaded to court`,
       )
     }
 
-    if (file.state === CaseFileState.BOKEN_LINK) {
-      throw new NotFoundException(
-        `File ${file.id} of case ${caseId} does not exists in AWS S3`,
-      )
+    if (file.state !== CaseFileState.STORED_IN_RVG) {
+      throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
     const exists = await this.awsS3Service.objectExists(file.key)
@@ -215,9 +212,7 @@ export class FileService {
         { state: CaseFileState.BOKEN_LINK },
         { where: { id: file.id } },
       )
-      throw new NotFoundException(
-        `File ${file.id} of case ${caseId} does not exists in AWS S3`,
-      )
+      throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
     this.throttle = this.throttleUploadStream(file, courtId)
