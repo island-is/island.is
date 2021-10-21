@@ -12,7 +12,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_QUERY,
+  GET_SERVICE_WEB_ORGANIZATION,
   GET_SUPPORT_CATEGORIES,
   GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
 } from '../../queries'
@@ -31,6 +31,7 @@ import {
   ServiceWebSearchSection,
   ServiceWebHeader,
 } from '@island.is/web/components'
+import Footer from '../shared/Footer'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import { getSlugPart } from '../utils'
@@ -117,6 +118,7 @@ const Home: Screen<HomeProps> = ({ organization, supportCategories }) => {
           </GridRow>
         </GridContainer>
       </Box>
+      <Footer institutionSlug={institutionSlug} organization={organization} />
     </>
   )
 }
@@ -127,7 +129,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const [organization, namespace, supportCategories] = await Promise.all([
     !!slug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
-        query: GET_ORGANIZATION_QUERY,
+        query: GET_SERVICE_WEB_ORGANIZATION,
         variables: {
           input: {
             slug,
@@ -188,4 +190,5 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
 
 export default withMainLayout(Home, {
   showHeader: false,
+  showFooter: false,
 })

@@ -3,7 +3,7 @@ const today = new Date()
 
 module.exports = {
   getGenericEndorsementList: (tags) => ({
-    id: faker.random.uuid(),
+    id: faker.datatype.uuid(),
     title: faker.lorem.words(2),
     description: faker.lorem.paragraph(1),
     opened_date: today,
@@ -20,7 +20,7 @@ module.exports = {
   }),
 
   getGenericEndorsement: () => ({
-    id: faker.random.uuid(),
+    id: faker.datatype.uuid(),
     endorser: faker.phone.phoneNumber('##########'),
     endorsement_list_id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c1',
     meta: '{}',
