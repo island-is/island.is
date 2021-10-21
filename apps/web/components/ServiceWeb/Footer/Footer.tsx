@@ -113,7 +113,7 @@ export const Footer: FC<Props> = ({
                           <Inline space={1}>
                             <Text>Sími:</Text>
                             <Text color="blue600">
-                              <a href="tel:426550">426550</a>
+                              <a href={`tel:${phone}`}>{phone}</a>
                             </Text>
                           </Inline>
                         </LinkContext.Provider>

@@ -16,15 +16,15 @@ interface FooterProps {
 const Footer = ({ organization, institutionSlug }: FooterProps) => {
   const { linkResolver } = useLinkResolver()
 
-  if (!organization || !institutionSlug) {
+  const slug = organization?.slug || institutionSlug
+
+  if (!slug) {
     return null
   }
 
-  const contactLink = `${
-    linkResolver('helpdesk').href
-  }/${institutionSlug}/hafa-samband`
+  const contactLink = `${linkResolver('helpdesk').href}/${slug}/hafa-samband`
 
-  return footerEnabled.includes(institutionSlug) ? (
+  return footerEnabled.includes(slug) ? (
     <OrganizationFooter organizations={[organization]} />
   ) : (
     <ServiceWebFooter

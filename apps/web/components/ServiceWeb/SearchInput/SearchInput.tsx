@@ -40,7 +40,7 @@ export const ModifySearchTerms = (searchTerms: string) =>
         return a.replace(b, '')
       }, cur)
       const f = s.length > 3 ? Math.floor(0.3 * s.length) : ''
-      const add = s ? `${s}~${f ? f : ''}|${s}` : ''
+      const add = s ? `${s}~${f}|${s}` : ''
       return sum ? `${sum}|${add}` : add
     }, '')
 
@@ -138,7 +138,6 @@ export const SearchInput = ({
             background={active ? 'white' : 'blue100'}
             onClick={() => {
               setOptions([])
-              // setSearchTerms('')
               onSelect(item)
             }}
           >
