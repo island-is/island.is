@@ -119,7 +119,7 @@ mutation {
 }
 ```
 
-## Integrating these naming conventions into our shared api
+## Integrating naming conventions into shared api
 
 **Now for the hard part!**
 

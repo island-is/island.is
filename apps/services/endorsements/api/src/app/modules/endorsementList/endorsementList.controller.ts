@@ -24,6 +24,7 @@ import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
 import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
+import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
 import { BypassAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
 import { environment } from '../../../environments'
@@ -35,9 +36,15 @@ import { AccessGroup } from '../../guards/accessGuard/access.enum'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
+import { SearchQueryDto } from './dto/searchQuery.dto'
 
-export class FindTagPaginationCombo extends IntersectionType(
+export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
+  PaginationDto,
+) {}
+
+export class SearchPaginationComboDto extends IntersectionType(
+  SearchQueryDto,
   PaginationDto,
 ) {}
 
@@ -47,7 +54,7 @@ export class FindTagPaginationCombo extends IntersectionType(
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
 @ApiOAuth2([])
-@ApiExtraModels(FindTagPaginationCombo, PaginatedEndorsementListDto)
+@ApiExtraModels(FindTagPaginationComboDto, PaginatedEndorsementListDto)
 export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
@@ -60,7 +67,7 @@ export class EndorsementListController {
   @Get()
   @BypassAuth()
   async findByTags(
-    @Query() query: FindTagPaginationCombo,
+    @Query() query: FindTagPaginationComboDto,
   ): Promise<PaginatedEndorsementListDto> {
     return await this.endorsementListService.findListsByTags(
       // query parameters of length one are not arrays, we normalize all tags input to arrays here
@@ -248,6 +255,35 @@ export class EndorsementListController {
   ): Promise<EndorsementList> {
     return await this.endorsementListService.unlock(endorsementList)
   }
+
+  @ApiOkResponse({
+    description:
+      'Admin update a single endorsements list by id and request body',
+    type: EndorsementList,
+  })
+  @ApiParam({ name: 'listId', type: 'string' })
+  @ApiBody({ type: UpdateEndorsementListDto })
+  @Scopes(EndorsementsScope.main)
+  @Put(':listId/update')
+  @HasAccessGroup(AccessGroup.Admin)
+  @Audit<EndorsementList>({
+    resources: (endorsementList) => endorsementList.id,
+  })
+  async update(
+    @Body() newData: UpdateEndorsementListDto,
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+    )
+    endorsementList: EndorsementList,
+  ): Promise<EndorsementList> {
+    return await this.endorsementListService.updateEndorsementList(
+      endorsementList,
+      newData,
+    )
+  }
+
   @ApiOperation({ summary: 'Create an endorsements list' })
   @ApiOkResponse({
     description: 'Create an endorsements list',

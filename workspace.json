@@ -979,7 +979,7 @@
               "yarn nx run services-endorsements-api:dev/init $NX_OPTIONS",
               "yarn nx run services-endorsements-api:schemas/external-openapi-generator $NX_OPTIONS",
               "yarn nx run services-endorsements-api:schemas/openapi-generator $NX_OPTIONS",
-              "yarn nx run services-endorsements-api:schemas/build-openapi $NX_OPTIONS",
+              "yarn nx run services-endorsements-api:schemas/build-openapi-internal $NX_OPTIONS",
               "yarn nx run api-domains-endorsement-system:schemas/openapi-generator $NX_OPTIONS"
             ],
             "parallel": false
@@ -1857,7 +1857,7 @@
             "cypressConfig": "apps/application-system/form-e2e/cypress.json",
             "tsConfig": "apps/application-system/form-e2e/tsconfig.e2e.json",
             "devServerTarget": "application-system-form:serve",
-            "baseUrl": "http://localhost:4200"
+            "baseUrl": "http://localhost:4242"
           },
           "configurations": {
             "production": {
@@ -1868,7 +1868,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n application-system-form-e2e -t react -d dist/apps/application-system/form -c"
+            "command": "yarn e2e-ci -n application-system-form-e2e -t react -p 4242 -d dist/apps/application-system/form -c"
           }
         },
         "lint": {
@@ -2633,7 +2633,7 @@
           "options": {
             "commands": [
               "nx run services-endorsements-api:schemas/external-openapi-generator $NX_OPTIONS",
-              "nx run services-endorsements-api:schemas/build-openapi $NX_OPTIONS",
+              "nx run services-endorsements-api:schemas/build-openapi-internal $NX_OPTIONS",
               "nx run application-templates-party-application:schemas/openapi-generator $NX_OPTIONS"
             ],
             "parallel": false
@@ -2720,8 +2720,8 @@
           "options": {
             "commands": [
               "nx run services-endorsements-api:schemas/external-openapi-generator $NX_OPTIONS",
-              "nx run services-endorsements-api:schemas/build-openapi $NX_OPTIONS",
-              "nx run services-party-letter-registry-api:schemas/build-openapi $NX_OPTIONS",
+              "nx run services-endorsements-api:schemas/build-openapi-internal $NX_OPTIONS",
+              "nx run services-party-letter-registry-api:schemas/build-openapi-internal $NX_OPTIONS",
               "nx run application-templates-party-letter:schemas/openapi-generator $NX_OPTIONS"
             ],
             "parallel": false
@@ -7685,6 +7685,12 @@
         "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
+            "command": "yarn nx run services-endorsements-api:schemas/build-openapi-internal $NX_OPTIONS"
+          }
+        },
+        "schemas/build-openapi-internal": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
             "outputPath": "apps/services/endorsements/api/src/openapi.yaml",
             "command": "yarn ts-node -P apps/services/endorsements/api/tsconfig.app.json apps/services/endorsements/api/src/buildOpenApi.ts"
           }
@@ -7801,6 +7807,12 @@
           }
         },
         "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn nx run services-party-letter-registry-api:schemas/build-openapi-internal"
+          }
+        },
+        "schemas/build-openapi-internal": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/party-letter-registry-api/src/openapi.yaml",

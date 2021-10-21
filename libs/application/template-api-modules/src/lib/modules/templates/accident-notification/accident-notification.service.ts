@@ -42,7 +42,7 @@ export class AccidentNotificationService {
     console.log('answers', answers)
     const xml = applictionAnswersToXml(answers, attachments)
 
-    console.log('XML ', xml)
+    console.log('XML OBJEJCJTWS', xml)
     try {
       const {
         success,
@@ -59,7 +59,7 @@ export class AccidentNotificationService {
       console.log('errorList', errorList)
       console.log('ihiDocumentID', ihiDocumentID)
       console.log('numberIHI', numberIHI)
-    } catch (error) {
+    } catch (error: any) {
       console.log('error', error.status)
       //check if errorcode is in 400 range
       if (error.status >= 400 && error.status < 500) {
@@ -67,7 +67,6 @@ export class AccidentNotificationService {
         throw new Exception(error.body.errorDesc)
       }
     }
-
     // Send confirmation email to applicant
     await this.sharedTemplateAPIService.sendEmail(
       (props) =>
