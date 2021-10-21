@@ -176,7 +176,7 @@ export class EndorsementSystemService {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerUpdate(input)
       .catch(this.handleError.bind(this))
-    }
+  }
   async endorsementListControllerClose(
     endorsementList: EndorsementListControllerCloseRequest,
     auth: Auth,

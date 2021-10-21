@@ -197,8 +197,8 @@ export class EndorsementSystemResolver {
         updateEndorsementListDto: endorsementList,
       },
       user,
-      )
-    }
+    )
+  }
   // PUT /endorsement-list/{listId}/close
   @Mutation(() => EndorsementList)
   async endorsementSystemCloseEndorsementList(
