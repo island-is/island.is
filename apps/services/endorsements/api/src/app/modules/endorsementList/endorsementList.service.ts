@@ -16,7 +16,6 @@ import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClo
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
-import { OwnerInfoDto } from './dto/ownerInfo.dto'
 
 interface CreateInput extends EndorsementListDto {
   owner: string

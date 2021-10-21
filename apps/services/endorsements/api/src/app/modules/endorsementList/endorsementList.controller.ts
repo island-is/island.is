@@ -35,7 +35,6 @@ import { AccessGroup } from '../../guards/accessGuard/access.enum'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
-import { OwnerInfoDto } from './dto/ownerInfo.dto'
 import { SearchQueryDto } from './dto/searchQuery.dto'
 
 export class FindTagPaginationComboDto extends IntersectionType(
