@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 
 import { Stepper } from '@island.is/financial-aid-web/osk/src/components'
@@ -11,14 +11,15 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 const SideBar = () => {
   const router = useRouter()
 
-  const { user } = useContext(AppContext)
+  const { user, municipality } = useContext(AppContext)
 
   return (
     <>
       {user?.currentApplication || router.route.includes('/stada') ? (
         <Box className={styles.sidebarContent}>
           <Text as="h3" variant="h3" marginBottom={[1, 1, 2]}>
-            Umsókn um fjárhagsaðstoð hjá Hafnarfjarðarbæ
+            Umsókn um fjárhagsaðstoð{' '}
+            {municipality?.name ? `hjá ${municipality?.name}` : ''}
           </Text>
         </Box>
       ) : (
