@@ -7,6 +7,7 @@ import {
   EndorsementControllerCreateRequest,
   EndorsementControllerDeleteRequest,
   EndorsementListControllerCreateRequest,
+  EndorsementListControllerUpdateRequest,
   EndorsementListControllerFindOneRequest,
   EndorsementControllerBulkCreateRequest,
   EndorsementControllerFindAllRequest,
@@ -175,6 +176,14 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
+  async endorsementListControllerUpdate(
+    input: EndorsementListControllerUpdateRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerUpdate(input)
+      .catch(this.handleError.bind(this))
+  }
   async endorsementListControllerClose(
     endorsementList: EndorsementListControllerCloseRequest,
     auth: Auth,
