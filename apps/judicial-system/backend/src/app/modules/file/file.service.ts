@@ -195,7 +195,7 @@ export class FileService {
     this.logger.debug(`Uploading file ${file.id} to court`)
 
     if (file.state === CaseFileState.STORED_IN_COURT) {
-      throw new ForbiddenException(
+      throw new BadRequestException(
         `File ${file.id} has already been uploaded to court`,
       )
     }

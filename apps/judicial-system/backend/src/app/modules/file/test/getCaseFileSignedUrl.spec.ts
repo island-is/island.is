@@ -175,7 +175,7 @@ describe('FileController - Get case file signed url', () => {
 
     it('should throw error', () => {
       expect(then.error).toBeInstanceOf(Error)
-      expect(then.error.message).toBe(`Some error`)
+      expect(then.error.message).toBe('Some error')
     })
   })
 
@@ -198,7 +198,7 @@ describe('FileController - Get case file signed url', () => {
 
     it('should throw error', () => {
       expect(then.error).toBeInstanceOf(Error)
-      expect(then.error.message).toBe(`Some error`)
+      expect(then.error.message).toBe('Some error')
     })
   })
 })

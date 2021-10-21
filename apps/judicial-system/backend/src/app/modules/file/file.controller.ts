@@ -112,7 +112,7 @@ export class FileController {
   }
 
   @RolesRules(judgeRule, registrarRule)
-  @UseGuards(CaseExistsGuard, CaseCompletedGuard, CaseFileExistsGuard)
+  @UseGuards(CaseExistsForUpdateGuard, CaseCompletedGuard, CaseFileExistsGuard)
   @Post('file/:id/court')
   @ApiOkResponse({
     type: PresignedPost,
