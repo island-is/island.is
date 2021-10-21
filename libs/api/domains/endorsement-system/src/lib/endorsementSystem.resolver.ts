@@ -26,7 +26,6 @@ import { PaginatedEndorsementListInput } from './dto/paginatedEndorsementList.in
 import { PaginatedEndorsementListResponse } from './dto/paginatedEndorsementList.response'
 
 import { EndorsementPaginationInput } from './dto/endorsementPagination.input'
-import { OwnerInfoDto } from './models/ownerInfo.model'
 import { OpenListInput } from './dto/openList.input'
 
 @UseGuards(IdsUserGuard)
