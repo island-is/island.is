@@ -66,7 +66,7 @@ export class HealthInsuranceService {
     ihiDocumentID: number,
   ): Promise<AccidentNotificationStatus | null> {
     console.log('starting call to get accident', ihiDocumentID)
-    const accidentStatus = await this.accidentNotificationApi.getAccidentStatus(
+    const accidentStatus = await this.accidentNotificationApi.documentGetAccidentStatus(
       { ihiDocumentID: ihiDocumentID },
     )
     console.log('managed to fetch')
