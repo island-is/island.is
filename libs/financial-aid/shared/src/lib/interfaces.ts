@@ -248,9 +248,9 @@ export interface NationalRegistryData {
     municipalityCode: string
   }
   spouse: {
-    nationalId: string
-    maritalStatus: string
-    name: string
+    nationalId?: string
+    maritalStatus?: string
+    name?: string
   }
 }
 

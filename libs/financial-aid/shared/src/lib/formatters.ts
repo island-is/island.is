@@ -189,7 +189,7 @@ export const getCommentFromLatestEvent = (
 
 export const logoKeyFromMunicipalityCode: KeyMapping<string, string> = {
   '': 'sis.svg',
-  '1000': 'hfj.svg',
+  '1400': 'hfj.svg',
 }
 
 export const martialStatusTypeFromMartialCode = (

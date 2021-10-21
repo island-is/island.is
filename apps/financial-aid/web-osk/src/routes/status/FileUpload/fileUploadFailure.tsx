@@ -5,7 +5,7 @@ import { Text } from '@island.is/island-ui/core'
 import { Routes } from '@island.is/financial-aid/shared/lib'
 
 import * as styles from './fileUpload.treat'
-import { AppContext } from '../../../components/AppProvider/AppProvider'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const FileUploadFailure = () => {
   const router = useRouter()

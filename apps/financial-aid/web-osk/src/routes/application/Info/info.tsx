@@ -51,9 +51,28 @@ const ApplicationInfo = () => {
       return
     }
 
-    const { data } = await nationalRegistryQuery({
-      input: { ssn: user?.nationalId },
-    })
+    // TODO: Add once national registry is connected to x-road
+    // const { data } = await nationalRegistryQuery({
+    //   input: { ssn: user?.nationalId },
+    // })
+
+    const data: { nationalRegistryUserV2: NationalRegistryData } = {
+      nationalRegistryUserV2: {
+        nationalId: user.nationalId,
+        fullName: user.name,
+        address: {
+          streetName: 'Hafnargata 7',
+          postalCode: '200',
+          city: 'Hafnarfjörður',
+          municipalityCode: '1400',
+        },
+        spouse: {
+          nationalId: undefined,
+          maritalStatus: undefined,
+          name: undefined,
+        },
+      },
+    }
 
     if (!data || !data.nationalRegistryUserV2.address) {
       return
@@ -64,8 +83,6 @@ const ApplicationInfo = () => {
     )
 
     setNationalRegistryData(data.nationalRegistryUserV2)
-
-    console.log(municipality)
 
     if (municipality === undefined || municipality.active === false) {
       router.push(
