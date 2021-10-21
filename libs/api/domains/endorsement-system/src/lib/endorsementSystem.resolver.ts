@@ -11,7 +11,10 @@ import { EndorsementList } from './models/endorsementList.model'
 import { CreateEndorsementListDto } from './dto/createEndorsementList.input'
 import { BulkEndorseListInput } from './dto/bulkEndorseList.input'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
-
+import {
+  UpdateEndorsementListInput,
+  UpdateEndorsementListDto,
+} from './dto/updateEndorsementList.input'
 import { PaginatedEndorsementInput } from './dto/paginatedEndorsement.input'
 import { PaginatedEndorsementResponse } from './dto/paginatedEndorsement.response'
 
@@ -183,6 +186,19 @@ export class EndorsementSystemResolver {
     )
   }
 
+  @Mutation(() => EndorsementList)
+  async endorsementSystemUpdateEndorsementList(
+    @Args('input') { listId, endorsementList }: UpdateEndorsementListInput,
+    @CurrentUser() user: User,
+  ): Promise<EndorsementList> {
+    return await this.endorsementSystemService.endorsementListControllerUpdate(
+      {
+        listId,
+        updateEndorsementListDto: endorsementList,
+      },
+      user,
+    )
+  }
   // PUT /endorsement-list/{listId}/close
   @Mutation(() => EndorsementList)
   async endorsementSystemCloseEndorsementList(
