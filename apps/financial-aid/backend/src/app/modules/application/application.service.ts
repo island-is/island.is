@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { CurrentApplicationModel, ApplicationModel } from './models'
 
-import { Op, Sequelize } from 'sequelize'
+import { Op } from 'sequelize'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import {
