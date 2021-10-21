@@ -4,10 +4,7 @@ import { Box, GridContainer } from '@island.is/island-ui/core'
 import * as styles from './AppLayout.treat'
 import { Logo, Header } from '@island.is/financial-aid-web/osk/src/components'
 
-import {
-  SideBar,
-  ServiceCenter,
-} from '@island.is/financial-aid-web/osk/src/components'
+import { SideBar } from '@island.is/financial-aid-web/osk/src/components'
 
 import cn from 'classnames'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
@@ -17,7 +14,7 @@ interface Props {
 }
 
 const AppLayout = ({ children }: Props) => {
-  const { isAuthenticated, user, userServiceCenter } = useContext(AppContext)
+  const { isAuthenticated, user } = useContext(AppContext)
 
   useEffect(() => {
     document.title = 'Fjárhagsaðstoð'
@@ -48,12 +45,7 @@ const AppLayout = ({ children }: Props) => {
               borderRadius="large"
               className={styles.formContainer}
             >
-              {/* Todo: þjóðskrá */}
-              {userServiceCenter === undefined || userServiceCenter?.active ? (
-                <>{children}</>
-              ) : (
-                <ServiceCenter serviceCenter={userServiceCenter} />
-              )}
+              {children}
             </Box>
 
             <Box className={styles.sidebarContent}>

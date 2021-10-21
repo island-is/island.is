@@ -24,7 +24,6 @@ import {
 import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
 
 import { Routes } from '@island.is/financial-aid/shared/lib'
-import cn from 'classnames'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const FileUpload = () => {

@@ -103,4 +103,16 @@ export class ApplicationModel implements Application {
 
   @Field(() => String)
   readonly familyStatus!: FamilyStatus
+
+  @Field({ nullable: true })
+  readonly streetName?: string
+
+  @Field({ nullable: true })
+  readonly postalCode?: string
+
+  @Field({ nullable: true })
+  readonly city?: string
+
+  @Field({ nullable: true })
+  readonly municipalityCode?: string
 }
