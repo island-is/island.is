@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import NextLink from 'next/link'
+import Head from 'next/head'
 import cn from 'classnames'
 import { useMutation } from '@apollo/client'
 
@@ -13,8 +14,11 @@ import {
   ToastContainer,
   toast,
   AlertBanner,
+  LinkContext,
+  Link,
+  Button,
 } from '@island.is/island-ui/core'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useNamespace, useLinkResolver } from '@island.is/web/hooks'
 import {
   ServiceWebHeader,
   ServiceWebStandardForm,
@@ -58,14 +62,16 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   supportCategories,
   institutionSlug,
   organization,
+  namespace,
 }) => {
   const { linkResolver } = useLinkResolver()
+  const n = useNamespace(namespace)
   const [submit, { data, loading, error }] = useMutation<
     ServiceWebFormsMutation,
     ServiceWebFormsMutationVariables
   >(SERVICE_WEB_FORMS_MUTATION)
 
-  const logoTitle = 'Þjónustuvefur Sýslumanna'
+  const organizationTitle = organization ? organization.title : 'Ísland.is'
   const errorMessage = 'Villa kom upp við að senda fyrirspurn.'
 
   const successfullySent = data?.serviceWebForms?.sent
@@ -88,9 +94,19 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     }
   }, [error])
 
+  const pageTitle = `${organizationTitle} | ${n('serviceWeb', 'Þjónustuvefur')}`
+
+  const headerTitle = `${n(
+    'serviceWeb',
+    'Þjónustuvefur',
+  )} - ${organizationTitle}`
+
   return (
     <>
-      <ServiceWebHeader logoTitle={logoTitle} />
+      <Head>
+        <title>{pageTitle}</title>
+      </Head>
+      <ServiceWebHeader title={headerTitle} />
       <div className={cn(sharedStyles.bg, sharedStyles.bgSmall)} />
       <Box marginY={[3, 3, 10]} marginBottom={10}>
         <GridContainer>
@@ -102,29 +118,60 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
               <GridContainer>
                 <GridRow>
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
-                    <Box printHidden>
+                    <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
                         items={[
                           {
-                            title: logoTitle,
+                            title: n('serviceWeb', 'Þjónustuvefur'),
                             typename: 'helpdesk',
-                            href: '/',
+                            href: linkResolver('helpdesk').href,
                           },
                           {
                             title: 'Hafðu samband',
+                            isTag: true,
                           },
                         ]}
-                        renderLink={(link, { typename, slug }) => {
+                        renderLink={(link, { href }) => {
                           return (
-                            <NextLink
-                              {...linkResolver(typename as LinkType, slug)}
-                              passHref
-                            >
+                            <NextLink href={href} passHref>
                               {link}
                             </NextLink>
                           )
                         }}
                       />
+                    </Box>
+                    <Box
+                      paddingBottom={[2, 2, 4]}
+                      display={['flex', 'flex', 'none']}
+                      justifyContent="spaceBetween"
+                      alignItems="center"
+                      printHidden
+                    >
+                      <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
+                        <LinkContext.Provider
+                          value={{
+                            linkRenderer: (href, children) => (
+                              <Link href={href} pureChildren skipTab>
+                                {children}
+                              </Link>
+                            ),
+                          }}
+                        >
+                          <Text truncate>
+                            <a href={linkResolver('helpdesk').href}>
+                              <Button
+                                preTextIcon="arrowBack"
+                                preTextIconType="filled"
+                                size="small"
+                                type="button"
+                                variant="text"
+                              >
+                                {n('serviceWeb', 'Þjónustuvefur')}
+                              </Button>
+                            </a>
+                          </Text>
+                        </LinkContext.Provider>
+                      </Box>
                     </Box>
                   </GridColumn>
                 </GridRow>
