@@ -32,6 +32,7 @@ import {
 
 import {
   apiBasePath,
+  Application,
   ApplicationStateUrl,
   Staff,
 } from '@island.is/financial-aid/shared/lib'
@@ -49,6 +50,7 @@ import { ApplicationGuard } from '../../guards/application.guard'
 import { StaffService } from '../staff'
 import { IsSpouseResponse } from './models/isSpouse.response'
 import { EmployeeGuard } from '../../guards/employee.guard'
+import { CurrentApplication } from '../../decorators/application.decorator'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/application`)
@@ -125,14 +127,11 @@ export class ApplicationController {
     type: ApplicationModel,
     description: 'Get application',
   })
-  async getById(@Param('id') id: string, @CurrentUser() user: User) {
+  async getById(
+    @Param('id') id: string,
+    @CurrentApplication() application: Application,
+  ) {
     this.logger.debug(`Application controller: Getting application by id ${id}`)
-    const application = await this.applicationService.findById(id, user.service)
-
-    if (!application) {
-      throw new NotFoundException(`application ${id} not found`)
-    }
-
     return application
   }
 
