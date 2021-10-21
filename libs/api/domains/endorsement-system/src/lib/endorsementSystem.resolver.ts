@@ -36,7 +36,9 @@ export class EndorsementSystemResolver {
 
   @ResolveField('ownerName', () => String, { nullable: true })
   resolveOwnerName(@Parent() list: EndorsementList): Promise<String | null> {
-    return this.endorsementSystemService.endorsementListControllerGetOwnerName({listId: list.id})
+    return this.endorsementSystemService.endorsementListControllerGetOwnerName({
+      listId: list.id,
+    })
   }
 
   // GET /endorsement-list/{listId}/endorsement/exists

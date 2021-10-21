@@ -52,10 +52,10 @@ export class EndorsementSystemService {
     return this.endorsementListApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async endorsementListControllerGetOwnerName(input: {listId: string}) {
+  async endorsementListControllerGetOwnerName(input: { listId: string }) {
     return await this.endorsementListApi
-    .endorsementListControllerGetOwnerInfo(input)
-    .catch(this.handleError.bind(this))
+      .endorsementListControllerGetOwnerInfo(input)
+      .catch(this.handleError.bind(this))
   }
 
   // Endorsement endpoints

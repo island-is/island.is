@@ -24,14 +24,17 @@ export interface Config {
     EndorsementValidatorModule,
   ],
   controllers: [EndorsementController],
-  providers: [EndorsementService, EndorsementListService,
+  providers: [
+    EndorsementService,
+    EndorsementListService,
     {
       provide: NationalRegistryApi,
       useFactory: async () =>
         await NationalRegistryApi.instanciateClass(
           environment.metadataProvider
             .nationalRegistry as NationalRegistryConfig,
-        )
-    },],
+        ),
+    },
+  ],
 })
 export class EndorsementModule {}

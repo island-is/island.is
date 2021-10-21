@@ -25,9 +25,8 @@ export interface Config {
         await NationalRegistryApi.instanciateClass(
           environment.metadataProvider
             .nationalRegistry as NationalRegistryConfig,
-        )
+        ),
     },
-
   ],
   exports: [EndorsementListService],
 })
