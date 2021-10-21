@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
+import cn from 'classnames'
 import { useIntl } from 'react-intl'
 import {
   Text,
@@ -8,6 +9,7 @@ import {
   Input,
   Tooltip,
   Checkbox,
+  Button,
 } from '@island.is/island-ui/core'
 import { PoliceCaseFile } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -24,6 +26,10 @@ import { rcCaseFiles as m } from '@island.is/judicial-system-web/messages'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/shared-components/MarkdownWrapper/MarkdownWrapper'
+import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
+import { theme } from '@island.is/island-ui/theme'
+import * as styles from './StepFive.treat'
+import { classNames } from 'react-select/src/utils'
 
 interface Props {
   workingCase: Case
@@ -34,6 +40,18 @@ interface Props {
 export const StepFiveForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, policeCaseFiles } = props
   const { formatMessage } = useIntl()
+  const [policeCaseFileList, setPoliceCaseFileList] = useState<
+    { id: string; label: string; checked: boolean }[]
+  >(
+    policeCaseFiles.map((policeCaseFile) => {
+      return {
+        id: policeCaseFile.rvMalSkjolMals_ID,
+        label: policeCaseFile.heitiSkjals,
+        checked: false,
+      }
+    }),
+  )
+  const [checkAllChecked, setCheckAllChecked] = useState<boolean>(false)
 
   const {
     files,
@@ -44,6 +62,36 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     onRetry,
   } = useS3Upload(workingCase)
   const { updateCase } = useCase()
+
+  const toggleCheckbox = (
+    evt: React.ChangeEvent<HTMLInputElement>,
+    checkAll?: boolean,
+  ) => {
+    const newPoliceCaseFileList = [...policeCaseFileList]
+    const target = policeCaseFileList.findIndex(
+      (listItem) => listItem.id.toString() === evt.target.value,
+    )
+
+    if (checkAll) {
+      setCheckAllChecked(!checkAllChecked)
+      setPoliceCaseFileList(
+        policeCaseFileList.map((l) => {
+          return { id: l.id, label: l.label, checked: evt.target.checked }
+        }),
+      )
+    } else {
+      newPoliceCaseFileList[target].checked = !newPoliceCaseFileList[target]
+        .checked
+
+      setPoliceCaseFileList(newPoliceCaseFileList)
+    }
+  }
+
+  const uploadToRVG = () => {
+    const newPoliceCaseFileList = [...policeCaseFileList]
+
+    setPoliceCaseFileList(newPoliceCaseFileList.filter((p) => !p.checked))
+  }
 
   return (
     <>
@@ -72,16 +120,68 @@ export const StepFiveForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box marginBottom={5}>
-          {policeCaseFiles.map((policeCaseFile, index) => {
-            return (
-              <Box marginBottom={index + 1 === policeCaseFiles.length ? 0 : 2}>
-                <Checkbox
-                  backgroundColor="blue"
-                  label={policeCaseFile.heitiSkjals}
-                />
-              </Box>
-            )
-          })}
+          {policeCaseFiles.length > 0 ? (
+            <AnimateSharedLayout>
+              <motion.div layout className={styles.policeCaseFilesContainer}>
+                <motion.ul layout>
+                  <motion.li
+                    layout
+                    className={cn(styles.policeCaseFile, {
+                      [styles.selectAllPoliceCaseFiles]: true,
+                    })}
+                  >
+                    <Checkbox
+                      label="Velja allt"
+                      checked={checkAllChecked}
+                      onChange={(evt) => toggleCheckbox(evt, true)}
+                      strong
+                    />
+                  </motion.li>
+                  <AnimatePresence>
+                    {policeCaseFileList.map((listItem) => {
+                      return (
+                        <motion.li
+                          layout
+                          className={styles.policeCaseFile}
+                          key={listItem.label}
+                          initial={{
+                            opacity: 0,
+                          }}
+                          animate={{
+                            opacity: 1,
+                          }}
+                          exit={{
+                            backgroundColor: [
+                              theme.color.blue100,
+                              '#3ae374',
+                              '#3ae374',
+                              '#3ae374',
+                              '#3ae374',
+                            ],
+                            opacity: [1, 1, 1, 1, 0],
+                            transition: { duration: 3 },
+                          }}
+                        >
+                          <Checkbox
+                            label={listItem.label}
+                            name={listItem.id}
+                            value={listItem.id}
+                            checked={listItem.checked}
+                            onChange={(evt) => toggleCheckbox(evt)}
+                          />
+                        </motion.li>
+                      )
+                    })}
+                  </AnimatePresence>
+                </motion.ul>
+              </motion.div>
+              <motion.div layout className={styles.uploadToRVGButtonContainer}>
+                <Button onClick={uploadToRVG}>Hlaða upp</Button>
+              </motion.div>
+            </AnimateSharedLayout>
+          ) : (
+            <Text>Engin gogn</Text>
+          )}
         </Box>
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
