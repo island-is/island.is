@@ -2,35 +2,32 @@ import gql from 'graphql-tag'
 import {
   EndorsementList,
   Endorsement,
-  TemporaryVoterRegistry,
+  PaginatedEndorsementResponse,
+  PaginatedEndorsementListResponse,
 } from '../types/schema'
 
 import { useQuery } from '@apollo/client'
 
-export type UserVoterRegion = Pick<
-  TemporaryVoterRegistry,
-  'regionNumber' | 'regionName'
->
-
-interface UserEndorsementsResponse {
-  endorsementSystemUserEndorsements: any //TODO: update with new schemes when they are ready
+interface UserSignedLists {
+  endorsementSystemUserEndorsements: PaginatedEndorsementResponse
 }
-
-interface UserEndorsementsListsResponse {
-  endorsementSystemUserEndorsementLists: any //TODO: update with new schemes when they are ready
+interface UserOwnsLists {
+  endorsementSystemUserEndorsementLists: PaginatedEndorsementListResponse
 }
-
-interface PetitionListResponse {
-  endorsementSystemFindEndorsementLists: any
+interface PetitionLists {
+  endorsementSystemFindEndorsementLists: PaginatedEndorsementListResponse
 }
 interface SinglePetition {
   endorsementSystemGetSingleEndorsementList?: EndorsementList
+}
+interface SinglePetitionEndorsements {
+  endorsementSystemGetGeneralPetitionEndorsements?: PaginatedEndorsementResponse
 }
 interface SingleEndorsement {
   endorsementSystemGetSingleEndorsement?: Endorsement
 }
 
-const GET_SINGLE_ENDORSEMENT = gql`
+const GetSingleEndorsement = gql`
   query endorsementSystemGetSingleEndorsement(
     $input: FindEndorsementListInput!
   ) {
@@ -41,7 +38,7 @@ const GET_SINGLE_ENDORSEMENT = gql`
   }
 `
 
-const GET_USER_ENDORSEMENTS = gql`
+const GetListsUserSigned = gql`
   query endorsementSystemUserEndorsements($input: EndorsementPaginationInput!) {
     endorsementSystemUserEndorsements(input: $input) {
       totalCount
@@ -60,6 +57,7 @@ const GET_USER_ENDORSEMENTS = gql`
           description
           tags
           closedDate
+          openedDate
         }
         meta {
           fullName
@@ -72,7 +70,7 @@ const GET_USER_ENDORSEMENTS = gql`
   }
 `
 
-const GET_REGION_ENDORSEMENTS = gql`
+const GetAllEndorsementsLists = gql`
   query endorsementSystemFindEndorsementLists(
     $input: PaginatedEndorsementListInput!
   ) {
@@ -89,6 +87,7 @@ const GET_REGION_ENDORSEMENTS = gql`
         title
         description
         closedDate
+        openedDate
       }
     }
   }
@@ -103,9 +102,29 @@ export const GetSinglePetitionList = gql`
       title
       description
       owner
+      closedDate
     }
   }
 `
+
+const GetGeneralPetitionListEndorsements = gql`
+  query endorsementSystemGetGeneralPetitionEndorsements(
+    $input: PaginatedEndorsementInput!
+  ) {
+    endorsementSystemGetGeneralPetitionEndorsements(input: $input) {
+      totalCount
+      data {
+        id
+        endorser
+        created
+        meta {
+          fullName
+        }
+      }
+    }
+  }
+`
+
 export const UnendorseList = gql`
   mutation unendorseList($input: FindEndorsementListInput!) {
     endorsementSystemUnendorseList(input: $input)
@@ -126,6 +145,7 @@ export const EndorseList = gql`
     }
   }
 `
+
 export const EndorsementListsUserOwns = gql`
   query endorsementSystemUserEndorsementLists(
     $input: PaginatedEndorsementListInput!
@@ -143,14 +163,35 @@ export const EndorsementListsUserOwns = gql`
         title
         description
         closedDate
+        openedDate
       }
     }
   }
 `
 
-export const useGetPetitionLists = () => {
-  const { data: endorsementListsResponse } = useQuery<PetitionListResponse>(
-    GET_REGION_ENDORSEMENTS,
+export const CloseList = gql`
+  mutation Mutants($input: FindEndorsementListInput!) {
+    endorsementSystemCloseEndorsementList(input: $input) {
+      id
+      title
+      modified
+      closedDate
+      openedDate
+    }
+  }
+`
+
+export const OpenList = gql`
+  mutation Mutants($input: OpenListInput!) {
+    endorsementSystemOpenEndorsementList(input: $input) {
+      id
+    }
+  }
+`
+
+export const useGetAllPetitionLists = () => {
+  const { data: endorsementListsResponse } = useQuery<PetitionLists>(
+    GetAllEndorsementsLists,
     {
       variables: {
         input: {
@@ -165,9 +206,9 @@ export const useGetPetitionLists = () => {
   return endorsementListsResponse?.endorsementSystemFindEndorsementLists ?? []
 }
 
-export const useGetUserLists = () => {
-  const { data: endorsementResponse } = useQuery<UserEndorsementsResponse>(
-    GET_USER_ENDORSEMENTS,
+export const useGetListsUserSigned = () => {
+  const { data: endorsementResponse } = useQuery<UserSignedLists>(
+    GetListsUserSigned,
     {
       variables: {
         input: {
@@ -181,7 +222,7 @@ export const useGetUserLists = () => {
 }
 
 export const useListsUserOwns = () => {
-  const { data: endorsementResponse } = useQuery<UserEndorsementsListsResponse>(
+  const { data: endorsementResponse } = useQuery<UserOwnsLists>(
     EndorsementListsUserOwns,
     {
       variables: {
@@ -197,19 +238,24 @@ export const useListsUserOwns = () => {
 }
 
 export const useGetSinglePetition = (listId: string) => {
-  const { data: petition } = useQuery<SinglePetition>(GetSinglePetitionList, {
+  const {
+    data: petition,
+    refetch: refetchSinglePetition,
+  } = useQuery<SinglePetition>(GetSinglePetitionList, {
     variables: {
       input: {
         listId: listId,
       },
     },
   })
-  return petition?.endorsementSystemGetSingleEndorsementList
+
+  const petitionData = petition?.endorsementSystemGetSingleEndorsementList ?? []
+  return { petitionData, refetchSinglePetition }
 }
 
 export const useGetSingleEndorsement = (listId: string) => {
   const { data: endorsement } = useQuery<SingleEndorsement>(
-    GET_SINGLE_ENDORSEMENT,
+    GetSingleEndorsement,
     {
       variables: {
         input: {
@@ -219,4 +265,22 @@ export const useGetSingleEndorsement = (listId: string) => {
     },
   )
   return endorsement
+}
+
+export const useGetSinglePetitionEndorsements = (listId: string) => {
+  const {
+    data: endorsements,
+    refetch: refetchSinglePetitionEndorsements,
+  } = useQuery<SinglePetitionEndorsements>(GetGeneralPetitionListEndorsements, {
+    variables: {
+      input: {
+        listId: listId,
+      },
+    },
+    pollInterval: 20000,
+  })
+
+  const petitionEndorsements =
+    endorsements?.endorsementSystemGetGeneralPetitionEndorsements ?? []
+  return { petitionEndorsements, refetchSinglePetitionEndorsements }
 }

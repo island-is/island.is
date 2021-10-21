@@ -6,23 +6,14 @@ import {
   Input,
   Stack,
   DialogPrompt,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
-import { ExportAsCSV } from '@island.is/application/ui-components'
 import { useGetSinglePetition } from '../queries'
 import { list } from '../mocks'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import PetitionsTable from '../PetitionsTable'
-
-const mapToCSVFile = (petitions: any) => {
-  return petitions.map((pet: any) => {
-    return {
-      Dagsetning: new Date(pet.signed),
-      Nafn: pet.name,
-    }
-  })
-}
 
 const ViewPetitionAdmin = () => {
   const { formatMessage } = useLocale()
@@ -111,20 +102,14 @@ const ViewPetitionAdmin = () => {
             )}
             buttonTextCancel={formatMessage(m.viewPetition.dialogPromptCancel)}
           />
-          <Button icon="reload" iconType="outline">
+          <Button icon="checkmark" iconType="outline">
             {formatMessage(m.viewPetition.updateListButton)}
           </Button>
         </Box>
 
-        <PetitionsTable />
-
-        <Box marginTop={3}>
-          <ExportAsCSV
-            data={mapToCSVFile(list.signedPetitions) as object[]}
-            filename="Meðmælalisti"
-            title="Sækja lista"
-            variant="ghost"
-          />
+        <Box>
+          <Text variant="h3">Yfirlit meðmæla</Text>
+          <PetitionsTable />
         </Box>
       </Stack>
     </Box>
