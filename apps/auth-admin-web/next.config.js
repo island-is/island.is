@@ -1,4 +1,4 @@
-const withTreat = require('next-treat')()
+const withVanillaExtract = require('@vanilla-extract/next-plugin')()
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 const { createSecureHeaders } = require('next-secure-headers')
 
@@ -16,7 +16,7 @@ const transpileModules = [
 const withTM = require('next-transpile-modules')(transpileModules)
 const { NEXT_PUBLIC_BACKEND_URL } = 'http://localhost:4200/backend'
 
-module.exports = withTreat(
+module.exports = withVanillaExtract(
   withTM(
     withHealthcheckConfig({
       basePath: '/admin',

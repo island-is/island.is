@@ -1,11 +1,11 @@
-const withTreat = require('next-treat')()
+const withVanillaExtract = require('@vanilla-extract/next-plugin')()
 
 const {
   API_URL = 'http://localhost:3333/api',
   WEB_PUBLIC_URL = 'http://localhost:4200',
 } = process.env
 
-module.exports = withTreat({
+module.exports = withVanillaExtract({
   webpack: (config, options) => {
     if (!options.isServer) {
       config.resolve.alias['@sentry/node'] = '@sentry/browser'

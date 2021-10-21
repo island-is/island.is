@@ -1,5 +1,5 @@
 const DefinePlugin = require('webpack/lib/DefinePlugin')
-const TreatPlugin = require('treat/webpack-plugin')
+const TreatPlugin = require('@vanilla-extract/webpack-plugin')
 const nrwlConfig = require('@nrwl/react/plugins/webpack.js')
 
 /**
@@ -43,8 +43,8 @@ module.exports = function (config) {
 
   setApiMocks(config)
 
-  // Add the Treat plugin
-  config.plugins.push(new TreatPlugin())
+  // Add the Vanilla Extract plugin
+  config.plugins.push(new VanillaExtractPlugin())
 
   return config
 }

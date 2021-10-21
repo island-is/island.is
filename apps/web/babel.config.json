@@ -4,5 +4,7 @@
     "@nrwl/react/babel",
     "./../../libs/shared/babel/web"
   ],
-  "plugins": []
+  "plugins": [
+    "@vanilla-extract/babel-plugin"
+  ]
 }

@@ -1,4 +1,4 @@
-const withTreat = require('next-treat')()
+const withVanillaExtract = require('@vanilla-extract/next-plugin')()
 const withSourceMaps = require('@zeit/next-source-maps')
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 // const SentryWebpackPlugin = require('@sentry/webpack-plugin')
@@ -14,7 +14,7 @@ const apiPath = '/api'
 const graphqlPath = '/api/graphql'
 
 module.exports = withSourceMaps(
-  withTreat(
+  withVanillaExtract(
     withHealthcheckConfig({
       webpack: (config, options) => {
         if (!options.isServer) {
