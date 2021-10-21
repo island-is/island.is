@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { MunicipalityModel } from './models'
-
-import { Municipality } from '@island.is/financial-aid/shared/lib'
+import { AidType } from '@island.is/financial-aid/shared/lib'
+import { AidModel } from '../aid'
 
 @Injectable()
 export class MunicipalityService {
@@ -12,17 +12,29 @@ export class MunicipalityService {
     private readonly municipalityModel: typeof MunicipalityModel,
   ) {}
 
-  findById(id: string): Promise<Municipality> {
-    const mockApplication: Municipality = {
-      id: id,
-      name: 'Hafnarfjörður',
-      aid: {
-        ownApartmentOrLease: 197200,
-        withOthersOrUnknow: 157760,
-        withParents: 98600,
-      },
-      homePage: 'https://www.hafnarfjordur.is/',
-    }
-    return Promise.resolve(mockApplication)
+  async findByMunicipalityId(
+    municipalityId: string,
+  ): Promise<MunicipalityModel> {
+    return await this.municipalityModel.findOne({
+      where: { municipalityId },
+      include: [
+        {
+          model: AidModel,
+          as: 'individualAid',
+          where: {
+            municipalityId,
+            type: AidType.INDIVIDUAL,
+          },
+        },
+        {
+          model: AidModel,
+          as: 'cohabitationAid',
+          where: {
+            municipalityId,
+            type: AidType.COHABITATION,
+          },
+        },
+      ],
+    })
   }
 }

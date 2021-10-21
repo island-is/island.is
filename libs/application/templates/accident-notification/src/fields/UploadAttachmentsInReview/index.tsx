@@ -21,7 +21,8 @@ export const UploadAttachmentsInReview: FC<UploadAttachmentsInReviewProps> = ({
   const onBackButtonClick = () => {
     setState('inReviewSteps')
   }
-  const onForwardButtonClick = () => {
+  const onSendAttachmentsButtonClick = () => {
+    // TODO: Send attachments to SÍ here.
     setState('overview')
   }
   return (
@@ -60,8 +61,8 @@ export const UploadAttachmentsInReview: FC<UploadAttachmentsInReviewProps> = ({
         <Button variant="ghost" onClick={onBackButtonClick}>
           {formatMessage(inReview.buttons.backButton)}
         </Button>
-        <Button icon="arrowForward" onClick={onForwardButtonClick}>
-          {formatMessage(inReview.buttons.forwardButton)}
+        <Button icon="checkmarkCircle" onClick={onSendAttachmentsButtonClick}>
+          {formatMessage(inReview.buttons.sendAttachmentsButton)}
         </Button>
       </Box>
     </>
