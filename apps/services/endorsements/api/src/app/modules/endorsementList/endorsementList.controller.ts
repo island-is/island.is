@@ -35,9 +35,15 @@ import { AccessGroup } from '../../guards/accessGuard/access.enum'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
+import { SearchQueryDto } from './dto/searchQuery.dto'
 
-export class FindTagPaginationCombo extends IntersectionType(
+export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
+  PaginationDto,
+) {}
+
+export class SearchPaginationComboDto extends IntersectionType(
+  SearchQueryDto,
   PaginationDto,
 ) {}
 
@@ -47,7 +53,7 @@ export class FindTagPaginationCombo extends IntersectionType(
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
 @ApiOAuth2([])
-@ApiExtraModels(FindTagPaginationCombo, PaginatedEndorsementListDto)
+@ApiExtraModels(FindTagPaginationComboDto, PaginatedEndorsementListDto)
 export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
@@ -60,7 +66,7 @@ export class EndorsementListController {
   @Get()
   @BypassAuth()
   async findByTags(
-    @Query() query: FindTagPaginationCombo,
+    @Query() query: FindTagPaginationComboDto,
   ): Promise<PaginatedEndorsementListDto> {
     return await this.endorsementListService.findListsByTags(
       // query parameters of length one are not arrays, we normalize all tags input to arrays here

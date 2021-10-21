@@ -30,6 +30,19 @@ export class EndorsementListService {
     private logger: Logger,
   ) {}
 
+  // generic reusable query with pagination defaults
+  async findListsGenericQuery(query: any, where: any = {}) {
+    return await paginate({
+      Model: this.endorsementListModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'DESC']],
+      where: where,
+    })
+  }
+
   async findListsByTags(tags: string[], query: any) {
     this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
     // TODO: Add option to get only open endorsement lists
@@ -150,19 +163,6 @@ export class EndorsementListService {
     }
     this.logger.info(`Creating endorsement list: ${list.title}`)
     return this.endorsementListModel.create(list)
-  }
-
-  // generic reusable query with pagination defaults
-  async findListsGenericQuery(query: any, where: any = {}) {
-    return await paginate({
-      Model: this.endorsementListModel,
-      limit: query.limit || 10,
-      after: query.after,
-      before: query.before,
-      primaryKeyField: 'counter',
-      orderOption: [['counter', 'DESC']],
-      where: where,
-    })
   }
 
   // generic get open lists

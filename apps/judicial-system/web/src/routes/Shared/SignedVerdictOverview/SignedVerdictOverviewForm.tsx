@@ -284,6 +284,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             { title: 'Dómstóll', value: workingCase.court?.name },
             { title: 'Ákærandi', value: workingCase.prosecutor?.name },
             { title: 'Dómari', value: workingCase.judge?.name },
+            { title: 'Dómritari', value: workingCase.registrar?.name },
             // Conditionally add this field based on case type
             ...(isInvestigationCase(workingCase.type)
               ? [
