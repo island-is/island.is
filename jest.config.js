@@ -163,6 +163,7 @@ module.exports = {
     '<rootDir>/libs/service-portal/licenses',
     '<rootDir>/libs/service-portal/wip',
     '<rootDir>/libs/service-portal/settings/access-control',
+    '<rootDir>/libs/service-portal/settings/islykill',
     '<rootDir>/libs/service-portal/settings/personal-information',
     '<rootDir>/libs/shared/babel',
     '<rootDir>/libs/shared/components',

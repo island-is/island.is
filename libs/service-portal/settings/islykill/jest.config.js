@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'service-portal-settings-access-control',
+  displayName: 'service-portal-settings-islykill',
   preset: '../../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
@@ -9,5 +9,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../coverage/libs/service-portal/settings/access-control',
+    '../../../../coverage/libs/service-portal/settings/islykill',
 }

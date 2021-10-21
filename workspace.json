@@ -7204,6 +7204,29 @@
         }
       }
     },
+    "service-portal-settings-islykill": {
+      "root": "libs/service-portal/settings/islykill",
+      "sourceRoot": "libs/service-portal/settings/islykill/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/settings/islykill/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/settings/islykill"],
+          "options": {
+            "jestConfig": "libs/service-portal/settings/islykill/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "service-portal-settings-personal-information": {
       "root": "libs/service-portal/settings/personal-information",
       "sourceRoot": "libs/service-portal/settings/personal-information/src",
