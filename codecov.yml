@@ -1,0 +1,9 @@
+comment:
+  behavior: new
+coverage:
+  status:
+    project: false
+    patch: false
+flag_management:
+  default_rules:
+    carryforward: true
