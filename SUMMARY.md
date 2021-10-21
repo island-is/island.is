@@ -222,7 +222,7 @@
   - [Service Portal Licenses](libs/service-portal/licenses/README.md)
   - [Service Portal Settings](libs/service-portal/settings/README.md)
     - [Service Portal Settings Access Control](libs/service-portal/settings/access-control/README.md)
-    - [Service Portal Íslykill Settings](libs/service-portal/settings/islykill/README.md)
+    - [Service Portal Settings Islykill](libs/service-portal/settings/islykill/README.md)
   - [Service Portal Wip](libs/service-portal/wip/README.md)
 - [Shared](libs/shared/README.md)
   - [Babel](libs/shared/babel/README.md)

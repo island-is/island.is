@@ -1,4 +1,4 @@
-# service-portal-settings-islykill
+# Service Portal Settings Islykill
 
 This library was generated with [Nx](https://nx.dev).
 
