@@ -20,6 +20,6 @@ export const CurrentStaff = createParamDecorator(
       throw new UnauthorizedException()
     }
 
-    return req.staff
+    return staff
   },
 )
