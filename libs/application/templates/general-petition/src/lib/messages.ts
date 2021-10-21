@@ -353,7 +353,7 @@ export const m: MessageDir = {
     },
     organization: {
       id: 'gpt.application:logo.organization',
-      defaultMessage: 'Dómsmálaráðuneytið',
+      defaultMessage: 'Þjóðskrá',
       description: 'Name of organization',
     },
   }),
