@@ -44,6 +44,7 @@ type FormState = {
   category: string
   syslumadur: string
   subject: string
+  institutionSlug: string
 }
 
 interface StandardFormProps {
@@ -368,6 +369,7 @@ export const StandardForm = ({
       subject: values.vidfangsefni,
       syslumadur: syslumadurId || '',
       category: categoryId,
+      institutionSlug,
       message,
     })
   }
@@ -503,7 +505,10 @@ export const StandardForm = ({
           <form onSubmit={handleSubmit(submitWithMessage)}>
             <GridContainer>
               <GridRow marginTop={8}>
-                <GridColumn paddingBottom={3} span="12/12">
+                <GridColumn
+                  paddingBottom={3}
+                  span={['12/12', '12/12', '12/12', '8/12']}
+                >
                   <Controller
                     control={control}
                     name="nafn"
@@ -531,7 +536,10 @@ export const StandardForm = ({
                     )}
                   />
                 </GridColumn>
-                <GridColumn paddingBottom={3} span="12/12">
+                <GridColumn
+                  paddingBottom={3}
+                  span={['12/12', '12/12', '12/12', '8/12']}
+                >
                   <Controller
                     control={useFormMethods.control}
                     id="phone"

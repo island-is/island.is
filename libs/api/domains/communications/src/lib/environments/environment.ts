@@ -1,6 +1,6 @@
 export const environment = {
   emailOptions: {
-    useTestAccount: false,
+    useTestAccount: true,
     options: {
       region: process.env.EMAIL_REGION,
     },

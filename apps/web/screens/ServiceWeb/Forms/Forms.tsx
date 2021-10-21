@@ -27,8 +27,8 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
   QueryGetSupportCategoriesInOrganizationArgs,
-  SyslumennFormsMutation,
-  SyslumennFormsMutationVariables,
+  ServiceWebFormsMutation,
+  ServiceWebFormsMutationVariables,
   SupportCategory,
   Organization,
   QueryGetOrganizationsArgs,
@@ -38,14 +38,14 @@ import {
   GET_ORGANIZATIONS_QUERY,
   GET_SERVICE_WEB_ORGANIZATION,
   GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
-  SYSLUMENN_FORMS_MUTATION,
+  SERVICE_WEB_FORMS_MUTATION,
 } from '../../queries'
 import { Screen } from '../../../types'
 import Footer from '../shared/Footer'
 
 import * as sharedStyles from '../shared/styles.css'
 
-interface SyslumennFormsPageProps {
+interface ServiceWebFormsPageProps {
   syslumenn?: Organizations['items']
   organization?: Organization
   supportCategories?: SupportCategory[]
@@ -53,7 +53,7 @@ interface SyslumennFormsPageProps {
   institutionSlug: string
 }
 
-const SyslumennFormsPage: Screen<SyslumennFormsPageProps> = ({
+const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   syslumenn,
   supportCategories,
   institutionSlug,
@@ -61,17 +61,17 @@ const SyslumennFormsPage: Screen<SyslumennFormsPageProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
   const [submit, { data, loading, error }] = useMutation<
-    SyslumennFormsMutation,
-    SyslumennFormsMutationVariables
-  >(SYSLUMENN_FORMS_MUTATION)
+    ServiceWebFormsMutation,
+    ServiceWebFormsMutationVariables
+  >(SERVICE_WEB_FORMS_MUTATION)
 
   const logoTitle = 'Þjónustuvefur Sýslumanna'
   const errorMessage = 'Villa kom upp við að senda fyrirspurn.'
 
-  const successfullySent = data?.syslumennForms?.sent
+  const successfullySent = data?.serviceWebForms?.sent
 
   useEffect(() => {
-    const sent = data?.syslumennForms?.sent
+    const sent = data?.serviceWebForms?.sent
 
     if (sent !== undefined) {
       sent
@@ -173,7 +173,7 @@ const SyslumennFormsPage: Screen<SyslumennFormsPageProps> = ({
   )
 }
 
-SyslumennFormsPage.getInitialProps = async ({
+ServiceWebFormsPage.getInitialProps = async ({
   apolloClient,
   locale,
   query,
@@ -241,7 +241,7 @@ SyslumennFormsPage.getInitialProps = async ({
   }
 }
 
-export default withMainLayout(SyslumennFormsPage, {
+export default withMainLayout(ServiceWebFormsPage, {
   showHeader: false,
   showFooter: false,
 })

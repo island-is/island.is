@@ -1,8 +1,6 @@
 import { SendMailOptions } from 'nodemailer'
-import { SyslumennFormsInput } from '../dto/syslumennForms.input'
+import { ServiceWebFormsInputWithToAddress } from '../dto/serviceWebForms.input'
 import { environment } from '../environments/environment'
-
-const DEFAULT_EMAIL = 'smh@syslumenn.is'
 
 type StringOrNull = string | null
 
@@ -225,17 +223,20 @@ export const syslumennEmails: Syslumenn = {
   },
 }
 
-export const getTemplate = (input: SyslumennFormsInput): SendMailOptions => {
+export const getTemplate = (
+  input: ServiceWebFormsInputWithToAddress,
+): SendMailOptions => {
   const categoryId = input.category
   const syslumadurId = input.syslumadur
+  const to = input.to
 
-  let toAddress = DEFAULT_EMAIL
+  let toAddress = to
 
   if (syslumadurId) {
     const emailList = syslumennEmails[syslumadurId]
 
     if (emailList) {
-      toAddress = emailList[categoryId] ?? emailList.default ?? DEFAULT_EMAIL
+      toAddress = emailList[categoryId] ?? emailList.default ?? to
     }
   }
 
@@ -250,11 +251,11 @@ export const getTemplate = (input: SyslumennFormsInput): SendMailOptions => {
     },
     to: [
       {
-        name: 'Þjónustuvefur Sýslumanna',
+        name: 'Þjónustuvefur',
         address: toAddress,
       },
     ],
-    subject: `Fyrirspurn af vef frá: "${input.name}"`,
+    subject: `Fyrirspurn af þjónustuvef frá: "${input.name}"`,
     text: input.message,
   }
 }
