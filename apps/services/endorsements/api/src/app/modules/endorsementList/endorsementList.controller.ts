@@ -58,7 +58,17 @@ export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
   ) {}
+  
+  // get gp lists - relay
+  // @ApiOperation({ summary: 'Gets General Petition Lists' })
+  // @ApiOkResponse({ type: PaginatedEndorsementListDto })
+  @Get('sendMail')
+  @BypassAuth()
+  async sendMail(): Promise<any> {
+    return await this.endorsementListService.sendMail()
+  }
 
+  
   @ApiOperation({
     summary: 'Finds all endorsement lists belonging to given tags',
   })
@@ -75,7 +85,6 @@ export class EndorsementListController {
     )
   }
 
-  // get gp lists - relay
   @ApiOperation({ summary: 'Gets General Petition Lists' })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get('general-petition-lists')
@@ -88,7 +97,6 @@ export class EndorsementListController {
     )
   }
 
-  // get gp list  - relay
   @ApiOperation({ summary: 'Gets a General Petition List by Id' })
   @ApiOkResponse({ type: EndorsementList })
   @ApiParam({ name: 'listId', type: 'string' })
@@ -277,4 +285,8 @@ export class EndorsementListController {
       owner: user.nationalId,
     })
   }
+
+  
+
+
 }

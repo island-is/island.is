@@ -22,6 +22,9 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
+import { EmailService } from '@island.is/email-service'
+
+
 interface FindEndorsementInput {
   listId: string
   nationalId: string
@@ -83,6 +86,8 @@ export class EndorsementService {
     private logger: Logger,
     private readonly metadataService: EndorsementMetadataService,
     private readonly validatorService: EndorsementValidatorService,
+    @Inject(EmailService)
+    private emailService: EmailService,
   ) {}
 
   private getEndorsementMetadataForNationalId = async (

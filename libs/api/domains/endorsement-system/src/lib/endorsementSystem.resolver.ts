@@ -230,4 +230,17 @@ export class EndorsementSystemResolver {
       user,
     )
   }
+
+
+  // @Mutation(() => CommunicationResponse)
+  // async syslumennForms(
+  //   @Args('input') input: SyslumennFormsInput,
+  // ): Promise<CommunicationResponse> {
+  //   await this.communicationsService.sendEmail(input)
+  //   return {
+  //     sent: true,
+  //   }
+  // }
+
+
 }

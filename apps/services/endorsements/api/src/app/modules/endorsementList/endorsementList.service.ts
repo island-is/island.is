@@ -16,9 +16,14 @@ import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClo
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
+import { EmailService } from '@island.is/email-service'
+
+
+
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
+
 @Injectable()
 export class EndorsementListService {
   constructor(
@@ -28,7 +33,9 @@ export class EndorsementListService {
     private readonly endorsementListModel: typeof EndorsementList,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) {}
+    @Inject(EmailService)
+    private emailService: EmailService,
+    ) {}
 
   // generic reusable query with pagination defaults
   async findListsGenericQuery(query: any, where: any = {}) {
@@ -197,4 +204,30 @@ export class EndorsementListService {
     }
     return result
   }
+
+  async sendMail() {
+    try {
+      return await this.emailService.sendEmail({
+        from: {
+          name: "RABBZ",//environment.email.fromName,
+          address: "rafn@juni.is",// environment.email.fromEmail,
+        },
+        to: [
+          {
+            name: "RABBZ",
+            address: "rafn@juni.is",//verification.email,
+          },
+        ],
+        subject: `Staðfesting netfangs á Ísland.is`,
+        html: `Þú hefur skráð netfangið þitt á Mínum síðum á Ísland.is. 
+        Vinsamlegast staðfestu skráninguna með því að smella á hlekkinn hér fyrir neðan:
+        <br>Ef hlekkurinn er ekki lengur í gildi biðjum við þig að endurtaka skráninguna á Ísland.is.
+        <br><br>Ef þú kannast ekki við að hafa sett inn þetta netfang, vinsamlegast hunsaðu þennan póst.`,
+      })
+    } catch (exception) {
+      this.logger.error(exception)
+      return exception
+    }
+  }
+  
 }
