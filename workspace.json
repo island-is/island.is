@@ -1137,6 +1137,27 @@
         }
       }
     },
+    "api-domains-islykill": {
+      "root": "libs/api/domains/islykill",
+      "sourceRoot": "libs/api/domains/islykill/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/islykill/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/islykill"],
+          "options": {
+            "jestConfig": "libs/api/domains/islykill/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-license-service": {
       "root": "libs/api/domains/license-service",
       "sourceRoot": "libs/api/domains/license-service/src",

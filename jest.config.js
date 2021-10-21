@@ -79,6 +79,7 @@ module.exports = {
     '<rootDir>/libs/api/domains/finance',
     '<rootDir>/libs/api/domains/health-insurance',
     '<rootDir>/libs/api/domains/identity',
+    '<rootDir>/libs/api/domains/islykill',
     '<rootDir>/libs/api/domains/license-service',
     '<rootDir>/libs/api/domains/national-registry',
     '<rootDir>/libs/api/domains/payment',

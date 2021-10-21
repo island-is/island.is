@@ -121,6 +121,9 @@
     "api-domains-identity": {
       "tags": []
     },
+    "api-domains-islykill": {
+      "tags": []
+    },
     "api-domains-license-service": {
       "tags": []
     },
