@@ -1,7 +1,9 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   Model,
   Table,
   UpdatedAt,
@@ -11,16 +13,11 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { Municipality } from '@island.is/financial-aid/shared/lib'
 
-import type { MunicipalitySettings } from '@island.is/financial-aid/shared/lib'
-
-// @Table({
-//   tableName: 'municipality',
-//   timestamps: true,
-// })
-
-@Table
-
-//TODO
+import { AidModel } from '../../aid/models'
+@Table({
+  tableName: 'municipality',
+  timestamps: true,
+})
 export class MunicipalityModel extends Model<Municipality> {
   @Column({
     type: DataType.UUID,
@@ -31,28 +28,70 @@ export class MunicipalityModel extends Model<Municipality> {
   @ApiProperty()
   id: string
 
-  // @CreatedAt
-  // @ApiProperty()
-  // created: Date
-
-  // @UpdatedAt
-  // @ApiProperty()
-  // modified: Date
-
-  // @Column({
-  //   type: DataType.STRING,
-  //   allowNull: false,
-  // })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   @ApiProperty()
   name: string
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   @ApiProperty()
-  settings: MunicipalitySettings
+  municipalityId: string
 
-  // @Column({
-  //   type: DataType.ENUM,
-  //   allowNull: false,
-  // })
-  // @ApiProperty()
-  // settings: object
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  active: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  homepage: string
+
+  @ForeignKey(() => AidModel)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ApiProperty()
+  individualAidId: string
+
+  @BelongsTo(() => AidModel, 'individualAidId')
+  @ApiProperty({ type: AidModel })
+  individualAid: AidModel
+
+  @ForeignKey(() => AidModel)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ApiProperty()
+  cohabitationAidId: string
+
+  @BelongsTo(() => AidModel, 'cohabitationAidId')
+  @ApiProperty({ type: AidModel })
+  cohabitationAid: AidModel
+
+  @CreatedAt
+  @ApiProperty()
+  created: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  modified: Date
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  email: string
 }
