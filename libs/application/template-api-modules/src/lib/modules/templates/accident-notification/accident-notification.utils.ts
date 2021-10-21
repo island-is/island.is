@@ -114,6 +114,7 @@ const accident = (answers: AccidentNotificationAnswers): Slys => {
     undirtegund: !answers.workAccident
       ? undefined
       : workAccidentTypeToId(answers.workAccident.type),
+
     dagsetningslys: answers.accidentDetails.dateOfAccident,
     timislys: answers.accidentDetails.timeOfAccident,
     lysing: answers.accidentDetails.descriptionOfAccident,
