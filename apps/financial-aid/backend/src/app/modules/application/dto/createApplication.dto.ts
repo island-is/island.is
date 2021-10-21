@@ -131,4 +131,24 @@ export class CreateApplicationDto {
   @IsString()
   @ApiProperty()
   readonly familyStatus: FamilyStatus
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly city: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly postalCode: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly municipalityCode: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly streetName: string
 }

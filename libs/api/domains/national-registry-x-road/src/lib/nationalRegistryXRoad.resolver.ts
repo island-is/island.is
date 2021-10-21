@@ -12,6 +12,7 @@ import { Audit } from '@island.is/nest/audit'
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
+import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Resolver(() => NationalRegistryPerson)
@@ -53,6 +54,18 @@ export class NationalRegistryXRoadResolver {
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryResidence[] | undefined> {
     return await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
+      person.nationalId,
+      user.authorization,
+    )
+  }
+
+  @ResolveField('spouse', () => NationalRegistrySpouse)
+  @Audit()
+  async resolveSpouse(
+    @Context('req') { user }: { user: User },
+    @Parent() person: NationalRegistryPerson,
+  ): Promise<NationalRegistrySpouse | undefined> {
+    return await this.nationalRegistryXRoadService.getSpouse(
       person.nationalId,
       user.authorization,
     )
