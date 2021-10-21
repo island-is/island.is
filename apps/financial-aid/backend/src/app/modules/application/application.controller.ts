@@ -34,10 +34,9 @@ import {
   apiBasePath,
   Application,
   ApplicationStateUrl,
-  Staff,
 } from '@island.is/financial-aid/shared/lib'
 
-import type { User } from '@island.is/financial-aid/shared/lib'
+import type { User, Staff } from '@island.is/financial-aid/shared/lib'
 
 import {
   ApplicationFilters,
