@@ -3,9 +3,8 @@ import { uuid } from 'uuidv4'
 
 import { BadGatewayException, NotFoundException } from '@nestjs/common'
 
-import { PoliceCaseFile } from '@island.is/judicial-system/types'
-
 import { Case } from '../../case'
+import { PoliceCaseFile } from '../policeCaseFile.model'
 import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 jest.mock('isomorphic-fetch')
