@@ -277,6 +277,10 @@ export class EndorsementListController {
 
 
   @ApiOperation({ summary: 'Fetches owner info from national registry' })
+  @ApiOkResponse({
+    description: 'Create an endorsements list',
+    type: String,
+  })
   @ApiParam({ name: 'listId', type: 'string' })
   @BypassAuth()
   @Get(':listId/ownerInfo')
@@ -287,7 +291,7 @@ export class EndorsementListController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
-  ): Promise<OwnerInfoDto> {
+  ): Promise<String> {
     return await this.endorsementListService.getOwnerInfo(endorsementList)
   }
   

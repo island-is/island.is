@@ -30,6 +30,7 @@ export class EndorsementList {
   @Field(() => [ValidationRule])
   validationRules!: ValidationRule[]
 
+  // Remove this field when changes have been made to frontend so that we dont expose the owners ssn
   @Field()
   owner!: string
 

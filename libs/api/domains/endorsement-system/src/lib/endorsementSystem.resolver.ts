@@ -26,7 +26,7 @@ import { PaginatedEndorsementListInput } from './dto/paginatedEndorsementList.in
 import { PaginatedEndorsementListResponse } from './dto/paginatedEndorsementList.response'
 
 import { EndorsementPaginationInput } from './dto/endorsementPagination.input'
-import { OwnerInfoDto } from './dto/ownerInfo.response'
+import { OwnerInfoDto } from './models/ownerInfo.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => EndorsementList)
@@ -34,7 +34,7 @@ export class EndorsementSystemResolver {
   constructor(private endorsementSystemService: EndorsementSystemService) {}
 
   @ResolveField('ownerName', () => String, { nullable: true })
-  resolveOwnerName(@Parent() list: EndorsementList): Promise<OwnerInfoDto> {
+  resolveOwnerName(@Parent() list: EndorsementList): Promise<String | null> {
     return this.endorsementSystemService.endorsementListControllerGetOwnerName({listId: list.id})
   }
 
