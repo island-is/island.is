@@ -32,11 +32,14 @@ import {
 
 import {
   apiBasePath,
-  Application,
   ApplicationStateUrl,
 } from '@island.is/financial-aid/shared/lib'
 
-import type { User, Staff } from '@island.is/financial-aid/shared/lib'
+import type {
+  User,
+  Staff,
+  Application,
+} from '@island.is/financial-aid/shared/lib'
 
 import {
   ApplicationFilters,
