@@ -849,6 +849,16 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'companyInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'companyInfo',
+              },
+            ),
           ],
         }),
       ],
@@ -925,6 +935,16 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'schoolInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'schoolInfo',
+              },
+            ),
           ],
         }),
       ],
@@ -1036,6 +1056,16 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'fishingCompanyInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'fishingCompanyInfo',
+              },
+            ),
           ],
         }),
       ],
@@ -1112,6 +1142,16 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'sportsClubInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'sportsClubInfo',
+              },
+            ),
           ],
         }),
       ],
@@ -1186,6 +1226,16 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'rescueSquadInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'rescueSquadInfo',
+              },
+            ),
           ],
         }),
       ],
