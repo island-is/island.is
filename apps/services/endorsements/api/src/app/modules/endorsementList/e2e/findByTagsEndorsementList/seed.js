@@ -6,11 +6,31 @@ module.exports = {
   endorsementLists: [
     {
       ...getGenericEndorsementList(),
-      tags: ['partyApplicationSudurkjordaemi2021'],
+      tags: ['generalPetition'],
     },
     {
       ...getGenericEndorsementList(),
-      tags: ['partyApplicationSudurkjordaemi2021'],
+      tags: ['generalPetition'],
+    },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
+    },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
+    },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
+    },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
+    },
+    {
+      ...getGenericEndorsementList(),
+      tags: ['generalPetition'],
     },
   ],
 }

@@ -15,6 +15,7 @@ import {
   getStateFromUrl,
   RolesRule,
   User,
+  getEmailTextFromState,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -25,9 +26,21 @@ import { StaffModel } from '../staff'
 
 import { EmailService } from '@island.is/email-service'
 
+import { ApplicationFileModel } from '../file/models'
+
 interface Recipient {
   name: string
   address: string
+}
+
+const linkToStatusPage = (applicationId: string) => {
+  return `<a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${applicationId}" target="_blank"> Getur kíkt á stöðu síðuna þína hér</a>`
+}
+
+const firstDateOfMonth = () => {
+  const date = new Date()
+
+  return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
 @Injectable()
@@ -51,17 +64,24 @@ export class ApplicationService {
     return Boolean(hasApplication)
   }
 
+  async hasSpouseApplied(spouseNationalId: string): Promise<boolean> {
+    const application = await this.applicationModel.findOne({
+      where: {
+        spouseNationalId: { [Op.eq]: spouseNationalId },
+        created: { [Op.gte]: firstDateOfMonth() },
+      },
+    })
+
+    return Boolean(application)
+  }
+
   async getCurrentApplication(
     nationalId: string,
   ): Promise<CurrentApplicationModel | null> {
-    const date = new Date()
-
-    const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-
     return await this.applicationModel.findOne({
       where: {
         nationalId,
-        created: { [Op.gte]: firstDateOfMonth },
+        created: { [Op.gte]: firstDateOfMonth() },
       },
     })
   }
@@ -74,12 +94,6 @@ export class ApplicationService {
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
     })
-  }
-
-  async setFilesToApplication(id: string, application: ApplicationModel) {
-    const files = await this.fileService.getAllApplicationFiles(id)
-
-    application?.setDataValue('files', files)
   }
 
   async findById(
@@ -101,10 +115,14 @@ export class ApplicationService {
           },
           order: [['created', 'DESC']],
         },
+        {
+          model: ApplicationFileModel,
+          as: 'files',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
       ],
     })
-
-    await this.setFilesToApplication(id, application)
 
     return application
   }
@@ -146,7 +164,7 @@ export class ApplicationService {
       eventType: ApplicationEventType[appModel.state.toUpperCase()],
     })
 
-    if (appModel.files) {
+    if (application.files) {
       const promises = application.files.map((f) => {
         return this.fileService.createFile({
           applicationId: appModel.id,
@@ -166,7 +184,7 @@ export class ApplicationService {
         address: appModel.email,
       },
       appModel.id,
-      `Umsókn þín er móttekin og er nú í vinnslu. <a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${appModel.id}" target="_blank"> Getur kíkt á stöðu síðuna þína hér</a>`,
+      `Umsókn þín er móttekin og er nú í vinnslu.`,
     )
 
     return appModel
@@ -175,17 +193,25 @@ export class ApplicationService {
   async update(
     id: string,
     update: UpdateApplicationDto,
+    userName: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
   }> {
+    const shouldSendEmail = [
+      ApplicationEventType.NEW,
+      ApplicationEventType.DATANEEDED,
+      ApplicationEventType.REJECTED,
+      ApplicationEventType.INPROGRESS,
+      ApplicationEventType.APPROVED,
+    ]
     if (update.state === ApplicationState.NEW) {
       update.staffId = null
     }
 
-    const eventModel = await this.applicationEventService.create({
+    await this.applicationEventService.create({
       applicationId: id,
-      eventType: ApplicationEventType[update.state.toUpperCase()],
+      eventType: update.event,
       comment:
         update?.rejection ||
         update?.amount?.toLocaleString('de-DE') ||
@@ -200,11 +226,22 @@ export class ApplicationService {
       returning: true,
     })
 
-    await this.setFilesToApplication(id, updatedApplication)
-
     const events = await this.applicationEventService.findById(id)
-
     updatedApplication?.setDataValue('applicationEvents', events)
+
+    const files = await this.fileService.getAllApplicationFiles(id)
+    updatedApplication?.setDataValue('files', files)
+
+    if (shouldSendEmail.includes(update.event)) {
+      await this.sendEmail(
+        {
+          name: userName,
+          address: updatedApplication.email,
+        },
+        updatedApplication.id,
+        getEmailTextFromState[update.state],
+      )
+    }
 
     return { numberOfAffectedRows, updatedApplication }
   }
@@ -214,20 +251,21 @@ export class ApplicationService {
     applicationId: string | undefined,
     body: string,
   ) {
+    const bodyWithLink = body + '<br/>' + linkToStatusPage(applicationId)
     try {
       await this.emailService.sendEmail({
         from: {
-          name: 'no-reply@svg.is',
-          address: 'Samband íslenskra sveitarfélaga',
+          name: 'Samband íslenskra sveitarfélaga',
+          address: 'no-reply@svg.is',
         },
         replyTo: {
-          name: 'no-reply@svg.is',
-          address: 'Samband íslenskra sveitarfélaga',
+          name: 'Samband íslenskra sveitarfélaga',
+          address: 'no-reply@svg.is',
         },
         to,
         subject: `Umsókn fyrir fjárhagsaðstoð móttekin ~ ${applicationId}`,
-        text: body,
-        html: body,
+        text: bodyWithLink,
+        html: bodyWithLink,
       })
     } catch (error) {
       console.log('failed to send email', error)

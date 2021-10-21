@@ -12,7 +12,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_QUERY,
+  GET_SERVICE_WEB_ORGANIZATION,
   GET_SUPPORT_QNAS_IN_CATEGORY,
 } from '../../queries'
 import { Screen } from '../../../types'
@@ -28,6 +28,7 @@ import {
   ContentBlock,
   AccordionCard,
 } from '@island.is/island-ui/core'
+import Footer from '../shared/Footer'
 import { ServiceWebHeader } from '@island.is/web/components'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { getSlugPart } from '../utils'
@@ -182,6 +183,7 @@ const SubPage: Screen<SubPageProps> = ({
           </GridRow>
         </GridContainer>
       </Box>
+      <Footer institutionSlug={institutionSlug} organization={organization} />
     </>
   )
 }
@@ -197,7 +199,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const [organization, namespace, supportQNAs] = await Promise.all([
     !!organizationSlug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
-        query: GET_ORGANIZATION_QUERY,
+        query: GET_SERVICE_WEB_ORGANIZATION,
         variables: {
           input: {
             slug: organizationSlug,
@@ -242,4 +244,5 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
 
 export default withMainLayout(SubPage, {
   showHeader: false,
+  showFooter: false,
 })

@@ -1,8 +1,18 @@
-import { Application } from '@island.is/application/core'
-import { AccidentNotificationAnswers } from '@island.is/application/templates/accident-notification'
+import {
+  AccidentNotificationAnswers,
+  AccidentTypeEnum,
+  WhoIsTheNotificationForEnum,
+  WorkAccidentTypeEnum,
+} from '@island.is/application/templates/accident-notification'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
-import { ApplicationSubmit } from './types/applicationSubmit'
+import {
+  ApplicationSubmit,
+  Atvinnurekandi,
+  EmployerEntity,
+  Slys,
+  TilkynnandiOrSlasadi,
+} from './types/applicationSubmit'
 import { AccidentNotificationAttachments } from './types/attachments'
 
 export const pathToAsset = (file: string) => {
@@ -16,69 +26,51 @@ export const pathToAsset = (file: string) => {
   return join(__dirname, `./accident-notification-assets/${file}`)
 }
 
+/**
+ * Generates Xml correctly formatted for each type of SÍ application
+ * The order of the elements is important as an incorrect order
+ * will result in an Invalid Xml error from SÍ
+ * @param answers - The answers to the accident notification
+ * @param attachments - The attachments names and base64 Content
+ * @returns The application Xml correctly formatted for SÍ application
+ */
 export const applictionAnswersToXml = (
   answers: AccidentNotificationAnswers,
   attachments: AccidentNotificationAttachments[],
 ): string => {
-  //Stuff to be done
+  const fylgiskjol = {
+    fylgiskjol: {
+      fylgiskjal: attachments.map((attachment) => {
+        return {
+          heiti: attachment.name,
+          innihald: attachment.content,
+          tegund: '',
+        }
+      }),
+    },
+  }
+
   const applicationJson: ApplicationSubmit = {
     slysatilkynning: {
       tilkynnandi: {
         kennitala: answers.applicant.nationalId,
         nafn: answers.applicant.name,
-        netfang: answers.applicant.email,
         heimili: answers.applicant.address,
-        postfang: answers.applicant.postalCode,
-        simi: answers.applicant.phoneNumber || '',
         stadur: answers.applicant.city,
+        postfang: answers.applicant.postalCode,
+        netfang: answers.applicant.email,
+        fyrirhvernerveridadtilkynna: whoIsTheNotificationForToId(
+          answers.whoIsTheNotificationFor.answer,
+        ),
+        simi: answers.applicant.phoneNumber,
       },
-      slasadi: {
-        kennitala: answers.injuredPersonInformation?.nationalId || '',
-        netfang: answers.injuredPersonInformation?.email || '',
-        simi: answers.injuredPersonInformation?.phoneNumber || '',
-        nafn: answers.injuredPersonInformation?.name || '',
-        stadur: '', //not in answers
-        heimili: '', //not n answers
-        postfang: '', //not in answers
-      },
-      atvinnurekandi: {
-        //TODO check if need per type of application
-        //forsjaradilikennitala: answers.sportsClubInfo.nationalRegistrationId,
-        forsjaradilinafn: answers.sportsClubInfo.name,
-        forsjaradilinetfang: answers.sportsClubInfo.email,
-        forsjaradilisimi: answers.sportsClubInfo.phoneNumber || '',
-        fyrirtaekikennitala: answers.sportsClubInfo.nationalRegistrationId,
-        fyrirtaekinafn: answers.sportsClubInfo.name,
-      },
-      felagstengsl: {
-        kennitala: answers.sportsClubInfo.nationalRegistrationId,
-        nafn: answers.sportsClubInfo.name,
-        tegundslyss: answers.accidentType.radioButton,
-      },
-      slys: {
-        banaslys: answers.wasTheAccidentFatal,
-        dagsetningslys: answers.accidentDetails.dateOfAccident,
-        bilslys: answers.carAccidentHindrance,
-        lysing: answers.accidentDetails.descriptionOfAccident,
-        lysingerindis: 'lysing ', //TODO find correct field answers.accidentDetails.descriptionOfInjuries,
-        nafnhafnar: '', // answers.fishermanLocation.answer
-        stadsetninghafnar: '',
-        stadurslysseferindi: '',
-        tegund: answers.accidentType.radioButton,
-        timislys: answers.accidentDetails.timeOfAccident,
-      },
-      fylgiskjol: {
-        fylgiskjal: attachments.map((attachment) => {
-          return {
-            heiti: attachment.name,
-            innihald: attachment.content,
-            tegund: '',
-          }
-        }),
-      },
+      slasadi: injuredPerson(answers),
+      slys: accident(answers),
+      atvinnurekandi: employer(answers),
+      ...fylgiskjol,
     },
   }
-
+  console.log('applicationJson ', JSON.stringify(applicationJson, null, 4))
   const xml = `<?xml version="1.0" encoding="ISO-8859-1"?>${objectToXML(
     applicationJson,
   )}`
@@ -86,10 +78,155 @@ export const applictionAnswersToXml = (
   return xml
 }
 
+const whoIsTheNotificationForToId = (
+  value: WhoIsTheNotificationForEnum,
+): number => {
+  switch (value) {
+    case WhoIsTheNotificationForEnum.ME:
+      return 1
+    case WhoIsTheNotificationForEnum.JURIDICALPERSON:
+      return 2
+    case WhoIsTheNotificationForEnum.POWEROFATTORNEY:
+      return 3
+    case WhoIsTheNotificationForEnum.CHILDINCUSTODY:
+      return 4
+  }
+}
+
+const injuredPerson = (
+  answers: AccidentNotificationAnswers,
+): TilkynnandiOrSlasadi => {
+  const person =
+    answers.whoIsTheNotificationFor.answer === WhoIsTheNotificationForEnum.ME
+      ? answers.applicant
+      : answers.injuredPersonInformation
+  return {
+    kennitala: person.nationalId,
+    nafn: person.name,
+    netfang: person.email,
+    simi: person.phoneNumber,
+  }
+}
+
+const accident = (answers: AccidentNotificationAnswers): Slys => {
+  const accidentBase = {
+    tegund: accidentTypeToId(answers.accidentType.radioButton),
+    undirtegund: !answers.workAccident
+      ? undefined
+      : workAccidentTypeToId(answers.workAccident.type),
+
+    dagsetningslys: answers.accidentDetails.dateOfAccident,
+    timislys: answers.accidentDetails.timeOfAccident,
+    lysing: answers.accidentDetails.descriptionOfAccident,
+    banaslys: yesOrNoToNumber(answers.wasTheAccidentFatal),
+    bilslys: yesOrNoToNumber(answers.carAccidentHindrance),
+    stadurslysseferindi: answers.locationAndPurpose?.location ?? '',
+    lysingerindis: 'lysingerindis ', //TODO find correct field
+  }
+
+  switch (answers.accidentType.radioButton) {
+    case AccidentTypeEnum.HOMEACTIVITIES: {
+      return {
+        ...accidentBase,
+        slysvidheimilisstorf: {
+          heimili: answers.homeAccident.address,
+          postnumer: answers.homeAccident.postalCode,
+          sveitarfelag: answers.homeAccident.community,
+          nanar: answers.homeAccident.moreDetails,
+        },
+      }
+    }
+    case AccidentTypeEnum.SPORTS:
+      return accidentBase
+    case AccidentTypeEnum.RESCUEWORK:
+      return accidentBase
+    case AccidentTypeEnum.STUDIES:
+      return accidentBase
+    case AccidentTypeEnum.WORK: {
+      return answers.workMachineRadio === 'yes'
+        ? {
+            ...accidentBase,
+            slysvidvinnu: {
+              lysingavinnuvel: answers.workMachine.desriptionOfMachine,
+            },
+          }
+        : accidentBase
+    }
+  }
+}
+
+const employer = (
+  answers: AccidentNotificationAnswers,
+): Atvinnurekandi | undefined => {
+  let employerEntity: EmployerEntity | undefined
+  switch (answers.accidentType.radioButton) {
+    case AccidentTypeEnum.HOMEACTIVITIES:
+      return undefined
+    case AccidentTypeEnum.SPORTS:
+      employerEntity = answers.sportsClubInfo
+      break
+    case AccidentTypeEnum.RESCUEWORK:
+      employerEntity = answers.rescueSquadInfo
+      break
+    case AccidentTypeEnum.STUDIES:
+      return undefined
+    case AccidentTypeEnum.WORK:
+      employerEntity = answers.companyInfo
+      break
+  }
+  if (!answers.companyInfo) return undefined
+  return {
+    fyrirtaekikennitala: employerEntity.nationalRegistrationId,
+    fyrirtaekinafn: employerEntity.name,
+    forsjaradilinafn: employerEntity.name,
+    forsjaradilinetfang: employerEntity.email,
+    forsjaradilisimi: employerEntity.phoneNumber || '',
+  }
+}
+
+const yesOrNoToNumber = (value: string): number => {
+  return value === 'yes' ? 1 : 0
+}
+
+const accidentTypeToId = (typeEnum: AccidentTypeEnum): number => {
+  switch (typeEnum) {
+    case AccidentTypeEnum.HOMEACTIVITIES:
+      return 7
+    case AccidentTypeEnum.SPORTS:
+      return 4
+    case AccidentTypeEnum.RESCUEWORK:
+      return 8
+    case AccidentTypeEnum.STUDIES:
+      return 9
+    case AccidentTypeEnum.WORK:
+      return 6
+  }
+}
+
+const workAccidentTypeToId = (
+  typeEnum: WorkAccidentTypeEnum | undefined,
+): number | undefined => {
+  switch (typeEnum) {
+    case WorkAccidentTypeEnum.GENERAL:
+      return 1
+    case WorkAccidentTypeEnum.FISHERMAN:
+      return 2
+    case WorkAccidentTypeEnum.PROFESSIONALATHLETE:
+      return 3
+    case WorkAccidentTypeEnum.AGRICULTURE:
+      return 4
+    default:
+      return undefined
+  }
+}
+
 export const objectToXML = (obj: object) => {
   let xml = ''
   Object.entries(obj).forEach((entry) => {
     const [key, value] = entry
+    if (value === undefined) {
+      return
+    }
     xml += value instanceof Array ? '' : '<' + key + '>'
     if (value instanceof Array) {
       for (const i in value) {

@@ -175,8 +175,10 @@ export class ApplicationModel extends Model<Application> {
   @ApiProperty({ enum: ApplicationState })
   state: ApplicationState
 
-  @ApiProperty({ type: [ApplicationFileModel] })
+  @HasMany(() => ApplicationFileModel, 'applicationId')
+  @ApiProperty({ type: ApplicationFileModel, isArray: true })
   files: ApplicationFileModel[]
+
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
@@ -228,4 +230,32 @@ export class ApplicationModel extends Model<Application> {
   @HasMany(() => ApplicationEventModel, 'applicationId')
   @ApiProperty({ type: ApplicationEventModel, isArray: true })
   applicationEvents?: ApplicationEventModel[]
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  city: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  streetName: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  postalCode: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  municipalityCode: string
 }

@@ -1,8 +1,8 @@
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { ApplicationFilters } from '@island.is/financial-aid/shared/lib'
 
-import { GetApplicationFiltersQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+import { ApplicationFiltersMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 interface ApplicationFiltersData {
   applicationFilters?: ApplicationFilters
@@ -42,19 +42,23 @@ const ApplicationFiltersProvider = ({ children }: PageProps) => {
     setApplicationFilters,
   ] = useState<ApplicationFilters>(initialState)
 
-  const { data, loading } = useQuery<ApplicationFiltersData>(
-    GetApplicationFiltersQuery,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const [
+    applicationFiltersQuery,
+    { loading },
+  ] = useMutation<ApplicationFiltersData>(ApplicationFiltersMutation, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   useEffect(() => {
-    if (data?.applicationFilters) {
-      setApplicationFilters(data.applicationFilters)
+    async function fetchFilters() {
+      const { data } = await applicationFiltersQuery()
+      if (data?.applicationFilters) {
+        setApplicationFilters(data.applicationFilters)
+      }
     }
-  }, [data])
+    fetchFilters()
+  }, [])
 
   return (
     <ApplicationFiltersContext.Provider

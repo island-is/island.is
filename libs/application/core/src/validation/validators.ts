@@ -9,14 +9,15 @@ import {
   Schema,
   StaticText,
   StaticTextObject,
+  ValidationRecord,
 } from '../types/Form'
 import { Answer, FormValue } from '../types/Application'
-import { RecordObject } from '../types/Fields'
 import { coreErrorMessages } from '../lib/messages'
 import { AnswerValidationError } from './AnswerValidator'
+import { RecordObject } from '../types/Fields'
 
 function populateError(
-  currentError: RecordObject = {},
+  currentError: ValidationRecord = {},
   newError: ZodSuberror[],
   pathToError: string | undefined,
   formatMessage: FormatMessage,
@@ -56,11 +57,11 @@ function constructPath(currentPath: string, newKey: string) {
 function partialSchemaValidation(
   answers: FormValue,
   originalSchema: Schema,
-  error: RecordObject | undefined,
+  error: ValidationRecord | undefined,
   currentPath = '',
   sendConstructedPath: boolean,
   formatMessage: FormatMessage,
-): RecordObject | undefined {
+): ValidationRecord | undefined {
   Object.keys(answers).forEach((key) => {
     const constructedErrorPath = constructPath(currentPath, key)
     const answer = answers[key]
@@ -129,7 +130,7 @@ export function validateAnswers({
   answers: FormValue
   isFullSchemaValidation?: boolean
   formatMessage: FormatMessage
-}): RecordObject | undefined {
+}): ValidationRecord | undefined {
   if (!isFullSchemaValidation) {
     return partialSchemaValidation(
       answers,

@@ -18,6 +18,7 @@ export const useIsClosed = (endorsementListId: string) => {
       },
     },
   )
-
-  return !!endorsement?.endorsementSystemGetSingleEndorsementList?.closedDate
+  const closedDate =
+    endorsement?.endorsementSystemGetSingleEndorsementList?.closedDate
+  return closedDate ? new Date(closedDate) > new Date() : true
 }

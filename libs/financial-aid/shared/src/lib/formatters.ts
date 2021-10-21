@@ -4,9 +4,12 @@ import {
   Employment,
   ApplicationEventType,
   ApplicationStateUrl,
+  FileType,
   RolesRule,
+  FamilyStatus,
+  MartialStatusType,
 } from './enums'
-import { ApplicationEvent } from './interfaces'
+import { Aid, ApplicationEvent } from './interfaces'
 import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -85,6 +88,22 @@ export const getEventType: KeyMapping<
     text: 'sendi inn gögn',
     isStaff: false,
   },
+  AssignCase: {
+    header: 'Umsjá',
+    text: 'tók að sér málið',
+    isStaff: true,
+  },
+}
+
+export const eventTypeFromApplicationState: KeyMapping<
+  ApplicationState,
+  ApplicationEventType
+> = {
+  New: ApplicationEventType.NEW,
+  DataNeeded: ApplicationEventType.DATANEEDED,
+  InProgress: ApplicationEventType.INPROGRESS,
+  Rejected: ApplicationEventType.REJECTED,
+  Approved: ApplicationEventType.APPROVED,
 }
 
 export const getActiveSectionForTimeline: KeyMapping<
@@ -106,28 +125,58 @@ export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
   Approved: 'Approved',
 }
 
+export const isSpouseDataNeeded: KeyMapping<FamilyStatus, boolean> = {
+  Unknown: false,
+  Single: false,
+  Cohabitation: true,
+  UnregisteredCohabitation: false,
+  Married: true,
+  MarriedNotLivingTogether: true,
+  NotInformed: false,
+}
+
+export const getFamilyStatus: KeyMapping<FamilyStatus, string> = {
+  Unknown: 'Óþekkt',
+  Cohabitation: 'Í sambúð',
+  Married: 'Gift',
+  Single: 'Einstæð',
+  MarriedNotLivingTogether: 'Hjón ekki í samvistum',
+  NotInformed: 'Óupplýst',
+  UnregisteredCohabitation: 'Óstaðfestri sambúð?',
+}
+
+export const getFileTypeName: KeyMapping<FileType, string> = {
+  TaxReturn: 'Skattagögn',
+  Income: 'Tekjugögn',
+  Other: 'Innsend gögn',
+}
+
+export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
+  New: 'Umsókn þín er móttekin',
+  DataNeeded: 'Okkur vantar gögn til að klára að vinna úr umsókninni',
+  InProgress: 'Umsókn þín er móttekin og er nú í vinnslu',
+  Rejected: 'Umsókn þinni um aðstoð hefur verið synjað',
+  Approved: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+}
+
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,
-  aid: {
-    ownApartmentOrLease: number
-    withOthersOrUnknow: number
-    withParents: number
-  },
+  aid: Aid,
 ): number => {
   switch (homeCircumstances) {
     case 'OwnPlace':
-      return aid.ownApartmentOrLease
+      return aid.ownPlace
     case 'RegisteredLease':
-      return aid.ownApartmentOrLease
+      return aid.registeredRenting
     case 'WithOthers':
-      return aid.ownApartmentOrLease
+      return aid.unregisteredRenting
     case 'Other':
     case 'Unknown':
-      return aid.withOthersOrUnknow
+      return aid.unknown
     case 'WithParents':
-      return aid.withParents
+      return aid.livesWithParents
     default:
-      return aid.withParents
+      return aid.unknown
   }
 }
 
@@ -136,4 +185,30 @@ export const getCommentFromLatestEvent = (
   findState: ApplicationEventType,
 ) => {
   return applicationEvents.find((el) => el.eventType === findState)
+}
+
+export const logoKeyFromMunicipalityCode: KeyMapping<string, string> = {
+  '': 'sis.svg',
+  '1400': 'hfj.svg',
+}
+
+export const martialStatusTypeFromMartialCode = (
+  martialCode: string | undefined,
+): MartialStatusType => {
+  switch (martialCode) {
+    case 'L':
+    case 'G':
+    case '8':
+    case '7':
+    case '3':
+    case '0':
+      return MartialStatusType.MARRIED
+    case 'g':
+    case '6':
+    case '5':
+    case '4':
+    case '1':
+    default:
+      return MartialStatusType.SINGLE
+  }
 }

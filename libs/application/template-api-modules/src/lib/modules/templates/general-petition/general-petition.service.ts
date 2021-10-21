@@ -82,6 +82,7 @@ export class GeneralPetitionService {
           description: application.answers.aboutList,
           endorsementMetadata: [
             { field: EndorsementMetadataDtoFieldEnum.address },
+            { field: EndorsementMetadataDtoFieldEnum.fullName },
           ],
           tags: [EndorsementListTagsEnum.generalPetition],
           validationRules: [
@@ -97,6 +98,9 @@ export class GeneralPetitionService {
             applicationTypeId: application.typeId,
             applicationId: application.id,
           },
+          closedDate: application.answers.dateTil,
+          openedDate: application.answers.dateFrom,
+          adminLock: false,
         },
       })
       .then((response) => response.json())

@@ -17,14 +17,13 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
 import {
-  CreateApplicationEventQuery,
-  UpdateApplicationMutation,
+  ApplicationEventMutation,
+  ApplicationMutation,
 } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
 
 import { Routes } from '@island.is/financial-aid/shared/lib'
-import cn from 'classnames'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const FileUpload = () => {
@@ -48,12 +47,10 @@ const FileUpload = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const [updateApplicationMutation] = useMutation<{ application: Application }>(
-    UpdateApplicationMutation,
+    ApplicationMutation,
   )
 
-  const [createApplicationEventMutation] = useMutation(
-    CreateApplicationEventQuery,
-  )
+  const [createApplicationEventMutation] = useMutation(ApplicationEventMutation)
 
   useEffect(() => {
     if (error) {
@@ -72,6 +69,7 @@ const FileUpload = () => {
               input: {
                 id: router.query.id,
                 state: ApplicationState.INPROGRESS,
+                event: ApplicationEventType.INPROGRESS,
               },
             },
           })

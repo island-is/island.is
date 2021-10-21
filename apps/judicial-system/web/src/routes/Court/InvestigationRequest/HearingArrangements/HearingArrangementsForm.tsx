@@ -53,10 +53,11 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   isLoading: boolean
   users: UserData
+  user: User
 }
 
 const HearingArrangementsForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading, users } = props
+  const { workingCase, setWorkingCase, isLoading, users, user } = props
   const [modalVisible, setModalVisible] = useState(false)
   const [defenderEmailEM, setDefenderEmailEM] = useState('')
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
@@ -151,7 +152,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Fyrirtaka
+            {formatMessage(m.title)}
           </Text>
         </Box>
         {workingCase.state === CaseState.DRAFT && (
@@ -164,13 +165,12 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           </Box>
         )}
         <Box component="section" marginBottom={7}>
-          <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
           <CaseNumbers workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Dómari{' '}
+              {`${formatMessage(m.sections.setJudge.title)} `}
               <Tooltip text={formatMessage(m.sections.setJudge.tooltip)} />
             </Text>
           </Box>
@@ -189,7 +189,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Dómritari{' '}
+              {`${formatMessage(m.sections.setRegistrar.title)} `}
               <Tooltip text={formatMessage(m.sections.setRegistrar.tooltip)} />
             </Text>
           </Box>
@@ -316,7 +316,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Skrá fyrirtökutíma
+              {formatMessage(m.sections.requestedCourtDate.title)}
             </Text>
           </Box>
           <Box marginBottom={2}>
@@ -377,7 +377,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Skipaður verjandi/talsmaður
+              {formatMessage(m.sections.defender.title)}
             </Text>
           </Box>
           <BlueBox>
@@ -526,9 +526,13 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isLoading}
           nextIsDisabled={!isValid || !courtDateIsValid}
-          hideNextButton={workingCase.isMasked}
+          hideNextButton={
+            user.id !== workingCase.judge?.id &&
+            user.id !== workingCase.registrar?.id
+          }
           infoBoxText={
-            workingCase.isMasked
+            user.id !== workingCase.judge?.id &&
+            user.id !== workingCase.registrar?.id
               ? formatMessage(m.footer.infoPanelForRestrictedAccess)
               : undefined
           }

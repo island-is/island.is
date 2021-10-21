@@ -2,23 +2,21 @@ export interface ApplicationSubmit {
   slysatilkynning: Slysatilkynning
 }
 export interface Slysatilkynning {
-  //-xmlns:xsd: string;
-  //-xmlns:xsi: string;
   tilkynnandi: TilkynnandiOrSlasadi
   slasadi: TilkynnandiOrSlasadi
   slys: Slys
-  atvinnurekandi: Atvinnurekandi
-  felagstengsl: Felagstengsl
+  atvinnurekandi?: Atvinnurekandi | undefined
   fylgiskjol: Fylgiskjol
 }
 export interface TilkynnandiOrSlasadi {
   kennitala: string
   nafn: string
-  heimili: string
-  stadur: string
-  postfang: string
+  stadur?: string
+  postfang?: string
   netfang: string
-  simi: string
+  heimili?: string
+  fyrirhvernerveridadtilkynna?: number
+  simi?: string
 }
 export interface SlysVidVinnusjomanna {
   stadsetningskips: number
@@ -34,19 +32,21 @@ export interface SlysVidHeimislisstorf {
   nanar?: string
 }
 export interface Slys {
-  tegund: string
+  tegund: number
   dagsetningslys: string
   timislys: string
   lysing: string
-  banaslys: string
-  bilslys: string
+  banaslys: number
+  bilslys: number
   stadurslysseferindi?: string
   lysingerindis?: string
-  nafnhafnar?: string
-  stadsetninghafnar?: string
-  undirtegund?: string
+  undirtegund?: number
   slysvidheimilisstorf?: SlysVidHeimislisstorf
   slysvidvinnusjomanna?: SlysVidVinnusjomanna
+  slysvidvinnu?: Slysvidvinnu
+}
+export interface Slysvidvinnu {
+  lysingavinnuvel: string
 }
 
 export interface Atvinnurekandi {
@@ -68,4 +68,11 @@ export interface Fylgiskjal {
   heiti: string
   tegund: string
   innihald: string
+}
+
+export interface EmployerEntity {
+  nationalRegistrationId: string
+  name: string
+  email: string
+  phoneNumber?: string
 }

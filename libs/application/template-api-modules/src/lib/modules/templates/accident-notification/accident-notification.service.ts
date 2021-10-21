@@ -4,6 +4,7 @@ import {
 } from '@island.is/application/templates/accident-notification'
 import { DocumentApi } from '@island.is/clients/health-insurance-v2'
 import { Inject, Injectable } from '@nestjs/common'
+import fetch from 'node-fetch'
 import { Exception } from 'handlebars'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
@@ -52,19 +53,11 @@ export class AccidentNotificationService {
       } = await this.documentApi.v1DocumentPost({
         document: { doc: xml, documentType: 801 },
       })
-      console.log('hahahahaha')
-      console.log('success', success)
-      console.log('errorDesc', errorDesc)
-      console.log('errorList', errorList)
-      console.log('ihiDocumentID', ihiDocumentID)
-      console.log('numberIHI', numberIHI)
-    } catch (error: any) {
-      console.log('error', JSON.parse(error.body))
-      console.log('status', error.status)
+    } catch (e) {
+      throw new Error('Villa kom upp við vistun á umsókn.')
     }
 
-    throw new Exception('STOP THIS APPLICATION FROM SUBMITTTING !!!!!!!!!')
-    //TODO SEND XML
+    throw new Exception('under development! wont let it submit!')
 
     // Send confirmation email to applicant
     await this.sharedTemplateAPIService.sendEmail(

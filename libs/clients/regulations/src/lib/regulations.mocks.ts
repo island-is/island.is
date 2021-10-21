@@ -81,6 +81,8 @@ export const demoRegulation: Regulation = {
   lawChapters: [],
   originalDoc: 'https://www.stjornartidindi.is/foobar.pdf',
 
+  repealed: false,
+
   // timelineDate: '2021-03-05' as ISODate,
   // showingDiff: {
   //   from: '2021-03-05' as ISODate,
