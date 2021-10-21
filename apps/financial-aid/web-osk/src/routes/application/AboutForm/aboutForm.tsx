@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Text, BulletList, Bullet, Box, Link } from '@island.is/island-ui/core'
 
 import {
@@ -13,9 +13,12 @@ import {
   NavigationProps,
   currentMonth,
 } from '@island.is/financial-aid/shared/lib'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const AboutForm = () => {
   const router = useRouter()
+
+  const { nationalRegistryData } = useContext(AppContext)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -29,7 +32,11 @@ const AboutForm = () => {
         </Text>
 
         <Text variant="h3" fontWeight="light" marginBottom={3}>
-          Þú ert að sækja um <strong>fjárhagsaðstoð hjá Hafnarfirði</strong>{' '}
+          Þú ert að sækja um{' '}
+          <strong>
+            fjárhagsaðstoð hjá{' '}
+            {nationalRegistryData?.address.city ?? 'Sambandi sveitarfélaga'}
+          </strong>{' '}
           fyrir {currentMonth()}. Áður en þú heldur áfram er gott að hafa
           eftirfarandi í huga:
         </Text>

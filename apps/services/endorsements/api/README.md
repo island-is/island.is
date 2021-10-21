@@ -25,7 +25,7 @@ To run the API locally make sure you:
 yarn nx run services-endorsements-api:dev/init
 ```
 
-## Running locally
+## Run locally
 
 Sign into AWS
 
@@ -45,6 +45,12 @@ And go to localhost once project is ready and started
 http://localhost:4246/
 http://localhost:4246/liveness
 http://localhost:4246/version
+```
+
+After making changes to the module code, re-initalize app to autogenerate code for swagger, openapi, fetch client etc.
+
+```bash
+yarn nx run services-endorsements-api:dev/init
 ```
 
 ## Run tests
