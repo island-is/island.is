@@ -43,30 +43,33 @@ export class AccidentNotificationService {
     const xml = applictionAnswersToXml(answers, attachments)
 
     console.log('XML OBJEJCJTWS', xml)
-    try {
-      const {
-        success,
-        errorDesc,
-        errorList,
-        ihiDocumentID,
-        numberIHI,
-      } = await this.documentApi.documentPost({
-        document: { doc: xml, documentType: 801 },
-      })
-      console.log('hahahahaha')
-      console.log('success', success)
-      console.log('errorDesc', errorDesc)
-      console.log('errorList', errorList)
-      console.log('ihiDocumentID', ihiDocumentID)
-      console.log('numberIHI', numberIHI)
-    } catch (error: any) {
+    //try {
+    const {
+      success,
+      errorDesc,
+      errorList,
+      ihiDocumentID,
+      numberIHI,
+    } = await this.documentApi.documentPost({
+      document: { doc: xml, documentType: 801 },
+    })
+    console.log('hahahahaha')
+    console.log('success', success)
+    console.log('errorDesc', errorDesc)
+    console.log('errorList', errorList)
+    console.log('ihiDocumentID', ihiDocumentID)
+    console.log('numberIHI', numberIHI)
+    /*} catch (error: any) {
       console.log('error', error.status)
       //check if errorcode is in 400 range
       if (error.status >= 400 && error.status < 500) {
         console.log('error', error.body)
         throw new Exception(error.body.errorDesc)
       }
-    }
+    }*/
+
+    throw new Exception('STOP THIS APPLICATION FROM SUBMITTTING !!!!!!!!!')
+
     // Send confirmation email to applicant
     await this.sharedTemplateAPIService.sendEmail(
       (props) =>

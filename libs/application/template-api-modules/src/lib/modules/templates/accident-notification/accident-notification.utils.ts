@@ -111,15 +111,15 @@ const injuredPerson = (
 const accident = (answers: AccidentNotificationAnswers): Slys => {
   const accidentBase = {
     tegund: accidentTypeToId(answers.accidentType.radioButton),
-    undirtegund: answers.workAccident.type
-      ? workAccidentTypeToId(answers.workAccident.type)
-      : undefined,
+    undirtegund: !answers.workAccident
+      ? undefined
+      : workAccidentTypeToId(answers.workAccident.type),
     dagsetningslys: answers.accidentDetails.dateOfAccident,
     timislys: answers.accidentDetails.timeOfAccident,
     lysing: answers.accidentDetails.descriptionOfAccident,
     banaslys: yesOrNoToNumber(answers.wasTheAccidentFatal),
     bilslys: yesOrNoToNumber(answers.carAccidentHindrance),
-    stadurslysseferindi: answers.locationAndPurpose.location,
+    stadurslysseferindi: answers.locationAndPurpose?.location ?? '',
     lysingerindis: 'lysingerindis ', //TODO find correct field
   }
 
@@ -202,7 +202,9 @@ const accidentTypeToId = (typeEnum: AccidentTypeEnum): number => {
   }
 }
 
-const workAccidentTypeToId = (typeEnum: WorkAccidentTypeEnum): number => {
+const workAccidentTypeToId = (
+  typeEnum: WorkAccidentTypeEnum | undefined,
+): number | undefined => {
   switch (typeEnum) {
     case WorkAccidentTypeEnum.GENERAL:
       return 1
@@ -212,6 +214,8 @@ const workAccidentTypeToId = (typeEnum: WorkAccidentTypeEnum): number => {
       return 3
     case WorkAccidentTypeEnum.AGRICULTURE:
       return 4
+    default:
+      return undefined
   }
 }
 
