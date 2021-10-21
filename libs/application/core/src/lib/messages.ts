@@ -187,6 +187,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin þín',
     description: 'Oops! Something went wrong when fetching your data',
   },
+  errorDataProviderDescription: {
+    id: 'application.system:core.error.dataProvider.description',
+    defaultMessage: 'Upp kom óvænt villa. Vinsamlegast reyndu aftur.',
+    description: 'An unexpected error occured. Please try again.',
+  },
   fileUpload: {
     id: 'application.system:core.error.file.upload',
     defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',

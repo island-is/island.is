@@ -2,10 +2,14 @@ import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
+  StaticText,
+  coreErrorMessages,
 } from '@island.is/application/core'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-import { FamilyMember } from '@island.is/api/domains/national-registry'
+import type { FamilyMember } from '@island.is/api/domains/national-registry'
 
+const isLocalDevelopment = isRunningOnEnvironment('local')
 export class FamilyInformationProvider extends BasicDataProvider {
   type = 'FamilyInformationProvider'
 
@@ -35,16 +39,24 @@ export class FamilyInformationProvider extends BasicDataProvider {
   }
 
   handleError(error: Error | unknown) {
+    if (isLocalDevelopment) {
+      return Promise.resolve([])
+    }
+
     console.error('Provider error - FamilyInformation:', error)
-    return Promise.resolve([])
+    return Promise.reject({
+      reason: coreErrorMessages.errorDataProviderDescription,
+    })
   }
 
-  onProvideError(result: string): FailedDataProviderResult {
+  onProvideError(error: { reason: StaticText }): FailedDataProviderResult {
+    const { reason } = error
+
     return {
       date: new Date(),
-      reason: result,
+      reason,
       status: 'failure',
-      data: result,
+      data: [],
     }
   }
 
