@@ -5,7 +5,7 @@ import { environment } from './environments'
 export const openApi = new DocumentBuilder()
   .setTitle('EndorsementSystem')
   .setDescription(
-    'This API manages non-digital endorsements collected by systems within island.is.',
+    'This API manages endorsement lists and associated endorsements collected by systems within island.is.',
   )
   .setVersion('1.0')
   .addOAuth2({

@@ -7,8 +7,9 @@ import {
   FileType,
   RolesRule,
   FamilyStatus,
+  MartialStatusType,
 } from './enums'
-import { ApplicationEvent } from './interfaces'
+import { Aid, ApplicationEvent } from './interfaces'
 import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -162,26 +163,22 @@ export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
 
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,
-  aid: {
-    ownApartmentOrLease: number
-    withOthersOrUnknow: number
-    withParents: number
-  },
+  aid: Aid,
 ): number => {
   switch (homeCircumstances) {
     case 'OwnPlace':
-      return aid.ownApartmentOrLease
+      return aid.ownPlace
     case 'RegisteredLease':
-      return aid.ownApartmentOrLease
+      return aid.registeredRenting
     case 'WithOthers':
-      return aid.ownApartmentOrLease
+      return aid.unregisteredRenting
     case 'Other':
     case 'Unknown':
-      return aid.withOthersOrUnknow
+      return aid.unknown
     case 'WithParents':
-      return aid.withParents
+      return aid.livesWithParents
     default:
-      return aid.withParents
+      return aid.unknown
   }
 }
 
@@ -190,4 +187,30 @@ export const getCommentFromLatestEvent = (
   findState: ApplicationEventType,
 ) => {
   return applicationEvents.find((el) => el.eventType === findState)
+}
+
+export const logoKeyFromMunicipalityCode: KeyMapping<string, string> = {
+  '': 'sis.svg',
+  '1400': 'hfj.svg',
+}
+
+export const martialStatusTypeFromMartialCode = (
+  martialCode: string | undefined,
+): MartialStatusType => {
+  switch (martialCode) {
+    case 'L':
+    case 'G':
+    case '8':
+    case '7':
+    case '3':
+    case '0':
+      return MartialStatusType.MARRIED
+    case 'g':
+    case '6':
+    case '5':
+    case '4':
+    case '1':
+    default:
+      return MartialStatusType.SINGLE
+  }
 }

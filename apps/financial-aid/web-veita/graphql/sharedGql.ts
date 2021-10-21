@@ -21,6 +21,10 @@ export const ApplicationQuery = gql`
       interview
       employmentCustom
       homeCircumstancesCustom
+      spouseNationalId
+      city
+      streetName
+      postalCode
       files {
         id
         applicationId
@@ -36,6 +40,7 @@ export const ApplicationQuery = gql`
       rejection
       staff {
         name
+        municipalityId
       }
       applicationEvents {
         id
@@ -64,6 +69,7 @@ export const UpdateApplicationTableMutation = gql`
         state
         staff {
           name
+          municipalityId
         }
       }
       filters {
@@ -154,6 +160,7 @@ export const ApplicationEventMutation = gql`
       rejection
       staff {
         name
+        municipalityId
       }
       applicationEvents {
         id
@@ -162,29 +169,6 @@ export const ApplicationEventMutation = gql`
         comment
         created
       }
-    }
-  }
-`
-
-export const MunicipalityQuery = gql`
-  query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
-    municipality(input: $input) {
-      id
-      name
-      aid {
-        ownApartmentOrLease
-        withOthersOrUnknow
-        withParents
-      }
-    }
-  }
-`
-
-export const MunicipalityHomePageQuery = gql`
-  query GetMunicipalityHomePageQuery($input: MunicipalityQueryInput!) {
-    municipality(input: $input) {
-      id
-      homePage
     }
   }
 `
@@ -203,6 +187,7 @@ export const CurrentUserQuery = gql`
         phoneNumber
         role
         active
+        municipalityHomepage
       }
     }
   }
@@ -251,6 +236,7 @@ export const UpdateApplicationMutation = gql`
       }
       staff {
         name
+        municipalityId
       }
     }
   }
