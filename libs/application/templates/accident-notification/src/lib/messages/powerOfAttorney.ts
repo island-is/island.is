@@ -23,7 +23,7 @@ export const powerOfAttorney = {
       id: 'an.application:powerOfAttorney.type.description',
       defaultMessage: `Sé verið að tilkynna slys fyrir hönd slasaða skal skila inn skriflegu og undirrituðu umboði þér til handa, staðfestu af tveimur vitundarvottum. 
     Umboðinu skal skila inn sem fylgiskjali með tilkynningunni. 
-    Þú getur sótt umboðsskjal hér til útfyllingar TODO`,
+    Þú getur sótt umboðsskjal til útfyllingar hér umboð.docx`,
       description: 'Description for power of attorney type',
     },
     sectionTitle: {
