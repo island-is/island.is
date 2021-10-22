@@ -22,7 +22,7 @@ export const powerOfAttorney = {
     description: {
       id: 'an.application:powerOfAttorney.type.description',
       defaultMessage: `Athugaðu að það er hægt að tilkynna slys án þess að öll nauðsynleg skjöl séu til staðar en Sjúkratryggingar Íslands kunna að óska eftir frekari gögnum við afgreiðslu málsins, svo taka megi ákvörðun um bótarétt, fjárhæð og greiðslu bóta. 
-    Þú getur sótt umboðsskjal hér til útfyllingar TODO`,
+      Þú getur sótt umboðsskjal til útfyllingar hér umboð.docx`,
       description: 'Description for power of attorney type',
     },
     sectionTitle: {
