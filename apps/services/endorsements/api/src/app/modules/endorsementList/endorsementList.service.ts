@@ -12,7 +12,7 @@ import { EndorsementList } from './endorsementList.model'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { Endorsement } from '../endorsement/models/endorsement.model'
 import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
-
+import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
@@ -29,6 +29,19 @@ export class EndorsementListService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
+
+  // generic reusable query with pagination defaults
+  async findListsGenericQuery(query: any, where: any = {}) {
+    return await paginate({
+      Model: this.endorsementListModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'DESC']],
+      where: where,
+    })
+  }
 
   async findListsByTags(tags: string[], query: any) {
     this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
@@ -132,6 +145,14 @@ export class EndorsementListService {
     return await endorsementList.update({ adminLock: false })
   }
 
+  async updateEndorsementList(
+    endorsementList: EndorsementList,
+    newData: UpdateEndorsementListDto,
+  ): Promise<EndorsementList> {
+    this.logger.info(`Updating endorsement list: ${endorsementList.id}`)
+    return await endorsementList.update({ ...endorsementList, ...newData })
+  }
+
   async create(list: CreateInput) {
     if (!list.openedDate || !list.closedDate) {
       throw new BadRequestException([
@@ -150,19 +171,6 @@ export class EndorsementListService {
     }
     this.logger.info(`Creating endorsement list: ${list.title}`)
     return this.endorsementListModel.create(list)
-  }
-
-  // generic reusable query with pagination defaults
-  async findListsGenericQuery(query: any, where: any = {}) {
-    return await paginate({
-      Model: this.endorsementListModel,
-      limit: query.limit || 10,
-      after: query.after,
-      before: query.before,
-      primaryKeyField: 'counter',
-      orderOption: [['counter', 'DESC']],
-      where: where,
-    })
   }
 
   // generic get open lists
