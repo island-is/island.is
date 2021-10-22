@@ -61,7 +61,7 @@ export const powerOfAttorney = {
     description: {
       id: 'an.application:powerOfAttorney.upload.description',
       defaultMessage:
-        '<p>Athugaðu að það er hægt að tilkynna slys án þess að öll nauðsynleg skjöl eru til staðar.... blabla</p><br/><p>Þú getur sótt umboðsskjal hér til útfyllingar umboð.docx</p>',
+        'Athugaðu að það er hægt að tilkynna slys án þess að öll nauðsynleg skjöl eru til staðar.... blabla Þú getur sótt umboðsskjal hér til útfyllingar umboð.docx',
       description: 'Description of upload section',
     },
     sectionTitle: {
