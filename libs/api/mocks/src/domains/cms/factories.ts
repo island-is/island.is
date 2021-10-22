@@ -90,8 +90,8 @@ export const article = factory<SystemMetadata<Article>>({
   intro: () => faker.lorem.paragraph(),
   category: null,
   subArticles: () =>
-    faker.random.number(4) === 0
-      ? subArticle.list(faker.random.number({ min: 1, max: 4 }))
+    faker.datatype.number(4) === 0
+      ? subArticle.list(faker.datatype.number({ min: 1, max: 4 }))
       : [],
   relatedArticles: () => [],
   group: null,
@@ -139,17 +139,17 @@ export const alertBanner = factory<AlertBanner>({
   id: () => faker.datatype.uuid(),
   title: () => title(),
   description: () => faker.lorem.sentence(),
-  isDismissable: () => faker.random.boolean(),
+  isDismissable: () => faker.datatype.boolean(),
   dismissedForDays: 7,
   link: () => referenceLink(),
   bannerVariant: () => alertBannerVariant(),
-  showAlertBanner: () => faker.random.boolean(),
+  showAlertBanner: () => faker.datatype.boolean(),
 })
 
 export const articleSubgroup = factory<ArticleSubgroup>({
   title: () => title(),
   slug: slugify('title'),
-  importance: () => faker.random.number(),
+  importance: () => faker.datatype.number(),
 })
 
 export const articleGroup = factory<ArticleGroup>({
@@ -180,7 +180,7 @@ export const frontPageSlider = factory<FrontpageSlider>({
 export const featured = factory<Featured>({
   thing: () => referenceLink(),
   title: ({ thing }) => title(),
-  attention: () => faker.random.boolean(),
+  attention: () => faker.datatype.boolean(),
 })
 
 export const genericPage = factory<GenericPage>({
