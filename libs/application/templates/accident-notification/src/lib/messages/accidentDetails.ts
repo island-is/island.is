@@ -10,7 +10,7 @@ export const accidentDetails = {
     description: {
       id: 'an.application:accidentDetails.general.description',
       defaultMessage:
-        'Vinsamlegast gerðu grein fyrir dagsetningu og tíma slyss, tildrögum-, orsökum- og aðstæðum slyssins.',
+        'Vinsamlegast gerðu grein fyrir dagsetningu, tíma og orsökum slyssins.',
       description:
         'Please state the date and time of the accident, the cause, cause and circumstances of the accident.',
     },

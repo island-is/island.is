@@ -138,6 +138,10 @@ We need to prefix all `Mutations`, `Queries`, `Types`, `Scalars`, etc. with the 
 
 Mutations should still follow the verb first rule. Then the module name, following the object, or “noun,” if applicable.
 
+#### Exception to the solution
+
+If the name of the GraphQL type/query/mutation is the same as the module, then we don't need the prefix.
+
 #### Example
 
 ```graphql
@@ -153,6 +157,26 @@ query {
 
 mutation {
   createProjectXUser {
+    id
+  }
+}
+```
+
+```graphql
+# here we are working in the identity module, thus we won't name our type IdentityIdenty. Same exception applies for query/mutation
+
+type Identity {
+  id: UUID!
+}
+
+query {
+  identity {
+    id
+  }
+}
+
+mutation {
+  createIdentity {
     id
   }
 }
