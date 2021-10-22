@@ -16,8 +16,6 @@ import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClo
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
-import { EmailService } from '@island.is/email-service'
-
 
 
 interface CreateInput extends EndorsementListDto {
@@ -33,10 +31,9 @@ export class EndorsementListService {
     private readonly endorsementListModel: typeof EndorsementList,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    @Inject(EmailService)
-    private emailService: EmailService,
-    ) {}
-
+  ) {}
+  
+  
   // generic reusable query with pagination defaults
   async findListsGenericQuery(query: any, where: any = {}) {
     return await paginate({
@@ -205,68 +202,7 @@ export class EndorsementListService {
     return result
   }
 
-  async sendMail() {
-    
-    try {
-      return await this.emailService.sendEmail({
-        from: {
-          name: "RABBZ",//environment.email.fromName,
-          address: "rafn@juni.is",// environment.email.fromEmail,
-        },
-        to: [
-          {
-            name: "RABBZ",
-            address: "rafn@juni.is",//verification.email,
-          },
-        ],
-        subject: `Staðfesting netfangs á Ísland.is`,
-        html: `Þú hefur skráð netfangið þitt á Mínum síðum á Ísland.is. 
-        Vinsamlegast staðfestu skráninguna með því að smella á hlekkinn hér fyrir neðan:
-        <br>Ef hlekkurinn er ekki lengur í gildi biðjum við þig að endurtaka skráninguna á Ísland.is.
-        <br><br>Ef þú kannast ekki við að hafa sett inn þetta netfang, vinsamlegast hunsaðu þennan póst.`,
-        attachments: [
-        //   {   // utf-8 string as an attachment
-        //     filename: 'text1.txt',
-        //     content: 'hello world!'
-        // },
-        // {   // binary buffer as an attachment
-        //     filename: 'text2.txt',
-        //     content: new Buffer('hello world!','utf-8')
-        // },
-        // {   // file on disk as an attachment
-        //     filename: 'text3.txt',
-        //     path: '/path/to/file.txt' // stream this file
-        // },
-        // {   // filename and content type is derived from path
-        //     path: '/path/to/file.txt'
-        // },
-        // {   // stream as an attachment
-        //     filename: 'text4.txt',
-        //     content: fs.createReadStream('file.txt')
-        // },
-        // {   // define custom content type for the attachment
-        //     filename: 'text.bin',
-        //     content: 'hello world!',
-        //     contentType: 'text/plain'
-        // },
-        {   // use URL as an attachment
-            filename: 'license.txt',
-            path: 'https://raw.github.com/nodemailer/nodemailer/master/LICENSE'
-        },
-        // {   // encoded string as an attachment
-        //     filename: 'text1.txt',
-        //     content: 'aGVsbG8gd29ybGQh',
-        //     encoding: 'base64'
-        // },
-        // {   // data uri as an attachment
-        //     path: 'data:text/plain;base64,aGVsbG8gd29ybGQ='
-        // }
-    ]
-      })
-    } catch (exception) {
-      this.logger.error(exception)
-      return exception
-    }
-  }
-  
+
+
+ 
 }

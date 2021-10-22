@@ -22,8 +22,10 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
-import { EmailService } from '@island.is/email-service'
 
+import { EmailService } from '@island.is/email-service'
+import PDFDocument from 'pdfkit'
+import getStream from 'get-stream'
 
 interface FindEndorsementInput {
   listId: string
@@ -385,4 +387,55 @@ export class EndorsementService {
       throw new NotFoundException(["This endorsement doesn't exist"])
     }
   }
+
+  async createDocument() {
+    // c7f7e470-17ce-4e58-a736-7b3a6f797ec1
+    const doc = new PDFDocument()
+    // list generated timestamp when
+    // total count - list metadata
+    doc.text('Hello, World! YOOOOOOOoo0fdsa..aa')
+    for (let i = 0; i < 1000; i++) {
+      doc.text(`Hello, World! ${i}`)
+      doc.moveDown()
+    }
+    doc.end()
+    return await getStream.buffer(doc)
+  }
+
+  async sendMail() {
+    const filename = 'listid-datetime-hash.pdf'
+    const content = await this.createDocument()
+
+    try {
+      return this.emailService.sendEmail({
+        from: {
+          name: 'RABBZ', //environment.email.fromName,
+          address: 'rafn@juni.is', // environment.email.fromEmail,
+        },
+        to: [
+          {
+            name: 'RABBZ',
+            address: 'rafn@juni.is', //verification.email,
+          },
+        ],
+        subject: `Staðfesting netfangs á Ísland.is`,
+        html: `Þú hefur skráð netfangið þitt á Mínum síðum á Ísland.is. 
+        Vinsamlegast staðfestu skráninguna með því að smella á hlekkinn hér fyrir neðan:
+        <br>Ef hlekkurinn er ekki lengur í gildi biðjum við þig að endurtaka skráninguna á Ísland.is.
+        <br><br>Ef þú kannast ekki við að hafa sett inn þetta netfang, vinsamlegast hunsaðu þennan póst.`,
+        attachments: [
+          {
+            filename: filename,
+            content: content,
+          },
+        ],
+      })
+    } catch (exception) {
+      this.logger.error(exception)
+      return exception
+    }
+  }
+ 
+ 
+
 }

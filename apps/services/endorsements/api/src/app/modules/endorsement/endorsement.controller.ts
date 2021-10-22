@@ -57,6 +57,15 @@ export class EndorsementController {
     private readonly auditService: AuditService,
   ) {}
 
+  // get gp lists - relay
+  // @ApiOperation({ summary: 'Gets General Petition Lists' })
+  // @ApiOkResponse({ type: PaginatedEndorsementListDto })
+  @Get('sendMail')
+  @BypassAuth()
+  sendMail(): any {
+    return this.endorsementService.sendMail()
+  }
+
   @ApiOperation({ summary: 'Finds all endorsements in a given list' })
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)

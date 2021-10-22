@@ -59,14 +59,7 @@ export class EndorsementListController {
     private readonly endorsementListService: EndorsementListService,
   ) {}
   
-  // get gp lists - relay
-  // @ApiOperation({ summary: 'Gets General Petition Lists' })
-  // @ApiOkResponse({ type: PaginatedEndorsementListDto })
-  @Get('sendMail')
-  @BypassAuth()
-  async sendMail(): Promise<any> {
-    return await this.endorsementListService.sendMail()
-  }
+
 
   
   @ApiOperation({
