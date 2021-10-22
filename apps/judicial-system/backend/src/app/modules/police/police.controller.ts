@@ -14,8 +14,7 @@ import {
   CaseNotCompletedGuard,
   CurrentCase,
 } from '../case'
-import { UploadPoliceCaseFileResponse } from './uploadPoliceCaseFile.response'
-import { PoliceCaseFile } from './policeCaseFile.model'
+import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
 import { PoliceService } from './police.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseNotCompletedGuard)
@@ -39,11 +38,10 @@ export class PoliceController {
   @Post('policeFile/:policeFileId')
   @ApiOkResponse({
     type: UploadPoliceCaseFileResponse,
-    isArray: true,
-    description: 'Gets all police files for a case',
+    description: 'Uploads a police files of a case to AWS S3',
   })
   uploadPoliceCaseFile(
-    @Param('polceFileId') policeFileId: string,
+    @Param('policeFileId') policeFileId: string,
   ): Promise<UploadPoliceCaseFileResponse> {
     return this.policeService.uploadPoliceCaseFile(policeFileId)
   }

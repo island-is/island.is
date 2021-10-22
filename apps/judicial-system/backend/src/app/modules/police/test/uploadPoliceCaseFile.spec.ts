@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import { uuid } from 'uuidv4'
 
-import { UploadPoliceCaseFileResponse } from '../uploadPoliceCaseFile.response'
+import { UploadPoliceCaseFileResponse } from '../models'
 import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 jest.mock('isomorphic-fetch')
@@ -31,7 +31,7 @@ describe('PoliceController - Upload police case file', () => {
     }
   })
 
-  describe('remove police call', () => {
+  describe('remote police call', () => {
     const policeFileId = uuid()
 
     beforeEach(async () => {

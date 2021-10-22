@@ -16,8 +16,7 @@ import {
 } from '@island.is/shared/utils/server'
 
 import { environment } from '../../../environments'
-import { UploadPoliceCaseFileResponse } from './uploadPoliceCaseFile.response'
-import { PoliceCaseFile } from './policeCaseFile.model'
+import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
 
 @Injectable()
 export class PoliceService {
