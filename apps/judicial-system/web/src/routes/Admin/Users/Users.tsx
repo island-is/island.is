@@ -1,24 +1,47 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
-import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Select,
+  Text,
+} from '@island.is/island-ui/core'
 import { Loading } from '@island.is/judicial-system-web/src/shared-components'
-import { UserRole } from '@island.is/judicial-system/types'
+import { Institution, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useQuery } from '@apollo/client'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import {
+  InstitutionsQuery,
+  UsersQuery,
+} from '@island.is/judicial-system-web/src/utils/mutations'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { useRouter } from 'next/router'
 import * as styles from './Users.treat'
+import { ValueType } from 'react-select'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 interface UserData {
   users: User[]
 }
+interface InstitutionData {
+  institutions: Institution[]
+}
 
 export const Users: React.FC = () => {
   const router = useRouter()
+  const [selectedInstitution, setSelectedInstitution] = useState<string>()
 
   const { data, error, loading } = useQuery<UserData>(UsersQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+
+  const {
+    data: rawInstitutions,
+    loading: loadingInstitutions,
+  } = useQuery<InstitutionData>(InstitutionsQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
@@ -26,6 +49,12 @@ export const Users: React.FC = () => {
   useEffect(() => {
     document.title = 'Notendur - Réttarvörslugátt'
   }, [])
+
+  const users = data?.users.filter((u) => {
+    return selectedInstitution
+      ? u.institution?.id === selectedInstitution
+      : true
+  })
 
   const handleClick = (user: User): void => {
     router.push(`${Constants.USER_CHANGE_ROUTE}/${user.id}`)
@@ -56,12 +85,34 @@ export const Users: React.FC = () => {
           Nýr notandi
         </Button>
       </div>
-      <Box marginBottom={3}>
+      <Box
+        marginBottom={8}
+        display="flex"
+        justifyContent="spaceBetween"
+        alignItems="center"
+      >
         <Text variant="h3" id="tableCaption">
           Notendur
         </Text>
+        <Box width="half">
+          <Select
+            name="institutions"
+            options={
+              rawInstitutions?.institutions.map((i) => {
+                return { label: i.name, value: i.id }
+              }) || []
+            }
+            placeholder="Veldu stofnun"
+            disabled={loadingInstitutions}
+            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+              setSelectedInstitution(
+                (selectedOption as ReactSelectOption).value.toString(),
+              )
+            }
+          />
+        </Box>
       </Box>
-      {data && (
+      {users && users.length > 0 ? (
         <table
           className={styles.userTable}
           data-testid="users-table"
@@ -97,7 +148,7 @@ export const Users: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {data?.users.map((user, i) => (
+            {users.map((user, i) => (
               <tr
                 key={i}
                 className={cn(styles.tableRowContainer)}
@@ -126,6 +177,14 @@ export const Users: React.FC = () => {
             ))}
           </tbody>
         </table>
+      ) : (
+        <Box width="half">
+          <AlertMessage
+            type="info"
+            title="Enginn notandi fannst"
+            message="Vinsamlegast veldur aðra stofnun"
+          />
+        </Box>
       )}
       {loading && (
         <Box className={styles.userTable}>
@@ -133,7 +192,7 @@ export const Users: React.FC = () => {
         </Box>
       )}
       {error && (
-        <div className={styles.userError} data-testid="users-error">
+        <div data-testid="users-error">
           <AlertMessage
             title="Ekki tókst að sækja gögn úr gagnagrunni"
             message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar."
