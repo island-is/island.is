@@ -140,7 +140,7 @@ Mutations should still follow the verb first rule. Then the module name, followi
 
 #### Exception to the solution
 
-If the name of the GraphQL type/query is the same as the module, then we don't need the prefix.
+If the name of the GraphQL type/query/mutation is the same as the module, then we don't need the prefix.
 
 #### Example
 
@@ -163,7 +163,7 @@ mutation {
 ```
 
 ```graphql
-# here we are working in the identity module, thus we won't name our type IdentityIdenty.
+# here we are working in the identity module, thus we won't name our type IdentityIdenty. Same exception applies for query/mutation
 
 type Identity {
   id: UUID!
@@ -171,6 +171,12 @@ type Identity {
 
 query {
   identity {
+    id
+  }
+}
+
+mutation {
+  createIdentity {
     id
   }
 }
