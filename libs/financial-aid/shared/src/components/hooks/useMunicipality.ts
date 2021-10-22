@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import {
-  Municipality,
-  useAsyncLazyQuery,
-} from '@island.is/financial-aid/shared/lib'
+import { Municipality, useAsyncLazyQuery } from '../../lib'
 import { gql } from '@apollo/client'
 
 const MunicipalityQuery = gql`
