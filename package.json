@@ -385,7 +385,6 @@
     "jest-transform-stub": "2.0.0",
     "license-checker": "25.0.1",
     "next-secure-headers": "2.1.0",
-    "next-transpile-modules": "4.1.0",
     "prettier": "2.2.1",
     "quicktype": "15.0.258",
     "sequelize-cli": "5.5.1",
