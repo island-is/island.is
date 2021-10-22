@@ -14,8 +14,8 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendAPI } from '../../../services'
-import { PoliceCaseFilesQueryInput } from './dto'
-import { PoliceCaseFile } from './models'
+import { PoliceCaseFilesQueryInput, UploadPoliceCaseFileInput } from './dto'
+import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
@@ -39,6 +39,25 @@ export class PoliceResolver {
       user.id,
       AuditedAction.GET_POLICE_CASE_FILES,
       backendApi.getPoliceCaseFiles(input.caseId),
+      input.caseId,
+    )
+  }
+
+  @Query(() => UploadPoliceCaseFileResponse, { nullable: true })
+  uploadPoliceCaseFile(
+    @Args('input', { type: () => UploadPoliceCaseFileInput })
+    input: UploadPoliceCaseFileInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSource') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<UploadPoliceCaseFileResponse> {
+    this.logger.debug(
+      `Uploading police case file ${input.id} of case ${input.caseId} to AWS S3`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPLOAD_POLICE_CASE_FILE,
+      backendApi.uploadPoliceFile(input.caseId, input.id),
       input.caseId,
     )
   }
