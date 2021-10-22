@@ -54,7 +54,7 @@ const Petitions = () => {
       </Stack>
 
       <Box marginTop={10} marginBottom={7}>
-        {ownedLists && (
+        {ownedLists && ownedLists.length > 0 && (
           <>
             <Text as="p" variant="h3" marginBottom={2}>
               {formatMessage(m.petition.petitionListsIown)}
@@ -98,7 +98,7 @@ const Petitions = () => {
       </Box>
 
       <Box marginTop={4}>
-        {openSignedLists && (
+        {openSignedLists && openSignedLists.length > 0 && (
           <>
             <Text as="p" variant="h3" marginBottom={2}>
               {formatMessage(m.petition.petitionListsSignedByMe)}
@@ -144,7 +144,7 @@ const Petitions = () => {
       </Box>
 
       <Box marginTop={4}>
-        {closedSignedLists && (
+        {closedSignedLists && closedSignedLists.length > 0 && (
           <>
             <Text as="p" variant="h3" marginBottom={2}>
               {formatMessage(m.petition.closedListsSignedByMe)}

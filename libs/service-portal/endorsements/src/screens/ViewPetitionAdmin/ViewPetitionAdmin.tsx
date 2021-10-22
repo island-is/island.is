@@ -14,11 +14,13 @@ import { list } from '../mocks'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import PetitionsTable from '../PetitionsTable'
+import { EndorsementList } from '../../types/schema'
 
 const ViewPetitionAdmin = () => {
   const { formatMessage } = useLocale()
   const location: any = useLocation()
-  const petition = useGetSinglePetition(location.state?.listId)
+  const { petitionData } = useGetSinglePetition(location.state?.listId)
+  const petition = petitionData as EndorsementList
 
   const [title, setTitle] = useState(petition?.title)
   const [description, setDescription] = useState(petition?.description)
@@ -49,8 +51,8 @@ const ViewPetitionAdmin = () => {
           textarea
           rows={10}
         />
-        <Box display="flex" justifyContent="spaceBetween">
-          <Box width="half" marginRight={2}>
+        <Box display={['block', 'flex']} justifyContent="spaceBetween">
+          <Box width="half" marginRight={[0, 2]}>
             <DatePicker
               selected={new Date()}
               handleChange={(date: Date) => console.log(date)}
@@ -59,7 +61,7 @@ const ViewPetitionAdmin = () => {
               placeholderText="Veldu dagsetningu"
             />
           </Box>
-          <Box width="half" marginLeft={2}>
+          <Box width="half" marginLeft={[0, 2]} marginTop={[2, 0]}>
             <DatePicker
               selected={new Date()}
               handleChange={(date: Date) => console.log(date)}

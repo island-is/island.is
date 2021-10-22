@@ -150,7 +150,7 @@ const ViewPetition = () => {
         </Text>
 
         <Box
-          display="flex"
+          display={['block', 'flex']}
           justifyContent="spaceBetween"
           width={viewTypeEdit ? 'half' : 'full'}
         >
@@ -306,7 +306,7 @@ const ViewPetition = () => {
                 <Text variant="default">
                   {formatMessage(m.viewPetition.openListDescription)}
                 </Text>
-                <Box display="flex" marginY={3}>
+                <Box display={['block', 'flex']} marginY={3}>
                   <DatePicker
                     label="Velja dagsetningu"
                     locale="is"
@@ -315,7 +315,12 @@ const ViewPetition = () => {
                     required
                     handleChange={(date) => setSelectedDateToOpenList(date)}
                   />
-                  <Box display="flex" alignItems="center" marginLeft={5}>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    marginLeft={[0, 5]}
+                    marginTop={[3, 0]}
+                  >
                     <DialogPrompt
                       baseId="demo_dialog"
                       title={formatMessage(
