@@ -26,7 +26,8 @@
     "pg-native",
     "form-data",
     "configcat-node",
-    "sequelize"
+    "sequelize",
+    "@protobufjs/aspromise"
   ],
   "keepNames": true
 }
