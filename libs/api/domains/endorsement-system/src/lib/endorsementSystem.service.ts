@@ -15,7 +15,6 @@ import {
   EndorsementListControllerFindEndorsementsRequest,
   EndorsementListControllerGetGeneralPetitionListRequest,
   EndorsementListControllerGetGeneralPetitionListsRequest,
-  EndorsementList,
   EndorsementListControllerCloseRequest,
   EndorsementListControllerOpenRequest,
   EndorsementListControllerLockRequest,

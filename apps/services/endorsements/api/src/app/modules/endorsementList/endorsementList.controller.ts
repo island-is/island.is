@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  UseInterceptors
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -36,6 +37,7 @@ import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
 import { SearchQueryDto } from './dto/searchQuery.dto'
+import { EndorsementListInterceptor } from './interceptors/endorsementList.interceptor'
 
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
@@ -93,13 +95,14 @@ export class EndorsementListController {
   @ApiOkResponse({ type: EndorsementList })
   @ApiParam({ name: 'listId', type: 'string' })
   @Get('general-petition-list/:listId')
+  @UseInterceptors(EndorsementListInterceptor)
   @BypassAuth()
   async getGeneralPetitionList(
     @Param('listId') listId: string,
   ): Promise<EndorsementList | null> {
     return await this.endorsementListService.findSingleOpenListTaggedGeneralPetition(
       listId,
-    )
+    ) 
   }
 
   @Scopes(EndorsementsScope.main)
@@ -150,6 +153,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
   @Get(':listId')
+  @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })
@@ -172,6 +176,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
   @Put(':listId/close')
+  @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -196,6 +201,7 @@ export class EndorsementListController {
   @ApiBody({ type: ChangeEndorsmentListClosedDateDto })
   @Scopes(EndorsementsScope.main)
   @Put(':listId/open')
+  @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -219,6 +225,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
   @Put(':listId/lock')
+  @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Admin)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -241,6 +248,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
   @Put(':listId/unlock')
+  @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Admin)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -264,6 +272,7 @@ export class EndorsementListController {
   @ApiBody({ type: EndorsementListDto })
   @Scopes(EndorsementsScope.main)
   @Post()
+  @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
     meta: (endorsementList) => ({
