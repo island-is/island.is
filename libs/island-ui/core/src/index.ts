@@ -4,6 +4,7 @@
 //       overridden styles, like global and box, need to come first.
 
 // Global
+export * from './styles/global.css'
 export * from './utils/globalStyles'
 
 // Layout

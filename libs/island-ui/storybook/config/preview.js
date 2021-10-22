@@ -1,7 +1,10 @@
 import React from 'react'
 import { IntlProvider } from 'react-intl'
+import { globalStyles } from '@island.is/island-ui/core'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ApolloProvider } from '@apollo/client'
+
+globalStyles()
 
 export const parameters = {
   viewMode: 'docs',
