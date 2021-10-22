@@ -141,8 +141,8 @@ export const AccidentNotificationSchema = z.object({
   fishingShipInfo: z.object({
     shipName: z.string().min(1),
     shipCharacters: z.string().min(1),
-    homePort: z.string().min(1),
-    shipRegisterNumber: z.string().min(1),
+    homePort: z.string(),
+    shipRegisterNumber: z.string(),
   }),
   onPayRoll: z.object({
     answer: z.enum([YES, NO]),
