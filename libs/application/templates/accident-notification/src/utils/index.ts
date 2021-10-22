@@ -22,11 +22,12 @@ const hasAttachment = (attachment: FileType[] | undefined) =>
   attachment && attachment.length > 0
 
 export const getAttachmentTitles = (answers: AccidentNotification) => {
-  const {
-    deathCertificateFile = undefined,
-    injuryCertificateFile = undefined,
-    powerOfAttorneyFile = undefined,
-  } = answers.attachments || {}
+  const deathCertificateFile =
+    answers.attachments?.deathCertificateFile?.file || undefined
+  const injuryCertificateFile =
+    answers.attachments?.injuryCertificateFile?.file || undefined
+  const powerOfAttorneyFile =
+    answers.attachments?.powerOfAttorneyFile?.file || undefined
   const files = []
 
   if (hasAttachment(deathCertificateFile))
@@ -56,7 +57,7 @@ export const returnMissingDocumentsList = (
 
   if (
     injuryCertificate?.answer === AttachmentsEnum.SENDCERTIFICATELATER &&
-    !hasAttachment(answers.attachments?.injuryCertificateFile)
+    !hasAttachment(answers.attachments?.injuryCertificateFile?.file)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.injuryCertificate),
@@ -66,7 +67,7 @@ export const returnMissingDocumentsList = (
   if (
     whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
     powerOfAttorneyType !== PowerOfAttorneyUploadEnum.FORCHILDINCUSTODY &&
-    !hasAttachment(answers.attachments?.powerOfAttorneyFile)
+    !hasAttachment(answers.attachments?.powerOfAttorneyFile?.file)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.powerOfAttorneyDocument),
@@ -75,7 +76,7 @@ export const returnMissingDocumentsList = (
 
   if (
     wasTheAccidentFatal === YES &&
-    !hasAttachment(answers.attachments?.deathCertificateFile)
+    !hasAttachment(answers.attachments?.deathCertificateFile?.file)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.deathCertificate),

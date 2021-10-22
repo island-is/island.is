@@ -685,7 +685,7 @@ export const aboutTheAccidentSection = buildSection({
           ],
         }),
         buildFileUploadField({
-          id: 'attachments.injuryCertificateFile',
+          id: 'attachments.injuryCertificateFile.file',
           title: attachments.general.heading,
           uploadAccept: UPLOAD_ACCEPT,
           uploadHeader: injuredPersonInformation.upload.uploadHeader,
@@ -694,9 +694,8 @@ export const aboutTheAccidentSection = buildSection({
           introduction: attachments.general.uploadIntroduction,
           condition: (formValue) =>
             (formValue as {
-              attachments: { injuryCertificate: AttachmentsEnum }
-            }).attachments?.injuryCertificate ===
-            AttachmentsEnum.INJURYCERTIFICATE,
+              injuryCertificate: { answer: AttachmentsEnum }
+            }).injuryCertificate?.answer === AttachmentsEnum.INJURYCERTIFICATE,
         }),
       ],
     }),
@@ -766,7 +765,7 @@ export const aboutTheAccidentSection = buildSection({
           title: attachments.general.uploadTitle,
           children: [
             buildFileUploadField({
-              id: 'attachments.deathCertificateFile',
+              id: 'attachments.deathCertificateFile.file',
               title: attachments.general.uploadHeader,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: attachments.general.uploadHeader,
