@@ -1,5 +1,5 @@
 import transformLib from './transformLib'
-import { TransformOptions, ConfigAPI, PluginItem } from "@babel/core";
+import { TransformOptions, ConfigAPI, PluginItem } from '@babel/core'
 
 export default function (api: ConfigAPI): TransformOptions {
   const config: TransformOptions = {

@@ -55,7 +55,9 @@ module.exports = {
         '@island.is/island-ui/core': rootDir('../../core/src'),
         '@island.is/island-ui/theme': rootDir('../../theme/src'),
         '@island.is/island-ui/utils': rootDir('../../utils/src'),
-        '@island.is/island-ui/vanilla-extract-utils': rootDir('../../vanilla-extract-utils/src'),
+        '@island.is/island-ui/vanilla-extract-utils': rootDir(
+          '../../vanilla-extract-utils/src',
+        ),
         '@island.is/application/core': rootDir('../../../application/core/src'),
         '@island.is/application/graphql': rootDir(
           '../../../application/graphql/src',

@@ -1,10 +1,5 @@
 import React, { useContext } from 'react'
-import {
-  Logo,
-  Text,
-  Box,
-  Button,
-} from '@island.is/island-ui/core'
+import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
