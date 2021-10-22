@@ -85,6 +85,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           },
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
+            shouldPersistToExternalData: true,
           },
           roles: [
             {

@@ -53,30 +53,33 @@ export class AccidentNotificationService {
       } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
       })
+      await this.sharedTemplateAPIService.sendEmail(
+        (props) =>
+          generateConfirmationEmail(
+            props,
+            this.accidentConfig.applicationSenderName,
+            this.accidentConfig.applicationSenderEmail,
+          ),
+        application,
+      )
+
+      // Request representative review when applicable
+      if (shouldRequestReview) {
+        await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+          generateAssignReviewerEmail,
+          application,
+          SIX_MONTHS_IN_SECONDS_EXPIRES,
+        )
+      }
+      return {
+        documentId: ihiDocumentID,
+      }
     } catch (e) {
+      console.log('ERROR', e)
       throw new Error('Villa kom upp við vistun á umsókn.')
     }
-
-    throw new Exception('under development! wont let it submit!')
+    //throw new Exception('under development! wont let it submit!')
 
     // Send confirmation email to applicant
-    await this.sharedTemplateAPIService.sendEmail(
-      (props) =>
-        generateConfirmationEmail(
-          props,
-          this.accidentConfig.applicationSenderName,
-          this.accidentConfig.applicationSenderEmail,
-        ),
-      application,
-    )
-
-    // Request representative review when applicable
-    if (shouldRequestReview) {
-      await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-        generateAssignReviewerEmail,
-        application,
-        SIX_MONTHS_IN_SECONDS_EXPIRES,
-      )
-    }
   }
 }
