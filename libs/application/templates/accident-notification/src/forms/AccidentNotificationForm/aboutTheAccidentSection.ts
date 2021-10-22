@@ -532,7 +532,9 @@ export const aboutTheAccidentSection = buildSection({
     buildSubSection({
       id: 'workMachine.section',
       title: workMachine.general.sectionTitle,
-      condition: (formValue) => isGeneralWorkplaceAccident(formValue),
+      condition: (formValue) =>
+        isGeneralWorkplaceAccident(formValue) ||
+        isAgricultureAccident(formValue),
       children: [
         buildMultiField({
           id: 'workMachine',
