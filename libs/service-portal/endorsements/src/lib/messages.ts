@@ -181,12 +181,12 @@ export const m: MessageDir = {
       description: 'Toast success message',
     },
     toastSuccessCloseList: {
-      id: 'sp.petitions:toast-success-message',
+      id: 'sp.petitions:toast-success-message-close-list',
       defaultMessage: 'Tókst að loka lista',
       description: 'Toast success message',
     },
     toastSuccessOpenList: {
-      id: 'sp.petitions:toast-success-message',
+      id: 'sp.petitions:toast-success-message-open-list',
       defaultMessage: 'Tókst að opna/uppfæra lista',
       description: 'Toast success message',
     },
@@ -228,6 +228,11 @@ export const m: MessageDir = {
       defaultMessage:
         'Til þess að virkja lista þarf að velja nýja lokadagsetningu',
       description: 'Alert message for opening list',
+    },
+    noNameLabel: {
+      id: 'sp.petitions:no-name',
+      defaultMessage: 'Nafn ótilgreint',
+      description: 'Label when endorsers name is hidden',
     },
   }),
 }

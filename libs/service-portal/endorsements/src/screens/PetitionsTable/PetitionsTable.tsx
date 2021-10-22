@@ -14,17 +14,17 @@ const formatDate = (date: string) => {
   }
 }
 
-const mapToCSVFile = (petitions: any) => {
-  return petitions.map((pet: any) => {
-    return {
-      Dagsetning: new Date(pet.signed),
-      Nafn: pet.name,
-    }
-  })
-}
-
 const PetitionsTable = (petitions: any) => {
   const { formatMessage } = useLocale()
+
+  const mapToCSVFile = (petitions: any) => {
+    return petitions.map((pet: any) => {
+      return {
+        Dagsetning: formatDate(pet.created),
+        Nafn: pet.name ? pet.name : formatMessage(m.viewPetition.noNameLabel),
+      }
+    })
+  }
 
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
@@ -59,7 +59,11 @@ const PetitionsTable = (petitions: any) => {
               return (
                 <T.Row key={petition.id}>
                   <T.Data>{formatDate(petition.created)}</T.Data>
-                  <T.Data>{petition.meta.fullName ?? 'Nafn'}</T.Data>
+                  <T.Data>
+                    {petition.meta.fullName
+                      ? petition.meta.fullName
+                      : formatMessage(m.viewPetition.noNameLabel)}
+                  </T.Data>
                 </T.Row>
               )
             })}
@@ -82,14 +86,16 @@ const PetitionsTable = (petitions: any) => {
           />
         )}
 
-        <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-          <ExportAsCSV
-            data={mapToCSVFile(listOfPetitions) as object[]}
-            filename="Meðmælalisti"
-            title="Sækja lista"
-            variant="text"
-          />
-        </Box>
+        {listOfPetitions?.length > 0 && (
+          <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+            <ExportAsCSV
+              data={mapToCSVFile(listOfPetitions) as object[]}
+              filename="Meðmælalisti"
+              title="Sækja lista"
+              variant="text"
+            />
+          </Box>
+        )}
       </Stack>
     </Box>
   )

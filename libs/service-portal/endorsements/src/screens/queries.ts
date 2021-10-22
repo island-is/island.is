@@ -262,6 +262,7 @@ export const useGetSingleEndorsement = (listId: string) => {
           listId: listId,
         },
       },
+      pollInterval: 20000,
     },
   )
   return endorsement
