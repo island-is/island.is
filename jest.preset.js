@@ -1,7 +1,7 @@
 const path = require('path')
 const nxPreset = require('@nrwl/jest/preset')
 
-const customResolver = path.relative(process.cwd(), path.join(__dirname, 'jest.resolver'))
+const customResolver = path.join(__dirname, 'jest.resolver.js')
 
 module.exports = {
   ...nxPreset,
