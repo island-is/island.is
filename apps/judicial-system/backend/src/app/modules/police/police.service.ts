@@ -14,9 +14,10 @@ import {
   createXRoadAPIPath,
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
-import type { PoliceCaseFile } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
+import { UploadPoliceCaseFileResponse } from './uploadPoliceCaseFile.response'
+import { PoliceCaseFile } from './policeCaseFile.model'
 
 @Injectable()
 export class PoliceService {
@@ -40,7 +41,10 @@ export class PoliceService {
   ) {}
 
   async getAllPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
+    this.logger.debug(`Getting all police files for case ${caseId}`)
+
     let res: Response
+
     try {
       res = await fetch(
         `${this.xRoadPath}/api/Rettarvarsla/GetDocumentListById/${caseId}`,
@@ -74,5 +78,38 @@ export class PoliceService {
         name: file.heitiSkjals,
       }),
     )
+  }
+
+  async uploadPoliceCaseFile(
+    policeFileId: string,
+  ): Promise<UploadPoliceCaseFileResponse> {
+    this.logger.debug(`Uploading police file ${policeFileId} to AWS S3`)
+
+    let res: Response
+
+    try {
+      res = await fetch(
+        `${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${policeFileId}`,
+        {
+          headers: { 'X-Road-Client': environment.xRoad.clientId },
+          agent: this.agent,
+        } as RequestInit,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Failed to get police case file ${policeFileId}}`,
+        error,
+      )
+
+      throw new BadGatewayException(
+        `Failed to get police case file ${policeFileId}}`,
+      )
+    }
+
+    if (!res.ok) {
+      throw new NotFoundException(`Police case file ${policeFileId} not found`)
+    }
+
+    return { success: false }
   }
 }

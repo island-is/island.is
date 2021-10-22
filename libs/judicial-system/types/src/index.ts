@@ -57,4 +57,7 @@ export type {
   CreateCourtCase,
 } from './lib/case'
 
-export type { PoliceCaseFile } from './lib/policeFile'
+export type {
+  PoliceCaseFile,
+  TUploadPoliceCaseFileResponse as UploadPoliceCaseFileResponse,
+} from './lib/policeFile'

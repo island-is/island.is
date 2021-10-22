@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common'
+import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -14,6 +14,7 @@ import {
   CaseNotCompletedGuard,
   CurrentCase,
 } from '../case'
+import { UploadPoliceCaseFileResponse } from './uploadPoliceCaseFile.response'
 import { PoliceCaseFile } from './policeCaseFile.model'
 import { PoliceService } from './police.service'
 
@@ -30,7 +31,20 @@ export class PoliceController {
     isArray: true,
     description: 'Gets all police files for a case',
   })
-  async getAll(@CurrentCase() theCase: Case): Promise<PoliceCaseFile[]> {
+  getAll(@CurrentCase() theCase: Case): Promise<PoliceCaseFile[]> {
     return this.policeService.getAllPoliceCaseFiles(theCase.id)
+  }
+
+  @RolesRules(prosecutorRule)
+  @Post('policeFile/:policeFileId')
+  @ApiOkResponse({
+    type: UploadPoliceCaseFileResponse,
+    isArray: true,
+    description: 'Gets all police files for a case',
+  })
+  uploadPoliceCaseFile(
+    @Param('polceFileId') policeFileId: string,
+  ): Promise<UploadPoliceCaseFileResponse> {
+    return this.policeService.uploadPoliceCaseFile(policeFileId)
   }
 }

@@ -44,7 +44,9 @@ describe('PoliceController - Get all', () => {
 
     it('should request police files for the correct case', () =>
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining(caseId),
+        expect.stringMatching(
+          new RegExp(`.*/api/Rettarvarsla/GetDocumentListById/${caseId}`),
+        ),
         expect.anything(),
       ))
   })

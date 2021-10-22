@@ -77,7 +77,7 @@ export class FileController {
     isArray: true,
     description: 'Gets all existing case file',
   })
-  async getAllCaseFiles(@CurrentCase() theCase: Case): Promise<CaseFile[]> {
+  getAllCaseFiles(@CurrentCase() theCase: Case): Promise<CaseFile[]> {
     return this.fileService.getAllCaseFiles(theCase.id)
   }
 
@@ -92,7 +92,7 @@ export class FileController {
     type: DeleteFileResponse,
     description: 'Deletes a case file',
   })
-  async deleteCaseFile(
+  deleteCaseFile(
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<DeleteFileResponse> {
     return this.fileService.deleteCaseFile(caseFile)
@@ -105,7 +105,7 @@ export class FileController {
     type: PresignedPost,
     description: 'Gets a signed url for a case file',
   })
-  async getCaseFileSignedUrl(
+  getCaseFileSignedUrl(
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<SignedUrl> {
     return this.fileService.getCaseFileSignedUrl(caseFile)
@@ -115,10 +115,10 @@ export class FileController {
   @UseGuards(CaseExistsForUpdateGuard, CaseCompletedGuard, CaseFileExistsGuard)
   @Post('file/:id/court')
   @ApiOkResponse({
-    type: PresignedPost,
+    type: UploadFileToCourtResponse,
     description: 'Uploads a case file to court',
   })
-  async uploadCaseFileToCourt(
+  uploadCaseFileToCourt(
     @CurrentCase() theCase: Case,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<UploadFileToCourtResponse> {
