@@ -1,4 +1,4 @@
-const withVanillaExtract = require('@vanilla-extract/next-plugin')()
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 const { createSecureHeaders } = require('next-secure-headers')
 
@@ -14,6 +14,7 @@ const transpileModules = [
   'escape-string-regexp', // Used by slugify.
 ]
 const withTM = require('next-transpile-modules')(transpileModules)
+const withVanillaExtract = createVanillaExtractPlugin()
 const { NEXT_PUBLIC_BACKEND_URL } = 'http://localhost:4200/backend'
 
 module.exports = withVanillaExtract(

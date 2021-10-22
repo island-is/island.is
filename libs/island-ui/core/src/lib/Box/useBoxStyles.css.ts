@@ -204,7 +204,9 @@ const positionRules = {
   static: 'static',
   sticky: 'sticky',
 }
-export const position = styleVariants(mapToStyleProperty(positionRules, 'position'))
+export const position = styleVariants(
+  mapToStyleProperty(positionRules, 'position'),
+)
 
 const displayRules = {
   block: 'block',
@@ -214,7 +216,9 @@ const displayRules = {
   flex: 'flex',
   inlineFlex: 'inline-flex',
 }
-export const display = styleVariants(mapToStyleProperty(displayRules, 'display'))
+export const display = styleVariants(
+  mapToStyleProperty(displayRules, 'display'),
+)
 export const displaySm = styleVariants(
   mapToStyleProperty(displayRules, 'display', (value, propertyName) =>
     themeUtils.responsiveStyle({
@@ -388,7 +392,9 @@ const flexWrapRules = {
   wrap: 'wrap',
   nowrap: 'nowrap',
 }
-export const flexWrap = styleVariants(mapToStyleProperty(flexWrapRules, 'flexWrap'))
+export const flexWrap = styleVariants(
+  mapToStyleProperty(flexWrapRules, 'flexWrap'),
+)
 export const flexWrapSm = styleVariants(
   mapToStyleProperty(flexWrapRules, 'flexWrap', (value, propertyName) =>
     themeUtils.responsiveStyle({
@@ -544,7 +550,9 @@ const overflowRules = {
   visible: 'visible',
   auto: 'auto',
 }
-export const overflow = styleVariants(mapToStyleProperty(overflowRules, 'overflow'))
+export const overflow = styleVariants(
+  mapToStyleProperty(overflowRules, 'overflow'),
+)
 
 const minWidthRules = {
   0: '0%', // We use a percentage here so it supports IE11: https://css-tricks.com/flexbox-truncated-text/#comment-1611744

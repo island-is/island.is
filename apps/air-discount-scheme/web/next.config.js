@@ -1,4 +1,4 @@
-const withVanillaExtract = require('@vanilla-extract/next-plugin')()
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withSourceMaps = require('@zeit/next-source-maps')
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 // const SentryWebpackPlugin = require('@sentry/webpack-plugin')
@@ -12,6 +12,7 @@ const {
 } = process.env
 const apiPath = '/api'
 const graphqlPath = '/api/graphql'
+const withVanillaExtract = createVanillaExtractPlugin()
 
 module.exports = withSourceMaps(
   withVanillaExtract(

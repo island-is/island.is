@@ -1,4 +1,9 @@
-import { keyframes, style, StyleRule, styleVariants } from '@vanilla-extract/css'
+import {
+  keyframes,
+  style,
+  StyleRule,
+  styleVariants,
+} from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import covidColors from '../colors'
 
@@ -186,7 +191,11 @@ type PrimaryColors = (
   textDisabled?: string,
 ) => StyleRule
 
-type BorderedColors = (main: string, hover: string, disabled: string) => StyleRule
+type BorderedColors = (
+  main: string,
+  hover: string,
+  disabled: string,
+) => StyleRule
 type UtilityColors = (
   text: string,
   border: string,
@@ -458,6 +467,5 @@ export const loadingDot = style({
       marginRight: 0,
     },
   },
-  animation:
-    `${dotAnimation} 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite`,
+  animation: `${dotAnimation} 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite`,
 })

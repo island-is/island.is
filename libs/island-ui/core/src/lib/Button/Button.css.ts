@@ -544,6 +544,5 @@ export const loadingDot = style({
       marginRight: 0,
     },
   },
-  animation:
-    `${dotAnimation} 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite`,
+  animation: `${dotAnimation} 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite`,
 })

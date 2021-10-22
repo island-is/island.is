@@ -1,4 +1,4 @@
-const withVanillaExtract = require('@vanilla-extract/next-plugin')()
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 
 const {
@@ -7,6 +7,7 @@ const {
 } = process.env
 
 const graphqlPath = '/api/graphql'
+const withVanillaExtract = createVanillaExtractPlugin()
 
 module.exports = withVanillaExtract(
   withHealthcheckConfig({

@@ -1,4 +1,9 @@
-import { style, globalStyle, styleVariants, StyleRule } from '@vanilla-extract/css'
+import {
+  style,
+  globalStyle,
+  styleVariants,
+  StyleRule,
+} from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import * as inputMixins from '../Input/Input.mixins'
 import merge from 'lodash/merge'
@@ -67,7 +72,10 @@ const wrapMedia = (stylesObj: StyleRule = {}, selector: string): StyleRule => {
 }
 
 export const wrapper = style({}, 'wrapper')
-export const wrapperColor = styleVariants({ blue: {}, white: {} }, 'wrapperColor')
+export const wrapperColor = styleVariants(
+  { blue: {}, white: {} },
+  'wrapperColor',
+)
 export const valueContainer = style(
   {
     selectors: {

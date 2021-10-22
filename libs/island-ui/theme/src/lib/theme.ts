@@ -139,7 +139,13 @@ export const makeThemeUtils = (tokens: RequiredTokens) => {
     xl: makeMediaQuery('xl'),
   }
 
-  const responsiveStyle = ({ xs, sm, md, lg, xl }: ResponsiveStyle): StyleRule => {
+  const responsiveStyle = ({
+    xs,
+    sm,
+    md,
+    lg,
+    xl,
+  }: ResponsiveStyle): StyleRule => {
     const xsStyles = omit(xs, '@media')
     const smStyles = !sm || isEqual(sm, xsStyles) ? null : sm
     const mdStyles = !md || isEqual(md, xsStyles || smStyles) ? null : md

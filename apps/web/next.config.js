@@ -1,9 +1,11 @@
 const path = require('path')
-const withVanillaExtract = require('@vanilla-extract/next-plugin')()
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const StatoscopeWebpackPlugin = require('@statoscope/ui-webpack')
 const { DuplicatesPlugin } = require('inspectpack/plugin')
+
+const withVanillaExtract = createVanillaExtractPlugin()
 
 // These modules need to be transpiled for IE11 support. This is not ideal,
 // we should aim to drop IE11 support, or only use dependencies that have

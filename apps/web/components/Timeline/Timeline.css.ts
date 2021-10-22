@@ -197,7 +197,7 @@ export const right = style({
 
 export const monthContainer = style({
   display: 'flex',
-  justifyContent: 'end',
+  justifyContent: 'flex-end',
   flexDirection: 'row',
   ...themeUtils.responsiveStyle({
     lg: {

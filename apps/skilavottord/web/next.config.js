@@ -1,4 +1,5 @@
-const withVanillaExtract = require('@vanilla-extract/next-plugin')()
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
+const withVanillaExtract = createVanillaExtractPlugin()
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 
 const {

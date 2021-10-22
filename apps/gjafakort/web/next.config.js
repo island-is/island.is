@@ -1,4 +1,5 @@
-const withVanillaExtract = require('@vanilla-extract/next-plugin')()
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
+const withVanillaExtract = createVanillaExtractPlugin()
 const withSourceMaps = require('@zeit/next-source-maps')
 // const SentryWebpackPlugin = require('@sentry/webpack-plugin')
 

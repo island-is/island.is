@@ -1,4 +1,5 @@
-import { style, StyleRule } from '@vanilla-extract/css'
+import { style } from '@vanilla-extract/css'
+import type { StyleRule } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const whenMobile = (style: StyleRule) => ({
