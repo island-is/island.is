@@ -101,14 +101,26 @@ export const AccidentNotificationSchema = z.object({
   }),
   attachments: z.object({
     injuryCertificateFile: z
-      .array(FileSchema)
-      .refine((v) => v.length > 0, { params: error.requiredFile }),
+      .object({
+        file: z
+          .array(FileSchema)
+          .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
     deathCertificateFile: z
-      .array(FileSchema)
-      .refine((v) => v.length > 0, { params: error.requiredFile }),
+      .object({
+        file: z
+          .array(FileSchema)
+          .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
     powerOfAttorneyFile: z
-      .array(FileSchema)
-      .refine((v) => v.length > 0, { params: error.requiredFile }),
+      .object({
+        file: z
+          .array(FileSchema)
+          .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
   }),
   wasTheAccidentFatal: z.enum([YES, NO]),
   fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),

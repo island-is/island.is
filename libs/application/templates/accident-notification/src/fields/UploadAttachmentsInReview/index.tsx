@@ -36,7 +36,7 @@ export const UploadAttachmentsInReview: FC<UploadAttachmentsInReviewProps> = ({
       {hasMissingInjuryCertificate(application.answers) && (
         <FileUploadController
           application={application}
-          id="attachments.injuryCertificateFile"
+          id="attachments.injuryCertificateFile.file"
           accept={UPLOAD_ACCEPT}
           header={formatMessage(addDocuments.injuryCertificate.uploadHeader)}
           description={formatMessage(addDocuments.general.uploadDescription)}
