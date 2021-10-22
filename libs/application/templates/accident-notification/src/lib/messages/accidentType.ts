@@ -106,7 +106,7 @@ export const accidentType = {
     },
     apprenticeship: {
       id: 'an.application:accidentType.studiesAccidentType.appprenticeship',
-      defaultMessage: 'Verknámi í Háskóla',
+      defaultMessage: 'Verknámi í háskóla',
       description: 'Label for the apprenticeship studies accident',
     },
     internship: {
