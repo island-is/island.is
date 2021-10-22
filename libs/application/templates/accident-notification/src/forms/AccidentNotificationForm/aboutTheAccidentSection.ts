@@ -786,8 +786,10 @@ export const aboutTheAccidentSection = buildSection({
       id: 'companyInfo.subSection',
       title: companyInfo.general.title,
       condition: (formValue) =>
-        isGeneralWorkplaceAccident(formValue) &&
-        !isReportingOnBehalfOfEmployee(formValue),
+        (isGeneralWorkplaceAccident(formValue) &&
+          !isReportingOnBehalfOfEmployee(formValue)) ||
+        (isInternshipStudiesAccident(formValue) &&
+          !isReportingOnBehalfOfEmployee(formValue)),
       children: [
         buildMultiField({
           id: 'companyInfo',
@@ -873,6 +875,7 @@ export const aboutTheAccidentSection = buildSection({
       title: schoolInfo.general.title,
       condition: (formValue) =>
         isStudiesAccident(formValue) &&
+        !isInternshipStudiesAccident(formValue) &&
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
