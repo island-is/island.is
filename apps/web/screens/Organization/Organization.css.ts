@@ -1,4 +1,4 @@
-import { responsiveStyleMap } from '@island.is/island-ui/theme'
+import { responsiveStyleMap } from '@island.is/island-ui/vanilla-extract-utils'
 import { style } from '@vanilla-extract/css'
 
 export const gradient = style({
