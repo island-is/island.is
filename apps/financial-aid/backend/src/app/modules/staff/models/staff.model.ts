@@ -15,7 +15,7 @@ import { Staff, StaffRole } from '@island.is/financial-aid/shared/lib'
   tableName: 'staff',
   timestamps: true,
 })
-export class StaffModel extends Model<Staff> {
+export class StaffModel extends Model implements Staff {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

@@ -14,7 +14,7 @@ import { Aid, AidType } from '@island.is/financial-aid/shared/lib'
   tableName: 'aid',
   timestamps: true,
 })
-export class AidModel extends Model<Aid> {
+export class AidModel extends Model implements Aid {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
