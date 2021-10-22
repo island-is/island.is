@@ -52,6 +52,7 @@ import {
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
   isInjuredAndRepresentativeOfCompanyOrInstitute,
+  isInternshipStudiesAccident,
   isLocatedOnShipOther,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfEmployee,
@@ -346,7 +347,9 @@ export const aboutTheAccidentSection = buildSection({
           id: 'accidentLocation.studiesAccident',
           title: accidentLocation.studiesAccidentLocation.heading,
           description: accidentLocation.studiesAccidentLocation.description,
-          condition: (formValue) => isStudiesAccident(formValue),
+          condition: (formValue) =>
+            isStudiesAccident(formValue) &&
+            !isInternshipStudiesAccident(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
