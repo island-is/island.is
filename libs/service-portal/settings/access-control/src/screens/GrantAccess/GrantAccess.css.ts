@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
@@ -17,14 +17,14 @@ export const icon = style({
 })
 
 export const loadingIcon = style({
-  '@keyframes': {
+  animationName: keyframes({
     from: {
       transform: 'translateY(-50%) rotate(0deg)',
     },
     to: {
       transform: 'translateY(-50%) rotate(360deg)',
     },
-  },
+  }),
   animationDuration: '1.5s',
   animationIterationCount: 'infinite',
   animationTimingFunction: 'linear',

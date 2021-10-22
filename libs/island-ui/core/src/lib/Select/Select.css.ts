@@ -1,8 +1,7 @@
-import { style, globalStyle, styleMap, Style } from 'treat'
+import { style, globalStyle, styleVariants, StyleRule } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import * as inputMixins from '../Input/Input.mixins'
 import merge from 'lodash/merge'
-import { StyleWithSelectors } from 'treat/lib/types/types'
 
 /**
  * Media does not work under the selector key, this function moves the selector under the media key
@@ -29,17 +28,17 @@ import { StyleWithSelectors } from 'treat/lib/types/types'
  * @param stylesObj
  * @param selector
  */
-const wrapMedia = (stylesObj: Style = {}, selector: string): Style => {
+const wrapMedia = (stylesObj: StyleRule = {}, selector: string): StyleRule => {
   const keys = Object.keys(stylesObj) as (keyof typeof stylesObj)[]
-  const initialValue: Style = { selectors: {} }
+  const initialValue: StyleRule = { selectors: {} }
   return keys.reduce((acc, key) => {
     if (key === '@media') {
       const mediaObj: {
-        [query: string]: StyleWithSelectors
+        [query: string]: StyleRule
       } = stylesObj['@media'] || {}
       const mediaKeys = Object.keys(mediaObj)
       const initialValue: {
-        [query: string]: StyleWithSelectors
+        [query: string]: StyleRule
       } = {}
       const media = mediaKeys.reduce((mediaAcc = {}, mediaKey) => {
         if (!mediaAcc[mediaKey]) {
@@ -68,7 +67,7 @@ const wrapMedia = (stylesObj: Style = {}, selector: string): Style => {
 }
 
 export const wrapper = style({}, 'wrapper')
-export const wrapperColor = styleMap({ blue: {}, white: {} }, 'wrapperColor')
+export const wrapperColor = styleVariants({ blue: {}, white: {} }, 'wrapperColor')
 export const valueContainer = style(
   {
     selectors: {
@@ -104,10 +103,10 @@ export const placeholderPadding = style({
   },
   ...wrapMedia({ '@media': inputMixins.input['@media'] }, `${wrapper} &`),
 })
-export const placeholderSizes = styleMap(inputMixins.inputSizes)
+export const placeholderSizes = styleVariants(inputMixins.inputSizes)
 
 export const input = style(inputMixins.input, 'input')
-export const inputSize = styleMap(
+export const inputSize = styleVariants(
   {
     sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
     md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
@@ -126,7 +125,7 @@ export const hasError = style({})
 
 export const containerDisabled = style({})
 export const container = style({}, 'container')
-export const containerSizes = styleMap(inputMixins.containerSizes)
+export const containerSizes = styleVariants(inputMixins.containerSizes)
 
 globalStyle(`${wrapper} .css-1uccc91-singleValue`, {
   color: theme.color.dark400,
@@ -188,7 +187,7 @@ export const label = style({
     [`${hasError} &`]: inputMixins.labelErrorState,
   },
 })
-export const labelSizes = styleMap({
+export const labelSizes = styleVariants({
   sm: inputMixins.labelSizes.sm,
   md: inputMixins.labelSizes.md,
 })
@@ -201,7 +200,7 @@ export const singleValue = style(
   },
   'singleValue',
 )
-export const singleValueSizes = styleMap(
+export const singleValueSizes = styleVariants(
   {
     sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
     md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
@@ -276,7 +275,7 @@ export const option = style({
   },
 })
 
-export const optionSizes = styleMap({
+export const optionSizes = styleVariants({
   sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
   md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
 })

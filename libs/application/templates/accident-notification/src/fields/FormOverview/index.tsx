@@ -46,7 +46,7 @@ import {
   isReportingOnBehalfOfInjured,
   returnMissingDocumentsList,
 } from '../../utils'
-import * as styles from './FormOverview.treat'
+import * as styles from './FormOverview.css'
 import { FileValueLine, ValueLine } from './ValueLine'
 
 export const FormOverview: FC<FieldBaseProps> = ({

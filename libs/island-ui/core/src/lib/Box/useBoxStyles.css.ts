@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { Properties } from 'csstype'
 import omit from 'lodash/omit'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
@@ -38,65 +38,65 @@ const spaceMapToCss = (
 }
 
 export const margin = {
-  top: styleMap(spaceMapToCss(theme, 'marginTop', 'xs')),
-  bottom: styleMap(spaceMapToCss(theme, 'marginBottom', 'xs')),
-  left: styleMap(spaceMapToCss(theme, 'marginLeft', 'xs')),
-  right: styleMap(spaceMapToCss(theme, 'marginRight', 'xs')),
+  top: styleVariants(spaceMapToCss(theme, 'marginTop', 'xs')),
+  bottom: styleVariants(spaceMapToCss(theme, 'marginBottom', 'xs')),
+  left: styleVariants(spaceMapToCss(theme, 'marginLeft', 'xs')),
+  right: styleVariants(spaceMapToCss(theme, 'marginRight', 'xs')),
 }
 export const marginSm = {
-  top: styleMap(spaceMapToCss(theme, 'marginTop', 'sm')),
-  bottom: styleMap(spaceMapToCss(theme, 'marginBottom', 'sm')),
-  left: styleMap(spaceMapToCss(theme, 'marginLeft', 'sm')),
-  right: styleMap(spaceMapToCss(theme, 'marginRight', 'sm')),
+  top: styleVariants(spaceMapToCss(theme, 'marginTop', 'sm')),
+  bottom: styleVariants(spaceMapToCss(theme, 'marginBottom', 'sm')),
+  left: styleVariants(spaceMapToCss(theme, 'marginLeft', 'sm')),
+  right: styleVariants(spaceMapToCss(theme, 'marginRight', 'sm')),
 }
 export const marginMd = {
-  top: styleMap(spaceMapToCss(theme, 'marginTop', 'md')),
-  bottom: styleMap(spaceMapToCss(theme, 'marginBottom', 'md')),
-  left: styleMap(spaceMapToCss(theme, 'marginLeft', 'md')),
-  right: styleMap(spaceMapToCss(theme, 'marginRight', 'md')),
+  top: styleVariants(spaceMapToCss(theme, 'marginTop', 'md')),
+  bottom: styleVariants(spaceMapToCss(theme, 'marginBottom', 'md')),
+  left: styleVariants(spaceMapToCss(theme, 'marginLeft', 'md')),
+  right: styleVariants(spaceMapToCss(theme, 'marginRight', 'md')),
 }
 export const marginLg = {
-  top: styleMap(spaceMapToCss(theme, 'marginTop', 'lg')),
-  bottom: styleMap(spaceMapToCss(theme, 'marginBottom', 'lg')),
-  left: styleMap(spaceMapToCss(theme, 'marginLeft', 'lg')),
-  right: styleMap(spaceMapToCss(theme, 'marginRight', 'lg')),
+  top: styleVariants(spaceMapToCss(theme, 'marginTop', 'lg')),
+  bottom: styleVariants(spaceMapToCss(theme, 'marginBottom', 'lg')),
+  left: styleVariants(spaceMapToCss(theme, 'marginLeft', 'lg')),
+  right: styleVariants(spaceMapToCss(theme, 'marginRight', 'lg')),
 }
 export const marginXl = {
-  top: styleMap(spaceMapToCss(theme, 'marginTop', 'xl')),
-  bottom: styleMap(spaceMapToCss(theme, 'marginBottom', 'xl')),
-  left: styleMap(spaceMapToCss(theme, 'marginLeft', 'xl')),
-  right: styleMap(spaceMapToCss(theme, 'marginRight', 'xl')),
+  top: styleVariants(spaceMapToCss(theme, 'marginTop', 'xl')),
+  bottom: styleVariants(spaceMapToCss(theme, 'marginBottom', 'xl')),
+  left: styleVariants(spaceMapToCss(theme, 'marginLeft', 'xl')),
+  right: styleVariants(spaceMapToCss(theme, 'marginRight', 'xl')),
 }
 
 export const padding = {
-  top: styleMap(spaceMapToCss(theme, 'paddingTop', 'xs')),
-  bottom: styleMap(spaceMapToCss(theme, 'paddingBottom', 'xs')),
-  left: styleMap(spaceMapToCss(theme, 'paddingLeft', 'xs')),
-  right: styleMap(spaceMapToCss(theme, 'paddingRight', 'xs')),
+  top: styleVariants(spaceMapToCss(theme, 'paddingTop', 'xs')),
+  bottom: styleVariants(spaceMapToCss(theme, 'paddingBottom', 'xs')),
+  left: styleVariants(spaceMapToCss(theme, 'paddingLeft', 'xs')),
+  right: styleVariants(spaceMapToCss(theme, 'paddingRight', 'xs')),
 }
 export const paddingSm = {
-  top: styleMap(spaceMapToCss(theme, 'paddingTop', 'sm')),
-  bottom: styleMap(spaceMapToCss(theme, 'paddingBottom', 'sm')),
-  left: styleMap(spaceMapToCss(theme, 'paddingLeft', 'sm')),
-  right: styleMap(spaceMapToCss(theme, 'paddingRight', 'sm')),
+  top: styleVariants(spaceMapToCss(theme, 'paddingTop', 'sm')),
+  bottom: styleVariants(spaceMapToCss(theme, 'paddingBottom', 'sm')),
+  left: styleVariants(spaceMapToCss(theme, 'paddingLeft', 'sm')),
+  right: styleVariants(spaceMapToCss(theme, 'paddingRight', 'sm')),
 }
 export const paddingMd = {
-  top: styleMap(spaceMapToCss(theme, 'paddingTop', 'md')),
-  bottom: styleMap(spaceMapToCss(theme, 'paddingBottom', 'md')),
-  left: styleMap(spaceMapToCss(theme, 'paddingLeft', 'md')),
-  right: styleMap(spaceMapToCss(theme, 'paddingRight', 'md')),
+  top: styleVariants(spaceMapToCss(theme, 'paddingTop', 'md')),
+  bottom: styleVariants(spaceMapToCss(theme, 'paddingBottom', 'md')),
+  left: styleVariants(spaceMapToCss(theme, 'paddingLeft', 'md')),
+  right: styleVariants(spaceMapToCss(theme, 'paddingRight', 'md')),
 }
 export const paddingLg = {
-  top: styleMap(spaceMapToCss(theme, 'paddingTop', 'lg')),
-  bottom: styleMap(spaceMapToCss(theme, 'paddingBottom', 'lg')),
-  left: styleMap(spaceMapToCss(theme, 'paddingLeft', 'lg')),
-  right: styleMap(spaceMapToCss(theme, 'paddingRight', 'lg')),
+  top: styleVariants(spaceMapToCss(theme, 'paddingTop', 'lg')),
+  bottom: styleVariants(spaceMapToCss(theme, 'paddingBottom', 'lg')),
+  left: styleVariants(spaceMapToCss(theme, 'paddingLeft', 'lg')),
+  right: styleVariants(spaceMapToCss(theme, 'paddingRight', 'lg')),
 }
 export const paddingXl = {
-  top: styleMap(spaceMapToCss(theme, 'paddingTop', 'xl')),
-  bottom: styleMap(spaceMapToCss(theme, 'paddingBottom', 'xl')),
-  left: styleMap(spaceMapToCss(theme, 'paddingLeft', 'xl')),
-  right: styleMap(spaceMapToCss(theme, 'paddingRight', 'xl')),
+  top: styleVariants(spaceMapToCss(theme, 'paddingTop', 'xl')),
+  bottom: styleVariants(spaceMapToCss(theme, 'paddingBottom', 'xl')),
+  left: styleVariants(spaceMapToCss(theme, 'paddingLeft', 'xl')),
+  right: styleVariants(spaceMapToCss(theme, 'paddingRight', 'xl')),
 }
 
 export const transform = {
@@ -105,11 +105,11 @@ export const transform = {
   }),
 }
 
-export const transition = styleMap(
+export const transition = styleVariants(
   mapToStyleProperty(theme.transitions, 'transition'),
 )
 
-export const border = styleMap({
+export const border = styleVariants({
   standard: {
     border: `${theme.border.style.solid} ${theme.border.width.standard}px ${theme.border.color.standard}`,
   },
@@ -119,43 +119,43 @@ export const border = styleMap({
 })
 
 export const borderRadius = {
-  ...styleMap(
+  ...styleVariants(
     mapToStyleProperty(theme.border.radius, 'borderRadius'),
     'borderRadius',
   ),
 }
 
-export const borderColor = styleMap(
+export const borderColor = styleVariants(
   mapToStyleProperty(theme.border.color, 'borderColor'),
   'borderColor',
 )
 
-export const borderWidth = styleMap(
+export const borderWidth = styleVariants(
   mapToStyleProperty(theme.border.width, 'borderWidth'),
   'borderWidth',
 )
 
-export const borderRightWidth = styleMap(
+export const borderRightWidth = styleVariants(
   mapToStyleProperty(theme.border.width, 'borderRightWidth'),
   'borderRightWidth',
 )
 
-export const borderTopWidth = styleMap(
+export const borderTopWidth = styleVariants(
   mapToStyleProperty(theme.border.width, 'borderTopWidth'),
   'borderTopWidth',
 )
 
-export const borderLeftWidth = styleMap(
+export const borderLeftWidth = styleVariants(
   mapToStyleProperty(theme.border.width, 'borderLeftWidth'),
   'borderLeftWidth',
 )
 
-export const borderBottomWidth = styleMap(
+export const borderBottomWidth = styleVariants(
   mapToStyleProperty(theme.border.width, 'borderBottomWidth'),
   'borderBottomWidth',
 )
 
-export const borderXWidth = styleMap(
+export const borderXWidth = styleVariants(
   {
     ...mapToStyleProperty(theme.border.width, 'borderLeftWidth'),
     ...mapToStyleProperty(theme.border.width, 'borderRightWidth'),
@@ -163,7 +163,7 @@ export const borderXWidth = styleMap(
   'borderXWidth',
 )
 
-export const borderYWidth = styleMap(
+export const borderYWidth = styleVariants(
   {
     ...mapToStyleProperty(theme.border.width, 'borderTopWidth'),
     ...mapToStyleProperty(theme.border.width, 'borderBottomWidth'),
@@ -171,13 +171,13 @@ export const borderYWidth = styleMap(
   'borderYWidth',
 )
 
-export const borderStyle = styleMap(
+export const borderStyle = styleVariants(
   mapToStyleProperty(theme.border.style, 'borderStyle'),
   'borderStyle',
 )
 
 export const width = {
-  ...styleMap(
+  ...styleVariants(
     {
       full: { width: '100%' },
       touchable: { width: theme.spacing[1] * theme.touchableSize },
@@ -188,7 +188,7 @@ export const width = {
 }
 
 export const height = {
-  ...styleMap(
+  ...styleVariants(
     {
       full: { height: '100%' },
       touchable: { height: theme.spacing[1] * theme.touchableSize },
@@ -204,7 +204,7 @@ const positionRules = {
   static: 'static',
   sticky: 'sticky',
 }
-export const position = styleMap(mapToStyleProperty(positionRules, 'position'))
+export const position = styleVariants(mapToStyleProperty(positionRules, 'position'))
 
 const displayRules = {
   block: 'block',
@@ -214,29 +214,29 @@ const displayRules = {
   flex: 'flex',
   inlineFlex: 'inline-flex',
 }
-export const display = styleMap(mapToStyleProperty(displayRules, 'display'))
-export const displaySm = styleMap(
+export const display = styleVariants(mapToStyleProperty(displayRules, 'display'))
+export const displaySm = styleVariants(
   mapToStyleProperty(displayRules, 'display', (value, propertyName) =>
     themeUtils.responsiveStyle({
       sm: { [propertyName]: value },
     }),
   ),
 )
-export const displayMd = styleMap(
+export const displayMd = styleVariants(
   mapToStyleProperty(displayRules, 'display', (value, propertyName) =>
     themeUtils.responsiveStyle({
       md: { [propertyName]: value },
     }),
   ),
 )
-export const displayLg = styleMap(
+export const displayLg = styleVariants(
   mapToStyleProperty(displayRules, 'display', (value, propertyName) =>
     themeUtils.responsiveStyle({
       lg: { [propertyName]: value },
     }),
   ),
 )
-export const displayXl = styleMap(
+export const displayXl = styleVariants(
   mapToStyleProperty(displayRules, 'display', (value, propertyName) =>
     themeUtils.responsiveStyle({
       xl: { [propertyName]: value },
@@ -251,31 +251,31 @@ const alignItemsRules = {
   baseline: 'baseline',
   stretch: 'stretch',
 }
-export const alignItems = styleMap(
+export const alignItems = styleVariants(
   mapToStyleProperty(alignItemsRules, 'alignItems'),
 )
-export const alignItemsSm = styleMap(
+export const alignItemsSm = styleVariants(
   mapToStyleProperty(alignItemsRules, 'alignItems', (value, propertyName) =>
     themeUtils.responsiveStyle({
       sm: { [propertyName]: value },
     }),
   ),
 )
-export const alignItemsMd = styleMap(
+export const alignItemsMd = styleVariants(
   mapToStyleProperty(alignItemsRules, 'alignItems', (value, propertyName) =>
     themeUtils.responsiveStyle({
       md: { [propertyName]: value },
     }),
   ),
 )
-export const alignItemsLg = styleMap(
+export const alignItemsLg = styleVariants(
   mapToStyleProperty(alignItemsRules, 'alignItems', (value, propertyName) =>
     themeUtils.responsiveStyle({
       lg: { [propertyName]: value },
     }),
   ),
 )
-export const alignItemsXl = styleMap(
+export const alignItemsXl = styleVariants(
   mapToStyleProperty(alignItemsRules, 'alignItems', (value, propertyName) =>
     themeUtils.responsiveStyle({
       xl: { [propertyName]: value },
@@ -290,10 +290,10 @@ const justifyContentRules = {
   spaceBetween: 'space-between',
   spaceAround: 'space-around',
 }
-export const justifyContent = styleMap(
+export const justifyContent = styleVariants(
   mapToStyleProperty(justifyContentRules, 'justifyContent'),
 )
-export const justifyContentSm = styleMap(
+export const justifyContentSm = styleVariants(
   mapToStyleProperty(
     justifyContentRules,
     'justifyContent',
@@ -303,7 +303,7 @@ export const justifyContentSm = styleMap(
       }),
   ),
 )
-export const justifyContentMd = styleMap(
+export const justifyContentMd = styleVariants(
   mapToStyleProperty(
     justifyContentRules,
     'justifyContent',
@@ -313,7 +313,7 @@ export const justifyContentMd = styleMap(
       }),
   ),
 )
-export const justifyContentLg = styleMap(
+export const justifyContentLg = styleVariants(
   mapToStyleProperty(
     justifyContentRules,
     'justifyContent',
@@ -323,7 +323,7 @@ export const justifyContentLg = styleMap(
       }),
   ),
 )
-export const justifyContentXl = styleMap(
+export const justifyContentXl = styleVariants(
   mapToStyleProperty(
     justifyContentRules,
     'justifyContent',
@@ -340,10 +340,10 @@ const flexDirectionRules = {
   column: 'column',
   columnReverse: 'column-reverse',
 }
-export const flexDirection = styleMap(
+export const flexDirection = styleVariants(
   mapToStyleProperty(flexDirectionRules, 'flexDirection'),
 )
-export const flexDirectionSm = styleMap(
+export const flexDirectionSm = styleVariants(
   mapToStyleProperty(
     flexDirectionRules,
     'flexDirection',
@@ -353,7 +353,7 @@ export const flexDirectionSm = styleMap(
       }),
   ),
 )
-export const flexDirectionMd = styleMap(
+export const flexDirectionMd = styleVariants(
   mapToStyleProperty(
     flexDirectionRules,
     'flexDirection',
@@ -363,7 +363,7 @@ export const flexDirectionMd = styleMap(
       }),
   ),
 )
-export const flexDirectionLg = styleMap(
+export const flexDirectionLg = styleVariants(
   mapToStyleProperty(
     flexDirectionRules,
     'flexDirection',
@@ -373,7 +373,7 @@ export const flexDirectionLg = styleMap(
       }),
   ),
 )
-export const flexDirectionXl = styleMap(
+export const flexDirectionXl = styleVariants(
   mapToStyleProperty(
     flexDirectionRules,
     'flexDirection',
@@ -388,29 +388,29 @@ const flexWrapRules = {
   wrap: 'wrap',
   nowrap: 'nowrap',
 }
-export const flexWrap = styleMap(mapToStyleProperty(flexWrapRules, 'flexWrap'))
-export const flexWrapSm = styleMap(
+export const flexWrap = styleVariants(mapToStyleProperty(flexWrapRules, 'flexWrap'))
+export const flexWrapSm = styleVariants(
   mapToStyleProperty(flexWrapRules, 'flexWrap', (value, propertyName) =>
     themeUtils.responsiveStyle({
       sm: { [propertyName]: value },
     }),
   ),
 )
-export const flexWrapMd = styleMap(
+export const flexWrapMd = styleVariants(
   mapToStyleProperty(flexWrapRules, 'flexWrap', (value, propertyName) =>
     themeUtils.responsiveStyle({
       md: { [propertyName]: value },
     }),
   ),
 )
-export const flexWrapLg = styleMap(
+export const flexWrapLg = styleVariants(
   mapToStyleProperty(flexWrapRules, 'flexWrap', (value, propertyName) =>
     themeUtils.responsiveStyle({
       lg: { [propertyName]: value },
     }),
   ),
 )
-export const flexWrapXl = styleMap(
+export const flexWrapXl = styleVariants(
   mapToStyleProperty(flexWrapRules, 'flexWrap', (value, propertyName) =>
     themeUtils.responsiveStyle({
       xl: { [propertyName]: value },
@@ -422,53 +422,53 @@ const flexShrinkRules = {
   0: 0,
   1: 1,
 }
-export const flexShrink = styleMap(
+export const flexShrink = styleVariants(
   mapToStyleProperty(flexShrinkRules, 'flexShrink'),
-) as Record<keyof typeof flexShrinkRules, string> // Remove this when 'styleMap' supports numbers as keys and it's been released to sku consumers
+) as Record<keyof typeof flexShrinkRules, string> // Remove this when 'styleVariants' supports numbers as keys and it's been released to sku consumers
 
 const flexGrowRules = {
   0: 0,
   1: 1,
 }
-export const flexGrow = styleMap(
+export const flexGrow = styleVariants(
   mapToStyleProperty(flexGrowRules, 'flexGrow'),
-) as Record<keyof typeof flexGrowRules, string> // Remove this when 'styleMap' supports numbers as keys and it's been released to sku consumers
+) as Record<keyof typeof flexGrowRules, string> // Remove this when 'styleVariants' supports numbers as keys and it's been released to sku consumers
 
 const dotDesktop = `url('data:image/svg+xml,%0A%3Csvg width="33" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1.96472 3.92944C3.0498 3.92944 3.92943 3.0498 3.92943 1.96472C3.92943 0.879639 3.0498 0 1.96472 0C0.879633 0 0 0.879639 0 1.96472C0 3.0498 0.879633 3.92944 1.96472 3.92944Z" fill="%23CCDFFF"/%3E%3C/svg%3E%0A')`
 const dotMobile = `url('data:image/svg+xml,%0A%3Csvg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="24" height="24" fill="white"/%3E%3Cpath d="M1.41521 2.83041C2.19681 2.83041 2.83041 2.19681 2.83041 1.41521C2.83041 0.63361 2.19681 0 1.41521 0C0.63361 0 0 0.63361 0 1.41521C0 2.19681 0.63361 2.83041 1.41521 2.83041Z" fill="%23CCDFFF"/%3E%3C/svg%3E%0A')`
 
-export const backgroundPattern = styleMap({
+export const backgroundPattern = styleVariants({
   dotted: themeUtils.responsiveStyle({
     md: { background: dotDesktop },
     xs: { background: dotMobile },
   }),
 })
 
-export const background = styleMap(
+export const background = styleVariants(
   mapToStyleProperty(theme.color, 'background'),
 )
-export const backgroundSm = styleMap(
+export const backgroundSm = styleVariants(
   mapToStyleProperty(theme.color, 'background', (value, propertyName) =>
     themeUtils.responsiveStyle({
       sm: { [propertyName]: value },
     }),
   ),
 )
-export const backgroundMd = styleMap(
+export const backgroundMd = styleVariants(
   mapToStyleProperty(theme.color, 'background', (value, propertyName) =>
     themeUtils.responsiveStyle({
       md: { [propertyName]: value },
     }),
   ),
 )
-export const backgroundLg = styleMap(
+export const backgroundLg = styleVariants(
   mapToStyleProperty(theme.color, 'background', (value, propertyName) =>
     themeUtils.responsiveStyle({
       lg: { [propertyName]: value },
     }),
   ),
 )
-export const backgroundXl = styleMap(
+export const backgroundXl = styleVariants(
   mapToStyleProperty(theme.color, 'background', (value, propertyName) =>
     themeUtils.responsiveStyle({
       xl: { [propertyName]: value },
@@ -482,7 +482,7 @@ const boxShadowProps = {
   shadows: theme.shadows,
 }
 
-export const boxShadow = styleMap({
+export const boxShadow = styleVariants({
   ...mapToStyleProperty(boxShadowProps.shadows, 'boxShadow'),
   outlineFocus: {
     boxShadow: `0 0 0 ${boxShadowProps.borderWidth.large}px ${boxShadowProps.color.focus}`,
@@ -492,11 +492,11 @@ export const boxShadow = styleMap({
   },
 })
 
-export const cursor = styleMap({
+export const cursor = styleVariants({
   pointer: { cursor: 'pointer' },
 })
 
-export const pointerEvents = styleMap({
+export const pointerEvents = styleVariants({
   none: { pointerEvents: 'none' },
 })
 
@@ -506,31 +506,31 @@ const textAlignRules = {
   right: 'right',
 }
 
-export const textAlign = styleMap(
+export const textAlign = styleVariants(
   mapToStyleProperty(textAlignRules, 'textAlign'),
 )
-export const textAlignSm = styleMap(
+export const textAlignSm = styleVariants(
   mapToStyleProperty(textAlignRules, 'textAlign', (value, propertyName) =>
     themeUtils.responsiveStyle({
       sm: { [propertyName]: value },
     }),
   ),
 )
-export const textAlignMd = styleMap(
+export const textAlignMd = styleVariants(
   mapToStyleProperty(textAlignRules, 'textAlign', (value, propertyName) =>
     themeUtils.responsiveStyle({
       md: { [propertyName]: value },
     }),
   ),
 )
-export const textAlignLg = styleMap(
+export const textAlignLg = styleVariants(
   mapToStyleProperty(textAlignRules, 'textAlign', (value, propertyName) =>
     themeUtils.responsiveStyle({
       lg: { [propertyName]: value },
     }),
   ),
 )
-export const textAlignXl = styleMap(
+export const textAlignXl = styleVariants(
   mapToStyleProperty(textAlignRules, 'textAlign', (value, propertyName) =>
     themeUtils.responsiveStyle({
       xl: { [propertyName]: value },
@@ -544,52 +544,52 @@ const overflowRules = {
   visible: 'visible',
   auto: 'auto',
 }
-export const overflow = styleMap(mapToStyleProperty(overflowRules, 'overflow'))
+export const overflow = styleVariants(mapToStyleProperty(overflowRules, 'overflow'))
 
 const minWidthRules = {
   0: '0%', // We use a percentage here so it supports IE11: https://css-tricks.com/flexbox-truncated-text/#comment-1611744
 }
-export const minWidth = styleMap(
+export const minWidth = styleVariants(
   mapToStyleProperty(minWidthRules, 'minWidth'),
-) as Record<keyof typeof minWidthRules, string> // Remove this when 'styleMap' supports numbers as keys and it's been released to sku consumers
+) as Record<keyof typeof minWidthRules, string> // Remove this when 'styleVariants' supports numbers as keys and it's been released to sku consumers
 
 const relativePositionRules = {
   0: 0,
   4: '32px',
   20: '20px',
 }
-// Remove this when 'styleMap' supports numbers as keys and it's been released to sku consumers,
+// Remove this when 'styleVariants' supports numbers as keys and it's been released to sku consumers,
 type PositionRulesType = Record<keyof typeof relativePositionRules, string>
 export const relativePosition = {
-  top: styleMap(
+  top: styleVariants(
     mapToStyleProperty(relativePositionRules, 'top'),
   ) as PositionRulesType,
-  bottom: styleMap(
+  bottom: styleVariants(
     mapToStyleProperty(relativePositionRules, 'bottom'),
   ) as PositionRulesType,
-  left: styleMap(
+  left: styleVariants(
     mapToStyleProperty(relativePositionRules, 'left'),
   ) as PositionRulesType,
-  right: styleMap(
+  right: styleVariants(
     mapToStyleProperty(relativePositionRules, 'right'),
   ) as PositionRulesType,
 }
 
-export const userSelect = styleMap({
+export const userSelect = styleVariants({
   none: { userSelect: 'none' },
 })
 
-export const outline = styleMap({
+export const outline = styleVariants({
   none: { outline: 'none' },
 })
 
-export const opacity = styleMap({
+export const opacity = styleVariants({
   0: { opacity: 0 },
   0.5: { opacity: 0.5 },
   1: { opacity: 1 },
 })
 
-export const zIndex = styleMap({
+export const zIndex = styleVariants({
   10: { zIndex: 10 },
   20: { zIndex: 20 },
   30: { zIndex: 30 },

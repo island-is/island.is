@@ -1,5 +1,5 @@
-import * as RSBStyles from './RegulationsSidebarBox.treat'
-import * as s from './RegulationInfoBox.treat'
+import * as RSBStyles from './RegulationsSidebarBox.css'
+import * as s from './RegulationInfoBox.css'
 
 import React, { useState } from 'react'
 import { Button, Hidden, Link, Text } from '@island.is/island-ui/core'

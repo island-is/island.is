@@ -1,4 +1,4 @@
-import { styleMap } from 'treat'
+import { styleVariants } from '@vanilla-extract/css'
 import mapValues from 'lodash/mapValues'
 import { themeUtils, Theme } from '@island.is/island-ui/theme'
 
@@ -13,7 +13,7 @@ const columnsWidths = {
 
 type ColumnWidths = Record<keyof typeof columnsWidths, string>
 const makeColumnsAtoms = (breakpoint: keyof Theme['breakpoints']) =>
-  styleMap(
+  styleVariants(
     mapValues(columnsWidths, (width) =>
       themeUtils.responsiveStyle({ [breakpoint]: { flex: `0 0 ${width}` } }),
     ),

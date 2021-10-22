@@ -10,7 +10,7 @@ import {
   GridColumn,
   LoadingIcon,
 } from '@island.is/island-ui/core'
-import * as styles from './Modal.treat'
+import * as styles from './Modal.css'
 import { OutlinedError } from '@island.is/skilavottord-web/components'
 import { Errors } from '@island.is/skilavottord-web/i18n/locales/translation'
 

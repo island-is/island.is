@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { hexToRgba } from '@island.is/island-ui/utils'
 
 export const backdrop = style({
@@ -20,7 +20,7 @@ export const backdrop = style({
   },
 })
 
-export const backdropColor = styleMap({
+export const backdropColor = styleVariants({
   default: {
     backgroundColor: hexToRgba(theme.color.blue100, 0.7),
   },

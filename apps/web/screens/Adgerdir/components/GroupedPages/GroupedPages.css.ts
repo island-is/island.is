@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 import covidColors from '../UI/colors'
 
@@ -8,7 +8,7 @@ export const container = style({
   borderStyle: 'solid',
 })
 
-export const variants = styleMap({
+export const variants = styleVariants({
   blue: {
     borderColor: covidColors.blue200,
   },

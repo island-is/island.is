@@ -1,4 +1,4 @@
-import { style, globalStyle } from 'treat'
+import { style, globalStyle } from '@vanilla-extract/css'
 
 export const table = style({
   textAlign: 'left',

@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const button = style({})
@@ -101,7 +101,7 @@ const iconWrapSizes = {
   sidebar: 20,
 }
 
-export const iconWrapVariants = styleMap({
+export const iconWrapVariants = styleVariants({
   default: {
     backgroundColor: theme.color.blue100,
     color: theme.color.blue400,

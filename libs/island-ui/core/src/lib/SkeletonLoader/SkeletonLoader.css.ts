@@ -1,6 +1,4 @@
-import { style, styleMap } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
-import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
+import { keyframes, style } from '@vanilla-extract/css'
 
 export const loader = style({
   height: '1em',
@@ -16,11 +14,11 @@ export const loader = style({
     animationIterationCount: 'infinite',
     animationDuration: '2s',
     content: '""',
-    '@keyframes': {
+    animationName: keyframes({
       to: {
         transform: 'translateX(100%)',
         color: 'inherit',
       },
-    },
+    }),
   },
 })

@@ -1,4 +1,4 @@
-import { style, globalStyle } from 'treat'
+import { style, globalStyle, keyframes } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const root = style(
@@ -202,12 +202,12 @@ globalStyle(`${root} .Toastify__toast--warning .Toastify__progress-bar`, {
 globalStyle(`${root} .Toastify__toast--error .Toastify__progress-bar`, {
   background: theme.color.red400,
 })
+const progressBarAnimation = keyframes({
+  '0%': { transform: 'scaleX(1)' },
+  '100%': { transform: 'scaleX(0)' },
+})
 globalStyle(`${root} .Toastify__progress-bar--animated`, {
-  animation: '@keyframes linear 1 forwards',
-  '@keyframes': {
-    '0%': { transform: 'scaleX(1)' },
-    '100%': { transform: 'scaleX(0)' },
-  },
+  animation: `${progressBarAnimation} linear 1 forwards`,
 })
 globalStyle(`${root} .Toastify__progress-bar--controlled`, {
   transition: 'transform 0.2s',
@@ -224,71 +224,63 @@ globalStyle(`${root} .Toastify__progress-bar--dark`, {
 globalStyle(
   `${useMotion} .Toastify__slide-enter--top-left, ${useMotion} .Toastify__slide-enter--bottom-left`,
   {
-    animationName: '@keyframes',
-    '@keyframes': {
+    animationName: keyframes({
       from: { transform: 'translate3d(-110%, 0, 0)', visibility: 'visible' },
       to: { transform: 'translate3d(0, 0, 0)' },
-    },
+    }),
   },
 )
 globalStyle(
   `${useMotion} .Toastify__slide-enter--top-right, ${useMotion} .Toastify__slide-enter--bottom-right`,
   {
-    animationName: '@keyframes',
-    '@keyframes': {
+    animationName: keyframes({
       from: {
         transform: 'translate3d(110%, 0, 0)',
         visibility: 'visible',
       },
       to: { transform: 'translate3d(0, 0, 0)' },
-    },
+    }),
   },
 )
 globalStyle(`${useMotion} .Toastify__slide-enter--top-center`, {
-  animationName: '@keyframes',
-  '@keyframes': {
+  animationName: keyframes({
     from: { transform: 'translate3d(0, -110%, 0)', visibility: 'visible' },
     to: { transform: 'translate3d(0, 0, 0)' },
-  },
+  }),
 })
 globalStyle(`${useMotion} .Toastify__slide-enter--bottom-center`, {
-  animationName: '@keyframes',
-  '@keyframes': {
+  animationName: keyframes({
     from: { transform: 'translate3d(0, 110%, 0)', visibility: 'visible' },
     to: { transform: 'translate3d(0, 0, 0)' },
-  },
+  }),
 })
 globalStyle(
   `${useMotion} .Toastify__slide-exit--top-left, ${useMotion} .Toastify__slide-exit--bottom-left`,
   {
-    animationName: '@keyframes',
-    '@keyframes': {
+    animationName: keyframes({
       from: { transform: 'translate3d(0, 0, 0)' },
       to: { visibility: 'hidden', transform: 'translate3d(-110%, 0, 0)' },
-    },
+    }),
   },
 )
 globalStyle(
   `${useMotion} .Toastify__slide-exit--top-right, ${useMotion} .Toastify__slide-exit--bottom-right`,
   {
-    animationName: '@keyframes',
-    '@keyframes': {
+    animationName: keyframes({
       from: { transform: 'translate3d(0, 0, 0)' },
       to: { visibility: 'hidden', transform: 'translate3d(110%, 0, 0)' },
-    },
+    }),
   },
 )
 globalStyle(`${useMotion} .Toastify__slide-exit--top-center`, {
-  animationName: '@keyframes',
-  '@keyframes': {
+  animationName: keyframes({
     from: { transform: 'translate3d(0, 0, 0)' },
     to: { visibility: 'hidden', transform: 'translate3d(0, -500px, 0)' },
-  },
+  }),
 })
 globalStyle(`${useMotion} .Toastify__slide-exit--bottom-center`, {
-  animationName: '@keyframes',
-  '@keyframes': {
+  animationName: keyframes({
     from: { transform: 'translate3d(0, 0, 0)' },
     to: { visibility: 'hidden', transform: 'translate3d(0, 500px, 0)' },
-  },
+  }),
 })

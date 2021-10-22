@@ -4,7 +4,6 @@
 //       overridden styles, like global and box, need to come first.
 
 // Global
-export * from './treat/global.treat'
 export * from './utils/globalStyles'
 
 // Layout
@@ -108,4 +107,4 @@ export type {
   DatePickerProps,
 } from './lib/DatePicker/types'
 export type { ResponsiveProp } from './utils/responsiveProp'
-export type { GridColumns } from './lib/Grid/GridColumn/GridColumn.treat'
+export type { GridColumns } from './lib/Grid/GridColumn/GridColumn.css'

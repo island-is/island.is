@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { style, globalStyle } from 'treat'
+import { style, globalStyle } from '@vanilla-extract/css'
 
 export const menu = style({
   width: 150,

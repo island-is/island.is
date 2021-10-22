@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const divider = style({
@@ -16,7 +16,7 @@ export const ul = style({
   borderLeftColor: theme.color.transparent,
 })
 
-export const colorScheme = styleMap({
+export const colorScheme = styleVariants({
   blue: {},
   purple: {},
   darkBlue: {},
@@ -28,7 +28,7 @@ export const link = style({
   },
 })
 
-export const level = styleMap({
+export const level = styleVariants({
   1: {
     padding: 0,
   },
@@ -71,7 +71,7 @@ export const dropdownIcon = style({
   borderRadius: '50%',
 })
 
-export const menuShadow = styleMap({
+export const menuShadow = styleVariants({
   blue: {
     boxShadow: ' 0px 4px 30px rgba(0, 97, 255, 0.25)',
   },

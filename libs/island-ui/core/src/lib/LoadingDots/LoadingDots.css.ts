@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const single = style({})
@@ -36,10 +36,25 @@ const gradient3 = `linear-gradient(90deg,
   #FD0050 100%
 )`
 
-export const colors = styleMap({
+export const colors = styleVariants({
   blue: {},
   white: {},
   gradient: {},
+})
+
+const dotAnimation = keyframes({
+  '0%': {
+    transform: 'scale(1)',
+    opacity: 1,
+  },
+  '50%': {
+    transform: 'scale(0.8)',
+    opacity: 0.4,
+  },
+  '100%': {
+    transform: 'scale(1)',
+    opacity: 1,
+  },
 })
 
 export const dot = style({
@@ -96,19 +111,5 @@ export const dot = style({
     },
   },
   animation:
-    '@keyframes 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite',
-  '@keyframes': {
-    '0%': {
-      transform: 'scale(1)',
-      opacity: 1,
-    },
-    '50%': {
-      transform: 'scale(0.8)',
-      opacity: 0.4,
-    },
-    '100%': {
-      transform: 'scale(1)',
-      opacity: 1,
-    },
-  },
+    `${dotAnimation} 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite`,
 })

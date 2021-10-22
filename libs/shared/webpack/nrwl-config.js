@@ -1,5 +1,5 @@
 const DefinePlugin = require('webpack/lib/DefinePlugin')
-const TreatPlugin = require('@vanilla-extract/webpack-plugin')
+const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin')
 const nrwlConfig = require('@nrwl/react/plugins/webpack.js')
 
 /**

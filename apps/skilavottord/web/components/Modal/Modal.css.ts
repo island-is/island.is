@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { style } from 'treat'
+import { keyframes, style } from '@vanilla-extract/css'
 
 export const container = style({
   position: 'fixed',
@@ -15,6 +15,15 @@ export const container = style({
   zIndex: 1,
 })
 
+const overlayAnimation = keyframes({
+  from: {
+    opacity: 0,
+  },
+  to: {
+    opacity: 0.7,
+  },
+})
+
 export const overlay = style({
   position: 'fixed',
   top: 0,
@@ -23,30 +32,25 @@ export const overlay = style({
   bottom: 0,
   opacity: 0.7,
   background: theme.color.blue100,
-  '@keyframes': {
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: 0.7,
-    },
-  },
+  animationName: overlayAnimation,
   animationTimingFunction: 'ease-out',
   animationDuration: '0.25s',
+})
+
+const containerAnimation = keyframes({
+  from: {
+    opacity: 0,
+  },
+  to: {
+    opacity: 1,
+  },
 })
 
 export const modalContainer = style({
   position: 'relative',
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
   zIndex: 1,
-  '@keyframes': {
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: 1,
-    },
-  },
+  animationName: containerAnimation,
   animationTimingFunction: 'ease-out',
   animationDuration: '0.25s',
   '@media': {

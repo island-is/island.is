@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { style } from '@vanilla-extract/css'
 import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const dropdown = style({

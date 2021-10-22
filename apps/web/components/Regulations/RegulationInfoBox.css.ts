@@ -1,4 +1,4 @@
-import { style, globalStyle } from 'treat'
+import { style, globalStyle, keyframes } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 const { spacing, color } = theme
 
@@ -45,6 +45,10 @@ globalStyle(`${container} p > a`, {
 })
 
 // ---------------------------------------------------------------------------
+const indicatorFade = keyframes({
+  '0%': { opacity: 1 },
+  '100%': { opacity: 0 },
+})
 
 export const copiedIndicator = style({
   color: color.mint400,
@@ -53,10 +57,5 @@ export const copiedIndicator = style({
   display: 'inline-block',
   verticalAlign: 'middle',
   paddingLeft: '.25em',
-
-  '@keyframes': {
-    '0%': { opacity: 1 },
-    '100%': { opacity: 0 },
-  },
-  animation: '@keyframes 1000ms 300ms 1 forwards ease-in-out',
+  animation: `${indicatorFade} 1000ms 300ms 1 forwards ease-in-out`,
 })

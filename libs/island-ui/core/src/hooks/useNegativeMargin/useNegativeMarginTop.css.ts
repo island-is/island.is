@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import omit from 'lodash/omit'
 import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
@@ -16,27 +16,27 @@ export const base = style({
   ':before': { content: '""', display: 'block' },
 })
 
-export const xs = styleMap(
+export const xs = styleVariants(
   mapToStyleProperty({ ...spacing }, 'marginTop', (rows) =>
     negativeMarginTop(1, rows),
   ),
 )
-export const sm = styleMap(
+export const sm = styleVariants(
   mapToStyleProperty({ ...spacing }, 'marginTop', (rows) =>
     themeUtils.responsiveStyle({ sm: negativeMarginTop(1, rows) }),
   ),
 )
-export const md = styleMap(
+export const md = styleVariants(
   mapToStyleProperty({ ...spacing }, 'marginTop', (rows) =>
     themeUtils.responsiveStyle({ md: negativeMarginTop(1, rows) }),
   ),
 )
-export const lg = styleMap(
+export const lg = styleVariants(
   mapToStyleProperty({ ...spacing }, 'marginTop', (rows) =>
     themeUtils.responsiveStyle({ lg: negativeMarginTop(1, rows) }),
   ),
 )
-export const xl = styleMap(
+export const xl = styleVariants(
   mapToStyleProperty({ ...spacing }, 'marginTop', (rows) =>
     themeUtils.responsiveStyle({ xl: negativeMarginTop(1, rows) }),
   ),

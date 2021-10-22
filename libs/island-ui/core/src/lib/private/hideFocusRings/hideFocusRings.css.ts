@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { style } from '@vanilla-extract/css'
 import { hideFocusRingsDataAttribute } from './hideFocusRingsDataAttribute'
 
 export const hideFocusRingsClassName = style({

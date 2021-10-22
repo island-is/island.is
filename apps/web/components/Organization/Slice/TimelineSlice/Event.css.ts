@@ -1,5 +1,5 @@
-import { style } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { style } from '@vanilla-extract/css'
+import { theme, themeUtils, keyframes } from '@island.is/island-ui/theme'
 
 export const eventBar = style({
   position: 'relative',
@@ -85,6 +85,15 @@ export const maxValue = style({
 })
 
 // Modal
+const modalFade = keyframes({
+  from: {
+    opacity: 0,
+  },
+  to: {
+    opacity: 1,
+  },
+})
+
 export const eventModal = style({
   position: 'relative',
   borderRadius: `32px 5px 5px 5px`,
@@ -93,14 +102,7 @@ export const eventModal = style({
   maxWidth: 660,
   margin: 'auto',
   backgroundColor: theme.color.white,
-  '@keyframes': {
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: 1,
-    },
-  },
+  animationName: modalFade,
   animationTimingFunction: 'ease-out',
   animationDuration: '0.25s',
   top: 64,

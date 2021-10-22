@@ -1,4 +1,4 @@
-import { Style } from 'treat'
+import { Style } from '@vanilla-extract/css'
 
 type SelectorMap = Style['selectors']
 

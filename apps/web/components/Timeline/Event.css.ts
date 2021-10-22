@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { keyframes, style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const eventBar = style({
@@ -93,14 +93,14 @@ export const eventModal = style({
   maxWidth: 660,
   margin: 'auto',
   backgroundColor: theme.color.purple100,
-  '@keyframes': {
+  animationName: keyframes({
     from: {
       opacity: 0,
     },
     to: {
       opacity: 1,
     },
-  },
+  }),
   animationTimingFunction: 'ease-out',
   animationDuration: '0.25s',
   ...themeUtils.responsiveStyle({

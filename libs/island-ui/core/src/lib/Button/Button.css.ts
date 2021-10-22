@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 // this is used to generate uniqe classname for button so we can target empty styles for icon
@@ -57,14 +57,14 @@ export const nowrap = style({
   whiteSpace: 'nowrap',
 })
 
-export const variants = styleMap({
+export const variants = styleVariants({
   primary: buttonBase,
   ghost: buttonBase,
   text: textBase,
   utility: buttonBase,
 })
 
-export const size = styleMap({
+export const size = styleVariants({
   default: {
     fontSize: 16,
     lineHeight: 1.25,
@@ -122,7 +122,7 @@ export const size = styleMap({
   },
 })
 
-export const padding = styleMap({
+export const padding = styleVariants({
   text: {
     paddingTop: 4,
     paddingBottom: 4,
@@ -156,7 +156,7 @@ export const padding = styleMap({
   },
 })
 
-export const circleSizes = styleMap({
+export const circleSizes = styleVariants({
   default: {
     width: 32,
     height: 32,
@@ -290,7 +290,7 @@ const utilityColors = (
 })
 
 export const colors = {
-  primary: styleMap({
+  primary: styleVariants({
     default: primaryColors(
       theme.color.blue400,
       theme.color.white,
@@ -317,7 +317,7 @@ export const colors = {
       theme.color.blue300,
     ),
   }),
-  ghost: styleMap({
+  ghost: styleVariants({
     default: ghostColors(
       theme.color.blue400,
       theme.color.blueberry400,
@@ -339,7 +339,7 @@ export const colors = {
       theme.color.blue300,
     ),
   }),
-  text: styleMap({
+  text: styleVariants({
     default: textColors(
       theme.color.blue400,
       theme.color.blueberry400,
@@ -361,7 +361,7 @@ export const colors = {
       theme.color.blue300,
     ),
   }),
-  utility: styleMap({
+  utility: styleVariants({
     default: utilityColors(
       theme.color.dark400,
       theme.color.blue200,
@@ -505,6 +505,21 @@ export const loader = style({
   justifyContent: 'center',
 })
 
+const dotAnimation = keyframes({
+  '0%': {
+    transform: 'scale(1)',
+    opacity: 1,
+  },
+  '50%': {
+    transform: 'scale(0.8)',
+    opacity: 0.4,
+  },
+  '100%': {
+    transform: 'scale(1)',
+    opacity: 1,
+  },
+})
+
 export const loadingDot = style({
   width: 8,
   height: 8,
@@ -530,19 +545,5 @@ export const loadingDot = style({
     },
   },
   animation:
-    '@keyframes 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite',
-  '@keyframes': {
-    '0%': {
-      transform: 'scale(1)',
-      opacity: 1,
-    },
-    '50%': {
-      transform: 'scale(0.8)',
-      opacity: 0.4,
-    },
-    '100%': {
-      transform: 'scale(1)',
-      opacity: 1,
-    },
-  },
+    `${dotAnimation} 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite`,
 })

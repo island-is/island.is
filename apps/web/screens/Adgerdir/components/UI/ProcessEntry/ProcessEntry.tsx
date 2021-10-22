@@ -3,8 +3,8 @@ import { Text, Box, Link, BoxProps } from '@island.is/island-ui/core'
 import { IframeModal } from '@island.is/island-ui/contentful'
 import { Button, ButtonProps, ButtonTypes } from '../Button/Button'
 
-import * as covidStyles from '../styles/styles.treat'
-import * as styles from './ProcessEntry.treat'
+import * as covidStyles from '../styles/styles.css'
+import * as styles from './ProcessEntry.css'
 
 export const Titles: {
   [Digital: string]: { is: string; en: string }

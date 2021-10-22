@@ -11,7 +11,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
 
-import * as styles from './ReviewGroup.treat'
+import * as styles from './ReviewGroup.css'
 
 interface ReviewGroupProps {
   editChildren?: ReactNode

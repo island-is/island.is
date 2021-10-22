@@ -1,5 +1,5 @@
 import isEqual from 'lodash/isEqual'
-import { Style } from 'treat'
+import type { StyleRule } from '@vanilla-extract/css'
 import omit from 'lodash/omit'
 import * as color from './colors'
 
@@ -113,7 +113,14 @@ export type Theme = typeof theme
 export type Colors = keyof typeof color
 
 type RequiredTokens = Pick<Theme, 'breakpoints'>
-type StyleWithoutMediaQueries = Exclude<Style['@media'], undefined>[string]
+type StyleWithoutMediaQueries = Exclude<StyleRule['@media'], undefined>[string]
+interface ResponsiveStyle {
+  xs?: StyleWithoutMediaQueries
+  sm?: StyleWithoutMediaQueries
+  md?: StyleWithoutMediaQueries
+  lg?: StyleWithoutMediaQueries
+  xl?: StyleWithoutMediaQueries
+}
 
 export const makeThemeUtils = (tokens: RequiredTokens) => {
   const makeMediaQuery = (breakpoint: keyof RequiredTokens['breakpoints']) => (
@@ -132,15 +139,7 @@ export const makeThemeUtils = (tokens: RequiredTokens) => {
     xl: makeMediaQuery('xl'),
   }
 
-  interface ResponsiveStyle {
-    xs?: StyleWithoutMediaQueries
-    sm?: StyleWithoutMediaQueries
-    md?: StyleWithoutMediaQueries
-    lg?: StyleWithoutMediaQueries
-    xl?: StyleWithoutMediaQueries
-  }
-
-  const responsiveStyle = ({ xs, sm, md, lg, xl }: ResponsiveStyle): Style => {
+  const responsiveStyle = ({ xs, sm, md, lg, xl }: ResponsiveStyle): StyleRule => {
     const xsStyles = omit(xs, '@media')
     const smStyles = !sm || isEqual(sm, xsStyles) ? null : sm
     const mdStyles = !md || isEqual(md, xsStyles || smStyles) ? null : md

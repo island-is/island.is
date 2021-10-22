@@ -1,18 +1,19 @@
-import { style } from 'treat'
+import { keyframes, style } from '@vanilla-extract/css'
+
+const scaleAnimation = keyframes({
+  '50%': {
+    transform: 'scale(0.95)',
+    opacity: 0,
+  },
+  '100%': {
+    transform: 'scale(1)',
+    opacity: 1,
+  },
+})
 
 export const animate = style({
-  '@keyframes': {
-    '50%': {
-      transform: 'scale(0.95)',
-      opacity: 0,
-    },
-    '100%': {
-      transform: 'scale(1)',
-      opacity: 1,
-    },
-  },
   transformOrigin: '50% 50%',
-  animation: '@keyframes ease-in-out infinite alternate',
+  animation: `${scaleAnimation} ease-in-out infinite alternate`,
   selectors: {
     '&:nth-child(1)': {
       animationDuration: '3100ms',

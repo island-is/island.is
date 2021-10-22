@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 import covidColors from '../colors'
 
@@ -31,12 +31,12 @@ const focusColors = (text: string) => ({
   },
 })
 
-export const breadcrumb = styleMap({
+export const breadcrumb = styleVariants({
   blue400: colorScheme(covidColors.green400, covidColors.green400),
   white: colorScheme(theme.color.white, theme.color.white),
 })
 
-export const focusable = styleMap({
+export const focusable = styleVariants({
   blue400: focusColors(covidColors.green400),
   white: focusColors(theme.color.white),
 })
@@ -52,7 +52,7 @@ export const bullet = style({
   width: 4,
 })
 
-export const color = styleMap({
+export const color = styleVariants({
   blue400: { backgroundColor: covidColors.green400 },
   white: { backgroundColor: theme.color.white },
 })

@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const link = style({
@@ -21,7 +21,7 @@ const underline = {
   transition: 'color .2s, box-shadow .2s',
 }
 
-export const underlines = styleMap({
+export const underlines = styleVariants({
   normal: {
     ...underline,
     paddingBottom: 4,
@@ -32,7 +32,7 @@ export const underlines = styleMap({
   },
 })
 
-export const underlineVisibilities = styleMap({
+export const underlineVisibilities = styleVariants({
   always: {
     selectors: {
       [`&${underlines.normal}`]: {
@@ -55,7 +55,7 @@ export const underlineVisibilities = styleMap({
   },
 })
 
-export const colors = styleMap({
+export const colors = styleVariants({
   blue400: {
     color: theme.color.blue400,
     ':hover': {

@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { blue100, blue600, theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const item = style({
@@ -140,7 +140,7 @@ export const arrowButton = style({
   }),
 })
 
-export const arrowButtonShadow = styleMap({
+export const arrowButtonShadow = styleVariants({
   prev: {
     position: 'absolute',
     background:
@@ -177,7 +177,7 @@ export const arrowButtonShadow = styleMap({
   },
 })
 
-export const arrowButtonTypes = styleMap({
+export const arrowButtonTypes = styleVariants({
   prev: {
     top: 88,
     left: 16,

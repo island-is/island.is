@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { style } from '@vanilla-extract/css'
 
 export const iconStyle = style({
   height: 96,

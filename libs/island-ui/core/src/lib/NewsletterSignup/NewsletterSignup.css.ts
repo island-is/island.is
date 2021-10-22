@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const buttonWrap = style({
@@ -13,7 +13,7 @@ export const inputWrap = style({
   flex: '0 1 70%',
 })
 
-export const variants = styleMap({
+export const variants = styleVariants({
   white: {
     backgroundColor: 'white',
   },

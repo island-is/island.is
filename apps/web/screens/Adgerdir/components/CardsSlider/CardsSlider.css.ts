@@ -1,4 +1,4 @@
-import { style, styleMap, globalStyle } from 'treat'
+import { style, styleVariants, globalStyle } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
 import covidColors from '../UI/colors'
 
@@ -21,7 +21,7 @@ export const item = style({
   flexFlow: 'column',
 })
 
-export const variants = styleMap({
+export const variants = styleVariants({
   blue: {},
   green: {},
 })

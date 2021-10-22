@@ -1,4 +1,4 @@
-import { globalStyle, style, styleMap } from 'treat'
+import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
 import colors from '../colors'
 
 export const bg = style({
@@ -12,7 +12,7 @@ export const frontpageBg = style({
   backgroundSize: 'cover',
 })
 
-export const focusableBorderColor = styleMap({
+export const focusableBorderColor = styleVariants({
   green: {
     borderWidth: 1,
     borderStyle: 'solid',
@@ -29,7 +29,7 @@ export const text = style({
   color: colors.green400,
 })
 
-export const textColor = styleMap({
+export const textColor = styleVariants({
   green: {
     color: colors.green400,
   },

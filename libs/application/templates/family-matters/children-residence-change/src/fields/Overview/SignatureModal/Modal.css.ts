@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { style, styleMap } from 'treat'
+import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 
 export const modal = style({
   position: 'absolute',
@@ -82,7 +82,7 @@ export const controlCode = style({
   marginLeft: '8px',
 })
 
-export const loader = styleMap({
+export const loader = styleVariants({
   general: {
     display: 'flex',
     alignItems: 'center',
@@ -90,6 +90,21 @@ export const loader = styleMap({
   },
   noLoader: {
     opacity: 0,
+  },
+})
+
+const dotAnimation = keyframes({
+  '0%': {
+    transform: 'scale(1)',
+    opacity: 1,
+  },
+  '50%': {
+    transform: 'scale(0.8)',
+    opacity: 0.4,
+  },
+  '100%': {
+    transform: 'scale(1)',
+    opacity: 1,
   },
 })
 
@@ -110,19 +125,5 @@ export const loadingDot = style({
     },
   },
   animation:
-    '@keyframes 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite',
-  '@keyframes': {
-    '0%': {
-      transform: 'scale(1)',
-      opacity: 1,
-    },
-    '50%': {
-      transform: 'scale(0.8)',
-      opacity: 0.4,
-    },
-    '100%': {
-      transform: 'scale(1)',
-      opacity: 1,
-    },
-  },
+    `${dotAnimation} 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite`,
 })

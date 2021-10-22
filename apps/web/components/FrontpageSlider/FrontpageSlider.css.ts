@@ -1,9 +1,7 @@
-import { style } from 'treat'
-import { ThemeOrAny } from 'treat/theme'
-import { ThemedStyle, Style } from 'treat/lib/types/types'
+import { style, StyleRule } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-const whenMobile = (style: ThemedStyle<Style, ThemeOrAny>) => ({
+const whenMobile = (style: StyleRule) => ({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md - 1}px)`]: {
       ...style,

@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { DividerProps } from '@island.is/island-ui/core'
 import { Colors, theme, spacing } from '@island.is/island-ui/theme'
 

@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { style } from '@vanilla-extract/css'
 import {
   SERVICE_PORTAL_HEADER_HEIGHT_LG,
   SERVICE_PORTAL_HEADER_HEIGHT_SM,

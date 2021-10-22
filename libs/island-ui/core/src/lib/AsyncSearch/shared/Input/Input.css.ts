@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const input = style({
@@ -52,7 +52,7 @@ export const colored = style({
   },
 })
 
-export const sizes = styleMap({
+export const sizes = styleVariants({
   medium: {
     paddingRight: 36,
     height: 40,

@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { style, keyframes } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const TooltipContainer = style({
@@ -29,6 +29,15 @@ export const TooltipBox = style({
   color: '#0061ff',
   marginBottom: 16,
   transition: 'transform 0.3s',
+})
+
+const thumbAnimation = keyframes({
+  from: {
+    transform: 'scale(0.6)',
+  },
+  to: {
+    transform: 'scale(0.8)',
+  },
 })
 
 export const Thumb = style({
@@ -67,15 +76,7 @@ export const Thumb = style({
     borderRadius: '50%',
     background: '#00e4ca',
     opacity: 0.25,
-    '@keyframes': {
-      from: {
-        transform: 'scale(0.6)',
-      },
-      to: {
-        transform: 'scale(0.8)',
-      },
-    },
-    animation: '@keyframes 1.5s infinite alternate',
+    animation: `${thumbAnimation} 1.5s infinite alternate`,
   },
 })
 

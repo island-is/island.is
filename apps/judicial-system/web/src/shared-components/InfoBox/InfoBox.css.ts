@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { style } from 'treat'
+import { style } from '@vanilla-extract/css'
 
 export const infoBoxContainer = style({
   maxWidth: '440px',

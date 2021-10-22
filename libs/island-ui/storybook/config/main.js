@@ -1,5 +1,5 @@
 const path = require('path')
-const TreatPlugin = require('treat/webpack-plugin')
+const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin')
 
 const rootDir = (dir) => path.resolve(__dirname, dir)
 
@@ -15,7 +15,7 @@ module.exports = {
     'storybook-addon-designs',
   ],
   webpackFinal: (config) => {
-    config.plugins.push(new TreatPlugin())
+    config.plugins.push(new VanillaExtractPlugin())
     config.devtool = false
 
     config.module.rules.push(

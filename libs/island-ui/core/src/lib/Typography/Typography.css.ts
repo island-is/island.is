@@ -1,4 +1,4 @@
-import { styleMap, style, globalStyle } from 'treat'
+import { styleVariants, style, globalStyle } from '@vanilla-extract/css'
 import * as CSS from 'csstype'
 import { theme } from '@island.is/island-ui/theme'
 import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
@@ -74,11 +74,11 @@ const defaultFontWeightsMap: defaultFontWeights = {
   datepickerHeaderText: theme.typography.semiBold,
 }
 
-export const fontWeight = styleMap(
+export const fontWeight = styleVariants(
   mapToStyleProperty(fontWeightMap, 'fontWeight'),
 )
 
-export const defaultFontWeights = styleMap(
+export const defaultFontWeights = styleVariants(
   mapToStyleProperty(defaultFontWeightsMap, 'fontWeight'),
 )
 
@@ -215,7 +215,7 @@ globalStyle(`${links} a:hover svg path`, {
   fill: theme.color.blueberry400,
 })
 
-export const colors = styleMap(mapToStyleProperty(theme.color, 'color'))
+export const colors = styleVariants(mapToStyleProperty(theme.color, 'color'))
 
 export const variantStyles = (Object.keys(variants) as VariantTypes[]).reduce(
   (acc, variantKey) => {

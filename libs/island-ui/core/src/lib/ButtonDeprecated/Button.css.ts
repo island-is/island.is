@@ -1,4 +1,4 @@
-import { styleMap, style, globalStyle } from 'treat'
+import { styleVariants, style, globalStyle } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const speed = '150ms'
@@ -100,7 +100,7 @@ const sizeLargeMobile = {
   padding: '0 24px',
 }
 
-export const sizes = styleMap({
+export const sizes = styleVariants({
   small: {
     ...themeUtils.responsiveStyle({
       xs: sizeMediumMobile,
@@ -121,7 +121,7 @@ export const sizes = styleMap({
   },
 })
 
-export const width = styleMap({
+export const width = styleVariants({
   normal: {
     width: 'auto',
   },
@@ -134,7 +134,7 @@ export const width = styleMap({
   },
 })
 
-export const variants = styleMap({
+export const variants = styleVariants({
   normal: {
     backgroundColor: theme.color.blue400,
     color: theme.color.white,

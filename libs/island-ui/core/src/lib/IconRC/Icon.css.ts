@@ -1,6 +1,6 @@
-import { styleMap } from 'treat'
+import { styleVariants } from '@vanilla-extract/css'
 
-export const placeholder = styleMap({
+export const placeholder = styleVariants({
   small: {
     width: 16,
     height: 16,

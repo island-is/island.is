@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { style } from '@vanilla-extract/css'
 import { blue200, blue400, theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const root = style({

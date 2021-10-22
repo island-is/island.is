@@ -3,24 +3,25 @@ import {
   SERVICE_PORTAL_HEADER_HEIGHT_SM,
   zIndex,
 } from '@island.is/service-portal/constants'
-import { style } from 'treat'
+import { keyframes, style } from '@vanilla-extract/css'
+
+const wrapperAnimation = keyframes({
+  '0%': {
+    transform: 'scale(1.05)',
+    opacity: 0,
+  },
+  '100%': {
+    transform: 'scale(1)',
+    opacity: 1,
+  },
+})
 
 export const wrapper = style({
   top: SERVICE_PORTAL_HEADER_HEIGHT_SM,
   zIndex: zIndex.mobileMenu,
   maxHeight: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_SM}px)`,
   overflowY: 'auto',
-  '@keyframes': {
-    '0%': {
-      transform: 'scale(1.05)',
-      opacity: 0,
-    },
-    '100%': {
-      transform: 'scale(1)',
-      opacity: 1,
-    },
-  },
-  animation: '@keyframes ease-in 200ms forwards',
+  animation: `${wrapperAnimation} ease-in 200ms forwards`,
 })
 
 export const figureCard = style({

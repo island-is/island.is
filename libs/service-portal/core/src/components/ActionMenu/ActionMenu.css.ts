@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { style, keyframes } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const trigger = style({
@@ -20,6 +20,11 @@ export const trigger = style({
   },
 })
 
+const menuAnimation = keyframes({
+  '0%': { opacity: 0, transform: 'translate3d(10px, -10px, 0)' },
+  '100%': { opacity: 1, transform: 'translate3d(0px, 0px, 0)' },
+})
+
 export const menu = style({
   position: 'absolute',
   top: 10,
@@ -27,11 +32,7 @@ export const menu = style({
   minWidth: 180,
   opacity: 0,
   zIndex: 2,
-  '@keyframes': {
-    '0%': { opacity: 0, transform: 'translate3d(10px, -10px, 0)' },
-    '100%': { opacity: 1, transform: 'translate3d(0px, 0px, 0)' },
-  },
-  animation: '@keyframes 150ms ease forwards',
+  animation: `${menuAnimation} 150ms ease forwards`,
 })
 
 export const menuItem = style({

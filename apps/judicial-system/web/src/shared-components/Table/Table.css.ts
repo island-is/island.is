@@ -1,4 +1,4 @@
-import { style, globalStyle } from 'treat'
+import { style, globalStyle } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const header = style({

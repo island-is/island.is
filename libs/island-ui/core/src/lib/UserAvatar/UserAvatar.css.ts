@@ -1,8 +1,8 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
-export const avatarSize = styleMap({
+export const avatarSize = styleVariants({
   default: {
     width: 40,
     height: 40,
@@ -22,7 +22,7 @@ export const initialsDelegation = style({
   color: theme.color.white,
 })
 
-export const initialsSize = styleMap({
+export const initialsSize = styleVariants({
   default: {
     fontSize: 18,
   },

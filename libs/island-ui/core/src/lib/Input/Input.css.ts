@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { Theme, theme, themeUtils } from '@island.is/island-ui/theme'
 import * as mixins from './Input.mixins'
 import omit from 'lodash/omit'
@@ -15,7 +15,7 @@ export const container = style({
   },
 })
 
-export const containerSizes = styleMap(mixins.containerSizes)
+export const containerSizes = styleVariants(mixins.containerSizes)
 
 export const input = style({
   ...mixins.input,
@@ -28,7 +28,7 @@ export const input = style({
   },
 })
 
-export const inputSize = styleMap(mixins.inputSizes)
+export const inputSize = styleVariants(mixins.inputSizes)
 
 const backgroundColorRules = {
   white: theme.color.white,
@@ -37,7 +37,7 @@ const backgroundColorRules = {
 
 // To handle styling auto-fill states
 const makeInputBackground = (breakpoint: keyof Theme['breakpoints']) =>
-  styleMap(
+  styleVariants(
     mapValues(backgroundColorRules, (color) =>
       themeUtils.responsiveStyle({
         [breakpoint]: {
@@ -75,7 +75,7 @@ export const label = style({
   },
 })
 
-export const labelSizes = styleMap(mixins.labelSizes)
+export const labelSizes = styleVariants(mixins.labelSizes)
 
 export const labelDisabledEmptyInput = style(mixins.labelDisabledEmptyInput)
 

@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { style, keyframes } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
@@ -15,6 +15,15 @@ export const container = style({
   zIndex: 1,
 })
 
+const overlayFade = keyframes({
+  from: {
+    opacity: 0,
+  },
+  to: {
+    opacity: '30%',
+  },
+})
+
 export const overlay = style({
   position: 'fixed',
   top: 0,
@@ -24,16 +33,18 @@ export const overlay = style({
   zIndex: 1,
   opacity: '30%',
   backgroundColor: theme.color.blue600,
-  '@keyframes': {
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: '30%',
-    },
-  },
+  animationName: overlayFade,
   animationTimingFunction: 'ease-out',
   animationDuration: '0.25s',
+})
+
+const modalFade = keyframes({
+  from: {
+    opacity: 0,
+  },
+  to: {
+    opacity: 1,
+  },
 })
 
 export const modal = style({
@@ -44,14 +55,7 @@ export const modal = style({
   borderRadius: '16px',
   boxSizing: 'border-box',
   backgroundColor: theme.color.white,
-  '@keyframes': {
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: 1,
-    },
-  },
+  animationName: modalFade,
   animationTimingFunction: 'ease-out',
   animationDuration: '0.25s',
 })

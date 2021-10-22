@@ -1,4 +1,4 @@
-import { styleMap, style } from 'treat'
+import { styleVariants, style } from '@vanilla-extract/css'
 import mapValues from 'lodash/mapValues'
 import { themeUtils, Theme, theme } from '@island.is/island-ui/theme'
 
@@ -106,7 +106,7 @@ const columns = ColumnRange.reduce((acc, column) => {
 }, {} as Columns)
 
 const makeSpan = (breakpoint: Breakpoint) =>
-  styleMap(
+  styleVariants(
     mapValues(columns, (span) =>
       themeUtils.responsiveStyle({
         [breakpoint]: { flexBasis: `${span}`, maxWidth: `${span}` },
@@ -122,7 +122,7 @@ export const spanLg = makeSpan('lg')
 export const spanXl = makeSpan('xl')
 
 const makeOffset = (breakpoint: Breakpoint) =>
-  styleMap(
+  styleVariants(
     mapValues(columns, (span) =>
       themeUtils.responsiveStyle({ [breakpoint]: { marginLeft: span } }),
     ),
@@ -136,7 +136,7 @@ export const offsetLg = makeOffset('lg')
 export const offsetXl = makeOffset('xl')
 
 const makeOrder = (breakpoint: Breakpoint) =>
-  styleMap(
+  styleVariants(
     mapValues(order, (order) =>
       themeUtils.responsiveStyle({ [breakpoint]: { order } }),
     ),

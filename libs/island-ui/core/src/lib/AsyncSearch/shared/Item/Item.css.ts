@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const colored = style({
@@ -48,7 +48,7 @@ export const dividerVisible = style({
   opacity: 1,
 })
 
-export const sizes = styleMap({
+export const sizes = styleVariants({
   medium: {
     fontSize: 15,
     lineHeight: 1.466666,

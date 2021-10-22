@@ -1,4 +1,4 @@
-import { styleMap, style } from 'treat'
+import { styleVariants, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 import colors from '../colors'
 
@@ -25,7 +25,7 @@ export const container = style({
   },
 })
 
-export const variants = styleMap({
+export const variants = styleVariants({
   green: {
     color: colors.green400,
     backgroundColor: colors.green100,

@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants, keyframes } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const wrapper = style({
@@ -25,7 +25,7 @@ export const menuContainer = style({
   position: 'relative',
 })
 
-export const sizes = styleMap({
+export const sizes = styleVariants({
   medium: {},
   large: {},
 })
@@ -84,7 +84,7 @@ export const focusable = style({
   },
 })
 
-export const iconSizes = styleMap({
+export const iconSizes = styleVariants({
   medium: {
     right: 8,
     ':before': {
@@ -116,20 +116,20 @@ export const loadingIcon = style({
   top: '50%',
   transform: 'translateY(-50%)',
   outline: 0,
-  '@keyframes': {
+  animationName: keyframes({
     from: {
       transform: 'translateY(-50%) rotate(0deg)',
     },
     to: {
       transform: 'translateY(-50%) rotate(360deg)',
     },
-  },
+  }),
   animationDuration: '1.5s',
   animationIterationCount: 'infinate',
   animationTimingFunction: 'linear',
 })
 
-export const loadingIconSizes = styleMap({
+export const loadingIconSizes = styleVariants({
   medium: {
     right: 8,
     ...themeUtils.responsiveStyle({

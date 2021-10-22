@@ -13,7 +13,7 @@ import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { paymentPlan } from '../../../lib/messages/paymentPlan'
-import * as styles from './PaymentPlanCard.treat'
+import * as styles from './PaymentPlanCard.css'
 
 interface Props {
   payment: PaymentScheduleDebts

@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const card = style({
@@ -59,7 +59,7 @@ export const status = style({
   height: 8,
 })
 
-export const statusType = styleMap({
+export const statusType = styleVariants({
   ongoing: {
     backgroundColor: theme.color.purple400,
   },

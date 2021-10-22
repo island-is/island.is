@@ -1,4 +1,4 @@
-import { globalStyle, style } from 'treat'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 export const markdownText = style({})
 

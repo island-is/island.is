@@ -1,19 +1,20 @@
-import { style } from 'treat'
+import { keyframes, style } from '@vanilla-extract/css'
 import { zIndex } from '@island.is/service-portal/constants'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const actionSidebarTransitionTiming = 400
 
+const sidebarAnimation = keyframes({
+  '0%': { transform: 'translate3d(120%, 0, 0)' },
+  '100%': { transform: 'translate3d(0%, 0, 0)' },
+})
+
 export const sidebar = style({
   zIndex: zIndex.notificationSidebar,
   minWidth: 300,
   maxWidth: '100%',
-  '@keyframes': {
-    '0%': { transform: 'translate3d(120%, 0, 0)' },
-    '100%': { transform: 'translate3d(0%, 0, 0)' },
-  },
   transition: `transform ease ${actionSidebarTransitionTiming}ms`,
-  animation: `@keyframes ease ${actionSidebarTransitionTiming}ms`,
+  animation: `${sidebarAnimation} ease ${actionSidebarTransitionTiming}ms`,
   ...themeUtils.responsiveStyle({
     md: {
       maxWidth: 650,
@@ -25,15 +26,16 @@ export const sidebarExit = style({
   transform: 'translate3d(120%, 0, 0)',
 })
 
+const overlayAnimation = keyframes({
+  '0%': { opacity: 0 },
+  '100%': { opacity: 1 },
+})
+
 export const overlay = style({
   zIndex: zIndex.notificationSidebar - 1,
   background: 'rgba(0, 0, 0, 0.1)',
-  '@keyframes': {
-    '0%': { opacity: 0 },
-    '100%': { opacity: 1 },
-  },
   transition: `opacity linear ${actionSidebarTransitionTiming}ms`,
-  animation: `@keyframes linear ${actionSidebarTransitionTiming}ms`,
+  animation: `${overlayAnimation} linear ${actionSidebarTransitionTiming}ms`,
 })
 
 export const overlayExit = style({

@@ -1,4 +1,4 @@
-import { style, styleMap } from 'treat'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const focusable = style({
@@ -39,7 +39,7 @@ export const focusable = style({
   },
 })
 
-export const colorSchemes = styleMap({
+export const colorSchemes = styleVariants({
   purple: {
     '@media': {
       [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
