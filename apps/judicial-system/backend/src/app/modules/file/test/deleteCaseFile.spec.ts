@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { CaseFileState } from '@island.is/judicial-system/types'
 
-import { AwsS3Service } from '../awsS3.service'
+import { AwsS3Service } from '../../aws-S3'
 import { CaseFile, DeleteFileResponse } from '../models'
 import { createTestingFileModule } from './createTestingFileModule'
 

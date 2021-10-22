@@ -3,7 +3,6 @@ import { Op } from 'sequelize'
 
 import {
   BadRequestException,
-  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -16,8 +15,8 @@ import { CaseFileState } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { writeFile } from '../../formatters'
+import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { AwsS3Service } from './awsS3.service'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
 import {
   PresignedPost,

@@ -3,7 +3,6 @@ import { S3 } from 'aws-sdk'
 import { Injectable } from '@nestjs/common'
 
 import { environment } from '../../../environments'
-import { PresignedPost, SignedUrl } from './models'
 
 @Injectable()
 export class AwsS3Service {
@@ -13,7 +12,7 @@ export class AwsS3Service {
     this.s3 = new S3({ region: environment.files.region })
   }
 
-  createPresignedPost(key: string, type: string): Promise<PresignedPost> {
+  createPresignedPost(key: string, type: string): Promise<S3.PresignedPost> {
     return new Promise((resolve, reject) => {
       this.s3.createPresignedPost(
         {
@@ -36,7 +35,7 @@ export class AwsS3Service {
     })
   }
 
-  getSignedUrl(key: string): Promise<SignedUrl> {
+  getSignedUrl(key: string): Promise<{ url: string }> {
     return new Promise((resolve, reject) => {
       this.s3.getSignedUrl(
         'getObject',

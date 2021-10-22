@@ -6,7 +6,7 @@ import { CaseFileState } from '@island.is/judicial-system/types'
 
 import { CourtService } from '../../court'
 import { Case } from '../../case'
-import { AwsS3Service } from '../awsS3.service'
+import { AwsS3Service } from '../../aws-S3'
 import { CaseFile, UploadFileToCourtResponse } from '../models'
 import { createTestingFileModule } from './createTestingFileModule'
 

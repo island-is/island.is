@@ -6,15 +6,15 @@ import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
 import { CourtService } from '../../court'
+import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
-import { AwsS3Service } from '../awsS3.service'
 import { CaseFile } from '../models'
 import { FileService } from '../file.service'
 import { FileController } from '../file.controller'
 
 jest.mock('../../court/court.service.ts')
 jest.mock('../../case/case.service.ts')
-jest.mock('../awsS3.service.ts')
+jest.mock('../../aws-s3/awsS3.service.ts')
 
 export const createTestingFileModule = async () => {
   const fileModule = await Test.createTestingModule({

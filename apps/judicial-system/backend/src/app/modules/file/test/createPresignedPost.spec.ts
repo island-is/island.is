@@ -1,7 +1,7 @@
 import { uuid } from 'uuidv4'
 
 import { Case } from '../../case'
-import { AwsS3Service } from '../awsS3.service'
+import { AwsS3Service } from '../../aws-S3'
 import { CreatePresignedPostDto } from '../dto'
 import { PresignedPost } from '../models'
 import { createTestingFileModule } from './createTestingFileModule'
