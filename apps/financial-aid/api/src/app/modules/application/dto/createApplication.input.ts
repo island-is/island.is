@@ -7,6 +7,7 @@ import {
   HomeCircumstances,
   Employment,
   ApplicationState,
+  FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
 import { CreateApplicationFileInput } from '../../file/dto'
@@ -91,4 +92,32 @@ export class CreateApplicationInput implements CreateApplication {
 
   @Field({ nullable: true })
   readonly amount?: number
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseNationalId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseEmail?: string
+
+  @Allow()
+  @Field(() => String)
+  readonly familyStatus!: FamilyStatus
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly city?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly streetName?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly municipalityCode?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly postalCode?: string
 }

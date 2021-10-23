@@ -11,8 +11,10 @@ export const Routes = {
       : '/api/auth/login?nationalId=',
   apiLoginRouteForRealUsers: (id: string) =>
     id ? `/api/auth/login?applicationId=${id}` : '/api/auth/login',
-  filesPage: '/gogn',
+  filesPage: (hasIncome?: boolean) =>
+    `/umsokn/${hasIncome ? 'skattagogn' : 'gogn'}`,
   newCases: '/nymal',
+  serviceCenter: (id: string) => `/midstod/${id}`,
 }
 
 export const months = [
@@ -42,4 +44,4 @@ export const getNextPeriod = {
     nextMonth === 0 ? new Date().getFullYear() + 1 : new Date().getFullYear(),
 }
 
-export const apiBasePath = 'api'
+export const apiBasePath = 'api/financial-aid'

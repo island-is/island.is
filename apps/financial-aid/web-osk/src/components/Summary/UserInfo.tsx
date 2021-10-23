@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import {
+  formatHomeAddress,
   formatNationalId,
   formatPhoneNumber,
 } from '@island.is/financial-aid/shared/lib'
@@ -8,12 +9,15 @@ import {
 import * as styles from './summary.treat'
 import cn from 'classnames'
 
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
-const UserInfo = () => {
-  const { user } = useContext(UserContext)
+interface Props {
+  phoneNumber?: string
+}
 
-  // TODO when þjóðskrá is up and running
+const UserInfo = ({ phoneNumber }: Props) => {
+  const { user, nationalRegistryData } = useContext(AppContext)
+
   return (
     <Box
       display="flex"
@@ -23,22 +27,29 @@ const UserInfo = () => {
         [`${styles.userInfoContainer}`]: true,
       })}
     >
-      <Box className={styles.mainInfo}>
-        <Text fontWeight="semiBold">Nafn</Text>
-        <Text marginBottom={3}>{user?.name}</Text>
+      {user && (
+        <Box className={styles.mainInfo}>
+          <Text fontWeight="semiBold">Nafn</Text>
+          <Text marginBottom={3}>{user.name}</Text>
 
-        <Text fontWeight="semiBold">Kennitala</Text>
-        {user?.nationalId && <Text>{formatNationalId(user.nationalId)}</Text>}
-      </Box>
+          <Text fontWeight="semiBold">Kennitala</Text>
+          <Text>{formatNationalId(user.nationalId)}</Text>
+        </Box>
+      )}
 
       <Box className={styles.contactInfo}>
-        <Text fontWeight="semiBold">Sími</Text>
-        {user?.phoneNumber && (
-          <Text marginBottom={3}>{formatPhoneNumber(user.phoneNumber)}</Text>
+        {phoneNumber && (
+          <>
+            <Text fontWeight="semiBold">Sími</Text>
+            <Text marginBottom={3}>{formatPhoneNumber(phoneNumber)}</Text>
+          </>
         )}
-
-        <Text fontWeight="semiBold">Heimili</Text>
-        <Text>Hafnargata 3, 220 Hafnarfjörður</Text>
+        {nationalRegistryData && (
+          <>
+            <Text fontWeight="semiBold">Heimili</Text>
+            <Text>{formatHomeAddress(nationalRegistryData)}</Text>
+          </>
+        )}
       </Box>
     </Box>
   )

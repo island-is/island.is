@@ -219,4 +219,14 @@ export const coreErrorMessages = defineMessages({
     description:
       'There are errors related to the application and it has been reported',
   },
+  missingAnswer: {
+    id: 'application.system:missing.answer',
+    defaultMessage: 'Svar vantar',
+    description: 'Copy when answer is missing',
+  },
+  failedDataProvider: {
+    id: 'application.system:fetch.data.error',
+    defaultMessage: 'Villa kom upp við að sækja gögn',
+    description: 'Copy when there was an error in one or more data providers',
+  },
 })

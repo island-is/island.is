@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Text, BulletList, Bullet, Box, Link } from '@island.is/island-ui/core'
 
 import {
@@ -7,15 +7,18 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { useRouter } from 'next/router'
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import {
   NavigationProps,
   currentMonth,
 } from '@island.is/financial-aid/shared/lib'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const AboutForm = () => {
   const router = useRouter()
+
+  const { nationalRegistryData } = useContext(AppContext)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -29,17 +32,17 @@ const AboutForm = () => {
         </Text>
 
         <Text variant="h3" fontWeight="light" marginBottom={3}>
-          Þú ert að sækja um <strong>fjárhagsaðstoð hjá Hafnarfirði</strong>{' '}
+          Þú ert að sækja um{' '}
+          <strong>
+            fjárhagsaðstoð hjá{' '}
+            {nationalRegistryData?.address.city ?? 'Sambandi sveitarfélaga'}
+          </strong>{' '}
           fyrir {currentMonth()}. Áður en þú heldur áfram er gott að hafa
           eftirfarandi í huga:
         </Text>
 
         <Box marginBottom={5}>
           <BulletList type={'ul'} space={2}>
-            <Bullet>
-              Fjárhagsaðstoð sveitarfélaga er ætluð fólki sem er ekki með vinnu,
-              í óstyrkhæfu námi og hefur ekki rétt á örorkubótum.
-            </Bullet>
             <Bullet>
               Til að eiga rétt á fjárhagsaðstoð þurfa tekjur og eignir þínar að
               vera undir ákveðnum viðmiðunarmörkum.
@@ -74,6 +77,15 @@ const AboutForm = () => {
                 underlineVisibility="always"
               >
                 lífeyrissjóðir
+              </Link>
+              {', '}
+              <Link
+                href="https://www.sjukra.is/"
+                color="blue400"
+                underline="small"
+                underlineVisibility="always"
+              >
+                Sjúkratryggingar Íslands
               </Link>{' '}
               og sjúkrasjóðir stéttarfélaga.
             </Bullet>

@@ -2,18 +2,20 @@ import { defineMessage, defineMessages } from 'react-intl'
 
 // Strings for court officials
 export const icHearingArrangements = {
+  title: defineMessage({
+    id: 'judicial.system.investigation_cases:hearing_arrangements.title',
+    defaultMessage: 'Fyrirtaka',
+    description: 'Notaður sem titill á fyrirtöku skrefi í rannsóknarheimildum.',
+  }),
   sections: {
-    setRegistrar: defineMessages({
-      tooltip: {
-        id:
-          'judicial.system.investigation_cases:hearing_arrangements.set_registrar.tooltip',
-        defaultMessage:
-          'Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "dómritari" titlinn á fyrirtöku skrefi í rannsóknarheimildum.',
-      },
-    }),
     setJudge: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.set_judge.title',
+        defaultMessage: 'Dómari',
+        description:
+          'Notaður sem titll fyrir "dómari" hlutann á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
       tooltip: {
         id:
           'judicial.system.investigation_cases:hearing_arrangements.set_judge.tooltip',
@@ -21,6 +23,23 @@ export const icHearingArrangements = {
           'Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð.',
         description:
           'Notaður sem upplýsingatexti í upplýsingasvæði við "dómari" titlinn á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+    }),
+    setRegistrar: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.set_registrar.title',
+        defaultMessage: 'Dómritari',
+        description:
+          'Notaður sem titll fyrir "Dómritari" hlutann á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      tooltip: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.set_registrar.tooltip',
+        defaultMessage:
+          'Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "dómritari" titlinn á fyrirtöku skrefi í rannsóknarheimildum.',
       },
     }),
     sessionArrangements: {
@@ -71,6 +90,24 @@ export const icHearingArrangements = {
         }),
       },
     },
+    requestedCourtDate: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.requested_court_date.title',
+        defaultMessage: 'Skrá fyrirtökutíma',
+        description:
+          'Notaður sem titill fyrir "Skrá fyrirtökutíma" hlutann á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+    }),
+    defender: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.title',
+        defaultMessage: 'Verjandi/talsmaður',
+        description:
+          'Notaður sem titill fyrir "Verjandi/talsmaður" hlutann á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+    }),
   },
   modal: defineMessages({
     heading: {
@@ -138,6 +175,16 @@ export const icHearingArrangements = {
       defaultMessage: 'Áfram',
       description:
         'Notaður sem texti í takkanum í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
+    },
+  }),
+  footer: defineMessages({
+    infoPanelForRestrictedAccess: {
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.footer.info_panel_for_restricted_access',
+      defaultMessage:
+        'Aðeins skráður dómari og dómritari geta haldið áfram í þingbók og úrskurð fyrir rannsóknarheimildir.',
+      description:
+        'Notaður sem texti sem birtist í staðinn fyrir halda áfram takka á fyrirtöku skrefi í rannsóknarheimildum ef notandi hefur ekki aðgang að málinu.',
     },
   }),
 }

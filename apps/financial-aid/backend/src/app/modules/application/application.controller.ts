@@ -17,7 +17,6 @@ import {
   CurrentApplicationModel,
   ApplicationModel,
   UpdateApplicationTableResponse,
-  UpdateApplicationResponse,
 } from './models'
 
 import {
@@ -46,21 +45,24 @@ import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { RolesGuard } from '../../guards'
 import { CurrentUser, RolesRules } from '../../decorators'
 import { ApplicationGuard } from '../../guards/application.guard'
+import { StaffService } from '../staff'
+import { IsSpouseResponse } from './models/isSpouse.response'
 
 @UseGuards(IdsUserGuard)
-@Controller(apiBasePath)
-@ApiTags('applications')
+@Controller(`${apiBasePath}/application`)
+@ApiTags('application')
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationEventService: ApplicationEventService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly staffService: StaffService,
   ) {}
 
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.OSK)
-  @Get('currentApplication')
+  @Get('nationalId/:nationalId')
   @ApiOkResponse({
     type: CurrentApplicationModel,
     description: 'Checks if user has a current application for this period',
@@ -81,8 +83,27 @@ export class ApplicationController {
   }
 
   @UseGuards(RolesGuard)
+  @RolesRules(RolesRule.OSK)
+  @Get('spouse/:spouseNationalId')
+  @ApiOkResponse({
+    type: IsSpouseResponse,
+    description: 'Checking if user is spouse',
+  })
+  async isSpouse(
+    @Param('spouseNationalId') spouseNationalId: string,
+  ): Promise<IsSpouseResponse> {
+    this.logger.debug('Application controller: Checking if user is spouse')
+
+    return {
+      HasApplied: await this.applicationService.hasSpouseApplied(
+        spouseNationalId,
+      ),
+    }
+  }
+
+  @UseGuards(RolesGuard)
   @RolesRules(RolesRule.VEITA)
-  @Get('allApplications/:stateUrl')
+  @Get('state/:stateUrl')
   @ApiOkResponse({
     type: ApplicationModel,
     isArray: true,
@@ -96,14 +117,14 @@ export class ApplicationController {
   }
 
   @UseGuards(ApplicationGuard)
-  @Get('applications/:id')
+  @Get('id/:id')
   @ApiOkResponse({
     type: ApplicationModel,
     description: 'Get application',
   })
-  async getById(@Param('id') id: string) {
+  async getById(@Param('id') id: string, @CurrentUser() user: User) {
     this.logger.debug(`Application controller: Getting application by id ${id}`)
-    const application = await this.applicationService.findById(id)
+    const application = await this.applicationService.findById(id, user.service)
 
     if (!application) {
       throw new NotFoundException(`application ${id} not found`)
@@ -114,7 +135,7 @@ export class ApplicationController {
 
   @UseGuards(RolesGuard)
   @RolesRules(RolesRule.VEITA)
-  @Get('applicationFilters')
+  @Get('filters')
   @ApiOkResponse({
     description: 'Gets all existing applications filters',
   })
@@ -123,7 +144,7 @@ export class ApplicationController {
     return this.applicationService.getAllFilters()
   }
 
-  @Put('applications/:id')
+  @Put('id/:id')
   @ApiOkResponse({
     type: ApplicationModel,
     description: 'Updates an existing application',
@@ -131,6 +152,7 @@ export class ApplicationController {
   async update(
     @Param('id') id: string,
     @Body() applicationToUpdate: UpdateApplicationDto,
+    @CurrentUser() user: User,
   ): Promise<ApplicationModel> {
     this.logger.debug(
       `Application controller: Updating application with id ${id}`,
@@ -138,58 +160,40 @@ export class ApplicationController {
     const {
       numberOfAffectedRows,
       updatedApplication,
-    } = await this.applicationService.update(id, applicationToUpdate)
+    } = await this.applicationService.update(id, applicationToUpdate, user.name)
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Application ${id} does not exist`)
     }
 
+    if (user.service === RolesRule.VEITA) {
+      const staff = await this.staffService.findById(updatedApplication.staffId)
+      updatedApplication?.setDataValue('staff', staff)
+    }
+
     return updatedApplication
   }
 
-  @Put('applications/:id/:stateUrl')
+  @Put(':id/:stateUrl')
   @ApiOkResponse({
     type: UpdateApplicationTableResponse,
     description:
       'Updates an existing application and returns application table',
   })
   async updateTable(
+    @CurrentUser() user: User,
     @Param('id') id: string,
     @Param('stateUrl') stateUrl: ApplicationStateUrl,
     @Body() applicationToUpdate: UpdateApplicationDto,
   ): Promise<UpdateApplicationTableResponse> {
-    await this.applicationService.update(id, applicationToUpdate)
+    await this.applicationService.update(id, applicationToUpdate, user.name)
     return {
       applications: await this.applicationService.getAll(stateUrl),
       filters: await this.applicationService.getAllFilters(),
     }
   }
 
-  @Put('updateApplication/:id')
-  @ApiOkResponse({
-    type: UpdateApplicationResponse,
-    description: 'Updates an existing application',
-  })
-  async updateApplication(
-    @Param('id') id: string,
-    @Body() applicationToUpdate: UpdateApplicationDto,
-  ): Promise<UpdateApplicationResponse> {
-    const {
-      numberOfAffectedRows,
-      updatedApplication,
-    } = await this.applicationService.update(id, applicationToUpdate)
-
-    if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(`Application ${id} does not exist`)
-    }
-
-    return {
-      application: updatedApplication,
-      filters: await this.applicationService.getAllFilters(),
-    }
-  }
-
-  @Post('application')
+  @Post('')
   @ApiCreatedResponse({
     type: ApplicationModel,
     description: 'Creates a new application',
@@ -202,18 +206,20 @@ export class ApplicationController {
     return this.applicationService.create(application, user)
   }
 
-  @Post('applicationEvent')
+  @Post('event')
   @ApiCreatedResponse({
     type: ApplicationEventModel,
     description: 'Creates a new application event',
   })
   async createEvent(
     @Body() applicationEvent: CreateApplicationEventDto,
+    @CurrentUser() user: User,
   ): Promise<ApplicationModel> {
     await this.applicationEventService.create(applicationEvent)
 
     const application = await this.applicationService.findById(
       applicationEvent.applicationId,
+      user.service,
     )
 
     if (!application) {

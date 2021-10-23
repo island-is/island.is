@@ -9,3 +9,16 @@ export const widthAlmostFull = style({
     },
   },
 })
+
+export const button = style({
+  color: theme.color.blue400,
+  textDecoration: 'underline',
+  marginRight: '8px',
+  fontSize: '14px',
+  marginBottom: '1px',
+  selectors: {
+    '&:hover': {
+      color: theme.color.blueberry400,
+    },
+  },
+})

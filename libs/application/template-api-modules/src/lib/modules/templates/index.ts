@@ -12,6 +12,7 @@ import { PartyApplicationModule } from './party-application/party-application.mo
 import { PayableDummyTemplateModule } from './payable-dummy-template/payable-dummy-template.module'
 import { AccidentNotificationModule } from './accident-notification/accident-notification.module'
 import { PublicDebtPaymentPlanTemplateModule } from './public-debt-payment-plan/public-debt-payment-plan.module'
+import { GeneralPetitionModule } from './general-petition/general-petition.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -28,6 +29,7 @@ export const modules = [
   PayableDummyTemplateModule,
   AccidentNotificationModule,
   PublicDebtPaymentPlanTemplateModule,
+  GeneralPetitionModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -44,3 +46,4 @@ export { PartyApplicationService } from './party-application/party-application.s
 export { PayableDummyTemplateService } from './payable-dummy-template/payable-dummy-template.service'
 export { AccidentNotificationService } from './accident-notification/accident-notification.service'
 export { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
+export { GeneralPetitionService } from './general-petition/general-petition.service'

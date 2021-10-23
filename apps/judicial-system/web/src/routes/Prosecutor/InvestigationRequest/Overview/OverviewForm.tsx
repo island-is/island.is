@@ -56,7 +56,8 @@ const OverviewForm: React.FC<Props> = (props) => {
               {
                 title: 'Embætti',
                 value: `${
-                  workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
+                  workingCase.creatingProsecutor?.institution?.name ??
+                  'Ekki skráð'
                 }`,
               },
               {
@@ -87,7 +88,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               phoneNumber: workingCase.defenderPhoneNumber,
               defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
-            isRCase
+            isInvestigationCase
           />
         </Box>
         <Box component="section" marginBottom={5}>

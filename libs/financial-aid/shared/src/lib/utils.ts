@@ -1,5 +1,7 @@
 import { months } from './const'
+
 import React from 'react'
+import { NationalRegistryData } from './interfaces'
 
 export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)
@@ -48,8 +50,9 @@ export const focusOnNextInput = (
   }
 }
 
-export const decodeToken = (token: string) => {
-  const base64Url = token.split('.')[1]
-  const base64 = base64Url.replace('-', '+').replace('_', '/')
-  return JSON.parse(Buffer.from(base64, 'base64').toString('binary'))
-}
+export const formatHomeAddress = (
+  nationalRegistryData?: NationalRegistryData,
+) =>
+  nationalRegistryData
+    ? `${nationalRegistryData.address.streetName}, ${nationalRegistryData.address.postalCode} ${nationalRegistryData.address.city}`
+    : undefined

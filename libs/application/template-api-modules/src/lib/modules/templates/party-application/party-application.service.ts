@@ -30,6 +30,8 @@ const CREATE_ENDORSEMENT_LIST_QUERY = `
   }
 `
 
+export const DEFAULT_CLOSED_DATE = 'default closed date'
+
 interface ErrorResponse {
   errors: {
     message: string
@@ -63,6 +65,7 @@ export class PartyApplicationService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(PARTY_APPLICATION_SERVICE_OPTIONS)
     private options: PartyApplicationServiceOptions,
+    @Inject(DEFAULT_CLOSED_DATE) private dateConfig: Date,
   ) {}
 
   endorsementListApiWithAuth(auth: User) {
@@ -97,9 +100,15 @@ export class PartyApplicationService {
   }: TemplateApiModuleActionProps) {
     const listId = (application.externalData?.createEndorsementList.data as any)
       .id
+    // TODO: change this date when new election
 
     return this.endorsementListApiWithAuth(auth)
-      .endorsementListControllerOpen({ listId })
+      .endorsementListControllerOpen({
+        listId,
+        changeEndorsmentListClosedDateDto: {
+          closedDate: this.dateConfig,
+        },
+      })
       .then(async () => {
         await this.sharedTemplateAPIService.sendEmail(
           generateApplicationRejectedEmail,

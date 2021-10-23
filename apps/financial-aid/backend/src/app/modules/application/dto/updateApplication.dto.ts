@@ -2,13 +2,21 @@ import { IsNotEmpty, IsString, IsOptional, IsNumber } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { ApplicationState } from '@island.is/financial-aid/shared/lib'
+import {
+  ApplicationEventType,
+  ApplicationState,
+} from '@island.is/financial-aid/shared/lib'
 
 export class UpdateApplicationDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
   readonly state: ApplicationState
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly event: ApplicationEventType
 
   @IsOptional()
   @IsNumber()
@@ -19,6 +27,11 @@ export class UpdateApplicationDto {
   @IsString()
   @ApiProperty()
   readonly rejection: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly comment: string
 
   @IsOptional()
   @IsString()

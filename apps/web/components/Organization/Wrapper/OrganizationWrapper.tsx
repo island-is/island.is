@@ -70,6 +70,7 @@ interface HeaderProps {
 }
 
 export const lightThemes = ['digital_iceland', 'utlendingastofnun']
+export const footerEnabled = ['syslumenn']
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   switch (organizationPage.theme) {
@@ -95,8 +96,6 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   organizations,
   force = false,
 }) => {
-  const footerEnabled = ['syslumenn']
-
   const organization = force
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))

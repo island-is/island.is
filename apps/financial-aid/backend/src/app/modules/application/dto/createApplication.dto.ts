@@ -13,6 +13,7 @@ import {
   HomeCircumstances,
   Employment,
   ApplicationState,
+  FamilyStatus,
   CreateApplicationFile,
 } from '@island.is/financial-aid/shared/lib'
 
@@ -115,4 +116,39 @@ export class CreateApplicationDto {
   @IsNumber()
   @ApiProperty()
   readonly amount: number
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spouseNationalId: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spouseEmail: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly familyStatus: FamilyStatus
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly city: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly postalCode: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly municipalityCode: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly streetName: string
 }

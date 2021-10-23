@@ -37,6 +37,7 @@ export enum ApplicationEventType {
   STAFFCOMMENT = 'StaffComment',
   USERCOMMENT = 'UserComment',
   FILEUPLOAD = 'FileUpload',
+  ASSIGNCASE = 'AssignCase',
 }
 
 export enum RolesRule {
@@ -63,4 +64,14 @@ export enum FamilyStatus {
   MARRIED = 'Married',
   MARRIED_NOT_LIVING_TOGETHER = 'MarriedNotLivingTogether',
   NOT_INFORMED = 'NotInformed',
+}
+
+export enum AidType {
+  INDIVIDUAL = 'Individual',
+  COHABITATION = 'Cohabitation',
+}
+
+export enum MartialStatusType {
+  MARRIED = 'Married',
+  SINGLE = 'Single',
 }

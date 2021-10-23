@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+import { ProblemModule } from '@island.is/nest/problem'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
 
@@ -9,6 +10,7 @@ import { ApplicationModule } from './modules/application/application.module'
       useClass: SequelizeConfigService,
     }),
     ApplicationModule,
+    ProblemModule,
   ],
 })
 export class AppModule {}
