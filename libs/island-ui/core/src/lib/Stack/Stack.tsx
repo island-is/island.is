@@ -66,9 +66,7 @@ const calculateHiddenStackItemProps = (
     displayMd,
     displayLg,
     displayXl,
-  ] = normaliseResponsiveProp(
-    'display' in stackItemProps ? stackItemProps.display : 'block',
-  )
+  ] = normaliseResponsiveProp(stackItemProps?.display || 'block')
 
   return {
     ...stackItemProps,
