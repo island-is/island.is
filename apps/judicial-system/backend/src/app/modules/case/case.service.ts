@@ -1,3 +1,5 @@
+import { Includeable } from 'sequelize/types'
+
 import {
   ForbiddenException,
   Inject,
@@ -37,7 +39,6 @@ import { CourtService } from '../court'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
-import { Includeable } from 'sequelize/types'
 
 interface Recipient {
   name: string

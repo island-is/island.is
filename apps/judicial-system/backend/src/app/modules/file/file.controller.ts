@@ -13,10 +13,14 @@ import {
   CaseExistsForUpdateGuard,
   CaseNotCompletedGuard,
   CurrentCase,
-  CaseService,
   CaseExistsGuard,
   CaseCompletedGuard,
 } from '../case'
+import {
+  CaseFileExistsGuard,
+  CurrentCaseFile,
+  ViewCaseFileGuard,
+} from './guards'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
 import {
   PresignedPost,
@@ -26,20 +30,12 @@ import {
   UploadFileToCourtResponse,
 } from './models'
 import { FileService } from './file.service'
-import {
-  CaseFileExistsGuard,
-  CurrentCaseFile,
-  ViewCaseFileGuard,
-} from './guards'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId')
 @ApiTags('files')
 export class FileController {
-  constructor(
-    private readonly fileService: FileService,
-    private readonly caseService: CaseService,
-  ) {}
+  constructor(private readonly fileService: FileService) {}
 
   @RolesRules(prosecutorRule)
   @UseGuards(CaseExistsForUpdateGuard, CaseNotCompletedGuard)

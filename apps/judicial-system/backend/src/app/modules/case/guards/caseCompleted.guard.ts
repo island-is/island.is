@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common'
 
 import { completedCaseStates } from '@island.is/judicial-system/types'
+
 import { Case } from '../models'
 
 @Injectable()
