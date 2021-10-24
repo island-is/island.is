@@ -48,7 +48,7 @@ const fixPostcss = (config) => {
       if (!Array.isArray(subRule.use)) {
         return
       }
-      subRule.use.forEach(use => {
+      subRule.use.forEach((use) => {
         // Find postcss loader.
         if (!use.loader?.includes('postcss-loader')) {
           return
