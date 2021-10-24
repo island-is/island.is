@@ -33,6 +33,35 @@ const setApiMocks = (config) => {
   })
 }
 
+// UPGRADE WARNING
+// This is to fix a bug in @nrwl/web 11.4.0 where some css rules would have misconfigured postcss.
+// Can be removed after upgrading to 12.1.0 or beyond. This should not appear in build logs when this is removed:
+// "You did not set any plugins, parser, or stringifier. Right now, PostCSS does nothing. Pick plugins for your case on https://www.postcss.parts/ and use them in postcss.config.js."
+const fixPostcss = (config) => {
+  config.module.rules.forEach((rule) => {
+    // Find CSS-like rule.
+    if (!Array.isArray(rule.oneOf)) {
+      return
+    }
+    rule.oneOf.forEach((subRule) => {
+      // Find css-like use array.
+      if (!Array.isArray(subRule.use)) {
+        return
+      }
+      subRule.use.forEach(use => {
+        // Find postcss loader.
+        if (!use.loader?.includes('postcss-loader')) {
+          return
+        }
+        // Fix accidental nested postcssOptions.
+        if (use.options.postcssOptions?.postcssOptions) {
+          use.options = use.options.postcssOptions
+        }
+      })
+    })
+  })
+}
+
 /**
  * Adds common web related configs to webpack
  * @param {*} config
@@ -42,6 +71,8 @@ module.exports = function (config) {
   nrwlConfig(config)
 
   setApiMocks(config)
+
+  fixPostcss(config)
 
   // Add the Vanilla Extract plugin
   config.plugins.push(new VanillaExtractPlugin())
