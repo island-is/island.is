@@ -1,7 +1,7 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import React, { PropsWithChildren } from 'react'
-import * as styles from './InfoCard.treat'
+import * as styles from './InfoCard.css'
 
 interface Props {
   data: Array<{ title: string; value?: string }>

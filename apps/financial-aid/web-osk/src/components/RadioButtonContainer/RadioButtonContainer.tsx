@@ -1,7 +1,7 @@
 import React, { ReactNode, useContext } from 'react'
 import { RadioButton, Box } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import * as styles from './RadioButtonContainer.treat'
+import * as styles from './RadioButtonContainer.css'
 
 interface RadioContainerProps {
   className?: string
