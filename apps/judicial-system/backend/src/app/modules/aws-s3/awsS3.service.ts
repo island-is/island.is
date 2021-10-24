@@ -87,21 +87,24 @@ export class AwsS3Service {
       )
   }
 
-  getObject(key: string): Promise<Buffer> {
-    return new Promise((resolve, reject) =>
-      this.s3.getObject(
-        {
-          Bucket: environment.files.bucket,
-          Key: key,
-        },
-        (err, data) => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve(data.Body as Buffer)
-          }
-        },
-      ),
-    )
+  async getObject(key: string): Promise<Buffer> {
+    return this.s3
+      .getObject({
+        Bucket: environment.files.bucket,
+        Key: key,
+      })
+      .promise()
+      .then((data) => data.Body as Buffer)
+  }
+
+  async putObject(key: string, content: string): Promise<string> {
+    return this.s3
+      .putObject({
+        Bucket: environment.files.bucket,
+        Key: key,
+        Body: content,
+      })
+      .promise()
+      .then(() => key)
   }
 }

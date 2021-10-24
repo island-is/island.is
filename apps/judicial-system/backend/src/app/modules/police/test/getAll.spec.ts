@@ -20,7 +20,7 @@ describe('PoliceController - Get all', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const policeController = await createTestingPoliceModule()
+    const { policeController } = await createTestingPoliceModule()
 
     givenWhenThen = async (theCase: Case): Promise<Then> => {
       const then = {} as Then

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -14,6 +14,7 @@ import {
   CaseNotCompletedGuard,
   CurrentCase,
 } from '../case'
+import { UploadPoliceCaseFileDto } from './dto'
 import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
 import { PoliceService } from './police.service'
 
@@ -35,14 +36,15 @@ export class PoliceController {
   }
 
   @RolesRules(prosecutorRule)
-  @Post('policeFile/:policeFileId')
+  @Post('policeFile')
   @ApiOkResponse({
     type: UploadPoliceCaseFileResponse,
     description: 'Uploads a police files of a case to AWS S3',
   })
   uploadPoliceCaseFile(
-    @Param('policeFileId') policeFileId: string,
+    @Param('caseId') caseId: string,
+    @Body() uploadPoliceCaseFile: UploadPoliceCaseFileDto,
   ): Promise<UploadPoliceCaseFileResponse> {
-    return this.policeService.uploadPoliceCaseFile(policeFileId)
+    return this.policeService.uploadPoliceCaseFile(caseId, uploadPoliceCaseFile)
   }
 }

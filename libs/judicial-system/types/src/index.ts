@@ -59,5 +59,6 @@ export type {
 
 export type {
   PoliceCaseFile,
-  TUploadPoliceCaseFileResponse as UploadPoliceCaseFileResponse,
+  UploadPoliceCaseFile,
+  UploadPoliceCaseFileResponse,
 } from './lib/policeFile'

@@ -1,3 +1,5 @@
+import { uuid } from 'uuidv4'
+import { Base64 } from 'js-base64'
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
 
@@ -16,6 +18,8 @@ import {
 } from '@island.is/shared/utils/server'
 
 import { environment } from '../../../environments'
+import { AwsS3Service } from '../aws-s3'
+import { UploadPoliceCaseFileDto } from './dto'
 import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
 
 @Injectable()
@@ -37,6 +41,7 @@ export class PoliceService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly awsS3Service: AwsS3Service,
   ) {}
 
   async getAllPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
@@ -80,15 +85,20 @@ export class PoliceService {
   }
 
   async uploadPoliceCaseFile(
-    policeFileId: string,
+    caseId: string,
+    uploadPoliceCaseFile: UploadPoliceCaseFileDto,
   ): Promise<UploadPoliceCaseFileResponse> {
-    this.logger.debug(`Uploading police file ${policeFileId} to AWS S3`)
+    this.logger.debug(
+      `Uploading police file ${uploadPoliceCaseFile.id} to AWS S3`,
+    )
 
     let res: Response
 
+    // TODO: throttle upload
+
     try {
       res = await fetch(
-        `${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${policeFileId}`,
+        `${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
         {
           headers: { 'X-Road-Client': environment.xRoad.clientId },
           agent: this.agent,
@@ -96,19 +106,27 @@ export class PoliceService {
       )
     } catch (error) {
       this.logger.error(
-        `Failed to get police case file ${policeFileId}}`,
+        `Failed to get police case file ${uploadPoliceCaseFile.id}}`,
         error,
       )
 
       throw new BadGatewayException(
-        `Failed to get police case file ${policeFileId}}`,
+        `Failed to get police case file ${uploadPoliceCaseFile.id}}`,
       )
     }
 
     if (!res.ok) {
-      throw new NotFoundException(`Police case file ${policeFileId} not found`)
+      throw new NotFoundException(
+        `Police case file ${uploadPoliceCaseFile.id} not found`,
+      )
     }
 
-    return { success: false }
+    const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+
+    const pdf = await res.json()
+
+    await this.awsS3Service.putObject(key, Base64.atob(pdf))
+
+    return { key }
   }
 }

@@ -50,14 +50,15 @@ export class PoliceResolver {
     @CurrentGraphQlUser() user: User,
     @Context('dataSource') { backendApi }: { backendApi: BackendAPI },
   ): Promise<UploadPoliceCaseFileResponse> {
+    const { caseId, ...uploadPoliceFile } = input
     this.logger.debug(
-      `Uploading police case file ${input.id} of case ${input.caseId} to AWS S3`,
+      `Uploading police case file ${input.id} of case ${caseId} to AWS S3`,
     )
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPLOAD_POLICE_CASE_FILE,
-      backendApi.uploadPoliceFile(input.caseId, input.id),
+      backendApi.uploadPoliceFile(input.caseId, uploadPoliceFile),
       input.caseId,
     )
   }

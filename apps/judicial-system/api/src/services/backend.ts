@@ -25,6 +25,7 @@ import type {
   UploadFileToCourtResponse,
   PoliceCaseFile,
   UploadPoliceCaseFileResponse,
+  UploadPoliceCaseFile,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../environments'
@@ -140,9 +141,9 @@ class BackendAPI extends RESTDataSource {
 
   uploadPoliceFile(
     caseId: string,
-    id: string,
+    uploadPoliceCaseFile: UploadPoliceCaseFile,
   ): Promise<UploadPoliceCaseFileResponse> {
-    return this.post(`case/${caseId}/policeFile/${id}`)
+    return this.post(`case/${caseId}/policeFile`, uploadPoliceCaseFile)
   }
 }
 

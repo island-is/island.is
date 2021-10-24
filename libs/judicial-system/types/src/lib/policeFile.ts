@@ -3,7 +3,11 @@ export interface PoliceCaseFile {
   name: string
 }
 
-export interface TUploadPoliceCaseFileResponse {
-  success: boolean
-  key?: string
+export interface UploadPoliceCaseFile {
+  id: string
+  name: number
+}
+
+export interface UploadPoliceCaseFileResponse {
+  key: string
 }

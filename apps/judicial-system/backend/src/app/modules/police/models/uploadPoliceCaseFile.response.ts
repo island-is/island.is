@@ -4,9 +4,6 @@ import type { UploadPoliceCaseFileResponse as TUploadPoliceCaseFileResponse } fr
 
 export class UploadPoliceCaseFileResponse
   implements TUploadPoliceCaseFileResponse {
-  @ApiProperty()
-  success!: boolean
-
   @ApiProperty({ nullable: true })
-  key?: string
+  key!: string
 }

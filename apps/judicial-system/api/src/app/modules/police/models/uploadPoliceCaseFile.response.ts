@@ -6,8 +6,5 @@ import type { UploadPoliceCaseFileResponse as TUploadPoliceCaseFileResponse } fr
 export class UploadPoliceCaseFileResponse
   implements TUploadPoliceCaseFileResponse {
   @Field()
-  success!: boolean
-
-  @Field()
-  key?: string
+  key!: string
 }
