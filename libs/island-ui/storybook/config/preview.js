@@ -1,5 +1,6 @@
 import React from 'react'
 import { IntlProvider } from 'react-intl'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { globalStyles } from '@island.is/island-ui/core'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ApolloProvider } from '@apollo/client'
