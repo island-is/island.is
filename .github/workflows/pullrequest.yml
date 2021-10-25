@@ -182,8 +182,6 @@ jobs:
 
       - name: Running tests
         run: ./scripts/ci/run-in-parallel.sh 30_test
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Cache CodeCov
         uses: actions/cache@v2
@@ -198,9 +196,6 @@ jobs:
         run: ./scripts/ci/run-in-parallel.sh 50_upload-coverage
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Remove coverage reports
-        run: rm -rf coverage/
 
   e2e:
     needs:

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euxo pipefail
+set -euo pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
@@ -16,7 +16,7 @@ if [[ ! -f "$COVERAGE_FILE" ]]; then
   exit 0
 fi
 
-COVERAGE_CONTENT=$(jq "." -r < $COVERAGE_FILE)
+COVERAGE_CONTENT=$(jq "." -cr < $COVERAGE_FILE)
 if [[ "$COVERAGE_CONTENT" == "{}" ]]; then
   echo "Coverage report is empty"
   exit 0
