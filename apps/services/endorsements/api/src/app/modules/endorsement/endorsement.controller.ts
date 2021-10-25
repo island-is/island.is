@@ -57,14 +57,18 @@ export class EndorsementController {
     private readonly auditService: AuditService,
   ) {}
 
+
   // get gp lists - relay
-  // @ApiOperation({ summary: 'Gets General Petition Lists' })
-  // @ApiOkResponse({ type: PaginatedEndorsementListDto })
-  @Get('sendMail')
+  // @ApiOkResponse({ type: any })
+  // @HasAccessGroup(AccessGroup.Owner, AccessGroup.Admin)
+  @ApiParam({ name: 'listId', type: String })
+  @Get('/sendMail')
+  // @ApiResponse()
   @BypassAuth()
-  sendMail(): any {
-    return this.endorsementService.sendMail()
+  async emailEndorsements(): Promise<string> {
+    return this.endorsementService.emailEndorsements()
   }
+
 
   @ApiOperation({ summary: 'Finds all endorsements in a given list' })
   @ApiParam({ name: 'listId', type: String })
@@ -260,3 +264,5 @@ export class EndorsementController {
     return
   }
 }
+
+

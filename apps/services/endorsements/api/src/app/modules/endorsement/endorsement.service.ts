@@ -388,23 +388,42 @@ export class EndorsementService {
     }
   }
 
-  async createDocument() {
-    // c7f7e470-17ce-4e58-a736-7b3a6f797ec1
+  async createDocumentBuffer(listId: string) {
+    // get list
+    const query = {
+      limit:10000
+    }
+
+
+    // const endorsementList = await this.endorsementListModel.findOne({
+    //   where: { id: listId },
+    // })
+    const endorsements = await this.findEndorsementsGeneralPetition({listId},query)
+    
+    // console.log(endorsements)
+    // get endorsies
+
     const doc = new PDFDocument()
     // list generated timestamp when
     // total count - list metadata
-    doc.text('Hello, World! YOOOOOOOoo0fdsa..aa')
-    for (let i = 0; i < 1000; i++) {
-      doc.text(`Hello, World! ${i}`)
+    doc.text("Listinnnnnnn")
+    doc.moveDown()
+    doc.moveDown()
+    doc.text(`Alls undirskriftir ${endorsements.totalCount}`)
+    doc.moveDown()
+    doc.moveDown()
+    for(const val of endorsements.data) {
+      doc.text(val.meta.fullName)
       doc.moveDown()
     }
     doc.end()
     return await getStream.buffer(doc)
   }
 
-  async sendMail() {
-    const filename = 'listid-datetime-hash.pdf'
-    const content = await this.createDocument()
+  async emailEndorsements() {
+    const listId = "c7f7e470-17ce-4e58-a736-7b3a6f797ec1" // demo
+    const some_date = "2021-21-21"
+    const filename = `${listId}-${some_date}-hash.pdf`
 
     try {
       return this.emailService.sendEmail({
@@ -425,8 +444,8 @@ export class EndorsementService {
         <br><br>Ef þú kannast ekki við að hafa sett inn þetta netfang, vinsamlegast hunsaðu þennan póst.`,
         attachments: [
           {
-            filename: filename,
-            content: content,
+            filename,
+            content: await this.createDocumentBuffer(listId),
           },
         ],
       })
