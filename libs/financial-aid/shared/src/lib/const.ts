@@ -14,6 +14,7 @@ export const Routes = {
   filesPage: (hasIncome?: boolean) =>
     `/umsokn/${hasIncome ? 'skattagogn' : 'gogn'}`,
   newCases: '/nymal',
+  serviceCenter: (id: string) => `/midstod/${id}`,
 }
 
 export const months = [

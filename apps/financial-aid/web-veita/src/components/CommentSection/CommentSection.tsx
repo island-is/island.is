@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { Box, Input, Button } from '@island.is/island-ui/core'
 import cn from 'classnames'
 
-import * as styles from './CommentSection.treat'
+import * as styles from './CommentSection.css'
 import { useMutation } from '@apollo/client'
 import { ApplicationEventMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import {

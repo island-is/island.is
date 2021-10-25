@@ -1,7 +1,7 @@
 import React from 'react'
 import { ActionCard, Box, Text } from '@island.is/island-ui/core'
 
-import * as styles from './Status.treat'
+import * as styles from './Status.css'
 
 import {
   ApplicationState,

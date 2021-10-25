@@ -2,9 +2,9 @@ import React, { FC } from 'react'
 import cn from 'classnames'
 import { Box } from '../../Box/Box'
 import { BoxProps } from '../../Box/types'
-import * as styles from './GridRow.treat'
+import * as styles from './GridRow.css'
 import { ResponsiveProp } from '../../../utils/responsiveProp'
-import { flexDirection, justifyContent } from '../../Box/useBoxStyles.treat'
+import { flexDirection, justifyContent } from '../../Box/useBoxStyles.css'
 
 interface Props {
   className?: string

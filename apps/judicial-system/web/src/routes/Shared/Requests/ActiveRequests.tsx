@@ -2,7 +2,7 @@ import React, { useContext, useMemo, useState } from 'react'
 import cn from 'classnames'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 
-import * as styles from './Requests.treat'
+import * as styles from './Requests.css'
 import { mapCaseStateToTagVariant } from './utils'
 import { CaseState, UserRole } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'

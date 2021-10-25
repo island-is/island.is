@@ -52,6 +52,7 @@ import {
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
   isInjuredAndRepresentativeOfCompanyOrInstitute,
+  isInternshipStudiesAccident,
   isLocatedOnShipOther,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfEmployee,
@@ -346,7 +347,9 @@ export const aboutTheAccidentSection = buildSection({
           id: 'accidentLocation.studiesAccident',
           title: accidentLocation.studiesAccidentLocation.heading,
           description: accidentLocation.studiesAccidentLocation.description,
-          condition: (formValue) => isStudiesAccident(formValue),
+          condition: (formValue) =>
+            isStudiesAccident(formValue) &&
+            !isInternshipStudiesAccident(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -529,7 +532,9 @@ export const aboutTheAccidentSection = buildSection({
     buildSubSection({
       id: 'workMachine.section',
       title: workMachine.general.sectionTitle,
-      condition: (formValue) => isGeneralWorkplaceAccident(formValue),
+      condition: (formValue) =>
+        isGeneralWorkplaceAccident(formValue) ||
+        isAgricultureAccident(formValue),
       children: [
         buildMultiField({
           id: 'workMachine',
@@ -636,14 +641,6 @@ export const aboutTheAccidentSection = buildSection({
                         label: attachments.labels.injuryCertificate,
                       },
                       {
-                        value: AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
-                        label: attachments.labels.hospitalSendsCertificate,
-                      },
-                      {
-                        value: AttachmentsEnum.INJUREDSENDSCERTIFICATE,
-                        label: attachments.labels.injuredSendsCertificate,
-                      },
-                      {
                         value: AttachmentsEnum.SENDCERTIFICATELATER,
                         label: attachments.labels.sendCertificateLater,
                       },
@@ -680,7 +677,7 @@ export const aboutTheAccidentSection = buildSection({
           ],
         }),
         buildFileUploadField({
-          id: 'attachments.injuryCertificateFile',
+          id: 'attachments.injuryCertificateFile.file',
           title: attachments.general.heading,
           uploadAccept: UPLOAD_ACCEPT,
           uploadHeader: injuredPersonInformation.upload.uploadHeader,
@@ -689,9 +686,8 @@ export const aboutTheAccidentSection = buildSection({
           introduction: attachments.general.uploadIntroduction,
           condition: (formValue) =>
             (formValue as {
-              attachments: { injuryCertificate: AttachmentsEnum }
-            }).attachments?.injuryCertificate ===
-            AttachmentsEnum.INJURYCERTIFICATE,
+              injuryCertificate: { answer: AttachmentsEnum }
+            }).injuryCertificate?.answer === AttachmentsEnum.INJURYCERTIFICATE,
         }),
       ],
     }),
@@ -761,7 +757,7 @@ export const aboutTheAccidentSection = buildSection({
           title: attachments.general.uploadTitle,
           children: [
             buildFileUploadField({
-              id: 'attachments.deathCertificateFile',
+              id: 'attachments.deathCertificateFile.file',
               title: attachments.general.uploadHeader,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: attachments.general.uploadHeader,
@@ -849,6 +845,16 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'companyInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'companyInfo',
+              },
+            ),
           ],
         }),
       ],
@@ -925,6 +931,16 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'schoolInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'schoolInfo',
+              },
+            ),
           ],
         }),
       ],
@@ -960,14 +976,12 @@ export const aboutTheAccidentSection = buildSection({
               title: fishingCompanyInfo.labels.homePort,
               backgroundColor: 'blue',
               width: 'half',
-              required: true,
             }),
             buildTextField({
               id: 'fishingShipInfo.shipRegisterNumber',
               title: fishingCompanyInfo.labels.shipRegisterNumber,
               backgroundColor: 'blue',
               width: 'half',
-              required: true,
             }),
           ],
         }),
@@ -1036,6 +1050,16 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'fishingCompanyInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'fishingCompanyInfo',
+              },
+            ),
           ],
         }),
       ],
@@ -1112,6 +1136,16 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'sportsClubInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'sportsClubInfo',
+              },
+            ),
           ],
         }),
       ],
@@ -1186,6 +1220,16 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'rescueSquadInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'rescueSquadInfo',
+              },
+            ),
           ],
         }),
       ],

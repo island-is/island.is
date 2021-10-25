@@ -1,14 +1,11 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useContext } from 'react'
 import { Text, Box, Button } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
-import * as styles from './application.treat'
+import * as styles from './application.css'
 
 import { useQuery } from '@apollo/client'
-import {
-  ApplicationQuery,
-  MunicipalityQuery,
-} from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+import { ApplicationQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 import {
   Application,
@@ -18,11 +15,11 @@ import {
   Employment,
   insertAt,
   ApplicationState,
-  Municipality,
   aidCalculator,
   getMonth,
   calculateAidFinalAmount,
   formatPhoneNumber,
+  formatNationalId,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -40,13 +37,10 @@ import {
   ApplicationSkeleton,
   LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
+import { AdminContext } from '../../components/AdminProvider/AdminProvider'
 
 interface ApplicantData {
   application: Application
-}
-
-interface MunicipalityData {
-  municipality: Municipality
 }
 
 const ApplicationProfile = () => {
@@ -58,31 +52,25 @@ const ApplicationProfile = () => {
 
   const [isLoading, setIsLoading] = useState(false)
 
+  const { municipality } = useContext(AdminContext)
+
   const { data, loading } = useQuery<ApplicantData>(ApplicationQuery, {
     variables: { input: { id: router.query.id } },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
-
-  const { data: dataMunicipality } = useQuery<MunicipalityData>(
-    MunicipalityQuery,
-    {
-      variables: { input: { id: 'hfj' } },
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
-
   const [application, setApplication] = useState<Application>()
 
   const aidAmount = useMemo(() => {
-    if (application && dataMunicipality && application.homeCircumstances) {
+    if (application && municipality && application.homeCircumstances) {
       return aidCalculator(
         application.homeCircumstances,
-        dataMunicipality?.municipality.aid,
+        application.spouseNationalId
+          ? municipality.cohabitationAid
+          : municipality.individualAid,
       )
     }
-  }, [application, dataMunicipality])
+  }, [application, municipality])
 
   useEffect(() => {
     if (data?.application) {
@@ -181,15 +169,17 @@ const ApplicationProfile = () => {
     const applicantMoreInfo = [
       {
         title: 'Lögheimili',
-        content: 'Hafnarstræti 10',
+        content: application.streetName,
       },
       {
         title: 'Póstnúmer',
-        content: '220',
+        content: application.postalCode,
       },
       {
         title: 'Maki',
-        content: '??',
+        content: application.spouseNationalId
+          ? formatNationalId(application.spouseNationalId)
+          : 'Enginn maki',
       },
       {
         title: 'Búsetuform',
@@ -284,7 +274,7 @@ const ApplicationProfile = () => {
             aidAmount={aidAmount}
             usePersonalTaxCredit={application.usePersonalTaxCredit}
             isVisible={isAidModalVisible}
-            onVisiblityChange={(isVisibleBoolean) => {
+            onVisibilityChange={(isVisibleBoolean) => {
               setAidModalVisible(isVisibleBoolean)
             }}
           />

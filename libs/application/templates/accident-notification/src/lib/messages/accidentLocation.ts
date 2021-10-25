@@ -136,7 +136,7 @@ export const accidentLocation = {
     },
     other: {
       id: 'an.application:accidentLocation.rescueWorkAccident.other',
-      defaultMessage: 'Annarsstaðar í vinnu fyrir björgunaraðgerðir',
+      defaultMessage: 'Annars staðar í vinnu vegna björgunaraðgerða',
       description: 'Label for the other in rescue work accident location',
     },
     description: {

@@ -6,10 +6,6 @@ import { CurrentUserQuery } from '@island.is/financial-aid-web/osk/graphql/share
 import { Routes, User } from '@island.is/financial-aid/shared/lib'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/client'
-import {
-  ServiceCenter,
-  serviceCenters,
-} from '@island.is/financial-aid/shared/data'
 
 const useUser = () => {
   const router = useRouter()
@@ -20,7 +16,6 @@ const useUser = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(session?.user),
   )
-  const [userServiceCenter, setUserServiceCenter] = useState<ServiceCenter>()
 
   const { data, loading: loadingUser } = useQuery(CurrentUserQuery, {
     fetchPolicy: 'no-cache',
@@ -44,12 +39,6 @@ const useUser = () => {
 
       setUser(loggedInUser)
       setIsAuthenticated(true)
-
-      setUserServiceCenter(
-        serviceCenters.find((serviceCenter) =>
-          serviceCenter.postalCodes.includes(Number(loggedInUser.postalCode)),
-        ),
-      )
     }
   }, [setUser, loggedInUser, user])
 
@@ -57,7 +46,6 @@ const useUser = () => {
     isAuthenticated,
     user,
     setUser,
-    userServiceCenter,
     loadingUser,
   }
 }

@@ -10,8 +10,9 @@ import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import {
+  months,
   NavigationProps,
-  currentMonth,
+  nextMonth,
 } from '@island.is/financial-aid/shared/lib'
 import {
   AboutFormApplicant,
@@ -22,6 +23,8 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 const AboutForm = () => {
   const router = useRouter()
   const { user } = useContext(AppContext)
+
+  const { nationalRegistryData } = useContext(AppContext)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
