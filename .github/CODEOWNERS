@@ -59,6 +59,7 @@
 /libs/api/domains/driving-license/                                                            @island-is/kosmos-kaos
 /libs/api/domains/education/                                                                  @island-is/kosmos-kaos
 /libs/application/templates/general-petition/                                                 @island-is/kosmos-kaos
+/libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists                           @island-is/kosmos-kaos
 
 /apps/reference-next-app/                                                                     @island-is/aranja-core
 /libs/cms-translations/                                                                       @island-is/aranja-core
