@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 import { AnimateSharedLayout } from 'framer-motion'
 
-import * as styles from './StateModal.treat'
+import * as styles from './StateModal.css'
 
 import {
   OptionsModal,

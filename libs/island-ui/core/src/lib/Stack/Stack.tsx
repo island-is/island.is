@@ -4,7 +4,7 @@ import { Box } from '../Box/Box'
 import { BoxProps } from '../Box/types'
 import { Divider, DividerProps } from '../Divider/Divider'
 import { Hidden, HiddenProps } from '../Hidden/Hidden'
-import * as hiddenStyleRefs from '../Hidden/Hidden.treat'
+import * as hiddenStyleRefs from '../Hidden/Hidden.css'
 import { alignToFlexAlign, Align } from '../../utils/align'
 import {
   mapResponsiveProp,
@@ -66,9 +66,7 @@ const calculateHiddenStackItemProps = (
     displayMd,
     displayLg,
     displayXl,
-  ] = normaliseResponsiveProp(
-    'display' in stackItemProps ? stackItemProps.display : 'block',
-  )
+  ] = normaliseResponsiveProp(stackItemProps?.display || 'block')
 
   return {
     ...stackItemProps,

@@ -25,7 +25,7 @@ import {
 import SignatureModal from './SignatureModal'
 import { CRCFieldBaseProps } from '../../types'
 import { ContractOverview } from '../components'
-import * as style from '../Shared.treat'
+import * as style from '../Shared.css'
 
 const confirmContractTerms = 'confirmContract.terms'
 const confirmContractTimestamp = 'confirmContract.timestamp'

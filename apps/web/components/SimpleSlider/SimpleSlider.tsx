@@ -17,7 +17,7 @@ import {
   Logo,
 } from '@island.is/island-ui/core'
 
-import * as styles from './SimpleSlider.treat'
+import * as styles from './SimpleSlider.css'
 
 type BreakpointOption = Partial<
   Pick<SlideState, 'slideWidthOffset' | 'gutterWidth' | 'slideCount'>

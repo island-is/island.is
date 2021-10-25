@@ -21,7 +21,7 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { errorModal } from '../../lib/messages'
 import { PaymentPlanExternalData } from '../../types'
-import * as styles from './PrerequisitesErrorModal.treat'
+import * as styles from './PrerequisitesErrorModal.css'
 
 interface ErrorMessageProps {
   title: string

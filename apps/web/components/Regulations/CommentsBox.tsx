@@ -1,4 +1,4 @@
-import * as s from './RegulationDisplay.treat'
+import * as s from './RegulationDisplay.css'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import React from 'react'

@@ -1,6 +1,6 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import React, { PropsWithChildren } from 'react'
-import * as styles from './AccordionListItem.treat'
+import * as styles from './AccordionListItem.css'
 
 interface AccordionListItemProps {
   title: string
