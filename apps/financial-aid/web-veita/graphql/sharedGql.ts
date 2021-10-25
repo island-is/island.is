@@ -80,6 +80,7 @@ export const UpdateApplicationTableMutation = gql`
         DataNeeded
         Rejected
         Approved
+        MyCases
       }
     }
   }
@@ -112,6 +113,7 @@ export const ApplicationFiltersMutation = gql`
       DataNeeded
       Rejected
       Approved
+      MyCases
     }
   }
 `
