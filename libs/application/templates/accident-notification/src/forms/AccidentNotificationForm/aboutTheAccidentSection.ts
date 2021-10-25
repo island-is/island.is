@@ -641,14 +641,6 @@ export const aboutTheAccidentSection = buildSection({
                         label: attachments.labels.injuryCertificate,
                       },
                       {
-                        value: AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
-                        label: attachments.labels.hospitalSendsCertificate,
-                      },
-                      {
-                        value: AttachmentsEnum.INJUREDSENDSCERTIFICATE,
-                        label: attachments.labels.injuredSendsCertificate,
-                      },
-                      {
                         value: AttachmentsEnum.SENDCERTIFICATELATER,
                         label: attachments.labels.sendCertificateLater,
                       },
