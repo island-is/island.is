@@ -140,7 +140,7 @@ describe('PoliceController - Upload police case file', () => {
     it('should throw bad gateway exception', () => {
       expect(then.error).toBeInstanceOf(BadGatewayException)
       expect(then.error.message).toBe(
-        `Failed to get police case file ${uploadPoliceCaseFile.id}`,
+        `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
       )
     })
   })
@@ -163,7 +163,7 @@ describe('PoliceController - Upload police case file', () => {
     it('should throw not found exception', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
       expect(then.error.message).toBe(
-        `Police case file ${policeFileId} not found`,
+        `Police case file ${policeFileId} of case ${caseId} not found`,
       )
     })
   })

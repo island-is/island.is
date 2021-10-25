@@ -38,11 +38,70 @@ export class PoliceService {
     rejectUnauthorized: false,
   })
 
+  private throttle = Promise.resolve('')
+
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private readonly awsS3Service: AwsS3Service,
   ) {}
+
+  private async throttleUploadPoliceCaseFile(
+    caseId: string,
+    uploadPoliceCaseFile: UploadPoliceCaseFileDto,
+  ) {
+    this.logger.debug(
+      `Waiting to upload police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+    )
+
+    await this.throttle.catch((reason) => {
+      this.logger.error('Previous upload failed', { reason })
+    })
+
+    this.logger.debug(
+      `Starting to upload police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+    )
+
+    let res: Response
+
+    try {
+      res = await fetch(
+        `${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+        {
+          headers: { 'X-Road-Client': environment.xRoad.clientId },
+          agent: this.agent,
+        } as RequestInit,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+        error,
+      )
+
+      throw new BadGatewayException(
+        `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+      )
+    }
+
+    if (!res.ok) {
+      throw new NotFoundException(
+        `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
+      )
+    }
+
+    const base64 = await res.json()
+    const pdf = Base64.atob(base64)
+
+    const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+
+    await this.awsS3Service.putObject(key, pdf)
+
+    this.logger.debug(
+      `Done uploading police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+    )
+
+    return key
+  }
 
   async getAllPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
     this.logger.debug(`Getting all police files for case ${caseId}`)
@@ -89,44 +148,15 @@ export class PoliceService {
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.logger.debug(
-      `Uploading police file ${uploadPoliceCaseFile.id} to AWS S3`,
+      `Uploading police file ${uploadPoliceCaseFile.id} of case ${caseId} to AWS S3`,
     )
 
-    let res: Response
+    this.throttle = this.throttleUploadPoliceCaseFile(
+      caseId,
+      uploadPoliceCaseFile,
+    )
 
-    // TODO: throttle upload
-
-    try {
-      res = await fetch(
-        `${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
-        {
-          headers: { 'X-Road-Client': environment.xRoad.clientId },
-          agent: this.agent,
-        } as RequestInit,
-      )
-    } catch (error) {
-      this.logger.error(
-        `Failed to get police case file ${uploadPoliceCaseFile.id}`,
-        error,
-      )
-
-      throw new BadGatewayException(
-        `Failed to get police case file ${uploadPoliceCaseFile.id}`,
-      )
-    }
-
-    if (!res.ok) {
-      throw new NotFoundException(
-        `Police case file ${uploadPoliceCaseFile.id} not found`,
-      )
-    }
-
-    const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
-
-    const base64 = await res.json()
-    const pdf = Base64.atob(base64)
-
-    await this.awsS3Service.putObject(key, pdf)
+    const key = await this.throttle
 
     return { key }
   }
