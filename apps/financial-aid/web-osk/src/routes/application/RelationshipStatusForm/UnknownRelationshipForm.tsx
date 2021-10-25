@@ -12,7 +12,7 @@ import {
   Spouse,
 } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import * as styles from './relationshipStatusForm.treat'
+import * as styles from './relationshipStatusForm.css'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 

@@ -5,7 +5,7 @@ import {
   ApplicationEventType,
   getEventType,
 } from '@island.is/financial-aid/shared/lib'
-import * as styles from '../History/History.treat'
+import * as styles from '../History/History.css'
 import cn from 'classnames'
 import { format } from 'date-fns'
 

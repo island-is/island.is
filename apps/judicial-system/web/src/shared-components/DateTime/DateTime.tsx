@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { DatePicker, Input } from '@island.is/island-ui/core'
 import { TimeInputField, BlueBox } from '../../shared-components'
-import * as styles from './DateTime.treat'
+import * as styles from './DateTime.css'
 
 import {
   validate,
