@@ -1,0 +1,15 @@
+{
+  "presets": [
+    [
+      "@nrwl/next/babel",
+      {
+        "preset-env": {
+          "loose": true
+        }
+      }
+    ],
+    ["@nrwl/web/babel", { "classProperties": { "loose": true } }],
+    "./libs/shared/babel/web"
+  ],
+  "plugins": []
+}

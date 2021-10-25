@@ -20,8 +20,15 @@ module.exports = {
   ],
   babel: async (options) => ({
     ...options,
-    presets: ['@babel/preset-env', '@babel/preset-react'],
-    plugins: ['@babel/plugin-proposal-class-properties'],
+    presets: [
+      ['@babel/preset-env', { loose: true }],
+      '@babel/preset-react',
+      '@babel/preset-typescript',
+    ],
+    plugins: [
+      ['@babel/plugin-proposal-decorators', { legacy: true }],
+      ['@babel/plugin-proposal-class-properties', { loose: true }],
+    ],
   }),
   webpackFinal: (config) => {
     config.plugins.push(new VanillaExtractPlugin())
