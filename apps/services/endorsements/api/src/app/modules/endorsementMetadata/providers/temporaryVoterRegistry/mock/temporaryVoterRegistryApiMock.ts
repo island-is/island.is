@@ -13,7 +13,7 @@ export class TemporaryVoterRegistryApiMock {
 
   async voterRegistryControllerFindByNationalId(input: any) {
     return Promise.resolve({
-      regionNumber: faker.random.number({ min: 1, max: 6 }),
+      regionNumber: faker.datatype.number({ min: 1, max: 6 }),
       regionName: faker.lorem.words(2),
     })
   }
