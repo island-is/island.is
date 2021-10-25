@@ -84,7 +84,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
         testID={testIDs.SCREEN_NOTIFICATIONS}
       >
         <FlatList
-          style={{ flex: 1 }}
+          style={{ flex: 1, paddingTop: 16 }}
           data={notifications}
           keyExtractor={(item: Notification) => item.id}
           renderItem={renderNotificationItem}

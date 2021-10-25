@@ -13,7 +13,7 @@ import { font } from '../../utils/font'
 
 const Header = styled.View`
   padding-top: 20px;
-  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;

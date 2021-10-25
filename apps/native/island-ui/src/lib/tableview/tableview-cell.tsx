@@ -87,7 +87,10 @@ const Content = styled.View`
 const Title = styled.View``
 
 const TitleText = styled.Text`
-  ${font()}
+  ${font({
+    fontSize: 16,
+    fontWeight: '300',
+  })}
 `
 
 const Subtitle = styled.View`
@@ -98,6 +101,7 @@ const SubtitleText = styled.Text`
   ${font({
     fontSize: 15,
     color: (props) => props.theme.color.dark300,
+    fontWeight: '300',
   })}
 `
 

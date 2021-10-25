@@ -6,7 +6,6 @@ const Host = styled.View`
   display: flex;
   width: 100%;
   flex-direction: row;
-  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
   margin-top: ${({ theme }) => theme.spacing[2]}px;
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `

@@ -56,10 +56,10 @@ export function BottomTabsIndicator({
         shadowColor: theme.color.blue400,
         shadowOffset: {
           width: 0,
-          height: -26,
+          height: -4,
         },
         shadowOpacity: 0.08,
-        shadowRadius: 30.0,
+        shadowRadius: 12.0,
         elevation: 1,
       }}
     >
