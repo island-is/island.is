@@ -1,4 +1,4 @@
-import * as s from './RegulationDisplay.treat'
+import * as s from './RegulationDisplay.css'
 
 import React, { useEffect, useState } from 'react'
 import { ISODate, prettyName } from '@island.is/regulations'

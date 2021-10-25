@@ -11,7 +11,7 @@ import {
   ColorSchemes,
 } from '../UI/ColorSchemeContext/ColorSchemeContext'
 
-import * as styles from './GroupedPages.treat'
+import * as styles from './GroupedPages.css'
 
 interface GroupedPagesProps {
   topContent: ReactNode

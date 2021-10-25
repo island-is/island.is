@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import cn from 'classnames'
 import { Image as ApiImage } from '@island.is/web/graphql/schema'
 
-import * as styles from './Image.treat'
+import * as styles from './Image.css'
 
 export type CustomImage = {
   type: 'custom'

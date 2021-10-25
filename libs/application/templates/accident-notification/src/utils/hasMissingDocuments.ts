@@ -38,15 +38,18 @@ export const hasMissingDocuments = (answers: FormValue) => {
   return (
     (hasMissingInjuryCertificate(answers) &&
       !hasAttachment(
-        (answers as AccidentNotification).attachments?.injuryCertificateFile,
+        (answers as AccidentNotification).attachments?.injuryCertificateFile
+          ?.file,
       )) ||
     (hasMissingDeathCertificate(answers) &&
       !hasAttachment(
-        (answers as AccidentNotification).attachments?.deathCertificateFile,
+        (answers as AccidentNotification).attachments?.deathCertificateFile
+          ?.file,
       )) ||
     (hasMissingPowerOfAttorneyFile(answers) &&
       !hasAttachment(
-        (answers as AccidentNotification).attachments?.powerOfAttorneyFile,
+        (answers as AccidentNotification).attachments?.powerOfAttorneyFile
+          ?.file,
       ))
   )
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box } from '../Box/Box'
-import * as styleRefs from './Divider.treat'
+import * as styleRefs from './Divider.css'
 
 export interface DividerProps {
   weight?: keyof typeof styleRefs.weight

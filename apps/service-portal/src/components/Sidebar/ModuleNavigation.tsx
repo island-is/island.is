@@ -3,7 +3,7 @@ import {
   ServicePortalNavigationItem,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import * as styles from './Sidebar.treat'
+import * as styles from './Sidebar.css'
 import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'

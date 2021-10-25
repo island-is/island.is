@@ -65,3 +65,13 @@ export enum FamilyStatus {
   MARRIED_NOT_LIVING_TOGETHER = 'MarriedNotLivingTogether',
   NOT_INFORMED = 'NotInformed',
 }
+
+export enum AidType {
+  INDIVIDUAL = 'Individual',
+  COHABITATION = 'Cohabitation',
+}
+
+export enum MartialStatusType {
+  MARRIED = 'Married',
+  SINGLE = 'Single',
+}

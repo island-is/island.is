@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 
-import * as styles from './Logo.treat'
+import * as styles from './Logo.css'
 
 interface LogoSvgProps {
   name: string
@@ -16,7 +16,7 @@ const LogoSvg = ({ name, className }: LogoSvgProps) => {
         [`${className}`]: className,
       })}
     >
-      <img src={`../../../svg/${name}.svg`} alt="" />
+      <img src={`../../../svg/${name}`} alt="" />
     </div>
   )
 }

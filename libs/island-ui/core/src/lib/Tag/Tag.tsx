@@ -2,7 +2,7 @@ import React, { FC, forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
 import { Text } from '../Text/Text'
 
-import * as styles from './Tag.treat'
+import * as styles from './Tag.css'
 
 export type TagVariant =
   | 'blue'

@@ -1,14 +1,37 @@
 import React from 'react'
 import { Box, Text, ActionCard, Stack } from '@island.is/island-ui/core'
-import { useGetPetitionLists } from '../queries'
+import { useGetAllPetitionLists } from '../queries'
 import { Link } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { PaginatedEndorsementListResponse } from '../../types/schema'
+import format from 'date-fns/format'
+
+const formatDate = (date: string) => {
+  try {
+    return format(new Date(date), 'dd.MM.yyyy')
+  } catch {
+    return date
+  }
+}
 
 const PetitionsAdmin = () => {
   const { formatMessage } = useLocale()
-  const petitionLists = useGetPetitionLists() //all existing lists
+  const getAllPetitionLists = useGetAllPetitionLists()
+  const allPetitionLists = (getAllPetitionLists as PaginatedEndorsementListResponse)
+    .data
+
+  const openLists = allPetitionLists?.filter((list) => {
+    return (
+      new Date(list.openedDate) <= new Date() &&
+      new Date() <= new Date(list.closedDate)
+    )
+  })
+
+  const closedLists = allPetitionLists?.filter((list) => {
+    return new Date() >= new Date(list.closedDate)
+  })
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -23,14 +46,14 @@ const PetitionsAdmin = () => {
       </Stack>
 
       <Box marginTop={10} marginBottom={7}>
-        {!!petitionLists.data && (
+        {openLists && (
           <>
             <Text as="p" variant="h3" marginBottom={2}>
               {formatMessage(m.petition.petitionListsOngoing)}
             </Text>
 
             <Stack space={4}>
-              {petitionLists.data.map((list: any) => {
+              {openLists.map((list: any) => {
                 return (
                   <Link
                     style={{ textDecoration: 'none' }}
@@ -40,13 +63,19 @@ const PetitionsAdmin = () => {
                         ':listId',
                         list.id,
                       ),
-                      state: { type: 'unendorse', listId: list.id },
+                      state: { listId: list.id },
                     }}
                   >
                     <ActionCard
                       backgroundColor="white"
                       heading={list.title}
-                      text={list.description as string}
+                      text={
+                        formatMessage(m.petition.listPeriod) +
+                        ' ' +
+                        formatDate(list.openedDate) +
+                        ' - ' +
+                        formatDate(list.closedDate)
+                      }
                       cta={{
                         label: formatMessage(m.petition.editList),
                         variant: 'text',
@@ -60,14 +89,14 @@ const PetitionsAdmin = () => {
           </>
         )}
 
-        {!!petitionLists.data && (
+        {closedLists && (
           <>
             <Text as="p" variant="h3" marginBottom={3} marginTop={7}>
               {formatMessage(m.petition.petitionListsClosed)}
             </Text>
 
             <Stack space={4}>
-              {petitionLists.data.map((list: any) => {
+              {closedLists.map((list: any) => {
                 return (
                   <Link
                     style={{ textDecoration: 'none' }}
@@ -77,13 +106,19 @@ const PetitionsAdmin = () => {
                         ':listId',
                         list.id,
                       ),
-                      state: { type: 'unendorse', listId: list.id },
+                      state: { listId: list.id },
                     }}
                   >
                     <ActionCard
                       backgroundColor="red"
                       heading={list.title}
-                      text={list.description as string}
+                      text={
+                        formatMessage(m.petition.listPeriod) +
+                        ' ' +
+                        formatDate(list.openedDate) +
+                        ' - ' +
+                        formatDate(list.closedDate)
+                      }
                       cta={{
                         label: formatMessage(m.petition.editList),
                         variant: 'text',

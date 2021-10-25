@@ -3,7 +3,7 @@ import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
 import { config, endpoints } from './config'
 import { useWindowSize } from 'react-use'
-import * as styles from './ChatPanel.treat'
+import * as styles from './ChatPanel.css'
 
 declare global {
   interface Window {
