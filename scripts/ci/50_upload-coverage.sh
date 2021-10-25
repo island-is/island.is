@@ -22,4 +22,4 @@ if [[ "$COVERAGE_CONTENT" == "{}" ]]; then
   exit 0
 fi
 
-NODE_OPTIONS="" codecov --token "$CODECOV_TOKEN" --flags "$APP" --file "$COVERAGE_FILE"
+NODE_OPTIONS="" codecov --token "$CODECOV_TOKEN" --flags "$APP" --file "$COVERAGE_FILE" --clean
