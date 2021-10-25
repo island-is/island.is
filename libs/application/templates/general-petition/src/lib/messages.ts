@@ -200,7 +200,7 @@ export const m: MessageDir = {
   listSubmitted: defineMessages({
     title: {
       id: 'gpt.application.list.submitted.title',
-      defaultMessage: 'Með hefur verið skilað',
+      defaultMessage: 'Meðmælendalista hefur verið skilað',
       description: 'Title for conlcusion',
     },
     approvedTitle: {
@@ -353,7 +353,7 @@ export const m: MessageDir = {
     },
     organization: {
       id: 'gpt.application:logo.organization',
-      defaultMessage: 'Dómsmálaráðuneytið',
+      defaultMessage: 'Þjóðskrá',
       description: 'Name of organization',
     },
   }),

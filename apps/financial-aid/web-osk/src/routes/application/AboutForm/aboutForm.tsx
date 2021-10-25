@@ -10,8 +10,9 @@ import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import {
+  months,
   NavigationProps,
-  currentMonth,
+  nextMonth,
 } from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
@@ -37,7 +38,7 @@ const AboutForm = () => {
             fjárhagsaðstoð hjá{' '}
             {nationalRegistryData?.address.city ?? 'Sambandi sveitarfélaga'}
           </strong>{' '}
-          fyrir {currentMonth()}. Áður en þú heldur áfram er gott að hafa
+          fyrir {months[nextMonth]}. Áður en þú heldur áfram er gott að hafa
           eftirfarandi í huga:
         </Text>
 

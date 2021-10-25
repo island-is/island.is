@@ -1,7 +1,7 @@
 import React, { useState, useRef, forwardRef } from 'react'
 import cn from 'classnames'
 
-import * as styles from './Input.treat'
+import * as styles from './Input.css'
 import { Box } from '../Box/Box'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Icon } from '../IconRC/Icon'

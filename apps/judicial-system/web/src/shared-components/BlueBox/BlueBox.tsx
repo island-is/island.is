@@ -1,6 +1,6 @@
 import React from 'react'
 import cn from 'classnames'
-import * as styles from './BlueBox.treat'
+import * as styles from './BlueBox.css'
 
 interface Props {
   size?: 'small' | 'large'

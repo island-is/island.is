@@ -35,18 +35,19 @@ import {
   ApplicationStateUrl,
 } from '@island.is/financial-aid/shared/lib'
 
-import type { User } from '@island.is/financial-aid/shared/lib'
+import type { User, Staff } from '@island.is/financial-aid/shared/lib'
 
 import {
   ApplicationFilters,
   RolesRule,
 } from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { RolesGuard } from '../../guards'
-import { CurrentUser, RolesRules } from '../../decorators'
+import { RolesGuard } from '../../guards/roles.guard'
+import { CurrentStaff, CurrentUser, RolesRules } from '../../decorators'
 import { ApplicationGuard } from '../../guards/application.guard'
 import { StaffService } from '../staff'
 import { IsSpouseResponse } from './models/isSpouse.response'
+import { EmployeeGuard } from '../../guards/employee.guard'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/application`)
@@ -101,7 +102,7 @@ export class ApplicationController {
     }
   }
 
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, EmployeeGuard)
   @RolesRules(RolesRule.VEITA)
   @Get('state/:stateUrl')
   @ApiOkResponse({
@@ -109,11 +110,12 @@ export class ApplicationController {
     isArray: true,
     description: 'Gets all existing applications',
   })
-  getAll(
+  async getAll(
     @Param('stateUrl') stateUrl: ApplicationStateUrl,
+    @CurrentStaff() staff: Staff,
   ): Promise<ApplicationModel[]> {
     this.logger.debug('Application controller: Getting all applications')
-    return this.applicationService.getAll(stateUrl)
+    return this.applicationService.getAll(stateUrl, staff.id)
   }
 
   @UseGuards(ApplicationGuard)
@@ -133,15 +135,17 @@ export class ApplicationController {
     return application
   }
 
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, EmployeeGuard)
   @RolesRules(RolesRule.VEITA)
   @Get('filters')
   @ApiOkResponse({
     description: 'Gets all existing applications filters',
   })
-  getAllFilters(): Promise<ApplicationFilters> {
+  async getAllFilters(
+    @CurrentStaff() staff: Staff,
+  ): Promise<ApplicationFilters> {
     this.logger.debug('Application controller: Getting application filters')
-    return this.applicationService.getAllFilters()
+    return this.applicationService.getAllFilters(staff.id)
   }
 
   @Put('id/:id')
@@ -160,7 +164,7 @@ export class ApplicationController {
     const {
       numberOfAffectedRows,
       updatedApplication,
-    } = await this.applicationService.update(id, applicationToUpdate, user.name)
+    } = await this.applicationService.update(id, applicationToUpdate)
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Application ${id} does not exist`)
@@ -174,6 +178,8 @@ export class ApplicationController {
     return updatedApplication
   }
 
+  @UseGuards(RolesGuard, EmployeeGuard)
+  @RolesRules(RolesRule.VEITA)
   @Put(':id/:stateUrl')
   @ApiOkResponse({
     type: UpdateApplicationTableResponse,
@@ -181,18 +187,20 @@ export class ApplicationController {
       'Updates an existing application and returns application table',
   })
   async updateTable(
-    @CurrentUser() user: User,
+    @CurrentStaff() staff: Staff,
     @Param('id') id: string,
     @Param('stateUrl') stateUrl: ApplicationStateUrl,
     @Body() applicationToUpdate: UpdateApplicationDto,
   ): Promise<UpdateApplicationTableResponse> {
-    await this.applicationService.update(id, applicationToUpdate, user.name)
+    await this.applicationService.update(id, applicationToUpdate, staff)
     return {
-      applications: await this.applicationService.getAll(stateUrl),
-      filters: await this.applicationService.getAllFilters(),
+      applications: await this.applicationService.getAll(stateUrl, staff.id),
+      filters: await this.applicationService.getAllFilters(staff.id),
     }
   }
 
+  @UseGuards(RolesGuard)
+  @RolesRules(RolesRule.OSK)
   @Post('')
   @ApiCreatedResponse({
     type: ApplicationModel,

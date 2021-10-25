@@ -6,7 +6,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 import { Panel } from './Panel'
 import { Chart } from './Chart'
-import * as styles from './Timeline.treat'
+import * as styles from './Timeline.css'
 
 export interface TimelinePeriod {
   actualDob?: boolean

@@ -20,7 +20,7 @@ import { formatIsk } from '../../lib/paymentPlanUtils'
 import { YES } from '../../shared/constants'
 import { PaymentPlanExternalData, PublicDebtPaymentPlan } from '../../types'
 import { DistributionTable } from './DistributionTabel'
-import * as styles from './Overview.treat'
+import * as styles from './Overview.css'
 
 export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
   const { formatMessage } = useLocale()

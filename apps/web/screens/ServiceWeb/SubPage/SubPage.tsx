@@ -33,7 +33,7 @@ import { ServiceWebHeader } from '@island.is/web/components'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { getSlugPart } from '../utils'
 
-import * as sharedStyles from '../shared/styles.treat'
+import * as sharedStyles from '../shared/styles.css'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import groupBy from 'lodash/groupBy'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
