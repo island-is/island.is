@@ -43,7 +43,7 @@ import {
 import { Screen } from '../../../types'
 import Footer from '../shared/Footer'
 
-import * as sharedStyles from '../shared/styles.treat'
+import * as sharedStyles from '../shared/styles.css'
 
 interface SyslumennFormsPageProps {
   syslumenn?: Organizations['items']

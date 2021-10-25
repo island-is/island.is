@@ -3,7 +3,7 @@ import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 import iconMap, { Icon as IconType, Type } from './iconMap'
 import { Box } from '../Box/Box'
-import * as styles from './Icon.treat'
+import * as styles from './Icon.css'
 
 const colors = theme.color
 

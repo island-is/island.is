@@ -18,9 +18,9 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { useRouter } from 'next/router'
-import * as styles from './Users.treat'
 import { ValueType } from 'react-select'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import * as styles from './Users.css'
 
 interface UserData {
   users: User[]

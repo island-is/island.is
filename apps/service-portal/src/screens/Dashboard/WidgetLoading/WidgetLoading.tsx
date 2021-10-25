@@ -1,6 +1,6 @@
 import { Box, SkeletonLoader, Stack } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import * as styles from './WidgetLoading.treat'
+import * as styles from './WidgetLoading.css'
 
 const WidgetLoading: FC<{}> = () => {
   return (

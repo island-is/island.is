@@ -57,7 +57,7 @@ import {
 } from '@island.is/web/utils/processMenuData'
 import { useLinkResolver, LinkType } from '@island.is/web/hooks/useLinkResolver'
 
-import * as covidStyles from './components/UI/styles/styles.treat'
+import * as covidStyles from './components/UI/styles/styles.css'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
