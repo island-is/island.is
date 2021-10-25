@@ -116,7 +116,7 @@ export const FrontpageSlider = ({
     }
   }
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!isMobile && !animationData.length) {
       const requests = slides.reduce((all, slide) => {
         if (slide.animationJsonAsset && slide.animationJsonAsset.url) {
