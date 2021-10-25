@@ -4,13 +4,5 @@
     "@typescript-eslint/no-var-requires": "off"
   },
   "ignorePatterns": ["!**/*"],
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "parserOptions": {
-        "project": ["libs/island-ui/storybook/tsconfig.*?.json"]
-      },
-      "rules": {}
-    }
-  ]
+  "overrides": []
 }

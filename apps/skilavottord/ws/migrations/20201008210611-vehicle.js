@@ -22,10 +22,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      vehicle_type: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
       vehicle_color: {
         type: DataTypes.STRING,
       },

@@ -2,21 +2,5 @@
   "extends": ["../../../.eslintrc.json", "plugin:cypress/recommended"],
   "rules": {},
   "ignorePatterns": ["!**/*"],
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "parserOptions": {
-        "project": ["apps/gjafakort/web-e2e/tsconfig.*?.json"]
-      },
-      "rules": {}
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "rules": {}
-    }
-  ]
+  "overrides": []
 }

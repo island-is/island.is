@@ -117,7 +117,7 @@ const SummaryForm = () => {
           )
 
           if (findErrorInFormInfo) {
-            var element = document.getElementById(findErrorInFormInfo.id)
+            const element = document.getElementById(findErrorInFormInfo.id)
             element?.scrollIntoView({
               behavior: 'smooth',
             })

@@ -2,21 +2,5 @@
   "extends": "../../../../.eslintrc.json",
   "rules": {},
   "ignorePatterns": ["!**/*"],
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "parserOptions": {
-        "project": ["libs/api/domains/endorsement-system/tsconfig.*?.json"]
-      },
-      "rules": {}
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "rules": {}
-    }
-  ]
+  "overrides": []
 }

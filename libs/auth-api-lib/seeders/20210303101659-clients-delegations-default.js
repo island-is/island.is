@@ -1,7 +1,4 @@
 'use strict'
-/* eslint-env node */
-/* eslint-disable @typescript-eslint/camelcase */
-/* eslint-disable no-undef */
 
 module.exports = {
   up: (queryInterface, Sequelize) => {

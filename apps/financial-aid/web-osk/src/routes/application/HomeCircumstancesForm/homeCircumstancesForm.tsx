@@ -47,7 +47,7 @@ const HomeCircumstancesForm = () => {
 
     if (
       form?.homeCircumstances === HomeCircumstances.OTHER &&
-      !Boolean(form?.homeCircumstancesCustom)
+      !form?.homeCircumstancesCustom
     ) {
       setHasError(true)
       return
@@ -112,7 +112,7 @@ const HomeCircumstancesForm = () => {
             rows={8}
             textarea
             value={form?.homeCircumstancesCustom}
-            hasError={hasError && !Boolean(form?.homeCircumstancesCustom)}
+            hasError={hasError && !form?.homeCircumstancesCustom}
             errorMessage="Þú þarft að skrifa í textareitinn"
             onChange={(event) => {
               updateForm({

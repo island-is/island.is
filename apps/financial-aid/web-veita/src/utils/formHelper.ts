@@ -39,7 +39,7 @@ export const calcAge = (ssn: string) => {
   const year = ssn.substring(4, 6)
   const significant = ssn.substring(9, 10)
 
-  let birthDay = new Date(
+  const birthDay = new Date(
     Number(`${Number(significant) < 8 ? '2' : '1'}${significant}${year}`),
     Number(ssn.substring(2, 4)) - 1,
     Number(ssn.substring(0, 2)),

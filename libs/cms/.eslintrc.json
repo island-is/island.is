@@ -2,13 +2,5 @@
   "extends": "../../.eslintrc.json",
   "rules": {},
   "ignorePatterns": ["!**/*", "contentfulTypes.d.ts"],
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "parserOptions": {
-        "project": ["libs/cms/tsconfig.*?.json"]
-      },
-      "rules": {}
-    }
-  ]
+  "overrides": []
 }

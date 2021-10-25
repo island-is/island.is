@@ -46,10 +46,7 @@ const EmploymentForm = () => {
       return
     }
 
-    if (
-      form?.employment === Employment.OTHER &&
-      !Boolean(form?.employmentCustom)
-    ) {
+    if (form?.employment === Employment.OTHER && !form?.employmentCustom) {
       setHasError(true)
       return
     }
@@ -109,7 +106,7 @@ const EmploymentForm = () => {
             rows={8}
             textarea
             value={form?.employmentCustom}
-            hasError={hasError && !Boolean(form?.employmentCustom)}
+            hasError={hasError && !form?.employmentCustom}
             errorMessage="Þú þarft að skrifa í textareitinn"
             onChange={(event) => {
               updateForm({ ...form, employmentCustom: event.target.value })

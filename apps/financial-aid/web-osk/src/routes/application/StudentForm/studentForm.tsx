@@ -42,7 +42,7 @@ const StudentForm = () => {
       return
     }
 
-    if (form?.student && !Boolean(form?.studentCustom)) {
+    if (form?.student && !form?.studentCustom) {
       setHasError(true)
       return
     }
@@ -101,7 +101,7 @@ const StudentForm = () => {
             name="education"
             placeholder="Skrifaðu hér"
             value={form?.studentCustom}
-            hasError={hasError && !Boolean(form?.studentCustom)}
+            hasError={hasError && !form?.studentCustom}
             errorMessage="Þú þarft að skrifa hvaða nám þú stundar. Dæmi: Viðskiptafræði í HR"
             onChange={(
               event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

@@ -17,13 +17,5 @@
       }
     ]
   },
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "parserOptions": {
-        "project": ["apps/skilavottord/web/tsconfig.*?.json"]
-      },
-      "rules": {}
-    }
-  ]
+  "overrides": []
 }

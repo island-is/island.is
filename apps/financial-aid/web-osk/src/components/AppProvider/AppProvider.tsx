@@ -35,7 +35,9 @@ interface Props {
 export const AppContext = createContext<AppProvider>({
   setUser: () => undefined,
   setMunicipality: () => Promise.resolve(undefined),
-  setNationalRegistryData: () => {},
+  setNationalRegistryData: () => {
+    // do nothing
+  },
   loading: false,
   loadingUser: false,
 })
