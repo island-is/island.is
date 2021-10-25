@@ -74,12 +74,6 @@ export const attachments = {
         'Ég vil klára að tilkynna slys en áverkavottorð verður skilað síðar',
       description: 'Label for send certificate later',
     },
-    injuredSendsCertificate: {
-      id: 'an.application:attachments.injuredSendsCertificate',
-      defaultMessage: 'Ég óska eftir að hinn slasaði skili inn áverkavottorði',
-      description:
-        'I request that the injured person submit a certificate of injury',
-    },
     alertMessage: {
       id: 'an.application:attachments.labels.alertMessage',
       defaultMessage: 'Athugið',

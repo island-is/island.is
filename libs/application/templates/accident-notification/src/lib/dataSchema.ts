@@ -96,7 +96,6 @@ export const AccidentNotificationSchema = z.object({
       AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
       AttachmentsEnum.INJURYCERTIFICATE,
       AttachmentsEnum.SENDCERTIFICATELATER,
-      AttachmentsEnum.INJUREDSENDSCERTIFICATE,
     ]),
   }),
   attachments: z.object({
