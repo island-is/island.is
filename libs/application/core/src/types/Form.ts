@@ -5,6 +5,7 @@ import { MessageDescriptor } from 'react-intl'
 
 import type { BoxProps } from '@island.is/island-ui/core/types'
 import { Field, RecordObject } from '@island.is/application/core'
+import { FeatureFlagClient } from '@island.is/feature-flags'
 
 import { Condition } from './Condition'
 import { Application } from './Application'
@@ -68,6 +69,12 @@ export interface Form {
   title: StaticText
   type: FormItemTypes.FORM
 }
+
+export interface FormLoaderArgs {
+  featureFlagClient: FeatureFlagClient
+}
+
+export type FormLoader = (args: FormLoaderArgs) => Promise<Form>
 
 export type FormLeaf = MultiField | Field | Repeater | ExternalDataProvider
 export type FormNode = Form | Section | SubSection | FormLeaf
