@@ -46,7 +46,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './HearingArrangements.treat'
+import * as styles from './HearingArrangements.css'
 
 interface Props {
   workingCase: Case

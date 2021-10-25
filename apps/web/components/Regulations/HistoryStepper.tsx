@@ -1,4 +1,4 @@
-import * as s from './RegulationDisplay.treat'
+import * as s from './RegulationDisplay.css'
 
 import React, { memo, useMemo } from 'react'
 import { Icon, Link } from '@island.is/island-ui/core'

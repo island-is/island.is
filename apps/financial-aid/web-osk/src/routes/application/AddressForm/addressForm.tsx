@@ -9,7 +9,7 @@ import {
 
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
-import * as styles from './addressForm.treat'
+import * as styles from './addressForm.css'
 import cn from 'classnames'
 
 import { useRouter } from 'next/router'

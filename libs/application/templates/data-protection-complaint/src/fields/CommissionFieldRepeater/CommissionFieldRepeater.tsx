@@ -15,7 +15,7 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { useFieldArray } from 'react-hook-form'
-import * as styles from './CommissionFieldRepeater.treat'
+import * as styles from './CommissionFieldRepeater.css'
 import { info } from '../../lib/messages'
 
 type PersonField = {

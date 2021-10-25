@@ -3,7 +3,7 @@ import React, { FC, Children } from 'react'
 import { Text } from '../Text/Text'
 import { Icon } from '../Icon/Icon'
 import { Colors } from '@island.is/island-ui/theme'
-import * as styles from './Breadcrumbs.treat'
+import * as styles from './Breadcrumbs.css'
 import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
 interface BreadcrumbsProps {

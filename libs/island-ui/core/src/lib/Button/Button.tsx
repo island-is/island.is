@@ -5,7 +5,7 @@ import { As } from 'reakit-utils/types'
 import cn from 'classnames'
 
 import { Box } from '../Box/Box'
-import * as styles from './Button.treat'
+import * as styles from './Button.css'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
 

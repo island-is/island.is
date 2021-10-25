@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useContext } from 'react'
 import { Text, Box, Button } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
-import * as styles from './application.treat'
+import * as styles from './application.css'
 
 import { useQuery } from '@apollo/client'
 import { ApplicationQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'

@@ -8,7 +8,7 @@ import cn from 'classnames'
 import { Box } from '../Box/Box'
 import { Icon } from '../Icon/Icon'
 import { Text } from '../Text/Text'
-import * as toastStyles from './Toast.treat'
+import * as toastStyles from './Toast.css'
 
 interface ToastProps {
   hideProgressBar?: boolean
