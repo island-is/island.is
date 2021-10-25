@@ -193,7 +193,7 @@ export class ApplicationService {
   async update(
     id: string,
     update: UpdateApplicationDto,
-    userName: string,
+    user: User,
   ): Promise<{
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
@@ -205,6 +205,8 @@ export class ApplicationService {
       ApplicationEventType.INPROGRESS,
       ApplicationEventType.APPROVED,
     ]
+    const isStaff = user.service === RolesRule.VEITA
+
     if (update.state === ApplicationState.NEW) {
       update.staffId = null
     }
@@ -216,6 +218,8 @@ export class ApplicationService {
         update?.rejection ||
         update?.amount?.toLocaleString('de-DE') ||
         update?.comment,
+      staffName: isStaff ? user.name : undefined,
+      staffNationalId: isStaff ? user.nationalId : undefined,
     })
 
     const [
@@ -235,7 +239,7 @@ export class ApplicationService {
     if (shouldSendEmail.includes(update.event)) {
       await this.sendEmail(
         {
-          name: userName,
+          name: updatedApplication.name,
           address: updatedApplication.email,
         },
         updatedApplication.id,
