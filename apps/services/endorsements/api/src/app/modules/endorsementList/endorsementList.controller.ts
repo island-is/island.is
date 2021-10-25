@@ -20,7 +20,7 @@ import {
   IntersectionType,
 } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
-import { EndorsementList, ReturnEndorsementList } from './endorsementList.model'
+import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
@@ -96,14 +96,14 @@ export class EndorsementListController {
 
   // get gp list  - relay
   @ApiOperation({ summary: 'Gets a General Petition List by Id' })
-  @ApiOkResponse({ type: ReturnEndorsementList })
+  @ApiOkResponse({ type: EndorsementList })
   @ApiParam({ name: 'listId', type: 'string' })
   @Get('general-petition-list/:listId')
   @UseInterceptors(EndorsementListInterceptor)
   @BypassAuth()
   async getGeneralPetitionList(
     @Param('listId') listId: string,
-  ): Promise<ReturnEndorsementList | null> {
+  ): Promise<EndorsementList | null> {
     return await this.endorsementListService.findSingleOpenListTaggedGeneralPetition(
       listId,
     )
@@ -152,7 +152,7 @@ export class EndorsementListController {
 
   @ApiOkResponse({
     description: 'Finds a single endorsements list by id',
-    type: ReturnEndorsementList,
+    type: EndorsementList,
   })
   @ApiOperation({ summary: 'Finds a single endorsements list by id' })
   @ApiParam({ name: 'listId', type: 'string' })
@@ -169,14 +169,14 @@ export class EndorsementListController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
-  ): Promise<ReturnEndorsementList> {
+  ): Promise<EndorsementList> {
     return endorsementList
   }
 
   @ApiOperation({ summary: 'Close a single endorsements list by id' })
   @ApiOkResponse({
     description: 'Close a single endorsements list by id',
-    type: ReturnEndorsementList,
+    type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
@@ -193,14 +193,14 @@ export class EndorsementListController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
-  ): Promise<ReturnEndorsementList> {
+  ): Promise<EndorsementList> {
     return await this.endorsementListService.close(endorsementList)
   }
 
   @ApiOperation({ summary: 'Open a single endorsements list by id' })
   @ApiOkResponse({
     description: 'Open a single endorsements list by id',
-    type: ReturnEndorsementList,
+    type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
   @ApiBody({ type: ChangeEndorsmentListClosedDateDto })
@@ -219,13 +219,13 @@ export class EndorsementListController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
-  ): Promise<ReturnEndorsementList> {
+  ): Promise<EndorsementList> {
     return await this.endorsementListService.open(endorsementList, newDate)
   }
 
   @ApiOkResponse({
     description: 'Lock a single endorsements list by id',
-    type: ReturnEndorsementList,
+    type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
@@ -242,13 +242,13 @@ export class EndorsementListController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
-  ): Promise<ReturnEndorsementList> {
+  ): Promise<EndorsementList> {
     return await this.endorsementListService.lock(endorsementList)
   }
 
   @ApiOkResponse({
     description: 'Unlock a single endorsements list by id',
-    type: ReturnEndorsementList,
+    type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
@@ -265,7 +265,7 @@ export class EndorsementListController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
-  ): Promise<ReturnEndorsementList> {
+  ): Promise<EndorsementList> {
     return await this.endorsementListService.unlock(endorsementList)
   }
 
@@ -300,7 +300,7 @@ export class EndorsementListController {
   @ApiOperation({ summary: 'Create an endorsements list' })
   @ApiOkResponse({
     description: 'Create an endorsements list',
-    type: ReturnEndorsementList,
+    type: EndorsementList,
   })
   @ApiBody({ type: EndorsementListDto })
   @Scopes(EndorsementsScope.main)
@@ -315,7 +315,7 @@ export class EndorsementListController {
   async create(
     @Body() endorsementList: EndorsementListDto,
     @CurrentUser() user: User,
-  ): Promise<ReturnEndorsementList> {
+  ): Promise<EndorsementList> {
     return await this.endorsementListService.create({
       ...endorsementList,
       owner: user.nationalId,

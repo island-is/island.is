@@ -10,7 +10,6 @@ import {
 
 import {
   EndorsementList,
-  ReturnEndorsementList,
 } from '../endorsementList.model'
 import { maskEndorsementList } from './endorsementList.mask'
 
@@ -19,7 +18,7 @@ export class EndorsementListInterceptor implements NestInterceptor {
   intercept(
     context: ExecutionContext,
     next: CallHandler,
-  ): Observable<ReturnEndorsementList> {
+  ): Observable<EndorsementList> {
     return next.handle().pipe(
       map((retEndorsementList: EndorsementList) => {
         return maskEndorsementList(retEndorsementList)
