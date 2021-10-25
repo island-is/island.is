@@ -1,3 +1,6 @@
+import { useContext } from 'react'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
+
 export interface FormStepperSection {
   name: string
   type?: string
@@ -6,6 +9,8 @@ export interface FormStepperSection {
 }
 
 const useNavigationTree = (hasIncome: boolean) => {
+  const { user } = useContext(AppContext)
+
   const section: FormStepperSection[] = [
     {
       name: 'Gagnaöflun',
@@ -123,7 +128,7 @@ const useNavigationTree = (hasIncome: boolean) => {
     },
   ]
 
-  return spouseSection
+  return user?.isSpouse ? spouseSection : section
 }
 
 export default useNavigationTree

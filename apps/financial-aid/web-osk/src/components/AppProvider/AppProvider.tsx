@@ -4,6 +4,7 @@ import {
   Application,
   Municipality,
   NationalRegistryData,
+  ServiceCenter,
   User,
 } from '@island.is/financial-aid/shared/lib'
 
@@ -12,7 +13,6 @@ import useMyApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/u
 import useUser from '@island.is/financial-aid-web/osk/src/utils/hooks/useUser'
 import { ApolloError } from 'apollo-client'
 import useNationalRegistry from '@island.is/financial-aid-web/osk/src/utils/hooks/useNationalRegistry'
-import { ServiceCenter } from '@island.is/financial-aid/shared/data'
 
 interface AppProvider {
   myApplication?: Application
