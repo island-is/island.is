@@ -1,2 +1,3 @@
-import { SearchInput } from './SearchInput'
+import { SearchInput, ModifySearchTerms } from './SearchInput'
 export const ServiceWebSearchInput = SearchInput
+export const ServiceWebModifySearchTerms = ModifySearchTerms

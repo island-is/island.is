@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 
-import * as styles from './Sidebar.treat'
+import * as styles from './Sidebar.css'
 
 interface UseHeadingLinksProps {
   selector?: string

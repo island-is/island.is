@@ -3,7 +3,7 @@ import { m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
-import * as styles from './Card.treat'
+import * as styles from './Card.css'
 import WipCard from './WipCard'
 
 interface Props {

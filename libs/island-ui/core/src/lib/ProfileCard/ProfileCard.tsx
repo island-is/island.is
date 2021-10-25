@@ -3,7 +3,7 @@ import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
 import { Link } from '../Link/Link'
 import { Text } from '../Text/Text'
-import * as styles from './ProfileCard.treat'
+import * as styles from './ProfileCard.css'
 
 /**
  * Ideal for employee lists and other profile cards
