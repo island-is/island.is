@@ -42,6 +42,7 @@ export const getStateFromUrl: KeyMapping<
 > = {
   New: [ApplicationState.NEW],
   InProgress: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+  MyCases: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
   Processed: [ApplicationState.REJECTED, ApplicationState.APPROVED],
 }
 
@@ -56,43 +57,71 @@ export const getEventTypesFromService: KeyMapping<
 export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
   '/': ApplicationStateUrl.NEW,
   '/nymal': ApplicationStateUrl.NEW,
-  '/vinnslu': ApplicationStateUrl.INPROGRESS,
+  '/vinnslu': ApplicationStateUrl.MYCASES,
+  '/teymid': ApplicationStateUrl.INPROGRESS,
   '/afgreidd': ApplicationStateUrl.PROCESSED,
 }
 
-export const getEventType: KeyMapping<
-  ApplicationEventType,
-  { header: string; text: string; isStaff: boolean }
-> = {
-  New: { header: 'Ný umsókn', text: 'sendi inn umsókn', isStaff: false },
-  DataNeeded: {
-    header: 'Vantar gögn',
-    text: 'óskaði eftir gögnum',
-    isStaff: true,
-  },
-  InProgress: { header: 'Í vinnslu', text: 'breytti stöðu', isStaff: true },
-  Rejected: { header: 'Synjað', text: 'synjaði umsókn', isStaff: true },
-  Approved: { header: 'Samþykkt', text: 'samþykkti umsókn', isStaff: true },
-  StaffComment: {
-    header: 'Athugasemd',
-    text: 'skrifaði athugasemd',
-    isStaff: true,
-  },
-  UserComment: {
-    header: 'Athugasemd',
-    text: 'skrifaði athugasemd',
-    isStaff: false,
-  },
-  FileUpload: {
-    header: 'Ný gögn',
-    text: 'sendi inn gögn',
-    isStaff: false,
-  },
-  AssignCase: {
-    header: 'Umsjá',
-    text: 'tók að sér málið',
-    isStaff: true,
-  },
+export const getEventData = (
+  event: ApplicationEvent,
+  applicantName: string,
+): { header: string; text: string; prefix: string } => {
+  switch (event.eventType) {
+    case ApplicationEventType.NEW:
+      return {
+        header: 'Ný umsókn',
+        text: 'sendi inn umsókn',
+        prefix: `Umsækjandi ${applicantName}`,
+      }
+    case ApplicationEventType.DATANEEDED:
+      return {
+        header: 'Vantar gögn',
+        text: 'óskaði eftir gögnum',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.INPROGRESS:
+      return {
+        header: 'Í vinnslu',
+        text: 'breytti stöðu',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.REJECTED:
+      return {
+        header: 'Synjað',
+        text: 'synjaði umsókn',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.APPROVED:
+      return {
+        header: 'Samþykkt',
+        text: 'samþykkti umsókn',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.STAFFCOMMENT:
+      return {
+        header: 'Athugasemd',
+        text: 'skrifaði athugasemd',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.USERCOMMENT:
+      return {
+        header: 'Athugasemd',
+        text: 'skrifaði athugasemd',
+        prefix: `Umsækjandi ${applicantName}`,
+      }
+    case ApplicationEventType.FILEUPLOAD:
+      return {
+        header: 'Ný gögn',
+        text: 'sendi inn gögn',
+        prefix: `Umsækjandi ${applicantName}`,
+      }
+    case ApplicationEventType.ASSIGNCASE:
+      return {
+        header: 'Umsjá',
+        text: 'tók að sér málið',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+  }
 }
 
 export const eventTypeFromApplicationState: KeyMapping<

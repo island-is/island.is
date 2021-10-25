@@ -109,11 +109,13 @@ export class ApplicationController {
     isArray: true,
     description: 'Gets all existing applications',
   })
-  getAll(
+  async getAll(
     @Param('stateUrl') stateUrl: ApplicationStateUrl,
+    @CurrentUser() user: User,
   ): Promise<ApplicationModel[]> {
     this.logger.debug('Application controller: Getting all applications')
-    return this.applicationService.getAll(stateUrl)
+    const staff = await this.staffService.findByNationalId(user.nationalId)
+    return this.applicationService.getAll(stateUrl, staff.id)
   }
 
   @UseGuards(ApplicationGuard)
@@ -139,9 +141,10 @@ export class ApplicationController {
   @ApiOkResponse({
     description: 'Gets all existing applications filters',
   })
-  getAllFilters(): Promise<ApplicationFilters> {
+  async getAllFilters(@CurrentUser() user: User): Promise<ApplicationFilters> {
     this.logger.debug('Application controller: Getting application filters')
-    return this.applicationService.getAllFilters()
+    const staff = await this.staffService.findByNationalId(user.nationalId)
+    return this.applicationService.getAllFilters(staff.id)
   }
 
   @Put('id/:id')
@@ -160,7 +163,7 @@ export class ApplicationController {
     const {
       numberOfAffectedRows,
       updatedApplication,
-    } = await this.applicationService.update(id, applicationToUpdate, user.name)
+    } = await this.applicationService.update(id, applicationToUpdate, user)
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Application ${id} does not exist`)
@@ -186,10 +189,11 @@ export class ApplicationController {
     @Param('stateUrl') stateUrl: ApplicationStateUrl,
     @Body() applicationToUpdate: UpdateApplicationDto,
   ): Promise<UpdateApplicationTableResponse> {
-    await this.applicationService.update(id, applicationToUpdate, user.name)
+    await this.applicationService.update(id, applicationToUpdate, user)
+    const staff = await this.staffService.findByNationalId(user.nationalId)
     return {
-      applications: await this.applicationService.getAll(stateUrl),
-      filters: await this.applicationService.getAllFilters(),
+      applications: await this.applicationService.getAll(stateUrl, staff.id),
+      filters: await this.applicationService.getAllFilters(staff.id),
     }
   }
 
