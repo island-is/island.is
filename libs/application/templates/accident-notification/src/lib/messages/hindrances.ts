@@ -31,7 +31,7 @@ export const hindrances = {
   timePassedHindrance: defineMessages({
     radioFieldTitle: {
       id: 'an.application:hindrances.timePassedHindrance.radioFieldTitle',
-      defaultMessage: 'Er meira en ár síðan að slysið átti sér stað?',
+      defaultMessage: 'Er meira en eitt ár síðan að slysið átti sér stað?',
       description: 'Has it been more than a year since the accident occured?',
     },
     errorTitle: {
