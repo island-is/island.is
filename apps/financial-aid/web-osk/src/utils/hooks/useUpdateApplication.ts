@@ -17,6 +17,10 @@ const useUpdateApplication = () => {
   const { form, updateForm } = useContext(FormContext)
   const { uploadFiles } = useFileUpload(form.otherFiles)
 
+  const allFiles = form.incomeFiles
+    .concat(form.taxReturnFiles)
+    .concat(form.otherFiles)
+
   const [updateApplicationMutation] = useMutation<{ application: Application }>(
     ApplicationMutation,
   )
@@ -25,7 +29,7 @@ const useUpdateApplication = () => {
     applicationId: string,
     fileType: FileType,
   ) => {
-    await uploadFiles(applicationId, fileType).then(async () => {
+    await uploadFiles(applicationId, fileType, allFiles).then(async () => {
       updateForm({ ...form, applicationId: applicationId })
       await updateApplicationMutation({
         variables: {

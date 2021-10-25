@@ -45,6 +45,7 @@ const SpouseSummary = () => {
     if (!form || !user) {
       return
     }
+
     setIsLoading(true)
 
     await updateApplication(
