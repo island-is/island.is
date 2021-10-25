@@ -3,7 +3,7 @@ import { Text } from '../Text/Text'
 import { Input } from '../Input/Input'
 import { Button } from '../Button/Button'
 
-import * as styles from './NewsletterSignup.treat'
+import * as styles from './NewsletterSignup.css'
 import { Box } from '../Box/Box'
 import { Hidden } from '../Hidden/Hidden'
 import { AlertMessage } from '../AlertMessage/AlertMessage'

@@ -7,6 +7,7 @@ module.exports = {
       { cwd: __dirname, configFile: './babel-jest.config.json' },
     ],
   },
+  setupFilesAfterEnv: ['./jest.setup.ts'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../coverage/libs/shared/components',
 }

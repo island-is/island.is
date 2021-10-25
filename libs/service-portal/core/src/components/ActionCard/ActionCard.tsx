@@ -10,7 +10,7 @@ import {
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 
-import * as styles from './ActionCard.treat'
+import * as styles from './ActionCard.css'
 
 interface Props {
   label: string

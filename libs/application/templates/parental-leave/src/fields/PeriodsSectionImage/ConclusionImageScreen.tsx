@@ -13,7 +13,7 @@ import {
 } from '../../lib/parentalLeaveUtils'
 import { NO } from '../../constants'
 
-import * as styles from './ConclusionImageScreen.treat'
+import * as styles from './ConclusionImageScreen.css'
 
 const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()

@@ -15,7 +15,7 @@ import {
   TextVariants,
   truncate as truncateStyle,
   strikethrough as strikethroughStyle,
-} from './Text.treat'
+} from './Text.css'
 
 type TextElements =
   | 'h1'

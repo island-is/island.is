@@ -7,7 +7,7 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
-import * as styles from './bankInfoForm.treat'
+import * as styles from './bankInfoForm.css'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 import { useRouter } from 'next/router'
 import cn from 'classnames'

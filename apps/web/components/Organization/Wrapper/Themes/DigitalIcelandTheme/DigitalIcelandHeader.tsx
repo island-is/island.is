@@ -8,7 +8,7 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './DigitalIcelandHeader.treat'
+import * as styles from './DigitalIcelandHeader.css'
 import cn from 'classnames'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
