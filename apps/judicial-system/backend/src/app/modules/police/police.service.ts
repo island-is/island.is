@@ -106,12 +106,12 @@ export class PoliceService {
       )
     } catch (error) {
       this.logger.error(
-        `Failed to get police case file ${uploadPoliceCaseFile.id}}`,
+        `Failed to get police case file ${uploadPoliceCaseFile.id}`,
         error,
       )
 
       throw new BadGatewayException(
-        `Failed to get police case file ${uploadPoliceCaseFile.id}}`,
+        `Failed to get police case file ${uploadPoliceCaseFile.id}`,
       )
     }
 
@@ -123,9 +123,10 @@ export class PoliceService {
 
     const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
 
-    const pdf = await res.json()
+    const base64 = await res.json()
+    const pdf = Base64.atob(base64)
 
-    await this.awsS3Service.putObject(key, Base64.atob(pdf))
+    await this.awsS3Service.putObject(key, pdf)
 
     return { key }
   }

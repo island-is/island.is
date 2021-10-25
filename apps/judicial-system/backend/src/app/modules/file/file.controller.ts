@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -59,6 +67,7 @@ export class FileController {
     description: 'Creates a new case file',
   })
   async createCaseFile(
+    @Param('caseId') _0: string,
     @CurrentCase() theCase: Case,
     @Body() createFile: CreateFileDto,
   ): Promise<CaseFile> {

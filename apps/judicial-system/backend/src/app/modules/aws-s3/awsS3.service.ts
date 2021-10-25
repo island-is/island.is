@@ -102,7 +102,8 @@ export class AwsS3Service {
       .putObject({
         Bucket: environment.files.bucket,
         Key: key,
-        Body: content,
+        Body: Buffer.from(content, 'binary'),
+        ContentType: 'application/pdf',
       })
       .promise()
       .then(() => key)
