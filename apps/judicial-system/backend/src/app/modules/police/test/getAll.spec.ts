@@ -14,7 +14,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (theCase: Case) => Promise<Then>
+type GivenWhenThen = (caseId: string) => Promise<Then>
 
 describe('PoliceController - Get all', () => {
   let givenWhenThen: GivenWhenThen
@@ -22,11 +22,11 @@ describe('PoliceController - Get all', () => {
   beforeEach(async () => {
     const { policeController } = await createTestingPoliceModule()
 
-    givenWhenThen = async (theCase: Case): Promise<Then> => {
+    givenWhenThen = async (caseId: string): Promise<Then> => {
       const then = {} as Then
 
       await policeController
-        .getAll(theCase)
+        .getAll(caseId)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -36,10 +36,9 @@ describe('PoliceController - Get all', () => {
 
   describe('remote call', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
 
     beforeEach(async () => {
-      await givenWhenThen(theCase)
+      await givenWhenThen(caseId)
     })
 
     it('should request police files for the correct case', () =>
@@ -52,7 +51,7 @@ describe('PoliceController - Get all', () => {
   })
 
   describe('police files found', () => {
-    const theCase = {} as Case
+    const caseId = uuid()
     let then: Then
 
     beforeEach(async () => {
@@ -65,7 +64,7 @@ describe('PoliceController - Get all', () => {
         ],
       })
 
-      then = await givenWhenThen(theCase)
+      then = await givenWhenThen(caseId)
     })
 
     it('should return police case files', () => {
@@ -78,14 +77,13 @@ describe('PoliceController - Get all', () => {
 
   describe('police files not found', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
     let then: Then
 
     beforeEach(async () => {
       const mockFetch = fetch as jest.Mock
       mockFetch.mockResolvedValueOnce({ ok: false })
 
-      then = await givenWhenThen(theCase)
+      then = await givenWhenThen(caseId)
     })
 
     it('should throw not found exception', () => {
@@ -98,14 +96,13 @@ describe('PoliceController - Get all', () => {
 
   describe('remote call fails', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
     let then: Then
 
     beforeEach(async () => {
       const mockFetch = fetch as jest.Mock
       mockFetch.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(theCase)
+      then = await givenWhenThen(caseId)
     })
 
     it('should throw bad gateway exception', () => {

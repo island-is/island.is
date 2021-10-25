@@ -53,10 +53,10 @@ export class FileController {
     description: 'Creates a new presigned post',
   })
   createPresignedPost(
-    @CurrentCase() theCase: Case,
+    @Param('caseId') caseId: string,
     @Body() createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {
-    return this.fileService.createPresignedPost(theCase.id, createPresignedPost)
+    return this.fileService.createPresignedPost(caseId, createPresignedPost)
   }
 
   @RolesRules(prosecutorRule)
@@ -67,11 +67,10 @@ export class FileController {
     description: 'Creates a new case file',
   })
   async createCaseFile(
-    @Param('caseId') _0: string,
-    @CurrentCase() theCase: Case,
+    @Param('caseId') caseId: string,
     @Body() createFile: CreateFileDto,
   ): Promise<CaseFile> {
-    return this.fileService.createCaseFile(theCase.id, createFile)
+    return this.fileService.createCaseFile(caseId, createFile)
   }
 
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
@@ -82,8 +81,8 @@ export class FileController {
     isArray: true,
     description: 'Gets all existing case file',
   })
-  getAllCaseFiles(@CurrentCase() theCase: Case): Promise<CaseFile[]> {
-    return this.fileService.getAllCaseFiles(theCase.id)
+  getAllCaseFiles(@Param('caseId') caseId: string): Promise<CaseFile[]> {
+    return this.fileService.getAllCaseFiles(caseId)
   }
 
   @RolesRules(prosecutorRule)
@@ -98,6 +97,8 @@ export class FileController {
     description: 'Deletes a case file',
   })
   deleteCaseFile(
+    @Param('caseId') _0: string,
+    @Param('fileId') _1: string,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<DeleteFileResponse> {
     return this.fileService.deleteCaseFile(caseFile)
@@ -111,6 +112,8 @@ export class FileController {
     description: 'Gets a signed url for a case file',
   })
   getCaseFileSignedUrl(
+    @Param('caseId') _0: string,
+    @Param('fileId') _1: string,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<SignedUrl> {
     return this.fileService.getCaseFileSignedUrl(caseFile)
@@ -118,12 +121,14 @@ export class FileController {
 
   @RolesRules(judgeRule, registrarRule)
   @UseGuards(CaseExistsForUpdateGuard, CaseCompletedGuard, CaseFileExistsGuard)
-  @Post('file/:id/court')
+  @Post('file/:fileId/court')
   @ApiOkResponse({
     type: UploadFileToCourtResponse,
     description: 'Uploads a case file to court',
   })
   uploadCaseFileToCourt(
+    @Param('caseId') _0: string,
+    @Param('fileId') _1: string,
     @CurrentCase() theCase: Case,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<UploadFileToCourtResponse> {

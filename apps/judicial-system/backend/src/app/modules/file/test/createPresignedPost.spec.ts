@@ -12,7 +12,7 @@ interface Then {
 }
 
 type GivenWhenThen = (
-  theCase: Case,
+  caseId: string,
   createPresignedPost: CreatePresignedPostDto,
 ) => Promise<Then>
 
@@ -26,13 +26,13 @@ describe('FileController - Create presigned post', () => {
     mockAwsS3Service = awsS3Service
 
     givenWhenThen = async (
-      theCase: Case,
+      caseId: string,
       createPresignedPost: CreatePresignedPostDto,
     ): Promise<Then> => {
       const then = {} as Then
 
       await fileController
-        .createPresignedPost(theCase, createPresignedPost)
+        .createPresignedPost(caseId, createPresignedPost)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -42,7 +42,6 @@ describe('FileController - Create presigned post', () => {
 
   describe('remote call', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
     const createPresignedPost: CreatePresignedPostDto = {
       fileName: 'test.txt',
       type: 'text/plain',
@@ -53,7 +52,7 @@ describe('FileController - Create presigned post', () => {
       mockCreatePresignedPost = mockAwsS3Service.createPresignedPost as jest.Mock
       mockCreatePresignedPost.mockResolvedValueOnce({})
 
-      await givenWhenThen(theCase, createPresignedPost)
+      await givenWhenThen(caseId, createPresignedPost)
     })
 
     it('should request a presigned post from AWS S3', () => {
@@ -66,7 +65,6 @@ describe('FileController - Create presigned post', () => {
 
   describe('presigned post created', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
     const createPresignedPost: CreatePresignedPostDto = {
       fileName: 'test.txt',
       type: 'text/plain',
@@ -91,7 +89,7 @@ describe('FileController - Create presigned post', () => {
           },
         }),
       ),
-        (then = await givenWhenThen(theCase, createPresignedPost))
+        (then = await givenWhenThen(caseId, createPresignedPost))
     })
 
     it('should return a presigned post', () => {
@@ -118,7 +116,6 @@ describe('FileController - Create presigned post', () => {
 
   describe('remote call fails', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
     const createPresignedPost: CreatePresignedPostDto = {
       fileName: 'test.txt',
       type: 'text/plain',
@@ -129,7 +126,7 @@ describe('FileController - Create presigned post', () => {
       const mockCreatePresignedPost = mockAwsS3Service.createPresignedPost as jest.Mock
       mockCreatePresignedPost.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(theCase, createPresignedPost)
+      then = await givenWhenThen(caseId, createPresignedPost)
     })
 
     it('should throw error', () => {

@@ -8,12 +8,7 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { prosecutorRule } from '../../guards'
-import {
-  Case,
-  CaseExistsGuard,
-  CaseNotCompletedGuard,
-  CurrentCase,
-} from '../case'
+import { CaseExistsGuard, CaseNotCompletedGuard } from '../case'
 import { UploadPoliceCaseFileDto } from './dto'
 import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
 import { PoliceService } from './police.service'
@@ -31,8 +26,8 @@ export class PoliceController {
     isArray: true,
     description: 'Gets all police files for a case',
   })
-  getAll(@CurrentCase() theCase: Case): Promise<PoliceCaseFile[]> {
-    return this.policeService.getAllPoliceCaseFiles(theCase.id)
+  getAll(@Param('caseId') caseId: string): Promise<PoliceCaseFile[]> {
+    return this.policeService.getAllPoliceCaseFiles(caseId)
   }
 
   @RolesRules(prosecutorRule)

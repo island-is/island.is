@@ -12,7 +12,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (theCase: Case) => Promise<Then>
+type GivenWhenThen = (caseId: string) => Promise<Then>
 
 describe('FileController - Get all case files', () => {
   let mockFileModel: typeof CaseFile
@@ -23,11 +23,11 @@ describe('FileController - Get all case files', () => {
 
     mockFileModel = fileModel
 
-    givenWhenThen = async (theCase: Case): Promise<Then> => {
+    givenWhenThen = async (caseId: string): Promise<Then> => {
       const then = {} as Then
 
       await fileController
-        .getAllCaseFiles(theCase)
+        .getAllCaseFiles(caseId)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -37,13 +37,12 @@ describe('FileController - Get all case files', () => {
 
   describe('database query', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
     let mockFindAll: jest.Mock
 
     beforeEach(async () => {
       mockFindAll = mockFileModel.findAll as jest.Mock
 
-      await givenWhenThen(theCase)
+      await givenWhenThen(caseId)
     })
 
     it('should request all case files from the database', () => {
@@ -59,7 +58,6 @@ describe('FileController - Get all case files', () => {
 
   describe('case files queried', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
     const caseFiles = [{ id: uuid() }, { id: uuid() }] as CaseFile[]
     let then: Then
 
@@ -67,7 +65,7 @@ describe('FileController - Get all case files', () => {
       const mockFindAll = mockFileModel.findAll as jest.Mock
       mockFindAll.mockResolvedValueOnce(caseFiles)
 
-      then = await givenWhenThen(theCase)
+      then = await givenWhenThen(caseId)
     })
 
     it('should return all case files', () => {
@@ -77,14 +75,13 @@ describe('FileController - Get all case files', () => {
 
   describe('database query fails', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
     let then: Then
 
     beforeEach(async () => {
       const mockFindAll = mockFileModel.findAll as jest.Mock
       mockFindAll.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(theCase)
+      then = await givenWhenThen(caseId)
     })
 
     it('should throw error', () => {

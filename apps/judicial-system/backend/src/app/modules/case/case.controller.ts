@@ -383,7 +383,10 @@ export class CaseController {
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
-  async getById(@CurrentCase() theCase: Case): Promise<Case> {
+  async getById(
+    @Param('caseId') _0: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<Case> {
     return theCase
   }
 

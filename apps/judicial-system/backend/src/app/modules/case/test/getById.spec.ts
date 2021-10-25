@@ -1,3 +1,5 @@
+import { uuid } from 'uuidv4'
+
 import { Case } from '../models'
 import { CaseController } from '../case.controller'
 import { createTestingCaseModule } from './createTestingCaseModule'
@@ -10,11 +12,12 @@ describe('CaseController - Get by id', () => {
   })
 
   describe('case exists', () => {
-    const theCase = {} as Case
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
     let result: Case
 
     beforeEach(async () => {
-      result = await caseController.getById(theCase)
+      result = await caseController.getById(caseId, theCase)
     })
 
     it('should return the case', () => {
