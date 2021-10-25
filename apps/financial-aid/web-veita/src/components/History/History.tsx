@@ -38,10 +38,9 @@ const History = ({ className, applicantName, applicationEvents }: Props) => {
           {applicationEvents.map((item, index) => {
             return (
               <TimeLineContainer
-                eventType={item.eventType}
+                event={item}
                 key={'timeline-' + index}
                 applicantName={applicantName}
-                created={item.created}
               >
                 <StaffComment
                   isVisable={
