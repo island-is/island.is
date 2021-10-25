@@ -107,6 +107,8 @@ export interface ApplicationEvent {
   applicationId: string
   eventType: ApplicationEventType
   comment?: string
+  staffNationalId?: string
+  staffName?: string
 }
 
 export interface Municipality {
@@ -181,6 +183,7 @@ export interface ApplicationFilters {
   DataNeeded: number
   Rejected: number
   Approved: number
+  MyCases: number
 }
 
 export interface Application {

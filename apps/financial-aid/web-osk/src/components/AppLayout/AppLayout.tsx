@@ -1,7 +1,7 @@
 import React, { ReactNode, useContext, useEffect } from 'react'
 import { Box, GridContainer } from '@island.is/island-ui/core'
 
-import * as styles from './AppLayout.treat'
+import * as styles from './AppLayout.css'
 import { Logo, Header } from '@island.is/financial-aid-web/osk/src/components'
 
 import { SideBar } from '@island.is/financial-aid-web/osk/src/components'

@@ -9,7 +9,7 @@ import {
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 
-import * as styles from './studentForm.treat'
+import * as styles from './studentForm.css'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 import cn from 'classnames'

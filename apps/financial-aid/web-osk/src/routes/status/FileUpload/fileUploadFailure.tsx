@@ -4,7 +4,7 @@ import { FileUploadResult } from '@island.is/financial-aid-web/osk/src/component
 import { Text } from '@island.is/island-ui/core'
 import { Routes } from '@island.is/financial-aid/shared/lib'
 
-import * as styles from './fileUpload.treat'
+import * as styles from './fileUpload.css'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const FileUploadFailure = () => {

@@ -27,7 +27,7 @@ import { DocumentsListItemTypes } from './DocumentScreen.types'
 import amountFormat from '../../utils/amountFormat'
 import { showPdfDocument } from '@island.is/service-portal/graphql'
 import { billsFilter } from '../../utils/simpleFilter'
-import * as styles from './DocumentScreen.treat'
+import * as styles from './DocumentScreen.css'
 
 const ITEMS_ON_PAGE = 20
 

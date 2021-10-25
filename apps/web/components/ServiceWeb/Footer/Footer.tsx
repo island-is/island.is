@@ -16,7 +16,7 @@ import {
 import Illustration from './Illustration'
 import { Locale } from '@island.is/shared/types'
 
-import * as styles from './Footer.treat'
+import * as styles from './Footer.css'
 
 interface Props {
   title: string
