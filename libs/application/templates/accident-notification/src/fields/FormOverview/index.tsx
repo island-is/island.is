@@ -83,7 +83,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
       <Text>
         {formatText(overview.general.description, application, formatMessage)}
       </Text>
-      {subAppData.data?.documentId && (
+      {subAppData?.data?.documentId && (
         <Box paddingTop={5}>
           <AlertMessage
             title={formatMessage(inReview.application.documentIdAlertTitle)}
