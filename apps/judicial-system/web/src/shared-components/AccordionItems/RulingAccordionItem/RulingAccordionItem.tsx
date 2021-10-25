@@ -21,7 +21,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { rulingAccordion as m } from '@island.is/judicial-system-web/messages/Core/rulingAccordion'
 import { rcConfirmation } from '@island.is/judicial-system-web/messages'
-import * as style from './RulingAccordionItem.treat'
+import * as style from './RulingAccordionItem.css'
 
 interface Props {
   workingCase: Case

@@ -6,7 +6,7 @@ import { Box } from '../Box/Box'
 import { BoxProps } from '../Box/types'
 import { Text } from '../Text/Text'
 import { Tag, TagVariant, TagProps } from '../Tag/Tag'
-import * as styles from './LinkCard.treat'
+import * as styles from './LinkCard.css'
 import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
 export interface LinkCardProps extends ComponentPropsWithRef<'div'> {

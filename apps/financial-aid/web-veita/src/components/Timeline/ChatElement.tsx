@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, Box, Icon } from '@island.is/island-ui/core'
 
-import * as styles from '../History/History.treat'
+import * as styles from '../History/History.css'
 
 interface Props {
   isVisable: boolean

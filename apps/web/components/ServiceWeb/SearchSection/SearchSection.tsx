@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Text, Hidden } from '@island.is/island-ui/core'
 import { ServiceWebSearchInput } from '@island.is/web/components'
 
-import * as styles from './SearchSection.treat'
+import * as styles from './SearchSection.css'
 
 interface SearchSectionProps {
   title?: string

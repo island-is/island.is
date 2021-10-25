@@ -15,7 +15,7 @@ import {
   LogoMunicipality,
 } from '@island.is/financial-aid-web/veita/src/components'
 
-import * as styles from './Nav.treat'
+import * as styles from './Nav.css'
 import cn from 'classnames'
 import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/src/components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 
