@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 
 import { currentMonth } from '@island.is/financial-aid/shared/lib'
 
@@ -11,7 +11,7 @@ const AboutFormSpouse = () => {
       </Text>
 
       <Text variant="intro" fontWeight="light" marginBottom={2}>
-        Maki þinn (Elísabet) hefur sótt um{' '}
+        Maki þinn hefur sótt um{' '}
         <strong>fjárhagsaðstoð hjá Hafnarfjarðarbæ</strong> fyrir{' '}
         {currentMonth()} mánuð.
       </Text>
@@ -21,8 +21,6 @@ const AboutFormSpouse = () => {
         <strong>tekju- og skattagögnum</strong> til að reikna út fjárhagsaðstoð
         til útgreiðslu í byrjun október.
       </Text>
-
-      <Box marginBottom={5}></Box>
     </>
   )
 }

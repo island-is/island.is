@@ -1,6 +1,4 @@
 import React, { useContext } from 'react'
-import { Text, BulletList, Bullet, Box, Link } from '@island.is/island-ui/core'
-
 import {
   ContentContainer,
   Footer,
@@ -9,11 +7,7 @@ import {
 import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import {
-  months,
-  NavigationProps,
-  nextMonth,
-} from '@island.is/financial-aid/shared/lib'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 import {
   AboutFormApplicant,
   AboutFormSpouse,

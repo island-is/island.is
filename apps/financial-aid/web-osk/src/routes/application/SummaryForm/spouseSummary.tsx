@@ -19,16 +19,13 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/
 
 import { FileType, NavigationProps } from '@island.is/financial-aid/shared/lib'
 
-import useApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useApplication'
-
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
-import formOverview from '../../../utils/formOverview'
-import useUpdateApplication from '../../../utils/hooks/useUpdateApplication'
-import FileUpload from '@island.is/financial-aid-web/osk/pages/stada/[id]/gogn'
+import formOverview from '@island.is/financial-aid-web/osk/src/utils/formOverview'
+import useUpdateApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useUpdateApplication'
 
 const SpouseSummary = () => {
   const router = useRouter()
-  const { form, updateForm } = useContext(FormContext)
+  const { form } = useContext(FormContext)
 
   const { user } = useContext(AppContext)
 

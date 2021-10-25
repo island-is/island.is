@@ -115,7 +115,7 @@ const useNavigationTree = (hasIncome: boolean) => {
     },
     {
       name: 'Yfirlit',
-      url: '/umsokn/yfirlit',
+      url: '/umsokn/yfirlit-maki',
     },
     {
       name: 'Staðfesting',
