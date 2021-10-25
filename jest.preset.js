@@ -12,8 +12,5 @@ module.exports = {
   resolver: customResolver,
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageReporters: ['json'],
-  collectCoverageFrom: [
-    '**/*.{js,jsx,ts,tsx}',
-    '!**/*.css.*'
-  ],
+  collectCoverageFrom: ['**/*.{js,jsx,ts,tsx}', '!**/*.css.*'],
 }

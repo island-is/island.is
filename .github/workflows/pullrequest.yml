@@ -162,6 +162,8 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Cache for NodeJS dependencies - host OS
         uses: actions/cache@v2
@@ -178,6 +180,11 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
+      - name: Running tests
+        run: ./scripts/ci/run-in-parallel.sh 30_test
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Cache CodeCov
         uses: actions/cache@v2
         with:
@@ -187,10 +194,13 @@ jobs:
       - name: Set local bin directory to path
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Running tests
-        run: ./scripts/ci/run-in-parallel.sh 30_test
+      - name: Upload coverage reports
+        run: ./scripts/ci/run-in-parallel.sh 50_upload-coverage
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Remove coverage reports
+        run: rm -rf coverage/
 
   e2e:
     needs:
