@@ -100,7 +100,7 @@ export const externalData = {
     },
     description: {
       id: 'an.application:section.externalData.notifications.description',
-      defaultMessage: 'Send verða til þín um stöðu mála osfrv.',
+      defaultMessage: 'Send verða til þín skilaboð um stöðu mála osfrv.',
       description:
         'Notifications will be sent regarding the status of your application',
     },

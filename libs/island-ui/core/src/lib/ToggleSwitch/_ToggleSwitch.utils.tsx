@@ -1,4 +1,4 @@
-import * as s from './ToggleSwitch.treat'
+import * as s from './ToggleSwitch.css'
 
 import React from 'react'
 import cn from 'classnames'

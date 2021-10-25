@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 
-import * as styles from './History.treat'
+import * as styles from './History.css'
 import cn from 'classnames'
 
 import {

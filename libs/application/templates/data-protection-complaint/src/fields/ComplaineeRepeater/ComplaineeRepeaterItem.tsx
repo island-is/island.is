@@ -19,7 +19,7 @@ import { useLocale } from '@island.is/localization'
 import { complaint, sharedFields } from '../../lib/messages'
 import { YES, NO } from '../../shared'
 import { ArrayField } from 'react-hook-form'
-import * as styles from './ComplaineeRepeater.treat'
+import * as styles from './ComplaineeRepeater.css'
 import { ComplaineeField } from './ComplaineeRepeater'
 
 interface Props {

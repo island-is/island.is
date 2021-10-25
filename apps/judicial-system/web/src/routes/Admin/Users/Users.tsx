@@ -9,7 +9,7 @@ import { useQuery } from '@apollo/client'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { useRouter } from 'next/router'
-import * as styles from './Users.treat'
+import * as styles from './Users.css'
 
 interface UserData {
   users: User[]

@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
-import * as styles from './summary.treat'
+import * as styles from './summary.css'
 
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { Routes } from '@island.is/financial-aid/shared/lib'
