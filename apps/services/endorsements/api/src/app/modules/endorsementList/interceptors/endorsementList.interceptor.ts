@@ -8,9 +8,7 @@ import {
   CallHandler,
 } from '@nestjs/common'
 
-import {
-  EndorsementList,
-} from '../endorsementList.model'
+import { EndorsementList } from '../endorsementList.model'
 import { maskEndorsementList } from './endorsementList.mask'
 
 @Injectable()

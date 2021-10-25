@@ -1,10 +1,6 @@
-import {
-  EndorsementList,
-} from '../endorsementList.model'
+import { EndorsementList } from '../endorsementList.model'
 
-export function maskEndorsementList(
-  theList: EndorsementList 
-): EndorsementList {
+export function maskEndorsementList(theList: EndorsementList): EndorsementList {
   // Removes owner from object
   return {
     id: theList.id,
