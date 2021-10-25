@@ -161,10 +161,10 @@ export const inReview = {
       defaultMessage: 'Halda áfram',
       description: 'Review forward button',
     },
-    updateButton: {
-      id: 'an.application:inReview.buttons.updateButton',
-      defaultMessage: 'Uppfæra tilkynningu',
-      description: 'Review update button',
+    sendAttachmentsButton: {
+      id: 'an.application:inReview.buttons.sendAttachmentsButton',
+      defaultMessage: 'Senda fylgiskjöl',
+      description: 'Review send attachments button',
     },
   }),
   confirmationModal: {

@@ -20,7 +20,7 @@ import {
   LinkResolverResponse,
 } from '@island.is/web/hooks/useLinkResolver'
 
-import * as styles from './AboutLatestNews.treat'
+import * as styles from './AboutLatestNews.css'
 
 // This component is used to display latest news on the About page only.
 // It's not how we display the latest news on the front page.

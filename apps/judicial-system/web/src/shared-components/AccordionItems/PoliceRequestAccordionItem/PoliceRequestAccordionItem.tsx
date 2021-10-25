@@ -18,7 +18,7 @@ import type {
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
-import * as styles from './PoliceRequestAccordionItem.treat'
+import * as styles from './PoliceRequestAccordionItem.css'
 interface Props {
   workingCase: Case
 }

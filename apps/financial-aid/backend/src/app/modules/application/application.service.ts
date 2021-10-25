@@ -16,6 +16,7 @@ import {
   RolesRule,
   User,
   getEmailTextFromState,
+  Staff,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -212,7 +213,7 @@ export class ApplicationService {
   async update(
     id: string,
     update: UpdateApplicationDto,
-    userName: string,
+    staff?: Staff,
   ): Promise<{
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
@@ -224,6 +225,7 @@ export class ApplicationService {
       ApplicationEventType.INPROGRESS,
       ApplicationEventType.APPROVED,
     ]
+
     if (update.state === ApplicationState.NEW) {
       update.staffId = null
     }
@@ -235,6 +237,8 @@ export class ApplicationService {
         update?.rejection ||
         update?.amount?.toLocaleString('de-DE') ||
         update?.comment,
+      staffName: staff?.name,
+      staffNationalId: staff?.nationalId,
     })
 
     const [
@@ -254,7 +258,7 @@ export class ApplicationService {
     if (shouldSendEmail.includes(update.event)) {
       await this.sendEmail(
         {
-          name: userName,
+          name: updatedApplication.name,
           address: updatedApplication.email,
         },
         updatedApplication.id,

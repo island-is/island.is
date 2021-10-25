@@ -9,7 +9,11 @@ import {
 } from '@nestjs/common'
 import { ValidationError } from 'class-validator'
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
-import { logger, LoggingModule } from '@island.is/logging'
+import {
+  logger,
+  LoggingModule,
+  monkeyPatchServerLogging,
+} from '@island.is/logging'
 import { startMetricServer } from '@island.is/infra-metrics'
 import { httpRequestDurationMiddleware } from './httpRequestDurationMiddleware'
 import { InfraModule } from './infra/infra.module'
@@ -63,6 +67,8 @@ export const createApp = async ({
   appModule,
   ...options
 }: RunServerOptions) => {
+  monkeyPatchServerLogging()
+
   const app = await NestFactory.create<NestExpressApplication>(
     InfraModule.forRoot({
       appModule,

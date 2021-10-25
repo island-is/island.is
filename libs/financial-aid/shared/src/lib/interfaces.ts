@@ -107,6 +107,8 @@ export interface ApplicationEvent {
   applicationId: string
   eventType: ApplicationEventType
   comment?: string
+  staffNationalId?: string
+  staffName?: string
 }
 
 export interface Municipality {

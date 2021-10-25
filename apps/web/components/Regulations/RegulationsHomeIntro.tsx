@@ -1,4 +1,4 @@
-import * as s from './RegulationsHomeIntro.treat'
+import * as s from './RegulationsHomeIntro.css'
 
 import React, { ReactNode, useState } from 'react'
 import { NamespaceGetter } from '@island.is/web/hooks'

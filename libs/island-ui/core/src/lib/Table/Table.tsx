@@ -4,7 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 import { useBoxStyles, UseBoxStylesProps } from '../Box/useBoxStyles'
 import { getTextStyles, TextProps } from '../Text/Text'
-import * as styles from './Table.treat'
+import * as styles from './Table.css'
 
 type DataField = {
   children?: ReactNode

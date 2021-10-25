@@ -138,6 +138,7 @@ module.exports = {
     '<rootDir>/libs/island-ui/core',
     '<rootDir>/libs/island-ui/theme',
     '<rootDir>/libs/island-ui/utils',
+    '<rootDir>/libs/island-ui/vanilla-extract-utils',
     '<rootDir>/libs/judicial-system/audit-trail',
     '<rootDir>/libs/judicial-system/auth',
     '<rootDir>/libs/judicial-system/consts',
