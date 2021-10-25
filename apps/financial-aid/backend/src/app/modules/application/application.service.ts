@@ -67,7 +67,7 @@ export class ApplicationService {
   async hasSpouseApplied(spouseNationalId: string): Promise<boolean> {
     const application = await this.applicationModel.findOne({
       where: {
-        spouseNationalId: { [Op.eq]: spouseNationalId },
+        spouseNationalId,
         created: { [Op.gte]: firstDateOfMonth() },
       },
     })
@@ -86,11 +86,18 @@ export class ApplicationService {
     })
   }
 
-  async getAll(stateUrl: ApplicationStateUrl): Promise<ApplicationModel[]> {
+  async getAll(
+    stateUrl: ApplicationStateUrl,
+    staffId: string,
+  ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
-      where: {
-        state: { [Op.in]: getStateFromUrl[stateUrl] },
-      },
+      where:
+        stateUrl === ApplicationStateUrl.MYCASES
+          ? {
+              state: { [Op.in]: getStateFromUrl[stateUrl] },
+              staffId,
+            }
+          : { state: { [Op.in]: getStateFromUrl[stateUrl] } },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
     })
@@ -127,7 +134,7 @@ export class ApplicationService {
     return application
   }
 
-  async getAllFilters(): Promise<ApplicationFilters> {
+  async getAllFilters(staffId: string): Promise<ApplicationFilters> {
     const statesToCount = [
       ApplicationState.NEW,
       ApplicationState.INPROGRESS,
@@ -138,7 +145,18 @@ export class ApplicationService {
 
     const countPromises = statesToCount.map((item) =>
       this.applicationModel.count({
-        where: { state: { [Op.eq]: item } },
+        where: { state: item },
+      }),
+    )
+
+    countPromises.push(
+      this.applicationModel.count({
+        where: {
+          staffId,
+          state: {
+            [Op.or]: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+          },
+        },
       }),
     )
 
@@ -150,6 +168,7 @@ export class ApplicationService {
       DataNeeded: filterCounts[2],
       Rejected: filterCounts[3],
       Approved: filterCounts[4],
+      MyCases: filterCounts[5],
     }
   }
 
