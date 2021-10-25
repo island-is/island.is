@@ -45,7 +45,7 @@ function reverseTraverse(arr: string[], node: any) {
     if (node['nodeType'] === 'paragraph') {
       node['content'] = flattenParagraphContent(node['content'])
     }
-    if (node['nodeType'] === 'text') {
+    if (node['nodeType'] === 'text' && node['value'].trim().length !== 0) {
       // Change data in traversal
       let translation = arr.pop() || ''
       node['value'] = translation
