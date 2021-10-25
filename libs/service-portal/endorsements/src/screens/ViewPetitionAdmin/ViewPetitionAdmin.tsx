@@ -6,28 +6,21 @@ import {
   Input,
   Stack,
   DialogPrompt,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
-import { ExportAsCSV } from '@island.is/application/ui-components'
 import { useGetSinglePetition } from '../queries'
 import { list } from '../mocks'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import PetitionsTable from '../PetitionsTable'
-
-const mapToCSVFile = (petitions: any) => {
-  return petitions.map((pet: any) => {
-    return {
-      Dagsetning: new Date(pet.signed),
-      Nafn: pet.name,
-    }
-  })
-}
+import { EndorsementList } from '../../types/schema'
 
 const ViewPetitionAdmin = () => {
   const { formatMessage } = useLocale()
   const location: any = useLocation()
-  const petition = useGetSinglePetition(location.state?.listId)
+  const { petitionData } = useGetSinglePetition(location.state?.listId)
+  const petition = petitionData as EndorsementList
 
   const [title, setTitle] = useState(petition?.title)
   const [description, setDescription] = useState(petition?.description)
@@ -58,8 +51,8 @@ const ViewPetitionAdmin = () => {
           textarea
           rows={10}
         />
-        <Box display="flex" justifyContent="spaceBetween">
-          <Box width="half" marginRight={2}>
+        <Box display={['block', 'flex']} justifyContent="spaceBetween">
+          <Box width="half" marginRight={[0, 2]}>
             <DatePicker
               selected={new Date()}
               handleChange={(date: Date) => console.log(date)}
@@ -68,7 +61,7 @@ const ViewPetitionAdmin = () => {
               placeholderText="Veldu dagsetningu"
             />
           </Box>
-          <Box width="half" marginLeft={2}>
+          <Box width="half" marginLeft={[0, 2]} marginTop={[2, 0]}>
             <DatePicker
               selected={new Date()}
               handleChange={(date: Date) => console.log(date)}
@@ -111,20 +104,14 @@ const ViewPetitionAdmin = () => {
             )}
             buttonTextCancel={formatMessage(m.viewPetition.dialogPromptCancel)}
           />
-          <Button icon="reload" iconType="outline">
+          <Button icon="checkmark" iconType="outline">
             {formatMessage(m.viewPetition.updateListButton)}
           </Button>
         </Box>
 
-        <PetitionsTable />
-
-        <Box marginTop={3}>
-          <ExportAsCSV
-            data={mapToCSVFile(list.signedPetitions) as object[]}
-            filename="Meðmælalisti"
-            title="Sækja lista"
-            variant="ghost"
-          />
+        <Box>
+          <Text variant="h3">Yfirlit meðmæla</Text>
+          <PetitionsTable />
         </Box>
       </Stack>
     </Box>

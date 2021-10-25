@@ -108,7 +108,11 @@ export class PaymentService {
     chargeItemCode: string,
     search: Item[],
   ): Promise<Item> {
-    if (chargeItemCode === '' || search === []) {
+    if (
+      chargeItemCode === '' ||
+      !Array.isArray(search) ||
+      search.length === 0
+    ) {
       return Promise.reject(new Error('Bad search catalog parameters.')).catch(
         handleError,
       )

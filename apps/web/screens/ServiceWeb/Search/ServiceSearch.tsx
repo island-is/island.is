@@ -48,7 +48,7 @@ import {
 } from '@island.is/web/components'
 import { getSlugPart } from '../utils'
 
-import * as sharedStyles from '../shared/styles.treat'
+import * as sharedStyles from '../shared/styles.css'
 
 const PERPAGE = 10
 

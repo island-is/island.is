@@ -13,7 +13,7 @@ import {
   ColorSchemes,
 } from '../ColorSchemeContext/ColorSchemeContext'
 
-import * as styles from './FocusableBox.treat'
+import * as styles from './FocusableBox.css'
 
 // TODO fix strict typing
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

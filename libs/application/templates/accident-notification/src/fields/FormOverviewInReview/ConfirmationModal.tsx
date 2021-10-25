@@ -6,7 +6,7 @@ import { useLocale } from '@island.is/localization'
 import * as Sentry from '@sentry/react'
 import React, { FC } from 'react'
 import { inReview } from '../../lib/messages'
-import * as styles from './ConfirmationModal.treat'
+import * as styles from './ConfirmationModal.css'
 
 type ConfirmationModalProps = {
   visibility: boolean

@@ -1,4 +1,4 @@
-import * as s from './RegulationDisplay.treat'
+import * as s from './RegulationDisplay.css'
 
 import { NamespaceGetter } from '@island.is/web/hooks'
 import React, { useState, MouseEvent, useEffect } from 'react'

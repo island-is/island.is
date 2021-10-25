@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 
-import * as styles from './Item.treat'
+import * as styles from './Item.css'
 
 import { AsyncSearchOption } from '../../AsyncSearch'
 
