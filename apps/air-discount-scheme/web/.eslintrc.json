@@ -16,6 +16,6 @@
       }
     ]
   },
-  "ignorePatterns": ["!**/*"],
+  "ignorePatterns": ["!**/*", "translation.d.ts"],
   "overrides": []
 }
