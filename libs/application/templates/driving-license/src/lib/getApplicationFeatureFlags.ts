@@ -1,6 +1,6 @@
 import { FeatureFlagClient } from '@island.is/feature-flags'
 
-enum DrivingLicenseFeatureFlags {
+export enum DrivingLicenseFeatureFlags {
   ALLOW_FAKE = 'applicationTemplateDrivingLicenseAllowFakeData',
   ALLOW_LICENSE_SELECTION = 'applicationTemplateDrivingLicenseAllowLicenseSelection',
 }

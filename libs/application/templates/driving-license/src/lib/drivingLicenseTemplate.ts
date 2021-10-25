@@ -7,10 +7,14 @@ import {
   DefaultStateLifeCycle,
   DefaultEvents,
 } from '@island.is/application/core'
+import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { Events, States } from './constants'
 import { dataSchema } from './dataSchema'
-import { getApplicationFeatureFlags } from './getApplicationFeatureFlags'
+import {
+  getApplicationFeatureFlags,
+  DrivingLicenseFeatureFlags,
+} from './getApplicationFeatureFlags'
 import { m } from './messages'
 
 const template: ApplicationTemplate<
@@ -37,7 +41,11 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: 'applicant',
-              formLoader: async ({ featureFlagClient }) => {
+              formLoader: async ({ getOptions }) => {
+                const { featureFlagClient } = getOptions() as {
+                  featureFlagClient: FeatureFlagClient
+                }
+
                 const featureFlags = await getApplicationFeatureFlags(
                   featureFlagClient,
                 )
@@ -47,8 +55,10 @@ const template: ApplicationTemplate<
                 ).then((val) => val.getApplication)
 
                 return getApplication(
-                  featureFlags.applicationTemplateDrivingLicenseAllowFakeData,
-                  featureFlags.applicationTemplateDrivingLicenseAllowLicenseSelection,
+                  featureFlags[DrivingLicenseFeatureFlags.ALLOW_FAKE],
+                  featureFlags[
+                    DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION
+                  ],
                 )
               },
               actions: [

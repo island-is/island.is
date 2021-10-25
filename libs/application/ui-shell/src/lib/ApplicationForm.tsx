@@ -107,7 +107,7 @@ const ShellWrapper: FC<{
 
             if (currentRole && currentRole.formLoader) {
               const formDescriptor = await currentRole.formLoader({
-                featureFlagClient,
+                getOptions: () => ({ featureFlagClient }),
               })
               setForm(formDescriptor)
               setDataSchema(template.dataSchema)
