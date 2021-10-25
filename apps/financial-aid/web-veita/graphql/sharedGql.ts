@@ -48,6 +48,8 @@ export const ApplicationQuery = gql`
         eventType
         comment
         created
+        staffName
+        staffNationalId
       }
     }
   }
@@ -116,14 +118,6 @@ export const ApplicationFiltersMutation = gql`
   }
 `
 
-export const CreateApplicationMutation = gql`
-  mutation CreateApplication($input: CreateApplicationInput!) {
-    createApplication(input: $input) {
-      id
-    }
-  }
-`
-
 export const ApplicationEventMutation = gql`
   mutation CreateApplicationEvent($input: CreateApplicationEventInput!) {
     createApplicationEvent(input: $input) {
@@ -168,6 +162,8 @@ export const ApplicationEventMutation = gql`
         eventType
         comment
         created
+        staffNationalId
+        staffName
       }
     }
   }
@@ -233,6 +229,8 @@ export const UpdateApplicationMutation = gql`
         eventType
         comment
         created
+        staffNationalId
+        staffName
       }
       staff {
         name
