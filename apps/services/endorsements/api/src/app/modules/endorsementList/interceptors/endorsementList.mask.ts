@@ -1,6 +1,6 @@
-import { EndorsementList } from '../endorsementList.model';
+import { EndorsementList, ReturnEndorsementList } from '../endorsementList.model';
 
-export function maskEndorsementList(theList: EndorsementList): EndorsementList {
+export function maskEndorsementList(theList: EndorsementList| ReturnEndorsementList): ReturnEndorsementList {
     // Removes owner from object
     return {
         id: theList.id,
@@ -16,7 +16,7 @@ export function maskEndorsementList(theList: EndorsementList): EndorsementList {
         meta: theList.meta,
         created: theList.created,
         modified: theList.modified,
-    } as EndorsementList
+    } as ReturnEndorsementList
 
 
 }

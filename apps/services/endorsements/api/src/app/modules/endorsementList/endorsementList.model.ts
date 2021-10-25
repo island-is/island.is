@@ -124,3 +124,5 @@ export class EndorsementList extends Model<EndorsementList> {
   @UpdatedAt
   readonly modified!: Date
 }
+
+export class ReturnEndorsementList extends OmitType(EndorsementList, ['owner'] as const) {}
