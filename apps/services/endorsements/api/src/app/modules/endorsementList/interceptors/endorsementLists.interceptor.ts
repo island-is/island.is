@@ -8,18 +8,22 @@ import {
   CallHandler,
 } from '@nestjs/common'
 
-import {maskEndorsementList} from './endorsementList.mask'
-import {PaginatedEndorsementListDto} from '../dto/paginatedEndorsementList.dto'
-
+import { maskEndorsementList } from './endorsementList.mask'
+import { PaginatedEndorsementListDto } from '../dto/paginatedEndorsementList.dto'
 
 @Injectable()
 export class EndorsementListsInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<PaginatedEndorsementListDto> {
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Observable<PaginatedEndorsementListDto> {
     return next.handle().pipe(
       map((retEndorsementLists: PaginatedEndorsementListDto) => {
-        retEndorsementLists.data = retEndorsementLists.data.map((retEndorsementList) => {
+        retEndorsementLists.data = retEndorsementLists.data.map(
+          (retEndorsementList) => {
             return maskEndorsementList(retEndorsementList)
-        })
+          },
+        )
         return retEndorsementLists
       }),
     )

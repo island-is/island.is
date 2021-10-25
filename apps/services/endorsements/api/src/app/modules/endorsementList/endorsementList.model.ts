@@ -125,4 +125,6 @@ export class EndorsementList extends Model<EndorsementList> {
   readonly modified!: Date
 }
 
-export class ReturnEndorsementList extends OmitType(EndorsementList, ['owner'] as const) {}
+export class ReturnEndorsementList extends OmitType(EndorsementList, [
+  'owner',
+] as const) {}

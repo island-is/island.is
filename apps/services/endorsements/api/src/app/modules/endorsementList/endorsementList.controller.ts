@@ -7,7 +7,7 @@ import {
   Post,
   Put,
   Query,
-  UseInterceptors
+  UseInterceptors,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -106,7 +106,7 @@ export class EndorsementListController {
   ): Promise<ReturnEndorsementList | null> {
     return await this.endorsementListService.findSingleOpenListTaggedGeneralPetition(
       listId,
-    ) 
+    )
   }
 
   @Scopes(EndorsementsScope.main)
