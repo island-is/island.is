@@ -1,7 +1,7 @@
 import { EndorsementList } from '../endorsementList.model'
 
 export function maskEndorsementList(theList: EndorsementList): EndorsementList {
-  // Removes owner from object
+  // Masks owner from EndorsementList
   return {
     id: theList.id,
     counter: theList.counter,
@@ -11,6 +11,7 @@ export function maskEndorsementList(theList: EndorsementList): EndorsementList {
     closedDate: theList.closedDate,
     endorsementMetadata: theList.endorsementMetadata,
     tags: theList.tags,
+    owner: 'xxxxxx-xxxx',
     validationRules: theList.validationRules,
     adminLock: theList.adminLock,
     meta: theList.meta,
