@@ -1,23 +1,16 @@
-import { useContext, useMemo } from 'react'
+import { useContext } from 'react'
 import { useMutation } from '@apollo/client'
 
-import {
-  ApplicationMutation,
-  CreateApplicationMutation,
-} from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { ApplicationMutation } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import {
-  User,
   ApplicationState,
   FileType,
   Application,
   ApplicationEventType,
 } from '@island.is/financial-aid/shared/lib'
-import {
-  Form,
-  FormContext,
-} from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { UploadFile } from '@island.is/island-ui/core'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+
 import { useFileUpload } from './useFileUpload'
 
 const useUpdateApplication = () => {
@@ -28,33 +21,25 @@ const useUpdateApplication = () => {
     ApplicationMutation,
   )
 
-  const sendFiles = async () => {
-    try {
-      await uploadFiles().then(async () => {
-        await updateApplicationMutation({
-          variables: {
-            input: {
-              id: '',
-              state: ApplicationState.INPROGRESS,
-              event: ApplicationEventType.INPROGRESS,
-            },
+  const updateApplication = async (
+    applicationId: string,
+    fileType: FileType,
+  ) => {
+    await uploadFiles(applicationId, fileType).then(async () => {
+      await updateApplicationMutation({
+        variables: {
+          input: {
+            id: applicationId,
+            state: ApplicationState.INPROGRESS,
+            event: ApplicationEventType.FILEUPLOAD,
           },
-        })
-
-        updateForm({
-          ...form,
-          status: ApplicationState.INPROGRESS,
-        })
-
-        console.log('suzzes')
+        },
       })
-    } catch (e) {
-      console.log('error catch')
-    }
+    })
   }
 
   return {
-    sendFiles,
+    updateApplication,
   }
 }
 

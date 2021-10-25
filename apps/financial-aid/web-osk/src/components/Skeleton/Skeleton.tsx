@@ -1,7 +1,7 @@
 import React, { ReactNode, useContext, useMemo } from 'react'
 import { SkeletonLoader, Box, Divider } from '@island.is/island-ui/core'
 
-import * as styles from './Skeleton.treat'
+import * as styles from './Skeleton.css'
 
 const Skeleton = () => {
   return (

@@ -149,6 +149,7 @@ export const getFileTypeName: KeyMapping<FileType, string> = {
   TaxReturn: 'Skattagögn',
   Income: 'Tekjugögn',
   Other: 'Innsend gögn',
+  SpouseFiles: 'Gögn frá maka',
 }
 
 export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {

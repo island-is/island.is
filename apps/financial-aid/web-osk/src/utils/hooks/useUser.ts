@@ -34,7 +34,7 @@ const useUser = () => {
       //   )
       // }
       if (loggedInUser.isSpouse) {
-        router.push(`/umsokn/rettur`, undefined, { shallow: true })
+        // router.push(`/umsokn/rettur`, undefined, { shallow: true })
       }
 
       setUser(loggedInUser)

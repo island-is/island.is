@@ -19,22 +19,12 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import {
-  FamilyStatus,
-  getFamilyStatus,
-  NavigationProps,
-} from '@island.is/financial-aid/shared/lib'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useApplication'
 
-import {
-  Employment,
-  getEmploymentStatus,
-  getHomeCircumstances,
-  HomeCircumstances,
-} from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
-import formOverview from '../../../utils/formOverview'
+import formOverview from '@island.is/financial-aid-web/osk/src/utils/formOverview'
 
 const SummaryForm = () => {
   const router = useRouter()

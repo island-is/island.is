@@ -13,23 +13,26 @@ import {
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 
-import * as styles from './summaryForm.treat'
 import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import { NavigationProps } from '@island.is/financial-aid/shared/lib'
+import { FileType, NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useApplication'
 
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 import formOverview from '../../../utils/formOverview'
+import useUpdateApplication from '../../../utils/hooks/useUpdateApplication'
+import FileUpload from '@island.is/financial-aid-web/osk/pages/stada/[id]/gogn'
 
 const SpouseSummary = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
 
   const { user } = useContext(AppContext)
+
+  const { updateApplication } = useUpdateApplication()
 
   const [isVisible, setIsVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -39,8 +42,6 @@ const SpouseSummary = () => {
     message: '',
   })
 
-  const { createApplication } = useApplication()
-
   const formInfoOverview = formOverview(user?.isSpouse)
 
   const handleNextButtonClick = async () => {
@@ -48,7 +49,11 @@ const SpouseSummary = () => {
       return
     }
     setIsLoading(true)
-    await createApplication(form, user, updateForm)
+
+    await updateApplication(
+      user.currentApplication?.id as string,
+      FileType.SPOUSEFILES,
+    )
       .then(() => {
         setIsLoading(false)
         if (navigation?.nextUrl) {
@@ -61,19 +66,6 @@ const SpouseSummary = () => {
           status: true,
           message: 'Obbobbob einhvað fór úrskeiðis',
         })
-
-        if (e.networkError?.statusCode === 400) {
-          const findErrorInFormInfo = formInfoOverview.find(
-            (el) => el.info === undefined,
-          )
-
-          if (findErrorInFormInfo) {
-            var element = document.getElementById(findErrorInFormInfo.id)
-            element?.scrollIntoView({
-              behavior: 'smooth',
-            })
-          }
-        }
       })
   }
 
@@ -84,9 +76,15 @@ const SpouseSummary = () => {
   return (
     <>
       <ContentContainer>
-        <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
+        <Text as="h1" variant="h2" marginBottom={2}>
           Yfirlit umsóknar
         </Text>
+
+        <Text marginBottom={[3, 3, 4]}>
+          Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar
+          upplýsingar hafi verið gefnar upp.
+        </Text>
+
         <Box marginTop={[4, 4, 5]}>
           <Divider />
         </Box>
