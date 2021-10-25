@@ -5,7 +5,6 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  AlertMessage,
   Box,
   Select,
   Text,
@@ -23,7 +22,6 @@ import {
   Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
-  CaseState,
   NotificationType,
   SessionArrangements,
   UserRole,
@@ -155,15 +153,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             {formatMessage(m.title)}
           </Text>
         </Box>
-        {workingCase.state === CaseState.DRAFT && (
-          <Box marginBottom={8}>
-            <AlertMessage
-              type="info"
-              title="Krafa hefur ekki verið staðfest af ákæranda"
-              message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
-            />
-          </Box>
-        )}
         <Box component="section" marginBottom={7}>
           <CaseNumbers workingCase={workingCase} />
         </Box>
