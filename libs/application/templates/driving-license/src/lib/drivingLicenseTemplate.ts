@@ -10,40 +10,8 @@ import {
 import { ApiActions } from '../shared'
 import { Events, States } from './constants'
 import { dataSchema } from './dataSchema'
+import { getApplicationFeatureFlags } from './getApplicationFeatureFlags'
 import { m } from './messages'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-
-type DrivingLicenseFeatureFlags =
-  | 'applicationTemplateDrivingLicenseAllowFakeData'
-  | 'applicationTemplateDrivingLicenseAllowLicenseSelection'
-
-const getClientSideFeatureFlags = async (
-  client: FeatureFlagClient,
-): Promise<Record<DrivingLicenseFeatureFlags, boolean>> => {
-  const featureFlags: DrivingLicenseFeatureFlags[] = [
-    'applicationTemplateDrivingLicenseAllowLicenseSelection',
-    'applicationTemplateDrivingLicenseAllowFakeData',
-  ]
-
-  return (
-    await Promise.all(
-      featureFlags.map(async (key: DrivingLicenseFeatureFlags) => {
-        return { key, value: !!(await client.getValue(key, false)) }
-      }),
-    )
-  ).reduce(
-    (
-      acc,
-      { key, value }: { key: DrivingLicenseFeatureFlags; value: boolean },
-    ) => {
-      return {
-        ...acc,
-        [key]: value,
-      }
-    },
-    {} as Record<DrivingLicenseFeatureFlags, boolean>,
-  )
-}
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -70,7 +38,7 @@ const template: ApplicationTemplate<
             {
               id: 'applicant',
               formLoader: async ({ featureFlagClient }) => {
-                const featureFlags = await getClientSideFeatureFlags(
+                const featureFlags = await getApplicationFeatureFlags(
                   featureFlagClient,
                 )
 
