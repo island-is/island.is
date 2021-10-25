@@ -11,7 +11,12 @@ import {
   AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
-import { useGetSinglePetition, LockList, UnlockList } from '../queries'
+import {
+  useGetSinglePetition,
+  LockList,
+  UnlockList,
+  UpdateList,
+} from '../queries'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import PetitionsTable from '../PetitionsTable'
@@ -28,10 +33,14 @@ const ViewPetitionAdmin = () => {
 
   const [title, setTitle] = useState(petition?.title)
   const [description, setDescription] = useState(petition?.description)
+  const [closedDate, setClosedDate] = useState(petition?.closedDate)
+  const [openedDate, setOpenedDate] = useState(petition?.openedDate)
 
   useEffect(() => {
     setTitle(petition?.title)
     setDescription(petition?.description)
+    setClosedDate(petition?.closedDate)
+    setOpenedDate(petition?.openedDate)
   }, [petition])
 
   const [lockList] = useMutation(LockList, {
@@ -41,6 +50,12 @@ const ViewPetitionAdmin = () => {
   })
 
   const [unlockList] = useMutation(UnlockList, {
+    onCompleted: () => {
+      refetchSinglePetition()
+    },
+  })
+
+  const [updateList] = useMutation(UpdateList, {
     onCompleted: () => {
       refetchSinglePetition()
     },
@@ -67,6 +82,28 @@ const ViewPetitionAdmin = () => {
       variables: {
         input: {
           listId: location.state?.listId,
+        },
+      },
+    }).catch(() => {
+      toast.error(formatMessage(m.viewPetition.toastErrorOpenList))
+    })
+
+    if (success) {
+      toast.success(formatMessage(m.viewPetition.toastSuccessOpenList))
+    }
+  }
+
+  const onUpdateList = async () => {
+    const success = await updateList({
+      variables: {
+        input: {
+          listId: location.state?.listId,
+          endorsementList: {
+            title: title,
+            description: description,
+            closedDate: closedDate,
+            openedDate: openedDate,
+          },
         },
       },
     }).catch(() => {
@@ -112,7 +149,7 @@ const ViewPetitionAdmin = () => {
               <Box width="half" marginRight={[0, 2]}>
                 <DatePicker
                   selected={new Date(petition?.openedDate)}
-                  handleChange={(date: Date) => console.log(date)}
+                  handleChange={(date: Date) => setOpenedDate(date)}
                   label="Tímabil frá"
                   locale="is"
                   placeholderText="Veldu dagsetningu"
@@ -121,7 +158,7 @@ const ViewPetitionAdmin = () => {
               <Box width="half" marginLeft={[0, 2]} marginTop={[2, 0]}>
                 <DatePicker
                   selected={new Date(petition?.closedDate)}
-                  handleChange={(date: Date) => console.log(date)}
+                  handleChange={(date: Date) => setClosedDate(date)}
                   label="Tímabil til"
                   locale="is"
                   placeholderText="Veldu dagsetningu"
@@ -189,7 +226,11 @@ const ViewPetitionAdmin = () => {
                 )}
               />
             )}
-            <Button icon="checkmark" iconType="outline">
+            <Button
+              icon="checkmark"
+              iconType="outline"
+              onClick={() => onUpdateList()}
+            >
               {formatMessage(m.viewPetition.updateListButton)}
             </Button>
           </Box>

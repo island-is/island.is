@@ -207,6 +207,14 @@ export const UnlockList = gql`
   }
 `
 
+export const UpdateList = gql`
+  mutation Mutants($input: UpdateEndorsementListInput!) {
+    endorsementSystemUpdateEndorsementList(input: $input) {
+      id
+    }
+  }
+`
+
 export const useGetAllPetitionLists = () => {
   const { data: endorsementListsResponse } = useQuery<PetitionLists>(
     GetAllEndorsementsLists,
