@@ -77,9 +77,7 @@ const Nav = ({ showInMobile }: Props) => {
           {navigationItems.map((item: NavigationElement, index: number) => {
             return (
               <>
-                {item.group && (
-                  <text className={styles.group}>{item.group}</text>
-                )}
+                {item.group && <p className={styles.group}>{item.group}</p>}
                 <Link href={item.link} key={'NavigationLinks-' + index}>
                   <a
                     aria-label={item.label}
