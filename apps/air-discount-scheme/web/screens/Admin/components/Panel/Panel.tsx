@@ -13,7 +13,7 @@ import {
 import { Typography, Box } from '@island.is/island-ui/core'
 import { FlightLeg } from '@island.is/air-discount-scheme-web/graphql/schema'
 import { financialStateOptions } from '../../consts'
-import * as styles from './Panel.treat'
+import * as styles from './Panel.css'
 
 interface PropTypes {
   flightLegs: FlightLeg[]

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Text, Link, FocusableBox } from '@island.is/island-ui/core'
-import * as styles from './LifeEventCard.treat'
+import * as styles from './LifeEventCard.css'
 
 interface Props {
   title: string

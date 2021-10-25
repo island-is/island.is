@@ -6,7 +6,7 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import * as styles from './FinanceTransactionsDetail.treat'
+import * as styles from './FinanceTransactionsDetail.css'
 
 interface Props {
   data: Array<{ title: string; value?: string | number }>

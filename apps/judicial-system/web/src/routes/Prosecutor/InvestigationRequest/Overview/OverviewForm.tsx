@@ -21,7 +21,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './Overview.treat'
+import * as styles from './Overview.css'
 
 interface Props {
   workingCase: Case

@@ -23,7 +23,7 @@ import {
 import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
 import { StartDateOptions, DATE_FORMAT } from '../../constants'
-import * as styles from './Duration.treat'
+import * as styles from './Duration.css'
 
 const DEFAULT_PERIOD_LENGTH = usageMinMonths
 

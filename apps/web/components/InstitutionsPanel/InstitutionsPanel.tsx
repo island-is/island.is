@@ -7,7 +7,7 @@ import {
   Link,
 } from '@island.is/island-ui/core'
 import React from 'react'
-import * as styles from './InstitutionsPanel.treat'
+import * as styles from './InstitutionsPanel.css'
 
 type Institution = {
   label: string
