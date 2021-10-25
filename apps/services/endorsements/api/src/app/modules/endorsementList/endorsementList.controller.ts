@@ -38,6 +38,7 @@ import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
 import { SearchQueryDto } from './dto/searchQuery.dto'
 import { EndorsementListInterceptor } from './interceptors/endorsementList.interceptor'
+import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
 
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
@@ -66,6 +67,7 @@ export class EndorsementListController {
   })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get()
+  @UseInterceptors(EndorsementListsInterceptor)
   @BypassAuth()
   async findByTags(
     @Query() query: FindTagPaginationComboDto,
@@ -81,6 +83,7 @@ export class EndorsementListController {
   @ApiOperation({ summary: 'Gets General Petition Lists' })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get('general-petition-lists')
+  @UseInterceptors(EndorsementListsInterceptor)
   @BypassAuth()
   async getGeneralPetitionLists(
     @Query() query: PaginationDto,
@@ -131,6 +134,7 @@ export class EndorsementListController {
   })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get('/endorsementLists')
+  @UseInterceptors(EndorsementListsInterceptor)
   @Audit<PaginatedEndorsementListDto>({
     resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),
