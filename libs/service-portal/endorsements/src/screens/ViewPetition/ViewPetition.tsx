@@ -99,7 +99,7 @@ const ViewPetition = () => {
         <Box>
           <Text variant="h4">{formatMessage(m.viewPetition.listOwner)}</Text>
           <Text variant="default" marginBottom={3}>
-            {list.owner}
+            {list.ownerName}
           </Text>
         </Box>
       </Box>

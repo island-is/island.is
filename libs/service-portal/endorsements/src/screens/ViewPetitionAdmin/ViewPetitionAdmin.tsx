@@ -80,8 +80,8 @@ const ViewPetitionAdmin = () => {
         </Box>
 
         <Input
-          name={list.owner}
-          value={list.owner}
+          name={list.ownerName}
+          value={list.ownerName}
           label={formatMessage(m.viewPetition.listOwner)}
         />
 
