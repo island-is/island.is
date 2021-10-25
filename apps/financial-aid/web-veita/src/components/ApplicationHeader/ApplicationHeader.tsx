@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react'
 import { NavigationElement } from '../../routes/ApplicationsOverview/applicationsOverview'
 import { navigationItems } from '../../utils/navigation'
 
-import * as styles from './ApplicationHeader.treat'
+import * as styles from './ApplicationHeader.css'
 
 import { useRouter } from 'next/router'
 import {

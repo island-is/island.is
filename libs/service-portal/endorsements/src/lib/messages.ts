@@ -50,7 +50,7 @@ export const m: MessageDir = {
     intro: {
       id: 'sp.petitions:intro',
       defaultMessage:
-        'Hér má finna yfirlit yfir meðmæli og meðmælendalista í þinni umsjá',
+        'Hér má finna yfirlit yfir meðmæli og meðmælendalista í þinni umsjá.',
       description: 'Petitions intro text',
     },
     petitionListsIown: {
@@ -126,8 +126,13 @@ export const m: MessageDir = {
       description: 'Dialog prompt title',
     },
     dialogPromptCloseListTitle: {
-      id: 'sp.petitions:dialog-prompt',
+      id: 'sp.petitions:dialog-prompt-close',
       defaultMessage: 'Ertu viss um að vilja loka lista?',
+      description: 'Dialog prompt title',
+    },
+    dialogPromptOpenListTitle: {
+      id: 'sp.petitions:dialog-prompt-open',
+      defaultMessage: 'Ertu viss um að vilja opna lista?',
       description: 'Dialog prompt title',
     },
     closeListButton: {
@@ -160,16 +165,74 @@ export const m: MessageDir = {
       defaultMessage: 'Nafn',
       description: 'Table header',
     },
-    toastError: {
-      id: 'sp.petitions:toast-error-message',
-      defaultMessage:
-        'Ekki tókst að taka nafn þitt af lista. Vinsamlegast reyndu aftur síðar',
+    toastErrorOpenList: {
+      id: 'sp.petitions:toast-error-message-open',
+      defaultMessage: 'Ekki tókst að opna lista',
+      description: 'Toast error message',
+    },
+    toastErrorCloseList: {
+      id: 'sp.petitions:toast-error-message-close',
+      defaultMessage: 'Ekki tókst að loka lista',
       description: 'Toast error message',
     },
     toastSuccess: {
       id: 'sp.petitions:toast-success-message',
       defaultMessage: 'Nafn þitt er ekki lengur á þessum lista',
       description: 'Toast success message',
+    },
+    toastSuccessCloseList: {
+      id: 'sp.petitions:toast-success-message-close-list',
+      defaultMessage: 'Tókst að loka lista',
+      description: 'Toast success message',
+    },
+    toastSuccessOpenList: {
+      id: 'sp.petitions:toast-success-message-open-list',
+      defaultMessage: 'Tókst að opna/uppfæra lista',
+      description: 'Toast success message',
+    },
+    closeListDescription: {
+      id: 'sp.petitions:close-list-description',
+      defaultMessage:
+        'Hér getur þú lokað lista og verður hann þá ekki lengur aðgengilegur á ísland.is, hægt er að opna lista aftur.',
+      description: 'Close list description text',
+    },
+    updateListTitle: {
+      id: 'sp.petitions:update-list-title',
+      defaultMessage: 'Breytingar á lista',
+      description: 'Update list title',
+    },
+    updateListDescription: {
+      id: 'sp.petitions:update-list-description',
+      defaultMessage:
+        'Hér geturðu breytt lokadagsetningu lista og þannig lengt/stytt líftíma hans.',
+      description: 'Update list description text',
+    },
+    openListTitle: {
+      id: 'sp.petitions:open-list-title',
+      defaultMessage: 'Opna lista',
+      description: 'Open list title',
+    },
+    openListDescription: {
+      id: 'sp.petitions:open-list-description',
+      defaultMessage:
+        'Hér getur þú opnað lista og verður hann þá aftur aðgengilegur á ísland.is, hægt er að loka lista aftur.',
+      description: 'Open list description',
+    },
+    enorsementsTableTitle: {
+      id: 'sp.petitions:endorsements-table-title',
+      defaultMessage: 'Yfirlit meðmæla',
+      description: 'Endorsements table title',
+    },
+    alertForSelectingDate: {
+      id: 'sp.petitions:alert-message',
+      defaultMessage:
+        'Til þess að virkja lista þarf að velja nýja lokadagsetningu',
+      description: 'Alert message for opening list',
+    },
+    noNameLabel: {
+      id: 'sp.petitions:no-name',
+      defaultMessage: 'Nafn ótilgreint',
+      description: 'Label when endorsers name is hidden',
     },
   }),
 }

@@ -1,4 +1,4 @@
-import * as s from './DiffModeToggle.treat'
+import * as s from './DiffModeToggle.css'
 
 import { Link, ToggleSwitchLink } from '@island.is/island-ui/core'
 import React from 'react'

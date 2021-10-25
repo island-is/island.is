@@ -10,7 +10,7 @@ import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { informationAboutInstitution } from '../../lib/messages'
 import { ArrayField } from 'react-hook-form'
-import * as styles from './ContactRepeater.treat'
+import * as styles from './ContactRepeater.css'
 import { ContactField } from './ContactRepeater'
 
 interface Props {

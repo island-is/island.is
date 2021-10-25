@@ -12,7 +12,7 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import * as styles from './Overview.treat'
+import * as styles from './Overview.css'
 import {
   capitalize,
   formatDate,
