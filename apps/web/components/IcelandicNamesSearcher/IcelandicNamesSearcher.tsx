@@ -42,7 +42,7 @@ import {
   GET_ICELANDIC_NAME_BY_INITIAL_LETTER,
 } from '@island.is/web/screens/queries/IcelandicNamesRegistry'
 
-import * as styles from './IcelandicNamesSearcher.treat'
+import * as styles from './IcelandicNamesSearcher.css'
 
 type ToggledFiltersState = {
   males: boolean

@@ -5,7 +5,7 @@ import { Typography } from '../Typography/Typography'
 import { Stack, StackProps } from '../Stack/Stack'
 import { Icon } from '../Icon/Icon'
 
-import * as styles from './BulletList.treat'
+import * as styles from './BulletList.css'
 
 interface BulletListContextValue {
   type: string

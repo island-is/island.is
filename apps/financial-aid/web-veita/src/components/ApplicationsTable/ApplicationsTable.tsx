@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Text } from '@island.is/island-ui/core'
-import * as styles from './ApplicationsTable.treat'
+import * as styles from './ApplicationsTable.css'
 import { useRouter } from 'next/router'
 
 import cn from 'classnames'

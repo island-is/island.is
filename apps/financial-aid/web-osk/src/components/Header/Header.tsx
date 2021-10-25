@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
-import * as styles from './Header.treat'
+import * as styles from './Header.css'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { Routes } from '@island.is/financial-aid/shared/lib'

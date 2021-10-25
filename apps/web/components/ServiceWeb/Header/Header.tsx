@@ -15,7 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import { ServiceWebSearchInput } from '@island.is/web/components'
 
-import * as styles from './Header.treat'
+import * as styles from './Header.css'
 
 interface HeaderProps {
   logoTitle?: string

@@ -1,4 +1,4 @@
-import * as s from './RegulationsSearchSection.treat'
+import * as s from './RegulationsSearchSection.css'
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
