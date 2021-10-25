@@ -26,6 +26,7 @@ const useUpdateApplication = () => {
     fileType: FileType,
   ) => {
     await uploadFiles(applicationId, fileType).then(async () => {
+      updateForm({ ...form, applicationId: applicationId })
       await updateApplicationMutation({
         variables: {
           input: {
