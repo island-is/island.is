@@ -31,8 +31,8 @@ export class StaffController {
     @Param('nationalId') nationalId: string,
   ): Promise<StaffModel> {
     const staff = await this.staffService.findByNationalId(nationalId)
-    if (staff === null) {
-      throw new ForbiddenException('Staff not found')
+    if (staff === null || staff.active === false) {
+      throw new ForbiddenException('Staff not found or is not active')
     }
     return staff
   }
