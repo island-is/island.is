@@ -30,10 +30,16 @@ const useUser = () => {
 
   useEffect(() => {
     if (loggedInUser && !user) {
-      if (loggedInUser.currentApplication) {
-        router.push(
-          `${Routes.statusPage(loggedInUser.currentApplication.id as string)}`,
-        )
+      console.log(loggedInUser)
+      // if (loggedInUser.currentApplication) {
+      //   router.push(
+      //     `${Routes.statusPage(loggedInUser.currentApplication.id as string)}`,
+      //     undefined,
+      //     { shallow: true },
+      //   )
+      // }
+      if (loggedInUser.isSpouse) {
+        router.push(`/umsokn/rettur`, undefined, { shallow: true })
       }
 
       setUser(loggedInUser)

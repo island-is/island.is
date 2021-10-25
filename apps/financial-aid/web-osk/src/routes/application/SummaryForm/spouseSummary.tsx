@@ -5,7 +5,6 @@ import {
   ContentContainer,
   Footer,
   CancelModal,
-  Estimation,
   UserInfo,
   AllFiles,
   FormInfo,
@@ -19,24 +18,14 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import {
-  FamilyStatus,
-  getFamilyStatus,
-  NavigationProps,
-} from '@island.is/financial-aid/shared/lib'
+import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useApplication'
 
-import {
-  Employment,
-  getEmploymentStatus,
-  getHomeCircumstances,
-  HomeCircumstances,
-} from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 import formOverview from '../../../utils/formOverview'
 
-const SummaryForm = () => {
+const SpouseSummary = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
 
@@ -98,24 +87,6 @@ const SummaryForm = () => {
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Yfirlit umsóknar
         </Text>
-        {form.homeCircumstances && (
-          <>
-            <Estimation
-              usePersonalTaxCredit={form.usePersonalTaxCredit}
-              homeCircumstances={form.homeCircumstances}
-              aboutText={
-                <Text marginBottom={[2, 2, 3]}>
-                  Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og{' '}
-                  <span className={styles.taxReturn}>
-                    gerir ekki ráð fyrir tekjum eða gögnum úr skattframtali
-                  </span>{' '}
-                  sem geta haft áhrif á þína aðstoð. Þú færð skilaboð þegar
-                  frekari útreikningur liggur fyrir.
-                </Text>
-              }
-            />
-          </>
-        )}
         <Box marginTop={[4, 4, 5]}>
           <Divider />
         </Box>
@@ -158,4 +129,4 @@ const SummaryForm = () => {
   )
 }
 
-export default SummaryForm
+export default SpouseSummary
