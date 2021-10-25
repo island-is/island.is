@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 import { Text, Box, Button } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
-import * as styles from './TableBody.treat'
+import * as styles from './TableBody.css'
 import cn from 'classnames'
 
 import {

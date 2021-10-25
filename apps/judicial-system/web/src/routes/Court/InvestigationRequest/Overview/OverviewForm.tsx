@@ -23,7 +23,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './Overview.treat'
+import * as styles from './Overview.css'
 import {
   FormSettings,
   useCaseFormHelper,

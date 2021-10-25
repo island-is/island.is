@@ -96,19 +96,30 @@ export const AccidentNotificationSchema = z.object({
       AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
       AttachmentsEnum.INJURYCERTIFICATE,
       AttachmentsEnum.SENDCERTIFICATELATER,
-      AttachmentsEnum.INJUREDSENDSCERTIFICATE,
     ]),
   }),
   attachments: z.object({
     injuryCertificateFile: z
-      .array(FileSchema)
-      .refine((v) => v.length > 0, { params: error.requiredFile }),
+      .object({
+        file: z
+          .array(FileSchema)
+          .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
     deathCertificateFile: z
-      .array(FileSchema)
-      .refine((v) => v.length > 0, { params: error.requiredFile }),
+      .object({
+        file: z
+          .array(FileSchema)
+          .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
     powerOfAttorneyFile: z
-      .array(FileSchema)
-      .refine((v) => v.length > 0, { params: error.requiredFile }),
+      .object({
+        file: z
+          .array(FileSchema)
+          .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
   }),
   wasTheAccidentFatal: z.enum([YES, NO]),
   fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),
@@ -129,8 +140,8 @@ export const AccidentNotificationSchema = z.object({
   fishingShipInfo: z.object({
     shipName: z.string().min(1),
     shipCharacters: z.string().min(1),
-    homePort: z.string().min(1),
-    shipRegisterNumber: z.string().min(1),
+    homePort: z.string(),
+    shipRegisterNumber: z.string(),
   }),
   onPayRoll: z.object({
     answer: z.enum([YES, NO]),

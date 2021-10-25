@@ -1,4 +1,4 @@
-import * as styles from './RegulationsSidebarBox.treat'
+import * as styles from './RegulationsSidebarBox.css'
 
 // TODO: make this reuseable component?
 // - <Sidebar> has a bunch of some search specific code and <SidebarBox> is too barebones

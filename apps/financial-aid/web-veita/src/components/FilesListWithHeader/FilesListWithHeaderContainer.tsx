@@ -5,7 +5,7 @@ import {
   FileType,
   getFileTypeName,
 } from '@island.is/financial-aid/shared/lib'
-import * as styles from './FilesListWithHeader.treat'
+import * as styles from './FilesListWithHeader.css'
 import cn from 'classnames'
 import { FileList } from '@island.is/financial-aid/shared/components'
 

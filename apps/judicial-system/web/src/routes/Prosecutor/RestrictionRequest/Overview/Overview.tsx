@@ -42,7 +42,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 
-import * as styles from './Overview.treat'
+import * as styles from './Overview.css'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)

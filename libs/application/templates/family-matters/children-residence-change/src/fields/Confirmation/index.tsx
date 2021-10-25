@@ -14,7 +14,7 @@ import {
 } from '@island.is/application/templates/family-matters-core/utils'
 import { useGeneratePdfUrl } from '@island.is/application/templates/family-matters-core/hooks'
 import { confirmation, copyUrl, contract } from '../../lib/messages'
-import { confirmationIllustration } from '../Shared.treat'
+import { confirmationIllustration } from '../Shared.css'
 import { ContractOverview } from '../components'
 import { CRCFieldBaseProps } from '../..'
 import { Roles } from '../../lib/constants'
