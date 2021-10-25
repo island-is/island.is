@@ -23,7 +23,7 @@ import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import ActiveRequests from './ActiveRequests'
 import PastRequests from './PastRequests'
 import router from 'next/router'
-import * as styles from './Requests.treat'
+import * as styles from './Requests.css'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
 

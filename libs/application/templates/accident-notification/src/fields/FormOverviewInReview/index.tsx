@@ -28,9 +28,6 @@ export const FormOverviewInReview: FC<FormOverviewInReviewProps> = ({
   )
 
   const onBackButtonClick = () => {
-    setState('uploadDocuments')
-  }
-  const onForwardButtonClick = () => {
     setState('inReviewSteps')
   }
   const goToAttachmentScreen = () => {
@@ -79,7 +76,7 @@ export const FormOverviewInReview: FC<FormOverviewInReviewProps> = ({
         <Button variant="ghost" onClick={onBackButtonClick}>
           {formatMessage(inReview.buttons.backButton)}
         </Button>
-        {isAssignee ? (
+        {isAssignee && (
           <Box display="flex" justifyContent="spaceBetween">
             <Button
               icon="warning"
@@ -94,10 +91,6 @@ export const FormOverviewInReview: FC<FormOverviewInReviewProps> = ({
               </Button>
             </Box>
           </Box>
-        ) : (
-          <Button icon="checkmarkCircle" onClick={onForwardButtonClick}>
-            {formatMessage(inReview.buttons.updateButton)}
-          </Button>
         )}
       </Box>
       <ConfirmationModal

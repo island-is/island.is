@@ -6,7 +6,7 @@ interface LogoSvgProps {
   className?: string
 }
 
-const LogoSvg = ({ name = 'sis.svg', className }: LogoSvgProps) => {
+const LogoSvg = ({ name = 'sambandid.svg', className }: LogoSvgProps) => {
   return (
     <div
       className={cn({

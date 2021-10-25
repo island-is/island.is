@@ -4,7 +4,7 @@ import { Icon } from '../IconRC/Icon'
 import { Icon as IconType } from '../IconRC/iconMap'
 import { Colors } from '@island.is/island-ui/theme'
 import { Box } from '../Box/Box'
-import * as styles from './AlertMessage.treat'
+import * as styles from './AlertMessage.css'
 import { Stack } from '../Stack/Stack'
 
 export type AlertMessageType = 'error' | 'info' | 'success' | 'warning'

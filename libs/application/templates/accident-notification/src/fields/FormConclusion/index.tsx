@@ -1,11 +1,11 @@
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import {
+  AccordionCard,
+  AlertMessage,
+  Box,
   Bullet,
   BulletList,
-  Box,
-  AccordionCard,
   Text,
-  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
@@ -75,7 +75,12 @@ export const FormConclusion: FC<FieldBaseProps> = ({ application, field }) => {
           </Bullet>
         </BulletList>
       </AccordionCard>
-      <Box marginTop={[5, 5, 6]} display="flex" justifyContent="center">
+      <Box
+        marginTop={[5, 5, 6]}
+        marginBottom={[5, 8, 10]}
+        display="flex"
+        justifyContent="center"
+      >
         <FamilyIllustration />
       </Box>
     </Box>

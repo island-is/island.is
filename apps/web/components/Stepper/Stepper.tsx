@@ -9,7 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
-import * as style from './Stepper.treat'
+import * as style from './Stepper.css'
 
 interface Option {
   key: string

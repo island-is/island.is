@@ -15,7 +15,7 @@ import {
   LogoMunicipality,
 } from '@island.is/financial-aid-web/veita/src/components'
 
-import * as styles from './Nav.treat'
+import * as styles from './Nav.css'
 import cn from 'classnames'
 import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/src/components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 
@@ -77,9 +77,7 @@ const Nav = ({ showInMobile }: Props) => {
           {navigationItems.map((item: NavigationElement, index: number) => {
             return (
               <>
-                {item.group && (
-                  <text className={styles.group}>{item.group}</text>
-                )}
+                {item.group && <p className={styles.group}>{item.group}</p>}
                 <Link href={item.link} key={'NavigationLinks-' + index}>
                   <a
                     aria-label={item.label}

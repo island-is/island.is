@@ -10,8 +10,8 @@ import React, {
 import cn from 'classnames'
 import { usePopper } from 'react-popper'
 
-import * as timelineStyles from './Timeline.treat'
-import * as eventStyles from './Event.treat'
+import * as timelineStyles from './Timeline.css'
+import * as eventStyles from './Event.css'
 import ReactDOM from 'react-dom'
 import {
   Box,

@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import { ModalBase, Box } from '@island.is/island-ui/core'
 
-import * as styles from './StateModal.treat'
+import * as styles from './StateModal.css'
 
 interface Props {
   isVisible: boolean

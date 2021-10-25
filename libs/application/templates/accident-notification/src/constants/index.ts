@@ -8,5 +8,6 @@ export enum States {
   DRAFT = 'draft',
 
   REVIEW = 'review',
+  REVIEW_WITH_REVIEWER = 'reviewWithReviewer',
   IN_FINAL_REVIEW = 'inFinalReview',
 }

@@ -27,7 +27,7 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../AccessControl'
-import * as styles from './GrantAccess.treat'
+import * as styles from './GrantAccess.css'
 
 const CreateAuthDelegationMutation = gql`
   mutation CreateAuthDelegationMutation($input: CreateAuthDelegationInput!) {

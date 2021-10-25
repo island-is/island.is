@@ -74,10 +74,7 @@ export const accidentType = {
     },
     description: {
       id: 'an.application:accidentType.workAccidentType.description',
-      defaultMessage: `Allir launþegar án tillits til aldurs, sem starfa hér á landi.
-        Starf um borð í skipi eða loftfari, íslensku eða sem gert er út eða rekið af íslenskum aðilum
-        jafngildir starfi hér á landi ef laun eru greidd hér á landi eru slysatryggðir.
-        Veldu slysaflokk hér að neðan sem að á við`,
+      defaultMessage: `Allir launþegar án tillits til aldurs, sem starfa hér á landi eru slysatryggðir ef laun eru greidd hér á landi. Vinsamlegast veldu þann flokk sem lýsir best aðstæðum sem um ræðir varðar við:`,
       description: 'Work accident type description',
     },
     subSectionTitle: {
@@ -106,7 +103,7 @@ export const accidentType = {
     },
     apprenticeship: {
       id: 'an.application:accidentType.studiesAccidentType.appprenticeship',
-      defaultMessage: 'Verknámi í Háskóla',
+      defaultMessage: 'Verknámi í háskóla',
       description: 'Label for the apprenticeship studies accident',
     },
     internship: {

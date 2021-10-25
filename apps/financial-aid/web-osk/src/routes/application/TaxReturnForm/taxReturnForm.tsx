@@ -93,7 +93,9 @@ const TaxReturnForm = () => {
 
       <Footer
         previousUrl={navigation?.prevUrl}
-        nextButtonText="Halda áfram"
+        nextButtonText={
+          form.taxReturnFiles.length > 0 ? 'Halda áfram' : 'Skila gögnum seinna'
+        }
         onNextButtonClick={() => errorCheck()}
       />
     </>
