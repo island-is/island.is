@@ -29,7 +29,7 @@ export const attachments = {
     },
     uploadTitle: {
       id: 'an.application:attachments.uploadTitle',
-      defaultMessage: 'Hlaða upp fylgiskjali',
+      defaultMessage: 'Fylgiskjal',
       description: 'Title of subsection for attachment upload',
     },
     uploadDescription: {
