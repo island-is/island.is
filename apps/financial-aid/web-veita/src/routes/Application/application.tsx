@@ -36,6 +36,7 @@ import {
   FilesListWithHeaderContainer,
   ApplicationSkeleton,
   LoadingContainer,
+  ApplicationNotFound,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { AdminContext } from '../../components/AdminProvider/AdminProvider'
 
@@ -284,27 +285,28 @@ const ApplicationProfile = () => {
   }
 
   return (
-    <LoadingContainer isLoading={loading} loader={<ApplicationSkeleton />}>
-      <Box>
-        <Button
-          colorScheme="default"
-          iconType="filled"
-          onClick={() => {
-            router.push('/nymal')
-          }}
-          preTextIcon="arrowBack"
-          preTextIconType="filled"
-          size="small"
-          type="button"
-          variant="text"
-        >
-          Í vinnslu
-        </Button>
-      </Box>
-      <Text color="red400" fontWeight="semiBold" marginTop={4}>
-        Abbabab Notendi ekki fundinn, farðu tilbaka og reyndu vinsamlegast aftur{' '}
-      </Text>
-    </LoadingContainer>
+    <ApplicationNotFound loading={loading} />
+    // <LoadingContainer isLoading={loading} loader={<ApplicationSkeleton />}>
+    //   <Box>
+    //     <Button
+    //       colorScheme="default"
+    //       iconType="filled"
+    //       onClick={() => {
+    //         router.push('/nymal')
+    //       }}
+    //       preTextIcon="arrowBack"
+    //       preTextIconType="filled"
+    //       size="small"
+    //       type="button"
+    //       variant="text"
+    //     >
+    //       Í vinnslu
+    //     </Button>
+    //   </Box>
+    //   <Text color="red400" fontWeight="semiBold" marginTop={4}>
+    //     Abbabab Notendi ekki fundinn, farðu tilbaka og reyndu vinsamlegast aftur{' '}
+    //   </Text>
+    // </LoadingContainer>
   )
 }
 
