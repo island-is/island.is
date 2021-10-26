@@ -130,6 +130,7 @@ export interface CurrentApplication {
   usePersonalTaxCredit: boolean
   state: ApplicationState
   created: string
+  name: string
 }
 
 export interface ApplicationFile {
