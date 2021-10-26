@@ -28,8 +28,7 @@ import { parseString } from '@island.is/judicial-system-web/src/utils/formatters
 import MarkdownWrapper from '@island.is/judicial-system-web/src/shared-components/MarkdownWrapper/MarkdownWrapper'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
 import { theme } from '@island.is/island-ui/theme'
-import * as styles from './StepFive.treat'
-import { classNames } from 'react-select/src/utils'
+import * as styles from './StepFive.css'
 
 interface Props {
   workingCase: Case
