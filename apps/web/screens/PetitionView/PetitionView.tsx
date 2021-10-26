@@ -125,7 +125,9 @@ const PetitionView = () => {
                         <T.Row key={petition.id}>
                           <T.Data>{formatDate(list.created)}</T.Data>
                           <T.Data>
-                            {petition.meta.fullName ?? 'Nafn ótilgreint'}
+                            {petition.meta.fullName
+                              ? petition.meta.fullName
+                              : 'Nafn ótilgreint'}
                           </T.Data>
                         </T.Row>
                       )

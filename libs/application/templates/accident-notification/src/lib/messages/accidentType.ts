@@ -86,7 +86,7 @@ export const accidentType = {
   studiesAccidentType: defineMessages({
     heading: {
       id: 'an.application:accidentType.studiesAccidentType.heading',
-      defaultMessage: 'Í hverskonar námi gerðist slysið?',
+      defaultMessage: 'Í hverskonar námi tengist slysið?',
       description: 'Studies accident type heading',
     },
     description: {

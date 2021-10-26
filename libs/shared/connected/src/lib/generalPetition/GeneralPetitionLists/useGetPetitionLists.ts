@@ -22,6 +22,8 @@ const GetGeneralPetitionLists = gql`
         title
         description
         closedDate
+        openedDate
+        adminLock
         meta
       }
     }
