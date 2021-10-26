@@ -10,6 +10,7 @@ import {
   PageLayout,
   FormContentContainer,
   RulingAccordionItem,
+  BlueBox,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -126,8 +127,27 @@ export const Confirmation: React.FC = () => {
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <CourtRecordAccordionItem workingCase={workingCase} />
-                <RulingAccordionItem workingCase={workingCase} startExpanded />
+                <RulingAccordionItem workingCase={workingCase} />
               </Accordion>
+            </Box>
+            <Box marginBottom={7}>
+              <BlueBox justifyContent="center">
+                <Box marginBottom={2}>
+                  <Text as="h4" variant="h4">
+                    {formatMessage(m.sections.conclusion.title)}
+                  </Text>
+                </Box>
+                <Box marginBottom={3}>
+                  <Box marginTop={1}>
+                    <Text variant="intro">{workingCase.conclusion}</Text>
+                  </Box>
+                </Box>
+                <Box marginBottom={1}>
+                  <Text variant="h5">
+                    {workingCase?.judge ? workingCase.judge.name : user?.name}
+                  </Text>
+                </Box>
+              </BlueBox>
             </Box>
             <Box marginBottom={3}>
               <PdfButton

@@ -237,8 +237,6 @@ export const AccidentNotificationSchema = z.object({
   childInCustody: z.object({
     name: z.string().min(1, error.required.defaultMessage),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    email: z.string().optional(),
-    phoneNumber: z.string().optional(),
   }),
   powerOfAttorney: z.object({
     type: z.enum([

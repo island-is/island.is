@@ -203,22 +203,6 @@ export const FormOverview: FC<FieldBaseProps> = ({
                   value={answers.childInCustody.nationalId}
                 />
               </GridColumn>
-              {answers.childInCustody.email && (
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <ValueLine
-                    label={childInCustody.labels.email}
-                    value={answers.childInCustody.email}
-                  />
-                </GridColumn>
-              )}
-              {answers.childInCustody.phoneNumber && (
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <ValueLine
-                    label={childInCustody.labels.tel}
-                    value={answers.childInCustody.phoneNumber}
-                  />
-                </GridColumn>
-              )}
             </GridRow>
           </ReviewGroup>
         </>
