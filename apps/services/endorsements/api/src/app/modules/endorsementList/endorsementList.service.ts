@@ -98,7 +98,7 @@ export class EndorsementListService {
       before: query.before,
       primaryKeyField: 'counter',
       orderOption: [['counter', 'DESC']],
-      where: { endorser: nationalId, adminLock: false },
+      where: { endorser: nationalId },
       include: [
         {
           model: EndorsementList,
