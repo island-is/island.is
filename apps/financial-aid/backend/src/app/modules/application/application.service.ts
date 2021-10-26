@@ -16,6 +16,7 @@ import {
   RolesRule,
   User,
   getEmailTextFromState,
+  Staff,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -219,7 +220,7 @@ export class ApplicationService {
   async update(
     id: string,
     update: UpdateApplicationDto,
-    user: User,
+    staff?: Staff,
   ): Promise<{
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
@@ -231,7 +232,6 @@ export class ApplicationService {
       ApplicationEventType.INPROGRESS,
       ApplicationEventType.APPROVED,
     ]
-    const isStaff = user.service === RolesRule.VEITA
 
     if (update.state === ApplicationState.NEW) {
       update.staffId = null
@@ -244,8 +244,8 @@ export class ApplicationService {
         update?.rejection ||
         update?.amount?.toLocaleString('de-DE') ||
         update?.comment,
-      staffName: isStaff ? user.name : undefined,
-      staffNationalId: isStaff ? user.nationalId : undefined,
+      staffName: staff?.name,
+      staffNationalId: staff?.nationalId,
     })
 
     const [

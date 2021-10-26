@@ -237,7 +237,7 @@ export const accidentLocation = {
     moreDetailsPlaceholder: {
       id:
         'an.application:accidentLocation.homeAccidentLocation.moreDetailsPlaceholder',
-      defaultMessage: 'T.d hæð 2, íbúð 101 eða sumarbústaður',
+      defaultMessage: 'T.d. inn á heimili, innan lóðamarka eða í sumarbústað',
       description:
         'Home accident location more details placeholder in textarea field',
     },
