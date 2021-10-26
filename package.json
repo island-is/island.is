@@ -337,7 +337,7 @@
     "@types/react-dom": "16.9.9",
     "@types/react-html-parser": "2.0.1",
     "@types/react-router-dom": "5.1.6",
-    "@types/react-select": "3.0.19",
+    "@types/react-select": "5.0.1",
     "@types/request": "2.48.5",
     "@types/sequelize": "4.28.9",
     "@types/smoothscroll-polyfill": "0.3.1",
