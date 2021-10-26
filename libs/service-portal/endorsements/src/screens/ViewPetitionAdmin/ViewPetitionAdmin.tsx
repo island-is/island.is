@@ -170,8 +170,8 @@ const ViewPetitionAdmin = () => {
           <Input
             backgroundColor="blue"
             disabled
-            name={petition?.ownerName}
-            value={petition?.ownerName}
+            name={petition?.ownerName ?? ''}
+            value={petition?.ownerName ?? ''}
             label={formatMessage(m.viewPetition.listOwner)}
           />
 
