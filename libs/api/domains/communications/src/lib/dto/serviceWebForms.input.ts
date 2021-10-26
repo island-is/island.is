@@ -37,6 +37,6 @@ export class ServiceWebFormsInput {
   type: 'serviceWebForms' = 'serviceWebForms'
 }
 
-export type ServiceWebFormsInputWithToAddress = ServiceWebFormsInput & {
-  to?: string
+export type ServiceWebFormsInputWithInstitutionEmail = ServiceWebFormsInput & {
+  institutionEmail: string
 }

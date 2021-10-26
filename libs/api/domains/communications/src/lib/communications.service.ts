@@ -1,20 +1,26 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
 import { ZendeskService } from '@island.is/clients/zendesk'
+import { ContentfulRepository, localeMap } from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SendMailOptions } from 'nodemailer'
 import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
-import { ServiceWebFormsInputWithToAddress } from './dto/serviceWebForms.input'
+import {
+  ServiceWebFormsInput,
+  ServiceWebFormsInputWithInstitutionEmail,
+} from './dto/serviceWebForms.input'
 import { getTemplate as getContactUsTemplate } from './emailTemplates/contactUs'
 import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsAStory'
 import { getTemplate as getServiceWebFormsTemplate } from './emailTemplates/serviceWebForms'
 
+const LOG_CATEGORY = 'communications-service'
+
 type SendEmailInput =
   | ContactUsInput
   | TellUsAStoryInput
-  | ServiceWebFormsInputWithToAddress
+  | ServiceWebFormsInputWithInstitutionEmail
 interface EmailTypeTemplateMap {
   [template: string]: (SendEmailInput) => SendMailOptions
 }
@@ -38,6 +44,43 @@ export class CommunicationsService {
       return this.emailTypeTemplateMap[input.type](input)
     } else {
       throw new Error('Message type is not supported')
+    }
+  }
+
+  async getInputWithInstitutionEmail(
+    input: ServiceWebFormsInput,
+  ): Promise<ServiceWebFormsInputWithInstitutionEmail> {
+    const institutionSlug = input.institutionSlug
+
+    try {
+      const contentfulRespository = new ContentfulRepository()
+
+      const result = await contentfulRespository.getLocalizedEntries(
+        localeMap['is'],
+        {
+          ['content_type']: 'organization',
+          'fields.slug': institutionSlug,
+        },
+      )
+
+      const item = result?.total > 0 ? result?.items[0] : null
+      const institutionEmail = (item?.fields as { email?: string })?.email
+
+      if (!institutionEmail) {
+        throw new Error(`No email address found for ${institutionSlug}`)
+      }
+
+      return {
+        ...input,
+        institutionEmail,
+      }
+    } catch (e) {
+      this.logger.error('Could not get institution email', {
+        error: e.message,
+        category: LOG_CATEGORY,
+      })
+
+      throw new Error('Could not get institution email')
     }
   }
 

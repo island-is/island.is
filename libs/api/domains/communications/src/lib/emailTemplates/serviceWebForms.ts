@@ -1,5 +1,5 @@
 import { SendMailOptions } from 'nodemailer'
-import { ServiceWebFormsInputWithToAddress } from '../dto/serviceWebForms.input'
+import { ServiceWebFormsInputWithInstitutionEmail } from '../dto/serviceWebForms.input'
 import { environment } from '../environments/environment'
 
 type StringOrNull = string | null
@@ -224,21 +224,28 @@ export const syslumennEmails: Syslumenn = {
 }
 
 export const getTemplate = (
-  input: ServiceWebFormsInputWithToAddress,
+  input: ServiceWebFormsInputWithInstitutionEmail,
 ): SendMailOptions => {
   const categoryId = input.category
   const syslumadurId = input.syslumadur
-  const to = input.to
+  const institutionEmail = input.institutionEmail
 
-  let toAddress = to
+  console.log('categoryId:', categoryId)
+  console.log('syslumadurId:', syslumadurId)
+  console.log('institutionEmail:', institutionEmail)
+
+  let toAddress = institutionEmail
 
   if (syslumadurId) {
     const emailList = syslumennEmails[syslumadurId]
 
     if (emailList) {
-      toAddress = emailList[categoryId] ?? emailList.default ?? to
+      console.log('emailList:', emailList)
+      toAddress = emailList[categoryId] ?? emailList.default ?? institutionEmail
     }
   }
+
+  console.log('toAddress:', toAddress)
 
   return {
     from: {
