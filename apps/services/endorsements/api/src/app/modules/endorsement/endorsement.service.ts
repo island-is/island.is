@@ -389,33 +389,50 @@ export class EndorsementService {
   }
 
   async createDocumentBuffer(listId: string) {
+    const endorsementList = await this.endorsementListModel.findOne({
+      where: { id: listId },
+    })
+    if(!endorsementList){
+      return "list not found" //new NotFoundException("List not found")
+    }
     // get list
     const query = {
-      limit:10000
+      limit:1000000000 // get all lame
     }
-
-
-    // const endorsementList = await this.endorsementListModel.findOne({
-    //   where: { id: listId },
-    // })
     const endorsements = await this.findEndorsementsGeneralPetition({listId},query)
     
-    // console.log(endorsements)
-    // get endorsies
-
+    // build pdf
     const doc = new PDFDocument()
     // list generated timestamp when
+    doc.text("þessi listi var framkallaður sjálvirkt @ " + String(new Date()))
+    doc.moveDown()
     // total count - list metadata
-    doc.text("Listinnnnnnn")
+    doc.text("id: " + endorsementList.id)
+    doc.moveDown()
+    doc.text("titill: " + endorsementList.title)
+    doc.moveDown()
+    doc.text("lýsing: " + String(endorsementList.description))//
+    doc.moveDown()
+    doc.text("eigandi: " + endorsementList.owner)
+    doc.moveDown()
+    doc.text(String("listi opnaður: " + endorsementList.openedDate))//
+    doc.moveDown()
+    doc.text(String("listi lokaður: " + endorsementList.closedDate))//
     doc.moveDown()
     doc.moveDown()
-    doc.text(`Alls undirskriftir ${endorsements.totalCount}`)
+    doc.text(`Alls undirskriftir: ${endorsements.totalCount}`)
     doc.moveDown()
     doc.moveDown()
-    for(const val of endorsements.data) {
-      doc.text(val.meta.fullName)
-      doc.moveDown()
-    }
+    // multiply for making huge list
+    // for (let i = 0; i < 100; i++) {
+      doc.text("##############################")
+
+      for(const val of endorsements.data) {
+        doc.text(val.meta.fullName)
+        doc.moveDown()
+      }
+      doc.text("##############################")
+    // }
     doc.end()
     return await getStream.buffer(doc)
   }
@@ -437,11 +454,8 @@ export class EndorsementService {
             address: 'rafn@juni.is', //verification.email,
           },
         ],
-        subject: `Staðfesting netfangs á Ísland.is`,
-        html: `Þú hefur skráð netfangið þitt á Mínum síðum á Ísland.is. 
-        Vinsamlegast staðfestu skráninguna með því að smella á hlekkinn hér fyrir neðan:
-        <br>Ef hlekkurinn er ekki lengur í gildi biðjum við þig að endurtaka skráninguna á Ísland.is.
-        <br><br>Ef þú kannast ekki við að hafa sett inn þetta netfang, vinsamlegast hunsaðu þennan póst.`,
+        subject: `subject line testing one two`,
+        html: `<h1>Halló halló</h1>body content testing`,
         attachments: [
           {
             filename,
