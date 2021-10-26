@@ -1,5 +1,5 @@
 import React from 'react'
-import * as styles from './SkipToContent.treat'
+import * as styles from './SkipToContent.css'
 
 const SkipToContent = () => {
   return (

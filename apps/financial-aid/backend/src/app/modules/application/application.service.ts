@@ -15,6 +15,8 @@ import {
   getStateFromUrl,
   RolesRule,
   User,
+  getEmailTextFromState,
+  Staff,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -30,6 +32,16 @@ import { ApplicationFileModel } from '../file/models'
 interface Recipient {
   name: string
   address: string
+}
+
+const linkToStatusPage = (applicationId: string) => {
+  return `<a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${applicationId}" target="_blank"> Getur kíkt á stöðu síðuna þína hér</a>`
+}
+
+const firstDateOfMonth = () => {
+  const date = new Date()
+
+  return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
 @Injectable()
@@ -53,26 +65,40 @@ export class ApplicationService {
     return Boolean(hasApplication)
   }
 
+  async hasSpouseApplied(spouseNationalId: string): Promise<boolean> {
+    const application = await this.applicationModel.findOne({
+      where: {
+        spouseNationalId,
+        created: { [Op.gte]: firstDateOfMonth() },
+      },
+    })
+
+    return Boolean(application)
+  }
+
   async getCurrentApplication(
     nationalId: string,
   ): Promise<CurrentApplicationModel | null> {
-    const date = new Date()
-
-    const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-
     return await this.applicationModel.findOne({
       where: {
         nationalId,
-        created: { [Op.gte]: firstDateOfMonth },
+        created: { [Op.gte]: firstDateOfMonth() },
       },
     })
   }
 
-  async getAll(stateUrl: ApplicationStateUrl): Promise<ApplicationModel[]> {
+  async getAll(
+    stateUrl: ApplicationStateUrl,
+    staffId: string,
+  ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
-      where: {
-        state: { [Op.in]: getStateFromUrl[stateUrl] },
-      },
+      where:
+        stateUrl === ApplicationStateUrl.MYCASES
+          ? {
+              state: { [Op.in]: getStateFromUrl[stateUrl] },
+              staffId,
+            }
+          : { state: { [Op.in]: getStateFromUrl[stateUrl] } },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
     })
@@ -109,7 +135,7 @@ export class ApplicationService {
     return application
   }
 
-  async getAllFilters(): Promise<ApplicationFilters> {
+  async getAllFilters(staffId: string): Promise<ApplicationFilters> {
     const statesToCount = [
       ApplicationState.NEW,
       ApplicationState.INPROGRESS,
@@ -120,7 +146,18 @@ export class ApplicationService {
 
     const countPromises = statesToCount.map((item) =>
       this.applicationModel.count({
-        where: { state: { [Op.eq]: item } },
+        where: { state: item },
+      }),
+    )
+
+    countPromises.push(
+      this.applicationModel.count({
+        where: {
+          staffId,
+          state: {
+            [Op.or]: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+          },
+        },
       }),
     )
 
@@ -132,6 +169,7 @@ export class ApplicationService {
       DataNeeded: filterCounts[2],
       Rejected: filterCounts[3],
       Approved: filterCounts[4],
+      MyCases: filterCounts[5],
     }
   }
 
@@ -166,7 +204,7 @@ export class ApplicationService {
         address: appModel.email,
       },
       appModel.id,
-      `Umsókn þín er móttekin og er nú í vinnslu. <a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${appModel.id}" target="_blank"> Getur kíkt á stöðu síðuna þína hér</a>`,
+      `Umsókn þín er móttekin og er nú í vinnslu.`,
     )
 
     return appModel
@@ -175,21 +213,32 @@ export class ApplicationService {
   async update(
     id: string,
     update: UpdateApplicationDto,
+    staff?: Staff,
   ): Promise<{
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
   }> {
+    const shouldSendEmail = [
+      ApplicationEventType.NEW,
+      ApplicationEventType.DATANEEDED,
+      ApplicationEventType.REJECTED,
+      ApplicationEventType.INPROGRESS,
+      ApplicationEventType.APPROVED,
+    ]
+
     if (update.state === ApplicationState.NEW) {
       update.staffId = null
     }
 
     await this.applicationEventService.create({
       applicationId: id,
-      eventType: ApplicationEventType[update.state.toUpperCase()],
+      eventType: update.event,
       comment:
         update?.rejection ||
         update?.amount?.toLocaleString('de-DE') ||
         update?.comment,
+      staffName: staff?.name,
+      staffNationalId: staff?.nationalId,
     })
 
     const [
@@ -197,7 +246,6 @@ export class ApplicationService {
       [updatedApplication],
     ] = await this.applicationModel.update(update, {
       where: { id },
-
       returning: true,
     })
 
@@ -207,6 +255,17 @@ export class ApplicationService {
     const files = await this.fileService.getAllApplicationFiles(id)
     updatedApplication?.setDataValue('files', files)
 
+    if (shouldSendEmail.includes(update.event)) {
+      await this.sendEmail(
+        {
+          name: updatedApplication.name,
+          address: updatedApplication.email,
+        },
+        updatedApplication.id,
+        getEmailTextFromState[update.state],
+      )
+    }
+
     return { numberOfAffectedRows, updatedApplication }
   }
 
@@ -215,20 +274,21 @@ export class ApplicationService {
     applicationId: string | undefined,
     body: string,
   ) {
+    const bodyWithLink = body + '<br/>' + linkToStatusPage(applicationId)
     try {
       await this.emailService.sendEmail({
         from: {
-          name: 'no-reply@svg.is',
-          address: 'Samband íslenskra sveitarfélaga',
+          name: 'Samband íslenskra sveitarfélaga',
+          address: 'no-reply@svg.is',
         },
         replyTo: {
-          name: 'no-reply@svg.is',
-          address: 'Samband íslenskra sveitarfélaga',
+          name: 'Samband íslenskra sveitarfélaga',
+          address: 'no-reply@svg.is',
         },
         to,
         subject: `Umsókn fyrir fjárhagsaðstoð móttekin ~ ${applicationId}`,
-        text: body,
-        html: body,
+        text: bodyWithLink,
+        html: bodyWithLink,
       })
     } catch (error) {
       console.log('failed to send email', error)

@@ -20,7 +20,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { Table } from '@island.is/judicial-system-web/src/shared-components'
 import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
-import * as styles from './Requests.treat'
+import * as styles from './Requests.css'
 
 interface Props {
   cases: Case[]
@@ -230,7 +230,7 @@ const PastRequests: React.FC<Props> = (props) => {
       columns={pastRequestsColumns}
       data={pastRequestsData ?? []}
       handleRowClick={onRowClick}
-      className={styles.pastRequestsTable}
+      className={styles.table}
       sortableColumnIds={sortableColumnIds}
     />
   )

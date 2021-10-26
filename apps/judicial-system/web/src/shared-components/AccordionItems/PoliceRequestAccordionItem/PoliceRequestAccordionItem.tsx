@@ -18,7 +18,7 @@ import type {
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
-import * as styles from './PoliceRequestAccordionItem.treat'
+import * as styles from './PoliceRequestAccordionItem.css'
 interface Props {
   workingCase: Case
 }
@@ -30,7 +30,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
 
   return (
     <AccordionItem
-      id="id_1"
+      id="policeRequestAccordionItem"
       label={`Krafa ${
         isRestrictionCase(workingCase.type)
           ? `um ${caseTypes[workingCase.type]}`

@@ -11,7 +11,7 @@ import {
   CallToAction,
 } from '@island.is/application/core'
 
-import * as styles from './ScreenFooter.treat'
+import * as styles from './ScreenFooter.css'
 
 interface FooterProps {
   application: Application

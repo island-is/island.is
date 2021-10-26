@@ -26,6 +26,7 @@
   - [ADR Template](handbook/technical-overview/adr/template.md)
 - [API Design Guide](handbook/technical-overview/api-design-guide/README.md)
   - [Data Definitions and Standards](handbook/technical-overview/api-design-guide/data-definitions.md)
+  - [Data Transfer Objects](handbook/technical-overview/api-design-guide/data-transfer-objects.md)
   - [Documentation](handbook/technical-overview/api-design-guide/documentation.md)
   - [Environments](handbook/technical-overview/api-design-guide/environments.md)
   - [Error Handling](handbook/technical-overview/api-design-guide/errors.md)
@@ -35,6 +36,7 @@
   - [Methods](handbook/technical-overview/api-design-guide/methods.md)
   - [Naming Conventions](handbook/technical-overview/api-design-guide/naming-conventions.md)
   - [Once Only Principle](handbook/technical-overview/api-design-guide/once-only.md)
+  - [Pagination](handbook/technical-overview/api-design-guide/pagination.md)
   - [Resource Oriented Design](handbook/technical-overview/api-design-guide/resource-oriented-design.md)
   - [Security](handbook/technical-overview/api-design-guide/security.md)
   - [Versioning](handbook/technical-overview/api-design-guide/versioning.md)
@@ -170,7 +172,7 @@
   - [Auth Public API Client](libs/clients/auth-public-api/README.md)
   - [Clients Document Provider](libs/clients/document-provider/README.md)
   - [Documents (Pósthólf)](libs/clients/documents/README.md)
-  - [Clients Driving License](libs/clients/driving-license/README.md)
+  - [Clients Driving License V1 / V2](libs/clients/driving-license/README.md)
   - [Clients Finance](libs/clients/finance/README.md)
   - [Client Middlewares](libs/clients/middlewares/README.md)
   - [Clients Mms](libs/clients/mms/README.md)
@@ -199,10 +201,12 @@
 - [Feature Flags](libs/feature-flags/README.md)
 - [Health Insurance](libs/health-insurance/README.md)
 - [Island UI](libs/island-ui/README.md)
+  - [Vanilla Extract Utils](libs/island-ui/vanilla-extract-utils/README.md)
 - [Localization](libs/localization/README.md)
 - [Nest Modules](libs/nest/README.md)
   - [Audit Module](libs/nest/audit/README.md)
   - [Nest Sequelize Cursor Pagination](libs/nest/pagination/README.md)
+  - [Problem Module](libs/nest/problem/README.md)
 - [Next Ids Auth Lib](libs/next-ids-auth/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)
 - [Plausible](libs/plausible/README.md)
@@ -229,11 +233,17 @@
   - [Constants](libs/shared/constants/README.md)
   - [Form Fields](libs/shared/form-fields/README.md)
   - [Mocking](libs/shared/mocking/README.md)
+  - [Problem Types](libs/shared/problem/README.md)
   - [Shared Translations](libs/shared/translations/README.md)
   - [Types](libs/shared/types/README.md)
   - [Utils](libs/shared/utils/README.md)
   - [Testing Fixtures](libs/testing/fixtures/README.md)
   - [Testing Nest](libs/testing/nest/README.md)
+
+## Reference
+
+- [Problems](handbook/reference/problems/README.md)
+  - [400 Validation Failed](handbook/reference/problems/validation-failed.md)
 
 ## Misc
 

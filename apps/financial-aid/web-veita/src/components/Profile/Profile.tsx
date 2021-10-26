@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, Box, Link, Button } from '@island.is/island-ui/core'
 
-import * as styles from './Profile.treat'
+import * as styles from './Profile.css'
 import cn from 'classnames'
 
 interface Props {

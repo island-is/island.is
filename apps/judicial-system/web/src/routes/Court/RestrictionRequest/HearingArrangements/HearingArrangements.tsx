@@ -3,7 +3,6 @@ import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
 import {
-  AlertMessage,
   Box,
   Input,
   Select,
@@ -24,7 +23,6 @@ import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   Case,
-  CaseState,
   CaseType,
   NotificationType,
   UserRole,
@@ -50,7 +48,7 @@ import { ValueType } from 'react-select/src/types'
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
+import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 
 export const HearingArrangements: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -207,31 +205,17 @@ export const HearingArrangements: React.FC = () => {
           <FormContentContainer>
             <Box marginBottom={10}>
               <Text as="h1" variant="h1">
-                Fyrirtaka
+                {formatMessage(m.title)}
               </Text>
             </Box>
-            {workingCase.state === CaseState.DRAFT && (
-              <Box marginBottom={8}>
-                <AlertMessage
-                  type="info"
-                  title="Krafa hefur ekki verið staðfest af ákæranda"
-                  message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
-                />
-              </Box>
-            )}
             <Box component="section" marginBottom={7}>
-              <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
               <CaseNumbers workingCase={workingCase} />
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  Dómari{' '}
-                  <Tooltip
-                    text={formatMessage(
-                      rcHearingArrangements.sections.setJudge.tooltip,
-                    )}
-                  />
+                  {`${formatMessage(m.sections.setJudge.title)} `}
+                  <Tooltip text={formatMessage(m.sections.setJudge.tooltip)} />
                 </Text>
               </Box>
               <Select
@@ -251,11 +235,9 @@ export const HearingArrangements: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  Dómritari{' '}
+                  {`${formatMessage(m.sections.setRegistrar.title)} `}
                   <Tooltip
-                    text={formatMessage(
-                      rcHearingArrangements.sections.setRegistrar.tooltip,
-                    )}
+                    text={formatMessage(m.sections.setRegistrar.tooltip)}
                   />
                 </Text>
               </Box>
@@ -276,7 +258,7 @@ export const HearingArrangements: React.FC = () => {
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  Skrá fyrirtökutíma
+                  {formatMessage(m.sections.requestedCourtDate.title)}
                 </Text>
               </Box>
               <Box marginBottom={3}>
@@ -337,7 +319,7 @@ export const HearingArrangements: React.FC = () => {
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  Skipaður verjandi
+                  {formatMessage(m.sections.defender.title)}
                 </Text>
               </Box>
               <BlueBox>
@@ -440,26 +422,22 @@ export const HearingArrangements: React.FC = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
+              previousUrl={`${Constants.COURT_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
               onNextButtonClick={handleNextButtonClick}
-              nextIsDisabled={
-                workingCase.state === CaseState.DRAFT ||
-                isStepIllegal ||
-                !courtDateIsValid
-              }
+              nextIsDisabled={isStepIllegal || !courtDateIsValid}
             />
           </FormContentContainer>
           {modalVisible && (
             <Modal
               title={formatMessage(
                 workingCase.type === CaseType.CUSTODY
-                  ? rcHearingArrangements.modal.custodyCases.heading
-                  : rcHearingArrangements.modal.travelBanCases.heading,
+                  ? m.modal.custodyCases.heading
+                  : m.modal.travelBanCases.heading,
               )}
               text={formatMessage(
                 workingCase.type === CaseType.CUSTODY
-                  ? rcHearingArrangements.modal.custodyCases.text
-                  : rcHearingArrangements.modal.travelBanCases.text,
+                  ? m.modal.custodyCases.text
+                  : m.modal.travelBanCases.text,
               )}
               isPrimaryButtonLoading={isSendingNotification}
               handleSecondaryButtonClick={() => {
@@ -476,10 +454,10 @@ export const HearingArrangements: React.FC = () => {
                 }
               }}
               primaryButtonText={formatMessage(
-                rcHearingArrangements.modal.shared.primaryButtonText,
+                m.modal.shared.primaryButtonText,
               )}
               secondaryButtonText={formatMessage(
-                rcHearingArrangements.modal.shared.secondaryButtonText,
+                m.modal.shared.secondaryButtonText,
               )}
             />
           )}

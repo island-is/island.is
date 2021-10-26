@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 import { AnimateSharedLayout } from 'framer-motion'
 
-import * as styles from './StateModal.treat'
+import * as styles from './StateModal.css'
 
 import {
   OptionsModal,
@@ -13,7 +13,9 @@ import {
 
 import {
   Application,
+  ApplicationEventType,
   ApplicationState,
+  eventTypeFromApplicationState,
 } from '@island.is/financial-aid/shared/lib'
 import { useApplicationState } from '../../utils/useApplicationState'
 import StateModalContainer from './StateModalContainer'
@@ -53,6 +55,7 @@ const StateModal = ({
     await changeApplicationState(
       applicationId,
       state,
+      eventTypeFromApplicationState[state],
       amount,
       rejection,
       comment,
@@ -68,9 +71,7 @@ const StateModal = ({
   }
 
   const closeModal = (): void => {
-    if (selected === undefined) {
-      onVisibilityChange(false)
-    }
+    onVisibilityChange(false)
   }
 
   const onClickCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -130,7 +131,7 @@ const StateModal = ({
         </Text>
       </Box>
 
-      <Box display="block" width="full" padding={4}>
+      <Box padding={4}>
         <AnimateSharedLayout type="crossfade">
           <OptionsModal
             isModalVisable={selected === undefined}

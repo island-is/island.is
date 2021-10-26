@@ -8,7 +8,6 @@ import {
   ApplicationFiltersModel,
   ApplicationModel,
   UpdateApplicationTableResponse,
-  UpdateApplicationResponse,
 } from './models'
 import {
   CreateApplicationInput,
@@ -22,7 +21,6 @@ import {
   Application,
   ApplicationFilters,
   UpdateApplicationTableResponseType,
-  UpdateApplicationResponseType,
 } from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
@@ -71,23 +69,10 @@ export class ApplicationResolver {
     @Args('input', { type: () => UpdateApplicationInput })
     input: UpdateApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApplicationModel> {
+  ): Promise<Application> {
     const { id, ...updateApplication } = input
     this.logger.debug(`updating application ${id}`)
     return backendApi.updateApplication(id, updateApplication)
-  }
-
-  @Mutation(() => UpdateApplicationResponse, { nullable: true })
-  updateApplicationRes(
-    @Args('input', { type: () => UpdateApplicationInput })
-    input: UpdateApplicationInput,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<UpdateApplicationResponseType> {
-    const { id, ...updateApplication } = input
-
-    this.logger.debug(`updating application ${id}`)
-
-    return backendApi.updateApplicationRes(id, updateApplication)
   }
 
   @Mutation(() => UpdateApplicationTableResponse, { nullable: true })
@@ -102,8 +87,7 @@ export class ApplicationResolver {
 
     return backendApi.updateApplicationTable(id, stateUrl, updateApplication)
   }
-
-  @Query(() => ApplicationFiltersModel, { nullable: false })
+  @Mutation(() => ApplicationFiltersModel, { nullable: false })
   applicationFilters(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<ApplicationFilters> {

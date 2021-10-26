@@ -1,6 +1,6 @@
 import React from 'react'
 
-import * as styles from './ModalTypes.treat'
+import * as styles from './ModalTypes.css'
 import cn from 'classnames'
 
 import { getState, ApplicationState } from '@island.is/financial-aid/shared/lib'
@@ -29,6 +29,7 @@ const OptionsModal = ({ activeState, onClick, isModalVisable }: Props) => {
             return (
               <button
                 key={'statusoptions-' + index}
+                disabled={item === activeState}
                 className={cn({
                   [`${styles.statusOptions}`]: true,
                   [`${styles.activeState}`]: item === activeState,

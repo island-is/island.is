@@ -7,8 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import get from 'lodash/get'
-import { useMutation } from '@apollo/client'
+import { ApolloError, useMutation } from '@apollo/client'
 import {
   Application,
   Answer,
@@ -18,20 +17,14 @@ import {
   FormValue,
   Schema,
   formatText,
-  MessageFormatter,
   mergeAnswers,
-  coreMessages,
-  coreErrorMessages,
   BeforeSubmitCallback,
-  getValueViaPath,
-  RecordObject,
 } from '@island.is/application/core'
 import {
   Box,
   GridColumn,
   Text,
   ToastContainer,
-  toast,
 } from '@island.is/island-ui/core'
 import {
   SUBMIT_APPLICATION,
@@ -42,6 +35,11 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
+import { handleServerError } from '@island.is/application/ui-components'
 
 import { FormScreen, ResolverContext } from '../types'
 import FormMultiField from './FormMultiField'
@@ -49,13 +47,7 @@ import FormField from './FormField'
 import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
 import FormExternalDataProvider from './FormExternalDataProvider'
-import {
-  extractAnswersToSubmitFromScreen,
-  findSubmitField,
-  getFieldsWithNoAnswer,
-  isJSONObject,
-  parseMessage,
-} from '../utils'
+import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
 
@@ -76,26 +68,14 @@ type ScreenProps = {
   goToScreen: (id: string) => void
 }
 
-function parseErrorMessage(error: string) {
-  if (!error) {
-    return 'Unknown error'
+const getServerValidationErrors = (error: ApolloError | undefined) => {
+  const problem = findProblemInApolloError(error, [
+    ProblemType.VALIDATION_FAILED,
+  ])
+  if (problem && problem.type === ProblemType.VALIDATION_FAILED) {
+    return problem.fields
   }
-
-  if (isJSONObject(error)) {
-    const errorObj = JSON.parse(error)
-
-    return errorObj.message ?? error
-  }
-
-  return error
-}
-
-function handleError(error: string, formatMessage: MessageFormatter): void {
-  toast.error(
-    formatMessage(coreMessages.updateOrSubmitError, {
-      error: parseErrorMessage(error),
-    }),
-  )
+  return null
 }
 
 const Screen: FC<ScreenProps> = ({
@@ -134,16 +114,19 @@ const Screen: FC<ScreenProps> = ({
     { loading, error: updateApplicationError },
   ] = useMutation(UPDATE_APPLICATION, {
     onError: (e) => {
-      // We only show the error message if it doesn't contains a json data object
-      if (!isJSONObject(e.message)) {
-        return handleError(e.message, formatMessage)
+      // We handle validation problems separately.
+      const problem = findProblemInApolloError(e)
+      if (problem?.type === ProblemType.VALIDATION_FAILED) {
+        return
       }
+
+      return handleServerError(e, formatMessage)
     },
   })
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
-      onError: (e) => handleError(e.message, formatMessage),
+      onError: (e) => handleServerError(e, formatMessage),
     },
   )
   const { handleSubmit, errors: formErrors, reset } = hookFormData
@@ -159,10 +142,9 @@ const Screen: FC<ScreenProps> = ({
     [beforeSubmitCallback],
   )
 
-  const parsedUpdateApplicationError =
-    updateApplicationError && isJSONObject(updateApplicationError?.message)
-      ? parseMessage(updateApplicationError.message)
-      : {}
+  const parsedUpdateApplicationError = getServerValidationErrors(
+    updateApplicationError,
+  )
 
   const dataSchemaOrApiErrors = {
     ...parsedUpdateApplicationError,

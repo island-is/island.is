@@ -152,3 +152,5 @@ export type RepeaterProps = {
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState
 }
+
+export type ValidationRecord = { [key: string]: string | ValidationRecord }

@@ -20,7 +20,6 @@ import {
 import {
   UserRole,
   CaseState,
-  CaseAppealDecision,
   completedCaseStates,
   courtRoles,
 } from '@island.is/judicial-system/types'

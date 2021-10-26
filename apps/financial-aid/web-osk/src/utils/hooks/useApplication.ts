@@ -1,7 +1,7 @@
-import { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 
-import { CreateApplicationQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { CreateApplicationMutation } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import {
   User,
@@ -10,12 +10,15 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { Form } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { UploadFile } from '@island.is/island-ui/core'
+import { AppContext } from '../../components/AppProvider/AppProvider'
 
 const useApplication = () => {
   const [
     createApplicationMutation,
     { loading: isCreatingApplication },
-  ] = useMutation(CreateApplicationQuery)
+  ] = useMutation(CreateApplicationMutation)
+
+  const { nationalRegistryData } = useContext(AppContext)
 
   const formatFiles = (files: UploadFile[], type: FileType) => {
     return files.map((f) => {
@@ -61,9 +64,15 @@ const useApplication = () => {
               formComment: form?.formComment,
               state: ApplicationState.NEW,
               files: files,
-              spouseNationalId: form?.spouse?.nationalId,
+              spouseNationalId:
+                nationalRegistryData?.spouse.nationalId ??
+                form?.spouse?.nationalId,
               spouseEmail: form?.spouse?.email,
               familyStatus: form?.familyStatus,
+              streetName: nationalRegistryData?.address.streetName,
+              postalCode: nationalRegistryData?.address.postalCode,
+              city: nationalRegistryData?.address.city,
+              municipalityCode: nationalRegistryData?.address.municipalityCode,
             },
           },
         })

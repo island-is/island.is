@@ -59,9 +59,14 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.FamilyRoot,
           },
           {
-            // Medmaeli
+            // Petitions
             name: m.endorsements,
-            path: ServicePortalPath.Endorsements,
+            path: ServicePortalPath.Petitions,
+          },
+          {
+            // Petitions Admin
+            name: m.endorsementsAdmin,
+            path: ServicePortalPath.PetitionsAdminView,
           },
         ],
       },

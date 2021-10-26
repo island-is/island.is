@@ -41,7 +41,7 @@ import {
   rcCourtRecord,
   closedCourt,
 } from '@island.is/judicial-system-web/messages'
-import * as styles from './CourtRecord.treat'
+import * as styles from './CourtRecord.css'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const CourtRecord: React.FC = () => {
@@ -170,7 +170,6 @@ export const CourtRecord: React.FC = () => {
               </Text>
             </Box>
             <Box component="section" marginBottom={7}>
-              <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
               <CaseNumbers workingCase={workingCase} />
             </Box>
             <Box component="section" marginBottom={3}>

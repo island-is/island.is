@@ -152,19 +152,64 @@ export const inReview = {
   },
   buttons: defineMessages({
     backButton: {
-      id: 'an.application:overview.buttons.backButton',
+      id: 'an.application:inReview.buttons.backButton',
       defaultMessage: 'Til baka',
       description: 'Review back button',
     },
     forwardButton: {
-      id: 'an.application:overview.buttons.forwardButton',
+      id: 'an.application:inReview.buttons.forwardButton',
       defaultMessage: 'Halda áfram',
       description: 'Review forward button',
     },
-    updateButton: {
-      id: 'an.application:overview.buttons.updateButton',
-      defaultMessage: 'Uppfæra tilkynningu',
-      description: 'Review update button',
+    sendAttachmentsButton: {
+      id: 'an.application:inReview.buttons.sendAttachmentsButton',
+      defaultMessage: 'Senda fylgiskjöl',
+      description: 'Review send attachments button',
     },
   }),
+  confirmationModal: {
+    default: defineMessages({
+      cancelButton: {
+        id: 'an.application:inReview.confirmationModal.default.cancelButton',
+        defaultMessage: 'Hætta við',
+        description: 'Confirmation modal cancel button',
+      },
+    }),
+    reject: defineMessages({
+      title: {
+        id: 'an.application:inReview.confirmationModal.reject.title',
+        defaultMessage: 'Andmæla tilkynningu',
+        description: 'Confirmation modal reject title',
+      },
+      text: {
+        id: 'an.application:inReview.confirmationModal.reject.text',
+        defaultMessage:
+          'Þú ert að fara að andmæla tilkynningu. Athugaðu að það er ekki hægt að bæta við athugasemdum eftir að tilkynning hefur verið andmælt.',
+        description: 'Confirmation modal reject text',
+      },
+      buttonText: {
+        id: 'an.application:inReview.confirmationModal.reject.buttonText',
+        defaultMessage: 'Andmæla tilkynningu',
+        description: 'Confirmation modal reject button',
+      },
+    }),
+    approve: defineMessages({
+      title: {
+        id: 'an.application:inReview.confirmationModal.approve.title',
+        defaultMessage: 'Staðfesta tilkynningu',
+        description: 'Confirmation modal approve title',
+      },
+      text: {
+        id: 'an.application:inReview.confirmationModal.approve.text',
+        defaultMessage:
+          'Þú ert að fara að staðfesta tilkynningu. Athugaðu að það er ekki hægt að bæta við athugasemdum eftir að tilkynning hefur verið staðfest.',
+        description: 'Confirmation modal approve text',
+      },
+      buttonText: {
+        id: 'an.application:inReview.confirmationModal.approve.buttonText',
+        defaultMessage: 'Staðfesta tilkynningu',
+        description: 'Confirmation modal approve button',
+      },
+    }),
+  },
 }
