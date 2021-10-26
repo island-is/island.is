@@ -365,12 +365,12 @@ export const m: MessageDir = {
     },
     cardTitle: {
       id: 'gpt.application:endorsement.approved.card.title',
-      defaultMessage: 'Þú hefur sett nafn þitt á listann',
+      defaultMessage: 'Þú hefur sett nafn þitt á listann.',
       description: 'Approved card title',
     },
     cardSubtitle: {
       id: 'gpt.application:endorsement.approved.card.subtitle',
-      defaultMessage: 'Yfirlit yfir öll meðmæli má finna á Mínum Síðum',
+      defaultMessage: 'Yfirlit yfir öll meðmæli má finna á Mínum Síðum.',
       description: 'Approved card subtitle',
     },
     myPagesButton: {
