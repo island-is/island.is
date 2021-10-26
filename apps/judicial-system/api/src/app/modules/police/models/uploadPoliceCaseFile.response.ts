@@ -7,4 +7,7 @@ export class UploadPoliceCaseFileResponse
   implements TUploadPoliceCaseFileResponse {
   @Field()
   key!: string
+
+  @Field()
+  size!: number
 }

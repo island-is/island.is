@@ -5,9 +5,10 @@ export interface PoliceCaseFile {
 
 export interface UploadPoliceCaseFile {
   id: string
-  name: number
+  name: string
 }
 
 export interface UploadPoliceCaseFileResponse {
   key: string
+  size: number
 }

@@ -38,7 +38,7 @@ export class PoliceService {
     rejectUnauthorized: false,
   })
 
-  private throttle = Promise.resolve('')
+  private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
 
   constructor(
     @Inject(LOGGER_PROVIDER)
@@ -49,7 +49,7 @@ export class PoliceService {
   private async throttleUploadPoliceCaseFile(
     caseId: string,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
-  ) {
+  ): Promise<UploadPoliceCaseFileResponse> {
     this.logger.debug(
       `Waiting to upload police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
     )
@@ -100,7 +100,7 @@ export class PoliceService {
       `Done uploading police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
     )
 
-    return key
+    return { key, size: pdf.length }
   }
 
   async getAllPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
@@ -156,8 +156,6 @@ export class PoliceService {
       uploadPoliceCaseFile,
     )
 
-    const key = await this.throttle
-
-    return { key }
+    return this.throttle
   }
 }
