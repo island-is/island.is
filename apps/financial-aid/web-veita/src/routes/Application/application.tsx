@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useContext } from 'react'
-import { Text, Box, Button } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 import * as styles from './application.css'
@@ -9,22 +9,13 @@ import { ApplicationQuery } from '@island.is/financial-aid-web/veita/graphql/sha
 
 import {
   Application,
-  getHomeCircumstances,
-  HomeCircumstances,
-  getEmploymentStatus,
-  Employment,
-  insertAt,
   ApplicationState,
   aidCalculator,
   getMonth,
   calculateAidFinalAmount,
-  formatPhoneNumber,
-  formatNationalId,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
-
-import { calcAge } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 import {
   Profile,
@@ -39,6 +30,10 @@ import {
   ApplicationNotFound,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { AdminContext } from '../../components/AdminProvider/AdminProvider'
+import {
+  getApplicant,
+  getApplicantMoreInfo,
+} from '../../utils/applicationHelper'
 
 interface ApplicantData {
   application: Application
@@ -124,91 +119,9 @@ const ApplicationProfile = () => {
       })
     }
 
-    const applicant = [
-      {
-        title: 'Nafn',
-        content: application.name,
-      },
-      {
-        title: 'Aldur',
-        content: calcAge(application.nationalId) + ' ára',
-      },
-      {
-        title: 'Kennitala',
-        content:
-          insertAt(application.nationalId.replace('-', ''), '-', 6) || '-',
-      },
-      {
-        title: 'Netfang',
-        content: application.email,
-        link: 'mailto:' + application.email,
-      },
-      {
-        title: 'Sími',
-        content: formatPhoneNumber(application.phoneNumber ?? ''),
-        link: 'tel:' + application.phoneNumber,
-      },
-      {
-        title: 'Bankareikningur',
-        content:
-          application.bankNumber +
-          '-' +
-          application.ledger +
-          '-' +
-          application.accountNumber,
-      },
-      {
-        title: 'Nota persónuafslátt',
-        content: application.usePersonalTaxCredit ? 'Já' : 'Nei',
-      },
-      {
-        title: 'Ríkisfang',
-        content: 'Ísland',
-      },
-    ]
+    const applicant = getApplicant(application)
 
-    const applicantMoreInfo = [
-      {
-        title: 'Lögheimili',
-        content: application.streetName,
-      },
-      {
-        title: 'Póstnúmer',
-        content: application.postalCode,
-      },
-      {
-        title: 'Maki',
-        content: application.spouseNationalId
-          ? formatNationalId(application.spouseNationalId)
-          : 'Enginn maki',
-      },
-      {
-        title: 'Búsetuform',
-        content:
-          getHomeCircumstances[
-            application.homeCircumstances as HomeCircumstances
-          ],
-        other: application.homeCircumstancesCustom,
-      },
-      {
-        title: 'Atvinna',
-        content: getEmploymentStatus[application.employment as Employment],
-        other: application.employmentCustom,
-      },
-      {
-        title: 'Lánshæft nám',
-        content: application.student ? 'Já' : 'Nei',
-        other: application.studentCustom,
-      },
-      {
-        title: 'Hefur haft tekjur',
-        content: application.hasIncome ? 'Já' : 'Nei',
-      },
-      {
-        title: 'Athugasemd',
-        other: application.formComment,
-      },
-    ]
+    const applicantMoreInfo = getApplicantMoreInfo(application)
 
     return (
       <LoadingContainer isLoading={isLoading} loader={<ApplicationSkeleton />}>
@@ -284,30 +197,7 @@ const ApplicationProfile = () => {
     )
   }
 
-  return (
-    <ApplicationNotFound loading={loading} />
-    // <LoadingContainer isLoading={loading} loader={<ApplicationSkeleton />}>
-    //   <Box>
-    //     <Button
-    //       colorScheme="default"
-    //       iconType="filled"
-    //       onClick={() => {
-    //         router.push('/nymal')
-    //       }}
-    //       preTextIcon="arrowBack"
-    //       preTextIconType="filled"
-    //       size="small"
-    //       type="button"
-    //       variant="text"
-    //     >
-    //       Í vinnslu
-    //     </Button>
-    //   </Box>
-    //   <Text color="red400" fontWeight="semiBold" marginTop={4}>
-    //     Abbabab Notendi ekki fundinn, farðu tilbaka og reyndu vinsamlegast aftur{' '}
-    //   </Text>
-    // </LoadingContainer>
-  )
+  return <ApplicationNotFound loading={loading} />
 }
 
 export default ApplicationProfile
