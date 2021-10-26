@@ -58,6 +58,7 @@ export class EndorsementListService {
       orderOption: [['counter', 'ASC']],
       where: {
         tags: { [Op.overlap]: tags },
+        adminLock: false
       },
     })
   }
@@ -65,7 +66,7 @@ export class EndorsementListService {
   async findSingleList(listId: string) {
     this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
     const result = await this.endorsementListModel.findOne({
-      where: { id: listId },
+      where: { id: listId, adminLock: false },
     })
 
     if (!result) {
@@ -87,7 +88,7 @@ export class EndorsementListService {
       before: query.before,
       primaryKeyField: 'counter',
       orderOption: [['counter', 'DESC']],
-      where: { endorser: nationalId },
+      where: { endorser: nationalId, adminLock: false },
       include: [
         {
           model: EndorsementList,
@@ -118,6 +119,7 @@ export class EndorsementListService {
       orderOption: [['counter', 'ASC']],
       where: {
         owner: nationalId,
+        adminLock: false
       },
     })
   }
@@ -183,6 +185,7 @@ export class EndorsementListService {
         tags: { [Op.eq]: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS },
         openedDate: { [Op.lt]: date_ob },
         closedDate: { [Op.gt]: date_ob },
+        adminLock: false
       }
       return await this.findListsGenericQuery(query, where)
     } catch (error) {
@@ -200,6 +203,7 @@ export class EndorsementListService {
         tags: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
         openedDate: { [Op.lt]: date_ob },
         closedDate: { [Op.gt]: date_ob },
+        adminLock: false
       },
     })
     if (!result) {
