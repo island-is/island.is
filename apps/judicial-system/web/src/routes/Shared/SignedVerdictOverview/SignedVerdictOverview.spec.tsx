@@ -690,7 +690,7 @@ describe('Signed Verdict Overview route', () => {
       test('should only have a button for the short version ruling and custody notice PDFs', async () => {
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
-          query: { id: 'test_id_7' },
+          query: { id: 'test_id' },
         }))
 
         render(
