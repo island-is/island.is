@@ -62,11 +62,19 @@ export class EndorsementController {
   // @ApiOkResponse({ type: any })
   // @HasAccessGroup(AccessGroup.Owner, AccessGroup.Admin)
   @ApiParam({ name: 'listId', type: String })
-  @Get('/sendMail')
+  @Get('/email-pdf')
   // @ApiResponse()
   @BypassAuth()
-  async emailEndorsements(): Promise<string> {
-    return this.endorsementService.emailEndorsements()
+  async emailEndorsementsPDF(
+    // @Param(
+    //   'listId',
+    //   new ParseUUIDPipe({ version: '4' }),
+    //   EndorsementListByIdPipe,
+    // )
+    // endorsementList: EndorsementList,
+    // @Query() query: PaginationDto,
+  ): Promise<string> {
+    return this.endorsementService.emailEndorsementsPDF()
   }
 
 

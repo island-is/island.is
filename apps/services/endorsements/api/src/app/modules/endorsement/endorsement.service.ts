@@ -395,16 +395,16 @@ export class EndorsementService {
     if(!endorsementList){
       return "list not found" //new NotFoundException("List not found")
     }
-    // get list
-    const query = {
-      limit:1000000000 // get all lame
-    }
-    const endorsements = await this.findEndorsementsGeneralPetition({listId},query)
-    
+    const endorsements = await this.endorsementModel.findAll({
+      where: { endorsement_list_id: listId },
+    })
+   
     // build pdf
     const doc = new PDFDocument()
     // list generated timestamp when
-    doc.text("þessi listi var framkallaður sjálvirkt @ " + String(new Date()))
+    doc.text("þetta pdf skjal var framkallað sjálvirkt @ " + String(new Date()))
+    doc.moveDown()
+    doc.text("MEÐMÆLALISTI ##############################")
     doc.moveDown()
     // total count - list metadata
     doc.text("id: " + endorsementList.id)
@@ -420,14 +420,14 @@ export class EndorsementService {
     doc.text(String("listi lokaður: " + endorsementList.closedDate))//
     doc.moveDown()
     doc.moveDown()
-    doc.text(`Alls undirskriftir: ${endorsements.totalCount}`)
+    doc.text(`Alls undirskriftir: ${endorsements.length}`)
     doc.moveDown()
     doc.moveDown()
     // multiply for making huge list
     // for (let i = 0; i < 100; i++) {
-      doc.text("##############################")
-
-      for(const val of endorsements.data) {
+      doc.text("MEÐMÆLENDUR ##############################")
+      doc.moveDown()
+      for(const val of endorsements) {
         doc.text(val.meta.fullName)
         doc.moveDown()
       }
@@ -437,10 +437,10 @@ export class EndorsementService {
     return await getStream.buffer(doc)
   }
 
-  async emailEndorsements() {
+  async emailEndorsementsPDF() {
     const listId = "c7f7e470-17ce-4e58-a736-7b3a6f797ec1" // demo
-    const some_date = "2021-21-21"
-    const filename = `${listId}-${some_date}-hash.pdf`
+    // const some_date = "2021-21-21"
+    const filename = `meðmælalisti.pdf`
 
     try {
       return this.emailService.sendEmail({
@@ -455,7 +455,49 @@ export class EndorsementService {
           },
         ],
         subject: `subject line testing one two`,
-        html: `<h1>Halló halló</h1>body content testing`,
+        // html: `<h1>Halló halló</h1>body content testing`,
+        template: {
+          title: "hello subject line",
+          body: [
+            {
+              component: 'Image',
+              context: {
+                src: 'logo.jpg',
+          alt: 'Logo name',
+              },
+            },
+            {
+              component: 'Image',
+              context: {
+                src: 'logo.jpg',
+          alt: 'Logo name',
+              },
+            },
+            { component: 'Heading', context: { copy: "waddup homie" } },
+            { component: 'Copy', context: { copy: 'Góðan dag.' } },
+            {
+              component: 'Copy',
+              context: {
+                copy: `Umsækjandi með kennitölu  hefur skráð þig sem atvinnuveitanda í umsókn sinni.`,
+              },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy: `Ef þú áttir von á þessum tölvupósti þá getur þú smellt á takkann hér fyrir neðan.`,
+              },
+            },
+            {
+              component: 'Button',
+              context: {
+                copy: 'Yfirfara umsókn',
+                href: "http://www.island.is",
+              },
+            },
+            { component: 'Copy', context: { copy: 'Með kveðju,' } },
+            { component: 'Copy', context: { copy: 'Nefndin' } },
+          ],
+        },
         attachments: [
           {
             filename,
