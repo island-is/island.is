@@ -168,14 +168,16 @@ const OverviewForm: React.FC<Props> = (props) => {
         </Box>
         {!workingCase.isMasked && (
           <>
-            <Box marginBottom={5}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Efni kröfu
-                </Text>
+            {workingCase.description && (
+              <Box marginBottom={5}>
+                <Box marginBottom={2}>
+                  <Text as="h3" variant="h3">
+                    Efni kröfu
+                  </Text>
+                </Box>
+                <Text>{workingCase.description}</Text>
               </Box>
-              <Text>{workingCase.description}</Text>
-            </Box>
+            )}
             <Box marginBottom={5} data-testid="demands">
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">

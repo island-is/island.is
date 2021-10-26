@@ -1,6 +1,16 @@
 import { defineMessages } from 'react-intl'
 
 export const icConfirmation = {
+  sections: {
+    conclusion: defineMessages({
+      title: {
+        id: 'judicial.system.investigation_cases:confirmation.conclusion.title',
+        defaultMessage: 'Úrskurðarorð',
+        description:
+          'Notaður sem titill fyrir "Úrskurðarorð" hlutanum á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+    }),
+  },
   modal: defineMessages({
     text: {
       id:
