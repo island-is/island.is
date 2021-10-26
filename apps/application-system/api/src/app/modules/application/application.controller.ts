@@ -823,6 +823,47 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
+  @Delete('applications/:id/testingcodecov')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'Test for codecov',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: ApplicationResponseDto })
+  @UseInterceptors(ApplicationSerializer)
+  async testCodeCov(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() input: DeleteAttachmentDto,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationResponseDto> {
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user.nationalId,
+    )
+    const { key } = input
+
+    const { updatedApplication } = await this.applicationService.update(
+      existingApplication.id,
+      {
+        attachments: omit(existingApplication.attachments, key),
+      },
+    )
+
+    this.auditService.audit({
+      user,
+      action: 'deleteAttachment',
+      resources: updatedApplication.id,
+      meta: {
+        file: key,
+      },
+    })
+
+    return updatedApplication
+  }
+
+  @Scopes(ApplicationScope.write)
   @Delete('applications/:id/attachments')
   @ApiParam({
     name: 'id',
