@@ -12,7 +12,7 @@ module.exports = {
             allowNull: true,
           },
           { transaction: t },
-        )
+        ),
       ]),
     )
   },
@@ -22,7 +22,7 @@ module.exports = {
       Promise.all([
         queryInterface.removeColumn('applications', 'spouse_phone_number', {
           transaction: t,
-        })
+        }),
       ]),
     )
   },
