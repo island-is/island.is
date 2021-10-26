@@ -64,7 +64,8 @@ export class EndorsementListController {
   ) {}
 
   @ApiOperation({
-    summary: 'Finds all endorsement lists belonging to given tags',
+    summary:
+      'Finds all endorsement lists belonging to given tags, if user is not admin then no locked lists will appear',
   })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get()
@@ -78,7 +79,7 @@ export class EndorsementListController {
       // query parameters of length one are not arrays, we normalize all tags input to arrays here
       !Array.isArray(query.tags) ? [query.tags] : query.tags,
       query,
-      user.nationalId
+      user.nationalId,
     )
   }
 

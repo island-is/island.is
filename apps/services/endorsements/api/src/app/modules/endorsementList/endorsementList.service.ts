@@ -64,15 +64,19 @@ export class EndorsementListService {
       orderOption: [['counter', 'ASC']],
       where: {
         tags: { [Op.overlap]: tags },
-        adminLock: admin ? {[Op.or]: [true, false]}: false,
+        adminLock: admin ? { [Op.or]: [true, false] } : false,
       },
     })
   }
 
-  async findSingleList(listId: string) {
+  async findSingleList(listId: string, nationalId: string) {
     this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
+    const admin = this.isAdmin(nationalId)
     const result = await this.endorsementListModel.findOne({
-      where: { id: listId, adminLock: false },
+      where: {
+        id: listId,
+        adminLock: admin ? { [Op.or]: [true, false] } : false,
+      },
     })
 
     if (!result) {
