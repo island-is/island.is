@@ -230,22 +230,15 @@ export const getTemplate = (
   const syslumadurId = input.syslumadur
   const institutionEmail = input.institutionEmail
 
-  console.log('categoryId:', categoryId)
-  console.log('syslumadurId:', syslumadurId)
-  console.log('institutionEmail:', institutionEmail)
-
   let toAddress = institutionEmail
 
   if (syslumadurId) {
     const emailList = syslumennEmails[syslumadurId]
 
     if (emailList) {
-      console.log('emailList:', emailList)
       toAddress = emailList[categoryId] ?? emailList.default ?? institutionEmail
     }
   }
-
-  console.log('toAddress:', toAddress)
 
   return {
     from: {
