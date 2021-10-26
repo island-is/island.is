@@ -2,7 +2,7 @@ FROM public.ecr.aws/bitnami/node:14.17.0
 
 RUN apt-get update && apt-get install netcat -y
 
-RUN addgroup runners && adduser -D runner -G runners
+RUN addgroup runners && useradd -m runner -G runners
 USER runner
 
 WORKDIR "/code"
