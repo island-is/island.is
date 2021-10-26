@@ -14,3 +14,7 @@ export const small = style({
   paddingTop: theme.spacing[2],
   paddingBottom: theme.spacing[2],
 })
+
+export const center = style({
+  textAlign: 'center',
+})

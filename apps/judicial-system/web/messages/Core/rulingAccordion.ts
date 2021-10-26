@@ -30,15 +30,6 @@ export const rulingAccordion = {
           'Notaður sem titill fyrir "Málsatvik" hlutanum í úrskurðar fellilista í öllum málategundum.',
       },
     }),
-    appealDecision: defineMessages({
-      disclaimer: {
-        id: 'judicial.system.core:ruling_accordion.appeal_decision.disclaimer',
-        defaultMessage:
-          'Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa.',
-        description:
-          'Notaður sem texti í "Ákvörðun um kæru" hlutanum í úrskurðar fellilista í öllum málategundum.',
-      },
-    }),
     requestProsecutorOnlySession: defineMessages({
       title: {
         id:
@@ -54,21 +45,6 @@ export const rulingAccordion = {
         defaultMessage: 'Niðurstaða',
         description:
           'Notaður sem titill fyrir "Niðurstaða" hlutanum í úrskurðar fellilista í öllum málategundum.',
-      },
-    }),
-    conclusion: defineMessages({
-      title: {
-        id: 'judicial.system.core:ruling_accordion.conclusion.title',
-        defaultMessage: 'Úrskurðarorð',
-        description:
-          'Notaður sem titill fyrir "Úrskurðarorð" hlutanum í úrskurðar fellilista í öllum málategundum.',
-      },
-      disclaimer: {
-        id: 'judicial.system.core:ruling_accordion.conclusion.disclaimer',
-        defaultMessage:
-          'Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.',
-        description:
-          'Notaður sem texti undir "Úrskurðarorð" hlutanum í úrskurðar fellilista í gæslu- og farbannsmálum og í rannsóknarheimildum þar sem fyrirtaka er ekki haldin í fjarfundi.',
       },
     }),
   },
