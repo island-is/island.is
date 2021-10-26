@@ -16,7 +16,6 @@ import {
   OpenList,
 } from '../queries'
 import { useMutation } from '@apollo/client'
-import { list } from '../mocks'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import PetitionsTable from '../PetitionsTable'
@@ -24,6 +23,7 @@ import {
   PaginatedEndorsementResponse,
   EndorsementList,
 } from '../../types/schema'
+import format from 'date-fns/format'
 
 const isLocalhost = window.location.origin.includes('localhost')
 const isDev = window.location.origin.includes('beta.dev01.devland.is')
@@ -95,7 +95,7 @@ const ViewPetition = () => {
         },
       },
     }).catch(() => {
-      toast.error(formatMessage(m.viewPetition.toastError))
+      toast.error(formatMessage(m.viewPetition.toastErrorCloseList))
     })
 
     if (success) {
@@ -154,11 +154,11 @@ const ViewPetition = () => {
           justifyContent="spaceBetween"
           width={viewTypeEdit ? 'half' : 'full'}
         >
-          {!viewTypeEdit && (
+          {!viewTypeEdit && petition?.closedDate && (
             <Box>
               <Text variant="h4">{formatMessage(m.viewPetition.openTil)}</Text>
               <Text variant="default" marginBottom={3}>
-                {list.til}
+                {format(new Date(petition?.closedDate), 'dd.MM.yyyy')}
               </Text>
             </Box>
           )}

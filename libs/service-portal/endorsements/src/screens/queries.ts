@@ -103,6 +103,8 @@ export const GetSinglePetitionList = gql`
       description
       owner
       closedDate
+      openedDate
+      adminLock
     }
   }
 `
@@ -189,6 +191,30 @@ export const OpenList = gql`
   }
 `
 
+export const LockList = gql`
+  mutation Mutants($input: FindEndorsementListInput!) {
+    endorsementSystemLockEndorsementList(input: $input) {
+      id
+    }
+  }
+`
+
+export const UnlockList = gql`
+  mutation Mutants($input: FindEndorsementListInput!) {
+    endorsementSystemUnlockEndorsementList(input: $input) {
+      id
+    }
+  }
+`
+
+export const UpdateList = gql`
+  mutation Mutants($input: UpdateEndorsementListInput!) {
+    endorsementSystemUpdateEndorsementList(input: $input) {
+      id
+    }
+  }
+`
+
 export const useGetAllPetitionLists = () => {
   const { data: endorsementListsResponse } = useQuery<PetitionLists>(
     GetAllEndorsementsLists,
@@ -249,7 +275,7 @@ export const useGetSinglePetition = (listId: string) => {
     },
   })
 
-  const petitionData = petition?.endorsementSystemGetSingleEndorsementList ?? []
+  const petitionData = petition?.endorsementSystemGetSingleEndorsementList ?? {}
   return { petitionData, refetchSinglePetition }
 }
 
