@@ -266,5 +266,10 @@ export const m: MessageDir = {
       defaultMessage: 'Admin hefur lokað á lista',
       description: 'Error message when list is closed by admin',
     },
+    sendListButton: {
+      id: 'sp.petitions:send-list',
+      defaultMessage: 'Senda lista',
+      description: 'Button title',
+    },
   }),
 }

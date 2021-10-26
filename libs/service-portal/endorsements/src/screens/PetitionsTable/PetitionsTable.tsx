@@ -96,7 +96,7 @@ const PetitionsTable = (petitions: any) => {
           <Box display="flex" justifyContent="flexEnd" marginTop={2}>
             <Box marginRight={5}>
               <Button variant="text" icon="mail" iconType="outline">
-                {'Senda lista'}
+                {formatMessage(m.viewPetition.sendListButton)}
               </Button>
             </Box>
             <ExportAsCSV
