@@ -145,7 +145,6 @@ export interface Case {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  isAccusedRightsHidden?: boolean
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
@@ -320,12 +319,4 @@ export function hasCaseBeenAppealed(theCase: Case): boolean {
       Boolean(theCase.accusedPostponedAppealDate) ||
       Boolean(theCase.prosecutorPostponedAppealDate))
   )
-}
-
-export function isAccusedRightsHidden(theCase: Case): boolean {
-  return theCase.isAccusedRightsHidden == null
-    ? theCase.sessionArrangements
-      ? theCase.sessionArrangements !== SessionArrangements.ALL_PRESENT
-      : false
-    : theCase.isAccusedRightsHidden
 }

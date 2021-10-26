@@ -103,7 +103,6 @@ export const ExtendCaseMutation = gql`
       courtAttendees
       prosecutorDemands
       courtDocuments
-      isAccusedRightsHidden
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations

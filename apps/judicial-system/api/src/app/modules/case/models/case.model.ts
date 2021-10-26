@@ -167,9 +167,6 @@ export class Case implements TCase {
   @Field(() => [String], { nullable: true })
   readonly courtDocuments?: string[]
 
-  @Field({ nullable: true })
-  readonly isAccusedRightsHidden?: boolean
-
   @Field(() => String, { nullable: true })
   readonly accusedPleaDecision?: AccusedPleaDecision
 

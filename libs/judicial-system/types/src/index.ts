@@ -45,7 +45,6 @@ export {
   isInvestigationCase,
   completedCaseStates,
   hasCaseBeenAppealed,
-  isAccusedRightsHidden,
 } from './lib/case'
 export type {
   Case,

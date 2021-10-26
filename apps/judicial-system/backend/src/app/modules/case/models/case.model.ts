@@ -569,16 +569,6 @@ export class Case extends Model<Case> {
   courtDocuments?: string[]
 
   /**********
-   * Indicates whether the accused rights are hidden from the court record - optional
-   **********/
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiProperty()
-  isAccusedRightsHidden?: boolean
-
-  /**********
    * The accused's plea decision - example: REJECT
    **********/
   @Column({

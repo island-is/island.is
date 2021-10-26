@@ -241,11 +241,6 @@ export class UpdateCaseDto {
   readonly courtDocuments?: string
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly isAccusedRightsHidden?: boolean
-
-  @IsOptional()
   @IsEnum(AccusedPleaDecision)
   @ApiPropertyOptional({ enum: AccusedPleaDecision })
   readonly accusedPleaDecision?: AccusedPleaDecision

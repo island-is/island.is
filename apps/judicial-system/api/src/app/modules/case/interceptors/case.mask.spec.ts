@@ -65,7 +65,6 @@ function createCase(type: CaseType): Case {
     courtAttendees: '-',
     prosecutorDemands: '-',
     courtDocuments: [],
-    isAccusedRightsHidden: true,
     accusedPleaDecision: AccusedPleaDecision.ACCEPT,
     accusedPleaAnnouncement: '-',
     litigationPresentations: '-',

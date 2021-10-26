@@ -113,7 +113,6 @@ const courtFields = [
   'courtAttendees',
   'prosecutorDemands',
   'courtDocuments',
-  'isAccusedRightsHidden',
   'accusedPleaDecision',
   'accusedPleaAnnouncement',
   'litigationPresentations',
