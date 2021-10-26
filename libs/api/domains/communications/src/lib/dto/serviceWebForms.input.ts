@@ -38,5 +38,5 @@ export class ServiceWebFormsInput {
 }
 
 export type ServiceWebFormsInputWithToAddress = ServiceWebFormsInput & {
-  to: string
+  to?: string
 }
