@@ -169,47 +169,11 @@ function constructRestrictionRulingPdf(
     ),
   )
 
-  if (!existingCase.isAccusedRightsHidden) {
-    doc.text(' ').text(formatMessage(ruling.accusedRights), {
-      paragraphGap: 1,
-    })
-  }
-
-  if (!existingCase.isAccusedRightsHidden) {
-    doc.text(' ').text(
-      formatMessage(ruling.accusedDemandsIntro, {
-        accused: capitalize(
-          formatAccusedByGender(existingCase.accusedGender, NounCases.DATIVE),
-        ),
-      }),
-      {
-        paragraphGap: 1,
-      },
-    )
-  }
-
   doc
     .text(' ')
-    .text(
-      `${
-        existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
-          ? formatMessage(ruling.accusedPlea.accept, {
-              accused: capitalize(
-                formatAccusedByGender(existingCase.accusedGender),
-              ),
-            })
-          : existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
-          ? formatMessage(ruling.accusedPlea.reject, {
-              accused: capitalize(
-                formatAccusedByGender(existingCase.accusedGender),
-              ),
-            })
-          : ''
-      } ${existingCase.accusedPleaAnnouncement ?? ''}`,
-      {
-        paragraphGap: 1,
-      },
-    )
+    .text(existingCase.accusedPleaAnnouncement ?? '', {
+      paragraphGap: 1,
+    })
     .text(' ')
     .text(
       existingCase.litigationPresentations ??
@@ -538,49 +502,11 @@ function constructInvestigationRulingPdf(
     ),
   )
 
-  if (
-    existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT &&
-    !existingCase.isAccusedRightsHidden
-  ) {
-    doc
-      .text(' ')
-      .text(formatMessage(ruling.accusedRights), {
-        paragraphGap: 1,
-      })
-      .text(' ')
-      .text(
-        formatMessage(ruling.accusedDemandsIntro, {
-          accused: capitalize(
-            formatAccusedByGender(existingCase.accusedGender, NounCases.DATIVE),
-          ),
-        }),
-        {
-          paragraphGap: 1,
-        },
-      )
-  }
-
-  // Only show accused plea if applicable
-  if (existingCase.accusedPleaDecision !== AccusedPleaDecision.NOT_APPLICABLE) {
-    doc.text(' ').text(
-      `${
-        existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
-          ? formatMessage(ruling.accusedPlea.accept, {
-              accused: 'Varnaraðili',
-            })
-          : existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
-          ? formatMessage(ruling.accusedPlea.reject, {
-              accused: 'Varnaraðili',
-            })
-          : ''
-      }${existingCase.accusedPleaAnnouncement ?? ''}`,
-      {
-        paragraphGap: 1,
-      },
-    )
-  }
-
   doc
+    .text(' ')
+    .text(existingCase.accusedPleaAnnouncement ?? '', {
+      paragraphGap: 1,
+    })
     .text(' ')
     .text(
       existingCase.litigationPresentations ??

@@ -13,7 +13,6 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import {
-  AccusedPleaDecision,
   CaseAppealDecision,
   CaseDecision,
   CaseType,
@@ -26,7 +25,6 @@ import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { closedCourt } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
 import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
-import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
 import { rcConfirmation } from '@island.is/judicial-system-web/messages'
 
 interface Props {
@@ -115,62 +113,19 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           })}
         </Text>
       </AccordionListItem>
-      {!workingCase.isAccusedRightsHidden && (
+      {workingCase.accusedPleaAnnouncement?.trim() && (
         <AccordionListItem
-          title={formatMessage(m.sections.accusedRights.title, {
+          title={formatMessage(m.sections.accusedPleaAnnouncement.title, {
             accusedType: isRestrictionCase(workingCase.type)
               ? formatAccusedByGender(
                   workingCase.accusedGender,
-                  NounCases.GENITIVE,
+                  NounCases.ACCUSATIVE,
                 )
               : 'varnaraðila',
           })}
-        >
-          <MarkdownWrapper
-            text={m.sections.accusedRights.text}
-            format={{
-              genderedAccused: isRestrictionCase(workingCase.type)
-                ? capitalize(
-                    formatAccusedByGender(
-                      workingCase.accusedGender,
-                      NounCases.GENITIVE,
-                    ),
-                  )
-                : 'Varnaraðila',
-            }}
-          />
-        </AccordionListItem>
-      )}
-      {workingCase.accusedAppealDecision !==
-        CaseAppealDecision.NOT_APPLICABLE && (
-        <AccordionListItem
-          title={`Afstaða ${
-            isRestrictionCase(workingCase.type)
-              ? formatAccusedByGender(
-                  workingCase.accusedGender,
-                  NounCases.GENITIVE,
-                )
-              : 'varnaraðila'
-          }`}
           breakSpaces
         >
-          <Text>
-            {`${
-              workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
-                ? `${capitalize(
-                    isRestrictionCase(workingCase.type)
-                      ? formatAccusedByGender(workingCase.accusedGender)
-                      : 'varnaraðili',
-                  )} hafnar kröfunni. `
-                : workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
-                ? `${capitalize(
-                    isRestrictionCase(workingCase.type)
-                      ? formatAccusedByGender(workingCase.accusedGender)
-                      : 'varnaraðili',
-                  )} samþykkir kröfuna. `
-                : ''
-            }${workingCase.accusedPleaAnnouncement ?? ''}`}
-          </Text>
+          <Text>{workingCase.accusedPleaAnnouncement.trim()}</Text>
         </AccordionListItem>
       )}
       <AccordionListItem title="Málflutningur" breakSpaces>
