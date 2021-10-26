@@ -101,7 +101,7 @@ export const GetSinglePetitionList = gql`
       meta
       title
       description
-      owner
+      ownerName
       closedDate
       openedDate
       adminLock
