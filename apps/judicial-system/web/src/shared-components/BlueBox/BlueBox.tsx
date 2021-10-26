@@ -4,6 +4,7 @@ import * as styles from './BlueBox.css'
 
 interface Props {
   size?: 'small' | 'large'
+  justifyContent?: 'center'
 
   /**
    * Set explicit height
@@ -12,12 +13,13 @@ interface Props {
 }
 
 const BlueBox: React.FC<Props> = (props) => {
-  const { children, size = 'large', height } = props
+  const { children, size = 'large', justifyContent, height } = props
 
   return (
     <div
       className={cn(styles.BlueBoxContainer, {
         [styles.small]: size === 'small',
+        [styles.center]: justifyContent === 'center',
       })}
       style={{ height: height }}
     >
