@@ -197,7 +197,7 @@ export const accidentLocation = {
       id:
         'an.application:accidentLocation.fishermanAccidentLocation.description',
       defaultMessage:
-        'Vinsamlegast skráðu staðsetningu skips þegar slysið átti sér stað',
+        'Vinsamlegast tilgreindu staðsetningu skips þegar slysið átti sér stað',
       description: 'Fisherman accident location description',
     },
   }),
