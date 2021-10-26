@@ -70,6 +70,16 @@ export const m: MessageDir = {
         'Lokaða meðmælendalista sem þú hefur mælt með, ekki er hægt að afskrá sig af lokuðum lista.',
       description: 'Petitions intro text bullet',
     },
+    bullet1Admin: {
+      id: 'sp.petitions:intro-bullet1-admin',
+      defaultMessage: 'Opna meðmælendalista',
+      description: 'Petitions intro text bullet',
+    },
+    bullet2Admin: {
+      id: 'sp.petitions:intro-bullet2-admin',
+      defaultMessage: 'Lokaða meðmælendalista',
+      description: 'Petitions intro text bullet',
+    },
     petitionListsIown: {
       id: 'sp.petitions:petition-lists-i-own',
       defaultMessage: 'Listar stofnaðir af mér',
