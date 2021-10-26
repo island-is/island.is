@@ -3,7 +3,6 @@ import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
 import {
-  AlertMessage,
   Box,
   Input,
   Select,
@@ -24,7 +23,6 @@ import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   Case,
-  CaseState,
   CaseType,
   NotificationType,
   UserRole,
@@ -210,15 +208,6 @@ export const HearingArrangements: React.FC = () => {
                 {formatMessage(m.title)}
               </Text>
             </Box>
-            {workingCase.state === CaseState.DRAFT && (
-              <Box marginBottom={8}>
-                <AlertMessage
-                  type="info"
-                  title="Krafa hefur ekki verið staðfest af ákæranda"
-                  message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
-                />
-              </Box>
-            )}
             <Box component="section" marginBottom={7}>
               <CaseNumbers workingCase={workingCase} />
             </Box>
@@ -435,11 +424,7 @@ export const HearingArrangements: React.FC = () => {
             <FormFooter
               previousUrl={`${Constants.COURT_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
               onNextButtonClick={handleNextButtonClick}
-              nextIsDisabled={
-                workingCase.state === CaseState.DRAFT ||
-                isStepIllegal ||
-                !courtDateIsValid
-              }
+              nextIsDisabled={isStepIllegal || !courtDateIsValid}
             />
           </FormContentContainer>
           {modalVisible && (
