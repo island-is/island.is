@@ -20,7 +20,7 @@ const GetGeneralPetitionList = gql`
       closedDate
       meta
       created
-      owner
+      ownerName
     }
   }
 `

@@ -234,5 +234,20 @@ export const m: MessageDir = {
       defaultMessage: 'Nafn ótilgreint',
       description: 'Label when endorsers name is hidden',
     },
+    listTitleHeader: {
+      id: 'sp.petitions:list-title',
+      defaultMessage: 'Heiti meðmælendalista',
+      description: 'List title header',
+    },
+    aboutListHeader: {
+      id: 'sp.petitions:about-list',
+      defaultMessage: 'Um meðmælendalista',
+      description: 'About list header',
+    },
+    adminLockedList: {
+      id: 'sp.petitions:admin-locked-list',
+      defaultMessage: 'Admin hefur lokað á lista',
+      description: 'Error message when list is closed by admin',
+    },
   }),
 }

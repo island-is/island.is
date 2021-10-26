@@ -18,4 +18,7 @@ export class ApplicationFiltersModel implements ApplicationFilters {
 
   @Field()
   readonly Approved!: number
+
+  @Field()
+  readonly MyCases!: number
 }

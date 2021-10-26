@@ -444,7 +444,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             />
           </Box>
           {workingCase.type === CaseType.CUSTODY &&
-            workingCase.state === CaseState.ACCEPTED && (
+            workingCase.state === CaseState.ACCEPTED &&
+            workingCase.decision === CaseDecision.ACCEPTING && (
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonCustodyNotice)}
