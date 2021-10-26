@@ -45,10 +45,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
   const [courtLocationEM, setCourtLocationEM] = useState('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
   const [
-    accusedPleaAnnouncementErrorMessage,
-    setAccusedPleaAnnouncementMessage,
-  ] = useState('')
-  const [
     litigationPresentationsErrorMessage,
     setLitigationPresentationsMessage,
   ] = useState('')
@@ -271,8 +267,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                   [],
                   workingCase,
                   setWorkingCase,
-                  accusedPleaAnnouncementErrorMessage,
-                  setAccusedPleaAnnouncementMessage,
                 )
               }
               onBlur={(event) =>
@@ -282,11 +276,8 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                   [],
                   workingCase,
                   updateCase,
-                  setAccusedPleaAnnouncementMessage,
                 )
               }
-              errorMessage={accusedPleaAnnouncementErrorMessage}
-              hasError={accusedPleaAnnouncementErrorMessage !== ''}
               textarea
               rows={7}
             />
@@ -340,11 +331,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={
-            !isValid ||
-            !courtRecordStartDateIsValid ||
-            !workingCase.accusedPleaDecision
-          }
+          nextIsDisabled={!isValid || !courtRecordStartDateIsValid}
         />
       </FormContentContainer>
     </>
