@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { json, Op } from 'sequelize'
+import { Op } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
@@ -16,6 +16,7 @@ import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
+import { environment } from '../../../environments'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -32,6 +33,11 @@ export class EndorsementListService {
     private logger: Logger,
   ) {}
 
+  // Checks if user is admin
+  isAdmin(nationalId: string) {
+    return environment.accessGroups.Admin.split(',').includes(nationalId)
+  }
+
   // generic reusable query with pagination defaults
   async findListsGenericQuery(query: any, where: any = {}) {
     return await paginate({
@@ -45,10 +51,10 @@ export class EndorsementListService {
     })
   }
 
-  async findListsByTags(tags: string[], query: any) {
+  async findListsByTags(tags: string[], query: any, nationalId: string) {
     this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
-    // TODO: Add option to get only open endorsement lists
-
+    // check if user is admin
+    const admin = this.isAdmin(nationalId)
     return await paginate({
       Model: this.endorsementListModel,
       limit: query.limit || 10,
@@ -58,7 +64,7 @@ export class EndorsementListService {
       orderOption: [['counter', 'ASC']],
       where: {
         tags: { [Op.overlap]: tags },
-        adminLock: false
+        adminLock: admin ? {[Op.or]: [true, false]}: false,
       },
     })
   }
@@ -119,7 +125,7 @@ export class EndorsementListService {
       orderOption: [['counter', 'ASC']],
       where: {
         owner: nationalId,
-        adminLock: false
+        adminLock: false,
       },
     })
   }
@@ -185,7 +191,7 @@ export class EndorsementListService {
         tags: { [Op.eq]: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS },
         openedDate: { [Op.lt]: date_ob },
         closedDate: { [Op.gt]: date_ob },
-        adminLock: false
+        adminLock: false,
       }
       return await this.findListsGenericQuery(query, where)
     } catch (error) {
@@ -203,7 +209,7 @@ export class EndorsementListService {
         tags: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
         openedDate: { [Op.lt]: date_ob },
         closedDate: { [Op.gt]: date_ob },
-        adminLock: false
+        adminLock: false,
       },
     })
     if (!result) {
