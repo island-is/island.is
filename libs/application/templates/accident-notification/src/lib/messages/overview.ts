@@ -49,7 +49,7 @@ export const overview = {
     hospitalSendsCertificate: {
       id: 'an.application:overview.labels.hospitalSendsCertificate',
       defaultMessage:
-        'Samskiptaseðill - Ég mun óska eftir því að Landspítalinn sendi samskiptaseðil til Sjúkratrygginga Íslands',
+        'Bráðamóttökuskrá - Ég mun óska eftir því að Landspítalinn sendi bráðamóttökuskrá til Sjúkratrygginga Íslands',
       description: 'Label for hospital sends certificate in document list',
     },
   }),
