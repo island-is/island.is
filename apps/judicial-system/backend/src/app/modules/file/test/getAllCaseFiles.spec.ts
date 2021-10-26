@@ -3,7 +3,6 @@ import { uuid } from 'uuidv4'
 
 import { CaseFileState } from '@island.is/judicial-system/types'
 
-import { Case } from '../../case'
 import { CaseFile } from '../models'
 import { createTestingFileModule } from './createTestingFileModule'
 

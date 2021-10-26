@@ -3,7 +3,6 @@ import { uuid } from 'uuidv4'
 
 import { BadGatewayException, NotFoundException } from '@nestjs/common'
 
-import { Case } from '../../case'
 import { PoliceCaseFile } from '../models'
 import { createTestingPoliceModule } from './createTestingPoliceModule'
 
