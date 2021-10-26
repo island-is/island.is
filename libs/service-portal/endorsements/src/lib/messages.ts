@@ -50,9 +50,24 @@ export const m: MessageDir = {
     intro: {
       id: 'sp.petitions:intro',
       defaultMessage:
-        'Hér má finna yfirlit yfir meðmæli og meðmælendalista í þinni umsjá.',
+        'Hér má sjá yfirlit yfir:', 
       description: 'Petitions intro text',
     },
+    bullet1: {
+      id: 'sp.petitions:intro-bullet1',
+      defaultMessage: 'Lista sem þú ert ábyrgðamaður á, hægt er að sjá yfirlit yfir meðmæli, breyta lokadagsetningu, og loka/opna lista.', 
+      description: 'Petitions intro text bullet',
+    },
+    bullet2: {
+      id: 'sp.petitions:intro-bullet2',
+      defaultMessage: 'Opna meðmælendalista sem þú hefur mælt með, hægt er að afskrá meðmæli.', 
+      description: 'Petitions intro text bullet',
+    }, 
+    bullet3: {
+      id: 'sp.petitions:intro-bullet3',
+      defaultMessage: 'Lokaða meðmælendalista sem þú hefur mælt með, ekki er hægt að afskrá sig af lokuðum lista.', 
+      description: 'Petitions intro text bullet',
+    }, 
     petitionListsIown: {
       id: 'sp.petitions:petition-lists-i-own',
       defaultMessage: 'Listar stofnaðir af mér',

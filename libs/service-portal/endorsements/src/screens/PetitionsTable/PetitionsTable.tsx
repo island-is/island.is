@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Table as T, Pagination, Stack } from '@island.is/island-ui/core'
+import { Box, Table as T, Pagination, Stack, Button } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { pages, PAGE_SIZE, paginate } from '../pagination'
@@ -88,6 +88,11 @@ const PetitionsTable = (petitions: any) => {
 
         {listOfPetitions?.length > 0 && (
           <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+            <Box marginRight={5}>
+              <Button variant='text' icon='mail' iconType="outline">
+                {'Senda lista'}
+              </Button>
+            </Box>
             <ExportAsCSV
               data={mapToCSVFile(listOfPetitions) as object[]}
               filename="Meðmælalisti"
