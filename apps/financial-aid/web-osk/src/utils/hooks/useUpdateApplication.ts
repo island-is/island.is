@@ -36,6 +36,8 @@ const useUpdateApplication = () => {
             id: applicationId,
             state: ApplicationState.INPROGRESS,
             event: ApplicationEventType.FILEUPLOAD,
+            spouseEmail: form.emailAddress,
+            spousePhoneNumber: form.phoneNumber,
           },
         },
       })

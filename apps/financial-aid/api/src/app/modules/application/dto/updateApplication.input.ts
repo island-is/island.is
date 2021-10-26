@@ -37,4 +37,12 @@ export class UpdateApplicationInput implements UpdateApplication {
   @Allow()
   @Field({ nullable: true })
   readonly staffId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseEmail?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spousePhoneNumber?: string
 }

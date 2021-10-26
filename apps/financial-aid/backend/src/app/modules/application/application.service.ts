@@ -80,7 +80,14 @@ export class ApplicationService {
   ): Promise<CurrentApplicationModel | null> {
     return await this.applicationModel.findOne({
       where: {
-        nationalId,
+        [Op.or]: [
+          {
+            nationalId: { [Op.eq]: nationalId },
+          },
+          {
+            spouseNationalId: { [Op.eq]: nationalId },
+          },
+        ],
         created: { [Op.gte]: firstDateOfMonth() },
       },
     })
