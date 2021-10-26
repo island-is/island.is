@@ -42,9 +42,9 @@ export const AppContext = createContext<AppProvider>({
 const AppProvider = ({ children }: Props) => {
   const { municipality, setMunicipality } = useMunicipality()
 
-  const { myApplication, error, loading } = useMyApplication()
-
   const { isAuthenticated, user, setUser } = useUser()
+
+  const { myApplication, error, loading } = useMyApplication()
 
   const {
     nationalRegistryData,

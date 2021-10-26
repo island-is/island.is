@@ -12,37 +12,46 @@ interface ApplicantData {
 
 const useMyApplication = () => {
   const router = useRouter()
-  const storageKey = 'myCurrentApplication'
 
-  const [myApplication, updateApplication] = useState<Application>()
+  if (router.query.id) {
+    const storageKey = 'myCurrentApplication'
 
-  const { data, error, loading } = useQuery<ApplicantData>(ApplicationQuery, {
-    variables: { input: { id: router.query.id } },
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+    const [myApplication, updateApplication] = useState<Application>()
 
-  useEffect(() => {
-    const storedFormJson = sessionStorage.getItem(storageKey)
-    if (storedFormJson === null) {
-      return
+    const { data, error, loading } = useQuery<ApplicantData>(ApplicationQuery, {
+      variables: { input: { id: router.query.id } },
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
+
+    useEffect(() => {
+      const storedFormJson = sessionStorage.getItem(storageKey)
+      if (storedFormJson === null) {
+        return
+      }
+      const storedState = JSON.parse(storedFormJson)
+      updateApplication(storedState)
+    }, [])
+
+    useEffect(() => {
+      if (data) {
+        updateApplication(data.application)
+        // Watches the user state and writes it to local storage on change
+        sessionStorage.setItem(storageKey, JSON.stringify(data.application))
+      }
+    }, [myApplication, data])
+
+    return {
+      myApplication,
+      error,
+      loading,
     }
-    const storedState = JSON.parse(storedFormJson)
-    updateApplication(storedState)
-  }, [])
-
-  useEffect(() => {
-    if (data) {
-      updateApplication(data.application)
-      // Watches the user state and writes it to local storage on change
-      sessionStorage.setItem(storageKey, JSON.stringify(data.application))
-    }
-  }, [myApplication, data])
+  }
 
   return {
-    myApplication,
-    error,
-    loading,
+    myApplication: undefined,
+    error: undefined,
+    loading: false,
   }
 }
 
