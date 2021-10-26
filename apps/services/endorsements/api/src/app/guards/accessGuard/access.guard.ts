@@ -57,6 +57,7 @@ export class AccessGuard implements CanActivate {
           if (listId) {
             const endorsementList = await this.endorsementListService.findSingleList(
               listId,
+              request.auth.nationalId,
             )
 
             if (endorsementList?.owner === request.auth.nationalId) {
