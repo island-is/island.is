@@ -2,7 +2,7 @@ import { FieldBaseProps } from '@island.is/application/core'
 import React, { FC, useState, useMemo } from 'react'
 import { FormOverviewInReview } from '../FormOverviewInReview'
 import { InReviewSteps } from '../InReviewSteps'
-import { UploadAttachmentsInReview } from '../UploadAttachmentsInReview'
+import { UploadStuff } from '../UploadAttachmentsInReview'
 
 type InReviewStepsProps = {
   field: {
@@ -28,11 +28,12 @@ export const ReviewForm: FC<FieldBaseProps & InReviewStepsProps> = (props) => {
         )
       case 'uploadDocuments':
         return (
-          <UploadAttachmentsInReview
-            application={application}
-            setState={setState}
-            refetch={refetch}
-          />
+          // <UploadAttachmentsInReview
+          //   application={application}
+          //   setState={setState}
+          //   refetch={refetch}
+          // />
+          null
         )
       case 'overview':
         return (
@@ -52,5 +53,11 @@ export const ReviewForm: FC<FieldBaseProps & InReviewStepsProps> = (props) => {
         )
     }
   }
-  return showScreen(state)
+  return (
+    <UploadStuff
+      application={application}
+      setState={setState}
+      refetch={refetch}
+    />
+  )
 }

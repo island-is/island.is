@@ -120,3 +120,9 @@ export enum ReviewSectionState {
   approved = 'Approved',
   objected = 'Objected',
 }
+
+export interface SubmittedApplicationData {
+  data?: {
+    documentId: number
+  }
+}

@@ -122,7 +122,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           },
           [DefaultEvents.SUBMIT]: {
             target: States.REVIEW_ADD_ATTACHMENT,
-            actions: 'addAttachment',
           },
           [DefaultEvents.REJECT]: {
             target: States.IN_FINAL_REVIEW,
@@ -171,7 +170,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.REVIEW_ADD_ATTACHMENT,
-            actions: 'addAttachment',
           },
           [DefaultEvents.REJECT]: {
             target: States.IN_FINAL_REVIEW,
@@ -219,7 +217,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.REVIEW_ADD_ATTACHMENT,
-            actions: 'addAttachment',
           },
         },
       },

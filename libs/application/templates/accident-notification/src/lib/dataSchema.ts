@@ -105,6 +105,7 @@ export const AccidentNotificationSchema = z.object({
       AttachmentsEnum.INJUREDSENDSCERTIFICATE,
     ]),
   }),
+
   attachments: z.object({
     injuryCertificateFile: z
       .object({
@@ -128,6 +129,9 @@ export const AccidentNotificationSchema = z.object({
       })
       .optional(),
   }),
+  ReviewFormDerp: z.object({
+    derp: z.string().min(1),
+  }),
   wasTheAccidentFatal: z.enum([YES, NO]),
   fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),
   accidentDetails: z.object({
@@ -150,6 +154,7 @@ export const AccidentNotificationSchema = z.object({
     homePort: z.string().min(1),
     shipRegisterNumber: z.string().min(1),
   }),
+
   onPayRoll: z.object({
     answer: z.enum([YES, NO]),
   }),

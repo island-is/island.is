@@ -1,15 +1,19 @@
+import { getValueViaPath } from '@island.is/application/core'
 import {
   AccidentNotificationAnswers,
+  ReviewApprovalEnum,
+  SubmittedApplicationData,
   utils,
 } from '@island.is/application/templates/accident-notification'
 import { DocumentApi } from '@island.is/clients/health-insurance-v2'
 import { Inject, Injectable } from '@nestjs/common'
-import fetch from 'node-fetch'
-import { Exception } from 'handlebars'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import { AttachmentProvider } from './accident-notification-attachments.provider'
-import { applictionAnswersToXml } from './accident-notification.utils'
+import {
+  applictionAnswersToXml,
+  getApplicationDocumentId,
+} from './accident-notification.utils'
 import type { AccidentNotificationConfig } from './config'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import {
@@ -44,13 +48,7 @@ export class AccidentNotificationService {
 
     console.log('XML OBJEJCJTWS', xml)
     try {
-      const {
-        success,
-        errorDesc,
-        errorList,
-        ihiDocumentID,
-        numberIHI,
-      } = await this.documentApi.documentPost({
+      const { ihiDocumentID } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
       })
 
@@ -83,13 +81,16 @@ export class AccidentNotificationService {
     }
   }
 
-  async addAttachment({ application }: TemplateApiModuleActionProps) {
+  async addAdditionalAttachment({ application }: TemplateApiModuleActionProps) {
     console.log('adding attachment')
+    console.log('top application: ', application)
     const attachments = await this.attachmentProvider.gatherAllAttachments(
       application,
     )
-    const { data } = application.externalData.submitApplication
 
+    console.log('attachments', attachments)
+
+    const documentId = getApplicationDocumentId(application)
     //Send multiple attachments
     const promises = attachments.map((attachment) =>
       this.documentApi.documentDocumentAttachment({
@@ -98,24 +99,28 @@ export class AccidentNotificationService {
           attachmentType: attachment.attachmentType,
           title: attachment.name,
         },
-        ihiDocumentID: 23,
+        ihiDocumentID: documentId,
       }),
     )
 
-    const res = this.documentApi.documentDocumentAttachment({
-      documentAttachment: {
-        attachmentBody: '',
-        attachmentType: 1,
-        title: '',
-      },
-      ihiDocumentID: 23,
-    })
-
-    return {}
+    const result = await Promise.all(promises)
+    console.log('attachment added', result)
   }
   async reviewApplication({ application }: TemplateApiModuleActionProps) {
-    console.log('reviewApplicationt')
+    const documentId = getApplicationDocumentId(application)
 
-    return {}
+    const isRepresentativeOfCompanyOrInstitue = utils.isRepresentativeOfCompanyOrInstitute(
+      application.answers,
+    )
+    const reviewApproval = getValueViaPath(
+      application.answers,
+      'reviewApproval',
+    ) as ReviewApprovalEnum
+
+    await this.documentApi.documentSendConfirmation({
+      ihiDocumentID: documentId,
+      confirmationType: reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
+      confirmationParty: isRepresentativeOfCompanyOrInstitue ? 2 : 1,
+    })
   }
 }

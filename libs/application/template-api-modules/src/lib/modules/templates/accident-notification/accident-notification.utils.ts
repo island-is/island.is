@@ -1,6 +1,8 @@
+import { Application } from '@island.is/application/core'
 import {
   AccidentNotificationAnswers,
   AccidentTypeEnum,
+  SubmittedApplicationData,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
 } from '@island.is/application/templates/accident-notification'
@@ -13,7 +15,7 @@ import {
   Slys,
   TilkynnandiOrSlasadi,
 } from './types/applicationSubmit'
-import { AccidentNotificationAttachments } from './types/attachments'
+import { AccidentNotificationAttachment } from './types/attachments'
 
 export const pathToAsset = (file: string) => {
   if (isRunningOnEnvironment('local')) {
@@ -36,7 +38,7 @@ export const pathToAsset = (file: string) => {
  */
 export const applictionAnswersToXml = (
   answers: AccidentNotificationAnswers,
-  attachments: AccidentNotificationAttachments[],
+  attachments: AccidentNotificationAttachment[],
 ): string => {
   const fylgiskjol = {
     fylgiskjol: {
@@ -242,4 +244,15 @@ export const objectToXML = (obj: object) => {
     xml += value instanceof Array ? '' : '</' + key + '>'
   })
   return xml
+}
+
+export const getApplicationDocumentId = (application: Application): number => {
+  const subAppData = application.externalData
+    .submitApplication as SubmittedApplicationData
+  const documentId = subAppData?.data?.documentId
+  if (!documentId) {
+    console.log('No documentId found on application')
+    throw new Error('No documentId found on application')
+  }
+  return documentId
 }

@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
 import { inReview } from '../lib/messages'
+import { UploadAttachmentsInReview } from '../fields/UploadAttachmentsInReview'
 
 export const AssigneeInReview: Form = buildForm({
   id: 'AssigneeInReview',
@@ -16,16 +17,12 @@ export const AssigneeInReview: Form = buildForm({
       id: 'review',
       title: '',
       children: [
-        buildCustomField(
-          {
-            id: 'ReviewForm',
-            title: '',
-            component: 'ReviewForm',
-          },
-          {
-            isAssignee: true,
-          },
-        ),
+        UploadAttachmentsInReview,
+        buildCustomField({
+          id: 'ReviewForm',
+          title: '',
+          component: 'ReviewForm',
+        }),
       ],
     }),
   ],

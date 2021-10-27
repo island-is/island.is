@@ -45,10 +45,11 @@ export class AttachmentProvider {
     answerKey: string,
     attachmentType: AttachmentTypeEnum,
   ): Promise<AccidentNotificationAttachment[]> {
+    console.log('ansers', JSON.stringify(application.answers, null, 2))
     const attachments = getValueViaPath(
       application.answers,
       answerKey,
-    ) as Array<AccidentNotificationAttachment>
+    ) as Array<{ key: string; name: string }>
     const hasAttachments = attachments && attachments?.length > 0
 
     if (!hasAttachments) {
