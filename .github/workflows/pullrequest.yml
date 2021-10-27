@@ -22,7 +22,7 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
-      code-cov-hash: ${{ steps.calculate_code_cov_hash.outputs.code-cov-hash }}
+      codecov-hash: ${{ steps.calculate_code_cov_hash.outputs.codecov-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
       - uses: actions/checkout@v2
@@ -48,7 +48,7 @@ jobs:
         run: |
           CODE_COV_HASH=$(curl -s https://uploader.codecov.io/latest/linux/codecov.SHA256SUM | cut -f1 -d" ")
           echo "CODE_COV_HASH: $CODE_COV_HASH"
-          echo "::set-output name=code-cov-hash::$CODE_COV_HASH"
+          echo "::set-output name=codecov-hash::$CODE_COV_HASH"
 
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
@@ -102,15 +102,15 @@ jobs:
         run: ./scripts/ci/20_license-audit.sh
 
       - name: Cache CodeCov
-        id: code-cov
+        id: codecov
         uses: actions/cache@v2
         with:
-          path: ~/.local/bin/codecov
-          key: code-cov-cache-${{ steps.calculate_code_cov_hash.outputs.code-cov-hash }}
+          path: codecov
+          key: codecov-cache-${{ steps.calculate_code_cov_hash.outputs.codecov-hash }}
 
-      - name: Install codecov uploader
-        if: steps.code-cov.outputs.cache-hit != 'true'
-        run: ./scripts/install-codecov-uploader.sh
+      - name: Download codecov uploader
+        if: steps.codecov.outputs.cache-hit != 'true'
+        run: ./scripts/download-codecov-uploader.sh
 
       - name: Prepare lint targets
         id: lint_projects
@@ -187,11 +187,14 @@ jobs:
       - name: Cache CodeCov
         uses: actions/cache@v2
         with:
-          path: ~/.local/bin/codecov
-          key: code-cov-cache-${{ needs.prepare.outputs.code-cov-hash }}
+          path: codecov
+          key: codecov-cache-${{ needs.prepare.outputs.codecov-hash }}
 
       - name: Set local bin directory to path
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          cp codecov "$HOME/.local/bin"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Upload coverage reports
         run: ./scripts/ci/run-in-parallel.sh 50_upload-coverage

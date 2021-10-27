@@ -112,12 +112,14 @@ jobs:
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
 
     outputs:
+      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
+      codecov-hash: ${{ steps.calculate_code_cov_hash.outputs.codecov-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
       - uses: actions/checkout@v2
@@ -194,6 +196,13 @@ jobs:
           echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
           echo "::set-output name=node-modules-hash::$NODE_MODULES_HASH"
 
+      - name: Calculate cache key for CodeCov
+        id: calculate_code_cov_hash
+        run: |
+          CODE_COV_HASH=$(curl -s https://uploader.codecov.io/latest/linux/codecov.SHA256SUM | cut -f1 -d" ")
+          echo "CODE_COV_HASH: $CODE_COV_HASH"
+          echo "::set-output name=codecov-hash::$CODE_COV_HASH"
+
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
         run: |
@@ -250,6 +259,25 @@ jobs:
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --skip-cache | xargs realpath --relative-to $(pwd))
 
+      - name: Cache CodeCov
+        id: codecov
+        uses: actions/cache@v2
+        with:
+          path: codecov
+          key: codecov-cache-${{ steps.calculate_code_cov_hash.outputs.codecov-hash }}
+
+      - name: Download codecov uploader
+        if: steps.codecov.outputs.cache-hit != 'true'
+        run: ./scripts/download-codecov-uploader.sh
+
+      - name: Prepare test targets
+        id: test_projects
+        run: |
+          CHUNKS=$(./scripts/ci/generate-chunks.sh test)
+          if [[ $CHUNKS != "[]" ]]; then
+            echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
+          fi
+
       - name: Prepare docker build targets
         id: build_map
         run: |
@@ -276,6 +304,58 @@ jobs:
         run: |
           UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-cypress)
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
+
+  tests:
+    needs:
+      - prepare
+    if: needs.prepare.outputs.TEST_CHUNKS
+    runs-on: ubuntu-20.04
+    timeout-minutes: 25
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      MAX_JOBS: 1
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Cache for NodeJS dependencies - host OS
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+
+      - name: Cache for generated files
+        uses: actions/cache@v2
+        with:
+          path: generated_files.tar.gz
+          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
+
+      - name: Untar generated files
+        run: tar zxvf generated_files.tar.gz
+
+      - name: Running tests
+        run: ./scripts/ci/run-in-parallel.sh 30_test
+
+      - name: Cache CodeCov
+        uses: actions/cache@v2
+        with:
+          path: codecov
+          key: codecov-cache-${{ needs.prepare.outputs.codecov-hash }}
+
+      - name: Set local bin directory to path
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          cp codecov "$HOME/.local/bin"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Upload coverage reports
+        run: ./scripts/ci/run-in-parallel.sh 50_upload-coverage
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   docker-build:
     needs:
