@@ -311,6 +311,9 @@
       "@island.is/island-ui/core/types": ["libs/island-ui/core/types.ts"],
       "@island.is/island-ui/theme": ["libs/island-ui/theme/src/index.ts"],
       "@island.is/island-ui/utils": ["libs/island-ui/utils/src/index.ts"],
+      "@island.is/island-ui/vanilla-extract-utils": [
+        "libs/island-ui/vanilla-extract-utils/src/index.ts"
+      ],
       "@island.is/judicial-system-web/*": ["apps/judicial-system/web/*"],
       "@island.is/judicial-system/audit-trail": [
         "libs/judicial-system/audit-trail/src/index.ts"

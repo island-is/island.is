@@ -1,7 +1,7 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import React, { PropsWithChildren } from 'react'
-import * as styles from './InfoCard.treat'
+import * as styles from './InfoCard.css'
 
 interface Props {
   data: Array<{ title: string; value?: string }>
@@ -14,13 +14,15 @@ interface Props {
     phoneNumber?: string
     defenderIsSpokesperson?: boolean
   }
-  isRCase?: boolean
+  isInvestigationCase?: boolean
 }
 
 const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
   return (
     <Box className={styles.infoCardContainer} data-testid="infoCard">
-      <Text variant="h4">{props.isRCase ? 'Varnaraðili' : 'Sakborningur'}</Text>
+      <Text variant="h4">
+        {props.isInvestigationCase ? 'Varnaraðili' : 'Sakborningur'}
+      </Text>
       <Box className={styles.infoCardTitleContainer}>
         <Box marginBottom={4}>
           <Text fontWeight="semiBold">

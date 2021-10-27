@@ -86,7 +86,7 @@ const PetitionView = () => {
               </GridColumn>
               <GridColumn span={['12/12', '4/12', '4/12']}>
                 <Text variant="h4">Ábyrgðarmaður:</Text>
-                <Text variant="default">{list.owner}</Text>
+                <Text variant="default">{list.ownerName}</Text>
               </GridColumn>
               <GridColumn span={['12/12', '4/12', '4/12']}>
                 <Text variant="h4">Fjöldi skráðir:</Text>
@@ -125,7 +125,9 @@ const PetitionView = () => {
                         <T.Row key={petition.id}>
                           <T.Data>{formatDate(list.created)}</T.Data>
                           <T.Data>
-                            {petition.meta.fullName ?? petition.endorser}
+                            {petition.meta.fullName
+                              ? petition.meta.fullName
+                              : 'Nafn ótilgreint'}
                           </T.Data>
                         </T.Row>
                       )

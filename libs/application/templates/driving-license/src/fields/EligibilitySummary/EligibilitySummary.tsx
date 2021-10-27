@@ -6,12 +6,8 @@ import ReviewSection, { ReviewSectionState, Step } from './ReviewSection'
 import { ApplicationEligibility, RequirementKey } from '../../types/schema'
 import { useFormContext } from 'react-hook-form'
 import { useQuery, gql } from '@apollo/client'
-import {
-  DrivingLicenseFakeData,
-  DrivingLicenseApplicationFor,
-  B_FULL,
-  YES,
-} from '../../lib/constants'
+import { DrivingLicenseFakeData, YES } from '../../lib/constants'
+import { DrivingLicenseApplicationFor, B_FULL } from '../../shared/constants'
 
 const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
   return eligibility.requirements.map(({ key, requirementMet }) =>

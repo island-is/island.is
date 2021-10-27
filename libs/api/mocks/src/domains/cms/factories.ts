@@ -40,7 +40,7 @@ export const image = factory<SystemMetadata<Image>>({
   typename: 'Image',
   width: 500,
   height: 500,
-  id: () => faker.random.uuid(),
+  id: () => faker.datatype.uuid(),
   url: () => faker.image.abstract(500, 500),
   contentType: 'img/jpeg',
   title: () => title(),
@@ -48,13 +48,13 @@ export const image = factory<SystemMetadata<Image>>({
 
 export const html = factory<Html>({
   typename: 'Html',
-  id: () => faker.random.uuid(),
+  id: () => faker.datatype.uuid(),
   document: () => wysiwyg(),
 })
 
 export const sectionWithImage = factory<SystemMetadata<SectionWithImage>>({
   typename: 'SectionWithImage',
-  id: () => faker.random.uuid(),
+  id: () => faker.datatype.uuid(),
   title: () => title(),
   html: () => html(),
   image: () => image(),
@@ -68,7 +68,7 @@ export const slice = simpleFactory(
 )
 
 export const subArticle = factory<SubArticle>({
-  id: () => faker.random.uuid(),
+  id: () => faker.datatype.uuid(),
   title: () => title(),
   slug: slugify('title'),
   body: () => [slice()],
@@ -77,21 +77,21 @@ export const subArticle = factory<SubArticle>({
 export const articleCategory = factory<ArticleCategory>({
   title: () => title(),
   slug: slugify('title'),
-  id: () => faker.random.uuid(),
+  id: () => faker.datatype.uuid(),
   description: () => faker.lorem.sentence(),
 })
 
 export const article = factory<SystemMetadata<Article>>({
   typename: 'Article',
-  id: () => faker.random.uuid(),
+  id: () => faker.datatype.uuid(),
   title: () => title(),
   body: () => slice.list(3),
   slug: slugify('title'),
   intro: () => faker.lorem.paragraph(),
   category: null,
   subArticles: () =>
-    faker.random.number(4) === 0
-      ? subArticle.list(faker.random.number({ min: 1, max: 4 }))
+    faker.datatype.number(4) === 0
+      ? subArticle.list(faker.datatype.number({ min: 1, max: 4 }))
       : [],
   relatedArticles: () => [],
   group: null,
@@ -99,7 +99,7 @@ export const article = factory<SystemMetadata<Article>>({
 })
 
 export const lifeEvent = factory<LifeEventPage>({
-  id: () => faker.random.uuid(),
+  id: () => faker.datatype.uuid(),
   title: () => title(),
   slug: slugify('title'),
   intro: () => faker.lorem.paragraph(),
@@ -120,14 +120,14 @@ export const menuLink = factory<MenuLinkWithChildren>({
 })
 
 export const menu = factory<Menu>({
-  id: faker.random.uuid(),
+  id: faker.datatype.uuid(),
   title: () => title(),
   links: () => link.list(4),
   menuLinks: () => menuLink.list(4),
 })
 
 export const groupedMenu = factory<GroupedMenu>({
-  id: faker.random.uuid(),
+  id: faker.datatype.uuid(),
   title: () => title(),
   menus: () => menu.list(5),
 })
@@ -136,20 +136,20 @@ export const alertBannerVariant = () =>
   faker.random.arrayElement(['error', 'info', 'success', 'warning', 'default'])
 
 export const alertBanner = factory<AlertBanner>({
-  id: () => faker.random.uuid(),
+  id: () => faker.datatype.uuid(),
   title: () => title(),
   description: () => faker.lorem.sentence(),
-  isDismissable: () => faker.random.boolean(),
+  isDismissable: () => faker.datatype.boolean(),
   dismissedForDays: 7,
   link: () => referenceLink(),
   bannerVariant: () => alertBannerVariant(),
-  showAlertBanner: () => faker.random.boolean(),
+  showAlertBanner: () => faker.datatype.boolean(),
 })
 
 export const articleSubgroup = factory<ArticleSubgroup>({
   title: () => title(),
   slug: slugify('title'),
-  importance: () => faker.random.number(),
+  importance: () => faker.datatype.number(),
 })
 
 export const articleGroup = factory<ArticleGroup>({
@@ -159,7 +159,7 @@ export const articleGroup = factory<ArticleGroup>({
 })
 
 export const news = factory<News>({
-  id: () => faker.random.uuid(),
+  id: () => faker.datatype.uuid(),
   title: () => title(),
   slug: slugify('title'),
   date: () => faker.date.past().toISOString(),
@@ -180,7 +180,7 @@ export const frontPageSlider = factory<FrontpageSlider>({
 export const featured = factory<Featured>({
   thing: () => referenceLink(),
   title: ({ thing }) => title(),
-  attention: () => faker.random.boolean(),
+  attention: () => faker.datatype.boolean(),
 })
 
 export const genericPage = factory<GenericPage>({
@@ -189,7 +189,7 @@ export const genericPage = factory<GenericPage>({
 })
 
 export const frontpage = factory<Frontpage>({
-  id: () => faker.random.uuid(),
+  id: () => faker.datatype.uuid(),
   title: () => title(),
   featured: () => featured.list(3),
   slides: () => frontPageSlider.list(2),

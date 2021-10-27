@@ -13,6 +13,7 @@ import { MunicipalityModel } from './models'
 
 import { apiBasePath, Municipality } from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { MunicipalityResponse } from './response'
 
 @UseGuards(IdsUserGuard)
 @Controller(apiBasePath)
@@ -22,11 +23,11 @@ export class MunicipalityController {
 
   @Get('municipality/:id')
   @ApiOkResponse({
-    type: MunicipalityModel,
+    type: MunicipalityResponse,
     description: 'Gets municipality',
   })
-  async getById(@Param('id') id: string): Promise<Municipality> {
-    const municipality = await this.municipalityService.findById(id)
+  async getById(@Param('id') id: string): Promise<MunicipalityResponse> {
+    const municipality = await this.municipalityService.findByMunicipalityId(id)
 
     if (!municipality) {
       throw new NotFoundException(`municipality ${id} not found`)

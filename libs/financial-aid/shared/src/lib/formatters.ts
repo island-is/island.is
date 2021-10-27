@@ -7,8 +7,9 @@ import {
   FileType,
   RolesRule,
   FamilyStatus,
+  MartialStatusType,
 } from './enums'
-import { ApplicationEvent } from './interfaces'
+import { Aid, ApplicationEvent } from './interfaces'
 import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -41,6 +42,7 @@ export const getStateFromUrl: KeyMapping<
 > = {
   New: [ApplicationState.NEW],
   InProgress: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+  MyCases: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
   Processed: [ApplicationState.REJECTED, ApplicationState.APPROVED],
 }
 
@@ -55,43 +57,71 @@ export const getEventTypesFromService: KeyMapping<
 export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
   '/': ApplicationStateUrl.NEW,
   '/nymal': ApplicationStateUrl.NEW,
-  '/vinnslu': ApplicationStateUrl.INPROGRESS,
+  '/vinnslu': ApplicationStateUrl.MYCASES,
+  '/teymid': ApplicationStateUrl.INPROGRESS,
   '/afgreidd': ApplicationStateUrl.PROCESSED,
 }
 
-export const getEventType: KeyMapping<
-  ApplicationEventType,
-  { header: string; text: string; isStaff: boolean }
-> = {
-  New: { header: 'Ný umsókn', text: 'sendi inn umsókn', isStaff: false },
-  DataNeeded: {
-    header: 'Vantar gögn',
-    text: 'óskaði eftir gögnum',
-    isStaff: true,
-  },
-  InProgress: { header: 'Í vinnslu', text: 'breytti stöðu', isStaff: true },
-  Rejected: { header: 'Synjað', text: 'synjaði umsókn', isStaff: true },
-  Approved: { header: 'Samþykkt', text: 'samþykkti umsókn', isStaff: true },
-  StaffComment: {
-    header: 'Athugasemd',
-    text: 'skrifaði athugasemd',
-    isStaff: true,
-  },
-  UserComment: {
-    header: 'Athugasemd',
-    text: 'skrifaði athugasemd',
-    isStaff: false,
-  },
-  FileUpload: {
-    header: 'Ný gögn',
-    text: 'sendi inn gögn',
-    isStaff: false,
-  },
-  AssignCase: {
-    header: 'Umsjá',
-    text: 'tók að sér málið',
-    isStaff: true,
-  },
+export const getEventData = (
+  event: ApplicationEvent,
+  applicantName: string,
+): { header: string; text: string; prefix: string } => {
+  switch (event.eventType) {
+    case ApplicationEventType.NEW:
+      return {
+        header: 'Ný umsókn',
+        text: 'sendi inn umsókn',
+        prefix: `Umsækjandi ${applicantName}`,
+      }
+    case ApplicationEventType.DATANEEDED:
+      return {
+        header: 'Vantar gögn',
+        text: 'óskaði eftir gögnum',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.INPROGRESS:
+      return {
+        header: 'Í vinnslu',
+        text: 'breytti stöðu',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.REJECTED:
+      return {
+        header: 'Synjað',
+        text: 'synjaði umsókn',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.APPROVED:
+      return {
+        header: 'Samþykkt',
+        text: 'samþykkti umsókn',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.STAFFCOMMENT:
+      return {
+        header: 'Athugasemd',
+        text: 'skrifaði athugasemd',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+    case ApplicationEventType.USERCOMMENT:
+      return {
+        header: 'Athugasemd',
+        text: 'skrifaði athugasemd',
+        prefix: `Umsækjandi ${applicantName}`,
+      }
+    case ApplicationEventType.FILEUPLOAD:
+      return {
+        header: 'Ný gögn',
+        text: 'sendi inn gögn',
+        prefix: `Umsækjandi ${applicantName}`,
+      }
+    case ApplicationEventType.ASSIGNCASE:
+      return {
+        header: 'Umsjá',
+        text: 'tók að sér málið',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
+  }
 }
 
 export const eventTypeFromApplicationState: KeyMapping<
@@ -160,26 +190,22 @@ export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
 
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,
-  aid: {
-    ownApartmentOrLease: number
-    withOthersOrUnknow: number
-    withParents: number
-  },
+  aid: Aid,
 ): number => {
   switch (homeCircumstances) {
     case 'OwnPlace':
-      return aid.ownApartmentOrLease
+      return aid.ownPlace
     case 'RegisteredLease':
-      return aid.ownApartmentOrLease
+      return aid.registeredRenting
     case 'WithOthers':
-      return aid.ownApartmentOrLease
+      return aid.unregisteredRenting
     case 'Other':
     case 'Unknown':
-      return aid.withOthersOrUnknow
+      return aid.unknown
     case 'WithParents':
-      return aid.withParents
+      return aid.livesWithParents
     default:
-      return aid.withParents
+      return aid.unknown
   }
 }
 
@@ -188,4 +214,97 @@ export const getCommentFromLatestEvent = (
   findState: ApplicationEventType,
 ) => {
   return applicationEvents.find((el) => el.eventType === findState)
+}
+
+export const logoKeyFromMunicipalityCode: KeyMapping<string, string> = {
+  '': 'sambandid.svg',
+  '5706': 'akrahreppur.svg',
+  '3000': 'akranes.svg',
+  '6000': 'akureyri.svg',
+  '8200': 'arborg.svg',
+  '4901': 'arneshreppur.svg',
+  '8610': 'asahreppur.svg',
+  '8721': 'blaskogabyggd.svg',
+  '5604': 'blonduosbaer.svg',
+  '4100': 'bolungarvik.svg',
+  '3609': 'borgarbyggd.svg',
+  '3811': 'dalabyggd.svg',
+  '6400': 'dalvikurbyggd.svg',
+  '3713': 'eyja-_og_miklaholtshreppur.svg',
+  '6513': 'eyjafjardarsveit.svg',
+  '6250': 'fjallabyggd.svg',
+  '7300': 'fjardabyggd.svg',
+  '7505': 'fljotsdalshreppur.svg',
+  '8722': 'floahreppur.svg',
+  '1300': 'gardabaer.svg',
+  '8719': 'grimsnes-_og_grafningshreppur.svg',
+  '2300': 'grindavikurbaer.svg',
+  '3709': 'grundarfjardarbaer.svg',
+  '6602': 'grytubakkahreppur.svg',
+  '1400': 'hafnarfjordur.svg',
+  '3710': 'helgafellssveit.svg',
+  '6515': 'horgarsveit.svg',
+  '8401': 'hornafjordur.svg',
+  '8710': 'hrunamannahreppur.svg',
+  '5508': 'hunathing_vestra.svg',
+  '5612': 'hunavatnshreppur.svg',
+  '3511': 'hvalfjardarsveit.svg',
+  '8716': 'hveragerdisbaer.svg',
+  '4200': 'isafjardarbaer.svg',
+  '4902': 'kaldrananeshreppur.svg',
+  '1606': 'kjosarhreppur.svg',
+  '1000': 'kopavogur.svg',
+  '6709': 'langanesbyggd.svg',
+  '1604': 'mosfellsbaer.svg',
+  '7400': 'mulathing.svg',
+  '8508': 'myrdalshreppur.svg',
+  '6100': 'nordurthing.svg',
+  '8717': 'olfus.svg',
+  '8613': 'rangarthing_eystra.svg',
+  '8614': 'rangarthing_ytra.svg',
+  '4502': 'reykholahreppur.svg',
+  '2000': 'reykjanesbaer.svg',
+  '1100': 'seltjarnarnes.svg',
+  '8509': 'skaftarhreppur.svg',
+  '5611': 'skagabyggd.svg',
+  '5200': 'skagafjordur.svg',
+  '5609': 'skagastrond.svg',
+  '8720': 'skeida-_og_gnupverjahreppur.svg',
+  '3506': 'skorradalur.svg',
+  '6607': 'skutustadahreppur.svg',
+  '3714': 'snaefellsbaer.svg',
+  '4911': 'strandabyggd.svg',
+  '3711': 'stykkisholmsbaer.svg',
+  '4803': 'sudavikurhreppur.svg',
+  '2510': 'sudurnesjabaer.svg',
+  '6706': 'svalbardshreppur.svg',
+  '6601': 'svalbardsstrandarhreppur.svg',
+  '4604': 'talknafjardarhreppur.svg',
+  '6612': 'thingeyjarsveit.svg',
+  '6611': 'tjorneshreppur.svg',
+  '8000': 'vestmannaeyjabaer.svg',
+  '4607': 'vesturbyggd.svg',
+  '2506': 'vogar.svg',
+  '7502': 'vopnafjardarhreppur.svg',
+}
+
+export const martialStatusTypeFromMartialCode = (
+  martialCode: string | undefined,
+): MartialStatusType => {
+  switch (martialCode) {
+    case 'L':
+    case 'G':
+    case '8':
+    case '7':
+    case '3':
+    case '0':
+      return MartialStatusType.MARRIED
+    case '9':
+    case '6':
+    case '5':
+    case '4':
+    case '1':
+    default:
+      return MartialStatusType.SINGLE
+  }
 }

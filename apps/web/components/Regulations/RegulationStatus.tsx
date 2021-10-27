@@ -1,4 +1,4 @@
-import * as s from './RegulationStatus.treat'
+import * as s from './RegulationStatus.css'
 
 import React from 'react'
 import { ISODate, interpolate, toISODate } from '@island.is/regulations'

@@ -8,7 +8,7 @@ import {
   ProgressMeter,
   ProgressMeterVariant,
 } from '../ProgressMeter/ProgressMeter'
-import * as styles from './ActionCard.treat'
+import * as styles from './ActionCard.css'
 import { Icon } from '../IconRC/Icon'
 
 type ActionCardProps = {
