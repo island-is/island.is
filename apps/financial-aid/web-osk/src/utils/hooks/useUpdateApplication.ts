@@ -14,7 +14,7 @@ import { FormContext } from '@island.is/financial-aid-web/osk/src/components/For
 import { useFileUpload } from './useFileUpload'
 
 const useUpdateApplication = () => {
-  const { form, updateForm } = useContext(FormContext)
+  const { form } = useContext(FormContext)
   const { uploadFiles } = useFileUpload(form.otherFiles)
 
   const allFiles = form.incomeFiles
