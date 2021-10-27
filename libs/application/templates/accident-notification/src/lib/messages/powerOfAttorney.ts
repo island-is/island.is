@@ -54,7 +54,7 @@ export const powerOfAttorney = {
   upload: defineMessages({
     heading: {
       id: 'an.application:powerOfAttorney.upload.heading',
-      defaultMessage: 'Hlaða upp umboði',
+      defaultMessage: 'Fylgiskjöl',
       description: 'Heading of upload section',
     },
     description: {
@@ -65,7 +65,7 @@ export const powerOfAttorney = {
     },
     sectionTitle: {
       id: 'an.application:powerOfAttorney.upload.sectionTitle',
-      defaultMessage: 'Hlaða upp umboði',
+      defaultMessage: 'Fylgiskjöl',
       description: 'Section title of upload section',
     },
     uploadDescription: {
