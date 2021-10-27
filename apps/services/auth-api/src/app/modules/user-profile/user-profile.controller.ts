@@ -9,7 +9,7 @@ import {
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { environment } from '../../../environments'
-import { trace } from '@gamechanger/datadog-apm'
+import { trace } from '@theo.gravity/datadog-apm'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('user-profile')

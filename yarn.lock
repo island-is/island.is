@@ -4259,13 +4259,6 @@
     chalk "^4.1.1"
     tslib "^2.1.0"
 
-"@gamechanger/datadog-apm@0.2.4":
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/@gamechanger/datadog-apm/-/datadog-apm-0.2.4.tgz#93255f583f5a8d5a1a7562fc4e0156a38d0e4685"
-  integrity sha512-s/cJzSFgP8Y0vwxtQkTJzDP8mWVv6/qKpDHueyq3Z6YCESmQ4lrUc/Olp91QKDes88O1VB/vqUlW4UoweUylmw==
-  dependencies:
-    dd-trace "^1.0.0"
-
 "@gperdomor/nx-docker@0.2.3":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@gperdomor/nx-docker/-/nx-docker-0.2.3.tgz#0eec27100fd7b1882568bce87add12b6124d9e17"
@@ -7189,6 +7182,13 @@
   integrity sha512-FzTnKvb0KC4T84G6uTx971ja8OOqLlsprzWbeRyd8f1MDwbcLIFgx0Hyr56izY9m9y2KwHGVKeVEkTPslw32lw==
   dependencies:
     "@babel/runtime" "^7.10.2"
+
+"@theo.gravity/datadog-apm@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@theo.gravity/datadog-apm/-/datadog-apm-2.0.0.tgz#c9383f7f9d42bd3937d2d06cfdf38210edc21c34"
+  integrity sha512-beVYfibhXkTYcVmBUkYvolU9IxgspFVf5idYGPXcxlIhVX6VN76b/ojoHgIwbnl/Us3HxCN7QgbIcXibT2Xx+A==
+  dependencies:
+    dd-trace "^1.5.0"
 
 "@tinymce/tinymce-react@^3.8.4":
   version "3.12.6"
@@ -13615,18 +13615,18 @@ dd-trace@0.33.1:
     source-map-resolve "^0.6.0"
     url-parse "^1.4.3"
 
-dd-trace@^1.0.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/dd-trace/-/dd-trace-1.6.0.tgz#8c6ff7f7f810b635757b343a5019055afc69371c"
-  integrity sha512-8ZrZSwJZAhT2RCBR7AKxWmM/9tAuDzZoN6Z+y8Yo0Ai51VhpZIbKqEkMvz77Tla5j+RUkvUB5VYRphxB+KhsNg==
+dd-trace@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/dd-trace/-/dd-trace-1.5.0.tgz#2962adb15690b93e26862eff319beb50e1125384"
+  integrity sha512-mVWYp6hkMlO0uKB75GGpwuIO8Jv/BYWW1aJqy3LPkJ5VyBshcqWf5yUUhHmNDH55c2NrCK4oy/Q0tfxUXMVmCw==
   dependencies:
-    "@datadog/native-metrics" "^1.1.0"
-    "@datadog/pprof" "^0.3.0"
+    "@datadog/native-metrics" "^1.0.0"
+    "@datadog/pprof" "^0.1.3"
     "@datadog/sketches-js" "^1.0.4"
-    "@types/node" ">=12"
+    "@types/node" "^10.12.18"
     crypto-randomuuid "^1.0.0"
     form-data "^3.0.0"
-    import-in-the-middle "^1.1.2"
+    import-in-the-middle "^1.1.1"
     koalas "^1.0.2"
     limiter "^1.1.4"
     lodash.kebabcase "^4.1.1"

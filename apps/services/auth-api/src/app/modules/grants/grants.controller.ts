@@ -14,7 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { trace } from '@gamechanger/datadog-apm'
+import { trace } from '@theo.gravity/datadog-apm'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('grants')
