@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Case, Feature } from '@island.is/judicial-system/types'
+import { Case, Feature, PoliceCaseFile } from '@island.is/judicial-system/types'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
 import { useQuery } from '@apollo/client'
 import {
@@ -14,8 +14,15 @@ import { useRouter } from 'next/router'
 import { StepFiveForm } from './StepFiveForm'
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 
+export interface PoliceCaseFilesData {
+  files: PoliceCaseFile[]
+  isLoading: boolean
+  hasError: boolean
+}
+
 export const StepFive: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
+  const [pCaseFiles, setPCaseFiles] = useState<PoliceCaseFilesData>()
 
   const router = useRouter()
   const id = router.query.id
@@ -27,11 +34,14 @@ export const StepFive: React.FC = () => {
 
   const { features } = useContext(FeatureContext)
 
-  const { data: policeData } = useQuery(PoliceCaseFilesQuery, {
-    variables: { input: { caseId: id } },
-    fetchPolicy: 'no-cache',
-    skip: !features.includes(Feature.POLICE_CASE_FILES),
-  })
+  const { data: policeData, loading: policeDataLoading } = useQuery(
+    PoliceCaseFilesQuery,
+    {
+      variables: { input: { caseId: id } },
+      fetchPolicy: 'no-cache',
+      skip: !features.includes(Feature.POLICE_CASE_FILES),
+    },
+  )
 
   const resCase = data?.case
 
@@ -44,6 +54,29 @@ export const StepFive: React.FC = () => {
       setWorkingCase(resCase)
     }
   }, [id, workingCase, setWorkingCase, resCase])
+
+  useEffect(() => {
+    console.log('pCaseFiles', policeData)
+    if (policeData && policeData.policeCaseFiles) {
+      setPCaseFiles({
+        files: policeData.policeCaseFiles,
+        isLoading: false,
+        hasError: false,
+      })
+    } else if (policeDataLoading) {
+      setPCaseFiles({
+        files: policeData ? policeData.policeCaseFiles : [],
+        isLoading: true,
+        hasError: false,
+      })
+    } else {
+      setPCaseFiles({
+        files: policeData ? policeData.policeCaseFiles : [],
+        isLoading: false,
+        hasError: true,
+      })
+    }
+  }, [policeData, policeDataLoading])
 
   return (
     <PageLayout
@@ -62,40 +95,7 @@ export const StepFive: React.FC = () => {
         <StepFiveForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
-          policeCaseFiles={
-            policeData?.policeCaseFiles || [
-              {
-                fkRMal_ID: '70cdc78c-d5cf-48eb-a2a2-17287a7ed676',
-                rvMalSkjolMals_ID: 327014,
-                heitiSkjals: 'Vettvangsskýrsla - Umferðalagabrot - LokeApp',
-                flokkurSkjals: 'Lögregluskýrsla',
-              },
-              {
-                fkRMal_ID: '70cdc78c-d5cf-48eb-a2a2-17287a7ed676',
-                rvMalSkjolMals_ID: 327116,
-                heitiSkjals: 'Averkavottorð',
-                flokkurSkjals: 'Áverkavottorð',
-              },
-              {
-                fkRMal_ID: '70cdc78c-d5cf-48eb-a2a2-17287a7ed676',
-                rvMalSkjolMals_ID: 327147,
-                heitiSkjals: 'Rafræn sendingargátt',
-                flokkurSkjals: 'Áverkavottorð',
-              },
-              {
-                fkRMal_ID: '70cdc78c-d5cf-48eb-a2a2-17287a7ed676',
-                rvMalSkjolMals_ID: 326932,
-                heitiSkjals: 'alþjóða',
-                flokkurSkjals: 'Vegna verkbeiðni',
-              },
-              {
-                fkRMal_ID: '70cdc78c-d5cf-48eb-a2a2-17287a7ed676',
-                rvMalSkjolMals_ID: 326896,
-                heitiSkjals: 'Afrit af flugmiða_Test skjal_4',
-                flokkurSkjals: 'Sýnaskrá',
-              },
-            ]
-          }
+          policeCaseFiles={pCaseFiles}
         />
       ) : null}
     </PageLayout>

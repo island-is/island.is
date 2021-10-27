@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useIntl } from 'react-intl'
 import {
@@ -11,7 +11,6 @@ import {
   Checkbox,
   Button,
 } from '@island.is/island-ui/core'
-import { PoliceCaseFile } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -29,11 +28,12 @@ import MarkdownWrapper from '@island.is/judicial-system-web/src/shared-component
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './StepFive.css'
+import { PoliceCaseFilesData } from './StepFive'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
-  policeCaseFiles: PoliceCaseFile[]
+  policeCaseFiles?: PoliceCaseFilesData
 }
 
 export const StepFiveForm: React.FC<Props> = (props) => {
@@ -41,16 +41,24 @@ export const StepFiveForm: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     { id: string; label: string; checked: boolean }[]
-  >(
-    policeCaseFiles.map((policeCaseFile) => {
-      return {
-        id: policeCaseFile.rvMalSkjolMals_ID,
-        label: policeCaseFile.heitiSkjals,
-        checked: false,
-      }
-    }),
-  )
+  >([])
   const [checkAllChecked, setCheckAllChecked] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (policeCaseFiles?.files) {
+      setPoliceCaseFileList(
+        policeCaseFiles.files.map((policeCaseFile) => {
+          return {
+            id: policeCaseFile.id,
+            label: policeCaseFile.name,
+            checked: false,
+          }
+        }),
+      )
+    }
+  }, [policeCaseFiles])
+
+  console.log(policeCaseFiles)
 
   const {
     files,
@@ -119,7 +127,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box marginBottom={5}>
-          {policeCaseFiles.length > 0 ? (
+          {policeCaseFileList.length > 0 ? (
             <AnimateSharedLayout>
               <motion.div layout className={styles.policeCaseFilesContainer}>
                 <motion.ul layout>
@@ -178,6 +186,8 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                 <Button onClick={uploadToRVG}>Hlaða upp</Button>
               </motion.div>
             </AnimateSharedLayout>
+          ) : policeCaseFiles?.isLoading ? (
+            <Text>is loading</Text>
           ) : (
             <Text>Engin gogn</Text>
           )}
