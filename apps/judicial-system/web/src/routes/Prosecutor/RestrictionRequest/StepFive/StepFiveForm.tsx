@@ -39,11 +39,20 @@ interface Props {
   policeCaseFiles?: PoliceCaseFilesData
 }
 
+interface PoliceCaseFile {
+  id: string
+  label: string
+  checked: boolean
+}
+
 export const StepFiveForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, policeCaseFiles } = props
   const { formatMessage } = useIntl()
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
-    { id: string; label: string; checked: boolean }[]
+    PoliceCaseFile[]
+  >([])
+  const [uploadedPoliceCaseFiles, setUploadedPoliceCaseFiles] = useState<
+    UploadFile[]
   >([])
   const [checkAllChecked, setCheckAllChecked] = useState<boolean>(false)
 
@@ -123,6 +132,17 @@ export const StepFiveForm: React.FC<Props> = (props) => {
           key,
           size,
         } as UploadFile)
+
+        setUploadedPoliceCaseFiles([
+          ...uploadedPoliceCaseFiles,
+          {
+            type: 'application/pdf',
+            name: policeCaseFile.label,
+            status: 'done',
+            key,
+            size,
+          } as UploadFile,
+        ])
 
         setPoliceCaseFileList(
           newPoliceCaseFileList.filter((p) => p.id !== policeCaseFile.id),
@@ -236,7 +256,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         <Box marginBottom={5}>
           <ContentBlock>
             <InputFileUpload
-              fileList={files}
+              fileList={[...uploadedPoliceCaseFiles, ...files]}
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
               onChange={onChange}
