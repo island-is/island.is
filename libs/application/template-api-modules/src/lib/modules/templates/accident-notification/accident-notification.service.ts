@@ -53,7 +53,7 @@ export class AccidentNotificationService {
       } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
       })
-      /*
+
       await this.sharedTemplateAPIService.sendEmail(
         (props) =>
           generateConfirmationEmail(
@@ -62,7 +62,7 @@ export class AccidentNotificationService {
             this.accidentConfig.applicationSenderEmail,
           ),
         application,
-      )*/
+      )
 
       // Request representative review when applicable
       if (shouldRequestReview) {
@@ -79,9 +79,6 @@ export class AccidentNotificationService {
       console.log('ERROR', e)
       throw new Error('Villa kom upp við vistun á umsókn.')
     }
-    //throw new Exception('under development! wont let it submit!')
-
-    // Send confirmation email to applicant
   }
 
   async addAttachment({ application }: TemplateApiModuleActionProps) {
@@ -89,8 +86,21 @@ export class AccidentNotificationService {
     const attachments = await this.attachmentProvider.gatherAllAttachments(
       application,
     )
-    /*
-    const res = await this.documentApi.documentDocumentAttachment({
+    const { data } = application.externalData.submitApplication
+
+    //Send multiple attachments
+    const promises = attachments.map((attachment) =>
+      this.documentApi.documentDocumentAttachment({
+        documentAttachment: {
+          attachmentBody: attachment.content,
+          attachmentType: attachment.attachmentType,
+          title: attachment.name,
+        },
+        ihiDocumentID: 23,
+      }),
+    )
+
+    const res = this.documentApi.documentDocumentAttachment({
       documentAttachment: {
         attachmentBody: '',
         attachmentType: 1,
@@ -98,7 +108,7 @@ export class AccidentNotificationService {
       },
       ihiDocumentID: 23,
     })
-*/
+
     return {}
   }
   async reviewApplication({ application }: TemplateApiModuleActionProps) {

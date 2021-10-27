@@ -4,6 +4,10 @@ import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
+import {
+  AccidentNotificationAttachment,
+  AttachmentTypeEnum,
+} from './types/attachments'
 
 @Injectable()
 export class AttachmentProvider {
@@ -14,26 +18,20 @@ export class AttachmentProvider {
 
   async gatherAllAttachments(
     application: Application,
-  ): Promise<{ name: string; content: string }[]> {
+  ): Promise<AccidentNotificationAttachment[]> {
     try {
       const injuryCertificateFile = await this.prepareApplicationAttachments(
         application,
         'attachments.injuryCertificateFile',
-      )
-      const deathCertificateFile = await this.prepareApplicationAttachments(
-        application,
-        'attachments.deathCertificateFile',
+        AttachmentTypeEnum.INJURY_CERTIFICATE,
       )
       const powerOfAttorneyFile = await this.prepareApplicationAttachments(
         application,
         'attachments.powerOfAttorneyFile',
+        AttachmentTypeEnum.POWER_OF_ATTORNEY,
       )
 
-      return [
-        ...injuryCertificateFile,
-        ...deathCertificateFile,
-        ...powerOfAttorneyFile,
-      ]
+      return [...injuryCertificateFile, ...powerOfAttorneyFile]
     } catch (error) {
       this.logger.error('Failed to gather attachments for application', {
         error,
@@ -45,11 +43,12 @@ export class AttachmentProvider {
   private async prepareApplicationAttachments(
     application: Application,
     answerKey: string,
-  ): Promise<{ name: string; content: string }[]> {
+    attachmentType: AttachmentTypeEnum,
+  ): Promise<AccidentNotificationAttachment[]> {
     const attachments = getValueViaPath(
       application.answers,
       answerKey,
-    ) as Array<{ key: string; name: string }>
+    ) as Array<AccidentNotificationAttachment>
     const hasAttachments = attachments && attachments?.length > 0
 
     if (!hasAttachments) {
@@ -66,12 +65,12 @@ export class AttachmentProvider {
 
         if (!url) {
           this.logger.info('Failed to get url from application state')
-          return { name, content: 'no content' }
+          return { name, content: 'no content', attachmentType }
         }
         const fileContent =
           (await this.getApplicationFilecontentAsBase64(url)) ?? ''
 
-        return { name, content: fileContent }
+        return { name, content: fileContent, attachmentType }
       }),
     )
   }
