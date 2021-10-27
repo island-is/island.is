@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { ValidationFailed } from '@island.is/nest/problem'
 import { EmailService } from '@island.is/email-service'
 import { ZendeskService } from '@island.is/clients/zendesk'
 import { ContentfulRepository, localeMap } from '@island.is/cms'
@@ -14,8 +15,6 @@ import {
 import { getTemplate as getContactUsTemplate } from './emailTemplates/contactUs'
 import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsAStory'
 import { getTemplate as getServiceWebFormsTemplate } from './emailTemplates/serviceWebForms'
-
-const LOG_CATEGORY = 'communications-service'
 
 type SendEmailInput =
   | ContactUsInput
@@ -52,35 +51,39 @@ export class CommunicationsService {
   ): Promise<ServiceWebFormsInputWithInstitutionEmail> {
     const institutionSlug = input.institutionSlug
 
-    try {
-      const contentfulRespository = new ContentfulRepository()
+    const contentfulRespository = new ContentfulRepository()
 
-      const result = await contentfulRespository.getLocalizedEntries(
-        localeMap['is'],
-        {
-          ['content_type']: 'organization',
-          'fields.slug': institutionSlug,
-        },
-      )
+    const result = await contentfulRespository.getLocalizedEntries(
+      localeMap['is'],
+      {
+        ['content_type']: 'organization',
+        'fields.slug': institutionSlug,
+      },
+    )
 
-      const item = result?.total > 0 ? result?.items[0] : null
-      const institutionEmail = (item?.fields as { email?: string })?.email
+    const errors = {}
 
-      if (!institutionEmail) {
-        throw new Error(`No email address found for ${institutionSlug}`)
-      }
+    const item = result?.items?.[0]
 
-      return {
-        ...input,
-        institutionEmail,
-      }
-    } catch (e) {
-      this.logger.error('Could not get institution email', {
-        error: e.message,
-        category: LOG_CATEGORY,
-      })
+    if (!item) {
+      errors[
+        'institutionSlug'
+      ] = `Unexpected institution slug "${institutionSlug}"`
+    }
 
-      throw new Error('Could not get institution email')
+    const institutionEmail = (item?.fields as { email?: string })?.email
+
+    if (!institutionEmail) {
+      errors['institutionEmail'] = 'Institution email not found'
+    }
+
+    if (Object.keys(errors).length) {
+      throw new ValidationFailed(errors)
+    }
+
+    return {
+      ...input,
+      institutionEmail,
     }
   }
 
