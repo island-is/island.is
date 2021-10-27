@@ -140,7 +140,7 @@ const devConfig = {
     defaultNamespace: '@island.is/api',
   },
   paymentSchedule: {
-    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     xRoadProviderId:
       process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID ??
       'IS-DEV/GOV/10021/FJS-Public',
