@@ -33,14 +33,14 @@ const AdminProvider = ({ children }: PageProps) => {
   const { data, error } = useQuery(CurrentUserQuery, {
     fetchPolicy: 'no-cache',
   })
-  const loggedInUser = data?.currentUser
+  const loggedInUser: User = data?.currentUser
 
   const { municipality, setMunicipality } = useMunicipality()
 
   useEffect(() => {
-    if (loggedInUser && !admin) {
+    if (loggedInUser && !admin && loggedInUser.staff) {
       setAdmin(loggedInUser)
-      setMunicipality(loggedInUser.municipalityId)
+      setMunicipality(loggedInUser.staff.municipalityId)
       setIsAuthenticated(true)
     }
   }, [setAdmin, loggedInUser, admin])
