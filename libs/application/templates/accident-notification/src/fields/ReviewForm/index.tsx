@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/core'
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useMemo } from 'react'
 import { FormOverviewInReview } from '../FormOverviewInReview'
 import { InReviewSteps } from '../InReviewSteps'
 import { UploadAttachmentsInReview } from '../UploadAttachmentsInReview'
@@ -13,11 +13,10 @@ type InReviewStepsProps = {
 }
 
 export const ReviewForm: FC<FieldBaseProps & InReviewStepsProps> = (props) => {
-  const { application, field } = props
+  const { application, field, refetch } = props
   const isAssignee = !!field.props.isAssignee
   const [state, setState] = useState('inReviewSteps')
-
-  const ShowScreen = () => {
+  const showScreen = (state: string) => {
     switch (state) {
       case 'inReviewSteps':
         return (
@@ -32,6 +31,7 @@ export const ReviewForm: FC<FieldBaseProps & InReviewStepsProps> = (props) => {
           <UploadAttachmentsInReview
             application={application}
             setState={setState}
+            refetch={refetch}
           />
         )
       case 'overview':
@@ -52,6 +52,5 @@ export const ReviewForm: FC<FieldBaseProps & InReviewStepsProps> = (props) => {
         )
     }
   }
-
-  return <ShowScreen />
+  return showScreen(state)
 }

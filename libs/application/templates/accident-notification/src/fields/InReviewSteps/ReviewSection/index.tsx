@@ -38,7 +38,6 @@ const ReviewSection: FC<ReviewSectionProps> = ({
 }) => {
   const handleButtonClick = () =>
     goToScreen(action?.showAlways ? 'uploadDocuments' : 'overview')
-
   if (!visible) return null
 
   return (

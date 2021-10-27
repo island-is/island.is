@@ -1,9 +1,14 @@
-import { DefaultEvents, FieldBaseProps } from '@island.is/application/core'
+import {
+  DefaultEvents,
+  FieldBaseProps,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import React, { FC, useState } from 'react'
 import { inReview, overview, thirdPartyComment } from '../../lib/messages'
+import { ReviewApprovalEnum } from '../../types'
 import { FormOverview } from '../FormOverview'
 import { ConfirmationModal } from './ConfirmationModal'
 
@@ -20,12 +25,21 @@ export const FormOverviewInReview: FC<FormOverviewInReviewProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { application, refetch } = props
+  const reviewApproval = getValueViaPath(
+    application.answers,
+    'reviewApproval',
+    ReviewApprovalEnum.NOTREVIEWED,
+  )
+
   const [rejectModalVisibility, setRejectModalVisibility] = useState<boolean>(
     false,
   )
   const [approveModalVisibility, setApproveModalVisibility] = useState<boolean>(
     false,
   )
+
+  const shouldReview =
+    isAssignee && reviewApproval === ReviewApprovalEnum.NOTREVIEWED
 
   const onBackButtonClick = () => {
     setState('inReviewSteps')
@@ -50,7 +64,7 @@ export const FormOverviewInReview: FC<FormOverviewInReviewProps> = ({
           {formatMessage(overview.labels.missingDocumentsButton)}
         </Button>
       </Box>
-      {isAssignee && (
+      {shouldReview && (
         <Box marginBottom={6}>
           <Text variant="h4" paddingBottom={2}>
             {formatMessage(thirdPartyComment.general.title)}
@@ -76,7 +90,7 @@ export const FormOverviewInReview: FC<FormOverviewInReviewProps> = ({
         <Button variant="ghost" onClick={onBackButtonClick}>
           {formatMessage(inReview.buttons.backButton)}
         </Button>
-        {isAssignee && (
+        {shouldReview && (
           <Box display="flex" justifyContent="spaceBetween">
             <Button
               icon="warning"

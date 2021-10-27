@@ -53,6 +53,7 @@ export class AccidentNotificationService {
       } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
       })
+      /*
       await this.sharedTemplateAPIService.sendEmail(
         (props) =>
           generateConfirmationEmail(
@@ -62,7 +63,7 @@ export class AccidentNotificationService {
             ihiDocumentID,
           ),
         application,
-      )
+      )*/
 
       // Request representative review when applicable
       if (shouldRequestReview) {
@@ -83,5 +84,28 @@ export class AccidentNotificationService {
     //throw new Exception('under development! wont let it submit!')
 
     // Send confirmation email to applicant
+  }
+
+  async addAttachment({ application }: TemplateApiModuleActionProps) {
+    console.log('adding attachment')
+    const attachments = await this.attachmentProvider.gatherAllAttachments(
+      application,
+    )
+    /*
+    const res = await this.documentApi.documentDocumentAttachment({
+      documentAttachment: {
+        attachmentBody: '',
+        attachmentType: 1,
+        title: '',
+      },
+      ihiDocumentID: 23,
+    })
+*/
+    return {}
+  }
+  async reviewApplication({ application }: TemplateApiModuleActionProps) {
+    console.log('reviewApplicationt')
+
+    return {}
   }
 }
