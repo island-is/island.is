@@ -69,7 +69,6 @@ export class HealthInsuranceService {
     const accidentStatus = await this.accidentNotificationApi.documentGetAccidentStatus(
       { ihiDocumentID: ihiDocumentID },
     )
-    console.log('managed to fetch')
     if (!accidentStatus) return null
     return {
       numberIHI: accidentStatus.numberIHI,
