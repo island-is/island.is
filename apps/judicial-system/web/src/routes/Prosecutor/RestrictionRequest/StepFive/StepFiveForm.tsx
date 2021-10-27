@@ -55,6 +55,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     UploadFile[]
   >([])
   const [checkAllChecked, setCheckAllChecked] = useState<boolean>(false)
+  const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const {
     files,
@@ -118,36 +119,40 @@ export const StepFiveForm: React.FC<Props> = (props) => {
 
   const uploadToRVG = async () => {
     const newPoliceCaseFileList = [...policeCaseFileList]
+    const filesToUpload = policeCaseFileList.filter((p) => p.checked)
+    setIsUploading(true)
 
-    policeCaseFileList
-      .filter((p) => p.checked)
-      .forEach(async (policeCaseFile) => {
-        const { key, size } = await uploadPoliceCaseFile(
-          policeCaseFile.id,
-          policeCaseFile.label,
-        )
+    filesToUpload.forEach(async (policeCaseFile, index) => {
+      const { key, size } = await uploadPoliceCaseFile(
+        policeCaseFile.id,
+        policeCaseFile.label,
+      )
 
-        await addFileToCase({
+      await addFileToCase({
+        type: 'application/pdf',
+        key,
+        size,
+      } as UploadFile)
+
+      setUploadedPoliceCaseFiles([
+        ...uploadedPoliceCaseFiles,
+        {
           type: 'application/pdf',
+          name: policeCaseFile.label,
+          status: 'done',
           key,
           size,
-        } as UploadFile)
+        } as UploadFile,
+      ])
 
-        setUploadedPoliceCaseFiles([
-          ...uploadedPoliceCaseFiles,
-          {
-            type: 'application/pdf',
-            name: policeCaseFile.label,
-            status: 'done',
-            key,
-            size,
-          } as UploadFile,
-        ])
+      setPoliceCaseFileList(
+        newPoliceCaseFileList.filter((p) => p.id !== policeCaseFile.id),
+      )
 
-        setPoliceCaseFileList(
-          newPoliceCaseFileList.filter((p) => p.id !== policeCaseFile.id),
-        )
-      })
+      if (index === filesToUpload.length - 1) {
+        setIsUploading(false)
+      }
+    })
   }
 
   return (
@@ -233,7 +238,9 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                 </motion.ul>
               </motion.div>
               <motion.div layout className={styles.uploadToRVGButtonContainer}>
-                <Button onClick={uploadToRVG}>Hlaða upp</Button>
+                <Button onClick={uploadToRVG} loading={isUploading}>
+                  Hlaða upp
+                </Button>
               </motion.div>
             </AnimateSharedLayout>
           ) : policeCaseFiles?.isLoading ? (
