@@ -1,5 +1,12 @@
 import React from 'react'
-import { Box, Text, ActionCard, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  ActionCard,
+  Stack,
+  BulletList,
+  Bullet,
+} from '@island.is/island-ui/core'
 import { useGetListsUserSigned, useListsUserOwns } from '../queries'
 import { Link } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
@@ -47,11 +54,17 @@ const Petitions = () => {
         <Text variant="h1" as="h1">
           {formatMessage(m.petition.introTitle)}
         </Text>
-
         <Text as="p" variant="intro">
           {formatMessage(m.petition.intro)}
         </Text>
       </Stack>
+      <Box padding="gutter">
+        <BulletList type="ul">
+          <Bullet>{formatMessage(m.petition.bullet1)}</Bullet>
+          <Bullet>{formatMessage(m.petition.bullet2)}</Bullet>
+          <Bullet>{formatMessage(m.petition.bullet3)}</Bullet>
+        </BulletList>
+      </Box>
 
       <Box marginTop={10} marginBottom={7}>
         {ownedLists && ownedLists.length > 0 && (
