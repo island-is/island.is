@@ -9,7 +9,7 @@ import { testServer } from '@island.is/infra-nest-server'
 import {
   CaseState,
   CaseTransition,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseGender,
@@ -164,10 +164,7 @@ function remainingProsecutorCaseData() {
     demands: 'Demands',
     lawsBroken: 'Broken Laws',
     legalBasis: 'Legal Basis',
-    custodyProvisions: [
-      CaseCustodyProvisions._95_1_A,
-      CaseCustodyProvisions._99_1_B,
-    ],
+    legalProvisions: [CaseLegalProvisions._95_1_A, CaseLegalProvisions._99_1_B],
     requestedCustodyRestrictions: [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
@@ -386,8 +383,8 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.demands ?? null).toBe(caseTwo.demands ?? null)
   expect(caseOne.lawsBroken ?? null).toBe(caseTwo.lawsBroken ?? null)
   expect(caseOne.legalBasis ?? null).toBe(caseTwo.legalBasis ?? null)
-  expect(caseOne.custodyProvisions ?? null).toStrictEqual(
-    caseTwo.custodyProvisions ?? null,
+  expect(caseOne.legalProvisions ?? null).toStrictEqual(
+    caseTwo.legalProvisions ?? null,
   )
   expect(caseOne.requestedCustodyRestrictions ?? null).toStrictEqual(
     caseTwo.requestedCustodyRestrictions ?? null,
@@ -1016,7 +1013,7 @@ describe('Case', () => {
           court,
           lawsBroken: dbCase.lawsBroken,
           legalBasis: dbCase.legalBasis,
-          custodyProvisions: dbCase.custodyProvisions,
+          legalProvisions: dbCase.legalProvisions,
           requestedCustodyRestrictions: dbCase.requestedCustodyRestrictions,
           caseFacts: dbCase.caseFacts,
           legalArguments: dbCase.legalArguments,

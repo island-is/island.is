@@ -15,7 +15,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import {
   CaseState,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseGender,
@@ -296,7 +296,7 @@ export class Case extends Model<Case> {
   lawsBroken?: string
 
   /**********
-   * The laws on which the demands are based. Used as additional custody
+   * The laws on which the demands are based. Used as additional legal
    * provisions in custody and travel ban cases.
    **********/
   @Column({
@@ -313,10 +313,10 @@ export class Case extends Model<Case> {
   @Column({
     type: DataType.ARRAY(DataType.ENUM),
     allowNull: true,
-    values: Object.values(CaseCustodyProvisions),
+    values: Object.values(CaseLegalProvisions),
   })
-  @ApiProperty({ enum: CaseCustodyProvisions, isArray: true })
-  custodyProvisions?: CaseCustodyProvisions[]
+  @ApiProperty({ enum: CaseLegalProvisions, isArray: true })
+  legalProvisions?: CaseLegalProvisions[]
 
   /**********
    * Restrictions requested by the prosecutor - from a predetermined list - example: ISOLATION -

@@ -41,7 +41,7 @@ export enum CaseTransition {
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
-export enum CaseCustodyProvisions {
+export enum CaseLegalProvisions {
   _95_1_A = '_95_1_A', // a-lið 1. mgr. 95. gr.
   _95_1_B = '_95_1_B', // b-lið 1. mgr. 95. gr.
   _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
@@ -122,7 +122,7 @@ export interface Case {
   demands?: string
   lawsBroken?: string
   legalBasis?: string
-  custodyProvisions?: CaseCustodyProvisions[]
+  legalProvisions?: CaseLegalProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   requestedOtherRestrictions?: string
   caseFacts?: string
@@ -216,7 +216,7 @@ export interface UpdateCase {
   demands?: string
   lawsBroken?: string
   legalBasis?: string
-  custodyProvisions?: CaseCustodyProvisions[]
+  legalProvisions?: CaseLegalProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   requestedOtherRestrictions?: string
   caseFacts?: string

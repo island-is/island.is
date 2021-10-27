@@ -43,7 +43,7 @@ function createCase(type: CaseType): Case {
     demands: '-',
     lawsBroken: '-',
     legalBasis: '-',
-    custodyProvisions: [],
+    legalProvisions: [],
     requestedCustodyRestrictions: [],
     requestedOtherRestrictions: '-',
     caseFacts: '-',
