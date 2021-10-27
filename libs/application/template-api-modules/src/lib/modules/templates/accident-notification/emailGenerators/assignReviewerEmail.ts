@@ -1,11 +1,22 @@
 import { utils } from '@island.is/application/templates/accident-notification'
 import { Message } from '@island.is/email-service'
-import { AssignmentEmailTemplateGenerator } from '../../../../types'
+import { SendMailOptions } from 'nodemailer'
+import {
+  AssignmentEmailTemplateGenerator,
+  EmailTemplateGeneratorProps,
+} from '../../../../types'
 import { pathToAsset } from '../accident-notification.utils'
 
-export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
+export type BlaGen = (
+  props: EmailTemplateGeneratorProps,
+  assignLink: string,
+  ihiDocumentId?: number,
+) => Message
+
+export const generateAssignReviewerEmail: BlaGen = (
   props,
   assignLink,
+  ihiDocumentId,
 ): Message => {
   const {
     application,
@@ -61,8 +72,8 @@ export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
           component: 'Subtitle',
           context: {
             copy: 'Skjalanúmer',
-            // TODO: Need to get application id from service
-            application: '#13568651',
+            // Need to get application id from service
+            application: `#${ihiDocumentId}`,
           },
         },
         {

@@ -59,6 +59,7 @@ export class AccidentNotificationService {
             props,
             this.accidentConfig.applicationSenderName,
             this.accidentConfig.applicationSenderEmail,
+            ihiDocumentID,
           ),
         application,
       )
@@ -66,7 +67,8 @@ export class AccidentNotificationService {
       // Request representative review when applicable
       if (shouldRequestReview) {
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-          generateAssignReviewerEmail,
+          (props, assignLink) =>
+            generateAssignReviewerEmail(props, assignLink, ihiDocumentID),
           application,
           SIX_MONTHS_IN_SECONDS_EXPIRES,
         )
