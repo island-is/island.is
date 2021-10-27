@@ -32,9 +32,7 @@ const LogoMunicipality = ({ className }: LogoProps) => {
           className={cn({ [`${className}`]: true })}
         >
           <LogoSvg
-            name={
-              logoKeyFromMunicipalityCode[admin.staff?.municipalityId ?? '']
-            }
+            name={logoKeyFromMunicipalityCode[admin.staff?.municipalityIds[0]]}
           />
         </a>
       )}

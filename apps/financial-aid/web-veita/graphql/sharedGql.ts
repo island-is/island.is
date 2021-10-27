@@ -40,7 +40,7 @@ export const ApplicationQuery = gql`
       rejection
       staff {
         name
-        municipalityId
+        municipalityIds
       }
       applicationEvents {
         id
@@ -71,7 +71,7 @@ export const UpdateApplicationTableMutation = gql`
         state
         staff {
           name
-          municipalityId
+          municipalityIds
         }
       }
       filters {
@@ -154,7 +154,7 @@ export const ApplicationEventMutation = gql`
       rejection
       staff {
         name
-        municipalityId
+        municipalityIds
       }
       applicationEvents {
         id
@@ -179,7 +179,7 @@ export const CurrentUserQuery = gql`
         id
         nationalId
         name
-        municipalityId
+        municipalityIds
         phoneNumber
         role
         active
@@ -234,7 +234,7 @@ export const UpdateApplicationMutation = gql`
       }
       staff {
         name
-        municipalityId
+        municipalityIds
       }
     }
   }

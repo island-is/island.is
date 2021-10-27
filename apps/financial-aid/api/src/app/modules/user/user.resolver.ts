@@ -42,7 +42,7 @@ export class UserResolver {
   async isSpouse(
     @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     const isSpouse = await backendApi.isSpouse(user.nationalId)
     return isSpouse.HasApplied
   }
