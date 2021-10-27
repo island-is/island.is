@@ -21,10 +21,7 @@ import { AffectingRegulations } from './AffectingRegulations'
 import { RegulationTimeline } from './RegulationTimeline'
 import { DiffModeToggle } from './DiffModeToggle'
 import { HistoryStepper } from './HistoryStepper'
-import {
-  useRegulationIndexer,
-  useImageSrcRewriter,
-} from './useRegulationIndexer'
+import { useRegulationIndexer } from './useRegulationIndexer'
 import { RegulationIndex } from './RegulationIndex'
 
 // ---------------------------------------------------------------------------
@@ -42,8 +39,6 @@ export type RegulationDisplayProps = {
   urlDate?: ISODate
   texts: RegulationPageTexts
 }
-
-let lastTxt: any
 
 export const RegulationDisplay = (props: RegulationDisplayProps) => {
   const { regulation, texts, urlDate } = props
@@ -79,10 +74,10 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
 
   const [showTimeline, setShowTimeline] = useState(false)
 
-  const indexedProps = useRegulationIndexer(regulation, txt)
-  const { index } = indexedProps
-
-  const { text, appendixes, comments } = useImageSrcRewriter(indexedProps)
+  const { index, text, appendixes, comments } = useRegulationIndexer(
+    regulation,
+    txt,
+  )
 
   return (
     <RegulationLayout
