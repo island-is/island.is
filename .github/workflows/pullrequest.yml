@@ -22,6 +22,7 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
+      code-cov-hash: ${{ steps.calculate_code_cov_hash.outputs.code-cov-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
       - uses: actions/checkout@v2
@@ -187,7 +188,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.local/bin/codecov
-          key: code-cov-cache-
+          key: code-cov-cache-${{ needs.prepare.outputs.code-cov-hash }}
 
       - name: Set local bin directory to path
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
