@@ -1,6 +1,6 @@
 import React from 'react'
 import { Icon, Link } from '@island.is/island-ui/core'
-import * as styles from './PdfLink.treat'
+import * as styles from './PdfLink.css'
 
 interface Props {
   url: string

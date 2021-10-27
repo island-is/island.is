@@ -11,11 +11,12 @@ import {
   ApplicationFilters,
   ApplicationState,
   ApplicationStateUrl,
-  getEmailTextFromState,
   getEventTypesFromService,
   getStateFromUrl,
   RolesRule,
   User,
+  getEmailTextFromState,
+  Staff,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -35,6 +36,12 @@ interface Recipient {
 
 const linkToStatusPage = (applicationId: string) => {
   return `<a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${applicationId}" target="_blank"> Getur kíkt á stöðu síðuna þína hér</a>`
+}
+
+const firstDateOfMonth = () => {
+  const date = new Date()
+
+  return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
 @Injectable()
@@ -58,26 +65,45 @@ export class ApplicationService {
     return Boolean(hasApplication)
   }
 
+  async hasSpouseApplied(spouseNationalId: string): Promise<boolean> {
+    const application = await this.applicationModel.findOne({
+      where: {
+        spouseNationalId,
+        created: { [Op.gte]: firstDateOfMonth() },
+      },
+    })
+
+    return Boolean(application)
+  }
+
   async getCurrentApplication(
     nationalId: string,
   ): Promise<CurrentApplicationModel | null> {
-    const date = new Date()
-
-    const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-
     return await this.applicationModel.findOne({
       where: {
         nationalId,
-        created: { [Op.gte]: firstDateOfMonth },
+        created: { [Op.gte]: firstDateOfMonth() },
       },
     })
   }
 
-  async getAll(stateUrl: ApplicationStateUrl): Promise<ApplicationModel[]> {
+  async getAll(
+    stateUrl: ApplicationStateUrl,
+    staffId: string,
+    municipalityCode: string,
+  ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
-      where: {
-        state: { [Op.in]: getStateFromUrl[stateUrl] },
-      },
+      where:
+        stateUrl === ApplicationStateUrl.MYCASES
+          ? {
+              state: { [Op.in]: getStateFromUrl[stateUrl] },
+              staffId,
+              municipalityCode,
+            }
+          : {
+              state: { [Op.in]: getStateFromUrl[stateUrl] },
+              municipalityCode,
+            },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
     })
@@ -114,7 +140,10 @@ export class ApplicationService {
     return application
   }
 
-  async getAllFilters(): Promise<ApplicationFilters> {
+  async getAllFilters(
+    staffId: string,
+    municipalityCode: string,
+  ): Promise<ApplicationFilters> {
     const statesToCount = [
       ApplicationState.NEW,
       ApplicationState.INPROGRESS,
@@ -125,7 +154,19 @@ export class ApplicationService {
 
     const countPromises = statesToCount.map((item) =>
       this.applicationModel.count({
-        where: { state: { [Op.eq]: item } },
+        where: { state: item, municipalityCode },
+      }),
+    )
+
+    countPromises.push(
+      this.applicationModel.count({
+        where: {
+          staffId,
+          municipalityCode,
+          state: {
+            [Op.or]: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+          },
+        },
       }),
     )
 
@@ -137,6 +178,7 @@ export class ApplicationService {
       DataNeeded: filterCounts[2],
       Rejected: filterCounts[3],
       Approved: filterCounts[4],
+      MyCases: filterCounts[5],
     }
   }
 
@@ -180,7 +222,7 @@ export class ApplicationService {
   async update(
     id: string,
     update: UpdateApplicationDto,
-    userName: string,
+    staff?: Staff,
   ): Promise<{
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
@@ -192,6 +234,7 @@ export class ApplicationService {
       ApplicationEventType.INPROGRESS,
       ApplicationEventType.APPROVED,
     ]
+
     if (update.state === ApplicationState.NEW) {
       update.staffId = null
     }
@@ -203,6 +246,8 @@ export class ApplicationService {
         update?.rejection ||
         update?.amount?.toLocaleString('de-DE') ||
         update?.comment,
+      staffName: staff?.name,
+      staffNationalId: staff?.nationalId,
     })
 
     const [
@@ -222,7 +267,7 @@ export class ApplicationService {
     if (shouldSendEmail.includes(update.event)) {
       await this.sendEmail(
         {
-          name: userName,
+          name: updatedApplication.name,
           address: updatedApplication.email,
         },
         updatedApplication.id,

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { ApplicationFilters } from '@island.is/financial-aid/shared/lib'
 
@@ -22,6 +22,7 @@ export const initialState = {
   DataNeeded: 0,
   Rejected: 0,
   Approved: 0,
+  MyCases: 0,
 }
 
 export const ApplicationFiltersContext = createContext<ApplicationFiltersProvider>(

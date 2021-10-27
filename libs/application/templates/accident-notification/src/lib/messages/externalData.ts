@@ -22,7 +22,7 @@ export const externalData = {
     bulletThree: {
       id: 'an.application:section.agreementDescription.BulletThree',
       defaultMessage:
-        'Eitthvað verður að hafa gerst sem veldur tjóni á líkama hins tryggða og áhorfandi getur áttað sig á að hafi gerst.',
+        'Eitthvað óvænt verður að hafa gerst sem veldur tjóni á líkama hins tryggða og áhorfandi getur áttað sig á að hafi gerst.',
       description: 'List item 3 on data gathering information',
     },
     bulletFour: {
@@ -88,7 +88,7 @@ export const externalData = {
     },
     description: {
       id: 'an.application:section.externalData.revAndCustoms.description',
-      defaultMessage: 'Upplýsingar um slyastryggingu við heimilisstörf',
+      defaultMessage: 'Upplýsingar um slysatryggingu við heimilisstörf',
       description: 'Description: External Info about applicants insurance',
     },
   }),
@@ -100,7 +100,7 @@ export const externalData = {
     },
     description: {
       id: 'an.application:section.externalData.notifications.description',
-      defaultMessage: 'Send verða til þín um stöðu mála osfrv.',
+      defaultMessage: 'Send verða til þín skilaboð um stöðu mála o.s.frv.',
       description:
         'Notifications will be sent regarding the status of your application',
     },

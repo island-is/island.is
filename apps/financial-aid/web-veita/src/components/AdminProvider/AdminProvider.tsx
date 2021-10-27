@@ -1,16 +1,18 @@
 import { useQuery } from '@apollo/client'
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
-import { User } from '@island.is/financial-aid/shared/lib'
+import { Municipality, User } from '@island.is/financial-aid/shared/lib'
 
 import { CurrentUserQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import { useSession } from 'next-auth/client'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLogOut } from '../../utils/useLogOut'
+import { useMunicipality } from '@island.is/financial-aid/shared/components'
 
 interface AdminProvider {
   isAuthenticated?: boolean
   admin?: User
   setAdmin?: React.Dispatch<React.SetStateAction<User | undefined>>
+  municipality?: Municipality
 }
 
 interface PageProps {
@@ -31,11 +33,14 @@ const AdminProvider = ({ children }: PageProps) => {
   const { data, error } = useQuery(CurrentUserQuery, {
     fetchPolicy: 'no-cache',
   })
-  const loggedInUser = data?.currentUser
+  const loggedInUser: User = data?.currentUser
+
+  const { municipality, setMunicipality } = useMunicipality()
 
   useEffect(() => {
-    if (loggedInUser && !admin) {
+    if (loggedInUser && !admin && loggedInUser.staff) {
       setAdmin(loggedInUser)
+      setMunicipality(loggedInUser.staff.municipalityId)
       setIsAuthenticated(true)
     }
   }, [setAdmin, loggedInUser, admin])
@@ -51,7 +56,9 @@ const AdminProvider = ({ children }: PageProps) => {
   }
 
   return (
-    <AdminContext.Provider value={{ isAuthenticated, admin, setAdmin }}>
+    <AdminContext.Provider
+      value={{ isAuthenticated, admin, setAdmin, municipality }}
+    >
       {children}
     </AdminContext.Provider>
   )

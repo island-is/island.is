@@ -3,54 +3,6 @@
 import { Asset, Entry } from 'contentful'
 import { Document } from '@contentful/rich-text-types'
 
-export interface IAboutSubPageFields {
-  /** Title */
-  title: string
-
-  /** Slug (old) */
-  slug: string
-
-  /** Url */
-  url: string
-
-  /** Description */
-  description?: string | undefined
-
-  /** Intro */
-  intro?: Document | undefined
-
-  /** subDescription */
-  subDescription?: string | undefined
-
-  /** Content */
-  content: Document
-
-  /** belowContent */
-  belowContent?: ILocation[] | undefined
-
-  /** Parent */
-  parent?: Entry<{ [fieldId: string]: unknown }> | undefined
-}
-
-/** sub-page of the about-page */
-
-export interface IAboutSubPage extends Entry<IAboutSubPageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'aboutSubPage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IAccordionSliceFields {
   /** Title */
   title?: string | undefined
@@ -1834,6 +1786,12 @@ export interface IOrganizationFields {
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
+
+  /** Phone */
+  phone?: string | undefined
+
+  /** Email */
+  email?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -3406,7 +3364,6 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 }
 
 export type CONTENT_TYPE =
-  | 'aboutSubPage'
   | 'accordionSlice'
   | 'alertBanner'
   | 'article'

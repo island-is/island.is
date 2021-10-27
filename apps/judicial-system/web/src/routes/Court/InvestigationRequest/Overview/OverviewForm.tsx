@@ -23,7 +23,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './Overview.treat'
+import * as styles from './Overview.css'
 import {
   FormSettings,
   useCaseFormHelper,
@@ -163,19 +163,21 @@ const OverviewForm: React.FC<Props> = (props) => {
               phoneNumber: workingCase.defenderPhoneNumber,
               defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
-            isRCase
+            isInvestigationCase
           />
         </Box>
         {!workingCase.isMasked && (
           <>
-            <Box marginBottom={5}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Efni kröfu
-                </Text>
+            {workingCase.description && (
+              <Box marginBottom={5}>
+                <Box marginBottom={2}>
+                  <Text as="h3" variant="h3">
+                    Efni kröfu
+                  </Text>
+                </Box>
+                <Text>{workingCase.description}</Text>
               </Box>
-              <Text>{workingCase.description}</Text>
-            </Box>
+            )}
             <Box marginBottom={5} data-testid="demands">
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">

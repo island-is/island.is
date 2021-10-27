@@ -24,21 +24,6 @@ export const ApplicationFilesMutation = gql`
   }
 `
 
-export const MunicipalityQuery = gql`
-  query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
-    municipality(input: $input) {
-      id
-      name
-      homePage
-      aid {
-        ownApartmentOrLease
-        withOthersOrUnknow
-        withParents
-      }
-    }
-  }
-`
-
 export const CreateSignedUrlMutation = gql`
   mutation getSignedUrl($input: GetSignedUrlInput!) {
     getSignedUrl(input: $input) {
@@ -55,6 +40,7 @@ export const CurrentUserQuery = gql`
       name
       phoneNumber
       postalCode
+      isSpouse
       currentApplication {
         id
         state
@@ -90,6 +76,26 @@ export const ApplicationMutation = gql`
   mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
     updateApplication(input: $input) {
       id
+    }
+  }
+`
+
+export const NationalRegistryUserQuery = gql`
+  query getNationalRegistryUserQuery {
+    nationalRegistryUserV2 {
+      nationalId
+      fullName
+      address {
+        streetName
+        postalCode
+        city
+        municipalityCode
+      }
+      spouse {
+        nationalId
+        maritalStatus
+        name
+      }
     }
   }
 `

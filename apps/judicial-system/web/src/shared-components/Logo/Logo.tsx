@@ -3,7 +3,7 @@ import { Box } from '@island.is/island-ui/core'
 import { UserContext } from '../UserProvider/UserProvider'
 import LandWightsLogo from './LandWightsLogo'
 
-import * as styles from './Logo.treat'
+import * as styles from './Logo.css'
 
 const Logo: React.FC = () => {
   const { user } = useContext(UserContext)

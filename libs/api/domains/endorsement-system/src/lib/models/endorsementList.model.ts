@@ -30,12 +30,6 @@ export class EndorsementList {
   @Field(() => [ValidationRule])
   validationRules!: ValidationRule[]
 
-  @Field()
-  owner!: string
-
-  @Field(() => [Endorsement])
-  endorsements?: Endorsement[]
-
   @Field(() => graphqlTypeJson)
   meta!: object
 
@@ -44,4 +38,7 @@ export class EndorsementList {
 
   @Field()
   modified!: string
+
+  @Field({ nullable: true })
+  ownerName?: string
 }

@@ -33,6 +33,12 @@ export class Organization {
 
   @Field(() => [FooterItem])
   footerItems?: Array<FooterItem>
+
+  @Field()
+  phone?: string
+
+  @Field()
+  email?: string
 }
 
 export const mapOrganization = ({
@@ -48,4 +54,6 @@ export const mapOrganization = ({
   logo: fields.logo ? mapImage(fields.logo) : null,
   link: fields.link ?? '',
   footerItems: (fields.footerItems ?? []).map(mapFooterItem),
+  phone: fields.phone ?? '',
+  email: fields.email ?? '',
 })

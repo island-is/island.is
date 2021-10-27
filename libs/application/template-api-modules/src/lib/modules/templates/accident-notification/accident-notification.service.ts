@@ -21,7 +21,7 @@ export class AccidentNotificationService {
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     const shouldRequestReview =
-      !utils.isHomeActivitiesAccident(application.answers) ||
+      !utils.isHomeActivitiesAccident(application.answers) &&
       !utils.isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
 
     // Send confirmation email to applicant

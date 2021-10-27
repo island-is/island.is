@@ -1,11 +1,12 @@
 import React, { useContext } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import {
+  formatHomeAddress,
   formatNationalId,
   formatPhoneNumber,
 } from '@island.is/financial-aid/shared/lib'
 
-import * as styles from './summary.treat'
+import * as styles from './summary.css'
 import cn from 'classnames'
 
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
@@ -15,9 +16,8 @@ interface Props {
 }
 
 const UserInfo = ({ phoneNumber }: Props) => {
-  const { user } = useContext(AppContext)
+  const { user, nationalRegistryData } = useContext(AppContext)
 
-  // TODO when þjóðskrá is up and running
   return (
     <Box
       display="flex"
@@ -44,9 +44,12 @@ const UserInfo = ({ phoneNumber }: Props) => {
             <Text marginBottom={3}>{formatPhoneNumber(phoneNumber)}</Text>
           </>
         )}
-
-        <Text fontWeight="semiBold">Heimili</Text>
-        <Text>Hafnargata 3, 220 Hafnarfjörður</Text>
+        {nationalRegistryData && (
+          <>
+            <Text fontWeight="semiBold">Heimili</Text>
+            <Text>{formatHomeAddress(nationalRegistryData)}</Text>
+          </>
+        )}
       </Box>
     </Box>
   )

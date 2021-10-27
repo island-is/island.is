@@ -30,7 +30,7 @@ import {
   icCourtRecord,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './CourtRecord.treat'
+import * as styles from './CourtRecord.css'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 interface Props {
@@ -85,7 +85,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
           <CaseNumbers workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={3}>
