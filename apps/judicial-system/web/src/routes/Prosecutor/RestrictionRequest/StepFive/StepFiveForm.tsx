@@ -10,6 +10,8 @@ import {
   Tooltip,
   Checkbox,
   Button,
+  LoadingDots,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -187,9 +189,15 @@ export const StepFiveForm: React.FC<Props> = (props) => {
               </motion.div>
             </AnimateSharedLayout>
           ) : policeCaseFiles?.isLoading ? (
-            <Text>is loading</Text>
+            <Box textAlign="center">
+              <LoadingDots />
+            </Box>
           ) : (
-            <Text>Engin gogn</Text>
+            <AlertMessage
+              type="error"
+              title="Engin gögn fundust"
+              message="Ekki tókst að sækja gögn úr LÖKE"
+            />
           )}
         </Box>
         <Box marginBottom={3}>
