@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Text, BulletList, Bullet, Box, Link } from '@island.is/island-ui/core'
 
 import { currentMonth } from '@island.is/financial-aid/shared/lib'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const AboutFormApplicant = () => {
+  const { municipality } = useContext(AppContext)
+
   return (
     <>
       <Text as="h1" variant="h2" marginBottom={2}>
@@ -11,7 +14,8 @@ const AboutFormApplicant = () => {
       </Text>
 
       <Text variant="h3" fontWeight="light" marginBottom={3}>
-        Þú ert að sækja um <strong>fjárhagsaðstoð hjá Hafnarfirði</strong> fyrir{' '}
+        Þú ert að sækja um{' '}
+        <strong>fjárhagsaðstoð hjá {municipality?.name}</strong> fyrir{' '}
         {currentMonth()}. Áður en þú heldur áfram er gott að hafa eftirfarandi í
         huga:
       </Text>

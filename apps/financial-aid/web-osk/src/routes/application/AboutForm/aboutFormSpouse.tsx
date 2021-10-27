@@ -5,8 +5,8 @@ import { currentMonth } from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const AboutFormSpouse = () => {
-  const { user, nationalRegistryData } = useContext(AppContext)
-  console.log(nationalRegistryData)
+  const { user, municipality } = useContext(AppContext)
+
   return (
     <>
       <Text as="h1" variant="h2" marginBottom={2}>
@@ -15,7 +15,7 @@ const AboutFormSpouse = () => {
 
       <Text variant="intro" fontWeight="light" marginBottom={2}>
         Maki þinn ({user?.currentApplication?.name}) hefur sótt um{' '}
-        <strong>fjárhagsaðstoð hjá Hafnarfjarðarbæ</strong> fyrir{' '}
+        <strong>fjárhagsaðstoð hjá {municipality?.name}</strong> fyrir{' '}
         {currentMonth()} mánuð.
       </Text>
 
