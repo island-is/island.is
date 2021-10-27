@@ -176,8 +176,8 @@ const SummaryForm = () => {
         </div>
         <CancelModal
           isVisible={isVisible}
-          setIsVisible={(isVisibleBoolean) => {
-            setIsVisible(isVisibleBoolean)
+          setIsVisible={(isModalVisible) => {
+            setIsVisible(isModalVisible)
           }}
         />
       </ContentContainer>
