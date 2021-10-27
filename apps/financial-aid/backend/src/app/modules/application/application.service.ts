@@ -90,6 +90,7 @@ export class ApplicationService {
   async getAll(
     stateUrl: ApplicationStateUrl,
     staffId: string,
+    municipalityCode: string,
   ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
       where:
@@ -97,8 +98,12 @@ export class ApplicationService {
           ? {
               state: { [Op.in]: getStateFromUrl[stateUrl] },
               staffId,
+              municipalityCode,
             }
-          : { state: { [Op.in]: getStateFromUrl[stateUrl] } },
+          : {
+              state: { [Op.in]: getStateFromUrl[stateUrl] },
+              municipalityCode,
+            },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
     })
@@ -135,7 +140,10 @@ export class ApplicationService {
     return application
   }
 
-  async getAllFilters(staffId: string): Promise<ApplicationFilters> {
+  async getAllFilters(
+    staffId: string,
+    municipalityCode: string,
+  ): Promise<ApplicationFilters> {
     const statesToCount = [
       ApplicationState.NEW,
       ApplicationState.INPROGRESS,
@@ -146,7 +154,7 @@ export class ApplicationService {
 
     const countPromises = statesToCount.map((item) =>
       this.applicationModel.count({
-        where: { state: item },
+        where: { state: item, municipalityCode },
       }),
     )
 
@@ -154,6 +162,7 @@ export class ApplicationService {
       this.applicationModel.count({
         where: {
           staffId,
+          municipalityCode,
           state: {
             [Op.or]: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
           },
