@@ -3,7 +3,6 @@ import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
 import {
-  AccusedPleaDecision,
   CaseAppealDecision,
   CaseDecision,
   CaseType,
@@ -15,7 +14,6 @@ import {
   formatDate,
   formatCustodyRestrictions,
   formatAlternativeTravelBanRestrictions,
-  NounCases,
   formatAccusedByGender,
   caseTypes,
   lowercase,
@@ -169,11 +167,13 @@ function constructRestrictionRulingPdf(
     ),
   )
 
-  doc
-    .text(' ')
-    .text(existingCase.accusedPleaAnnouncement ?? '', {
+  if (existingCase.accusedBookings) {
+    doc.text(' ').text(existingCase.accusedBookings, {
       paragraphGap: 1,
     })
+  }
+
+  doc
     .text(' ')
     .text(
       existingCase.litigationPresentations ??
@@ -502,11 +502,13 @@ function constructInvestigationRulingPdf(
     ),
   )
 
-  doc
-    .text(' ')
-    .text(existingCase.accusedPleaAnnouncement ?? '', {
+  if (existingCase.accusedBookings) {
+    doc.text(' ').text(existingCase.accusedBookings, {
       paragraphGap: 1,
     })
+  }
+
+  doc
     .text(' ')
     .text(
       existingCase.litigationPresentations ??

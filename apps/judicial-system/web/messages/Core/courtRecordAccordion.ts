@@ -52,7 +52,7 @@ export const courtRecordAccordion = {
           'Notaður sem texti undir "Úrskurðarorð" hlutanum í þingbókarfellilistanum.',
       },
     }),
-    accusedPleaAnnouncement: defineMessages({
+    accusedBookings: defineMessages({
       title: {
         id:
           'judicial.system.core:court_record_accordion.accused_plea_announcement.title',

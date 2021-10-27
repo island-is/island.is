@@ -139,8 +139,8 @@ export const CourtRecord: React.FC = () => {
       }
 
       autofill(
-        'accusedPleaAnnouncement',
-        `${formatMessage(m.sections.accusedPleaAnnouncement.autofill)}`,
+        'accusedBookings',
+        `${formatMessage(m.sections.accusedBookings.autofill)}`,
         theCase,
       )
 
@@ -334,35 +334,33 @@ export const CourtRecord: React.FC = () => {
             <Box component="section" marginBottom={8}>
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">
-                  {`${formatMessage(m.sections.accusedPleaAnnouncement.title, {
+                  {`${formatMessage(m.sections.accusedBookings.title, {
                     genderedAccused: formatAccusedByGender(
                       workingCase.accusedGender,
                       NounCases.GENITIVE,
                     ),
                   })} `}
                   <Tooltip
-                    text={formatMessage(
-                      m.sections.accusedPleaAnnouncement.tooltip,
-                    )}
+                    text={formatMessage(m.sections.accusedBookings.tooltip)}
                   />
                 </Text>
               </Box>
               <Input
-                data-testid="accusedPleaAnnouncement"
-                name="accusedPleaAnnouncement"
-                label={formatMessage(m.sections.accusedPleaAnnouncement.label, {
+                data-testid="accusedBookings"
+                name="accusedBookings"
+                label={formatMessage(m.sections.accusedBookings.label, {
                   genderedAccused: formatAccusedByGender(
                     workingCase.accusedGender,
                     NounCases.GENITIVE,
                   ),
                 })}
-                defaultValue={workingCase.accusedPleaAnnouncement}
+                defaultValue={workingCase.accusedBookings}
                 placeholder={formatMessage(
-                  m.sections.accusedPleaAnnouncement.placeholder,
+                  m.sections.accusedBookings.placeholder,
                 )}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
-                    'accusedPleaAnnouncement',
+                    'accusedBookings',
                     event,
                     [],
                     workingCase,
@@ -371,7 +369,7 @@ export const CourtRecord: React.FC = () => {
                 }
                 onBlur={(event) =>
                   validateAndSendToServer(
-                    'accusedPleaAnnouncement',
+                    'accusedBookings',
                     event.target.value,
                     [],
                     workingCase,

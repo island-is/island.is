@@ -244,25 +244,23 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                {`${formatMessage(m.sections.accusedPleaAnnouncement.title)} `}
+                {`${formatMessage(m.sections.accusedBookings.title)} `}
                 <Tooltip
-                  text={formatMessage(
-                    m.sections.accusedPleaAnnouncement.tooltip,
-                  )}
+                  text={formatMessage(m.sections.accusedBookings.tooltip)}
                 />
               </Text>
             </Box>
             <Input
-              data-testid="accusedPleaAnnouncement"
-              name="accusedPleaAnnouncement"
-              label={formatMessage(m.sections.accusedPleaAnnouncement.label)}
-              defaultValue={workingCase.accusedPleaAnnouncement}
+              data-testid="accusedBookings"
+              name="accusedBookings"
+              label={formatMessage(m.sections.accusedBookings.label)}
+              defaultValue={workingCase.accusedBookings}
               placeholder={formatMessage(
-                m.sections.accusedPleaAnnouncement.placeholder,
+                m.sections.accusedBookings.placeholder,
               )}
               onChange={(event) =>
                 removeTabsValidateAndSet(
-                  'accusedPleaAnnouncement',
+                  'accusedBookings',
                   event,
                   [],
                   workingCase,
@@ -271,7 +269,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               }
               onBlur={(event) =>
                 validateAndSendToServer(
-                  'accusedPleaAnnouncement',
+                  'accusedBookings',
                   event.target.value,
                   [],
                   workingCase,

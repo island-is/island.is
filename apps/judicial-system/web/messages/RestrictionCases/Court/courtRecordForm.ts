@@ -2,7 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const rcCourtRecord = {
   sections: {
-    accusedPleaAnnouncement: defineMessages({
+    accusedBookings: defineMessages({
       title: {
         id:
           'judicial.system.restriction_cases:court_record.accused_plea_announcement.title',

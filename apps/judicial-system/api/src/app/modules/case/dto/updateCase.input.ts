@@ -8,7 +8,6 @@ import type {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseGender,
-  AccusedPleaDecision,
   UpdateCase,
   CaseType,
   SessionArrangements,
@@ -197,12 +196,8 @@ export class UpdateCaseInput implements UpdateCase {
   readonly courtDocuments?: string[]
 
   @Allow()
-  @Field(() => String, { nullable: true })
-  readonly accusedPleaDecision?: AccusedPleaDecision
-
-  @Allow()
   @Field({ nullable: true })
-  readonly accusedPleaAnnouncement?: string
+  readonly accusedBookings?: string
 
   @Allow()
   @Field({ nullable: true })

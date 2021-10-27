@@ -113,9 +113,9 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           })}
         </Text>
       </AccordionListItem>
-      {workingCase.accusedPleaAnnouncement?.trim() && (
+      {workingCase.accusedBookings?.trim() && (
         <AccordionListItem
-          title={formatMessage(m.sections.accusedPleaAnnouncement.title, {
+          title={formatMessage(m.sections.accusedBookings.title, {
             accusedType: isRestrictionCase(workingCase.type)
               ? formatAccusedByGender(
                   workingCase.accusedGender,
@@ -125,7 +125,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           })}
           breakSpaces
         >
-          <Text>{workingCase.accusedPleaAnnouncement.trim()}</Text>
+          <Text>{workingCase.accusedBookings.trim()}</Text>
         </AccordionListItem>
       )}
       <AccordionListItem title="Málflutningur" breakSpaces>

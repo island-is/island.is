@@ -106,8 +106,8 @@ const CourtRecord = () => {
 
       if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
         autofill(
-          'accusedPleaAnnouncement',
-          `${formatMessage(m.sections.accusedPleaAnnouncement.autofill)}`,
+          'accusedBookings',
+          `${formatMessage(m.sections.accusedBookings.autofill)}`,
           theCase,
         )
       }

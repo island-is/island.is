@@ -37,7 +37,6 @@ export {
   CaseAppealDecision,
   CaseGender,
   CaseDecision,
-  AccusedPleaDecision,
   SessionArrangements,
   restrictionCases,
   investigationCases,

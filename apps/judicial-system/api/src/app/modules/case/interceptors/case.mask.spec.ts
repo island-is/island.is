@@ -1,7 +1,6 @@
 import each from 'jest-each'
 
 import {
-  AccusedPleaDecision,
   CaseAppealDecision,
   CaseDecision,
   CaseGender,
@@ -65,8 +64,7 @@ function createCase(type: CaseType): Case {
     courtAttendees: '-',
     prosecutorDemands: '-',
     courtDocuments: [],
-    accusedPleaDecision: AccusedPleaDecision.ACCEPT,
-    accusedPleaAnnouncement: '-',
+    accusedBookings: '-',
     litigationPresentations: '-',
     courtCaseFacts: '-',
     courtLegalArguments: '-',

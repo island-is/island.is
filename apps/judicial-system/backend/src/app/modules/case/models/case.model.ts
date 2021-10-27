@@ -21,7 +21,6 @@ import {
   CaseGender,
   CaseDecision,
   CaseType,
-  AccusedPleaDecision,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
@@ -569,25 +568,14 @@ export class Case extends Model<Case> {
   courtDocuments?: string[]
 
   /**********
-   * The accused's plea decision - example: REJECT
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(AccusedPleaDecision),
-  })
-  @ApiProperty({ enum: AccusedPleaDecision })
-  accusedPleaDecision?: AccusedPleaDecision
-
-  /**********
-   * The accused's plea
+   * Bookings about the accused
    **********/
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  accusedPleaAnnouncement?: string
+  accusedBookings?: string
 
   /**********
    * The presentations for both parties
