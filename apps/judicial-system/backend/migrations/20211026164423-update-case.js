@@ -12,7 +12,7 @@ module.exports = {
         )
         .then(() =>
           queryInterface.sequelize.query(
-            `SELECT id, type, session_arrangements, is_accused_rights_hidden, accused_plea_decision, accused_plea_announcement FROM "case" WHERE state in ('ACCEPTED', 'REJECTED', 'DISMISSED')`,
+            `SELECT id, type, session_arrangements, is_accused_rights_hidden, accused_plea_decision, accused_plea_announcement FROM "case" WHERE state in ('RECEIVED', 'ACCEPTED', 'REJECTED', 'DISMISSED')`,
             { transaction: t },
           ),
         )
