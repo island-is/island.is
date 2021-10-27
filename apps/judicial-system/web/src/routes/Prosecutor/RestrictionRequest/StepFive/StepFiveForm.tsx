@@ -60,12 +60,11 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     }
   }, [policeCaseFiles])
 
-  console.log(policeCaseFiles)
-
   const {
     files,
     uploadErrorMessage,
     allFilesUploaded,
+    uploadPoliceCaseFile,
     onChange,
     onRemove,
     onRetry,
@@ -96,10 +95,18 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     }
   }
 
-  const uploadToRVG = () => {
+  const uploadToRVG = async () => {
     const newPoliceCaseFileList = [...policeCaseFileList]
 
-    setPoliceCaseFileList(newPoliceCaseFileList.filter((p) => !p.checked))
+    policeCaseFileList
+      .filter((p) => p.checked)
+      .forEach(async (policeCaseFile) => {
+        await uploadPoliceCaseFile(policeCaseFile.id, policeCaseFile.label)
+
+        setPoliceCaseFileList(
+          newPoliceCaseFileList.filter((p) => p.id !== policeCaseFile.id),
+        )
+      })
   }
 
   return (

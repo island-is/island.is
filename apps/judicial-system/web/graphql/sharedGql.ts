@@ -188,3 +188,12 @@ export const PoliceCaseFilesQuery = gql`
     }
   }
 `
+
+export const UploadPoliceCaseFileMutation = gql`
+  mutation UploadPoliceCaseFileMutation($input: UploadPoliceCaseFileInput!) {
+    uploadPoliceCaseFile(input: $input) {
+      key
+      size
+    }
+  }
+`

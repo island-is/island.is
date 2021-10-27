@@ -1,12 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
 import {
   CreateFileMutation,
   CreatePresignedPostMutation,
   DeleteFileMutation,
+  UploadPoliceCaseFileMutation,
 } from '@island.is/judicial-system-web/graphql'
-import type { Case, PresignedPost } from '@island.is/judicial-system/types'
+import type {
+  Case,
+  PresignedPost,
+  UploadPoliceCaseFileResponse,
+} from '@island.is/judicial-system/types'
 
 export const useS3Upload = (workingCase?: Case) => {
   const [files, setFiles] = useState<UploadFile[]>([])
@@ -31,11 +36,33 @@ export const useS3Upload = (workingCase?: Case) => {
     )
   }, [files])
 
+  const [uploadPoliceCaseFileMutation] = useMutation(
+    UploadPoliceCaseFileMutation,
+  )
   const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
   const [createFileMutation] = useMutation(CreateFileMutation)
   const [deleteFileMutation] = useMutation(DeleteFileMutation)
 
   // File upload spesific functions
+  const uploadPoliceCaseFile = async (
+    id: string,
+    name: string,
+  ): Promise<UploadPoliceCaseFileResponse> => {
+    const {
+      data: uploadPoliceCaseFileData,
+    } = await uploadPoliceCaseFileMutation({
+      variables: {
+        input: {
+          caseId: workingCase?.id,
+          id: id,
+          name: name,
+        },
+      },
+    })
+
+    return uploadPoliceCaseFileData?.uploadPoliceCaseFile
+  }
+
   const createPresignedPost = async (
     filename: string,
     type: string,
@@ -247,6 +274,7 @@ export const useS3Upload = (workingCase?: Case) => {
     files,
     uploadErrorMessage,
     allFilesUploaded,
+    uploadPoliceCaseFile,
     onChange,
     onRemove,
     onRetry,

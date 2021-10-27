@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Query, Resolver } from '@nestjs/graphql'
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -43,12 +43,12 @@ export class PoliceResolver {
     )
   }
 
-  @Query(() => UploadPoliceCaseFileResponse, { nullable: true })
+  @Mutation(() => UploadPoliceCaseFileResponse, { nullable: true })
   uploadPoliceCaseFile(
     @Args('input', { type: () => UploadPoliceCaseFileInput })
     input: UploadPoliceCaseFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSource') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<UploadPoliceCaseFileResponse> {
     const { caseId, ...uploadPoliceFile } = input
     this.logger.debug(
