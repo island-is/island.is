@@ -19,12 +19,19 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import { NavigationProps } from '@island.is/financial-aid/shared/lib'
+import {
+  Employment,
+  FamilyStatus,
+  getEmploymentStatus,
+  getFamilyStatus,
+  getHomeCircumstances,
+  HomeCircumstances,
+  NavigationProps,
+} from '@island.is/financial-aid/shared/lib'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useApplication'
 
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
-import formOverview from '@island.is/financial-aid-web/osk/src/utils/formOverview'
 
 const SummaryForm = () => {
   const router = useRouter()
@@ -42,7 +49,48 @@ const SummaryForm = () => {
 
   const { createApplication } = useApplication()
 
-  const formInfoOverview = formOverview(user?.isSpouse)
+  const formInfoOverview = [
+    {
+      id: 'familyStatus',
+      label: 'Hjúskaparstaða',
+      url: 'hjuskaparstada',
+      info: getFamilyStatus[form?.familyStatus as FamilyStatus],
+    },
+    {
+      id: 'homeCircumstances',
+      label: 'Búseta',
+      url: 'buseta',
+      info:
+        form?.homeCircumstances === HomeCircumstances.OTHER
+          ? form?.homeCircumstancesCustom
+          : getHomeCircumstances[form?.homeCircumstances as HomeCircumstances],
+    },
+    {
+      id: 'hasIncome',
+      label: 'Tekjur',
+      url: 'tekjur',
+      info:
+        form?.hasIncome === undefined
+          ? undefined
+          : 'Ég hef ' +
+            (form?.hasIncome ? '' : 'ekki') +
+            'fengið tekjur í þessum mánuði eða síðasta',
+    },
+    {
+      id: 'employmentCustom',
+      label: 'Staða',
+      url: 'atvinna',
+      info: form?.employmentCustom
+        ? form?.employmentCustom
+        : getEmploymentStatus[form?.employment as Employment],
+    },
+    {
+      id: 'emailAddress',
+      label: 'Netfang',
+      url: 'samskipti',
+      info: form?.emailAddress,
+    },
+  ]
 
   const handleNextButtonClick = async () => {
     if (!form || !user) {

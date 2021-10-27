@@ -3,13 +3,10 @@ import { useQuery } from '@apollo/client'
 
 import { CurrentUserQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
-import { Routes, User } from '@island.is/financial-aid/shared/lib'
-import { useRouter } from 'next/router'
+import { User } from '@island.is/financial-aid/shared/lib'
 import { useSession } from 'next-auth/client'
 
 const useUser = () => {
-  const router = useRouter()
-
   const [user, setUser] = useState<User>()
   const [session] = useSession()
 

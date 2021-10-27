@@ -20,7 +20,6 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/
 import { FileType, NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
-import formOverview from '@island.is/financial-aid-web/osk/src/utils/formOverview'
 import useUpdateApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useUpdateApplication'
 
 const SpouseSummary = () => {
@@ -39,7 +38,25 @@ const SpouseSummary = () => {
     message: '',
   })
 
-  const formInfoOverview = formOverview(user?.isSpouse)
+  const formInfoOverview = [
+    {
+      id: 'hasIncome',
+      label: 'Tekjur',
+      url: 'tekjur',
+      info:
+        form?.hasIncome === undefined
+          ? undefined
+          : 'Ég hef ' +
+            (form?.hasIncome ? '' : 'ekki') +
+            'fengið tekjur í þessum mánuði eða síðasta',
+    },
+    {
+      id: 'emailAddress',
+      label: 'Netfang',
+      url: 'samskipti',
+      info: form?.emailAddress,
+    },
+  ]
 
   const handleNextButtonClick = async () => {
     if (!form || !user) {
