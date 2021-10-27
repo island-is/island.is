@@ -5,28 +5,28 @@ export const icCourtRecord = {
     accusedBookings: defineMessages({
       title: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_plea_announcement.title',
+          'judicial.system.investigation_cases:court_record.accused_bookings.title',
         defaultMessage: 'Bókanir um varnaraðila',
         description:
           'Notaður sem titill fyrir "Bókarnir um varnaraðila" hlutann í rannsóknarheimildum.',
       },
       label: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_plea_announcement.label',
+          'judicial.system.investigation_cases:court_record.accused_bookings.label',
         defaultMessage: 'Afstaða varnaraðila og aðrar bókanir',
         description:
           'Notaður sem titill í "Afstaða varnaraðila og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
       placeholder: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_plea_announcement.placeholder',
+          'judicial.system.investigation_cases:court_record.accused_bookings.placeholder',
         defaultMessage: 'Nánari útlistun á afstöðu sakbornings',
         description:
           'Notaður sem skýritexti í "Afstaða varnaraðila og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
       tooltip: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_plea_announcement.tooltip-2',
+          'judicial.system.investigation_cases:court_record.accused_bookings.tooltip-2',
         defaultMessage:
           'Hér er hægt að bóka í þingbók um réttindi og afstöðu varnaraðila, ásamt bókunum t.d. um verjanda og túlk. Hægt er að sleppa öllum bókunum hér, t.d. ef varnaraðili er ekki viðstaddur.',
         description:
@@ -34,7 +34,7 @@ export const icCourtRecord = {
       },
       autofill: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_plea_announcement.autofill#markdown',
+          'judicial.system.investigation_cases:court_record.accused_bookings.autofill#markdown',
         defaultMessage:
           'Varnaraðila er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Varnaraðili er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.\\n\\nVarnaraðila er kynnt krafa á dómskjali nr. 1.\\n\\nVarnaraðili mótmælir kröfunni / Varnaraðili samþykkir kröfuna',
         description:

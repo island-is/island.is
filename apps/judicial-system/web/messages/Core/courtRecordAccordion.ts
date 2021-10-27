@@ -55,7 +55,7 @@ export const courtRecordAccordion = {
     accusedBookings: defineMessages({
       title: {
         id:
-          'judicial.system.core:court_record_accordion.accused_plea_announcement.title',
+          'judicial.system.core:court_record_accordion.accused_bookings.title',
         defaultMessage: 'Bókanir um {accusedType}',
         description:
           'Notaður sem titill fyrir "Bókarnir um ..." hlutann í þingbókarfellilistanum.',
