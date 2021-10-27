@@ -15,6 +15,7 @@ import {
   StudiesAccidentTypeEnum,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
+  ReviewApprovalEnum,
 } from '../types'
 import { isValid24HFormatTime } from '../utils'
 import { error } from './messages/error'
@@ -34,9 +35,14 @@ const CompanyInfoSchema = z.object({
   nationalRegistrationId: z
     .string()
     .refine((x) => (x ? kennitala.isCompany(x) : false)),
+  // Forsvarsmaður nafn
   name: z.string().min(1),
   email: z.string().email(),
   phoneNumber: z.string().optional(),
+  representativeNationalId: z
+    .string()
+    .refine((x) => (x ? kennitala.isPerson(x) : false))
+    .optional(),
 })
 
 export const AccidentNotificationSchema = z.object({
@@ -252,7 +258,13 @@ export const AccidentNotificationSchema = z.object({
   overview: z.object({
     custom: z.string().optional(),
   }),
-  reviewerApproved: z.boolean().optional(),
+  reviewApproval: z
+    .enum([
+      ReviewApprovalEnum.APPROVED,
+      ReviewApprovalEnum.REJECTED,
+      ReviewApprovalEnum.NOTREVIEWED,
+    ])
+    .refine((x) => (x ? x : ReviewApprovalEnum.NOTREVIEWED)),
 })
 
 export type AccidentNotification = z.TypeOf<typeof AccidentNotificationSchema>
