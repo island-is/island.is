@@ -14,7 +14,7 @@ import {
   AlertMessage,
   UploadFile,
 } from '@island.is/island-ui/core'
-import type { Case } from '@island.is/judicial-system/types'
+import { Case, CaseFile, CaseFileState } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   useCase,
@@ -47,20 +47,6 @@ export const StepFiveForm: React.FC<Props> = (props) => {
   >([])
   const [checkAllChecked, setCheckAllChecked] = useState<boolean>(false)
 
-  useEffect(() => {
-    if (policeCaseFiles?.files) {
-      setPoliceCaseFileList(
-        policeCaseFiles.files.map((policeCaseFile) => {
-          return {
-            id: policeCaseFile.id,
-            label: policeCaseFile.name,
-            checked: false,
-          }
-        }),
-      )
-    }
-  }, [policeCaseFiles])
-
   const {
     files,
     uploadErrorMessage,
@@ -72,6 +58,30 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     onRetry,
   } = useS3Upload(workingCase)
   const { updateCase } = useCase()
+
+  useEffect(() => {
+    if (policeCaseFiles) {
+      const policeCaseFilesNotStoredInRVG = policeCaseFiles.files.filter(
+        (p) => {
+          const xFiles = files as CaseFile[]
+
+          return !xFiles.find(
+            (f) => f.name === p.name && f.state === CaseFileState.STORED_IN_RVG,
+          )
+        },
+      )
+
+      setPoliceCaseFileList(
+        policeCaseFilesNotStoredInRVG.map((policeCaseFile) => {
+          return {
+            id: policeCaseFile.id,
+            label: policeCaseFile.name,
+            checked: false,
+          }
+        }),
+      )
+    }
+  }, [policeCaseFiles, files])
 
   const toggleCheckbox = (
     evt: React.ChangeEvent<HTMLInputElement>,
