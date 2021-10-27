@@ -6,6 +6,7 @@ import { DatePickerController } from '@island.is/shared/form-fields'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { NO, YES } from '../../constants'
+import { useLazyGetIdentity } from '../../hooks/useLazyGetIdentity'
 import { useLazyIsHealthInsured } from '../../hooks/useLazyIsHealthInsured'
 import { AccidentNotification } from '../../lib/dataSchema'
 import { accidentDetails } from '../../lib/messages'
@@ -26,6 +27,7 @@ export const DateOfAccident: FC<FieldBaseProps> = ({
   )
 
   const getIsHealthInsured = useLazyIsHealthInsured()
+  const getIdentity = useLazyGetIdentity()
 
   const getIsHealhInsuredCallback = useCallback(
     async ({ date }: IsHealthInsuredInput) => {
@@ -39,6 +41,17 @@ export const DateOfAccident: FC<FieldBaseProps> = ({
     },
     [getIsHealthInsured],
   )
+
+  const getIdentityCallback = useCallback(async () => {
+    const { data } = await getIdentity({
+      input: {
+        nationalId: '2811903429',
+        // '2410952909'
+      },
+    })
+
+    return data
+  }, [getIdentity])
 
   useEffect(() => {
     if (dateOfAccident !== undefined) {
@@ -55,6 +68,11 @@ export const DateOfAccident: FC<FieldBaseProps> = ({
             err,
           )
         })
+      getIdentityCallback()
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((err) => console.log(err))
     }
   }, [dateOfAccident, getIsHealhInsuredCallback, setValue])
 

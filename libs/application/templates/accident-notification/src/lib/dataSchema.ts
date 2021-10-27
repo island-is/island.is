@@ -76,7 +76,11 @@ export const AccidentNotificationSchema = z.object({
   carAccidentHindrance: z.enum([YES, NO]),
   applicant: z.object({
     name: z.string().min(1, error.required.defaultMessage),
-    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
+    nationalId: z
+      .string()
+      .refine((x) => x && kennitala.isValid(x) && kennitala.isPerson(x), {
+        params: error.validNationalId,
+      }),
     address: z.string().min(1, error.required.defaultMessage),
     postalCode: z.string().min(1, error.required.defaultMessage),
     city: z.string().min(1, error.required.defaultMessage),
@@ -221,7 +225,11 @@ export const AccidentNotificationSchema = z.object({
   }),
   injuredPersonInformation: z.object({
     name: z.string().min(1, error.required.defaultMessage),
-    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
+    nationalId: z
+      .string()
+      .refine((x) => x && kennitala.isValid(x) && kennitala.isPerson(x), {
+        params: error.validNationalId,
+      }),
     email: z.string().email().min(1, error.required.defaultMessage),
     phoneNumber: z.string().optional(),
   }),
@@ -229,14 +237,20 @@ export const AccidentNotificationSchema = z.object({
     companyName: z.string().min(1, error.required.defaultMessage),
     companyNationalId: z
       .string()
-      .refine((x) => (x ? kennitala.isCompany(x) : false)),
+      .refine((x) => x && kennitala.isValid(x) && kennitala.isCompany(x), {
+        params: error.validNationalId,
+      }),
     companyConfirmation: z.array(z.string()).refine((v) => v.includes(YES), {
       params: error.requiredCheckmark,
     }),
   }),
   childInCustody: z.object({
     name: z.string().min(1, error.required.defaultMessage),
-    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
+    nationalId: z
+      .string()
+      .refine((x) => x && kennitala.isValid(x) && kennitala.isPerson(x), {
+        params: error.validNationalId,
+      }),
   }),
   powerOfAttorney: z.object({
     type: z.enum([
