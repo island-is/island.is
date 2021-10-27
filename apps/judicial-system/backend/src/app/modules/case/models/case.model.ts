@@ -208,7 +208,7 @@ export class Case extends Model<Case> {
    * The surrogate key of the court assigned to the case
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     allowNull: true,
   })
   @ApiProperty()
@@ -278,7 +278,7 @@ export class Case extends Model<Case> {
    * expiration date - can be modified even when auto generated
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -288,7 +288,7 @@ export class Case extends Model<Case> {
    * The laws broken by the accused
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -299,7 +299,7 @@ export class Case extends Model<Case> {
    * provisions in custody and travel ban cases.
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -334,7 +334,7 @@ export class Case extends Model<Case> {
    * optional
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -344,7 +344,7 @@ export class Case extends Model<Case> {
    * The facts of the case as seen by the prosecutor
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -354,7 +354,7 @@ export class Case extends Model<Case> {
    * The prosecutor's legal arguments
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -376,7 +376,7 @@ export class Case extends Model<Case> {
    * not used for custody and travel ban cases - optional
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -386,7 +386,7 @@ export class Case extends Model<Case> {
    * Comments from the prosecutor to the court - optional
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -396,7 +396,7 @@ export class Case extends Model<Case> {
    * Comments from the prosecutor to the court regarding the accompanying case files - optional
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -541,7 +541,7 @@ export class Case extends Model<Case> {
    * The court attendees
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -551,7 +551,7 @@ export class Case extends Model<Case> {
    * The prosecutor's demands - autofilled from demands - possibly modified by the court
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -571,7 +571,7 @@ export class Case extends Model<Case> {
    * Bookings about the accused
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -581,7 +581,7 @@ export class Case extends Model<Case> {
    * The presentations for both parties
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -592,7 +592,7 @@ export class Case extends Model<Case> {
    * by the court
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -603,7 +603,7 @@ export class Case extends Model<Case> {
    * possibly modified by the court
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -613,7 +613,7 @@ export class Case extends Model<Case> {
    * The judge's ruling
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -659,7 +659,7 @@ export class Case extends Model<Case> {
    * only used for travel ban cases - optional
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -681,7 +681,7 @@ export class Case extends Model<Case> {
    * are auto generated
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -702,7 +702,7 @@ export class Case extends Model<Case> {
    * The accused's appeal announcement - only used if the accused appeals in court
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -723,7 +723,7 @@ export class Case extends Model<Case> {
    * The prosecutor's appeal announcement - only used if the prosecutor appeals in court
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
