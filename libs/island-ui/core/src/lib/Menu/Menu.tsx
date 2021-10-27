@@ -4,7 +4,7 @@ import AnimateHeight from 'react-animate-height'
 import { ModalBase, ModalBaseProps } from '../ModalBase/ModalBase'
 import { Button } from '../Button/Button'
 
-import * as styles from './Menu.treat'
+import * as styles from './Menu.css'
 import { Logo } from '../Logo/Logo'
 import { Input } from '../Input/Input'
 import { Box } from '../Box/Box'

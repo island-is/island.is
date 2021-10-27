@@ -36,8 +36,8 @@ import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import { getSlugPart } from '../utils'
 
-import * as styles from './Home.treat'
-import * as sharedStyles from '../shared/styles.treat'
+import * as styles from './Home.css'
+import * as sharedStyles from '../shared/styles.css'
 
 interface HomeProps {
   organization?: Organization

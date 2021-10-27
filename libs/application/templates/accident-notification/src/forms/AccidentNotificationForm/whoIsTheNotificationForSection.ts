@@ -9,7 +9,7 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-
+import { UPLOAD_ACCEPT, YES } from '../../constants'
 import {
   childInCustody,
   injuredPersonInformation,
@@ -17,7 +17,6 @@ import {
   powerOfAttorney,
   whoIsTheNotificationFor,
 } from '../../lib/messages'
-
 import {
   PowerOfAttorneyUploadEnum,
   WhoIsTheNotificationForEnum,
@@ -28,7 +27,6 @@ import {
   isReportingOnBehalfOfInjured,
 } from '../../utils'
 import { isPowerOfAttorney } from '../../utils/isPowerOfAttorney'
-import { UPLOAD_ACCEPT, YES } from '../../constants'
 import { isUploadNow } from '../../utils/isUploadNow'
 
 export const whoIsTheNotificationForSection = buildSection({
@@ -218,21 +216,6 @@ export const whoIsTheNotificationForSection = buildSection({
               width: 'half',
               required: true,
             }),
-            buildTextField({
-              id: 'childInCustody.email',
-              backgroundColor: 'blue',
-              title: childInCustody.labels.email,
-              variant: 'email',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'childInCustody.phoneNumber',
-              backgroundColor: 'blue',
-              variant: 'tel',
-              title: childInCustody.labels.tel,
-              format: '###-####',
-              width: 'half',
-            }),
           ],
         }),
       ],
@@ -248,7 +231,7 @@ export const whoIsTheNotificationForSection = buildSection({
           description: powerOfAttorney.upload.description,
           children: [
             buildFileUploadField({
-              id: 'attachments.powerOfAttorneyFile',
+              id: 'attachments.powerOfAttorneyFile.file',
               title: '',
               introduction: '',
               uploadAccept: UPLOAD_ACCEPT,
@@ -263,6 +246,3 @@ export const whoIsTheNotificationForSection = buildSection({
     }),
   ],
 })
-function getFieldValue(fo: any): boolean {
-  throw new Error('Function not implemented.')
-}

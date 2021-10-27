@@ -52,7 +52,7 @@ import {
   OrganizationSubpage,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
-import * as styles from './Search.treat'
+import * as styles from './Search.css'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useLazyQuery } from '@apollo/client'
 

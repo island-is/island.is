@@ -27,7 +27,7 @@ import { ActionTypes } from '../reducer/ReducerTypes'
 import { useHistorySync } from '../hooks/useHistorySync'
 import { useApplicationTitle } from '../hooks/useApplicationTitle'
 import { useHeaderInfo } from '../context/HeaderInfoProvider'
-import * as styles from './FormShell.treat'
+import * as styles from './FormShell.css'
 import { ErrorShell } from '../components/ErrorShell'
 
 export const FormShell: FC<{

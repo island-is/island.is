@@ -5,7 +5,7 @@ import { Stepper } from '@island.is/financial-aid-web/osk/src/components'
 
 import { useRouter } from 'next/router'
 
-import * as styles from './SideBar.treat'
+import * as styles from './SideBar.css'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const SideBar = () => {

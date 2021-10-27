@@ -15,10 +15,10 @@ import { useVirtualTouchable } from '../../private/touchable/useVirtualTouchable
 import { hideFocusRingsClassName } from '../../private/hideFocusRings/hideFocusRings'
 import { Overlay } from '../../private/Overlay/Overlay'
 import { Text } from '../../Text/Text'
-import { TextVariants } from '../../Text/Text.treat'
+import { TextVariants } from '../../Text/Text.css'
 import { AccordionContext } from '../../Accordion/Accordion'
 import { Icon } from '../../IconRC/Icon'
-import * as styles from './AccordionItem.treat'
+import * as styles from './AccordionItem.css'
 import { Colors } from '@island.is/island-ui/theme'
 
 type IconVariantTypes = 'default' | 'small' | 'sidebar'

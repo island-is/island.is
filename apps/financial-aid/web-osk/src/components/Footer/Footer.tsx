@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Button, Icon, Text, ButtonProps } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
-import * as styles from './Footer.treat'
+import * as styles from './Footer.css'
 import cn from 'classnames'
 
 interface Props {

@@ -11,7 +11,7 @@ import { BackgroundImage } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { Image } from '@island.is/web/graphql/schema'
 
-import * as styles from './NewsCard.treat'
+import * as styles from './NewsCard.css'
 
 interface NewsCardProps {
   title: string

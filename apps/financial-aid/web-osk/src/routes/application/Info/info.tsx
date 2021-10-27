@@ -6,7 +6,7 @@ import {
   Footer,
   Logo,
 } from '@island.is/financial-aid-web/osk/src/components'
-import * as styles from './info.treat'
+import * as styles from './info.css'
 import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
