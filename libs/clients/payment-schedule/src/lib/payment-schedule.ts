@@ -16,6 +16,7 @@ import {
   PaymentDistribution,
   PaymentDistributionRequest,
   PaymentDistributionResponse,
+  ConditionsResponse,
 } from './types'
 
 export class PaymentScheduleAPI extends RESTDataSource {
@@ -41,8 +42,10 @@ export class PaymentScheduleAPI extends RESTDataSource {
   }
 
   async getConditions(nationalId: string): Promise<Conditions> {
-    const response = await this.get<Conditions>(`conditions/${nationalId}`)
-    return response
+    const response = await this.get<ConditionsResponse>(
+      `conditions/${nationalId}`,
+    )
+    return response.conditions
   }
 
   async getDebts(nationalId: string): Promise<DebtSchedules[]> {
@@ -67,7 +70,8 @@ export class PaymentScheduleAPI extends RESTDataSource {
     const response = await this.get<DistributionInitialPositionResponse>(
       `distributionInitialPosition/${nationalId}/${type}?totalAmount=${totalAmount}&disposableIncome=${disposableIncome}`,
     )
-    return response.DistributionInitialPosition
+
+    return response.distributionInitialPosition
   }
 
   async getPaymentDistribtion(
