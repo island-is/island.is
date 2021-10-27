@@ -12,6 +12,7 @@ import {
   Button,
   LoadingDots,
   AlertMessage,
+  UploadFile,
 } from '@island.is/island-ui/core'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -65,6 +66,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     uploadErrorMessage,
     allFilesUploaded,
     uploadPoliceCaseFile,
+    addFileToCase,
     onChange,
     onRemove,
     onRetry,
@@ -101,7 +103,16 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     policeCaseFileList
       .filter((p) => p.checked)
       .forEach(async (policeCaseFile) => {
-        await uploadPoliceCaseFile(policeCaseFile.id, policeCaseFile.label)
+        const { key, size } = await uploadPoliceCaseFile(
+          policeCaseFile.id,
+          policeCaseFile.label,
+        )
+
+        await addFileToCase({
+          type: 'application/pdf',
+          key,
+          size,
+        } as UploadFile)
 
         setPoliceCaseFileList(
           newPoliceCaseFileList.filter((p) => p.id !== policeCaseFile.id),

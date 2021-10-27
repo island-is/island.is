@@ -275,6 +275,7 @@ export const useS3Upload = (workingCase?: Case) => {
     uploadErrorMessage,
     allFilesUploaded,
     uploadPoliceCaseFile,
+    addFileToCase,
     onChange,
     onRemove,
     onRetry,
