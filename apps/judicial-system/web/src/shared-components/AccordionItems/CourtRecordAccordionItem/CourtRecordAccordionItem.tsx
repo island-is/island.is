@@ -26,7 +26,6 @@ import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { closedCourt } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
 import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
-import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
 import { rcConfirmation } from '@island.is/judicial-system-web/messages'
 
 interface Props {
