@@ -1,7 +1,6 @@
-import React, { useContext } from 'react'
-import { Box, Button, Divider, Icon, Text } from '@island.is/island-ui/core'
+import React from 'react'
+import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
-import { FormContext } from '../FormProvider/FormProvider'
 
 interface InfoProps {
   id: string
@@ -17,8 +16,6 @@ interface Props {
 
 const FormInfo = ({ info, error }: Props) => {
   const router = useRouter()
-
-  const { form, updateForm } = useContext(FormContext)
 
   return (
     <>

@@ -5,7 +5,8 @@ import { currentMonth } from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const AboutFormSpouse = () => {
-  const { user } = useContext(AppContext)
+  const { user, nationalRegistryData } = useContext(AppContext)
+  console.log(nationalRegistryData)
   return (
     <>
       <Text as="h1" variant="h2" marginBottom={2}>

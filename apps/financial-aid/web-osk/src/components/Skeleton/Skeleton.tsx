@@ -10,12 +10,7 @@ const Skeleton = () => {
         <SkeletonLoader display="block" height={112} />
       </Box>
 
-      <Box
-        display="flex"
-        marginTop={6}
-        justifyContent="spaceBetween"
-        className={styles.wrapper}
-      >
+      <Box className={styles.wrapper}>
         <Box className={styles.boxWidthPercent}>
           <SkeletonLoader display="block" height={880} />
         </Box>

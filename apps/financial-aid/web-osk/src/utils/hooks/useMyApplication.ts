@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useLazyQuery, useQuery } from '@apollo/client'
 
 import { ApplicationQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
@@ -13,45 +13,47 @@ interface ApplicantData {
 const useMyApplication = () => {
   const router = useRouter()
 
-  if (router.query.id) {
-    const storageKey = 'myCurrentApplication'
+  const storageKey = 'myCurrentApplication'
 
-    const [myApplication, updateApplication] = useState<Application>()
+  const [myApplication, updateApplication] = useState<Application>()
 
-    const { data, error, loading } = useQuery<ApplicantData>(ApplicationQuery, {
-      variables: { input: { id: router.query.id } },
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    })
+  const [getApplication, { data, error, loading }] = useLazyQuery<
+    {
+      application: Application
+    },
+    { input: { id: string } }
+  >(ApplicationQuery)
 
-    useEffect(() => {
-      const storedFormJson = sessionStorage.getItem(storageKey)
-      if (storedFormJson === null) {
-        return
-      }
-      const storedState = JSON.parse(storedFormJson)
-      updateApplication(storedState)
-    }, [])
+  if (router.query.id && myApplication === undefined && loading === false) {
+    try {
+      getApplication({
+        variables: {
+          input: { id: router.query.id as string },
+        },
+      })
 
-    useEffect(() => {
       if (data) {
         updateApplication(data.application)
-        // Watches the user state and writes it to local storage on change
         sessionStorage.setItem(storageKey, JSON.stringify(data.application))
       }
-    }, [myApplication, data])
-
-    return {
-      myApplication,
-      error,
-      loading,
+    } catch {
+      console.log('CATCH')
     }
   }
 
+  useEffect(() => {
+    const storedFormJson = sessionStorage.getItem(storageKey)
+    if (storedFormJson === null) {
+      return
+    }
+    const storedState = JSON.parse(storedFormJson)
+    updateApplication(storedState)
+  }, [])
+
   return {
-    myApplication: undefined,
-    error: undefined,
-    loading: false,
+    myApplication,
+    error,
+    loading,
   }
 }
 

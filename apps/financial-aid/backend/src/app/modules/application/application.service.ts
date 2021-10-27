@@ -83,10 +83,10 @@ export class ApplicationService {
       where: {
         [Op.or]: [
           {
-            nationalId: { [Op.eq]: nationalId },
+            nationalId: nationalId,
           },
           {
-            spouseNationalId: { [Op.eq]: nationalId },
+            spouseNationalId: nationalId,
           },
         ],
         created: { [Op.gte]: firstDateOfMonth() },
