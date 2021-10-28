@@ -82,42 +82,6 @@ describe('transformCase', () => {
     },
   )
 
-  each`
-    originalValue | sessionArrangements                             | transformedValue
-    ${null}       | ${null}                                         | ${false}
-    ${null}       | ${SessionArrangements.ALL_PRESENT}              | ${false}
-    ${null}       | ${SessionArrangements.ALL_PRESENT_SPOKESPERSON} | ${true}
-    ${null}       | ${SessionArrangements.PROSECUTOR_PRESENT}       | ${true}
-    ${null}       | ${SessionArrangements.REMOTE_SESSION}           | ${true}
-    ${false}      | ${null}                                         | ${false}
-    ${false}      | ${SessionArrangements.ALL_PRESENT}              | ${false}
-    ${false}      | ${SessionArrangements.ALL_PRESENT_SPOKESPERSON} | ${false}
-    ${false}      | ${SessionArrangements.PROSECUTOR_PRESENT}       | ${false}
-    ${false}      | ${SessionArrangements.REMOTE_SESSION}           | ${false}
-    ${true}       | ${null}                                         | ${true}
-    ${true}       | ${SessionArrangements.ALL_PRESENT}              | ${true}
-    ${true}       | ${SessionArrangements.ALL_PRESENT_SPOKESPERSON} | ${true}
-    ${true}       | ${SessionArrangements.PROSECUTOR_PRESENT}       | ${true}
-    ${true}       | ${SessionArrangements.REMOTE_SESSION}           | ${true}
-  `.describe(
-    'isAccusedRightsHidden',
-    ({ originalValue, sessionArrangements, transformedValue }) => {
-      it(`should transform isAccusedRightsHidden with original value ${originalValue} and ${sessionArrangements} to ${transformedValue}`, () => {
-        // Arrange
-        const theCase = {
-          isAccusedRightsHidden: originalValue,
-          sessionArrangements,
-        } as Case
-
-        // Act
-        const res = transformCase(theCase)
-
-        // Assert
-        expect(res.isAccusedRightsHidden).toBe(transformedValue)
-      })
-    },
-  )
-
   describe('isValidToDateInThePast', () => {
     it('should not set custody end date in the past if no custody end date', () => {
       // Arrange

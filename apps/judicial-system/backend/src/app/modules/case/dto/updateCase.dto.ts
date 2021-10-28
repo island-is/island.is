@@ -14,7 +14,6 @@ import {
   CaseAppealDecision,
   CaseGender,
   CaseDecision,
-  AccusedPleaDecision,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
@@ -241,19 +240,9 @@ export class UpdateCaseDto {
   readonly courtDocuments?: string
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly isAccusedRightsHidden?: boolean
-
-  @IsOptional()
-  @IsEnum(AccusedPleaDecision)
-  @ApiPropertyOptional({ enum: AccusedPleaDecision })
-  readonly accusedPleaDecision?: AccusedPleaDecision
-
-  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly accusedPleaAnnouncement?: string
+  readonly accusedBookings?: string
 
   @IsOptional()
   @IsString()
