@@ -403,9 +403,18 @@ export class CmsContentfulService {
       include: 10,
     }
 
+    const res = await this.contentfulRepository.getClient().getEntries({
+      ...params,
+    })
+
+    console.log('tester', res)
+    console.log('-----')
+
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IArticleFields>(lang, params)
       .catch(errorHandler('getContentSlug'))
+
+    console.log('result', result.items)
 
     return (result.items as types.IArticle[]).map(mapContentSlug)[0] ?? null
   }

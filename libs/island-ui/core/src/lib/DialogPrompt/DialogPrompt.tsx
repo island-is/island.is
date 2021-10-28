@@ -43,6 +43,10 @@ interface DialogPromptProps {
    */
   onCancel?: () => void
   /**
+   * When opened callback
+   */
+  onVisibilityChange?: (isVisible: boolean) => void
+  /**
    * If left empty the button won't be rendered
    */
   buttonTextConfirm?: string
@@ -60,6 +64,7 @@ export const DialogPrompt = ({
   disclosureElement,
   onConfirm,
   onCancel,
+  onVisibilityChange,
   buttonTextCancel,
   buttonTextConfirm,
 }: DialogPromptProps) => {
@@ -71,6 +76,7 @@ export const DialogPrompt = ({
       baseId={baseId}
       aria-label={ariaLabel}
       className={styles.dialog}
+      onVisibilityChange={onVisibilityChange}
     >
       {({ closeModal }: { closeModal: () => void }) => {
         const handleClose = () => {

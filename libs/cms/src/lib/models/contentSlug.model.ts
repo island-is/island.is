@@ -10,6 +10,9 @@ export class ContentSlug {
   @Field()
   slug: string = ''
 
+  // @Field()
+  // currentSlug: string = ''
+
   @Field()
   type: string = ''
 }
@@ -17,5 +20,6 @@ export class ContentSlug {
 export const mapContentSlug = ({ fields, sys }: IArticle): ContentSlug => ({
   id: sys.id,
   slug: fields?.slug ?? '',
+  // currentSlug: fields?.currentSlug ?? '',
   type: sys.contentType.sys.id,
 })
