@@ -18,6 +18,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD',
       NATIONAL_REGISTRY_USERNAME:
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME',
+      NATIONAL_REGISTRY_URL: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL',
     })
     .env({
       ENVIRONMENT: {
@@ -33,11 +34,6 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         prod:
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
       },
-      NATIONAL_REGISTRY_URL: {
-        dev: 'https://skeyti.advania.is/ords/slrv/registry/v1.0',
-        staging: 'https://skeyti.advania.is/ords/slrv/registry/v1.0',
-        prod: 'https://skeyti.advania.is/ords/slrv/registry/v1.0',
-      }
     })
     .postgres(postgresInfo)
     .initContainer({

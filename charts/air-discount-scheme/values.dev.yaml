@@ -62,7 +62,6 @@ air-discount-scheme-backend:
     DB_NAME: 'air_discount_scheme_backend'
     DB_USER: 'air_discount_scheme_backend'
     ENVIRONMENT: 'dev'
-    NATIONAL_REGISTRY_URL: 'https://skeyti.advania.is/ords/slrv/registry/v1.0'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -117,6 +116,7 @@ air-discount-scheme-backend:
     ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
     ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
     NATIONAL_REGISTRY_PASSWORD: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD'
+    NATIONAL_REGISTRY_URL: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL'
     NATIONAL_REGISTRY_USERNAME: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
     NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY'
     SENTRY_DSN: '/k8s/air-discount-scheme-backend/SENTRY_DSN'
