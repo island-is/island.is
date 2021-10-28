@@ -17,7 +17,6 @@ import {
   NotificationType,
   CaseType,
   UserRole,
-  AccusedPleaDecision,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import type {
@@ -194,9 +193,7 @@ function remainingJudgeCaseData() {
     courtAttendees: 'Court Attendees',
     prosecutorDemands: 'Police Demands',
     courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
-    isAccusedRightsHidden: true,
-    accusedPleaDecision: AccusedPleaDecision.ACCEPT,
-    accusedPleaAnnouncement: 'Accused Plea',
+    accusedBookings: 'Accused Plea',
     litigationPresentations: 'Litigation Presentations',
     courtCaseFacts: 'Court Case Facts',
     courtLegalArguments: 'Court Legal Arguments',
@@ -432,15 +429,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.courtDocuments ?? null).toStrictEqual(
     caseTwo.courtDocuments ?? null,
   )
-  expect(caseOne.isAccusedRightsHidden ?? null).toBe(
-    caseTwo.isAccusedRightsHidden ?? null,
-  )
-  expect(caseOne.accusedPleaDecision ?? null).toBe(
-    caseTwo.accusedPleaDecision ?? null,
-  )
-  expect(caseOne.accusedPleaAnnouncement ?? null).toBe(
-    caseTwo.accusedPleaAnnouncement ?? null,
-  )
+  expect(caseOne.accusedBookings ?? null).toBe(caseTwo.accusedBookings ?? null)
   expect(caseOne.litigationPresentations ?? null).toBe(
     caseTwo.litigationPresentations ?? null,
   )
