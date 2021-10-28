@@ -4,7 +4,7 @@ import { Field, InputType } from '@nestjs/graphql'
 
 import type {
   CaseAppealDecision,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseGender,
@@ -109,7 +109,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field(() => [String], { nullable: true })
-  readonly custodyProvisions?: CaseCustodyProvisions[]
+  readonly legalProvisions?: CaseLegalProvisions[]
 
   @Allow()
   @Field(() => [String], { nullable: true })

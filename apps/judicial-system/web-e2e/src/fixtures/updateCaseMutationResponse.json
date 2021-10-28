@@ -19,7 +19,7 @@
       "requestedCourtDate": "2020-09-16T19:50:08.033Z",
       "requestedValidToDate": "2020-09-16T19:50:08.033Z",
       "lawsBroken": "Lorem ipsum",
-      "custodyProvisions": ["_95_1_A"],
+      "legalProvisions": ["_95_1_A"],
       "requestedCustodyRestrictions": ["ISOLATION", "MEDIA"],
       "caseFacts": "lorem ipsum",
       "legalArguments": "lorem ipsum",
