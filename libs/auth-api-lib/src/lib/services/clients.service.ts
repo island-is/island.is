@@ -27,8 +27,10 @@ import Base64 from 'crypto-js/enc-base64'
 import { IdentityResource } from '../entities/models/identity-resource.model'
 import { ApiScope } from '../entities/models/api-scope.model'
 import { IdpProvider } from '../entities/models/idp-provider.model'
+import { trace } from '@theo.gravity/datadog-apm'
 
 @Injectable()
+@trace()
 export class ClientsService {
   constructor(
     @InjectModel(Client)

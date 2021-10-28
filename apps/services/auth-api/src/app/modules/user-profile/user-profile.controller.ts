@@ -9,12 +9,10 @@ import {
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { environment } from '../../../environments'
-import { trace } from '@theo.gravity/datadog-apm'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('user-profile')
 @Controller('user-profile')
-@trace()
 export class UserProfileController {
   constructor(private readonly userProfileService: UserProfileService) {}
 

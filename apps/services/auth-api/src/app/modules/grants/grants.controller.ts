@@ -14,12 +14,10 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { trace } from '@theo.gravity/datadog-apm'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('grants')
 @Controller('grants')
-@trace()
 export class GrantsController {
   constructor(private readonly grantsService: GrantsService) {}
 

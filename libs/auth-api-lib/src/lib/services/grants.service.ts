@@ -10,8 +10,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectModel } from '@nestjs/sequelize'
 import { GrantDto } from '../entities/dto/grant.dto'
 import { WhereOptions } from 'sequelize/types'
+import { trace } from '@theo.gravity/datadog-apm'
 
 @Injectable()
+@trace()
 export class GrantsService {
   constructor(
     @InjectModel(Grant)
