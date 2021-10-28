@@ -15,6 +15,9 @@ import type {
 
 export const useS3Upload = (workingCase?: Case) => {
   const [files, setFiles] = useState<UploadFile[]>([])
+  const [uploadedPoliceCaseFiles, setUploadedPoliceCaseFiles] = useState<
+    UploadFile[]
+  >([])
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
   const filesRef = useRef<UploadFile[]>(files)
@@ -59,6 +62,15 @@ export const useS3Upload = (workingCase?: Case) => {
         },
       },
     })
+
+    setUploadedPoliceCaseFiles([
+      ...uploadedPoliceCaseFiles,
+      {
+        ...uploadPoliceCaseFileData.uploadPoliceCaseFile,
+        name,
+        status: 'done',
+      },
+    ])
 
     return uploadPoliceCaseFileData?.uploadPoliceCaseFile
   }
@@ -275,6 +287,7 @@ export const useS3Upload = (workingCase?: Case) => {
     uploadErrorMessage,
     allFilesUploaded,
     uploadPoliceCaseFile,
+    uploadedPoliceCaseFiles,
     addFileToCase,
     onChange,
     onRemove,

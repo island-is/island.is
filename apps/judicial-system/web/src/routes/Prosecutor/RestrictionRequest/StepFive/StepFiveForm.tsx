@@ -52,9 +52,6 @@ export const StepFiveForm: React.FC<Props> = (props) => {
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFile[]
   >([])
-  const [uploadedPoliceCaseFiles, setUploadedPoliceCaseFiles] = useState<
-    UploadFile[]
-  >([])
   const [checkAllChecked, setCheckAllChecked] = useState<boolean>(false)
   const [isUploading, setIsUploading] = useState<boolean>(false)
 
@@ -63,6 +60,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     uploadErrorMessage,
     allFilesUploaded,
     uploadPoliceCaseFile,
+    uploadedPoliceCaseFiles,
     addFileToCase,
     onChange,
     onRemove,
@@ -141,12 +139,6 @@ export const StepFiveForm: React.FC<Props> = (props) => {
 
       await addFileToCase({
         type: 'application/pdf',
-        key,
-        size,
-      } as UploadFile)
-
-      updatedPoliceCaseFiles.push({
-        type: 'application/pdf',
         name: policeCaseFile.label,
         status: 'done',
         key,
@@ -162,7 +154,6 @@ export const StepFiveForm: React.FC<Props> = (props) => {
       }
     })
 
-    setUploadedPoliceCaseFiles(updatedPoliceCaseFiles)
     setPoliceCaseFileList(updatedPoliceCaseFileList)
   }
 
