@@ -3,7 +3,6 @@ import {
   Logo,
   Text,
   Box,
-  Button,
   GridContainer,
   DropdownMenu,
 } from '@island.is/island-ui/core'

@@ -225,6 +225,13 @@ export class ApplicationModel extends Model<Application> {
     allowNull: true,
   })
   @ApiProperty()
+  spousePhoneNumber?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
   spouseEmail?: string
 
   @HasMany(() => ApplicationEventModel, 'applicationId')
