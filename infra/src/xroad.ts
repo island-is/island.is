@@ -7,31 +7,15 @@ type XroadSectionConfig = {
 
 class XroadConf {
   config: XroadSectionConfig
-  // TODO: Deprecate
-  extraMap: { [name: string]: string }
 
-  constructor(
-    config: XroadSectionConfig,
-    extraMap?: { [name: string]: string },
-  ) {
+  constructor(config: XroadSectionConfig) {
     this.config = config
-    this.extraMap = extraMap || {}
-  }
-  private mapExtraVariables<T extends Object>(conf: T): T {
-    const copy = { ...conf }
-    Object.entries(this.extraMap).forEach(([extraKey, currentKey]) => {
-      const currentValue = (copy as any)[currentKey]
-      if (currentValue) {
-        ;(copy as any)[extraKey] = currentValue
-      }
-    })
-    return copy
   }
   getEnv(): EnvironmentVariables {
-    return this.mapExtraVariables(this.config.env || {})
+    return this.config.env || {}
   }
   getSecrets(): Secrets {
-    return this.mapExtraVariables(this.config.secrets || {})
+    return this.config.secrets || {}
   }
 }
 
@@ -60,125 +44,96 @@ export const Client = new XroadConf({
   },
 })
 
-export const JudicialSystem = new XroadConf(
-  {
-    env: {
-      XROAD_CLIENT_ID: {
-        dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Client',
-        staging: 'IS-TEST/GOV/5804170510/Rettarvorslugatt-Client',
-        prod: 'IS/GOV/5804170510/Rettarvorslugatt-Client',
-      },
-      XROAD_COURT_MEMBER_CODE: {
-        dev: '10019',
-        staging: '4707171140',
-        prod: '4707171140',
-      },
-      XROAD_POLICE_MEMBER_CODE: {
-        dev: '10005',
-        staging: '5306972079',
-        prod: '5306972079',
-      },
-      XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1',
-      XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1',
+export const JudicialSystem = new XroadConf({
+  env: {
+    XROAD_CLIENT_ID: {
+      dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Client',
+      staging: 'IS-TEST/GOV/5804170510/Rettarvorslugatt-Client',
+      prod: 'IS/GOV/5804170510/Rettarvorslugatt-Client',
     },
-    secrets: {
-      XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT',
-      XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY',
-      XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM',
-      XROAD_COURTS_CREDENTIALS: '/k8s/judicial-system/COURTS_CREDENTIALS',
+    XROAD_COURT_MEMBER_CODE: {
+      dev: '10019',
+      staging: '4707171140',
+      prod: '4707171140',
     },
+    XROAD_POLICE_MEMBER_CODE: {
+      dev: '10005',
+      staging: '5306972079',
+      prod: '5306972079',
+    },
+    XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1',
+    XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1',
   },
-  {
-    COURTS_CREDENTIALS: 'XROAD_COURTS_CREDENTIALS',
+  secrets: {
+    XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT',
+    XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY',
+    XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM',
+    XROAD_COURTS_CREDENTIALS: '/k8s/judicial-system/COURTS_CREDENTIALS',
   },
-)
+})
 
-export const DrivingLicense = new XroadConf(
-  {
-    env: {
-      XROAD_DRIVING_LICENSE_PATH: {
-        dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
-        staging:
-          'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1',
-        prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
-      },
-      XROAD_DRIVING_LICENSE_V2_PATH: {
-        dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
-        staging:
-          'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2',
-        prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v2',
-      },
+export const DrivingLicense = new XroadConf({
+  env: {
+    XROAD_DRIVING_LICENSE_PATH: {
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
+      staging:
+        'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
     },
-    secrets: {
-      XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET',
+    XROAD_DRIVING_LICENSE_V2_PATH: {
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
+      staging:
+        'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v2',
     },
   },
-  {
-    DRIVING_LICENSE_XROAD_PATH: 'XROAD_DRIVING_LICENSE_PATH',
-    DRIVING_LICENSE_XROAD_PATH_V2: 'XROAD_DRIVING_LICENSE_V2_PATH',
-    DRIVING_LICENSE_SECRET: 'XROAD_DRIVING_LICENSE_SECRET',
+  secrets: {
+    XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET',
   },
-)
+})
 
-export const HealthInsurance = new XroadConf(
-  {
-    env: {
-      XROAD_HEALTH_INSURANCE_WSDLURL: {
-        dev: 'https://test-huld.sjukra.is/islandrg?wsdl',
-        staging: 'https://test-huld.sjukra.is/islandrg?wsdl',
-        prod: 'https://huld.sjukra.is/islandrg?wsdl',
-      },
-      XROAD_HEALTH_INSURANCE_ID: {
-        dev: 'IS-DEV/GOV/10007/SJUKRA-Protected',
-        staging: 'IS-TEST/GOV/4804080550/SJUKRA-Protected',
-        prod: 'IS/GOV/4804080550/SJUKRA-Protected',
-      },
+export const HealthInsurance = new XroadConf({
+  env: {
+    XROAD_HEALTH_INSURANCE_WSDLURL: {
+      dev: 'https://test-huld.sjukra.is/islandrg?wsdl',
+      staging: 'https://test-huld.sjukra.is/islandrg?wsdl',
+      prod: 'https://huld.sjukra.is/islandrg?wsdl',
     },
-    secrets: {
-      XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER',
-      XROAD_HEALTH_INSURANCE_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD',
-      XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME:
-        '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME',
-      XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD:
-        '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD',
+    XROAD_HEALTH_INSURANCE_ID: {
+      dev: 'IS-DEV/GOV/10007/SJUKRA-Protected',
+      staging: 'IS-TEST/GOV/4804080550/SJUKRA-Protected',
+      prod: 'IS/GOV/4804080550/SJUKRA-Protected',
     },
   },
-  {
-    HEALTH_INSURANCE_XROAD_WSDLURL: 'XROAD_HEALTH_INSURANCE_WSDLURL',
-    HEALTH_INSURANCE_XROAD_USERNAME: 'XROAD_HEALTH_INSURANCE_USERNAME',
-    HEALTH_INSURANCE_XROAD_PASSWORD: 'XROAD_HEALTH_INSURANCE_PASSWORD',
+  secrets: {
+    XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER',
+    XROAD_HEALTH_INSURANCE_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD',
+    XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME:
+      '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME',
+    XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD:
+      '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD',
   },
-)
+})
 
-export const Payment = new XroadConf(
-  {
-    env: {
-      XROAD_PAYMENT_PROVIDER_ID: {
-        dev: 'IS-DEV/GOV/10021/FJS-Public',
-        staging: 'IS-TEST/GOV/10021/FJS-DEV-Public',
-        prod: 'IS/GOV/5402697509/FJS-Public',
-      },
-      XROAD_PAYMENT_BASE_CALLBACK_URL: {
-        dev: 'XROAD:/IS-DEV/GOV/10000/island-is/application-payment-v1/',
-        staging: 'XROAD:',
-        prod: 'XROAD:/IS/GOV/5501692829/island-is/application-payment-v1/',
-      },
-      XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/',
+export const Payment = new XroadConf({
+  env: {
+    XROAD_PAYMENT_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public',
+      staging: 'IS-TEST/GOV/10021/FJS-DEV-Public',
+      prod: 'IS/GOV/5402697509/FJS-Public',
     },
-    secrets: {
-      XROAD_PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER',
-      XROAD_PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD',
+    XROAD_PAYMENT_BASE_CALLBACK_URL: {
+      dev: 'XROAD:/IS-DEV/GOV/10000/island-is/application-payment-v1/',
+      staging: 'XROAD:',
+      prod: 'XROAD:/IS/GOV/5501692829/island-is/application-payment-v1/',
     },
+    XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/',
   },
-  {
-    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'XROAD_PAYMENT_PROVIDER_ID',
-    PAYMENT_XROAD_PROVIDER_ID: 'XROAD_PAYMENT_PROVIDER_ID',
-    PAYMENT_ADDITION_CALLBACK_URL: 'XROAD_PAYMENT_ADDITION_CALLBACK_URL',
-    PAYMENT_BASE_CALLBACK_URL: 'XROAD_PAYMENT_BASE_CALLBACK_URL',
-    PAYMENT_USER: 'XROAD_PAYMENT_USER',
-    PAYMENT_PASSWORD: 'XROAD_PAYMENT_PASSWORD',
+  secrets: {
+    XROAD_PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER',
+    XROAD_PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD',
   },
-)
+})
 
 export const Finance = new XroadConf({
   env: {
@@ -216,23 +171,20 @@ export const NationalRegistry = new XroadConf({
   },
 })
 
-export const Labor = new XroadConf(
-  {
-    env: {
-      XROAD_VMST_API_PATH: {
-        dev: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1',
-        staging: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1',
-        prod: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1',
-      },
-      XROAD_VMST_MEMBER_CODE: {
-        dev: '10003',
-        staging: '7005942039',
-        prod: '7005942039',
-      },
+export const Labor = new XroadConf({
+  env: {
+    XROAD_VMST_API_PATH: {
+      dev: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1',
+      staging: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1',
+      prod: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1',
     },
-    secrets: {
-      XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY',
+    XROAD_VMST_MEMBER_CODE: {
+      dev: '10003',
+      staging: '7005942039',
+      prod: '7005942039',
     },
   },
-  { VMST_API_KEY: 'XROAD_VMST_API_KEY' },
-)
+  secrets: {
+    XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY',
+  },
+})

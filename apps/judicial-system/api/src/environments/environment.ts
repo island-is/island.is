@@ -23,7 +23,7 @@ const devConfig = {
     apiPath: process.env.XROAD_COURT_API_PATH ?? '',
     memberCode: process.env.XROAD_COURT_MEMBER_CODE ?? '',
     serviceOptions: JSON.parse(
-      process.env.COURTS_CREDENTIALS ?? '{}',
+      process.env.XROAD_COURTS_CREDENTIALS ?? '{}',
     ) as CourtClientServiceOptions,
   },
   backend: {
@@ -71,13 +71,13 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.XROAD_COURT_MEMBER_CODE) {
     throw new Error('Missing XROAD_COURT_MEMBER_CODE environment.')
   }
-  if (!process.env.COURTS_CREDENTIALS) {
+  if (!process.env.XROAD_COURTS_CREDENTIALS) {
     throw new Error('Missing COURTS_CREDENTIALS environment.')
   }
   if (!process.env.BACKEND_URL) {
     throw new Error('Missing BACKEND_URL environment.')
   }
-  if (!process.env.COURTS_CREDENTIALS) {
+  if (!process.env.XROAD_COURTS_CREDENTIALS) {
     throw new Error('Missing COURTS_CREDENTIALS environment.')
   }
 }
@@ -108,7 +108,7 @@ const prodConfig = {
     apiPath: process.env.XROAD_COURT_API_PATH ?? '',
     memberCode: process.env.XROAD_COURT_MEMBER_CODE ?? '',
     serviceOptions: JSON.parse(
-      process.env.COURTS_CREDENTIALS ?? '{}',
+      process.env.XROAD_COURTS_CREDENTIALS ?? '{}',
     ) as CourtClientServiceOptions,
   },
   backend: {
