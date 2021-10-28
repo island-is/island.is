@@ -22,7 +22,7 @@ const Profile = ({ heading, info, className }: Props) => {
       {' '}
       <Box
         className={cn({
-          [`${styles.headings}`]: true,
+          [`${styles.headings} profileHeadlines`]: true,
           [`${className}`]: true,
         })}
         marginBottom={[2, 2, 3]}
@@ -30,7 +30,7 @@ const Profile = ({ heading, info, className }: Props) => {
         <Text as="h2" variant="h3" color="dark300">
           {heading}
         </Text>
-        <Divider />
+        {/* <Divider /> */}
       </Box>
       <div
         className={cn({

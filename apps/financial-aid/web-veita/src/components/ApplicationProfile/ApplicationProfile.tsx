@@ -42,8 +42,6 @@ const ApplicationProfile = ({
   setApplication,
   setIsLoading,
 }: ApplicationProps) => {
-  console.log(application)
-
   const [isStateModalVisible, setStateModalVisible] = useState(false)
 
   const [isAidModalVisible, setAidModalVisible] = useState(false)
