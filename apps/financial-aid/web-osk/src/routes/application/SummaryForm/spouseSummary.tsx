@@ -47,14 +47,14 @@ const SpouseSummary = () => {
         form?.hasIncome === undefined
           ? undefined
           : 'Ég hef ' +
-            (form?.hasIncome ? '' : 'ekki') +
+            (form.hasIncome ? '' : 'ekki') +
             'fengið tekjur í þessum mánuði eða síðasta',
     },
     {
       id: 'emailAddress',
       label: 'Netfang',
       url: 'samskipti',
-      info: form?.emailAddress,
+      info: form.emailAddress,
     },
   ]
 

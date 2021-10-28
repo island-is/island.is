@@ -83,7 +83,7 @@ export class ApplicationService {
       where: {
         [Op.or]: [
           {
-            nationalId: nationalId,
+            nationalId,
           },
           {
             spouseNationalId: nationalId,

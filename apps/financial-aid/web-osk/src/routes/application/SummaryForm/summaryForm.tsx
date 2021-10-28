@@ -54,7 +54,7 @@ const SummaryForm = () => {
       id: 'familyStatus',
       label: 'Hjúskaparstaða',
       url: 'hjuskaparstada',
-      info: getFamilyStatus[form?.familyStatus as FamilyStatus],
+      info: getFamilyStatus[form.familyStatus as FamilyStatus],
     },
     {
       id: 'homeCircumstances',
@@ -63,7 +63,7 @@ const SummaryForm = () => {
       info:
         form?.homeCircumstances === HomeCircumstances.OTHER
           ? form?.homeCircumstancesCustom
-          : getHomeCircumstances[form?.homeCircumstances as HomeCircumstances],
+          : getHomeCircumstances[form.homeCircumstances as HomeCircumstances],
     },
     {
       id: 'hasIncome',
@@ -73,7 +73,7 @@ const SummaryForm = () => {
         form?.hasIncome === undefined
           ? undefined
           : 'Ég hef ' +
-            (form?.hasIncome ? '' : 'ekki') +
+            (form.hasIncome ? '' : 'ekki') +
             'fengið tekjur í þessum mánuði eða síðasta',
     },
     {
@@ -81,14 +81,14 @@ const SummaryForm = () => {
       label: 'Staða',
       url: 'atvinna',
       info: form?.employmentCustom
-        ? form?.employmentCustom
-        : getEmploymentStatus[form?.employment as Employment],
+        ? form.employmentCustom
+        : getEmploymentStatus[form.employment as Employment],
     },
     {
       id: 'emailAddress',
       label: 'Netfang',
       url: 'samskipti',
-      info: form?.emailAddress,
+      info: form.emailAddress,
     },
   ]
 

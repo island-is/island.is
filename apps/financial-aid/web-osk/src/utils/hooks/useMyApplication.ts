@@ -37,7 +37,7 @@ const useMyApplication = () => {
         sessionStorage.setItem(storageKey, JSON.stringify(data.application))
       }
     } catch {
-      console.log('CATCH')
+      return error
     }
   }
 

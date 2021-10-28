@@ -88,8 +88,12 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     return signedUrl
   }
 
-  const uploadStateFiles = async (applicationId: string, type: FileType) => {
-    const formatFiles = files.map((f) => {
+  const formatFiles = async (
+    allFiles: UploadFile[],
+    applicationId: string,
+    type: FileType,
+  ) => {
+    const formatFiles = allFiles.map((f) => {
       return {
         applicationId: applicationId,
         name: f.name ?? '',
@@ -98,11 +102,14 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
         type: type,
       }
     })
+    return formatFiles
+  }
 
+  const uploadStateFiles = async (applicationId: string, type: FileType) => {
     try {
       return await createApplicationFiles({
         variables: {
-          input: { files: formatFiles },
+          input: { files: formatFiles(files, applicationId, type) },
         },
       })
     } catch (e) {
@@ -115,20 +122,10 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     type: FileType,
     uploadFile: UploadFile[],
   ) => {
-    const formatFiles = uploadFile.map((f) => {
-      return {
-        applicationId: applicationId,
-        name: f.name ?? '',
-        key: f.key ?? '',
-        size: f.size ?? 0,
-        type: type,
-      }
-    })
-
     try {
       return await createApplicationFiles({
         variables: {
-          input: { files: formatFiles },
+          input: { files: formatFiles(uploadFile, applicationId, type) },
         },
       })
     } catch (e) {
