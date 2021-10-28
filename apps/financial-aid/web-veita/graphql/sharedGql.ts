@@ -181,7 +181,7 @@ export const CurrentUserQuery = gql`
         name
         municipalityId
         phoneNumber
-        role
+        roles
         active
         municipalityHomepage
       }

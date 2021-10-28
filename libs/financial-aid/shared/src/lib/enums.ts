@@ -62,6 +62,7 @@ export enum FileType {
 }
 
 export enum StaffRole {
+  SUPERADMIN = 'SuperAdmin',
   ADMIN = 'Admin',
   EMPLOYEE = 'Employee',
 }
