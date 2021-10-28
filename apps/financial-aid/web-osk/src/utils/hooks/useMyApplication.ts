@@ -1,14 +1,10 @@
 import { useEffect, useState } from 'react'
-import { useLazyQuery, useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 
 import { ApplicationQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import { Application } from '@island.is/financial-aid/shared/lib'
 import { useRouter } from 'next/router'
-
-interface ApplicantData {
-  application?: Application
-}
 
 const useMyApplication = () => {
   const router = useRouter()
@@ -46,7 +42,11 @@ const useMyApplication = () => {
         sessionStorage.setItem(storageKey, JSON.stringify(data.application))
       }
     } catch {
-      return error
+      return {
+        myApplication,
+        error,
+        loading,
+      }
     }
   }
 
