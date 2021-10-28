@@ -18,7 +18,7 @@ export const getApplicant = (application: Application) => {
     },
     {
       title: 'Kennitala',
-      content: insertAt(application.nationalId.replace('-', ''), '-', 6) || '-',
+      content: formatNationalId(application.nationalId),
     },
     {
       title: 'Sími',
@@ -118,7 +118,7 @@ export const getApplicantSpouse = (application: Application) => {
     {
       title: 'Kennitala',
       content: application.spouseNationalId
-        ? insertAt(application.spouseNationalId.replace('-', ''), '-', 6) || '-'
+        ? formatNationalId(application.spouseNationalId)
         : '',
     },
     {

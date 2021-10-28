@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useContext } from 'react'
-import { Box, Divider } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 
 import * as styles from './ApplicationProfile.css'
 
