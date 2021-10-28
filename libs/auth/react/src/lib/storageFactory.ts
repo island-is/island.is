@@ -1,30 +1,39 @@
-/* ISC License (ISC). Copyright 2017 Michal Zalecki */
+/*
+ * Based on an article from Michal Zalecki:
+ * https://michalzalecki.com/why-using-localStorage-directly-is-a-bad-idea/
+ *
+ * Tweaked to have better runtime performance by only checking for support once
+ * per wrapped storage.
+ */
 
 export function storageFactory(getStorage: () => Storage): Storage {
   let inMemoryStorage: { [key: string]: string } = {}
+  let storage: Storage | null = initStorage()
 
-  function isSupported() {
+  function initStorage(): Storage | null {
     try {
+      const testStorage = getStorage()
       const testKey = '__some_random_key_you_are_not_going_to_use__'
-      getStorage().setItem(testKey, testKey)
-      getStorage().removeItem(testKey)
-      return true
+      testStorage.setItem(testKey, testKey)
+      testStorage.removeItem(testKey)
+      return testStorage
     } catch (e) {
-      return false
+      // Ignored, falling back to inMemoryStorage.
+      return null
     }
   }
 
   function clear(): void {
-    if (isSupported()) {
-      getStorage().clear()
+    if (storage) {
+      storage.clear()
     } else {
       inMemoryStorage = {}
     }
   }
 
   function getItem(name: string): string | null {
-    if (isSupported()) {
-      return getStorage().getItem(name)
+    if (storage) {
+      return storage.getItem(name)
     }
     if (inMemoryStorage.hasOwnProperty(name)) {
       return inMemoryStorage[name]
@@ -33,32 +42,32 @@ export function storageFactory(getStorage: () => Storage): Storage {
   }
 
   function key(index: number): string | null {
-    if (isSupported()) {
-      return getStorage().key(index)
+    if (storage) {
+      return storage.key(index)
     } else {
       return Object.keys(inMemoryStorage)[index] || null
     }
   }
 
   function removeItem(name: string): void {
-    if (isSupported()) {
-      getStorage().removeItem(name)
+    if (storage) {
+      storage.removeItem(name)
     } else {
       delete inMemoryStorage[name]
     }
   }
 
   function setItem(name: string, value: string): void {
-    if (isSupported()) {
-      getStorage().setItem(name, value)
+    if (storage) {
+      storage.setItem(name, value)
     } else {
       inMemoryStorage[name] = String(value) // not everyone uses TypeScript
     }
   }
 
   function length(): number {
-    if (isSupported()) {
-      return getStorage().length
+    if (storage) {
+      return storage.length
     } else {
       return Object.keys(inMemoryStorage).length
     }
