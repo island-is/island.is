@@ -1,4 +1,4 @@
-import { Base, JudicialSystem } from '../../../../infra/src/xroad'
+import { Base, JudicialSystem } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {

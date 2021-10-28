@@ -4,7 +4,7 @@ import {
   HealthInsurance,
   Labor,
   Payment,
-} from '../../../../infra/src/xroad'
+} from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const postgresInfo = {

@@ -1,11 +1,11 @@
-import { EnvironmentVariables, Secrets } from './dsl/types/input-types'
+import { EnvironmentVariables, Secrets } from './types/input-types'
 
 type XroadSectionConfig = {
   secrets?: Secrets
   env?: EnvironmentVariables
 }
 
-class XroadConf {
+export class XroadConf {
   config: XroadSectionConfig
 
   constructor(config: XroadSectionConfig) {

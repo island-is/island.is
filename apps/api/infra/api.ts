@@ -9,7 +9,7 @@ import {
   Labor,
   NationalRegistry,
   Payment,
-} from '../../../infra/src/xroad'
+} from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
 export const serviceSetup = (services: {
