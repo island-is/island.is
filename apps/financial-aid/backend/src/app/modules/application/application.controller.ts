@@ -71,7 +71,8 @@ export class ApplicationController {
   @Get('nationalId/:nationalId')
   @ApiOkResponse({
     type: CurrentApplicationModel,
-    description: 'Checks if user has a current application for this period',
+    description:
+      'Checks if user or spouse has a current application for this period',
   })
   async getCurrentApplication(
     @Param('nationalId') nationalId: string,

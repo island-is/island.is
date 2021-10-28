@@ -22,4 +22,7 @@ export class CurrentApplicationModel implements CurrentApplication {
 
   @Field(() => String)
   readonly state!: ApplicationState
+
+  @Field()
+  readonly name!: string
 }
