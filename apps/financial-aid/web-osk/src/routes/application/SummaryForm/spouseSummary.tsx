@@ -5,7 +5,6 @@ import {
   ContentContainer,
   Footer,
   CancelModal,
-  Estimation,
   UserInfo,
   AllFiles,
   FormInfo,
@@ -14,30 +13,22 @@ import {
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 
-import * as styles from './summaryForm.css'
 import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import {
-  Employment,
-  FamilyStatus,
-  getEmploymentStatus,
-  getFamilyStatus,
-  getHomeCircumstances,
-  HomeCircumstances,
-  NavigationProps,
-} from '@island.is/financial-aid/shared/lib'
-
-import useApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useApplication'
+import { FileType, NavigationProps } from '@island.is/financial-aid/shared/lib'
 
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
+import useUpdateApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useUpdateApplication'
 
-const SummaryForm = () => {
+const SpouseSummary = () => {
   const router = useRouter()
-  const { form, updateForm } = useContext(FormContext)
+  const { form } = useContext(FormContext)
 
   const { user } = useContext(AppContext)
+
+  const { updateApplication } = useUpdateApplication()
 
   const [isVisible, setIsVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -47,24 +38,7 @@ const SummaryForm = () => {
     message: '',
   })
 
-  const { createApplication } = useApplication()
-
   const formInfoOverview = [
-    {
-      id: 'familyStatus',
-      label: 'Hjúskaparstaða',
-      url: 'hjuskaparstada',
-      info: getFamilyStatus[form.familyStatus as FamilyStatus],
-    },
-    {
-      id: 'homeCircumstances',
-      label: 'Búseta',
-      url: 'buseta',
-      info:
-        form?.homeCircumstances === HomeCircumstances.OTHER
-          ? form?.homeCircumstancesCustom
-          : getHomeCircumstances[form.homeCircumstances as HomeCircumstances],
-    },
     {
       id: 'hasIncome',
       label: 'Tekjur',
@@ -75,14 +49,6 @@ const SummaryForm = () => {
           : 'Ég hef ' +
             (form.hasIncome ? '' : 'ekki') +
             'fengið tekjur í þessum mánuði eða síðasta',
-    },
-    {
-      id: 'employmentCustom',
-      label: 'Staða',
-      url: 'atvinna',
-      info: form?.employmentCustom
-        ? form.employmentCustom
-        : getEmploymentStatus[form.employment as Employment],
     },
     {
       id: 'emailAddress',
@@ -96,8 +62,13 @@ const SummaryForm = () => {
     if (!form || !user) {
       return
     }
+
     setIsLoading(true)
-    await createApplication(form, user, updateForm)
+
+    await updateApplication(
+      user.currentApplication?.id as string,
+      FileType.SPOUSEFILES,
+    )
       .then(() => {
         setIsLoading(false)
         if (navigation?.nextUrl) {
@@ -110,19 +81,6 @@ const SummaryForm = () => {
           status: true,
           message: 'Obbobbob einhvað fór úrskeiðis',
         })
-
-        if (e.networkError?.statusCode === 400) {
-          const findErrorInFormInfo = formInfoOverview.find(
-            (el) => el.info === undefined,
-          )
-
-          if (findErrorInFormInfo) {
-            var element = document.getElementById(findErrorInFormInfo.id)
-            element?.scrollIntoView({
-              behavior: 'smooth',
-            })
-          }
-        }
       })
   }
 
@@ -133,27 +91,15 @@ const SummaryForm = () => {
   return (
     <>
       <ContentContainer>
-        <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
+        <Text as="h1" variant="h2" marginBottom={2}>
           Yfirlit umsóknar
         </Text>
-        {form.homeCircumstances && (
-          <>
-            <Estimation
-              usePersonalTaxCredit={form.usePersonalTaxCredit}
-              homeCircumstances={form.homeCircumstances}
-              aboutText={
-                <Text marginBottom={[2, 2, 3]}>
-                  Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og{' '}
-                  <span className={styles.taxReturn}>
-                    gerir ekki ráð fyrir tekjum eða gögnum úr skattframtali
-                  </span>{' '}
-                  sem geta haft áhrif á þína aðstoð. Þú færð skilaboð þegar
-                  frekari útreikningur liggur fyrir.
-                </Text>
-              }
-            />
-          </>
-        )}
+
+        <Text marginBottom={[3, 3, 4]}>
+          Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar
+          upplýsingar hafi verið gefnar upp.
+        </Text>
+
         <Box marginTop={[4, 4, 5]}>
           <Divider />
         </Box>
@@ -184,7 +130,7 @@ const SummaryForm = () => {
 
       <Footer
         onPrevButtonClick={() => {
-          setIsVisible(!isVisible)
+          setIsVisible((isVisible) => !isVisible)
         }}
         previousIsDestructive={true}
         prevButtonText="Hætta við"
@@ -196,4 +142,4 @@ const SummaryForm = () => {
   )
 }
 
-export default SummaryForm
+export default SpouseSummary
