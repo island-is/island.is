@@ -65,7 +65,7 @@ export interface User {
   phoneNumber?: string
   folder: string
   service: RolesRule
-  currentApplication?: CurrentApplication
+  currentApplication?: string
   isSpouse?: boolean
   staff?: Staff
   spouse?: Spouse
@@ -122,15 +122,6 @@ export interface Municipality {
   cohabitationAid: Aid
   homepage?: string
   email?: string
-}
-
-export interface CurrentApplication {
-  id: string
-  homeCircumstances: HomeCircumstances
-  usePersonalTaxCredit: boolean
-  state: ApplicationState
-  created: string
-  name: string
 }
 
 export interface ApplicationFile {
