@@ -620,7 +620,7 @@ export const aboutTheAccidentSection = buildSection({
       ],
     }),
 
-    // Attachments section files are optional at this point
+    // Injury Certificate and Fatal accident section
     buildSubSection({
       id: 'attachments.section',
       title: attachments.general.sectionTitle,
@@ -676,31 +676,29 @@ export const aboutTheAccidentSection = buildSection({
             ),
           ],
         }),
-        buildFileUploadField({
-          id: 'attachments.injuryCertificateFile.file',
+        buildMultiField({
+          id: 'attachments.injuryCertificateFile.subSection',
           title: attachments.general.heading,
-          uploadAccept: UPLOAD_ACCEPT,
-          uploadHeader: injuredPersonInformation.upload.uploadHeader,
-          uploadDescription: attachments.general.uploadDescription,
-          uploadButtonLabel: attachments.general.uploadButtonLabel,
-          introduction: attachments.general.uploadIntroduction,
+          children: [
+            buildFileUploadField({
+              id: 'attachments.injuryCertificateFile.file',
+              title: attachments.general.heading,
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: injuredPersonInformation.upload.uploadHeader,
+              uploadDescription: attachments.general.uploadDescription,
+              uploadButtonLabel: attachments.general.uploadButtonLabel,
+              introduction: attachments.general.uploadIntroduction,
+            }),
+          ],
           condition: (formValue) =>
             (formValue as {
               injuryCertificate: { answer: AttachmentsEnum }
             }).injuryCertificate?.answer === AttachmentsEnum.INJURYCERTIFICATE,
         }),
-      ],
-    }),
-
-    // Fatal accident section
-    buildSubSection({
-      id: 'fatalAccident.section',
-      title: fatalAccidentAttachment.general.sectionTitle,
-      condition: (formValue) => isReportingOnBehalfOfInjured(formValue),
-      children: [
         buildMultiField({
           id: 'fatalAccidentMulti.section',
           title: fatalAccident.general.sectionTitle,
+          condition: (formValue) => isReportingOnBehalfOfInjured(formValue),
           children: [
             buildRadioField({
               id: 'wasTheAccidentFatal',
@@ -718,7 +716,9 @@ export const aboutTheAccidentSection = buildSection({
           id: 'fatalAccidentUploadDeathCertificateNowMulti',
           title: fatalAccidentAttachment.labels.title,
           description: fatalAccidentAttachment.labels.description,
-          condition: (formValue) => formValue.wasTheAccidentFatal === YES,
+          condition: (formValue) =>
+            isReportingOnBehalfOfInjured(formValue) &&
+            formValue.wasTheAccidentFatal === YES,
           children: [
             buildRadioField({
               id: 'fatalAccidentUploadDeathCertificateNow',
@@ -767,6 +767,7 @@ export const aboutTheAccidentSection = buildSection({
             }),
           ],
           condition: (formValue) =>
+            isReportingOnBehalfOfInjured(formValue) &&
             formValue.wasTheAccidentFatal === YES &&
             formValue.fatalAccidentUploadDeathCertificateNow === YES,
         }),

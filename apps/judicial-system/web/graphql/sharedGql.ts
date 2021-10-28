@@ -76,9 +76,7 @@ export const CaseQuery = gql`
       courtAttendees
       prosecutorDemands
       courtDocuments
-      isAccusedRightsHidden
-      accusedPleaDecision
-      accusedPleaAnnouncement
+      accusedBookings
       litigationPresentations
       courtCaseFacts
       courtLegalArguments

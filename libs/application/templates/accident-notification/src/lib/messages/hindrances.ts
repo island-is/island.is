@@ -4,7 +4,7 @@ export const hindrances = {
   general: defineMessages({
     sectionTitle: {
       id: 'an.application:general.sectionTitle',
-      defaultMessage: 'Hindranir ',
+      defaultMessage: 'Almennt ',
       description: 'Hindrances',
     },
   }),

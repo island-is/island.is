@@ -82,12 +82,6 @@ export enum CaseDecision {
   DISMISSING = 'DISMISSING',
 }
 
-export enum AccusedPleaDecision {
-  ACCEPT = 'ACCEPT',
-  REJECT = 'REJECT',
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
-}
-
 export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
@@ -145,9 +139,7 @@ export interface Case {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  isAccusedRightsHidden?: boolean
-  accusedPleaDecision?: AccusedPleaDecision
-  accusedPleaAnnouncement?: string
+  accusedBookings?: string
   litigationPresentations?: string
   courtCaseFacts?: string
   courtLegalArguments?: string
@@ -238,8 +230,7 @@ export interface UpdateCase {
   prosecutorDemands?: string
   courtDocuments?: string[]
   isAccusedAbsent?: boolean
-  accusedPleaDecision?: AccusedPleaDecision
-  accusedPleaAnnouncement?: string
+  accusedBookings?: string
   litigationPresentations?: string
   courtCaseFacts?: string
   courtLegalArguments?: string
@@ -320,12 +311,4 @@ export function hasCaseBeenAppealed(theCase: Case): boolean {
       Boolean(theCase.accusedPostponedAppealDate) ||
       Boolean(theCase.prosecutorPostponedAppealDate))
   )
-}
-
-export function isAccusedRightsHidden(theCase: Case): boolean {
-  return theCase.isAccusedRightsHidden == null
-    ? theCase.sessionArrangements
-      ? theCase.sessionArrangements !== SessionArrangements.ALL_PRESENT
-      : false
-    : theCase.isAccusedRightsHidden
 }
