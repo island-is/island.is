@@ -9,7 +9,7 @@ import {
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseGender,
@@ -130,9 +130,9 @@ export class UpdateCaseDto {
   readonly legalBasis?: string
 
   @IsOptional()
-  @IsEnum(CaseCustodyProvisions, { each: true })
-  @ApiPropertyOptional({ enum: CaseCustodyProvisions, isArray: true })
-  readonly custodyProvisions?: CaseCustodyProvisions[]
+  @IsEnum(CaseLegalProvisions, { each: true })
+  @ApiPropertyOptional({ enum: CaseLegalProvisions, isArray: true })
+  readonly legalProvisions?: CaseLegalProvisions[]
 
   @IsOptional()
   @IsEnum(CaseCustodyRestrictions, { each: true })

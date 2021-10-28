@@ -458,7 +458,7 @@ export class CaseService {
       courtId: existingCase.courtId,
       lawsBroken: existingCase.lawsBroken,
       legalBasis: existingCase.legalBasis,
-      custodyProvisions: existingCase.custodyProvisions,
+      legalProvisions: existingCase.legalProvisions,
       requestedCustodyRestrictions: existingCase.requestedCustodyRestrictions,
       caseFacts: existingCase.caseFacts,
       legalArguments: existingCase.legalArguments,

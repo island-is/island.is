@@ -33,7 +33,7 @@ export const CaseQuery = gql`
       demands
       lawsBroken
       legalBasis
-      custodyProvisions
+      legalProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
       caseFacts
