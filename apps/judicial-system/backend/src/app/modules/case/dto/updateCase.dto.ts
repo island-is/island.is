@@ -9,12 +9,11 @@ import {
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseGender,
   CaseDecision,
-  AccusedPleaDecision,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
@@ -131,9 +130,9 @@ export class UpdateCaseDto {
   readonly legalBasis?: string
 
   @IsOptional()
-  @IsEnum(CaseCustodyProvisions, { each: true })
-  @ApiPropertyOptional({ enum: CaseCustodyProvisions, isArray: true })
-  readonly custodyProvisions?: CaseCustodyProvisions[]
+  @IsEnum(CaseLegalProvisions, { each: true })
+  @ApiPropertyOptional({ enum: CaseLegalProvisions, isArray: true })
+  readonly legalProvisions?: CaseLegalProvisions[]
 
   @IsOptional()
   @IsEnum(CaseCustodyRestrictions, { each: true })
@@ -241,19 +240,9 @@ export class UpdateCaseDto {
   readonly courtDocuments?: string
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly isAccusedRightsHidden?: boolean
-
-  @IsOptional()
-  @IsEnum(AccusedPleaDecision)
-  @ApiPropertyOptional({ enum: AccusedPleaDecision })
-  readonly accusedPleaDecision?: AccusedPleaDecision
-
-  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly accusedPleaAnnouncement?: string
+  readonly accusedBookings?: string
 
   @IsOptional()
   @IsString()

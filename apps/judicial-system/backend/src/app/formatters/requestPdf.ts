@@ -14,7 +14,7 @@ import {
 import { environment } from '../../environments'
 import { restrictionRequest as m } from '../messages'
 import { Case } from '../modules/case/models'
-import { formatCustodyProvisions } from './formatters'
+import { formatLegalProvisions } from './formatters'
 import {
   baseFontSize,
   hugeFontSize,
@@ -123,8 +123,8 @@ function constructRestrictionRequestPdf(
     .font('Helvetica')
     .fontSize(baseFontSize)
     .text(
-      formatCustodyProvisions(
-        existingCase.custodyProvisions,
+      formatLegalProvisions(
+        existingCase.legalProvisions,
         existingCase.legalBasis,
       ),
       {

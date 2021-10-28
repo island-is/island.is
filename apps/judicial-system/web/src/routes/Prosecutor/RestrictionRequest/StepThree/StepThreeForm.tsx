@@ -23,7 +23,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import {
-  custodyProvisions,
+  legalProvisions,
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
 import {
@@ -174,13 +174,13 @@ const StepThreeForm: React.FC<Props> = (props) => {
               <CheckboxList
                 checkboxes={
                   workingCase.type === CaseType.CUSTODY
-                    ? custodyProvisions
+                    ? legalProvisions
                     : travelBanProvisions
                 }
-                selected={workingCase.custodyProvisions}
+                selected={workingCase.legalProvisions}
                 onChange={(id) =>
                   setCheckboxAndSendToServer(
-                    'custodyProvisions',
+                    'legalProvisions',
                     id,
                     workingCase,
                     setWorkingCase,
@@ -336,8 +336,8 @@ const StepThreeForm: React.FC<Props> = (props) => {
           nextIsDisabled={
             !validate(workingCase.lawsBroken ?? '', 'empty').isValid ||
             !requestedValidToDateIsValid ||
-            ((!workingCase.custodyProvisions ||
-              workingCase.custodyProvisions?.length === 0) &&
+            ((!workingCase.legalProvisions ||
+              workingCase.legalProvisions?.length === 0) &&
               !workingCase.legalBasis)
           }
         />

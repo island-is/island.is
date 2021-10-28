@@ -41,7 +41,7 @@ export enum CaseTransition {
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
-export enum CaseCustodyProvisions {
+export enum CaseLegalProvisions {
   _95_1_A = '_95_1_A', // a-lið 1. mgr. 95. gr.
   _95_1_B = '_95_1_B', // b-lið 1. mgr. 95. gr.
   _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
@@ -82,12 +82,6 @@ export enum CaseDecision {
   DISMISSING = 'DISMISSING',
 }
 
-export enum AccusedPleaDecision {
-  ACCEPT = 'ACCEPT',
-  REJECT = 'REJECT',
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
-}
-
 export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
@@ -122,7 +116,7 @@ export interface Case {
   demands?: string
   lawsBroken?: string
   legalBasis?: string
-  custodyProvisions?: CaseCustodyProvisions[]
+  legalProvisions?: CaseLegalProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   requestedOtherRestrictions?: string
   caseFacts?: string
@@ -145,9 +139,7 @@ export interface Case {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  isAccusedRightsHidden?: boolean
-  accusedPleaDecision?: AccusedPleaDecision
-  accusedPleaAnnouncement?: string
+  accusedBookings?: string
   litigationPresentations?: string
   courtCaseFacts?: string
   courtLegalArguments?: string
@@ -216,7 +208,7 @@ export interface UpdateCase {
   demands?: string
   lawsBroken?: string
   legalBasis?: string
-  custodyProvisions?: CaseCustodyProvisions[]
+  legalProvisions?: CaseLegalProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   requestedOtherRestrictions?: string
   caseFacts?: string
@@ -237,9 +229,7 @@ export interface UpdateCase {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  isAccusedAbsent?: boolean
-  accusedPleaDecision?: AccusedPleaDecision
-  accusedPleaAnnouncement?: string
+  accusedBookings?: string
   litigationPresentations?: string
   courtCaseFacts?: string
   courtLegalArguments?: string
@@ -320,12 +310,4 @@ export function hasCaseBeenAppealed(theCase: Case): boolean {
       Boolean(theCase.accusedPostponedAppealDate) ||
       Boolean(theCase.prosecutorPostponedAppealDate))
   )
-}
-
-export function isAccusedRightsHidden(theCase: Case): boolean {
-  return theCase.isAccusedRightsHidden == null
-    ? theCase.sessionArrangements
-      ? theCase.sessionArrangements !== SessionArrangements.ALL_PRESENT
-      : false
-    : theCase.isAccusedRightsHidden
 }
