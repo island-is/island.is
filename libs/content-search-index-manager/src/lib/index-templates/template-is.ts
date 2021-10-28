@@ -2,6 +2,7 @@ export const template = {
   order: 0,
   index_patterns: ['island-is-*'],
   settings: {
+    max_ngram_diff: 2,
     analysis: {
       filter: {
         icelandicStemmer: {
@@ -36,7 +37,7 @@ export const template = {
       analyzer: {
         baseIcelandic: {
           type: 'custom',
-          tokenizer: 'standard',
+          tokenizer: 'edgeGram',
           filter: [
             'lowercase',
             'icelandicSynonym',
@@ -47,7 +48,7 @@ export const template = {
         },
         compoundIcelandic: {
           type: 'custom',
-          tokenizer: 'standard',
+          tokenizer: 'edgeGram',
           filter: [
             'lowercase',
             'icelandicSynonym',
@@ -59,13 +60,20 @@ export const template = {
         },
         termIcelandic: {
           type: 'custom',
-          tokenizer: 'standard',
+          tokenizer: 'edgeGram',
           filter: [
             'lowercase',
             'icelandicSynonym',
             'icelandicStop',
             'icelandicAutocompleteStop',
           ],
+        },
+      },
+      tokenizer: {
+        edgeGram: {
+          type: 'ngram',
+          min_gram: 3,
+          max_gram: 5,
         },
       },
     },
