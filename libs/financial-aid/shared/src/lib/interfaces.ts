@@ -29,7 +29,7 @@ export interface Staff {
   nationalId: string
   name: string
   municipalityId: string
-  role: StaffRole
+  roles: StaffRole[]
   active: boolean
   municipalityName: string
   phoneNumber?: string
