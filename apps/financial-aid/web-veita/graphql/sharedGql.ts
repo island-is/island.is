@@ -239,3 +239,15 @@ export const UpdateApplicationMutation = gql`
     }
   }
 `
+
+export const StaffForMunicipalityQuery = gql`
+  query staffForMunicipality {
+    users {
+      id
+      nationalId
+      name
+      roles
+      active
+    }
+  }
+`

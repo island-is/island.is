@@ -33,6 +33,7 @@ import {
 import {
   apiBasePath,
   ApplicationStateUrl,
+  StaffRole,
 } from '@island.is/financial-aid/shared/lib'
 
 import type {
@@ -51,8 +52,9 @@ import { CurrentStaff, CurrentUser, RolesRules } from '../../decorators'
 import { ApplicationGuard } from '../../guards/application.guard'
 import { StaffService } from '../staff'
 import { IsSpouseResponse } from './models/isSpouse.response'
-import { EmployeeGuard } from '../../guards/employee.guard'
+import { StaffGuard } from '../../guards/staff.guard'
 import { CurrentApplication } from '../../decorators/application.decorator'
+import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/application`)
@@ -107,8 +109,9 @@ export class ApplicationController {
     }
   }
 
-  @UseGuards(RolesGuard, EmployeeGuard)
+  @UseGuards(RolesGuard, StaffGuard)
   @RolesRules(RolesRule.VEITA)
+  @StaffRolesRules(StaffRole.EMPLOYEE)
   @Get('state/:stateUrl')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -141,8 +144,9 @@ export class ApplicationController {
     return application
   }
 
-  @UseGuards(RolesGuard, EmployeeGuard)
+  @UseGuards(RolesGuard, StaffGuard)
   @RolesRules(RolesRule.VEITA)
+  @StaffRolesRules(StaffRole.EMPLOYEE)
   @Get('filters')
   @ApiOkResponse({
     description: 'Gets all existing applications filters',
@@ -184,8 +188,9 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @UseGuards(RolesGuard, EmployeeGuard)
+  @UseGuards(RolesGuard, StaffGuard)
   @RolesRules(RolesRule.VEITA)
+  @StaffRolesRules(StaffRole.EMPLOYEE)
   @Put(':id/:stateUrl')
   @ApiOkResponse({
     type: UpdateApplicationTableResponse,

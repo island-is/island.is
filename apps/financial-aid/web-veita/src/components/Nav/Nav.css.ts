@@ -95,12 +95,13 @@ export const linkHoverEffect = style({
   },
 })
 
-export const logOutButton = style({
+export const sideNavBarButton = style({
   display: 'flex',
   alignItems: 'center',
+  marginBottom: '8px',
 })
 
-export const logOutButtonIcon = style({
+export const sideNavBarButtonIcon = style({
   marginRight: theme.spacing[2],
   transition: 'transform 250ms ease',
 })
