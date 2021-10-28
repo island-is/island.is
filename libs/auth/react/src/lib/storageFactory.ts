@@ -6,81 +6,49 @@
  * per wrapped storage.
  */
 
-export function storageFactory(getStorage: () => Storage): Storage {
-  let inMemoryStorage: { [key: string]: string } = {}
-  let storage: Storage | null = initStorage()
+class InMemoryStorage implements Storage {
+  storage: { [key: string]: string } = {}
 
-  function initStorage(): Storage | null {
-    try {
-      const testStorage = getStorage()
-      const testKey = '__some_random_key_you_are_not_going_to_use__'
-      testStorage.setItem(testKey, testKey)
-      testStorage.removeItem(testKey)
-      return testStorage
-    } catch (e) {
-      // Ignored, falling back to inMemoryStorage.
-      return null
-    }
+  clear = (): void => {
+    this.storage = {}
   }
 
-  function clear(): void {
-    if (storage) {
-      storage.clear()
-    } else {
-      inMemoryStorage = {}
-    }
-  }
-
-  function getItem(name: string): string | null {
-    if (storage) {
-      return storage.getItem(name)
-    }
-    if (inMemoryStorage.hasOwnProperty(name)) {
-      return inMemoryStorage[name]
+  getItem = (name: string): string | null => {
+    if (Object.prototype.hasOwnProperty.call(this.storage, name)) {
+      return this.storage[name]
     }
     return null
   }
 
-  function key(index: number): string | null {
-    if (storage) {
-      return storage.key(index)
-    } else {
-      return Object.keys(inMemoryStorage)[index] || null
-    }
+  key = (index: number): string | null => {
+    return Object.keys(this.storage)[index] || null
   }
 
-  function removeItem(name: string): void {
-    if (storage) {
-      storage.removeItem(name)
-    } else {
-      delete inMemoryStorage[name]
-    }
+  removeItem = (name: string): void => {
+    delete this.storage[name]
   }
 
-  function setItem(name: string, value: string): void {
-    if (storage) {
-      storage.setItem(name, value)
-    } else {
-      inMemoryStorage[name] = String(value) // not everyone uses TypeScript
-    }
+  setItem = (name: string, value: string): void => {
+    this.storage[name] = String(value) // not everyone uses TypeScript
   }
 
-  function length(): number {
-    if (storage) {
-      return storage.length
-    } else {
-      return Object.keys(inMemoryStorage).length
-    }
+  get length(): number {
+    return Object.keys(this.storage).length
   }
+}
 
-  return {
-    getItem,
-    setItem,
-    removeItem,
-    clear,
-    key,
-    get length() {
-      return length()
-    },
+export function storageFactory(getStorage: () => Storage): Storage {
+  try {
+    // Test if the storage works.
+    const storage = getStorage()
+    const testKey = '__some_random_key_you_are_not_going_to_use__'
+    storage.setItem(testKey, testKey)
+    storage.removeItem(testKey)
+
+    // Great! return it.
+    return storage
+  } catch (e) {
+    // Oh no. Fall back to inMemoryStorage.
+    return new InMemoryStorage()
   }
 }
