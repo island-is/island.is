@@ -15,8 +15,8 @@ const Index = () => {
       return `${Routes.spouseApplication}`
     }
 
-    if (user?.currentApplication?.id) {
-      return `${Routes.statusPage(user.currentApplication.id as string)}`
+    if (user?.currentApplication) {
+      return `${Routes.statusPage(user.currentApplication as string)}`
     }
 
     return `${Routes.application}`
