@@ -59,7 +59,10 @@ export function toISODate(
       date = undefined
     }
   }
-  return date ? (date.toISOString().substr(0, 10) as ISODate) : null
+  // TODO: Remove this dumb `as Date` type coersion as soon as
+  // the `nx run api:schemas/build-graphql-schema` script gets fixed
+  // and stops exploding on this next line.
+  return date ? ((date as Date).toISOString().substr(0, 10) as ISODate) : null
 }
 
 // ---------------------------------------------------------------------------
