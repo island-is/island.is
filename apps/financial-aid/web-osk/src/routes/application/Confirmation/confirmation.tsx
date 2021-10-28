@@ -14,7 +14,7 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
 
-import { Routes } from '@island.is/financial-aid/shared/lib'
+import { getNextPeriod, Routes } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
@@ -28,8 +28,8 @@ const Confirmation = () => {
 
   const nextSteps = [
     'Vinnsluaðili sveitarfélagsins vinnur úr umsókninni. Umsóknin verður afgreidd eins fljótt og auðið er.',
-    'Staðfesting verður send á þig í tölvupósti',
-    'Ef þörf er á frekari upplýsingum eða gögnum mun vinnsluaðili sveitarfélagsins hafa samband.',
+    `Ef umsóknin er samþykkt getur þú reiknað með útgreiðslu í byrjun ${getNextPeriod.month}.`,
+    'Ef þörf er á frekari upplýsingum eða gögnum til að vinna úr umsókninni mun vinnsluaðili sveitarfélagsins hafa samband.',
   ]
 
   useEffect(() => {

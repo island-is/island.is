@@ -31,7 +31,7 @@ export class ApplicationGuard implements CanActivate {
         return false
       }
     } else if (user.service === RolesRule.OSK) {
-      if (application.nationalId === user.nationalId) {
+      if (application.nationalId !== user.nationalId) {
         return false
       }
     } else {

@@ -37,4 +37,14 @@ export class UpdateApplicationDto {
   @IsString()
   @ApiProperty()
   staffId: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spouseEmail: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spousePhoneNumber: string
 }
