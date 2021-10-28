@@ -41,13 +41,9 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: 'applicant',
-              formLoader: async ({ getOptions }) => {
-                const { featureFlagClient } = getOptions() as {
-                  featureFlagClient: FeatureFlagClient
-                }
-
+              formLoader: async ({ featureFlagClient }) => {
                 const featureFlags = await getApplicationFeatureFlags(
-                  featureFlagClient,
+                  featureFlagClient as FeatureFlagClient,
                 )
 
                 const getApplication = await import(

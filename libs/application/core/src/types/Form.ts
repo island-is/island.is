@@ -70,9 +70,7 @@ export interface Form {
 }
 
 export interface FormLoaderArgs {
-  getOptions: () => {
-    featureFlagClient: unknown
-  }
+  featureFlagClient: unknown
 }
 
 export type FormLoader = (args: FormLoaderArgs) => Promise<Form>
