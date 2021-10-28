@@ -42,10 +42,11 @@ export class AccidentNotificationService {
     const attachments = await this.attachmentProvider.gatherAllAttachments(
       application,
     )
-
+    console.log('attachments ', attachments)
     const answers = application.answers as AccidentNotificationAnswers
     const xml = applictionAnswersToXml(answers, attachments)
-
+    console.log('applicationJson ', JSON.stringify(answers, null, 4))
+    console.log('XML OBJEJCJTWS', xml)
     try {
       const { ihiDocumentID } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
@@ -61,7 +62,8 @@ export class AccidentNotificationService {
           ),
         application,
       )
-
+      //stop application from being submitted
+      throw new Error('debug stop!')
       // Request representative review when applicable
       if (shouldRequestReview) {
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(

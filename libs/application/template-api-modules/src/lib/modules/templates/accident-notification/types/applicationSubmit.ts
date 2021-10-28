@@ -1,6 +1,7 @@
 export interface ApplicationSubmit {
   slysatilkynning: Slysatilkynning
 }
+
 export interface Slysatilkynning {
   tilkynnandi: TilkynnandiOrSlasadi
   slasadi: TilkynnandiOrSlasadi
@@ -8,6 +9,7 @@ export interface Slysatilkynning {
   atvinnurekandi?: Atvinnurekandi | undefined
   fylgiskjol: Fylgiskjol
 }
+
 export interface TilkynnandiOrSlasadi {
   kennitala: string
   nafn: string
@@ -18,19 +20,23 @@ export interface TilkynnandiOrSlasadi {
   fyrirhvernerveridadtilkynna?: number
   simi?: string
 }
+
 export interface SlysVidVinnusjomanna {
   stadsetningskips: number
   nafnskips: string
   einkennisstafirskips: string
+  nafnhafnar?: string
   heimahofnskips?: string
   skipaskrarnumer?: string
 }
+
 export interface SlysVidHeimislisstorf {
   heimili: string
   postnumer: string
   sveitarfelag: string
   nanar?: string
 }
+
 export interface Slys {
   tegund: number
   dagsetningslys: string
@@ -45,6 +51,7 @@ export interface Slys {
   slysvidvinnusjomanna?: SlysVidVinnusjomanna
   slysvidvinnu?: Slysvidvinnu
 }
+
 export interface Slysvidvinnu {
   lysingavinnuvel: string
 }
@@ -66,7 +73,7 @@ export interface Fylgiskjol {
 }
 export interface Fylgiskjal {
   heiti: string
-  tegund: string
+  tegund: number
   innihald: string
 }
 

@@ -2,6 +2,8 @@ import { Application } from '@island.is/application/core'
 import {
   AccidentNotificationAnswers,
   AccidentTypeEnum,
+  FishermanWorkplaceAccidentLocationEnum,
+  FishermanWorkplaceAccidentShipLocationEnum,
   SubmittedApplicationData,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
@@ -45,8 +47,8 @@ export const applictionAnswersToXml = (
       fylgiskjal: attachments.map((attachment) => {
         return {
           heiti: attachment.name,
+          tegund: attachment.attachmentType as number,
           innihald: attachment.content,
-          tegund: '',
         }
       }),
     },
@@ -111,11 +113,14 @@ const injuredPerson = (
 }
 
 const accident = (answers: AccidentNotificationAnswers): Slys => {
+  const accidentType = accidentTypeToId(answers.accidentType.radioButton)
   const accidentBase = {
-    tegund: accidentTypeToId(answers.accidentType.radioButton),
-    undirtegund: !answers.workAccident
-      ? undefined
-      : workAccidentTypeToId(answers.workAccident.type),
+    tegund: accidentType,
+    //the types 6 = WORK accident and 9 = STUDIES are the only ones with a subtype
+    undirtegund:
+      accidentType === 6 || accidentType === 9
+        ? workAccidentTypeToId(answers.workAccident.type)
+        : undefined,
 
     dagsetningslys: answers.accidentDetails.dateOfAccident,
     timislys: answers.accidentDetails.timeOfAccident,
@@ -123,7 +128,7 @@ const accident = (answers: AccidentNotificationAnswers): Slys => {
     banaslys: yesOrNoToNumber(answers.wasTheAccidentFatal),
     bilslys: yesOrNoToNumber(answers.carAccidentHindrance),
     stadurslysseferindi: answers.locationAndPurpose?.location ?? '',
-    lysingerindis: 'lysingerindis ', //TODO find correct field
+    lysingerindis: 'lysingerindis', //TODO find correct field
   }
 
   switch (answers.accidentType.radioButton) {
@@ -145,15 +150,46 @@ const accident = (answers: AccidentNotificationAnswers): Slys => {
     case AccidentTypeEnum.STUDIES:
       return accidentBase
     case AccidentTypeEnum.WORK: {
-      return answers.workMachineRadio === 'yes'
-        ? {
-            ...accidentBase,
-            slysvidvinnu: {
-              lysingavinnuvel: answers.workMachine.desriptionOfMachine,
-            },
-          }
-        : accidentBase
+      return work(answers, accidentBase)
     }
+  }
+}
+
+const work = (
+  answers: AccidentNotificationAnswers,
+  accidentBase: Slys,
+): Slys => {
+  if (answers.workAccident.type === WorkAccidentTypeEnum.FISHERMAN) {
+    return {
+      ...accidentBase,
+      slysvidvinnusjomanna: {
+        stadsetningskips: shipLocation(answers),
+        nafnskips: answers.fishingShipInfo.shipName,
+        einkennisstafirskips: answers.fishingShipInfo.shipCharacters,
+      },
+    }
+  }
+
+  return answers.workMachineRadio === 'yes'
+    ? {
+        ...accidentBase,
+        slysvidvinnu: {
+          lysingavinnuvel: answers.workMachine.desriptionOfMachine,
+        },
+      }
+    : accidentBase
+}
+
+const shipLocation = (answers: AccidentNotificationAnswers): number => {
+  const location = answers.fishermanLocation
+    .answer as FishermanWorkplaceAccidentShipLocationEnum
+  switch (location) {
+    case FishermanWorkplaceAccidentShipLocationEnum.SAILINGORFISHING:
+      return 1
+    case FishermanWorkplaceAccidentShipLocationEnum.HARBOR:
+      return 2
+    case FishermanWorkplaceAccidentShipLocationEnum.OTHER:
+      return 3
   }
 }
 

@@ -22,12 +22,12 @@ export class AttachmentProvider {
     try {
       const injuryCertificateFile = await this.prepareApplicationAttachments(
         application,
-        'attachments.injuryCertificateFile',
+        'attachments.injuryCertificateFile.file',
         AttachmentTypeEnum.INJURY_CERTIFICATE,
       )
       const powerOfAttorneyFile = await this.prepareApplicationAttachments(
         application,
-        'attachments.powerOfAttorneyFile',
+        'attachments.powerOfAttorneyFile.file',
         AttachmentTypeEnum.POWER_OF_ATTORNEY,
       )
       const additionalFiles = await this.prepareApplicationAttachments(
