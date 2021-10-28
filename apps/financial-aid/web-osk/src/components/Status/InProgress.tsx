@@ -4,8 +4,8 @@ import { ActionCard, Box, Text } from '@island.is/island-ui/core'
 import * as styles from './Status.css'
 
 import {
+  Application,
   ApplicationState,
-  CurrentApplication,
   getNextPeriod,
   getState,
   Routes,
@@ -15,7 +15,7 @@ import { Estimation } from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
 
 interface Props {
-  currentApplication: CurrentApplication
+  currentApplication: Application
 }
 
 const InProgress = ({ currentApplication }: Props) => {

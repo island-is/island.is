@@ -27,7 +27,7 @@ const useUser = () => {
     if (loggedInUser && !user) {
       if (loggedInUser.currentApplication) {
         router.push(
-          `${Routes.statusPage(loggedInUser.currentApplication.id as string)}`,
+          `${Routes.statusPage(loggedInUser.currentApplication as string)}`,
         )
       }
 
