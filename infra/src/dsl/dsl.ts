@@ -98,6 +98,18 @@ export class ServiceBuilder<ServiceType> implements Service {
   name() {
     return this.serviceDef.name
   }
+
+  private assertUnset<T>(current: T, envs: T) {
+    const intersection = Object.keys({
+      ...current,
+    }).filter({}.hasOwnProperty.bind(envs))
+    if (intersection.length) {
+      throw new Error(
+        `Trying to set same environment variable multiple times: ${intersection}`,
+      )
+    }
+  }
+
   /**
    * Environment variables are used for a configuration that is not a secret. It can be environment-specific or not. Mapped to [environment variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/).
    * Environment variables are only applied to the service. If you need those on an `initContainer` you need to specify them at that scope. That means you may need to extract and reuse or duplicate the variables if you need them both for `initContainer` and the service.
@@ -105,14 +117,13 @@ export class ServiceBuilder<ServiceType> implements Service {
    * @param value value of env variable. A single string sets the same value across all environment. A dictionary with keys the environments sets an individual value for each one
    */
   env(envs: EnvironmentVariables) {
+    this.assertUnset(this.serviceDef.env, envs)
     this.serviceDef.env = { ...this.serviceDef.env, ...envs }
     return this
   }
 
   xroad(...configs: XroadConfig[]) {
-    configs.forEach((config) =>
-      this.env(config.getEnv()).secrets(config.getSecrets()),
-    )
+    this.serviceDef.xroadConfig = [...this.serviceDef.xroadConfig, ...configs]
     return this
   }
 
@@ -142,6 +153,7 @@ export class ServiceBuilder<ServiceType> implements Service {
    * @param secrets Maps of secret names and their corresponding paths
    */
   secrets(secrets: Secrets) {
+    this.assertUnset(this.serviceDef.secrets, secrets)
     this.serviceDef.secrets = { ...this.serviceDef.secrets, ...secrets }
     return this
   }
