@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { CaseState } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
