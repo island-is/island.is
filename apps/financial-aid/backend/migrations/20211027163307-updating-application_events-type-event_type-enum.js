@@ -24,6 +24,8 @@ module.exports = {
                 'Approved',
                 'StaffComment',
                 'UserComment',
+                'FileUpload',
+                'AssignCase'
               ),
               allowNull: false,
               defaultValue: 'New',
