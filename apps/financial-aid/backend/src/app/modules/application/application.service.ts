@@ -84,7 +84,11 @@ export class ApplicationService {
       },
     })
 
-    return currentApplication.id
+    if (currentApplication) {
+      return currentApplication.id
+    }
+
+    return null
   }
 
   async getAll(
