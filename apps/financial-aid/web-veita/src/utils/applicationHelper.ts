@@ -7,7 +7,6 @@ import {
   insertAt,
   formatPhoneNumber,
   formatNationalId,
-  showSpouseData,
 } from '@island.is/financial-aid/shared/lib'
 import { calcAge } from './formHelper'
 
@@ -49,36 +48,34 @@ export const getApplicant = (application: Application) => {
 }
 
 export const getApplicantMoreInfo = (application: Application) => {
-  return showSpouseData[application.familyStatus]
-    ? [
-        {
-          title: 'Búsetuform',
-          content:
-            getHomeCircumstances[
-              application.homeCircumstances as HomeCircumstances
-            ],
-          other: application.homeCircumstancesCustom,
-        },
-        {
-          title: 'Atvinna',
-          content: getEmploymentStatus[application.employment as Employment],
-          other: application.employmentCustom,
-        },
-        {
-          title: 'Lánshæft nám',
-          content: application.student ? 'Já' : 'Nei',
-          other: application.studentCustom,
-        },
-        {
-          title: 'Hefur haft tekjur',
-          content: application.hasIncome ? 'Já' : 'Nei',
-        },
-        {
-          title: 'Athugasemd',
-          other: application.formComment,
-        },
-      ]
-    : []
+  return [
+    {
+      title: 'Búsetuform',
+      content:
+        getHomeCircumstances[
+          application.homeCircumstances as HomeCircumstances
+        ],
+      other: application.homeCircumstancesCustom,
+    },
+    {
+      title: 'Atvinna',
+      content: getEmploymentStatus[application.employment as Employment],
+      other: application.employmentCustom,
+    },
+    {
+      title: 'Lánshæft nám',
+      content: application.student ? 'Já' : 'Nei',
+      other: application.studentCustom,
+    },
+    {
+      title: 'Hefur haft tekjur',
+      content: application.hasIncome ? 'Já' : 'Nei',
+    },
+    {
+      title: 'Athugasemd',
+      other: application.formComment,
+    },
+  ]
 }
 
 export const getNationalRegistryInfo = (application: Application) => {
