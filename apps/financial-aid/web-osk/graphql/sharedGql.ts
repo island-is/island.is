@@ -46,6 +46,7 @@ export const CurrentUserQuery = gql`
         state
         homeCircumstances
         usePersonalTaxCredit
+        name
       }
     }
   }

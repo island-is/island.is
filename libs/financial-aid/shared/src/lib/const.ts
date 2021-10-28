@@ -1,5 +1,6 @@
 export const Routes = {
   application: '/umsokn',
+  spouseApplication: '/umsokn/rettur',
   status: '/stada',
   statusPage: (id: string) => `/stada/${id}`,
   statusFileUpload: (id: string) => `/stada/${id}/gogn`,

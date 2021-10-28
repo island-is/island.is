@@ -11,11 +11,11 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 const SideBar = () => {
   const router = useRouter()
 
-  const { user, municipality } = useContext(AppContext)
+  const { municipality } = useContext(AppContext)
 
   return (
     <>
-      {user?.currentApplication || router.route.includes('/stada') ? (
+      {router.route.includes('/stada') ? (
         <Box className={styles.sidebarContent}>
           <Text as="h3" variant="h3" marginBottom={[1, 1, 2]}>
             Umsókn um fjárhagsaðstoð{' '}

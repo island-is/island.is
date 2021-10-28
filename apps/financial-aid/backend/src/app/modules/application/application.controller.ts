@@ -71,7 +71,8 @@ export class ApplicationController {
   @Get('nationalId/:nationalId')
   @ApiOkResponse({
     type: CurrentApplicationModel,
-    description: 'Checks if user has a current application for this period',
+    description:
+      'Checks if user or spouse has a current application for this period',
   })
   async getCurrentApplication(
     @Param('nationalId') nationalId: string,
@@ -120,7 +121,11 @@ export class ApplicationController {
     @CurrentStaff() staff: Staff,
   ): Promise<ApplicationModel[]> {
     this.logger.debug('Application controller: Getting all applications')
-    return this.applicationService.getAll(stateUrl, staff.id)
+    return this.applicationService.getAll(
+      stateUrl,
+      staff.id,
+      staff.municipalityId,
+    )
   }
 
   @UseGuards(ApplicationGuard)
@@ -147,7 +152,7 @@ export class ApplicationController {
     @CurrentStaff() staff: Staff,
   ): Promise<ApplicationFilters> {
     this.logger.debug('Application controller: Getting application filters')
-    return this.applicationService.getAllFilters(staff.id)
+    return this.applicationService.getAllFilters(staff.id, staff.municipalityId)
   }
 
   @Put('id/:id')
@@ -196,8 +201,15 @@ export class ApplicationController {
   ): Promise<UpdateApplicationTableResponse> {
     await this.applicationService.update(id, applicationToUpdate, staff)
     return {
-      applications: await this.applicationService.getAll(stateUrl, staff.id),
-      filters: await this.applicationService.getAllFilters(staff.id),
+      applications: await this.applicationService.getAll(
+        stateUrl,
+        staff.id,
+        staff.municipalityId,
+      ),
+      filters: await this.applicationService.getAllFilters(
+        staff.id,
+        staff.municipalityId,
+      ),
     }
   }
 
