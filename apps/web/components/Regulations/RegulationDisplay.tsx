@@ -1,6 +1,6 @@
 import * as s from './RegulationDisplay.css'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { ISODate, prettyName } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
