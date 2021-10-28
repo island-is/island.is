@@ -80,9 +80,16 @@ export const StepFiveForm: React.FC<Props> = (props) => {
           )
         },
       )
+      console.log(policeCaseFilesNotStoredInRVG)
+
+      const policeCaseFilesInList = policeCaseFilesNotStoredInRVG.filter(
+        (p) => {
+          return !uploadedPoliceCaseFiles.find((uf) => uf.name === p.name)
+        },
+      )
 
       setPoliceCaseFileList(
-        policeCaseFilesNotStoredInRVG.map((policeCaseFile) => {
+        policeCaseFilesInList.map((policeCaseFile) => {
           return {
             id: policeCaseFile.id,
             label: policeCaseFile.name,
@@ -91,7 +98,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         }),
       )
     }
-  }, [policeCaseFiles, files])
+  }, [policeCaseFiles, files, uploadedPoliceCaseFiles])
 
   const toggleCheckbox = (
     evt: React.ChangeEvent<HTMLInputElement>,
@@ -120,6 +127,9 @@ export const StepFiveForm: React.FC<Props> = (props) => {
   const uploadToRVG = async () => {
     const newPoliceCaseFileList = [...policeCaseFileList]
     const filesToUpload = policeCaseFileList.filter((p) => p.checked)
+    const updatedPoliceCaseFiles: UploadFile[] = []
+    let updatedPoliceCaseFileList: PoliceCaseFile[] = policeCaseFileList
+
     setIsUploading(true)
 
     filesToUpload.forEach(async (policeCaseFile, index) => {
@@ -134,25 +144,25 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         size,
       } as UploadFile)
 
-      setUploadedPoliceCaseFiles([
-        ...uploadedPoliceCaseFiles,
-        {
-          type: 'application/pdf',
-          name: policeCaseFile.label,
-          status: 'done',
-          key,
-          size,
-        } as UploadFile,
-      ])
+      updatedPoliceCaseFiles.push({
+        type: 'application/pdf',
+        name: policeCaseFile.label,
+        status: 'done',
+        key,
+        size,
+      } as UploadFile)
 
-      setPoliceCaseFileList(
-        newPoliceCaseFileList.filter((p) => p.id !== policeCaseFile.id),
+      updatedPoliceCaseFileList = newPoliceCaseFileList.filter(
+        (p) => p.id !== policeCaseFile.id,
       )
 
       if (index === filesToUpload.length - 1) {
         setIsUploading(false)
       }
     })
+
+    setUploadedPoliceCaseFiles(updatedPoliceCaseFiles)
+    setPoliceCaseFileList(updatedPoliceCaseFileList)
   }
 
   return (
