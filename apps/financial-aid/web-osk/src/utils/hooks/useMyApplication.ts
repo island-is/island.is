@@ -24,6 +24,15 @@ const useMyApplication = () => {
     { input: { id: string } }
   >(ApplicationQuery)
 
+  useEffect(() => {
+    const storedFormJson = sessionStorage.getItem(storageKey)
+    if (storedFormJson === null) {
+      return
+    }
+    const storedState = JSON.parse(storedFormJson)
+    updateApplication(storedState)
+  }, [])
+
   if (router.query.id && myApplication === undefined && loading === false) {
     try {
       getApplication({
@@ -40,15 +49,6 @@ const useMyApplication = () => {
       return error
     }
   }
-
-  useEffect(() => {
-    const storedFormJson = sessionStorage.getItem(storageKey)
-    if (storedFormJson === null) {
-      return
-    }
-    const storedState = JSON.parse(storedFormJson)
-    updateApplication(storedState)
-  }, [])
 
   return {
     myApplication,

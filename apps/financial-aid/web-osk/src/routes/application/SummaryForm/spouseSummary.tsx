@@ -130,7 +130,7 @@ const SpouseSummary = () => {
 
       <Footer
         onPrevButtonClick={() => {
-          setIsVisible(!isVisible)
+          setIsVisible((isVisible) => !isVisible)
         }}
         previousIsDestructive={true}
         prevButtonText="Hætta við"
