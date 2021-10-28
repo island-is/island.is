@@ -251,7 +251,6 @@ export const getApplicationDocumentId = (application: Application): number => {
     .submitApplication as SubmittedApplicationData
   const documentId = subAppData?.data?.documentId
   if (!documentId) {
-    console.log('No documentId found on application')
     throw new Error('No documentId found on application')
   }
   return documentId

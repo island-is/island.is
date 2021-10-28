@@ -2,10 +2,11 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   AccidentNotificationAnswers,
   ReviewApprovalEnum,
-  SubmittedApplicationData,
   utils,
 } from '@island.is/application/templates/accident-notification'
 import { DocumentApi } from '@island.is/clients/health-insurance-v2'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
@@ -26,6 +27,7 @@ const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 @Injectable()
 export class AccidentNotificationService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(ACCIDENT_NOTIFICATION_CONFIG)
     private accidentConfig: AccidentNotificationConfig,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
@@ -37,16 +39,13 @@ export class AccidentNotificationService {
     const shouldRequestReview =
       !utils.isHomeActivitiesAccident(application.answers) ||
       !utils.isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
-
     const attachments = await this.attachmentProvider.gatherAllAttachments(
       application,
     )
 
     const answers = application.answers as AccidentNotificationAnswers
-    console.log('answers', answers)
     const xml = applictionAnswersToXml(answers, attachments)
 
-    console.log('XML OBJEJCJTWS', xml)
     try {
       const { ihiDocumentID } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
@@ -76,51 +75,56 @@ export class AccidentNotificationService {
         documentId: ihiDocumentID,
       }
     } catch (e) {
-      console.log('ERROR', e)
+      this.logger.error('Error submitting application to SÍ', { e })
       throw new Error('Villa kom upp við vistun á umsókn.')
     }
   }
 
   async addAdditionalAttachment({ application }: TemplateApiModuleActionProps) {
-    console.log('adding attachment')
-    console.log('top application: ', application)
-    const attachments = await this.attachmentProvider.gatherAllAttachments(
-      application,
-    )
+    try {
+      const attachments = await this.attachmentProvider.gatherAllAttachments(
+        application,
+      )
+      const documentId = getApplicationDocumentId(application)
 
-    console.log('attachments', attachments)
+      const promises = attachments.map((attachment) =>
+        this.documentApi.documentDocumentAttachment({
+          documentAttachment: {
+            attachmentBody: attachment.content,
+            attachmentType: attachment.attachmentType,
+            title: attachment.name,
+          },
+          ihiDocumentID: documentId,
+        }),
+      )
 
-    const documentId = getApplicationDocumentId(application)
-    //Send multiple attachments
-    const promises = attachments.map((attachment) =>
-      this.documentApi.documentDocumentAttachment({
-        documentAttachment: {
-          attachmentBody: attachment.content,
-          attachmentType: attachment.attachmentType,
-          title: attachment.name,
-        },
-        ihiDocumentID: documentId,
-      }),
-    )
-
-    const result = await Promise.all(promises)
-    console.log('attachment added', result)
+      await Promise.all(promises)
+    } catch (e) {
+      this.logger.error('Error adding attachment to SÍ', { e })
+      throw new Error('Villa kom upp við að bæta við viðhengi.')
+    }
   }
   async reviewApplication({ application }: TemplateApiModuleActionProps) {
-    const documentId = getApplicationDocumentId(application)
+    try {
+      const documentId = getApplicationDocumentId(application)
 
-    const isRepresentativeOfCompanyOrInstitue = utils.isRepresentativeOfCompanyOrInstitute(
-      application.answers,
-    )
-    const reviewApproval = getValueViaPath(
-      application.answers,
-      'reviewApproval',
-    ) as ReviewApprovalEnum
+      const isRepresentativeOfCompanyOrInstitue = utils.isRepresentativeOfCompanyOrInstitute(
+        application.answers,
+      )
+      const reviewApproval = getValueViaPath(
+        application.answers,
+        'reviewApproval',
+      ) as ReviewApprovalEnum
 
-    await this.documentApi.documentSendConfirmation({
-      ihiDocumentID: documentId,
-      confirmationType: reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
-      confirmationParty: isRepresentativeOfCompanyOrInstitue ? 2 : 1,
-    })
+      await this.documentApi.documentSendConfirmation({
+        ihiDocumentID: documentId,
+        confirmationType:
+          reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
+        confirmationParty: isRepresentativeOfCompanyOrInstitue ? 2 : 1,
+      })
+    } catch (e) {
+      this.logger.error('Error reviewing application to SÍ', { e })
+      throw new Error('Villa kom upp við samþykki á umsókn.')
+    }
   }
 }

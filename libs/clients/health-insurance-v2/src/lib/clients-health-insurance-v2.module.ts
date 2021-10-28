@@ -13,7 +13,6 @@ export class HealthInsuranceV2Client {
       xRoadProviderId,
     } = options
     const basePath = `${xRoadBaseUrl}/r1/${xRoadProviderId}/islandis`
-    console.log('config : ', options)
     return {
       module: HealthInsuranceV2Client,
       imports: [],
