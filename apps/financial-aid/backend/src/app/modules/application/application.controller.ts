@@ -183,9 +183,7 @@ export class ApplicationController {
       throw new NotFoundException(`Application ${id} does not exist`)
     }
 
-    if (user.service === RolesRule.VEITA) {
-      updatedApplication?.setDataValue('staff', staff)
-    }
+    updatedApplication?.setDataValue('staff', staff)
 
     return updatedApplication
   }
