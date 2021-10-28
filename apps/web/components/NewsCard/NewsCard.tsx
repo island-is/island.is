@@ -107,7 +107,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
               iconType="filled"
               variant="text"
               as="span"
-              disabled
+              unfocusable
             >
               {readMoreText}
             </Button>
