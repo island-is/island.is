@@ -13,7 +13,7 @@ const devConfig = {
     useGenericLogger: true,
   },
   xRoad: {
-    basePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
+    basePathWithEnv: process.env.XROAD_TLS_BASE_PATH_WITH_ENV ?? '',
     clientId: process.env.XROAD_CLIENT_ID ?? '',
     clientCert: process.env.XROAD_CLIENT_CERT ?? '',
     clientKey: process.env.XROAD_CLIENT_KEY ?? '',
@@ -50,8 +50,8 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.AUDIT_TRAIL_REGION) {
     throw new Error('Missing AUDIT_TRAIL_REGION environment.')
   }
-  if (!process.env.XROAD_BASE_PATH_WITH_ENV) {
-    throw new Error('Missing XROAD_BASE_PATH_WITH_ENV environment.')
+  if (!process.env.XROAD_TLS_BASE_PATH_WITH_ENV) {
+    throw new Error('Missing XROAD_TLS_BASE_PATH_WITH_ENV environment.')
   }
   if (!process.env.XROAD_CLIENT_ID) {
     throw new Error('Missing XROAD_CLIENT_ID environment.')
@@ -98,7 +98,7 @@ const prodConfig = {
     region: process.env.AUDIT_TRAIL_REGION,
   },
   xRoad: {
-    basePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
+    basePathWithEnv: process.env.XROAD_TLS_BASE_PATH_WITH_ENV ?? '',
     clientId: process.env.XROAD_CLIENT_ID ?? '',
     clientCert: process.env.XROAD_CLIENT_CERT ?? '',
     clientKey: process.env.XROAD_CLIENT_KEY ?? '',

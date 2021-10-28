@@ -24,12 +24,22 @@ export const Base = new XroadConf({
     XROAD_BASE_PATH: {
       dev: 'http://securityserver.dev01.devland.is',
       staging: 'http://securityserver.staging01.devland.is',
-      prod: 'https://securityserver.island.is',
+      prod: 'http://securityserver.island.is',
     },
     XROAD_BASE_PATH_WITH_ENV: {
       dev: 'http://securityserver.dev01.devland.is/r1/IS-DEV',
       staging: 'http://securityserver.staging01.devland.is/r1/IS-TEST',
       prod: 'http://securityserver.island.is/r1/IS',
+    },
+    XROAD_TLS_BASE_PATH: {
+      dev: 'https://securityserver.dev01.devland.is',
+      staging: 'https://securityserver.staging01.devland.is',
+      prod: 'https://securityserver.island.is',
+    },
+    XROAD_TLS_BASE_PATH_WITH_ENV: {
+      dev: 'https://securityserver.dev01.devland.is/r1/IS-DEV',
+      staging: 'https://securityserver.staging01.devland.is/r1/IS-TEST',
+      prod: 'https://securityserver.island.is/r1/IS',
     },
   },
 })

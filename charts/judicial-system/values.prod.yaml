@@ -23,13 +23,15 @@ judicial-system-api:
     HIDDEN_FEATURES: 'POLICE_CASE_FILES'
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=rettarvorslugatt.prod'
     SERVERSIDE_FEATURES_ON: ''
-    XROAD_BASE_PATH: 'https://securityserver.island.is'
+    XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5804170510/Rettarvorslugatt-Client'
     XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1'
     XROAD_COURT_MEMBER_CODE: '4707171140'
     XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1'
     XROAD_POLICE_MEMBER_CODE: '5306972079'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -91,13 +93,15 @@ judicial-system-backend:
     S3_TIME_TO_LIVE_GET: '5'
     S3_TIME_TO_LIVE_POST: '15'
     SERVERSIDE_FEATURES_ON: ''
-    XROAD_BASE_PATH: 'https://securityserver.island.is'
+    XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5804170510/Rettarvorslugatt-Client'
     XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1'
     XROAD_COURT_MEMBER_CODE: '4707171140'
     XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1'
     XROAD_POLICE_MEMBER_CODE: '5306972079'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true

@@ -30,6 +30,8 @@ judicial-system-api:
     XROAD_COURT_MEMBER_CODE: '10019'
     XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1'
     XROAD_POLICE_MEMBER_CODE: '10005'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -100,6 +102,8 @@ judicial-system-backend:
     XROAD_COURT_MEMBER_CODE: '10019'
     XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1'
     XROAD_POLICE_MEMBER_CODE: '10005'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
