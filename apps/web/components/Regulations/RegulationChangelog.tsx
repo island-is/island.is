@@ -1,4 +1,4 @@
-import * as s from './RegulationsSidebarBox.treat'
+import * as s from './RegulationsSidebarBox.css'
 
 import React, { useEffect, useMemo, useState } from 'react'
 import cn from 'classnames'

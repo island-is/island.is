@@ -10,7 +10,7 @@ import { GridRow } from '../Grid/GridRow/GridRow'
 import { GridColumn } from '../Grid/GridColumn/GridColumn'
 import { ModalBase } from '../ModalBase/ModalBase'
 
-import * as styles from './DialogPrompt.treat'
+import * as styles from './DialogPrompt.css'
 
 interface DialogPromptProps {
   /**

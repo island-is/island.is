@@ -13,12 +13,12 @@ import {
 import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import type {
   Case,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
-import * as styles from './PoliceRequestAccordionItem.treat'
+import * as styles from './PoliceRequestAccordionItem.css'
 interface Props {
   workingCase: Case
 }
@@ -82,12 +82,12 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       <AccordionListItem title="Lagaákvæði sem krafan er byggð á" breakSpaces>
         {isRestrictionCase(workingCase.type) ? (
           <>
-            {workingCase.custodyProvisions &&
-              workingCase.custodyProvisions.map(
-                (custodyProvision: CaseCustodyProvisions, index) => {
+            {workingCase.legalProvisions &&
+              workingCase.legalProvisions.map(
+                (legalProvision: CaseLegalProvisions, index) => {
                   return (
                     <div key={index}>
-                      <Text>{laws[custodyProvision]}</Text>
+                      <Text>{laws[legalProvision]}</Text>
                     </div>
                   )
                 },

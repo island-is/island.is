@@ -13,7 +13,7 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import SearchInput from '../SearchInput/SearchInput'
 
-import * as styles from './FixedNav.treat'
+import * as styles from './FixedNav.css'
 
 export const FixedNav: FC = () => {
   const [show, setShow] = useState<boolean>(false)

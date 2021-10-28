@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Text, Icon, Box, Checkbox } from '@island.is/island-ui/core'
 
 import {
@@ -6,23 +6,38 @@ import {
   Footer,
   Logo,
 } from '@island.is/financial-aid-web/osk/src/components'
-import * as styles from './info.treat'
+import * as styles from './info.css'
 import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import {
   getNextPeriod,
+  NationalRegistryData,
   NavigationProps,
+  Routes,
+  useAsyncLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
 
+import { NationalRegistryUserQuery } from '@island.is/financial-aid-web/osk/graphql'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const ApplicationInfo = () => {
   const router = useRouter()
+  const { user, setMunicipality, setNationalRegistryData } = useContext(
+    AppContext,
+  )
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
+
+  const nationalRegistryQuery = useAsyncLazyQuery<
+    {
+      nationalRegistryUserV2: NationalRegistryData
+    },
+    { input: { ssn: string } }
+  >(NationalRegistryUserQuery)
 
   const logOut = useLogOut()
 
@@ -30,13 +45,52 @@ const ApplicationInfo = () => {
     router.pathname,
   ) as NavigationProps
 
-  const errorCheck = () => {
-    if (!accept) {
+  const errorCheck = async () => {
+    if (!accept || !user) {
       setHasError(true)
       return
     }
 
-    if (navigation?.nextUrl) {
+    // TODO: Add once national registry is connected to x-road
+    // const { data } = await nationalRegistryQuery({
+    //   input: { ssn: user?.nationalId },
+    // })
+
+    const data: { nationalRegistryUserV2: NationalRegistryData } = {
+      nationalRegistryUserV2: {
+        nationalId: user.nationalId,
+        fullName: user.name,
+        address: {
+          streetName: 'Hafnargata 7',
+          postalCode: '200',
+          city: 'Hafnarfjörður',
+          municipalityCode: '1400',
+        },
+        spouse: {
+          nationalId: undefined,
+          maritalStatus: undefined,
+          name: undefined,
+        },
+      },
+    }
+
+    if (!data || !data.nationalRegistryUserV2.address) {
+      return
+    }
+
+    const municipality = await setMunicipality(
+      data.nationalRegistryUserV2.address.municipalityCode,
+    )
+
+    setNationalRegistryData(data.nationalRegistryUserV2)
+
+    if (municipality === undefined || municipality.active === false) {
+      router.push(
+        Routes.serviceCenter(
+          data.nationalRegistryUserV2.address.municipalityCode,
+        ),
+      )
+    } else if (navigation?.nextUrl) {
       router.push(navigation?.nextUrl)
     }
   }

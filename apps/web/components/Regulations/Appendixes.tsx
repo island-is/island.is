@@ -1,4 +1,4 @@
-import * as s from './RegulationDisplay.treat'
+import * as s from './RegulationDisplay.css'
 
 import React, { memo } from 'react'
 import { HTMLText } from '@island.is/regulations'

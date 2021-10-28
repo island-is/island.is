@@ -7,7 +7,6 @@ import type { User } from '@island.is/financial-aid/shared/lib'
 
 import { UserModel } from './user.model'
 
-import { CurrentApplicationModel } from '../application'
 import { StaffModel } from '../staff/models'
 import { CurrentUser } from '../decorators'
 import { BackendAPI } from '../../../services'
@@ -47,11 +46,11 @@ export class UserResolver {
     return isSpouse.HasApplied
   }
 
-  @ResolveField('currentApplication', () => CurrentApplicationModel)
+  @ResolveField('currentApplication', () => String)
   async currentApplication(
     @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<CurrentApplicationModel | undefined> {
+  ): Promise<string | undefined> {
     this.logger.debug('Getting current application for nationalId')
     return await this.handleNotFoundException(() =>
       backendApi.getCurrentApplication(user.nationalId),

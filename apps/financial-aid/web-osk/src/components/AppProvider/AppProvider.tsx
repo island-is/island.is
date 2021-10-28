@@ -3,26 +3,29 @@ import React, { createContext, ReactNode } from 'react'
 import {
   Application,
   Municipality,
+  NationalRegistryData,
+  ServiceCenter,
   User,
 } from '@island.is/financial-aid/shared/lib'
 
-import { useRouter } from 'next/router'
-import { ApolloError } from 'apollo-client'
-
-import useMuncipality from '@island.is/financial-aid-web/osk/src/utils/hooks/useMuncipality'
+import { useMunicipality } from '@island.is/financial-aid/shared/components'
 import useMyApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useMyApplication'
 import useUser from '@island.is/financial-aid-web/osk/src/utils/hooks/useUser'
-import { ServiceCenter } from '@island.is/financial-aid/shared/data'
+import { ApolloError } from 'apollo-client'
+import useNationalRegistry from '@island.is/financial-aid-web/osk/src/utils/hooks/useNationalRegistry'
 
 interface AppProvider {
   myApplication?: Application
   loading: boolean
   error?: ApolloError
   municipality?: Municipality
+  setMunicipality: (municipalityId: string) => Promise<Municipality | undefined>
   isAuthenticated?: boolean
   user?: User
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>
-  userServiceCenter?: ServiceCenter
+  loadingUser: boolean
+  nationalRegistryData?: NationalRegistryData
+  setNationalRegistryData: (data: NationalRegistryData) => void
 }
 
 interface Props {
@@ -30,16 +33,24 @@ interface Props {
 }
 
 export const AppContext = createContext<AppProvider>({
-  loading: true,
   setUser: () => undefined,
+  setMunicipality: () => Promise.resolve(undefined),
+  setNationalRegistryData: () => {},
+  loading: false,
+  loadingUser: false,
 })
 
 const AppProvider = ({ children }: Props) => {
-  const municipality = useMuncipality()
+  const { municipality, setMunicipality } = useMunicipality()
+
+  const { isAuthenticated, user, setUser, loadingUser } = useUser()
 
   const { myApplication, error, loading } = useMyApplication()
 
-  const { isAuthenticated, user, setUser, userServiceCenter } = useUser()
+  const {
+    nationalRegistryData,
+    setNationalRegistryData,
+  } = useNationalRegistry()
 
   return (
     <AppContext.Provider
@@ -48,10 +59,13 @@ const AppProvider = ({ children }: Props) => {
         error,
         loading,
         municipality,
+        setMunicipality,
         isAuthenticated,
         user,
+        loadingUser,
         setUser,
-        userServiceCenter,
+        nationalRegistryData,
+        setNationalRegistryData,
       }}
     >
       {children}

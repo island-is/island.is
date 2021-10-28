@@ -5,7 +5,7 @@ import {
   MobileMenuButton,
 } from '@island.is/financial-aid-web/veita/src/components'
 
-import * as styles from './AdminLayout.treat'
+import * as styles from './AdminLayout.css'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 

@@ -10,6 +10,7 @@ export {
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
   stripHtmlTags,
+  formatCustodyIsolation,
 } from './formatters'
 export { getRequestPdfAsString, getRequestPdfAsBuffer } from './requestPdf'
 export { getRulingPdfAsString } from './rulingPdf'

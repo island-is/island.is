@@ -21,9 +21,8 @@ export const powerOfAttorney = {
   type: defineMessages({
     description: {
       id: 'an.application:powerOfAttorney.type.description',
-      defaultMessage: `Sé verið að tilkynna slys fyrir hönd slasaða skal skila inn skriflegu og undirrituðu umboði þér til handa, staðfestu af tveimur vitundarvottum. 
-    Umboðinu skal skila inn sem fylgiskjali með tilkynningunni. 
-    Þú getur sótt umboðsskjal hér til útfyllingar TODO`,
+      defaultMessage: `Athugaðu að það er hægt að tilkynna slys án þess að öll nauðsynleg skjöl séu til staðar en Sjúkratryggingar Íslands kunna að óska eftir frekari gögnum við afgreiðslu málsins, svo taka megi ákvörðun um bótarétt, fjárhæð og greiðslu bóta. 
+      Þú getur sótt umboðsskjal til útfyllingar hér umboð.docx`,
       description: 'Description for power of attorney type',
     },
     sectionTitle: {
@@ -55,18 +54,18 @@ export const powerOfAttorney = {
   upload: defineMessages({
     heading: {
       id: 'an.application:powerOfAttorney.upload.heading',
-      defaultMessage: 'Hlaða upp umboði',
+      defaultMessage: 'Fylgiskjöl',
       description: 'Heading of upload section',
     },
     description: {
       id: 'an.application:powerOfAttorney.upload.description',
       defaultMessage:
-        '<p>Athugaðu að það er hægt að tilkynna slys án þess að öll nauðsynleg skjöl eru til staðar.... blabla</p><br/><p>Þú getur sótt umboðsskjal hér til útfyllingar umboð.docx</p>',
+        'Athugaðu að það er hægt að tilkynna slys án þess að öll nauðsynleg skjöl eru til staðar.... blabla Þú getur sótt umboðsskjal hér til útfyllingar umboð.docx',
       description: 'Description of upload section',
     },
     sectionTitle: {
       id: 'an.application:powerOfAttorney.upload.sectionTitle',
-      defaultMessage: 'Hlaða upp umboði',
+      defaultMessage: 'Fylgiskjöl',
       description: 'Section title of upload section',
     },
     uploadDescription: {

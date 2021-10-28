@@ -1,19 +1,16 @@
-import { INestApplication } from '@nestjs/common'
-import { Console } from 'console'
 import request from 'supertest'
-import { ConsoleTransportOptions } from 'winston/lib/winston/transports'
-import { setup } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { EndorsementTag } from '../../constants'
-
-let app: INestApplication
-// this is a unauthenticated app
-beforeAll(async () => {
-  app = await setup()
-})
+import { getAuthenticatedApp } from '../../../../../../test/setup'
+import { authNationalId } from './seed'
+import { EndorsementsScope } from '@island.is/auth/scopes'
 
 describe('findByTagsEndorsementList', () => {
   it(`GET /endorsement-list?tags should return validation error when called with a non existing tag`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
     const response = await request(app.getHttpServer())
       .get(
         `/endorsement-list?tags[]=thisTagIsUsedInE2ETests&tags[]=${EndorsementTag.GENERAL_PETITION}`,
@@ -27,6 +24,10 @@ describe('findByTagsEndorsementList', () => {
     })
   })
   it(`GET /endorsement-list?tags should return 200 and empty list when no data exists for given tags`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
     const response = await request(app.getHttpServer())
       .get(`/endorsement-list?tags=${EndorsementTag.PARTY_LETTER_2021}`)
       .send()
@@ -34,6 +35,10 @@ describe('findByTagsEndorsementList', () => {
     expect(response.body.data).toStrictEqual([])
   })
   it(`GET /endorsement-list?tags should return 200 and a list`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
     const response = await request(app.getHttpServer())
       .get(`/endorsement-list?tags=${EndorsementTag.GENERAL_PETITION}`)
       .send()
@@ -46,6 +51,10 @@ describe('findByTagsEndorsementList', () => {
 
   // general petition tests
   it(`GET /endorsement-list/general-petition-lists should return 200 and 2 lists`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
     const response = await request(app.getHttpServer())
       .get(`/endorsement-list/general-petition-lists?limit=5`)
       .send()

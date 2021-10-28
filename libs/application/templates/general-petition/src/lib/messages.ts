@@ -200,7 +200,7 @@ export const m: MessageDir = {
   listSubmitted: defineMessages({
     title: {
       id: 'gpt.application.list.submitted.title',
-      defaultMessage: 'Með hefur verið skilað',
+      defaultMessage: 'Meðmælendalista hefur verið skilað',
       description: 'Title for conlcusion',
     },
     approvedTitle: {
@@ -353,7 +353,7 @@ export const m: MessageDir = {
     },
     organization: {
       id: 'gpt.application:logo.organization',
-      defaultMessage: 'Dómsmálaráðuneytið',
+      defaultMessage: 'Þjóðskrá',
       description: 'Name of organization',
     },
   }),
@@ -365,12 +365,12 @@ export const m: MessageDir = {
     },
     cardTitle: {
       id: 'gpt.application:endorsement.approved.card.title',
-      defaultMessage: 'Þú hefur sett nafn þitt á listann',
+      defaultMessage: 'Þú hefur sett nafn þitt á listann.',
       description: 'Approved card title',
     },
     cardSubtitle: {
       id: 'gpt.application:endorsement.approved.card.subtitle',
-      defaultMessage: 'Yfirlit yfir öll meðmæli má finna á Mínum Síðum',
+      defaultMessage: 'Yfirlit yfir öll meðmæli má finna á Mínum Síðum.',
       description: 'Approved card subtitle',
     },
     myPagesButton: {

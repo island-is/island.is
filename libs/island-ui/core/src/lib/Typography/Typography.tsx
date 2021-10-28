@@ -12,7 +12,7 @@ import {
   links as linksStyle,
   fontWeight as fontWeightStyles,
   defaultFontWeights,
-} from './Typography.treat'
+} from './Typography.css'
 import { Colors } from '@island.is/island-ui/theme'
 import { ResponsiveSpace } from '../Box/useBoxStyles'
 import { Box } from '../Box/Box'
