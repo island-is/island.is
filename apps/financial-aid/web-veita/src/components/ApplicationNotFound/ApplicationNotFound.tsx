@@ -1,23 +1,15 @@
 import React from 'react'
 import { Text, Box, Button } from '@island.is/island-ui/core'
-import {
-  ApplicationSkeleton,
-  LoadingContainer,
-} from '@island.is/financial-aid-web/veita/src/components'
 
 import { useRouter } from 'next/router'
 
 import * as styles from './ApplicationNotFound.css'
 
-interface Props {
-  loading: boolean
-}
-
-const ApplicationNotFound = ({ loading }: Props) => {
+const ApplicationNotFound = () => {
   const router = useRouter()
 
   return (
-    <LoadingContainer isLoading={loading} loader={<ApplicationSkeleton />}>
+    <>
       <Box marginTop={10} marginBottom={4}>
         <Button
           colorScheme="default"
@@ -59,7 +51,7 @@ const ApplicationNotFound = ({ loading }: Props) => {
           {` `} síðunni.
         </Text>
       </Box>
-    </LoadingContainer>
+    </>
   )
 }
 
