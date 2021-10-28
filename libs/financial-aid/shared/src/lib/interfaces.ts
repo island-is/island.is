@@ -86,6 +86,8 @@ export interface UpdateApplication {
   rejection?: string
   comment?: string
   staffId?: string
+  spousePhoneNumber?: string
+  spouseEmail?: string
 }
 
 export interface UpdateApplicationTable {
@@ -208,6 +210,7 @@ export interface Application {
   applicationEvents?: ApplicationEvent[]
   spouseNationalId?: string
   spouseEmail?: string
+  spousePhoneNumber?: string
   familyStatus: FamilyStatus
   streetName?: string
   postalCode?: string

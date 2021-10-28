@@ -79,7 +79,14 @@ export class ApplicationService {
   async getCurrentApplication(nationalId: string): Promise<string | null> {
     const currentApplication = await this.applicationModel.findOne({
       where: {
-        nationalId,
+        [Op.or]: [
+          {
+            nationalId,
+          },
+          {
+            spouseNationalId: nationalId,
+          },
+        ],
         created: { [Op.gte]: firstDateOfMonth() },
       },
     })
