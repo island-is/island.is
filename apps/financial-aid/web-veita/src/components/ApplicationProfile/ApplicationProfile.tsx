@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useContext } from 'react'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Divider } from '@island.is/island-ui/core'
 
 import * as styles from './ApplicationProfile.css'
 
@@ -9,6 +9,7 @@ import {
   aidCalculator,
   getMonth,
   calculateAidFinalAmount,
+  showSpouseData,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -26,6 +27,8 @@ import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/
 import {
   getApplicant,
   getApplicantMoreInfo,
+  getApplicantSpouse,
+  getNationalRegistryInfo,
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
 
 interface ApplicationProps {
@@ -39,6 +42,8 @@ const ApplicationProfile = ({
   setApplication,
   setIsLoading,
 }: ApplicationProps) => {
+  console.log(application)
+
   const [isStateModalVisible, setStateModalVisible] = useState(false)
 
   const [isAidModalVisible, setAidModalVisible] = useState(false)
@@ -102,7 +107,11 @@ const ApplicationProfile = ({
 
   const applicant = getApplicant(application)
 
+  const applicantSpouse = getApplicantSpouse(application)
+
   const applicantMoreInfo = getApplicantMoreInfo(application)
+
+  const nationalRegistryInfo = getNationalRegistryInfo(application)
 
   return (
     <>
@@ -125,14 +134,30 @@ const ApplicationProfile = ({
           info={applicationInfo}
           className={`contentUp delay-50`}
         />
+
         <Profile
           heading="Umsækjandi"
           info={applicant}
           className={`contentUp delay-75`}
         />
+
+        {showSpouseData[application.familyStatus] && (
+          <Profile
+            heading="Maki"
+            info={applicantSpouse}
+            className={`contentUp delay-75`}
+          />
+        )}
+
         <Profile
-          heading="Aðrar upplýsingar"
+          heading="Umsóknarferli"
           info={applicantMoreInfo}
+          className={`contentUp delay-100`}
+        />
+
+        <Profile
+          heading="Þjóðskrá"
+          info={nationalRegistryInfo}
           className={`contentUp delay-100`}
         />
 

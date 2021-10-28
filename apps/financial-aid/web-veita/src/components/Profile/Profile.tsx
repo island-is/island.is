@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box, Link, Button } from '@island.is/island-ui/core'
+import { Text, Box, Link, Button, Divider } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
 import cn from 'classnames'
@@ -30,6 +30,7 @@ const Profile = ({ heading, info, className }: Props) => {
         <Text as="h2" variant="h3" color="dark300">
           {heading}
         </Text>
+        <Divider />
       </Box>
       <div
         className={cn({
