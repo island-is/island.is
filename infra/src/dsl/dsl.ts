@@ -1,7 +1,6 @@
 import {
   Ingress,
   InitContainers,
-  SecretType,
   EnvironmentVariables,
   Context,
   Service,
@@ -12,6 +11,8 @@ import {
   PostgresInfo,
   HealthProbe,
   Features,
+  Secrets,
+  XroadConfig,
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -63,6 +64,7 @@ export class ServiceBuilder<ServiceType> implements Service {
         privileged: false,
         allowPrivilegeEscalation: false,
       },
+      xroadConfig: [],
     }
   }
 
@@ -107,6 +109,13 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
 
+  xroad(...configs: XroadConfig[]) {
+    configs.forEach((config) =>
+      this.env(config.getEnv()).secrets(config.getSecrets()),
+    )
+    return this
+  }
+
   /**
    * To perform maintenance before deploying the main service(database migrations, etc.), create an `initContainer` (optional). It maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
    * @param ic initContainer definitions
@@ -132,7 +141,7 @@ export class ServiceBuilder<ServiceType> implements Service {
    * To provision secrets in the Parameter Store, you need to get in touch with the DevOps team.
    * @param secrets Maps of secret names and their corresponding paths
    */
-  secrets(secrets: { [key: string]: SecretType }) {
+  secrets(secrets: Secrets) {
     this.serviceDef.secrets = { ...this.serviceDef.secrets, ...secrets }
     return this
   }

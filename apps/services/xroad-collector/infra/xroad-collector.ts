@@ -1,3 +1,4 @@
+import { Base, Client } from '../../../../infra/src/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (): ServiceBuilder<'xroad-collector'> =>
@@ -16,10 +17,7 @@ export const serviceSetup = (): ServiceBuilder<'xroad-collector'> =>
           'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com',
       },
     })
-    .secrets({
-      XROAD_BASE_PATH: '/k8s/xroad-collector/XROAD_BASE_PATH',
-      XROAD_CLIENT_ID: '/k8s/xroad-collector/XROAD_CLIENT_ID',
-    })
+    .xroad(Base, Client)
     .command('node')
     .args('main.js')
     .extraAttributes({
