@@ -12640,10 +12640,10 @@ dayjs@^1.9.1:
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.4.tgz#8e544a9b8683f61783f570980a8a80eaf54ab1e2"
   integrity sha512-RI/Hh4kqRc1UKLOAf/T5zdMMX5DQIlDxwUe3wSyMMnEbGunnpENCdbUgM+dW7kXidZqCttBrmw7BhN4TMddkCw==
 
-dd-trace@0.33.1:
-  version "0.33.1"
-  resolved "https://registry.yarnpkg.com/dd-trace/-/dd-trace-0.33.1.tgz#dc9d283c7c875495aa4f170af00c03edd978b01e"
-  integrity sha512-5PoDEfUYiYwNOwGS1nTeOfrYkwKHtAJHrXMk/Ds5KxliiLqmSGPK48dNCtrPANoLSuDmpxA1gVJ4K13QVn2SVg==
+dd-trace@0.33.2:
+  version "0.33.2"
+  resolved "https://registry.yarnpkg.com/dd-trace/-/dd-trace-0.33.2.tgz#a3a93f6a0ad190081fb21ddb039fb965618c7df3"
+  integrity sha512-PXn58Nj2Y/rnnj46cgKHhqBBHCRJfAj8HcOtBDp5K6OQbl1BYFRgX9j+xe39zZj+QE9wpRvWbp9A5xRFN2r72A==
   dependencies:
     "@types/node" "^10.12.18"
     form-data "^3.0.0"
@@ -12663,12 +12663,10 @@ dd-trace@0.33.1:
     path-to-regexp "^0.1.2"
     performance-now "^2.1.0"
     protobufjs "^6.9.0"
-    require-in-the-middle "^2.2.2"
     semver "^5.5.0"
     shimmer "1.2.1"
     source-map "^0.7.3"
     source-map-resolve "^0.6.0"
-    url-parse "^1.4.3"
 
 deasync@^0.1.14:
   version "0.1.21"
@@ -24582,14 +24580,6 @@ require-from-string@^2.0.1, require-from-string@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/require-from-string/-/require-from-string-2.0.2.tgz#89a7fdd938261267318eafe14f9c32e598c36909"
   integrity sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==
-
-require-in-the-middle@^2.2.2:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/require-in-the-middle/-/require-in-the-middle-2.2.2.tgz#1d3124709cf43bf2c1f225082e6d8394e2f9d4f4"
-  integrity sha512-XxtlrdTCRsr+/8WnWfqz2pFZ0SoUnrOJCFc4gJbUViZ2/3P0+zwWNi4+cV4bPfEJZVAAcxel3j/oCmwnjPvnfA==
-  dependencies:
-    module-details-from-path "^1.0.3"
-    resolve "^1.5.0"
 
 "require-like@>= 0.1.1":
   version "0.1.2"
