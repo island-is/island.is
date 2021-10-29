@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
 
-import * as styles from './AssetCardLoader.treat'
+import * as styles from './AssetCardLoader.css'
 
 export const AssetCardLoader = () => (
   <Box
