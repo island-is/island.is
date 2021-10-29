@@ -43,9 +43,9 @@ interface DialogPromptProps {
    */
   onCancel?: () => void
   /**
-   * When opened callback
+   * Show immediately without clicking the disclosure button
    */
-  onVisibilityChange?: (isVisible: boolean) => void
+  initialVisibility?: boolean | undefined
   /**
    * If left empty the button won't be rendered
    */
@@ -64,9 +64,9 @@ export const DialogPrompt = ({
   disclosureElement,
   onConfirm,
   onCancel,
-  onVisibilityChange,
   buttonTextCancel,
   buttonTextConfirm,
+  initialVisibility,
 }: DialogPromptProps) => {
   const hasButtons = !!buttonTextCancel || !!buttonTextConfirm
 
@@ -75,8 +75,8 @@ export const DialogPrompt = ({
       disclosure={disclosureElement}
       baseId={baseId}
       aria-label={ariaLabel}
+      initialVisibility={initialVisibility}
       className={styles.dialog}
-      onVisibilityChange={onVisibilityChange}
     >
       {({ closeModal }: { closeModal: () => void }) => {
         const handleClose = () => {

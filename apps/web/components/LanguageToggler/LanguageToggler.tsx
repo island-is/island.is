@@ -1,4 +1,4 @@
-import React, { useContext, ReactElement, useEffect, useState, FC } from 'react'
+import React, { useContext, ReactElement, useState, FC } from 'react'
 import { useRouter } from 'next/router'
 import { useApolloClient } from '@apollo/client/react'
 import {
@@ -6,14 +6,18 @@ import {
   ButtonTypes,
   Hidden,
   DialogPrompt,
+  ButtonProps,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { Locale } from '@island.is/shared/types'
 import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
 import { GlobalContext } from '@island.is/web/context'
-import { ContentLanguage } from '@island.is/web/graphql/schema'
+import {
+  GetContentSlugQuery,
+  GetContentSlugQueryVariables,
+} from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useLinkResolver, LinkType } from '@island.is/web/hooks/useLinkResolver'
 
 type LanguageTogglerProps = {
   dialogId?: string
@@ -29,10 +33,7 @@ export const LanguageToggler = ({
 }: LanguageTogglerProps) => {
   const client = useApolloClient()
   const Router = useRouter()
-  const [isVisible, setIsVisible] = useState<boolean>(false)
-  const [isChecking, setIsChecking] = useState<boolean>(false)
-  const [show, setShow] = useState<boolean>(true)
-  const [pagePath, setPagePath] = useState<string>('')
+  const [showDialog, setShowDialog] = useState<boolean>(false)
   const { contentfulId, globalNamespace } = useContext(GlobalContext)
   const { activeLocale, locale, t } = useI18n()
   const gn = useNamespace(globalNamespace)
@@ -40,35 +41,38 @@ export const LanguageToggler = ({
   const { linkResolver, typeResolver } = useLinkResolver()
 
   const getOtherLanguagePath = async () => {
-    setIsChecking(true)
-    locale(t.otherLanguageCode)
+    if (showDialog) {
+      return null
+    }
 
     if (!contentfulId) {
       const { type } = typeResolver(Router.asPath.split('?')[0], true)
+      const pagePath = linkResolver(type, [], otherLanguage).href
 
-      console.log('here1')
-
-      setPagePath(
-        pagePath === '/404'
-          ? linkResolver('homepage').href
-          : linkResolver(type, [], otherLanguage).href,
-      )
+      if (pagePath === '/404') {
+        return setShowDialog(true)
+      } else {
+        return Router.push(pagePath)
+      }
     } else {
       await getContentSlug(contentfulId).then((res) => {
         const slug = res.data?.getContentSlug?.slug
-        const type = res.data?.getContentSlug?.type
+        const type = res.data?.getContentSlug?.type as LinkType
 
-        console.log('here2', slug, type)
+        if (type && slug?.[otherLanguage]) {
+          return goToOtherLanguagePage(
+            linkResolver(type, [slug[otherLanguage]], otherLanguage).href,
+          )
+        }
 
-        setPagePath(
-          type && slug
-            ? linkResolver(type, [slug], otherLanguage).href
-            : linkResolver('homepage', [], otherLanguage).href,
-        )
+        setShowDialog(true)
       })
     }
+  }
 
-    setIsChecking(false)
+  const goToOtherLanguagePage = (path) => {
+    locale(t.otherLanguageCode)
+    Router.push(path)
   }
 
   const onClick = async () => {
@@ -76,28 +80,15 @@ export const LanguageToggler = ({
   }
 
   const getContentSlug = async (contentfulId: string) => {
-    return client.query({
+    return client.query<GetContentSlugQuery, GetContentSlugQueryVariables>({
       query: GET_CONTENT_SLUG,
       variables: {
         input: {
           id: contentfulId as string,
-          lang: otherLanguage as ContentLanguage,
         },
       },
     })
   }
-
-  const onVisibilityChange = (visibility: boolean) => {
-    setIsVisible(visibility)
-  }
-
-  useEffect(() => {
-    console.log(isVisible)
-  }, [isVisible])
-
-  useEffect(() => {
-    console.log(pagePath)
-  }, [pagePath])
 
   const buttonElementProps: ButtonElementProps = {
     buttonColorScheme,
@@ -110,30 +101,25 @@ export const LanguageToggler = ({
     <ButtonElement {...buttonElementProps}>{t.otherLanguageName}</ButtonElement>
   )
 
-  const LanguageButton =
-    otherLanguage === 'en' ? (
-      <DialogPrompt
-        baseId={dialogId}
-        title={gn('switchToEnglishModalTitle')}
-        description={gn('switchToEnglishModalText')}
-        ariaLabel="Confirm switching to english"
-        disclosureElement={Disclosure}
-        onVisibilityChange={onVisibilityChange}
-        onConfirm={onClick}
-        buttonTextConfirm="Confirm"
-        buttonTextCancel="Cancel"
-      />
-    ) : show ? (
-      Disclosure
-    ) : (
-      <ButtonElement {...buttonElementProps}>X</ButtonElement>
-    )
-
-  return !hideWhenMobile ? (
-    LanguageButton
-  ) : (
-    <Hidden below="md">{LanguageButton}</Hidden>
+  const Dialog = (
+    <DialogPrompt
+      baseId={dialogId}
+      initialVisibility={true}
+      title={gn('switchToEnglishModalTitle')}
+      description={gn('switchToEnglishModalText')}
+      ariaLabel="Confirm switching to english"
+      disclosureElement={Disclosure}
+      onConfirm={() => {
+        goToOtherLanguagePage(linkResolver('homepage', [], otherLanguage).href)
+      }}
+      buttonTextConfirm="Go to home page"
+      buttonTextCancel="Keep viewing"
+    />
   )
+
+  const Content = showDialog ? Dialog : Disclosure
+
+  return !hideWhenMobile ? Content : <Hidden below="md">{Content}</Hidden>
 }
 
 type ButtonElementProps = {
@@ -143,12 +129,13 @@ type ButtonElementProps = {
   onClick: () => void
 }
 
-const ButtonElement: FC<ButtonElementProps> = ({
+const ButtonElement: FC<ButtonElementProps & ButtonProps> = ({
   buttonColorScheme = 'default',
   otherLanguage,
   otherLanguageAria,
   onClick,
   children,
+  ...props
 }) => (
   <Button
     colorScheme={buttonColorScheme}
@@ -156,6 +143,7 @@ const ButtonElement: FC<ButtonElementProps> = ({
     onClick={onClick}
     aria-label={otherLanguageAria}
     lang={otherLanguage === 'en' ? 'en' : 'is'}
+    {...props}
   >
     {children}
   </Button>

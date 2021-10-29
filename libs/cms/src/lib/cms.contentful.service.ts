@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
-import { ContentSlug, mapContentSlug } from './models/contentSlug.model'
+import { ContentSlug, ContentSlugLocales } from './models/contentSlug.model'
 import { GenericPage, mapGenericPage } from './models/genericPage.model'
 import {
   GenericOverviewPage,
@@ -31,7 +31,7 @@ import { mapAdgerdirTag } from './models/adgerdirTag.model'
 import { mapOrganization } from './models/organization.model'
 import { OrganizationTags } from './models/organizationTags.model'
 import { mapOrganizationTag } from './models/organizationTag.model'
-import { ContentfulRepository } from './contentful.repository'
+import { ContentfulRepository, localeMap } from './contentful.repository'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
 import { mapUrl, Url } from './models/url.model'
@@ -396,27 +396,29 @@ export class CmsContentfulService {
 
   async getContentSlug({
     id,
-    lang,
   }: GetContentSlugInput): Promise<ContentSlug | null> {
-    const params = {
-      'sys.id': id,
-      include: 10,
-    }
-
-    const res = await this.contentfulRepository.getClient().getEntries({
-      ...params,
-    })
-
-    console.log('tester', res)
-    console.log('-----')
-
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IArticleFields>(lang, params)
+      .getClient()
+      .getEntry<{ slug: Record<string, string> }>(id, {
+        locale: '*',
+        include: 1,
+      })
       .catch(errorHandler('getContentSlug'))
 
-    console.log('result', result.items)
+    let slugs: ContentSlugLocales = { is: '', en: '' }
 
-    return (result.items as types.IArticle[]).map(mapContentSlug)[0] ?? null
+    if (result?.fields?.slug) {
+      slugs = Object.keys(localeMap).reduce((obj, k) => {
+        obj[k] = result?.fields?.slug?.[localeMap[k]] ?? ''
+        return obj
+      }, {} as typeof localeMap)
+    }
+
+    return {
+      id: result?.sys?.id,
+      slug: slugs,
+      type: result?.sys?.contentType?.sys?.id ?? '',
+    }
   }
 
   async getGenericPage({
