@@ -12,19 +12,19 @@ import { ReviewApprovalEnum } from '../../types'
 import { FormOverview } from '../FormOverview'
 import { ConfirmationModal } from './ConfirmationModal'
 
-type FormOverviewInReviewProps = {
-  props: FieldBaseProps
-  isAssignee: boolean
-  setState: React.Dispatch<React.SetStateAction<string>>
+interface FormOverviewInReviewProps {
+  field: {
+    props: {
+      isAssignee: boolean
+    }
+  }
 }
 
-export const FormOverviewInReview: FC<FormOverviewInReviewProps> = ({
-  props,
-  setState,
-  isAssignee,
-}) => {
+export const FormOverviewInReview: FC<
+  FormOverviewInReviewProps & FieldBaseProps
+> = ({ application, field, refetch, goToScreen }) => {
+  const isAssignee = field?.props?.isAssignee || false
   const { formatMessage } = useLocale()
-  const { application, refetch } = props
   const reviewApproval = getValueViaPath(
     application.answers,
     'reviewApproval',
@@ -42,10 +42,10 @@ export const FormOverviewInReview: FC<FormOverviewInReviewProps> = ({
     isAssignee && reviewApproval === ReviewApprovalEnum.NOTREVIEWED
 
   const onBackButtonClick = () => {
-    setState('inReviewSteps')
+    goToScreen && goToScreen('applicationStatusScreen')
   }
   const goToAttachmentScreen = () => {
-    setState('uploadDocuments')
+    goToScreen && goToScreen('addAttachmentScreen')
   }
   const openRejectModal = () => {
     setRejectModalVisibility(true)
@@ -58,7 +58,11 @@ export const FormOverviewInReview: FC<FormOverviewInReviewProps> = ({
       <Text variant="h1" marginBottom={2}>
         {formatMessage(overview.general.sectionTitle)}
       </Text>
-      <FormOverview {...props} />
+      <FormOverview
+        field={field}
+        application={application}
+        goToScreen={() => {}}
+      />
       <Box display="flex" justifyContent="flexEnd" marginBottom={6}>
         <Button icon="attach" variant="utility" onClick={goToAttachmentScreen}>
           {formatMessage(overview.labels.missingDocumentsButton)}

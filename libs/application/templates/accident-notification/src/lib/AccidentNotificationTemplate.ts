@@ -95,8 +95,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
                 ),
               read: 'all',
               write: 'all',
@@ -107,8 +107,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/AssigneeInReview').then((val) =>
-                  Promise.resolve(val.AssigneeInReview),
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.AssigneeReview),
                 ),
               read: 'all',
               write: 'all',
@@ -149,8 +149,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
                 ),
               read: 'all',
               write: 'all',
@@ -158,8 +158,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/AssigneeInReview').then((val) =>
-                  Promise.resolve(val.AssigneeInReview),
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.AssigneeReview),
                 ),
               read: 'all',
               write: 'all',
@@ -198,16 +198,16 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
                 ),
               read: 'all',
             },
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
                 ),
               read: 'all',
               write: 'all',
@@ -244,7 +244,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         const { application } = context
 
         const assigneeId = getNationalIdOfReviewer(application)
-        set(application, 'assignees', [assigneeId])
+        set(application, 'assignees', ['0206912399'])
 
         return context
       }),
