@@ -513,42 +513,18 @@ export const ParentalLeaveForm: Form = buildForm({
               ],
             }),
             buildCustomField({
-              id: 'requestRights',
+              id: 'transferRights',
               childInputIds: [
+                'transferRights',
                 'requestRights.isRequestingRights',
                 'requestRights.requestDays',
                 'giveRights.isGivingRights',
                 'giveRights.giveDays',
               ],
-              title: parentalLeaveFormMessages.shared.requestRightsName,
+              title: parentalLeaveFormMessages.shared.transferRightsTitle,
               description:
-                parentalLeaveFormMessages.shared.requestRightsDescription,
-              condition: (answers, externalData) =>
-                getSelectedChild(answers, externalData)?.parentalRelation ===
-                  ParentalRelations.primary && allowOtherParent(answers),
-              component: 'RequestRightsRadio',
-            }),
-            buildCustomField({
-              id: 'giveRights',
-              childInputIds: [
-                'giveRights.isGivingRights',
-                'giveRights.giveDays',
-                'requestRights.isRequestingRights',
-                'requestRights.requestDays',
-              ],
-              title: parentalLeaveFormMessages.shared.giveRightsName,
-              description:
-                parentalLeaveFormMessages.shared.giveRightsDescription,
-              condition: (answers, externalData) => {
-                const { isRequestingRights } = getApplicationAnswers(answers)
-
-                const canRequestRights =
-                  getSelectedChild(answers, externalData)?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
-
-                return canRequestRights && isRequestingRights === NO
-              },
-              component: 'GiveRightsRadio',
+                parentalLeaveFormMessages.shared.transferRightsDescription,
+              component: 'TransferRights',
             }),
             buildCustomField({
               id: 'requestRights.requestDays',
@@ -572,38 +548,13 @@ export const ParentalLeaveForm: Form = buildForm({
                 getApplicationAnswers(answers).isGivingRights === YES,
               component: 'GiveDaysSlider',
             }),
-            buildCustomField({
-              id: 'giveRights',
-              title: parentalLeaveFormMessages.shared.giveRightsName,
-              description:
-                parentalLeaveFormMessages.shared.giveRightsDescription,
-              width: 'half',
-              condition: (answers, externalData) => {
-                const selectedChild = getSelectedChild(answers, externalData)
-
-                const isSecondaryParent =
-                  selectedChild?.parentalRelation ===
-                  ParentalRelations.secondary
-                const hasNoRights = selectedChild?.hasRights === true
-                const hasNoRemainingDays = selectedChild?.remainingDays === 0
-                const canNotGiveRights =
-                  !isSecondaryParent || hasNoRights || hasNoRemainingDays
-
-                if (canNotGiveRights) {
-                  return false
-                }
-
-                const { isRequestingRights } = getApplicationAnswers(answers)
-                return isRequestingRights === NO
-              },
-              component: 'GiveRightsRadio',
-            }),
           ],
         }),
         buildSubSection({
           id: 'otherParentEmailQuestion',
           title: parentalLeaveFormMessages.shared.otherParentEmailSubSection,
-          condition: (answers) => requiresOtherParentApproval(answers),
+          condition: (answers, externalData) =>
+            requiresOtherParentApproval(answers, externalData),
           children: [
             buildTextField({
               id: 'otherParentEmail',

@@ -26,6 +26,7 @@ import {
   SPOUSE,
   StartDateOptions,
   ParentalRelations,
+  TransferRightsOption,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
@@ -462,10 +463,18 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const selectedChild = getValueViaPath(answers, 'selectedChild') as string
 
-  const isRequestingRights = getValueViaPath(
+  const transferRights = getValueViaPath(
     answers,
-    'requestRights.isRequestingRights',
-  ) as YesOrNo
+    'transferRights',
+  ) as TransferRightsOption
+
+  const isRequestingRights =
+    transferRights === TransferRightsOption.REQUEST
+      ? YES
+      : (getValueViaPath(
+          answers,
+          'requestRights.isRequestingRights',
+        ) as YesOrNo)
 
   const requestValue = getValueViaPath(answers, 'requestRights.requestDays') as
     | number
@@ -473,10 +482,10 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const requestDays = getOrFallback(isRequestingRights, requestValue)
 
-  const isGivingRights = getValueViaPath(
-    answers,
-    'giveRights.isGivingRights',
-  ) as YesOrNo
+  const isGivingRights =
+    transferRights === TransferRightsOption.GIVE
+      ? YES
+      : (getValueViaPath(answers, 'giveRights.isGivingRights') as YesOrNo)
 
   const giveValue = getValueViaPath(answers, 'giveRights.giveDays') as
     | number
@@ -520,6 +529,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,
+    transferRights,
     isRequestingRights,
     requestDays: Number(requestDays),
     isGivingRights,
@@ -534,15 +544,23 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
 export const requiresOtherParentApproval = (
   answers: Application['answers'],
+  externalData: Application['externalData'],
 ) => {
   const applicationAnswers = getApplicationAnswers(answers)
+  const selectedChild = getSelectedChild(answers, externalData)
 
   const {
     isRequestingRights,
     usePersonalAllowanceFromSpouse,
   } = applicationAnswers
 
-  return isRequestingRights === YES || usePersonalAllowanceFromSpouse === YES
+  const needsApprovalForRequestingRights =
+    selectedChild?.parentalRelation === ParentalRelations.primary
+
+  return (
+    (isRequestingRights === YES && needsApprovalForRequestingRights) ||
+    usePersonalAllowanceFromSpouse === YES
+  )
 }
 
 export const otherParentApprovalDescription = (
