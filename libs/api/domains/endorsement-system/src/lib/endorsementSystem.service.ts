@@ -19,6 +19,7 @@ import {
   EndorsementListControllerOpenRequest,
   EndorsementListControllerLockRequest,
   EndorsementListControllerUnlockRequest,
+  EndorsementControllerEmailEndorsementsPDFRequest,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -204,25 +205,14 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
-  // getEmailTemplate(input: SendEmailInput) {
-  //   if (this.emailTypeTemplateMap[input.type]) {
-  //     return this.emailTypeTemplateMap[input.type](input)
-  //   } else {
-  //     throw new Error('Message type is not supported')
-  //   }
-  // }
-
-  // async sendEmail(input: SendEmailInput): Promise<boolean> {
-  //   this.logger.info('Sending email', { type: input.type })
-  //   try {
-  //     const emailOptions = this.getEmailTemplate(input)
-  //     await this.emailService.sendEmail(emailOptions)
-  //     return true
-  //   } catch (error) {
-  //     this.logger.error('Failed to send email', { message: error.message })
-  //     // we dont want the client to see these errors since they might contain sensitive data
-  //     throw new Error('Failed to send message')
-  //   }
-  // }
+  async endorsementControllerSendPdfEmail(
+    endorsementList: EndorsementControllerEmailEndorsementsPDFRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementApiWithAuth(auth)
+      .endorsementControllerEmailEndorsementsPDF(endorsementList)
+      .catch(this.handleError.bind(this))
+  }
+  
 
 }

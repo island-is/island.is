@@ -20,6 +20,8 @@ import { PaginatedEndorsementListResponse } from './dto/paginatedEndorsementList
 
 import { EndorsementPaginationInput } from './dto/endorsementPagination.input'
 import { OpenListInput } from './dto/openList.input'
+import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
+import { sendPdfEmailInput } from './dto/sendPdfEmail.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver('EndorsementSystemResolver')
@@ -231,16 +233,14 @@ export class EndorsementSystemResolver {
     )
   }
 
-
-  // @Mutation(() => CommunicationResponse)
-  // async syslumennForms(
-  //   @Args('input') input: SyslumennFormsInput,
-  // ): Promise<CommunicationResponse> {
-  //   await this.communicationsService.sendEmail(input)
-  //   return {
-  //     sent: true,
-  //   }
-  // }
-
-
+  @Mutation(() => sendPdfEmailResponse)
+  async endorsementSystemsendPdfEmail(
+    @Args('input') input: sendPdfEmailInput,
+    @CurrentUser() user: User,
+  ): Promise<{ success: boolean }> {
+    return await this.endorsementSystemService.endorsementControllerSendPdfEmail(
+      input,
+      user,
+    )
+  }
 }

@@ -22,10 +22,11 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
-
 import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
+import model from 'sequelize/types/lib/model'
+import { emailDto } from './dto/email.dto'
 
 interface FindEndorsementInput {
   listId: string
@@ -388,97 +389,83 @@ export class EndorsementService {
     }
   }
 
-  async createDocumentBuffer(listId: string) {
-    const endorsementList = await this.endorsementListModel.findOne({
-      where: { id: listId },
-    })
-    if(!endorsementList){
-      return "list not found" //new NotFoundException("List not found")
-    }
-    const endorsements = await this.endorsementModel.findAll({
-      where: { endorsement_list_id: listId },
-    })
-   
+  async createDocumentBuffer(endorsementList: any) {
     // build pdf
     const doc = new PDFDocument()
-    // list generated timestamp when
-    doc.text("þetta pdf skjal var framkallað sjálvirkt @ " + String(new Date()))
-    doc.moveDown()
-    doc.text("MEÐMÆLALISTI ##############################")
-    doc.moveDown()
-    // total count - list metadata
-    doc.text("id: " + endorsementList.id)
-    doc.moveDown()
-    doc.text("titill: " + endorsementList.title)
-    doc.moveDown()
-    doc.text("lýsing: " + String(endorsementList.description))//
-    doc.moveDown()
-    doc.text("eigandi: " + endorsementList.owner)
-    doc.moveDown()
-    doc.text(String("listi opnaður: " + endorsementList.openedDate))//
-    doc.moveDown()
-    doc.text(String("listi lokaður: " + endorsementList.closedDate))//
-    doc.moveDown()
-    doc.moveDown()
-    doc.text(`Alls undirskriftir: ${endorsements.length}`)
-    doc.moveDown()
-    doc.moveDown()
-    // multiply for making huge list
-    // for (let i = 0; i < 100; i++) {
-      doc.text("MEÐMÆLENDUR ##############################")
-      doc.moveDown()
-      for(const val of endorsements) {
-        doc.text(val.meta.fullName)
-        doc.moveDown()
+    const locale = 'is-IS'
+    const big = 16
+    const regular = 8
+    doc
+      .fontSize(big)
+      .text('ISLAND.IS LOGO ofl...')
+      .fontSize(regular)
+      .text(
+        'þetta skjal var framkallað sjálfvirkt þann: ' +
+          new Date().toLocaleDateString(locale),
+      )
+      .moveDown()
+      .fontSize(big)
+      .text('Meðmælendalisti')
+      .fontSize(regular)
+      .text('id: ' + endorsementList.id)
+      .text('titill: ' + endorsementList.title)
+      .text('lýsing: ' + endorsementList.description)
+      .text('eigandi: ' + endorsementList.owner)
+      .text(
+        'listi opnaður: ' +
+          endorsementList.openedDate.toLocaleDateString(locale),
+      )
+      .text(
+        'listi lokaður: ' +
+          endorsementList.closedDate.toLocaleDateString(locale),
+      )
+      .text(`Alls undirskriftir: ${endorsementList.endorsements.length}`)
+      .moveDown()
+    if (endorsementList.endorsements.length) {
+      doc.fontSize(big).text('Meðmælendur').fontSize(regular)
+      for (const val of endorsementList.endorsements) {
+        doc.text(
+          val.created.toLocaleDateString(locale) + ' ' + val.meta.fullName,
+        )
       }
-      doc.text("##############################")
-    // }
+    }
     doc.end()
     return await getStream.buffer(doc)
   }
 
-  async emailEndorsementsPDF() {
-    const listId = "c7f7e470-17ce-4e58-a736-7b3a6f797ec1" // demo
-    // const some_date = "2021-21-21"
-    const filename = `meðmælalisti.pdf`
-
+  async emailPDF(listId: string, recipientEmail: string): Promise<{ success: boolean }> {
+    const endorsementList = await this.endorsementListModel.findOne({
+      where: { id: listId },
+      include: [{
+        model: Endorsement,
+      }]
+    })
+    // demo c7f7e470-17ce-4e58-a736-7b3a6f797ec1
     try {
-      return this.emailService.sendEmail({
+      const result = this.emailService.sendEmail({
         from: {
-          name: 'RABBZ', //environment.email.fromName,
-          address: 'rafn@juni.is', // environment.email.fromEmail,
+          name: 'Meðmælendakerfi island.is',
+          address: 'noreply@island.is',
         },
         to: [
           {
-            name: 'RABBZ',
-            address: 'rafn@juni.is', //verification.email,
+            name: recipientEmail, // message can be sent to any email so recipient name in unknown
+            address: recipientEmail,
           },
         ],
-        subject: `subject line testing one two`,
-        // html: `<h1>Halló halló</h1>body content testing`,
+        subject: 'Afrit af meðmælendalista',
         template: {
-          title: "hello subject line",
+          title: 'Afrit af meðmælendalista',
           body: [
             {
-              component: 'Image',
-              context: {
-                src: 'logo.jpg',
-          alt: 'Logo name',
-              },
+              component: 'Heading',
+              context: { copy: 'Afrit af meðmælendalista' },
             },
-            {
-              component: 'Image',
-              context: {
-                src: 'logo.jpg',
-          alt: 'Logo name',
-              },
-            },
-            { component: 'Heading', context: { copy: "waddup homie" } },
             { component: 'Copy', context: { copy: 'Góðan dag.' } },
             {
               component: 'Copy',
               context: {
-                copy: `Umsækjandi með kennitölu  hefur skráð þig sem atvinnuveitanda í umsókn sinni.`,
+                copy: `Umsækjandi með kennitölu hefur sent þér ... copy copy copy`,
               },
             },
             {
@@ -491,7 +478,7 @@ export class EndorsementService {
               component: 'Button',
               context: {
                 copy: 'Yfirfara umsókn',
-                href: "http://www.island.is",
+                href: 'http://www.island.is',
               },
             },
             { component: 'Copy', context: { copy: 'Með kveðju,' } },
@@ -500,17 +487,15 @@ export class EndorsementService {
         },
         attachments: [
           {
-            filename,
-            content: await this.createDocumentBuffer(listId),
+            filename: 'Meðmælendalisti.pdf',
+            content: await this.createDocumentBuffer(endorsementList),
           },
         ],
       })
-    } catch (exception) {
-      this.logger.error(exception)
-      return exception
+      return { success: true }
+    } catch (error) {
+      this.logger.error('Failed to send email', error)
+      return { success: false }
     }
   }
- 
- 
-
 }

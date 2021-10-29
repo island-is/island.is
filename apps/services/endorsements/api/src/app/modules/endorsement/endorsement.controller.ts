@@ -42,6 +42,8 @@ import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
+import { emailDto } from './dto/email.dto'
+import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @Audit({
@@ -57,26 +59,28 @@ export class EndorsementController {
     private readonly auditService: AuditService,
   ) {}
 
-
-  // get gp lists - relay
-  // @ApiOkResponse({ type: any })
-  // @HasAccessGroup(AccessGroup.Owner, AccessGroup.Admin)
-  @ApiParam({ name: 'listId', type: String })
-  @Get('/email-pdf')
-  // @ApiResponse()
-  @BypassAuth()
+  @ApiOperation({
+    summary: 'Emails a PDF with list endorsements data',
+  })
+  @HasAccessGroup(AccessGroup.Owner, AccessGroup.Admin)
+  @ApiParam({ name: 'listId', type: String})
+  @ApiOkResponse({ type: sendPdfEmailResponse })
+  @Post('/email-pdf')
+  // @BypassAuth()
   async emailEndorsementsPDF(
-    // @Param(
-    //   'listId',
-    //   new ParseUUIDPipe({ version: '4' }),
-    //   EndorsementListByIdPipe,
-    // )
-    // endorsementList: EndorsementList,
-    // @Query() query: PaginationDto,
-  ): Promise<string> {
-    return this.endorsementService.emailEndorsementsPDF()
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+    )
+    endorsementList: EndorsementList,
+    @Query() query: emailDto,
+  ): Promise<sendPdfEmailResponse> {
+    return this.endorsementService.emailPDF(
+      endorsementList.id,
+      query.emailAddress,
+    )
   }
-
 
   @ApiOperation({ summary: 'Finds all endorsements in a given list' })
   @ApiParam({ name: 'listId', type: String })
@@ -272,5 +276,3 @@ export class EndorsementController {
     return
   }
 }
-
-
