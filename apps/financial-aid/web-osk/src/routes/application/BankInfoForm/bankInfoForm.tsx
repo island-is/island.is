@@ -87,7 +87,10 @@ const Form = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     fieldSettings: BankOptionsProps,
   ) => {
-    if (event.target.value.length <= event.target.maxLength) {
+    if (
+      event.target.value.length <= event.target.maxLength &&
+      Number(event.target.value) >= 0
+    ) {
       fieldSettings.changeFunction(event)
     }
   }

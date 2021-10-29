@@ -333,7 +333,7 @@ export const regulationContentStyling = (wrapper: string) => {
   styleRegulation(
     `
     .article__title:first-child,
-    .section__title + .chapter__title,
+    .section__title + .article__title,
     .chapter__title + .article__title
     `,
     {
