@@ -60,7 +60,7 @@ export class HealthInsuranceService {
     private readonly accidentNotificationApi: DocumentApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) {}
+  ) { }
 
   async getAccidentNotificationStatus(
     ihiDocumentID: number,

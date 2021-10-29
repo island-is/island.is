@@ -22,7 +22,7 @@ export class SharedTemplateApiService {
     private readonly emailService: EmailService,
     @Inject(ConfigService)
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
-  ) {}
+  ) { }
 
   async sendEmail(
     templateGenerator: EmailTemplateGenerator,
@@ -86,8 +86,7 @@ export class SharedTemplateApiService {
       },
       assignLink,
     )
-    console.log('assignlink : ', assignLink)
-    return
+
     return this.emailService.sendEmail(template)
   }
 
