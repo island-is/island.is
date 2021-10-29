@@ -111,8 +111,8 @@
 /libs/application/templates/login-service/                                                    @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/               @island-is/sendiradid
 /libs/clients/documents/                                                                      @island-is/sendiradid
-/libs/clients/payment-schedule/   
-/libs/api/domains/payment-schedule/                                                            @island-is/sendiradid
+/libs/clients/payment-schedule/                                                               @island-is/sendiradid
+/libs/api/domains/payment-schedule/                                                           @island-is/sendiradid
 /libs/application/templates/funding-government-projects/                                      @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/ @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/institution-collaboration/   @island-is/sendiradid
