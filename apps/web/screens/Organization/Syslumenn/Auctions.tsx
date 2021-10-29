@@ -736,7 +736,7 @@ const Auctions: Screen<AuctionsProps> = ({
                   {/* Auction takes place at */}
                   {auction.takesPlaceAt && (
                     <Text paddingBottom={1}>
-                      {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:
+                      {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:{' '}
                       {auction.takesPlaceAt}
                     </Text>
                   )}
