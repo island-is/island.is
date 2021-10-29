@@ -182,7 +182,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(GenericScope.system)
+  @Scopes(GenericScope.system, GenericScope.internal)
   @Put(':listId/close')
   @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Owner)
@@ -306,7 +306,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiBody({ type: EndorsementListDto })
-  @Scopes(GenericScope.system)
+  @Scopes(GenericScope.system, GenericScope.internal)
   @Post()
   @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
