@@ -135,9 +135,9 @@ const ApplicationHeader = ({
         </Button>
       </Box>
 
-      {/* <Divider /> */}
+      <Divider />
 
-      <Box display="flex" marginBottom={8}>
+      <Box display="flex" marginBottom={8} marginTop={4}>
         {application.staff?.name && (
           <Box display="flex" marginRight={1}>
             <Box marginRight={1}>
