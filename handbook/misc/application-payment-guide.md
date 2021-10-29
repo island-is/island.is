@@ -49,6 +49,20 @@ retrieve the charges. In the DLA we implemented a `FeeInfoProvider`, extending a
 `PaymentCatalogProvider` that returns the exact charge item codes we want to use along with
 the prices.
 
+```typescript
+export class FeeInfoProvider extends PaymentCatalogProvider {
+  type = 'FeeInfoProvider'
+
+  async provide(): Promise<PaymentCatalogItem[]> {
+    const items =
+      (await this.getCatalogForOrganization(SYSLUMADUR_NATIONAL_ID)) || []
+
+    return items.filter(({ chargeItemCode }) =>
+      CHARGE_ITEM_CODES.includes(chargeItemCode),
+    )
+  }
+```
+
 ### 2. Payment states
 
 The easiest way to block steps and guarantee that you always end up on the right step for
@@ -61,11 +75,41 @@ updates to the payment that was created and charged. Both of those are specific 
 the driving license application, so for now you'd need to create similar api actions for
 creating the charge and handling the post-payment stage.
 
+```typescript
+  [States.PAYMENT]: {
+    meta: {
+      ...etc,
+      onEntry: {
+        apiModuleAction: ApiActions.createCharge,
+      },
+      onExit: {
+        apiModuleAction: ApiActions.submitApplication,
+      },
+      ...etc,
+  },
+```
+
 ### 3. Insuring payment has been completed
 
 Both in terms of past-application history compatibility and in terms of absolute safety
 that something unpaid doesn't go, we'd recommend that you check whether the application
 payment has been fulfilled in your final application submission step.
+
+```typescript
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+    const { answers } = application
+    const nationalId = application.applicant
+
+    const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth.authorization,
+      application.id,
+    )
+
+    if (isPayment.fulfilled) {
+      const result = await this.submitSomethign(nationalId, answers)
+      // etc
+    }
+```
 
 ## FJS / Fjarsýsla ríkisins API
 
