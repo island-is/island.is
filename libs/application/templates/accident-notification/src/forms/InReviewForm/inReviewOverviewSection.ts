@@ -9,7 +9,7 @@ export const inReviewOverviewSection = (isAssignee?: boolean) =>
       buildCustomField(
         {
           id: 'inReviewOverviewScreen',
-          title: 'Overview Screen',
+          title: '',
           component: 'FormOverviewInReview',
         },
         {

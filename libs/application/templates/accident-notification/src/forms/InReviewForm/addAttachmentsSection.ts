@@ -7,10 +7,12 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  DefaultEvents,
   getValueViaPath,
 } from '@island.is/application/core'
 import { UPLOAD_ACCEPT } from '../../constants'
 import { addDocuments } from '../../lib/messages'
+import { hasMissingPowerOfAttorneyFile } from '../../utils'
 
 export const addAttachmentsSection = buildSection({
   id: 'addAttachmentSection',
@@ -43,7 +45,7 @@ export const addAttachmentsSection = buildSection({
           description: '',
           space: 5,
           titleVariant: 'h5',
-          condition: (formValue) => true,
+          condition: (formValue) => hasMissingPowerOfAttorneyFile(formValue),
         }),
         buildFileUploadField({
           id: 'attachments.powerOfAttorneyFile.file',
@@ -52,7 +54,7 @@ export const addAttachmentsSection = buildSection({
           uploadHeader: addDocuments.powerOfAttorney.uploadHeader,
           uploadDescription: addDocuments.general.uploadDescription,
           uploadButtonLabel: addDocuments.general.uploadButtonLabel,
-          condition: (formValue) => true,
+          condition: (formValue) => hasMissingPowerOfAttorneyFile(formValue),
         }),
 
         buildDescriptionField({
@@ -75,15 +77,6 @@ export const addAttachmentsSection = buildSection({
           uploadHeader: addDocuments.general.uploadHeader,
           uploadDescription: addDocuments.general.uploadDescription,
           uploadButtonLabel: addDocuments.general.uploadButtonLabel,
-        }),
-        buildSubmitField({
-          id: 'submit',
-          title: '',
-          placement: 'footer',
-          actions: [
-            // Todo make sure we send correct action to upload additional attachments.
-            { event: 'SUBMIT', name: 'Hlaða upp skjölum', type: 'primary' },
-          ],
         }),
       ],
     }),

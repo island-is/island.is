@@ -266,6 +266,7 @@ export const AccidentNotificationSchema = z.object({
   overview: z.object({
     custom: z.string().optional(),
   }),
+  assigneeComment: z.string().optional(),
   reviewApproval: z
     .enum([
       ReviewApprovalEnum.APPROVED,
