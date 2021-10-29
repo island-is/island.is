@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { CurrentApplicationModel, ApplicationModel } from './models'
+import { ApplicationModel } from './models'
 
 import { Op } from 'sequelize'
 
@@ -76,20 +76,32 @@ export class ApplicationService {
     return Boolean(application)
   }
 
-  async getCurrentApplication(
-    nationalId: string,
-  ): Promise<CurrentApplicationModel | null> {
-    return await this.applicationModel.findOne({
+  async getCurrentApplication(nationalId: string): Promise<string | null> {
+    const currentApplication = await this.applicationModel.findOne({
       where: {
-        nationalId,
+        [Op.or]: [
+          {
+            nationalId,
+          },
+          {
+            spouseNationalId: nationalId,
+          },
+        ],
         created: { [Op.gte]: firstDateOfMonth() },
       },
     })
+
+    if (currentApplication) {
+      return currentApplication.id
+    }
+
+    return null
   }
 
   async getAll(
     stateUrl: ApplicationStateUrl,
     staffId: string,
+    municipalityCode: string,
   ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
       where:
@@ -97,8 +109,12 @@ export class ApplicationService {
           ? {
               state: { [Op.in]: getStateFromUrl[stateUrl] },
               staffId,
+              municipalityCode,
             }
-          : { state: { [Op.in]: getStateFromUrl[stateUrl] } },
+          : {
+              state: { [Op.in]: getStateFromUrl[stateUrl] },
+              municipalityCode,
+            },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
     })
@@ -135,7 +151,10 @@ export class ApplicationService {
     return application
   }
 
-  async getAllFilters(staffId: string): Promise<ApplicationFilters> {
+  async getAllFilters(
+    staffId: string,
+    municipalityCode: string,
+  ): Promise<ApplicationFilters> {
     const statesToCount = [
       ApplicationState.NEW,
       ApplicationState.INPROGRESS,
@@ -146,7 +165,7 @@ export class ApplicationService {
 
     const countPromises = statesToCount.map((item) =>
       this.applicationModel.count({
-        where: { state: item },
+        where: { state: item, municipalityCode },
       }),
     )
 
@@ -154,6 +173,7 @@ export class ApplicationService {
       this.applicationModel.count({
         where: {
           staffId,
+          municipalityCode,
           state: {
             [Op.or]: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
           },

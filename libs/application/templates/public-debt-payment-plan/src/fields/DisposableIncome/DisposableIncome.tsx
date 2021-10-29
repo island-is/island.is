@@ -49,20 +49,22 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
         {formatMessage(employer.labels.minimumMonthlyPayment)}
       </Text>
       <Text marginBottom={4}>
-        {formatMessage(employer.labels.minimumMonthlyPaymentDescription)}
+        {formatMessage(employer.labels.minimumMonthlyPaymentDescription, {
+          percent: `${conditions?.percent}%`,
+        })}
       </Text>
       {/* TODO: Handle null values? */}
       <InfoBox
         title={`${conditions?.minPayment.toLocaleString('is-IS') || 0} kr.`}
         text={formatMessage(employer.labels.yourMinimumPayment)}
       />
-      {!!conditions?.minPayment && (
+      {!!conditions?.minWagePayment && (
         <Box marginTop={3}>
           <AlertMessage
             type="info"
             title={formatMessage(employer.labels.alertTitle)}
             message={formatMessage(employer.labels.alertMessage, {
-              minPayment: formatIsk(conditions?.minPayment),
+              minPayment: formatIsk(conditions?.minWagePayment),
             })}
           />
         </Box>
