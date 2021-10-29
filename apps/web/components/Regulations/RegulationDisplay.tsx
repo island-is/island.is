@@ -1,6 +1,6 @@
-import * as s from './RegulationDisplay.treat'
+import * as s from './RegulationDisplay.css'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { ISODate, prettyName } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
@@ -21,10 +21,7 @@ import { AffectingRegulations } from './AffectingRegulations'
 import { RegulationTimeline } from './RegulationTimeline'
 import { DiffModeToggle } from './DiffModeToggle'
 import { HistoryStepper } from './HistoryStepper'
-import {
-  useRegulationIndexer,
-  useImageSrcRewriter,
-} from './useRegulationIndexer'
+import { useRegulationIndexer } from './useRegulationIndexer'
 import { RegulationIndex } from './RegulationIndex'
 
 // ---------------------------------------------------------------------------
@@ -42,8 +39,6 @@ export type RegulationDisplayProps = {
   urlDate?: ISODate
   texts: RegulationPageTexts
 }
-
-let lastTxt: any
 
 export const RegulationDisplay = (props: RegulationDisplayProps) => {
   const { regulation, texts, urlDate } = props
@@ -79,10 +74,10 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
 
   const [showTimeline, setShowTimeline] = useState(false)
 
-  const indexedProps = useRegulationIndexer(regulation, txt)
-  const { index } = indexedProps
-
-  const { text, appendixes, comments } = useImageSrcRewriter(indexedProps)
+  const { index, text, appendixes, comments } = useRegulationIndexer(
+    regulation,
+    txt,
+  )
 
   return (
     <RegulationLayout

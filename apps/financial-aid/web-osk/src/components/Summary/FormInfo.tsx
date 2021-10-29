@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Divider, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 interface InfoProps {

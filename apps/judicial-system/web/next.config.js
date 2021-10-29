@@ -1,4 +1,5 @@
-const withTreat = require('next-treat')()
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
+const withVanillaExtract = createVanillaExtractPlugin()
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 
 const { INTERNAL_API_URL = 'http://localhost:3333' } = process.env
@@ -6,7 +7,7 @@ const { INTERNAL_API_URL = 'http://localhost:3333' } = process.env
 const apiPath = '/api'
 const graphqlPath = '/api/graphql'
 
-module.exports = withTreat(
+module.exports = withVanillaExtract(
   withHealthcheckConfig({
     webpack: (config, options) => {
       // if (!options.isServer) {

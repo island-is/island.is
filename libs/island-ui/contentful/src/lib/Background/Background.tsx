@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
 import { Box, BoxProps } from '@island.is/island-ui/core'
-import * as styles from './Background.treat'
+import * as styles from './Background.css'
 
 export const Background: FC<BoxProps> = ({ children, ...props }) => {
   return (

@@ -40,6 +40,8 @@ export const queryPaymentScheduleConditions = `
         withholdingTaxReturns
         wageReturns
         alimony
+        percent
+        minWagePayment
     }
   }
 `

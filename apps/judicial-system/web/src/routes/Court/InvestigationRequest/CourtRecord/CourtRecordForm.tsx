@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
+import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
   CaseNumbers,
@@ -10,8 +10,7 @@ import {
   FormFooter,
   HideableText,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { AccusedPleaDecision } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
+import { Case, SessionArrangements } from '@island.is/judicial-system/types'
 import {
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
@@ -25,12 +24,10 @@ import {
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import {
-  accusedRights,
   closedCourt,
-  icCourtRecord,
+  icCourtRecord as m,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './CourtRecord.treat'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 interface Props {
@@ -48,15 +45,13 @@ const CourtRecordForm: React.FC<Props> = (props) => {
   const [courtLocationEM, setCourtLocationEM] = useState('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
   const [
-    accusedPleaAnnouncementErrorMessage,
-    setAccusedPleaAnnouncementMessage,
-  ] = useState('')
-  const [
     litigationPresentationsErrorMessage,
     setLitigationPresentationsMessage,
   ] = useState('')
 
   const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
+
   const validations: FormSettings = {
     courtLocation: {
       validations: ['empty'],
@@ -74,7 +69,6 @@ const CourtRecordForm: React.FC<Props> = (props) => {
     setWorkingCase,
     validations,
   )
-  const { formatMessage } = useIntl()
 
   return (
     <>
@@ -118,14 +112,10 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             <Input
               data-testid="courtLocation"
               name="courtLocation"
-              tooltip={formatMessage(
-                icCourtRecord.sections.courtLocation.tooltip,
-              )}
-              label={formatMessage(icCourtRecord.sections.courtLocation.label)}
+              tooltip={formatMessage(m.sections.courtLocation.tooltip)}
+              label={formatMessage(m.sections.courtLocation.label)}
               defaultValue={workingCase.courtLocation}
-              placeholder={formatMessage(
-                icCourtRecord.sections.courtLocation.placeholder,
-              )}
+              placeholder={formatMessage(m.sections.courtLocation.placeholder)}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLocation',
@@ -249,138 +239,48 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             workingCase={workingCase}
           />
         </Box>
-        <Box component="section" marginBottom={8}>
-          <Box marginBottom={1}>
-            <Text as="h3" variant="h3">
-              {formatMessage(accusedRights.title, {
-                accusedType: 'varnaraðila',
-              })}
-            </Text>
-          </Box>
-          <Box marginBottom={2}>
-            <HideableText
-              text={formatMessage(accusedRights.text)}
-              isHidden={workingCase.isAccusedRightsHidden}
-              onToggleVisibility={(isVisible: boolean) =>
-                setAndSendToServer(
-                  'isAccusedRightsHidden',
-                  isVisible,
-                  workingCase,
-                  setWorkingCase,
-                  updateCase,
-                )
-              }
-              tooltip={formatMessage(accusedRights.tooltip, {
-                accusedType: 'varnaraðila',
-              })}
-            />
-          </Box>
-          <BlueBox>
-            <div className={styles.accusedPleaDecision}>
-              <RadioButton
-                name="accusedPleaDecision"
-                id="accused-plea-decision-rejecting"
-                label={formatMessage(
-                  icCourtRecord.sections.accusedAppealDecision.options.reject,
-                )}
-                checked={
-                  workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
-                }
-                onChange={() => {
-                  setAndSendToServer(
-                    'accusedPleaDecision',
-                    AccusedPleaDecision.REJECT,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }}
-                large
-                backgroundColor="white"
-              />
-              <RadioButton
-                name="accusedPleaDecision"
-                id="accused-plea-decision-accepting"
-                label={formatMessage(
-                  icCourtRecord.sections.accusedAppealDecision.options.accept,
-                )}
-                checked={
-                  workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
-                }
-                onChange={() => {
-                  setAndSendToServer(
-                    'accusedPleaDecision',
-                    AccusedPleaDecision.ACCEPT,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }}
-                large
-                backgroundColor="white"
-              />
-            </div>
+        {workingCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT && (
+          <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
-              <RadioButton
-                name="accusedPleaDecision"
-                id="accused-plea-decision-na"
-                label={formatMessage(
-                  icCourtRecord.sections.accusedAppealDecision.options
-                    .notApplicable,
-                )}
-                checked={
-                  workingCase.accusedPleaDecision ===
-                  AccusedPleaDecision.NOT_APPLICABLE
-                }
-                onChange={() => {
-                  setAndSendToServer(
-                    'accusedPleaDecision',
-                    AccusedPleaDecision.NOT_APPLICABLE,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }}
-                large
-                backgroundColor="white"
-              />
+              <Text as="h3" variant="h3">
+                {`${formatMessage(m.sections.accusedBookings.title)} `}
+                <Tooltip
+                  text={formatMessage(m.sections.accusedBookings.tooltip)}
+                />
+              </Text>
             </Box>
             <Input
-              data-testid="accusedPleaAnnouncement"
-              name="accusedPleaAnnouncement"
-              label="Afstaða varnaraðila"
-              defaultValue={workingCase.accusedPleaAnnouncement}
+              data-testid="accusedBookings"
+              name="accusedBookings"
+              label={formatMessage(m.sections.accusedBookings.label)}
+              defaultValue={workingCase.accusedBookings}
               placeholder={formatMessage(
-                icCourtRecord.sections.accusedPleaAnnouncement.placeholder,
+                m.sections.accusedBookings.placeholder,
               )}
               onChange={(event) =>
                 removeTabsValidateAndSet(
-                  'accusedPleaAnnouncement',
+                  'accusedBookings',
                   event,
                   [],
                   workingCase,
                   setWorkingCase,
-                  accusedPleaAnnouncementErrorMessage,
-                  setAccusedPleaAnnouncementMessage,
                 )
               }
               onBlur={(event) =>
                 validateAndSendToServer(
-                  'accusedPleaAnnouncement',
+                  'accusedBookings',
                   event.target.value,
                   [],
                   workingCase,
                   updateCase,
-                  setAccusedPleaAnnouncementMessage,
                 )
               }
-              errorMessage={accusedPleaAnnouncementErrorMessage}
-              hasError={accusedPleaAnnouncementErrorMessage !== ''}
               textarea
               rows={7}
             />
-          </BlueBox>
-        </Box>
+          </Box>
+        )}
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
@@ -429,11 +329,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={
-            !isValid ||
-            !courtRecordStartDateIsValid ||
-            !workingCase.accusedPleaDecision
-          }
+          nextIsDisabled={!isValid || !courtRecordStartDateIsValid}
         />
       </FormContentContainer>
     </>

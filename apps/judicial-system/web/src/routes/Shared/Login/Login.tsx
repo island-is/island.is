@@ -6,7 +6,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
 import { login } from '@island.is/judicial-system-web/messages'
 import { useRouter } from 'next/router'
-import * as styles from './Login.treat'
+import * as styles from './Login.css'
 
 const Login = () => {
   const router = useRouter()
