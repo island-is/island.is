@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
 import cn from 'classnames'
 
-import * as styles from './InputFileUpload.treat'
+import * as styles from './InputFileUpload.css'
 
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'

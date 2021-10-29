@@ -2,6 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
+  BlueBox,
   CaseNumbers,
   CourtRecordAccordionItem,
   FormContentContainer,
@@ -13,7 +14,10 @@ import {
 import { CaseDecision } from '@island.is/judicial-system/types'
 import type { Case, User } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { core, icConfirmation } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  icConfirmation as m,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
@@ -48,18 +52,33 @@ const Confirmation: React.FC<Props> = (props) => {
           )}`}</Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <Text
-            variant="h2"
-            as="h2"
-          >{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
           <CaseNumbers workingCase={workingCase} />
         </Box>
         <Box marginBottom={9}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <CourtRecordAccordionItem workingCase={workingCase} />
-            <RulingAccordionItem workingCase={workingCase} startExpanded />
+            <RulingAccordionItem workingCase={workingCase} />
           </Accordion>
+        </Box>
+        <Box marginBottom={7}>
+          <BlueBox justifyContent="center">
+            <Box marginBottom={2}>
+              <Text as="h4" variant="h4">
+                {formatMessage(m.sections.conclusion.title)}
+              </Text>
+            </Box>
+            <Box marginBottom={3}>
+              <Box marginTop={1}>
+                <Text variant="intro">{workingCase.conclusion}</Text>
+              </Box>
+            </Box>
+            <Box marginBottom={1}>
+              <Text variant="h5">
+                {workingCase?.judge ? workingCase.judge.name : user?.name}
+              </Text>
+            </Box>
+          </BlueBox>
         </Box>
         <Box marginBottom={3}>
           <PdfButton
@@ -83,12 +102,12 @@ const Confirmation: React.FC<Props> = (props) => {
           nextIsLoading={isLoading}
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING
-              ? icConfirmation.footer.accepting.continueButtonText
+              ? m.footer.accepting.continueButtonText
               : workingCase.decision === CaseDecision.REJECTING
-              ? icConfirmation.footer.rejecting.continueButtonText
+              ? m.footer.rejecting.continueButtonText
               : workingCase.decision === CaseDecision.DISMISSING
-              ? icConfirmation.footer.dismissing.continueButtonText
-              : icConfirmation.footer.acceptingPartially.continueButtonText,
+              ? m.footer.dismissing.continueButtonText
+              : m.footer.acceptingPartially.continueButtonText,
           )}
           nextButtonIcon={
             workingCase.decision &&

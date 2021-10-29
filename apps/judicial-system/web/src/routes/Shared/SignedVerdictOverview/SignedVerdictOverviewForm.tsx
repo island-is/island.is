@@ -284,6 +284,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             { title: 'Dómstóll', value: workingCase.court?.name },
             { title: 'Ákærandi', value: workingCase.prosecutor?.name },
             { title: 'Dómari', value: workingCase.judge?.name },
+            { title: 'Dómritari', value: workingCase.registrar?.name },
             // Conditionally add this field based on case type
             ...(isInvestigationCase(workingCase.type)
               ? [
@@ -443,7 +444,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             />
           </Box>
           {workingCase.type === CaseType.CUSTODY &&
-            workingCase.state === CaseState.ACCEPTED && (
+            workingCase.state === CaseState.ACCEPTED &&
+            workingCase.decision === CaseDecision.ACCEPTING && (
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonCustodyNotice)}

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
 
-import * as styles from './ApplicationLoading.treat'
+import * as styles from './ApplicationLoading.css'
 
 export const ApplicationLoading = () => (
   <Box

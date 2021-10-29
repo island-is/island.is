@@ -1,7 +1,7 @@
-import * as s from './RegulationStatus.treat'
+import * as s from './RegulationStatus.css'
 
 import React from 'react'
-import { ISODate, interpolate } from '@island.is/regulations'
+import { ISODate, interpolate, toISODate } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { Hidden, Link, Text } from '@island.is/island-ui/core'
 import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
@@ -34,7 +34,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
     history,
   } = regulation
 
-  const today = new Date().toISOString().substr(0, 10) as ISODate
+  const today = toISODate(new Date())
 
   const color: BallColor = repealed
     ? 'red'
@@ -56,7 +56,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
   const getNextHistoryDate = () => {
     const idx = (history || []).findIndex((item) => item.date === timelineDate)
     const nextItem = idx > -1 && history[idx + 1]
-    return nextItem ? nextItem.date : today // fall back to `today`, because whatever, It should never happen...
+    return nextItem ? nextItem.date : undefined
   }
 
   const renderLinkToCurrent = () => {
@@ -78,6 +78,9 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
   }
 
   const isOgildWAT = repealed && !repealedDate // Don't ask. Magic data!
+
+  const futureDateTo =
+    timelineDate && timelineDate > today && getNextHistoryDate()
 
   return (
     <>
@@ -138,9 +141,14 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
             {txt('statusUpcoming') + ' '}
             {onDateText || (
               <small className={s.metaDate}>
-                {interpolate(txt('statusUpcoming_on'), {
-                  date: formatDate(timelineDate),
-                })}
+                {!futureDateTo
+                  ? interpolate(txt('statusUpcoming_on'), {
+                      date: formatDate(timelineDate),
+                    })
+                  : interpolate(txt('statusUpcoming_period'), {
+                      dateFrom: formatDate(timelineDate),
+                      dateTo: futureDateTo,
+                    })}
               </small>
             )}{' '}
             {renderLinkToCurrent()}
@@ -156,7 +164,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
               <small className={s.metaDate}>
                 {interpolate(txt('statusHistoric_period'), {
                   dateFrom: formatDate(timelineDate),
-                  dateTo: formatDate(getNextHistoryDate()),
+                  dateTo: formatDate(getNextHistoryDate() || today),
                 })}
               </small>
             )}{' '}

@@ -1,5 +1,6 @@
 import * as z from 'zod'
-import { B_FULL, B_TEMP, YES, NO } from './constants'
+import { YES, NO } from './constants'
+import { B_FULL, B_TEMP } from '../shared/constants'
 
 export const dataSchema = z.object({
   type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),

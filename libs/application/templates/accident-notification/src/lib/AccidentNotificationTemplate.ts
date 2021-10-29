@@ -96,6 +96,33 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+          ],
+        },
+        on: {
+          [DefaultEvents.ASSIGN]: {
+            target: States.REVIEW_WITH_REVIEWER,
+          },
+        },
+      },
+      [States.REVIEW_WITH_REVIEWER]: {
+        meta: {
+          name: States.REVIEW_WITH_REVIEWER,
+          progress: 0.6,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+              write: 'all',
+            },
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
@@ -108,9 +135,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.ASSIGN]: {
-            target: States.REVIEW,
-          },
           [DefaultEvents.REJECT]: {
             target: States.IN_FINAL_REVIEW,
             actions: 'rejectApplication',
@@ -125,7 +149,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
       [States.IN_FINAL_REVIEW]: {
         meta: {
           name: States.IN_FINAL_REVIEW,
-          progress: 0.8,
+          progress: 1,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,

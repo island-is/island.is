@@ -96,13 +96,30 @@ export const AccidentNotificationSchema = z.object({
       AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
       AttachmentsEnum.INJURYCERTIFICATE,
       AttachmentsEnum.SENDCERTIFICATELATER,
-      AttachmentsEnum.INJUREDSENDSCERTIFICATE,
     ]),
   }),
   attachments: z.object({
-    injuryCertificateFile: z.array(FileSchema).optional(),
-    deathCertificateFile: z.array(FileSchema).optional(),
-    powerOfAttorneyFile: z.array(FileSchema).optional(),
+    injuryCertificateFile: z
+      .object({
+        file: z
+          .array(FileSchema)
+          .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
+    deathCertificateFile: z
+      .object({
+        file: z
+          .array(FileSchema)
+          .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
+    powerOfAttorneyFile: z
+      .object({
+        file: z
+          .array(FileSchema)
+          .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
   }),
   wasTheAccidentFatal: z.enum([YES, NO]),
   fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),
@@ -123,8 +140,8 @@ export const AccidentNotificationSchema = z.object({
   fishingShipInfo: z.object({
     shipName: z.string().min(1),
     shipCharacters: z.string().min(1),
-    homePort: z.string().min(1),
-    shipRegisterNumber: z.string().min(1),
+    homePort: z.string(),
+    shipRegisterNumber: z.string(),
   }),
   onPayRoll: z.object({
     answer: z.enum([YES, NO]),
@@ -164,9 +181,11 @@ export const AccidentNotificationSchema = z.object({
       FishermanWorkplaceAccidentShipLocationEnum.HARBOR,
       FishermanWorkplaceAccidentShipLocationEnum.OTHER,
     ]),
-    locationAndPurpose: z.object({
-      location: z.string().min(1),
-    }),
+    locationAndPurpose: z
+      .object({
+        location: z.string().min(1),
+      })
+      .optional(),
   }),
   workMachineRadio: z.enum([YES, NO]),
   workMachine: z.object({
@@ -218,8 +237,6 @@ export const AccidentNotificationSchema = z.object({
   childInCustody: z.object({
     name: z.string().min(1, error.required.defaultMessage),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    email: z.string().optional(),
-    phoneNumber: z.string().optional(),
   }),
   powerOfAttorney: z.object({
     type: z.enum([

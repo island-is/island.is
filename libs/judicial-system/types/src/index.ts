@@ -32,12 +32,11 @@ export {
   CaseType,
   CaseState,
   CaseTransition,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseGender,
   CaseDecision,
-  AccusedPleaDecision,
   SessionArrangements,
   restrictionCases,
   investigationCases,
@@ -45,7 +44,6 @@ export {
   isInvestigationCase,
   completedCaseStates,
   hasCaseBeenAppealed,
-  isAccusedRightsHidden,
 } from './lib/case'
 export type {
   Case,

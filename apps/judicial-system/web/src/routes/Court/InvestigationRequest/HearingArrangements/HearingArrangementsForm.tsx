@@ -5,7 +5,6 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  AlertMessage,
   Box,
   Select,
   Text,
@@ -23,7 +22,6 @@ import {
   Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
-  CaseState,
   NotificationType,
   SessionArrangements,
   UserRole,
@@ -46,7 +44,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './HearingArrangements.treat'
+import * as styles from './HearingArrangements.css'
 
 interface Props {
   workingCase: Case
@@ -152,26 +150,16 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Fyrirtaka
+            {formatMessage(m.title)}
           </Text>
         </Box>
-        {workingCase.state === CaseState.DRAFT && (
-          <Box marginBottom={8}>
-            <AlertMessage
-              type="info"
-              title="Krafa hefur ekki verið staðfest af ákæranda"
-              message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
-            />
-          </Box>
-        )}
         <Box component="section" marginBottom={7}>
-          <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
           <CaseNumbers workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Dómari{' '}
+              {`${formatMessage(m.sections.setJudge.title)} `}
               <Tooltip text={formatMessage(m.sections.setJudge.tooltip)} />
             </Text>
           </Box>
@@ -190,7 +178,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Dómritari{' '}
+              {`${formatMessage(m.sections.setRegistrar.title)} `}
               <Tooltip text={formatMessage(m.sections.setRegistrar.tooltip)} />
             </Text>
           </Box>
@@ -317,7 +305,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Skrá fyrirtökutíma
+              {formatMessage(m.sections.requestedCourtDate.title)}
             </Text>
           </Box>
           <Box marginBottom={2}>
@@ -378,7 +366,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Skipaður verjandi/talsmaður
+              {formatMessage(m.sections.defender.title)}
             </Text>
           </Box>
           <BlueBox>

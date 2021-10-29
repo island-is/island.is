@@ -24,7 +24,6 @@ import {
 import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
 
 import { Routes } from '@island.is/financial-aid/shared/lib'
-import cn from 'classnames'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const FileUpload = () => {
@@ -41,7 +40,7 @@ const FileUpload = () => {
   }, [myApplication])
 
   const router = useRouter()
-  const { uploadFiles } = useFileUpload(form.otherFiles)
+  const { uploadStateFiles } = useFileUpload(form.otherFiles)
 
   const [error, setError] = useState(false)
 
@@ -63,14 +62,14 @@ const FileUpload = () => {
     setIsLoading(true)
 
     try {
-      await uploadFiles(router.query.id as string, FileType.OTHER).then(
+      await uploadStateFiles(router.query.id as string, FileType.OTHER).then(
         async () => {
           await updateApplicationMutation({
             variables: {
               input: {
                 id: router.query.id,
                 state: ApplicationState.INPROGRESS,
-                event: ApplicationEventType.INPROGRESS,
+                event: ApplicationEventType.FILEUPLOAD,
               },
             },
           })

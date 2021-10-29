@@ -2,7 +2,7 @@
 import React, { ReactNode, useContext } from 'react'
 import { Box } from '../Box/Box'
 import { ColumnsContext } from '../Columns/Columns'
-import * as styles from './Column.treat'
+import * as styles from './Column.css'
 
 export interface ColumnProps {
   children: ReactNode

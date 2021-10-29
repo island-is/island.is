@@ -26,6 +26,7 @@
 /apps/services/temporary-voter-registry-api/                                                  @island-is/kosmos-kaos
 /apps/services/party-letter-registry-api/                                                     @island-is/kosmos-kaos
 /apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
+/apps/web/screens/PetitionView/                                                               @island-is/kosmos-kaos
 /libs/cms/                                                                                    @island-is/kosmos-kaos
 /libs/api/domains/endorsement-system                                                          @island-is/kosmos-kaos
 /libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
@@ -57,6 +58,9 @@
 /apps/application-system/api/src/app/modules/payment                                          @island-is/kosmos-kaos @island-is/aranja-applications
 /libs/api/domains/driving-license/                                                            @island-is/kosmos-kaos
 /libs/api/domains/education/                                                                  @island-is/kosmos-kaos
+/libs/application/templates/general-petition/                                                 @island-is/kosmos-kaos
+/libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists                           @island-is/kosmos-kaos
+/libs/api/domains/communications/                                                             @island-is/kosmos-kaos
 
 /apps/reference-next-app/                                                                     @island-is/aranja-core
 /libs/cms-translations/                                                                       @island-is/aranja-core
@@ -101,6 +105,7 @@
 /libs/clients/national-registry/v1/                                                           @island-is/hugsmidjan
 /libs/clients/regulations/                                                                    @island-is/hugsmidjan
 /libs/api/domains/regulations/                                                                @island-is/hugsmidjan
+/libs/regulations/                                                                            @island-is/hugsmidjan
 
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
 /libs/application/templates/institution-collaboration/                                        @island-is/sendiradid
@@ -108,6 +113,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/               @island-is/sendiradid
 /libs/clients/documents/                                                                      @island-is/sendiradid
 /libs/clients/payment-schedule/                                                               @island-is/sendiradid
+/libs/api/domains/payment-schedule/                                                           @island-is/sendiradid
 /libs/application/templates/funding-government-projects/                                      @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/ @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/institution-collaboration/   @island-is/sendiradid

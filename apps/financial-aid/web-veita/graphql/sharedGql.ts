@@ -21,6 +21,12 @@ export const ApplicationQuery = gql`
       interview
       employmentCustom
       homeCircumstancesCustom
+      familyStatus
+      spouseNationalId
+      spouseName
+      city
+      streetName
+      postalCode
       files {
         id
         applicationId
@@ -36,6 +42,7 @@ export const ApplicationQuery = gql`
       rejection
       staff {
         name
+        municipalityId
       }
       applicationEvents {
         id
@@ -43,6 +50,8 @@ export const ApplicationQuery = gql`
         eventType
         comment
         created
+        staffName
+        staffNationalId
       }
     }
   }
@@ -64,6 +73,7 @@ export const UpdateApplicationTableMutation = gql`
         state
         staff {
           name
+          municipalityId
         }
       }
       filters {
@@ -72,6 +82,7 @@ export const UpdateApplicationTableMutation = gql`
         DataNeeded
         Rejected
         Approved
+        MyCases
       }
     }
   }
@@ -104,14 +115,7 @@ export const ApplicationFiltersMutation = gql`
       DataNeeded
       Rejected
       Approved
-    }
-  }
-`
-
-export const CreateApplicationMutation = gql`
-  mutation CreateApplication($input: CreateApplicationInput!) {
-    createApplication(input: $input) {
-      id
+      MyCases
     }
   }
 `
@@ -152,6 +156,7 @@ export const ApplicationEventMutation = gql`
       rejection
       staff {
         name
+        municipalityId
       }
       applicationEvents {
         id
@@ -159,30 +164,9 @@ export const ApplicationEventMutation = gql`
         eventType
         comment
         created
+        staffNationalId
+        staffName
       }
-    }
-  }
-`
-
-export const MunicipalityQuery = gql`
-  query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
-    municipality(input: $input) {
-      id
-      name
-      aid {
-        ownApartmentOrLease
-        withOthersOrUnknow
-        withParents
-      }
-    }
-  }
-`
-
-export const MunicipalityHomePageQuery = gql`
-  query GetMunicipalityHomePageQuery($input: MunicipalityQueryInput!) {
-    municipality(input: $input) {
-      id
-      homePage
     }
   }
 `
@@ -199,8 +183,9 @@ export const CurrentUserQuery = gql`
         name
         municipalityId
         phoneNumber
-        role
+        roles
         active
+        municipalityHomepage
       }
     }
   }
@@ -246,9 +231,12 @@ export const UpdateApplicationMutation = gql`
         eventType
         comment
         created
+        staffNationalId
+        staffName
       }
       staff {
         name
+        municipalityId
       }
     }
   }
