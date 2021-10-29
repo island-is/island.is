@@ -17,9 +17,6 @@ export const useModules = () => {
       featureFlaggedModules.map((moduleKey) => {
         const capKey = moduleKey.charAt(0).toUpperCase() + moduleKey.slice(1)
 
-        // TODO !!!
-        if (moduleKey === 'islykill') return true
-
         return featureFlagClient.getValue(
           `isServicePortal${capKey}ModuleEnabled`,
           false,
