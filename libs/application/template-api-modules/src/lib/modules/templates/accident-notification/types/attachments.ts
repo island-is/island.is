@@ -8,5 +8,5 @@ export enum AttachmentTypeEnum {
   INJURY_CERTIFICATE = 1,
   POWER_OF_ATTORNEY = 2,
   POLICE_REPORT = 3,
-  OTHER = 4,
+  ADDITIONAL_FILES = 4,
 }

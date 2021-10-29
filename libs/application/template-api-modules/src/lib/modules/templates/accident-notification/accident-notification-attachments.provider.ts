@@ -22,21 +22,30 @@ export class AttachmentProvider {
     try {
       const injuryCertificateFile = await this.prepareApplicationAttachments(
         application,
-        'attachments.injuryCertificateFile',
+        'attachments.injuryCertificateFile.file',
         AttachmentTypeEnum.INJURY_CERTIFICATE,
       )
       const powerOfAttorneyFile = await this.prepareApplicationAttachments(
         application,
-        'attachments.powerOfAttorneyFile',
+        'attachments.powerOfAttorneyFile.file',
         AttachmentTypeEnum.POWER_OF_ATTORNEY,
       )
+      const additionalFiles = await this.prepareApplicationAttachments(
+        application,
+        'attachments.additionalFiles',
+        AttachmentTypeEnum.ADDITIONAL_FILES,
+      )
 
-      return [...injuryCertificateFile, ...powerOfAttorneyFile]
+      return [
+        ...injuryCertificateFile,
+        ...powerOfAttorneyFile,
+        ...additionalFiles,
+      ]
     } catch (error) {
       this.logger.error('Failed to gather attachments for application', {
         error,
       })
-      throw new Error('Failed to gather attachments for application')
+      throw error
     }
   }
 
@@ -45,7 +54,6 @@ export class AttachmentProvider {
     answerKey: string,
     attachmentType: AttachmentTypeEnum,
   ): Promise<AccidentNotificationAttachment[]> {
-    console.log('ansers', JSON.stringify(application.answers, null, 2))
     const attachments = getValueViaPath(
       application.answers,
       answerKey,
@@ -58,8 +66,6 @@ export class AttachmentProvider {
 
     return await Promise.all(
       attachments.map(async ({ key, name }) => {
-        console.log('mapping key ', key)
-        console.log(application.attachments)
         const url = (application.attachments as {
           [key: string]: string
         })[key]
@@ -81,19 +87,13 @@ export class AttachmentProvider {
   ): Promise<string | undefined> {
     const { bucket, key } = AmazonS3URI(fileName)
     const uploadBucket = bucket
-    try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent?.toString('base64')
-    } catch (error) {
-      console.log('error ', error)
-      console.error(error)
-      return undefined
-    }
+    const file = await this.s3
+      .getObject({
+        Bucket: uploadBucket,
+        Key: key,
+      })
+      .promise()
+    const fileContent = file.Body as Buffer
+    return fileContent?.toString('base64')
   }
 }
