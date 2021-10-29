@@ -35,6 +35,7 @@ const SpouseInfo = ({
             (hasError && !form?.spouse?.nationalId) ||
             (hasError && form?.spouse?.nationalId?.length !== 10)
           }
+          errorMessage="Athugaðu hvort kennitalan sé rétt slegin inn, gild kennitala er 10 stafir"
           value={form?.spouse?.nationalId}
           maxLength={10}
           onChange={(event) => {
@@ -63,6 +64,7 @@ const SpouseInfo = ({
             (hasError && !form?.spouse?.email) ||
             (hasError && !isEmailValid(form?.spouse?.email))
           }
+          errorMessage="Athugaðu hvort netfang sé rétt slegið inn"
           type="email"
           value={form?.spouse?.email}
           onChange={(event) => {

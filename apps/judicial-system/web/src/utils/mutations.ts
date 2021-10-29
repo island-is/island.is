@@ -70,7 +70,7 @@ export const ExtendCaseMutation = gql`
       demands
       lawsBroken
       legalBasis
-      custodyProvisions
+      legalProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
       caseFacts
@@ -103,9 +103,7 @@ export const ExtendCaseMutation = gql`
       courtAttendees
       prosecutorDemands
       courtDocuments
-      isAccusedRightsHidden
-      accusedPleaDecision
-      accusedPleaAnnouncement
+      accusedBookings
       litigationPresentations
       courtCaseFacts
       courtLegalArguments
