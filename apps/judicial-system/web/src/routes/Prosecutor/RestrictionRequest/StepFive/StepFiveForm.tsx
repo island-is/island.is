@@ -13,7 +13,6 @@ import {
   LoadingDots,
   UploadFile,
   Icon,
-  LoadingIcon,
 } from '@island.is/island-ui/core'
 import { Case, CaseFile, CaseFileState } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -30,7 +29,6 @@ import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/uti
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/shared-components/MarkdownWrapper/MarkdownWrapper'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
-import { theme } from '@island.is/island-ui/theme'
 import * as styles from './StepFive.css'
 import { PoliceCaseFilesData } from './StepFive'
 
@@ -60,7 +58,6 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     uploadErrorMessage,
     allFilesUploaded,
     uploadPoliceCaseFile,
-    uploadedPoliceCaseFiles,
     addFileToCase,
     onChange,
     onRemove,
@@ -70,6 +67,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (policeCaseFiles) {
+      console.log(files)
       const policeCaseFilesNotStoredInRVG = policeCaseFiles.files.filter(
         (p) => {
           const xFiles = files as CaseFile[]
@@ -80,14 +78,8 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         },
       )
 
-      const policeCaseFilesInList = policeCaseFilesNotStoredInRVG.filter(
-        (p) => {
-          return !uploadedPoliceCaseFiles.find((uf) => uf.name === p.name)
-        },
-      )
-
       setPoliceCaseFileList(
-        policeCaseFilesInList.map((policeCaseFile) => {
+        policeCaseFilesNotStoredInRVG.map((policeCaseFile) => {
           return {
             id: policeCaseFile.id,
             label: policeCaseFile.name,
@@ -98,7 +90,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         }),
       )
     }
-  }, [policeCaseFiles, files, uploadedPoliceCaseFiles])
+  }, [policeCaseFiles, files])
 
   const toggleCheckbox = (
     evt: React.ChangeEvent<HTMLInputElement>,
@@ -141,6 +133,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         type: 'application/pdf',
         name: policeCaseFile.label,
         status: 'done',
+        state: CaseFileState.STORED_IN_RVG,
         key,
         size,
       } as UploadFile)
@@ -281,13 +274,21 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         <Box marginBottom={5}>
           <ContentBlock>
             <InputFileUpload
-              fileList={[...uploadedPoliceCaseFiles, ...files]}
+              fileList={files}
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
               onChange={onChange}
-              onRemove={onRemove}
+              onRemove={(file) => {
+                onRemove(file)
+
+                setPoliceCaseFileList([
+                  ...policeCaseFileList,
+                  (file as unknown) as PoliceCaseFile,
+                ])
+              }}
               onRetry={onRetry}
               errorMessage={uploadErrorMessage}
+              disabled={isUploading}
               showFileSize
             />
           </ContentBlock>
