@@ -216,6 +216,11 @@ export const whoIsTheNotificationForSection = buildSection({
               width: 'half',
               required: true,
             }),
+            buildCustomField({
+              id: 'customField',
+              title: 'custom',
+              component: 'NationalIdChecker',
+            }),
           ],
         }),
       ],
