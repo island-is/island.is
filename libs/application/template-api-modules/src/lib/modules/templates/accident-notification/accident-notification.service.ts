@@ -120,9 +120,15 @@ export class AccidentNotificationService {
 
       await this.documentApi.documentSendConfirmation({
         ihiDocumentID: documentId,
-        confirmationType:
-          reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
-        confirmationParty: isRepresentativeOfCompanyOrInstitue ? 2 : 1,
+        confirmationIN: {
+          confirmationType:
+            reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
+          confirmationParty: isRepresentativeOfCompanyOrInstitue ? 2 : 1,
+          objection: getValueViaPath(
+            application.answers,
+            'assigneeComment',
+          ) as string,
+        },
       })
     } catch (e) {
       this.logger.error('Error reviewing application to SÍ', { e })
