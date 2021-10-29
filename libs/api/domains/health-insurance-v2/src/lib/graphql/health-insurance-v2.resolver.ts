@@ -8,20 +8,20 @@ import { AccidentStatusInput } from './dto/AccidentStatus.input'
 import { AccidentNotificationStatus } from './models/accidentNotificationStatus.model'
 import { HealthInsuranceService } from './health-insurance-v2.service'
 
-// @UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => AccidentNotificationStatus)
 export class HealthInsuranceResolver {
   constructor(
     private accidentNotificationApi: HealthInsuranceService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) {}
+  ) { }
 
   @Query(() => AccidentNotificationStatus, {
     name: 'accidentStatus',
     nullable: true,
   })
-  // @Audit()
+  @Audit()
   async accidentStatus(
     @Args('input', { type: () => AccidentStatusInput })
     input: AccidentStatusInput,
