@@ -218,17 +218,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
-      // Fjármál
-      {
-        name: m.finance,
-        path: ServicePortalPath.FinanceWIP,
-        systemRoute: true,
-        icon: {
-          type: 'outline',
-          icon: 'cellular',
-        },
-      },
-
       // Stillingar
       {
         name: m.settings,
