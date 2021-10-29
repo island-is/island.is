@@ -82,6 +82,7 @@ const calculateHiddenValues = (
 export const TransferRights: FC<FieldBaseProps & CustomField> = ({
   field,
   application,
+  error,
 }) => {
   const {
     transferRights,
@@ -112,6 +113,7 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
     <>
       <RadioFormField
         application={application}
+        error={error}
         field={{
           ...field,
           type: FieldTypes.RADIO,

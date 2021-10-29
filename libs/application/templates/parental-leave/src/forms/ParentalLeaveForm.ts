@@ -521,6 +521,13 @@ export const ParentalLeaveForm: Form = buildForm({
                 'giveRights.isGivingRights',
                 'giveRights.giveDays',
               ],
+              condition: (answers, externalData) => {
+                const canTransferRights =
+                  getSelectedChild(answers, externalData)?.parentalRelation ===
+                    ParentalRelations.primary && allowOtherParent(answers)
+
+                return canTransferRights
+              },
               title: parentalLeaveFormMessages.shared.transferRightsTitle,
               description:
                 parentalLeaveFormMessages.shared.transferRightsDescription,
@@ -533,8 +540,16 @@ export const ParentalLeaveForm: Form = buildForm({
                 'requestRights.requestDays',
               ],
               title: 'Hversu mörgum dögum viltu óska eftir?',
-              condition: (answers) =>
-                getApplicationAnswers(answers).isRequestingRights === YES,
+              condition: (answers, externalData) => {
+                const canTransferRights =
+                  getSelectedChild(answers, externalData)?.parentalRelation ===
+                    ParentalRelations.primary && allowOtherParent(answers)
+
+                return (
+                  canTransferRights &&
+                  getApplicationAnswers(answers).isRequestingRights === YES
+                )
+              },
               component: 'RequestDaysSlider',
             }),
             buildCustomField({
@@ -544,8 +559,16 @@ export const ParentalLeaveForm: Form = buildForm({
                 'giveRights.giveDays',
               ],
               title: 'Hversu marga daga viltu færa yfir á hitt foreldrið?',
-              condition: (answers) =>
-                getApplicationAnswers(answers).isGivingRights === YES,
+              condition: (answers, externalData) => {
+                const canTransferRights =
+                  getSelectedChild(answers, externalData)?.parentalRelation ===
+                    ParentalRelations.primary && allowOtherParent(answers)
+
+                return (
+                  canTransferRights &&
+                  getApplicationAnswers(answers).isGivingRights === YES
+                )
+              },
               component: 'GiveDaysSlider',
             }),
           ],
