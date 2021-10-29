@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React from 'react'
 import { Text, Box, Button } from '@island.is/island-ui/core'
 import Link from 'next/link'
 

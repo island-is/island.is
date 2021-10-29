@@ -14,7 +14,6 @@ import {
 import {
   Application,
   ApplicationState,
-  ApplicationStateUrl,
   getStateUrlFromRoute,
 } from '@island.is/financial-aid/shared/lib'
 import { TableHeadersProps } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
