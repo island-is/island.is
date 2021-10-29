@@ -317,10 +317,7 @@ export const getPeriodIndex = (field?: Field) => {
   return parseInt(id.substring(id.indexOf('[') + 1, id.indexOf(']')), 10)
 }
 
-const getOrFallback = (
-  condition: YesOrNo,
-  value: number | undefined = maxDaysToGiveOrReceive,
-) => {
+const getOrFallback = (condition: YesOrNo, value: number | undefined = 0) => {
   if (condition === YES) {
     return value
   }
@@ -524,9 +521,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
     shareInformationWithOtherParent,
     selectedChild,
     isRequestingRights,
-    requestDays,
+    requestDays: Number(requestDays),
     isGivingRights,
-    giveDays,
+    giveDays: Number(giveDays),
     applicantEmail,
     applicantPhoneNumber,
     periods,

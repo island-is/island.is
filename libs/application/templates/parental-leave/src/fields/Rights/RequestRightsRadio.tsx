@@ -25,7 +25,12 @@ const RequestRightsRadio = ({
   application,
   errors,
 }: RequestRightsRadioProps) => {
-  const { isRequestingRights } = getApplicationAnswers(application.answers)
+  const {
+    isGivingRights,
+    giveDays,
+    isRequestingRights,
+    requestDays,
+  } = getApplicationAnswers(application.answers)
   const { register } = useFormContext()
   const [radio, setRadio] = useState<YesOrNo | undefined>(
     isRequestingRights ?? undefined,
@@ -63,8 +68,26 @@ const RequestRightsRadio = ({
       <input
         ref={register}
         type="hidden"
-        value={radio === YES ? maxDaysToGiveOrReceive : 0}
+        value={
+          radio === YES
+            ? Math.min(Math.max(requestDays, 1), maxDaysToGiveOrReceive)
+            : 0
+        }
         name={`${field.id}.requestDays`}
+      />
+
+      <input
+        ref={register}
+        type="hidden"
+        name="giveRights.isGivingRights"
+        value={radio === YES ? NO : isGivingRights}
+      />
+
+      <input
+        ref={register}
+        type="hidden"
+        name="giveRights.giveDays"
+        value={radio === YES ? 0 : giveDays}
       />
     </>
   )

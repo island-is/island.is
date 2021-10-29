@@ -5,6 +5,7 @@ import {
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
+  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -511,92 +512,66 @@ export const ParentalLeaveForm: Form = buildForm({
                 ),
               ],
             }),
-            /*
-            TODO: move back to days picker later on
-            buildMultiField({
-              id: 'requestRights.isRequestingRights',
-              title: parentalLeaveFormMessages.shared.requestRightsName,
-              description:
-                parentalLeaveFormMessages.shared.requestRightsDescription,
-              condition: (answers, externalData) =>
-                getSelectedChild(answers, externalData)?.parentalRelation === ParentalRelations.primary,
-              children: [
-                buildCustomField({
-                  id: 'requestRights.isRequestingRights',
-                  title: '',
-                  component: 'RequestRights',
-                }),
-                buildCustomField({
-                  id: 'requestRights.requestDays',
-                  title: '',
-                  condition: (answers) =>
-                    (answers as {
-                      requestRights: {
-                        isRequestingRights: string
-                      }
-                    })?.requestRights?.isRequestingRights === YES,
-                  component: 'RequestDaysSlider',
-                }),
-              ],
-            }),
-            */
             buildCustomField({
               id: 'requestRights',
+              childInputIds: [
+                'requestRights.isRequestingRights',
+                'requestRights.requestDays',
+                'giveRights.isGivingRights',
+                'giveRights.giveDays',
+              ],
               title: parentalLeaveFormMessages.shared.requestRightsName,
               description:
                 parentalLeaveFormMessages.shared.requestRightsDescription,
-              width: 'half',
               condition: (answers, externalData) =>
                 getSelectedChild(answers, externalData)?.parentalRelation ===
                   ParentalRelations.primary && allowOtherParent(answers),
               component: 'RequestRightsRadio',
             }),
-            /*
-            TODO: move back to days picker later on
-            buildMultiField({
-              id: 'giveRights.isGivingRights',
+            buildCustomField({
+              id: 'giveRights',
+              childInputIds: [
+                'giveRights.isGivingRights',
+                'giveRights.giveDays',
+                'requestRights.isRequestingRights',
+                'requestRights.requestDays',
+              ],
               title: parentalLeaveFormMessages.shared.giveRightsName,
               description:
                 parentalLeaveFormMessages.shared.giveRightsDescription,
               condition: (answers, externalData) => {
-                const selectedChild = getSelectedChild(answers, externalData)
+                const { isRequestingRights } = getApplicationAnswers(answers)
 
-                if (
-                  selectedChild?.parentalRelation === ParentalRelations.secondary ||
-                  !selectedChild?.hasRights ||
-                  selectedChild?.remainingDays === 0
-                ) {
-                  return false
-                }
+                const canRequestRights =
+                  getSelectedChild(answers, externalData)?.parentalRelation ===
+                    ParentalRelations.primary && allowOtherParent(answers)
 
-                return (
-                  (answers as {
-                    requestRights: {
-                      isRequestingRights: string
-                    }
-                  })?.requestRights?.isRequestingRights === NO
-                )
+                return canRequestRights && isRequestingRights === NO
               },
-              children: [
-                buildCustomField({
-                  id: 'giveRights.isGivingRights',
-                  title: '',
-                  component: 'GiveRights',
-                }),
-                buildCustomField({
-                  id: 'giveRights.giveDays',
-                  title: '',
-                  condition: (answers) =>
-                    (answers as {
-                      giveRights: {
-                        isGivingRights: string
-                      }
-                    })?.giveRights?.isGivingRights === YES,
-                  component: 'GiveDaysSlider',
-                }),
-              ],
+              component: 'GiveRightsRadio',
             }),
-            */
+            buildCustomField({
+              id: 'requestRights.requestDays',
+              childInputIds: [
+                'requestRights.isRequestingRights',
+                'requestRights.requestDays',
+              ],
+              title: 'Hversu mörgum dögum viltu óska eftir?',
+              condition: (answers) =>
+                getApplicationAnswers(answers).isRequestingRights === YES,
+              component: 'RequestDaysSlider',
+            }),
+            buildCustomField({
+              id: 'giveRights.giveDays',
+              childInputIds: [
+                'giveRights.isGivingRights',
+                'giveRights.giveDays',
+              ],
+              title: 'Hversu marga daga viltu færa yfir á hitt foreldrið?',
+              condition: (answers) =>
+                getApplicationAnswers(answers).isGivingRights === YES,
+              component: 'GiveDaysSlider',
+            }),
             buildCustomField({
               id: 'giveRights',
               title: parentalLeaveFormMessages.shared.giveRightsName,
