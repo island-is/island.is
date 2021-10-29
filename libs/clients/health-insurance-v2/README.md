@@ -1,4 +1,4 @@
-# clients-health-insurance-v2
+# Clients Health Insurance V2
 
 This library was generated with [Nx](https://nx.dev).
 
