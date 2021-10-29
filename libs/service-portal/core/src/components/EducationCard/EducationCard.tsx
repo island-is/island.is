@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import * as styles from './EducationCard.treat'
+import * as styles from './EducationCard.css'
 interface ActionCard {
   eyebrow?: string
   title?: string

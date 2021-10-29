@@ -22,9 +22,19 @@ export enum ApplicationState {
   APPROVED = 'Approved',
 }
 
+export enum ApplicationFiltersEnum {
+  NEW = 'New',
+  INPROGRESS = 'InProgress',
+  DATANEEDED = 'DataNeeded',
+  REJECTED = 'Rejected',
+  APPROVED = 'Approved',
+  MYCASES = 'MyCases',
+}
+
 export enum ApplicationStateUrl {
   NEW = 'New',
   INPROGRESS = 'InProgress',
+  MYCASES = 'MyCases',
   PROCESSED = 'Processed',
 }
 
@@ -49,9 +59,11 @@ export enum FileType {
   TAXRETURN = 'TaxReturn',
   INCOME = 'Income',
   OTHER = 'Other',
+  SPOUSEFILES = 'SpouseFiles',
 }
 
 export enum StaffRole {
+  SUPERADMIN = 'SuperAdmin',
   ADMIN = 'Admin',
   EMPLOYEE = 'Employee',
 }

@@ -29,7 +29,7 @@ export interface Staff {
   nationalId: string
   name: string
   municipalityId: string
-  role: StaffRole
+  roles: StaffRole[]
   active: boolean
   municipalityName: string
   phoneNumber?: string
@@ -65,7 +65,7 @@ export interface User {
   phoneNumber?: string
   folder: string
   service: RolesRule
-  currentApplication?: CurrentApplication
+  currentApplication?: string
   isSpouse?: boolean
   staff?: Staff
   spouse?: Spouse
@@ -86,6 +86,8 @@ export interface UpdateApplication {
   rejection?: string
   comment?: string
   staffId?: string
+  spousePhoneNumber?: string
+  spouseEmail?: string
 }
 
 export interface UpdateApplicationTable {
@@ -107,6 +109,8 @@ export interface ApplicationEvent {
   applicationId: string
   eventType: ApplicationEventType
   comment?: string
+  staffNationalId?: string
+  staffName?: string
 }
 
 export interface Municipality {
@@ -118,14 +122,6 @@ export interface Municipality {
   cohabitationAid: Aid
   homepage?: string
   email?: string
-}
-
-export interface CurrentApplication {
-  id: string
-  homeCircumstances: HomeCircumstances
-  usePersonalTaxCredit: boolean
-  state: ApplicationState
-  created: string
 }
 
 export interface ApplicationFile {
@@ -181,6 +177,7 @@ export interface ApplicationFilters {
   DataNeeded: number
   Rejected: number
   Approved: number
+  MyCases: number
 }
 
 export interface Application {
@@ -213,6 +210,7 @@ export interface Application {
   applicationEvents?: ApplicationEvent[]
   spouseNationalId?: string
   spouseEmail?: string
+  spousePhoneNumber?: string
   familyStatus: FamilyStatus
   streetName?: string
   postalCode?: string

@@ -15,4 +15,7 @@ export class ApplicationFilterResponse {
 
   @ApiProperty()
   Approved: number
+
+  @ApiProperty()
+  MyCases: number
 }

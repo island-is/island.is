@@ -22,7 +22,7 @@ export const externalData = {
     bulletThree: {
       id: 'an.application:section.agreementDescription.BulletThree',
       defaultMessage:
-        'Eitthvað verður að hafa gerst sem veldur tjóni á líkama hins tryggða og áhorfandi getur áttað sig á að hafi gerst.',
+        'Eitthvað óvænt verður að hafa gerst sem veldur tjóni á líkama hins tryggða og áhorfandi getur áttað sig á að hafi gerst.',
       description: 'List item 3 on data gathering information',
     },
     bulletFour: {
@@ -67,17 +67,17 @@ export const externalData = {
       description: 'Description: National Registry',
     },
   }),
-  userProfile: defineMessages({
+  accidentProvider: defineMessages({
     title: {
-      id: 'an.application:section.externalData.userProfile.title',
-      defaultMessage: 'Upplýsingar úr prófílgrunni á island.is',
-      description: 'Title: User Profile',
+      id: 'an.application:section.externalData.accidentProvider.title',
+      defaultMessage: 'Upplýsingar sóttar af Sjúkratryggingum Íslands',
+      description: 'Title: Accident Provider',
     },
     description: {
-      id: 'an.application:section.externalData.userProfile.description',
+      id: 'an.application:section.externalData.accidentProvider.description',
       defaultMessage:
-        'Símanúmer, netfang. Upplýsingar um símanúmer eða netfang er hægt að uppfæra á vefsíðu island.is ef þess þarf.',
-      description: 'Description: User Profile',
+        'Við vinnslu málsins munu Sjúkratryggingar Íslands afla nauðsynlegra upplýsinga frá skattyfirvöldum, Tryggingastofnun ríkisins, Vinnumálastofnun, Þjóðskrá Íslands og evrópskum sjúkratryggingastofnunum, þegar það á við.',
+      description: 'Description: Accident Provider',
     },
   }),
   revAndCustoms: defineMessages({
@@ -88,7 +88,7 @@ export const externalData = {
     },
     description: {
       id: 'an.application:section.externalData.revAndCustoms.description',
-      defaultMessage: 'Upplýsingar um slyastryggingu við heimilisstörf',
+      defaultMessage: 'Upplýsingar um slysatryggingu við heimilisstörf',
       description: 'Description: External Info about applicants insurance',
     },
   }),
@@ -100,7 +100,7 @@ export const externalData = {
     },
     description: {
       id: 'an.application:section.externalData.notifications.description',
-      defaultMessage: 'Send verða til þín um stöðu mála osfrv.',
+      defaultMessage: 'Send verða til þín skilaboð um stöðu mála o.s.frv.',
       description:
         'Notifications will be sent regarding the status of your application',
     },

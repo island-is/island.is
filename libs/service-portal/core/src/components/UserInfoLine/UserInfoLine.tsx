@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { sharedMessages } from '@island.is/shared/translations'
 
-import * as styles from './UserInfoLine.treat'
+import * as styles from './UserInfoLine.css'
 
 interface Props {
   label: MessageDescriptor | string

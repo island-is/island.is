@@ -80,8 +80,8 @@ export const generateAssignReviewerEmail: BlaGen = (
           component: 'Copy',
           context: {
             copy: isReportingOnBehalfOfEmployee
-              ? 'Tilkynning um slys hefur borist Sjúkratryggingum Íslands þar sem þú ert skráður sem hinn slasaði.  Hægt er að fara yfir tilkynninguna á íslands.is eða með því að smella á hlekkinn hér að neðan.'
-              : 'Tilkynning um slys hefur borist Sjúkratryggingum Íslands sem tengist stofnun eða félagi þar sem þú varst skráður sem forsvarsmaður.  Hægt er að fara yfir tilkynninguna á íslands.is eða með því að smella á hlekkinn hér að neðan.',
+              ? 'Tilkynning um slys hefur borist Sjúkratryggingum Íslands þar sem þú ert skráður sem hinn slasaði.  Hægt er að fara yfir tilkynninguna á island.is eða með því að smella á hlekkinn hér að neðan.'
+              : 'Tilkynning um slys hefur borist Sjúkratryggingum Íslands sem tengist stofnun eða félagi þar sem þú varst skráður sem forsvarsmaður.  Hægt er að fara yfir tilkynninguna á island.is eða með því að smella á hlekkinn hér að neðan.',
           },
         },
         {

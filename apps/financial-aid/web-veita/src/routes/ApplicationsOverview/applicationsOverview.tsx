@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, Box, Link } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import {
@@ -23,6 +23,7 @@ interface ApplicationsProvider {
 }
 
 export interface NavigationElement {
+  group?: string
   label: string
   link: string
   applicationState: ApplicationState[]

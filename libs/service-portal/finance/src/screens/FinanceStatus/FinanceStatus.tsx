@@ -194,12 +194,12 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                   />
                   <T.Body>
                     {financeStatusData?.organizations?.map(
-                      (org: FinanceStatusOrganizationType) =>
-                        org.chargeTypes.map((chargeType) => (
+                      (org: FinanceStatusOrganizationType, i) =>
+                        org.chargeTypes.map((chargeType, ii) => (
                           <FinanceStatusTableRow
                             chargeType={chargeType}
                             organization={org}
-                            key={`${org.id}-${chargeType.id}`}
+                            key={`${org.id}-${chargeType.id}-${i}-${ii}`}
                           />
                         )),
                     )}

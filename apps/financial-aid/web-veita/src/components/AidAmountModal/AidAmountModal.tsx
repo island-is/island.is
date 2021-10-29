@@ -1,7 +1,7 @@
 import React from 'react'
 import { ModalBase, Text, Box, Button } from '@island.is/island-ui/core'
 
-import * as styles from './AidAmountModal.treat'
+import * as styles from './AidAmountModal.css'
 
 import format from 'date-fns/format'
 

@@ -48,6 +48,8 @@ export const ApplicationQuery = gql`
         eventType
         comment
         created
+        staffName
+        staffNationalId
       }
     }
   }
@@ -78,6 +80,7 @@ export const UpdateApplicationTableMutation = gql`
         DataNeeded
         Rejected
         Approved
+        MyCases
       }
     }
   }
@@ -110,14 +113,7 @@ export const ApplicationFiltersMutation = gql`
       DataNeeded
       Rejected
       Approved
-    }
-  }
-`
-
-export const CreateApplicationMutation = gql`
-  mutation CreateApplication($input: CreateApplicationInput!) {
-    createApplication(input: $input) {
-      id
+      MyCases
     }
   }
 `
@@ -166,6 +162,8 @@ export const ApplicationEventMutation = gql`
         eventType
         comment
         created
+        staffNationalId
+        staffName
       }
     }
   }
@@ -183,7 +181,7 @@ export const CurrentUserQuery = gql`
         name
         municipalityId
         phoneNumber
-        role
+        roles
         active
         municipalityHomepage
       }
@@ -231,6 +229,8 @@ export const UpdateApplicationMutation = gql`
         eventType
         comment
         created
+        staffNationalId
+        staffName
       }
       staff {
         name
