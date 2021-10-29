@@ -1,4 +1,5 @@
 import { UserManagerSettings, WebStorageStateStore } from 'oidc-client'
+import { storageFactory } from './storageFactory'
 
 export interface AuthSettings extends Omit<UserManagerSettings, 'scope'> {
   /**
@@ -59,7 +60,7 @@ export const mergeAuthSettings = (settings: AuthSettings) => {
     loadUserInfo: true,
     monitorSession: onIdsDomain,
     userStore: new WebStorageStateStore({
-      store: window.sessionStorage,
+      store: storageFactory(() => sessionStorage),
       prefix: settings.userStorePrefix,
     }),
     ...settings,

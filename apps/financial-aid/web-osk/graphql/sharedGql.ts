@@ -41,13 +41,7 @@ export const CurrentUserQuery = gql`
       phoneNumber
       postalCode
       isSpouse
-      currentApplication {
-        id
-        state
-        homeCircumstances
-        usePersonalTaxCredit
-        name
-      }
+      currentApplication
     }
   }
 `
