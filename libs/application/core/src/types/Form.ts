@@ -69,6 +69,12 @@ export interface Form {
   type: FormItemTypes.FORM
 }
 
+export interface FormLoaderArgs {
+  featureFlagClient: unknown
+}
+
+export type FormLoader = (args: FormLoaderArgs) => Promise<Form>
+
 export type FormLeaf = MultiField | Field | Repeater | ExternalDataProvider
 export type FormNode = Form | Section | SubSection | FormLeaf
 export type FormChildren = Section | FormLeaf
