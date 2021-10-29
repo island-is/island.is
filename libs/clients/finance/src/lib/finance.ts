@@ -81,7 +81,7 @@ export class FinanceService extends RESTDataSource {
     let response
     try {
       response = await this.get<FinanceStatusDetails | null>(
-        `/customerStatusByOrganizationDetails?nationalID=${nationalID}&OrgID=${OrgID}&chargeTypeID=${chargeTypeID}`,
+        `/customerStatusByOrganizationDetails?nationalID=${nationalID}&orgID=${OrgID}&chargeTypeID=${chargeTypeID}`,
         {},
         {
           cacheOptions: { ttl: this.options.ttl },
