@@ -2,7 +2,6 @@ import { Application } from '@island.is/application/core'
 import {
   AccidentNotificationAnswers,
   AccidentTypeEnum,
-  FishermanWorkplaceAccidentLocationEnum,
   FishermanWorkplaceAccidentShipLocationEnum,
   SubmittedApplicationData,
   WhoIsTheNotificationForEnum,
@@ -74,7 +73,7 @@ export const applictionAnswersToXml = (
       ...fylgiskjol,
     },
   }
-  console.log('applicationJson ', JSON.stringify(applicationJson, null, 4))
+
   const xml = `<?xml version="1.0" encoding="ISO-8859-1"?>${objectToXML(
     applicationJson,
   )}`
@@ -172,11 +171,11 @@ const work = (
 
   return answers.workMachineRadio === 'yes'
     ? {
-        ...accidentBase,
-        slysvidvinnu: {
-          lysingavinnuvel: answers.workMachine.desriptionOfMachine,
-        },
-      }
+      ...accidentBase,
+      slysvidvinnu: {
+        lysingavinnuvel: answers.workMachine.desriptionOfMachine,
+      },
+    }
     : accidentBase
 }
 
