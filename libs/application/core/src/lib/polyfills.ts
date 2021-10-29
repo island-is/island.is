@@ -29,7 +29,7 @@ export const submitterPolyfill = () => {
       const candidates = [document.activeElement, lastBtn]
       lastBtn = null
 
-      for (let candidate of candidates) {
+      for (const candidate of candidates) {
         if (!candidate) continue
         if (!(candidate as HTMLButtonElement).form) continue
         if (!candidate.matches('button, input[type=button], input[type=image]'))
