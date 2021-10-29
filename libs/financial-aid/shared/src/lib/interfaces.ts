@@ -211,6 +211,7 @@ export interface Application {
   spouseNationalId?: string
   spouseEmail?: string
   spousePhoneNumber?: string
+  spouseName?: string
   familyStatus: FamilyStatus
   streetName?: string
   postalCode?: string
