@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class PaymentScheduleConditions {
@@ -52,4 +52,10 @@ export class PaymentScheduleConditions {
 
   @Field(() => Number)
   alimony!: number
+
+  @Field(() => Number)
+  minWagePayment!: number
+
+  @Field(() => Number)
+  percent!: number
 }

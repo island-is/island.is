@@ -11,7 +11,6 @@ import {
 } from './RegulationsSidebarBox'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
-import { useRouter } from 'next/router'
 
 export type RegulationInfoBoxProps = {
   regulation: RegulationMaybeDiff
@@ -23,7 +22,6 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
   const { ministry, lawChapters } = regulation
 
   const { linkToRegulationSearch } = useRegulationLinkResolver()
-  const { asPath } = useRouter()
 
   const txt = useNamespace(texts)
   const { formatDate } = useDateUtils()
@@ -125,9 +123,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
             size="small"
             variant="text"
           >
-            <Link href={asPath.split('#')[0] + '/pdf'}>
-              {txt('downloadPdf')}
-            </Link>
+            <Link href={regulation.pdfVersion}>{txt('downloadPdf')}</Link>
           </Button>
         </Text>
 

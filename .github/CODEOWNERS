@@ -105,6 +105,7 @@
 /libs/clients/national-registry/v1/                                                           @island-is/hugsmidjan
 /libs/clients/regulations/                                                                    @island-is/hugsmidjan
 /libs/api/domains/regulations/                                                                @island-is/hugsmidjan
+/libs/regulations/                                                                            @island-is/hugsmidjan
 
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
 /libs/application/templates/institution-collaboration/                                        @island-is/sendiradid
@@ -112,6 +113,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/               @island-is/sendiradid
 /libs/clients/documents/                                                                      @island-is/sendiradid
 /libs/clients/payment-schedule/                                                               @island-is/sendiradid
+/libs/api/domains/payment-schedule/                                                           @island-is/sendiradid
 /libs/application/templates/funding-government-projects/                                      @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/ @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/institution-collaboration/   @island-is/sendiradid
