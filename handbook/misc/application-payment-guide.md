@@ -61,7 +61,17 @@ updates to the payment that was created and charged. Both of those are specific 
 the driving license application, so for now you'd need to create similar api actions for
 creating the charge and handling the post-payment stage.
 
-.. to be continued
+### 3. Insuring payment has been completed
+
+Both in terms of past-application history compatibility and in terms of absolute safety
+that something unpaid doesn't go, we'd recommend that you check whether the application
+payment has been fulfilled in your final application submission step.
+
+## FJS / Fjarsýsla ríkisins API
+
+FJS has an openAPI document for their API, however the definition is not yet in x-road.
+
+Reference: https://island.is/s/stafraent-island/vefthjonustur/SVNfR09WXzU0MDI2OTc1MDlfRkpTLVB1YmxpY19jaGFyZ2VGSlNfdjE
 
 ## FAQ / glossary
 
