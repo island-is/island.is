@@ -8,21 +8,6 @@ export class UpdateApplicationInput {
   @IsString()
   id: string
 
-  @Field((type) => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  applicant?: string
-
-  @Field((type) => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  assignee?: string
-
-  @Field((type) => graphqlTypeJson, { nullable: true })
-  @IsObject()
-  @IsOptional()
-  attachments?: object
-
   @Field((type) => graphqlTypeJson, { nullable: true })
   @IsObject()
   @IsOptional()
