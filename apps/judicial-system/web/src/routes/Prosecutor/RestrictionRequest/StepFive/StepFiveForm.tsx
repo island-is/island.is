@@ -11,9 +11,9 @@ import {
   Checkbox,
   Button,
   LoadingDots,
-  AlertMessage,
   UploadFile,
   Icon,
+  LoadingIcon,
 } from '@island.is/island-ui/core'
 import { Case, CaseFile, CaseFileState } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -79,7 +79,6 @@ export const StepFiveForm: React.FC<Props> = (props) => {
           )
         },
       )
-      console.log(policeCaseFilesNotStoredInRVG)
 
       const policeCaseFilesInList = policeCaseFilesNotStoredInRVG.filter(
         (p) => {
@@ -92,7 +91,9 @@ export const StepFiveForm: React.FC<Props> = (props) => {
           return {
             id: policeCaseFile.id,
             label: policeCaseFile.name,
-            checked: false,
+            checked:
+              policeCaseFileList.find((p) => p.id === policeCaseFile.id)
+                ?.checked || false,
           }
         }),
       )
@@ -126,7 +127,6 @@ export const StepFiveForm: React.FC<Props> = (props) => {
   const uploadToRVG = async () => {
     const newPoliceCaseFileList = [...policeCaseFileList]
     const filesToUpload = policeCaseFileList.filter((p) => p.checked)
-    const updatedPoliceCaseFiles: UploadFile[] = []
     let updatedPoliceCaseFileList: PoliceCaseFile[] = policeCaseFileList
 
     setIsUploading(true)
@@ -216,19 +216,22 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                             opacity: 1,
                           }}
                           exit={{
-                            backgroundColor: [
-                              theme.color.blue100,
-                              '#3ae374',
-                              '#3ae374',
-                              '#3ae374',
-                              '#3ae374',
-                            ],
-                            opacity: [1, 1, 1, 1, 0],
-                            transition: { duration: 3 },
+                            opacity: 0,
                           }}
                         >
                           <Checkbox
-                            label={listItem.label}
+                            label={
+                              <Box
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="spaceBetween"
+                              >
+                                {listItem.label}
+                                {isUploading && listItem.checked && (
+                                  <LoadingDots />
+                                )}
+                              </Box>
+                            }
                             name={listItem.id}
                             value={listItem.id}
                             checked={listItem.checked}

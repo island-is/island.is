@@ -63,8 +63,8 @@ export const useS3Upload = (workingCase?: Case) => {
       },
     })
 
-    setUploadedPoliceCaseFiles([
-      ...uploadedPoliceCaseFiles,
+    setUploadedPoliceCaseFiles((prev) => [
+      ...prev,
       {
         ...uploadPoliceCaseFileData.uploadPoliceCaseFile,
         name,
