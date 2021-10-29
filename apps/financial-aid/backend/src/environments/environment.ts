@@ -24,6 +24,8 @@ const prodConfig = {
     audience: '@samband.is',
   },
   emailOptions: {
+    fromEmail: process.env.SEND_FROM_EMAIL,
+    replyToEmail: process.env.SEND_FROM_EMAIL,
     useTestAccount: false,
     options: {
       region: process.env.EMAIL_REGION ?? '',
@@ -45,6 +47,8 @@ const devConfig = {
     audience: '@samband.is',
   },
   emailOptions: {
+    fromEmail: process.env.SEND_FROM_EMAIL,
+    replyToEmail: process.env.SEND_FROM_EMAIL,
     useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
     options: {
       region: process.env.EMAIL_REGION ?? '',

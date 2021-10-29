@@ -28,6 +28,7 @@ import { StaffModel } from '../staff'
 import { EmailService } from '@island.is/email-service'
 
 import { ApplicationFileModel } from '../file/models'
+import { environment } from '../../../environments'
 
 interface Recipient {
   name: string
@@ -299,11 +300,11 @@ export class ApplicationService {
       await this.emailService.sendEmail({
         from: {
           name: 'Samband íslenskra sveitarfélaga',
-          address: 'no-reply@svg.is',
+          address: environment.emailOptions.fromEmail,
         },
         replyTo: {
           name: 'Samband íslenskra sveitarfélaga',
-          address: 'no-reply@svg.is',
+          address: environment.emailOptions.replyToEmail,
         },
         to,
         subject: `Umsókn fyrir fjárhagsaðstoð móttekin ~ ${applicationId}`,
