@@ -3,8 +3,11 @@ import { getConnectionToken } from '@nestjs/sequelize'
 import { INestApplication, Type } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
+import { startMocking } from '@island.is/shared/mocking'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { handlers as temporaryVoterRegistryHandlers } from '../src/app/modules/endorsementMetadata/providers/temporaryVoterRegistry/mock/temporaryVoterRegistryMock'
+import { handlers as nationalRegistryHandlers } from '../src/app/modules/endorsementMetadata/providers/nationalRegistry/mock/nationalRegistryMock'
 
 export let app: INestApplication
 let sequelize: Sequelize
@@ -41,7 +44,7 @@ export const setup = async (options?: Partial<TestServerOptions>) => {
 }
 
 interface SetupAuthInput {
-  scope: EndorsementsScope[]
+  scope: GenericScope[]
   nationalId?: string
 }
 export const getAuthenticatedApp = ({
@@ -58,9 +61,19 @@ export const getAuthenticatedApp = ({
       ),
   })
 
+let mockServer: any
+beforeAll(() => {
+  // Enable mocking.
+  mockServer = startMocking([
+    ...nationalRegistryHandlers,
+    ...temporaryVoterRegistryHandlers,
+  ])
+})
+
 afterAll(async () => {
   if (app && sequelize) {
     await app.close()
     await sequelize.close()
+    await mockServer.close()
   }
 })

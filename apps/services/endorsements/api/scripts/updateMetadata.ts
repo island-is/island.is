@@ -2,6 +2,10 @@ import 'reflect-metadata'
 import { NestFactory } from '@nestjs/core/nest-factory'
 import { Sequelize } from 'sequelize-typescript'
 import Bottleneck from 'bottleneck'
+import jsonwebtoken from 'jsonwebtoken'
+import { logger } from '@island.is/logging'
+import { Auth } from '@island.is/auth-nest-tools'
+import { GenericScope } from '@island.is/auth/scopes'
 import * as sequelizeConfig from '../sequelize.config'
 import { Endorsement } from '../src/app/modules/endorsement/models/endorsement.model'
 import { EndorsementList } from '../src/app/modules/endorsementList/endorsementList.model'
@@ -9,7 +13,7 @@ import { EndorsementMetadataService } from '../src/app/modules/endorsementMetada
 import { EndorsementMetaField } from '../src/app/modules/endorsementMetadata/types'
 import { AppModule } from '../src/app/app.module'
 import { EndorsementMetadata } from '../src/app/modules/endorsementMetadata/endorsementMetadata.model'
-import { logger } from '@island.is/logging'
+import { environment } from '../src/environments'
 
 interface EndorsementListFieldMap {
   [key: string]: EndorsementMetaField[]
@@ -20,9 +24,23 @@ interface EndorsementMetadataResponse {
   meta: EndorsementMetadata
 }
 
-// lets init sequelize client with config from the api app
-const production = process.env.NODE_ENV === 'production'
-const sequelizeConfigKey = production ? 'production' : 'development'
+// taken from @island.is/auth-nest-tools
+interface JwtPayload {
+  nationalId?: string
+  scope: string | string[]
+  client_id: string
+  act?: {
+    nationalId: string
+    scope?: string | string[]
+  }
+  actor?: {
+    nationalId: string
+    scope?: string | string[]
+  }
+}
+
+// INIT
+const sequelizeConfigKey = environment.production ? 'production' : 'development'
 new Sequelize({
   ...sequelizeConfig[sequelizeConfigKey],
   models: [Endorsement, EndorsementList],
@@ -36,6 +54,86 @@ const limiter = new Bottleneck({
   maxConcurrent: Number(process.env.MAX_CONCURRENT) || 10,
 })
 
+// AUTH
+const acquireAuthToken = async (): Promise<string> => {
+  const tokenOptions = {
+    client_id: environment.endorsementClient.clientId,
+    grant_type: 'client_credentials',
+    scope: GenericScope.system,
+    client_secret: environment.endorsementClient.clientSecret,
+  }
+  const response = await fetch(`${environment.auth.issuer}/connect/token`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(tokenOptions),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to acquire access token')
+  }
+
+  const result = await response.json()
+
+  return result.access_token
+}
+
+// taken from @island.is/auth-nest-tools
+const parseScopes = (scopes: undefined | string | string[]): string[] => {
+  if (scopes === undefined) {
+    return []
+  }
+  if (typeof scopes === 'string') {
+    return scopes.split(' ')
+  }
+  return scopes
+}
+
+// token is not validated at this point, we expect the underlying services to authenticate the token
+const convertTokenToAuth = (token: string): Auth => {
+  try {
+    const decodedPayload = jsonwebtoken.decode(token) as JwtPayload
+
+    return {
+      scope: parseScopes(decodedPayload.scope),
+      client: decodedPayload.client_id,
+      authorization: token,
+    }
+  } catch (e) {
+    logger.error('Failed to convert token to authentication')
+    throw e
+  }
+}
+
+/*
+This script can take long to execute, this ensures auth wont time out
+*/
+let currentAuth: Auth | undefined
+let lastTokenTime = new Date()
+let fetchingAuth = false
+const getClientAuth = async (): Promise<Auth> => {
+  const currentTime = new Date()
+  const refreshTime = new Date(lastTokenTime)
+  const authRefreshHours = 2
+  refreshTime.setHours(lastTokenTime.getHours() + authRefreshHours) // refresh every X hours
+
+  // if refresh time is in the past we refresh the auth
+  if ((refreshTime < currentTime || !currentAuth) && !fetchingAuth) {
+    fetchingAuth = true
+    const clientAuthToken = await acquireAuthToken()
+
+    // store the auth
+    currentAuth = convertTokenToAuth(clientAuthToken)
+
+    // remember fetched time
+    lastTokenTime = currentTime
+  }
+
+  return currentAuth as Auth // auth is always set at this point
+}
+
+// DATA
 const createEndorsementListFieldMap = (
   endorsementLists: EndorsementList[],
 ): EndorsementListFieldMap =>
@@ -69,10 +167,13 @@ const getEndorsementMetadata = async (
       meta: {
         ...endorsement.meta,
         // we get only updated fields from this function
-        ...(await endorsementMetadataService.getMetadata({
-          nationalId: endorsement.endorser,
-          fields: fieldsToUpdate,
-        })),
+        ...(await endorsementMetadataService.getMetadata(
+          {
+            nationalId: endorsement.endorser,
+            fields: fieldsToUpdate,
+          },
+          await getClientAuth(),
+        )),
       },
       id: endorsement.id,
     }
@@ -156,10 +257,12 @@ const processEndorsementLists = async (cb: () => void, index = 0) => {
 }
 
 export default async () => {
-  if (!production) {
+  if (!environment.production) {
     // Lets make sure it is clear in logs if this is running in dev mode
     logger.warn('>>>RUNNING IN DEV MODE!!!<<<')
   }
+
+  await getClientAuth() // pre fetch auth
   const app = await NestFactory.create(AppModule)
   endorsementMetadataService = app.get(EndorsementMetadataService)
   processEndorsementLists(() => {

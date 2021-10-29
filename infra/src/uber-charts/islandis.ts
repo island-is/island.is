@@ -89,7 +89,6 @@ export const Services: EnvironmentServices = {
     endorsement,
     partyLetterRegistry,
     temporaryVoterRegistry,
-    endorsementUpdateMetadata,
   ],
   staging: [
     appSystemApi,
@@ -110,7 +109,6 @@ export const Services: EnvironmentServices = {
     endorsement,
     partyLetterRegistry,
     temporaryVoterRegistry,
-    endorsementUpdateMetadata,
   ],
   dev: [
     appSystemApi,
@@ -131,7 +129,6 @@ export const Services: EnvironmentServices = {
     endorsement,
     partyLetterRegistry,
     temporaryVoterRegistry,
-    endorsementUpdateMetadata,
   ],
 }
 
@@ -139,5 +136,4 @@ export const FeatureDeploymentServices = [
   endorsement,
   partyLetterRegistry,
   temporaryVoterRegistry,
-  endorsementUpdateMetadata,
 ]

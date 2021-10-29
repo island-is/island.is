@@ -1,4 +1,4 @@
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
 import request from 'supertest'
 import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
@@ -24,7 +24,7 @@ describe('EndorsementList', () => {
   it(`GET /endorsement-list/:listId should return 404 error when uid does not exist`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const response = await request(app.getHttpServer())
       .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba777') // random uuid
@@ -39,7 +39,7 @@ describe('EndorsementList', () => {
   it(`GET /endorsement-list/:listId should return 400 validation error when listId is not UUID`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const response = await request(app.getHttpServer())
       .get('/endorsement-list/notAUUID')
@@ -54,7 +54,7 @@ describe('EndorsementList', () => {
   it(`GET /endorsement-list/:listId should return 200 and a valid endorsement list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const response = await request(app.getHttpServer())
       .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba016')

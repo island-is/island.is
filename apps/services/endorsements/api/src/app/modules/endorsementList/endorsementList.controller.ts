@@ -29,10 +29,10 @@ import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
 import { BypassAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
 import { environment } from '../../../environments'
-import { EndorsementsScope } from '@island.is/auth/scopes'
-import type { User } from '@island.is/auth-nest-tools'
+import { GenericScope } from '@island.is/auth/scopes'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
+import type { User } from '@island.is/auth-nest-tools'
 
 import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
@@ -70,7 +70,7 @@ export class EndorsementListController {
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get()
   @UseInterceptors(EndorsementListsInterceptor)
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   async findByTags(
     @CurrentUser() user: User,
     @Query() query: FindTagPaginationComboDto,
@@ -112,7 +112,7 @@ export class EndorsementListController {
     )
   }
 
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @ApiOperation({
     summary: 'Finds all endorsements for the currently authenticated user',
   })
@@ -159,7 +159,7 @@ export class EndorsementListController {
   })
   @ApiOperation({ summary: 'Finds a single endorsements list by id' })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @Get(':listId')
   @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
@@ -182,7 +182,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.system)
   @Put(':listId/close')
   @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Owner)
@@ -207,7 +207,7 @@ export class EndorsementListController {
   })
   @ApiParam({ name: 'listId', type: 'string' })
   @ApiBody({ type: ChangeEndorsmentListClosedDateDto })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @Put(':listId/open')
   @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Owner)
@@ -231,7 +231,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @Put(':listId/lock')
   @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Admin)
@@ -254,7 +254,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @Put(':listId/unlock')
   @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Admin)
@@ -279,7 +279,7 @@ export class EndorsementListController {
   })
   @ApiParam({ name: 'listId', type: 'string' })
   @ApiBody({ type: UpdateEndorsementListDto })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @Put(':listId/update')
   @HasAccessGroup(AccessGroup.Admin)
   @Audit<EndorsementList>({
@@ -306,7 +306,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiBody({ type: EndorsementListDto })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.system)
   @Post()
   @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({

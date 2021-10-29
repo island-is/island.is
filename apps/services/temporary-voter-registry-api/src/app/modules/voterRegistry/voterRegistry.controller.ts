@@ -1,8 +1,8 @@
-import { BypassAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
+import { CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { Controller, Get, Query } from '@nestjs/common'
 import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
 import { VoterRegistry } from './voterRegistry.model'
 import { VoterRegistryService } from './voterRegistry.service'
 import { environment } from '../../../environments'
@@ -24,7 +24,7 @@ export class VoterRegistryController {
   @Audit<VoterRegistry>({
     resources: (voterRegistry) => voterRegistry.id,
   })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @Get()
   async findByAuth(
     @CurrentUser() { nationalId }: User,
@@ -36,7 +36,10 @@ export class VoterRegistryController {
     description: 'Finds voter registry entry given users national id',
     type: VoterRegistry,
   })
-  @BypassAuth() // currently we have no way to create system auth tokens, we will add those when available for better tracking
+  @Audit<VoterRegistry>({
+    resources: (voterRegistry) => voterRegistry.id,
+  })
+  @Scopes(GenericScope.system)
   @Get('/system')
   async findByNationalId(
     @Query() { nationalId }: FindOneDto,

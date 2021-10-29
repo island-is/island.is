@@ -4,8 +4,8 @@ import {
   ApplicationScope,
   NationalRegistryScope,
   UserProfileScope,
-  EndorsementsScope,
   AuthScope,
+  GenericScope,
 } from '@island.is/auth/scopes'
 
 const userMocked = process.env.API_MOCKS === 'true'
@@ -30,7 +30,7 @@ if (userMocked) {
       AuthScope.actorDelegations,
       UserProfileScope.read,
       NationalRegistryScope.individuals,
-      EndorsementsScope.main,
+      GenericScope.internal,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'as.',

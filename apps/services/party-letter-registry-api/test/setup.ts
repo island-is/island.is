@@ -3,14 +3,14 @@ import { getConnectionToken } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
 import type { INestApplication, Type } from '@nestjs/common'
 
 export let app: INestApplication
 let sequelize: Sequelize
 
 interface SetupAuthInput {
-  scope: EndorsementsScope[]
+  scope: GenericScope[]
   nationalId?: string
 }
 

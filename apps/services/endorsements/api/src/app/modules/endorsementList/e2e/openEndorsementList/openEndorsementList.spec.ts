@@ -1,4 +1,4 @@
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
 import request from 'supertest'
 import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
@@ -23,7 +23,7 @@ describe('openEndorsementList', () => {
   it(`PUT /endorsement-list/:listId/open should return 404 when opening an non existing list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.system],
     })
     const response = await request(app.getHttpServer())
       .put('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba777/open')
@@ -38,7 +38,7 @@ describe('openEndorsementList', () => {
   it(`PUT /endorsement-list/:listId/open should fail to open existing closed endorsement list if not in any access group`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: '0000000000',
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.system],
     })
     const response = await request(app.getHttpServer())
       .put('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba018/open')
@@ -53,7 +53,7 @@ describe('openEndorsementList', () => {
   it(`PUT /endorsement-list/:listId/open should open existing closed endorsement list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.system],
     })
     const closedDate = new Date(
       new Date().getTime() + 7 * 24 * 60 * 60 * 1000,

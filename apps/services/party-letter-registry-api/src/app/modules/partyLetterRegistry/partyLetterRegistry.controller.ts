@@ -7,7 +7,7 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger'
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { CreateDto } from './dto/create.dto'
 import { PartyLetterRegistry } from './partyLetterRegistry.model'
@@ -33,7 +33,7 @@ export class PartyLetterRegistryController {
   @Audit<PartyLetterRegistry>({
     resources: (voterRegistry) => voterRegistry.partyLetter,
   })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.internal)
   @Get('manager')
   async findAsManagerByAuth(
     @CurrentUser() user: User,
@@ -60,7 +60,7 @@ export class PartyLetterRegistryController {
     resources: (voterRegistry) => voterRegistry.partyLetter,
     meta: (voterRegistry) => ({ owner: voterRegistry.owner }),
   })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(GenericScope.system)
   @Post()
   async create(@Body() input: CreateDto): Promise<PartyLetterRegistry> {
     return await this.partyLetterRegistryService.create(input)

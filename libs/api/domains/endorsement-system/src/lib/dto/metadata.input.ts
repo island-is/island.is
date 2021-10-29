@@ -12,8 +12,8 @@ export class MetadataInput {
   @IsEnum(EndorsementMetadataDtoFieldEnum)
   field!: EndorsementMetadataDtoFieldEnum
 
-  @Field({ nullable: true })
+  @Field()
   @IsOptional()
   @IsBoolean()
-  keepUpToDate!: boolean | null
+  keepUpToDate?: boolean = false
 }

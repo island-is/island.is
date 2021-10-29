@@ -1,7 +1,7 @@
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import { TemplateApiModuleActionProps } from '../../../types'
+import { GenericScope } from '@island.is/auth/scopes'
+import { User, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { SharedTemplateApiService } from '../../shared'
 import {
   generateAssignMinistryOfJusticeApplicationEmail,
@@ -12,11 +12,17 @@ import { PartyLetterRegistryApi } from './gen/fetch/party-letter'
 import {
   EndorsementListApi,
   EndorsementMetadataDtoFieldEnum,
-  EndorsementListTagsEnum,
+  EndorsementListDtoTagsEnum,
+  ValidationRuleDtoTypeEnum,
 } from './gen/fetch/endorsements'
-import { User, AuthMiddleware } from '@island.is/auth-nest-tools'
+import type {
+  ApplicationSystemClient,
+  TemplateApiModuleActionProps,
+} from '../../../types'
+import type { Logger } from '@island.is/logging'
 
 const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
+export const APPLICATION_SYSTEM_CLIENT = 'APPLICATION_SYSTEM_CLIENT'
 
 const CREATE_ENDORSEMENT_LIST_QUERY = `
   mutation EndorsementSystemCreatePartyLetterEndorsementList($input: CreateEndorsementListDto!) {
@@ -49,15 +55,39 @@ export class PartyLetterService {
     private endorsementListApi: EndorsementListApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    @Inject(APPLICATION_SYSTEM_CLIENT)
+    private systemClient: ApplicationSystemClient,
     @Inject(DEFAULT_CLOSED_DATE) private dateConfig: Date,
   ) {}
 
   partyLetterRegistryApiWithAuth(auth: User) {
-    return this.partyLetterRegistryApi.withMiddleware(new AuthMiddleware(auth))
+    return this.partyLetterRegistryApi.withMiddleware(
+      new AuthMiddleware(auth, {
+        forwardUserInfo: false,
+        tokenExchangeOptions: {
+          scope: `openid ${GenericScope.system}`,
+          requestActorToken: true,
+          issuer: this.systemClient.issuer,
+          clientId: this.systemClient.clientId,
+          clientSecret: this.systemClient.clientSecret,
+        },
+      }),
+    )
   }
 
   endorsementListApiWithAuth(auth: User) {
-    return this.endorsementListApi.withMiddleware(new AuthMiddleware(auth))
+    return this.endorsementListApi.withMiddleware(
+      new AuthMiddleware(auth, {
+        forwardUserInfo: false,
+        tokenExchangeOptions: {
+          scope: `openid ${GenericScope.system}`,
+          requestActorToken: true,
+          issuer: this.systemClient.issuer,
+          clientId: this.systemClient.clientId,
+          clientSecret: this.systemClient.clientSecret,
+        },
+      }),
+    )
   }
 
   async assignMinistryOfJustice({
@@ -120,42 +150,40 @@ export class PartyLetterService {
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(auth.authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
-        input: {
-          title: application.answers.partyName,
-          description: application.answers.partyLetter,
-          endorsementMetadata: [
-            { field: EndorsementMetadataDtoFieldEnum.fullName },
-            { field: EndorsementMetadataDtoFieldEnum.signedTags },
-            { field: EndorsementMetadataDtoFieldEnum.address },
-          ],
-          tags: [EndorsementListTagsEnum.partyLetter2021],
-          validationRules: [
-            {
-              type: 'minAge',
-              value: {
-                age: 18,
-              },
+    const { id } = await this.endorsementListApiWithAuth(
+      auth,
+    ).endorsementListControllerCreate({
+      endorsementListDto: {
+        title: application.answers.partyName as string,
+        description: application.answers.partyLetter as string,
+        endorsementMetadata: [
+          { field: EndorsementMetadataDtoFieldEnum.fullName },
+          { field: EndorsementMetadataDtoFieldEnum.signedTags },
+          { field: EndorsementMetadataDtoFieldEnum.address },
+        ],
+        tags: [EndorsementListDtoTagsEnum.partyLetter2021],
+        validationRules: [
+          {
+            type: ValidationRuleDtoTypeEnum.minAge,
+            value: {
+              age: 18,
             },
-          ],
-          meta: {
-            // to be able to link back to this application
-            applicationTypeId: application.typeId,
-            applicationId: application.id,
           },
+        ],
+        meta: {
+          // to be able to link back to this application
+          applicationTypeId: application.typeId,
+          applicationId: application.id,
         },
-      })
-      .then((response) => response.json())
-
-    if ('errors' in endorsementList) {
-      this.logger.error('Failed to create endorsement list', endorsementList)
-      throw new Error('Failed to create endorsement list')
-    }
+        adminLock: false,
+        openedDate: new Date(),
+        closedDate: this.dateConfig
+      },
+    })
 
     // This gets written to externalData under the key createEndorsementList
     return {
-      id: endorsementList.data.endorsementSystemCreateEndorsementList.id,
+      id,
     }
   }
 

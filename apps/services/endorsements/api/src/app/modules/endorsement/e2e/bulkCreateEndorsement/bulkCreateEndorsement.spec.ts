@@ -1,5 +1,5 @@
 import request from 'supertest'
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
 import { authNationalId } from './seed'
 import { getAuthenticatedApp } from '../../../../../../test/setup'
 import {
@@ -31,7 +31,7 @@ describe('bulkCreateEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement/bulk should partially succeed when list contains some existing national ids`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalIds = ['0101304339', '0101304339']
@@ -58,7 +58,7 @@ describe('bulkCreateEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement/bulk should fail to create endorsements on a closed list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalIds = ['0101304339']
@@ -77,7 +77,7 @@ describe('bulkCreateEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement/bulk should fail to create endorsements on other peoples lists`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalIds = ['0101304339']
@@ -96,7 +96,7 @@ describe('bulkCreateEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement/bulk should create new endorsements and populate metadata`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c1'
     // eslint-disable-next-line local-rules/disallow-kennitalas

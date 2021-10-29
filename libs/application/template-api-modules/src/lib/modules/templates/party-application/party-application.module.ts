@@ -2,6 +2,7 @@ import { DynamicModule } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import {
+  APPLICATION_SYSTEM_CLIENT,
   PartyApplicationService,
   PARTY_APPLICATION_SERVICE_OPTIONS,
   DEFAULT_CLOSED_DATE,
@@ -33,9 +34,14 @@ export class PartyApplicationModule {
           useFactory: () => config.partyApplication.options,
         },
         {
+          provide: APPLICATION_SYSTEM_CLIENT,
+          useFactory: () => config.partyApplication.systemClient,
+
+        },
+        { 
           provide: DEFAULT_CLOSED_DATE,
           useValue: config.partyLetter.defaultClosedDate,
-        },
+        }
       ],
       exports: [PartyApplicationService],
     }

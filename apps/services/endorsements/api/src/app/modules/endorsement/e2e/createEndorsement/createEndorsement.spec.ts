@@ -1,4 +1,4 @@
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { GenericScope } from '@island.is/auth/scopes'
 import request from 'supertest'
 import {
   errorExpectedStructure,
@@ -29,7 +29,7 @@ describe('createEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement should return 404 when supplied with a non existing list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
 
     const endorsementBody = {
@@ -50,7 +50,7 @@ describe('createEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement should fail to create endorsement on a closed list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const endorsementBody = {
       showName: true,
@@ -70,7 +70,7 @@ describe('createEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement should fail to create endorsement when conflicts within tags`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const endorsementBody = {
       showName: true,
@@ -90,7 +90,7 @@ describe('createEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement should create a new endorsement and populate metadata`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [GenericScope.internal],
     })
     const endorsementBody = {
       showName: true,

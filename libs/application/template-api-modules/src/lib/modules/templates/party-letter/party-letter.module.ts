@@ -1,7 +1,11 @@
 import { DynamicModule } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
-import { PartyLetterService, DEFAULT_CLOSED_DATE } from './party-letter.service'
+import {
+  APPLICATION_SYSTEM_CLIENT,
+  PartyLetterService,
+  DEFAULT_CLOSED_DATE,
+} from './party-letter.service'
 import {
   Configuration as endorsementConfig,
   EndorsementListApi,
@@ -37,6 +41,10 @@ export class PartyLetterModule {
                 basePath: config.partyLetter.partyLetterRegistryApiBasePath,
               }),
             ),
+        },
+        {
+          provide: APPLICATION_SYSTEM_CLIENT,
+          useFactory: () => config.partyLetter.systemClient,
         },
         {
           provide: DEFAULT_CLOSED_DATE,
