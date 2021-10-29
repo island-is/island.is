@@ -108,6 +108,8 @@ air-discount-scheme-backend:
     ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
     ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
     NATIONAL_REGISTRY_PASSWORD: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD'
+    NATIONAL_REGISTRY_URL: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL'
+    NATIONAL_REGISTRY_USERNAME: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
     NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY'
     SENTRY_DSN: '/k8s/air-discount-scheme-backend/SENTRY_DSN'
   securityContext:

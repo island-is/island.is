@@ -104,6 +104,7 @@
 /libs/clients/national-registry/v1/                                                           @island-is/hugsmidjan
 /libs/clients/regulations/                                                                    @island-is/hugsmidjan
 /libs/api/domains/regulations/                                                                @island-is/hugsmidjan
+/libs/regulations/                                                                            @island-is/hugsmidjan
 
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
 /libs/application/templates/institution-collaboration/                                        @island-is/sendiradid
