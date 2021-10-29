@@ -1,3 +1,4 @@
+import * as kennitala from 'kennitala'
 import * as z from 'zod'
 import { AMOUNT, MONTHS, NO, YES } from '../shared/constants'
 import { error } from './messages'
@@ -28,7 +29,19 @@ export const PublicDebtPaymentPlanSchema = z.object({
   }),
   employer: z.object({
     isCorrectInfo: z.enum([YES, NO]),
-    correctedNationalId: z.string().optional(),
+    correctedNationalId: z
+      .object({
+        id: z
+          .string()
+          .refine(
+            (x) =>
+              x &&
+              x.length !== 0 &&
+              kennitala.isValid(x) &&
+              kennitala.isCompany(x),
+          ),
+      })
+      .optional(),
   }),
   paymentPlanContext: z.object({
     isFulfilled: z.boolean().refine((x) => x),
