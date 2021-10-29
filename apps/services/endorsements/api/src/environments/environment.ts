@@ -60,9 +60,9 @@ const prodConfig = {
   emailOptions: {
     useTestAccount: false,
     useNodemailerApp: false,
-    // options: {
-    //   region: process.env.EMAIL_REGION,
-    // },
+    options: {
+      region: process.env.EMAIL_REGION,
+    },
   },
 }
 
