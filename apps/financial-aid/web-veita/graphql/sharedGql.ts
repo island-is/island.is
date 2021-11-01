@@ -21,7 +21,9 @@ export const ApplicationQuery = gql`
       interview
       employmentCustom
       homeCircumstancesCustom
+      familyStatus
       spouseNationalId
+      spouseName
       city
       streetName
       postalCode
@@ -181,7 +183,7 @@ export const CurrentUserQuery = gql`
         name
         municipalityId
         phoneNumber
-        role
+        roles
         active
         municipalityHomepage
       }

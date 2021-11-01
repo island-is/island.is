@@ -17,7 +17,10 @@ export class EmployeeGuard implements CanActivate {
 
     const staff = await this.staffService.findByNationalId(user.nationalId)
 
-    if (staff.role !== StaffRole.EMPLOYEE || staff.active === false) {
+    if (
+      staff.roles.includes(StaffRole.EMPLOYEE) === false ||
+      staff.active === false
+    ) {
       return false
     }
 

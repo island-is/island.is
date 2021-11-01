@@ -59,9 +59,11 @@ export enum FileType {
   TAXRETURN = 'TaxReturn',
   INCOME = 'Income',
   OTHER = 'Other',
+  SPOUSEFILES = 'SpouseFiles',
 }
 
 export enum StaffRole {
+  SUPERADMIN = 'SuperAdmin',
   ADMIN = 'Admin',
   EMPLOYEE = 'Employee',
 }

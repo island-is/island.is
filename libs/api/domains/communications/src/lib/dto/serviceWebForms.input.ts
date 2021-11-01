@@ -2,7 +2,7 @@ import { Field, HideField, InputType } from '@nestjs/graphql'
 import { IsOptional, IsString } from 'class-validator'
 
 @InputType()
-export class SyslumennFormsInput {
+export class ServiceWebFormsInput {
   @Field()
   @IsString()
   name: string
@@ -28,7 +28,15 @@ export class SyslumennFormsInput {
   @IsString()
   message: string
 
+  @Field()
+  @IsString()
+  institutionSlug: string
+
   @HideField()
   @IsString()
-  type: 'syslumennForms' = 'syslumennForms'
+  type: 'serviceWebForms' = 'serviceWebForms'
+}
+
+export type ServiceWebFormsInputWithInstitutionEmail = ServiceWebFormsInput & {
+  institutionEmail: string
 }

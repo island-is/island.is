@@ -218,7 +218,21 @@ export class ApplicationModel extends Model<Application> {
     allowNull: true,
   })
   @ApiProperty()
+  spouseName?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
   spouseNationalId?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spousePhoneNumber?: string
 
   @Column({
     type: DataType.STRING,

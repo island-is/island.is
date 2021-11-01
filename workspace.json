@@ -1655,6 +1655,11 @@
               },
               {
                 "glob": "*",
+                "input": "libs/application/template-api-modules/src/lib/modules/templates/accident-notification/emailGenerators/assets",
+                "output": "./accident-notification-assets"
+              },
+              {
+                "glob": "*",
                 "input": "libs/email-service/src/tools/design",
                 "output": "./email-service-assets"
               }

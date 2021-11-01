@@ -255,12 +255,31 @@ export const PaymentPlanForm: Form = buildForm({
                 { label: employer.labels.employerIsNotCorrect, value: NO },
               ],
             }),
+          ],
+        }),
+        buildMultiField({
+          id: 'newEmployerMultiField',
+          title: employer.general.pageTitle,
+          condition: (_formValue, externalData) => {
+            const debts = (externalData as PaymentPlanExternalData)
+              ?.paymentPlanPrerequisites?.data?.debts
+
+            return (
+              debts?.find((x) => x.type === 'Wagedection') !== undefined &&
+              (_formValue as PublicDebtPaymentPlan).employer?.isCorrectInfo ===
+                NO
+            )
+          },
+          children: [
+            buildCustomField({
+              id: 'employerInfoDescription',
+              title: '',
+              component: 'EmployerInfoDescription',
+            }),
             buildCustomField({
               id: 'employerCustomId',
               title: '',
               component: 'EmployerIdField',
-              condition: (data) =>
-                (data as PublicDebtPaymentPlan).employer?.isCorrectInfo === NO,
             }),
           ],
         }),

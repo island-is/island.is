@@ -34,7 +34,6 @@ describe('/domur/thingbok/:id', () => {
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('courtStartDate-time').type('1222')
     cy.getByTestid('courtLocation').type('í Dúfnahólum 10')
-    cy.get('#accused-plea-decision-rejecting').check()
     cy.getByTestid('litigationPresentations').type('lorem')
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
