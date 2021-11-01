@@ -13,11 +13,7 @@ import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 import { ApplicationService } from './application.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  CurrentApplicationModel,
-  ApplicationModel,
-  UpdateApplicationTableResponse,
-} from './models'
+import { ApplicationModel, UpdateApplicationTableResponse } from './models'
 
 import {
   ApplicationEventModel,
@@ -72,12 +68,11 @@ export class ApplicationController {
   @RolesRules(RolesRule.OSK)
   @Get('nationalId/:nationalId')
   @ApiOkResponse({
-    type: CurrentApplicationModel,
     description: 'Checks if user has a current application for this period',
   })
   async getCurrentApplication(
     @Param('nationalId') nationalId: string,
-  ): Promise<CurrentApplicationModel> {
+  ): Promise<string> {
     this.logger.debug('Application controller: Getting current application')
     const currentApplication = await this.applicationService.getCurrentApplication(
       nationalId,

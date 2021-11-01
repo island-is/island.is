@@ -163,6 +163,9 @@ export type Regulation = {
   /** URL linking to the originally published document as published in Stjórnartíðindi */
   originalDoc?: string | null
 
+  /** URL to a PDF file containing the current version of the Regulation */
+  pdfVersion: string
+
   /** Regulations are roughly classified based on whether they contain
    * any original text/stipulations, or whether they **only**  prescribe
    * changes to other regulations.

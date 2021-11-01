@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { CurrentApplicationModel, ApplicationModel } from './models'
+import { ApplicationModel } from './models'
 
 import { Op } from 'sequelize'
 
@@ -28,6 +28,7 @@ import { StaffModel } from '../staff'
 import { EmailService } from '@island.is/email-service'
 
 import { ApplicationFileModel } from '../file/models'
+import { environment } from '../../../environments'
 
 interface Recipient {
   name: string
@@ -76,15 +77,26 @@ export class ApplicationService {
     return Boolean(application)
   }
 
-  async getCurrentApplication(
-    nationalId: string,
-  ): Promise<CurrentApplicationModel | null> {
-    return await this.applicationModel.findOne({
+  async getCurrentApplication(nationalId: string): Promise<string | null> {
+    const currentApplication = await this.applicationModel.findOne({
       where: {
-        nationalId,
+        [Op.or]: [
+          {
+            nationalId,
+          },
+          {
+            spouseNationalId: nationalId,
+          },
+        ],
         created: { [Op.gte]: firstDateOfMonth() },
       },
     })
+
+    if (currentApplication) {
+      return currentApplication.id
+    }
+
+    return null
   }
 
   async getAll(
@@ -288,11 +300,11 @@ export class ApplicationService {
       await this.emailService.sendEmail({
         from: {
           name: 'Samband íslenskra sveitarfélaga',
-          address: 'no-reply@svg.is',
+          address: environment.emailOptions.fromEmail,
         },
         replyTo: {
           name: 'Samband íslenskra sveitarfélaga',
-          address: 'no-reply@svg.is',
+          address: environment.emailOptions.replyToEmail,
         },
         to,
         subject: `Umsókn fyrir fjárhagsaðstoð móttekin ~ ${applicationId}`,
