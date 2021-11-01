@@ -85,8 +85,18 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return undefined
     }
 
-    const daysUsedByPeriods = calculateDaysUsedByPeriods(periods)
-    const rights = getAvailableRightsInDays(application)
+    let daysUsedByPeriods, rights
+
+    try {
+      daysUsedByPeriods = calculateDaysUsedByPeriods(periods)
+      rights = getAvailableRightsInDays(application)
+    } catch (e) {
+      return {
+        path: 'periods',
+        message: e,
+        values: {},
+      }
+    }
 
     if (daysUsedByPeriods > rights) {
       return {
