@@ -23,7 +23,7 @@ export class IslykillApiModule {
     let pfx = undefined as Buffer | undefined
     try {
       if (!config.cert) {
-        throw Error('IslykillApiModule certificate not provided')
+        throw Error('IslykillApiModule certificate not provided.')
       }
       const data = fs.readFileSync(config.cert, {
         encoding: 'base64',
