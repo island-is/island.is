@@ -1,4 +1,4 @@
-import * as s from './DiffModeToggle.treat'
+import * as s from './DiffModeToggle.css'
 
 import { Link, ToggleSwitchLink } from '@island.is/island-ui/core'
 import React from 'react'
@@ -7,6 +7,7 @@ import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { useRegulationLinkResolver } from './regulationUtils'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { ISODate } from '@hugsmidjan/regulations-editor/types'
+import cl from 'classnames'
 
 export type DiffModeToggleProps = {
   regulation: RegulationMaybeDiff
@@ -28,16 +29,11 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
   } = regulation
 
   const firstEvent = regulation.history[0]
-  const isDiffable =
-    firstEvent &&
-    firstEvent.effect === 'amend' &&
-    timelineDate !== effectiveDate
 
-  if (!isDiffable) {
+  if (!firstEvent || firstEvent.effect !== 'amend') {
     return null
   }
-
-  console.log({ showingDiff, history })
+  const isDiffable = timelineDate !== effectiveDate
 
   const diffView = !!showingDiff
   const showSecondaryButton =
@@ -46,8 +42,9 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
     !!showingDiff && showingDiff.from === history[0].date
 
   return (
-    <div className={s.wrapper}>
+    <div className={cl(s.wrapper, !isDiffable && s.wrapperDisabled)}>
       <ToggleSwitchLink
+        disabled={!isDiffable}
         className={s.toggler}
         checked={diffView}
         href={linkToRegulation(regulation.name, {

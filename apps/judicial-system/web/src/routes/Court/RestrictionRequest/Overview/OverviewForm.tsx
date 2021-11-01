@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { CaseType } from '@island.is/judicial-system/types'
 import type {
   Case,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
@@ -12,7 +12,7 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import * as styles from './Overview.treat'
+import * as styles from './Overview.css'
 import {
   capitalize,
   formatDate,
@@ -21,7 +21,7 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 
 interface Props {
@@ -85,7 +85,8 @@ const OverviewForm: React.FC<Props> = (props) => {
             {
               title: 'Embætti',
               value: `${
-                workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
+                workingCase.creatingProsecutor?.institution?.name ??
+                'Ekki skráð'
               }`,
             },
             {
@@ -156,17 +157,17 @@ const OverviewForm: React.FC<Props> = (props) => {
               </span>
             </Text>
           </Box>
-          <Box data-testid="custodyProvisions">
+          <Box data-testid="legalProvisions">
             <Box marginBottom={1}>
               <Text as="h2" variant="h3">
                 Lagaákvæði sem krafan er byggð á
               </Text>
             </Box>
-            {workingCase.custodyProvisions?.map(
-              (custodyProvision: CaseCustodyProvisions, index) => {
+            {workingCase.legalProvisions?.map(
+              (legalProvision: CaseLegalProvisions, index) => {
                 return (
                   <div key={index}>
-                    <Text>{laws[custodyProvision]}</Text>
+                    <Text>{laws[legalProvision]}</Text>
                   </div>
                 )
               },
@@ -275,13 +276,13 @@ const OverviewForm: React.FC<Props> = (props) => {
           <Box marginBottom={1}>
             <Text as="h2" variant="h3">
               {`Rannsóknargögn (${
-                workingCase.files ? workingCase.files.length : 0
+                workingCase.caseFiles ? workingCase.caseFiles.length : 0
               })`}
             </Text>
           </Box>
           <CaseFileList
             caseId={workingCase.id}
-            files={workingCase.files ?? []}
+            files={workingCase.caseFiles ?? []}
             canOpenFiles={
               workingCase.judge !== null && workingCase.judge?.id === user?.id
             }
@@ -290,7 +291,7 @@ const OverviewForm: React.FC<Props> = (props) => {
         <Box marginBottom={3}>
           <PdfButton
             caseId={workingCase.id}
-            title="Opna PDF kröfu"
+            title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
         </Box>

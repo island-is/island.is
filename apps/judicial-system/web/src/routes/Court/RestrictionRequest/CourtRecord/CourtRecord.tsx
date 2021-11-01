@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
-import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
+import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   FormFooter,
   CourtDocuments,
@@ -15,12 +15,11 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
-  capitalize,
   caseTypes,
   formatAccusedByGender,
   NounCases,
 } from '@island.is/judicial-system/formatters'
-import { AccusedPleaDecision, CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
@@ -37,11 +36,9 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '../../../../utils/validate'
 import {
-  accusedRights,
-  rcCourtRecord,
+  rcCourtRecord as m,
   closedCourt,
 } from '@island.is/judicial-system-web/messages'
-import * as styles from './CourtRecord.treat'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const CourtRecord: React.FC = () => {
@@ -54,10 +51,6 @@ export const CourtRecord: React.FC = () => {
   const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] = useState(
     '',
   )
-  const [
-    accusedPleaAnnouncementErrorMessage,
-    setAccusedPleaAnnouncementMessage,
-  ] = useState('')
   const [
     litigationPresentationsErrorMessage,
     setLitigationPresentationsMessage,
@@ -120,7 +113,9 @@ export const CourtRecord: React.FC = () => {
         )
       }
 
-      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      if (theCase.courtAttendees !== '') {
+        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      }
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
@@ -143,9 +138,15 @@ export const CourtRecord: React.FC = () => {
         )
       }
 
+      autofill(
+        'accusedBookings',
+        `${formatMessage(m.sections.accusedBookings.autofill)}`,
+        theCase,
+      )
+
       setWorkingCase(theCase)
     }
-  }, [workingCase, updateCase, setWorkingCase, data, autofill])
+  }, [workingCase, updateCase, setWorkingCase, data, autofill, formatMessage])
 
   return (
     <PageLayout
@@ -168,64 +169,44 @@ export const CourtRecord: React.FC = () => {
               </Text>
             </Box>
             <Box component="section" marginBottom={7}>
-              <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
               <CaseNumbers workingCase={workingCase} />
             </Box>
-            <Box component="section" marginBottom={8}>
-              <Box marginBottom={3}>
-                <DateTime
-                  name="courtStartDate"
-                  datepickerLabel="Dagsetning þinghalds"
-                  timeLabel="Þinghald hófst (kk:mm)"
-                  maxDate={new Date()}
-                  selectedDate={
-                    workingCase.courtStartDate
-                      ? new Date(workingCase.courtStartDate)
-                      : new Date()
-                  }
-                  onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
-                      'courtStartDate',
-                      date,
-                      valid,
-                      workingCase,
-                      setWorkingCase,
-                      setCourtRecordStartDateIsValid,
-                      updateCase,
-                    )
-                  }}
-                  required
-                />
-              </Box>
-              <Box marginBottom={3}>
-                <HideableText
-                  text={formatMessage(closedCourt.text)}
-                  isHidden={workingCase.isClosedCourtHidden}
-                  onToggleVisibility={(isVisible: boolean) =>
-                    setAndSendToServer(
-                      'isClosedCourtHidden',
-                      isVisible,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
-                  }
-                  tooltip={formatMessage(closedCourt.tooltip)}
-                />
-              </Box>
-              <Box marginBottom={3}>
+            <Box component="section" marginBottom={3}>
+              <BlueBox>
+                <Box marginBottom={3}>
+                  <DateTime
+                    name="courtStartDate"
+                    datepickerLabel="Dagsetning þinghalds"
+                    timeLabel="Þinghald hófst (kk:mm)"
+                    maxDate={new Date()}
+                    selectedDate={
+                      workingCase.courtStartDate
+                        ? new Date(workingCase.courtStartDate)
+                        : new Date()
+                    }
+                    onChange={(date: Date | undefined, valid: boolean) => {
+                      newSetAndSendDateToServer(
+                        'courtStartDate',
+                        date,
+                        valid,
+                        workingCase,
+                        setWorkingCase,
+                        setCourtRecordStartDateIsValid,
+                        updateCase,
+                      )
+                    }}
+                    blueBox={false}
+                    required
+                  />
+                </Box>
                 <Input
                   data-testid="courtLocation"
                   name="courtLocation"
-                  tooltip={formatMessage(
-                    rcCourtRecord.sections.courtLocation.tooltip,
-                  )}
-                  label={formatMessage(
-                    rcCourtRecord.sections.courtLocation.label,
-                  )}
+                  tooltip={formatMessage(m.sections.courtLocation.tooltip)}
+                  label={formatMessage(m.sections.courtLocation.label)}
                   defaultValue={workingCase.courtLocation}
                   placeholder={formatMessage(
-                    rcCourtRecord.sections.courtLocation.placeholder,
+                    m.sections.courtLocation.placeholder,
                   )}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
@@ -252,6 +233,24 @@ export const CourtRecord: React.FC = () => {
                   hasError={courtLocationErrorMessage !== ''}
                   autoComplete="off"
                   required
+                />
+              </BlueBox>
+            </Box>
+            <Box component="section" marginBottom={8}>
+              <Box marginBottom={3}>
+                <HideableText
+                  text={formatMessage(closedCourt.text)}
+                  isHidden={workingCase.isClosedCourtHidden}
+                  onToggleVisibility={(isVisible: boolean) =>
+                    setAndSendToServer(
+                      'isClosedCourtHidden',
+                      isVisible,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
+                  tooltip={formatMessage(closedCourt.tooltip)}
                 />
               </Box>
               <Box marginBottom={3}>
@@ -335,135 +334,51 @@ export const CourtRecord: React.FC = () => {
             <Box component="section" marginBottom={8}>
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">
-                  {`${formatMessage(accusedRights.title, {
-                    accusedType: formatAccusedByGender(
+                  {`${formatMessage(m.sections.accusedBookings.title, {
+                    genderedAccused: formatAccusedByGender(
                       workingCase.accusedGender,
                       NounCases.GENITIVE,
                     ),
                   })} `}
-                  <Text as="span" fontWeight="semiBold" color="red600">
-                    *
-                  </Text>
+                  <Tooltip
+                    text={formatMessage(m.sections.accusedBookings.tooltip)}
+                  />
                 </Text>
               </Box>
-              <Box marginBottom={2}>
-                <HideableText
-                  text={formatMessage(accusedRights.text)}
-                  isHidden={workingCase.isAccusedRightsHidden}
-                  onToggleVisibility={(isVisible: boolean) =>
-                    setAndSendToServer(
-                      'isAccusedRightsHidden',
-                      isVisible,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
-                  }
-                  tooltip={formatMessage(accusedRights.tooltip, {
-                    accusedType: formatAccusedByGender(
-                      workingCase.accusedGender,
-                      NounCases.GENITIVE,
-                    ),
-                  })}
-                />
-              </Box>
-              <BlueBox>
-                <div className={styles.accusedPleaDecision}>
-                  <RadioButton
-                    name="accusedPleaDecision"
-                    id="accused-plea-decision-rejecting"
-                    label={formatMessage(
-                      rcCourtRecord.sections.accusedAppealDecision.options
-                        .reject,
-                      {
-                        accusedType: capitalize(
-                          formatAccusedByGender(workingCase.accusedGender),
-                        ),
-                      },
-                    )}
-                    checked={
-                      workingCase.accusedPleaDecision ===
-                      AccusedPleaDecision.REJECT
-                    }
-                    onChange={() => {
-                      setAndSendToServer(
-                        'accusedPleaDecision',
-                        AccusedPleaDecision.REJECT,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }}
-                    large
-                    backgroundColor="white"
-                  />
-                  <RadioButton
-                    name="accusedPleaDecision"
-                    id="accused-plea-decision-accepting"
-                    label={formatMessage(
-                      rcCourtRecord.sections.accusedAppealDecision.options
-                        .accept,
-                      {
-                        accusedType: capitalize(
-                          formatAccusedByGender(workingCase.accusedGender),
-                        ),
-                      },
-                    )}
-                    checked={
-                      workingCase.accusedPleaDecision ===
-                      AccusedPleaDecision.ACCEPT
-                    }
-                    onChange={() => {
-                      setAndSendToServer(
-                        'accusedPleaDecision',
-                        AccusedPleaDecision.ACCEPT,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }}
-                    large
-                    backgroundColor="white"
-                  />
-                </div>
-                <Input
-                  data-testid="accusedPleaAnnouncement"
-                  name="accusedPleaAnnouncement"
-                  label={`Afstaða ${formatAccusedByGender(
+              <Input
+                data-testid="accusedBookings"
+                name="accusedBookings"
+                label={formatMessage(m.sections.accusedBookings.label, {
+                  genderedAccused: formatAccusedByGender(
                     workingCase.accusedGender,
                     NounCases.GENITIVE,
-                  )}`}
-                  defaultValue={workingCase.accusedPleaAnnouncement}
-                  placeholder={formatMessage(
-                    rcCourtRecord.sections.accusedPleaAnnouncement.placeholder,
-                  )}
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'accusedPleaAnnouncement',
-                      event,
-                      [],
-                      workingCase,
-                      setWorkingCase,
-                      accusedPleaAnnouncementErrorMessage,
-                      setAccusedPleaAnnouncementMessage,
-                    )
-                  }
-                  onBlur={(event) =>
-                    validateAndSendToServer(
-                      'accusedPleaAnnouncement',
-                      event.target.value,
-                      [],
-                      workingCase,
-                      updateCase,
-                      setAccusedPleaAnnouncementMessage,
-                    )
-                  }
-                  errorMessage={accusedPleaAnnouncementErrorMessage}
-                  hasError={accusedPleaAnnouncementErrorMessage !== ''}
-                  textarea
-                  rows={7}
-                />
-              </BlueBox>
+                  ),
+                })}
+                defaultValue={workingCase.accusedBookings}
+                placeholder={formatMessage(
+                  m.sections.accusedBookings.placeholder,
+                )}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'accusedBookings',
+                    event,
+                    [],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'accusedBookings',
+                    event.target.value,
+                    [],
+                    workingCase,
+                    updateCase,
+                  )
+                }
+                textarea
+                rows={7}
+              />
             </Box>
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
@@ -518,8 +433,7 @@ export const CourtRecord: React.FC = () => {
                 !validate(workingCase.prosecutorDemands ?? '', 'empty')
                   .isValid ||
                 !validate(workingCase.litigationPresentations ?? '', 'empty')
-                  .isValid ||
-                !workingCase.accusedPleaDecision
+                  .isValid
               }
             />
           </FormContentContainer>

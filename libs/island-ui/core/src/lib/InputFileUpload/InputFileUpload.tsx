@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
 import cn from 'classnames'
 
-import * as styles from './InputFileUpload.treat'
+import * as styles from './InputFileUpload.css'
 
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
@@ -10,6 +10,7 @@ import { Button } from '../Button/Button'
 import { theme, Colors } from '@island.is/island-ui/theme'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconTypes } from '../IconRC/iconMap'
+import { useMeasure } from 'react-use'
 
 export type UploadFileStatus = 'error' | 'done' | 'uploading'
 
@@ -81,6 +82,8 @@ export const UploadedFile = ({
   onOpenFile,
   hideIcons = false,
 }: UploadedFileProps) => {
+  const [ref, { width }] = useMeasure()
+
   const statusColor = (status?: UploadFileStatus): Colors => {
     switch (status) {
       case 'error':
@@ -107,11 +110,21 @@ export const UploadedFile = ({
     return bytes ? Math.ceil(bytes / 1024) : ''
   }
 
+  const truncateInMiddle = (str: string) => {
+    if (str.length > 70) {
+      const nrOfCharacters = width / 25
+      return `${str.slice(0, nrOfCharacters)}...${str.slice(-nrOfCharacters)}`
+    } else {
+      return str
+    }
+  }
+
   const isUploading =
     file.percent && file.percent < 100 && file.status === 'uploading'
 
   return (
     <Box
+      ref={ref}
       display="flex"
       flexDirection="row"
       alignItems="center"
@@ -138,7 +151,7 @@ export const UploadedFile = ({
     >
       <Text truncate fontWeight="semiBold">
         <Box className={{ [styles.fileName]: onOpenFile }}>
-          {file.name}
+          {truncateInMiddle(file.name)}
           {showFileSize && file.size && (
             <Text as="span">{` (${kb(file.size)}KB)`}</Text>
           )}

@@ -1,23 +1,39 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  ForbiddenException,
+  Get,
+  Param,
+  UseGuards,
+} from '@nestjs/common'
 
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { StaffService } from './staff.service'
 import { StaffModel } from './models'
-import { TokenGuard } from '@island.is/financial-aid/auth'
+import { apiBasePath, RolesRule } from '@island.is/financial-aid/shared/lib'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { RolesGuard } from '../../guards/roles.guard'
+import { RolesRules } from '../../decorators'
 
-@Controller('api/staff')
+@UseGuards(IdsUserGuard, RolesGuard)
+@RolesRules(RolesRule.VEITA)
+@Controller(`${apiBasePath}/staff`)
 @ApiTags('staff')
 export class StaffController {
   constructor(private readonly staffService: StaffService) {}
 
-  @UseGuards(TokenGuard)
   @Get(':nationalId')
   @ApiOkResponse({
     type: StaffModel,
     description: 'Gets staff by nationalId',
   })
-  async getStaffByNationalId(@Param('nationalId') nationalId: string) {
-    return await this.staffService.findByNationalId(nationalId)
+  async getStaffByNationalId(
+    @Param('nationalId') nationalId: string,
+  ): Promise<StaffModel> {
+    const staff = await this.staffService.findByNationalId(nationalId)
+    if (staff === null || staff.active === false) {
+      throw new ForbiddenException('Staff not found or is not active')
+    }
+    return staff
   }
 }

@@ -54,37 +54,16 @@ export const ruling = {
         'Notaður sem heiti á öðrum þingmerktum skjölum þar sem {documentName} er nafn skjals og {documentNumber} er númer skjals og er sjálfkrafa bætt við í kóða.',
     },
   }),
-  accusedRights: defineMessage({
-    id: 'judicial.system.backend:pdf.ruling.accused_rights',
-    defaultMessage:
-      'Sakborningi er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
-    description: 'Notaður sem fyrirsögn réttindi hins kærða.',
-  }),
-  accusedDemandsIntro: defineMessage({
-    id: 'judicial.system.backend:pdf.ruling.accused_demands_into',
-    defaultMessage: '{accused} er kynnt krafa á dómskjali nr. 1.',
-    description:
-      'Notaður sem tilkynning um að kærða hafi verið kynnt krafa þar sem {accused} er ávarp til kærða í réttu kyni og er sjálfkrafa bætt við í kóða.',
-  }),
-  accusedPlea: defineMessages({
-    accept: {
-      id: 'judicial.system.backend:pdf.ruling.accused_plea.accept',
-      defaultMessage: '{accused} samþykkir kröfuna.',
-      description:
-        'Notaður fyrir samþykki kærða á kröfunni þar sem {accused} er ávarp til kærða í réttu kyni og er sjálfkrafa bætt við í kóða.',
-    },
-    reject: {
-      id: 'judicial.system.backend:pdf.ruling.accused_plea.reject',
-      defaultMessage: '{accused} mótmælir kröfunni.',
-      description:
-        'Notaður fyrir höfnun kærða á kröfunni þar sem {accused} er ávarp til kærða í réttu kyni og er sjálfkrafa bætt við í kóða.',
-    },
-  }),
   rulingHeading: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.ruling_heading',
     defaultMessage: 'Úrskurður',
     description: 'Notaður sem fyrirsögn á úrskurð.',
   }),
+  rulingShortVersionPlaceholder: {
+    id: 'judicial.system.backend:pdf.ruling.short_version_placeholder',
+    defaultMessage: '(...)',
+    description: 'Notaður í stað úrskurðartexta í stuttu útgáfu úrskurðar.',
+  },
   courtDemandsHeading: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.court_demands_heading',
     defaultMessage: 'Krafa',

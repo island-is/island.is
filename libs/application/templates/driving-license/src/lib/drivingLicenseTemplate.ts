@@ -7,9 +7,14 @@ import {
   DefaultStateLifeCycle,
   DefaultEvents,
 } from '@island.is/application/core'
+import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { Events, States } from './constants'
 import { dataSchema } from './dataSchema'
+import {
+  getApplicationFeatureFlags,
+  DrivingLicenseFeatureFlags,
+} from './getApplicationFeatureFlags'
 import { m } from './messages'
 
 const template: ApplicationTemplate<
@@ -19,6 +24,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_LICENSE,
   name: m.applicationForDrivingLicense,
+  institution: m.nationalCommissionerOfPolice,
   dataSchema,
   readyForProduction: true,
   stateMachineConfig: {
@@ -35,8 +41,22 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: 'applicant',
-              formLoader: () =>
-                import('../forms/application').then((val) => val.application),
+              formLoader: async ({ featureFlagClient }) => {
+                const featureFlags = await getApplicationFeatureFlags(
+                  featureFlagClient as FeatureFlagClient,
+                )
+
+                const getApplication = await import(
+                  '../forms/application'
+                ).then((val) => val.getApplication)
+
+                return getApplication(
+                  featureFlags[DrivingLicenseFeatureFlags.ALLOW_FAKE],
+                  featureFlags[
+                    DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION
+                  ],
+                )
+              },
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
@@ -50,6 +70,7 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.REJECT]: { target: States.DECLINED },
         },
       },
       [States.PAYMENT]: {
@@ -91,6 +112,22 @@ const template: ApplicationTemplate<
             {
               id: 'applicant',
               formLoader: () => import('../forms/done').then((val) => val.done),
+              read: 'all',
+            },
+          ],
+        },
+        type: 'final' as const,
+      },
+      [States.DECLINED]: {
+        meta: {
+          name: 'Declined',
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/declined').then((val) => val.declined),
               read: 'all',
             },
           ],

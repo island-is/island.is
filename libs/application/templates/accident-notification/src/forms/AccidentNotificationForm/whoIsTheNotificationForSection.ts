@@ -1,13 +1,15 @@
 import {
   buildCheckboxField,
+  buildCustomField,
   buildFileUploadField,
   buildMultiField,
   buildRadioField,
   buildSection,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
-
+import { UPLOAD_ACCEPT, YES } from '../../constants'
 import {
   childInCustody,
   injuredPersonInformation,
@@ -15,7 +17,6 @@ import {
   powerOfAttorney,
   whoIsTheNotificationFor,
 } from '../../lib/messages'
-
 import {
   PowerOfAttorneyUploadEnum,
   WhoIsTheNotificationForEnum,
@@ -26,7 +27,6 @@ import {
   isReportingOnBehalfOfInjured,
 } from '../../utils'
 import { isPowerOfAttorney } from '../../utils/isPowerOfAttorney'
-import { UPLOAD_ACCEPT, YES } from '../../constants'
 import { isUploadNow } from '../../utils/isUploadNow'
 
 export const whoIsTheNotificationForSection = buildSection({
@@ -41,6 +41,7 @@ export const whoIsTheNotificationForSection = buildSection({
         buildRadioField({
           id: 'whoIsTheNotificationFor.answer',
           title: '',
+          width: 'half',
           options: [
             {
               value: WhoIsTheNotificationForEnum.ME,
@@ -137,6 +138,8 @@ export const whoIsTheNotificationForSection = buildSection({
             buildCheckboxField({
               id: 'juridicalPerson.companyConfirmation',
               title: '',
+              large: false,
+              backgroundColor: 'white',
               options: [
                 {
                   value: YES,
@@ -168,11 +171,22 @@ export const whoIsTheNotificationForSection = buildSection({
                 },
                 {
                   value: PowerOfAttorneyUploadEnum.UPLOADLATER,
-                  label:
-                    'Ég vil klára að tilkynna slys og skila inn umboði síðar',
+                  label: powerOfAttorney.labels.uploadLater,
                 },
               ],
             }),
+            buildCustomField(
+              {
+                id: 'attachments.injuryCertificate.alert',
+                title: powerOfAttorney.alertMessage.title,
+                description: powerOfAttorney.alertMessage.description,
+                component: 'FieldAlertMessage',
+                condition: (formValue) =>
+                  getValueViaPath(formValue, 'powerOfAttorney.type') ===
+                  PowerOfAttorneyUploadEnum.UPLOADLATER,
+              },
+              { type: 'warning' },
+            ),
           ],
         }),
       ],
@@ -202,21 +216,6 @@ export const whoIsTheNotificationForSection = buildSection({
               width: 'half',
               required: true,
             }),
-            buildTextField({
-              id: 'childInCustody.email',
-              backgroundColor: 'blue',
-              title: childInCustody.labels.email,
-              variant: 'email',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'childInCustody.phoneNumber',
-              backgroundColor: 'blue',
-              variant: 'tel',
-              title: childInCustody.labels.tel,
-              format: '###-####',
-              width: 'half',
-            }),
           ],
         }),
       ],
@@ -232,7 +231,7 @@ export const whoIsTheNotificationForSection = buildSection({
           description: powerOfAttorney.upload.description,
           children: [
             buildFileUploadField({
-              id: 'attachments.powerOfAttorneyFile',
+              id: 'attachments.powerOfAttorneyFile.file',
               title: '',
               introduction: '',
               uploadAccept: UPLOAD_ACCEPT,

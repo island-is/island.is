@@ -15,10 +15,10 @@ import { useVirtualTouchable } from '../../private/touchable/useVirtualTouchable
 import { hideFocusRingsClassName } from '../../private/hideFocusRings/hideFocusRings'
 import { Overlay } from '../../private/Overlay/Overlay'
 import { Text } from '../../Text/Text'
-import { TextVariants } from '../../Text/Text.treat'
+import { TextVariants } from '../../Text/Text.css'
 import { AccordionContext } from '../../Accordion/Accordion'
 import { Icon } from '../../IconRC/Icon'
-import * as styles from './AccordionItem.treat'
+import * as styles from './AccordionItem.css'
 import { Colors } from '@island.is/island-ui/theme'
 
 type IconVariantTypes = 'default' | 'small' | 'sidebar'
@@ -34,8 +34,6 @@ type BaseProps = {
   iconVariant?: IconVariantTypes
   visibleContent?: ReactNode
   children: ReactNode
-  startExpanded?: boolean
-  onClick?: () => void
   onBlur?: () => void
   onFocus?: () => void
 }
@@ -44,12 +42,14 @@ type StateProps =
   | {
       expanded: boolean
       onToggle: (expanded: boolean) => void
-      onClick?: never
       startExpanded?: never
+      onClick?: never
     }
   | {
       expanded?: never
       onToggle?: never
+      startExpanded?: boolean
+      onClick?: () => void
     }
 
 // ---------------------------------------------------------------------------
@@ -199,7 +199,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
 
 // ---------------------------------------------------------------------------
 
-export type AccordionCardProps = BaseProps
+export type AccordionCardProps = AccordionItemProps
 
 export const AccordionCard = (props: AccordionCardProps) => {
   const [isFocused, setIsFocused] = useState<boolean>(false)
@@ -227,7 +227,8 @@ export const AccordionCard = (props: AccordionCardProps) => {
 export type SidebarAccordionProps = Omit<
   BaseProps,
   'labelVariant' | 'iconVariant'
->
+> &
+  StateProps
 
 export const SidebarAccordion = (props: SidebarAccordionProps) => {
   return (

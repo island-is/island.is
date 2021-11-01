@@ -2,55 +2,64 @@ import { useContext } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   Application,
+  ApplicationEventType,
+  ApplicationFilters,
   ApplicationState,
 } from '@island.is/financial-aid/shared/lib'
-import { UpdateApplicationMutation } from '../../graphql'
 import { ApplicationFiltersContext } from '../components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 import { AdminContext } from '../components/AdminProvider/AdminProvider'
-
-interface SaveData {
-  application: Application
-}
+import {
+  UpdateApplicationMutation,
+  ApplicationFiltersMutation,
+} from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 export const useApplicationState = () => {
-  const [
-    updateApplicationMutation,
-    { loading: saveLoading },
-  ] = useMutation<SaveData>(UpdateApplicationMutation)
+  const [updateApplicationMutation, { loading: saveLoading }] = useMutation<{
+    updateApplication: Application
+  }>(UpdateApplicationMutation)
 
-  const { applicationFilters, setApplicationFilters } = useContext(
-    ApplicationFiltersContext,
-  )
+  const [applicationFiltersQuery, { loading: loadingFilters }] = useMutation<{
+    applicationFilters: ApplicationFilters
+  }>(ApplicationFiltersMutation)
+
+  const { setApplicationFilters } = useContext(ApplicationFiltersContext)
+
   const { admin } = useContext(AdminContext)
 
+  const fetchAndSetFilters = async () => {
+    const { data } = await applicationFiltersQuery()
+    if (data) {
+      setApplicationFilters(data.applicationFilters)
+    }
+  }
+
   const changeApplicationState = async (
-    application: Application,
+    applicationId: string,
     state: ApplicationState,
+    event: ApplicationEventType,
     amount?: number,
     rejection?: string,
+    comment?: string,
   ) => {
-    const prevState = application.state
-
-    if (saveLoading === false && application) {
-      await updateApplicationMutation({
+    if (saveLoading === false && loadingFilters === false && applicationId) {
+      const { data } = await updateApplicationMutation({
         variables: {
           input: {
-            id: application.id,
+            id: applicationId,
             state,
             amount,
             rejection,
+            comment,
             staffId: admin?.staff?.id,
+            event,
           },
         },
       })
-    }
 
-    if (applicationFilters && setApplicationFilters) {
-      setApplicationFilters((preState) => ({
-        ...preState,
-        [prevState]: applicationFilters[prevState] - 1,
-        [state]: applicationFilters[state] + 1,
-      }))
+      if (data) {
+        await fetchAndSetFilters()
+        return data.updateApplication
+      }
     }
   }
 

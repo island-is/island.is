@@ -4,6 +4,7 @@ import { translateTexts } from '../api/index'
 import richTextEditor from './widgets/richTextEditor'
 import singleLine from './widgets/singleLine'
 import multipleLine from './widgets/multipleLine'
+import markdownEditor from './widgets/markdownEditor'
 
 interface WidgetActions {
   extractText: (value: any) => string[]
@@ -55,7 +56,7 @@ async function populateField(field: any, eInterface: any, texts: string[]) {
     const { widgetId } = eInterface.controls.filter(
       (a: any) => a['fieldId'] === field.id,
     )[0]
-    const { extractText, createValue, ignore } = selectWidget(widgetId)
+    const { createValue, ignore } = selectWidget(widgetId)
     // ignore: Either not implemented or type not supported
     if (ignore) {
       return
@@ -84,6 +85,8 @@ function selectWidget(widgetId: string): WidgetActions | any {
       return singleLine
     case 'multipleLine':
       return multipleLine
+    case 'markdown':
+      return markdownEditor
     default:
       return {
         ignore: true,

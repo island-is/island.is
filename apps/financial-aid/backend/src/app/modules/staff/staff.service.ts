@@ -10,11 +10,18 @@ export class StaffService {
     private readonly staffModel: typeof StaffModel,
   ) {}
 
-  // TODO: Add staff guard
   async findByNationalId(nationalId: string): Promise<StaffModel> {
     return await this.staffModel.findOne({
       where: {
         nationalId,
+      },
+    })
+  }
+
+  async findById(id: string): Promise<StaffModel> {
+    return await this.staffModel.findOne({
+      where: {
+        id,
       },
     })
   }

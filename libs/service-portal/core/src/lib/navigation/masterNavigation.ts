@@ -59,9 +59,14 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.FamilyRoot,
           },
           {
-            // Medmaeli
+            // Petitions
             name: m.endorsements,
-            path: ServicePortalPath.Endorsements,
+            path: ServicePortalPath.Petitions,
+          },
+          {
+            // Petitions Admin
+            name: m.endorsementsAdmin,
+            path: ServicePortalPath.PetitionsAdminView,
           },
         ],
       },
@@ -156,7 +161,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Fjarmal
       {
         name: m.finance,
-        path: ServicePortalPath.FinanceStatus,
+        path: ServicePortalPath.FinanceRoot,
         children: [
           {
             name: m.financeStatus,
@@ -210,17 +215,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           type: 'outline',
           icon: 'home',
-        },
-      },
-
-      // Fjármál
-      {
-        name: m.finance,
-        path: ServicePortalPath.FinanceRoot,
-        systemRoute: true,
-        icon: {
-          type: 'outline',
-          icon: 'cellular',
         },
       },
 

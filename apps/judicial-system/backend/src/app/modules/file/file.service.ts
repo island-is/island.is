@@ -29,6 +29,8 @@ import {
 
 @Injectable()
 export class FileService {
+  private throttle = Promise.resolve('')
+
   constructor(
     @InjectModel(CaseFile)
     private readonly fileModel: typeof CaseFile,
@@ -58,6 +60,40 @@ export class FileService {
     } catch (error) {
       this.logger.error(`Error while deleting file ${key} from S3`, error)
     }
+  }
+
+  private async throttleUploadStream(
+    file: CaseFile,
+    courtId: string | undefined,
+  ): Promise<string> {
+    this.logger.debug(
+      `Waiting to upload file ${file.id} of case ${file.caseId}`,
+    )
+
+    await this.throttle.catch((reason) => {
+      this.logger.error('Previous upload failed', { reason })
+    })
+
+    this.logger.debug(
+      `Starting to upload file ${file.id} of case ${file.caseId}`,
+    )
+
+    const content = await this.awsS3Service.getObject(file.key)
+
+    if (!environment.production) {
+      writeFile(`${file.name}`, content)
+    }
+
+    const streamId = this.courtService.uploadStream(
+      courtId,
+      file.name,
+      file.type,
+      content,
+    )
+
+    this.logger.debug(`Done uploading file ${file.id} of case ${file.caseId}`)
+
+    return streamId
   }
 
   async findById(id: string, caseId: string): Promise<CaseFile | null> {
@@ -196,18 +232,9 @@ export class FileService {
       )
     }
 
-    const content = await this.awsS3Service.getObject(file.key)
+    this.throttle = this.throttleUploadStream(file, courtId)
 
-    if (!environment.production) {
-      writeFile(`${file.name}`, content)
-    }
-
-    const streamId = await this.courtService.uploadStream(
-      courtId,
-      file.name,
-      file.type,
-      content,
-    )
+    const streamId = await this.throttle
 
     const documentId = await this.courtService.createDocument(
       courtId,

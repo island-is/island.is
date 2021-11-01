@@ -73,7 +73,7 @@ const format = (str) => {
     .join('')
 }
 
-const printContent = (apps, libs, overview, repo, misc) => {
+const printContent = (apps, libs, overview, repo, reference, misc) => {
   const formatDeep = (arr) =>
     arr
       .map(({ name, path, fromRoot }, index) => {
@@ -117,6 +117,10 @@ ${formatDeep(apps)}
 ## Libs
 
 ${formatDeep(libs)}
+
+## Reference
+
+${formatDeep(reference)}
 
 ## Misc
 
@@ -194,15 +198,19 @@ const fromDir = async (startPath, res = [], readmeAsRoot = false) => {
  * To run this script, do `yarn gitbook`
  */
 const generateSummary = async () => {
-  const [apps, libs, overview, repo, misc] = await Promise.all([
+  const [apps, libs, overview, repo, reference, misc] = await Promise.all([
     await fromDir('./apps'),
     await fromDir('./libs'),
     await fromDir('./handbook/technical-overview', [], true),
     await fromDir('./handbook/repository'),
+    await fromDir('./handbook/reference', [], true),
     await fromDir('./handbook/misc'),
   ])
 
-  fs.writeFileSync('SUMMARY.md', printContent(apps, libs, overview, repo, misc))
+  fs.writeFileSync(
+    'SUMMARY.md',
+    printContent(apps, libs, overview, repo, reference, misc),
+  )
 }
 
 const run = async () => {

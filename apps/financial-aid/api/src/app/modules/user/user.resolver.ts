@@ -1,79 +1,68 @@
-import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Context, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  ApplicationState,
-  CurrentApplication,
-  HomeCircumstances,
-} from '@island.is/financial-aid/shared/lib'
 import type { User } from '@island.is/financial-aid/shared/lib'
-import {
-  CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
-} from '@island.is/financial-aid/auth'
 
 import { UserModel } from './user.model'
-import { UserService } from './user.service'
 
-import { CurrentApplicationModel } from '../application'
-import { environment } from '../../../environments'
 import { StaffModel } from '../staff/models'
+import { CurrentUser } from '../decorators'
+import { BackendAPI } from '../../../services'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(IdsUserGuard)
 @Resolver(() => UserModel)
 export class UserResolver {
   constructor(
-    private readonly userService: UserService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
-  private fakeUsers: { [key: string]: CurrentApplication | null } = {
-    '0000000000': null,
-    '0000000001': {
-      id: 'dbfc6ff1-58e0-4815-8fa9-1e06ddace1c3',
-      state: ApplicationState.INPROGRESS,
-      homeCircumstances: HomeCircumstances.OWNPLACE,
-      usePersonalTaxCredit: true,
-      created: '2021-09-11 18:11:17.103+00',
-    },
-    '0000000003': {
-      id: '5ebdb6ca-edcb-4391-bda7-f5999d2b6b08',
-      state: ApplicationState.DATANEEDED,
-      homeCircumstances: HomeCircumstances.OWNPLACE,
-      usePersonalTaxCredit: true,
-      created: '2021-09-12 18:11:17.103+00',
-    },
+  private async handleNotFoundException<T>(callback: () => Promise<T>) {
+    try {
+      return await callback()
+    } catch (e) {
+      if (e.extensions.response.status === 404) {
+        return undefined
+      }
+      throw e
+    }
   }
 
   @Query(() => UserModel, { nullable: true })
-  async currentUser(
-    @CurrentGraphQlUser() user: User,
-  ): Promise<UserModel | undefined> {
+  async currentUser(@CurrentUser() user: User): Promise<UserModel | undefined> {
     this.logger.debug('Getting current user')
-
     return user as UserModel
   }
 
-  @ResolveField('currentApplication', () => CurrentApplicationModel)
-  async currentApplication(
+  @ResolveField('isSpouse', () => Boolean)
+  async isSpouse(
     @Parent() user: User,
-  ): Promise<CurrentApplicationModel | null> {
-    // Local development
-    this.logger.debug(
-      `Getting current application for nationalId: ${user.nationalId}`,
-    )
-    if (environment.auth.allowFakeUsers && user.nationalId in this.fakeUsers) {
-      return this.fakeUsers[user.nationalId]
-    }
-    return await this.userService.getCurrentApplication(user.nationalId)
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Boolean> {
+    const isSpouse = await backendApi.isSpouse(user.nationalId)
+    return isSpouse.HasApplied
   }
 
-  @ResolveField('staff', () => StaffModel)
-  async staff(@Parent() user: User): Promise<StaffModel> {
-    this.logger.debug(`Getting staff for nationalId: ${user.nationalId}`)
-    return await this.userService.getStaff(user.nationalId)
+  @ResolveField('currentApplication', () => String)
+  async currentApplication(
+    @Parent() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<string | undefined> {
+    this.logger.debug('Getting current application for nationalId')
+    return await this.handleNotFoundException(() =>
+      backendApi.getCurrentApplication(user.nationalId),
+    )
+  }
+
+  @ResolveField('staff', () => StaffModel, { name: 'staff', nullable: true })
+  async staff(
+    @Parent() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<StaffModel | undefined> {
+    this.logger.debug('Getting staff for nationalId')
+    return await backendApi.getStaff(user.nationalId)
   }
 }

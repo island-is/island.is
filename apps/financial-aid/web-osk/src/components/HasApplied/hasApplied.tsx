@@ -1,14 +1,13 @@
 import React, { useContext } from 'react'
 import { Text, Button } from '@island.is/island-ui/core'
 
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
-
 import { ContentContainer } from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
 import { Routes } from '@island.is/financial-aid/shared/lib'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const HasApplied = () => {
-  const { user } = useContext(UserContext)
+  const { user } = useContext(AppContext)
   const router = useRouter()
 
   return (
@@ -21,7 +20,7 @@ const HasApplied = () => {
       <Button
         onClick={() => {
           router.push(
-            `${Routes.statusPage(user?.currentApplication?.id as string)}`,
+            `${Routes.statusPage(user?.currentApplication as string)}`,
           )
         }}
       >

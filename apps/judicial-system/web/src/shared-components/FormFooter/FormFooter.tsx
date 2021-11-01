@@ -1,7 +1,12 @@
 import React from 'react'
-import { Box, Button } from '@island.is/island-ui/core'
-
 import { useRouter } from 'next/router'
+import {
+  Box,
+  Button,
+  ButtonTypes,
+  IconMapIcon,
+} from '@island.is/island-ui/core'
+
 import InfoBox from '../InfoBox/InfoBox'
 interface Props {
   previousUrl?: string
@@ -10,6 +15,8 @@ interface Props {
   nextIsDisabled?: boolean
   nextIsLoading?: boolean
   nextButtonText?: string
+  nextButtonIcon?: IconMapIcon
+  nextButtonColorScheme?: ButtonTypes['colorScheme']
   onNextButtonClick?: () => void
   hideNextButton?: boolean
   infoBoxText?: string
@@ -19,7 +26,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
   const router = useRouter()
 
   return (
-    <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
+    <Box display="flex" justifyContent="spaceBetween" alignItems="center">
       <Button
         variant="ghost"
         disabled={props.previousIsDisabled}
@@ -32,8 +39,9 @@ const FormFooter: React.FC<Props> = (props: Props) => {
       {!props.hideNextButton && (
         <Button
           data-testid="continueButton"
-          icon="arrowForward"
+          icon={props.nextButtonIcon ?? 'arrowForward'}
           disabled={props.nextIsDisabled}
+          colorScheme={props.nextButtonColorScheme ?? 'default'}
           loading={props.nextIsLoading}
           onClick={() => {
             if (props.onNextButtonClick) {

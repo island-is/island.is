@@ -15,6 +15,7 @@ import {
   getApplicationUIFields,
 } from '@island.is/application/template-loader'
 import { useApplicationNamespaces, useLocale } from '@island.is/localization'
+import { useFeatureFlagClient } from '@island.is/feature-flags'
 
 import { RefetchProvider } from '../context/RefetchContext'
 import { FieldProvider, useFields } from '../context/FieldContext'
@@ -73,6 +74,7 @@ const ShellWrapper: FC<{
   const [form, setForm] = useState<Form>()
   const [, fieldsDispatch] = useFields()
   const { formatMessage } = useLocale()
+  const featureFlagClient = useFeatureFlagClient()
 
   useApplicationNamespaces(application.typeId)
 
@@ -104,7 +106,9 @@ const ShellWrapper: FC<{
             )
 
             if (currentRole && currentRole.formLoader) {
-              const formDescriptor = await currentRole.formLoader()
+              const formDescriptor = await currentRole.formLoader({
+                featureFlagClient,
+              })
               setForm(formDescriptor)
               setDataSchema(template.dataSchema)
               fieldsDispatch(applicationFields)
@@ -121,6 +125,7 @@ const ShellWrapper: FC<{
     nationalRegistryId,
     dataSchema,
     formatMessage,
+    featureFlagClient,
   ])
 
   if (!form || !dataSchema) {

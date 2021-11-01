@@ -19,7 +19,7 @@ import { useLocale } from '@island.is/localization'
 import { complaint, sharedFields } from '../../lib/messages'
 import { YES, NO } from '../../shared'
 import { ArrayField } from 'react-hook-form'
-import * as styles from './ComplaineeRepeater.treat'
+import * as styles from './ComplaineeRepeater.css'
 import { ComplaineeField } from './ComplaineeRepeater'
 
 interface Props {
@@ -122,7 +122,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
         largeButtons
         options={[
           { value: YES, label: formatMessage(sharedFields.yes) },
-          { value: NO, label: formatMessage(sharedFields.no) },
+          { value: NO, label: formatMessage(sharedFields.noIdontKnow) },
         ]}
         split="1/2"
         onSelect={handleOnSelect}

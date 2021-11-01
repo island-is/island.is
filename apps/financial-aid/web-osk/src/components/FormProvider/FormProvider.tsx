@@ -3,6 +3,8 @@ import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import {
   HomeCircumstances,
   Employment,
+  FamilyStatus,
+  Spouse,
 } from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
 
@@ -31,6 +33,9 @@ export interface Form {
   section?: Array<string>
   formComment?: string
   fileUploadComment?: string
+  familyStatus?: FamilyStatus
+  spouse?: Spouse
+  phoneNumber?: string
 }
 
 export const initialState = {

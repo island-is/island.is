@@ -6,8 +6,8 @@ export type CompanyInfo = {
   email: string
   phoneNumber: string
   type: AccidentTypeEnum | WorkAccidentTypeEnum
-  employee?: {
-    radioButton: YesOrNo
+  onPayRoll?: {
+    answer: YesOrNo
   }
 }
 
@@ -43,7 +43,6 @@ export enum AttachmentsEnum {
   INJURYCERTIFICATE = 'injuryCertificate',
   HOSPITALSENDSCERTIFICATE = 'hospitalSendsCertificate',
   SENDCERTIFICATELATER = 'sendCertificateLater',
-  INJUREDSENDSCERTIFICATE = 'injuredSendsCertificate',
 }
 
 export enum GeneralWorkplaceAccidentLocationEnum {

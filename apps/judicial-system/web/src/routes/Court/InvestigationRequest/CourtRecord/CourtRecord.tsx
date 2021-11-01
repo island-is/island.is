@@ -12,7 +12,7 @@ import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import CourtRecordForm from './CourtRecordForm'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icCourtRecord } from '@island.is/judicial-system-web/messages'
+import { icCourtRecord as m } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
 
 const CourtRecord = () => {
@@ -88,7 +88,9 @@ const CourtRecord = () => {
         )
       }
 
-      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      if (theCase.courtAttendees !== '') {
+        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+      }
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
@@ -97,15 +99,22 @@ const CourtRecord = () => {
       if (theCase.sessionArrangements === SessionArrangements.REMOTE_SESSION) {
         autofill(
           'litigationPresentations',
-          formatMessage(
-            icCourtRecord.sections.litigationPresentations.autofill,
-          ),
+          formatMessage(m.sections.litigationPresentations.autofill),
           theCase,
         )
       }
+
+      if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+        autofill(
+          'accusedBookings',
+          `${formatMessage(m.sections.accusedBookings.autofill)}`,
+          theCase,
+        )
+      }
+
       setWorkingCase(data.case)
     }
-  }, [workingCase, setWorkingCase, data, autofill])
+  }, [workingCase, setWorkingCase, data, autofill, formatMessage])
 
   return (
     <PageLayout

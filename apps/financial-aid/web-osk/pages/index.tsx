@@ -1,34 +1,32 @@
-import React, { useContext, useEffect } from 'react'
-import { Button, Text } from '@island.is/island-ui/core'
-
+import { Routes, User } from '@island.is/financial-aid/shared/lib'
 import { useRouter } from 'next/router'
-import { ContentContainer } from '@island.is/financial-aid-web/osk/src/components'
+import { useContext, useEffect } from 'react'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const Index = () => {
+  const { isAuthenticated, user } = useContext(AppContext)
   const router = useRouter()
   useEffect(() => {
     document.title = 'Umsókn um fjárhagsaðstoð'
   }, [])
 
-  return (
-    <ContentContainer>
-      <Text as="h1" variant="h2" marginBottom={2}>
-        Abbabba þú hefur villst
-      </Text>
+  const returnUrl = (user: User) => {
+    if (user?.isSpouse) {
+      return `${Routes.spouseApplication}`
+    }
 
-      <Button
-        onClick={() => {
-          router.push('/umsokn')
-        }}
-        data-testid="logout-button"
-        preTextIconType="filled"
-        type="button"
-        variant="primary"
-      >
-        heim
-      </Button>
-    </ContentContainer>
-  )
+    if (user?.currentApplication) {
+      return `${Routes.statusPage(user.currentApplication as string)}`
+    }
+
+    return `${Routes.application}`
+  }
+
+  if (isAuthenticated && user) {
+    router.push(returnUrl(user))
+  }
+
+  return null
 }
 
 export default Index

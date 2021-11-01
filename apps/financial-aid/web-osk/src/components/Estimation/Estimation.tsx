@@ -4,14 +4,16 @@ import { Text, Box, Divider } from '@island.is/island-ui/core'
 import {
   aidCalculator,
   calculateAidFinalAmount,
-  calulatePersonalTaxAllowanceUsed,
-  calulateTaxOfAmount,
+  calculatePersonalTaxAllowanceUsed,
+  calculateTaxOfAmount,
   HomeCircumstances,
   getNextPeriod,
+  MartialStatusType,
+  martialStatusTypeFromMartialCode,
 } from '@island.is/financial-aid/shared/lib'
-import { MunicipalityContext } from '@island.is/financial-aid-web/osk/src/components/MunicipalityProvider/MunicipalityProvider'
 
 import format from 'date-fns/format'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 interface Props {
   aboutText: ReactNode
@@ -26,11 +28,18 @@ const Estimation = ({
 }: Props) => {
   const currentYear = format(new Date(), 'yyyy')
 
-  const { municipality } = useContext(MunicipalityContext)
+  const { municipality, nationalRegistryData } = useContext(AppContext)
 
   const aidAmount = useMemo(() => {
     if (municipality && homeCircumstances) {
-      return aidCalculator(homeCircumstances, municipality.aid)
+      return aidCalculator(
+        homeCircumstances,
+        martialStatusTypeFromMartialCode(
+          nationalRegistryData?.spouse.maritalStatus,
+        ) === MartialStatusType.SINGLE
+          ? municipality.individualAid
+          : municipality.cohabitationAid,
+      )
     }
   }, [municipality])
 
@@ -43,14 +52,14 @@ const Estimation = ({
         {
           title: 'Skattur',
           calculation: `- 
-      ${calulateTaxOfAmount(aidAmount, currentYear).toLocaleString(
+      ${calculateTaxOfAmount(aidAmount, currentYear).toLocaleString(
         'de-DE',
       )} kr.`,
         },
         {
           title: 'Persónuafsláttur',
           calculation: `+  
-      ${calulatePersonalTaxAllowanceUsed(
+      ${calculatePersonalTaxAllowanceUsed(
         aidAmount,
         Boolean(usePersonalTaxCredit),
         currentYear,

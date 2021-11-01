@@ -41,7 +41,7 @@ export enum CaseTransition {
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
-export enum CaseCustodyProvisions {
+export enum CaseLegalProvisions {
   _95_1_A = '_95_1_A', // a-lið 1. mgr. 95. gr.
   _95_1_B = '_95_1_B', // b-lið 1. mgr. 95. gr.
   _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
@@ -82,12 +82,6 @@ export enum CaseDecision {
   DISMISSING = 'DISMISSING',
 }
 
-export enum AccusedPleaDecision {
-  ACCEPT = 'ACCEPT',
-  REJECT = 'REJECT',
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
-}
-
 export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
@@ -112,6 +106,7 @@ export interface Case {
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   defenderIsSpokesperson?: boolean
+  isHeightenedSecurityLevel?: boolean
   court?: Institution
   leadInvestigator?: string
   arrestDate?: string
@@ -121,7 +116,7 @@ export interface Case {
   demands?: string
   lawsBroken?: string
   legalBasis?: string
-  custodyProvisions?: CaseCustodyProvisions[]
+  legalProvisions?: CaseLegalProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   requestedOtherRestrictions?: string
   caseFacts?: string
@@ -130,6 +125,7 @@ export interface Case {
   prosecutorOnlySessionRequest?: string
   comments?: string
   caseFilesComments?: string
+  creatingProsecutor?: User
   prosecutor?: User
   sharedWithProsecutorsOffice?: Institution
   courtCaseNumber?: string
@@ -143,9 +139,7 @@ export interface Case {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  isAccusedRightsHidden?: boolean
-  accusedPleaDecision?: AccusedPleaDecision
-  accusedPleaAnnouncement?: string
+  accusedBookings?: string
   litigationPresentations?: string
   courtCaseFacts?: string
   courtLegalArguments?: string
@@ -171,7 +165,8 @@ export interface Case {
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
-  files?: CaseFile[]
+  caseFiles?: CaseFile[]
+  isMasked?: boolean
 }
 
 export interface CreateCase {
@@ -203,6 +198,7 @@ export interface UpdateCase {
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
   defenderIsSpokesperson?: boolean
+  isHeightenedSecurityLevel?: boolean
   courtId?: string
   leadInvestigator?: string
   arrestDate?: string
@@ -212,7 +208,7 @@ export interface UpdateCase {
   demands?: string
   lawsBroken?: string
   legalBasis?: string
-  custodyProvisions?: CaseCustodyProvisions[]
+  legalProvisions?: CaseLegalProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   requestedOtherRestrictions?: string
   caseFacts?: string
@@ -233,9 +229,7 @@ export interface UpdateCase {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  isAccusedAbsent?: boolean
-  accusedPleaDecision?: AccusedPleaDecision
-  accusedPleaAnnouncement?: string
+  accusedBookings?: string
   litigationPresentations?: string
   courtCaseFacts?: string
   courtLegalArguments?: string
@@ -276,6 +270,30 @@ export interface CreateCourtCase {
   type: CaseType
   policeCaseNumber: string
   isExtension: boolean
+}
+
+export const restrictionCases = [CaseType.CUSTODY, CaseType.TRAVEL_BAN]
+
+export const investigationCases = [
+  CaseType.SEARCH_WARRANT,
+  CaseType.BANKING_SECRECY_WAIVER,
+  CaseType.PHONE_TAPPING,
+  CaseType.TELECOMMUNICATIONS,
+  CaseType.TRACKING_EQUIPMENT,
+  CaseType.PSYCHIATRIC_EXAMINATION,
+  CaseType.SOUND_RECORDING_EQUIPMENT,
+  CaseType.AUTOPSY,
+  CaseType.BODY_SEARCH,
+  CaseType.INTERNET_USAGE,
+  CaseType.OTHER,
+]
+
+export function isRestrictionCase(type?: CaseType): boolean {
+  return Boolean(type && restrictionCases.includes(type))
+}
+
+export function isInvestigationCase(type?: CaseType): boolean {
+  return Boolean(type && investigationCases.includes(type))
 }
 
 export const completedCaseStates = [

@@ -6,7 +6,6 @@ import {
   buildSection,
   buildSubSection,
 } from '@island.is/application/core'
-
 import { externalData } from '../../lib/messages'
 import { DataProviderTypes } from '../../types'
 
@@ -43,12 +42,6 @@ export const externalDataSection = buildSection({
               subTitle: externalData.nationalRegistry.description,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: DataProviderTypes.UserProfile,
-              title: externalData.userProfile.title,
-              subTitle: externalData.userProfile.description,
-            }),
-            buildDataProviderItem({
               id: 'revAndCustoms',
               type: '',
               title: externalData.revAndCustoms.title,
@@ -59,6 +52,12 @@ export const externalDataSection = buildSection({
               type: '',
               title: externalData.notifications.title,
               subTitle: externalData.notifications.description,
+            }),
+            buildDataProviderItem({
+              id: 'accidentProvider',
+              type: '',
+              title: externalData.accidentProvider.title,
+              subTitle: externalData.accidentProvider.description,
             }),
           ],
         }),

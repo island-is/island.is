@@ -1,16 +1,14 @@
-import { dedent } from 'ts-dedent'
-import { EmailTemplateGeneratorProps } from '../../../../types'
-import { overviewTemplate } from './overviewTemplate'
-import { SendMailOptions } from 'nodemailer'
-import { Attachment } from 'nodemailer/lib/mailer'
+import { ApplicationConfigurations } from '@island.is/application/core'
 import { AccidentNotificationAnswers } from '@island.is/application/templates/accident-notification'
+import { SendMailOptions } from 'nodemailer'
+import { EmailTemplateGeneratorProps } from '../../../../types'
+import { pathToAsset } from '../accident-notification.utils'
 
 interface ConfirmationEmail {
   (
     props: EmailTemplateGeneratorProps,
     applicationSenderName: string,
     applicationSenderEmail: string,
-    attachments: Attachment[],
   ): SendMailOptions
 }
 
@@ -18,11 +16,10 @@ export const generateConfirmationEmail: ConfirmationEmail = (
   props,
   applicationSenderName,
   applicationSenderEmail,
-  attachments,
 ) => {
   const {
     application,
-    options: { locale },
+    options: { clientLocationOrigin },
   } = props
 
   const answers = application.answers as AccidentNotificationAnswers
@@ -31,22 +28,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
     address: answers.applicant.email,
   }
 
-  const subject = `Tilkynning um slys hefur verið móttekin.`
-  const overview = overviewTemplate(application)
-
-  // TODO: Translations?
-  const body = dedent(`
-    <h2>Tilkynning móttekin</h2>
-    <p>
-      Takk fyrir að tilkynna slys. Sjúkratryggingar Íslands verður í sambandi við þig ef frekari upplýsingar vantar.
-      Ef þú vilt hafa samband getur þú sent tölvupóst á netfangið <a href="mailto:info@sjukra.is">info@sjukra.is</a>
-    </p>
-    <p>
-      Þú getur fylgst með stöðu mála á
-      <a href="https://island.is/umsoknir/tilkynning-um-slys">https://island.is/umsoknir/tilkynning-um-slys</a>
-    </p> </br>
-    ${overview}
-`)
+  const subject = `Tilkynning móttekin.`
 
   return {
     from: {
@@ -55,8 +37,51 @@ export const generateConfirmationEmail: ConfirmationEmail = (
     },
     to: applicant,
     cc: undefined,
-    attachments,
     subject,
-    html: body,
+    template: {
+      title: subject,
+      body: [
+        {
+          component: 'Image',
+          context: {
+            src: pathToAsset('logo.jpg'),
+            alt: 'Ísland.is logo',
+          },
+        },
+        {
+          component: 'Image',
+          context: {
+            src: pathToAsset('manWithBabyIllustration.jpg'),
+            alt: 'Maður með barn myndskreyting',
+          },
+        },
+        {
+          component: 'Heading',
+          context: { copy: subject },
+        },
+        {
+          component: 'Subtitle',
+          context: {
+            copy: 'Skjalanúmer',
+            // Need to get application id from service
+            application: '#13568651',
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy:
+              'Sjúkratryggingar Íslands verður í sambandi við þig ef frekari upplýsingar vantar. Hægt er að skoða tilkynninguna á island.is eða með því að smella á hlekkinn hér að neðan.',
+          },
+        },
+        {
+          component: 'Button',
+          context: {
+            copy: 'Skoða tilkynningu',
+            href: `${clientLocationOrigin}/${ApplicationConfigurations.AccidentNotification.slug}/${application.id}`,
+          },
+        },
+      ],
+    },
   }
 }

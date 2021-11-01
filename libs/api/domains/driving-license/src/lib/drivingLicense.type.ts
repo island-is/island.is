@@ -1,26 +1,3 @@
-import type { Okuskirteini } from '@island.is/clients/driving-license'
-
-export interface Eligibility {
-  id: string
-  issued: Date | undefined
-  expires: Date | undefined
-  comment: string
-}
-
-export interface DrivingLicense {
-  id: Okuskirteini['id']
-  name: string
-  issued: Date | undefined
-  expires: Date | undefined
-  isProvisional: boolean | undefined
-  eligibilities: Eligibility[]
-}
-
-export interface DeprevationType {
-  id: number
-  name: string
-}
-
 export interface StudentInformation {
   name: string
 }
@@ -30,23 +7,19 @@ export interface DrivingLicenseType {
   name: string
 }
 
-export interface RemarkType {
-  id: number
-  remark: boolean
-  for: string
-  name: string
-  description: string
-}
-
-export interface PenaltyPointStatus {
-  nationalId: string
-  isPenaltyPointsOk: boolean
-}
+export type DrivingLicenseApplicationType = 'B-full' | 'B-temp'
 
 export interface NewDrivingLicenseInput {
   juristictionId: number
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
+}
+
+export interface NewTemporaryDrivingLicenseInput {
+  juristictionId: number
+  needsToPresentHealthCertificate: boolean
+  needsToPresentQualityPhoto: boolean
+  teacherNationalId: string
 }
 
 export interface NewDrivingLicenseResult {
@@ -78,6 +51,7 @@ export enum RequirementKey {
   drivingAssessmentMissing = 'DrivingAssessmentMissing',
   drivingSchoolMissing = 'DrivingSchoolMissing',
   deniedByService = 'DeniedByService',
+  localResidency = 'LocalResidency',
 }
 
 export interface ApplicationEligibilityRequirement {
@@ -114,4 +88,8 @@ export interface StudentAssessment {
   studentNationalId: string | null
   teacherNationalId: string | null
   teacherName: string | null
+}
+
+export interface DrivingSchool {
+  hasFinishedSchool: boolean
 }

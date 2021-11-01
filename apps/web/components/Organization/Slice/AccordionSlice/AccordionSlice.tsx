@@ -11,7 +11,7 @@ import {
   AccordionSlice as AccordionSliceSchema,
   Html,
 } from '@island.is/web/graphql/schema'
-import * as styles from './AccordionSlice.treat'
+import * as styles from './AccordionSlice.css'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 interface SliceProps {
@@ -32,7 +32,7 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
         </Text>
         {slice.type === 'accordion' &&
           slice.accordionItems.map((item) => (
-            <Box paddingY={1}>
+            <Box paddingY={1} key={item.id}>
               <AccordionCard
                 id={item.id}
                 label={item.title}
@@ -49,6 +49,7 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
             <Accordion>
               {slice.accordionItems.map((item) => (
                 <AccordionItem
+                  key={item.id}
                   id={item.id}
                   label={item.title}
                   startExpanded={slice.accordionItems.length === 1}

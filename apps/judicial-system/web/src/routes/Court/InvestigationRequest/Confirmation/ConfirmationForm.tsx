@@ -2,24 +2,23 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
+  BlueBox,
   CaseNumbers,
   CourtRecordAccordionItem,
   FormContentContainer,
   FormFooter,
   PdfButton,
   PoliceRequestAccordionItem,
+  RulingAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  CaseAppealDecision,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { CaseDecision } from '@island.is/judicial-system/types'
 import type { Case, User } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
-import { icConfirmation } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  icConfirmation as m,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './Confirmation.treat'
 
 interface Props {
   workingCase: Case
@@ -53,121 +52,46 @@ const Confirmation: React.FC<Props> = (props) => {
           )}`}</Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <Text
-            variant="h2"
-            as="h2"
-          >{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
           <CaseNumbers workingCase={workingCase} />
         </Box>
         <Box marginBottom={9}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <CourtRecordAccordionItem workingCase={workingCase} />
+            <RulingAccordionItem workingCase={workingCase} />
           </Accordion>
         </Box>
-        <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              Úrskurður Héraðsdóms
-            </Text>
-          </Box>
-          <Box marginBottom={7}>
-            <Text variant="eyebrow" color="blue400">
-              Niðurstaða
-            </Text>
-            <Text>
-              <span className={styles.breakSpaces}>{workingCase.ruling}</span>
-            </Text>
-          </Box>
-        </Box>
-        {workingCase.conclusion && (
-          <Box component="section" marginBottom={7}>
+        <Box marginBottom={7}>
+          <BlueBox justifyContent="center">
             <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Úrskurðarorð
+              <Text as="h4" variant="h4">
+                {formatMessage(m.sections.conclusion.title)}
               </Text>
             </Box>
             <Box marginBottom={3}>
-              <Text variant="intro">{workingCase.conclusion}</Text>
+              <Box marginTop={1}>
+                <Text variant="intro">{workingCase.conclusion}</Text>
+              </Box>
             </Box>
-          </Box>
-        )}
-        <Box component="section" marginBottom={7}>
-          <Box marginBottom={1}>
-            <Text variant="h3">
-              {workingCase.judge
-                ? `${workingCase.judge.name} ${workingCase.judge.title}`
-                : `Enginn dómari skráður`}
-            </Text>
-          </Box>
-          {workingCase.sessionArrangements !==
-            SessionArrangements.REMOTE_SESSION && (
-            <Text>
-              Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
-            </Text>
-          )}
+            <Box marginBottom={1}>
+              <Text variant="h5">
+                {workingCase?.judge ? workingCase.judge.name : user?.name}
+              </Text>
+            </Box>
+          </BlueBox>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <Box marginBottom={1}>
-            <Text as="h3" variant="h3">
-              Ákvörðun um kæru
-            </Text>
-          </Box>
-          <Box marginBottom={1}>
-            <Text>
-              {formatMessage(
-                icConfirmation.sections.accusedAppealDecision.disclaimer,
-              )}
-            </Text>
-          </Box>
-          <Box marginBottom={1}>
-            <Text variant="h4">
-              {getAppealDecisionText(
-                AppealDecisionRole.ACCUSED,
-                workingCase.accusedAppealDecision,
-                workingCase.accusedGender,
-                workingCase.type,
-              )}
-            </Text>
-          </Box>
-          <Text variant="h4">
-            {getAppealDecisionText(
-              AppealDecisionRole.PROSECUTOR,
-              workingCase.prosecutorAppealDecision,
-              workingCase.accusedGender,
-            )}
-          </Text>
-          {(workingCase.accusedAppealAnnouncement ||
-            workingCase.prosecutorAppealAnnouncement) && (
-            <Box component="section" marginTop={3}>
-              {workingCase.accusedAppealAnnouncement &&
-                workingCase.accusedAppealDecision ===
-                  CaseAppealDecision.APPEAL && (
-                  <Box>
-                    <Text variant="eyebrow" color="blue400">
-                      Yfirlýsing um kæru varnaraðila
-                    </Text>
-                    <Text>{workingCase.accusedAppealAnnouncement}</Text>
-                  </Box>
-                )}
-              {workingCase.prosecutorAppealAnnouncement &&
-                workingCase.prosecutorAppealDecision ===
-                  CaseAppealDecision.APPEAL && (
-                  <Box marginTop={2}>
-                    <Text variant="eyebrow" color="blue400">
-                      Yfirlýsing um kæru sækjanda
-                    </Text>
-                    <Text>{workingCase.prosecutorAppealAnnouncement}</Text>
-                  </Box>
-                )}
-            </Box>
-          )}
+        <Box marginBottom={3}>
+          <PdfButton
+            caseId={workingCase.id}
+            title={formatMessage(core.pdfButtonRuling)}
+            pdfType="ruling?shortVersion=false"
+          />
         </Box>
         <Box marginBottom={15}>
           <PdfButton
             caseId={workingCase.id}
-            title="Opna PDF þingbók og úrskurð"
-            pdfType="ruling"
+            title={formatMessage(core.pdfButtonRulingShortVersion)}
+            pdfType="ruling?shortVersion=true"
           />
         </Box>
       </FormContentContainer>
@@ -176,7 +100,31 @@ const Confirmation: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
           nextUrl={Constants.REQUEST_LIST_ROUTE}
           nextIsLoading={isLoading}
-          nextButtonText="Staðfesta og hefja undirritun"
+          nextButtonText={formatMessage(
+            workingCase.decision === CaseDecision.ACCEPTING
+              ? m.footer.accepting.continueButtonText
+              : workingCase.decision === CaseDecision.REJECTING
+              ? m.footer.rejecting.continueButtonText
+              : workingCase.decision === CaseDecision.DISMISSING
+              ? m.footer.dismissing.continueButtonText
+              : m.footer.acceptingPartially.continueButtonText,
+          )}
+          nextButtonIcon={
+            workingCase.decision &&
+            [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
+              workingCase.decision,
+            )
+              ? 'checkmark'
+              : 'close'
+          }
+          nextButtonColorScheme={
+            workingCase.decision &&
+            [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
+              workingCase.decision,
+            )
+              ? 'default'
+              : 'destructive'
+          }
           onNextButtonClick={handleNextButtonClick}
           hideNextButton={workingCase.judge?.id !== user?.id}
           infoBoxText={

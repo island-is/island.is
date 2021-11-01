@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
-import { ContentSlug, mapContentSlug } from './models/contentSlug.model'
+import { ContentSlug, ContentSlugLocales } from './models/contentSlug.model'
 import { GenericPage, mapGenericPage } from './models/genericPage.model'
 import {
   GenericOverviewPage,
@@ -31,11 +31,10 @@ import { mapAdgerdirTag } from './models/adgerdirTag.model'
 import { mapOrganization } from './models/organization.model'
 import { OrganizationTags } from './models/organizationTags.model'
 import { mapOrganizationTag } from './models/organizationTag.model'
-import { ContentfulRepository } from './contentful.repository'
+import { ContentfulRepository, localeMap } from './contentful.repository'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
 import { mapUrl, Url } from './models/url.model'
-import { AboutSubPage, mapAboutSubPage } from './models/aboutSubPage.model'
 import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
@@ -395,42 +394,31 @@ export class CmsContentfulService {
     return (result.items as types.INews[]).map(mapNews)[0] ?? null
   }
 
-  async getAboutSubPage({
-    lang,
-    url,
-  }: {
-    lang: string
-    url: string
-  }): Promise<AboutSubPage | null> {
-    const params = {
-      ['content_type']: 'aboutSubPage',
-      include: 10,
-      'fields.url': url,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IAboutSubPageFields>(lang, params)
-      .catch(errorHandler('getAboutSubPage'))
-
-    return (
-      (result.items as types.IAboutSubPage[]).map(mapAboutSubPage)[0] ?? null
-    )
-  }
-
   async getContentSlug({
     id,
-    lang,
   }: GetContentSlugInput): Promise<ContentSlug | null> {
-    const params = {
-      'sys.id': id,
-      include: 10,
-    }
-
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IArticleFields>(lang, params)
+      .getClient()
+      .getEntry<{ slug: Record<string, string> }>(id, {
+        locale: '*',
+        include: 1,
+      })
       .catch(errorHandler('getContentSlug'))
 
-    return (result.items as types.IArticle[]).map(mapContentSlug)[0] ?? null
+    let slugs: ContentSlugLocales = { is: '', en: '' }
+
+    if (result?.fields?.slug) {
+      slugs = Object.keys(localeMap).reduce((obj, k) => {
+        obj[k] = result?.fields?.slug?.[localeMap[k]] ?? ''
+        return obj
+      }, {} as typeof localeMap)
+    }
+
+    return {
+      id: result?.sys?.id,
+      slug: slugs,
+      type: result?.sys?.contentType?.sys?.id ?? '',
+    }
   }
 
   async getGenericPage({

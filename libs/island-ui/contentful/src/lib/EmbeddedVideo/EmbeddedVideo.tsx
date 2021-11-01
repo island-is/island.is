@@ -9,7 +9,7 @@ import {
   Checkbox,
 } from '@island.is/island-ui/core'
 
-import * as styles from './EmbeddedVideo.treat'
+import * as styles from './EmbeddedVideo.css'
 
 export interface EmbeddedVideoProps {
   title?: string

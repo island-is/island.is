@@ -125,6 +125,9 @@
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
+      "@island.is/application/core/polyfills": [
+        "libs/application/core/src/lib/polyfills.ts"
+      ],
       "@island.is/application/data-providers": [
         "libs/application/data-providers/src/index.ts"
       ],
@@ -166,6 +169,9 @@
       ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
+      ],
+      "@island.is/application/templates/general-petition": [
+        "libs/application/templates/general-petition/src/index.ts"
       ],
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
@@ -274,9 +280,11 @@
       "@island.is/financial-aid-web/veita/*": [
         "apps/financial-aid/web-veita/*"
       ],
-      "@island.is/financial-aid/auth": ["libs/financial-aid/auth/src/index.ts"],
       "@island.is/financial-aid/shared/components": [
         "libs/financial-aid/shared/src/components/index.ts"
+      ],
+      "@island.is/financial-aid/shared/data": [
+        "libs/financial-aid/shared/src/data/index.ts"
       ],
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
@@ -306,6 +314,9 @@
       "@island.is/island-ui/core/types": ["libs/island-ui/core/types.ts"],
       "@island.is/island-ui/theme": ["libs/island-ui/theme/src/index.ts"],
       "@island.is/island-ui/utils": ["libs/island-ui/utils/src/index.ts"],
+      "@island.is/island-ui/vanilla-extract-utils": [
+        "libs/island-ui/vanilla-extract-utils/src/index.ts"
+      ],
       "@island.is/judicial-system-web/*": ["apps/judicial-system/web/*"],
       "@island.is/judicial-system/audit-trail": [
         "libs/judicial-system/audit-trail/src/index.ts"
@@ -329,7 +340,10 @@
       "@island.is/logging": ["libs/logging/src/index.ts"],
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
+      "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
+      "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
       "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
+      "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
@@ -409,6 +423,7 @@
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
       "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
+      "@island.is/shared/problem": ["libs/shared/problem/src/index.ts"],
       "@island.is/shared/table": ["libs/shared/table/src/index.ts"],
       "@island.is/shared/translations": [
         "libs/shared/translations/src/index.ts"
@@ -421,6 +436,8 @@
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
+      "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
+      "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"]
     }

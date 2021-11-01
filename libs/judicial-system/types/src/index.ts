@@ -10,7 +10,7 @@ export type {
   SendNotificationResponse,
 } from './lib/notification'
 
-export { CaseFileState, UploadState } from './lib/file'
+export { CaseFileState } from './lib/file'
 
 export type {
   PresignedPost,
@@ -32,13 +32,16 @@ export {
   CaseType,
   CaseState,
   CaseTransition,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseGender,
   CaseDecision,
-  AccusedPleaDecision,
   SessionArrangements,
+  restrictionCases,
+  investigationCases,
+  isRestrictionCase,
+  isInvestigationCase,
   completedCaseStates,
   hasCaseBeenAppealed,
 } from './lib/case'
@@ -51,3 +54,5 @@ export type {
   SignatureConfirmationResponse,
   CreateCourtCase,
 } from './lib/case'
+
+export type { PoliceCaseFile } from './lib/policeFile'

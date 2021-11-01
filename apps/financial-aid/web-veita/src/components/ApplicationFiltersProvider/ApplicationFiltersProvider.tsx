@@ -1,16 +1,16 @@
-import { useQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { ApplicationFilters } from '@island.is/financial-aid/shared/lib'
 
-import { GetApplicationFiltersQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+import { ApplicationFiltersMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 interface ApplicationFiltersData {
   applicationFilters?: ApplicationFilters
 }
 
 interface ApplicationFiltersProvider {
-  applicationFilters?: ApplicationFilters
-  setApplicationFilters?: React.Dispatch<
+  applicationFilters: ApplicationFilters
+  setApplicationFilters: React.Dispatch<
     React.SetStateAction<ApplicationFilters>
   >
   loading: boolean
@@ -22,12 +22,14 @@ export const initialState = {
   DataNeeded: 0,
   Rejected: 0,
   Approved: 0,
+  MyCases: 0,
 }
 
 export const ApplicationFiltersContext = createContext<ApplicationFiltersProvider>(
   {
     applicationFilters: initialState,
     loading: true,
+    setApplicationFilters: () => initialState,
   },
 )
 
@@ -41,19 +43,23 @@ const ApplicationFiltersProvider = ({ children }: PageProps) => {
     setApplicationFilters,
   ] = useState<ApplicationFilters>(initialState)
 
-  const { data, loading } = useQuery<ApplicationFiltersData>(
-    GetApplicationFiltersQuery,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const [
+    applicationFiltersQuery,
+    { loading },
+  ] = useMutation<ApplicationFiltersData>(ApplicationFiltersMutation, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   useEffect(() => {
-    if (data?.applicationFilters) {
-      setApplicationFilters(data.applicationFilters)
+    async function fetchFilters() {
+      const { data } = await applicationFiltersQuery()
+      if (data?.applicationFilters) {
+        setApplicationFilters(data.applicationFilters)
+      }
     }
-  }, [data])
+    fetchFilters()
+  }, [])
 
   return (
     <ApplicationFiltersContext.Provider

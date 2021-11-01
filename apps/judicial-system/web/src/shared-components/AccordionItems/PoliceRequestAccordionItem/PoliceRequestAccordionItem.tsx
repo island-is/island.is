@@ -10,15 +10,15 @@ import {
   laws,
   caseTypes,
 } from '@island.is/judicial-system/formatters'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import type {
   Case,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
-import * as styles from './PoliceRequestAccordionItem.treat'
+import * as styles from './PoliceRequestAccordionItem.css'
 interface Props {
   workingCase: Case
 }
@@ -27,15 +27,12 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
   workingCase,
 }: Props) => {
   const { formatMessage } = useIntl()
-  const isRestrictionCase =
-    workingCase.type === CaseType.CUSTODY ||
-    workingCase.type === CaseType.TRAVEL_BAN
 
   return (
     <AccordionItem
-      id="id_1"
+      id="policeRequestAccordionItem"
       label={`Krafa ${
-        isRestrictionCase
+        isRestrictionCase(workingCase.type)
           ? `um ${caseTypes[workingCase.type]}`
           : `- ${capitalize(caseTypes[workingCase.type])}`
       }`}
@@ -83,14 +80,14 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         <Text>{workingCase.lawsBroken}</Text>
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði sem krafan er byggð á" breakSpaces>
-        {isRestrictionCase ? (
+        {isRestrictionCase(workingCase.type) ? (
           <>
-            {workingCase.custodyProvisions &&
-              workingCase.custodyProvisions.map(
-                (custodyProvision: CaseCustodyProvisions, index) => {
+            {workingCase.legalProvisions &&
+              workingCase.legalProvisions.map(
+                (legalProvision: CaseLegalProvisions, index) => {
                   return (
                     <div key={index}>
-                      <Text>{laws[custodyProvision]}</Text>
+                      <Text>{laws[legalProvision]}</Text>
                     </div>
                   )
                 },
@@ -101,7 +98,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
           <Text>{workingCase.legalBasis}</Text>
         )}
       </AccordionListItem>
-      {isRestrictionCase && (
+      {isRestrictionCase(workingCase.type) && (
         <>
           <Box marginBottom={1}>
             <Text variant="h5">{`Takmarkanir og tilhögun ${

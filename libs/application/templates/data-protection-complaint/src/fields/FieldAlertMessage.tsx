@@ -1,5 +1,11 @@
 import { FieldBaseProps, formatText } from '@island.is/application/core'
-import { AlertMessage, Box, Button, Link } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Link,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 
@@ -29,12 +35,14 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
         message={
           <>
             <Box component="span" display="block">
-              {description
-                ? formatText(description, application, formatMessage)
-                : undefined}
+              <Text variant="small">
+                {description
+                  ? formatText(description, application, formatMessage)
+                  : undefined}
+              </Text>
             </Box>
             {props.links && (
-              <Box component="span" display="flex" marginTop={2}>
+              <Box display="flex" flexWrap="wrap" marginTop={2}>
                 {props.links.map((link, index) => (
                   <Box component="span" marginRight={2} key={index}>
                     <Link href={link.url}>

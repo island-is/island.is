@@ -1,6 +1,7 @@
 import { FormValue } from '@island.is/application/core'
 import { accidentType } from '../lib/messages'
 import { AccidentTypeEnum } from '../types'
+import { isReportingOnBehalfOfChild } from './isReportingOnBehalfOfChild'
 import { isReportingOnBehalfOfEmployee } from './isReportingOnBehalfOfEmployee'
 
 export const getAccidentTypeOptions = (answers: FormValue) => {
@@ -23,7 +24,10 @@ export const getAccidentTypeOptions = (answers: FormValue) => {
     },
   ]
 
-  if (!isReportingOnBehalfOfEmployee(answers)) {
+  if (
+    !isReportingOnBehalfOfEmployee(answers) &&
+    !isReportingOnBehalfOfChild(answers)
+  ) {
     options.unshift({
       value: AccidentTypeEnum.HOMEACTIVITIES,
       label: accidentType.labels.homeActivities,
