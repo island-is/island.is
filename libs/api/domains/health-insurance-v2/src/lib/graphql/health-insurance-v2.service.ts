@@ -30,7 +30,7 @@ const mapStatus = (statusId: number) => {
   }
 }
 
-const mapAttachmentType = (attachmentTypeId: number) => {
+const mapAttachmentType = (attachmentTypeId: number | undefined) => {
   switch (attachmentTypeId) {
     case 1:
       return AttachmentTypes.INJURY_CERTIFICATE
@@ -39,18 +39,18 @@ const mapAttachmentType = (attachmentTypeId: number) => {
     case 3:
       return AttachmentTypes.POLICE_REPORT
     default:
-      break
+      return 'Unknown'
   }
 }
 
-const mapConfirmationType = (confirmationTypeId: number) => {
+const mapConfirmationType = (confirmationTypeId: number | undefined) => {
   switch (confirmationTypeId) {
     case 1:
       return ConfirmationTypes.INJUREDORREPRESENTATIVEPARTY
     case 2:
       return ConfirmationTypes.COMPANYPARTY
     default:
-      break
+      return 'Unknown'
   }
 }
 
@@ -73,22 +73,22 @@ export class HealthInsuranceService {
     return {
       numberIHI: accidentStatus.numberIHI,
       status: accidentStatus.status ? mapStatus(accidentStatus.status) : '',
-      attachments: accidentStatus.attachments?.map((attachment) => {
-        return {
-          isReceived: !!attachment.isReceived,
-          attachmentType: attachment.attachmentType
-            ? mapAttachmentType(attachment.attachmentType)
-            : '',
-        } as AccidentNotificationAttachment
-      }),
-      confirmations: accidentStatus.confirmations?.map((attachment) => {
-        return {
-          isReceived: !!attachment.isReceived,
-          confirmationType: attachment.confirmationType
-            ? mapConfirmationType(attachment.confirmationType)
-            : '',
-        } as AccidentNotificationConfirmation
-      }),
+      receivedAttachments: accidentStatus.attachments
+        ?.map((x) => ({
+          [mapAttachmentType(x.attachmentType)]: !!x.isReceived,
+        }))
+        .reduce(
+          (prev, curr) => ({ ...prev, ...curr }),
+          {},
+        ) as AccidentNotificationAttachment,
+      receivedConfirmations: accidentStatus.confirmations
+        ?.map((x) => ({
+          [mapConfirmationType(x.confirmationType)]: !!x.isReceived,
+        }))
+        .reduce(
+          (prev, curr) => ({ ...prev, ...curr }),
+          {},
+        ) as AccidentNotificationConfirmation,
     } as AccidentNotificationStatus
   }
 }

@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { IsEnum } from 'class-validator'
 
 export enum AttachmentTypes {
   INJURY_CERTIFICATE = 'InjuryCertificate',
@@ -9,11 +8,12 @@ export enum AttachmentTypes {
 
 @ObjectType()
 export class AccidentNotificationAttachment {
-  @Field(() => Boolean)
-  isReceived?: boolean
-
-  // 1 = Áverkavottorð, 2 = Umboðsskjal, 3 = Lögregluskýrsla
-  @Field(() => String)
-  @IsEnum(AttachmentTypes)
-  attachmentType?: string
+  @Field({ nullable: true })
+  InjuryCertificate?: boolean
+  @Field({ nullable: true })
+  ProxyDocument?: boolean
+  @Field({ nullable: true })
+  PoliceReport?: boolean
+  @Field({ nullable: true })
+  Unknown?: boolean
 }
