@@ -7,6 +7,7 @@ import {
   EndorsementControllerCreateRequest,
   EndorsementControllerDeleteRequest,
   EndorsementListControllerCreateRequest,
+  EndorsementListControllerUpdateRequest,
   EndorsementListControllerFindOneRequest,
   EndorsementControllerBulkCreateRequest,
   EndorsementControllerFindAllRequest,
@@ -50,6 +51,12 @@ export class EndorsementSystemService {
 
   endorsementListApiWithAuth(auth: Auth) {
     return this.endorsementListApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async endorsementListControllerGetOwnerName(input: { listId: string }) {
+    return await this.endorsementListApi
+      .endorsementListControllerGetOwnerInfo(input)
+      .catch(this.handleError.bind(this))
   }
 
   // Endorsement endpoints
@@ -169,6 +176,14 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
+  async endorsementListControllerUpdate(
+    input: EndorsementListControllerUpdateRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerUpdate(input)
+      .catch(this.handleError.bind(this))
+  }
   async endorsementListControllerClose(
     endorsementList: EndorsementListControllerCloseRequest,
     auth: Auth,

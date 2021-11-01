@@ -3,7 +3,7 @@ import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Text, Stack, Icon, Button } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
 import { YES, NO } from '../../constants'
-import * as styles from './SecondaryContact.treat'
+import * as styles from './SecondaryContact.css'
 import { useLocale } from '@island.is/localization'
 import { institutionApplicationMessages as m } from '../../lib/messages'
 const SecondaryContact: FC<FieldBaseProps> = ({ field, application }) => {

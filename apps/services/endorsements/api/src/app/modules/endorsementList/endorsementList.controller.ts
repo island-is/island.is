@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  UseInterceptors,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -24,6 +25,7 @@ import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
 import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
+import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
 import { BypassAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
 import { environment } from '../../../environments'
@@ -36,6 +38,8 @@ import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
 import { SearchQueryDto } from './dto/searchQuery.dto'
+import { EndorsementListInterceptor } from './interceptors/endorsementList.interceptor'
+import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
 
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
@@ -63,24 +67,29 @@ export class EndorsementListController {
 
   
   @ApiOperation({
-    summary: 'Finds all endorsement lists belonging to given tags',
+    summary:
+      'Finds all endorsement lists belonging to given tags, if user is not admin then no locked lists will appear',
   })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get()
-  @BypassAuth()
+  @UseInterceptors(EndorsementListsInterceptor)
+  @Scopes(EndorsementsScope.main)
   async findByTags(
+    @CurrentUser() user: User,
     @Query() query: FindTagPaginationComboDto,
   ): Promise<PaginatedEndorsementListDto> {
     return await this.endorsementListService.findListsByTags(
       // query parameters of length one are not arrays, we normalize all tags input to arrays here
       !Array.isArray(query.tags) ? [query.tags] : query.tags,
       query,
+      user.nationalId,
     )
   }
 
   @ApiOperation({ summary: 'Gets General Petition Lists' })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get('general-petition-lists')
+  @UseInterceptors(EndorsementListsInterceptor)
   @BypassAuth()
   async getGeneralPetitionLists(
     @Query() query: PaginationDto,
@@ -94,6 +103,7 @@ export class EndorsementListController {
   @ApiOkResponse({ type: EndorsementList })
   @ApiParam({ name: 'listId', type: 'string' })
   @Get('general-petition-list/:listId')
+  @UseInterceptors(EndorsementListInterceptor)
   @BypassAuth()
   async getGeneralPetitionList(
     @Param('listId') listId: string,
@@ -129,6 +139,7 @@ export class EndorsementListController {
   })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get('/endorsementLists')
+  @UseInterceptors(EndorsementListsInterceptor)
   @Audit<PaginatedEndorsementListDto>({
     resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),
@@ -151,6 +162,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
   @Get(':listId')
+  @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })
@@ -164,6 +176,7 @@ export class EndorsementListController {
   ): Promise<EndorsementList> {
     return endorsementList
   }
+
   @ApiOperation({ summary: 'Close a single endorsements list by id' })
   @ApiOkResponse({
     description: 'Close a single endorsements list by id',
@@ -172,6 +185,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
   @Put(':listId/close')
+  @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -196,6 +210,7 @@ export class EndorsementListController {
   @ApiBody({ type: ChangeEndorsmentListClosedDateDto })
   @Scopes(EndorsementsScope.main)
   @Put(':listId/open')
+  @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -219,6 +234,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
   @Put(':listId/lock')
+  @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Admin)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -241,6 +257,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
   @Put(':listId/unlock')
+  @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Admin)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -255,6 +272,35 @@ export class EndorsementListController {
   ): Promise<EndorsementList> {
     return await this.endorsementListService.unlock(endorsementList)
   }
+
+  @ApiOkResponse({
+    description:
+      'Admin update a single endorsements list by id and request body',
+    type: EndorsementList,
+  })
+  @ApiParam({ name: 'listId', type: 'string' })
+  @ApiBody({ type: UpdateEndorsementListDto })
+  @Scopes(EndorsementsScope.main)
+  @Put(':listId/update')
+  @HasAccessGroup(AccessGroup.Admin)
+  @Audit<EndorsementList>({
+    resources: (endorsementList) => endorsementList.id,
+  })
+  async update(
+    @Body() newData: UpdateEndorsementListDto,
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+    )
+    endorsementList: EndorsementList,
+  ): Promise<EndorsementList> {
+    return await this.endorsementListService.updateEndorsementList(
+      endorsementList,
+      newData,
+    )
+  }
+
   @ApiOperation({ summary: 'Create an endorsements list' })
   @ApiOkResponse({
     description: 'Create an endorsements list',
@@ -263,6 +309,7 @@ export class EndorsementListController {
   @ApiBody({ type: EndorsementListDto })
   @Scopes(EndorsementsScope.main)
   @Post()
+  @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
     meta: (endorsementList) => ({
@@ -282,4 +329,22 @@ export class EndorsementListController {
   
 
 
+  @ApiOperation({ summary: 'Fetches owner info from national registry' })
+  @ApiOkResponse({
+    description: 'Create an endorsements list',
+    type: String,
+  })
+  @ApiParam({ name: 'listId', type: 'string' })
+  @BypassAuth()
+  @Get(':listId/ownerInfo')
+  async getOwnerInfo(
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+    )
+    endorsementList: EndorsementList,
+  ): Promise<String> {
+    return await this.endorsementListService.getOwnerInfo(endorsementList)
+  }
 }

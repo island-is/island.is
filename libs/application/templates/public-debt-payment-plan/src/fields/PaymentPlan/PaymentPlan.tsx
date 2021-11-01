@@ -31,7 +31,7 @@ import {
 import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
 import { PlanSlider } from '../components/PlanSlider/PlanSlider'
 import { PaymentPlanCard } from '../PaymentPlanList/PaymentPlanCard/PaymentPlanCard'
-import * as styles from './PaymentPlan.treat'
+import * as styles from './PaymentPlan.css'
 import { useDebouncedSliderValues } from './useDebouncedSliderValues'
 
 // An array might not work for this schema

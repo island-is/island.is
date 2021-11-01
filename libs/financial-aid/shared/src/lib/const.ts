@@ -1,5 +1,6 @@
 export const Routes = {
   application: '/umsokn',
+  spouseApplication: '/umsokn/rettur',
   status: '/stada',
   statusPage: (id: string) => `/stada/${id}`,
   statusFileUpload: (id: string) => `/stada/${id}/gogn`,
@@ -14,6 +15,7 @@ export const Routes = {
   filesPage: (hasIncome?: boolean) =>
     `/umsokn/${hasIncome ? 'skattagogn' : 'gogn'}`,
   newCases: '/nymal',
+  serviceCenter: (id: string) => `/midstod/${id}`,
 }
 
 export const months = [

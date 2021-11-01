@@ -15,7 +15,7 @@ import { GridRow } from '../Grid/GridRow/GridRow'
 import { GridColumn } from '../Grid/GridColumn/GridColumn'
 import { Link } from '../Link/Link'
 
-import * as styles from './Footer.treat'
+import * as styles from './Footer.css'
 import { Button } from '../Button/Button'
 import Hyphen from '../Hyphen/Hyphen'
 import { LinkContext } from '../context/LinkContext/LinkContext'

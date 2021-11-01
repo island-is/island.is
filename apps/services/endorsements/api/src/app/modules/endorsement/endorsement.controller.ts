@@ -66,7 +66,6 @@ export class EndorsementController {
   @ApiParam({ name: 'listId', type: String})
   @ApiOkResponse({ type: sendPdfEmailResponse })
   @Post('/email-pdf')
-  // @BypassAuth()
   async emailEndorsementsPDF(
     @Param(
       'listId',

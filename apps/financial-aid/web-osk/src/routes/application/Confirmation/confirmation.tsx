@@ -14,25 +14,22 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
-import { NavigationProps, Routes } from '@island.is/financial-aid/shared/lib'
+import { getNextPeriod, Routes } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const Confirmation = () => {
   const router = useRouter()
   const { form } = useContext(FormContext)
-
-  const navigation: NavigationProps = useFormNavigation(
-    router.pathname,
-  ) as NavigationProps
+  const { municipality } = useContext(AppContext)
 
   const logOut = useLogOut()
 
   const nextSteps = [
     'Vinnsluaðili sveitarfélagsins vinnur úr umsókninni. Umsóknin verður afgreidd eins fljótt og auðið er.',
-    'Staðfesting verður send á þig í tölvupósti',
-    'Ef þörf er á frekari upplýsingum eða gögnum mun vinnsluaðili sveitarfélagsins hafa samband.',
+    `Ef umsóknin er samþykkt getur þú reiknað með útgreiðslu í byrjun ${getNextPeriod.month}.`,
+    'Ef þörf er á frekari upplýsingum eða gögnum til að vinna úr umsókninni mun vinnsluaðili sveitarfélagsins hafa samband.',
   ]
 
   useEffect(() => {
@@ -75,7 +72,7 @@ const Confirmation = () => {
                 colorScheme="default"
                 iconType="outline"
                 onClick={() =>
-                  router.push(Routes.statusPage(form?.applicationId as string))
+                  router.push(Routes.statusPage(form.applicationId as string))
                 }
                 preTextIconType="filled"
                 size="small"
@@ -87,26 +84,24 @@ const Confirmation = () => {
             </Box>
           )}
 
-          <Box marginBottom={3}>
-            <Button
-              icon="open"
-              colorScheme="default"
-              iconType="outline"
-              preTextIconType="filled"
-              size="small"
-              onClick={() => {
-                // TODO when there more muncipality
-                window.open(
-                  'https://www.hafnarfjordur.is/ibuar/felagsleg-adstod/fjarhagsadstod/"',
-                  '_ blank',
-                )
-              }}
-              type="button"
-              variant="text"
-            >
-              Upplýsingar um fjárhagsaðstoð
-            </Button>
-          </Box>
+          {municipality?.homepage && (
+            <Box marginBottom={3}>
+              <Button
+                icon="open"
+                colorScheme="default"
+                iconType="outline"
+                preTextIconType="filled"
+                size="small"
+                onClick={() => {
+                  window.open(municipality.homepage, '_ blank')
+                }}
+                type="button"
+                variant="text"
+              >
+                Upplýsingar um fjárhagsaðstoð
+              </Button>
+            </Box>
+          )}
         </Box>
       </ContentContainer>
       <Footer

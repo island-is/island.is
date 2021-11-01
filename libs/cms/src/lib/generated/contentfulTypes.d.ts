@@ -1789,6 +1789,9 @@ export interface IOrganizationFields {
 
   /** Phone */
   phone?: string | undefined
+
+  /** Email */
+  email?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {

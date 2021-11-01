@@ -1,4 +1,11 @@
-import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
+import {
+  Args,
+  Query,
+  Resolver,
+  Mutation,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql'
 import { BypassAuth } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
@@ -11,7 +18,10 @@ import { EndorsementList } from './models/endorsementList.model'
 import { CreateEndorsementListDto } from './dto/createEndorsementList.input'
 import { BulkEndorseListInput } from './dto/bulkEndorseList.input'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
-
+import {
+  UpdateEndorsementListInput,
+  UpdateEndorsementListDto,
+} from './dto/updateEndorsementList.input'
 import { PaginatedEndorsementInput } from './dto/paginatedEndorsement.input'
 import { PaginatedEndorsementResponse } from './dto/paginatedEndorsement.response'
 
@@ -24,9 +34,16 @@ import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
 import { sendPdfEmailInput } from './dto/sendPdfEmail.input'
 
 @UseGuards(IdsUserGuard)
-@Resolver('EndorsementSystemResolver')
+@Resolver(() => EndorsementList)
 export class EndorsementSystemResolver {
   constructor(private endorsementSystemService: EndorsementSystemService) {}
+
+  @ResolveField('ownerName', () => String, { nullable: true })
+  resolveOwnerName(@Parent() list: EndorsementList): Promise<String | null> {
+    return this.endorsementSystemService.endorsementListControllerGetOwnerName({
+      listId: list.id,
+    })
+  }
 
   // GET /endorsement-list/{listId}/endorsement/exists
   @Query(() => Endorsement, { nullable: true })
@@ -185,6 +202,19 @@ export class EndorsementSystemResolver {
     )
   }
 
+  @Mutation(() => EndorsementList)
+  async endorsementSystemUpdateEndorsementList(
+    @Args('input') { listId, endorsementList }: UpdateEndorsementListInput,
+    @CurrentUser() user: User,
+  ): Promise<EndorsementList> {
+    return await this.endorsementSystemService.endorsementListControllerUpdate(
+      {
+        listId,
+        updateEndorsementListDto: endorsementList,
+      },
+      user,
+    )
+  }
   // PUT /endorsement-list/{listId}/close
   @Mutation(() => EndorsementList)
   async endorsementSystemCloseEndorsementList(

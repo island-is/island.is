@@ -218,7 +218,21 @@ export class ApplicationModel extends Model<Application> {
     allowNull: true,
   })
   @ApiProperty()
+  spouseName?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
   spouseNationalId?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spousePhoneNumber?: string
 
   @Column({
     type: DataType.STRING,
@@ -230,4 +244,32 @@ export class ApplicationModel extends Model<Application> {
   @HasMany(() => ApplicationEventModel, 'applicationId')
   @ApiProperty({ type: ApplicationEventModel, isArray: true })
   applicationEvents?: ApplicationEventModel[]
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  city: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  streetName: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  postalCode: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  municipalityCode: string
 }

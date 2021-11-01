@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 
-import * as styles from './History.treat'
+import * as styles from './History.css'
 import cn from 'classnames'
 
 import {
@@ -38,10 +38,9 @@ const History = ({ className, applicantName, applicationEvents }: Props) => {
           {applicationEvents.map((item, index) => {
             return (
               <TimeLineContainer
-                eventType={item.eventType}
+                event={item}
                 key={'timeline-' + index}
                 applicantName={applicantName}
-                created={item.created}
               >
                 <StaffComment
                   isVisable={

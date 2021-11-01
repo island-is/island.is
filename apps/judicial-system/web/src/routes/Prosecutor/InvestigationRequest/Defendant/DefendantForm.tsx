@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
 import { Box, Input, Select, Text } from '@island.is/island-ui/core'
@@ -10,11 +10,7 @@ import {
 import { ICaseTypes } from '@island.is/judicial-system/consts'
 import { CaseType } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import {
-  removeTabsValidateAndSet,
-  setAndSendToServer,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
@@ -48,9 +44,6 @@ const DefendantForm: React.FC<Props> = (props) => {
     type: {
       validations: ['empty'],
     },
-    description: {
-      validations: ['empty'],
-    },
     accusedGender: {
       validations: ['empty'],
     },
@@ -64,10 +57,10 @@ const DefendantForm: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
   }
-  const [petitionDescriptionEM, setPetitionDescriptionEM] = useState<string>('')
+
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
-  const { isValid } = useCaseFormHelper(
+  const { isValid, setField, validateAndSendToServer } = useCaseFormHelper(
     workingCase,
     setWorkingCase,
     validations,
@@ -96,7 +89,7 @@ const DefendantForm: React.FC<Props> = (props) => {
           <BlueBox>
             <Box marginBottom={3}>
               <Select
-                name="petition-type"
+                name="type"
                 options={ICaseTypes as ReactSelectOption[]}
                 label={formatMessage(
                   defendant.sections.investigationType.type.label,
@@ -135,8 +128,8 @@ const DefendantForm: React.FC<Props> = (props) => {
               />
             </Box>
             <Input
-              data-testid="petition-description"
-              name="petition-description"
+              data-testid="description"
+              name="description"
               label={formatMessage(
                 defendant.sections.investigationType.description.label,
               )}
@@ -144,31 +137,11 @@ const DefendantForm: React.FC<Props> = (props) => {
                 defendant.sections.investigationType.description.placeholder,
               )}
               defaultValue={workingCase.description}
-              errorMessage={petitionDescriptionEM}
-              hasError={petitionDescriptionEM !== ''}
               autoComplete="off"
               onChange={(event) => {
-                removeTabsValidateAndSet(
-                  'description',
-                  event,
-                  ['empty'],
-                  workingCase,
-                  setWorkingCase,
-                  petitionDescriptionEM,
-                  setPetitionDescriptionEM,
-                )
+                setField(event.target)
               }}
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'description',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setPetitionDescriptionEM,
-                )
-              }
-              required
+              onBlur={(event) => validateAndSendToServer(event.target)}
             />
           </BlueBox>
         </Box>

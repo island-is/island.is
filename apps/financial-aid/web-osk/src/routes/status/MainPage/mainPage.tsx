@@ -26,7 +26,7 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 const MainPage = () => {
   const logOut = useLogOut()
 
-  const { myApplication, loading, error } = useContext(AppContext)
+  const { myApplication, loading, error, municipality } = useContext(AppContext)
 
   return (
     <>
@@ -37,7 +37,7 @@ const MainPage = () => {
 
         {myApplication && myApplication?.state && (
           <>
-            <InProgress currentApplication={myApplication} />
+            <InProgress application={myApplication} />
 
             <Approved
               isStateVisible={myApplication.state === ApplicationState.APPROVED}
@@ -72,23 +72,21 @@ const MainPage = () => {
           <BulletList type={'ul'} space={2}>
             <Bullet>
               <Link
-                href="https://www.hafnarfjordur.is/ibuar/felagsleg-adstod/fjarhagsadstod/"
+                href={municipality?.homepage ?? ''}
                 color="blue400"
                 underline="normal"
                 underlineVisibility="always"
               >
-                {/* TODO: different for muncipality */}
                 <b>Upplýsingar um fjárhagsaðstoð</b>
               </Link>
             </Bullet>
             <Bullet>
               <Link
-                href="mailto: felagsthjonusta@hafnarfjordur.is"
+                href={`mailto: ${municipality?.email}`}
                 color="blue400"
                 underline="normal"
                 underlineVisibility="always"
               >
-                {/* TODO: different for muncipality */}
                 <b> Hafa samband</b>
               </Link>
             </Bullet>

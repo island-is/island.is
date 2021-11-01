@@ -71,6 +71,7 @@ export type RegulationPageTexts = Partial<
     | 'statusHistoric_period' // 'gilti á tímabilinu ${dateFrom} – ${dateTo}'
     | 'statusUpcoming' // 'Væntanleg útgáfa reglugerðar'
     | 'statusUpcoming_on' // 'mun taka gildi ${date}'
+    | 'statusUpcoming_period' // 'mun gilda frá ${dateFrom} – ${dateTo}'
     | 'statusLinkToCurrent' // 'sjá núgildandi'
     | 'statusLinkToCurrent_long' // 'Sjá núgildandi útgfáfu reglugerðarinnar'
     | 'statusLinkToRepealed' // 'sjá lokaútgáfu'

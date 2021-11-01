@@ -4,7 +4,7 @@ export const hindrances = {
   general: defineMessages({
     sectionTitle: {
       id: 'an.application:general.sectionTitle',
-      defaultMessage: 'Hindranir ',
+      defaultMessage: 'Almennt ',
       description: 'Hindrances',
     },
   }),
@@ -31,7 +31,7 @@ export const hindrances = {
   timePassedHindrance: defineMessages({
     radioFieldTitle: {
       id: 'an.application:hindrances.timePassedHindrance.radioFieldTitle',
-      defaultMessage: 'Er meira en ár síðan að slysið átti sér stað?',
+      defaultMessage: 'Er meira en eitt ár síðan að slysið átti sér stað?',
       description: 'Has it been more than a year since the accident occured?',
     },
     errorTitle: {
@@ -42,7 +42,7 @@ export const hindrances = {
     errorDescription: {
       id: 'an.application:hindrances.timePassedHindrance.errorDescription',
       defaultMessage:
-        'Öll slys ber að tilkynna innan eins árs. Mikilvægt er að tilkynningar séu rétt útfylltar og í frumriti. Ef tilkynningaskylda er vanrækt skal það ekki vera því til fyrirstöðu að sá slasaði eða vandamenn geti gert kröfu til bóta. Heimilt er að veita undanþágu þótt meira en ár sé liðið ef atvik slyss eru alveg ljós og drátturinn torveldar ekki gagnaöflun um atriði sem skipta máli. Þá er það skilyrði að unnt sé að meta orsakasamband slyssins og heilsutjóns slasaða.',
+        'Öll slys ber að tilkynna innan eins árs. Mikilvægt er að tilkynningar séu rétt útfylltar. Ef tilkynningaskylda er vanrækt skal það ekki vera því til fyrirstöðu að sá slasaði eða vandamenn geti gert kröfu til bóta. Heimilt er að veita undanþágu þótt meira en ár sé liðið ef atvik slyss eru alveg ljós og drátturinn torveldar ekki gagnaöflun um atriði sem skipta máli. Þá er það skilyrði að unnt sé að meta orsakasamband slyssins og heilsutjóns slasaða.',
       description:
         'All accidents must be reported within one year. It is important that the notifications are filled in correctly and in the original. If the duty to notify is neglected, it shall not be an obstacle for the injured party or relatives to make a claim for compensation. An exemption may be granted even if more than one year has elapsed if the circumstances of the accident are completely clear and the delay does not impede the collection of data on matters of importance. It is also a condition that it is possible to assess the causal link between the accident and the health damage to the injured.',
     },

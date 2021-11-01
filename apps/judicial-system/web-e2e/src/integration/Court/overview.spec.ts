@@ -1,6 +1,6 @@
 import {
   Case,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseState,
 } from '@island.is/judicial-system/types'
@@ -20,7 +20,7 @@ describe('/domur/krafa/:id', () => {
       demands:
         'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
       lawsBroken: 'Lorem ipsum',
-      custodyProvisions: [CaseCustodyProvisions._95_1_A],
+      legalProvisions: [CaseLegalProvisions._95_1_A],
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.ISOLATION,
         CaseCustodyRestrictions.MEDIA,
@@ -56,12 +56,12 @@ describe('/domur/krafa/:id', () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it('should display the correct demands, laws broken, custody provisions, and custody restriction', () => {
+  it('should display the correct demands, laws broken, legal provisions, and custody restriction', () => {
     cy.contains(
       'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     )
     cy.getByTestid('lawsBroken').contains('Lorem ipsum')
-    cy.getByTestid('custodyProvisions').contains('a-lið 1. mgr. 95. gr.')
+    cy.getByTestid('legalProvisions').contains('a-lið 1. mgr. 95. gr.')
     cy.getByTestid('custodyRestrictions')
       .children()
       .should('contain', 'B - Einangrun')

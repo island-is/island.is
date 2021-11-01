@@ -19,7 +19,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
     .data as any).id
 
   const [agreed, setAgreed] = useState(false)
-  const [allowName, setAllowName] = useState(false)
+  const [allowName, setAllowName] = useState(true)
   const [hasEndorsed, setHasEndorsed] = useState(false)
 
   const endorsedBefore = useHasEndorsed(endorsementListId)
@@ -38,7 +38,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
         input: {
           listId: endorsementListId,
           endorsementDto: {
-            showName: true,
+            showName: allowName,
           },
         },
       },

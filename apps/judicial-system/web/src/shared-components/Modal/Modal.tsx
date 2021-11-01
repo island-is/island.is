@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 import { motion } from 'framer-motion'
 
-import * as styles from './Modal.treat'
+import * as styles from './Modal.css'
 
 interface ModalProps {
   title: string
