@@ -122,6 +122,7 @@ export const UploadedFile = ({
   const isUploading =
     file.percent && file.percent < 100 && file.status === 'uploading'
 
+  console.log(file)
   return (
     <Box
       ref={ref}
@@ -200,7 +201,7 @@ export const UploadedFile = ({
           )}
         </Box>
       )}
-      <UploadingIndicator percent={file.percent} />
+      {file.percent && <UploadingIndicator percent={file.percent} />}
     </Box>
   )
 }
