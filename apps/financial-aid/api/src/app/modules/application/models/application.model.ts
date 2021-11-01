@@ -96,6 +96,9 @@ export class ApplicationModel implements Application {
   readonly filters?: ApplicationFiltersModel
 
   @Field({ nullable: true })
+  readonly spouseName?: string
+
+  @Field({ nullable: true })
   readonly spouseNationalId?: string
 
   @Field({ nullable: true })

@@ -162,19 +162,23 @@ export class ApplicationController {
     this.logger.debug(
       `Application controller: Updating application with id ${id}`,
     )
+
+    let staff = undefined
+
+    if (user.service === RolesRule.VEITA) {
+      staff = await this.staffService.findByNationalId(user.nationalId)
+    }
+
     const {
       numberOfAffectedRows,
       updatedApplication,
-    } = await this.applicationService.update(id, applicationToUpdate)
+    } = await this.applicationService.update(id, applicationToUpdate, staff)
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Application ${id} does not exist`)
     }
 
-    if (user.service === RolesRule.VEITA) {
-      const staff = await this.staffService.findById(updatedApplication.staffId)
-      updatedApplication?.setDataValue('staff', staff)
-    }
+    updatedApplication?.setDataValue('staff', staff)
 
     return updatedApplication
   }
