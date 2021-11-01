@@ -54,7 +54,7 @@ const calculateHiddenValues = (
   selectedOption: TransferRightsOption | undefined,
   requestDays: number,
   giveDays: number,
-): HiddenValues | undefined => {
+): HiddenValues => {
   if (selectedOption === TransferRightsOption.REQUEST) {
     return {
       isRequestingRights: YES,
@@ -69,13 +69,13 @@ const calculateHiddenValues = (
       isRequestingRights: NO,
       requestDays: 0,
     }
-  } else if (selectedOption === TransferRightsOption.NONE) {
-    return {
-      isRequestingRights: NO,
-      requestDays: 0,
-      isGivingRights: NO,
-      giveDays: 0,
-    }
+  }
+
+  return {
+    isRequestingRights: NO,
+    requestDays: 0,
+    isGivingRights: NO,
+    giveDays: 0,
   }
 }
 
@@ -144,38 +144,33 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
           defaultValue,
         }}
       />
-      {!!hiddenValues && (
-        <input
-          type="hidden"
-          ref={register}
-          name="requestRights.isRequestingRights"
-          value={hiddenValues.isRequestingRights}
-        />
-      )}
-      {!!hiddenValues && (
-        <input
-          type="hidden"
-          ref={register}
-          name="requestRights.requestDays"
-          value={hiddenValues.requestDays}
-        />
-      )}
-      {!!hiddenValues && (
-        <input
-          type="hidden"
-          ref={register}
-          name="giveRights.isGivingRights"
-          value={hiddenValues.isGivingRights}
-        />
-      )}
-      {!!hiddenValues && (
-        <input
-          type="hidden"
-          ref={register}
-          name="giveRights.giveDays"
-          value={hiddenValues.giveDays}
-        />
-      )}
+      <input
+        type="hidden"
+        ref={register}
+        name="requestRights.isRequestingRights"
+        value={hiddenValues.isRequestingRights}
+      />
+
+      <input
+        type="hidden"
+        ref={register}
+        name="requestRights.requestDays"
+        value={hiddenValues.requestDays}
+      />
+
+      <input
+        type="hidden"
+        ref={register}
+        name="giveRights.isGivingRights"
+        value={hiddenValues.isGivingRights}
+      />
+
+      <input
+        type="hidden"
+        ref={register}
+        name="giveRights.giveDays"
+        value={hiddenValues.giveDays}
+      />
     </>
   )
 }
