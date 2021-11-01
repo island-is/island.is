@@ -69,8 +69,8 @@ export const serviceSetup = (services: {
       },
       ISLYKILL_CERT: {
         dev: '/etc/config/islyklar.p12',
-        staging: '',
-        prod: '',
+        staging: '/etc/config/islyklar.p12',
+        prod: '/etc/config/islyklar.p12',
       },
       SERVICE_USER_PROFILE_URL: ref(
         (h) => `http://${h.svc(services.servicePortalApi)}`,
