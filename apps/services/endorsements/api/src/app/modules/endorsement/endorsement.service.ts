@@ -433,12 +433,17 @@ export class EndorsementService {
     return await getStream.buffer(doc)
   }
 
-  async emailPDF(listId: string, recipientEmail: string): Promise<{ success: boolean }> {
+  async emailPDF(
+    listId: string,
+    recipientEmail: string,
+  ): Promise<{ success: boolean }> {
     const endorsementList = await this.endorsementListModel.findOne({
       where: { id: listId },
-      include: [{
-        model: Endorsement,
-      }]
+      include: [
+        {
+          model: Endorsement,
+        },
+      ],
     })
     try {
       const result = this.emailService.sendEmail({
@@ -449,7 +454,7 @@ export class EndorsementService {
         to: [
           {
             // message can be sent to any email so recipient name in unknown
-            name: recipientEmail, 
+            name: recipientEmail,
             address: recipientEmail,
           },
         ],

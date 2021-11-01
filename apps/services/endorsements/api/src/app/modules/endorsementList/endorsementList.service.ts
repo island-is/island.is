@@ -18,8 +18,6 @@ import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import { environment } from '../../../environments'
 
-
-
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
@@ -35,8 +33,6 @@ export class EndorsementListService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
-  
-  
 
   // Checks if user is admin
   isAdmin(nationalId: string) {
@@ -227,9 +223,6 @@ export class EndorsementListService {
     return result
   }
 
-
-
- 
   async getOwnerInfo(endorsementList: EndorsementList) {
     return (await this.nationalRegistryApi.getUser(endorsementList.owner))
       .Fulltnafn

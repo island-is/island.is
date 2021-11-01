@@ -228,6 +228,4 @@ export class EndorsementSystemService {
       .endorsementControllerEmailEndorsementsPDF(endorsementList)
       .catch(this.handleError.bind(this))
   }
-  
-
 }

@@ -27,7 +27,7 @@ const devConfig = {
   emailOptions: {
     useTestAccount: true,
     useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
-  }
+  },
 }
 
 const prodConfig = {

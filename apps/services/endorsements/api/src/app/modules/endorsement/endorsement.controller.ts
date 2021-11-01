@@ -63,7 +63,7 @@ export class EndorsementController {
     summary: 'Emails a PDF with list endorsements data',
   })
   @HasAccessGroup(AccessGroup.Owner, AccessGroup.Admin)
-  @ApiParam({ name: 'listId', type: String})
+  @ApiParam({ name: 'listId', type: String })
   @ApiOkResponse({ type: sendPdfEmailResponse })
   @Post('/email-pdf')
   async emailEndorsementsPDF(

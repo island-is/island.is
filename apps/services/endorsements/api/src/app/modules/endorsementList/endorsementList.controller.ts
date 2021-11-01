@@ -62,10 +62,7 @@ export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
   ) {}
-  
 
-
-  
   @ApiOperation({
     summary:
       'Finds all endorsement lists belonging to given tags, if user is not admin then no locked lists will appear',
@@ -325,9 +322,6 @@ export class EndorsementListController {
       owner: user.nationalId,
     })
   }
-
-  
-
 
   @ApiOperation({ summary: 'Fetches owner info from national registry' })
   @ApiOkResponse({
