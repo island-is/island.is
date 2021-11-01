@@ -22,7 +22,7 @@ export interface PoliceCaseFilesData {
 
 export const StepFive: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [pCaseFiles, setPCaseFiles] = useState<PoliceCaseFilesData>()
+  const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
   const router = useRouter()
   const id = router.query.id
@@ -56,21 +56,20 @@ export const StepFive: React.FC = () => {
   }, [id, workingCase, setWorkingCase, resCase])
 
   useEffect(() => {
-    console.log('pCaseFiles', policeData)
     if (policeData && policeData.policeCaseFiles) {
-      setPCaseFiles({
+      setPoliceCaseFiles({
         files: policeData.policeCaseFiles,
         isLoading: false,
         hasError: false,
       })
     } else if (policeDataLoading) {
-      setPCaseFiles({
+      setPoliceCaseFiles({
         files: policeData ? policeData.policeCaseFiles : [],
         isLoading: true,
         hasError: false,
       })
     } else {
-      setPCaseFiles({
+      setPoliceCaseFiles({
         files: policeData ? policeData.policeCaseFiles : [],
         isLoading: false,
         hasError: true,
@@ -95,7 +94,7 @@ export const StepFive: React.FC = () => {
         <StepFiveForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
-          policeCaseFiles={pCaseFiles}
+          policeCaseFiles={policeCaseFiles}
         />
       ) : null}
     </PageLayout>
