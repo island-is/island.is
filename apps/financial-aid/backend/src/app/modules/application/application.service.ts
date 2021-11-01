@@ -29,6 +29,7 @@ import { EmailService } from '@island.is/email-service'
 
 import { ApplicationFileModel } from '../file/models'
 import { environment } from '../../../environments'
+import { IsSpouseResponse } from './models/isSpouse.response'
 
 interface Recipient {
   name: string
@@ -66,7 +67,7 @@ export class ApplicationService {
     return Boolean(hasApplication)
   }
 
-  async hasSpouseApplied(spouseNationalId: string): Promise<boolean> {
+  async hasSpouseApplied(spouseNationalId: string): Promise<IsSpouseResponse> {
     const application = await this.applicationModel.findOne({
       where: {
         spouseNationalId,
@@ -74,7 +75,14 @@ export class ApplicationService {
       },
     })
 
-    return Boolean(application)
+    const files = Boolean(application)
+      ? await this.fileService.getSpouseApplicationFiles(application.id)
+      : false
+
+    return {
+      HasApplied: Boolean(application),
+      HasSpouseFiles: Boolean(files),
+    }
   }
 
   async getCurrentApplication(nationalId: string): Promise<string | null> {

@@ -6,6 +6,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { CloudFrontService } from './cloudFront.service'
 
+import { FileType } from '@island.is/financial-aid/shared/lib'
+
 import {
   SignedUrlModel,
   ApplicationFileModel,
@@ -60,6 +62,16 @@ export class FileService {
     return this.fileModel.findAll({
       where: { applicationId },
       order: [['created', 'DESC']],
+    })
+  }
+
+  async getSpouseApplicationFiles(
+    applicationId: string,
+  ): Promise<ApplicationFileModel> {
+    this.logger.debug(`Getting all files from spouse case ${applicationId}`)
+
+    return this.fileModel.findOne({
+      where: { applicationId, type: FileType.SPOUSEFILES },
     })
   }
 

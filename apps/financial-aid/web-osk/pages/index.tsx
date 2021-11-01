@@ -11,7 +11,10 @@ const Index = () => {
   }, [])
 
   const returnUrl = (user: User) => {
-    if (user?.isSpouse) {
+    if (user?.isSpouse?.HasSpouseFiles) {
+      return `${Routes.statusPage(user.currentApplication as string)}`
+    }
+    if (user?.isSpouse?.HasApplied) {
       return `${Routes.spouseApplication}`
     }
 

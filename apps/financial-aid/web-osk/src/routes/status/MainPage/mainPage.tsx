@@ -34,25 +34,28 @@ const MainPage = () => {
     <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={1}>
-          {user?.isSpouse ? 'Aðstoð maka þíns' : 'Aðstoðin þín '}
+          {user?.isSpouse?.HasApplied ? 'Aðstoð maka þíns' : 'Aðstoðin þín '}
         </Text>
 
         {myApplication && myApplication?.state && (
           <>
-            <InProgress application={myApplication} isSpouse={user?.isSpouse} />
+            <InProgress
+              application={myApplication}
+              isSpouse={user?.isSpouse?.HasApplied}
+            />
 
             <Approved
               isStateVisible={myApplication.state === ApplicationState.APPROVED}
               state={myApplication.state}
               amount={myApplication.amount}
-              isSpouse={user?.isSpouse}
+              isSpouse={user?.isSpouse?.HasApplied}
             />
 
             <Rejected
               isStateVisible={myApplication.state === ApplicationState.REJECTED}
               state={myApplication.state}
               rejectionComment={myApplication?.rejection}
-              isSpouse={user?.isSpouse}
+              isSpouse={user?.isSpouse?.HasApplied}
             />
 
             <Timeline

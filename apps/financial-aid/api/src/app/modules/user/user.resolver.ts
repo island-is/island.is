@@ -11,6 +11,7 @@ import { StaffModel } from '../staff/models'
 import { CurrentUser } from '../decorators'
 import { BackendAPI } from '../../../services'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { HasSpouseAppliedModel } from './HasSpouseApplied.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => UserModel)
@@ -37,13 +38,13 @@ export class UserResolver {
     return user as UserModel
   }
 
-  @ResolveField('isSpouse', () => Boolean)
+  @ResolveField('isSpouse', () => HasSpouseAppliedModel)
   async isSpouse(
     @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Boolean> {
+  ): Promise<HasSpouseAppliedModel> {
     const isSpouse = await backendApi.isSpouse(user.nationalId)
-    return isSpouse.HasApplied
+    return isSpouse
   }
 
   @ResolveField('currentApplication', () => String)

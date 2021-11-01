@@ -40,7 +40,10 @@ export const CurrentUserQuery = gql`
       name
       phoneNumber
       postalCode
-      isSpouse
+      isSpouse {
+        HasApplied
+        HasSpouseFiles
+      }
       currentApplication
     }
   }
@@ -56,6 +59,14 @@ export const ApplicationQuery = gql`
       amount
       rejection
       created
+      files {
+        id
+        applicationId
+        name
+        size
+        created
+        type
+      }
       applicationEvents {
         id
         applicationId
