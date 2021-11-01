@@ -41,6 +41,7 @@ export const ApplicationQuery = gql`
       staff {
         name
         municipalityId
+        nationalId
       }
       applicationEvents {
         id

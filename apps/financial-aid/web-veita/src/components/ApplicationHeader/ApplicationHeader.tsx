@@ -1,12 +1,13 @@
 import {
   Application,
   ApplicationEventType,
+  ApplicationFiltersEnum,
   ApplicationState,
+  applicationStateToFilterEnum,
   getState,
 } from '@island.is/financial-aid/shared/lib'
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
-import { NavigationElement } from '../../routes/ApplicationsOverview/applicationsOverview'
+import React, { SetStateAction, useContext, useEffect, useState } from 'react'
 import { navigationItems } from '../../utils/navigation'
 
 import * as styles from './ApplicationHeader.css'
@@ -22,6 +23,7 @@ import {
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
+import { AdminContext } from '../AdminProvider/AdminProvider'
 
 interface ApplicantProps {
   application: Application
@@ -38,8 +40,9 @@ const ApplicationHeader = ({
 }: ApplicantProps) => {
   const router = useRouter()
 
-  const [prevUrl, setPrevUrl] = useState<NavigationElement | undefined>()
+  const [prevUrl, setPrevUrl] = useState<string | undefined>()
   const changeApplicationState = useApplicationState()
+  const { admin } = useContext(AdminContext)
 
   const assignEmployee = async () => {
     setIsLoading(true)
@@ -59,10 +62,24 @@ const ApplicationHeader = ({
       })
   }
 
+  const comingFromMyCases = (state: ApplicationState) =>
+    application &&
+    application.staff?.nationalId === admin?.staff?.nationalId &&
+    (state === ApplicationState.INPROGRESS ||
+      state === ApplicationState.DATANEEDED)
+
   const findPrevUrl = (
     state: ApplicationState,
-  ): React.SetStateAction<NavigationElement | undefined> => {
-    return navigationItems.find((i) => i.applicationState.includes(state))
+  ): SetStateAction<string | undefined> => {
+    if (comingFromMyCases(state)) {
+      return navigationItems.find((i) =>
+        i.applicationState.includes(ApplicationFiltersEnum.MYCASES),
+      )?.link
+    }
+
+    return navigationItems.find((i) =>
+      i.applicationState.includes(applicationStateToFilterEnum[state]),
+    )?.link
   }
 
   useEffect(() => {
@@ -85,7 +102,7 @@ const ApplicationHeader = ({
             colorScheme="default"
             iconType="filled"
             onClick={() => {
-              router.push(prevUrl.link)
+              router.push(prevUrl)
             }}
             preTextIcon="arrowBack"
             preTextIconType="filled"
