@@ -440,7 +440,6 @@ export class EndorsementService {
         model: Endorsement,
       }]
     })
-    // demo c7f7e470-17ce-4e58-a736-7b3a6f797ec1
     try {
       const result = this.emailService.sendEmail({
         from: {
@@ -449,7 +448,8 @@ export class EndorsementService {
         },
         to: [
           {
-            name: recipientEmail, // message can be sent to any email so recipient name in unknown
+            // message can be sent to any email so recipient name in unknown
+            name: recipientEmail, 
             address: recipientEmail,
           },
         ],
@@ -471,7 +471,7 @@ export class EndorsementService {
             {
               component: 'Copy',
               context: {
-                copy: `Þetta er í þróun`,
+                copy: `Þetta kjal er í þróun ...`,
               },
             },
             {
