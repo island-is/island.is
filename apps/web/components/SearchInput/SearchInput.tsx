@@ -116,8 +116,6 @@ const useSearch = (
               language: locale as ContentLanguage,
               types: [
                 SearchableContentTypes['WebArticle'],
-                SearchableContentTypes['WebLifeEventPage'],
-                SearchableContentTypes['WebNews'],
                 SearchableContentTypes['WebSubArticle'],
               ],
             },

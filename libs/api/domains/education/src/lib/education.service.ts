@@ -138,7 +138,7 @@ export class EducationService {
           name: familyMember.Nafn,
           isChild: nationalId !== familyMember.Kennitala,
           organizationType: 'Menntamálastofnun',
-          organizationName: 'Samræmd Könnunarpróf',
+          organizationName: 'Samræmd könnunarpróf',
           yearInterval: getYearInterval(examDates),
           familyIndex: index,
         }

@@ -37,7 +37,7 @@ const MainPage = () => {
 
         {myApplication && myApplication?.state && (
           <>
-            <InProgress currentApplication={myApplication} />
+            <InProgress application={myApplication} />
 
             <Approved
               isStateVisible={myApplication.state === ApplicationState.APPROVED}

@@ -21,7 +21,9 @@ export const ApplicationQuery = gql`
       interview
       employmentCustom
       homeCircumstancesCustom
+      familyStatus
       spouseNationalId
+      spouseName
       city
       streetName
       postalCode
