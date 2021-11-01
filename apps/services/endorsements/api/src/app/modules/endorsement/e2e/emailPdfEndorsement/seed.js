@@ -1,23 +1,33 @@
-const {
-  getGenericEndorsementList,
-  getGenericEndorsement,
-} = require('../../../../../../test/seedHelpers')
-const authNationalId = '0101303369' // we use gervimaður national id here to pass national id checks
+const faker = require('faker')
+const authNationalId = 'xxxxxx-xxxx' // we use gervimaður national id here to pass national id checks
 module.exports = {
   authNationalId,
   endorsementLists: [
     {
-      ...getGenericEndorsementList(),
-      id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c4',
-      closed_date: '2029-11-01T10:53:39.882Z',
-      tags: ['generalPetition'],
+      id: '7d6c2b91-8d8d-42d0-82f7-cd64ce16d753',
+      title: 'titill',
+      description: 'lýsingin ..............',
+      opened_date: new Date(),
+      closed_date: new Date(),
+      admin_lock: false,
+      endorsement_meta: '{}', // default empty array in postgres
+      endorsement_metadata: '[]', // default empty array in postgres
+      tags: ['generalPetition'], // default empty array in postgres
+      validation_rules: '[]',
+      meta: '{}',
+      owner: 'xxxxxx-xxxx', //faker.phone.phoneNumber('##########'),
+      created: new Date(),
+      modified: new Date(),
     },
   ],
   endorsements: [
     {
-      ...getGenericEndorsement(),
-      endorser: authNationalId,
-      endorsement_list_id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c4',
+      id: faker.datatype.uuid(),
+      endorser: '1305775399',
+      endorsement_list_id: '7d6c2b91-8d8d-42d0-82f7-cd64ce16d753',
+      meta: '{}',
+      created: new Date(),
+      modified: new Date(),
     },
   ],
 }
