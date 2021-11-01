@@ -3,28 +3,27 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { DocumentApi } from '@island.is/clients/health-insurance-v2'
 import {
-  AccidentNotificationStatus,
-  StatusTypes,
-} from './models/accidentNotificationStatus.model'
+  HealthInsuranceAccidentNotificationAttachmentTypes,
+  HealthInsuranceAccidentNotificationConfirmationTypes,
+  HealthInsuranceAccidentNotificationStatusTypes
+} from './types'
 import {
   AccidentNotificationAttachment,
-  AttachmentTypes,
-} from './models/accidentNotificationAttachment.model'
-import {
   AccidentNotificationConfirmation,
-  ConfirmationTypes,
-} from './models/accidentNotificationConfirmation.model'
+  AccidentNotificationStatus
+} from './graphql/models'
+
 
 const mapStatus = (statusId: number) => {
   switch (statusId) {
     case 0:
-      return StatusTypes.ACCEPTED
+      return HealthInsuranceAccidentNotificationStatusTypes.ACCEPTED
     case 1:
-      return StatusTypes.REFUSED
+      return HealthInsuranceAccidentNotificationStatusTypes.REFUSED
     case 2:
-      return StatusTypes.INPROGRESS
+      return HealthInsuranceAccidentNotificationStatusTypes.INPROGRESS
     case 3:
-      return StatusTypes.INPROGRESSWAITINGFORDOCUMENT
+      return HealthInsuranceAccidentNotificationStatusTypes.INPROGRESSWAITINGFORDOCUMENT
     default:
       break
   }
@@ -33,11 +32,11 @@ const mapStatus = (statusId: number) => {
 const mapAttachmentType = (attachmentTypeId: number) => {
   switch (attachmentTypeId) {
     case 1:
-      return AttachmentTypes.INJURY_CERTIFICATE
+      return HealthInsuranceAccidentNotificationAttachmentTypes.INJURY_CERTIFICATE
     case 2:
-      return AttachmentTypes.PROXY_DOCUMENT
+      return HealthInsuranceAccidentNotificationAttachmentTypes.PROXY_DOCUMENT
     case 3:
-      return AttachmentTypes.POLICE_REPORT
+      return HealthInsuranceAccidentNotificationAttachmentTypes.POLICE_REPORT
     default:
       break
   }
@@ -46,16 +45,16 @@ const mapAttachmentType = (attachmentTypeId: number) => {
 const mapConfirmationType = (confirmationTypeId: number) => {
   switch (confirmationTypeId) {
     case 1:
-      return ConfirmationTypes.INJUREDORREPRESENTATIVEPARTY
+      return HealthInsuranceAccidentNotificationConfirmationTypes.INJUREDORREPRESENTATIVEPARTY
     case 2:
-      return ConfirmationTypes.COMPANYPARTY
+      return HealthInsuranceAccidentNotificationConfirmationTypes.COMPANYPARTY
     default:
       break
   }
 }
 
 @Injectable()
-export class HealthInsuranceService {
+export class AccidentNotificationService {
   constructor(
     private readonly accidentNotificationApi: DocumentApi,
     @Inject(LOGGER_PROVIDER)
@@ -65,7 +64,7 @@ export class HealthInsuranceService {
   async getAccidentNotificationStatus(
     ihiDocumentID: number,
   ): Promise<AccidentNotificationStatus | null> {
-    console.log('starting call to get accident', ihiDocumentID)
+    this.logger.log('starting call to get accident', ihiDocumentID)
     const accidentStatus = await this.accidentNotificationApi.documentGetAccidentStatus(
       { ihiDocumentID: ihiDocumentID },
     )

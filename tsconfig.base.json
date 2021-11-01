@@ -81,9 +81,6 @@
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
       ],
-      "@island.is/api/domains/health-insurance-v2": [
-        "libs/api/domains/health-insurance-v2/src/index.ts"
-      ],
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],

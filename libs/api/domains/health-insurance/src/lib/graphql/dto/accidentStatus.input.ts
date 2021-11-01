@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql'
 import { IsNumber } from 'class-validator'
 
 @InputType()
-export class AccidentStatusInput {
+export class HealthInsuranceAccidentStatusInput {
   @Field()
   @IsNumber()
   ihiDocumentID!: number

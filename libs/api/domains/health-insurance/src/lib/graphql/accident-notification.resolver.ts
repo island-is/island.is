@@ -4,30 +4,30 @@ import { Audit } from '@island.is/nest/audit'
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { AccidentStatusInput } from './dto/AccidentStatus.input'
+import { HealthInsuranceAccidentStatusInput } from './dto/accidentStatus.input'
 import { AccidentNotificationStatus } from './models/accidentNotificationStatus.model'
-import { HealthInsuranceService } from './health-insurance-v2.service'
+import { AccidentNotificationService } from '../accident-notification.service'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+//@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => AccidentNotificationStatus)
-export class HealthInsuranceResolver {
+export class HealthInsuranceAccidentNotificationResolver {
   constructor(
-    private accidentNotificationApi: HealthInsuranceService,
+    private accidentNotificationService: AccidentNotificationService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) { }
 
   @Query(() => AccidentNotificationStatus, {
-    name: 'accidentStatus',
+    name: 'HealthInsuranceAccidentStatus',
     nullable: true,
   })
-  @Audit()
+  //@Audit()
   async accidentStatus(
-    @Args('input', { type: () => AccidentStatusInput })
-    input: AccidentStatusInput,
+    @Args('input', { type: () => HealthInsuranceAccidentStatusInput })
+    input: HealthInsuranceAccidentStatusInput,
   ): Promise<AccidentNotificationStatus | null> {
     this.logger.debug(`Getting company information`)
-    const accidentStatus = await this.accidentNotificationApi.getAccidentNotificationStatus(
+    const accidentStatus = await this.accidentNotificationService.getAccidentNotificationStatus(
       input.ihiDocumentID,
     )
     this.logger.debug(`Getting accident status for id ${input.ihiDocumentID}`)
