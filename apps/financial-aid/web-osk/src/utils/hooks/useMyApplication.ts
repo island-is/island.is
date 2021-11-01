@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 const useMyApplication = () => {
   const router = useRouter()
 
-  const storageKey = 'myCurrentApplication'
+  // const storageKey = 'myCurrentApplication'
 
   const [myApplication, updateApplication] = useState<Application>()
 
@@ -20,16 +20,21 @@ const useMyApplication = () => {
     { input: { id: string } }
   >(ApplicationQuery)
 
-  useEffect(() => {
-    const storedFormJson = sessionStorage.getItem(storageKey)
-    if (storedFormJson === null) {
-      return
-    }
-    const storedState = JSON.parse(storedFormJson)
-    updateApplication(storedState)
-  }, [])
+  // useEffect(() => {
+  //   const storedFormJson = sessionStorage.getItem(storageKey)
+  //   if (storedFormJson === null) {
+  //     return
+  //   }
+  //   const storedState = JSON.parse(storedFormJson)
+  //   updateApplication(storedState)
+  // }, [])
 
-  if (router.query.id && myApplication === undefined && loading === false) {
+  if (
+    router.query.id &&
+    myApplication === undefined &&
+    loading === false &&
+    error === undefined
+  ) {
     try {
       getApplication({
         variables: {
@@ -39,7 +44,7 @@ const useMyApplication = () => {
 
       if (data) {
         updateApplication(data.application)
-        sessionStorage.setItem(storageKey, JSON.stringify(data.application))
+        // sessionStorage.setItem(storageKey, JSON.stringify(data.application))
       }
     } catch {
       return {

@@ -16,9 +16,10 @@ import { useRouter } from 'next/router'
 
 interface Props {
   application: Application
+  isSpouse?: boolean
 }
 
-const InProgress = ({ application }: Props) => {
+const InProgress = ({ application, isSpouse = false }: Props) => {
   const router = useRouter()
 
   if (
@@ -50,21 +51,22 @@ const InProgress = ({ application }: Props) => {
           />
         </Box>
       )}
-
-      <Estimation
-        homeCircumstances={application.homeCircumstances}
-        usePersonalTaxCredit={application?.usePersonalTaxCredit}
-        aboutText={
-          <Text marginBottom={[2, 2, 3]}>
-            Athugaðu að þessi útreikningur er{' '}
-            <span className={styles.taxReturn}>
-              eingöngu til viðmiðunar og getur tekið breytingum.
-            </span>{' '}
-            Þú færð skilaboð þegar frekari útreikningur liggur fyrir. Umsóknin
-            verður afgreidd eins fljótt og auðið er.
-          </Text>
-        }
-      />
+      {!isSpouse && (
+        <Estimation
+          homeCircumstances={application.homeCircumstances}
+          usePersonalTaxCredit={application?.usePersonalTaxCredit}
+          aboutText={
+            <Text marginBottom={[2, 2, 3]}>
+              Athugaðu að þessi útreikningur er{' '}
+              <span className={styles.taxReturn}>
+                eingöngu til viðmiðunar og getur tekið breytingum.
+              </span>{' '}
+              Þú færð skilaboð þegar frekari útreikningur liggur fyrir. Umsóknin
+              verður afgreidd eins fljótt og auðið er.
+            </Text>
+          }
+        />
+      )}
     </>
   )
 }

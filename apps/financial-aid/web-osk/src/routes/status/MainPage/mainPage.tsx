@@ -26,29 +26,33 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 const MainPage = () => {
   const logOut = useLogOut()
 
-  const { myApplication, loading, error, municipality } = useContext(AppContext)
+  const { myApplication, loading, error, municipality, user } = useContext(
+    AppContext,
+  )
 
   return (
     <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={1}>
-          Aðstoðin þín
+          {user?.isSpouse ? 'Aðstoð maka þíns' : 'Aðstoðin þín '}
         </Text>
 
         {myApplication && myApplication?.state && (
           <>
-            <InProgress application={myApplication} />
+            <InProgress application={myApplication} isSpouse={user?.isSpouse} />
 
             <Approved
               isStateVisible={myApplication.state === ApplicationState.APPROVED}
               state={myApplication.state}
               amount={myApplication.amount}
+              isSpouse={user?.isSpouse}
             />
 
             <Rejected
               isStateVisible={myApplication.state === ApplicationState.REJECTED}
               state={myApplication.state}
               rejectionComment={myApplication?.rejection}
+              isSpouse={user?.isSpouse}
             />
 
             <Timeline
@@ -57,6 +61,7 @@ const MainPage = () => {
             />
           </>
         )}
+
         {error && (
           <Text>
             Umsókn ekki fundin eða einhvað fór úrskeiðis <br />
