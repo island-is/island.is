@@ -1,17 +1,25 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { ValidationFailed } from '@island.is/nest/problem'
 import { EmailService } from '@island.is/email-service'
 import { ZendeskService } from '@island.is/clients/zendesk'
+import { ContentfulRepository, localeMap } from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SendMailOptions } from 'nodemailer'
 import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
-import { SyslumennFormsInput } from './dto/syslumennForms.input'
+import {
+  ServiceWebFormsInput,
+  ServiceWebFormsInputWithInstitutionEmail,
+} from './dto/serviceWebForms.input'
 import { getTemplate as getContactUsTemplate } from './emailTemplates/contactUs'
 import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsAStory'
-import { getTemplate as getSyslumennFormsTemplate } from './emailTemplates/syslumennForms'
+import { getTemplate as getServiceWebFormsTemplate } from './emailTemplates/serviceWebForms'
 
-type SendEmailInput = ContactUsInput | TellUsAStoryInput | SyslumennFormsInput
+type SendEmailInput =
+  | ContactUsInput
+  | TellUsAStoryInput
+  | ServiceWebFormsInputWithInstitutionEmail
 interface EmailTypeTemplateMap {
   [template: string]: (SendEmailInput) => SendMailOptions
 }
@@ -27,7 +35,7 @@ export class CommunicationsService {
   emailTypeTemplateMap: EmailTypeTemplateMap = {
     contactUs: getContactUsTemplate,
     tellUsAStory: getTellUsAStoryTemplate,
-    syslumennForms: getSyslumennFormsTemplate,
+    serviceWebForms: getServiceWebFormsTemplate,
   }
 
   getEmailTemplate(input: SendEmailInput) {
@@ -35,6 +43,47 @@ export class CommunicationsService {
       return this.emailTypeTemplateMap[input.type](input)
     } else {
       throw new Error('Message type is not supported')
+    }
+  }
+
+  async getInputWithInstitutionEmail(
+    input: ServiceWebFormsInput,
+  ): Promise<ServiceWebFormsInputWithInstitutionEmail> {
+    const institutionSlug = input.institutionSlug
+
+    const contentfulRespository = new ContentfulRepository()
+
+    const result = await contentfulRespository.getLocalizedEntries(
+      localeMap['is'],
+      {
+        ['content_type']: 'organization',
+        'fields.slug': institutionSlug,
+      },
+    )
+
+    const errors = {}
+
+    const item = result?.items?.[0]
+
+    if (!item) {
+      errors[
+        'institutionSlug'
+      ] = `Unexpected institution slug "${institutionSlug}"`
+    }
+
+    const institutionEmail = (item?.fields as { email?: string })?.email
+
+    if (!institutionEmail) {
+      errors['institutionEmail'] = 'Institution email not found'
+    }
+
+    if (Object.keys(errors).length) {
+      throw new ValidationFailed(errors)
+    }
+
+    return {
+      ...input,
+      institutionEmail,
     }
   }
 

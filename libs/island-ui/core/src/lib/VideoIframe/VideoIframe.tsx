@@ -1,5 +1,5 @@
 import React from 'react'
-import * as styles from './VideoIframe.treat'
+import * as styles from './VideoIframe.css'
 
 export interface VideoIframeProps {
   src: string

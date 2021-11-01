@@ -297,6 +297,39 @@ describe('Application system API', () => {
     })
   })
 
+  it('should fail when PUT-ing anything else than answers', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    const response = await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        applicant: '1111',
+        assignees: ['1234'],
+        attachments: {
+          someAttachment: 'asdf',
+        },
+      })
+      .expect(400)
+
+    expect(response.body).toMatchInlineSnapshot(`
+      Object {
+        "detail": Array [
+          "property applicant should not exist",
+          "property assignees should not exist",
+          "property attachments should not exist",
+        ],
+        "status": 400,
+        "title": "Bad Request",
+        "type": "https://httpstatuses.com/400",
+      }
+    `)
+  })
+
   it('should fail when PUT-ing externalData on an application where it is in a state where it is not permitted', async () => {
     const creationResponse = await server
       .post('/applications')

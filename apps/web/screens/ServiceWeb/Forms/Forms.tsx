@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import NextLink from 'next/link'
+import Head from 'next/head'
 import cn from 'classnames'
 import { useMutation } from '@apollo/client'
 
@@ -13,8 +14,11 @@ import {
   ToastContainer,
   toast,
   AlertBanner,
+  LinkContext,
+  Link,
+  Button,
 } from '@island.is/island-ui/core'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useNamespace, useLinkResolver } from '@island.is/web/hooks'
 import {
   ServiceWebHeader,
   ServiceWebStandardForm,
@@ -27,8 +31,8 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
   QueryGetSupportCategoriesInOrganizationArgs,
-  SyslumennFormsMutation,
-  SyslumennFormsMutationVariables,
+  ServiceWebFormsMutation,
+  ServiceWebFormsMutationVariables,
   SupportCategory,
   Organization,
   QueryGetOrganizationsArgs,
@@ -38,14 +42,14 @@ import {
   GET_ORGANIZATIONS_QUERY,
   GET_SERVICE_WEB_ORGANIZATION,
   GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
-  SYSLUMENN_FORMS_MUTATION,
+  SERVICE_WEB_FORMS_MUTATION,
 } from '../../queries'
 import { Screen } from '../../../types'
 import Footer from '../shared/Footer'
 
-import * as sharedStyles from '../shared/styles.treat'
+import * as sharedStyles from '../shared/styles.css'
 
-interface SyslumennFormsPageProps {
+interface ServiceWebFormsPageProps {
   syslumenn?: Organizations['items']
   organization?: Organization
   supportCategories?: SupportCategory[]
@@ -53,25 +57,27 @@ interface SyslumennFormsPageProps {
   institutionSlug: string
 }
 
-const SyslumennFormsPage: Screen<SyslumennFormsPageProps> = ({
+const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   syslumenn,
   supportCategories,
   institutionSlug,
   organization,
+  namespace,
 }) => {
   const { linkResolver } = useLinkResolver()
+  const n = useNamespace(namespace)
   const [submit, { data, loading, error }] = useMutation<
-    SyslumennFormsMutation,
-    SyslumennFormsMutationVariables
-  >(SYSLUMENN_FORMS_MUTATION)
+    ServiceWebFormsMutation,
+    ServiceWebFormsMutationVariables
+  >(SERVICE_WEB_FORMS_MUTATION)
 
-  const logoTitle = 'Þjónustuvefur Sýslumanna'
+  const organizationTitle = organization ? organization.title : 'Ísland.is'
   const errorMessage = 'Villa kom upp við að senda fyrirspurn.'
 
-  const successfullySent = data?.syslumennForms?.sent
+  const successfullySent = data?.serviceWebForms?.sent
 
   useEffect(() => {
-    const sent = data?.syslumennForms?.sent
+    const sent = data?.serviceWebForms?.sent
 
     if (sent !== undefined) {
       sent
@@ -88,9 +94,19 @@ const SyslumennFormsPage: Screen<SyslumennFormsPageProps> = ({
     }
   }, [error])
 
+  const pageTitle = `${organizationTitle} | ${n('serviceWeb', 'Þjónustuvefur')}`
+
+  const headerTitle = `${n(
+    'serviceWeb',
+    'Þjónustuvefur',
+  )} - ${organizationTitle}`
+
   return (
     <>
-      <ServiceWebHeader logoTitle={logoTitle} />
+      <Head>
+        <title>{pageTitle}</title>
+      </Head>
+      <ServiceWebHeader title={headerTitle} />
       <div className={cn(sharedStyles.bg, sharedStyles.bgSmall)} />
       <Box marginY={[3, 3, 10]} marginBottom={10}>
         <GridContainer>
@@ -102,29 +118,60 @@ const SyslumennFormsPage: Screen<SyslumennFormsPageProps> = ({
               <GridContainer>
                 <GridRow>
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
-                    <Box printHidden>
+                    <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
                         items={[
                           {
-                            title: logoTitle,
+                            title: n('serviceWeb', 'Þjónustuvefur'),
                             typename: 'helpdesk',
-                            href: '/',
+                            href: linkResolver('helpdesk').href,
                           },
                           {
                             title: 'Hafðu samband',
+                            isTag: true,
                           },
                         ]}
-                        renderLink={(link, { typename, slug }) => {
+                        renderLink={(link, { href }) => {
                           return (
-                            <NextLink
-                              {...linkResolver(typename as LinkType, slug)}
-                              passHref
-                            >
+                            <NextLink href={href} passHref>
                               {link}
                             </NextLink>
                           )
                         }}
                       />
+                    </Box>
+                    <Box
+                      paddingBottom={[2, 2, 4]}
+                      display={['flex', 'flex', 'none']}
+                      justifyContent="spaceBetween"
+                      alignItems="center"
+                      printHidden
+                    >
+                      <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
+                        <LinkContext.Provider
+                          value={{
+                            linkRenderer: (href, children) => (
+                              <Link href={href} pureChildren skipTab>
+                                {children}
+                              </Link>
+                            ),
+                          }}
+                        >
+                          <Text truncate>
+                            <a href={linkResolver('helpdesk').href}>
+                              <Button
+                                preTextIcon="arrowBack"
+                                preTextIconType="filled"
+                                size="small"
+                                type="button"
+                                variant="text"
+                              >
+                                {n('serviceWeb', 'Þjónustuvefur')}
+                              </Button>
+                            </a>
+                          </Text>
+                        </LinkContext.Provider>
+                      </Box>
                     </Box>
                   </GridColumn>
                 </GridRow>
@@ -173,7 +220,7 @@ const SyslumennFormsPage: Screen<SyslumennFormsPageProps> = ({
   )
 }
 
-SyslumennFormsPage.getInitialProps = async ({
+ServiceWebFormsPage.getInitialProps = async ({
   apolloClient,
   locale,
   query,
@@ -241,7 +288,7 @@ SyslumennFormsPage.getInitialProps = async ({
   }
 }
 
-export default withMainLayout(SyslumennFormsPage, {
+export default withMainLayout(ServiceWebFormsPage, {
   showHeader: false,
   showFooter: false,
 })

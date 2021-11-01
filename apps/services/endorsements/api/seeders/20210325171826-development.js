@@ -69,7 +69,7 @@ module.exports = {
             )}`,
           },
           signedTags: [],
-          bulkEndorsement: faker.random.boolean(),
+          bulkEndorsement: faker.datatype.boolean(),
           showName: true,
           voterRegion: {
             voterRegionNumber: faker.phone.phoneNumber('#'),

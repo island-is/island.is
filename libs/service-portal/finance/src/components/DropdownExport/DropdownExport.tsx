@@ -2,7 +2,7 @@ import React, { FC, ReactElement } from 'react'
 import { Box, DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import * as styles from './DropdownExport.treat'
+import * as styles from './DropdownExport.css'
 import DisabledItem from './DisabledItem'
 
 interface Props {

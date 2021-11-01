@@ -18,7 +18,7 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useIslykillSettings } from '@island.is/service-portal/graphql'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
-import * as styles from './UserMenu.treat'
+import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
 import { ValueType } from 'react-select'
 

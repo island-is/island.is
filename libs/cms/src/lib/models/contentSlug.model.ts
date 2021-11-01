@@ -1,21 +1,25 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { IArticle } from '../generated/contentfulTypes'
+import { IsObject } from 'class-validator'
+
+@ObjectType()
+export class ContentSlugLocales {
+  @Field()
+  is?: string = ''
+
+  @Field()
+  en?: string = ''
+}
 
 @ObjectType()
 export class ContentSlug {
   @Field(() => ID)
   id: string = ''
 
-  @Field()
-  slug: string = ''
+  @IsObject()
+  @Field(() => ContentSlugLocales, { nullable: true })
+  slug: ContentSlugLocales = {}
 
   @Field()
   type: string = ''
 }
-
-export const mapContentSlug = ({ fields, sys }: IArticle): ContentSlug => ({
-  id: sys.id,
-  slug: fields?.slug ?? '',
-  type: sys.contentType.sys.id,
-})

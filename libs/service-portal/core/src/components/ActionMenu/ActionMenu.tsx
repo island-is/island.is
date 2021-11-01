@@ -1,7 +1,7 @@
 import React, { FC, useState, useRef } from 'react'
 import { useClickAway } from 'react-use'
 import { Box, Stack } from '@island.is/island-ui/core'
-import * as styles from './ActionMenu.treat'
+import * as styles from './ActionMenu.css'
 
 interface ActionMenuItemProps {
   onClick?: () => void

@@ -1,5 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import NextLink from 'next/link'
+import Head from 'next/head'
 import cn from 'classnames'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -27,13 +29,16 @@ import {
   TopicCard,
   ContentBlock,
   AccordionCard,
+  Link,
+  LinkContext,
+  Button,
 } from '@island.is/island-ui/core'
 import Footer from '../shared/Footer'
 import { ServiceWebHeader } from '@island.is/web/components'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { getSlugPart } from '../utils'
 
-import * as sharedStyles from '../shared/styles.treat'
+import * as sharedStyles from '../shared/styles.css'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import groupBy from 'lodash/groupBy'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
@@ -49,9 +54,10 @@ const SubPage: Screen<SubPageProps> = ({
   organization,
   supportQNAs,
   questionSlug,
+  namespace,
 }) => {
   const Router = useRouter()
-
+  const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const organizationTitle = organization ? organization.title : 'Ísland.is'
   const organizationSlug = organization.slug
@@ -60,8 +66,6 @@ const SubPage: Screen<SubPageProps> = ({
   )
 
   const institutionSlug = getSlugPart(Router.asPath, 2)
-
-  const logoTitle = `Þjónustuvefur ${organizationTitle}`
 
   // Already filtered by category, simply
   const categoryDescription = supportQNAs[0]?.category?.description ?? ''
@@ -72,9 +76,30 @@ const SubPage: Screen<SubPageProps> = ({
     (supportQNA) => supportQNA.subCategory.title,
   )
 
+  const pageTitle = `${question?.title ?? organizationTitle} | ${n(
+    'serviceWeb',
+    'Þjónustuvefur',
+  )}`
+
+  const headerTitle = `${n(
+    'serviceWeb',
+    'Þjónustuvefur',
+  )} - ${organizationTitle}`
+
+  const mobileBackButtonText = questionSlug
+    ? `${organizationTitle}: ${categoryTitle}`
+    : `${organizationTitle}`
+
+  const mobileBackButtonLink = `${
+    linkResolver('helpdesk').href
+  }/${organizationSlug}${questionSlug ? `/${categorySlug}` : ''}`
+
   return (
     <>
-      <ServiceWebHeader logoTitle={logoTitle} />
+      <Head>
+        <title>{pageTitle}</title>
+      </Head>
+      <ServiceWebHeader title={headerTitle} />
       <div className={cn(sharedStyles.bg, sharedStyles.bgSmall)} />
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
@@ -86,11 +111,16 @@ const SubPage: Screen<SubPageProps> = ({
               <GridContainer>
                 <GridRow>
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
-                    <Box printHidden>
+                    <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
                         items={[
                           {
-                            title: logoTitle,
+                            title: n('serviceWeb', 'Þjónustuvefur'),
+                            typename: 'helpdesk',
+                            href: linkResolver('helpdesk').href,
+                          },
+                          {
+                            title: organization.title,
                             typename: 'helpdesk',
                             href: `${
                               linkResolver('helpdesk').href
@@ -99,12 +129,55 @@ const SubPage: Screen<SubPageProps> = ({
                           {
                             title: `${categoryTitle}`,
                             typename: 'helpdesk',
-                            href: `${
-                              linkResolver('helpdesk').href
-                            }/${organizationSlug}/${categorySlug}`,
+                            isTag: true,
+                            ...(questionSlug && {
+                              href: `${
+                                linkResolver('helpdesk').href
+                              }/${organizationSlug}/${categorySlug}`,
+                            }),
                           },
                         ]}
+                        renderLink={(link, { href }) => {
+                          return (
+                            <NextLink href={href} passHref>
+                              {link}
+                            </NextLink>
+                          )
+                        }}
                       />
+                    </Box>
+                    <Box
+                      paddingBottom={[2, 2, 4]}
+                      display={['flex', 'flex', 'none']}
+                      justifyContent="spaceBetween"
+                      alignItems="center"
+                      printHidden
+                    >
+                      <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
+                        <LinkContext.Provider
+                          value={{
+                            linkRenderer: (href, children) => (
+                              <Link href={href} pureChildren skipTab>
+                                {children}
+                              </Link>
+                            ),
+                          }}
+                        >
+                          <Text truncate>
+                            <a href={mobileBackButtonLink}>
+                              <Button
+                                preTextIcon="arrowBack"
+                                preTextIconType="filled"
+                                size="small"
+                                type="button"
+                                variant="text"
+                              >
+                                {mobileBackButtonText}
+                              </Button>
+                            </a>
+                          </Text>
+                        </LinkContext.Provider>
+                      </Box>
                     </Box>
                   </GridColumn>
                 </GridRow>

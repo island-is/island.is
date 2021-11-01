@@ -120,6 +120,11 @@ export class CreateApplicationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
+  readonly spouseName: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
   readonly spouseNationalId: string
 
   @IsOptional()

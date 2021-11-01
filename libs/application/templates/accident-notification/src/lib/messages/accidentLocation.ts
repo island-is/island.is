@@ -197,7 +197,7 @@ export const accidentLocation = {
       id:
         'an.application:accidentLocation.fishermanAccidentLocation.description',
       defaultMessage:
-        'Vinsamlegast skráðu staðsetningu skips þegar slysið átti sér stað',
+        'Vinsamlegast tilgreindu staðsetningu skips þegar slysið átti sér stað',
       description: 'Fisherman accident location description',
     },
   }),
@@ -237,7 +237,7 @@ export const accidentLocation = {
     moreDetailsPlaceholder: {
       id:
         'an.application:accidentLocation.homeAccidentLocation.moreDetailsPlaceholder',
-      defaultMessage: 'T.d hæð 2, íbúð 101 eða sumarbústaður',
+      defaultMessage: 'T.d. inn á heimili, innan lóðamarka eða í sumarbústað',
       description:
         'Home accident location more details placeholder in textarea field',
     },

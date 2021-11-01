@@ -200,6 +200,7 @@
 - [Feature Flags](libs/feature-flags/README.md)
 - [Health Insurance](libs/health-insurance/README.md)
 - [Island UI](libs/island-ui/README.md)
+  - [Vanilla Extract Utils](libs/island-ui/vanilla-extract-utils/README.md)
 - [Localization](libs/localization/README.md)
 - [Nest Modules](libs/nest/README.md)
   - [Audit Module](libs/nest/audit/README.md)

@@ -9,7 +9,7 @@ import { User } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
 import { Features, useFeatureFlag } from '@island.is/feature-flags'
 import { userMessages } from '@island.is/shared/translations'
-import * as styles from './UserMenu.treat'
+import * as styles from './UserMenu.css'
 import { useActorDelegationsQuery } from '../../../gen/graphql'
 
 interface UserDelegationsProps {

@@ -96,7 +96,6 @@ export const AccidentNotificationSchema = z.object({
       AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
       AttachmentsEnum.INJURYCERTIFICATE,
       AttachmentsEnum.SENDCERTIFICATELATER,
-      AttachmentsEnum.INJUREDSENDSCERTIFICATE,
     ]),
   }),
   attachments: z.object({
@@ -182,9 +181,11 @@ export const AccidentNotificationSchema = z.object({
       FishermanWorkplaceAccidentShipLocationEnum.HARBOR,
       FishermanWorkplaceAccidentShipLocationEnum.OTHER,
     ]),
-    locationAndPurpose: z.object({
-      location: z.string().min(1),
-    }),
+    locationAndPurpose: z
+      .object({
+        location: z.string().min(1),
+      })
+      .optional(),
   }),
   workMachineRadio: z.enum([YES, NO]),
   workMachine: z.object({
@@ -236,8 +237,6 @@ export const AccidentNotificationSchema = z.object({
   childInCustody: z.object({
     name: z.string().min(1, error.required.defaultMessage),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    email: z.string().optional(),
-    phoneNumber: z.string().optional(),
   }),
   powerOfAttorney: z.object({
     type: z.enum([

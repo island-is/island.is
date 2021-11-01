@@ -147,7 +147,13 @@ export class ApplicationTemplateHelper<
       this.template.stateMachineOptions,
     )
 
-    service.start()
+    const eventType = typeof event === 'object' ? event.type : event
+    const { initialState } = service.start()
+
+    if (!initialState.nextEvents.includes(eventType)) {
+      throw new Error(`${eventType} is invalid for state ${initialState.value}`)
+    }
+
     service.send(event)
 
     const state = service.state
