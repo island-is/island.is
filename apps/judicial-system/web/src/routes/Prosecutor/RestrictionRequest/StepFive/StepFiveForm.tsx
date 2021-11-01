@@ -269,7 +269,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                 loading={isUploading}
                 disabled={policeCaseFileList.length === 0}
               >
-                {formatMessage(m.sections.policeCaseFiles.buttonLabel)}
+                {formatMessage(m.sections.policeCaseFiles.uploadButtonLabel)}
               </Button>
             </motion.div>
           </AnimateSharedLayout>

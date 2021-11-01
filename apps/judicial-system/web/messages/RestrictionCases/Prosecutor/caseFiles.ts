@@ -73,7 +73,7 @@ export const rcCaseFiles = {
         description:
           'Notaður sem skilaboð þegar öllum skjölum hefur verið hlaðið upp í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
-      buttonLabel: {
+      uploadButtonLabel: {
         id:
           'judicial.system.restriction_cases:case_files.police_case_files.upload_button_label',
         defaultMessage: 'Hlaða upp',
