@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { CurrentApplicationModel, ApplicationModel } from './models'
+import { ApplicationModel } from './models'
 
 import { Op } from 'sequelize'
 
@@ -76,15 +76,26 @@ export class ApplicationService {
     return Boolean(application)
   }
 
-  async getCurrentApplication(
-    nationalId: string,
-  ): Promise<CurrentApplicationModel | null> {
-    return await this.applicationModel.findOne({
+  async getCurrentApplication(nationalId: string): Promise<string | null> {
+    const currentApplication = await this.applicationModel.findOne({
       where: {
-        nationalId,
+        [Op.or]: [
+          {
+            nationalId,
+          },
+          {
+            spouseNationalId: nationalId,
+          },
+        ],
         created: { [Op.gte]: firstDateOfMonth() },
       },
     })
+
+    if (currentApplication) {
+      return currentApplication.id
+    }
+
+    return null
   }
 
   async getAll(

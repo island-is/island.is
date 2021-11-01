@@ -12,7 +12,7 @@ export const employer = {
     pageDescription: {
       id: `pdpp.application:application.employer.general.pageDescription`,
       defaultMessage:
-        'Upplýsingar um tekjur eru sóttar í staðgreiðsluskrá Skattsins. Ráðstöfunartekjur eru reiknaðar með því að draga frá staðgreiðslu opinberra gjalda, iðgjöld í lífeyrissjóði og meðlagsgreiðslur sem eru dregnar frá launum. ',
+        'Samkvæmt 11. gr. laga um innheimtu opinberra skatta og gjalda, nr. 150/2019 ber launagreiðanda að draga af launum opinber gjöld utan staðgreiðslu, þ.e. þing- og sveitarsjóðsgjöld. Nánar má lesa um launaafdrátt á ',
       description: 'Employer page description',
     },
     disposableIncomePageTitle: {
@@ -51,8 +51,13 @@ export const employer = {
     },
     employerNationalId: {
       id: `pdpp.application:application.employer.labels.employerNationalId`,
-      defaultMessage: 'Kennitala fyrirtækisins',
+      defaultMessage: 'Sláðu inn kennitölu atvinnurekanda',
       description: 'Employer national id',
+    },
+    employerNationalIdPlaceholder: {
+      id: `pdpp.application:application.employer.labels.employerNationalIdPlaceholder`,
+      defaultMessage: 'Kennitala launagreiðanda',
+      description: 'Employer national id placeholder',
     },
     yourDisposableIncome: {
       id: `pdpp.application:application.employer.labels.yourDisposableIncome`,
@@ -72,7 +77,7 @@ export const employer = {
     minimumMonthlyPaymentDescription: {
       id: `pdpp.application:application.employer.labels.minimumMonthlyPaymentDescription`,
       defaultMessage: `
-      Í sjálfsafgreiðsluferlinu er miðað við lágmarksgreiðsla á skuld sé 10% af ráðstöfunartekjum þínum. Ef þú telur þessa fjárhæð of háa miðað við framfærslukostnað þinn þá skaltu hafa samband við innheimtumann ríkissjóð. 
+      Í sjálfsafgreiðsluferlinu er miðað við lágmarksgreiðsla á skuld sé {percent} af ráðstöfunartekjum þínum. Ef þú telur þessa fjárhæð of háa miðað við framfærslukostnað þinn þá skaltu hafa samband við innheimtumann ríkissjóð. 
       `,
       description: 'Minimum monthly payment description',
     },
@@ -83,7 +88,7 @@ export const employer = {
     },
     alertMessage: {
       id: `pdpp.application:application.employer.labels.alertMessage`,
-      defaultMessage: `Lágmarksgreiðsla í launaafdrætti er {minPayment} og þegar áætlun um launaafdrátt er gerð þá er hægt að fara niður í {minPayment} greiðslu.`,
+      defaultMessage: `Lágmarksgreiðsla í launaafdrætti er {minPayment}`,
       description: 'Disposable income alert message',
     },
   }),

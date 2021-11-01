@@ -3,7 +3,6 @@ import {
   Logo,
   Text,
   Box,
-  Button,
   GridContainer,
   DropdownMenu,
 } from '@island.is/island-ui/core'
@@ -27,7 +26,7 @@ const Header = () => {
           <Link
             href={
               user?.currentApplication
-                ? Routes.statusPage(user?.currentApplication?.id as string)
+                ? Routes.statusPage(user?.currentApplication as string)
                 : Routes.application
             }
             data-testid="link-to-home"

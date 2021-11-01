@@ -176,14 +176,18 @@ describe('ApplicationTemplate', () => {
       expect(newState).toBe('inReview')
       expect(hasChanged).toBe(true)
     })
-    it('should return the same state if passing an event that cannot progress the application to any other state', () => {
-      const [hasChanged, newState] = templateHelper.changeState('APPROVE')
-      expect(newState).toBe('draft')
-      expect(hasChanged).toBe(false)
+    it('should throw an error if passing an invalid event that cannot progress the application to any other state', () => {
+      // Arrange
+      const invalidEvent = 'APPROVE'
+      const currentState = 'draft'
+      const sut = () => {
+        templateHelper.changeState(invalidEvent)
+      }
 
-      const anotherState = templateHelper.changeState('REJECT')
-      expect(anotherState[0]).toBe(false)
-      expect(anotherState[1]).toBe('draft')
+      // Act & Assert
+      expect(sut).toThrow(
+        new Error(`${invalidEvent} is invalid for state ${currentState}`),
+      )
     })
   })
 

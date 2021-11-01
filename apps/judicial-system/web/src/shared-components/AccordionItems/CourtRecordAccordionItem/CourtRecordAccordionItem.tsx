@@ -13,7 +13,6 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import {
-  AccusedPleaDecision,
   CaseAppealDecision,
   CaseDecision,
   CaseType,
@@ -26,7 +25,6 @@ import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { closedCourt } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
 import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
-import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
 import { rcConfirmation } from '@island.is/judicial-system-web/messages'
 
 interface Props {
@@ -115,63 +113,19 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           })}
         </Text>
       </AccordionListItem>
-      {!workingCase.isAccusedRightsHidden && (
+      {workingCase.accusedBookings?.trim() && (
         <AccordionListItem
-          title={formatMessage(m.sections.accusedRights.title, {
+          title={formatMessage(m.sections.accusedBookings.title, {
             accusedType: isRestrictionCase(workingCase.type)
               ? formatAccusedByGender(
                   workingCase.accusedGender,
-                  NounCases.GENITIVE,
+                  NounCases.ACCUSATIVE,
                 )
               : 'varnaraðila',
           })}
-        >
-          <Text>
-            <span style={{ whiteSpace: 'pre-wrap' }}>
-              {`Sakborningi er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.\n\n${
-                isRestrictionCase(workingCase.type)
-                  ? capitalize(
-                      formatAccusedByGender(
-                        workingCase.accusedGender,
-                        NounCases.GENITIVE,
-                      ),
-                    )
-                  : 'Varnaraðila'
-              } er kynnt krafa á dómskjali nr. 1.`}
-            </span>
-          </Text>
-        </AccordionListItem>
-      )}
-      {workingCase.accusedAppealDecision !==
-        CaseAppealDecision.NOT_APPLICABLE && (
-        <AccordionListItem
-          title={`Afstaða ${
-            isRestrictionCase(workingCase.type)
-              ? formatAccusedByGender(
-                  workingCase.accusedGender,
-                  NounCases.GENITIVE,
-                )
-              : 'varnaraðila'
-          }`}
           breakSpaces
         >
-          <Text>
-            {`${
-              workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
-                ? `${capitalize(
-                    isRestrictionCase(workingCase.type)
-                      ? formatAccusedByGender(workingCase.accusedGender)
-                      : 'varnaraðili',
-                  )} hafnar kröfunni. `
-                : workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
-                ? `${capitalize(
-                    isRestrictionCase(workingCase.type)
-                      ? formatAccusedByGender(workingCase.accusedGender)
-                      : 'varnaraðili',
-                  )} samþykkir kröfuna. `
-                : ''
-            }${workingCase.accusedPleaAnnouncement ?? ''}`}
-          </Text>
+          <Text>{workingCase.accusedBookings.trim()}</Text>
         </AccordionListItem>
       )}
       <AccordionListItem title="Málflutningur" breakSpaces>
