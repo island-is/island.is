@@ -397,7 +397,7 @@ export class EndorsementService {
     const regular = 8
     doc
       .fontSize(big)
-      .text('ISLAND.IS LOGO ofl...')
+      .text('ISLAND.IS - þetta skjal og kerfi er í vinnslu')
       .fontSize(regular)
       .text(
         'þetta skjal var framkallað sjálfvirkt þann: ' +
@@ -444,7 +444,7 @@ export class EndorsementService {
     try {
       const result = this.emailService.sendEmail({
         from: {
-          name: 'Meðmælendakerfi island.is',
+          name: 'TEST:Meðmælendakerfi island.is',
           address: 'noreply@island.is',
         },
         to: [
@@ -453,7 +453,7 @@ export class EndorsementService {
             address: recipientEmail,
           },
         ],
-        subject: 'Afrit af meðmælendalista',
+        subject: 'TEST:Afrit af meðmælendalista',
         template: {
           title: 'Afrit af meðmælendalista',
           body: [
@@ -465,24 +465,24 @@ export class EndorsementService {
             {
               component: 'Copy',
               context: {
-                copy: `Umsækjandi með kennitölu hefur sent þér ... copy copy copy`,
+                copy: `... copy copy copy`,
               },
             },
             {
               component: 'Copy',
               context: {
-                copy: `Ef þú áttir von á þessum tölvupósti þá getur þú smellt á takkann hér fyrir neðan.`,
+                copy: `Þetta er í þróun`,
               },
             },
             {
               component: 'Button',
               context: {
-                copy: 'Yfirfara umsókn',
+                copy: 'Takki',
                 href: 'http://www.island.is',
               },
             },
             { component: 'Copy', context: { copy: 'Með kveðju,' } },
-            { component: 'Copy', context: { copy: 'Nefndin' } },
+            { component: 'Copy', context: { copy: 'TEST' } },
           ],
         },
         attachments: [
