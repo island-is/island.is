@@ -9,7 +9,6 @@ import {
 } from '@island.is/judicial-system-web/graphql'
 import {
   Case,
-  CaseFile,
   PresignedPost,
   UploadPoliceCaseFileResponse,
 } from '@island.is/judicial-system/types'
@@ -26,8 +25,6 @@ export const useS3Upload = (workingCase?: Case) => {
       uploadCaseFile.status = 'done'
       return uploadCaseFile
     })
-
-    console.log('uploadCaseFiles', uploadCaseFiles)
 
     setFilesRefAndState(uploadCaseFiles ?? [])
   }, [workingCase?.caseFiles])
@@ -243,7 +240,7 @@ export const useS3Upload = (workingCase?: Case) => {
 
   const onRemove = (file: UploadFile) => {
     setUploadErrorMessage(undefined)
-    console.log('file to delete', file as CaseFile)
+
     if (workingCase) {
       deleteFileMutation({
         variables: {
@@ -263,7 +260,7 @@ export const useS3Upload = (workingCase?: Case) => {
         })
         .catch((res) => {
           // TODO: Log to Sentry and display an error message.
-          console.log('failed', file)
+          console.log(res)
           setUploadErrorMessage(
             'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
           )
