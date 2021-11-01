@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box, Link, Button, Divider } from '@island.is/island-ui/core'
+import { Text, Box, Link } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
 import cn from 'classnames'
