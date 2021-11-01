@@ -213,7 +213,7 @@ const prodConfig = {
   healthInsuranceV2: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     xRoadClientId: process.env.XROAD_CLIENT_ID,
-    xRoadProviderId: process.env.HEALTH_INSURANCE_V2_XROAD_PROVIDER_ID,
+    xRoadProviderId: process.env.XROAD_HEALTH_INSURANCE_ID,
     username: process.env.HEALTH_INSURANCE_V2_XROAD_USERNAME,
     password: process.env.HEALTH_INSURANCE_V2_XROAD_PASSWORD,
   },
