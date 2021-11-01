@@ -26,11 +26,18 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 const MainPage = () => {
   const logOut = useLogOut()
 
-  const { myApplication, loading, error, municipality, user } = useContext(
-    AppContext,
-  )
+  const {
+    myApplication,
+    loading,
+    error,
+    municipality,
+    setMunicipality,
+    user,
+  } = useContext(AppContext)
 
   const isUserSpouse = user?.isSpouse?.HasApplied
+
+  setMunicipality('1400')
 
   return (
     <>

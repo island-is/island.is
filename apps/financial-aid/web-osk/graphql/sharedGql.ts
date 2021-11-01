@@ -59,6 +59,7 @@ export const ApplicationQuery = gql`
       amount
       rejection
       created
+      municipalityCode
       applicationEvents {
         id
         applicationId
