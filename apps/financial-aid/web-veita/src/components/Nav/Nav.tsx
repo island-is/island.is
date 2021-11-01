@@ -23,6 +23,7 @@ import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOu
 import {
   ApplicationFiltersEnum,
   Routes,
+  StaffRole,
 } from '@island.is/financial-aid/shared/lib'
 
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
@@ -71,56 +72,59 @@ const Nav = ({ showInMobile }: Props) => {
           isLoading={loading}
           loader={<SkeletonLoader repeat={3} space={2} />}
         >
-          {navigationItems.map((item, index) => {
-            return (
-              <div key={'NavigationLinks-' + index}>
-                {item.group && <p className={styles.group}>{item.group}</p>}
-                <Link href={item.link}>
-                  <a
-                    aria-label={item.label}
-                    className={cn({
-                      [`${styles.link}`]: true,
-                      [`${styles.activeLink}`]: router.pathname === item.link,
-                      [`${styles.linkHoverEffect}`]:
-                        router.pathname !== item.link,
-                    })}
-                  >
-                    <Box display="flex" justifyContent="spaceBetween">
-                      <Text fontWeight="semiBold">{item.label}</Text>
-                      <Text fontWeight="semiBold" color="dark300">
-                        {item.applicationState
-                          .map((state: ApplicationFiltersEnum) => {
-                            if (applicationFilters) {
-                              return applicationFilters[state]
-                            }
-                          })
-                          .reduce((a?: number, b?: number) => {
-                            return (a || 0) + (b || 0)
-                          })}
-                      </Text>
-                    </Box>
-                  </a>
-                </Link>
-              </div>
-            )
-          })}
+          {admin?.staff?.roles.includes(StaffRole.EMPLOYEE) &&
+            navigationItems.map((item, index) => {
+              return (
+                <div key={'NavigationLinks-' + index}>
+                  {item.group && <p className={styles.group}>{item.group}</p>}
+                  <Link href={item.link}>
+                    <a
+                      aria-label={item.label}
+                      className={cn({
+                        [`${styles.link}`]: true,
+                        [`${styles.activeLink}`]: router.pathname === item.link,
+                        [`${styles.linkHoverEffect}`]:
+                          router.pathname !== item.link,
+                      })}
+                    >
+                      <Box display="flex" justifyContent="spaceBetween">
+                        <Text fontWeight="semiBold">{item.label}</Text>
+                        <Text fontWeight="semiBold" color="dark300">
+                          {item.applicationState
+                            .map((state: ApplicationFiltersEnum) => {
+                              if (applicationFilters) {
+                                return applicationFilters[state]
+                              }
+                            })
+                            .reduce((a?: number, b?: number) => {
+                              return (a || 0) + (b || 0)
+                            })}
+                        </Text>
+                      </Box>
+                    </a>
+                  </Link>
+                </div>
+              )
+            })}
         </LoadingContainer>
       </div>
 
       <Box display="block" marginBottom={2} marginTop={4}>
         <Box marginBottom={2}>
-          <button
-            className={`${styles.sideNavBarButton} navBarButtonHover`}
-            onClick={() => router.push(Routes.users)}
-          >
-            <Icon
-              icon="people"
-              type="outline"
-              color="blue400"
-              className={styles.sideNavBarButtonIcon}
-            />
-            <Text> Notendur</Text>
-          </button>
+          {admin?.staff?.roles.includes(StaffRole.ADMIN) && (
+            <button
+              className={`${styles.sideNavBarButton} navBarButtonHover`}
+              onClick={() => router.push(Routes.users)}
+            >
+              <Icon
+                icon="people"
+                type="outline"
+                color="blue400"
+                className={styles.sideNavBarButtonIcon}
+              />
+              <Text> Notendur</Text>
+            </button>
+          )}
           <button
             className={`${styles.sideNavBarButton} navBarButtonHover`}
             onClick={() => logOut()}

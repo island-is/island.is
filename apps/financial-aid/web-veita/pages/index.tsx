@@ -1,3 +1,3 @@
-import ApplicationsOverview from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
+import LandingPage from '@island.is/financial-aid-web/veita/src/routes/LandingPage/landingPage'
 
-export default ApplicationsOverview
+export default LandingPage
