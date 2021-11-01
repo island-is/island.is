@@ -251,6 +251,7 @@ const autoSchemaFile = environment.production
     }),
     IslykillModule.register({
       certificateBase64: environment.islykill.certificateBase64,
+      cert: environment.islykill.cert,
       passphrase: environment.islykill.passphrase,
     }),
     ProblemModule,

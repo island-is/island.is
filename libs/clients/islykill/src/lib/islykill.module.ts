@@ -1,3 +1,4 @@
+import fs from 'fs'
 import { DynamicModule } from '@nestjs/common'
 
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -7,6 +8,7 @@ import { Configuration, IslyklarApi } from '../../gen/fetch'
 
 export interface IslykillApiModuleConfig {
   certificateBase64: string
+  cert: string
   passphrase: string
 }
 
@@ -14,15 +16,26 @@ export const ISLYKILL_OPTIONS = 'ISLYKILL_OPTIONS'
 
 export class IslykillApiModule {
   static register(config: IslykillApiModuleConfig): DynamicModule {
-    if (!config.certificateBase64) {
-      logger.error('IslykillApiModule certificate not provided.')
+    function lykillError(errorMsg: any) {
+      logger.error(errorMsg)
+    }
+
+    let pfx = undefined as Buffer | undefined
+    try {
+      if (!config.cert) {
+        throw Error('IslykillApiModule certificate not provided')
+      }
+      const data = fs.readFileSync(config.cert, {
+        encoding: 'base64',
+      })
+      pfx = Buffer.from(data, 'base64')
+    } catch (err) {
+      lykillError(err)
     }
 
     if (!config.passphrase) {
       logger.error('IslykillApiModule secret not provided.')
     }
-
-    const pfx = Buffer.from(config.certificateBase64, 'base64')
     const passphrase = config.passphrase
 
     return {

@@ -157,6 +157,7 @@ const devConfig = {
   },
   islykill: {
     certificateBase64: process.env.ISLYKILL_SERVICE_CERT_BASE64 ?? '',
+    cert: process.env.ISLYKILL_CERT,
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
   },
 }
@@ -303,6 +304,7 @@ const prodConfig = {
   },
   islykill: {
     certificateBase64: process.env.ISLYKILL_SERVICE_CERT_BASE64 ?? '',
+    cert: process.env.ISLYKILL_CERT,
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
   },
 }
