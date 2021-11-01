@@ -61,19 +61,19 @@ const ApplicationProfile = ({
 
   const currentYear = format(new Date(), 'yyyy')
 
-  const applicationInfo = aidAmount
-    ? [
-        {
-          title: 'Tímabil',
-          content:
-            getMonth(new Date(application.created).getMonth()) +
-            format(new Date(application.created), ' y'),
-        },
-        {
-          title: 'Sótt um',
-          content: format(new Date(application.created), 'dd.MM.y  · kk:mm'),
-        },
-        {
+  const applicationInfo = [
+    {
+      title: 'Tímabil',
+      content:
+        getMonth(new Date(application.created).getMonth()) +
+        format(new Date(application.created), ' y'),
+    },
+    {
+      title: 'Sótt um',
+      content: format(new Date(application.created), 'dd.MM.y  · kk:mm'),
+    },
+    aidAmount
+      ? {
           title: 'Áætluð aðstoð',
           content: `${calculateAidFinalAmount(
             aidAmount,
@@ -83,24 +83,12 @@ const ApplicationProfile = ({
           onclick: () => {
             setAidModalVisible(!isAidModalVisible)
           },
-        },
-      ]
-    : [
-        {
-          title: 'Tímabil',
-          content:
-            getMonth(new Date(application.created).getMonth()) +
-            format(new Date(application.created), ' y'),
-        },
-        {
-          title: 'Sótt um',
-          content: format(new Date(application.created), 'dd.MM.y  · kk:mm'),
-        },
-        {
+        }
+      : {
           title: 'Áætluð aðstoð',
           content: `Útreikningur misstókst`,
         },
-      ]
+  ]
 
   if (application.state === ApplicationState.APPROVED) {
     applicationInfo.push({
