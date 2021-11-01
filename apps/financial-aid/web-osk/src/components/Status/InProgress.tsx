@@ -16,10 +16,10 @@ import { useRouter } from 'next/router'
 
 interface Props {
   application: Application
-  isSpouse?: boolean
+  isUserSpouse?: boolean
 }
 
-const InProgress = ({ application, isSpouse = false }: Props) => {
+const InProgress = ({ application, isUserSpouse = false }: Props) => {
   const router = useRouter()
 
   if (
@@ -51,7 +51,7 @@ const InProgress = ({ application, isSpouse = false }: Props) => {
           />
         </Box>
       )}
-      {!isSpouse && (
+      {!isUserSpouse && (
         <Estimation
           homeCircumstances={application.homeCircumstances}
           usePersonalTaxCredit={application?.usePersonalTaxCredit}

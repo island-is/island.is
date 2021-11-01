@@ -7,14 +7,14 @@ interface Props {
   state: ApplicationState
   rejectionComment?: string
   isStateVisible: boolean
-  isSpouse?: boolean
+  isUserSpouse?: boolean
 }
 
 const Rejected = ({
   state,
   rejectionComment,
   isStateVisible,
-  isSpouse = false,
+  isUserSpouse = false,
 }: Props) => {
   if (!isStateVisible) {
     return null
@@ -26,7 +26,7 @@ const Rejected = ({
         Umsókn {getState[state].toLowerCase()}
       </Text>
 
-      {!isSpouse && (
+      {!isUserSpouse && (
         <>
           {rejectionComment && (
             <Text variant="intro" marginBottom={[2, 2, 3]}>

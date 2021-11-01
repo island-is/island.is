@@ -30,32 +30,34 @@ const MainPage = () => {
     AppContext,
   )
 
+  const isUserSpouse = user?.isSpouse?.HasApplied
+
   return (
     <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={1}>
-          {user?.isSpouse?.HasApplied ? 'Aðstoð maka þíns' : 'Aðstoðin þín '}
+          {isUserSpouse ? 'Aðstoð maka þíns' : 'Aðstoðin þín '}
         </Text>
 
         {myApplication && myApplication?.state && (
           <>
             <InProgress
               application={myApplication}
-              isSpouse={user?.isSpouse?.HasApplied}
+              isUserSpouse={user?.isSpouse?.HasApplied}
             />
 
             <Approved
               isStateVisible={myApplication.state === ApplicationState.APPROVED}
               state={myApplication.state}
               amount={myApplication.amount}
-              isSpouse={user?.isSpouse?.HasApplied}
+              isUserSpouse={isUserSpouse}
             />
 
             <Rejected
               isStateVisible={myApplication.state === ApplicationState.REJECTED}
               state={myApplication.state}
               rejectionComment={myApplication?.rejection}
-              isSpouse={user?.isSpouse?.HasApplied}
+              isUserSpouse={isUserSpouse}
             />
 
             <Timeline

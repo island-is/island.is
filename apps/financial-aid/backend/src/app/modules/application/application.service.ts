@@ -56,17 +56,6 @@ export class ApplicationService {
     private readonly emailService: EmailService,
   ) {}
 
-  async hasAccessToApplication(
-    nationalId: string,
-    id: string,
-  ): Promise<boolean> {
-    const hasApplication = await this.applicationModel.findOne({
-      where: { id, nationalId },
-    })
-
-    return Boolean(hasApplication)
-  }
-
   async hasSpouseApplied(spouseNationalId: string): Promise<IsSpouseResponse> {
     const application = await this.applicationModel.findOne({
       where: {

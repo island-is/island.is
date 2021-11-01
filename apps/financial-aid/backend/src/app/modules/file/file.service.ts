@@ -68,7 +68,9 @@ export class FileService {
   async getSpouseApplicationFiles(
     applicationId: string,
   ): Promise<ApplicationFileModel> {
-    this.logger.debug(`Getting all files from spouse case ${applicationId}`)
+    this.logger.debug(
+      `Checking if application-${applicationId} has files from spouse `,
+    )
 
     return this.fileModel.findOne({
       where: { applicationId, type: FileType.SPOUSEFILES },
