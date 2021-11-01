@@ -251,6 +251,7 @@ export const AccidentNotificationSchema = z.object({
       .refine((x) => x && kennitala.isValid(x) && kennitala.isPerson(x), {
         params: error.validNationalId,
       }),
+    isValid: z.string().min(1),
   }),
   powerOfAttorney: z.object({
     type: z.enum([

@@ -208,19 +208,18 @@ export const whoIsTheNotificationForSection = buildSection({
               width: 'half',
               required: true,
             }),
-            buildTextField({
-              id: 'childInCustody.nationalId',
-              backgroundColor: 'blue',
-              title: childInCustody.labels.nationalId,
-              format: '######-####',
-              width: 'half',
-              required: true,
-            }),
-            buildCustomField({
-              id: 'customField',
-              title: 'custom',
-              component: 'NationalIdChecker',
-            }),
+            buildCustomField(
+              {
+                id: 'childInCustody.nationalIdChecker',
+                title: '',
+                width: 'half',
+                component: 'NationalIdInputChecker',
+              },
+              {
+                inputId: 'childInCustody.nationalId',
+                validationId: 'childInCustody.isValid',
+              },
+            ),
           ],
         }),
       ],

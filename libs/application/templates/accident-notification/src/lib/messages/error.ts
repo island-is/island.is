@@ -22,4 +22,14 @@ export const error = defineMessages({
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'National Id should be valid',
   },
+  companyHasNationalId: {
+    id: 'an.application:error.companyHasNationalId',
+    defaultMessage: 'Þetta er fyrirtækjarkennitala.',
+    description: 'National Id belongs to company',
+  },
+  noPersonNationalId: {
+    id: 'an.application:error.personNationalId',
+    defaultMessage: 'Það á engin manneskjan þessa kennitölu.',
+    description: 'National Id does not belong to person',
+  },
 })
