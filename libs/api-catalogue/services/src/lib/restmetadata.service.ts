@@ -35,7 +35,8 @@ export class RestMetadataService {
    * @param provider
    */
   async getServices(provider: Provider): Promise<Array<Service>> {
-    logger.info(`Getting services for ${providerToString(provider)}`)
+    const providerString = providerToString(provider)
+    logger.info(`Getting services for ${providerString}`)
     const services: Array<Service> = []
     const serviceMap = await this.getServiceCodes(provider)
 
@@ -70,32 +71,39 @@ export class RestMetadataService {
         const spec = await this.getOpenApi(sorted[i])
 
         if (spec && this.validateSpec(spec)) {
-          // The list is sorted for the latest service version to be
-          // the last element so name, owner and description will
-          // be from the latest version.
-          service.title = spec.info.title
-          service.owner = provider.name
-          service.description = spec.info.description ?? ''
-          service.data = union(service.data, spec.info['x-category'])
-          service.pricing = union(service.pricing, spec.info['x-pricing'])
+          if (spec.info['x-hide-api-catalogue']) {
+            logger.info(
+              `Service provider ${providerString} opted-out of displaying service ${sorted[i].serviceCode} in API Catalogue.`,
+            )
+          } else {
+            // The list is sorted for the latest service version to be
+            // the last element so name, owner and description will
+            // be from the latest version.
+            service.title = spec.info.title
+            service.owner = provider.name
+            service.description = spec.info.description ?? ''
+            service.data = union(service.data, spec.info['x-category'])
+            service.pricing = union(service.pricing, spec.info['x-pricing'])
 
-          // TODO: This needs to be environment aware
-          service.environments[0].details.push({
-            version: parseVersionNumber(sorted[i].serviceCode!),
-            title: spec.info.title,
-            summary: '', // TODO: We should have a short summary
-            description: spec.info.description ?? '',
-            type: TypeCategory.REST,
-            data: spec.info['x-category'] ?? [],
-            pricing: spec.info['x-pricing'] ?? [],
-            links: {
-              responsibleParty: spec.info['x-links']?.responsibleParty ?? '',
-              bugReport: spec.info['x-links']?.bugReport ?? '',
-              documentation: spec.info['x-links']?.documentation ?? '',
-              featureRequest: spec.info['x-links']?.featureRequest ?? '',
-            },
-            xroadIdentifier: sorted[i],
-          })
+            // Here we could add environment awareness if we want to see all environments
+            // in single Api Catalogue UI. I.e. prod would see prod, staging, dev.
+            service.environments[0].details.push({
+              version: parseVersionNumber(sorted[i].serviceCode!),
+              title: spec.info.title,
+              summary: '', // TODO: We should have a short summary
+              description: spec.info.description ?? '',
+              type: TypeCategory.REST,
+              data: spec.info['x-category'] ?? [],
+              pricing: spec.info['x-pricing'] ?? [],
+              links: {
+                responsibleParty: spec.info['x-links']?.responsibleParty ?? '',
+                bugReport: spec.info['x-links']?.bugReport ?? '',
+                documentation: spec.info['x-links']?.documentation ?? '',
+                featureRequest: spec.info['x-links']?.featureRequest ?? '',
+              },
+              xroadIdentifier: sorted[i],
+            })
+          }
         } else {
           logger.error(
             `OpenAPI not found or is invalid for service code ${sorted[i].memberCode}/${sorted[i].subsystemCode}/${sorted[i].serviceCode}`,
@@ -121,7 +129,7 @@ export class RestMetadataService {
   async getOpenApi(
     xroadIdentifier: XroadIdentifier,
   ): Promise<OpenApi | undefined> {
-    return YamlParser.safeLoad(
+    return YamlParser.load(
       await this.getOpenApiString(xroadIdentifier),
     ) as OpenApi
   }

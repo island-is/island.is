@@ -38,11 +38,12 @@ export interface Option {
   tooltip?: FormText
   excludeOthers?: boolean
   illustration?: React.FC
+  disabled?: boolean
 }
 
-interface SelectOption {
+export interface SelectOption<T = string | number> {
   label: string
-  value: string | number
+  value: T
 }
 
 export interface BaseField extends FormItem {
@@ -56,6 +57,7 @@ export interface BaseField extends FormItem {
   condition?: Condition
   isPartOfRepeater?: boolean
   defaultValue?: MaybeWithApplicationAndField<unknown>
+  doesNotRequireAnswer?: boolean
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
 }
@@ -200,7 +202,7 @@ export interface KeyValueField extends BaseField {
 export interface CustomField extends BaseField {
   readonly type: FieldTypes.CUSTOM
   readonly component: string
-  props?: object
+  props?: RecordObject
   childInputIds?: string[]
 }
 

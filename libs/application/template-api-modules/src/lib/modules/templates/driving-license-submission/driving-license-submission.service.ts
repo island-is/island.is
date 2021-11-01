@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
+import {
+  DrivingLicenseService,
+  NewDrivingLicenseResult,
+} from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
-import type { Item } from '@island.is/clients/payment'
+import { FormValue } from '@island.is/application/core'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -18,45 +21,39 @@ export class DrivingLicenseSubmissionService {
   ) {}
 
   async createCharge({
-    application: { id, externalData },
-    authorization,
+    application: { id, answers },
+    auth,
   }: TemplateApiModuleActionProps) {
-    const parsedPaymentData = externalData.payment.data as Item
+    // TODO: this logic should really be shared between the application and
+    // this function right here, one way or another...
+    const applicationFor = answers.applicationFor || 'B-full'
+    const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
+
     return this.sharedTemplateAPIService.createCharge(
-      authorization,
+      auth.authorization,
       id,
-      parsedPaymentData.chargeItemCode,
+      chargeItemCode,
     )
   }
 
-  async submitApplication({
-    application,
-    authorization,
-  }: TemplateApiModuleActionProps) {
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { answers } = application
     const nationalId = application.applicant
-    const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
-    const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
-    const juristictionId = answers.juristiction
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      authorization,
+      auth.authorization,
       application.id,
     )
 
     if (isPayment.fulfilled) {
-      const result = await this.drivingLicenseService
-        .newDrivingLicense(nationalId, {
-          juristictionId: juristictionId as number,
-          needsToPresentHealthCertificate: needsHealthCert,
-          needsToPresentQualityPhoto: needsQualityPhoto,
-        })
-        .catch((e) => {
+      const result = await this.createLicense(nationalId, answers).catch(
+        (e) => {
           return {
             success: false,
             errorMessage: e.message,
           }
-        })
+        },
+      )
 
       if (!result.success) {
         throw new Error(
@@ -72,6 +69,35 @@ export class DrivingLicenseSubmissionService {
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
       )
     }
+  }
+
+  private async createLicense(
+    nationalId: string,
+    answers: FormValue,
+  ): Promise<NewDrivingLicenseResult> {
+    const applicationFor = answers.applicationFor || 'B-full'
+
+    const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
+    const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
+    const juristictionId = answers.juristiction
+    const teacher = answers.drivingInstructor as string
+
+    if (applicationFor === 'B-full') {
+      return this.drivingLicenseService.newDrivingLicense(nationalId, {
+        juristictionId: juristictionId as number,
+        needsToPresentHealthCertificate: needsHealthCert,
+        needsToPresentQualityPhoto: needsQualityPhoto,
+      })
+    } else if (applicationFor === 'B-temp') {
+      return this.drivingLicenseService.newTemporaryDrivingLicense(nationalId, {
+        juristictionId: juristictionId as number,
+        needsToPresentHealthCertificate: needsHealthCert,
+        needsToPresentQualityPhoto: needsQualityPhoto,
+        teacherNationalId: teacher,
+      })
+    }
+
+    throw new Error('application for unknown type of license')
   }
 
   async submitAssessmentConfirmation({

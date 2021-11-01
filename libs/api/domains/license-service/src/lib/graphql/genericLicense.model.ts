@@ -7,6 +7,7 @@ import {
   GenericUserLicenseStatus,
   GenericUserLicenseFetchStatus,
   GenericLicenseProviderId,
+  GenericUserLicensePkPassStatus,
 } from '../licenceService.type'
 
 registerEnumType(GenericLicenseType, {
@@ -27,6 +28,11 @@ registerEnumType(GenericUserLicenseStatus, {
 registerEnumType(GenericUserLicenseFetchStatus, {
   name: 'GenericUserLicenseFetchStatus',
   description: 'Possible license fetch statuses',
+})
+
+registerEnumType(GenericUserLicensePkPassStatus, {
+  name: 'GenericUserLicensePkPassStatus',
+  description: 'Possible license pkpass statuses',
 })
 
 @ObjectType()
@@ -63,6 +69,11 @@ export class GenericLicense {
 
   @Field(() => GenericUserLicenseStatus, { description: 'Status of license' })
   status!: GenericUserLicenseStatus
+
+  @Field(() => GenericUserLicensePkPassStatus, {
+    description: 'Status of pkpass availablity of license',
+  })
+  pkpassStatus!: GenericUserLicensePkPassStatus
 }
 
 @ObjectType()

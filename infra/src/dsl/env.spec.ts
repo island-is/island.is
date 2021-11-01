@@ -9,6 +9,7 @@ const Staging: EnvironmentConfig = {
   auroraHost: 'a',
   domain: 'staging01.devland.is',
   type: 'staging',
+  featuresOn: [],
   defaultMaxReplicas: 3,
   releaseName: 'web',
   awsAccountId: '111111',
@@ -29,6 +30,44 @@ describe('Env variable', () => {
   it('missing variables cause errors', () => {
     expect(serviceDef.errors).toEqual([
       'Missing settings for service api in env staging. Keys of missing settings: B',
+    ])
+  })
+
+  it('Should not allow to collision of secrets and env variables', () => {
+    const sut = service('api')
+      .env({
+        A: 'B',
+      })
+      .secrets({
+        A: 'somesecret',
+      })
+    const serviceDef = serializeService(
+      sut,
+      new UberChart(Staging),
+    ) as SerializeErrors
+
+    expect(serviceDef.errors).toStrictEqual([
+      'Collisions for environment or secrets for key A',
+    ])
+  })
+
+  it('Should not allow collision of secrets and env variables in init containers', () => {
+    const sut = service('api').initContainer({
+      envs: {
+        A: 'B',
+      },
+      secrets: {
+        A: 'somesecret',
+      },
+      containers: [{ command: 'go' }],
+    })
+    const serviceDef = serializeService(
+      sut,
+      new UberChart(Staging),
+    ) as SerializeErrors
+
+    expect(serviceDef.errors).toStrictEqual([
+      'Collisions for environment or secrets for key A',
     ])
   })
 })

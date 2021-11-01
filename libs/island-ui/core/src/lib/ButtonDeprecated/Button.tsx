@@ -6,7 +6,7 @@ import { Inline } from '../Inline/Inline'
 import { IconTypes, Icon as IconComponent } from '../Icon/Icon'
 import { ColorSchemeContext } from '../context'
 
-import * as styles from './Button.treat'
+import * as styles from './Button.css'
 import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
 export type ButtonSize = 'small' | 'medium' | 'large'

@@ -1,7 +1,6 @@
 import {
   buildForm,
   buildCustomField,
-  buildSection,
   Form,
   FormModes,
 } from '@island.is/application/core'

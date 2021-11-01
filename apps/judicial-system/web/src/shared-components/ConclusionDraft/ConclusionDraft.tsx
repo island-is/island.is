@@ -1,11 +1,16 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   Decision,
   RulingInput,
 } from '@island.is/judicial-system-web/src/shared-components'
+import {
+  icRulingStepOne,
+  rcRulingStepOne,
+} from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -14,6 +19,8 @@ interface Props {
 
 const ConclusionDraft: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
+  const { formatMessage } = useIntl()
+
   return (
     <>
       <Box marginBottom={2}>
@@ -45,11 +52,20 @@ const ConclusionDraft: React.FC<Props> = (props) => {
               : ''
           }hafnað`}
           partiallyAcceptedLabelText={`${
-            workingCase.type === CaseType.CUSTODY ||
-            workingCase.type === CaseType.TRAVEL_BAN
+            isRestrictionCase(workingCase.type)
               ? 'Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann'
               : 'Krafa tekin til greina að hluta'
           }`}
+          dismissLabelText={
+            isRestrictionCase(workingCase.type)
+              ? formatMessage(rcRulingStepOne.sections.decision.dismissLabel, {
+                  caseType:
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhald'
+                      : 'farbann',
+                })
+              : formatMessage(icRulingStepOne.sections.decision.dismissLabel)
+          }
         />
       </Box>
       <Box marginBottom={3}>

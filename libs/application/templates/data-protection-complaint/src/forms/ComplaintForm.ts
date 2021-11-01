@@ -1,34 +1,34 @@
 import {
+  buildCheckboxField,
+  buildCustomField,
+  buildDataProviderItem,
+  buildExternalDataProvider,
+  buildFileUploadField,
   buildForm,
+  buildMultiField,
+  buildRadioField,
   buildSection,
+  buildSubmitField,
+  buildSubSection,
+  buildTextField,
+  DefaultEvents,
   Form,
   FormModes,
-  buildRadioField,
-  buildTextField,
-  buildMultiField,
-  buildCustomField,
   FormValue,
-  buildSubSection,
-  buildFileUploadField,
-  buildCheckboxField,
-  buildSubmitField,
-  DefaultEvents,
-  buildExternalDataProvider,
-  buildDataProviderItem,
 } from '@island.is/application/core'
-import { FILE_SIZE_LIMIT, YES, NO, SubjectOfComplaint } from '../shared'
+import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
 import {
-  section,
+  application,
+  complaint,
   delimitation,
   errorCards,
   info,
-  application,
-  sharedFields,
-  complaint,
   overview,
+  section,
+  sharedFields,
 } from '../lib/messages'
-import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
 import { externalData } from '../lib/messages/externalData'
+import { FILE_SIZE_LIMIT, NO, SubjectOfComplaint, YES } from '../shared'
 
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }
@@ -300,7 +300,7 @@ export const ComplaintForm: Form = buildForm({
                 buildTextField({
                   id: 'applicant.name',
                   title: info.labels.name,
-                  backgroundColor: 'blue',
+                  backgroundColor: 'white',
                   disabled: true,
                   required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
@@ -311,7 +311,7 @@ export const ComplaintForm: Form = buildForm({
                   title: info.labels.nationalId,
                   format: '######-####',
                   width: 'half',
-                  backgroundColor: 'blue',
+                  backgroundColor: 'white',
                   disabled: true,
                   required: true,
                   defaultValue: (application: DataProtectionComplaint) =>
@@ -589,6 +589,7 @@ export const ComplaintForm: Form = buildForm({
                   id: 'complaint.documentHeading',
                   title: complaint.labels.complaintDescription,
                   component: 'ComplaintDocumentHeading',
+                  defaultValue: '',
                 }),
                 buildFileUploadField({
                   id: 'complaint.documents',
@@ -604,7 +605,9 @@ export const ComplaintForm: Form = buildForm({
                 buildCustomField({
                   component: 'FieldAlertMessage',
                   id: 'complaintDocumentsInfo',
-                  title: complaint.labels.complaintDocumentsInfoLabel,
+                  title:
+                    complaint.labels.complaintDocumentsInfoAlertMessageTitle,
+                  description: complaint.labels.complaintDocumentsInfoLabel,
                 }),
               ],
             }),

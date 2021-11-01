@@ -215,6 +215,9 @@
     "application-templates-funding-government-projects": {
       "tags": []
     },
+    "application-templates-general-petition": {
+      "tags": []
+    },
     "application-templates-health-insurance": {
       "tags": []
     },
@@ -283,8 +286,8 @@
       "tags": []
     },
     "clients-auth-public-api": {
-      "implicitDependencies": ["services-auth-public-api"],
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["services-auth-public-api"]
     },
     "clients-document-provider": {
       "tags": []
@@ -379,9 +382,6 @@
     "financial-aid-api": {
       "tags": []
     },
-    "financial-aid-auth": {
-      "tags": []
-    },
     "financial-aid-backend": {
       "tags": []
     },
@@ -464,6 +464,9 @@
     "island-ui-utils": {
       "tags": []
     },
+    "island-ui-vanilla-extract-utils": {
+      "tags": []
+    },
     "judicial-system-api": {
       "tags": []
     },
@@ -510,7 +513,16 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-pagination": {
+      "tags": []
+    },
+    "nest-problem": {
+      "tags": []
+    },
     "nest-validators": {
+      "tags": []
+    },
+    "next-ids-auth": {
       "tags": []
     },
     "nova-sms": {
@@ -637,6 +649,9 @@
     "shared-babel": {
       "tags": []
     },
+    "shared-components": {
+      "tags": []
+    },
     "shared-connected": {
       "tags": []
     },
@@ -647,6 +662,12 @@
       "tags": []
     },
     "shared-mocking": {
+      "tags": []
+    },
+    "shared-problem": {
+      "tags": []
+    },
+    "shared-translations": {
       "tags": []
     },
     "shared-types": {
@@ -672,6 +693,12 @@
       "tags": []
     },
     "system-e2e": {
+      "tags": []
+    },
+    "testing-fixtures": {
+      "tags": []
+    },
+    "testing-nest": {
       "tags": []
     },
     "web": {

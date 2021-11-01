@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react'
+import React, { useContext } from 'react'
 import {
   Text,
   Box,
   BulletList,
   Bullet,
-  Button,
   LoadingDots,
+  Link,
 } from '@island.is/island-ui/core'
 
 import {
@@ -14,70 +14,53 @@ import {
   Footer,
   InProgress,
   Rejected,
-  StatusLayout,
   Timeline,
 } from '@island.is/financial-aid-web/osk/src/components'
 
-import {
-  Application,
-  getActiveTypeForStatus,
-} from '@island.is/financial-aid/shared/lib'
+import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
-import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
-import { useQuery } from '@apollo/client'
-import { useRouter } from 'next/router'
-import { GetApplicationQuery } from '@island.is/financial-aid-web/osk/graphql'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 
-interface ApplicantData {
-  application: Application
-}
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const MainPage = () => {
-  const router = useRouter()
   const logOut = useLogOut()
 
-  const { data, error, loading } = useQuery<ApplicantData>(
-    GetApplicationQuery,
-    {
-      variables: { input: { id: router.query.id } },
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
-  const currentApplication = useMemo(() => {
-    if (data?.application) {
-      return data.application
-    }
-  }, [data])
+  const { myApplication, loading, error, municipality } = useContext(AppContext)
 
   return (
-    <StatusLayout>
+    <>
       <ContentContainer>
-        <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
+        <Text as="h1" variant="h2" marginBottom={1}>
           Aðstoðin þín
         </Text>
 
-        {currentApplication && (
+        {myApplication && myApplication?.state && (
           <>
-            {getActiveTypeForStatus[currentApplication.state] ===
-              'InProgress' && (
-              <InProgress currentApplication={currentApplication} />
-            )}
+            <InProgress application={myApplication} />
 
-            {getActiveTypeForStatus[currentApplication.state] ===
-              'Approved' && <Approved state={currentApplication.state} />}
+            <Approved
+              isStateVisible={myApplication.state === ApplicationState.APPROVED}
+              state={myApplication.state}
+              amount={myApplication.amount}
+            />
 
-            {getActiveTypeForStatus[currentApplication.state] ===
-              'Rejected' && <Rejected state={currentApplication.state} />}
+            <Rejected
+              isStateVisible={myApplication.state === ApplicationState.REJECTED}
+              state={myApplication.state}
+              rejectionComment={myApplication?.rejection}
+            />
 
-            <Timeline state={currentApplication.state} />
+            <Timeline
+              state={myApplication.state}
+              created={myApplication.created}
+            />
           </>
         )}
         {error && (
           <Text>
-            {' '}
-            Umsókn ekki fundin eða einhvað fór úrskeiðis, ertu viss þú hefur
-            sótt um?{' '}
+            Umsókn ekki fundin eða einhvað fór úrskeiðis <br />
+            vinsamlegast reyndu síðar
           </Text>
         )}
         {loading && <LoadingDots />}
@@ -88,34 +71,24 @@ const MainPage = () => {
         <Box marginBottom={[5, 5, 10]}>
           <BulletList type={'ul'} space={2}>
             <Bullet>
-              <Button
-                colorScheme="default"
-                iconType="filled"
-                onClick={() => {
-                  /*TODO on click event */
-                }}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="text"
+              <Link
+                href={municipality?.homepage ?? ''}
+                color="blue400"
+                underline="normal"
+                underlineVisibility="always"
               >
-                Upplýsingar um fjárhagsaðstoð
-              </Button>
+                <b>Upplýsingar um fjárhagsaðstoð</b>
+              </Link>
             </Bullet>
             <Bullet>
-              <Button
-                colorScheme="default"
-                iconType="filled"
-                onClick={() => {
-                  /*TODO on click event */
-                }}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="text"
+              <Link
+                href={`mailto: ${municipality?.email}`}
+                color="blue400"
+                underline="normal"
+                underlineVisibility="always"
               >
-                Hafa samband
-              </Button>
+                <b> Hafa samband</b>
+              </Link>
             </Bullet>
           </BulletList>
         </Box>
@@ -128,7 +101,7 @@ const MainPage = () => {
         previousIsDestructive={true}
         hideNextButton={true}
       />
-    </StatusLayout>
+    </>
   )
 }
 

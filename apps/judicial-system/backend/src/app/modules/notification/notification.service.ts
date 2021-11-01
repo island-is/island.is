@@ -13,6 +13,8 @@ import {
   CaseState,
   CaseType,
   NotificationType,
+  isRestrictionCase,
+  isInvestigationCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
@@ -32,6 +34,7 @@ import {
   getRequestPdfAsBuffer,
   getCustodyNoticePdfAsString,
   formatProsecutorReceivedByCourtSmsNotification,
+  getRulingPdfAsString,
 } from '../../formatters'
 import { Case } from '../case'
 import { CourtService } from '../court'
@@ -207,11 +210,15 @@ export class NotificationService {
     try {
       const streamId = await this.courtService.uploadStream(
         existingCase.courtId,
+        'Krafa.pdf',
+        'application/pdf',
         requestPdf,
       )
       await this.courtService.createRequest(
         existingCase.courtId,
         existingCase.courtCaseNumber,
+        'Krafa',
+        'Krafa.pdf',
         streamId,
       )
     } catch (error) {
@@ -396,7 +403,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = 'Krafa um gæsluvarðhald í vinnslu' // Always custody
     const html = formatPrisonCourtDateEmailNotification(
-      existingCase.prosecutor?.institution?.name,
+      existingCase.creatingProsecutor?.institution?.name,
       existingCase.court?.name,
       existingCase.courtDate,
       existingCase.accusedName,
@@ -466,8 +473,7 @@ export class NotificationService {
     ]
 
     if (
-      (existingCase.type === CaseType.CUSTODY ||
-        existingCase.type === CaseType.TRAVEL_BAN ||
+      (isRestrictionCase(existingCase.type) ||
         existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) &&
       existingCase.defenderEmail
     ) {
@@ -499,23 +505,7 @@ export class NotificationService {
     existingCase: Case,
   ): Promise<Recipient[]> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
-    const html = formatPrisonRulingEmailNotification(
-      existingCase.accusedGender,
-      existingCase.court?.name,
-      existingCase.prosecutor?.name,
-      existingCase.courtEndTime,
-      existingCase.defenderName,
-      existingCase.defenderEmail,
-      existingCase.decision,
-      existingCase.validToDate,
-      existingCase.custodyRestrictions,
-      existingCase.accusedAppealDecision,
-      existingCase.prosecutorAppealDecision,
-      existingCase.judge?.name,
-      existingCase.judge?.title,
-      existingCase.conclusion,
-      existingCase.isolationToDate,
-    )
+    const html = formatPrisonRulingEmailNotification(existingCase.courtEndTime)
 
     let attachments: Attachment[] | undefined
 
@@ -548,18 +538,57 @@ export class NotificationService {
     ])
   }
 
+  private async sendRulingEmailNotificationToPrisonAdministration(
+    existingCase: Case,
+  ): Promise<Recipient> {
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    const pdf = await getRulingPdfAsString(
+      existingCase,
+      intl.formatMessage,
+      true,
+    )
+
+    return this.sendEmail(
+      'Fangelsismálastofnun',
+      environment.notifications.prisonAdminEmail,
+      existingCase.courtCaseNumber ?? '',
+      'Sjá viðhengi',
+      [
+        {
+          filename: `Þingbók án úrskurður ${existingCase.courtCaseNumber}.pdf`,
+          content: pdf,
+          encoding: 'binary',
+        },
+      ],
+    )
+  }
+
   private async sendRulingNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
-    if (existingCase.type !== CaseType.CUSTODY) {
+    if (isInvestigationCase(existingCase.type)) {
       return {
         notificationSent: false,
       }
     }
 
-    const recipients = await this.sendRulingEmailNotificationToProsecutorAndPrison(
-      existingCase,
-    )
+    const recipients = [
+      await this.sendRulingEmailNotificationToPrisonAdministration(
+        existingCase,
+      ),
+    ]
+
+    if (existingCase.type === CaseType.CUSTODY) {
+      recipients.concat(
+        await this.sendRulingEmailNotificationToProsecutorAndPrison(
+          existingCase,
+        ),
+      )
+    }
 
     return this.recordNotification(
       existingCase.id,
@@ -591,7 +620,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = 'Gæsluvarðhaldskrafa afturkölluð' // Always custody
     const html = formatPrisonRevokedEmailNotification(
-      existingCase.prosecutor?.institution?.name,
+      existingCase.creatingProsecutor?.institution?.name,
       existingCase.court?.name,
       existingCase.courtDate,
       existingCase.accusedName,

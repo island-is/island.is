@@ -1,90 +1,67 @@
 import {
-  capitalize,
-  formatAccusedByGender,
   formatDate,
   formatNationalId,
-  formatCustodyRestrictions,
   laws,
   formatGender,
   caseTypes,
+  capitalize,
+  formatAccusedByGender,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealDecision,
-  CaseCustodyProvisions,
-  CaseDecision,
+  CaseLegalProvisions,
   CaseType,
+  isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import type {
-  CaseCustodyRestrictions,
-  CaseGender,
-} from '@island.is/judicial-system/types'
+import type { CaseGender } from '@island.is/judicial-system/types'
 
-function custodyProvisionsOrder(p: CaseCustodyProvisions) {
+function legalProvisionsOrder(p: CaseLegalProvisions) {
   switch (p) {
-    case CaseCustodyProvisions._95_1_A:
+    case CaseLegalProvisions._95_1_A:
       return 0
-    case CaseCustodyProvisions._95_1_B:
+    case CaseLegalProvisions._95_1_B:
       return 1
-    case CaseCustodyProvisions._95_1_C:
+    case CaseLegalProvisions._95_1_C:
       return 2
-    case CaseCustodyProvisions._95_1_D:
+    case CaseLegalProvisions._95_1_D:
       return 3
-    case CaseCustodyProvisions._95_2:
+    case CaseLegalProvisions._95_2:
       return 4
-    case CaseCustodyProvisions._98_2:
-      return 5
-    case CaseCustodyProvisions._99_1_B:
+    case CaseLegalProvisions._99_1_B:
       return 6
-    case CaseCustodyProvisions._100_1:
+    case CaseLegalProvisions._100_1:
       return 7
     default:
       return 999
   }
 }
 
-function custodyProvisionsCompare(
-  p1: CaseCustodyProvisions,
-  p2: CaseCustodyProvisions,
+function legalProvisionsCompare(
+  p1: CaseLegalProvisions,
+  p2: CaseLegalProvisions,
 ) {
-  const o1 = custodyProvisionsOrder(p1)
-  const o2 = custodyProvisionsOrder(p2)
+  const o1 = legalProvisionsOrder(p1)
+  const o2 = legalProvisionsOrder(p2)
 
   return o1 < o2 ? -1 : o1 > o2 ? 1 : 0
 }
 
-export function formatCustodyProvisions(
-  custodyProvisions?: CaseCustodyProvisions[],
+export function formatLegalProvisions(
+  legalProvisions?: CaseLegalProvisions[],
+  legalBasis?: string,
 ): string {
-  return (
-    custodyProvisions
-      ?.sort((p1, p2) => custodyProvisionsCompare(p1, p2))
-      .reduce((s, l) => `${s}${laws[l]}\n`, '')
-      .slice(0, -1) ?? 'Lagaákvæði ekki skráð'
-  )
-}
+  const list = legalProvisions
+    ?.sort((p1, p2) => legalProvisionsCompare(p1, p2))
+    .reduce((s, l) => `${s}${laws[l]}\n`, '')
+    .slice(0, -1)
 
-export function formatAppeal(
-  appealDecision: CaseAppealDecision | undefined,
-  stakeholder: string,
-  includeBullet = true,
-): string {
-  switch (appealDecision) {
-    case CaseAppealDecision.APPEAL:
-      return `${
-        includeBullet ? '  \u2022  ' : ''
-      }${stakeholder} kærir úrskurðinn.`
-    case CaseAppealDecision.ACCEPT:
-      return `${
-        includeBullet ? '  \u2022  ' : ''
-      }${stakeholder} unir úrskurðinum.`
-    case CaseAppealDecision.POSTPONE:
-      return `${
-        includeBullet ? '  \u2022  ' : ''
-      }${stakeholder} tekur sér lögboðinn frest.`
-    default:
-      return ''
-  }
+  return list
+    ? legalBasis
+      ? `${list}\n${legalBasis}`
+      : list
+    : legalBasis
+    ? legalBasis
+    : 'Lagaákvæði ekki skráð'
 }
 
 export function formatCourtHeadsUpSmsNotification(
@@ -149,12 +126,11 @@ export function formatProsecutorReceivedByCourtSmsNotification(
   court?: string,
   courtCaseNumber?: string,
 ): string {
-  const receivedCaseText =
-    type === CaseType.CUSTODY || type === CaseType.TRAVEL_BAN
-      ? `${caseTypes[type]}`
-      : type === CaseType.OTHER
-      ? 'rannsóknarheimild'
-      : `rannsóknarheimild (${caseTypes[type]})`
+  const receivedCaseText = isRestrictionCase(type)
+    ? `${caseTypes[type]}`
+    : type === CaseType.OTHER
+    ? 'rannsóknarheimild'
+    : `rannsóknarheimild (${caseTypes[type]})`
 
   return `${court} hefur móttekið kröfu um ${receivedCaseText} sem þú sendir og úthlutað málsnúmerinu ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.`
 }
@@ -264,50 +240,12 @@ export function formatDefenderCourtDateEmailNotification(
 
 // This function is only intended for case type CUSTODY
 export function formatPrisonRulingEmailNotification(
-  accusedGender?: CaseGender,
-  court?: string,
-  prosecutorName?: string,
   courtEndTime?: Date,
-  defenderName?: string,
-  defenderEmail?: string,
-  decision?: CaseDecision,
-  validToDate?: Date,
-  custodyRestrictions?: CaseCustodyRestrictions[],
-  accusedAppealDecision?: CaseAppealDecision,
-  prosecutorAppealDecision?: CaseAppealDecision,
-  judgeName?: string,
-  judgeTitle?: string,
-  conclusion?: string,
-  isolationToDate?: Date,
 ): string {
-  return `<strong>Úrskurður um gæsluvarðhald</strong><br /><br />${court}, ${formatDate(
+  return `Meðfylgjandi er vistunarseðill gæsluvarðhaldsfanga sem var úrskurðaður í gæsluvarðhald í héraðsdómi ${formatDate(
     courtEndTime,
     'PPP',
-  )}.<br /><br />Þinghaldi lauk kl. ${formatDate(
-    courtEndTime,
-    'p',
-  )}.<br /><br />Ákærandi: ${prosecutorName}.<br />Verjandi: ${
-    defenderName
-      ? defenderEmail
-        ? `${defenderName}, ${defenderEmail}`
-        : defenderName
-      : defenderEmail
-      ? defenderEmail
-      : 'Hefur ekki verið skráður'
-  }.<br /><br /><strong>Úrskurðarorð</strong><br /><br />${conclusion}<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
-    accusedAppealDecision,
-    capitalize(formatAccusedByGender(accusedGender)),
-    false,
-  )}<br />${formatAppeal(prosecutorAppealDecision, 'Sækjandi', false)}${
-    decision === CaseDecision.ACCEPTING
-      ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatCustodyRestrictions(
-          accusedGender,
-          custodyRestrictions,
-          validToDate,
-          isolationToDate,
-        )}`
-      : ''
-  }<br /><br />${judgeName} ${judgeTitle}`
+  )}.`
 }
 
 export function formatCourtRevokedSmsNotification(
@@ -377,4 +315,15 @@ export function formatDefenderRevokedEmailNotification(
 
 export function stripHtmlTags(html: string): string {
   return html.replace(/(?:<br \/>)/g, '\n').replace(/(?:<\/?strong>)/g, '')
+}
+
+export function formatCustodyIsolation(
+  gender?: CaseGender,
+  isolationToDate?: Date,
+) {
+  return `${capitalize(
+    formatAccusedByGender(gender),
+  )} skal sæta einangrun til ${formatDate(isolationToDate, 'PPPPp')
+    ?.replace('dagur,', 'dagsins')
+    ?.replace(' kl.', ', kl.')}.`
 }

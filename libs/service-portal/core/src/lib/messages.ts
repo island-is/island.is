@@ -289,10 +289,6 @@ export const m = defineMessages({
     id: 'service.portal:loadingData',
     defaultMessage: `Sæki gögn`,
   },
-  userDelegationList: {
-    id: 'service.portal:user-delegation-list',
-    defaultMessage: `Aðgangar/umboð`,
-  },
   info: {
     id: 'service.portal:info',
     defaultMessage: 'Upplýsingar',
@@ -332,6 +328,10 @@ export const m = defineMessages({
   endorsements: {
     id: 'service.portal:endorsements',
     defaultMessage: 'Meðmæli',
+  },
+  endorsementsAdmin: {
+    id: 'service.portal:endorsements-admin',
+    defaultMessage: 'Meðmæli - Admin',
   },
   educationLicense: {
     id: 'service.portal:educationLicense',
@@ -376,6 +376,10 @@ export const m = defineMessages({
   financeLocalTax: {
     id: 'service.portal:finance-local-tax',
     defaultMessage: 'Útsvar',
+  },
+  searchPlaceholder: {
+    id: 'service.portal:search-placeholder',
+    defaultMessage: 'Sláðu inn leitarorð',
   },
   actions: {
     id: 'service.portal:actions',

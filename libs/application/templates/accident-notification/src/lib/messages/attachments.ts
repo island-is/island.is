@@ -14,16 +14,12 @@ export const attachments = {
     },
     description: {
       id: 'an.application:attachments.description',
-      defaultMessage: `Svo hægt sé að klára afgreiðslu tilkynningar þurfa öll nauðsynleg fylgiskjöl að berast Sjúkratryggingum Íslands.
-			 Ef þig vantar enn einhver fylgiskjöl, getur þú samt sem áður sent tilkynninguna inn og skilað fylgiskjölum síðar.`,
+      defaultMessage: `Sjúkratryggingar Íslands kunna að óska eftir frekari gögnum við afgreiðslu málsins, svo taka megi ákvörðun um bótarétt, fjárhæð og greiðslu bóta.`,
       description: 'Description for attachments',
     },
     alertMessage: {
       id: 'an.application:attachments.alertMessage',
-      defaultMessage: `Mögulegt er að bæta við fylgiskjölum eftir að tilkynning hefur verið send til Sjúkratrygginga Íslands. 
-      Áður en hægt er að taka afstöðu til tilkynningar og bótaskyldu þurfa áverkavottorð eða tilkynningarseðill frá
-       Landspítala Íslands hins vegar að vera til staðar og bótaskyldu þarf áverkavottorð frá þeim lækni sem sá slasaða fyrst eða samskiptaseðill
-        vegna fyrstu komu frá Landspítala að vera til staðar.`,
+      defaultMessage: `Mögulegt er að bæta við fylgiskjölum eftir að tilkynning hefur verið send til Sjúkratrygginga Íslands. Áður en hægt er að taka afstöðu til tilkynningar og bótaskyldu og þarf áverkavottorð frá þeim lækni sem sá slasaða fyrst eða bráðamóttökuskrá vegna fyrstu komu frá Landspítala að vera til staðar.`,
       description: 'Alert message when send certificate later is selecte',
     },
     uploadSubSectionTitle: {
@@ -33,7 +29,7 @@ export const attachments = {
     },
     uploadTitle: {
       id: 'an.application:attachments.uploadTitle',
-      defaultMessage: 'Hlaða upp fylgiskjali',
+      defaultMessage: 'Fylgiskjal',
       description: 'Title of subsection for attachment upload',
     },
     uploadDescription: {
@@ -54,7 +50,7 @@ export const attachments = {
     uploadIntroduction: {
       id: 'an.application:attachments.uploadIntroduction',
       defaultMessage: `Athugaðu að það er hægt að tilkynna slys án þess að öll nauðsynleg skjöl
-       eru til staðar en Sjúkratryggingar Íslands kunna að óska eftir frekari gögnum
+       séu til staðar en Sjúkratryggingar Íslands kunna að óska eftir frekari gögnum
        við afgreiðslu málsins, svo taka megi ákvörðun um bótarétt, fjárhæð og greiðslu bóta.`,
       description: 'Upload introduction',
     },
@@ -68,20 +64,14 @@ export const attachments = {
     hospitalSendsCertificate: {
       id: 'an.application:attachments.hospitalSendsCertificate',
       defaultMessage:
-        'Ég mun óska eftir því að Landspítalinn sendi  samskiptaseðill frá bráðamóttöku',
+        'Ég mun óska eftir því að Landspítalinn sendi bráðamóttökuskrá til Sjúkratrygginga Íslands',
       description: 'Label for hospital sends certificate',
     },
     sendCertificateLater: {
       id: 'an.application:attachments.sendCertificateLater',
       defaultMessage:
-        'Ég vil klára að tilkynna slys en skila áverkavottorði síðar',
+        'Ég vil klára að tilkynna slys en áverkavottorð verður skilað síðar',
       description: 'Label for send certificate later',
-    },
-    injuredSendsCertificate: {
-      id: 'an.application:attachments.injuredSendsCertificate',
-      defaultMessage: 'Ég óska eftir að hinn slasaði skili inn áverkavottorði',
-      description:
-        'I request that the injured person submit a certificate of injury',
     },
     alertMessage: {
       id: 'an.application:attachments.labels.alertMessage',
@@ -108,7 +98,7 @@ export const attachments = {
     },
     powerOfAttorneyDocument: {
       id: 'an.application:attachments.documentNames.powerOfAttorney',
-      defaultMessage: 'Umboðsskjal',
+      defaultMessage: 'Umboð',
       description: 'Name of power of attorney document for in review',
     },
   }),

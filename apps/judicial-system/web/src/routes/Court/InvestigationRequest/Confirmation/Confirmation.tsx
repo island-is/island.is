@@ -84,7 +84,7 @@ const Confirmation = () => {
       caseType={workingCase?.type}
       caseId={workingCase?.id}
     >
-      {workingCase && (
+      {workingCase && user && (
         <>
           <ConfirmationForm
             workingCase={workingCase}

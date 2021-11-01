@@ -13,7 +13,17 @@ import {
   schoolInfo,
   sportsClubInfo,
 } from '../lib/messages'
-import { AccidentTypeEnum, CompanyInfo, WorkAccidentTypeEnum } from '../types'
+import {
+  AccidentTypeEnum,
+  CompanyInfo,
+  WorkAccidentTypeEnum,
+  YesOrNo,
+} from '../types'
+
+const getSportsClubInfo = (answers: FormValue) => ({
+  ...(answers as { sportsClubInfo: CompanyInfo }).sportsClubInfo,
+  ...(answers as { onPayRoll: { answer: YesOrNo } }).onPayRoll,
+})
 
 export const getWorkplaceData = (answers: FormValue) => {
   if (isGeneralWorkplaceAccident(answers))
@@ -22,6 +32,7 @@ export const getWorkplaceData = (answers: FormValue) => {
       general: companyInfo.general,
       labels: companyInfo.labels,
       type: AccidentTypeEnum.WORK,
+      screenId: 'companyInfo',
     }
 
   if (isStudiesAccident(answers))
@@ -30,6 +41,7 @@ export const getWorkplaceData = (answers: FormValue) => {
       general: schoolInfo.general,
       labels: schoolInfo.labels,
       type: AccidentTypeEnum.STUDIES,
+      screenId: 'schoolInfo',
     }
 
   if (isFishermanAccident(answers))
@@ -38,14 +50,16 @@ export const getWorkplaceData = (answers: FormValue) => {
       general: fishingCompanyInfo.general,
       labels: fishingCompanyInfo.labels,
       type: WorkAccidentTypeEnum.FISHERMAN,
+      screenId: 'fishingCompanyInfo',
     }
 
   if (isProfessionalAthleteAccident(answers))
     return {
-      info: (answers as { sportsClubInfo: CompanyInfo }).sportsClubInfo,
+      info: getSportsClubInfo(answers),
       general: sportsClubInfo.general,
       labels: sportsClubInfo.labels,
       type: AccidentTypeEnum.SPORTS,
+      screenId: 'sportsClubInfo',
     }
 
   if (isRescueWorkAccident(answers))
@@ -54,5 +68,6 @@ export const getWorkplaceData = (answers: FormValue) => {
       general: rescueSquadInfo.general,
       labels: rescueSquadInfo.labels,
       type: AccidentTypeEnum.RESCUEWORK,
+      screenId: 'rescueSquad',
     }
 }

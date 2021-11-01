@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
   Text,
   Box,
@@ -10,35 +10,26 @@ import {
 
 import {
   ContentContainer,
-  FormLayout,
+  Footer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
-import { NavigationProps } from '@island.is/financial-aid/shared/lib'
+import { getNextPeriod, Routes } from '@island.is/financial-aid/shared/lib'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const Confirmation = () => {
   const router = useRouter()
+  const { form } = useContext(FormContext)
+  const { municipality } = useContext(AppContext)
 
-  const navigation: NavigationProps = useFormNavigation(
-    router.pathname,
-  ) as NavigationProps
+  const logOut = useLogOut()
 
   const nextSteps = [
-    'Fjölskylduþjónusta Hafnarfjarðar vinnur úr umsókninni. Afgreiðsla umsóknarinnar tekur 1–3 virka daga.',
-    'Staðfesting verður send á þig í tölvupósti',
-    'Ef þörf er á frekari upplýsingum eða gögnum mun fjölskylduþjónusta Hafnarfjarðar hafa samband.',
-  ]
-
-  const otherOptions = [
-    {
-      text: 'Upplýsingar um fjárhagsaðstoð',
-      url: '/',
-    },
-    {
-      text: 'Hafðu samband',
-      url: '/',
-    },
+    'Vinnsluaðili sveitarfélagsins vinnur úr umsókninni. Umsóknin verður afgreidd eins fljótt og auðið er.',
+    `Ef umsóknin er samþykkt getur þú reiknað með útgreiðslu í byrjun ${getNextPeriod.month}.`,
+    'Ef þörf er á frekari upplýsingum eða gögnum til að vinna úr umsókninni mun vinnsluaðili sveitarfélagsins hafa samband.',
   ]
 
   useEffect(() => {
@@ -46,7 +37,7 @@ const Confirmation = () => {
   }, [])
 
   return (
-    <FormLayout activeSection={navigation?.activeSectionIndex}>
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
           Staðfesting
@@ -55,7 +46,7 @@ const Confirmation = () => {
         <Box marginBottom={[4, 4, 5]}>
           <AlertMessage
             type="success"
-            title="Umsókn þín um fjárhagsaðstoð hjá Hafnarfirði er móttekin"
+            title="Umsókn þín um fjárhagsaðstoð er móttekin"
           />
         </Box>
 
@@ -74,28 +65,52 @@ const Confirmation = () => {
           Frekari aðgerðir í boði
         </Text>
         <Box marginBottom={[4, 4, 5]}>
-          <BulletList type={'ul'} space={2}>
-            {otherOptions.map((item, index) => {
-              return (
-                <Bullet key={'options-' + index}>
-                  <Button
-                    colorScheme="default"
-                    iconType="filled"
-                    onClick={() => router.push(item.url)}
-                    preTextIconType="filled"
-                    size="default"
-                    type="button"
-                    variant="text"
-                  >
-                    {item.text}
-                  </Button>
-                </Bullet>
-              )
-            })}
-          </BulletList>
+          {form.applicationId && (
+            <Box marginBottom={3}>
+              <Button
+                icon="open"
+                colorScheme="default"
+                iconType="outline"
+                onClick={() =>
+                  router.push(Routes.statusPage(form.applicationId as string))
+                }
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+              >
+                Sjá stöðu umsóknar
+              </Button>
+            </Box>
+          )}
+
+          {municipality?.homepage && (
+            <Box marginBottom={3}>
+              <Button
+                icon="open"
+                colorScheme="default"
+                iconType="outline"
+                preTextIconType="filled"
+                size="small"
+                onClick={() => {
+                  window.open(municipality.homepage, '_ blank')
+                }}
+                type="button"
+                variant="text"
+              >
+                Upplýsingar um fjárhagsaðstoð
+              </Button>
+            </Box>
+          )}
         </Box>
       </ContentContainer>
-    </FormLayout>
+      <Footer
+        hidePreviousButton={true}
+        nextButtonText={'Loka'}
+        nextButtonIcon={'close'}
+        onNextButtonClick={() => logOut()}
+      />
+    </>
   )
 }
 

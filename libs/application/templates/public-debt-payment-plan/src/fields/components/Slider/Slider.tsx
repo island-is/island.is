@@ -1,9 +1,8 @@
-import React, { CSSProperties, FC, useRef, useState, useEffect } from 'react'
-import useComponentSize from '@rehooks/component-size'
-import { useDrag } from '../utils'
-
-import * as styles from './Slider.treat'
 import { Box, Text } from '@island.is/island-ui/core'
+import useComponentSize from '@rehooks/component-size'
+import React, { CSSProperties, FC, useEffect, useRef, useState } from 'react'
+import { useDrag } from '../utils'
+import * as styles from './Slider.css'
 
 interface TooltipProps {
   style?: CSSProperties
@@ -120,7 +119,10 @@ const Slider = ({
     onDragMove(deltaX) {
       const currentX = x + deltaX
       dragX.current = Math.max(0, Math.min(size.width, currentX))
-      const index = roundByNum(dragX.current / sizePerCell, step) + min
+      const index =
+        dragX.current / sizePerCell + min >= max
+          ? max
+          : roundByNum(dragX.current / sizePerCell, step) + min
 
       if (onChange && index !== indexRef.current) {
         onChange(index)

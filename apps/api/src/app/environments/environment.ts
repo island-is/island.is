@@ -8,13 +8,20 @@ const devConfig = {
     baseApiUrl: 'http://localhost:3333',
   },
   authPublicApi: {
-    baseApiUrl: 'http://localhost:3370',
+    baseApiUrl: process.env.AUTH_PUBLIC_API_URL ?? 'http://localhost:3370',
   },
   drivingLicense: {
     secret: process.env.DRIVING_LICENSE_SECRET,
-    xroadPath:
-      process.env.DRIVING_LICENSE_XROAD_PATH ??
-      'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
+    v1: {
+      xroadPath:
+        process.env.DRIVING_LICENSE_XROAD_PATH ??
+        'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
+    },
+    v2: {
+      xroadPath:
+        process.env.DRIVING_LICENSE_XROAD_PATH_V2 ??
+        'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
+    },
   },
   education: {
     xroadLicenseServiceId: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
@@ -131,6 +138,10 @@ const devConfig = {
     apiKey: process.env.PKPASS_API_KEY,
     apiUrl: process.env.PKPASS_API_URL,
     secretKey: process.env.PKPASS_SECRET_KEY,
+    cacheKey: process.env.PKPASS_CACHE_KEY ?? 'smartsolution:apitoken',
+    cacheTokenExpiryDelta:
+      process.env.PKPASS_CACHE_TOKEN_EXPIRY_DELTA ?? '2000',
+    authRetries: process.env.PKPASS_AUTH_RETRIES ?? '1',
   },
   audit: {
     defaultNamespace: '@island.is/api',
@@ -160,7 +171,12 @@ const prodConfig = {
   },
   drivingLicense: {
     secret: process.env.DRIVING_LICENSE_SECRET,
-    xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH,
+    v1: {
+      xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH,
+    },
+    v2: {
+      xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH_V2,
+    },
   },
   education: {
     xroadLicenseServiceId: process.env.XROAD_MMS_LICENSE_SERVICE_ID,
@@ -265,6 +281,9 @@ const prodConfig = {
     apiKey: process.env.PKPASS_API_KEY,
     apiUrl: process.env.PKPASS_API_URL,
     secretKey: process.env.PKPASS_SECRET_KEY,
+    cacheKey: process.env.PKPASS_CACHE_KEY,
+    cacheTokenExpiryDelta: process.env.PKPASS_CACHE_TOKEN_EXPIRY_DELTA,
+    authRetries: process.env.PKPASS_AUTH_RETRIES,
   },
   audit: {
     defaultNamespace: '@island.is/api',

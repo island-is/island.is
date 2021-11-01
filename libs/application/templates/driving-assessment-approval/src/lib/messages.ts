@@ -200,7 +200,7 @@ export const m = defineMessages({
   errorOrNoTemporaryLicense: {
     id: 'dla.application:error.noTempLicense',
     defaultMessage:
-      'Kennitala fannst ekki eða nemandi er ekki með bráðabyrgðaskírteini',
+      'Kennitala fannst ekki eða nemandi er ekki með bráðabirgðaskírteini',
     description:
       'The national ID was not found or the student does not have a valid temporary driving license.',
   },
@@ -266,8 +266,14 @@ export const m = defineMessages({
     description: 'I confirm that the student has passed the driving assessment',
   },
   finalAssessmentTitle: {
-    id: 'dla.application:',
-    defaultMessage: 'Akstursmat hefur verið staðfest',
+    id: 'dla.application:finalAssessmentTitle',
+    defaultMessage: 'Akstursmat móttekið',
     description: 'Driving assessment received.',
+  },
+  finalAssessmentDescription: {
+    id: 'dla.application:finalAssessmentDescription',
+    defaultMessage:
+      'Tölvupóstur hefur verið sendur á nemanda og honum tilkynnt að ökukennari hafi staðfest að akstursmat hafi farið fram. Nemandi getur nú sótt um fullnaðarskírteini.',
+    description: 'Driving assessment received description.',
   },
 })

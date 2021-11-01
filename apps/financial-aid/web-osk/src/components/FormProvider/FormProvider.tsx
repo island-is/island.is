@@ -3,10 +3,13 @@ import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import {
   HomeCircumstances,
   Employment,
+  FamilyStatus,
+  Spouse,
 } from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
 
 export interface Form {
+  applicationId?: string
   customAddress?: boolean
   customHomeAddress?: string
   customPostalCode?: number
@@ -29,6 +32,10 @@ export interface Form {
   submitted: boolean
   section?: Array<string>
   formComment?: string
+  fileUploadComment?: string
+  familyStatus?: FamilyStatus
+  spouse?: Spouse
+  phoneNumber?: string
 }
 
 export const initialState = {
@@ -41,6 +48,7 @@ export const initialState = {
 interface FormProvider {
   form: Form
   updateForm?: any
+  initializeFormProvider?: any
 }
 
 interface Props {
@@ -50,14 +58,6 @@ interface Props {
 export const FormContext = createContext<FormProvider>({ form: initialState })
 
 const FormProvider = ({ children }: Props) => {
-  const getSessionStorageOrDefault = (key: any) => {
-    const stored = sessionStorage.getItem(key)
-    if (!stored) {
-      return initialState
-    }
-    return JSON.parse(stored)
-  }
-
   const storageKey = 'formState'
 
   const [form, updateForm] = useState(initialState)
@@ -76,8 +76,17 @@ const FormProvider = ({ children }: Props) => {
     sessionStorage.setItem(storageKey, JSON.stringify(form))
   }, [form])
 
+  const initializeFormProvider = () => {
+    updateForm({
+      submitted: false,
+      incomeFiles: [],
+      taxReturnFiles: [],
+      otherFiles: [],
+    })
+  }
+
   return (
-    <FormContext.Provider value={{ form, updateForm }}>
+    <FormContext.Provider value={{ form, updateForm, initializeFormProvider }}>
       {children}
     </FormContext.Provider>
   )

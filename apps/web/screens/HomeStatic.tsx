@@ -37,7 +37,7 @@ import {
 import initApollo from '../graphql/client'
 import I18n from '../i18n/I18n'
 import { ApolloProvider } from '@apollo/client'
-import { getHomeData, getMainLayoutData } from '../data'
+// import { getHomeData, getMainLayoutData } from '../data'
 import { Layout, LayoutProps } from '../layouts/main'
 
 interface HomeProps {
@@ -46,6 +46,7 @@ interface HomeProps {
   page: GetFrontpageQuery['getFrontpage']
   layoutProps: LayoutProps
   locale: Locale
+  renderTime: string
 }
 
 export const HomeStatic: Screen<HomeProps> = ({
@@ -54,6 +55,7 @@ export const HomeStatic: Screen<HomeProps> = ({
   page,
   layoutProps,
   locale = 'is',
+  renderTime,
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const namespace = JSON.parse(page.namespace.fields)
   // const { activeLocale, t } = useI18n()
@@ -121,6 +123,7 @@ export const HomeStatic: Screen<HomeProps> = ({
     <ApolloProvider client={initApollo({}, locale)}>
       <I18n locale={'is'} translations={{ FOO: 'bar' }}>
         <Layout {...layoutProps}>
+          <div>render time: {renderTime}</div>
           <div id="main-content" style={{ overflow: 'hidden' }}>
             <Section aria-label={'carousel-title'}>
               <FrontpageSlider
@@ -183,43 +186,9 @@ export const HomeStatic: Screen<HomeProps> = ({
   )
 }
 
-export const getStaticPaths: GetStaticPaths = async (
-  context: GetStaticPathsContext,
-): Promise<GetStaticPathsResult> => {
-  return {
-    paths: [
-      {
-        params: {
-          foo: 'bar',
-        },
-        locale: 'is',
-      },
-    ],
-    fallback: 'blocking',
-  }
-}
-
-// export const getServerSideProps: GetServerSideProps = async (
-//   context: GetServerSidePropsContext,
-// ): Promise<GetServerSidePropsResult<HomeProps>> => {
-//   const { locale } = context
-//   const [homeData, layoutData] = await Promise.all([
-//     getHomeData(locale as Locale),
-//     getMainLayoutData(locale as Locale),
-//   ])
-
-//   return {
-//     props: {
-//       ...homeData,
-//       layoutProps: layoutData,
-//       locale: locale as Locale,
-//     },
-//   }
-// }
-
-export const getStaticProps: GetStaticProps = async (
-  context: GetStaticPropsContext,
-): Promise<GetStaticPropsResult<HomeProps>> => {
+export const getStaticProps: GetStaticProps = async (): Promise<
+  GetStaticPropsResult<HomeProps>
+> => {
   // const { locale } = context
   // const [homeData, layoutData] = await Promise.all([
   //   getHomeData(locale as Locale),
@@ -232,23 +201,15 @@ export const getStaticProps: GetStaticProps = async (
   //   locale: locale as Locale,
   // }
 
-  // const writeFile = util.promisify(fs.writeFile)
-
-  // const jsonContent = JSON.stringify(data)
-  // console.log('jsonContent:', jsonContent)
-
-  // const fn = async () => {
-  //   await writeFile('homestatic.json', jsonContent)
-  // }
-
-  // fn()
-
   const readFile = util.promisify(fs.readFile)
 
   const json = await readFile(process.cwd() + '/homestatic.json', 'utf8')
 
   return {
-    props: JSON.parse(json),
+    props: {
+      ...JSON.parse(json),
+      renderTime: new Date().toString(),
+    },
     // props: data,
     revalidate: 300,
   }

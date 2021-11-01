@@ -4,7 +4,7 @@ export const workMachine = {
   general: defineMessages({
     sectionTitle: {
       id: 'an.application:general.sectionTitle',
-      defaultMessage: 'Vinnuvél',
+      defaultMessage: 'Notkun Vinnuvélar',
       description: 'Machinery',
     },
     subSectionTitle: {
@@ -14,7 +14,7 @@ export const workMachine = {
     },
     workMachineRadioTitle: {
       id: 'an.application:general.workMachineRadioTitle',
-      defaultMessage: 'Tengist slys notkun vinnuvélar ?',
+      defaultMessage: 'Tengist slysið notkun á vinnuvél?',
       description: 'Does the accident relate to use of machinery?',
     },
   }),
@@ -28,7 +28,7 @@ export const workMachine = {
   placeholder: defineMessages({
     desriptionOfMachine: {
       id: 'an.application:placeholder.desriptionOfMachine',
-      defaultMessage: 'Heiti á vinnuvél',
+      defaultMessage: 'Heiti á vinnuvél, og vinnuvélanúmer ef þekkt',
       description: 'Desription of machine',
     },
   }),

@@ -4,7 +4,7 @@
 //       overridden styles, like global and box, need to come first.
 
 // Global
-export * from './treat/global.treat'
+export * from './styles/global.css'
 export * from './utils/globalStyles'
 
 // Layout
@@ -46,6 +46,7 @@ export * from './lib/NewsletterSignup/NewsletterSignup'
 export * from './lib/Swiper/Swiper'
 export * from './lib/Header/Header'
 export * from './lib/Header/UserDropdown/UserDropdown'
+export * from './lib/UserAvatar/UserAvatar'
 export * from './lib/Footer/Footer'
 export * from './lib/DialogPrompt/DialogPrompt'
 export * from './lib/ModalBase/ModalBase'
@@ -107,4 +108,4 @@ export type {
   DatePickerProps,
 } from './lib/DatePicker/types'
 export type { ResponsiveProp } from './utils/responsiveProp'
-export type { GridColumns } from './lib/Grid/GridColumn/GridColumn.treat'
+export type { GridColumns } from './lib/Grid/GridColumn/GridColumn.css'

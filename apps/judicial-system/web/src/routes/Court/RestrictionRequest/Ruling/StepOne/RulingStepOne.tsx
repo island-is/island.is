@@ -50,7 +50,7 @@ import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { rcRulingStepOne } from '@island.is/judicial-system-web/messages'
+import { rcRulingStepOne as m } from '@island.is/judicial-system-web/messages'
 
 export const RulingStepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -157,11 +157,10 @@ export const RulingStepOne: React.FC = () => {
           <FormContentContainer>
             <Box marginBottom={7}>
               <Text as="h1" variant="h1">
-                Úrskurður
+                {formatMessage(m.title)}
               </Text>
             </Box>
             <Box component="section" marginBottom={5}>
-              <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
               <CaseNumbers workingCase={workingCase} />
             </Box>
             <Box component="section" marginBottom={5}>
@@ -169,12 +168,14 @@ export const RulingStepOne: React.FC = () => {
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <AccordionItem
                   id="caseFileList"
-                  label={`Rannsóknargögn (${workingCase.files?.length ?? 0})`}
+                  label={`Rannsóknargögn (${
+                    workingCase.caseFiles?.length ?? 0
+                  })`}
                   labelVariant="h3"
                 >
                   <CaseFileList
                     caseId={workingCase.id}
-                    files={workingCase.files ?? []}
+                    files={workingCase.caseFiles ?? []}
                     canOpenFiles={
                       workingCase.judge !== null &&
                       workingCase.judge?.id === user?.id
@@ -186,11 +187,9 @@ export const RulingStepOne: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  Greinargerð um málsatvik{' '}
+                  {`${formatMessage(m.sections.courtCaseFacts.title)} `}
                   <Tooltip
-                    text={formatMessage(
-                      rcRulingStepOne.sections.courtCaseFacts.tooltip,
-                    )}
+                    text={formatMessage(m.sections.courtCaseFacts.tooltip)}
                   />
                 </Text>
               </Box>
@@ -198,9 +197,11 @@ export const RulingStepOne: React.FC = () => {
                 <Input
                   data-testid="courtCaseFacts"
                   name="courtCaseFacts"
-                  label="Málsatvik"
+                  label={formatMessage(m.sections.courtCaseFacts.label)}
                   defaultValue={workingCase.courtCaseFacts}
-                  placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+                  placeholder={formatMessage(
+                    m.sections.courtCaseFacts.placeholder,
+                  )}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'courtCaseFacts',
@@ -233,11 +234,9 @@ export const RulingStepOne: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  Greinargerð um lagarök{' '}
+                  {`${formatMessage(m.sections.courtLegalArguments.title)} `}
                   <Tooltip
-                    text={formatMessage(
-                      rcRulingStepOne.sections.courtLegalArguments.tooltip,
-                    )}
+                    text={formatMessage(m.sections.courtLegalArguments.tooltip)}
                   />
                 </Text>
               </Box>
@@ -245,9 +244,11 @@ export const RulingStepOne: React.FC = () => {
                 <Input
                   data-testid="courtLegalArguments"
                   name="courtLegalArguments"
-                  label="Lagarök"
+                  label={formatMessage(m.sections.courtLegalArguments.label)}
                   defaultValue={workingCase.courtLegalArguments}
-                  placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+                  placeholder={formatMessage(
+                    m.sections.courtLegalArguments.placeholder,
+                  )}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'courtLegalArguments',
@@ -280,7 +281,7 @@ export const RulingStepOne: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  Úrskurður{' '}
+                  {`${formatMessage(m.sections.decision.title)} `}
                   <Text as="span" fontWeight="semiBold" color="red600">
                     *
                   </Text>
@@ -301,13 +302,22 @@ export const RulingStepOne: React.FC = () => {
                       : 'farbann'
                   } hafnað`}
                   partiallyAcceptedLabelText="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
+                  dismissLabelText={formatMessage(
+                    m.sections.decision.dismissLabel,
+                    {
+                      caseType:
+                        workingCase.type === CaseType.CUSTODY
+                          ? 'gæsluvarðhald'
+                          : 'farbann',
+                    },
+                  )}
                 />
               </Box>
             </Box>
             <Box component="section" marginBottom={8}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  Niðurstaða
+                  {formatMessage(m.sections.ruling.title)}
                 </Text>
               </Box>
               <RulingInput
@@ -317,7 +327,8 @@ export const RulingStepOne: React.FC = () => {
               />
             </Box>
             {workingCase.decision &&
-              workingCase.decision !== CaseDecision.REJECTING && (
+              workingCase.decision !== CaseDecision.REJECTING &&
+              workingCase.decision !== CaseDecision.DISMISSING && (
                 <Box
                   component="section"
                   marginBottom={7}
@@ -365,7 +376,7 @@ export const RulingStepOne: React.FC = () => {
                 <Box component="section" marginBottom={8}>
                   <Box marginBottom={2}>
                     <Text as="h3" variant="h3">
-                      Takmarkanir á gæslu
+                      {formatMessage(m.sections.custodyRestrictions.title)}
                     </Text>
                   </Box>
                   <BlueBox>
@@ -388,6 +399,11 @@ export const RulingStepOne: React.FC = () => {
                     <DateTime
                       name="isolationToDate"
                       datepickerLabel="Einangrun til"
+                      disabled={
+                        !workingCase.custodyRestrictions?.includes(
+                          CaseCustodyRestrictions.ISOLATION,
+                        )
+                      }
                       selectedDate={
                         workingCase.isolationToDate
                           ? new Date(workingCase.isolationToDate)

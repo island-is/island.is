@@ -7,9 +7,9 @@ import {
   NounCases,
 } from '@island.is/judicial-system/formatters'
 import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
-import { CaseType } from '@island.is/judicial-system/types'
+import { isInvestigationCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import * as styles from '../AppealSection/AppealSection.treat'
+import * as styles from '../AppealSection/AppealSection.css'
 
 interface Props {
   workingCase: Case
@@ -20,10 +20,6 @@ interface Props {
 const AccusedAppealDatePicker: React.FC<Props> = (props) => {
   const { workingCase, setAccusedAppealDate, isInitialMount } = props
   const [appealDate, setAppealDate] = useState<Date>()
-
-  const isInvestiagionCase =
-    workingCase.type !== CaseType.CUSTODY &&
-    workingCase.type !== CaseType.TRAVEL_BAN
 
   const animateInAndOut = {
     visible: {
@@ -66,7 +62,7 @@ const AccusedAppealDatePicker: React.FC<Props> = (props) => {
               formatAccusedByGender(
                 workingCase.accusedGender,
                 NounCases.NOMINATIVE,
-                isInvestiagionCase,
+                isInvestigationCase(workingCase.type),
               ),
             )} kærir`}
           </Button>

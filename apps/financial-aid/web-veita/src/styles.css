@@ -33,19 +33,20 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hideScrollBar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hideScrollBar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 .wrapper {
   max-width: 1440px;
   margin: 0 auto;
-}
-
-.logoHfj {
-  width: 32px;
-  height: 48px;
-}
-
-.logoContainer {
-  max-width: 160px;
-  display: flex;
 }
 
 .headLine {
@@ -62,9 +63,33 @@ input[type='number'] {
   top: calc((100% / 2) - 12px);
 }
 
+.profileHeadlines::after {
+  content: '';
+  margin-top: 8px;
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: #9999b1;
+  transform-origin: 0% 100%;
+  transform: scaleX(0);
+  animation-name: lineTransition;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+  animation-duration: 750ms;
+}
+
+@keyframes lineTransition {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 .contentUp {
   opacity: 0;
-  transform: translate3d(0, 30px, 0);
+  transform: translate3d(0, 15px, 0);
   animation-name: ptContentUp;
   animation-timing-function: ease;
   animation-fill-mode: forwards;
@@ -145,4 +170,13 @@ input[type='number'] {
 
 .logOutButtonHover:hover > svg {
   transform: translate3d(5px, 0px, 0px);
+}
+
+.errorMessage {
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+.showErrorMessage {
+  opacity: 1;
 }

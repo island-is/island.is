@@ -1,8 +1,5 @@
 import {
-  CaseAppealDecision,
-  CaseCustodyProvisions,
-  CaseCustodyRestrictions,
-  CaseDecision,
+  CaseLegalProvisions,
   CaseGender,
   CaseType,
   SessionArrangements,
@@ -10,7 +7,7 @@ import {
 
 import {
   formatProsecutorCourtDateEmailNotification,
-  formatCustodyProvisions,
+  formatLegalProvisions,
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
   formatPrisonCourtDateEmailNotification,
@@ -21,34 +18,43 @@ import {
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
+  formatCustodyIsolation,
 } from './formatters'
 
-describe('formatCustodyProvisions', () => {
-  test('should format custody provisions when no provisions are selected', () => {
+describe('formatLegalProvisions', () => {
+  test('should format legal provisions when no provisions are selected', () => {
     // Arrange
-    const custodyProvisions: CaseCustodyProvisions[] = []
+    const legalProvisions: CaseLegalProvisions[] = []
 
     // Act
-    const res = formatCustodyProvisions(custodyProvisions)
+    const res = formatLegalProvisions(legalProvisions)
 
     // Assert
-    expect(res).toBe('')
+    expect(res).toBe('Lagaákvæði ekki skráð')
   })
 
-  test('should format custody provisions when some provisions are selected', () => {
+  test('should format legal provisions when provisions not defined', () => {
+    // Act
+    const res = formatLegalProvisions()
+
+    // Assert
+    expect(res).toBe('Lagaákvæði ekki skráð')
+  })
+
+  test('should format legal provisions when some provisions are selected', () => {
     // Arrange
-    const custodyProvisions = [
-      CaseCustodyProvisions._95_1_A,
-      CaseCustodyProvisions._95_1_B,
-      CaseCustodyProvisions._95_1_C,
-      CaseCustodyProvisions._95_1_D,
-      CaseCustodyProvisions._95_2,
-      CaseCustodyProvisions._99_1_B,
-      CaseCustodyProvisions._100_1,
+    const legalProvisions = [
+      CaseLegalProvisions._95_1_A,
+      CaseLegalProvisions._95_1_B,
+      CaseLegalProvisions._95_1_C,
+      CaseLegalProvisions._95_1_D,
+      CaseLegalProvisions._95_2,
+      CaseLegalProvisions._99_1_B,
+      CaseLegalProvisions._100_1,
     ]
 
     // Act
-    const res = formatCustodyProvisions(custodyProvisions)
+    const res = formatLegalProvisions(legalProvisions)
 
     // Assert
     expect(res).toBe(
@@ -56,25 +62,58 @@ describe('formatCustodyProvisions', () => {
     )
   })
 
-  test('should sort provisions when formatting custody provisions', () => {
+  test('should sort provisions when formatting legal provisions', () => {
     // Arrange
-    const custodyProvisions = [
-      CaseCustodyProvisions._95_1_C,
-      CaseCustodyProvisions._95_1_D,
-      CaseCustodyProvisions._95_1_A,
-      CaseCustodyProvisions._95_2,
-      CaseCustodyProvisions._99_1_B,
-      CaseCustodyProvisions._95_1_B,
-      CaseCustodyProvisions._100_1,
+    const legalProvisions = [
+      CaseLegalProvisions._95_1_C,
+      CaseLegalProvisions._95_1_D,
+      CaseLegalProvisions._95_1_A,
+      CaseLegalProvisions._95_2,
+      CaseLegalProvisions._99_1_B,
+      CaseLegalProvisions._95_1_B,
+      CaseLegalProvisions._100_1,
     ]
 
     // Act
-    const res = formatCustodyProvisions(custodyProvisions)
+    const res = formatLegalProvisions(legalProvisions)
 
     // Assert
     expect(res).toBe(
       'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.',
     )
+  })
+
+  test('should format legal provisions when some provisions are selected and additional freetext provided', () => {
+    // Arrange
+    const legalProvisions = [
+      CaseLegalProvisions._95_1_A,
+      CaseLegalProvisions._95_1_B,
+      CaseLegalProvisions._95_1_C,
+      CaseLegalProvisions._95_1_D,
+      CaseLegalProvisions._95_2,
+      CaseLegalProvisions._99_1_B,
+      CaseLegalProvisions._100_1,
+    ]
+    const legalBasis = 'some lið mgr. gr.'
+
+    // Act
+    const res = formatLegalProvisions(legalProvisions, legalBasis)
+
+    // Assert
+    expect(res).toBe(
+      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.\nsome lið mgr. gr.',
+    )
+  })
+
+  test('should format legal provisions only freetext provided', () => {
+    // Arrange
+    const legalBasis = 'some lið mgr. gr.'
+
+    // Act
+    const res = formatLegalProvisions(undefined, legalBasis)
+
+    // Assert
+    expect(res).toBe('some lið mgr. gr.')
   })
 })
 
@@ -809,138 +848,14 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 describe('formatPrisonRulingEmailNotification', () => {
   test('should format prison ruling notification', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
-    const court = 'Héraðsdómur Vesturlands'
-    const prosecutorName = 'Siggi Sakó'
     const courtEndTime = new Date('2020-12-20T13:32')
-    const defenderName = 'Skúli Skjöldur'
-    const defenderEmail = 'shield@defend.is'
-    const decision = CaseDecision.ACCEPTING
-    const validToDate = new Date('2021-04-06T12:30')
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.ISOLATION,
-      CaseCustodyRestrictions.MEDIA,
-    ]
-    const accusedAppealDecision = CaseAppealDecision.APPEAL
-    const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
-    const judgeName = 'Dalli Dómari'
-    const judgeTitle = 'aðal dómarinn'
-    const conclusion =
-      'Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021, kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
-    const isolationToDate = new Date('2021-04-06T12:30')
 
     // Act
-    const res = formatPrisonRulingEmailNotification(
-      accusedGender,
-      court,
-      prosecutorName,
-      courtEndTime,
-      defenderName,
-      defenderEmail,
-      decision,
-      validToDate,
-      custodyRestrictions,
-      accusedAppealDecision,
-      prosecutorAppealDecision,
-      judgeName,
-      judgeTitle,
-      conclusion,
-      isolationToDate,
-    )
+    const res = formatPrisonRulingEmailNotification(courtEndTime)
 
     // Assert
     expect(res).toBe(
-      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Þinghaldi lauk kl. 13:32.<br /><br />Ákærandi: Siggi Sakó.<br />Verjandi: Skúli Skjöldur, shield@defend.is.<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021, kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur og að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.<br /><br />Dalli Dómari aðal dómarinn',
-    )
-  })
-
-  test('should format prison ruling notification for a rejected case', () => {
-    // Arrange
-    const accusedGender = CaseGender.MALE
-    const court = 'Héraðsdómur Vesturlands'
-    const prosecutorName = 'Siggi Sakó'
-    const courtEndTime = new Date('2020-12-20T14:30')
-    const defenderName = 'Skúli Skjöldur'
-    const defenderEmail = 'shield@defend.is'
-    const decision = CaseDecision.REJECTING
-    const validToDate = new Date('2021-04-06T12:30')
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.ISOLATION,
-      CaseCustodyRestrictions.MEDIA,
-    ]
-    const accusedAppealDecision = CaseAppealDecision.APPEAL
-    const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
-    const judgeName = 'Dalli Dómari'
-    const judgeTitle = 'aðal dómarinn'
-    const conclusion =
-      'Kröfu um að kærði, Biggi Börgler, kt. 241101-8760, sæti gæsluvarðhaldi er hafnað.'
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      accusedGender,
-      court,
-      prosecutorName,
-      courtEndTime,
-      defenderName,
-      defenderEmail,
-      decision,
-      validToDate,
-      custodyRestrictions,
-      accusedAppealDecision,
-      prosecutorAppealDecision,
-      judgeName,
-      judgeTitle,
-      conclusion,
-    )
-
-    // Assert
-    expect(res).toBe(
-      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Þinghaldi lauk kl. 14:30.<br /><br />Ákærandi: Siggi Sakó.<br />Verjandi: Skúli Skjöldur, shield@defend.is.<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kröfu um að kærði, Biggi Börgler, kt. 241101-8760, sæti gæsluvarðhaldi er hafnað.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br />Dalli Dómari aðal dómarinn',
-    )
-  })
-
-  test('should format prison ruling notification when a defender has not been set', () => {
-    // Arrange
-    const accusedGender = CaseGender.MALE
-    const court = 'Héraðsdómur Vesturlands'
-    const prosecutorName = 'Siggi Sakó'
-    const courtEndTime = new Date('2020-12-20T13:32')
-    const decision = CaseDecision.ACCEPTING
-    const validToDate = new Date('2021-04-06T12:30')
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.ISOLATION,
-      CaseCustodyRestrictions.MEDIA,
-    ]
-    const accusedAppealDecision = CaseAppealDecision.APPEAL
-    const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
-    const judgeName = 'Dalli Dómari'
-    const judgeTitle = 'aðal dómarinn'
-    const conclusion =
-      'Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021, kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
-    const isolationToDate = new Date('2021-04-06T12:30')
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      accusedGender,
-      court,
-      prosecutorName,
-      courtEndTime,
-      undefined,
-      undefined,
-      decision,
-      validToDate,
-      custodyRestrictions,
-      accusedAppealDecision,
-      prosecutorAppealDecision,
-      judgeName,
-      judgeTitle,
-      conclusion,
-      isolationToDate,
-    )
-
-    // Assert
-    expect(res).toBe(
-      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Þinghaldi lauk kl. 13:32.<br /><br />Ákærandi: Siggi Sakó.<br />Verjandi: Hefur ekki verið skráður.<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021, kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur og að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.<br /><br />Dalli Dómari aðal dómarinn',
+      'Meðfylgjandi er vistunarseðill gæsluvarðhaldsfanga sem var úrskurðaður í gæsluvarðhald í héraðsdómi 20. desember 2020.',
     )
   })
 })
@@ -1110,5 +1025,21 @@ describe('stripHtmlTags', () => {
 
     // Assert
     expect(res).toBe('blablabla\n\nblabla')
+  })
+})
+
+describe('formatCustodyIsolation', () => {
+  test('should format custody isolation', () => {
+    // Arrange
+    const gender = CaseGender.OTHER
+    const isolationToDate = new Date('2021-12-31T16:00')
+
+    //Act
+    const res = formatCustodyIsolation(gender, isolationToDate)
+
+    // Assert
+    expect(res).toBe(
+      'Kærða skal sæta einangrun til föstudagsins 31. desember 2021, kl. 16:00.',
+    )
   })
 })

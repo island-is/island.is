@@ -137,3 +137,36 @@ export const GET_SUPPORT_SEARCH_RESULTS_QUERY = gql`
     }
   }
 `
+
+export const GET_SERVICE_WEB_ORGANIZATION = gql`
+  fragment HtmlFields on Html {
+    __typename
+    id
+    document
+  }
+  query GetServiceWebOrganization($input: GetOrganizationInput!) {
+    getOrganization(input: $input) {
+      title
+      shortTitle
+      slug
+      link
+      logo {
+        url
+        width
+        height
+      }
+      footerItems {
+        title
+        content {
+          ...HtmlFields
+        }
+        link {
+          text
+          url
+        }
+      }
+      phone
+      email
+    }
+  }
+`

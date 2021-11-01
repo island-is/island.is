@@ -8,8 +8,7 @@ import {
 } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
-import * as styles from './FamilyMemberCard.treat'
-import { defineMessage } from 'react-intl'
+import * as styles from './FamilyMemberCard.css'
 
 interface Props {
   title: string
@@ -21,26 +20,9 @@ interface Props {
 export const FamilyMemberCard: FC<Props> = ({
   title,
   nationalId,
-  familyRelation,
   currentUser,
 }) => {
   const { formatMessage } = useLocale()
-
-  const familyRelationLabel =
-    familyRelation === 'child'
-      ? defineMessage({
-          id: 'sp.family:child',
-          defaultMessage: 'Barn',
-        })
-      : familyRelation === 'spouse'
-      ? defineMessage({
-          id: 'sp.family:spouse',
-          defaultMessage: 'Maki',
-        })
-      : defineMessage({
-          id: 'sp.family:family-member',
-          defaultMessage: 'Fjölskyldumeðlimur',
-        })
 
   return (
     <Box
@@ -67,11 +49,6 @@ export const FamilyMemberCard: FC<Props> = ({
           </Text>
         </Box>
         <div>
-          {familyRelation && (
-            <Text variant="eyebrow" color="purple400">
-              {formatMessage(familyRelationLabel)}
-            </Text>
-          )}
           <Box marginBottom={nationalId ? 1 : 0}>
             <Text variant="h3" as="h3" color="dark400">
               {title}

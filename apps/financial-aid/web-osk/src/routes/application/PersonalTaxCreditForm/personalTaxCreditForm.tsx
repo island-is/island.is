@@ -4,15 +4,14 @@ import { Text } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 
-import * as styles from './personalTaxCreditForm.treat'
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import * as styles from './personalTaxCreditForm.css'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 import cn from 'classnames'
 
 import { NavigationProps } from '@island.is/financial-aid/shared/lib'
@@ -50,10 +49,7 @@ const PersonalTaxCreditForm = () => {
   }
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Viltu nota persónuafslátt?
@@ -74,9 +70,8 @@ const PersonalTaxCreditForm = () => {
           }}
           onChange={(value: number | boolean) => {
             updateForm({ ...form, usePersonalTaxCredit: value })
-            if (hasError) {
-              setHasError(false)
-            }
+
+            setHasError(false)
           }}
         />
 
@@ -112,7 +107,7 @@ const PersonalTaxCreditForm = () => {
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
-    </FormLayout>
+    </>
   )
 }
 

@@ -1,16 +1,15 @@
+import { AuthModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
+import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 
-import { SharedAuthModule } from '@island.is/financial-aid/auth'
 import { environment } from '../environments'
 import { BackendAPI } from '../services'
 import {
-  AuthModule,
   UserModule,
   ApplicationModule,
   MunicipalityModule,
   FileModule,
-  ApplicationEventModule,
 } from './modules/'
 
 const debug = !environment.production
@@ -26,19 +25,17 @@ const autoSchemaFile = environment.production
       playground,
       autoSchemaFile,
       path: '/api/graphql',
-      context: ({ req }) => ({ req }),
-      dataSources: () => ({ backendApi: new BackendAPI() }),
+      context: ({ req }) => req,
+      dataSources: () => ({
+        backendApi: new BackendAPI(),
+      }),
     }),
-    SharedAuthModule.register({
-      jwtSecret: environment.auth.jwtSecret,
-      secretToken: environment.auth.secretToken,
-    }),
-    AuthModule,
+    AuthModule.register(environment.identityServerAuth),
     UserModule,
     ApplicationModule,
     MunicipalityModule,
     FileModule,
-    ApplicationEventModule,
+    NationalRegistryXRoadModule.register(environment.nationalRegistryXRoad),
   ],
   providers: [BackendAPI],
 })

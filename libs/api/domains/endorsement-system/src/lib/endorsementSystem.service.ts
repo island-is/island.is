@@ -7,11 +7,19 @@ import {
   EndorsementControllerCreateRequest,
   EndorsementControllerDeleteRequest,
   EndorsementListControllerCreateRequest,
+  EndorsementListControllerUpdateRequest,
   EndorsementListControllerFindOneRequest,
   EndorsementControllerBulkCreateRequest,
   EndorsementControllerFindAllRequest,
   EndorsementControllerFindByAuthRequest,
   EndorsementListControllerFindByTagsRequest,
+  EndorsementListControllerFindEndorsementsRequest,
+  EndorsementListControllerGetGeneralPetitionListRequest,
+  EndorsementListControllerGetGeneralPetitionListsRequest,
+  EndorsementListControllerCloseRequest,
+  EndorsementListControllerOpenRequest,
+  EndorsementListControllerLockRequest,
+  EndorsementListControllerUnlockRequest,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -42,6 +50,12 @@ export class EndorsementSystemService {
 
   endorsementListApiWithAuth(auth: Auth) {
     return this.endorsementListApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async endorsementListControllerGetOwnerName(input: { listId: string }) {
+    return await this.endorsementListApi
+      .endorsementListControllerGetOwnerInfo(input)
+      .catch(this.handleError.bind(this))
   }
 
   // Endorsement endpoints
@@ -91,19 +105,55 @@ export class EndorsementSystemService {
     return Boolean(result)
   }
 
-  // Endorsement list endpoints
+  // Auth removed - Tags
   async endorsementListControllerFindLists(
     input: EndorsementListControllerFindByTagsRequest,
-    auth: Auth,
   ) {
-    return await this.endorsementListApiWithAuth(auth)
+    return await this.endorsementListApi
       .endorsementListControllerFindByTags(input)
       .catch(this.handleError.bind(this))
   }
 
-  async endorsementListControllerFindEndorsements(auth: Auth) {
+  // Auth removed - gp lists
+  async endorsementListControllerGetGeneralPetitionLists(
+    input: EndorsementListControllerGetGeneralPetitionListsRequest,
+  ) {
+    return await this.endorsementListApi
+      .endorsementListControllerGetGeneralPetitionLists(input)
+      .catch(this.handleError.bind(this))
+  }
+  // Auth removed - pg list
+  async endorsementListControllerGetGeneralPetitionList(
+    input: EndorsementListControllerGetGeneralPetitionListRequest,
+  ) {
+    return await this.endorsementListApi
+      .endorsementListControllerGetGeneralPetitionList(input)
+      .catch(this.handleError.bind(this))
+  }
+  // Auth removed - pg endorements
+  async endorsementControllerGetGeneralPetitionEndorsements(
+    input: EndorsementListControllerGetGeneralPetitionListRequest,
+  ) {
+    return await this.endorsementApi
+      .endorsementControllerFind(input)
+      .catch(this.handleError.bind(this))
+  }
+
+  async endorsementListControllerFindEndorsements(
+    auth: Auth,
+    input: EndorsementListControllerFindEndorsementsRequest,
+  ) {
     return await this.endorsementListApiWithAuth(auth)
-      .endorsementListControllerFindEndorsements()
+      .endorsementListControllerFindEndorsements(input)
+      .catch(this.handleError.bind(this))
+  }
+
+  async endorsementListControllerFindEndorsementLists(
+    auth: Auth,
+    input: EndorsementListControllerFindEndorsementsRequest,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerFindEndorsementLists(input)
       .catch(this.handleError.bind(this))
   }
 
@@ -122,6 +172,50 @@ export class EndorsementSystemService {
   ) {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerCreate(endorsementList)
+      .catch(this.handleError.bind(this))
+  }
+
+  async endorsementListControllerUpdate(
+    input: EndorsementListControllerUpdateRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerUpdate(input)
+      .catch(this.handleError.bind(this))
+  }
+  async endorsementListControllerClose(
+    endorsementList: EndorsementListControllerCloseRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerClose(endorsementList)
+      .catch(this.handleError.bind(this))
+  }
+
+  async endorsementListControllerOpen(
+    endorsementList: EndorsementListControllerOpenRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerOpen(endorsementList)
+      .catch(this.handleError.bind(this))
+  }
+
+  async endorsementListControllerLock(
+    endorsementList: EndorsementListControllerLockRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerLock(endorsementList)
+      .catch(this.handleError.bind(this))
+  }
+
+  async endorsementListControllerUnlock(
+    endorsementList: EndorsementListControllerUnlockRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerUnlock(endorsementList)
       .catch(this.handleError.bind(this))
   }
 }

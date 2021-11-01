@@ -11,13 +11,15 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   CaseDecision,
   CaseType,
+  isRestrictionCase,
+  isInvestigationCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
 import Loading from '../Loading/Loading'
-import * as styles from './PageLayout.treat'
+import * as styles from './PageLayout.css'
 import {
   getCourtSections,
   getCustodyAndTravelBanProsecutorSection,
@@ -25,6 +27,8 @@ import {
   getInvestigationCaseCourtSections,
   getInvestigationCaseProsecutorSection,
 } from './Sections'
+import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import { useIntl } from 'react-intl'
 
 interface PageProps {
   children: ReactNode
@@ -55,6 +59,7 @@ const PageLayout: React.FC<PageProps> = ({
   showSidepanel = true,
 }) => {
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
 
   const caseResult = () => {
     const decisionIsRejecting =
@@ -65,21 +70,22 @@ const PageLayout: React.FC<PageProps> = ({
       decision === CaseDecision.ACCEPTING ||
       parentCaseDecision === CaseDecision.ACCEPTING
 
+    const decisionIsDismissing =
+      decision === CaseDecision.DISMISSING ||
+      parentCaseDecision === CaseDecision.DISMISSING
+
     const decisionIsAcceptingAlternativeTravelBan =
       decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
       parentCaseDecision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
 
-    const isInvestigationCase =
-      caseType !== CaseType.CUSTODY && caseType !== CaseType.TRAVEL_BAN
-
     if (decisionIsRejecting) {
-      if (isInvestigationCase) {
+      if (isInvestigationCase(caseType)) {
         return 'Kröfu um rannsóknarheimild hafnað'
       } else {
         return 'Kröfu hafnað'
       }
     } else if (decisionIsAccepting) {
-      if (isInvestigationCase) {
+      if (isInvestigationCase(caseType)) {
         return 'Krafa um rannsóknarheimild samþykkt'
       } else {
         return isValidToDateInThePast
@@ -90,6 +96,8 @@ const PageLayout: React.FC<PageProps> = ({
               caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
             } virkt`
       }
+    } else if (decisionIsDismissing) {
+      return formatMessage(signedVerdictOverview.dismissedTitle)
     } else if (decisionIsAcceptingAlternativeTravelBan) {
       return isValidToDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
     } else {
@@ -98,14 +106,14 @@ const PageLayout: React.FC<PageProps> = ({
   }
 
   const sections = [
-    caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
+    isRestrictionCase(caseType)
       ? getCustodyAndTravelBanProsecutorSection(
           caseId,
           caseType,
           activeSubSection,
         )
       : getInvestigationCaseProsecutorSection(caseId, activeSubSection),
-    caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
+    isRestrictionCase(caseType)
       ? getCourtSections(caseId, activeSubSection)
       : getInvestigationCaseCourtSections(caseId, activeSubSection),
     {

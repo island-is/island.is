@@ -64,7 +64,7 @@ export const complaint = {
       id:
         'dpac.application:section.complaint.labels.complaineeOperatesWithinEurope',
       defaultMessage:
-        'Veistu hvort viðkomandi aðili er með starfsemi í öðru landi innan Evrópu? ',
+        'Er viðkomandi aðili með starfsemi í öðru landi innan Evrópska efnahagssvæðisins?',
       description:
         'Does the complainee operate within in another country within Europe?',
     },
@@ -232,6 +232,12 @@ export const complaint = {
         'dpac.application:section.complaint.labels.complaintDocumentsButtonLabel',
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Complaint Documents Button Label',
+    },
+    complaintDocumentsInfoAlertMessageTitle: {
+      id:
+        'dpac.application:section.complaint.labels.complaintDocumentsInfoAlertMessageTitle',
+      defaultMessage: 'Athugið',
+      description: 'Title of alert message in complaint screen',
     },
     complaintDocumentsInfoLabel: {
       id:

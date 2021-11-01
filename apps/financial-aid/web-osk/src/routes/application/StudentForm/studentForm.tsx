@@ -4,15 +4,14 @@ import { Text, Input, Box } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 
-import * as styles from './studentForm.treat'
+import * as styles from './studentForm.css'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 import cn from 'classnames'
 import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
@@ -58,10 +57,7 @@ const StudentForm = () => {
   }
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Ertu í lánshæfu námi?
@@ -76,9 +72,8 @@ const StudentForm = () => {
             }}
             onChange={(value: number | boolean) => {
               updateForm({ ...form, student: value })
-              if (hasError) {
-                setHasError(false)
-              }
+
+              setHasError(false)
             }}
           />
         </div>
@@ -130,7 +125,7 @@ const StudentForm = () => {
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
-    </FormLayout>
+    </>
   )
 }
 

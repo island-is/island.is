@@ -23,7 +23,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import {
-  custodyProvisions,
+  legalProvisions,
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
 import {
@@ -170,22 +170,55 @@ const StepThreeForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <BlueBox>
-            <CheckboxList
-              checkboxes={
-                workingCase.type === CaseType.CUSTODY
-                  ? custodyProvisions
-                  : travelBanProvisions
-              }
-              selected={workingCase.custodyProvisions}
-              onChange={(id) =>
-                setCheckboxAndSendToServer(
-                  'custodyProvisions',
-                  id,
+            <Box marginBottom={2}>
+              <CheckboxList
+                checkboxes={
+                  workingCase.type === CaseType.CUSTODY
+                    ? legalProvisions
+                    : travelBanProvisions
+                }
+                selected={workingCase.legalProvisions}
+                onChange={(id) =>
+                  setCheckboxAndSendToServer(
+                    'legalProvisions',
+                    id,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+              />
+            </Box>
+            <Input
+              data-testid="legalBasis"
+              name="legalBasis"
+              label={formatMessage(
+                rcDemands.sections.legalBasis.legalBasisLabel,
+              )}
+              placeholder={formatMessage(
+                rcDemands.sections.legalBasis.legalBasisPlaceholder,
+              )}
+              defaultValue={workingCase?.legalBasis}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'legalBasis',
+                  event,
+                  [],
                   workingCase,
                   setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'legalBasis',
+                  event.target.value,
+                  [],
+                  workingCase,
                   updateCase,
                 )
               }
+              textarea
+              rows={7}
             />
           </BlueBox>
         </Box>
@@ -303,8 +336,9 @@ const StepThreeForm: React.FC<Props> = (props) => {
           nextIsDisabled={
             !validate(workingCase.lawsBroken ?? '', 'empty').isValid ||
             !requestedValidToDateIsValid ||
-            !workingCase.custodyProvisions ||
-            workingCase.custodyProvisions?.length === 0
+            ((!workingCase.legalProvisions ||
+              workingCase.legalProvisions?.length === 0) &&
+              !workingCase.legalBasis)
           }
         />
       </FormContentContainer>

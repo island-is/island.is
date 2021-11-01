@@ -1,24 +1,32 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import graphqlTypeJson from 'graphql-type-json'
-
-import type { MunicipalitySettings } from '@island.is/financial-aid/shared/lib'
 
 import { Municipality } from '@island.is/financial-aid/shared/lib'
+
+import { AidModel } from '../../aid'
 
 @ObjectType()
 export class MunicipalityModel implements Municipality {
   @Field(() => ID)
   readonly id!: string
 
-  // @Field()
-  // readonly created!: string
-
-  // @Field()
-  // readonly modified!: string
-
   @Field()
   readonly name!: string
 
-  @Field(() => graphqlTypeJson)
-  readonly settings!: MunicipalitySettings
+  @Field()
+  readonly active!: boolean
+
+  @Field()
+  readonly homepage?: string
+
+  @Field()
+  readonly municipalityId!: string
+
+  @Field()
+  readonly individualAid!: AidModel
+
+  @Field()
+  readonly cohabitationAid!: AidModel
+
+  @Field()
+  readonly email?: string
 }

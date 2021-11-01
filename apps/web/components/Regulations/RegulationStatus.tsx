@@ -1,7 +1,7 @@
-import * as s from './RegulationStatus.treat'
+import * as s from './RegulationStatus.css'
 
 import React from 'react'
-import { ISODate, interpolate } from '@island.is/regulations'
+import { ISODate, interpolate, toISODate } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { Hidden, Link, Text } from '@island.is/island-ui/core'
 import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
@@ -29,13 +29,14 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
     timelineDate,
     lastAmendDate,
     effectiveDate,
+    repealed,
     repealedDate,
     history,
   } = regulation
 
-  const today = new Date().toISOString().substr(0, 10) as ISODate
+  const today = toISODate(new Date())
 
-  const color: BallColor = repealedDate
+  const color: BallColor = repealed
     ? 'red'
     : type === 'amending'
     ? 'yellow'
@@ -55,24 +56,31 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
   const getNextHistoryDate = () => {
     const idx = (history || []).findIndex((item) => item.date === timelineDate)
     const nextItem = idx > -1 && history[idx + 1]
-    return nextItem ? nextItem.date : today // fall back to `today`, because whatever, It should never happen...
+    return nextItem ? nextItem.date : undefined
   }
 
   const renderLinkToCurrent = () => {
-    const textKey = !repealedDate
-      ? 'statusLinkToCurrent'
-      : 'statusLinkToRepealed'
-    const labelKey = !repealedDate
-      ? 'statusLinkToCurrent_long'
-      : 'statusLinkToRepealed_long'
+    const textKey = repealed ? 'statusLinkToRepealed' : 'statusLinkToCurrent'
+    const labelKey = repealed
+      ? 'statusLinkToRepealed_long'
+      : 'statusLinkToCurrent_long'
     return (
-      <small className={s.linkToCurrent}>
-        <Link href={linkToRegulation(name)} aria-label={txt(labelKey)}>
+      <small className={s.toCurrent}>
+        <Link
+          className={s.linkToCurrent}
+          href={linkToRegulation(name)}
+          aria-label={txt(labelKey)}
+        >
           {txt(textKey)}
         </Link>
       </small>
     )
   }
+
+  const isOgildWAT = repealed && !repealedDate // Don't ask. Magic data!
+
+  const futureDateTo =
+    timelineDate && timelineDate > today && getNextHistoryDate()
 
   return (
     <>
@@ -81,7 +89,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
           {txt('printedDate')} {formatDate(today)}
         </Text>
       </div>
-      <Text>
+      <div className={s.statusText}>
         <Ball type={color} />
 
         {!timelineDate || timelineDate === lastAmendDate ? (
@@ -95,6 +103,18 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
                   })}
                 </small>
               )}
+            </>
+          ) : isOgildWAT ? (
+            <>
+              {txt('statusOgildWat') + ' '}
+              {onDateText ||
+                (lastAmendDate && (
+                  <small className={s.metaDate}>
+                    {interpolate(txt('statusCurrent_amended'), {
+                      date: formatDate(lastAmendDate),
+                    })}
+                  </small>
+                ))}
             </>
           ) : !lastAmendDate ? (
             <>
@@ -121,9 +141,14 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
             {txt('statusUpcoming') + ' '}
             {onDateText || (
               <small className={s.metaDate}>
-                {interpolate(txt('statusUpcoming_on'), {
-                  date: formatDate(timelineDate),
-                })}
+                {!futureDateTo
+                  ? interpolate(txt('statusUpcoming_on'), {
+                      date: formatDate(timelineDate),
+                    })
+                  : interpolate(txt('statusUpcoming_period'), {
+                      dateFrom: formatDate(timelineDate),
+                      dateTo: futureDateTo,
+                    })}
               </small>
             )}{' '}
             {renderLinkToCurrent()}
@@ -139,14 +164,14 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
               <small className={s.metaDate}>
                 {interpolate(txt('statusHistoric_period'), {
                   dateFrom: formatDate(timelineDate),
-                  dateTo: formatDate(getNextHistoryDate()),
+                  dateTo: formatDate(getNextHistoryDate() || today),
                 })}
               </small>
             )}{' '}
             {renderLinkToCurrent()}
           </>
         )}
-      </Text>
+      </div>
     </>
   )
 }

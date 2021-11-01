@@ -30,6 +30,12 @@ export enum ServicePortalPath {
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
 
+  // General Petitions
+  Petitions = '/min-gogn/medmaeli',
+  PetitionsAdminView = '/min-gogn/medmaeli-admin',
+  PetitionList = '/min-gogn/medmaeli/:listId',
+  PetitionListAdmin = '/min-gogn/medmaeli-admin/:listId',
+
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 
   // Fjarmal
@@ -54,7 +60,7 @@ export enum ServicePortalPath {
   EducationRoot = '/menntun',
   EducationDegree = '/menntun/profgradur',
   EducationCareer = '/menntun/namsferill',
-  EducationStudentAssessment = '/menntun/namsferill/:nationalId/samraemd-prof',
+  EducationStudentAssessment = '/menntun/namsferill/:familyIndex/samraemd-prof',
   EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
 
   // Education License

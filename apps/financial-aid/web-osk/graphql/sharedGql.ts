@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client'
 
-export const CreateApplicationQuery = gql`
+export const CreateApplicationMutation = gql`
   mutation createApplication($input: CreateApplicationInput!) {
     createApplication(input: $input) {
       id
@@ -8,7 +8,7 @@ export const CreateApplicationQuery = gql`
   }
 `
 
-export const CreateApplicationEventQuery = gql`
+export const ApplicationEventMutation = gql`
   mutation createApplicationEvent($input: CreateApplicationEventInput!) {
     createApplicationEvent(input: $input) {
       id
@@ -16,20 +16,10 @@ export const CreateApplicationEventQuery = gql`
   }
 `
 
-export const CreateApplicationFiles = gql`
+export const ApplicationFilesMutation = gql`
   mutation createApplicationFiles($input: CreateApplicationFilesInput!) {
     createApplicationFiles(input: $input) {
       success
-    }
-  }
-`
-
-export const GetMunicipalityQuery = gql`
-  query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
-    municipality(input: $input) {
-      id
-      name
-      settings
     }
   }
 `
@@ -49,17 +39,14 @@ export const CurrentUserQuery = gql`
       nationalId
       name
       phoneNumber
-      currentApplication {
-        id
-        state
-        homeCircumstances
-        usePersonalTaxCredit
-      }
+      postalCode
+      isSpouse
+      currentApplication
     }
   }
 `
 
-export const GetApplicationQuery = gql`
+export const ApplicationQuery = gql`
   query GetApplicationQuery($input: ApplicationInput!) {
     application(input: $input) {
       id
@@ -68,14 +55,42 @@ export const GetApplicationQuery = gql`
       state
       amount
       rejection
+      created
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
     }
   }
 `
 
-export const UpdateApplicationMutation = gql`
+export const ApplicationMutation = gql`
   mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
     updateApplication(input: $input) {
       id
+    }
+  }
+`
+
+export const NationalRegistryUserQuery = gql`
+  query getNationalRegistryUserQuery {
+    nationalRegistryUserV2 {
+      nationalId
+      fullName
+      address {
+        streetName
+        postalCode
+        city
+        municipalityCode
+      }
+      spouse {
+        nationalId
+        maritalStatus
+        name
+      }
     }
   }
 `

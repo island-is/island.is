@@ -77,7 +77,7 @@ export const PaymentPlanForm: Form = buildForm({
         buildExternalDataProvider({
           id: 'approveExternalData',
           title: externalData.general.pageTitle,
-          description: '',
+          description: externalData.general.description,
           subTitle: externalData.general.subTitle,
           checkboxLabel: externalData.general.checkboxLabel,
           dataProviders: [
@@ -98,6 +98,13 @@ export const PaymentPlanForm: Form = buildForm({
               title: externalData.labels.paymentPlanTitle,
               type: 'PaymentPlanPrerequisitesProvider',
               subTitle: externalData.labels.paymentPlanSubtitle,
+            }),
+
+            buildDataProviderItem({
+              id: 'additionalDataProviderMessage',
+              type: '',
+              title: externalData.labels.paymentEmployerTitle,
+              subTitle: externalData.labels.paymentEmployerSubtitle,
             }),
           ],
         }),
@@ -224,16 +231,8 @@ export const PaymentPlanForm: Form = buildForm({
           condition: (_formValue, externalData) => {
             const debts = (externalData as PaymentPlanExternalData)
               ?.paymentPlanPrerequisites?.data?.debts
-            const employer = (externalData as PaymentPlanExternalData)
-              ?.paymentPlanPrerequisites?.data?.employer
 
-            return !!(
-              debts?.find((x) => x.type === 'OverpaidBenefits') !== undefined ||
-              (employer?.name &&
-                employer?.name.length > 0 &&
-                employer?.nationalId &&
-                employer?.nationalId.length > 0)
-            )
+            return debts?.find((x) => x.type === 'Wagedection') !== undefined
           },
           children: [
             buildCustomField({
@@ -256,12 +255,31 @@ export const PaymentPlanForm: Form = buildForm({
                 { label: employer.labels.employerIsNotCorrect, value: NO },
               ],
             }),
+          ],
+        }),
+        buildMultiField({
+          id: 'newEmployerMultiField',
+          title: employer.general.pageTitle,
+          condition: (_formValue, externalData) => {
+            const debts = (externalData as PaymentPlanExternalData)
+              ?.paymentPlanPrerequisites?.data?.debts
+
+            return (
+              debts?.find((x) => x.type === 'Wagedection') !== undefined &&
+              (_formValue as PublicDebtPaymentPlan).employer?.isCorrectInfo ===
+                NO
+            )
+          },
+          children: [
+            buildCustomField({
+              id: 'employerInfoDescription',
+              title: '',
+              component: 'EmployerInfoDescription',
+            }),
             buildCustomField({
               id: 'employerCustomId',
               title: '',
               component: 'EmployerIdField',
-              condition: (data) =>
-                (data as PublicDebtPaymentPlan).employer?.isCorrectInfo === NO,
             }),
           ],
         }),

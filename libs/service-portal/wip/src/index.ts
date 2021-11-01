@@ -13,10 +13,5 @@ export const wipModule: ServicePortalModule = {
       path: ServicePortalPath.SettingsRoot,
       render: () => lazy(() => import('./screens/SettingsWIP/SettingsWIP')),
     },
-    {
-      name: 'Fjármál',
-      path: ServicePortalPath.FinanceRoot,
-      render: () => lazy(() => import('./screens/FinanceWIP/FinanceWIP')),
-    },
   ],
 }
