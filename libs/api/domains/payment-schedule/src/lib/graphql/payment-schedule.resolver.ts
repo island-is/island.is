@@ -16,7 +16,6 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { PaymentScheduleApi } from '@island.is/clients/payment-schedule'
 import { PaymentScheduleService } from '../payment-schedule.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)

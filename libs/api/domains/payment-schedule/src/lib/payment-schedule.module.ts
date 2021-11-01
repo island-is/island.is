@@ -13,14 +13,7 @@ export class PaymentScheduleModule {
     return {
       module: PaymentScheduleModule,
       imports: [PaymentScheduleClientModule.register(config)],
-      providers: [
-        PaymentScheduleResolver,
-        {
-          provide: PaymentScheduleAPI,
-          useFactory: () => new PaymentScheduleAPI(config),
-        },
-        PaymentScheduleService,
-      ],
+      providers: [PaymentScheduleResolver, PaymentScheduleService],
     }
   }
 }

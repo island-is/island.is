@@ -1,7 +1,4 @@
-import {
-  PaymentScheduleApi,
-  ScheduleType,
-} from '@island.is/clients/payment-schedule'
+import { DefaultApi, ScheduleType } from '@island.is/clients/payment-schedule'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
@@ -20,7 +17,7 @@ import {
 @Injectable()
 export class PaymentScheduleService {
   constructor(
-    private paymentScheduleApi: PaymentScheduleApi,
+    private paymentScheduleApi: DefaultApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -33,8 +30,6 @@ export class PaymentScheduleService {
     } = await this.paymentScheduleApi.conditionsnationalIdGET3({
       nationalId,
     })
-    console.log('conditions', conditions)
-    console.log('error', error)
 
     if (error) {
       this.logger.error('Error getting conditions', error)
@@ -81,10 +76,7 @@ export class PaymentScheduleService {
           accumulated: payment.accumulated,
         }
       }),
-      scheduleType:
-        ScheduleType[
-          paymentDistribution.scheduleType as keyof typeof ScheduleType
-        ],
+      scheduleType: paymentDistribution.scheduleType as ScheduleType,
       nationalId: paymentDistribution.nationalId,
     }
   }
@@ -112,10 +104,7 @@ export class PaymentScheduleService {
     }
     return {
       ...distributionInitialPosition,
-      scheduleType:
-        ScheduleType[
-          distributionInitialPosition.scheduleType as keyof typeof ScheduleType
-        ],
+      scheduleType: distributionInitialPosition.scheduleType as ScheduleType,
     }
   }
 
@@ -136,7 +125,7 @@ export class PaymentScheduleService {
     return deptAndSchedules.map((debt) => {
       return {
         ...debt,
-        type: ScheduleType[debt.type as keyof typeof ScheduleType],
+        type: debt.type as ScheduleType,
       }
     })
   }

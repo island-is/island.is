@@ -1,4 +1,4 @@
-import { PaymentScheduleApi } from '@island.is/clients/payment-schedule'
+import { DefaultApi } from '@island.is/clients/payment-schedule'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
@@ -6,7 +6,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 @Injectable()
 export class PublicDebtPaymentPlanTemplateService {
   constructor(
-    private paymentScheduleApi: PaymentScheduleApi,
+    private paymentScheduleApi: DefaultApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}

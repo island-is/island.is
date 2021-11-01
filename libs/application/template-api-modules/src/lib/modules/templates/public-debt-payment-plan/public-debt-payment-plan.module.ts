@@ -10,21 +10,20 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 // Here you import your module service
 import { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan.service'
 
-import { PaymentScheduleAPI } from '@island.is/clients/payment-schedule'
+import {
+  PaymentScheduleAPI,
+  PaymentScheduleClientModule,
+} from '@island.is/clients/payment-schedule'
 
 export class PublicDebtPaymentPlanTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: PublicDebtPaymentPlanTemplateModule,
-      imports: [SharedTemplateAPIModule.register(config)],
-      providers: [
-        PublicDebtPaymentPlanTemplateService,
-        {
-          provide: PaymentScheduleAPI,
-          useFactory: () =>
-            new PaymentScheduleAPI(config.paymentScheduleConfig),
-        },
+      imports: [
+        SharedTemplateAPIModule.register(config),
+        PaymentScheduleClientModule.register(config.paymentScheduleConfig),
       ],
+      providers: [PublicDebtPaymentPlanTemplateService],
       exports: [PublicDebtPaymentPlanTemplateService],
     }
   }
