@@ -189,7 +189,9 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                   >
                     <Checkbox
                       name="selectAllPoliceCaseFiles"
-                      label="Velja allt"
+                      label={formatMessage(
+                        m.sections.policeCaseFiles.selectAllLabel,
+                      )}
                       checked={checkAllChecked}
                       onChange={(evt) => toggleCheckbox(evt, true)}
                       strong
@@ -244,14 +246,20 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                   <Box display="flex" marginRight={2}>
                     <Icon icon="close" color="red400" />
                   </Box>
-                  <Text variant="h5">Upp kom óvænt kerfisvilla</Text>
+                  <Text variant="h5">
+                    {formatMessage(m.sections.policeCaseFiles.errorMessage)}
+                  </Text>
                 </Box>
               ) : (
                 <Box display="flex" alignItems="center" paddingY={3}>
                   <Box display="flex" marginRight={2}>
                     <Icon icon="checkmark" color="blue400" />
                   </Box>
-                  <Text variant="h5">Öllum skjölum hefur verið hlaðið upp</Text>
+                  <Text variant="h5">
+                    {formatMessage(
+                      m.sections.policeCaseFiles.allFilesUploadedMessage,
+                    )}
+                  </Text>
                 </Box>
               )}
             </motion.div>
@@ -261,7 +269,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                 loading={isUploading}
                 disabled={policeCaseFileList.length === 0}
               >
-                Hlaða upp
+                {formatMessage(m.sections.policeCaseFiles.buttonLabel)}
               </Button>
             </motion.div>
           </AnimateSharedLayout>
