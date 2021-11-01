@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import cn from 'classnames'
 import { useIntl } from 'react-intl'
+import cn from 'classnames'
+import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
 import {
   Text,
   Box,
@@ -15,7 +16,6 @@ import {
   Icon,
 } from '@island.is/island-ui/core'
 import { Case, CaseFile, CaseFileState } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   useCase,
   useS3Upload,
@@ -28,9 +28,9 @@ import { rcCaseFiles as m } from '@island.is/judicial-system-web/messages'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/shared-components/MarkdownWrapper/MarkdownWrapper'
-import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
-import * as styles from './StepFive.css'
 import { PoliceCaseFilesData } from './StepFive'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as styles from './StepFive.css'
 
 interface Props {
   workingCase: Case
@@ -67,7 +67,6 @@ export const StepFiveForm: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (policeCaseFiles) {
-      console.log(files)
       const policeCaseFilesNotStoredInRVG = policeCaseFiles.files.filter(
         (p) => {
           const xFiles = files as CaseFile[]
@@ -78,19 +77,21 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         },
       )
 
-      setPoliceCaseFileList(
-        policeCaseFilesNotStoredInRVG.map((policeCaseFile) => {
-          return {
-            id: policeCaseFile.id,
-            label: policeCaseFile.name,
-            checked:
-              policeCaseFileList.find((p) => p.id === policeCaseFile.id)
-                ?.checked || false,
-          }
-        }),
-      )
+      if (policeCaseFilesNotStoredInRVG.length !== policeCaseFileList.length) {
+        setPoliceCaseFileList(
+          policeCaseFilesNotStoredInRVG.map((policeCaseFile) => {
+            return {
+              id: policeCaseFile.id,
+              label: policeCaseFile.name,
+              checked:
+                policeCaseFileList.find((p) => p.id === policeCaseFile.id)
+                  ?.checked || false,
+            }
+          }),
+        )
+      }
     }
-  }, [policeCaseFiles, files])
+  }, [policeCaseFiles, files, policeCaseFileList])
 
   const toggleCheckbox = (
     evt: React.ChangeEvent<HTMLInputElement>,
@@ -111,15 +112,13 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     } else {
       newPoliceCaseFileList[target].checked = !newPoliceCaseFileList[target]
         .checked
-
       setPoliceCaseFileList(newPoliceCaseFileList)
     }
   }
 
   const uploadToRVG = async () => {
-    const newPoliceCaseFileList = [...policeCaseFileList]
     const filesToUpload = policeCaseFileList.filter((p) => p.checked)
-    let updatedPoliceCaseFileList: PoliceCaseFile[] = policeCaseFileList
+    let newPoliceCaseFileList = [...policeCaseFileList]
 
     setIsUploading(true)
 
@@ -138,7 +137,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         size,
       } as UploadFile)
 
-      updatedPoliceCaseFileList = newPoliceCaseFileList.filter(
+      newPoliceCaseFileList = newPoliceCaseFileList.filter(
         (p) => p.id !== policeCaseFile.id,
       )
 
@@ -147,7 +146,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
       }
     })
 
-    setPoliceCaseFileList(updatedPoliceCaseFileList)
+    setPoliceCaseFileList(newPoliceCaseFileList)
   }
 
   return (
