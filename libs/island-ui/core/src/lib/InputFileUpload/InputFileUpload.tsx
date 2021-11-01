@@ -122,7 +122,6 @@ export const UploadedFile = ({
   const isUploading =
     file.percent && file.percent < 100 && file.status === 'uploading'
 
-  console.log(file)
   return (
     <Box
       ref={ref}
