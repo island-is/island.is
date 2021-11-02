@@ -82,7 +82,7 @@ export class IslykillService {
           nationalId,
           exception: e,
         })
-        throw new BadRequestException(errorMsg)
+        throw new BadRequestException(`${errorMsg}, Details: ${e}`)
       })
     return apiData
   }
