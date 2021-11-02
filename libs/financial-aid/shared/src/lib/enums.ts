@@ -68,6 +68,14 @@ export enum StaffRole {
   EMPLOYEE = 'Employee',
 }
 
+export enum UserType {
+  SUPERADMIN = 'SuperAdmin',
+  ADMIN = 'Admin',
+  EMPLOYEE = 'Employee',
+  APPLICANT = 'Applicant',
+  SPOUSE = 'Spouse',
+}
+
 export enum FamilyStatus {
   UNKNOWN = 'Unknown',
   SINGLE = 'Single',

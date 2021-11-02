@@ -9,6 +9,7 @@ import {
   ApplicationStateUrl,
   FamilyStatus,
   AidType,
+  UserType,
 } from './enums'
 
 export interface GetSignedUrl {
@@ -70,6 +71,7 @@ export interface User {
   staff?: Staff
   spouse?: Spouse
   address?: Address
+  type: UserType
 }
 
 export interface Address {
