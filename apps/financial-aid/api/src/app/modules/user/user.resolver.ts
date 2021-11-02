@@ -43,7 +43,7 @@ export class UserResolver {
     @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<SpouseModel> {
-    return await backendApi.isSpouse(user.nationalId)
+    return await backendApi.getSpouse(user.nationalId)
   }
 
   @ResolveField('currentApplicationId', () => String)

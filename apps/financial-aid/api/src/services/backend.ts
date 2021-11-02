@@ -92,7 +92,7 @@ class BackendAPI extends RESTDataSource {
     return this.get(`application/nationalId/${nationalId}`)
   }
 
-  isSpouse(spouseNationalId: string): Promise<SpouseModel> {
+  getSpouse(spouseNationalId: string): Promise<SpouseModel> {
     return this.get(`application/spouse/${spouseNationalId}`)
   }
 
