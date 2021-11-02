@@ -182,7 +182,7 @@ export const getFamilyStatus: KeyMapping<FamilyStatus, string> = {
   Single: 'Einstæð',
   MarriedNotLivingTogether: 'Hjón ekki í samvistum',
   NotInformed: 'Óupplýst',
-  UnregisteredCohabitation: 'Óstaðfestri sambúð?',
+  UnregisteredCohabitation: 'Ég er ekki í sambúð',
 }
 
 export const getFileTypeName: KeyMapping<FileType, string> = {
