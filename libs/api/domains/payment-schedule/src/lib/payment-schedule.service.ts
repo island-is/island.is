@@ -71,7 +71,7 @@ export class PaymentScheduleService {
     return {
       payments: paymentDistribution.payments.map((payment) => {
         return {
-          dueDate: new Date(payment.dueDate),
+          dueDate: new Date(+payment.dueDate),
           payment: payment.payment,
           accumulated: payment.accumulated,
         }
