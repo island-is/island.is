@@ -2,10 +2,10 @@ import { HasSpouseApplied } from '@island.is/financial-aid/shared/lib'
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class HasSpouseAppliedModel implements HasSpouseApplied {
+export class SpouseModel implements HasSpouseApplied {
   @Field()
   readonly HasApplied!: boolean
 
   @Field()
-  readonly HasSpouseFiles!: boolean
+  readonly hasFiles!: boolean
 }

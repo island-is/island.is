@@ -65,7 +65,7 @@ export interface User {
   phoneNumber?: string
   folder: string
   service: RolesRule
-  currentApplication?: string
+  currentApplicationId?: string
   isSpouse?: HasSpouseApplied
   staff?: Staff
   spouse?: Spouse
@@ -225,7 +225,7 @@ export interface GetSignedUrlForId {
 
 export interface HasSpouseApplied {
   HasApplied: boolean
-  HasSpouseFiles: boolean
+  hasFiles: boolean
 }
 
 export interface UpdateApplicationTableResponseType {

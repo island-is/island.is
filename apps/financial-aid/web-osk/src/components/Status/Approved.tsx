@@ -13,14 +13,14 @@ interface Props {
   state: ApplicationState
   amount?: number
   isStateVisible: boolean
-  isUserSpouse?: boolean
+  isApplicant?: boolean
 }
 
 const Approved = ({
   state,
   amount,
   isStateVisible,
-  isUserSpouse = false,
+  isApplicant = true,
 }: Props) => {
   if (!isStateVisible) {
     return null
@@ -31,7 +31,7 @@ const Approved = ({
       <Text as="h2" variant="h3" color="mint600" marginBottom={[4, 4, 5]}>
         Umsókn {getState[state].toLowerCase()}
       </Text>
-      {!isUserSpouse ? (
+      {isApplicant ? (
         <Text as="h3" variant="h3" marginBottom={2}>
           Veitt aðstoð{amount?.toLocaleString('de-DE') + ' kr.'}
         </Text>

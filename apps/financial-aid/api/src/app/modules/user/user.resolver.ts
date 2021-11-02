@@ -11,7 +11,7 @@ import { StaffModel } from '../staff/models'
 import { CurrentUser } from '../decorators'
 import { BackendAPI } from '../../../services'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { HasSpouseAppliedModel } from './HasSpouseApplied.model'
+import { SpouseModel } from './spouseModel.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => UserModel)
@@ -38,23 +38,22 @@ export class UserResolver {
     return user as UserModel
   }
 
-  @ResolveField('isSpouse', () => HasSpouseAppliedModel)
+  @ResolveField('isSpouse', () => SpouseModel)
   async isSpouse(
     @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<HasSpouseAppliedModel> {
-    const isSpouse = await backendApi.isSpouse(user.nationalId)
-    return isSpouse
+  ): Promise<SpouseModel> {
+    return await backendApi.isSpouse(user.nationalId)
   }
 
-  @ResolveField('currentApplication', () => String)
-  async currentApplication(
+  @ResolveField('currentApplicationId', () => String)
+  async currentApplicationId(
     @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<string | undefined> {
     this.logger.debug('Getting current application for nationalId')
     return await this.handleNotFoundException(() =>
-      backendApi.getCurrentApplication(user.nationalId),
+      backendApi.getCurrentApplicationId(user.nationalId),
     )
   }
 

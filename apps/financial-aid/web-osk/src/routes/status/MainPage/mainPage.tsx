@@ -54,21 +54,21 @@ const MainPage = () => {
           <>
             <InProgress
               application={myApplication}
-              isUserSpouse={user?.isSpouse?.HasApplied}
+              isApplicant={!user?.isSpouse?.HasApplied}
             />
 
             <Approved
               isStateVisible={myApplication.state === ApplicationState.APPROVED}
               state={myApplication.state}
               amount={myApplication.amount}
-              isUserSpouse={isUserSpouse}
+              isApplicant={!isUserSpouse}
             />
 
             <Rejected
               isStateVisible={myApplication.state === ApplicationState.REJECTED}
               state={myApplication.state}
               rejectionComment={myApplication?.rejection}
-              isUserSpouse={isUserSpouse}
+              isApplicant={!isUserSpouse}
             />
 
             <Timeline

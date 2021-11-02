@@ -42,9 +42,9 @@ export const CurrentUserQuery = gql`
       postalCode
       isSpouse {
         HasApplied
-        HasSpouseFiles
+        hasFiles
       }
-      currentApplication
+      currentApplicationId
     }
   }
 `

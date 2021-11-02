@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { ApplicationModel } from './models'
+import { ApplicationModel, SpouseResponse } from './models'
 
 import { Op } from 'sequelize'
 
@@ -17,6 +17,7 @@ import {
   User,
   getEmailTextFromState,
   Staff,
+  FileType,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -29,7 +30,6 @@ import { EmailService } from '@island.is/email-service'
 
 import { ApplicationFileModel } from '../file/models'
 import { environment } from '../../../environments'
-import { IsSpouseResponse } from './models/isSpouse.response'
 
 interface Recipient {
   name: string
@@ -56,7 +56,7 @@ export class ApplicationService {
     private readonly emailService: EmailService,
   ) {}
 
-  async hasSpouseApplied(spouseNationalId: string): Promise<IsSpouseResponse> {
+  async hasSpouseApplied(spouseNationalId: string): Promise<SpouseResponse> {
     const application = await this.applicationModel.findOne({
       where: {
         spouseNationalId,
@@ -64,17 +64,20 @@ export class ApplicationService {
       },
     })
 
-    const files = Boolean(application)
-      ? await this.fileService.getSpouseApplicationFiles(application.id)
+    const files = application
+      ? await this.fileService.getApplicationFilesByType(
+          application.id,
+          FileType.SPOUSEFILES,
+        )
       : false
 
     return {
       HasApplied: Boolean(application),
-      HasSpouseFiles: Boolean(files),
+      hasFiles: Boolean(files),
     }
   }
 
-  async getCurrentApplication(nationalId: string): Promise<string | null> {
+  async getCurrentApplicationId(nationalId: string): Promise<string | null> {
     const currentApplication = await this.applicationModel.findOne({
       where: {
         [Op.or]: [

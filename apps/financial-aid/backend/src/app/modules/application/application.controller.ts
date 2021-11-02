@@ -13,7 +13,11 @@ import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 import { ApplicationService } from './application.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { ApplicationModel, UpdateApplicationTableResponse } from './models'
+import {
+  ApplicationModel,
+  SpouseResponse,
+  UpdateApplicationTableResponse,
+} from './models'
 
 import {
   ApplicationEventModel,
@@ -46,7 +50,6 @@ import { RolesGuard } from '../../guards/roles.guard'
 import { CurrentStaff, CurrentUser, RolesRules } from '../../decorators'
 import { ApplicationGuard } from '../../guards/application.guard'
 import { StaffService } from '../staff'
-import { IsSpouseResponse } from './models/isSpouse.response'
 import { EmployeeGuard } from '../../guards/employee.guard'
 import { CurrentApplication } from '../../decorators/application.decorator'
 
@@ -72,7 +75,7 @@ export class ApplicationController {
     @Param('nationalId') nationalId: string,
   ): Promise<string> {
     this.logger.debug('Application controller: Getting current application')
-    const currentApplication = await this.applicationService.getCurrentApplication(
+    const currentApplication = await this.applicationService.getCurrentApplicationId(
       nationalId,
     )
 
@@ -87,16 +90,15 @@ export class ApplicationController {
   @RolesRules(RolesRule.OSK)
   @Get('spouse/:spouseNationalId')
   @ApiOkResponse({
-    type: IsSpouseResponse,
+    type: SpouseResponse,
     description: 'Checking if user is spouse',
   })
   async isSpouse(
     @Param('spouseNationalId') spouseNationalId: string,
-  ): Promise<IsSpouseResponse> {
+  ): Promise<SpouseResponse> {
     this.logger.debug('Application controller: Checking if user is spouse')
 
-    const res = await this.applicationService.hasSpouseApplied(spouseNationalId)
-    return res
+    return await this.applicationService.hasSpouseApplied(spouseNationalId)
   }
 
   @UseGuards(RolesGuard, EmployeeGuard)

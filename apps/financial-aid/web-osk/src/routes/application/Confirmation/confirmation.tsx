@@ -24,7 +24,7 @@ const Confirmation = () => {
   const { form } = useContext(FormContext)
   const { municipality, user } = useContext(AppContext)
 
-  const applicationId = form.applicationId || user?.currentApplication
+  const applicationId = form.applicationId || user?.currentApplicationId
 
   const logOut = useLogOut()
 
