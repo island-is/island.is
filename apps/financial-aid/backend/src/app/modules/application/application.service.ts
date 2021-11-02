@@ -36,7 +36,7 @@ interface Recipient {
 }
 
 const linkToStatusPage = (applicationId: string) => {
-  return `<a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${applicationId}" target="_blank"> Getur kíkt á stöðu síðuna þína hér</a>`
+  return `<a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${applicationId}" target="_blank"> Getur kíkt á stöðusíðuna þína hér</a>`
 }
 
 const firstDateOfMonth = () => {
@@ -54,17 +54,6 @@ export class ApplicationService {
     private readonly applicationEventService: ApplicationEventService,
     private readonly emailService: EmailService,
   ) {}
-
-  async hasAccessToApplication(
-    nationalId: string,
-    id: string,
-  ): Promise<boolean> {
-    const hasApplication = await this.applicationModel.findOne({
-      where: { id, nationalId },
-    })
-
-    return Boolean(hasApplication)
-  }
 
   async hasSpouseApplied(spouseNationalId: string): Promise<boolean> {
     const application = await this.applicationModel.findOne({

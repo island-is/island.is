@@ -5,8 +5,13 @@ import {
   CreateFileMutation,
   CreatePresignedPostMutation,
   DeleteFileMutation,
+  UploadPoliceCaseFileMutation,
 } from '@island.is/judicial-system-web/graphql'
-import type { Case, PresignedPost } from '@island.is/judicial-system/types'
+import {
+  Case,
+  PresignedPost,
+  UploadPoliceCaseFileResponse,
+} from '@island.is/judicial-system/types'
 
 export const useS3Upload = (workingCase?: Case) => {
   const [files, setFiles] = useState<UploadFile[]>([])
@@ -31,11 +36,33 @@ export const useS3Upload = (workingCase?: Case) => {
     )
   }, [files])
 
+  const [uploadPoliceCaseFileMutation] = useMutation(
+    UploadPoliceCaseFileMutation,
+  )
   const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
   const [createFileMutation] = useMutation(CreateFileMutation)
   const [deleteFileMutation] = useMutation(DeleteFileMutation)
 
   // File upload spesific functions
+  const uploadPoliceCaseFile = async (
+    id: string,
+    name: string,
+  ): Promise<UploadPoliceCaseFileResponse> => {
+    const {
+      data: uploadPoliceCaseFileData,
+    } = await uploadPoliceCaseFileMutation({
+      variables: {
+        input: {
+          caseId: workingCase?.id,
+          id: id,
+          name: name,
+        },
+      },
+    })
+
+    return uploadPoliceCaseFileData?.uploadPoliceCaseFile
+  }
+
   const createPresignedPost = async (
     filename: string,
     type: string,
@@ -130,11 +157,14 @@ export const useS3Upload = (workingCase?: Case) => {
      */
     const newFiles = [...filesRef.current]
 
-    const updatedFiles = newFiles.map((newFile) => {
-      return newFile.key === file.key ? file : newFile
-    })
+    if (newFiles.some((f) => f.key === file.key)) {
+      const index = newFiles.findIndex((f) => f.key === file.key)
+      newFiles[index] = file
+    } else {
+      newFiles.push(file)
+    }
 
-    setFilesRefAndState(updatedFiles)
+    setFilesRefAndState(newFiles)
   }
 
   const removeFileFromState = (file: UploadFile) => {
@@ -230,7 +260,7 @@ export const useS3Upload = (workingCase?: Case) => {
         })
         .catch((res) => {
           // TODO: Log to Sentry and display an error message.
-          console.log(res.graphQLErrors)
+          console.log(res)
           setUploadErrorMessage(
             'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
           )
@@ -247,6 +277,8 @@ export const useS3Upload = (workingCase?: Case) => {
     files,
     uploadErrorMessage,
     allFilesUploaded,
+    uploadPoliceCaseFile,
+    addFileToCase,
     onChange,
     onRemove,
     onRetry,

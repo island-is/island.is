@@ -91,7 +91,9 @@ const InReviewSteps: FC<FieldBaseProps> = ({
     })
   }
 
-  if (requiresOtherParentApproval(application.answers)) {
+  if (
+    requiresOtherParentApproval(application.answers, application.externalData)
+  ) {
     steps.unshift({
       state: statesMap['otherParent'][application.state],
       title: formatMessage(

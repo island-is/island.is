@@ -265,3 +265,8 @@ export interface ServiceCenter {
   active?: boolean
   link?: string
 }
+
+export interface TableHeadersProps {
+  filterBy?: string
+  title: string
+}
