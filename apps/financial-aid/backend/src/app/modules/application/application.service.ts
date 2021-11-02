@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { ApplicationModel } from './models'
+import { ApplicationModel, SpouseResponse } from './models'
 
 import { Op } from 'sequelize'
 
@@ -17,6 +17,7 @@ import {
   User,
   getEmailTextFromState,
   Staff,
+  FileType,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -55,7 +56,7 @@ export class ApplicationService {
     private readonly emailService: EmailService,
   ) {}
 
-  async hasSpouseApplied(spouseNationalId: string): Promise<boolean> {
+  async getSpouseInfo(spouseNationalId: string): Promise<SpouseResponse> {
     const application = await this.applicationModel.findOne({
       where: {
         spouseNationalId,
@@ -63,10 +64,20 @@ export class ApplicationService {
       },
     })
 
-    return Boolean(application)
+    const files = application
+      ? await this.fileService.getApplicationFilesByType(
+          application.id,
+          FileType.SPOUSEFILES,
+        )
+      : false
+
+    return {
+      hasPartnerApplied: Boolean(application),
+      hasFiles: Boolean(files),
+    }
   }
 
-  async getCurrentApplication(nationalId: string): Promise<string | null> {
+  async getCurrentApplicationId(nationalId: string): Promise<string | null> {
     const currentApplication = await this.applicationModel.findOne({
       where: {
         [Op.or]: [

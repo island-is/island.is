@@ -791,6 +791,23 @@ island-ui-storybook:
     privileged: false
   strategy:
     type: 'Recreate'
+namespaces:
+  namespaces:
+    - 'application-system'
+    - 'service-portal'
+    - 'islandis'
+    - 'search-indexer'
+    - 'xroad-collector'
+    - 'skilavottord'
+    - 'services-documents'
+    - 'storybook'
+    - 'contentful-translation-extension'
+    - 'download-service'
+    - 'icelandic-names-registry'
+    - 'endorsement-system'
+    - 'party-letter-registry'
+    - 'temporary-voter-registry'
+    - 'air-discount-scheme'
 party-letter-registry-api:
   enabled: true
   env:
