@@ -21,6 +21,7 @@ import { environment } from '../../../environments'
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
+
 @Injectable()
 export class EndorsementListService {
   constructor(
