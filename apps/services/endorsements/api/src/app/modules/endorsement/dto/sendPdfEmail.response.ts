@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsBoolean } from 'class-validator'
 
-export class EndorsementDto {
-  @ApiProperty({ type: Boolean, example: 'bob' })
+export class sendPdfEmailResponse {
+  @ApiProperty()
   @IsBoolean()
-  showName!: boolean
+  success!: boolean
 }
