@@ -259,6 +259,8 @@ api:
     DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
     DRIVING_LICENSE_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_XROAD_PATH'
     DRIVING_LICENSE_XROAD_PATH_V2: '/k8s/api/DRIVING_LICENSE_XROAD_PATH_V2'
+    HEALTH_INSURANCE_V2_XROAD_PASSWORD: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD'
+    HEALTH_INSURANCE_V2_XROAD_USERNAME: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME'
     HEALTH_INSURANCE_XROAD_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
     HEALTH_INSURANCE_XROAD_USERNAME: '/k8s/health-insurance/XROAD-USER'
     HEALTH_INSURANCE_XROAD_WSDLURL: '/k8s/api/HEALTH_INSURANCE_XROAD_WSDLURL'
@@ -577,6 +579,7 @@ endorsement-system-api:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_endorsements_api'
     DB_USER: 'services_endorsements_api'
+    EMAIL_REGION: 'eu-west-1'
     SERVERSIDE_FEATURES_ON: ''
     TEMPORARY_VOTER_REGISTRY_API_URL: 'http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local'
   grantNamespaces:
