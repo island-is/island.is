@@ -40,7 +40,7 @@ export const CurrentUserQuery = gql`
       name
       phoneNumber
       postalCode
-      isSpouse {
+      spouse {
         hasApplied
         hasFiles
       }

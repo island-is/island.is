@@ -26,7 +26,7 @@ export class UserModel implements User {
   readonly currentApplicationId?: string
 
   @Field(() => SpouseModel, { nullable: true })
-  readonly isSpouse?: SpouseModel
+  readonly spouse?: SpouseModel
 
   @Field(() => StaffModel, { nullable: true })
   readonly staff?: StaffModel

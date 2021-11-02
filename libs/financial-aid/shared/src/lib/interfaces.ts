@@ -52,7 +52,7 @@ export interface NavigationProps {
   nextUrl: string | undefined
 }
 
-export interface Spouse {
+export interface FormSpouse {
   nationalId?: string
   name?: string
   email?: string
@@ -65,9 +65,9 @@ export interface User {
   folder: string
   service: RolesRule
   currentApplicationId?: string
-  isSpouse?: HasSpouseApplied
-  staff?: Staff
   spouse?: Spouse
+  staff?: Staff
+  formSpouse?: FormSpouse
   address?: Address
 }
 
@@ -222,7 +222,7 @@ export interface GetSignedUrlForId {
   id: string
 }
 
-export interface HasSpouseApplied {
+export interface Spouse {
   hasApplied: boolean
   hasFiles: boolean
 }
@@ -262,4 +262,9 @@ export interface ServiceCenter {
   postalCodes: number[]
   active?: boolean
   link?: string
+}
+
+export interface TableHeadersProps {
+  filterBy?: string
+  title: string
 }

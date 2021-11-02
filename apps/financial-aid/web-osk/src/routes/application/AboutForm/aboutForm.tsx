@@ -27,7 +27,7 @@ const AboutForm = () => {
   return (
     <>
       <ContentContainer>
-        {user?.isSpouse?.hasApplied ? (
+        {user?.spouse?.hasApplied ? (
           <AboutFormSpouse />
         ) : (
           <AboutFormApplicant />

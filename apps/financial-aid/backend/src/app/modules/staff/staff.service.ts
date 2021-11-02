@@ -25,4 +25,12 @@ export class StaffService {
       },
     })
   }
+
+  async findByMunicipalityId(municipalityId: string): Promise<StaffModel[]> {
+    return await this.staffModel.findAll({
+      where: {
+        municipalityId,
+      },
+    })
+  }
 }
