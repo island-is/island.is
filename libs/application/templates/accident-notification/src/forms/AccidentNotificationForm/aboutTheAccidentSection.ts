@@ -1200,6 +1200,16 @@ export const aboutTheAccidentSection = buildSection({
               title: rescueSquadInfo.labels.name,
               backgroundColor: 'blue',
               required: true,
+              width: 'half',
+              condition: (formValue) =>
+                !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
+            }),
+            buildTextField({
+              id: 'rescueSquadInfo.representativeNationalId',
+              title: rescueSquadInfo.labels.nationalId,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),

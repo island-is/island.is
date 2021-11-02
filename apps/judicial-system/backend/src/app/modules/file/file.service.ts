@@ -3,7 +3,6 @@ import { Op } from 'sequelize'
 
 import {
   BadRequestException,
-  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -16,8 +15,8 @@ import { CaseFileState } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { writeFile } from '../../formatters'
+import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { AwsS3Service } from './awsS3.service'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
 import {
   PresignedPost,
@@ -106,7 +105,7 @@ export class FileService {
     })
   }
 
-  createCasePresignedPost(
+  createPresignedPost(
     caseId: string,
     createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {
@@ -153,18 +152,11 @@ export class FileService {
     })
   }
 
-  async getCaseFileSignedUrl(
-    caseId: string,
-    file: CaseFile,
-  ): Promise<SignedUrl> {
-    this.logger.debug(
-      `Getting a signed url for file ${file.id} of case ${caseId}`,
-    )
+  async getCaseFileSignedUrl(file: CaseFile): Promise<SignedUrl> {
+    this.logger.debug(`Getting a signed url for file ${file.id}`)
 
-    if (file.state === CaseFileState.BOKEN_LINK) {
-      throw new NotFoundException(
-        `File ${file.id} of case ${caseId} does not exists in AWS S3`,
-      )
+    if (file.state !== CaseFileState.STORED_IN_RVG) {
+      throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
     const exists = await this.awsS3Service.objectExists(file.key)
@@ -175,23 +167,18 @@ export class FileService {
         { state: CaseFileState.BOKEN_LINK },
         { where: { id: file.id } },
       )
-      throw new NotFoundException(
-        `File ${file.id} of case ${caseId} does not exists in AWS S3`,
-      )
+      throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
     return this.awsS3Service.getSignedUrl(file.key)
   }
 
-  async deleteCaseFile(
-    caseId: string,
-    file: CaseFile,
-  ): Promise<DeleteFileResponse> {
-    this.logger.debug(`Deleting file ${file.id} of case ${caseId}`)
+  async deleteCaseFile(file: CaseFile): Promise<DeleteFileResponse> {
+    this.logger.debug(`Deleting file ${file.id}`)
 
     const success = await this.deleteFileFromDatabase(file.id)
 
-    if (success) {
+    if (success && file.state === CaseFileState.STORED_IN_RVG) {
       // Fire and forget, no need to wait for the result
       this.tryDeleteFileFromS3(file.key)
     }
@@ -200,23 +187,20 @@ export class FileService {
   }
 
   async uploadCaseFileToCourt(
-    caseId: string,
     courtId: string | undefined,
     courtCaseNumber: string | undefined,
     file: CaseFile,
   ): Promise<UploadFileToCourtResponse> {
-    this.logger.debug(`Uploading file ${file.id} of case ${caseId} to court`)
+    this.logger.debug(`Uploading file ${file.id} to court`)
 
     if (file.state === CaseFileState.STORED_IN_COURT) {
-      throw new ForbiddenException(
-        `File ${file.id} of case ${caseId} has already been uploaded to court`,
+      throw new BadRequestException(
+        `File ${file.id} has already been uploaded to court`,
       )
     }
 
-    if (file.state === CaseFileState.BOKEN_LINK) {
-      throw new NotFoundException(
-        `File ${file.id} of case ${caseId} does not exists in AWS S3`,
-      )
+    if (file.state !== CaseFileState.STORED_IN_RVG) {
+      throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
     const exists = await this.awsS3Service.objectExists(file.key)
@@ -227,9 +211,7 @@ export class FileService {
         { state: CaseFileState.BOKEN_LINK },
         { where: { id: file.id } },
       )
-      throw new NotFoundException(
-        `File ${file.id} of case ${caseId} does not exists in AWS S3`,
-      )
+      throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
     this.throttle = this.throttleUploadStream(file, courtId)

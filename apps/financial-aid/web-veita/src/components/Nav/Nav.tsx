@@ -8,9 +8,10 @@ import {
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
-import Link from 'next/link'
 
 import {
+  AdminSideNavItems,
+  EmployeeSideNavItems,
   LoadingContainer,
   LogoMunicipality,
 } from '@island.is/financial-aid-web/veita/src/components'
@@ -20,15 +21,6 @@ import cn from 'classnames'
 import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/src/components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 
 import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
-import {
-  ApplicationFilters,
-  ApplicationFiltersEnum,
-  ApplicationState,
-} from '@island.is/financial-aid/shared/lib'
-
-import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
-
-import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
@@ -74,53 +66,25 @@ const Nav = ({ showInMobile }: Props) => {
           isLoading={loading}
           loader={<SkeletonLoader repeat={3} space={2} />}
         >
-          {navigationItems.map((item: NavigationElement, index: number) => {
-            return (
-              <>
-                {item.group && <p className={styles.group}>{item.group}</p>}
-                <Link href={item.link} key={'NavigationLinks-' + index}>
-                  <a
-                    aria-label={item.label}
-                    className={cn({
-                      [`${styles.link}`]: true,
-                      [`${styles.activeLink}`]: router.pathname === item.link,
-                      [`${styles.linkHoverEffect}`]:
-                        router.pathname !== item.link,
-                    })}
-                  >
-                    <Box display="flex" justifyContent="spaceBetween">
-                      <Text fontWeight="semiBold">{item.label}</Text>
-                      <Text fontWeight="semiBold" color="dark300">
-                        {item.applicationState
-                          .map((state: ApplicationFiltersEnum) => {
-                            if (applicationFilters) {
-                              return applicationFilters[state]
-                            }
-                          })
-                          .reduce((a?: number, b?: number) => {
-                            return (a || 0) + (b || 0)
-                          })}
-                      </Text>
-                    </Box>
-                  </a>
-                </Link>
-              </>
-            )
-          })}
+          <EmployeeSideNavItems
+            roles={admin?.staff?.roles}
+            applicationFilters={applicationFilters}
+          />
         </LoadingContainer>
       </div>
 
       <Box display="block" marginBottom={2} marginTop={4}>
-        <Box marginBottom={3}>
+        <Box marginBottom={2}>
+          <AdminSideNavItems roles={admin?.staff?.roles} />
           <button
-            className={` ${styles.logOutButton} logOutButtonHover`}
+            className={`${styles.sideNavBarButton} navBarButtonHover`}
             onClick={() => logOut()}
           >
             <Icon
               icon="logOut"
               type="outline"
               color="blue400"
-              className={styles.logOutButtonIcon}
+              className={styles.sideNavBarButtonIcon}
             />
             <Text> Útskráning</Text>
           </button>

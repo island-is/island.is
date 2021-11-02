@@ -5,6 +5,7 @@ import {
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
+  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -511,124 +512,72 @@ export const ParentalLeaveForm: Form = buildForm({
                 ),
               ],
             }),
-            /*
-            TODO: move back to days picker later on
-            buildMultiField({
-              id: 'requestRights.isRequestingRights',
-              title: parentalLeaveFormMessages.shared.requestRightsName,
-              description:
-                parentalLeaveFormMessages.shared.requestRightsDescription,
-              condition: (answers, externalData) =>
-                getSelectedChild(answers, externalData)?.parentalRelation === ParentalRelations.primary,
-              children: [
-                buildCustomField({
-                  id: 'requestRights.isRequestingRights',
-                  title: '',
-                  component: 'RequestRights',
-                }),
-                buildCustomField({
-                  id: 'requestRights.requestDays',
-                  title: '',
-                  condition: (answers) =>
-                    (answers as {
-                      requestRights: {
-                        isRequestingRights: string
-                      }
-                    })?.requestRights?.isRequestingRights === YES,
-                  component: 'RequestDaysSlider',
-                }),
-              ],
-            }),
-            */
             buildCustomField({
-              id: 'requestRights',
-              title: parentalLeaveFormMessages.shared.requestRightsName,
-              description:
-                parentalLeaveFormMessages.shared.requestRightsDescription,
-              width: 'half',
-              condition: (answers, externalData) =>
-                getSelectedChild(answers, externalData)?.parentalRelation ===
-                  ParentalRelations.primary && allowOtherParent(answers),
-              component: 'RequestRightsRadio',
-            }),
-            /*
-            TODO: move back to days picker later on
-            buildMultiField({
-              id: 'giveRights.isGivingRights',
-              title: parentalLeaveFormMessages.shared.giveRightsName,
-              description:
-                parentalLeaveFormMessages.shared.giveRightsDescription,
+              id: 'transferRights',
+              childInputIds: [
+                'transferRights',
+                'requestRights.isRequestingRights',
+                'requestRights.requestDays',
+                'giveRights.isGivingRights',
+                'giveRights.giveDays',
+              ],
               condition: (answers, externalData) => {
-                const selectedChild = getSelectedChild(answers, externalData)
+                const canTransferRights =
+                  getSelectedChild(answers, externalData)?.parentalRelation ===
+                    ParentalRelations.primary && allowOtherParent(answers)
 
-                if (
-                  selectedChild?.parentalRelation === ParentalRelations.secondary ||
-                  !selectedChild?.hasRights ||
-                  selectedChild?.remainingDays === 0
-                ) {
-                  return false
-                }
+                return canTransferRights
+              },
+              title: parentalLeaveFormMessages.shared.transferRightsTitle,
+              description:
+                parentalLeaveFormMessages.shared.transferRightsDescription,
+              component: 'TransferRights',
+            }),
+            buildCustomField({
+              id: 'requestRights.requestDays',
+              childInputIds: [
+                'requestRights.isRequestingRights',
+                'requestRights.requestDays',
+              ],
+              title: 'Hversu mörgum dögum viltu óska eftir?',
+              condition: (answers, externalData) => {
+                const canTransferRights =
+                  getSelectedChild(answers, externalData)?.parentalRelation ===
+                    ParentalRelations.primary && allowOtherParent(answers)
 
                 return (
-                  (answers as {
-                    requestRights: {
-                      isRequestingRights: string
-                    }
-                  })?.requestRights?.isRequestingRights === NO
+                  canTransferRights &&
+                  getApplicationAnswers(answers).isRequestingRights === YES
                 )
               },
-              children: [
-                buildCustomField({
-                  id: 'giveRights.isGivingRights',
-                  title: '',
-                  component: 'GiveRights',
-                }),
-                buildCustomField({
-                  id: 'giveRights.giveDays',
-                  title: '',
-                  condition: (answers) =>
-                    (answers as {
-                      giveRights: {
-                        isGivingRights: string
-                      }
-                    })?.giveRights?.isGivingRights === YES,
-                  component: 'GiveDaysSlider',
-                }),
-              ],
+              component: 'RequestDaysSlider',
             }),
-            */
             buildCustomField({
-              id: 'giveRights',
-              title: parentalLeaveFormMessages.shared.giveRightsName,
-              description:
-                parentalLeaveFormMessages.shared.giveRightsDescription,
-              width: 'half',
+              id: 'giveRights.giveDays',
+              childInputIds: [
+                'giveRights.isGivingRights',
+                'giveRights.giveDays',
+              ],
+              title: 'Hversu marga daga viltu færa yfir á hitt foreldrið?',
               condition: (answers, externalData) => {
-                const selectedChild = getSelectedChild(answers, externalData)
+                const canTransferRights =
+                  getSelectedChild(answers, externalData)?.parentalRelation ===
+                    ParentalRelations.primary && allowOtherParent(answers)
 
-                const isSecondaryParent =
-                  selectedChild?.parentalRelation ===
-                  ParentalRelations.secondary
-                const hasNoRights = selectedChild?.hasRights === true
-                const hasNoRemainingDays = selectedChild?.remainingDays === 0
-                const canNotGiveRights =
-                  !isSecondaryParent || hasNoRights || hasNoRemainingDays
-
-                if (canNotGiveRights) {
-                  return false
-                }
-
-                const { isRequestingRights } = getApplicationAnswers(answers)
-                return isRequestingRights === NO
+                return (
+                  canTransferRights &&
+                  getApplicationAnswers(answers).isGivingRights === YES
+                )
               },
-              component: 'GiveRightsRadio',
+              component: 'GiveDaysSlider',
             }),
           ],
         }),
         buildSubSection({
           id: 'otherParentEmailQuestion',
           title: parentalLeaveFormMessages.shared.otherParentEmailSubSection,
-          condition: (answers) => requiresOtherParentApproval(answers),
+          condition: (answers, externalData) =>
+            requiresOtherParentApproval(answers, externalData),
           children: [
             buildTextField({
               id: 'otherParentEmail',
