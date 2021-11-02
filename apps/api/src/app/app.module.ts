@@ -169,9 +169,8 @@ const autoSchemaFile = environment.production
         xRoadClientId: environment.healthInsuranceV2.xRoadClientId,
         username: environment.healthInsuranceV2.username,
         password: environment.healthInsuranceV2.password,
-      }
-    }
-    ),
+      },
+    }),
     UserProfileModule.register({
       userProfileServiceBasePath:
         environment.userProfile.userProfileServiceBasePath,
@@ -261,4 +260,4 @@ const autoSchemaFile = environment.production
     ProblemModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

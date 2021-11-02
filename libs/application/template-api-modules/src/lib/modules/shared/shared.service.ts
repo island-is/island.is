@@ -22,7 +22,7 @@ export class SharedTemplateApiService {
     private readonly emailService: EmailService,
     @Inject(ConfigService)
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
-  ) { }
+  ) {}
 
   async sendEmail(
     templateGenerator: EmailTemplateGenerator,

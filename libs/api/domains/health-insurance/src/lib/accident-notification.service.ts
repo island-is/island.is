@@ -5,14 +5,13 @@ import { DocumentApi } from '@island.is/clients/health-insurance-v2'
 import {
   HealthInsuranceAccidentNotificationAttachmentTypes,
   HealthInsuranceAccidentNotificationConfirmationTypes,
-  HealthInsuranceAccidentNotificationStatusTypes
+  HealthInsuranceAccidentNotificationStatusTypes,
 } from './types'
 import {
   AccidentNotificationAttachment,
   AccidentNotificationConfirmation,
-  AccidentNotificationStatus
+  AccidentNotificationStatus,
 } from './graphql/models'
-
 
 const mapStatus = (statusId: number) => {
   switch (statusId) {
@@ -59,7 +58,7 @@ export class AccidentNotificationService {
     private readonly accidentNotificationApi: DocumentApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) { }
+  ) {}
 
   async getAccidentNotificationStatus(
     ihiDocumentID: number,

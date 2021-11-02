@@ -15,7 +15,7 @@ export class HealthInsuranceAccidentNotificationResolver {
     private accidentNotificationService: AccidentNotificationService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) { }
+  ) {}
 
   @Query(() => AccidentNotificationStatus, {
     name: 'HealthInsuranceAccidentStatus',

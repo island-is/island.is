@@ -1,5 +1,9 @@
 import { registerEnumType } from '@nestjs/graphql'
-import { HealthInsuranceAccidentNotificationAttachmentTypes, HealthInsuranceAccidentNotificationConfirmationTypes, HealthInsuranceAccidentNotificationStatusTypes } from './../types'
+import {
+  HealthInsuranceAccidentNotificationAttachmentTypes,
+  HealthInsuranceAccidentNotificationConfirmationTypes,
+  HealthInsuranceAccidentNotificationStatusTypes,
+} from './../types'
 
 registerEnumType(HealthInsuranceAccidentNotificationConfirmationTypes, {
   name: 'HealthInsuranceAccidentNotificationConfirmationTypes',

@@ -61,7 +61,7 @@ export const FormOverviewInReview: FC<
       <FormOverview
         field={field}
         application={application}
-        goToScreen={() => {}}
+        goToScreen={() => undefined}
       />
       <Box display="flex" justifyContent="flexEnd" marginBottom={6}>
         <Button icon="attach" variant="utility" onClick={goToAttachmentScreen}>

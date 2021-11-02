@@ -120,7 +120,7 @@ export const ApplicationStatus: FC<FieldBaseProps> = ({
           <StatusStep
             key={index}
             application={application}
-            goToScreen={() => {}}
+            goToScreen={() => undefined}
             {...step}
           />
         ))}

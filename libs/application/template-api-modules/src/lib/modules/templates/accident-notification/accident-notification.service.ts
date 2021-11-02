@@ -33,7 +33,7 @@ export class AccidentNotificationService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly attachmentProvider: AttachmentProvider,
     private readonly documentApi: DocumentApi,
-  ) { }
+  ) {}
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     const shouldRequestReview =

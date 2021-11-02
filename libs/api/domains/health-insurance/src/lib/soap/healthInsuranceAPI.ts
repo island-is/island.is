@@ -37,7 +37,7 @@ export class HealthInsuranceAPI {
     private clientConfig: HealthInsuranceConfig,
     @Inject(BucketService)
     private bucketService: BucketService,
-  ) { }
+  ) {}
 
   public async getProfun(): Promise<string> {
     logger.info(`--- Starting getProfun api call ---`)
@@ -150,9 +150,9 @@ export class HealthInsuranceAPI {
         // 'dagssidustubusetuthjodskra' could be empty string
         dagssidustubusetuthjodskra: inputObj.residenceDateFromNationalRegistry
           ? format(
-            new Date(inputObj.residenceDateFromNationalRegistry),
-            'yyyy-MM-dd',
-          )
+              new Date(inputObj.residenceDateFromNationalRegistry),
+              'yyyy-MM-dd',
+            )
           : '',
         // 'dagssidustubusetu' could be empty string
         dagssidustubusetu: inputObj.residenceDateUserThink
@@ -239,7 +239,8 @@ export class HealthInsuranceAPI {
         }
       }
       logger.info(
-        `Failed to upload document to sjukra because: ${vistaSkjal.comment ?? 'unknown error'
+        `Failed to upload document to sjukra because: ${
+          vistaSkjal.comment ?? 'unknown error'
         }`,
       )
 

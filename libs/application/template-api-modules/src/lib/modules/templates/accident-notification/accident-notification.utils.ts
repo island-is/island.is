@@ -171,11 +171,11 @@ const work = (
 
   return answers.workMachineRadio === 'yes'
     ? {
-      ...accidentBase,
-      slysvidvinnu: {
-        lysingavinnuvel: answers.workMachine.desriptionOfMachine,
-      },
-    }
+        ...accidentBase,
+        slysvidvinnu: {
+          lysingavinnuvel: answers.workMachine.desriptionOfMachine,
+        },
+      }
     : accidentBase
 }
 
