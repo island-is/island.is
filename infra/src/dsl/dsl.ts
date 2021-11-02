@@ -122,6 +122,10 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
 
+  /**
+   * X-Road configuration blocks to inject to the container. Types of XroadConfig can contain environment variables and/or secrets that define how to contact an external service through X-Road
+   * @param ...configs: X-road configs
+   */
   xroad(...configs: XroadConfig[]) {
     this.serviceDef.xroadConfig = [...this.serviceDef.xroadConfig, ...configs]
     return this
