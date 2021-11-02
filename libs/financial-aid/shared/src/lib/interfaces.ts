@@ -55,7 +55,6 @@ export interface NavigationProps {
 export interface Spouse {
   nationalId?: string
   name?: string
-  maritalStatus?: string
   email?: string
 }
 
@@ -224,7 +223,7 @@ export interface GetSignedUrlForId {
 }
 
 export interface HasSpouseApplied {
-  HasApplied: boolean
+  hasApplied: boolean
   hasFiles: boolean
 }
 

@@ -64,7 +64,7 @@ const FileUpload = () => {
     try {
       await uploadStateFiles(
         router.query.id as string,
-        user?.isSpouse?.HasApplied ? FileType.SPOUSEFILES : FileType.OTHER,
+        user?.isSpouse?.hasApplied ? FileType.SPOUSEFILES : FileType.OTHER,
       ).then(async () => {
         await updateApplicationMutation({
           variables: {

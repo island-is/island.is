@@ -68,6 +68,7 @@ const useApplication = () => {
                 nationalRegistryData?.spouse.nationalId ??
                 form?.spouse?.nationalId,
               spouseEmail: form?.spouse?.email,
+              //TODO spouse name
               familyStatus: form?.familyStatus,
               streetName: nationalRegistryData?.address.streetName,
               postalCode: nationalRegistryData?.address.postalCode,

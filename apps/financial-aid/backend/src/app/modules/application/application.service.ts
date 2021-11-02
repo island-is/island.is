@@ -72,7 +72,7 @@ export class ApplicationService {
       : false
 
     return {
-      HasApplied: Boolean(application),
+      hasApplied: Boolean(application),
       hasFiles: Boolean(files),
     }
   }

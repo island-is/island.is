@@ -14,7 +14,7 @@ const Index = () => {
     if (user?.isSpouse?.hasFiles) {
       return `${Routes.statusPage(user.currentApplicationId as string)}`
     }
-    if (user?.isSpouse?.HasApplied) {
+    if (user?.isSpouse?.hasApplied) {
       return `${Routes.spouseApplication}`
     }
 

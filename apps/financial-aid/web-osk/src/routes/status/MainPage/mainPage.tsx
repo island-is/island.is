@@ -35,7 +35,7 @@ const MainPage = () => {
     user,
   } = useContext(AppContext)
 
-  const isUserSpouse = user?.isSpouse?.HasApplied
+  const isUserSpouse = user?.isSpouse?.hasApplied
 
   useEffect(() => {
     if (myApplication && myApplication.municipalityCode) {
@@ -54,7 +54,7 @@ const MainPage = () => {
           <>
             <InProgress
               application={myApplication}
-              isApplicant={!user?.isSpouse?.HasApplied}
+              isApplicant={!user?.isSpouse?.hasApplied}
             />
 
             <Approved
