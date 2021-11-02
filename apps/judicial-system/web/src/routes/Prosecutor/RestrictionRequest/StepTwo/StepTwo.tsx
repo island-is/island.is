@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
@@ -22,7 +22,6 @@ import {
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
   useCase,
   useInstitution,
@@ -37,7 +36,6 @@ export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
-  const { user } = useContext(UserContext)
   const {
     sendNotification,
     isSendingNotification,
@@ -109,16 +107,13 @@ export const StepTwo: React.FC = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_TWO}
       isLoading={loading || userLoading || institutionLoading}
       notFound={data?.case === undefined}
-      decision={workingCase?.decision}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase && prosecutors && !institutionLoading ? (
         <>

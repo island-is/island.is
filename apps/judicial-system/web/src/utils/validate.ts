@@ -1,5 +1,7 @@
 // TODO: Add tests
 
+import { Case, CaseType } from '@island.is/judicial-system/types'
+
 export type Validation =
   | 'empty'
   | 'time-format'
@@ -61,4 +63,47 @@ export const getRegexByValidation = (validation: Validation) => {
       }
     }
   }
+}
+
+export const isAccusedStepValidRC = (workingCase: Case) => {
+  return (
+    validate(workingCase.policeCaseNumber, 'empty').isValid &&
+    validate(workingCase.policeCaseNumber, 'police-casenumber-format')
+      .isValid &&
+    workingCase.accusedGender &&
+    validate(workingCase.accusedNationalId, 'empty').isValid &&
+    validate(workingCase.accusedNationalId, 'national-id').isValid &&
+    validate(workingCase.accusedName || '', 'empty').isValid &&
+    validate(workingCase.defenderEmail || '', 'email-format').isValid &&
+    validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid &&
+    validate(workingCase.leadInvestigator || '', 'empty').isValid
+  )
+}
+
+export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
+  return (
+    workingCase.prosecutor &&
+    workingCase.requestedValidToDate &&
+    validate(workingCase.requestedValidToDate, 'date-format').isValid
+  )
+}
+
+export const isPoliceDemandsStepValidRC = (workingCase: Case) => {
+  return (
+    validate(workingCase.lawsBroken || '', 'empty').isValid &&
+    validate(workingCase.requestedValidToDate || '', 'date-format').isValid &&
+    (workingCase.type === CaseType.TRAVEL_BAN
+      ? validate(workingCase.legalBasis || '', 'empty').isValid
+      : true) &&
+    workingCase.legalProvisions &&
+    workingCase.legalProvisions.length > 0
+  )
+}
+
+export const isPoliceReportStepValidRC = (workingCase: Case) => {
+  return (
+    validate(workingCase.demands || '', 'empty').isValid &&
+    validate(workingCase.caseFacts || '', 'empty').isValid &&
+    validate(workingCase.legalArguments || '', 'empty').isValid
+  )
 }

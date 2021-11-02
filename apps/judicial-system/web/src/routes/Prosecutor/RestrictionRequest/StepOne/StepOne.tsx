@@ -76,6 +76,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
@@ -83,10 +84,6 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
       isLoading={loading}
       notFound={id !== undefined && data?.case === undefined}
       isExtension={workingCase?.parentCase && true}
-      decision={workingCase?.decision}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase && !institutionLoading && (
         <StepOneForm
