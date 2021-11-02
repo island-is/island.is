@@ -31,7 +31,6 @@ type AccidentNotificationEvent =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.ASSIGN }
-  | { type: 'ADDATTACHMENT' }
 
 const AccidentNotificationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -55,7 +54,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
-            //whenToPrune: 3600 * 1000,
+            whenToPrune: 3600 * 1000,
           },
           roles: [
             {
@@ -85,7 +84,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
-            //whenToPrune: 3600 * 1000,
           },
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
@@ -140,7 +138,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
-            //whenToPrune: 3600 * 1000000,
           },
           onEntry: {
             apiModuleAction: ApiActions.addAttachment,
@@ -189,7 +186,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
-            //whenToPrune: 3600 * 1000000,
           },
           onEntry: {
             apiModuleAction: ApiActions.reviewApplication,
@@ -244,7 +240,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         const { application } = context
 
         const assigneeId = getNationalIdOfReviewer(application)
-        set(application, 'assignees', ['0206912399'])
+        set(application, 'assignees', [assigneeId])
 
         return context
       }),

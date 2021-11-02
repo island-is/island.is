@@ -1,19 +1,17 @@
 import { utils } from '@island.is/application/templates/accident-notification'
 import { Message } from '@island.is/email-service'
-import { SendMailOptions } from 'nodemailer'
 import {
-  AssignmentEmailTemplateGenerator,
   EmailTemplateGeneratorProps,
 } from '../../../../types'
 import { pathToAsset } from '../accident-notification.utils'
 
-export type BlaGen = (
+export type AnAssignmentEmailTemplateGenerator = (
   props: EmailTemplateGeneratorProps,
   assignLink: string,
   ihiDocumentId?: number,
 ) => Message
 
-export const generateAssignReviewerEmail: BlaGen = (
+export const generateAssignReviewerEmail: AnAssignmentEmailTemplateGenerator = (
   props,
   assignLink,
   ihiDocumentId,
