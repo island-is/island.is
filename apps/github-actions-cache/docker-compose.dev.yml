@@ -1,0 +1,13 @@
+version: '3.3'
+
+services:
+  redis-cluster:
+    container_name: ads_redis_cluster
+    image: grokzen/redis-cluster:5.0.6
+    privileged: true
+    sysctls:
+      net.core.somaxconn: '511'
+    environment:
+      - IP=0.0.0.0
+    ports:
+      - '7000-7005:7000-7005'

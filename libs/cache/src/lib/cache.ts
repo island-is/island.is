@@ -27,8 +27,32 @@ class Cache {
     return this.client.set(key, value)
   }
 
+  setKeyIfNotExists(
+    key: string,
+    field: string,
+    value: string,
+  ): Promise<number> {
+    return this.client.hsetnx(key, field, value)
+  }
+
+  setKey(key: string, field: string, value: string): Promise<number> {
+    return this.client.hset(key, field, value)
+  }
+
+  getKey(key: string, field: string): Promise<string | null> {
+    return this.client.hget(key, field)
+  }
+
+  getMap(key: string): Promise<Record<string, string>> {
+    return this.client.hgetall(key)
+  }
+
   expire(key: string, seconds: number): Promise<Redis.BooleanResponse> {
     return this.client.expire(key, seconds)
+  }
+
+  async ping(): Promise<boolean> {
+    return (await this.client.ping()) == 'pong'
   }
 }
 
