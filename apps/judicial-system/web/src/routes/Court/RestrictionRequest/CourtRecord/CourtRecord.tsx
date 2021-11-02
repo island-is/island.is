@@ -140,7 +140,11 @@ export const CourtRecord: React.FC = () => {
 
       autofill(
         'accusedBookings',
-        `${formatMessage(m.sections.accusedBookings.autofill)}`,
+        `${formatMessage(
+          m.sections.accusedBookings.autofillRightToRemainSilent,
+        )}\n\n${formatMessage(
+          m.sections.accusedBookings.autofillCourtDocumentOne,
+        )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`,
         theCase,
       )
 
