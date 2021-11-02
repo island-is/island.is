@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
   Text,
   Box,
@@ -26,29 +26,49 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 const MainPage = () => {
   const logOut = useLogOut()
 
-  const { myApplication, loading, error, municipality } = useContext(AppContext)
+  const {
+    myApplication,
+    loading,
+    error,
+    municipality,
+    setMunicipality,
+    user,
+  } = useContext(AppContext)
+
+  const isUserSpouse = user?.spouse?.hasPartnerApplied
+
+  useEffect(() => {
+    if (myApplication && myApplication.municipalityCode) {
+      setMunicipality(myApplication.municipalityCode)
+    }
+  }, [myApplication])
 
   return (
     <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={1}>
-          Aðstoðin þín
+          {isUserSpouse ? 'Aðstoð maka þíns' : 'Aðstoðin þín '}
         </Text>
 
         {myApplication && myApplication?.state && (
           <>
-            <InProgress application={myApplication} />
+            <InProgress
+              application={myApplication}
+              isApplicant={!isUserSpouse}
+            />
 
             <Approved
               isStateVisible={myApplication.state === ApplicationState.APPROVED}
               state={myApplication.state}
               amount={myApplication.amount}
+              isApplicant={!isUserSpouse}
             />
 
             <Rejected
               isStateVisible={myApplication.state === ApplicationState.REJECTED}
               state={myApplication.state}
               rejectionComment={myApplication?.rejection}
+              isApplicant={!isUserSpouse}
             />
 
             <Timeline
@@ -57,6 +77,7 @@ const MainPage = () => {
             />
           </>
         )}
+
         {error && (
           <Text>
             Umsókn ekki fundin eða einhvað fór úrskeiðis <br />

@@ -27,7 +27,11 @@ const AboutForm = () => {
   return (
     <>
       <ContentContainer>
-        {user?.isSpouse ? <AboutFormSpouse /> : <AboutFormApplicant />}
+        {user?.spouse?.hasPartnerApplied ? (
+          <AboutFormSpouse />
+        ) : (
+          <AboutFormApplicant />
+        )}
       </ContentContainer>
 
       <Footer previousUrl={navigation?.prevUrl} nextUrl={navigation?.nextUrl} />
