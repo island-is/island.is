@@ -766,6 +766,23 @@ island-ui-storybook:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+namespaces:
+  namespaces:
+    - 'application-system'
+    - 'service-portal'
+    - 'islandis'
+    - 'skilavottord'
+    - 'search-indexer'
+    - 'services-documents'
+    - 'storybook'
+    - 'contentful-translation-extension'
+    - 'xroad-collector'
+    - 'download-service'
+    - 'icelandic-names-registry'
+    - 'endorsement-system'
+    - 'party-letter-registry'
+    - 'temporary-voter-registry'
+    - 'air-discount-scheme'
 party-letter-registry-api:
   enabled: true
   env:
