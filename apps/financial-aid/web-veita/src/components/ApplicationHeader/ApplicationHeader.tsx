@@ -1,13 +1,10 @@
 import {
   Application,
   ApplicationEventType,
-  ApplicationState,
   getState,
 } from '@island.is/financial-aid/shared/lib'
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
-import { NavigationElement } from '../../routes/ApplicationsOverview/applicationsOverview'
-import { navigationItems } from '../../utils/navigation'
+import React from 'react'
 
 import * as styles from './ApplicationHeader.css'
 
@@ -38,7 +35,6 @@ const ApplicationHeader = ({
 }: ApplicantProps) => {
   const router = useRouter()
 
-  const [prevUrl, setPrevUrl] = useState<NavigationElement | undefined>()
   const changeApplicationState = useApplicationState()
 
   const assignEmployee = async () => {
@@ -59,18 +55,6 @@ const ApplicationHeader = ({
       })
   }
 
-  const findPrevUrl = (
-    state: ApplicationState,
-  ): React.SetStateAction<NavigationElement | undefined> => {
-    return navigationItems.find((i) => i.applicationState.includes(state))
-  }
-
-  useEffect(() => {
-    if (application) {
-      setPrevUrl(findPrevUrl(application.state))
-    }
-  }, [application])
-
   return (
     <Box className={`contentUp ${styles.widthAlmostFull} `}>
       <Box
@@ -80,22 +64,20 @@ const ApplicationHeader = ({
         alignItems="center"
         width="full"
       >
-        {prevUrl && (
-          <Button
-            colorScheme="default"
-            iconType="filled"
-            onClick={() => {
-              router.push(prevUrl.link)
-            }}
-            preTextIcon="arrowBack"
-            preTextIconType="filled"
-            size="small"
-            type="button"
-            variant="text"
-          >
-            Til baka
-          </Button>
-        )}
+        <Button
+          colorScheme="default"
+          iconType="filled"
+          onClick={() => {
+            router.back()
+          }}
+          preTextIcon="arrowBack"
+          preTextIconType="filled"
+          size="small"
+          type="button"
+          variant="text"
+        >
+          Til baka
+        </Button>
 
         {application.state && (
           <div className={`tags ${getTagByState(application.state)}`}>

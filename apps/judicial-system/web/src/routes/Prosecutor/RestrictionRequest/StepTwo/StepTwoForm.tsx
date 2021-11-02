@@ -43,7 +43,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
     requestedCourtDateIsValid,
     setRequestedCourtDateIsValid,
   ] = useState<boolean>(workingCase.requestedCourtDate !== null)
-
+  const [selectedCourt, setSelectedCourt] = useState<string>()
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
   const { validateAndSendToServer, setField } = useCaseFormHelper(
@@ -81,6 +81,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
           <SelectCourt
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            setSelectedCourt={setSelectedCourt}
             courts={courts}
           />
         </Box>
@@ -162,6 +163,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
           nextIsDisabled={
             transitionLoading ||
             !arrestDateIsValid ||
+            (!workingCase.court && !selectedCourt) ||
             !requestedCourtDateIsValid
           }
           nextIsLoading={transitionLoading}
