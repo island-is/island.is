@@ -55,4 +55,8 @@ export type {
   CreateCourtCase,
 } from './lib/case'
 
-export type { PoliceCaseFile } from './lib/policeFile'
+export type {
+  PoliceCaseFile,
+  UploadPoliceCaseFile,
+  UploadPoliceCaseFileResponse,
+} from './lib/policeFile'
