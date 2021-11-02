@@ -18,7 +18,8 @@ export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
   WithOthers: 'Ég bý eða leigi hjá öðrum án leigusamnings',
   OwnPlace: 'Ég bý í eigin húsnæði',
   RegisteredLease: 'Ég leigi með þinglýstan leigusamning',
-  Other: 'Ekkert að ofan lýsir mínum aðstæðum',
+  UnregisteredLease: 'Ég leigi með óþinglýstan leigusamning',
+  Other: 'Annað',
 }
 
 export const getEmploymentStatus: KeyMapping<Employment, string> = {
