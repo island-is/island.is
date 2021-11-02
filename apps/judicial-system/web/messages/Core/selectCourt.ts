@@ -8,7 +8,7 @@ export const selectCourt = {
       'Notaður sem titill við "Veldu dómstól" fellilistann í öllum málstegundum.',
   }),
   label: defineMessage({
-    id: 'judicial.system.core:select_court.lable',
+    id: 'judicial.system.core:select_court.label',
     defaultMessage: 'Veldu dómstól',
     description:
       'Notaður sem titill í "Veldu dómstól" fellilistanum í öllum málstegundum.',
