@@ -28,6 +28,7 @@ import { StaffModel } from '../staff'
 import { EmailService } from '@island.is/email-service'
 
 import { ApplicationFileModel } from '../file/models'
+import { environment } from '../../../environments'
 
 interface Recipient {
   name: string
@@ -53,17 +54,6 @@ export class ApplicationService {
     private readonly applicationEventService: ApplicationEventService,
     private readonly emailService: EmailService,
   ) {}
-
-  async hasAccessToApplication(
-    nationalId: string,
-    id: string,
-  ): Promise<boolean> {
-    const hasApplication = await this.applicationModel.findOne({
-      where: { id, nationalId },
-    })
-
-    return Boolean(hasApplication)
-  }
 
   async hasSpouseApplied(spouseNationalId: string): Promise<boolean> {
     const application = await this.applicationModel.findOne({
@@ -299,11 +289,11 @@ export class ApplicationService {
       await this.emailService.sendEmail({
         from: {
           name: 'Samband íslenskra sveitarfélaga',
-          address: 'no-reply@svg.is',
+          address: environment.emailOptions.fromEmail,
         },
         replyTo: {
           name: 'Samband íslenskra sveitarfélaga',
-          address: 'no-reply@svg.is',
+          address: environment.emailOptions.replyToEmail,
         },
         to,
         subject: `Umsókn fyrir fjárhagsaðstoð móttekin ~ ${applicationId}`,

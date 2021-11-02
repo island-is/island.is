@@ -72,20 +72,22 @@ const ApplicationProfile = ({
       title: 'Sótt um',
       content: format(new Date(application.created), 'dd.MM.y  · kk:mm'),
     },
-    {
-      title: 'Sótt um',
-      content: `${
-        aidAmount &&
-        calculateAidFinalAmount(
-          aidAmount,
-          application.usePersonalTaxCredit,
-          currentYear,
-        ).toLocaleString('de-DE')
-      } kr.`,
-      onclick: () => {
-        setAidModalVisible(!isAidModalVisible)
-      },
-    },
+    aidAmount
+      ? {
+          title: 'Áætluð aðstoð',
+          content: `${calculateAidFinalAmount(
+            aidAmount,
+            application.usePersonalTaxCredit,
+            currentYear,
+          ).toLocaleString('de-DE')} kr.`,
+          onclick: () => {
+            setAidModalVisible(!isAidModalVisible)
+          },
+        }
+      : {
+          title: 'Áætluð aðstoð',
+          content: `Útreikningur misstókst`,
+        },
   ]
 
   if (application.state === ApplicationState.APPROVED) {
