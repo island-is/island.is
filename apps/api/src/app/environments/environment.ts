@@ -47,6 +47,16 @@ const devConfig = {
     clientID: process.env.XROAD_CLIENT_ID ?? '',
     xroadID: process.env.XROAD_HEALTH_INSURANCE_ID ?? '',
   },
+  healthInsuranceV2: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
+    xRoadClientId:
+      process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
+    xRoadProviderId:
+      process.env.HEALTH_INSURANCE_V2_XROAD_PROVIDER_ID ??
+      'IS-DEV/GOV/10007/SJUKRA-Protected',
+    username: process.env.HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
+    password: process.env.HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
+  },
   userProfile: {
     userProfileServiceBasePath: 'http://localhost:3366',
   },
@@ -204,6 +214,13 @@ const prodConfig = {
     password: process.env.HEALTH_INSURANCE_XROAD_PASSWORD,
     clientID: process.env.XROAD_CLIENT_ID,
     xroadID: process.env.XROAD_HEALTH_INSURANCE_ID,
+  },
+  healthInsuranceV2: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
+    xRoadProviderId: process.env.XROAD_HEALTH_INSURANCE_ID,
+    username: process.env.HEALTH_INSURANCE_V2_XROAD_USERNAME,
+    password: process.env.HEALTH_INSURANCE_V2_XROAD_PASSWORD,
   },
   userProfile: {
     userProfileServiceBasePath: process.env.SERVICE_USER_PROFILE_URL,
