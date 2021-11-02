@@ -59,13 +59,11 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     prosecutor: {
       validations: ['empty'],
     },
-    court: {
-      validations: ['empty'],
-    },
   }
   const [, setRequestedCourtDateIsValid] = useState<boolean>(
     workingCase.requestedCourtDate !== null,
   )
+  const [selectedCourt, setSelectedCourt] = useState<string>()
   const {
     isValid,
     setField,
@@ -121,6 +119,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
             <SelectCourt
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
+              setSelectedCourt={setSelectedCourt}
               courts={courts}
             />
           </Box>
@@ -163,7 +162,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.IC_DEFENDANT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={async () => await onNextButtonClick()}
-          nextIsDisabled={!isValid}
+          nextIsDisabled={!isValid || (!workingCase.court && !selectedCourt)}
           nextIsLoading={isLoading}
         />
       </FormContentContainer>
