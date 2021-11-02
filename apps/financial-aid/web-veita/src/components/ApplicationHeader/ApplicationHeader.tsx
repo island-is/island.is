@@ -1,14 +1,10 @@
 import {
   Application,
   ApplicationEventType,
-  ApplicationFiltersEnum,
-  ApplicationState,
-  applicationStateToFilterEnum,
   getState,
 } from '@island.is/financial-aid/shared/lib'
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
-import React, { SetStateAction, useContext, useEffect, useState } from 'react'
-import { navigationItems } from '../../utils/navigation'
+import React from 'react'
 
 import * as styles from './ApplicationHeader.css'
 
@@ -23,7 +19,6 @@ import {
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
-import { AdminContext } from '../AdminProvider/AdminProvider'
 
 interface ApplicantProps {
   application: Application
@@ -40,9 +35,7 @@ const ApplicationHeader = ({
 }: ApplicantProps) => {
   const router = useRouter()
 
-  const [prevUrl, setPrevUrl] = useState<string | undefined>()
   const changeApplicationState = useApplicationState()
-  const { admin } = useContext(AdminContext)
 
   const assignEmployee = async () => {
     setIsLoading(true)
@@ -62,32 +55,6 @@ const ApplicationHeader = ({
       })
   }
 
-  const comingFromMyCases = (state: ApplicationState) =>
-    application &&
-    application.staff?.nationalId === admin?.staff?.nationalId &&
-    (state === ApplicationState.INPROGRESS ||
-      state === ApplicationState.DATANEEDED)
-
-  const findPrevUrl = (
-    state: ApplicationState,
-  ): SetStateAction<string | undefined> => {
-    if (comingFromMyCases(state)) {
-      return navigationItems.find((i) =>
-        i.applicationState.includes(ApplicationFiltersEnum.MYCASES),
-      )?.link
-    }
-
-    return navigationItems.find((i) =>
-      i.applicationState.includes(applicationStateToFilterEnum[state]),
-    )?.link
-  }
-
-  useEffect(() => {
-    if (application) {
-      setPrevUrl(findPrevUrl(application.state))
-    }
-  }, [application])
-
   return (
     <Box className={`contentUp ${styles.widthAlmostFull} `}>
       <Box
@@ -97,22 +64,20 @@ const ApplicationHeader = ({
         alignItems="center"
         width="full"
       >
-        {prevUrl && (
-          <Button
-            colorScheme="default"
-            iconType="filled"
-            onClick={() => {
-              router.push(prevUrl)
-            }}
-            preTextIcon="arrowBack"
-            preTextIconType="filled"
-            size="small"
-            type="button"
-            variant="text"
-          >
-            Til baka
-          </Button>
-        )}
+        <Button
+          colorScheme="default"
+          iconType="filled"
+          onClick={() => {
+            router.back()
+          }}
+          preTextIcon="arrowBack"
+          preTextIconType="filled"
+          size="small"
+          type="button"
+          variant="text"
+        >
+          Til baka
+        </Button>
 
         {application.state && (
           <div className={`tags ${getTagByState(application.state)}`}>
