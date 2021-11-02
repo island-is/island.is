@@ -47,7 +47,7 @@ import AppealSection from './Components/AppealSection/AppealSection'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { useIntl } from 'react-intl'
 import {
   UploadState,
@@ -119,7 +119,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
     }
 
     if (theCase.state === CaseState.DISMISSED) {
-      return formatMessage(signedVerdictOverview.dismissedTitle)
+      return formatMessage(m.dismissedTitle)
     }
 
     if (theCase.isValidToDateInThePast) {
@@ -347,7 +347,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                             icon="warning"
                             iconColor="red600"
                             message={formatMessage(
-                              signedVerdictOverview.someFilesUploadedToCourtText,
+                              m.someFilesUploadedToCourtText,
                             )}
                           />
                         )}
@@ -356,7 +356,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                             icon="checkmark"
                             iconColor="blue400"
                             message={formatMessage(
-                              signedVerdictOverview.allFilesUploadedToCourtText,
+                              m.allFilesUploadedToCourtText,
                             )}
                           />
                         )}
@@ -387,9 +387,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                     0 ? null : uploadState ===
                       UploadState.NONE_CAN_BE_UPLOADED ? (
                       <InfoBox
-                        text={formatMessage(
-                          signedVerdictOverview.uploadToCourtAllBrokenText,
-                        )}
+                        text={formatMessage(m.uploadToCourtAllBrokenText)}
                       />
                     ) : (
                       <Button
@@ -405,8 +403,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                       >
                         {formatMessage(
                           uploadState === UploadState.UPLOAD_ERROR
-                            ? signedVerdictOverview.retryUploadToCourtButtonText
-                            : signedVerdictOverview.uploadToCourtButtonText,
+                            ? m.retryUploadToCourtButtonText
+                            : m.uploadToCourtButtonText,
                         )}
                       </Button>
                     )}
@@ -416,6 +414,25 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           </Accordion>
         </Box>
       )}
+      <Box marginBottom={7}>
+        <BlueBox>
+          <Box marginBottom={2} textAlign="center">
+            <Text as="h3" variant="h3">
+              {formatMessage(m.conclusionTitle)}
+            </Text>
+          </Box>
+          <Box marginBottom={3}>
+            <Box marginTop={1}>
+              <Text variant="intro">{workingCase.conclusion}</Text>
+            </Box>
+          </Box>
+          <Box marginBottom={1} textAlign="center">
+            <Text variant="h4">
+              {workingCase?.judge ? workingCase.judge.name : user?.name}
+            </Text>
+          </Box>
+        </BlueBox>
+      </Box>
       {!workingCase.isMasked && (
         <Box marginBottom={user?.role === UserRole.PROSECUTOR ? 7 : 15}>
           {user?.role !== UserRole.STAFF && (
