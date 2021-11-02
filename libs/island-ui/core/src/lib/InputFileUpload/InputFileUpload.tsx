@@ -200,7 +200,7 @@ export const UploadedFile = ({
           )}
         </Box>
       )}
-      <UploadingIndicator percent={file.percent} />
+      {file.percent && <UploadingIndicator percent={file.percent} />}
     </Box>
   )
 }
