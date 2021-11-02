@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
   Text,
   Box,
@@ -37,7 +37,11 @@ const MainPage = () => {
 
   const isUserSpouse = user?.isSpouse?.HasApplied
 
-  setMunicipality('1400')
+  useEffect(() => {
+    if (myApplication && myApplication.municipalityCode) {
+      setMunicipality(myApplication.municipalityCode)
+    }
+  }, [myApplication])
 
   return (
     <>
