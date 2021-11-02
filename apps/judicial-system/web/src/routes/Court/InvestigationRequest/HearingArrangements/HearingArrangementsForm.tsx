@@ -254,7 +254,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 backgroundColor="white"
               />
             </Box>
-            <Box marginBottom={2}>
               <RadioButton
                 name="session-arrangements-prosecutor-present"
                 id="session-arrangements-prosecutor-present"
@@ -277,29 +276,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 large
                 backgroundColor="white"
               />
-            </Box>
-            <RadioButton
-              name="session-arrangements-remote-session"
-              id="session-arrangements-remote-session"
-              label={formatMessage(
-                m.sections.sessionArrangements.options.remoteSession,
-              )}
-              checked={
-                workingCase.sessionArrangements ===
-                SessionArrangements.REMOTE_SESSION
-              }
-              onChange={() => {
-                setAndSendToServer(
-                  'sessionArrangements',
-                  SessionArrangements.REMOTE_SESSION,
-                  workingCase,
-                  setWorkingCase,
-                  updateCase,
-                )
-              }}
-              large
-              backgroundColor="white"
-            />
           </BlueBox>
         </Box>
         <Box component="section" marginBottom={8}>
