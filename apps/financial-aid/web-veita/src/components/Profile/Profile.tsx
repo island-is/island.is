@@ -1,7 +1,7 @@
 import React from 'react'
-import { Text, Box, Link, Button } from '@island.is/island-ui/core'
+import { Text, Box, Link } from '@island.is/island-ui/core'
 
-import * as styles from './Profile.treat'
+import * as styles from './Profile.css'
 import cn from 'classnames'
 
 interface Props {
@@ -22,7 +22,7 @@ const Profile = ({ heading, info, className }: Props) => {
       {' '}
       <Box
         className={cn({
-          [`${styles.headings}`]: true,
+          [`${styles.headings} `]: true,
           [`${className}`]: true,
         })}
         marginBottom={[2, 2, 3]}

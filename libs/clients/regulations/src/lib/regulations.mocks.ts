@@ -80,12 +80,16 @@ export const demoRegulation: Regulation = {
   },
   lawChapters: [],
   originalDoc: 'https://www.stjornartidindi.is/foobar.pdf',
+  pdfVersion: 'https://files.reglugerd.is/pdf/0244-2021/current',
+
+  repealed: false,
 
   // timelineDate: '2021-03-05' as ISODate,
   // showingDiff: {
   //   from: '2021-03-05' as ISODate,
   //   to: '2021-02-18' as ISODate,
   // },
+  // pdfVersion: 'https://files.reglugerd.is/pdf/0244-2021/d/2021-03-05/diff',
 }
 
 export const demoRegulationRedirect: RegulationRedirect = {

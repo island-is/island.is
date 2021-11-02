@@ -43,20 +43,32 @@ export const courtRecordAccordion = {
           'Notaður sem titill í "Lagt er fram" svæði í þingbókarfellilistanum.',
       },
     }),
-    accusedRights: defineMessages({
-      title: {
-        id: 'judicial.system.core:court_record_accordion.accused_rights.title',
-        defaultMessage: 'Réttindi {accusedType}',
-        description:
-          'Notaður sem titill í "Réttindi ..." svæði í þingbókarfellilistanum.',
-      },
-      text: {
-        id:
-          'judicial.system.core:court_record_accordion.accused_rights.text#markdown',
+    conclusion: defineMessages({
+      disclaimer: {
+        id: 'judicial.system.core:court_record_accordion.conclusion.disclaimer',
         defaultMessage:
-          'Sakborning er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Sakborning er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.<br/><br/>{genderedAccused} er kynnt krafa á dómskjali nr. 1.',
+          'Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.',
         description:
-          'Notaður sem texti í "Réttindi ..." svæði í þingbókarfellilistanum.',
+          'Notaður sem texti undir "Úrskurðarorð" hlutanum í þingbókarfellilistanum.',
+      },
+    }),
+    accusedBookings: defineMessages({
+      title: {
+        id:
+          'judicial.system.core:court_record_accordion.accused_bookings.title',
+        defaultMessage: 'Bókanir um {accusedType}',
+        description:
+          'Notaður sem titill fyrir "Bókarnir um ..." hlutann í þingbókarfellilistanum.',
+      },
+    }),
+    appealDecision: defineMessages({
+      disclaimer: {
+        id:
+          'judicial.system.core:court_record_accordion.appeal_decision.disclaimer',
+        defaultMessage:
+          'Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa.',
+        description:
+          'Notaður sem texti í "Ákvörðun um kæru" hlutanum í þingbókarfellilistanum.',
       },
     }),
   },

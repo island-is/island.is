@@ -10,10 +10,10 @@ export const GeneralPetitionLists = () => {
   return (
     <>
       <Box marginBottom={3}>
-        <Text variant="h4">{'Undirskriftalistar'}</Text>
+        <Text variant="h4">{'Virkir meðmælendalistar'}</Text>
       </Box>
       <Stack space={4}>
-        {petitionLists.map((petition: any) => {
+        {petitionLists?.data?.map((petition: any) => {
           return (
             <ActionCard
               key={petition.title}
@@ -25,9 +25,7 @@ export const GeneralPetitionLists = () => {
                 variant: 'text',
                 icon: 'arrowForward',
                 onClick: () =>
-                  router.push(
-                    '/undirskriftalistar/' + petition.meta.applicationId,
-                  ),
+                  router.push('/undirskriftalistar/' + petition.id),
               }}
             />
           )

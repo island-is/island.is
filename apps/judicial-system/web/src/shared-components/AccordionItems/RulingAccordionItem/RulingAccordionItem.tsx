@@ -1,56 +1,38 @@
-import React, { useContext } from 'react'
+import React from 'react'
+import { useIntl } from 'react-intl'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
-import {
-  CaseAppealDecision,
-  CaseDecision,
-  CaseType,
-  isRestrictionCase,
-} from '@island.is/judicial-system/types'
+import { isInvestigationCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import {
-  capitalize,
-  formatAccusedByGender,
-  formatAlternativeTravelBanRestrictions,
-  formatAppeal,
-  formatCustodyRestrictions,
-  NounCases,
-} from '@island.is/judicial-system/formatters'
-import * as style from './RulingAccordionItem.treat'
+import { rulingAccordion as m } from '@island.is/judicial-system-web/messages/Core/rulingAccordion'
+import * as style from './RulingAccordionItem.css'
 
 interface Props {
   workingCase: Case
+  startExpanded?: boolean
 }
 
-const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
-  const { user } = useContext(UserContext)
-
-  const custodyRestrictions = formatCustodyRestrictions(
-    workingCase.accusedGender,
-    workingCase.custodyRestrictions,
-  )
-
-  const alternativeTravelBanRestrictions = formatAlternativeTravelBanRestrictions(
-    workingCase.accusedGender,
-    workingCase.custodyRestrictions,
-    workingCase.otherRestrictions,
-  )
+const RulingAccordionItem: React.FC<Props> = ({
+  workingCase,
+  startExpanded,
+}: Props) => {
+  const { formatMessage } = useIntl()
 
   return (
     <AccordionItem
-      id="id_3"
-      label="Úrskurður Héraðsdóms Reykjavíkur"
+      id="rulingAccordionItem"
+      label={formatMessage(m.heading)}
       labelVariant="h3"
+      startExpanded={startExpanded}
     >
-      <Box component="section" marginBottom={5}>
+      <Box component="section">
         <Box marginBottom={2}>
           <Text as="h4" variant="h4">
-            Úrskurður Héraðsdóms
+            {formatMessage(m.title)}
           </Text>
         </Box>
         <Box marginBottom={1}>
           <Text variant="eyebrow" color="blue400">
-            Greinargerð um málsatvik
+            {formatMessage(m.sections.courtCaseFacts.title)}
           </Text>
         </Box>
         <Box marginBottom={2}>
@@ -58,153 +40,30 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </Box>
         <Box marginBottom={1}>
           <Text variant="eyebrow" color="blue400">
-            Greinargerð um lagarök
+            {formatMessage(m.sections.courtLegalArguments.title)}
           </Text>
         </Box>
         <Box marginBottom={2}>
           <Text>{workingCase.courtLegalArguments}</Text>
         </Box>
-        <Box marginBottom={7}>
-          <Text variant="eyebrow" color="blue400">
-            Niðurstaða
-          </Text>
-          <Text>
-            <span className={style.breakSpaces}>{workingCase.ruling}</span>
-          </Text>
-        </Box>
-      </Box>
-      <Box component="section" marginBottom={7}>
-        <Box marginBottom={2}>
-          <Text as="h4" variant="h4">
-            Úrskurðarorð
-          </Text>
-        </Box>
-        <Box marginBottom={3}>
-          <Box marginTop={1}>
-            <Text>{workingCase.conclusion}</Text>
-          </Box>
-        </Box>
-        <Box marginBottom={1}>
-          <Text variant="h3">
-            {workingCase?.judge
-              ? `${workingCase.judge.name} ${workingCase.judge.title}`
-              : `${user?.name} ${user?.title}`}
-          </Text>
-        </Box>
-      </Box>
-      <Box component="section" marginBottom={3}>
-        <Box marginBottom={1}>
-          <Text as="h4" variant="h4">
-            Ákvörðun um kæru
-          </Text>
-        </Box>
-        <Box marginBottom={2}>
-          <Text>
-            Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð
-            þennan til Landsréttar innan þriggja sólarhringa.
-          </Text>
-        </Box>
-        {workingCase.prosecutorAppealDecision !==
-          CaseAppealDecision.NOT_APPLICABLE && (
-          <Box marginBottom={1}>
-            <Text variant="h4">
-              {formatAppeal(workingCase.prosecutorAppealDecision, 'Sækjandi')}
-            </Text>
-          </Box>
-        )}
-        {workingCase.accusedAppealDecision !==
-          CaseAppealDecision.NOT_APPLICABLE && (
-          <Text variant="h4">
-            {formatAppeal(
-              workingCase.accusedAppealDecision,
-              isRestrictionCase(workingCase.type)
-                ? capitalize(formatAccusedByGender(workingCase.accusedGender))
-                : 'Varnaraðili',
-              isRestrictionCase(workingCase.type)
-                ? workingCase.accusedGender
-                : undefined,
-            )}
-          </Text>
-        )}
-      </Box>
-      {(workingCase.accusedAppealAnnouncement ||
-        workingCase.prosecutorAppealAnnouncement) && (
-        <Box component="section" marginBottom={6}>
-          {workingCase.accusedAppealAnnouncement &&
-            workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
-              <Box marginBottom={2}>
-                <Text variant="eyebrow" color="blue400">
-                  {`Yfirlýsing um kæru ${formatAccusedByGender(
-                    workingCase.accusedGender,
-                    NounCases.GENITIVE,
-                  )}`}
-                </Text>
-                <Text>{workingCase.accusedAppealAnnouncement}</Text>
-              </Box>
-            )}
-          {workingCase.prosecutorAppealAnnouncement &&
-            workingCase.prosecutorAppealDecision ===
-              CaseAppealDecision.APPEAL && (
-              <Box marginBottom={2}>
-                <Text variant="eyebrow" color="blue400">
-                  Yfirlýsing um kæru sækjanda
-                </Text>
-                <Text>{workingCase.prosecutorAppealAnnouncement}</Text>
-              </Box>
-            )}
-        </Box>
-      )}
-      {workingCase.type === CaseType.CUSTODY &&
-        workingCase.decision === CaseDecision.ACCEPTING && (
-          <Box>
-            <Box marginBottom={1}>
-              <Text as="h3" variant="h3">
-                Tilhögun gæsluvarðhalds
-              </Text>
-            </Box>
-            {custodyRestrictions && (
-              <Box marginBottom={2}>
-                <Text>{custodyRestrictions}</Text>
-              </Box>
-            )}
-            <Text>
-              Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
-              bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
-            </Text>
-          </Box>
-        )}
-      {(workingCase.type === CaseType.CUSTODY &&
-        workingCase.decision ===
-          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) ||
-        (workingCase.type === CaseType.TRAVEL_BAN &&
-          workingCase.decision === CaseDecision.ACCEPTING && (
-            <Box>
+        {isInvestigationCase(workingCase.type) &&
+          workingCase.requestProsecutorOnlySession && (
+            <Box marginY={2}>
               <Box marginBottom={1}>
-                <Text as="h3" variant="h3">
-                  Tilhögun farbanns
+                <Text variant="eyebrow" color="blue400">
+                  {formatMessage(m.sections.requestProsecutorOnlySession.title)}
                 </Text>
               </Box>
-              {alternativeTravelBanRestrictions && (
-                <Box marginBottom={2}>
-                  <Text>
-                    {alternativeTravelBanRestrictions
-                      .split('\n')
-                      .map((str, index) => {
-                        return (
-                          <div key={index}>
-                            <Text>{str}</Text>
-                          </div>
-                        )
-                      })}
-                  </Text>
-                </Box>
-              )}
-              <Text>
-                Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
-                bera atriði er lúta að framkvæmd farbannsins undir dómara.
-              </Text>
+              <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
             </Box>
-          ))}
+          )}
+        <Text variant="eyebrow" color="blue400">
+          {formatMessage(m.sections.ruling.title)}
+        </Text>
+        <Text>
+          <span className={style.breakSpaces}>{workingCase.ruling}</span>
+        </Text>
+      </Box>
     </AccordionItem>
   )
 }

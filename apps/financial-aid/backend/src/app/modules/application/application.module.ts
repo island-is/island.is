@@ -8,6 +8,7 @@ import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
 import { FileModule } from '../file'
 import { environment } from '../../../environments'
+import { StaffModule } from '../staff'
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { environment } from '../../../environments'
     EmailModule.register(environment.emailOptions),
     ApplicationEventModule,
     SequelizeModule.forFeature([ApplicationModel]),
+    StaffModule,
   ],
   providers: [ApplicationService],
   controllers: [ApplicationController],

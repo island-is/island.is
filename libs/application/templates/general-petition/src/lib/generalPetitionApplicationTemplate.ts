@@ -73,6 +73,14 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
             },
+            {
+              id: Roles.SIGNATUREE,
+              formLoader: () =>
+                import('../forms/EndorsementForm').then((val) =>
+                  Promise.resolve(val.EndorsementForm),
+                ),
+              read: 'all',
+            },
           ],
         },
         type: 'final' as const,
@@ -86,7 +94,7 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
     if (application.applicant === nationalId) {
       return Roles.APPLICANT
     } else {
-      return undefined
+      return Roles.SIGNATUREE
     }
   },
 }

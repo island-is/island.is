@@ -8,7 +8,7 @@ import { BoxProps } from '../Box/types'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Button } from '../Button/Button'
 
-import * as styles from './Navigation.treat'
+import * as styles from './Navigation.css'
 import { Icon } from '../IconRC/Icon'
 
 export type NavigationColorAttributes =

@@ -52,6 +52,7 @@ import {
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
   isInjuredAndRepresentativeOfCompanyOrInstitute,
+  isInternshipStudiesAccident,
   isLocatedOnShipOther,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfEmployee,
@@ -218,6 +219,7 @@ export const aboutTheAccidentSection = buildSection({
     }),
     // Location Subsection
     buildSubSection({
+      id: 'location.subSection',
       title: 'Staðsetning',
       children: [
         buildMultiField({
@@ -226,7 +228,7 @@ export const aboutTheAccidentSection = buildSection({
           condition: (formValue) => isProfessionalAthleteAccident(formValue),
           children: [
             buildRadioField({
-              id: 'sportsClubInfo.employee.radioButton',
+              id: 'onPayRoll.answer',
               width: 'half',
               title: '',
               options: [
@@ -345,7 +347,9 @@ export const aboutTheAccidentSection = buildSection({
           id: 'accidentLocation.studiesAccident',
           title: accidentLocation.studiesAccidentLocation.heading,
           description: accidentLocation.studiesAccidentLocation.description,
-          condition: (formValue) => isStudiesAccident(formValue),
+          condition: (formValue) =>
+            isStudiesAccident(formValue) &&
+            !isInternshipStudiesAccident(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -528,7 +532,9 @@ export const aboutTheAccidentSection = buildSection({
     buildSubSection({
       id: 'workMachine.section',
       title: workMachine.general.sectionTitle,
-      condition: (formValue) => isGeneralWorkplaceAccident(formValue),
+      condition: (formValue) =>
+        isGeneralWorkplaceAccident(formValue) ||
+        isAgricultureAccident(formValue),
       children: [
         buildMultiField({
           id: 'workMachine',
@@ -614,7 +620,7 @@ export const aboutTheAccidentSection = buildSection({
       ],
     }),
 
-    // Attachments section files are optional at this point
+    // Injury Certificate and Fatal accident section
     buildSubSection({
       id: 'attachments.section',
       title: attachments.general.sectionTitle,
@@ -624,7 +630,7 @@ export const aboutTheAccidentSection = buildSection({
           title: attachments.general.heading,
           children: [
             buildRadioField({
-              id: 'attachments.injuryCertificate',
+              id: 'injuryCertificate.answer',
               title: '',
               description: attachments.general.description,
               options: (application) =>
@@ -633,14 +639,6 @@ export const aboutTheAccidentSection = buildSection({
                       {
                         value: AttachmentsEnum.INJURYCERTIFICATE,
                         label: attachments.labels.injuryCertificate,
-                      },
-                      {
-                        value: AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
-                        label: attachments.labels.hospitalSendsCertificate,
-                      },
-                      {
-                        value: AttachmentsEnum.INJUREDSENDSCERTIFICATE,
-                        label: attachments.labels.injuredSendsCertificate,
                       },
                       {
                         value: AttachmentsEnum.SENDCERTIFICATELATER,
@@ -678,32 +676,29 @@ export const aboutTheAccidentSection = buildSection({
             ),
           ],
         }),
-        buildFileUploadField({
-          id: 'attachments.injuryCertificateFile',
+        buildMultiField({
+          id: 'attachments.injuryCertificateFile.subSection',
           title: attachments.general.heading,
-          uploadAccept: UPLOAD_ACCEPT,
-          uploadHeader: injuredPersonInformation.upload.uploadHeader,
-          uploadDescription: attachments.general.uploadDescription,
-          uploadButtonLabel: attachments.general.uploadButtonLabel,
-          introduction: attachments.general.uploadIntroduction,
+          children: [
+            buildFileUploadField({
+              id: 'attachments.injuryCertificateFile.file',
+              title: attachments.general.heading,
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: injuredPersonInformation.upload.uploadHeader,
+              uploadDescription: attachments.general.uploadDescription,
+              uploadButtonLabel: attachments.general.uploadButtonLabel,
+              introduction: attachments.general.uploadIntroduction,
+            }),
+          ],
           condition: (formValue) =>
             (formValue as {
-              attachments: { injuryCertificate: AttachmentsEnum }
-            }).attachments?.injuryCertificate ===
-            AttachmentsEnum.INJURYCERTIFICATE,
+              injuryCertificate: { answer: AttachmentsEnum }
+            }).injuryCertificate?.answer === AttachmentsEnum.INJURYCERTIFICATE,
         }),
-      ],
-    }),
-
-    // Fatal accident section
-    buildSubSection({
-      id: 'fatalAccident.section',
-      title: fatalAccidentAttachment.general.sectionTitle,
-      condition: (formValue) => isReportingOnBehalfOfInjured(formValue),
-      children: [
         buildMultiField({
           id: 'fatalAccidentMulti.section',
           title: fatalAccident.general.sectionTitle,
+          condition: (formValue) => isReportingOnBehalfOfInjured(formValue),
           children: [
             buildRadioField({
               id: 'wasTheAccidentFatal',
@@ -721,7 +716,9 @@ export const aboutTheAccidentSection = buildSection({
           id: 'fatalAccidentUploadDeathCertificateNowMulti',
           title: fatalAccidentAttachment.labels.title,
           description: fatalAccidentAttachment.labels.description,
-          condition: (formValue) => formValue.wasTheAccidentFatal === YES,
+          condition: (formValue) =>
+            isReportingOnBehalfOfInjured(formValue) &&
+            formValue.wasTheAccidentFatal === YES,
           children: [
             buildRadioField({
               id: 'fatalAccidentUploadDeathCertificateNow',
@@ -760,7 +757,7 @@ export const aboutTheAccidentSection = buildSection({
           title: attachments.general.uploadTitle,
           children: [
             buildFileUploadField({
-              id: 'attachments.deathCertificateFile',
+              id: 'attachments.deathCertificateFile.file',
               title: attachments.general.uploadHeader,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: attachments.general.uploadHeader,
@@ -770,6 +767,7 @@ export const aboutTheAccidentSection = buildSection({
             }),
           ],
           condition: (formValue) =>
+            isReportingOnBehalfOfInjured(formValue) &&
             formValue.wasTheAccidentFatal === YES &&
             formValue.fatalAccidentUploadDeathCertificateNow === YES,
         }),
@@ -778,10 +776,12 @@ export const aboutTheAccidentSection = buildSection({
 
     // Company information if work accident without the injured being a fisherman
     buildSubSection({
+      id: 'companyInfo.subSection',
       title: companyInfo.general.title,
       condition: (formValue) =>
-        isGeneralWorkplaceAccident(formValue) &&
-        !isReportingOnBehalfOfEmployee(formValue),
+        !isReportingOnBehalfOfEmployee(formValue) &&
+        (isGeneralWorkplaceAccident(formValue) ||
+          isInternshipStudiesAccident(formValue)),
       children: [
         buildMultiField({
           id: 'companyInfo',
@@ -847,15 +847,27 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'companyInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'companyInfo',
+              },
+            ),
           ],
         }),
       ],
     }),
     // School information if school accident
     buildSubSection({
+      id: 'schoolInfo.subSection',
       title: schoolInfo.general.title,
       condition: (formValue) =>
         isStudiesAccident(formValue) &&
+        !isInternshipStudiesAccident(formValue) &&
         !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
@@ -922,12 +934,23 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'schoolInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'schoolInfo',
+              },
+            ),
           ],
         }),
       ],
     }),
     // fishery information if fisherman
     buildSubSection({
+      id: 'fishingCompanyInfo.subSection',
       title: fishingCompanyInfo.general.title,
       condition: (formValue) => isFishermanAccident(formValue),
       children: [
@@ -956,14 +979,12 @@ export const aboutTheAccidentSection = buildSection({
               title: fishingCompanyInfo.labels.homePort,
               backgroundColor: 'blue',
               width: 'half',
-              required: true,
             }),
             buildTextField({
               id: 'fishingShipInfo.shipRegisterNumber',
               title: fishingCompanyInfo.labels.shipRegisterNumber,
               backgroundColor: 'blue',
               width: 'half',
-              required: true,
             }),
           ],
         }),
@@ -1032,12 +1053,23 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'fishingCompanyInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'fishingCompanyInfo',
+              },
+            ),
           ],
         }),
       ],
     }),
     // Sports club information when the injured has a sports related accident
     buildSubSection({
+      id: 'sportsClubInfo.subSection',
       title: sportsClubInfo.general.title,
       condition: (formValue) =>
         isProfessionalAthleteAccident(formValue) &&
@@ -1107,12 +1139,23 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'sportsClubInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'sportsClubInfo',
+              },
+            ),
           ],
         }),
       ],
     }),
     // Rescue squad information when accident is related to rescue squad
     buildSubSection({
+      id: 'rescueSquadInfo.subSection',
       title: rescueSquadInfo.general.title,
       condition: (formValue) =>
         isRescueWorkAccident(formValue) &&
@@ -1180,6 +1223,16 @@ export const aboutTheAccidentSection = buildSection({
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+            buildCustomField(
+              {
+                id: 'rescueSquadInfo.custom',
+                title: '',
+                component: 'HiddenInformation',
+              },
+              {
+                id: 'rescueSquadInfo',
+              },
+            ),
           ],
         }),
       ],

@@ -2,9 +2,12 @@ import { literal, Op, WhereOptions } from 'sequelize'
 
 import {
   CaseAppealDecision,
+  CaseDecision,
   CaseState,
+  CaseType,
   hasCaseBeenAppealed,
   InstitutionType,
+  investigationCases,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -12,7 +15,10 @@ import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
 import { Case } from '../models'
 
-function getBlockedStates(role: UserRole, institutionType?: InstitutionType) {
+function getBlockedStates(
+  role: UserRole,
+  institutionType?: InstitutionType,
+): CaseState[] {
   const blockedStates = [CaseState.DELETED]
 
   if (role === UserRole.PROSECUTOR) {
@@ -21,11 +27,17 @@ function getBlockedStates(role: UserRole, institutionType?: InstitutionType) {
 
   blockedStates.push(CaseState.NEW)
 
-  if (institutionType !== InstitutionType.HIGH_COURT) {
+  if (institutionType === InstitutionType.COURT) {
     return blockedStates
   }
 
   blockedStates.push(CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED)
+
+  if (institutionType === InstitutionType.HIGH_COURT) {
+    return blockedStates
+  }
+
+  blockedStates.push(CaseState.REJECTED, CaseState.DISMISSED)
 
   return blockedStates
 }
@@ -44,6 +56,53 @@ function isStateHiddenFromRole(
   institutionType?: InstitutionType,
 ): boolean {
   return getBlockedStates(role, institutionType).includes(state)
+}
+
+function getBlockedTypes(
+  role: UserRole,
+  forUpdate: boolean,
+  institutionType?: InstitutionType,
+): CaseType[] {
+  const blocketTypes: CaseType[] = []
+
+  if (role !== UserRole.STAFF) {
+    return blocketTypes
+  }
+
+  blocketTypes.push(...investigationCases)
+
+  if (forUpdate) {
+    blocketTypes.push(...restrictionCases)
+
+    return blocketTypes
+  }
+
+  if (institutionType === InstitutionType.PRISON_ADMIN) {
+    return blocketTypes
+  }
+
+  blocketTypes.push(CaseType.TRAVEL_BAN)
+
+  return blocketTypes
+}
+
+function isTypeHiddenFromRole(
+  type: CaseType,
+  role: UserRole,
+  forUpdate: boolean,
+  institutionType?: InstitutionType,
+): boolean {
+  return getBlockedTypes(role, forUpdate, institutionType).includes(type)
+}
+
+function isDecisionHiddenFromInstitution(
+  decision?: CaseDecision,
+  institutionType?: InstitutionType,
+): boolean {
+  return (
+    institutionType === InstitutionType.PRISON &&
+    decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+  )
 }
 
 function isProsecutorsOfficeCaseHiddenFromUser(
@@ -85,6 +144,7 @@ function isHightenedSecurityCaseHiddenFromUser(
   prosecutorId?: string,
 ): boolean {
   return (
+    user.role === UserRole.PROSECUTOR &&
     Boolean(isHeightenedSecurityLevel) &&
     user.id !== creatingProsecutorId &&
     user.id !== prosecutorId
@@ -98,6 +158,13 @@ export function isCaseBlockedFromUser(
 ): boolean {
   return (
     isStateHiddenFromRole(theCase.state, user.role, user.institution?.type) ||
+    isTypeHiddenFromRole(
+      theCase.type,
+      user.role,
+      forUpdate,
+      user.institution?.type,
+    ) ||
+    isDecisionHiddenFromInstitution(theCase.decision, user.institution?.type) ||
     isProsecutorsOfficeCaseHiddenFromUser(
       user,
       forUpdate,
@@ -119,7 +186,32 @@ export function isCaseBlockedFromUser(
   )
 }
 
+function getStaffCasesQueryFilter(
+  institutionType?: InstitutionType,
+): WhereOptions {
+  return institutionType === InstitutionType.PRISON_ADMIN
+    ? {
+        [Op.and]: [
+          { state: CaseState.ACCEPTED },
+          { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
+          { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
+        ],
+      }
+    : {
+        [Op.and]: [
+          { state: CaseState.ACCEPTED },
+          { type: CaseType.CUSTODY },
+          { decision: CaseDecision.ACCEPTING },
+          { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
+        ],
+      }
+}
+
 export function getCasesQueryFilter(user: User): WhereOptions {
+  if (user.role === UserRole.STAFF) {
+    return getStaffCasesQueryFilter(user.institution?.type)
+  }
+
   const blockStates = {
     [Op.not]: { state: getBlockedStates(user.role, user.institution?.type) },
   }

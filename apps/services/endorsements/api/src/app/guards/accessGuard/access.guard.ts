@@ -57,12 +57,24 @@ export class AccessGuard implements CanActivate {
           if (listId) {
             const endorsementList = await this.endorsementListService.findSingleList(
               listId,
+              request.auth.nationalId,
             )
 
             if (endorsementList?.owner === request.auth.nationalId) {
               return true
             }
           }
+          break
+        }
+        case AccessGroup.Admin: {
+          if (
+            environment.accessGroups.Admin.split(',').includes(
+              request.auth.nationalId,
+            )
+          ) {
+            return true
+          }
+          break
         }
       }
     }

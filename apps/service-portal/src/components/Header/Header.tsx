@@ -8,7 +8,7 @@ import {
   Logo,
   FocusableBox,
 } from '@island.is/island-ui/core'
-import * as styles from './Header.treat'
+import * as styles from './Header.css'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { UserMenu } from '@island.is/shared/components'

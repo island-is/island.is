@@ -59,9 +59,14 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.FamilyRoot,
           },
           {
-            // Medmaeli
+            // Petitions
             name: m.endorsements,
-            path: ServicePortalPath.Endorsements,
+            path: ServicePortalPath.Petitions,
+          },
+          {
+            // Petitions Admin
+            name: m.endorsementsAdmin,
+            path: ServicePortalPath.PetitionsAdminView,
           },
         ],
       },
@@ -210,17 +215,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           type: 'outline',
           icon: 'home',
-        },
-      },
-
-      // Fjármál
-      {
-        name: m.finance,
-        path: ServicePortalPath.FinanceWIP,
-        systemRoute: true,
-        icon: {
-          type: 'outline',
-          icon: 'cellular',
         },
       },
 

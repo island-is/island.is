@@ -12,7 +12,7 @@ import {
 } from '@island.is/judicial-system/types'
 import type {
   Case,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
 import {
   formatDate,
@@ -42,7 +42,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 
-import * as styles from './Overview.treat'
+import * as styles from './Overview.css'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -242,12 +242,12 @@ export const Overview: React.FC = () => {
                   id="id_2"
                   label="Lagaákvæði sem krafan er byggð á"
                 >
-                  {workingCase.custodyProvisions &&
-                    workingCase.custodyProvisions.map(
-                      (custodyProvision: CaseCustodyProvisions, index) => {
+                  {workingCase.legalProvisions &&
+                    workingCase.legalProvisions.map(
+                      (legalProvision: CaseLegalProvisions, index) => {
                         return (
                           <div key={index}>
-                            <Text>{laws[custodyProvision]}</Text>
+                            <Text>{laws[legalProvision]}</Text>
                           </div>
                         )
                       },

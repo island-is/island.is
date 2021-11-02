@@ -12,14 +12,14 @@ interface InstitutionData {
 const institutions: {
   courts: Institution[]
   allCourts: Institution[]
-  defaultCourt: Institution | undefined
   prosecutorsOffices: Institution[]
+  prisonInstitutions: Institution[]
   loaded: boolean
 } = {
   courts: [],
   allCourts: [],
-  defaultCourt: undefined,
   prosecutorsOffices: [],
+  prisonInstitutions: [],
   loaded: false,
 }
 
@@ -41,14 +41,15 @@ const useInstitution = () => {
         institution.type === InstitutionType.HIGH_COURT,
     )
 
-    institutions.defaultCourt = institutions.courts.find(
-      (institution) => institution.name === 'Héraðsdómur Reykjavíkur',
-    )
-
     institutions.prosecutorsOffices = rawInstitutions.filter(
       (institution) => institution.type === InstitutionType.PROSECUTORS_OFFICE,
     )
 
+    institutions.prisonInstitutions = rawInstitutions.filter(
+      (institution) =>
+        institution.type === InstitutionType.PRISON ||
+        institution.type === InstitutionType.PRISON_ADMIN,
+    )
     institutions.loaded = true
   }
 

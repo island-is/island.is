@@ -93,6 +93,9 @@ export class CreateApplicationInput implements CreateApplication {
   @Field({ nullable: true })
   readonly amount?: number
 
+  @Field({ nullable: true })
+  readonly spouseName?: string
+
   @Allow()
   @Field({ nullable: true })
   readonly spouseNationalId?: string
@@ -104,4 +107,20 @@ export class CreateApplicationInput implements CreateApplication {
   @Allow()
   @Field(() => String)
   readonly familyStatus!: FamilyStatus
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly city?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly streetName?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly municipalityCode?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly postalCode?: string
 }

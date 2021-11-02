@@ -37,7 +37,7 @@ import {
   News,
 } from '@island.is/web/graphql/schema'
 
-import * as styles from './SearchInput.treat'
+import * as styles from './SearchInput.css'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const DEBOUNCE_TIMER = 150
@@ -116,8 +116,6 @@ const useSearch = (
               language: locale as ContentLanguage,
               types: [
                 SearchableContentTypes['WebArticle'],
-                SearchableContentTypes['WebLifeEventPage'],
-                SearchableContentTypes['WebNews'],
                 SearchableContentTypes['WebSubArticle'],
               ],
             },

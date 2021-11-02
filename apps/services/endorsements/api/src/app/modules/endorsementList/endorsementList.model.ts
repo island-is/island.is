@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, OmitType } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -49,13 +49,22 @@ export class EndorsementList extends Model<EndorsementList> {
   description!: string | null
 
   @ApiProperty({
-    type: String,
-    nullable: true,
+    type: Date,
+    nullable: false,
   })
   @Column({
     type: DataType.DATE,
   })
-  closedDate!: Date | null
+  openedDate!: Date
+
+  @ApiProperty({
+    type: Date,
+    nullable: false,
+  })
+  @Column({
+    type: DataType.DATE,
+  })
+  closedDate!: Date
 
   @ApiProperty({ type: [EndorsementMetadataDto] })
   @Column({
@@ -83,6 +92,13 @@ export class EndorsementList extends Model<EndorsementList> {
     allowNull: false,
   })
   owner!: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  adminLock!: boolean
 
   @ApiProperty({ type: () => [Endorsement], required: false })
   @HasMany(() => Endorsement)

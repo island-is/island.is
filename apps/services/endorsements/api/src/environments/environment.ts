@@ -22,6 +22,11 @@ const devConfig = {
   },
   accessGroups: {
     DMR: process.env.ACCESS_GROUP_DMR ?? '',
+    Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
+  },
+  emailOptions: {
+    useTestAccount: true,
+    useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
   },
 }
 
@@ -50,7 +55,18 @@ const prodConfig = {
   },
   accessGroups: {
     DMR: process.env.ACCESS_GROUP_DMR ?? '',
+    Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
+  },
+  emailOptions: {
+    useTestAccount: false,
+    useNodemailerApp: false,
+    options: {
+      region: process.env.EMAIL_REGION,
+    },
   },
 }
 
 export default isProductionEnvironment ? prodConfig : devConfig
+
+// global settings for endorsementsystem
+export const ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS = ['generalPetition']

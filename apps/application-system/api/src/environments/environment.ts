@@ -42,11 +42,15 @@ const devConfig = {
       password: process.env.NOVA_PASSWORD,
     },
     drivingLicense: {
-      secret: process.env.DRIVING_LICENSE_SECRET,
-      xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
-      xroadPath:
-        'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
-      xroadBaseUrl: 'http://localhost:8081',
+      clientConfig: {
+        secret: process.env.DRIVING_LICENSE_SECRET,
+        xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
+        xroadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
+        xroadPathV1:
+          'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
+        xroadPathV2:
+          'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
+      },
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
@@ -67,11 +71,19 @@ const devConfig = {
     partyLetter: {
       partyLetterRegistryApiBasePath: 'http://localhost:4251',
       endorsementsApiBasePath: 'http://localhost:4246',
+      defaultClosedDate: new Date(
+        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
+          '2021-09-15T00:00:00.000Z',
+      ),
     },
     generalPetition: {
       endorsementsApiBasePath: 'http://localhost:4246',
     },
     partyApplication: {
+      defaultClosedDate: new Date(
+        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
+          '2021-09-15T00:00:00.000Z',
+      ),
       endorsementsApiBasePath: 'http://localhost:4246',
       options: {
         adminEmails: {
@@ -158,10 +170,13 @@ const prodConfig = {
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     drivingLicense: {
-      secret: process.env.DRIVING_LICENSE_SECRET,
-      xroadClientId: process.env.XROAD_CLIENT_ID,
-      xroadBaseUrl: process.env.XROAD_BASE_PATH,
-      xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH,
+      clientConfig: {
+        secret: process.env.DRIVING_LICENSE_SECRET,
+        xroadClientId: process.env.XROAD_CLIENT_ID,
+        xroadBaseUrl: process.env.XROAD_BASE_PATH,
+        xroadPathV1: process.env.DRIVING_LICENSE_XROAD_PATH,
+        xroadPathV2: process.env.DRIVING_LICENSE_XROAD_PATH_V2,
+      },
     },
     paymentOptions: {
       arkBaseUrl: process.env.ARK_BASE_URL,
@@ -177,11 +192,19 @@ const prodConfig = {
       partyLetterRegistryApiBasePath:
         process.env.PARTY_LETTER_REGISTRY_API_BASE_PATH,
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
+      defaultClosedDate: new Date(
+        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
+          '2021-09-15T00:00:00.000Z',
+      ),
     },
     generalPetition: {
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
     },
     partyApplication: {
+      defaultClosedDate: new Date(
+        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
+          '2021-09-15T00:00:00.000Z',
+      ),
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
       options: {
         adminEmails: {

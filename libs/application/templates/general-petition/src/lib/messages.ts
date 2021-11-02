@@ -18,7 +18,7 @@ export const m: MessageDir = {
     termsAndConditions: {
       id: 'gpt.application:dmr.subtitle',
       defaultMessage:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vestibulum auctor ipsum. Sed at erat odio. In consectetur sem bibendum augue gravida consectetur. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aliquam fringilla sem a quam pellentesque, eu condimentum augue vestibulum. Integer porttitor ante nec tellus accumsan, vel cursus velit commodo. Cras pellentesque lacus non est interdum volutpat.',
+        'Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018. Ábyrgðaraðili staðfestir hér með að listinn sé í samræmi við lög og reglur landsins og stjórnarskrá Íslands. Vinnsluaðila er heimilt að loka lista niður fari hann gegn ofangreindu.',
       description: 'External data DRM subtitle',
     },
     agree: {
@@ -101,7 +101,8 @@ export const m: MessageDir = {
     },
     aboutListPlaceholder: {
       id: 'gpt.application:information.aboutListPlaceholder',
-      defaultMessage: 'Texti sem birtist með meðmælendalista',
+      defaultMessage:
+        'Texti sem birtist með meðmælendalista. Ekki er hægt að breyta texta eftir að meðmælendalisti hefur verið birtur',
       description: 'About list placeholder',
     },
     dateTitle: {
@@ -141,7 +142,7 @@ export const m: MessageDir = {
     subtitle: {
       id: 'gpt.application:overview.subtitle',
       defaultMessage:
-        'Vinsamlegast farðu yfir upplýsingarnar hér að néðan og staðfestu að þær sé réttar',
+        'Vinsamlegast farðu yfir upplýsingarnar hér að neðan og staðfestu að þær séu réttar. Eftir að listi er stofnaður er ekki hægt að breyta upplýsingum um lista.',
       description: 'Overview subtitle',
     },
     overviewTitle: {
@@ -151,7 +152,7 @@ export const m: MessageDir = {
     },
     applicant: {
       id: 'gpt.application:overview.applicant',
-      defaultMessage: 'Umsækjandi',
+      defaultMessage: 'Ábyrgðarmaður',
       description: 'Applicant',
     },
     listName: {
@@ -199,7 +200,7 @@ export const m: MessageDir = {
   listSubmitted: defineMessages({
     title: {
       id: 'gpt.application.list.submitted.title',
-      defaultMessage: 'Með hefur verið skilað',
+      defaultMessage: 'Meðmælendalista hefur verið skilað',
       description: 'Title for conlcusion',
     },
     approvedTitle: {
@@ -352,7 +353,7 @@ export const m: MessageDir = {
     },
     organization: {
       id: 'gpt.application:logo.organization',
-      defaultMessage: 'Dómsmálaráðuneytið',
+      defaultMessage: 'Þjóðskrá',
       description: 'Name of organization',
     },
   }),
@@ -364,12 +365,12 @@ export const m: MessageDir = {
     },
     cardTitle: {
       id: 'gpt.application:endorsement.approved.card.title',
-      defaultMessage: 'Þú hefur sett nafn þitt á listann',
+      defaultMessage: 'Þú hefur sett nafn þitt á listann.',
       description: 'Approved card title',
     },
     cardSubtitle: {
       id: 'gpt.application:endorsement.approved.card.subtitle',
-      defaultMessage: 'Yfirlit yfir öll meðmæli má finna á Mínum Síðum',
+      defaultMessage: 'Yfirlit yfir öll meðmæli má finna á Mínum Síðum.',
       description: 'Approved card subtitle',
     },
     myPagesButton: {
@@ -450,12 +451,6 @@ export const m: MessageDir = {
       id: 'gpt.application:ministry.justice.csv.button',
       defaultMessage: 'Hlaða niður meðmælum',
       description: 'Download endorsements button',
-    },
-    noEndorsementsMessage: {
-      id: 'gpt.application:ministry.justice.no.endorsements',
-      defaultMessage: 'Umsækjandi hefur ekki skilað inn neinum meðmælum',
-      description:
-        'Message that will appear in the .csv file if there are no endorsements',
     },
     rejectButton: {
       id: 'gpt.application:ministry.justice.reject.button',

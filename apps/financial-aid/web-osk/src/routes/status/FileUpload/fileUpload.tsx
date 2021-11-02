@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -7,40 +7,50 @@ import {
   ContentContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/useFileUpload'
+import { useFileUpload } from '@island.is/financial-aid-web/osk/src/utils/hooks/useFileUpload'
 import {
   Application,
   ApplicationEventType,
   ApplicationState,
   FileType,
+  getCommentFromLatestEvent,
 } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
 import {
-  CreateApplicationEventQuery,
-  UpdateApplicationMutation,
+  ApplicationEventMutation,
+  ApplicationMutation,
 } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
 
 import { Routes } from '@island.is/financial-aid/shared/lib'
-import cn from 'classnames'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
+  const { myApplication } = useContext(AppContext)
+
+  const fileComment = useMemo(() => {
+    if (myApplication?.applicationEvents) {
+      return getCommentFromLatestEvent(
+        myApplication?.applicationEvents,
+        ApplicationEventType.DATANEEDED,
+      )
+    }
+  }, [myApplication])
+
   const router = useRouter()
-  const { uploadFiles } = useFileUpload(form.otherFiles)
+  const { uploadStateFiles } = useFileUpload(form.otherFiles)
 
   const [error, setError] = useState(false)
 
   const [isLoading, setIsLoading] = useState(false)
 
   const [updateApplicationMutation] = useMutation<{ application: Application }>(
-    UpdateApplicationMutation,
+    ApplicationMutation,
   )
 
-  const [createApplicationEventMutation] = useMutation(
-    CreateApplicationEventQuery,
-  )
+  const [createApplicationEventMutation] = useMutation(ApplicationEventMutation)
 
   useEffect(() => {
     if (error) {
@@ -52,13 +62,14 @@ const FileUpload = () => {
     setIsLoading(true)
 
     try {
-      await uploadFiles(router.query.id as string, FileType.OTHER).then(
+      await uploadStateFiles(router.query.id as string, FileType.OTHER).then(
         async () => {
           await updateApplicationMutation({
             variables: {
               input: {
                 id: router.query.id,
                 state: ApplicationState.INPROGRESS,
+                event: ApplicationEventType.FILEUPLOAD,
               },
             },
           })
@@ -103,14 +114,30 @@ const FileUpload = () => {
   return (
     <>
       <ContentContainer>
-        <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
+        <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
           Senda inn gögn
         </Text>
+
+        <Text marginBottom={[3, 3, 4]}>
+          Hér getur þú sent okkur gögn ef vantar svo hægt sé að vinna þína
+          umsókn.
+        </Text>
+
+        {fileComment?.comment && (
+          <Box marginBottom={[3, 3, 5]}>
+            <AlertMessage
+              type="warning"
+              title="Athugasemd frá vinnsluaðila"
+              message={fileComment.comment}
+            />
+          </Box>
+        )}
 
         <Files
           header="Senda inn gögn"
           fileKey="otherFiles"
           uploadFiles={form.otherFiles}
+          hasError={error && form?.otherFiles.length <= 0}
         />
 
         <Text as="h2" variant="h3" marginBottom={[2, 2, 3]}>
@@ -134,17 +161,6 @@ const FileUpload = () => {
             }}
           />
         </Box>
-
-        <div
-          className={cn({
-            [`errorMessage`]: true,
-            [`showErrorMessage`]: error && form?.otherFiles.length <= 0,
-          })}
-        >
-          <Text color="red600" fontWeight="semiBold" variant="small">
-            Það vantar gögn
-          </Text>
-        </div>
       </ContentContainer>
 
       <Footer

@@ -30,6 +30,12 @@ export enum ServicePortalPath {
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
 
+  // General Petitions
+  Petitions = '/min-gogn/medmaeli',
+  PetitionsAdminView = '/min-gogn/medmaeli-admin',
+  PetitionList = '/min-gogn/medmaeli/:listId',
+  PetitionListAdmin = '/min-gogn/medmaeli-admin/:listId',
+
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 
   // Fjarmal
@@ -42,7 +48,6 @@ export enum ServicePortalPath {
   FinanceVehicles = 'https://mitt.samgongustofa.is/',
   FinancePayments = '/greidslur',
   FinanceExternal = 'https://minarsidur.island.is/minar-sidur/fjarmal/fjarmal-stada-vid-rikissjod-og-stofnanir/',
-  FinanceWIP = '/fjarmal-annad',
 
   // Electronic Documents
   ElectronicDocumentsRoot = '/postholf',

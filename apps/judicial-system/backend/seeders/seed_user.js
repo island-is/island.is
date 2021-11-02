@@ -40,6 +40,26 @@ const userSeeds = `[
     "email": "lalli@dummy.dd",
     "role": "JUDGE",
     "institution_id": "4676f08b-aab4-4b4f-a366-697540788088"
+  },
+  {
+    "id": "1e08b81e-2aa4-11ec-8d3d-0242ac130003",
+    "national_id": "0000004449",
+    "name": "Pétur í FMST",
+    "title": "starfsmaður",
+    "mobile_number": "4444444",
+    "email": "petur@dummy.dd",
+    "role": "STAFF",
+    "institution_id": "c9b3b124-2a85-11ec-8d3d-0242ac130003"
+  },
+  {
+    "id": "1e08ba30-2aa4-11ec-8d3d-0242ac130003",
+    "national_id": "0000005559",
+    "name": "Valgarð á Hólmsheiði",
+    "title": "starfsmaður",
+    "mobile_number": "5555555",
+    "email": "valgard@dummy.dd",
+    "role": "STAFF",
+    "institution_id": "c9b3b3ae-2a85-11ec-8d3d-0242ac130003"
   }
 ]`
 

@@ -20,6 +20,13 @@ import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 
 import { paginate } from '@island.is/nest/pagination'
+import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
+
+import { EmailService } from '@island.is/email-service'
+import PDFDocument from 'pdfkit'
+import getStream from 'get-stream'
+import model from 'sequelize/types/lib/model'
+import { emailDto } from './dto/email.dto'
 
 interface FindEndorsementInput {
   listId: string
@@ -27,6 +34,12 @@ interface FindEndorsementInput {
 }
 
 interface EndorsementInput {
+  endorsementList: EndorsementList
+  nationalId: string
+  showName: boolean
+}
+
+interface DeleteEndorsementInput {
   endorsementList: EndorsementList
   nationalId: string
 }
@@ -57,6 +70,7 @@ interface FindUserEndorsementsByTagsInput {
 interface ProcessEndorsementInput {
   nationalId: string
   endorsementList: EndorsementList
+  showName: boolean
 }
 
 export interface NationalIdError {
@@ -75,6 +89,8 @@ export class EndorsementService {
     private logger: Logger,
     private readonly metadataService: EndorsementMetadataService,
     private readonly validatorService: EndorsementValidatorService,
+    @Inject(EmailService)
+    private emailService: EmailService,
   ) {}
 
   private getEndorsementMetadataForNationalId = async (
@@ -135,7 +151,7 @@ export class EndorsementService {
   }
 
   private processEndorsement = async (
-    { nationalId, endorsementList }: ProcessEndorsementInput,
+    { nationalId, endorsementList, showName }: ProcessEndorsementInput,
     auth: Auth,
   ) => {
     // get metadata for this national id
@@ -155,16 +171,21 @@ export class EndorsementService {
       nationalId,
     })
 
+    const meta = this.metadataService.pruneMetadataFields(
+      // apply metadata service pruning logic
+      metadata, // the metadata we have e.g. {fullName: 'Some name', lastName: 'SomeOtherName'}
+      endorsementList.endorsementMetadata.map(({ field }) => field), // the fields we want to keep e.g. ['fullName']
+    )
+
     return {
       endorser: nationalId,
       endorsementListId: endorsementList.id,
       // this removes validation fields fetched by meta service
       meta: {
-        ...this.metadataService.pruneMetadataFields(
-          metadata,
-          endorsementList.endorsementMetadata.map(({ field }) => field),
-        ),
+        ...meta, // add all allowed metadata fields
+        ...(showName ? {} : { fullName: '' }), // if showName is false overwrite full name field),
         bulkEndorsement: false, // defaults to false we overwrite this value in bulk import
+        showName: showName,
       },
     }
   }
@@ -181,6 +202,23 @@ export class EndorsementService {
       orderOption: [['counter', 'DESC']],
       where: { endorsementListId: listId },
     })
+  }
+
+  async findEndorsementsGeneralPetition(
+    { listId }: FindEndorsementsInput,
+    query: any,
+  ) {
+    // check if list exists and belongs to general petitions
+    const result = await this.endorsementListModel.findOne({
+      where: {
+        id: listId,
+        tags: { [Op.eq]: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS },
+      },
+    })
+    if (!result) {
+      throw new NotFoundException(['Not found - not a General Petition List'])
+    }
+    return this.findEndorsements({ listId }, query)
   }
 
   async findSingleUserEndorsement({
@@ -222,13 +260,13 @@ export class EndorsementService {
 
   // FIXME: Find a way to combine with create bulk endorsements
   async createEndorsementOnList(
-    { endorsementList, nationalId }: EndorsementInput,
+    { endorsementList, nationalId, showName }: EndorsementInput,
     auth: User,
   ) {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
     // we don't allow endorsements on closed lists
-    if (endorsementList.closedDate) {
+    if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
 
@@ -236,6 +274,7 @@ export class EndorsementService {
       {
         nationalId: auth.nationalId,
         endorsementList,
+        showName: showName,
       },
       auth,
     )
@@ -263,7 +302,7 @@ export class EndorsementService {
     this.logger.debug('Creating resource with nationalIds:', nationalIds)
 
     // we don't allow endorsements on closed lists
-    if (endorsementList.closedDate) {
+    if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
 
@@ -276,6 +315,7 @@ export class EndorsementService {
           {
             nationalId,
             endorsementList,
+            showName: true,
           },
           auth,
         ).catch((error: Error) => {
@@ -321,13 +361,13 @@ export class EndorsementService {
   async deleteFromListByNationalId({
     nationalId,
     endorsementList,
-  }: EndorsementInput) {
+  }: DeleteEndorsementInput) {
     this.logger.debug(
       `Removing endorsement from list "${endorsementList.id}" by nationalId "${nationalId}"`,
     )
 
     // we don't allow endorsements on closed lists
-    if (endorsementList.closedDate) {
+    if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException([
         'Unable to remove endorsement form closed list',
       ])
@@ -346,6 +386,121 @@ export class EndorsementService {
         { listId: endorsementList.id },
       )
       throw new NotFoundException(["This endorsement doesn't exist"])
+    }
+  }
+
+  async createDocumentBuffer(endorsementList: any) {
+    // build pdf
+    const doc = new PDFDocument()
+    const locale = 'is-IS'
+    const big = 16
+    const regular = 8
+    doc
+      .fontSize(big)
+      .text('ISLAND.IS - þetta skjal og kerfi er í vinnslu')
+      .fontSize(regular)
+      .text(
+        'þetta skjal var framkallað sjálfvirkt þann: ' +
+          new Date().toLocaleDateString(locale),
+      )
+      .moveDown()
+      .fontSize(big)
+      .text('Meðmælendalisti')
+      .fontSize(regular)
+      .text('id: ' + endorsementList.id)
+      .text('titill: ' + endorsementList.title)
+      .text('lýsing: ' + endorsementList.description)
+      .text('eigandi: ' + endorsementList.owner)
+      .text(
+        'listi opnaður: ' +
+          endorsementList.openedDate.toLocaleDateString(locale),
+      )
+      .text(
+        'listi lokaður: ' +
+          endorsementList.closedDate.toLocaleDateString(locale),
+      )
+      .text(`Alls undirskriftir: ${endorsementList.endorsements.length}`)
+      .moveDown()
+    if (endorsementList.endorsements.length) {
+      doc.fontSize(big).text('Meðmælendur').fontSize(regular)
+      for (const val of endorsementList.endorsements) {
+        doc.text(
+          val.created.toLocaleDateString(locale) + ' ' + val.meta.fullName,
+        )
+      }
+    }
+    doc.end()
+    return await getStream.buffer(doc)
+  }
+
+  async emailPDF(
+    listId: string,
+    recipientEmail: string,
+  ): Promise<{ success: boolean }> {
+    const endorsementList = await this.endorsementListModel.findOne({
+      where: { id: listId },
+      include: [
+        {
+          model: Endorsement,
+        },
+      ],
+    })
+    try {
+      const result = this.emailService.sendEmail({
+        from: {
+          name: 'TEST:Meðmælendakerfi island.is',
+          address: 'noreply@island.is',
+        },
+        to: [
+          {
+            // message can be sent to any email so recipient name in unknown
+            name: recipientEmail,
+            address: recipientEmail,
+          },
+        ],
+        subject: 'TEST:Afrit af meðmælendalista',
+        template: {
+          title: 'Afrit af meðmælendalista',
+          body: [
+            {
+              component: 'Heading',
+              context: { copy: 'Afrit af meðmælendalista' },
+            },
+            { component: 'Copy', context: { copy: 'Góðan dag.' } },
+            {
+              component: 'Copy',
+              context: {
+                copy: `... copy copy copy`,
+              },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy: `Þetta kjal er í þróun ...`,
+              },
+            },
+            {
+              component: 'Button',
+              context: {
+                copy: 'Takki',
+                href: 'http://www.island.is',
+              },
+            },
+            { component: 'Copy', context: { copy: 'Með kveðju,' } },
+            { component: 'Copy', context: { copy: 'TEST' } },
+          ],
+        },
+        attachments: [
+          {
+            filename: 'Meðmælendalisti.pdf',
+            content: await this.createDocumentBuffer(endorsementList),
+          },
+        ],
+      })
+      return { success: true }
+    } catch (error) {
+      this.logger.error('Failed to send email', error)
+      return { success: false }
     }
   }
 }

@@ -1,3 +1,167 @@
+air-discount-scheme-api:
+  enabled: true
+  env:
+    AUTH_AUDIENCE: 'loftbru.staging01.devland.is'
+    BACKEND_URL: 'http://web-air-discount-scheme-backend'
+    CONTENTFUL_HOST: 'cdn.contentful.com'
+    ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
+    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=ads.staging'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+      hosts:
+        - host: 'loftbru.staging01.devland.is'
+          paths:
+            - '/api'
+        - host: 'loftbru-cf.staging01.devland.is'
+          paths:
+            - '/api'
+  namespace: 'air-discount-scheme'
+  podSecurityContext:
+    fsGroup: 65534
+  replicaCount:
+    default: 2
+    max: 3
+    min: 2
+  secrets:
+    ADMINS: '/k8s/air-discount-scheme/api/ADMINS'
+    AUTH_JWT_SECRET: '/k8s/air-discount-scheme/api/AUTH_JWT_SECRET'
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN'
+    DEVELOPERS: '/k8s/air-discount-scheme/api/DEVELOPERS'
+    SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/air-discount-scheme-api'
+    create: true
+    name: 'air-discount-scheme-api'
+air-discount-scheme-backend:
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'air_discount_scheme_backend'
+    DB_USER: 'air_discount_scheme_backend'
+    ENVIRONMENT: 'staging'
+    REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+      hosts:
+        - host: 'loftbru.staging01.devland.is'
+          paths:
+            - '/api/swagger'
+            - '/api/public'
+        - host: 'loftbru-cf.staging01.devland.is'
+          paths:
+            - '/api/swagger'
+            - '/api/public'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+    env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'air_discount_scheme_backend'
+      DB_USER: 'air_discount_scheme_backend'
+      SERVERSIDE_FEATURES_ON: ''
+    secrets:
+      DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+  namespace: 'air-discount-scheme'
+  replicaCount:
+    default: 2
+    max: 3
+    min: 2
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+    ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
+    ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
+    NATIONAL_REGISTRY_PASSWORD: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD'
+    NATIONAL_REGISTRY_URL: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL'
+    NATIONAL_REGISTRY_USERNAME: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
+    NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY'
+    SENTRY_DSN: '/k8s/air-discount-scheme-backend/SENTRY_DSN'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+air-discount-scheme-web:
+  enabled: true
+  env:
+    API_URL: 'http://web-air-discount-scheme-api'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/readiness'
+      timeoutSeconds: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/configuration-snippet: 'rewrite /$ https://beta.staging01.devland.is/loftbru; rewrite /en$ https://beta.staging01.devland.is/en/lower-airfares-for-residents-in-rural-areas;'
+      hosts:
+        - host: 'loftbru.staging01.devland.is'
+          paths:
+            - '/'
+        - host: 'loftbru-cf.staging01.devland.is'
+          paths:
+            - '/'
+  namespace: 'air-discount-scheme'
+  replicaCount:
+    default: 2
+    max: 3
+    min: 2
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 api:
   args:
     - '--tls-min-v1.0'
@@ -86,6 +250,7 @@ api:
     DOCUMENT_PROVIDER_TOKEN_URL_TEST: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST'
     DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
     DRIVING_LICENSE_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_XROAD_PATH'
+    DRIVING_LICENSE_XROAD_PATH_V2: '/k8s/api/DRIVING_LICENSE_XROAD_PATH_V2'
     HEALTH_INSURANCE_XROAD_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
     HEALTH_INSURANCE_XROAD_USERNAME: '/k8s/health-insurance/XROAD-USER'
     HEALTH_INSURANCE_XROAD_WSDLURL: '/k8s/api/HEALTH_INSURANCE_XROAD_WSDLURL'
@@ -224,6 +389,7 @@ application-system-api:
     DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
     DRIVING_LICENSE_SECRET: '/k8s/application-system/api/DRIVING_LICENSE_SECRET'
     DRIVING_LICENSE_XROAD_PATH: '/k8s/application-system/api/DRIVING_LICENSE_XROAD_PATH'
+    DRIVING_LICENSE_XROAD_PATH_V2: '/k8s/application-system/api/DRIVING_LICENSE_XROAD_PATH_V2'
     EMAIL_FROM: '/k8s/application-system/api/EMAIL_FROM'
     EMAIL_FROM_NAME: '/k8s/application-system/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/application-system/api/EMAIL_REPLY_TO'
@@ -395,6 +561,7 @@ endorsement-system-api:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_endorsements_api'
     DB_USER: 'services_endorsements_api'
+    EMAIL_REGION: 'eu-west-1'
     SERVERSIDE_FEATURES_ON: ''
     TEMPORARY_VOTER_REGISTRY_API_URL: 'http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local'
   grantNamespaces:

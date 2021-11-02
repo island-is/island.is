@@ -1,32 +1,31 @@
 import React, { ReactNode, useContext, useEffect } from 'react'
 import { Box, GridContainer } from '@island.is/island-ui/core'
 
-import * as styles from './AppLayout.treat'
+import * as styles from './AppLayout.css'
 import { Logo, Header } from '@island.is/financial-aid-web/osk/src/components'
 
 import {
   SideBar,
-  ServiceCenter,
+  Skeleton,
 } from '@island.is/financial-aid-web/osk/src/components'
 
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import cn from 'classnames'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 interface Props {
   children: ReactNode
 }
 
 const AppLayout = ({ children }: Props) => {
-  const { isAuthenticated, user, userServiceCenter } = useContext(UserContext)
+  const { isAuthenticated, user, loadingUser } = useContext(AppContext)
 
   useEffect(() => {
     document.title = 'Fjárhagsaðstoð'
   }, [])
 
-  if (isAuthenticated === false || user === undefined) {
-    return null
+  if (isAuthenticated === false || user === undefined || loadingUser) {
+    return <Skeleton />
   }
-
   return (
     <>
       <Header />
@@ -48,12 +47,7 @@ const AppLayout = ({ children }: Props) => {
               borderRadius="large"
               className={styles.formContainer}
             >
-              {/* Todo: þjóðskrá */}
-              {userServiceCenter === undefined || userServiceCenter?.active ? (
-                <>{children}</>
-              ) : (
-                <ServiceCenter serviceCenter={userServiceCenter} />
-              )}
+              {children}
             </Box>
 
             <Box className={styles.sidebarContent}>

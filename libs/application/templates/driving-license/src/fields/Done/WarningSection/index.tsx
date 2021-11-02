@@ -9,7 +9,7 @@ import {
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { MessageDescriptor } from '@formatjs/intl'
 
-import * as styles from './WarningSection.treat'
+import * as styles from './WarningSection.css'
 
 export interface Step {
   key: string

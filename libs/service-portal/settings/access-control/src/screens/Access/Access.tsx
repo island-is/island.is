@@ -33,7 +33,7 @@ import { useLocale } from '@island.is/localization'
 import { AuthDelegationsQuery } from '../AccessControl'
 import { AccessItem } from './components'
 
-import * as styles from './Access.treat'
+import * as styles from './Access.css'
 
 const GROUP_PREFIX = 'group'
 const SCOPE_PREFIX = 'scope'
@@ -317,7 +317,7 @@ function Access() {
             </Inline>
           </Box>
 
-          <div className={styles.tempTableDatePickerFix}>
+          <div className={styles.datePickerFix}>
             <T.Table>
               <T.Head>
                 <T.Row>

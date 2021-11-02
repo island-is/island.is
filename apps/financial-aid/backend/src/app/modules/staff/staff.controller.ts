@@ -2,7 +2,6 @@ import {
   Controller,
   ForbiddenException,
   Get,
-  NotFoundException,
   Param,
   UseGuards,
 } from '@nestjs/common'
@@ -13,7 +12,7 @@ import { StaffService } from './staff.service'
 import { StaffModel } from './models'
 import { apiBasePath, RolesRule } from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { RolesGuard } from '../../guards'
+import { RolesGuard } from '../../guards/roles.guard'
 import { RolesRules } from '../../decorators'
 
 @UseGuards(IdsUserGuard, RolesGuard)
@@ -32,8 +31,8 @@ export class StaffController {
     @Param('nationalId') nationalId: string,
   ): Promise<StaffModel> {
     const staff = await this.staffService.findByNationalId(nationalId)
-    if (staff === null) {
-      throw new ForbiddenException('Staff not found')
+    if (staff === null || staff.active === false) {
+      throw new ForbiddenException('Staff not found or is not active')
     }
     return staff
   }

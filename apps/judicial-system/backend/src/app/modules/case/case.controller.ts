@@ -43,22 +43,20 @@ import {
   TokenGuard,
 } from '@island.is/judicial-system/auth'
 
+import {
+  judgeRule,
+  prosecutorRule,
+  registrarRule,
+  staffRule,
+} from '../../guards'
 import { CaseFile } from '../file/models/file.model'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
+import { CaseExistsGuard, CurrentCase } from './guards'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
 import { CaseService } from './case.service'
-
-// Allows prosecutors to perform any action
-const prosecutorRule = UserRole.PROSECUTOR as RolesRule
-
-// Allows judges to perform any action
-const judgeRule = UserRole.JUDGE as RolesRule
-
-// Allows registrars to perform any action
-const registrarRule = UserRole.REGISTRAR as RolesRule
 
 // Allows prosecutors to update a specific set of fields
 const prosecutorUpdateRule = {
@@ -86,7 +84,7 @@ const prosecutorUpdateRule = {
     'demands',
     'lawsBroken',
     'legalBasis',
-    'custodyProvisions',
+    'legalProvisions',
     'requestedCustodyRestrictions',
     'requestedOtherRestrictions',
     'caseFacts',
@@ -116,9 +114,7 @@ const courtFields = [
   'courtAttendees',
   'prosecutorDemands',
   'courtDocuments',
-  'isAccusedRightsHidden',
-  'accusedPleaDecision',
-  'accusedPleaAnnouncement',
+  'accusedBookings',
   'litigationPresentations',
   'courtCaseFacts',
   'courtLegalArguments',
@@ -370,7 +366,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('cases')
   @ApiOkResponse({
     type: Case,
@@ -381,15 +377,15 @@ export class CaseController {
     return this.caseService.getAll(user)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
-  @Get('case/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
-  getById(
-    @Param('id') id: string,
-    @CurrentHttpUser() user: User,
+  async getById(
+    @Param('caseId') _0: string,
+    @CurrentCase() theCase: Case,
   ): Promise<Case> {
-    return this.caseService.findByIdAndUser(id, user, false)
+    return theCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -432,7 +428,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -472,7 +468,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:id/custodyNotice')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { DatePicker, Input } from '@island.is/island-ui/core'
 import { TimeInputField, BlueBox } from '../../shared-components'
-import * as styles from './DateTime.treat'
+import * as styles from './DateTime.css'
 
 import {
   validate,
@@ -45,7 +45,10 @@ const DateTime: React.FC<Props> = (props) => {
 
   const getTimeFromDate = (date: Date | undefined): string =>
     date
-      ? `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`
+      ? `${date
+          .getHours()
+          .toString()
+          .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
       : ''
 
   const [currentDate, setCurrentDate] = useState(selectedDate)

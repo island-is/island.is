@@ -6,8 +6,8 @@ import {
   Footer,
 } from '@island.is/financial-aid-web/osk/src/components'
 
-import { ServiceCenter as IServiceCenter } from '@island.is/financial-aid/shared/data'
-import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
+import { ServiceCenter as IServiceCenter } from '@island.is/financial-aid/shared/lib'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 
 interface Props {
   serviceCenter?: IServiceCenter
@@ -25,7 +25,7 @@ const ServiceCenter = ({ serviceCenter }: Props) => {
 
         <Text marginBottom={[1, 1, 2]}>
           Samkvæmt <b>Þjóðskrá</b> ert þú með lögheimili í{' '}
-          <b>{serviceCenter?.name}</b> .
+          <b>{serviceCenter?.name}</b>.
         </Text>
 
         <Text marginBottom={[2, 2, 4]}>

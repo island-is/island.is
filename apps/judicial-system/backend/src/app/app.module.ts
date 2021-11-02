@@ -12,6 +12,8 @@ import {
   NotificationModule,
   UserModule,
   EventModule,
+  PoliceModule,
+  AwsS3Module,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
@@ -31,6 +33,8 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     FileModule,
     CourtModule,
     EventModule,
+    PoliceModule,
+    AwsS3Module,
   ],
 })
 export class AppModule {}

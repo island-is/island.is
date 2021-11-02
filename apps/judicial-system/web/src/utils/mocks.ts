@@ -1,6 +1,6 @@
 import {
   CaseAppealDecision,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseFileState,
@@ -23,6 +23,18 @@ export const mockCourt = {
   id: 'court_id',
   type: InstitutionType.COURT,
   name: 'Héraðsdómur Reykjavíkur',
+}
+
+export const mockHighCourt = {
+  id: 'high_court_id',
+  type: InstitutionType.HIGH_COURT,
+  name: 'Landsréttur',
+}
+
+export const mockPrison = {
+  id: 'prison_id',
+  type: InstitutionType.PRISON,
+  name: 'Stóra Hraun',
 }
 
 export const mockProsecutor = {
@@ -51,6 +63,22 @@ export const mockJudge = {
   name: 'Wonder Woman',
   title: 'héraðsdómari',
   institution: mockCourt,
+} as User
+
+export const mockHighCourtUser = {
+  id: 'hc_1',
+  role: UserRole.JUDGE,
+  name: 'Lalli Landsréttardómari',
+  title: 'dómari',
+  institution: mockHighCourt,
+} as User
+
+export const mockPrisonUser = {
+  id: 'hc_1',
+  role: UserRole.STAFF,
+  name: 'Lalli Landsréttardómari',
+  title: 'dómari',
+  institution: mockPrison,
 } as User
 
 export const mockJudgeBatman = {
@@ -91,10 +119,7 @@ const testCase1 = {
   demands:
     'Þess er krafist að Jon Harring, kt. string, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:51, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
   lawsBroken: 'string',
-  custodyProvisions: [
-    CaseCustodyProvisions._95_1_A,
-    CaseCustodyProvisions._95_1_C,
-  ],
+  legalProvisions: [CaseLegalProvisions._95_1_A, CaseLegalProvisions._95_1_C],
   requestedCustodyRestrictions: ['ISOLATION', 'MEDIA'],
   caseFacts: 'string',
   legalArguments: 'string',
@@ -117,7 +142,7 @@ const testCase1 = {
   courtEndTime: null,
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling:
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Prioris generis est docilitas, memoria; Quod quidem nobis non saepe contingit. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quasi vero, inquit, perpetua oratio rhetorum solum, non etiam philosophorum sit. Duo Reges: constructio interrete. Non est ista, inquam, Piso, magna dissensio. Quantum Aristoxeni ingenium consumptum videmus in musicis? ',
@@ -161,7 +186,7 @@ const testCase2 = {
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedValidToDate: null,
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
@@ -180,7 +205,7 @@ const testCase2 = {
   courtEndTime: null,
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.REJECTING,
@@ -212,7 +237,7 @@ const testCase3 = {
   requestedCourtDate: null,
   requestedValidToDate: '2020-10-24T12:31:00Z',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [CaseCustodyRestrictions.MEDIA],
   caseFacts: null,
   legalArguments: null,
@@ -226,7 +251,7 @@ const testCase3 = {
   courtAttendees: null,
   courtRoom: '999',
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   courtCaseFacts: null,
   courtLegalArguments: null,
@@ -260,7 +285,7 @@ const testCase4 = {
   requestedCourtDate: null,
   requestedValidToDate: '2020-09-16',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
@@ -279,7 +304,7 @@ const testCase4 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.REJECTING,
@@ -324,7 +349,7 @@ const testCase5 = {
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedValidToDate: '2020-09-16',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
@@ -343,7 +368,7 @@ const testCase5 = {
   courtEndTime: null,
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   courtCaseFacts: null,
   courtLegalArguments: null,
@@ -390,7 +415,7 @@ const testCase6 = {
   requestedCourtDate: null,
   requestedValidToDate: '2020-09-16',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
@@ -409,7 +434,7 @@ const testCase6 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.ACCEPTING,
@@ -441,7 +466,7 @@ const testCase7 = {
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedValidToDate: '2020-09-16',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
@@ -460,7 +485,7 @@ const testCase7 = {
   courtEndTime: '2020-09-16',
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
@@ -491,7 +516,7 @@ const testCase8 = {
   requestedCourtDate: null,
   requestedValidToDate: '2020-09-16',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
@@ -510,7 +535,7 @@ const testCase8 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
@@ -580,7 +605,7 @@ const testCase9 = {
   requestedValidToDate: '2020-09-16T00:00:00.000Z',
   demands: 'Þess er krafist ...',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
@@ -599,7 +624,7 @@ const testCase9 = {
   courtEndTime: null,
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.REJECTING,
@@ -630,7 +655,7 @@ const testCase10 = {
   requestedCourtDate: null,
   requestedValidToDate: '2020-09-16',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
@@ -649,7 +674,7 @@ const testCase10 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.ACCEPTING,
@@ -681,7 +706,7 @@ const testCase11 = {
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedValidToDate: '2020-09-16T19:51:28.224Z',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
@@ -700,7 +725,7 @@ const testCase11 = {
   courtEndTime: null,
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.REJECTING,
@@ -731,7 +756,7 @@ const testCase12 = {
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedValidToDate: '2020-09-16T19:51:28.224Z',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
@@ -750,7 +775,7 @@ const testCase12 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.DISMISSING,
@@ -786,6 +811,32 @@ export const mockJudgeQuery = [
     result: {
       data: {
         currentUser: mockJudge,
+      },
+    },
+  },
+]
+
+export const mockHighCourtQuery = [
+  {
+    request: {
+      query: CurrentUserQuery,
+    },
+    result: {
+      data: {
+        currentUser: mockHighCourtUser,
+      },
+    },
+  },
+]
+
+export const mockPrisonUserQuery = [
+  {
+    request: {
+      query: CurrentUserQuery,
+    },
+    result: {
+      data: {
+        currentUser: mockPrisonUser,
       },
     },
   },
@@ -837,7 +888,7 @@ export const mockUsersQuery = [
     },
     result: {
       data: {
-        users: [mockProsecutor, mockJudge, mockRegistrar],
+        users: [mockProsecutor, mockJudge, mockRegistrar, mockHighCourtUser],
       },
     },
   },
