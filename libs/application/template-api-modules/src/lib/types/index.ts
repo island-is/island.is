@@ -4,6 +4,7 @@ import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Message } from '@island.is/email-service'
 import { PartyApplicationServiceOptions } from '../modules/templates/party-application/party-application.service'
 import { User } from '@island.is/auth-nest-tools'
+import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -48,6 +49,7 @@ export interface BaseTemplateAPIModuleConfig {
   generalPetition: {
     endorsementsApiBasePath: string
   }
+  healthInsuranceV2: HealthInsuranceV2Options
 }
 
 export interface TemplateApiModuleActionProps {

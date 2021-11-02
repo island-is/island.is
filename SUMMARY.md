@@ -172,6 +172,7 @@
   - [Documents (Pósthólf)](libs/clients/documents/README.md)
   - [Clients Driving License V1 / V2](libs/clients/driving-license/README.md)
   - [Clients Finance](libs/clients/finance/README.md)
+  - [Clients Health Insurance V2](libs/clients/health-insurance-v2/README.md)
   - [Client Middlewares](libs/clients/middlewares/README.md)
   - [Clients Mms](libs/clients/mms/README.md)
   - [National Registry Clients](libs/clients/national-registry/README.md)

@@ -33,6 +33,7 @@ import {
   locationAndPurpose,
   overview,
   sportsClubInfo,
+  inReview,
 } from '../../lib/messages'
 import {
   getAttachmentTitles,
@@ -48,6 +49,12 @@ import {
 } from '../../utils'
 import * as styles from './FormOverview.css'
 import { FileValueLine, ValueLine } from './ValueLine'
+
+interface SubmittedApplicationData {
+  data?: {
+    documentId: string
+  }
+}
 
 export const FormOverview: FC<FieldBaseProps> = ({
   application,
@@ -68,13 +75,33 @@ export const FormOverview: FC<FieldBaseProps> = ({
     if (goToScreen) goToScreen(screen)
   }
 
+  const subAppData = application.externalData
+    .submitApplication as SubmittedApplicationData
+
   return (
     <Box component="section" paddingTop={2}>
       <Text>
         {formatText(overview.general.description, application, formatMessage)}
       </Text>
-
-      <Text variant="h4" paddingTop={10} paddingBottom={3}>
+      {subAppData?.data?.documentId && (
+        <Box paddingTop={5}>
+          <AlertMessage
+            title={formatMessage(inReview.application.documentIdAlertTitle)}
+            type={'info'}
+            message={
+              <Text>
+                <span>
+                  {formatMessage(inReview.application.documentIdAlertMessage)}
+                </span>
+                <span className={styles.valueLabel}>
+                  {` ${subAppData.data?.documentId}`}
+                </span>
+              </Text>
+            }
+          />
+        </Box>
+      )}
+      <Text variant="h4" paddingTop={5} paddingBottom={3}>
         {formatText(
           applicantInformation.general.title,
           application,

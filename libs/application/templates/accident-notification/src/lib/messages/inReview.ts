@@ -58,6 +58,17 @@ export const inReview = {
         'Slysatilkynning hefur verið send til Sjúkratryggingar Íslands',
       description: 'Summary for application section in review',
     },
+    documentIdAlertTitle: {
+      id: 'an.application:inReview.application.documentIdAlertTitle',
+      defaultMessage: 'Skjalanúmer',
+      description: 'Document Id',
+    },
+    documentIdAlertMessage: {
+      id: 'an.application:inReview.application.documentIdAlertMessage',
+      defaultMessage:
+        'Skjalanúmer fyrir tilkynninguna hjá Sjúkratryggingum Íslands:',
+      description: 'Document id description text',
+    },
   }),
   documents: defineMessages({
     title: {
