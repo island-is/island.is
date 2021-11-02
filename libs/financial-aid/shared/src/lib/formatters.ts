@@ -210,6 +210,8 @@ export const aidCalculator = (
     case 'RegisteredLease':
       return aid.registeredRenting
     case 'WithOthers':
+      return aid.withOthers
+    case 'UnregisteredLease':
       return aid.unregisteredRenting
     case 'Other':
     case 'Unknown':
