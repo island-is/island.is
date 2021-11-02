@@ -48,7 +48,9 @@ const CourtRecord = () => {
           attendees += `${wc.accusedName} varnaraðili`
         }
       } else {
-        attendees += formatMessage(m.sections.courtAttendees.defendantNotPresentAutofill)
+        attendees += formatMessage(
+          m.sections.courtAttendees.defendantNotPresentAutofill,
+        )
       }
 
       if (
