@@ -43,15 +43,6 @@ export const showNavInMobile = style({
   },
 })
 
-export const group = style({
-  display: 'block',
-  color: theme.color.dark300,
-  fontSize: '14px',
-  marginTop: theme.spacing[4],
-  marginLeft: theme.spacing[1],
-  marginBottom: theme.spacing[1],
-})
-
 export const logoContainer = style({
   marginBottom: theme.spacing[8],
   maxWidth: '160px',
@@ -68,31 +59,6 @@ export const logoMunicipalityContainer = style({
 export const logoMunicipality = style({
   width: theme.spacing[4],
   height: theme.spacing[6],
-})
-
-export const activeLink = style({
-  backgroundColor: theme.color.white,
-  borderRadius: theme.spacing[1],
-})
-
-export const link = style({
-  display: 'block',
-  padding: theme.spacing[1],
-  borderRadius: theme.spacing[1],
-  selectors: {
-    '&:hover': {
-      textDecoration: 'none !important',
-    },
-  },
-})
-
-export const linkHoverEffect = style({
-  transition: 'background-color 250ms ease',
-  selectors: {
-    '&:hover': {
-      backgroundColor: theme.color.purple200,
-    },
-  },
 })
 
 export const sideNavBarButton = style({

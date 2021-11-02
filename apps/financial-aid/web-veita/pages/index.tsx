@@ -1,3 +1,3 @@
-import LandingPage from '@island.is/financial-aid-web/veita/src/routes/LandingPage/landingPage'
+import RedirectPage from '@island.is/financial-aid-web/veita/src/routes/RedirectPage/redirectPage'
 
-export default LandingPage
+export default RedirectPage

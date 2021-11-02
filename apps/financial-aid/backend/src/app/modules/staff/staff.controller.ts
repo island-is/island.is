@@ -13,9 +13,10 @@ import { StaffModel } from './models'
 import {
   apiBasePath,
   RolesRule,
-  Staff,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
+
+import type { Staff } from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { RolesGuard } from '../../guards/roles.guard'
 import { CurrentStaff, RolesRules } from '../../decorators'

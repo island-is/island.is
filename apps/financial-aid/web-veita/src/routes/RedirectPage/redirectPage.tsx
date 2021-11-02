@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import { Box } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import {
   ApplicationOverviewSkeleton,
@@ -10,7 +9,7 @@ import { Routes, StaffRole } from '@island.is/financial-aid/shared/lib'
 
 import { AdminContext } from '../../components/AdminProvider/AdminProvider'
 
-export const LandingPage = () => {
+export const RedirectPage = () => {
   const router = useRouter()
   const { admin, isAuthenticated } = useContext(AdminContext)
 
@@ -24,9 +23,9 @@ export const LandingPage = () => {
 
   return (
     <LoadingContainer isLoading={true} loader={<ApplicationOverviewSkeleton />}>
-      <Box className={`contentUp delay-25`} marginTop={15}></Box>
+      <></>
     </LoadingContainer>
   )
 }
 
-export default LandingPage
+export default RedirectPage
