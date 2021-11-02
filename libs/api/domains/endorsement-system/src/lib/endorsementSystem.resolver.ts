@@ -30,6 +30,8 @@ import { PaginatedEndorsementListResponse } from './dto/paginatedEndorsementList
 
 import { EndorsementPaginationInput } from './dto/endorsementPagination.input'
 import { OpenListInput } from './dto/openList.input'
+import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
+import { sendPdfEmailInput } from './dto/sendPdfEmail.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => EndorsementList)
@@ -256,6 +258,17 @@ export class EndorsementSystemResolver {
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {
     return await this.endorsementSystemService.endorsementListControllerUnlock(
+      input,
+      user,
+    )
+  }
+
+  @Mutation(() => sendPdfEmailResponse)
+  async endorsementSystemsendPdfEmail(
+    @Args('input') input: sendPdfEmailInput,
+    @CurrentUser() user: User,
+  ): Promise<{ success: boolean }> {
+    return await this.endorsementSystemService.endorsementControllerSendPdfEmail(
       input,
       user,
     )
