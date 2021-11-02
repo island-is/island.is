@@ -38,8 +38,8 @@ export class UserResolver {
     return user as UserModel
   }
 
-  @ResolveField('isSpouse', () => SpouseModel)
-  async isSpouse(
+  @ResolveField('spouse', () => SpouseModel)
+  async spouse(
     @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<SpouseModel> {

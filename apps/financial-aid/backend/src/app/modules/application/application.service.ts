@@ -56,7 +56,7 @@ export class ApplicationService {
     private readonly emailService: EmailService,
   ) {}
 
-  async hasSpouseApplied(spouseNationalId: string): Promise<SpouseResponse> {
+  async getSpouseInfo(spouseNationalId: string): Promise<SpouseResponse> {
     const application = await this.applicationModel.findOne({
       where: {
         spouseNationalId,

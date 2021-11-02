@@ -95,12 +95,12 @@ export class ApplicationController {
     type: SpouseResponse,
     description: 'Checking if user is spouse',
   })
-  async isSpouse(
+  async spouse(
     @Param('spouseNationalId') spouseNationalId: string,
   ): Promise<SpouseResponse> {
     this.logger.debug('Application controller: Checking if user is spouse')
 
-    return await this.applicationService.hasSpouseApplied(spouseNationalId)
+    return await this.applicationService.getSpouseInfo(spouseNationalId)
   }
 
   @UseGuards(RolesGuard, StaffGuard)
