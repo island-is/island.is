@@ -100,12 +100,12 @@ const devConfig = {
     healthInsuranceV2: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
       xRoadProviderId:
-        process.env.HEALTH_INSURANCE_V2_XROAD_PROVIDER_ID ??
+        process.env.XROAD_HEALTH_INSURANCE_ID ??
         'IS-DEV/GOV/10007/SJUKRA-Protected',
       xRoadClientId:
         process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
-      username: process.env.HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
-      password: process.env.HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
+      username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
+      password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
     },
   },
   application: {
@@ -227,10 +227,10 @@ const prodConfig = {
     },
     healthInsuranceV2: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-      xRoadProviderId: process.env.HEALTH_INSURANCE_V2_XROAD_PROVIDER_ID,
+      xRoadProviderId: process.env.XROAD_HEALTH_INSURANCE_ID,
       xRoadClientId: process.env.XROAD_CLIENT_ID,
-      username: process.env.HEALTH_INSURANCE_V2_XROAD_USERNAME,
-      password: process.env.HEALTH_INSURANCE_V2_XROAD_PASSWORD,
+      username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME,
+      password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD,
     },
   },
   application: {
