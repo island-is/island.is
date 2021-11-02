@@ -223,7 +223,7 @@ export interface GetSignedUrlForId {
 }
 
 export interface Spouse {
-  hasApplied: boolean
+  hasPartnerApplied: boolean
   hasFiles: boolean
 }
 

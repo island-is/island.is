@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class SpouseResponse {
   @ApiProperty()
-  hasApplied: boolean
+  hasPartnerApplied: boolean
 
   @ApiProperty()
   hasFiles: boolean

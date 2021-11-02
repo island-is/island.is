@@ -128,7 +128,7 @@ const useNavigationTree = (hasIncome: boolean) => {
     },
   ]
 
-  return user?.spouse?.hasApplied ? spouseSection : section
+  return user?.spouse?.hasPartnerApplied ? spouseSection : section
 }
 
 export default useNavigationTree

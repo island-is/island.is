@@ -35,7 +35,7 @@ const MainPage = () => {
     user,
   } = useContext(AppContext)
 
-  const isUserSpouse = user?.spouse?.hasApplied
+  const isUserSpouse = user?.spouse?.hasPartnerApplied
 
   useEffect(() => {
     if (myApplication && myApplication.municipalityCode) {

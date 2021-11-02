@@ -41,7 +41,7 @@ export const CurrentUserQuery = gql`
       phoneNumber
       postalCode
       spouse {
-        hasApplied
+        hasPartnerApplied
         hasFiles
       }
       currentApplicationId
