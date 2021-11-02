@@ -1,8 +1,6 @@
 import { utils } from '@island.is/application/templates/accident-notification'
 import { Message } from '@island.is/email-service'
-import {
-  EmailTemplateGeneratorProps,
-} from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../accident-notification.utils'
 
 export type AnAssignmentEmailTemplateGenerator = (
