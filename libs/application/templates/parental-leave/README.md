@@ -72,6 +72,16 @@ To connect to VMST test API you'll want to start the local proxy, following thes
 
 See `libs/api/domains/directorate-of-labour/src/lib/directorate-of-labour.module.ts` for examples of VMST communication.
 
+### Contacts
+
+VMST API specific questions:
+[Guðmundur K. G. Kolka](mailto:gudmundur.kolka@advania.is), API and NAV developer
+
+VMST Devops:
+[Unnar Sigurðsson](mailto:unnar.sigurdsson@vmst.is), VMST API dev ops and x-road integration
+
+We also have two channels on the islandis slack #faedingarorlof-profanir and #faedingarorlof
+
 ### Localisation
 
 All localisation can be found on Contentful.
