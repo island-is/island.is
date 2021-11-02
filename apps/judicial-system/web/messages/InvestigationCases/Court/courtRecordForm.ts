@@ -2,6 +2,16 @@ import { defineMessages } from 'react-intl'
 
 export const icCourtRecord = {
   sections: {
+    courtAttendees: defineMessages({
+      defendantNotPresentAutofill: {
+        id:
+          'judicial.system.investigation_cases:court_record.court_attendees.defendant_not_present_autofill',
+        defaultMessage:
+          'Varnaraðili er ekki viðstaddur sbr. 104. gr. laga 88/2008 um meðferð sakamála.',
+        description:
+          'Notaður sem sjálfgefinn texti í "Mættir eru" textaboxi á þingbókar skrefi í rannsóknaheimildum',
+      },
+    }),
     accusedBookings: defineMessages({
       title: {
         id:

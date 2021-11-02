@@ -48,8 +48,7 @@ const CourtRecord = () => {
           attendees += `${wc.accusedName} varnaraðili`
         }
       } else {
-        attendees +=
-          'Varnaraðili var ekki viðstaddur sbr. 104. gr. laga 88/2008 um meðferð sakamála.'
+        attendees += formatMessage(m.sections.courtAttendees.defendantNotPresentAutofill)
       }
 
       if (
