@@ -9,6 +9,7 @@ import {
   aidCalculator,
   getMonth,
   calculateAidFinalAmount,
+  showSpouseData,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -26,6 +27,8 @@ import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/
 import {
   getApplicant,
   getApplicantMoreInfo,
+  getApplicantSpouse,
+  getNationalRegistryInfo,
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
 
 interface ApplicationProps {
@@ -69,20 +72,22 @@ const ApplicationProfile = ({
       title: 'Sótt um',
       content: format(new Date(application.created), 'dd.MM.y  · kk:mm'),
     },
-    {
-      title: 'Sótt um',
-      content: `${
-        aidAmount &&
-        calculateAidFinalAmount(
-          aidAmount,
-          application.usePersonalTaxCredit,
-          currentYear,
-        ).toLocaleString('de-DE')
-      } kr.`,
-      onclick: () => {
-        setAidModalVisible(!isAidModalVisible)
-      },
-    },
+    aidAmount
+      ? {
+          title: 'Áætluð aðstoð',
+          content: `${calculateAidFinalAmount(
+            aidAmount,
+            application.usePersonalTaxCredit,
+            currentYear,
+          ).toLocaleString('de-DE')} kr.`,
+          onclick: () => {
+            setAidModalVisible(!isAidModalVisible)
+          },
+        }
+      : {
+          title: 'Áætluð aðstoð',
+          content: `Útreikningur misstókst`,
+        },
   ]
 
   if (application.state === ApplicationState.APPROVED) {
@@ -102,7 +107,11 @@ const ApplicationProfile = ({
 
   const applicant = getApplicant(application)
 
+  const applicantSpouse = getApplicantSpouse(application)
+
   const applicantMoreInfo = getApplicantMoreInfo(application)
+
+  const nationalRegistryInfo = getNationalRegistryInfo(application)
 
   return (
     <>
@@ -125,14 +134,30 @@ const ApplicationProfile = ({
           info={applicationInfo}
           className={`contentUp delay-50`}
         />
+
         <Profile
           heading="Umsækjandi"
           info={applicant}
           className={`contentUp delay-75`}
         />
+
+        {showSpouseData[application.familyStatus] && (
+          <Profile
+            heading="Maki"
+            info={applicantSpouse}
+            className={`contentUp delay-75`}
+          />
+        )}
+
         <Profile
-          heading="Aðrar upplýsingar"
+          heading="Umsóknarferli"
           info={applicantMoreInfo}
+          className={`contentUp delay-100`}
+        />
+
+        <Profile
+          heading="Þjóðskrá"
+          info={nationalRegistryInfo}
           className={`contentUp delay-100`}
         />
 

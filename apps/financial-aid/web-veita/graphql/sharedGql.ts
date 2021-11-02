@@ -21,7 +21,9 @@ export const ApplicationQuery = gql`
       interview
       employmentCustom
       homeCircumstancesCustom
+      familyStatus
       spouseNationalId
+      spouseName
       city
       streetName
       postalCode
@@ -41,6 +43,7 @@ export const ApplicationQuery = gql`
       staff {
         name
         municipalityId
+        nationalId
       }
       applicationEvents {
         id
@@ -236,6 +239,18 @@ export const UpdateApplicationMutation = gql`
         name
         municipalityId
       }
+    }
+  }
+`
+
+export const StaffForMunicipalityQuery = gql`
+  query staffForMunicipality {
+    users {
+      id
+      nationalId
+      name
+      roles
+      active
     }
   }
 `

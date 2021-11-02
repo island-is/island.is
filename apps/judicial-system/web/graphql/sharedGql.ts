@@ -177,3 +177,21 @@ export const UploadFileToCourtMutation = gql`
     }
   }
 `
+
+export const PoliceCaseFilesQuery = gql`
+  query GetPoliceCaseFiles($input: PoliceCaseFilesQueryInput!) {
+    policeCaseFiles(input: $input) {
+      id
+      name
+    }
+  }
+`
+
+export const UploadPoliceCaseFileMutation = gql`
+  mutation UploadPoliceCaseFileMutation($input: UploadPoliceCaseFileInput!) {
+    uploadPoliceCaseFile(input: $input) {
+      key
+      size
+    }
+  }
+`

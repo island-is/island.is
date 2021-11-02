@@ -211,6 +211,7 @@ export interface Application {
   spouseNationalId?: string
   spouseEmail?: string
   spousePhoneNumber?: string
+  spouseName?: string
   familyStatus: FamilyStatus
   streetName?: string
   postalCode?: string
@@ -261,4 +262,9 @@ export interface ServiceCenter {
   postalCodes: number[]
   active?: boolean
   link?: string
+}
+
+export interface TableHeadersProps {
+  filterBy?: string
+  title: string
 }

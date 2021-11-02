@@ -1,3 +1,5 @@
+import { uuid } from 'uuidv4'
+import { Base64 } from 'js-base64'
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
 
@@ -14,9 +16,11 @@ import {
   createXRoadAPIPath,
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
-import type { PoliceCaseFile } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
+import { AwsS3Service } from '../aws-s3'
+import { UploadPoliceCaseFileDto } from './dto'
+import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
 
 @Injectable()
 export class PoliceService {
@@ -34,13 +38,76 @@ export class PoliceService {
     rejectUnauthorized: false,
   })
 
+  private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
+
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly awsS3Service: AwsS3Service,
   ) {}
 
-  async getAllPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
+  private async throttleUploadPoliceCaseFile(
+    caseId: string,
+    uploadPoliceCaseFile: UploadPoliceCaseFileDto,
+  ): Promise<UploadPoliceCaseFileResponse> {
+    this.logger.debug(
+      `Waiting to upload police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+    )
+
+    await this.throttle.catch((reason) => {
+      this.logger.error('Previous upload failed', { reason })
+    })
+
+    this.logger.debug(
+      `Starting to upload police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+    )
+
     let res: Response
+
+    try {
+      res = await fetch(
+        `${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+        {
+          headers: { 'X-Road-Client': environment.xRoad.clientId },
+          agent: this.agent,
+        } as RequestInit,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+        error,
+      )
+
+      throw new BadGatewayException(
+        `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+      )
+    }
+
+    if (!res.ok) {
+      throw new NotFoundException(
+        `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
+      )
+    }
+
+    const base64 = await res.json()
+    const pdf = Base64.atob(base64)
+
+    const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+
+    await this.awsS3Service.putObject(key, pdf)
+
+    this.logger.debug(
+      `Done uploading police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+    )
+
+    return { key, size: pdf.length }
+  }
+
+  async getAllPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
+    this.logger.debug(`Getting all police files for case ${caseId}`)
+
+    let res: Response
+
     try {
       res = await fetch(
         `${this.xRoadPath}/api/Rettarvarsla/GetDocumentListById/${caseId}`,
@@ -74,5 +141,21 @@ export class PoliceService {
         name: file.heitiSkjals,
       }),
     )
+  }
+
+  async uploadPoliceCaseFile(
+    caseId: string,
+    uploadPoliceCaseFile: UploadPoliceCaseFileDto,
+  ): Promise<UploadPoliceCaseFileResponse> {
+    this.logger.debug(
+      `Uploading police file ${uploadPoliceCaseFile.id} of case ${caseId} to AWS S3`,
+    )
+
+    this.throttle = this.throttleUploadPoliceCaseFile(
+      caseId,
+      uploadPoliceCaseFile,
+    )
+
+    return this.throttle
   }
 }
