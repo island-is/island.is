@@ -35,19 +35,10 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
       ? parentalLeaveFormMessages.shared.yourRightsInMonthsAndDay
       : parentalLeaveFormMessages.shared.yourRightsInMonthsAndDays
 
-  const rightsAfterChangeInDays = defaultMonths * daysInMonth - chosenGiveDays
-  const rightsAfterChangeInMonths = Math.floor(
-    (rightsAfterChangeInDays * 10000) / daysInMonth,
-  )
-  const rightsAfterChangeInWholeMonths =
-    Math.floor(rightsAfterChangeInMonths / 10000) * 10000
+  const rightsAfterTransfer = defaultMonths * daysInMonth - chosenGiveDays
 
-  const remainingMonths = Math.floor(rightsAfterChangeInMonths / 10000)
-  const monthRemainder =
-    rightsAfterChangeInMonths - rightsAfterChangeInWholeMonths
-  const remainingDays = Math.floor(
-    monthRemainder / Math.floor((1 / daysInMonth) * 10000),
-  )
+  const remainingMonths = Math.floor(rightsAfterTransfer / daysInMonth)
+  const remainingDays = rightsAfterTransfer % (remainingMonths * daysInMonth)
 
   const boxChartKeys: BoxChartKey[] = [
     {
