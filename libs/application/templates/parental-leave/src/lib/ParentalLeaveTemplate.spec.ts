@@ -15,7 +15,27 @@ function buildApplication(data: {
   externalData?: ExternalData
   state?: string
 }): Application {
-  const { answers = {}, externalData = {}, state = 'draft' } = data
+  const {
+    answers = {},
+    externalData = {
+      children: {
+        data: {
+          children: [
+            {
+              hasRights: true,
+              remainingDays: 180,
+              parentalRelation: 'primary',
+              expectedDateOfBirth: '2022-10-31',
+            },
+          ],
+          existingApplications: [],
+        },
+        date: new Date('2021-10-31'),
+        status: 'success',
+      },
+    },
+    state = 'draft',
+  } = data
 
   return {
     id: '12345',
@@ -43,6 +63,7 @@ describe('Parental Leave Application Template', () => {
               isRequestingRights: 'yes',
             },
             otherParentId,
+            selectedChild: '0',
           },
         }),
         ParentalLeaveTemplate,
@@ -84,6 +105,7 @@ describe('Parental Leave Application Template', () => {
       const otherParentId = '0987654321'
       const helper = new ApplicationTemplateHelper(
         buildApplication({
+          state: 'draft',
           answers: {
             requestRights: {
               isRequestingRights: 'yes',
@@ -92,6 +114,7 @@ describe('Parental Leave Application Template', () => {
             employer: {
               isSelfEmployed: 'no',
             },
+            selectedChild: '0',
           },
         }),
         ParentalLeaveTemplate,
@@ -131,6 +154,7 @@ describe('Parental Leave Application Template', () => {
             employer: {
               isSelfEmployed: 'yes',
             },
+            selectedChild: '0',
           },
         }),
         ParentalLeaveTemplate,

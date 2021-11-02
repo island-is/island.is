@@ -22,19 +22,6 @@ interface ApplicationsProvider {
   applications?: Application[]
 }
 
-export interface NavigationElement {
-  group?: string
-  label: string
-  link: string
-  applicationState: ApplicationState[]
-  headers: TableHeadersProps[]
-}
-
-export interface TableHeadersProps {
-  filterBy?: string
-  title: string
-}
-
 export const ApplicationsOverview = () => {
   const router = useRouter()
 
