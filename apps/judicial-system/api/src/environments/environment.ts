@@ -30,7 +30,7 @@ const devConfig = {
     url: 'http://localhost:3344',
   },
   features: {
-    hidden: '',
+    hidden: process.env.HIDDEN_FEATURES ?? '',
   },
 }
 
