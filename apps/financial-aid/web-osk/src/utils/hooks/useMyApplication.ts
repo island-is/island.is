@@ -9,8 +9,6 @@ import { useRouter } from 'next/router'
 const useMyApplication = () => {
   const router = useRouter()
 
-  // const storageKey = 'myCurrentApplication'
-
   const [myApplication, updateApplication] = useState<Application>()
 
   const [getApplication, { data, error, loading }] = useLazyQuery<
@@ -19,15 +17,6 @@ const useMyApplication = () => {
     },
     { input: { id: string } }
   >(ApplicationQuery)
-
-  // useEffect(() => {
-  //   const storedFormJson = sessionStorage.getItem(storageKey)
-  //   if (storedFormJson === null) {
-  //     return
-  //   }
-  //   const storedState = JSON.parse(storedFormJson)
-  //   updateApplication(storedState)
-  // }, [])
 
   if (
     router.query.id &&
@@ -44,7 +33,6 @@ const useMyApplication = () => {
 
       if (data) {
         updateApplication(data.application)
-        // sessionStorage.setItem(storageKey, JSON.stringify(data.application))
       }
     } catch {
       return {
