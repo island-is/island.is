@@ -5,6 +5,8 @@ import {
   ApplicationState,
   getState,
   getMonth,
+  months,
+  currentMonth,
 } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
@@ -20,8 +22,6 @@ const Approved = ({
   isStateVisible,
   isUserSpouse = false,
 }: Props) => {
-  const currentMonth = getMonth(new Date().getMonth())
-
   if (!isStateVisible) {
     return null
   }
@@ -37,8 +37,8 @@ const Approved = ({
         </Text>
       ) : (
         <Text variant="intro">
-          Umsóknin maka þíns um fjárhagsaðstoð í ágúst er samþykkt. Maki þinn
-          fær frekari upplýsingar um veitta aðstoð.
+          Umsóknin maka þíns um fjárhagsaðstoð í {currentMonth()} er samþykkt.
+          Maki þinn fær frekari upplýsingar um veitta aðstoð.
         </Text>
       )}
 
