@@ -44,6 +44,7 @@ type FormState = {
   category: string
   syslumadur: string
   subject: string
+  institutionSlug: string
 }
 
 interface StandardFormProps {
@@ -118,7 +119,6 @@ const labels = {
   kennitala_vegna_lausafes: 'Kennitala vegna lausafés',
   erindi: 'Erindi',
   vidfangsefni: 'Viðfangsefni',
-  phone: 'Símanúmer',
 }
 
 interface BasicInputProps {
@@ -368,6 +368,7 @@ export const StandardForm = ({
       subject: values.vidfangsefni,
       syslumadur: syslumadurId || '',
       category: categoryId,
+      institutionSlug,
       message,
     })
   }
@@ -503,7 +504,10 @@ export const StandardForm = ({
           <form onSubmit={handleSubmit(submitWithMessage)}>
             <GridContainer>
               <GridRow marginTop={8}>
-                <GridColumn paddingBottom={3} span="12/12">
+                <GridColumn
+                  paddingBottom={3}
+                  span={['12/12', '12/12', '12/12', '8/12']}
+                >
                   <Controller
                     control={control}
                     name="nafn"
@@ -527,26 +531,6 @@ export const StandardForm = ({
                         errorMessage={errors.nafn?.message}
                         onChange={onChange}
                         required
-                      />
-                    )}
-                  />
-                </GridColumn>
-                <GridColumn paddingBottom={3} span="12/12">
-                  <Controller
-                    control={useFormMethods.control}
-                    id="phone"
-                    name="phone"
-                    defaultValue=""
-                    render={({ onChange, onBlur, value, name }) => (
-                      <Input
-                        backgroundColor="blue"
-                        name={name}
-                        onBlur={onBlur}
-                        label={labels.phone}
-                        value={value}
-                        hasError={errors.phone}
-                        errorMessage={errors.phone?.message}
-                        onChange={onChange}
                       />
                     )}
                   />

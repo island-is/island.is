@@ -52,6 +52,7 @@ import {
 import { CaseFile } from '../file/models/file.model'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
+import { CaseExistsGuard, CurrentCase } from './guards'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
@@ -83,7 +84,7 @@ const prosecutorUpdateRule = {
     'demands',
     'lawsBroken',
     'legalBasis',
-    'custodyProvisions',
+    'legalProvisions',
     'requestedCustodyRestrictions',
     'requestedOtherRestrictions',
     'caseFacts',
@@ -113,9 +114,7 @@ const courtFields = [
   'courtAttendees',
   'prosecutorDemands',
   'courtDocuments',
-  'isAccusedRightsHidden',
-  'accusedPleaDecision',
-  'accusedPleaAnnouncement',
+  'accusedBookings',
   'litigationPresentations',
   'courtCaseFacts',
   'courtLegalArguments',
@@ -378,15 +377,15 @@ export class CaseController {
     return this.caseService.getAll(user)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
-  @Get('case/:id')
+  @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
-  getById(
-    @Param('id') id: string,
-    @CurrentHttpUser() user: User,
+  async getById(
+    @Param('caseId') _0: string,
+    @CurrentCase() theCase: Case,
   ): Promise<Case> {
-    return this.caseService.findByIdAndUser(id, user, false)
+    return theCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

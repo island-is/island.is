@@ -3,13 +3,10 @@ import { useQuery } from '@apollo/client'
 
 import { CurrentUserQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
-import { Routes, User } from '@island.is/financial-aid/shared/lib'
-import { useRouter } from 'next/router'
+import { User } from '@island.is/financial-aid/shared/lib'
 import { useSession } from 'next-auth/client'
 
 const useUser = () => {
-  const router = useRouter()
-
   const [user, setUser] = useState<User>()
   const [session] = useSession()
 
@@ -17,7 +14,7 @@ const useUser = () => {
     Boolean(session?.user),
   )
 
-  const { data } = useQuery(CurrentUserQuery, {
+  const { data, loading: loadingUser } = useQuery(CurrentUserQuery, {
     fetchPolicy: 'no-cache',
   })
 
@@ -25,12 +22,6 @@ const useUser = () => {
 
   useEffect(() => {
     if (loggedInUser && !user) {
-      if (loggedInUser.currentApplication) {
-        router.push(
-          `${Routes.statusPage(loggedInUser.currentApplication.id as string)}`,
-        )
-      }
-
       setUser(loggedInUser)
       setIsAuthenticated(true)
     }
@@ -40,6 +31,7 @@ const useUser = () => {
     isAuthenticated,
     user,
     setUser,
+    loadingUser,
   }
 }
 

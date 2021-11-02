@@ -1,5 +1,5 @@
 import {
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseGender,
   CaseType,
   SessionArrangements,
@@ -7,7 +7,7 @@ import {
 
 import {
   formatProsecutorCourtDateEmailNotification,
-  formatCustodyProvisions,
+  formatLegalProvisions,
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
   formatPrisonCourtDateEmailNotification,
@@ -21,40 +21,40 @@ import {
   formatCustodyIsolation,
 } from './formatters'
 
-describe('formatCustodyProvisions', () => {
-  test('should format custody provisions when no provisions are selected', () => {
+describe('formatLegalProvisions', () => {
+  test('should format legal provisions when no provisions are selected', () => {
     // Arrange
-    const custodyProvisions: CaseCustodyProvisions[] = []
+    const legalProvisions: CaseLegalProvisions[] = []
 
     // Act
-    const res = formatCustodyProvisions(custodyProvisions)
+    const res = formatLegalProvisions(legalProvisions)
 
     // Assert
     expect(res).toBe('Lagaákvæði ekki skráð')
   })
 
-  test('should format custody provisions when provisions not defined', () => {
+  test('should format legal provisions when provisions not defined', () => {
     // Act
-    const res = formatCustodyProvisions()
+    const res = formatLegalProvisions()
 
     // Assert
     expect(res).toBe('Lagaákvæði ekki skráð')
   })
 
-  test('should format custody provisions when some provisions are selected', () => {
+  test('should format legal provisions when some provisions are selected', () => {
     // Arrange
-    const custodyProvisions = [
-      CaseCustodyProvisions._95_1_A,
-      CaseCustodyProvisions._95_1_B,
-      CaseCustodyProvisions._95_1_C,
-      CaseCustodyProvisions._95_1_D,
-      CaseCustodyProvisions._95_2,
-      CaseCustodyProvisions._99_1_B,
-      CaseCustodyProvisions._100_1,
+    const legalProvisions = [
+      CaseLegalProvisions._95_1_A,
+      CaseLegalProvisions._95_1_B,
+      CaseLegalProvisions._95_1_C,
+      CaseLegalProvisions._95_1_D,
+      CaseLegalProvisions._95_2,
+      CaseLegalProvisions._99_1_B,
+      CaseLegalProvisions._100_1,
     ]
 
     // Act
-    const res = formatCustodyProvisions(custodyProvisions)
+    const res = formatLegalProvisions(legalProvisions)
 
     // Assert
     expect(res).toBe(
@@ -62,20 +62,20 @@ describe('formatCustodyProvisions', () => {
     )
   })
 
-  test('should sort provisions when formatting custody provisions', () => {
+  test('should sort provisions when formatting legal provisions', () => {
     // Arrange
-    const custodyProvisions = [
-      CaseCustodyProvisions._95_1_C,
-      CaseCustodyProvisions._95_1_D,
-      CaseCustodyProvisions._95_1_A,
-      CaseCustodyProvisions._95_2,
-      CaseCustodyProvisions._99_1_B,
-      CaseCustodyProvisions._95_1_B,
-      CaseCustodyProvisions._100_1,
+    const legalProvisions = [
+      CaseLegalProvisions._95_1_C,
+      CaseLegalProvisions._95_1_D,
+      CaseLegalProvisions._95_1_A,
+      CaseLegalProvisions._95_2,
+      CaseLegalProvisions._99_1_B,
+      CaseLegalProvisions._95_1_B,
+      CaseLegalProvisions._100_1,
     ]
 
     // Act
-    const res = formatCustodyProvisions(custodyProvisions)
+    const res = formatLegalProvisions(legalProvisions)
 
     // Assert
     expect(res).toBe(
@@ -83,21 +83,21 @@ describe('formatCustodyProvisions', () => {
     )
   })
 
-  test('should format custody provisions when some provisions are selected and additional freetext provided', () => {
+  test('should format legal provisions when some provisions are selected and additional freetext provided', () => {
     // Arrange
-    const custodyProvisions = [
-      CaseCustodyProvisions._95_1_A,
-      CaseCustodyProvisions._95_1_B,
-      CaseCustodyProvisions._95_1_C,
-      CaseCustodyProvisions._95_1_D,
-      CaseCustodyProvisions._95_2,
-      CaseCustodyProvisions._99_1_B,
-      CaseCustodyProvisions._100_1,
+    const legalProvisions = [
+      CaseLegalProvisions._95_1_A,
+      CaseLegalProvisions._95_1_B,
+      CaseLegalProvisions._95_1_C,
+      CaseLegalProvisions._95_1_D,
+      CaseLegalProvisions._95_2,
+      CaseLegalProvisions._99_1_B,
+      CaseLegalProvisions._100_1,
     ]
     const legalBasis = 'some lið mgr. gr.'
 
     // Act
-    const res = formatCustodyProvisions(custodyProvisions, legalBasis)
+    const res = formatLegalProvisions(legalProvisions, legalBasis)
 
     // Assert
     expect(res).toBe(
@@ -105,12 +105,12 @@ describe('formatCustodyProvisions', () => {
     )
   })
 
-  test('should format custody provisions only freetext provided', () => {
+  test('should format legal provisions only freetext provided', () => {
     // Arrange
     const legalBasis = 'some lið mgr. gr.'
 
     // Act
-    const res = formatCustodyProvisions(undefined, legalBasis)
+    const res = formatLegalProvisions(undefined, legalBasis)
 
     // Assert
     expect(res).toBe('some lið mgr. gr.')

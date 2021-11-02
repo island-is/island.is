@@ -54,12 +54,12 @@ export class StaffModel extends Model<Staff> {
   municipalityName: string
 
   @Column({
-    type: DataType.ENUM,
+    type: DataType.ARRAY(DataType.ENUM),
     allowNull: false,
     values: Object.values(StaffRole),
   })
   @ApiProperty()
-  role: StaffRole
+  roles: StaffRole[]
 
   @Column({
     type: DataType.BOOLEAN,

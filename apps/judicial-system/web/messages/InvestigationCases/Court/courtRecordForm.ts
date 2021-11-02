@@ -2,38 +2,58 @@ import { defineMessages } from 'react-intl'
 
 export const icCourtRecord = {
   sections: {
-    accusedAppealDecision: {
-      options: defineMessages({
-        accept: {
-          id:
-            'judicial.system.investigation_cases:court_record.accused_appeal_decision.options.accept',
-          defaultMessage: 'Varnaraðili samþykkir kröfuna',
-          description:
-            'Notaður sem texti fyrir valmöguleikann "samþykkir kröfuna" í dómaraflæði í rannsóknarheimildum',
-        },
-        reject: {
-          id:
-            'judicial.system.investigation_cases:court_record.accused_appeal_decision.options.reject',
-          defaultMessage: 'Varnaraðili mótmælir kröfunni',
-          description:
-            'Notaður sem texti fyrir valmöguleikann "hafnar kröfunni" í dómaraflæði í rannsóknarheimildum',
-        },
-        notApplicable: {
-          id:
-            'judicial.system.investigation_cases:court_record.accused_appeal_decision.options.not_applicable',
-          defaultMessage: 'Á ekki við',
-          description:
-            'Notaður sem texti fyrir valmöguleikann "á ekki við" í dómaraflæði í rannsóknarheimildum',
-        },
-      }),
-    },
-    accusedPleaAnnouncement: defineMessages({
+    accusedBookings: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:court_record.accused_bookings.title',
+        defaultMessage: 'Bókanir um varnaraðila',
+        description:
+          'Notaður sem titill fyrir "Bókarnir um varnaraðila" hlutann í rannsóknarheimildum.',
+      },
+      label: {
+        id:
+          'judicial.system.investigation_cases:court_record.accused_bookings.label',
+        defaultMessage: 'Afstaða varnaraðila og aðrar bókanir',
+        description:
+          'Notaður sem titill í "Afstaða varnaraðila og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+      },
       placeholder: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_plea_announcement.tooltip',
+          'judicial.system.investigation_cases:court_record.accused_bookings.placeholder',
         defaultMessage: 'Nánari útlistun á afstöðu sakbornings',
         description:
-          'Notaður sem skýritexti í "afstaða kærða" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+          'Notaður sem skýritexti í "Afstaða varnaraðila og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      tooltip: {
+        id:
+          'judicial.system.investigation_cases:court_record.accused_bookings.tooltip-2',
+        defaultMessage:
+          'Hér er hægt að bóka í þingbók um réttindi og afstöðu varnaraðila, ásamt bókunum t.d. um verjanda og túlk. Hægt er að sleppa öllum bókunum hér, t.d. ef varnaraðili er ekki viðstaddur.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "Afstaða varnaraðila og aðrar bókanir" svæðið í rannsóknarheimildum.',
+      },
+      autofillRightToRemainSilent: {
+        id:
+          'judicial.system.investigation_cases:court_record.accused_bookings.autofill_right_to_remain_silent',
+        defaultMessage:
+          'Sakborningi er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
+        description:
+          'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      autofillCourtDocumentOne: {
+        id:
+          'judicial.system.investigation_cases:court_record.accused_bookings.autofill_court_document_one',
+        defaultMessage: 'Sakborningi er kynnt krafa á dómskjali nr. 1.',
+        description:
+          'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      autofillAccusedPlea: {
+        id:
+          'judicial.system.investigation_cases:court_record.accused_bookings.autofill_accused_plea',
+        defaultMessage:
+          'Sakborningur mótmælir kröfunni / Sakborningur samþykkir kröfuna',
+        description:
+          'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
     }),
     litigationPresentations: defineMessages({

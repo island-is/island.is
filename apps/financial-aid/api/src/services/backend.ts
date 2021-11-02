@@ -19,7 +19,6 @@ import {
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
-import { CurrentApplicationModel } from '../app/modules/application'
 import { StaffModel } from '../app/modules/staff'
 import { HasSpouseAppliedModel } from '../app/modules/user/HasSpouseApplied.model'
 
@@ -89,7 +88,7 @@ class BackendAPI extends RESTDataSource {
     return this.post('file', createApplicationFiles)
   }
 
-  getCurrentApplication(nationalId: string): Promise<CurrentApplicationModel> {
+  getCurrentApplication(nationalId: string): Promise<string | undefined> {
     return this.get(`application/nationalId/${nationalId}`)
   }
 
@@ -98,7 +97,11 @@ class BackendAPI extends RESTDataSource {
   }
 
   getStaff(nationalId: string): Promise<StaffModel> {
-    return this.get(`staff/${nationalId}`)
+    return this.get(`staff/nationalId/${nationalId}`)
+  }
+
+  getStaffForMunicipality(): Promise<StaffModel[]> {
+    return this.get('staff/municipality')
   }
 }
 

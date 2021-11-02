@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { CurrentApplicationModel, ApplicationModel } from './models'
+import { ApplicationModel } from './models'
 
 import { Op } from 'sequelize'
 
@@ -28,6 +28,7 @@ import { StaffModel } from '../staff'
 import { EmailService } from '@island.is/email-service'
 
 import { ApplicationFileModel } from '../file/models'
+import { environment } from '../../../environments'
 
 interface Recipient {
   name: string
@@ -54,17 +55,6 @@ export class ApplicationService {
     private readonly emailService: EmailService,
   ) {}
 
-  async hasAccessToApplication(
-    nationalId: string,
-    id: string,
-  ): Promise<boolean> {
-    const hasApplication = await this.applicationModel.findOne({
-      where: { id, nationalId },
-    })
-
-    return Boolean(hasApplication)
-  }
-
   async hasSpouseApplied(spouseNationalId: string): Promise<boolean> {
     const application = await this.applicationModel.findOne({
       where: {
@@ -76,20 +66,32 @@ export class ApplicationService {
     return Boolean(application)
   }
 
-  async getCurrentApplication(
-    nationalId: string,
-  ): Promise<CurrentApplicationModel | null> {
-    return await this.applicationModel.findOne({
+  async getCurrentApplication(nationalId: string): Promise<string | null> {
+    const currentApplication = await this.applicationModel.findOne({
       where: {
-        nationalId,
+        [Op.or]: [
+          {
+            nationalId,
+          },
+          {
+            spouseNationalId: nationalId,
+          },
+        ],
         created: { [Op.gte]: firstDateOfMonth() },
       },
     })
+
+    if (currentApplication) {
+      return currentApplication.id
+    }
+
+    return null
   }
 
   async getAll(
     stateUrl: ApplicationStateUrl,
     staffId: string,
+    municipalityCode: string,
   ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
       where:
@@ -97,8 +99,12 @@ export class ApplicationService {
           ? {
               state: { [Op.in]: getStateFromUrl[stateUrl] },
               staffId,
+              municipalityCode,
             }
-          : { state: { [Op.in]: getStateFromUrl[stateUrl] } },
+          : {
+              state: { [Op.in]: getStateFromUrl[stateUrl] },
+              municipalityCode,
+            },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
     })
@@ -135,7 +141,10 @@ export class ApplicationService {
     return application
   }
 
-  async getAllFilters(staffId: string): Promise<ApplicationFilters> {
+  async getAllFilters(
+    staffId: string,
+    municipalityCode: string,
+  ): Promise<ApplicationFilters> {
     const statesToCount = [
       ApplicationState.NEW,
       ApplicationState.INPROGRESS,
@@ -146,7 +155,7 @@ export class ApplicationService {
 
     const countPromises = statesToCount.map((item) =>
       this.applicationModel.count({
-        where: { state: item },
+        where: { state: item, municipalityCode },
       }),
     )
 
@@ -154,6 +163,7 @@ export class ApplicationService {
       this.applicationModel.count({
         where: {
           staffId,
+          municipalityCode,
           state: {
             [Op.or]: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
           },
@@ -279,11 +289,11 @@ export class ApplicationService {
       await this.emailService.sendEmail({
         from: {
           name: 'Samband íslenskra sveitarfélaga',
-          address: 'no-reply@svg.is',
+          address: environment.emailOptions.fromEmail,
         },
         replyTo: {
           name: 'Samband íslenskra sveitarfélaga',
-          address: 'no-reply@svg.is',
+          address: environment.emailOptions.replyToEmail,
         },
         to,
         subject: `Umsókn fyrir fjárhagsaðstoð móttekin ~ ${applicationId}`,

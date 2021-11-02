@@ -1,3 +1,4 @@
+import { ApplicationFiltersEnum } from './enums'
 import {
   HomeCircumstances,
   ApplicationState,
@@ -164,6 +165,16 @@ export const isSpouseDataNeeded: KeyMapping<FamilyStatus, boolean> = {
   NotInformed: false,
 }
 
+export const showSpouseData: KeyMapping<FamilyStatus, boolean> = {
+  Unknown: false,
+  Single: false,
+  Cohabitation: true,
+  UnregisteredCohabitation: true,
+  Married: true,
+  MarriedNotLivingTogether: true,
+  NotInformed: false,
+}
+
 export const getFamilyStatus: KeyMapping<FamilyStatus, string> = {
   Unknown: 'Óþekkt',
   Cohabitation: 'Í sambúð',
@@ -178,6 +189,7 @@ export const getFileTypeName: KeyMapping<FileType, string> = {
   TaxReturn: 'Skattagögn',
   Income: 'Tekjugögn',
   Other: 'Innsend gögn',
+  SpouseFiles: 'Gögn frá maka',
 }
 
 export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
@@ -186,6 +198,17 @@ export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
   InProgress: 'Umsókn þín er móttekin og er nú í vinnslu',
   Rejected: 'Umsókn þinni um aðstoð hefur verið synjað',
   Approved: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+}
+
+export const applicationStateToFilterEnum: KeyMapping<
+  ApplicationState,
+  ApplicationFiltersEnum
+> = {
+  New: ApplicationFiltersEnum.NEW,
+  DataNeeded: ApplicationFiltersEnum.INPROGRESS,
+  InProgress: ApplicationFiltersEnum.INPROGRESS,
+  Rejected: ApplicationFiltersEnum.REJECTED,
+  Approved: ApplicationFiltersEnum.APPROVED,
 }
 
 export const aidCalculator = (

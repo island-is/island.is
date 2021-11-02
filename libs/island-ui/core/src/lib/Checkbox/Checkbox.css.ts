@@ -37,6 +37,7 @@ export const label = style({
 })
 export const labelText = style({
   display: 'flex',
+  flex: 1,
   flexDirection: 'column',
 })
 export const checkboxDisabled = style({
