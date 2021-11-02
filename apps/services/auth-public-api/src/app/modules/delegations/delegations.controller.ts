@@ -43,7 +43,7 @@ const namespace = '@island.is/auth-public-api/delegations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
-@Controller('public/v1/delegations')
+@Controller('v1/delegations')
 @Audit({ namespace })
 export class DelegationsController {
   constructor(
