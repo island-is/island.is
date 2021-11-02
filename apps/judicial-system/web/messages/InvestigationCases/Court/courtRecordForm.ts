@@ -9,7 +9,7 @@ export const icCourtRecord = {
         defaultMessage:
           'Varnaraðili er ekki viðstaddur sbr. 104. gr. laga 88/2008 um meðferð sakamála.',
         description:
-          'Notaður sem sjálfgefinn texti í "Mættir eru" textaboxi á þingbókar skrefi í rannsóknaheimildum',
+          'Notaður sem sjálfgefinn texti í "Mættir eru" textaboxi á þingbókar skrefi í rannsóknarheimildum',
       },
     }),
     accusedBookings: defineMessages({
