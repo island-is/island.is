@@ -28,7 +28,6 @@ export type HealthProbe = {
 }
 
 export type Secrets = { [name: string]: string }
-export type Environment = { [name: string]: string }
 
 export type EnvironmentVariableValue =
   | {

@@ -1,11 +1,11 @@
-import { EnvironmentVariables, Secrets } from './types/input-types'
+import { EnvironmentVariables, Secrets, XroadConfig } from './types/input-types'
 
 type XroadSectionConfig = {
   secrets?: Secrets
   env?: EnvironmentVariables
 }
 
-export class XroadConf {
+export class XroadConf implements XroadConfig {
   config: XroadSectionConfig
 
   constructor(config: XroadSectionConfig) {
