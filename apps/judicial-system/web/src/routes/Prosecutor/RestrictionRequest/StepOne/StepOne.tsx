@@ -36,13 +36,10 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
     skip: !id,
   })
 
-  const { defaultCourt, loading: institutionLoading } = useInstitution()
+  const { loading: institutionLoading } = useInstitution()
 
   const handleNextButtonClick = async (theCase: Case) => {
-    const caseId =
-      theCase.id === ''
-        ? await createCase({ ...theCase, court: defaultCourt })
-        : theCase.id
+    const caseId = theCase.id === '' ? await createCase(theCase) : theCase.id
 
     router.push(`${Constants.STEP_TWO_ROUTE}/${caseId}`)
   }
