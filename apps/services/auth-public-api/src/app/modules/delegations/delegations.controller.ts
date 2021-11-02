@@ -32,6 +32,7 @@ import {
   CurrentActor,
   CurrentUser,
   ActorScopes,
+  AuthMiddlewareOptions,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
@@ -90,13 +91,15 @@ export class DelegationsController {
   @Get()
   @ApiOkResponse({ type: [DelegationDTO] })
   @Audit<DelegationDTO[]>({
-    resources: (delegations) => delegations.map((delegation) => delegation.id),
+    resources: (delegations) =>
+      delegations.map((delegation) => delegation.id ?? ''),
   })
   async findAllTo(@CurrentActor() user: User): Promise<DelegationDTO[]> {
     return this.delegationsService.findAllTo(
       user,
       environment.nationalRegistry.xroad.clientId ?? '',
-      environment.nationalRegistry.authMiddlewareOptions,
+      environment.nationalRegistry
+        .authMiddlewareOptions as AuthMiddlewareOptions,
     )
   }
 
@@ -104,7 +107,7 @@ export class DelegationsController {
   @Post()
   @ApiCreatedResponse({ type: DelegationDTO })
   @Audit<DelegationDTO>({
-    resources: (delegation) => delegation?.id,
+    resources: (delegation) => delegation?.id ?? '',
   })
   create(
     @CurrentUser() user: User,
@@ -119,7 +122,8 @@ export class DelegationsController {
     return this.delegationsService.create(
       user,
       environment.nationalRegistry.xroad.clientId ?? '',
-      environment.nationalRegistry.authMiddlewareOptions,
+      environment.nationalRegistry
+        .authMiddlewareOptions as AuthMiddlewareOptions,
       delegation,
     )
   }
@@ -138,12 +142,12 @@ export class DelegationsController {
       )
     }
 
-    return this.auditService.auditPromise<DelegationDTO>(
+    return this.auditService.auditPromise<DelegationDTO | null>(
       {
         user,
         namespace,
         action: 'update',
-        resources: (delegation) => delegation?.id,
+        resources: (delegation) => delegation?.id ?? '',
         meta: { fields: Object.keys(delegation) },
       },
       this.delegationsService.update(user.nationalId, delegation, toNationalId),
@@ -190,7 +194,7 @@ export class DelegationsController {
   @Get('custom/findone/:id')
   @ApiOkResponse({ type: DelegationDTO })
   @Audit<DelegationDTO>({
-    resources: (delegation) => delegation?.id,
+    resources: (delegation) => delegation?.id ?? '',
   })
   findOne(
     @CurrentUser() user: User,
@@ -203,7 +207,7 @@ export class DelegationsController {
   @Get('custom/findone/to/:nationalId')
   @ApiOkResponse({ type: DelegationDTO })
   @Audit<DelegationDTO>({
-    resources: (delegation) => delegation?.id,
+    resources: (delegation) => delegation?.id ?? '',
   })
   async findOneTo(
     @CurrentUser() user: User,
@@ -226,7 +230,8 @@ export class DelegationsController {
   @Get('custom/to')
   @ApiOkResponse({ type: [DelegationDTO] })
   @Audit<DelegationDTO[]>({
-    resources: (delegations) => delegations.map((delegation) => delegation?.id),
+    resources: (delegations) =>
+      delegations.map((delegation) => delegation?.id ?? ''),
   })
   async findAllCustomTo(
     @CurrentUser() user: User,
@@ -239,7 +244,8 @@ export class DelegationsController {
   @ApiQuery({ name: 'is-valid', required: false })
   @ApiOkResponse({ type: [DelegationDTO] })
   @Audit<DelegationDTO[]>({
-    resources: (delegations) => delegations.map((delegation) => delegation?.id),
+    resources: (delegations) =>
+      delegations.map((delegation) => delegation?.id ?? ''),
   })
   async findAllCustomFrom(
     @CurrentUser() user: User,
