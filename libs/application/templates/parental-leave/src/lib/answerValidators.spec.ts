@@ -10,7 +10,7 @@ import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
 import { ParentalRelations } from '../constants'
 import { answerValidators, VALIDATE_LATEST_PERIOD } from './answerValidators'
 import { errorMessages } from './messages'
-import { YES, NO, StartDateOptions } from '..'
+import { NO, StartDateOptions } from '../constants'
 
 const dateFormat = 'yyyy-MM-dd'
 const DEFAULT_DOB = '2021-01-15'
@@ -181,7 +181,7 @@ describe('when constructing a new period', () => {
       }),
     ).toStrictEqual({
       message: errorMessages.periodsEndDateBeforeStartDate,
-      path: 'periods[0].endDate',
+      path: 'periods',
       values: {},
     })
 

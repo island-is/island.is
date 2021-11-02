@@ -12,5 +12,8 @@ export function hasEmployer(context: ApplicationContext) {
 }
 
 export function needsOtherParentApproval(context: ApplicationContext) {
-  return requiresOtherParentApproval(context.application.answers)
+  return requiresOtherParentApproval(
+    context.application.answers,
+    context.application.externalData,
+  )
 }
