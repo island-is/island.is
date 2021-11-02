@@ -806,6 +806,7 @@ namespaces:
     - 'endorsement-system'
     - 'party-letter-registry'
     - 'temporary-voter-registry'
+    - 'air-discount-scheme'
 party-letter-registry-api:
   enabled: true
   env:
