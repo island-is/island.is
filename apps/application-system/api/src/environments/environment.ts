@@ -43,7 +43,7 @@ const devConfig = {
     },
     drivingLicense: {
       clientConfig: {
-        secret: process.env.DRIVING_LICENSE_SECRET,
+        secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
         xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
         xroadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
         xroadPathV1:
@@ -60,13 +60,14 @@ const devConfig = {
       xRoadClientId:
         process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
       xRoadProviderId:
-        process.env.PAYMENT_XROAD_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
-      callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL ?? '/',
+        process.env.XROAD_PAYMENT_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
+      callbackAdditionUrl:
+        process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL ?? '/',
       callbackBaseUrl:
-        process.env.PAYMENT_BASE_CALLBACK_URL ??
+        process.env.XROAD_PAYMENT_BASE_CALLBACK_URL ??
         'https://localhost:3333/applications/',
-      username: process.env.PAYMENT_USER,
-      password: process.env.PAYMENT_PASSWORD,
+      username: process.env.XROAD_PAYMENT_USER,
+      password: process.env.XROAD_PAYMENT_PASSWORD,
     },
     partyLetter: {
       partyLetterRegistryApiBasePath: 'http://localhost:4251',
@@ -99,12 +100,12 @@ const devConfig = {
     healthInsuranceV2: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
       xRoadProviderId:
-        process.env.HEALTH_INSURANCE_V2_XROAD_PROVIDER_ID ??
+        process.env.XROAD_HEALTH_INSURANCE_ID ??
         'IS-DEV/GOV/10007/SJUKRA-Protected',
       xRoadClientId:
         process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
-      username: process.env.HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
-      password: process.env.HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
+      username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
+      password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
     },
   },
   application: {
@@ -172,22 +173,22 @@ const prodConfig = {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     drivingLicense: {
       clientConfig: {
-        secret: process.env.DRIVING_LICENSE_SECRET,
+        secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
         xroadClientId: process.env.XROAD_CLIENT_ID,
         xroadBaseUrl: process.env.XROAD_BASE_PATH,
-        xroadPathV1: process.env.DRIVING_LICENSE_XROAD_PATH,
-        xroadPathV2: process.env.DRIVING_LICENSE_XROAD_PATH_V2,
+        xroadPathV1: process.env.XROAD_DRIVING_LICENSE_PATH,
+        xroadPathV2: process.env.XROAD_DRIVING_LICENSE_V2_PATH,
       },
     },
     paymentOptions: {
       arkBaseUrl: process.env.ARK_BASE_URL,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
       xRoadClientId: process.env.XROAD_CLIENT_ID,
-      xRoadProviderId: process.env.PAYMENT_XROAD_PROVIDER_ID,
-      callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
-      callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
-      username: process.env.PAYMENT_USER,
-      password: process.env.PAYMENT_PASSWORD,
+      xRoadProviderId: process.env.XROAD_PAYMENT_PROVIDER_ID,
+      callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
+      callbackBaseUrl: process.env.XROAD_PAYMENT_BASE_CALLBACK_URL,
+      username: process.env.XROAD_PAYMENT_USER,
+      password: process.env.XROAD_PAYMENT_PASSWORD,
     },
     partyLetter: {
       partyLetterRegistryApiBasePath:
@@ -226,10 +227,10 @@ const prodConfig = {
     },
     healthInsuranceV2: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-      xRoadProviderId: process.env.HEALTH_INSURANCE_V2_XROAD_PROVIDER_ID,
+      xRoadProviderId: process.env.XROAD_HEALTH_INSURANCE_ID,
       xRoadClientId: process.env.XROAD_CLIENT_ID,
-      username: process.env.HEALTH_INSURANCE_V2_XROAD_USERNAME,
-      password: process.env.HEALTH_INSURANCE_V2_XROAD_PASSWORD,
+      username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME,
+      password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD,
     },
   },
   application: {
