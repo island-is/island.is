@@ -44,6 +44,43 @@ export const rcCaseFiles = {
           'Notaður sem titill í "velja gögn til að hlaða upp" takka á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
+    policeCaseFiles: defineMessages({
+      heading: {
+        id:
+          'judicial.system.restriction_cases:case_files.police_case_files.heading',
+        defaultMessage: 'Gögn úr LÖKE-máli {policeCaseNumber}',
+        description:
+          'Notaður sem titill fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      selectAllLabel: {
+        id:
+          'judicial.system.restriction_cases:case_files.police_case_files.select_all_label',
+        defaultMessage: 'Velja allt',
+        description:
+          'Notaður sem texti fyrir "Velja allt" valmöguleikann í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      errorMessage: {
+        id:
+          'judicial.system.restriction_cases:case_files.police_case_files.error_message',
+        defaultMessage: 'Upp kom óvænt kerfisvilla',
+        description:
+          'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      allFilesUploadedMessage: {
+        id:
+          'judicial.system.restriction_cases:case_files.police_case_files.all_files_uploaded',
+        defaultMessage: 'Öllum skjölum hefur verið hlaðið upp',
+        description:
+          'Notaður sem skilaboð þegar öllum skjölum hefur verið hlaðið upp í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      uploadButtonLabel: {
+        id:
+          'judicial.system.restriction_cases:case_files.police_case_files.upload_button_label',
+        defaultMessage: 'Hlaða upp',
+        description:
+          'Notaður sem texti í "hlaða upp" takka í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
     comments: defineMessages({
       heading: {
         id: 'judicial.system.restriction_cases:case_files.comments.heading',
