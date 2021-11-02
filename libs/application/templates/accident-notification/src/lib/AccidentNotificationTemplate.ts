@@ -7,9 +7,11 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  getValueViaPath,
 } from '@island.is/application/core'
 import set from 'lodash/set'
 import { assign } from 'xstate'
+import { AccidentTypeEnum, ReviewApprovalEnum } from '..'
 // import * as z from 'zod'
 import { States } from '../constants'
 import { ApiActions } from '../shared'
@@ -75,50 +77,77 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         },
       },
       [States.REVIEW]: {
+        entry: 'assignUser',
         meta: {
           name: States.REVIEW,
           progress: 0.6,
           lifecycle: {
             shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
+            shouldBePruned: false,
           },
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
+            shouldPersistToExternalData: true,
           },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
+                ),
+              read: 'all',
+              write: 'all',
+              actions: [
+                { event: 'APPROVE', name: 'Samþykki', type: 'primary' },
+              ],
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.AssigneeReview),
                 ),
               read: 'all',
               write: 'all',
             },
           ],
         },
+
         on: {
           [DefaultEvents.ASSIGN]: {
-            target: States.REVIEW_WITH_REVIEWER,
+            target: States.REVIEW,
+          },
+          [DefaultEvents.SUBMIT]: {
+            target: States.REVIEW_ADD_ATTACHMENT,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.IN_FINAL_REVIEW,
+            actions: 'rejectApplication',
+          },
+          [DefaultEvents.APPROVE]: {
+            target: States.IN_FINAL_REVIEW,
+            actions: 'approveApplication',
           },
         },
       },
-      [States.REVIEW_WITH_REVIEWER]: {
+      [States.REVIEW_ADD_ATTACHMENT]: {
         meta: {
-          name: States.REVIEW_WITH_REVIEWER,
+          name: States.REVIEW_ADD_ATTACHMENT,
           progress: 0.6,
           lifecycle: {
             shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
+            shouldBePruned: false,
+          },
+          onEntry: {
+            apiModuleAction: ApiActions.addAttachment,
           },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
                 ),
               read: 'all',
               write: 'all',
@@ -126,15 +155,19 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/AssigneeInReview').then((val) =>
-                  Promise.resolve(val.AssigneeInReview),
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.AssigneeReview),
                 ),
               read: 'all',
               write: 'all',
             },
           ],
         },
+
         on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.REVIEW_ADD_ATTACHMENT,
+          },
           [DefaultEvents.REJECT]: {
             target: States.IN_FINAL_REVIEW,
             actions: 'rejectApplication',
@@ -152,27 +185,35 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: {
             shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
+            shouldBePruned: false,
+          },
+          onEntry: {
+            apiModuleAction: ApiActions.reviewApplication,
           },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
                 ),
               read: 'all',
             },
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
                 ),
               read: 'all',
+              write: 'all',
             },
           ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.REVIEW_ADD_ATTACHMENT,
+          },
         },
       },
     },
@@ -183,7 +224,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
 
-        set(answers, 'reviewerApproved', true)
+        set(answers, 'reviewApproval', ReviewApprovalEnum.APPROVED)
 
         return context
       }),
@@ -191,7 +232,15 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
 
-        set(answers, 'reviewerApproved', false)
+        set(answers, 'reviewApproval', ReviewApprovalEnum.REJECTED)
+
+        return context
+      }),
+      assignUser: assign((context) => {
+        const { application } = context
+
+        const assigneeId = getNationalIdOfReviewer(application)
+        set(application, 'assignees', [assigneeId])
 
         return context
       }),
@@ -212,3 +261,22 @@ const AccidentNotificationTemplate: ApplicationTemplate<
 }
 
 export default AccidentNotificationTemplate
+
+const getNationalIdOfReviewer = (application: Application) => {
+  try {
+    const accidentType = getValueViaPath(
+      application.answers,
+      'accidentType',
+    ) as AccidentTypeEnum
+    if (accidentType === AccidentTypeEnum.HOMEACTIVITIES) {
+      return null
+    }
+    return getValueViaPath(
+      application.answers,
+      'rescueSquadInfo.representativeNationalId',
+    )
+  } catch (error) {
+    console.log(error)
+    return 0
+  }
+}

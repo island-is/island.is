@@ -105,6 +105,12 @@ export enum PowerOfAttorneyUploadEnum {
   FORCHILDINCUSTODY = 'forChildInCustody',
 }
 
+export enum ReviewApprovalEnum {
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+  NOTREVIEWED = 'notReviewed',
+}
+
 export enum ReviewSectionState {
   inProgress = 'In progress',
   received = 'Received',
@@ -112,4 +118,10 @@ export enum ReviewSectionState {
   pending = 'Pending',
   approved = 'Approved',
   objected = 'Objected',
+}
+
+export interface SubmittedApplicationData {
+  data?: {
+    documentId: number
+  }
 }

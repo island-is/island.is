@@ -23,15 +23,12 @@ export const hasMissingDeathCertificate = (answers: FormValue) => {
   return wasTheAccidentFatal === YES
 }
 
-export const hasMissingPowerOfAttorneyFile = (answers: FormValue) => {
+export const hasMissingPowerOfAttorneyFile = (answers: FormValue): boolean => {
   const whoIsTheNotificationFor = (answers as AccidentNotification)
     .whoIsTheNotificationFor.answer
   const powerOfAttorneyType = (answers as AccidentNotification).powerOfAttorney
     ?.type
-  return (
-    whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
-    powerOfAttorneyType !== PowerOfAttorneyUploadEnum.FORCHILDINCUSTODY
-  )
+  return whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY
 }
 
 export const hasMissingDocuments = (answers: FormValue) => {

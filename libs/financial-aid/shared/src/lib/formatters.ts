@@ -1,3 +1,4 @@
+import { ApplicationFiltersEnum } from './enums'
 import {
   HomeCircumstances,
   ApplicationState,
@@ -181,7 +182,7 @@ export const getFamilyStatus: KeyMapping<FamilyStatus, string> = {
   Single: 'Einstæð',
   MarriedNotLivingTogether: 'Hjón ekki í samvistum',
   NotInformed: 'Óupplýst',
-  UnregisteredCohabitation: 'Óstaðfestri sambúð?',
+  UnregisteredCohabitation: 'Ég er ekki í sambúð',
 }
 
 export const getFileTypeName: KeyMapping<FileType, string> = {
@@ -197,6 +198,17 @@ export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
   InProgress: 'Umsókn þín er móttekin og er nú í vinnslu',
   Rejected: 'Umsókn þinni um aðstoð hefur verið synjað',
   Approved: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+}
+
+export const applicationStateToFilterEnum: KeyMapping<
+  ApplicationState,
+  ApplicationFiltersEnum
+> = {
+  New: ApplicationFiltersEnum.NEW,
+  DataNeeded: ApplicationFiltersEnum.INPROGRESS,
+  InProgress: ApplicationFiltersEnum.INPROGRESS,
+  Rejected: ApplicationFiltersEnum.REJECTED,
+  Approved: ApplicationFiltersEnum.APPROVED,
 }
 
 export const aidCalculator = (
