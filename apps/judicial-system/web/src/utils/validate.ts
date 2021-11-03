@@ -1,6 +1,6 @@
 // TODO: Add tests
 
-import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseType } from '@island.is/judicial-system/types'
 
 export type Validation =
   | 'empty'
@@ -99,8 +99,8 @@ export const isDefendantStepValidIC = (workingCase: Case) => {
 export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
   return (
     workingCase.prosecutor &&
-    workingCase.requestedValidToDate &&
-    validate(workingCase.requestedValidToDate, 'date-format').isValid
+    workingCase.court &&
+    validate(workingCase.requestedCourtDate || '', 'date-format').isValid
   )
 }
 

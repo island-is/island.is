@@ -19,10 +19,7 @@ import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectPros
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import {
-  isHearingArrangementsStepValidIC,
-  isHearingArrangementsStepValidRC,
-} from '@island.is/judicial-system-web/src/utils/validate'
+import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
@@ -42,12 +39,11 @@ const StepTwoForm: React.FC<Props> = (props) => {
     handleNextButtonClick,
     transitionLoading,
   } = props
-  const [arrestDateIsValid, setArrestDateIsValid] = useState(true)
-  const [
-    requestedCourtDateIsValid,
-    setRequestedCourtDateIsValid,
-  ] = useState<boolean>(workingCase.requestedCourtDate !== null)
-  const [selectedCourt, setSelectedCourt] = useState<string>()
+  const [, setArrestDateIsValid] = useState(true)
+  const [, setRequestedCourtDateIsValid] = useState<boolean>(
+    workingCase.requestedCourtDate !== null,
+  )
+  const [, setSelectedCourt] = useState<string>()
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
   const { validateAndSendToServer, setField } = useCaseFormHelper(

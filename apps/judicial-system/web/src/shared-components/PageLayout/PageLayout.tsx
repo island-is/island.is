@@ -15,6 +15,7 @@ import {
   isInvestigationCase,
   UserRole,
   Case,
+  completedCaseStates,
 } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -56,25 +57,21 @@ const PageLayout: React.FC<PageProps> = ({
 
   const caseResult = () => {
     const decisionIsRejecting =
-      workingCase &&
-      (workingCase.decision === CaseDecision.REJECTING ||
-        workingCase.parentCase?.decision === CaseDecision.REJECTING)
+      workingCase?.decision === CaseDecision.REJECTING ||
+      workingCase?.parentCase?.decision === CaseDecision.REJECTING
 
     const decisionIsAccepting =
-      workingCase &&
-      (workingCase.decision === CaseDecision.ACCEPTING ||
-        workingCase.parentCase?.decision === CaseDecision.ACCEPTING)
+      workingCase?.decision === CaseDecision.ACCEPTING ||
+      workingCase?.parentCase?.decision === CaseDecision.ACCEPTING
 
     const decisionIsDismissing =
-      workingCase &&
-      (workingCase.decision === CaseDecision.DISMISSING ||
-        workingCase.parentCase?.decision === CaseDecision.DISMISSING)
+      workingCase?.decision === CaseDecision.DISMISSING ||
+      workingCase?.parentCase?.decision === CaseDecision.DISMISSING
 
     const decisionIsAcceptingAlternativeTravelBan =
-      workingCase &&
-      (workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-        workingCase.parentCase?.decision ===
-          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+      workingCase?.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+      workingCase?.parentCase?.decision ===
+        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
 
     if (decisionIsRejecting) {
       if (isInvestigationCase(workingCase.type)) {
@@ -126,9 +123,12 @@ const PageLayout: React.FC<PageProps> = ({
           activeSubSection,
         ),
     {
-      name: caseResult(),
+      name:
+        workingCase?.state && completedCaseStates.includes(workingCase?.state)
+          ? caseResult()
+          : 'Niðurstaða',
     },
-    getExtenstionSections(workingCase?.id, activeSubSection),
+    getExtenstionSections(workingCase || ({} as Case), activeSubSection),
     getCourtSections(workingCase || ({} as Case), activeSubSection),
   ]
 

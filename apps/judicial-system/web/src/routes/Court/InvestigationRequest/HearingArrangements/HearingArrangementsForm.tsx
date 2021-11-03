@@ -60,7 +60,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [defenderEmailEM, setDefenderEmailEM] = useState('')
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
-  const [courtDateIsValid, setCourtDateIsValid] = useState(true)
+  const [, setCourtDateIsValid] = useState(true)
   const { updateCase, sendNotification, isSendingNotification } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()

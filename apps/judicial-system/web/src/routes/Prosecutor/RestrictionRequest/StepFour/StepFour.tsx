@@ -7,11 +7,7 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import {
-  isPoliceReportStepValidRC,
-  Validation,
-} from '@island.is/judicial-system-web/src/utils/validate'
+import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   FormFooter,
   PageLayout,

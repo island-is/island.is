@@ -91,7 +91,6 @@ export const StepOneForm: React.FC<Props> = (props) => {
   }
 
   const {
-    isValid,
     setField,
     validateAndSendToServer,
     setAndSendToServer,

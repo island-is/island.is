@@ -30,10 +30,7 @@ import {
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import {
-  isRulingStepOneValidRC,
-  validate,
-} from '@island.is/judicial-system-web/src/utils/validate'
+import { isRulingStepOneValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
@@ -57,8 +54,8 @@ import { rcRulingStepOne as m } from '@island.is/judicial-system-web/messages'
 
 export const RulingStepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [validToDateIsValid, setValidToDateIsValid] = useState<boolean>(true)
-  const [isolationToIsValid, setIsolationToIsValid] = useState<boolean>(true)
+  const [, setValidToDateIsValid] = useState<boolean>(true)
+  const [, setIsolationToIsValid] = useState<boolean>(true)
   const [
     courtCaseFactsErrorMessage,
     setCourtCaseFactsErrorMessage,

@@ -30,11 +30,7 @@ import {
   alternativeTravelBanRestrictions,
   restrictions,
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
-import {
-  isPoliceDemandsStepValidIC,
-  isPoliceDemandsStepValidRC,
-  validate,
-} from '@island.is/judicial-system-web/src/utils/validate'
+import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
 
@@ -46,12 +42,7 @@ interface Props {
 }
 
 const StepThreeForm: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    requestedValidToDateIsValid,
-    setRequestedValidToDateIsValid,
-  } = props
+  const { workingCase, setWorkingCase, setRequestedValidToDateIsValid } = props
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
     '',
   )

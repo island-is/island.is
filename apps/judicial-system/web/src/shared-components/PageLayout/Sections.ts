@@ -1,4 +1,4 @@
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseType } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   isAccusedStepValidRC,
@@ -24,7 +24,7 @@ export const getCustodyAndTravelBanProsecutorSection = (
   workingCase: Case,
   activeSubSection?: number,
 ) => {
-  const { type, id, state } = workingCase
+  const { type, id } = workingCase
 
   return {
     name:
@@ -40,7 +40,7 @@ export const getCustodyAndTravelBanProsecutorSection = (
         name: 'Óskir um fyrirtöku',
         href:
           (activeSubSection && activeSubSection > 1) ||
-          (state === CaseState.SUBMITTED && isAccusedStepValidRC(workingCase))
+          isAccusedStepValidRC(workingCase)
             ? `${Constants.STEP_TWO_ROUTE}/${id}`
             : undefined,
       },
@@ -49,8 +49,7 @@ export const getCustodyAndTravelBanProsecutorSection = (
         name: 'Dómkröfur og lagagrundvöllur',
         href:
           (activeSubSection && activeSubSection > 2) ||
-          (state === CaseState.SUBMITTED &&
-            isAccusedStepValidRC(workingCase) &&
+          (isAccusedStepValidRC(workingCase) &&
             isHearingArrangementsStepValidRC(workingCase))
             ? `${Constants.STEP_THREE_ROUTE}/${id}`
             : undefined,
@@ -60,8 +59,7 @@ export const getCustodyAndTravelBanProsecutorSection = (
         name: 'Greinargerð',
         href:
           (activeSubSection && activeSubSection > 3) ||
-          (state === CaseState.SUBMITTED &&
-            isAccusedStepValidRC(workingCase) &&
+          (isAccusedStepValidRC(workingCase) &&
             isHearingArrangementsStepValidRC(workingCase) &&
             isPoliceDemandsStepValidRC(workingCase))
             ? `${Constants.STEP_FOUR_ROUTE}/${id}`
@@ -72,8 +70,7 @@ export const getCustodyAndTravelBanProsecutorSection = (
         name: 'Rannsóknargögn',
         href:
           (activeSubSection && activeSubSection > 4) ||
-          (state === CaseState.SUBMITTED &&
-            isAccusedStepValidRC(workingCase) &&
+          (isAccusedStepValidRC(workingCase) &&
             isHearingArrangementsStepValidRC(workingCase) &&
             isPoliceDemandsStepValidRC(workingCase) &&
             isPoliceReportStepValidRC(workingCase))
@@ -84,7 +81,6 @@ export const getCustodyAndTravelBanProsecutorSection = (
         type: 'SUB_SECTION',
         name: 'Yfirlit kröfu',
         href:
-          state === CaseState.SUBMITTED &&
           isAccusedStepValidRC(workingCase) &&
           isHearingArrangementsStepValidRC(workingCase) &&
           isPoliceDemandsStepValidRC(workingCase) &&
@@ -100,7 +96,7 @@ export const getInvestigationCaseProsecutorSection = (
   workingCase: Case,
   activeSubSection?: number,
 ) => {
-  const { id, state } = workingCase
+  const { id } = workingCase
 
   return {
     name: 'Krafa um rannsóknarheimild',
@@ -115,7 +111,7 @@ export const getInvestigationCaseProsecutorSection = (
         name: 'Óskir um fyrirtöku',
         href:
           (activeSubSection && activeSubSection > 1) ||
-          (state === CaseState.SUBMITTED && isDefendantStepValidIC(workingCase))
+          isDefendantStepValidIC(workingCase)
             ? `${Constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${id}`
             : undefined,
       },
@@ -124,8 +120,7 @@ export const getInvestigationCaseProsecutorSection = (
         name: 'Dómkröfur og lagagrundvöllur',
         href:
           (activeSubSection && activeSubSection > 2) ||
-          (state === CaseState.SUBMITTED &&
-            isDefendantStepValidIC(workingCase) &&
+          (isDefendantStepValidIC(workingCase) &&
             isHearingArrangementsStepValidIC(workingCase))
             ? `${Constants.IC_POLICE_DEMANDS_ROUTE}/${id}`
             : undefined,
@@ -135,8 +130,7 @@ export const getInvestigationCaseProsecutorSection = (
         name: 'Greinargerð',
         href:
           (activeSubSection && activeSubSection > 3) ||
-          (state === CaseState.SUBMITTED &&
-            isDefendantStepValidIC(workingCase) &&
+          (isDefendantStepValidIC(workingCase) &&
             isHearingArrangementsStepValidIC(workingCase) &&
             isPoliceDemandsStepValidIC(workingCase))
             ? `${Constants.IC_POLICE_REPORT_ROUTE}/${id}`
@@ -147,8 +141,7 @@ export const getInvestigationCaseProsecutorSection = (
         name: 'Rannsóknargögn',
         href:
           (activeSubSection && activeSubSection > 4) ||
-          (state === CaseState.SUBMITTED &&
-            isDefendantStepValidIC(workingCase) &&
+          (isDefendantStepValidIC(workingCase) &&
             isHearingArrangementsStepValidIC(workingCase) &&
             isPoliceDemandsStepValidIC(workingCase))
             ? `${Constants.IC_CASE_FILES_ROUTE}/${id}`
@@ -158,7 +151,6 @@ export const getInvestigationCaseProsecutorSection = (
         type: 'SUB_SECTION',
         name: 'Yfirlit kröfu',
         href:
-          state === CaseState.SUBMITTED &&
           isDefendantStepValidIC(workingCase) &&
           isHearingArrangementsStepValidIC(workingCase) &&
           isPoliceDemandsStepValidIC(workingCase)
@@ -314,52 +306,71 @@ export const getCourtSections = (
 }
 
 export const getExtenstionSections = (
-  caseId?: string,
+  workingCase: Case,
   activeSubSection?: number,
 ) => {
+  const { id } = workingCase
+
   return {
     name: 'Krafa um framlengingu',
     children: [
       {
         type: 'SUB_SECTION',
         name: 'Sakborningur',
-        href: `${Constants.STEP_ONE_ROUTE}/${caseId}`,
+        href: `${Constants.STEP_ONE_ROUTE}/${id}`,
       },
       {
         type: 'SUB_SECTION',
         name: 'Óskir um fyrirtöku',
         href:
-          activeSubSection && activeSubSection > 1
-            ? `${Constants.STEP_TWO_ROUTE}/${caseId}`
+          (activeSubSection && activeSubSection > 1) ||
+          isAccusedStepValidRC(workingCase)
+            ? `${Constants.STEP_TWO_ROUTE}/${id}`
             : undefined,
       },
       {
         type: 'SUB_SECTION',
         name: 'Dómkröfur og lagagrundvöllur',
         href:
-          activeSubSection && activeSubSection > 2
-            ? `${Constants.STEP_THREE_ROUTE}/${caseId}`
+          (activeSubSection && activeSubSection > 2) ||
+          (isAccusedStepValidRC(workingCase) &&
+            isHearingArrangementsStepValidRC(workingCase))
+            ? `${Constants.STEP_THREE_ROUTE}/${id}`
             : undefined,
       },
       {
         type: 'SUB_SECTION',
         name: 'Greinargerð',
         href:
-          activeSubSection && activeSubSection > 3
-            ? `${Constants.STEP_FOUR_ROUTE}/${caseId}`
+          (activeSubSection && activeSubSection > 3) ||
+          (isAccusedStepValidRC(workingCase) &&
+            isHearingArrangementsStepValidRC(workingCase) &&
+            isPoliceDemandsStepValidRC(workingCase))
+            ? `${Constants.STEP_FOUR_ROUTE}/${id}`
             : undefined,
       },
       {
         type: 'SUB_SECTION',
         name: 'Rannsóknargögn',
         href:
-          activeSubSection && activeSubSection > 4
-            ? `${Constants.STEP_FIVE_ROUTE}/${caseId}`
+          (activeSubSection && activeSubSection > 4) ||
+          (isAccusedStepValidRC(workingCase) &&
+            isHearingArrangementsStepValidRC(workingCase) &&
+            isPoliceDemandsStepValidRC(workingCase) &&
+            isPoliceReportStepValidRC(workingCase))
+            ? `${Constants.STEP_FIVE_ROUTE}/${id}`
             : undefined,
       },
       {
         type: 'SUB_SECTION',
         name: 'Yfirlit kröfu',
+        href:
+          isAccusedStepValidRC(workingCase) &&
+          isHearingArrangementsStepValidRC(workingCase) &&
+          isPoliceDemandsStepValidRC(workingCase) &&
+          isPoliceReportStepValidRC(workingCase)
+            ? `${Constants.STEP_SIX_ROUTE}/${id}`
+            : undefined,
       },
     ],
   }
