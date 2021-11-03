@@ -268,3 +268,10 @@ export interface TableHeadersProps {
   filterBy?: string
   title: string
 }
+
+export interface CreateStaff {
+  name: string
+  email: string
+  nationalId: string
+  roles: StaffRole[]
+}

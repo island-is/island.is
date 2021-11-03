@@ -34,3 +34,5 @@ export { default as ApplicationNotFound } from './ApplicationNotFound/Applicatio
 export { default as ApplicationProfile } from './ApplicationProfile/ApplicationProfile'
 export { default as EmployeeSideNavItems } from './EmployeeSideNavItems/EmployeeSideNavItems'
 export { default as AdminSideNavItems } from './AdminSideNavItems/AdminSideNavItems'
+export { default as NewUserModal } from './NewUserModal/NewUserModal'
+export { default as ActionModal } from './ActionModal/ActionModal'
