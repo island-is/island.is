@@ -3,7 +3,6 @@ import {
   HealthIndicator,
   HealthIndicatorResult,
   HealthCheckError,
-  HttpHealthIndicator,
   HealthCheckService,
 } from '@nestjs/terminus'
 import dns from 'dns'
@@ -12,10 +11,7 @@ import { environment } from './environments'
 
 @Injectable()
 export class CmsHealthIndicator extends HealthIndicator {
-  constructor(
-    private dns: HttpHealthIndicator,
-    private health: HealthCheckService,
-  ) {
+  constructor(private health: HealthCheckService) {
     super()
   }
 
