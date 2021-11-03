@@ -12,14 +12,14 @@ export const rcRequestedHearingArrangements = {
     prosecutor: defineMessages({
       heightenSecurityLevelLabel: {
         id:
-          'judicial.system.investigation_cases:requested_hearing_arrangements.prosecutor.heighten_security_level_label',
+          'judicial.system.restriction_cases:requested_hearing_arrangements.prosecutor.heighten_security_level_label',
         defaultMessage: 'Hækka öryggisstig',
         description:
           'Notaður sem texti í "Hækka öryggisstig" checkboxi á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
       },
       heightenSecurityLevelInfo: {
         id:
-          'judicial.system.investigation_cases:requested_hearing_arrangements.prosecutor.heighten_security_level_info',
+          'judicial.system.restriction_cases:requested_hearing_arrangements.prosecutor.heighten_security_level_info',
         defaultMessage:
           'Með því að hækka öryggisstig á kröfunni verður krafan eingöngu aðgengileg þeim sem stofnaði kröfuna ásamt skráðum ákæranda í málinu.',
         description:
@@ -79,14 +79,14 @@ export const rcRequestedHearingArrangements = {
   prosecutorAccessModal: defineMessages({
     heading: {
       id:
-        'judicial.system.investigation_cases:requested_hearing_arrangements.prosecutor_access_modal.heading',
+        'judicial.system.restriction_cases:requested_hearing_arrangements.prosecutor_access_modal.heading',
       defaultMessage: 'Viltu skrá annan saksóknara á málið?',
       description:
         'Notaður sem titill fyrir "viltu skrá annan saksóknara á málið" tilkynningagluggan á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
     },
     text: {
       id:
-        'judicial.system.investigation_cases:requested_hearing_arrangements.prosecutor_access_modal.text',
+        'judicial.system.restriction_cases:requested_hearing_arrangements.prosecutor_access_modal.text',
       defaultMessage:
         'Með því að skrá annan saksóknara á málið lokast þinn aðgangur að málinu og það verður ekki lengur sýnilegt þér í listanum.',
       description:
@@ -94,14 +94,14 @@ export const rcRequestedHearingArrangements = {
     },
     primaryButtonText: {
       id:
-        'judicial.system.investigation_cases:requested_hearing_arrangements.prosecutor_access_modal.primary_button_text',
+        'judicial.system.restriction_cases:requested_hearing_arrangements.prosecutor_access_modal.primary_button_text',
       defaultMessage: 'Já, halda áfram',
       description:
         'Notaður sem texti í "halda áfram" takkanum í tilkynningaglugganum á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
     },
     secondaryButtonText: {
       id:
-        'judicial.system.investigation_cases:requested_hearing_arrangements.prosecutor_access_modal.secondary_button_text',
+        'judicial.system.restriction_cases:requested_hearing_arrangements.prosecutor_access_modal.secondary_button_text',
       defaultMessage: 'Nei, hætta við',
       description:
         'Notaður sem texti í "hætta við" takkanum í tilkynningaglugganum á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
