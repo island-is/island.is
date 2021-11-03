@@ -801,6 +801,7 @@ export const aboutTheAccidentSection = buildSection({
               title: companyInfo.labels.nationalId,
               backgroundColor: 'blue',
               width: 'half',
+              format: '######-####',
               required: true,
             }),
             // buildCheckboxField({
