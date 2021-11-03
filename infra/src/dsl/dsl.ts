@@ -13,6 +13,7 @@ import {
   Features,
   Secrets,
   XroadConfig,
+  MountedFile,
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -65,6 +66,7 @@ export class ServiceBuilder<ServiceType> implements Service {
         allowPrivilegeEscalation: false,
       },
       xroadConfig: [],
+      files: [],
     }
   }
 
@@ -128,6 +130,11 @@ export class ServiceBuilder<ServiceType> implements Service {
    */
   xroad(...configs: XroadConfig[]) {
     this.serviceDef.xroadConfig = [...this.serviceDef.xroadConfig, ...configs]
+    return this
+  }
+
+  files(...files: MountedFile[]) {
+    this.serviceDef.files = [...this.serviceDef.files, ...files]
     return this
   }
 
