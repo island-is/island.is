@@ -31,21 +31,23 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
-const CompanyInfoSchema = z.object({
+const RepresentativeInfo = z.object({
+  name: z.string().min(1),
+  nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
+  email: z.string().email(),
+  phoneNumber: z.string().optional(),
+})
+
+const CompanyInfo = z.object({
+  name: z.string().min(1),
   nationalRegistrationId: z
     .string()
     .refine((x) => (x ? kennitala.isCompany(x) : false)),
-  // Forsvarsmaður nafn
-  name: z.string().min(1),
-  email: z.string().email(),
-  phoneNumber: z.string().optional(),
-  representativeNationalId: z
-    .string()
-    .refine((x) => (x ? kennitala.isPerson(x) : false))
-    .optional(),
 })
 
 export const AccidentNotificationSchema = z.object({
+  representative: RepresentativeInfo,
+  companyInfo: CompanyInfo,
   externalData: z.object({
     nationalRegistry: z.object({
       data: z.object({
@@ -145,11 +147,6 @@ export const AccidentNotificationSchema = z.object({
     descriptionOfAccident: z.string().min(1),
   }),
   isRepresentativeOfCompanyOrInstitue: z.array(z.string()).optional(),
-  companyInfo: CompanyInfoSchema,
-  schoolInfo: CompanyInfoSchema,
-  fishingCompanyInfo: CompanyInfoSchema,
-  rescueSquadInfo: CompanyInfoSchema,
-  sportsClubInfo: CompanyInfoSchema,
   fishingShipInfo: z.object({
     shipName: z.string().min(1),
     shipCharacters: z.string().min(1),
