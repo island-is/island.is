@@ -40,9 +40,9 @@ export const serviceSetup = (services: {
         prod: 'island-is-prod-upload-api',
       },
       AUTH_PUBLIC_API_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
+        dev: 'https://identity-server.dev01.devland.is/api',
+        staging: 'https://identity-server.staging01.devland.is/api',
+        prod: 'https://innskra.island.is/api',
       },
       ELASTIC_NODE: {
         dev:
@@ -161,6 +161,7 @@ export const serviceSetup = (services: {
       Education,
       NationalRegistry,
     )
+    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       primary: {
         host: {

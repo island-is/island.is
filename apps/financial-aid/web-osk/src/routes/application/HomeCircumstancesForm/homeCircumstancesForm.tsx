@@ -33,6 +33,7 @@ const HomeCircumstancesForm = () => {
     HomeCircumstances.WITHOTHERS,
     HomeCircumstances.OWNPLACE,
     HomeCircumstances.REGISTEREDLEASE,
+    HomeCircumstances.UNREGISTEREDLEASE,
     HomeCircumstances.OTHER,
   ].map((item) => ({
     label: getHomeCircumstances[item],

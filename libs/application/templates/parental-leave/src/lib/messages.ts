@@ -1592,7 +1592,7 @@ export const errorMessages = defineMessages({
       'Copy for when user has not chosen how to end a period (length or specific date)',
   },
   periodsEndDateDefinitionInvalid: {
-    id: 'pl.application:answerValidators.periodsEndDateDefinitionMissing',
+    id: 'pl.application:answerValidators.periodsEndDateDefinitionInvalid',
     defaultMessage: 'Ógild skilgreining á endalokum tímabils.',
     description:
       'Copy for when user has chosen how to end a period but it was an invalid choice',
