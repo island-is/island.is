@@ -80,11 +80,32 @@ export const isAccusedStepValidRC = (workingCase: Case) => {
   )
 }
 
+export const isDefendantStepValidIC = (workingCase: Case) => {
+  return (
+    validate(workingCase.policeCaseNumber, 'empty').isValid &&
+    validate(workingCase.policeCaseNumber, 'police-casenumber-format')
+      .isValid &&
+    workingCase.type &&
+    workingCase.accusedGender &&
+    validate(workingCase.accusedNationalId, 'empty').isValid &&
+    validate(workingCase.accusedNationalId, 'national-id').isValid &&
+    validate(workingCase.accusedName || '', 'empty').isValid
+  )
+}
+
 export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
   return (
     workingCase.prosecutor &&
     workingCase.requestedValidToDate &&
     validate(workingCase.requestedValidToDate, 'date-format').isValid
+  )
+}
+
+export const isHearingArrangementsStepValidIC = (workingCase: Case) => {
+  return (
+    validate(workingCase.requestedCourtDate || '', 'date-format').isValid &&
+    workingCase.prosecutor &&
+    workingCase.court
   )
 }
 
@@ -101,6 +122,14 @@ export const isPoliceDemandsStepValidRC = (workingCase: Case) => {
 }
 
 export const isPoliceReportStepValidRC = (workingCase: Case) => {
+  return (
+    validate(workingCase.demands || '', 'empty').isValid &&
+    validate(workingCase.caseFacts || '', 'empty').isValid &&
+    validate(workingCase.legalArguments || '', 'empty').isValid
+  )
+}
+
+export const isPoliceDemandsStepValidIC = (workingCase: Case) => {
   return (
     validate(workingCase.demands || '', 'empty').isValid &&
     validate(workingCase.caseFacts || '', 'empty').isValid &&

@@ -116,7 +116,7 @@ const PageLayout: React.FC<PageProps> = ({
           activeSubSection,
         )
       : getInvestigationCaseProsecutorSection(
-          workingCase?.id,
+          workingCase || ({} as Case),
           activeSubSection,
         ),
     isRestrictionCase(workingCase?.type)
