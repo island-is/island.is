@@ -4,6 +4,7 @@ export enum HomeCircumstances {
   WITHOTHERS = 'WithOthers',
   OWNPLACE = 'OwnPlace',
   REGISTEREDLEASE = 'RegisteredLease',
+  UNREGISTEREDLEASE = 'UnregisteredLease',
   OTHER = 'Other',
 }
 
