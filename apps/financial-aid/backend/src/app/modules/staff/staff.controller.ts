@@ -1,8 +1,10 @@
 import {
+  Body,
   Controller,
   ForbiddenException,
   Get,
   Param,
+  Post,
   UseGuards,
 } from '@nestjs/common'
 
@@ -22,6 +24,7 @@ import { RolesGuard } from '../../guards/roles.guard'
 import { CurrentStaff, RolesRules } from '../../decorators'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
+import { CreateStaffDto } from './dto'
 
 @UseGuards(IdsUserGuard, RolesGuard)
 @RolesRules(RolesRule.VEITA)
@@ -56,5 +59,19 @@ export class StaffController {
     @CurrentStaff() staff: Staff,
   ): Promise<StaffModel[]> {
     return await this.staffService.findByMunicipalityId(staff.municipalityId)
+  }
+
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.ADMIN)
+  @Post('')
+  @ApiOkResponse({
+    type: StaffModel,
+    description: 'Creates staff',
+  })
+  async createStaff(
+    @CurrentStaff() staff: Staff,
+    @Body() createStaffInput: CreateStaffDto,
+  ): Promise<StaffModel> {
+    return await this.staffService.createStaff(staff, createStaffInput)
   }
 }
