@@ -3,8 +3,10 @@ import { Field, ObjectType } from '@nestjs/graphql'
 export class AccidentNotificationConfirmation {
   @Field({ nullable: true })
   InjuredOrRepresentativeParty?: boolean
+
   @Field({ nullable: true })
   CompanyParty?: boolean
+
   @Field({ nullable: true })
   Unknown?: boolean
 }

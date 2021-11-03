@@ -44,8 +44,6 @@ export class AccidentNotificationService {
     )
     const answers = application.answers as AccidentNotificationAnswers
     const xml = applictionAnswersToXml(answers, attachments)
-    console.log('applicationJson ', JSON.stringify(answers, null, 4))
-    console.log('XML OBJEJCJTWS', xml)
     try {
       const { ihiDocumentID } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
