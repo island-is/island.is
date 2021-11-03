@@ -99,6 +99,7 @@ export interface ServiceHelm {
   strategy?: {
     type: 'RollingUpdate' | 'Recreate'
   }
+  files?: string[]
 }
 
 export interface FeatureKubeJob {
