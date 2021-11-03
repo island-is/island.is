@@ -177,7 +177,7 @@ api:
   enabled: true
   env:
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
-    AUTH_PUBLIC_API_URL: 'https://identity-server.dev01.devland.is'
+    AUTH_PUBLIC_API_URL: 'https://identity-server.dev01.devland.is/public'
     CONTACT_US_EMAIL: 's@kogk.is'
     CONTENTFUL_HOST: 'preview.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
