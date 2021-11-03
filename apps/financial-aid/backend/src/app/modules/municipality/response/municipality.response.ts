@@ -22,4 +22,7 @@ export class MunicipalityResponse {
 
   @ApiProperty()
   cohabitationAid: AidModel
+
+  @ApiProperty()
+  rulesHomepage: string
 }

@@ -23,7 +23,7 @@ export const MunicipalitySettings = () => {
       <Text as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
         Reglur um fjárhagsaðstoð {municipality?.name}
       </Text>
-      <Box marginBottom={[1, 1, 2]}>
+      <Box marginBottom={[1, 1, 2]} className={`contentUp delay-50`}>
         <Input
           label="Slóð"
           name="financialAidRules"
@@ -39,7 +39,7 @@ export const MunicipalitySettings = () => {
       <Text as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
         Almennt netfang sveitarfélagsins (félagsþjónusta)
       </Text>
-      <Box marginBottom={[1, 1, 2]}>
+      <Box marginBottom={[1, 1, 2]} className={`contentUp delay-75`}>
         <Input
           label="Netfang"
           name="municipalityEmail"
@@ -58,7 +58,7 @@ export const MunicipalitySettings = () => {
       <Text as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
         Vefur sveitarfélagsins
       </Text>
-      <Box marginBottom={[1, 1, 2]}>
+      <Box marginBottom={[1, 1, 2]} className={`contentUp delay-100`}>
         <Input
           label="Slóð"
           name="municipalityWeb"
@@ -79,6 +79,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Eigin húsnæði"
           name="individualsOwnPlace"
+          type="number"
           value={municipality?.individualAid.ownPlace}
           backgroundColor="blue"
         />
@@ -88,6 +89,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Leiga með þinglýstan leigusamning"
           name="individualsRegisteredRenting"
+          type="number"
           value={municipality?.individualAid.registeredRenting}
           backgroundColor="blue"
         />
@@ -97,6 +99,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Leiga með óþinglýstan leigusamning"
           name="individualsUnregisteredRenting"
+          type="number"
           value={municipality?.individualAid.unregisteredRenting}
           backgroundColor="blue"
         />
@@ -106,6 +109,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Býr eða leigir hjá öðrum án þinglýsts leigusamnings"
           name="individualsWithOthers"
+          type="number"
           value={municipality?.individualAid.withOthers}
           backgroundColor="blue"
         />
@@ -115,6 +119,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Býr hjá foreldrum"
           name="individualsWithParents"
+          type="number"
           value={municipality?.individualAid.livesWithParents}
           backgroundColor="blue"
         />
@@ -124,6 +129,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Ekkert að ofantöldu"
           name="individualsOther"
+          type="number"
           value={municipality?.individualAid.unknown}
           backgroundColor="blue"
         />
@@ -137,6 +143,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Eigin húsnæði"
           name="cohabitationOwnPlace"
+          type="number"
           value={municipality?.cohabitationAid.ownPlace}
           backgroundColor="blue"
         />
@@ -146,6 +153,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Leiga með þinglýstan leigusamning"
           name="cohabitationRegisteredRenting"
+          type="number"
           value={municipality?.cohabitationAid.registeredRenting}
           backgroundColor="blue"
         />
@@ -155,6 +163,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Leiga með óþinglýstan leigusamning"
           name="cohabitationUnregisteredRenting"
+          type="number"
           value={municipality?.cohabitationAid.unregisteredRenting}
           backgroundColor="blue"
         />
@@ -164,6 +173,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Býr eða leigir hjá öðrum án þinglýsts leigusamnings"
           name="cohabitationWithOthers"
+          type="number"
           value={municipality?.cohabitationAid.withOthers}
           backgroundColor="blue"
         />
@@ -173,6 +183,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Býr hjá foreldrum"
           name="cohabitationWithParents"
+          type="number"
           value={municipality?.cohabitationAid.livesWithParents}
           backgroundColor="blue"
         />
@@ -182,6 +193,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Ekkert að ofantöldu"
           name="cohabitationOther"
+          type="number"
           value={municipality?.cohabitationAid.unknown}
           backgroundColor="blue"
         />
@@ -189,8 +201,8 @@ export const MunicipalitySettings = () => {
 
       {error && (
         <div>
-          Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að þessu
-          upplýsingum?
+          Abbabab mistókst að sækja sveitarfélagsstillingar, ertu örugglega með
+          aðgang að þessu upplýsingum?
         </div>
       )}
     </LoadingContainer>
