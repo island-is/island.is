@@ -11,32 +11,46 @@ interface Props {
   onStaffCreated: () => void
 }
 
+interface newUsersModalState {
+  staffNationalId: string
+  staffName: string
+  staffEmail: string
+  hasError: boolean
+  hasSubmitError: boolean
+  roles: StaffRole[]
+}
+
 const NewUserModal = ({ isVisible, setIsVisible, onStaffCreated }: Props) => {
-  const [staffNationalId, setStaffNationalId] = useState<string>()
-  const [staffName, setStaffName] = useState<string>()
-  const [staffEmail, setStaffEmail] = useState<string>()
-  const [hasError, setHasError] = useState(false)
-  const [hasSubmitError, setHasSubmitError] = useState(false)
+  const [state, setState] = useState<newUsersModalState>({
+    staffNationalId: '',
+    staffName: '',
+    staffEmail: '',
+    hasError: false,
+    hasSubmitError: false,
+    roles: [],
+  })
   const [createStaff] = useMutation(StaffMutation)
-  const [roles, setRoles] = useState<StaffRole[]>([])
 
   const changeStaffAccess = (role: StaffRole, isAddingRole: boolean) => {
     isAddingRole
-      ? setRoles((roles) => [...roles, role])
-      : setRoles(roles.filter((item) => item !== role))
+      ? setState({ ...state, roles: [...state.roles, role], hasError: false })
+      : setState({
+          ...state,
+          roles: state.roles.filter((item) => item !== role),
+        })
   }
 
   const areRequiredFieldsFilled =
-    !staffEmail ||
-    !staffName ||
-    !staffNationalId ||
-    roles.length === 0 ||
-    !isEmailValid(staffEmail) ||
-    staffNationalId.length !== 10
+    !state.staffEmail ||
+    !state.staffName ||
+    !state.staffNationalId ||
+    state.roles.length === 0 ||
+    !isEmailValid(state.staffEmail) ||
+    state.staffNationalId.length !== 10
 
   const submit = async () => {
     if (areRequiredFieldsFilled) {
-      setHasError(true)
+      setState({ ...state, hasError: true })
       return
     }
 
@@ -44,17 +58,17 @@ const NewUserModal = ({ isVisible, setIsVisible, onStaffCreated }: Props) => {
       return await createStaff({
         variables: {
           input: {
-            name: staffName,
-            email: staffEmail,
-            nationalId: staffNationalId,
-            roles: roles,
+            name: state.staffName,
+            email: state.staffEmail,
+            nationalId: state.staffNationalId,
+            roles: state.roles,
           },
         },
       }).then(() => {
         onStaffCreated()
       })
     } catch (e) {
-      setHasSubmitError(true)
+      setState({ ...state, hasSubmitError: true })
     }
   }
 
@@ -63,7 +77,7 @@ const NewUserModal = ({ isVisible, setIsVisible, onStaffCreated }: Props) => {
       isVisible={isVisible}
       setIsVisible={setIsVisible}
       header={'Nýr notandi'}
-      hasError={hasSubmitError}
+      hasError={state.hasSubmitError}
       errorMessage={'Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar'}
       submitButtonText={'Stofna notanda'}
       onSubmit={submit}
@@ -75,15 +89,19 @@ const NewUserModal = ({ isVisible, setIsVisible, onStaffCreated }: Props) => {
           type={'number'}
           placeholder="Sláðu inn kennitölu"
           backgroundColor="blue"
-          value={staffNationalId}
+          value={state.staffNationalId}
           onChange={(event) => {
-            setHasError(false)
             if (event.currentTarget.value.length <= 10) {
-              setStaffNationalId(event.currentTarget.value)
+              setState({
+                ...state,
+                staffNationalId: event.currentTarget.value,
+                hasError: false,
+              })
             }
           }}
           hasError={
-            hasError && (!staffNationalId || staffNationalId.length !== 10)
+            state.hasError &&
+            (!state.staffNationalId || state.staffNationalId.length !== 10)
           }
         />
       </Box>
@@ -91,29 +109,38 @@ const NewUserModal = ({ isVisible, setIsVisible, onStaffCreated }: Props) => {
         <Input
           label="Nafn"
           name="staffName"
-          value={staffName}
+          value={state.staffName}
           placeholder="Sláðu inn fullt nafn"
           backgroundColor="blue"
           onChange={(event) => {
-            setHasError(false)
-            setStaffName(event.currentTarget.value)
+            setState({
+              ...state,
+              hasError: false,
+              staffName: event.currentTarget.value,
+            })
           }}
-          hasError={hasError && !staffName}
+          hasError={state.hasError && !state.staffName}
         />
       </Box>
       <Box marginBottom={2}>
         <Input
           label="Netfang"
           name="staffEmail"
-          value={staffEmail}
+          value={state.staffEmail}
           placeholder="Sláðu inn netfang"
           backgroundColor="blue"
           type={'email'}
           onChange={(event) => {
-            setHasError(false)
-            setStaffEmail(event.currentTarget.value)
+            setState({
+              ...state,
+              hasError: false,
+              staffEmail: event.currentTarget.value,
+            })
           }}
-          hasError={hasError && (!staffEmail || !isEmailValid(staffEmail))}
+          hasError={
+            state.hasError &&
+            (!state.staffEmail || !isEmailValid(state.staffEmail))
+          }
         />
       </Box>
       <Text marginBottom={5} variant="small">
@@ -127,11 +154,10 @@ const NewUserModal = ({ isVisible, setIsVisible, onStaffCreated }: Props) => {
         <Checkbox
           name={'employee'}
           label="Vinnsluaðili"
-          checked={roles.includes(StaffRole.EMPLOYEE)}
+          checked={state.roles.includes(StaffRole.EMPLOYEE)}
           strong={false}
-          hasError={hasError && roles.length === 0}
+          hasError={state.hasError && state.roles.length === 0}
           onChange={(event) => {
-            setHasError(false)
             changeStaffAccess(StaffRole.EMPLOYEE, event.target.checked)
           }}
           filled={false}
@@ -141,16 +167,15 @@ const NewUserModal = ({ isVisible, setIsVisible, onStaffCreated }: Props) => {
         <Checkbox
           name={'admin'}
           label="Stjórnandi (admin)"
-          checked={roles.includes(StaffRole.ADMIN)}
-          hasError={hasError && roles.length === 0}
+          checked={state.roles.includes(StaffRole.ADMIN)}
+          hasError={state.hasError && state.roles.length === 0}
           onChange={(event) => {
-            setHasError(false)
             changeStaffAccess(StaffRole.ADMIN, event.target.checked)
           }}
           strong={false}
         />
       </Box>
-      {hasError && roles.length === 0 && (
+      {state.hasError && state.roles.length === 0 && (
         <Text color="red600" fontWeight="semiBold" variant="small">
           Það þarf að velja réttindi
         </Text>
