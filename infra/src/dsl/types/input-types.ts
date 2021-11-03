@@ -77,6 +77,7 @@ export type ServiceDefinition = {
     allowPrivilegeEscalation: boolean
   }
   xroadConfig: XroadConfig[]
+  files: string[]
 }
 
 export interface Ingress {

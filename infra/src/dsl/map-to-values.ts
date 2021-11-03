@@ -148,6 +148,9 @@ export const serializeService: SerializeMethod = (
   if (Object.keys(serviceDef.secrets).length > 0) {
     result.secrets = { ...serviceDef.secrets }
   }
+  if (Object.keys(serviceDef.files).length > 0) {
+    result.files = [...serviceDef.files]
+  }
 
   const {
     envs: featureEnvs,

@@ -161,6 +161,7 @@ export const serviceSetup = (services: {
       Education,
       NationalRegistry,
     )
+    .files('islyklar.p12')
     .ingress({
       primary: {
         host: {

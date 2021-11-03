@@ -65,6 +65,7 @@ export class ServiceBuilder<ServiceType> implements Service {
         allowPrivilegeEscalation: false,
       },
       xroadConfig: [],
+      files: [],
     }
   }
 
@@ -128,6 +129,11 @@ export class ServiceBuilder<ServiceType> implements Service {
    */
   xroad(...configs: XroadConfig[]) {
     this.serviceDef.xroadConfig = [...this.serviceDef.xroadConfig, ...configs]
+    return this
+  }
+
+  files(...files: string[]) {
+    this.serviceDef.files = [...this.serviceDef.files, ...files]
     return this
   }
 
