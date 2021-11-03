@@ -37,7 +37,7 @@ export class StaffResolver {
   }
 
   @Mutation(() => StaffModel, { nullable: true })
-  updateUser(
+  updateStaffMember(
     @Args('input', { type: () => UpdateStaffInput })
     input: UpdateStaffInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },

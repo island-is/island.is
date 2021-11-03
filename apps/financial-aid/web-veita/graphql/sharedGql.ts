@@ -275,3 +275,16 @@ export const StaffMutation = gql`
     }
   }
 `
+
+export const UpdateStaffMutation = gql`
+  mutation UpdateApplicationTableMutation($input: UpdateStaffInput!) {
+    updateStaffMember(input: $input) {
+      id
+      nationalId
+      name
+      roles
+      active
+      nickname
+    }
+  }
+`

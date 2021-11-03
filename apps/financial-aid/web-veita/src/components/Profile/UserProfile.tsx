@@ -11,7 +11,11 @@ import {
 import * as styles from './Profile.css'
 
 import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
-import { Staff } from '@island.is/financial-aid/shared/lib'
+import {
+  isEmailValid,
+  Staff,
+  StaffRole,
+} from '@island.is/financial-aid/shared/lib'
 
 interface UserProps {
   user: Staff
@@ -19,49 +23,102 @@ interface UserProps {
 
 interface UserInfo {
   nationalId: string
+  email?: string
   nickname?: string
+  hasError: boolean
+  roles: StaffRole[]
 }
 
 const UserProfile = ({ user }: UserProps) => {
-  const [userInfo, setUserInfo] = useState<UserInfo>({
+  const [state, setState] = useState<UserInfo>({
     nationalId: user.nationalId,
     nickname: user?.nickname,
+    hasError: false,
+    roles: [],
   })
 
-  console.log(user)
+  const changeStaffAccess = (role: StaffRole, isAddingRole: boolean) => {
+    isAddingRole
+      ? setState({
+          ...state,
+          roles: [...state.roles, role],
+          hasError: false,
+        })
+      : setState({
+          ...state,
+          roles: state.roles.filter((item) => item !== role),
+        })
+  }
 
   const inputFields = [
     {
       label: 'Kennitala',
-      value: userInfo.nationalId,
+      value: state.nationalId,
       onchange: (
-        event: React.MouseEvent<
-          HTMLInputElement | HTMLTextAreaElement,
-          MouseEvent
-        >,
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
         if (event.currentTarget.value.length <= 10) {
-          setUserInfo({ ...userInfo, nationalId: event.target.value })
+          setState({
+            ...state,
+            nationalId: event.target.value,
+            hasError: false,
+          })
         }
       },
+      error: !state.nationalId || state.nationalId.length !== 10,
     },
-    // {
-    //   label: 'Netfang',
-    //   bgIsBlue: true,
-    // },
+    {
+      label: 'Netfang',
+      bgIsBlue: true,
+      onchange: (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+      ) => {
+        setState({ ...state, email: event.target.value, hasError: false })
+      },
+      error: !state.email || !isEmailValid(state.email),
+    },
     {
       label: 'Stutt nafn',
-      value: userInfo.nickname,
+      value: state.nickname,
       onchange: (
-        event: React.MouseEvent<
-          HTMLInputElement | HTMLTextAreaElement,
-          MouseEvent
-        >,
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
-        setUserInfo({ ...userInfo, nickname: event.target.value })
+        setState({ ...state, nickname: event.target.value, hasError: false })
       },
     },
   ]
+
+  const areRequiredFieldsFilled =
+    !state.email ||
+    !state.nickname ||
+    !state.nationalId ||
+    state.roles.length === 0 ||
+    !isEmailValid(state.email) ||
+    state.nationalId.length !== 10
+
+  const onSubmitUpdate = async () => {
+    if (areRequiredFieldsFilled) {
+      setState({ ...state, hasError: true })
+      return
+    }
+
+    // try {
+    //   return await createStaff({
+    //     variables: {
+    //       input: {
+    //         name: state.staffName,
+    //         email: state.staffEmail,
+    //         nationalId: state.staffNationalId,
+    //         roles: state.roles,
+    //       },
+    //     },
+    //   }).then(() => {
+    //     onStaffCreated()
+    //   })
+    // } catch (e) {
+    //   setState({ ...state, hasSubmitError: true })
+    // }
+  }
 
   return (
     <>
@@ -104,9 +161,9 @@ const UserProfile = ({ user }: UserProps) => {
                   label={item.label}
                   name=""
                   value={item.value}
-                  placeholder="This is the placeholder"
                   onClick={item.onchange}
-                  // backgroundColor={item.bgIsBlue ? 'blue' : 'white'}
+                  backgroundColor={item.bgIsBlue ? 'blue' : 'white'}
+                  hasError={state.hasError && item.error}
                 />
               </Box>
             )
