@@ -254,3 +254,16 @@ export const StaffForMunicipalityQuery = gql`
     }
   }
 `
+
+export const StaffQuery = gql`
+  query getStaff($input: StaffInput!) {
+    user(input: $input) {
+      id
+      nationalId
+      name
+      roles
+      active
+      nickname
+    }
+  }
+`

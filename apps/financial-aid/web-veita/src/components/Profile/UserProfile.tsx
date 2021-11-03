@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Box,
   Divider,
@@ -11,20 +11,55 @@ import {
 import * as styles from './Profile.css'
 
 import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
+import { Staff } from '@island.is/financial-aid/shared/lib'
 
-interface UserProps {}
+interface UserProps {
+  user: Staff
+}
 
-const UserProfile = ({}: UserProps) => {
+interface UserInfo {
+  nationalId: string
+  nickname?: string
+}
+
+const UserProfile = ({ user }: UserProps) => {
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    nationalId: user.nationalId,
+    nickname: user?.nickname,
+  })
+
+  console.log(user)
+
   const inputFields = [
     {
       label: 'Kennitala',
+      value: userInfo.nationalId,
+      onchange: (
+        event: React.MouseEvent<
+          HTMLInputElement | HTMLTextAreaElement,
+          MouseEvent
+        >,
+      ) => {
+        if (event.currentTarget.value.length <= 10) {
+          setUserInfo({ ...userInfo, nationalId: event.target.value })
+        }
+      },
     },
-    {
-      label: 'Netfang',
-      bgIsBlue: true,
-    },
+    // {
+    //   label: 'Netfang',
+    //   bgIsBlue: true,
+    // },
     {
       label: 'Stutt nafn',
+      value: userInfo.nickname,
+      onchange: (
+        event: React.MouseEvent<
+          HTMLInputElement | HTMLTextAreaElement,
+          MouseEvent
+        >,
+      ) => {
+        setUserInfo({ ...userInfo, nickname: event.target.value })
+      },
     },
   ]
 
@@ -38,7 +73,7 @@ const UserProfile = ({}: UserProps) => {
         <Box className={`${styles.widthAlmostFull}`}>
           <Box className={`contentUp delay-25`} marginBottom={[3, 3, 7]}>
             <Text as="h1" variant="h1" marginBottom={2}>
-              Hlín Bergrún Guðmundsdóttir
+              {user.name}
             </Text>
 
             <Divider />
@@ -50,7 +85,9 @@ const UserProfile = ({}: UserProps) => {
                 </Text>
               </Box>
               <Box marginRight={1}>
-                <Text variant="small">Notandi er virkur</Text>
+                <Text variant="small">
+                  Notandi er {user.active ? 'virkur' : 'óvirkur'}
+                </Text>
               </Box>
               <button className={headerStyles.button}>Sjá um</button>
             </Box>
@@ -65,9 +102,11 @@ const UserProfile = ({}: UserProps) => {
               >
                 <Input
                   label={item.label}
-                  name="Test1"
+                  name=""
+                  value={item.value}
                   placeholder="This is the placeholder"
-                  backgroundColor={item.bgIsBlue ? 'blue' : 'white'}
+                  onClick={item.onchange}
+                  // backgroundColor={item.bgIsBlue ? 'blue' : 'white'}
                 />
               </Box>
             )

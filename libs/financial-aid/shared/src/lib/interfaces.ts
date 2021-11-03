@@ -34,6 +34,7 @@ export interface Staff {
   municipalityName: string
   phoneNumber?: string
   municipalityHomepage?: string
+  nickname?: string
 }
 
 export interface Aid {

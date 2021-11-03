@@ -45,6 +45,21 @@ export class StaffController {
     return staff
   }
 
+  @Get('id/:id')
+  @ApiOkResponse({
+    type: StaffModel,
+    description: 'Gets staff by id',
+  })
+  async getStaffById(@Param('id') id: string): Promise<StaffModel> {
+    const staff = await this.staffService.findById(id)
+
+    if (staff === null) {
+      throw new ForbiddenException('Staff not found')
+    }
+
+    return staff
+  }
+
   @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.ADMIN)
   @Get('municipality')

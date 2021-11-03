@@ -100,6 +100,10 @@ class BackendAPI extends RESTDataSource {
     return this.get(`staff/nationalId/${nationalId}`)
   }
 
+  getStaffById(id: string): Promise<StaffModel> {
+    return this.get(`staff/id/${id}`)
+  }
+
   getStaffForMunicipality(): Promise<StaffModel[]> {
     return this.get('staff/municipality')
   }
