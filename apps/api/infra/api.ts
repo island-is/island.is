@@ -40,7 +40,7 @@ export const serviceSetup = (services: {
         prod: 'island-is-prod-upload-api',
       },
       AUTH_PUBLIC_API_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
+        dev: 'https://identity-server.dev01.devland.is/public',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
