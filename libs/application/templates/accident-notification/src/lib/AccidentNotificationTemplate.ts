@@ -31,7 +31,6 @@ type AccidentNotificationEvent =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.ASSIGN }
-  | { type: 'ADDATTACHMENT' }
 
 const AccidentNotificationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -54,8 +53,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           progress: 0.2,
           lifecycle: {
             shouldBeListed: true,
-            shouldBePruned: false,
-            //whenToPrune: 3600 * 1000,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
           },
           roles: [
             {
@@ -85,7 +84,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
-            //whenToPrune: 3600 * 1000,
           },
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
@@ -140,7 +138,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
-            //whenToPrune: 3600 * 1000000,
           },
           onEntry: {
             apiModuleAction: ApiActions.addAttachment,
@@ -189,7 +186,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
-            //whenToPrune: 3600 * 1000000,
           },
           onEntry: {
             apiModuleAction: ApiActions.reviewApplication,
@@ -207,7 +203,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               id: Roles.ASSIGNEE,
               formLoader: () =>
                 import('../forms/InReviewForm/index').then((val) =>
-                  Promise.resolve(val.ApplicantReview),
+                  Promise.resolve(val.AssigneeReview),
                 ),
               read: 'all',
               write: 'all',

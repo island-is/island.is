@@ -273,6 +273,7 @@ export const AccidentNotificationSchema = z.object({
       ReviewApprovalEnum.NOTREVIEWED,
     ])
     .refine((x) => (x ? x : ReviewApprovalEnum.NOTREVIEWED)),
+  reviewComment: z.string().optional(),
 })
 
 export type AccidentNotification = z.TypeOf<typeof AccidentNotificationSchema>

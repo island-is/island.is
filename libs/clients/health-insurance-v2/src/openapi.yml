@@ -18,7 +18,7 @@ info:
     bugReport: https://www.sjukra.is/um-okkur/thjonustuleidir
     featureRequest: https://sjukra.is
 servers:
-  - url: https://test-innrisirestws.sjukra.is/islandrg
+  - url: https://dev-innrisirestws.sjukra.is/islandrg
 paths:
   /v1/document:
     post:
@@ -211,8 +211,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  ? /v1/document/{ihiDocumentID}/sendconfirmation/{confirmationParty}/{confirmationType}
-  : post:
+  /v1/document/{ihiDocumentID}/sendconfirmation:
+    post:
       tags:
         - Document
       operationId: Document_SendConfirmation
@@ -234,22 +234,18 @@ paths:
             type: integer
             format: int32
           x-position: 2
-        - name: confirmationParty
-          in: path
-          required: true
-          description: 1 = Injured or representative party, 2 = Company party
-          schema:
-            type: integer
-            format: int32
-          x-position: 3
-        - name: confirmationType
-          in: path
-          required: true
-          description: 1 = Confirmation, 2 = Objection
-          schema:
-            type: integer
-            format: int32
-          x-position: 4
+      requestBody:
+        x-name: confirmation
+        description: >-
+          Instance of the  ConfirmationIN class. Has information about the
+          confirmationParty, confirmationType and objection text if
+          confirmationType = 2 (Objection)
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmationIN'
+        required: true
+        x-position: 3
       responses:
         '201':
           description: Returns unique id of the request as NumberIHI
@@ -701,6 +697,24 @@ components:
             If ping is successful it returns a unique id for the request from
             IHI database.
           format: int32
+    ConfirmationIN:
+      type: object
+      additionalProperties: false
+      properties:
+        confirmationParty:
+          type: integer
+          description: 1 = Injured or representative party, 2 = Company party
+          format: int32
+        confirmationType:
+          type: integer
+          description: 1 = Confirmation, 2 = Objection
+          format: int32
+        objection:
+          type: string
+          description: >-
+            If conformationType = 2 (Objection), then this is a description text
+            for the objection.
+          nullable: true
     IsHealthInsuredType:
       type: object
       description: Return values from the IsHealthInsured (Sjúkratryggdur) service.

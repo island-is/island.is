@@ -95,8 +95,8 @@ export const attachments = {
     },
     deathCertificate: {
       id: 'an.application:attachments.documentNames.deathCertificate',
-      defaultMessage: 'Dánarvottorð',
-      description: 'Name of death certificate for in review',
+      defaultMessage: 'Lögregluskýrsla',
+      description: 'Name of police report for in review',
     },
     policeReport: {
       id: 'an.application:attachments.documentNames.policeReport',

@@ -51,7 +51,7 @@ export class AccidentNotificationService {
       const { ihiDocumentID } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
       })
-
+      this.logger.debug('in try')
       await this.sharedTemplateAPIService.sendEmail(
         (props) =>
           generateConfirmationEmail(
@@ -63,9 +63,10 @@ export class AccidentNotificationService {
         application,
       )
       //stop application from being submitted
-      throw new Error('debug stop!')
+      // throw new Error('debug stop!')
       // Request representative review when applicable
       if (shouldRequestReview) {
+        this.logger.debug('in shoulderequestreview')
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
           (props, assignLink) =>
             generateAssignReviewerEmail(props, assignLink, ihiDocumentID),
@@ -84,6 +85,7 @@ export class AccidentNotificationService {
 
   async addAdditionalAttachment({ application }: TemplateApiModuleActionProps) {
     try {
+      this.logger.debug('adding additional docs')
       const attachments = await this.attachmentProvider.gatherAllAttachments(
         application,
       )
@@ -117,12 +119,16 @@ export class AccidentNotificationService {
         application.answers,
         'reviewApproval',
       ) as ReviewApprovalEnum
-
+      const reviewComment =
+        getValueViaPath(application.answers, 'reviewComment') || ''
       await this.documentApi.documentSendConfirmation({
         ihiDocumentID: documentId,
-        confirmationType:
-          reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
-        confirmationParty: isRepresentativeOfCompanyOrInstitue ? 2 : 1,
+        confirmationIN: {
+          confirmationType:
+            reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
+          confirmationParty: isRepresentativeOfCompanyOrInstitue ? 2 : 1,
+          objection: reviewComment as string,
+        },
       })
     } catch (e) {
       this.logger.error('Error reviewing application to SÍ', { e })
