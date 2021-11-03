@@ -323,6 +323,7 @@ export class DrivingLicenseService {
   ): Promise<NewDrivingLicenseResult> {
     const response: unknown = await this.drivingLicenseApi.apiOkuskirteiniApplicationsNewCategoryPost(
       {
+        apiVersion: '2.0',
         category: DrivingLicenseCategory.B,
         postNewFinalLicense: {
           authorityNumber: input.juristictionId,
