@@ -209,6 +209,8 @@ api:
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
     XROAD_VMST_MEMBER_CODE: '7005942039'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
+  files:
+    - 'islyklar.p12'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'api-catalogue'

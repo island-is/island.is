@@ -167,6 +167,7 @@ export const serviceSetup = (services: {
       Education,
       NationalRegistry,
     )
+    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       primary: {
         host: {
