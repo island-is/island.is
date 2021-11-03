@@ -34,6 +34,7 @@ export interface Staff {
   municipalityName: string
   phoneNumber?: string
   municipalityHomepage?: string
+  email?: string
 }
 
 export interface Aid {
@@ -268,4 +269,11 @@ export interface ServiceCenter {
 export interface TableHeadersProps {
   filterBy?: string
   title: string
+}
+
+export interface CreateStaff {
+  name: string
+  email: string
+  nationalId: string
+  roles: StaffRole[]
 }
