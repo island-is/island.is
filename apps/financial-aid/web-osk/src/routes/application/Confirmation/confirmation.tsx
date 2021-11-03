@@ -22,7 +22,9 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 const Confirmation = () => {
   const router = useRouter()
   const { form } = useContext(FormContext)
-  const { municipality } = useContext(AppContext)
+  const { municipality, user } = useContext(AppContext)
+
+  const applicationId = form.applicationId || user?.currentApplicationId
 
   const logOut = useLogOut()
 
@@ -65,14 +67,14 @@ const Confirmation = () => {
           Frekari aðgerðir í boði
         </Text>
         <Box marginBottom={[4, 4, 5]}>
-          {form.applicationId && (
+          {applicationId && (
             <Box marginBottom={3}>
               <Button
                 icon="open"
                 colorScheme="default"
                 iconType="outline"
                 onClick={() =>
-                  router.push(Routes.statusPage(form.applicationId as string))
+                  router.push(Routes.statusPage(applicationId as string))
                 }
                 preTextIconType="filled"
                 size="small"

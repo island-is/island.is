@@ -1,3 +1,4 @@
+import { Base, JudicialSystem } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
@@ -27,34 +28,15 @@ export const serviceSetup = (services: {
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
-      XROAD_BASE_PATH_WITH_ENV: {
-        dev: 'https://securityserver.dev01.devland.is/r1/IS-DEV',
-        staging: 'https://securityserver.staging01.devland.is/r1/IS-TEST',
-        prod: 'https://securityserver.island.is/r1/IS',
-      },
-      XROAD_CLIENT_ID: {
-        dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Client',
-        staging: 'IS-TEST/GOV/5804170510/Rettarvorslugatt-Client',
-        prod: 'IS/GOV/5804170510/Rettarvorslugatt-Client',
-      },
-      XROAD_COURT_MEMBER_CODE: {
-        dev: '10019',
-        staging: '4707171140',
-        prod: '4707171140',
-      },
       HIDDEN_FEATURES: {
         dev: '',
         staging: 'POLICE_CASE_FILES',
         prod: 'POLICE_CASE_FILES',
       },
     })
+    .xroad(Base, JudicialSystem)
     .secrets({
-      XROAD_COURT_API_PATH: '/k8s/judicial-system/XROAD_COURT_API_PATH',
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
-      COURTS_CREDENTIALS: '/k8s/judicial-system/COURTS_CREDENTIALS',
-      XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT',
-      XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY',
-      XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM',
       SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN',
     })
