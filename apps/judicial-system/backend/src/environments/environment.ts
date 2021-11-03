@@ -47,7 +47,7 @@ const devConfig = {
     timeToLiveGet: '5',
   },
   xRoad: {
-    basePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
+    basePathWithEnv: process.env.XROAD_TLS_BASE_PATH_WITH_ENV ?? '',
     clientId: process.env.XROAD_CLIENT_ID ?? '',
     clientCert: process.env.XROAD_CLIENT_CERT ?? '',
     clientKey: process.env.XROAD_CLIENT_KEY ?? '',
@@ -57,7 +57,7 @@ const devConfig = {
     apiPath: process.env.XROAD_COURT_API_PATH ?? '',
     memberCode: process.env.XROAD_COURT_MEMBER_CODE ?? '',
     serviceOptions: JSON.parse(
-      process.env.COURTS_CREDENTIALS ?? '{}',
+      process.env.XROAD_COURTS_CREDENTIALS ?? '{}',
     ) as CourtClientServiceOptions,
   },
   policeServiceOptions: {
@@ -130,8 +130,8 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.S3_TIME_TO_LIVE_GET) {
     throw new Error('Missing S3_TIME_TO_LIVE_GET environment.')
   }
-  if (!process.env.XROAD_BASE_PATH_WITH_ENV) {
-    throw new Error('Missing XROAD_BASE_PATH_WITH_ENV environment.')
+  if (!process.env.XROAD_TLS_BASE_PATH_WITH_ENV) {
+    throw new Error('Missing XROAD_TLS_BASE_PATH_WITH_ENV environment.')
   }
   if (!process.env.XROAD_CLIENT_ID) {
     throw new Error('Missing XROAD_CLIENT_ID environment.')
@@ -157,8 +157,8 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.XROAD_POLICE_MEMBER_CODE) {
     throw new Error('Missing XROAD_POLICE_MEMBER_CODE environment.')
   }
-  if (!process.env.COURTS_CREDENTIALS) {
-    throw new Error('Missing COURTS_CREDENTIALS environment.')
+  if (!process.env.XROAD_COURTS_CREDENTIALS) {
+    throw new Error('Missing XROAD_COURTS_CREDENTIALS environment.')
   }
 }
 
@@ -208,7 +208,7 @@ const prodConfig = {
     timeToLiveGet: process.env.S3_TIME_TO_LIVE_GET ?? '',
   },
   xRoad: {
-    basePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
+    basePathWithEnv: process.env.XROAD_TLS_BASE_PATH_WITH_ENV ?? '',
     clientId: process.env.XROAD_CLIENT_ID ?? '',
     clientCert: process.env.XROAD_CLIENT_CERT ?? '',
     clientKey: process.env.XROAD_CLIENT_KEY ?? '',
@@ -218,7 +218,7 @@ const prodConfig = {
     apiPath: process.env.XROAD_COURT_API_PATH ?? '',
     memberCode: process.env.XROAD_COURT_MEMBER_CODE ?? '',
     serviceOptions: JSON.parse(
-      process.env.COURTS_CREDENTIALS ?? '{}',
+      process.env.XROAD_COURTS_CREDENTIALS ?? '{}',
     ) as CourtClientServiceOptions,
   },
   policeServiceOptions: {

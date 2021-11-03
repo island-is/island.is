@@ -4,7 +4,7 @@ import {
   HomeCircumstances,
   Employment,
   FamilyStatus,
-  Spouse,
+  FormSpouse,
 } from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
 
@@ -34,7 +34,7 @@ export interface Form {
   formComment?: string
   fileUploadComment?: string
   familyStatus?: FamilyStatus
-  spouse?: Spouse
+  spouse?: FormSpouse
   phoneNumber?: string
 }
 

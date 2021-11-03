@@ -81,13 +81,6 @@ export const icHearingArrangements = {
           description:
             'Notaður sem texti fyrir valmöguleikann "Fulltrúi ákæruvalds mætir" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
         }),
-        remoteSession: defineMessage({
-          id:
-            'judicial.system.investigation_cases:hearing_arrangements.session_arrangements.options.remote_session',
-          defaultMessage: 'Fyrirtaka að málsaðilum fjarstöddum',
-          description:
-            'Notaður sem texti fyrir valmöguleikann "Fyrirtaka að málsaðilum fjarstöddum" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
-        }),
       },
     },
     requestedCourtDate: defineMessages({
