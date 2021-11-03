@@ -13,11 +13,7 @@ import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 import { ApplicationService } from './application.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  ApplicationModel,
-  SpouseResponse,
-  UpdateApplicationTableResponse,
-} from './models'
+import { ApplicationModel, UpdateApplicationTableResponse } from './models'
 
 import {
   ApplicationEventModel,
@@ -54,6 +50,7 @@ import { StaffService } from '../staff'
 import { StaffGuard } from '../../guards/staff.guard'
 import { CurrentApplication } from '../../decorators/application.decorator'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
+import { SpouseResponse } from './models/spouse.response'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/application`)

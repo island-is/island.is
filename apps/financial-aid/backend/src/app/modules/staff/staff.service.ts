@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { UpdateStaffDto } from './dto'
 
 import { StaffModel } from './models'
 
@@ -32,5 +33,23 @@ export class StaffService {
         municipalityId,
       },
     })
+  }
+
+  async update(
+    id: string,
+    update: UpdateStaffDto,
+  ): Promise<{
+    numberOfAffectedRows: number
+    updatedStaff: StaffModel
+  }> {
+    const [numberOfAffectedRows, [updatedStaff]] = await this.staffModel.update(
+      update,
+      {
+        where: { id },
+        returning: true,
+      },
+    )
+
+    return { numberOfAffectedRows, updatedStaff }
   }
 }

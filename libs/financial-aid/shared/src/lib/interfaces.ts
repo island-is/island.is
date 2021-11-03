@@ -37,6 +37,13 @@ export interface Staff {
   nickname?: string
 }
 
+export interface UpdateStaff {
+  nationalId?: string
+  roles?: StaffRole[]
+  active: boolean
+  nickname?: string
+}
+
 export interface Aid {
   ownPlace: number
   registeredRenting: number

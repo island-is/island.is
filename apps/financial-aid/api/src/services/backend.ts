@@ -15,6 +15,7 @@ import {
   apiBasePath,
   ApplicationStateUrl,
   UpdateApplicationTableResponseType,
+  UpdateStaff,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -102,6 +103,10 @@ class BackendAPI extends RESTDataSource {
 
   getStaffById(id: string): Promise<StaffModel> {
     return this.get(`staff/id/${id}`)
+  }
+
+  updateStaff(id: string, updateStaff: UpdateStaff): Promise<StaffModel> {
+    return this.put(`staff/id/${id}`, updateStaff)
   }
 
   getStaffForMunicipality(): Promise<StaffModel[]> {

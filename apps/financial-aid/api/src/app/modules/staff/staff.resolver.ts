@@ -1,4 +1,4 @@
-import { Args, Context, Query, Resolver } from '@nestjs/graphql'
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -6,7 +6,7 @@ import { BackendAPI } from '../../../services'
 
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { StaffModel } from './models'
-import { StaffInput } from './dto/staff.input'
+import { StaffInput, UpdateStaffInput } from './dto'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => StaffModel)
@@ -34,5 +34,18 @@ export class StaffResolver {
     this.logger.debug(`Getting staff from ${input.id}`)
 
     return backendApi.getStaffById(input.id)
+  }
+
+  @Mutation(() => StaffModel, { nullable: true })
+  updateUser(
+    @Args('input', { type: () => UpdateStaffInput })
+    input: UpdateStaffInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<StaffModel> {
+    const { id, ...updateStaff } = input
+
+    this.logger.debug(`updating staff ${id}`)
+
+    return backendApi.updateStaff(id, updateStaff)
   }
 }
