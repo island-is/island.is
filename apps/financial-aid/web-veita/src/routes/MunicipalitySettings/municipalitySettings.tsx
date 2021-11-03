@@ -1,23 +1,14 @@
 import React from 'react'
-import { useQuery } from '@apollo/client'
 import {
   ApplicationOverviewSkeleton,
   LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { Text, Box, Input } from '@island.is/island-ui/core'
 
-import { Staff } from '@island.is/financial-aid/shared/lib'
-import { StaffForMunicipalityQuery } from '@island.is/financial-aid-web/veita/graphql'
+import { useMunicipality } from '@island.is/financial-aid/shared/components'
 
 export const MunicipalitySettings = () => {
-  const { data, error, loading } = useQuery<{ users: Staff[] }>(
-    StaffForMunicipalityQuery,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
-
+  const { municipality, error, loading } = useMunicipality()
   return (
     <LoadingContainer
       isLoading={loading}
@@ -30,13 +21,13 @@ export const MunicipalitySettings = () => {
       </Box>
 
       <Text as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
-        Reglur um fjárhagsaðstoð CITYNAME
+        Reglur um fjárhagsaðstoð {municipality?.name}
       </Text>
       <Box marginBottom={[1, 1, 2]}>
         <Input
           label="Slóð"
           name="financialAidRules"
-          value={''}
+          value={municipality?.rulesHomepage}
           backgroundColor="blue"
         />
       </Box>
@@ -52,7 +43,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Netfang"
           name="municipalityEmail"
-          value={''}
+          value={municipality?.email}
           type="email"
           backgroundColor="blue"
         />
@@ -71,7 +62,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Slóð"
           name="municipalityWeb"
-          value={''}
+          value={municipality?.homepage}
           backgroundColor="blue"
         />
       </Box>
@@ -88,7 +79,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Eigin húsnæði"
           name="individualsOwnPlace"
-          value={''}
+          value={municipality?.individualAid.ownPlace}
           backgroundColor="blue"
         />
       </Box>
@@ -96,8 +87,8 @@ export const MunicipalitySettings = () => {
       <Box marginBottom={[1, 1, 3]}>
         <Input
           label="Leiga með þinglýstan leigusamning"
-          name="individualsRegisteredLease"
-          value={''}
+          name="individualsRegisteredRenting"
+          value={municipality?.individualAid.registeredRenting}
           backgroundColor="blue"
         />
       </Box>
@@ -105,8 +96,8 @@ export const MunicipalitySettings = () => {
       <Box marginBottom={[1, 1, 3]}>
         <Input
           label="Leiga með óþinglýstan leigusamning"
-          name="individualsUnregisteredLease"
-          value={''}
+          name="individualsUnregisteredRenting"
+          value={municipality?.individualAid.unregisteredRenting}
           backgroundColor="blue"
         />
       </Box>
@@ -115,7 +106,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Býr eða leigir hjá öðrum án þinglýsts leigusamnings"
           name="individualsWithOthers"
-          value={''}
+          value={municipality?.individualAid.withOthers}
           backgroundColor="blue"
         />
       </Box>
@@ -124,7 +115,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Býr hjá foreldrum"
           name="individualsWithParents"
-          value={''}
+          value={municipality?.individualAid.livesWithParents}
           backgroundColor="blue"
         />
       </Box>
@@ -133,7 +124,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Ekkert að ofantöldu"
           name="individualsOther"
-          value={''}
+          value={municipality?.individualAid.unknown}
           backgroundColor="blue"
         />
       </Box>
@@ -146,7 +137,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Eigin húsnæði"
           name="cohabitationOwnPlace"
-          value={''}
+          value={municipality?.cohabitationAid.ownPlace}
           backgroundColor="blue"
         />
       </Box>
@@ -154,8 +145,8 @@ export const MunicipalitySettings = () => {
       <Box marginBottom={[1, 1, 3]}>
         <Input
           label="Leiga með þinglýstan leigusamning"
-          name="cohabitationRegisteredLease"
-          value={''}
+          name="cohabitationRegisteredRenting"
+          value={municipality?.cohabitationAid.registeredRenting}
           backgroundColor="blue"
         />
       </Box>
@@ -163,8 +154,8 @@ export const MunicipalitySettings = () => {
       <Box marginBottom={[1, 1, 3]}>
         <Input
           label="Leiga með óþinglýstan leigusamning"
-          name="cohabitationUnregisteredLease"
-          value={''}
+          name="cohabitationUnregisteredRenting"
+          value={municipality?.cohabitationAid.unregisteredRenting}
           backgroundColor="blue"
         />
       </Box>
@@ -173,7 +164,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Býr eða leigir hjá öðrum án þinglýsts leigusamnings"
           name="cohabitationWithOthers"
-          value={''}
+          value={municipality?.cohabitationAid.withOthers}
           backgroundColor="blue"
         />
       </Box>
@@ -182,7 +173,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Býr hjá foreldrum"
           name="cohabitationWithParents"
-          value={''}
+          value={municipality?.cohabitationAid.livesWithParents}
           backgroundColor="blue"
         />
       </Box>
@@ -191,7 +182,7 @@ export const MunicipalitySettings = () => {
         <Input
           label="Ekkert að ofantöldu"
           name="cohabitationOther"
-          value={''}
+          value={municipality?.cohabitationAid.unknown}
           backgroundColor="blue"
         />
       </Box>
