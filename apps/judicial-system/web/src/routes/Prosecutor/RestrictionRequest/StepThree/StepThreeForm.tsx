@@ -30,7 +30,11 @@ import {
   alternativeTravelBanRestrictions,
   restrictions,
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  isPoliceDemandsStepValidIC,
+  isPoliceDemandsStepValidRC,
+  validate,
+} from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
 
@@ -333,13 +337,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.STEP_TWO_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={
-            !validate(workingCase.lawsBroken ?? '', 'empty').isValid ||
-            !requestedValidToDateIsValid ||
-            ((!workingCase.legalProvisions ||
-              workingCase.legalProvisions?.length === 0) &&
-              !workingCase.legalBasis)
-          }
+          nextIsDisabled={!isPoliceDemandsStepValidRC(workingCase)}
         />
       </FormContentContainer>
     </>

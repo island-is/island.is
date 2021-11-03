@@ -74,9 +74,12 @@ export const isAccusedStepValidRC = (workingCase: Case) => {
     validate(workingCase.accusedNationalId, 'empty').isValid &&
     validate(workingCase.accusedNationalId, 'national-id').isValid &&
     validate(workingCase.accusedName || '', 'empty').isValid &&
-    validate(workingCase.defenderEmail || '', 'email-format').isValid &&
-    validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid &&
-    validate(workingCase.leadInvestigator || '', 'empty').isValid
+    (workingCase.type === CaseType.CUSTODY
+      ? validate(workingCase.defenderEmail || '', 'email-format').isValid &&
+        validate(workingCase.defenderPhoneNumber || '', 'phonenumber')
+          .isValid &&
+        validate(workingCase.leadInvestigator || '', 'empty').isValid
+      : true)
   )
 }
 
@@ -113,9 +116,6 @@ export const isPoliceDemandsStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.lawsBroken || '', 'empty').isValid &&
     validate(workingCase.requestedValidToDate || '', 'date-format').isValid &&
-    (workingCase.type === CaseType.TRAVEL_BAN
-      ? validate(workingCase.legalBasis || '', 'empty').isValid
-      : true) &&
     workingCase.legalProvisions &&
     workingCase.legalProvisions.length > 0
   )

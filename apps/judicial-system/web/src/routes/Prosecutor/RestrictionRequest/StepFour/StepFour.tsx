@@ -8,7 +8,10 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  isPoliceReportStepValidRC,
+  Validation,
+} from '@island.is/judicial-system-web/src/utils/validate'
 import {
   FormFooter,
   PageLayout,
@@ -36,7 +39,6 @@ import {
 
 export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
   const [
@@ -95,27 +97,6 @@ export const StepFour: React.FC = () => {
       setWorkingCase(theCase)
     }
   }, [id, workingCase, setWorkingCase, data, autofill, formatMessage])
-
-  useEffect(() => {
-    const requiredFields: { value: string; validations: Validation[] }[] = [
-      {
-        value: workingCase?.demands ?? '',
-        validations: ['empty'],
-      },
-      {
-        value: workingCase?.caseFacts ?? '',
-        validations: ['empty'],
-      },
-      {
-        value: workingCase?.legalArguments ?? '',
-        validations: ['empty'],
-      },
-    ]
-
-    if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields))
-    }
-  }, [workingCase, setIsStepIllegal])
 
   return (
     <PageLayout
@@ -334,7 +315,7 @@ export const StepFour: React.FC = () => {
             <FormFooter
               previousUrl={`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`}
               nextUrl={`${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
-              nextIsDisabled={isStepIllegal}
+              nextIsDisabled={!isPoliceReportStepValidRC(workingCase)}
             />
           </FormContentContainer>
         </>

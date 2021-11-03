@@ -27,6 +27,7 @@ import {
 import { accused } from '@island.is/judicial-system-web/messages'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
+import { isAccusedStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
@@ -260,7 +261,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
             await handleNextButtonClick(workingCase)
           }
           nextIsLoading={loading}
-          nextIsDisabled={!isValid}
+          nextIsDisabled={!isAccusedStepValidRC(workingCase)}
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
           }
