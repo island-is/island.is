@@ -189,7 +189,6 @@ export class HealthInsuranceAPI {
   public async xroadCall(functionName: string, args: object): Promise<any> {
     // create 'soap' client
     logger.info(`Start ${functionName} function call.`)
-    console.log(this.clientConfig)
     const client = await SoapClient.generateClient(
       this.clientConfig.wsdlUrl,
       this.clientConfig.baseUrl,

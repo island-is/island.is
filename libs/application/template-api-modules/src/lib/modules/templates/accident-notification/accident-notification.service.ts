@@ -42,7 +42,6 @@ export class AccidentNotificationService {
     const attachments = await this.attachmentProvider.gatherAllAttachments(
       application,
     )
-    console.log('attachments ', attachments)
     const answers = application.answers as AccidentNotificationAnswers
     const xml = applictionAnswersToXml(answers, attachments)
     console.log('applicationJson ', JSON.stringify(answers, null, 4))
@@ -51,7 +50,6 @@ export class AccidentNotificationService {
       const { ihiDocumentID } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
       })
-      this.logger.debug('in try')
       await this.sharedTemplateAPIService.sendEmail(
         (props) =>
           generateConfirmationEmail(
@@ -62,11 +60,8 @@ export class AccidentNotificationService {
           ),
         application,
       )
-      //stop application from being submitted
-      // throw new Error('debug stop!')
       // Request representative review when applicable
       if (shouldRequestReview) {
-        this.logger.debug('in shoulderequestreview')
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
           (props, assignLink) =>
             generateAssignReviewerEmail(props, assignLink, ihiDocumentID),

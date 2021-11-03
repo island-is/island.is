@@ -1085,27 +1085,6 @@
         }
       }
     },
-    "api-domains-health-insurance-v2": {
-      "root": "libs/api/domains/health-insurance-v2",
-      "sourceRoot": "libs/api/domains/health-insurance-v2/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/api/domains/health-insurance-v2/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/domains/health-insurance-v2"],
-          "options": {
-            "jestConfig": "libs/api/domains/health-insurance-v2/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "api-domains-icelandic-names-registry": {
       "root": "libs/api/domains/icelandic-names-registry",
       "sourceRoot": "libs/api/domains/icelandic-names-registry/src",

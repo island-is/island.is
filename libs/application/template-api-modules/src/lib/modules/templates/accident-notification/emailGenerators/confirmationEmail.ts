@@ -2,10 +2,7 @@ import { ApplicationConfigurations } from '@island.is/application/core'
 import { AccidentNotificationAnswers } from '@island.is/application/templates/accident-notification'
 import { SendMailOptions } from 'nodemailer'
 import { EmailTemplateGeneratorProps } from '../../../../types'
-import {
-  applictionAnswersToXml,
-  pathToAsset,
-} from '../accident-notification.utils'
+import { pathToAsset } from '../accident-notification.utils'
 
 interface ConfirmationEmail {
   (
@@ -31,11 +28,10 @@ export const generateConfirmationEmail: ConfirmationEmail = (
     name: answers.applicant.name,
     address: answers.applicant.email,
   }
-  console.log('in generate email')
 
   const subject = `Tilkynning móttekin.`
 
-  const x = {
+  return {
     from: {
       name: applicationSenderName,
       address: applicationSenderEmail,
@@ -88,6 +84,4 @@ export const generateConfirmationEmail: ConfirmationEmail = (
       ],
     },
   }
-  console.log('the email should be', x)
-  return x
 }

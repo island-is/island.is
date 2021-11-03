@@ -86,8 +86,6 @@ export class SharedTemplateApiService {
       },
       assignLink,
     )
-    console.log('assignlink : ', assignLink)
-    return
     return this.emailService.sendEmail(template)
   }
 
