@@ -362,7 +362,7 @@
     "csv-parse": "4.16.0",
     "cypress": "8.4.1",
     "dotenv": "10.0.0",
-    "esbuild": "0.12.1",
+    "esbuild": "0.13.12",
     "eslint": "7.21.0",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-cypress": "2.11.2",
