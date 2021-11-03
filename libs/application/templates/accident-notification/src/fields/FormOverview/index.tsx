@@ -61,7 +61,6 @@ export const FormOverview: FC<FieldBaseProps> = ({
   goToScreen,
 }) => {
   const answers = application.answers as AccidentNotification
-  console.log(answers)
   const { formatMessage } = useLocale()
 
   const files = getAttachmentTitles(answers)
