@@ -66,7 +66,7 @@ const SpouseSummary = () => {
     setIsLoading(true)
 
     await updateApplication(
-      user.currentApplication?.id as string,
+      user.currentApplicationId as string,
       FileType.SPOUSEFILES,
     )
       .then(() => {

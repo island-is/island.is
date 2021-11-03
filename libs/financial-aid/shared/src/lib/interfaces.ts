@@ -53,10 +53,9 @@ export interface NavigationProps {
   nextUrl: string | undefined
 }
 
-export interface Spouse {
+export interface FormSpouse {
   nationalId?: string
   name?: string
-  maritalStatus?: string
   email?: string
 }
 
@@ -66,10 +65,10 @@ export interface User {
   phoneNumber?: string
   folder: string
   service: RolesRule
-  currentApplication?: string
-  isSpouse?: boolean
-  staff?: Staff
+  currentApplicationId?: string
   spouse?: Spouse
+  staff?: Staff
+  formSpouse?: FormSpouse
   address?: Address
 }
 
@@ -224,8 +223,9 @@ export interface GetSignedUrlForId {
   id: string
 }
 
-export interface HasSpouseApplied {
-  HasApplied: boolean
+export interface Spouse {
+  hasPartnerApplied: boolean
+  hasFiles: boolean
 }
 
 export interface UpdateApplicationTableResponseType {

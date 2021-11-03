@@ -13,6 +13,7 @@ type ActionProps = {
   actionButtonTitle: string
   hasActionButtonIcon?: boolean
   showAlways?: boolean
+  cta?: () => void
 }
 
 type ReviewSectionProps = {
@@ -26,7 +27,7 @@ type ReviewSectionProps = {
   visible?: boolean
 }
 
-const ReviewSection: FC<ReviewSectionProps> = ({
+export const StatusStep: FC<ReviewSectionProps> = ({
   application,
   title,
   description,
@@ -36,9 +37,9 @@ const ReviewSection: FC<ReviewSectionProps> = ({
   goToScreen,
   visible = true,
 }) => {
-  const handleButtonClick = () =>
-    goToScreen(action?.showAlways ? 'uploadDocuments' : 'overview')
-
+  const handleOnCTAButtonClick = () => {
+    action?.cta && action.cta()
+  }
   if (!visible) return null
 
   return (
@@ -73,7 +74,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
                   size="small"
                   type="button"
                   variant="text"
-                  onClick={handleButtonClick}
+                  onClick={handleOnCTAButtonClick}
                 >
                   {action.actionButtonTitle}
                 </Button>
@@ -111,7 +112,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
                 size="small"
                 type="button"
                 variant="text"
-                onClick={handleButtonClick}
+                onClick={handleOnCTAButtonClick}
               >
                 {action.actionButtonTitle}
               </Button>
@@ -122,5 +123,3 @@ const ReviewSection: FC<ReviewSectionProps> = ({
     </Box>
   )
 }
-
-export default ReviewSection

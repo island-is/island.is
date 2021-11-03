@@ -50,7 +50,7 @@ describe('Feature-deployment support', () => {
   )
 
   it('dynamic service name generation', () => {
-    expect(values.graphql.env).toEqual({
+    expect(values.services.graphql.env).toEqual({
       A: 'web-service-a',
       B: 'feature-web-service-b.islandis.svc.cluster.local',
       DB_USER: 'feature_feature_A_graphql',
@@ -61,27 +61,36 @@ describe('Feature-deployment support', () => {
   })
 
   it('dynamic secrets path', () => {
-    expect(values.graphql.secrets).toHaveProperty('DB_PASS')
-    expect(values.graphql.secrets!.DB_PASS).toEqual(
+    expect(values.services.graphql.secrets).toHaveProperty('DB_PASS')
+    expect(values.services.graphql.secrets!.DB_PASS).toEqual(
       '/k8s/feature-feature-A-graphql/DB_PASSWORD',
     )
   })
 
   it('dynamic secrets path', () => {
-    expect(values.graphql.initContainer?.secrets).toHaveProperty('DB_PASS')
-    expect(values.graphql.initContainer?.secrets!.DB_PASS).toEqual(
+    expect(values.services.graphql.initContainer?.secrets).toHaveProperty(
+      'DB_PASS',
+    )
+    expect(values.services.graphql.initContainer?.secrets!.DB_PASS).toEqual(
       '/k8s/feature-feature-A-graphql/DB_PASSWORD',
     )
   })
 
   it('feature deployment namespaces', () => {
-    expect(Object.keys(values).sort()).toEqual(['graphql', 'service-a'])
-    expect(values['graphql'].namespace).toEqual(`feature-${Dev.feature}`)
-    expect(values['service-a'].namespace).toEqual(`feature-${Dev.feature}`)
+    expect(Object.keys(values.services).sort()).toEqual([
+      'graphql',
+      'service-a',
+    ])
+    expect(values.services['graphql'].namespace).toEqual(
+      `feature-${Dev.feature}`,
+    )
+    expect(values.services['service-a'].namespace).toEqual(
+      `feature-${Dev.feature}`,
+    )
   })
 
   it('feature deployment ingress', () => {
-    expect(values.graphql.ingress).toEqual({
+    expect(values.services.graphql.ingress).toEqual({
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',

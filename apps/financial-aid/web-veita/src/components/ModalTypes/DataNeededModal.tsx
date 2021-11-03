@@ -17,8 +17,6 @@ const DataNeededModal = ({
   const [comment, setComment] = useState<string>()
   const [hasError, setHasError] = useState(false)
 
-  console.log('comment', comment)
-
   return (
     <InputModal
       headline="Okkur vantar gögn til að klára að vinna úr umsókninni"
