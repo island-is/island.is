@@ -150,8 +150,8 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
       })
       if (
         res.data &&
-        hasAccidentStatusChanged(accidentStatus, oldAccidentStatus) &&
-        refetch
+        refetch &&
+        hasAccidentStatusChanged(accidentStatus, oldAccidentStatus)
       ) {
         console.log('res', accidentStatus)
         refetch()
@@ -172,6 +172,12 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
         <SkeletonLoader height={120} />
         <SkeletonLoader height={800} />
       </>
+    )
+  }
+
+  if (error) {
+    return (
+      <Text>Ekki tókst að sækja stöðu umsóknar, eitthvað fór úrskeiðis.</Text>
     )
   }
 
