@@ -41,7 +41,7 @@ export class StaffService {
       nationalId: input.nationalId,
       name: input.name,
       municipalityId: user.municipalityId,
-      staffEmail: input.email,
+      email: input.email,
       roles: input.roles,
       active: true,
       municipalityName: user.municipalityName,

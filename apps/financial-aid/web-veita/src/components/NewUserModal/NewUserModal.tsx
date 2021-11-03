@@ -4,6 +4,7 @@ import { ActionModal } from '@island.is/financial-aid-web/veita/src/components'
 import { StaffMutation } from '@island.is/financial-aid-web/veita/graphql'
 import { useMutation } from '@apollo/client'
 import { isEmailValid, StaffRole } from '@island.is/financial-aid/shared/lib'
+import cn from 'classnames'
 
 interface Props {
   isVisible: boolean
@@ -160,7 +161,6 @@ const NewUserModal = ({ isVisible, setIsVisible, onStaffCreated }: Props) => {
           onChange={(event) => {
             changeStaffAccess(StaffRole.EMPLOYEE, event.target.checked)
           }}
-          filled={false}
         />
       </Box>
       <Box marginBottom={2}>
@@ -176,9 +176,16 @@ const NewUserModal = ({ isVisible, setIsVisible, onStaffCreated }: Props) => {
         />
       </Box>
       {state.hasError && state.roles.length === 0 && (
-        <Text color="red600" fontWeight="semiBold" variant="small">
-          Það þarf að velja réttindi
-        </Text>
+        <div
+          className={cn({
+            [`errorMessage`]: state.hasError && state.roles.length === 0,
+            [`showErrorMessage`]: state.hasError && state.roles.length === 0,
+          })}
+        >
+          <Text color="red600" fontWeight="semiBold" variant="small">
+            Það þarf að velja réttindi
+          </Text>
+        </div>
       )}
     </ActionModal>
   )

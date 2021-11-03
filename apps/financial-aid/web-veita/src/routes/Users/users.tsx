@@ -53,7 +53,6 @@ export const Users = () => {
         className={`${styles.header} contentUp delay-25`}
         marginTop={15}
         marginBottom={[2, 2, 4]}
-        key={'Notendur'}
       >
         <Text as="h1" variant="h1">
           Notendur

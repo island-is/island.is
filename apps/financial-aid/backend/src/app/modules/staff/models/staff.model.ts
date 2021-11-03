@@ -95,5 +95,5 @@ export class StaffModel extends Model<Staff> {
     allowNull: true,
   })
   @ApiProperty()
-  staffEmail: string
+  email: string
 }
