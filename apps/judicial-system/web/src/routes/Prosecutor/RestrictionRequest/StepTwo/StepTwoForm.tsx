@@ -26,7 +26,7 @@ interface Props {
   handleNextButtonClick: () => Promise<void>
   onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
   transitionLoading: boolean
-  user: User
+  user?: User
 }
 
 const StepTwoForm: React.FC<Props> = (props) => {
@@ -82,8 +82,8 @@ const StepTwoForm: React.FC<Props> = (props) => {
                   .heightenSecurityLevelInfo,
               )}
               disabled={
-                user.id !== workingCase.creatingProsecutor?.id &&
-                user.id !==
+                user?.id !== workingCase.creatingProsecutor?.id &&
+                user?.id !==
                   (((workingCase as unknown) as { prosecutorId: string })
                     .prosecutorId ?? workingCase.prosecutor?.id)
               }

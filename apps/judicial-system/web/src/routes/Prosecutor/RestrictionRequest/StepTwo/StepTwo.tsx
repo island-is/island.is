@@ -162,7 +162,7 @@ export const StepTwo: React.FC = () => {
       caseType={workingCase?.type}
       caseId={workingCase?.id}
     >
-      {workingCase && user && prosecutors && !institutionLoading ? (
+      {workingCase && prosecutors && !institutionLoading ? (
         <>
           <StepTwoForm
             workingCase={workingCase}
