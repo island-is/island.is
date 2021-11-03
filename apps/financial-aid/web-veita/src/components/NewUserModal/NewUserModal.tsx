@@ -8,9 +8,10 @@ import { isEmailValid, StaffRole } from '@island.is/financial-aid/shared/lib'
 interface Props {
   isVisible: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
+  onStaffCreated: () => void
 }
 
-const NewUserModal = ({ isVisible, setIsVisible }: Props) => {
+const NewUserModal = ({ isVisible, setIsVisible, onStaffCreated }: Props) => {
   const [staffNationalId, setStaffNationalId] = useState<string>()
   const [staffName, setStaffName] = useState<string>()
   const [staffEmail, setStaffEmail] = useState<string>()
@@ -49,6 +50,8 @@ const NewUserModal = ({ isVisible, setIsVisible }: Props) => {
             roles: roles,
           },
         },
+      }).then(() => {
+        onStaffCreated()
       })
     } catch (e) {
       setHasSubmitError(true)

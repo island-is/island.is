@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import {
   ApplicationOverviewSkeleton,
   LoadingContainer,
@@ -15,13 +15,17 @@ import { Staff } from '@island.is/financial-aid/shared/lib'
 import { StaffForMunicipalityQuery } from '@island.is/financial-aid-web/veita/graphql'
 
 export const Users = () => {
-  const { data, error, loading } = useQuery<{ users: Staff[] }>(
+  const [getStaff, { data, error, loading }] = useLazyQuery<{ users: Staff[] }>(
     StaffForMunicipalityQuery,
     {
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     },
   )
+
+  useEffect(() => {
+    getStaff()
+  }, [])
 
   const [isModalVisible, setIsModalVisible] = useState(false)
 
@@ -34,6 +38,11 @@ export const Users = () => {
       setUsers(data.users)
     }
   }, [data])
+
+  const refreshList = () => {
+    setIsModalVisible(false)
+    getStaff()
+  }
 
   return (
     <LoadingContainer
@@ -101,6 +110,7 @@ export const Users = () => {
         setIsVisible={(visible) => {
           setIsModalVisible(visible)
         }}
+        onStaffCreated={refreshList}
       />
     </LoadingContainer>
   )
