@@ -10,4 +10,11 @@ describe(' Timeline', () => {
     )
     expect(baseElement).toBeTruthy()
   })
+
+  it('should render successfully v2', () => {
+    const { baseElement } = render(
+      <Timeline getMonthByIndex={() => 'month'} events={[]} />,
+    )
+    expect(baseElement).toBeTruthy()
+  })
 })
