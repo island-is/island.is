@@ -15,6 +15,7 @@ import { AccidentTypeEnum, ReviewApprovalEnum } from '..'
 // import * as z from 'zod'
 import { States } from '../constants'
 import { ApiActions } from '../shared'
+import { WhoIsTheNotificationForEnum } from '../types'
 import { AccidentNotificationSchema } from './dataSchema'
 import { application } from './messages'
 
@@ -53,8 +54,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           progress: 0.2,
           lifecycle: {
             shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
+            shouldBePruned: false,
+            // whenToPrune: 3600 * 1000,
           },
           roles: [
             {
@@ -240,7 +241,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         const { application } = context
 
         const assigneeId = getNationalIdOfReviewer(application)
-        set(application, 'assignees', [assigneeId])
+        if (assigneeId) {
+          set(application, 'assignees', [assigneeId])
+        }
 
         return context
       }),
@@ -250,9 +253,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
+    if (id === application.applicant && application.assignees.includes(id)) {
+      return Roles.ASSIGNEE
+    }
+
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
+
     if (application.assignees.includes(id)) {
       return Roles.ASSIGNEE
     }
@@ -268,13 +276,25 @@ const getNationalIdOfReviewer = (application: Application) => {
       application.answers,
       'accidentType',
     ) as AccidentTypeEnum
+    const whoIsTheNotificationFor = getValueViaPath(
+      application.answers,
+      'whoIsTheNotificationFor.answer',
+    )
     if (accidentType === AccidentTypeEnum.HOMEACTIVITIES) {
       return null
     }
-    return getValueViaPath(
-      application.answers,
-      'rescueSquadInfo.representativeNationalId',
-    )
+    // In this case the Assignee in the review process is the injured Person
+    if (
+      whoIsTheNotificationFor === WhoIsTheNotificationForEnum.JURIDICALPERSON
+    ) {
+      return getValueViaPath(
+        application.answers,
+        'injuredPersonInformation.nationalId',
+      )
+    }
+
+    // In Every other case the Representative is the Assignee in the review Process
+    return getValueViaPath(application.answers, 'representative.nationalId')
   } catch (error) {
     console.log(error)
     return 0

@@ -3,12 +3,19 @@ import { NO, YES } from './../constants'
 export type CompanyInfo = {
   nationalRegistrationId: string
   name: string
-  email: string
-  phoneNumber: string
+  // email: string
+  // phoneNumber: string
   type: AccidentTypeEnum | WorkAccidentTypeEnum
   onPayRoll?: {
     answer: YesOrNo
   }
+}
+
+export type RepresentativeInfo = {
+  name: string
+  nationalId: string
+  email: string
+  phoneNumber?: string
 }
 
 export type FileType = {
