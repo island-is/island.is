@@ -3,13 +3,12 @@ import {
   Logo,
   Text,
   Box,
-  Button,
   GridContainer,
   DropdownMenu,
 } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
-import * as styles from './Header.treat'
+import * as styles from './Header.css'
 
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { Routes } from '@island.is/financial-aid/shared/lib'
@@ -26,8 +25,8 @@ const Header = () => {
         <Box display="flex" height="full" alignItems="center">
           <Link
             href={
-              user?.currentApplication
-                ? Routes.statusPage(user?.currentApplication?.id as string)
+              user?.currentApplicationId
+                ? Routes.statusPage(user?.currentApplicationId as string)
                 : Routes.application
             }
             data-testid="link-to-home"

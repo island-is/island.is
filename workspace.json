@@ -1676,6 +1676,11 @@
               },
               {
                 "glob": "*",
+                "input": "libs/application/template-api-modules/src/lib/modules/templates/accident-notification/emailGenerators/assets",
+                "output": "./accident-notification-assets"
+              },
+              {
+                "glob": "*",
                 "input": "libs/email-service/src/tools/design",
                 "output": "./email-service-assets"
               }
@@ -5347,6 +5352,27 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/island-ui/utils"]
+        }
+      }
+    },
+    "island-ui-vanilla-extract-utils": {
+      "root": "libs/island-ui/vanilla-extract-utils",
+      "sourceRoot": "libs/island-ui/vanilla-extract-utils/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/island-ui/vanilla-extract-utils/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/island-ui/vanilla-extract-utils"],
+          "options": {
+            "jestConfig": "libs/island-ui/vanilla-extract-utils/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },

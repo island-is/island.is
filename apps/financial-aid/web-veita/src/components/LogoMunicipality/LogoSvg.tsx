@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 
-import * as styles from './Logo.treat'
+import * as styles from './Logo.css'
 
 interface LogoSvgProps {
   name: string

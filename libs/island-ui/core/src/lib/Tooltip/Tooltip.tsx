@@ -6,7 +6,7 @@ import {
   TooltipReference,
   useTooltipState,
 } from 'reakit'
-import * as styles from './Tooltip.treat'
+import * as styles from './Tooltip.css'
 import { Icon, Size } from '../IconRC/Icon'
 import { Colors } from '@island.is/island-ui/theme'
 

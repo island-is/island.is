@@ -32,7 +32,7 @@ export class AttachmentProvider {
       )
       const additionalFiles = await this.prepareApplicationAttachments(
         application,
-        'attachments.additionalFiles',
+        'attachments.additionalFiles.file',
         AttachmentTypeEnum.ADDITIONAL_FILES,
       )
 

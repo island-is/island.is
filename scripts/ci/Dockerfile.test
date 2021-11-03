@@ -2,6 +2,9 @@ FROM public.ecr.aws/bitnami/node:14.17.0
 
 RUN apt-get update && apt-get install netcat -y
 
+RUN addgroup runners && useradd -m runner -G runners
+USER runner
+
 WORKDIR "/code"
 VOLUME ["/code"]
 
@@ -11,4 +14,4 @@ ARG APP
 ENV DB_NAME=$DB_NAME
 ENV APP=$APP
 
-ENTRYPOINT /code/scripts/ci/_wait-for.sh $DB_NAME:5432 -t 60 -- yarn test $APP --runInBand --runner=docker-test
+ENTRYPOINT /code/scripts/ci/_wait-for.sh $DB_NAME:5432 -t 60 -- yarn test $APP --runInBand --runner=docker-test --codeCoverage

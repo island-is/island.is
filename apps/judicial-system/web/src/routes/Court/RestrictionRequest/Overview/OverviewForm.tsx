@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { CaseType } from '@island.is/judicial-system/types'
 import type {
   Case,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
@@ -12,7 +12,7 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import * as styles from './Overview.treat'
+import * as styles from './Overview.css'
 import {
   capitalize,
   formatDate,
@@ -157,17 +157,17 @@ const OverviewForm: React.FC<Props> = (props) => {
               </span>
             </Text>
           </Box>
-          <Box data-testid="custodyProvisions">
+          <Box data-testid="legalProvisions">
             <Box marginBottom={1}>
               <Text as="h2" variant="h3">
                 Lagaákvæði sem krafan er byggð á
               </Text>
             </Box>
-            {workingCase.custodyProvisions?.map(
-              (custodyProvision: CaseCustodyProvisions, index) => {
+            {workingCase.legalProvisions?.map(
+              (legalProvision: CaseLegalProvisions, index) => {
                 return (
                   <div key={index}>
-                    <Text>{laws[custodyProvision]}</Text>
+                    <Text>{laws[legalProvision]}</Text>
                   </div>
                 )
               },

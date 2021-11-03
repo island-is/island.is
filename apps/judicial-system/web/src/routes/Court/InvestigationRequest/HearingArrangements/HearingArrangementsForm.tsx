@@ -5,7 +5,6 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  AlertMessage,
   Box,
   Select,
   Text,
@@ -23,7 +22,6 @@ import {
   Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
-  CaseState,
   NotificationType,
   SessionArrangements,
   UserRole,
@@ -46,7 +44,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './HearingArrangements.treat'
+import * as styles from './HearingArrangements.css'
 
 interface Props {
   workingCase: Case
@@ -155,15 +153,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             {formatMessage(m.title)}
           </Text>
         </Box>
-        {workingCase.state === CaseState.DRAFT && (
-          <Box marginBottom={8}>
-            <AlertMessage
-              type="info"
-              title="Krafa hefur ekki verið staðfest af ákæranda"
-              message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
-            />
-          </Box>
-        )}
         <Box component="section" marginBottom={7}>
           <CaseNumbers workingCase={workingCase} />
         </Box>
@@ -265,44 +254,20 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 backgroundColor="white"
               />
             </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="session-arrangements-prosecutor-present"
-                id="session-arrangements-prosecutor-present"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.prosecutorPresent,
-                )}
-                checked={
-                  workingCase.sessionArrangements ===
-                  SessionArrangements.PROSECUTOR_PRESENT
-                }
-                onChange={() => {
-                  setAndSendToServer(
-                    'sessionArrangements',
-                    SessionArrangements.PROSECUTOR_PRESENT,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }}
-                large
-                backgroundColor="white"
-              />
-            </Box>
             <RadioButton
-              name="session-arrangements-remote-session"
-              id="session-arrangements-remote-session"
+              name="session-arrangements-prosecutor-present"
+              id="session-arrangements-prosecutor-present"
               label={formatMessage(
-                m.sections.sessionArrangements.options.remoteSession,
+                m.sections.sessionArrangements.options.prosecutorPresent,
               )}
               checked={
                 workingCase.sessionArrangements ===
-                SessionArrangements.REMOTE_SESSION
+                SessionArrangements.PROSECUTOR_PRESENT
               }
               onChange={() => {
                 setAndSendToServer(
                   'sessionArrangements',
-                  SessionArrangements.REMOTE_SESSION,
+                  SessionArrangements.PROSECUTOR_PRESENT,
                   workingCase,
                   setWorkingCase,
                   updateCase,

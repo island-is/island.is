@@ -37,7 +37,7 @@ export class AccidentNotificationService {
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     const shouldRequestReview =
-      !utils.isHomeActivitiesAccident(application.answers) ||
+      !utils.isHomeActivitiesAccident(application.answers) &&
       !utils.isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
     const attachments = await this.attachmentProvider.gatherAllAttachments(
       application,
@@ -85,7 +85,6 @@ export class AccidentNotificationService {
 
   async addAdditionalAttachment({ application }: TemplateApiModuleActionProps) {
     try {
-      this.logger.debug('adding additional docs')
       const attachments = await this.attachmentProvider.gatherAllAttachments(
         application,
       )

@@ -156,12 +156,21 @@ const autoSchemaFile = environment.production
       },
     }),
     HealthInsuranceModule.register({
-      wsdlUrl: environment.healthInsurance.wsdlUrl,
-      baseUrl: environment.healthInsurance.baseUrl,
-      username: environment.healthInsurance.username,
-      password: environment.healthInsurance.password,
-      clientID: environment.healthInsurance.clientID,
-      xroadID: environment.healthInsurance.xroadID,
+      soapConfig: {
+        wsdlUrl: environment.healthInsurance.wsdlUrl,
+        baseUrl: environment.healthInsurance.baseUrl,
+        username: environment.healthInsurance.username,
+        password: environment.healthInsurance.password,
+        clientID: environment.healthInsurance.clientID,
+        xroadID: environment.healthInsurance.xroadID,
+      },
+      clientV2Config: {
+        xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl,
+        xRoadProviderId: environment.healthInsuranceV2.xRoadProviderId,
+        xRoadClientId: environment.healthInsuranceV2.xRoadClientId,
+        username: environment.healthInsuranceV2.username,
+        password: environment.healthInsuranceV2.password,
+      },
     }),
     HealthInsuranceV2Module.register({
       xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl,

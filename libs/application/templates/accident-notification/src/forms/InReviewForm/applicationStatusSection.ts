@@ -1,10 +1,4 @@
-import {
-  buildCustomField,
-  buildMultiField,
-  buildSection,
-  buildTextField,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { buildCustomField, buildSection } from '@island.is/application/core'
 import { inReview } from '../../lib/messages'
 
 export const applicationStatusSection = (isAssignee?: boolean) =>

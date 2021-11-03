@@ -128,6 +128,9 @@
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
+      "@island.is/application/core/polyfills": [
+        "libs/application/core/src/lib/polyfills.ts"
+      ],
       "@island.is/application/data-providers": [
         "libs/application/data-providers/src/index.ts"
       ],
@@ -317,6 +320,9 @@
       "@island.is/island-ui/core/types": ["libs/island-ui/core/types.ts"],
       "@island.is/island-ui/theme": ["libs/island-ui/theme/src/index.ts"],
       "@island.is/island-ui/utils": ["libs/island-ui/utils/src/index.ts"],
+      "@island.is/island-ui/vanilla-extract-utils": [
+        "libs/island-ui/vanilla-extract-utils/src/index.ts"
+      ],
       "@island.is/judicial-system-web/*": ["apps/judicial-system/web/*"],
       "@island.is/judicial-system/audit-trail": [
         "libs/judicial-system/audit-trail/src/index.ts"

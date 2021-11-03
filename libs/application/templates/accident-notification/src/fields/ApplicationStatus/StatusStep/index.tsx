@@ -3,7 +3,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import React, { FC } from 'react'
 import { ReviewSectionState } from '../../../types'
-import * as styles from './ReviewSection.treat'
+import * as styles from './ReviewSection.css'
 import { ReviewTag } from './ReviewTag'
 
 type ActionProps = {

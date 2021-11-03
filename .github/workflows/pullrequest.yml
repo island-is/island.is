@@ -144,24 +144,14 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
-
-      - name: Cache for NodeJS dependencies - host OS
-        uses: actions/cache@v2
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+          fetch-depth: 0
 
-      - name: Cache for generated files
-        uses: actions/cache@v2
+      - uses: ./.github/actions/unit-test
         with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Untar generated files
-        run: tar zxvf generated_files.tar.gz
-
-      - name: Running tests
-        run: ./scripts/ci/run-in-parallel.sh 30_test
+          node-modules-hash: ${{ needs.prepare.outputs.node-modules-hash }}
+          generated-files-cache-key: ${{ needs.prepare.outputs.generated-files-cache-key }}
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
 
   e2e:
     needs:

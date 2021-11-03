@@ -1,27 +1,18 @@
-import React, { FC, useCallback, useEffect } from 'react'
-import { Box, Button, SkeletonLoader, Text } from '@island.is/island-ui/core'
-
-import {
-  FieldBaseProps,
-  FormValue,
-  getValueViaPath,
-} from '@island.is/application/core'
+import React, { FC } from 'react'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { FieldBaseProps } from '@island.is/application/core'
 import { States } from '../../constants'
 import { useLocale } from '@island.is/localization'
 import { ReviewSectionState } from '../../types'
 import {
+  hasMissingDocuments,
   isHomeActivitiesAccident,
   isInjuredAndRepresentativeOfCompanyOrInstitute,
-  hasReceivedAllDocuments,
-  getErrorMessageForMissingDocuments,
+  returnMissingDocumentsList,
 } from '../../utils'
 import { inReview } from '../../lib/messages'
+import { AccidentNotification } from '../../lib/dataSchema'
 import { StatusStep } from './StatusStep'
-import { getAccidentStatusQuery } from '../../hooks/useLazyStatusOfNotification'
-import { useFormContext } from 'react-hook-form'
-import { useMutation } from '@apollo/client'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { gql, useQuery } from '@apollo/client'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 
@@ -40,139 +31,17 @@ const statesMap: StatesMap = {
     [States.IN_FINAL_REVIEW]: ReviewSectionState.inProgress,
   },
 }
-
-interface IAccidentStatus {
-  status: string
-  __typename: string
-  attachments: Array<{
-    isReceived: boolean
-    attachmentType: string
-    __typename: string
-  }>
-  confirmations: Array<{
-    isReceived: boolean
-    confirmationType: string
-    __typename: string
-  }>
-}
-
-interface SubmittedApplicationData {
-  data?: {
-    documentId: string
-  }
-}
-
-interface ApplicationStatusProps {
-  field: {
-    props: {
-      isAssignee: boolean
-    }
-  }
-}
-
-export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
+export const ApplicationStatus: FC<FieldBaseProps> = ({
   goToScreen,
   application,
-  refetch,
-  field,
-}) => {
-  const isAssignee = field?.props?.isAssignee || false
-  const subAppData = application.externalData
-    .submitApplication as SubmittedApplicationData
-  const ihiDocumentID = +(subAppData.data?.documentId || 0)
-  const { setValue } = useFormContext()
-  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
-  const { locale, formatMessage } = useLocale()
-
-  // Todo error state when service doesnt reply
-  const { loading: loadingData, error, data } = useQuery(
-    getAccidentStatusQuery,
-    {
-      variables: { input: { ihiDocumentID: ihiDocumentID } },
-    },
-  )
-
-  const answers = application?.answers as FormValue
+}: FieldBaseProps) => {
+  const { formatMessage } = useLocale()
+  const answers = application?.answers as AccidentNotification
 
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
   }
-
-  const oldAccidentStatus = getValueViaPath(
-    application.answers,
-    'accidentStatus',
-  ) as IAccidentStatus
-
-  const hasAccidentStatusChanged = useCallback(
-    (
-      newAccidentStatus: IAccidentStatus,
-      oldAccidentStatus: IAccidentStatus,
-    ) => {
-      if (
-        newAccidentStatus.attachments.sort() !==
-        oldAccidentStatus.attachments.sort()
-      ) {
-        return true
-      }
-      if (
-        newAccidentStatus.confirmations.sort() !==
-        oldAccidentStatus.confirmations.sort()
-      ) {
-        return true
-      }
-      if (newAccidentStatus.status !== oldAccidentStatus.status) {
-        return true
-      }
-      return false
-    },
-    [],
-  )
-
-  // assign to answers and refresh if accidentStatus answers are stale
-  const assignValueToAnswersAndRefetch = useCallback(async (accidentStatus) => {
-    if (accidentStatus) {
-      setValue('accidentStatus', accidentStatus)
-      const res = await updateApplication({
-        variables: {
-          input: {
-            id: application.id,
-            answers: {
-              ...application.answers,
-              accidentStatus,
-            },
-          },
-          locale,
-        },
-      })
-
-      if (
-        res.data &&
-        hasAccidentStatusChanged(accidentStatus, oldAccidentStatus) &&
-        refetch
-      ) {
-        console.log('res', accidentStatus)
-        refetch()
-      }
-    }
-  }, [])
-
-  // monitor data and if changes assign to answers
-  useEffect(() => {
-    if (data && data.accidentStatus) {
-      assignValueToAnswersAndRefetch(data.accidentStatus)
-    }
-  }, [data, assignValueToAnswersAndRefetch])
-
-  if (loadingData || loading) {
-    return (
-      <>
-        <Text variant="h3" marginBottom={3}>
-          <SkeletonLoader width={500} />
-        </Text>
-        <SkeletonLoader height={800} />
-      </>
-    )
-  }
+  const isAssignee = false
 
   const steps = [
     {
@@ -182,19 +51,19 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
       hasActionMessage: false,
     },
     {
-      state: hasReceivedAllDocuments(application.answers)
-        ? ReviewSectionState.received
-        : ReviewSectionState.missing,
+      state: hasMissingDocuments(application.answers)
+        ? ReviewSectionState.missing
+        : ReviewSectionState.received,
       title: formatMessage(inReview.documents.title),
       description: formatMessage(inReview.documents.summary),
-      hasActionMessage: !hasReceivedAllDocuments(application.answers),
+      hasActionMessage: hasMissingDocuments(application.answers),
       action: {
         cta: () => {
           changeScreens('addAttachmentScreen')
         },
         title: formatMessage(inReview.action.documents.title),
         description: formatMessage(inReview.action.documents.description),
-        fileNames: getErrorMessageForMissingDocuments(answers, formatMessage), // We need to get this from first form
+        fileNames: returnMissingDocumentsList(answers, formatMessage), // We need to get this from first form
         actionButtonTitle: formatMessage(
           inReview.action.documents.actionButtonTitle,
         ),
@@ -208,8 +77,8 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
       title: formatMessage(inReview.representative.title),
       description: formatMessage(inReview.representative.summary),
       hasActionMessage: isAssignee,
+      ctaScreenName: 'inReviewOverviewScreen',
       action: {
-        cta: () => changeScreens('inReviewOverviewScreen'),
         title: formatMessage(inReview.action.representative.title),
         description: formatMessage(inReview.action.representative.description),
         actionButtonTitle: formatMessage(

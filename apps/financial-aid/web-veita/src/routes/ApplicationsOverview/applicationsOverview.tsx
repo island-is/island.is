@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, Box, Link } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import {
@@ -20,18 +20,6 @@ import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/na
 
 interface ApplicationsProvider {
   applications?: Application[]
-}
-
-export interface NavigationElement {
-  label: string
-  link: string
-  applicationState: ApplicationState[]
-  headers: TableHeadersProps[]
-}
-
-export interface TableHeadersProps {
-  filterBy?: string
-  title: string
 }
 
 export const ApplicationsOverview = () => {

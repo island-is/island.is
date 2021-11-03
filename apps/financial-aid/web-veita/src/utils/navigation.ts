@@ -1,10 +1,11 @@
-import { ApplicationState } from '@island.is/financial-aid/shared/lib'
+import { ApplicationFiltersEnum } from '@island.is/financial-aid/shared/lib'
 
 export const navigationItems = [
   {
+    group: 'Innhólf',
     label: 'Ný mál',
     link: `/nymal`,
-    applicationState: [ApplicationState.NEW],
+    applicationState: [ApplicationFiltersEnum.NEW],
     headers: [
       { title: 'Nafn' },
       { title: 'Staða' },
@@ -14,12 +15,10 @@ export const navigationItems = [
     ],
   },
   {
+    group: 'Mitt',
     label: 'Mál í vinnslu',
     link: `/vinnslu`,
-    applicationState: [
-      ApplicationState.INPROGRESS,
-      ApplicationState.DATANEEDED,
-    ],
+    applicationState: [ApplicationFiltersEnum.MYCASES],
     headers: [
       { title: 'Nafn' },
       { title: 'Staða' },
@@ -29,9 +28,28 @@ export const navigationItems = [
     ],
   },
   {
+    group: 'Teymið',
+    label: 'Öll mál í vinnslu',
+    link: `/teymid`,
+    applicationState: [
+      ApplicationFiltersEnum.INPROGRESS,
+      ApplicationFiltersEnum.DATANEEDED,
+    ],
+    headers: [
+      { title: 'Nafn' },
+      { title: 'Staða' },
+      { title: 'Úrlausnartími' },
+      { title: 'Tímabil' },
+      { title: 'Unnið af' },
+    ],
+  },
+  {
     label: 'Afgreidd mál',
     link: `/afgreidd`,
-    applicationState: [ApplicationState.APPROVED, ApplicationState.REJECTED],
+    applicationState: [
+      ApplicationFiltersEnum.APPROVED,
+      ApplicationFiltersEnum.REJECTED,
+    ],
     headers: [
       { title: 'Nafn' },
       { title: 'Staða' },

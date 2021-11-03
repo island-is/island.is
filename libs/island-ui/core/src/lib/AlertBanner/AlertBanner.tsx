@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import { Colors } from '@island.is/island-ui/theme'
 
 import { Box } from '../Box/Box'
-import * as styles from './AlertBanner.treat'
+import * as styles from './AlertBanner.css'
 import { Icon, IconTypes } from '../Icon/Icon'
 import { Text } from '../Text/Text'
 import { LinkContext } from '../context/LinkContext/LinkContext'

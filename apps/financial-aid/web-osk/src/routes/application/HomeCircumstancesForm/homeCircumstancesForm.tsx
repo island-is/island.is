@@ -10,7 +10,7 @@ import { FormContext } from '@island.is/financial-aid-web/osk/src/components/For
 import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import * as styles from './homeCircumstancesForm.treat'
+import * as styles from './homeCircumstancesForm.css'
 import cn from 'classnames'
 import {
   NavigationProps,
@@ -33,6 +33,7 @@ const HomeCircumstancesForm = () => {
     HomeCircumstances.WITHOTHERS,
     HomeCircumstances.OWNPLACE,
     HomeCircumstances.REGISTEREDLEASE,
+    HomeCircumstances.UNREGISTEREDLEASE,
     HomeCircumstances.OTHER,
   ].map((item) => ({
     label: getHomeCircumstances[item],

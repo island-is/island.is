@@ -1,10 +1,11 @@
-const withTreat = require('next-treat')()
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
+const withVanillaExtract = createVanillaExtractPlugin()
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 const { createSecureHeaders } = require('next-secure-headers')
 
 const { NEXT_PUBLIC_BACKEND_URL } = 'http://localhost:4200/backend'
 
-module.exports = withTreat(
+module.exports = withVanillaExtract(
   withHealthcheckConfig({
     basePath: '/admin',
     cssModules: false,

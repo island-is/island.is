@@ -1,5 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
+import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { Screen } from '../../../types'
 import {
@@ -18,6 +19,8 @@ import {
   GridContainer,
   GridColumn,
   GridRow,
+  LinkContext,
+  Button,
 } from '@island.is/island-ui/core'
 import Footer from '../shared/Footer'
 import { useNamespace } from '@island.is/web/hooks'
@@ -40,7 +43,7 @@ import {
   QueryGetOrganizationArgs,
   Query,
 } from '../../../graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useLinkResolver } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import {
   ServiceWebSearchInput,
@@ -48,7 +51,7 @@ import {
 } from '@island.is/web/components'
 import { getSlugPart } from '../utils'
 
-import * as sharedStyles from '../shared/styles.treat'
+import * as sharedStyles from '../shared/styles.css'
 
 const PERPAGE = 10
 
@@ -94,12 +97,22 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
+  const pageTitle = `${n('searchResults', 'Leitarniðurstöður')} | ${n(
+    'serviceWeb',
+    'Þjónustuvefur',
+  )}`
+
+  const headerTitle = `${n('serviceWeb', 'Þjónustuvefur')} - ${n(
+    'search',
+    'Leit',
+  )}`
+
   return (
     <>
       <Head>
-        <title>{n('searchResults', 'Leitarniðurstöður')} | Ísland.is</title>
+        <title>{pageTitle}</title>
       </Head>
-      <ServiceWebHeader logoTitle={'Þjónustuvefur - Leit'} hideSearch />
+      <ServiceWebHeader title={headerTitle} hideSearch />
       <div className={cn(sharedStyles.bg, sharedStyles.bgSmall)} />
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
@@ -109,18 +122,60 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
               span={['12/12', '12/12', '12/12', '10/12', '7/12']}
             >
               <Stack space={[3, 3, 4]}>
-                <Breadcrumbs
-                  items={[
-                    {
-                      title: 'Þjónustuvefur',
-                      href: linkResolver('helpdesk').href,
-                    },
-                    {
-                      title: 'Leit',
-                      href: linkResolver('helpdesksearch').href,
-                    },
-                  ]}
-                />
+                <Box display={['none', 'none', 'block']} printHidden>
+                  <Breadcrumbs
+                    items={[
+                      {
+                        title: n('serviceWeb', 'Þjónustuvefur'),
+                        href: linkResolver('helpdesk').href,
+                      },
+                      {
+                        title: n('search', 'Leit'),
+                        isTag: true,
+                      },
+                    ]}
+                    renderLink={(link, { href }) => {
+                      return (
+                        <NextLink href={href} passHref>
+                          {link}
+                        </NextLink>
+                      )
+                    }}
+                  />
+                </Box>
+                <Box
+                  paddingBottom={[2, 2, 4]}
+                  display={['flex', 'flex', 'none']}
+                  justifyContent="spaceBetween"
+                  alignItems="center"
+                  printHidden
+                >
+                  <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
+                    <LinkContext.Provider
+                      value={{
+                        linkRenderer: (href, children) => (
+                          <Link href={href} pureChildren skipTab>
+                            {children}
+                          </Link>
+                        ),
+                      }}
+                    >
+                      <Text truncate>
+                        <a href={linkResolver('helpdesk').href}>
+                          <Button
+                            preTextIcon="arrowBack"
+                            preTextIconType="filled"
+                            size="small"
+                            type="button"
+                            variant="text"
+                          >
+                            {n('serviceWeb', 'Þjónustuvefur')}
+                          </Button>
+                        </a>
+                      </Text>
+                    </LinkContext.Provider>
+                  </Box>
+                </Box>
 
                 <ServiceWebSearchInput
                   colored={true}

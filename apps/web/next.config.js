@@ -1,5 +1,6 @@
 const path = require('path')
-const withTreat = require('next-treat')()
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
+const withVanillaExtract = createVanillaExtractPlugin()
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const StatoscopeWebpackPlugin = require('@statoscope/ui-webpack')
@@ -13,7 +14,7 @@ const {
   DISABLE_ORGANIZATION_CHATBOT,
 } = process.env
 
-module.exports = withTreat(
+module.exports = withVanillaExtract(
   withHealthcheckConfig({
     webpack: (config, { isServer }) => {
       if (!isServer) {

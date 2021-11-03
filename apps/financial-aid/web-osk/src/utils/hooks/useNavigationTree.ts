@@ -1,3 +1,6 @@
+import { useContext } from 'react'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
+
 export interface FormStepperSection {
   name: string
   type?: string
@@ -6,6 +9,8 @@ export interface FormStepperSection {
 }
 
 const useNavigationTree = (hasIncome: boolean) => {
+  const { user } = useContext(AppContext)
+
   const section: FormStepperSection[] = [
     {
       name: 'Gagnaöflun',
@@ -83,7 +88,47 @@ const useNavigationTree = (hasIncome: boolean) => {
     },
   ]
 
-  return section
+  const spouseSection: FormStepperSection[] = [
+    {
+      name: 'Upplýsingar',
+      url: '/umsokn/rettur',
+    },
+    {
+      name: 'Fjármál',
+      children: hasIncome
+        ? [
+            { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Skattagögn',
+              url: '/umsokn/skattagogn',
+            },
+          ]
+        : [
+            { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
+            { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Skattagögn',
+              url: '/umsokn/skattagogn',
+            },
+          ],
+    },
+    {
+      name: 'Samskipti',
+      url: '/umsokn/samskipti',
+    },
+    {
+      name: 'Yfirlit',
+      url: '/umsokn/yfirlit-maki',
+    },
+    {
+      name: 'Staðfesting',
+      url: '/umsokn/stadfesting',
+    },
+  ]
+
+  return user?.spouse?.hasPartnerApplied ? spouseSection : section
 }
 
 export default useNavigationTree

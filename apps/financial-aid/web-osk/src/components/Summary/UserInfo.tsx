@@ -6,7 +6,7 @@ import {
   formatPhoneNumber,
 } from '@island.is/financial-aid/shared/lib'
 
-import * as styles from './summary.treat'
+import * as styles from './summary.css'
 import cn from 'classnames'
 
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'

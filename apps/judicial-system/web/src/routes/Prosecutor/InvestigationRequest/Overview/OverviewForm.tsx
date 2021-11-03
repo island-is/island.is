@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { CaseState } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
@@ -21,7 +21,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './Overview.treat'
+import * as styles from './Overview.css'
 
 interface Props {
   workingCase: Case
@@ -91,14 +91,16 @@ const OverviewForm: React.FC<Props> = (props) => {
             isInvestigationCase
           />
         </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              Efni kröfu
-            </Text>
+        {workingCase.description && (
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                Efni kröfu
+              </Text>
+            </Box>
+            <Text>{workingCase.description}</Text>
           </Box>
-          <Text>{workingCase.description}</Text>
-        </Box>
+        )}
         <Box component="section" marginBottom={5} data-testid="demands">
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">

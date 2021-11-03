@@ -15,7 +15,7 @@ import {
 import { Locale, User } from '@island.is/shared/types'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
-import * as styles from './UserMenu.treat'
+import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
 import { ValueType } from 'react-select'
 

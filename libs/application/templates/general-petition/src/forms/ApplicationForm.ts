@@ -103,7 +103,7 @@ export const PetitionApplicationForm: Form = buildForm({
               actions: [
                 {
                   event: 'SUBMIT',
-                  name: 'Submit',
+                  name: 'Stofna lista',
                   type: 'primary',
                 },
               ],

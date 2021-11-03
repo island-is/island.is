@@ -1,43 +1,47 @@
 import { useEffect, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 
 import { ApplicationQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import { Application } from '@island.is/financial-aid/shared/lib'
 import { useRouter } from 'next/router'
 
-interface ApplicantData {
-  application?: Application
-}
-
 const useMyApplication = () => {
   const router = useRouter()
-  const storageKey = 'myCurrentApplication'
 
   const [myApplication, updateApplication] = useState<Application>()
 
-  const { data, error, loading } = useQuery<ApplicantData>(ApplicationQuery, {
-    variables: { input: { id: router.query.id } },
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+  const [getApplication, { data, error, loading }] = useLazyQuery<
+    {
+      application: Application
+    },
+    { input: { id: string } }
+  >(ApplicationQuery)
 
-  useEffect(() => {
-    const storedFormJson = sessionStorage.getItem(storageKey)
-    if (storedFormJson === null) {
-      return
-    }
-    const storedState = JSON.parse(storedFormJson)
-    updateApplication(storedState)
-  }, [])
+  if (
+    router.query.id &&
+    myApplication === undefined &&
+    loading === false &&
+    error === undefined
+  ) {
+    try {
+      getApplication({
+        variables: {
+          input: { id: router.query.id as string },
+        },
+      })
 
-  useEffect(() => {
-    if (data) {
-      updateApplication(data.application)
-      // Watches the user state and writes it to local storage on change
-      sessionStorage.setItem(storageKey, JSON.stringify(data.application))
+      if (data) {
+        updateApplication(data.application)
+      }
+    } catch {
+      return {
+        myApplication,
+        error,
+        loading,
+      }
     }
-  }, [myApplication, data])
+  }
 
   return {
     myApplication,

@@ -19,8 +19,8 @@ export class StaffModel implements Staff {
   @Field()
   readonly municipalityName!: string
 
-  @Field(() => String)
-  readonly role!: StaffRole
+  @Field(() => [String])
+  readonly roles!: StaffRole[]
 
   @Field()
   readonly active!: boolean
@@ -30,4 +30,7 @@ export class StaffModel implements Staff {
 
   @Field()
   readonly municipalityHomepage?: string
+
+  @Field({ nullable: true })
+  readonly email?: string
 }
