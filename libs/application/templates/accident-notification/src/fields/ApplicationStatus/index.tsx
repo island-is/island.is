@@ -1,10 +1,9 @@
-import { Application } from '@island.is/application/core'
-import { Box, Button, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+
+import { FieldBaseProps } from '@island.is/application/core'
 import { States } from '../../constants'
-import { AccidentNotification } from '../../lib/dataSchema'
-import { inReview } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 import { ReviewSectionState } from '../../types'
 import {
   hasMissingDocuments,
@@ -12,7 +11,9 @@ import {
   isInjuredAndRepresentativeOfCompanyOrInstitute,
   returnMissingDocumentsList,
 } from '../../utils'
-import ReviewSection from './ReviewSection'
+import { inReview } from '../../lib/messages'
+import { AccidentNotification } from '../../lib/dataSchema'
+import { StatusStep } from './StatusStep'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 
@@ -31,29 +32,17 @@ const statesMap: StatesMap = {
     [States.IN_FINAL_REVIEW]: ReviewSectionState.inProgress,
   },
 }
-
-type InReviewStepsProps = {
-  application: Application
-  isAssignee: boolean
-  setState: React.Dispatch<React.SetStateAction<string>>
-}
-
-export const InReviewSteps: FC<InReviewStepsProps> = ({
+export const ApplicationStatus: FC<FieldBaseProps> = ({
+  goToScreen,
   application,
-  isAssignee,
-  setState,
-}) => {
+}: FieldBaseProps) => {
   const { formatMessage } = useLocale()
+  const answers = application?.answers as AccidentNotification
 
-  const goToScreenFunction = (id: string) => {
-    setState(id)
+  const changeScreens = (screen: string) => {
+    if (goToScreen) goToScreen(screen)
   }
-
-  const goToOverview = () => {
-    setState('overview')
-  }
-
-  const answers = application.answers as AccidentNotification
+  const isAssignee = false
 
   const steps = [
     {
@@ -70,6 +59,9 @@ export const InReviewSteps: FC<InReviewStepsProps> = ({
       description: formatMessage(inReview.documents.summary),
       hasActionMessage: hasMissingDocuments(application.answers),
       action: {
+        cta: () => {
+          changeScreens('addAttachmentScreen')
+        },
         title: formatMessage(inReview.action.documents.title),
         description: formatMessage(inReview.action.documents.description),
         fileNames: returnMissingDocumentsList(answers, formatMessage), // We need to get this from first form
@@ -86,6 +78,7 @@ export const InReviewSteps: FC<InReviewStepsProps> = ({
       title: formatMessage(inReview.representative.title),
       description: formatMessage(inReview.representative.summary),
       hasActionMessage: isAssignee,
+      ctaScreenName: 'inReviewOverviewScreen',
       action: {
         title: formatMessage(inReview.action.representative.title),
         description: formatMessage(inReview.action.representative.description),
@@ -117,17 +110,17 @@ export const InReviewSteps: FC<InReviewStepsProps> = ({
           size="small"
           type="button"
           variant="text"
-          onClick={goToOverview}
+          onClick={() => changeScreens('inReviewOverviewScreen')}
         >
-          {formatMessage(inReview.general.viewApplicationButton)}
+          Skoða yfirlit
         </Button>
       </Box>
       <Box marginTop={4} marginBottom={8}>
         {steps.map((step, index) => (
-          <ReviewSection
+          <StatusStep
             key={index}
             application={application}
-            goToScreen={goToScreenFunction}
+            goToScreen={() => undefined}
             {...step}
           />
         ))}
