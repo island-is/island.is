@@ -261,3 +261,6 @@ judicial-system-xrd-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/judicial-system-xrd-api'
     create: true
     name: 'judicial-system-xrd-api'
+namespaces:
+  namespaces:
+    - 'judicial-system'

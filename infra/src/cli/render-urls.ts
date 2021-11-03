@@ -18,7 +18,7 @@ const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
 }
 
 const renderUrlsForChart = (environment: OpsEnv, chartName: ChartName) => {
-  const services = generateYamlForEnv(
+  const { services } = generateYamlForEnv(
     new UberChart(Envs[environment]),
     ...charts[chartName][environment],
   )
