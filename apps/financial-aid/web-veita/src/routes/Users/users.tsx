@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import {
   ApplicationOverviewSkeleton,
   LoadingContainer,
+  NewUserModal,
   TableHeaders,
   UsersTableBody,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, Button } from '@island.is/island-ui/core'
 import * as styles from './users.css'
 import cn from 'classnames'
 
@@ -14,13 +15,19 @@ import { Staff } from '@island.is/financial-aid/shared/lib'
 import { StaffForMunicipalityQuery } from '@island.is/financial-aid-web/veita/graphql'
 
 export const Users = () => {
-  const { data, error, loading } = useQuery<{ users: Staff[] }>(
+  const [getStaff, { data, error, loading }] = useLazyQuery<{ users: Staff[] }>(
     StaffForMunicipalityQuery,
     {
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     },
   )
+
+  useEffect(() => {
+    getStaff()
+  }, [])
+
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
   const headers = ['Nafn', 'Kennitala', 'Hlutverk', 'Aðgerð']
 
@@ -32,15 +39,32 @@ export const Users = () => {
     }
   }, [data])
 
+  const refreshList = () => {
+    setIsModalVisible(false)
+    getStaff()
+  }
+
   return (
     <LoadingContainer
       isLoading={loading}
       loader={<ApplicationOverviewSkeleton />}
     >
-      <Box className={`contentUp delay-25`} marginTop={15} key={'Notendur'}>
-        <Text as="h1" variant="h1" marginBottom={[2, 2, 4]}>
+      <Box
+        className={`${styles.header} contentUp delay-25`}
+        marginTop={15}
+        marginBottom={[2, 2, 4]}
+      >
+        <Text as="h1" variant="h1">
           Notendur
         </Text>
+        <Button
+          size="small"
+          icon="add"
+          variant="ghost"
+          onClick={() => setIsModalVisible(true)}
+        >
+          Nýr notandi
+        </Button>
       </Box>
 
       {users && (
@@ -79,6 +103,14 @@ export const Users = () => {
           upplýsingum?
         </div>
       )}
+
+      <NewUserModal
+        isVisible={isModalVisible}
+        setIsVisible={(visible) => {
+          setIsModalVisible(visible)
+        }}
+        onStaffCreated={refreshList}
+      />
     </LoadingContainer>
   )
 }

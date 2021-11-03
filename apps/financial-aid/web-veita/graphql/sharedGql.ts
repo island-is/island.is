@@ -254,3 +254,11 @@ export const StaffForMunicipalityQuery = gql`
     }
   }
 `
+
+export const StaffMutation = gql`
+  mutation StaffMutation($input: CreateStaffInput!) {
+    createStaff(input: $input) {
+      id
+    }
+  }
+`
