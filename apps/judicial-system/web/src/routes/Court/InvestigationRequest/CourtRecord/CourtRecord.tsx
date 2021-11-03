@@ -124,25 +124,23 @@ const CourtRecord = () => {
   }, [workingCase, setWorkingCase, data, autofill, formatMessage])
 
   return (
-    workingCase && (
-      <PageLayout
-        workingCase={workingCase}
-        activeSection={
-          workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-        }
-        activeSubSection={JudgeSubsections.COURT_RECORD}
-        isLoading={loading}
-        notFound={data?.case === undefined}
-      >
-        {workingCase && (
-          <CourtRecordForm
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            isLoading={loading}
-          />
-        )}
-      </PageLayout>
-    )
+    <PageLayout
+      workingCase={workingCase}
+      activeSection={
+        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+      }
+      activeSubSection={JudgeSubsections.COURT_RECORD}
+      isLoading={loading}
+      notFound={data?.case === undefined}
+    >
+      {workingCase && (
+        <CourtRecordForm
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          isLoading={loading}
+        />
+      )}
+    </PageLayout>
   )
 }
 

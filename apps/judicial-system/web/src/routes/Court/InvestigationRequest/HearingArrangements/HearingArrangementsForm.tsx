@@ -45,6 +45,7 @@ import {
 import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './HearingArrangements.css'
+import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
@@ -73,11 +74,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
     },
   }
 
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
+  useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   const setJudge = (id: string) => {
     if (workingCase) {
@@ -490,7 +487,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isLoading}
-          nextIsDisabled={!isValid || !courtDateIsValid}
+          nextIsDisabled={!isCourtHearingArrangementsStepValidIC(workingCase)}
           hideNextButton={
             user.id !== workingCase.judge?.id &&
             user.id !== workingCase.registrar?.id

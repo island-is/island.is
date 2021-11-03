@@ -141,6 +141,10 @@ export const isOverviewStepValidRC = (workingCase: Case) => {
   return validate(workingCase.courtCaseNumber || '', 'empty').isValid
 }
 
+export const isOverviewStepValidIC = (workingCase: Case) => {
+  return validate(workingCase.courtCaseNumber || '', 'empty').isValid
+}
+
 export const isCourtHearingArrangemenstStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
@@ -151,7 +155,24 @@ export const isCourtHearingArrangemenstStepValidRC = (workingCase: Case) => {
   )
 }
 
+export const isCourtHearingArrangementsStepValidIC = (workingCase: Case) => {
+  return (
+    workingCase.judge &&
+    workingCase.registrar &&
+    validate(workingCase.courtDate || '', 'date-format').isValid
+  )
+}
+
 export const isCourtRecordStepValidRC = (workingCase: Case) => {
+  return (
+    validate(workingCase.courtStartDate || '', 'date-format').isValid &&
+    validate(workingCase.courtLocation || '', 'empty').isValid &&
+    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
+    validate(workingCase.litigationPresentations || '', 'empty').isValid
+  )
+}
+
+export const isCourtRecordStepValidIC = (workingCase: Case) => {
   return (
     validate(workingCase.courtStartDate || '', 'date-format').isValid &&
     validate(workingCase.courtLocation || '', 'empty').isValid &&
@@ -169,10 +190,25 @@ export const isRulingStepOneValidRC = (workingCase: Case) => {
   )
 }
 
-export const isRulingStepTwoValidRC = (workingCase: Case) => {
-  console.log(workingCase.courtEndTime)
-  console.log(validate(workingCase.courtEndTime || '', 'date-format').isValid)
+export const isRulingStepOneValidIC = (workingCase: Case) => {
+  return (
+    validate(workingCase.ruling || '', 'empty').isValid &&
+    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
+    validate(workingCase.decision || '', 'empty').isValid &&
+    validate(workingCase.courtCaseFacts || '', 'empty').isValid
+  )
+}
 
+export const isRulingStepTwoValidRC = (workingCase: Case) => {
+  return (
+    workingCase.accusedAppealDecision &&
+    workingCase.prosecutorAppealDecision &&
+    validate(workingCase.conclusion || '', 'empty').isValid &&
+    validate(workingCase.courtEndTime || '', 'date-format').isValid
+  )
+}
+
+export const isRulingStepTwoValidIC = (workingCase: Case) => {
   return (
     workingCase.accusedAppealDecision &&
     workingCase.prosecutorAppealDecision &&
