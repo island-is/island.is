@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 export const getAccidentStatusQuery = gql`
-  query NotificationStatus($input: AccidentStatusInput!) {
-    accidentStatus(input: $input) {
+  query NotificationStatus($input: HealthInsuranceAccidentStatusInput!) {
+    HealthInsuranceAccidentStatus(input: $input) {
       status
       receivedAttachments {
         InjuryCertificate

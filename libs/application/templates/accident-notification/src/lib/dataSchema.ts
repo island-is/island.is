@@ -38,12 +38,14 @@ const RepresentativeInfo = z.object({
   phoneNumber: z.string().optional(),
 })
 
-const CompanyInfo = z.object({
-  name: z.string().min(1),
-  nationalRegistrationId: z
-    .string()
-    .refine((x) => (x ? kennitala.isCompany(x) : false)),
-})
+const CompanyInfo = z
+  .object({
+    name: z.string().min(1),
+    nationalRegistrationId: z
+      .string()
+      .refine((x) => (x ? kennitala.isCompany(x) : false)),
+  })
+  .optional()
 
 export const AccidentNotificationSchema = z.object({
   representative: RepresentativeInfo,
