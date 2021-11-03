@@ -106,11 +106,12 @@ export class EndorsementSystemService {
     return Boolean(result)
   }
 
-  // Auth removed - Tags
+  // Auth - Tags
   async endorsementListControllerFindLists(
     input: EndorsementListControllerFindByTagsRequest,
+    auth: Auth,
   ) {
-    return await this.endorsementListApi
+    return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerFindByTags(input)
       .catch(this.handleError.bind(this))
   }
