@@ -149,7 +149,11 @@ export const serializeService: SerializeMethod = (
     result.secrets = { ...serviceDef.secrets }
   }
   if (Object.keys(serviceDef.files).length > 0) {
-    result.files = [...serviceDef.files]
+    result.files = []
+    serviceDef.files.forEach((f) => {
+      result.files!.push(f.filename)
+      mergeObjects(result.env, { [f.env]: `/etc/config/${f.filename}` })
+    })
   }
 
   const {

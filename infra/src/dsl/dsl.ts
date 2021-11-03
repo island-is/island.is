@@ -13,6 +13,7 @@ import {
   Features,
   Secrets,
   XroadConfig,
+  MountedFile,
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -132,7 +133,7 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
 
-  files(...files: string[]) {
+  files(...files: MountedFile[]) {
     this.serviceDef.files = [...this.serviceDef.files, ...files]
     return this
   }

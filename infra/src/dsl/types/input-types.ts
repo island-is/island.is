@@ -49,6 +49,7 @@ export type Feature = {
 }
 
 export type Features = { [name in FeatureNames]: Feature }
+export type MountedFile = { filename: string; env: string }
 
 export type ServiceDefinition = {
   liveness: HealthProbe
@@ -77,7 +78,7 @@ export type ServiceDefinition = {
     allowPrivilegeEscalation: boolean
   }
   xroadConfig: XroadConfig[]
-  files: string[]
+  files: MountedFile[]
 }
 
 export interface Ingress {
