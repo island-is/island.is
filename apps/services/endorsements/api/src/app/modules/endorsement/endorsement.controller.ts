@@ -62,6 +62,7 @@ export class EndorsementController {
   @ApiOperation({
     summary: 'Emails a PDF with list endorsements data',
   })
+  @Scopes(EndorsementsScope.main)
   @HasAccessGroup(AccessGroup.Owner, AccessGroup.Admin)
   @ApiParam({ name: 'listId', type: String })
   @ApiOkResponse({ type: sendPdfEmailResponse })

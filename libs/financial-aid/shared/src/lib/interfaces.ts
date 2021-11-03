@@ -35,6 +35,7 @@ export interface Staff {
   phoneNumber?: string
   municipalityHomepage?: string
   nickname?: string
+  email?: string
 }
 
 export interface UpdateStaff {
@@ -42,6 +43,7 @@ export interface UpdateStaff {
   roles?: StaffRole[]
   active: boolean
   nickname?: string
+  email?: string
 }
 
 export interface Aid {
@@ -276,4 +278,11 @@ export interface ServiceCenter {
 export interface TableHeadersProps {
   filterBy?: string
   title: string
+}
+
+export interface CreateStaff {
+  name: string
+  email: string
+  nationalId: string
+  roles: StaffRole[]
 }

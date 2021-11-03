@@ -20,7 +20,7 @@ import {
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
-import { StaffModel } from '../app/modules/staff'
+import { CreateStaffInput, StaffModel } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
 
 @Injectable()
@@ -111,6 +111,10 @@ class BackendAPI extends RESTDataSource {
 
   getStaffForMunicipality(): Promise<StaffModel[]> {
     return this.get('staff/municipality')
+  }
+
+  createStaff(createStaff: CreateStaffInput): Promise<StaffModel> {
+    return this.post('staff', createStaff)
   }
 }
 

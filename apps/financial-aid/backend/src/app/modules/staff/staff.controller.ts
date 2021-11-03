@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Param,
   Put,
+  Post,
   UseGuards,
 } from '@nestjs/common'
 
@@ -25,7 +26,7 @@ import { RolesGuard } from '../../guards/roles.guard'
 import { CurrentStaff, RolesRules } from '../../decorators'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
-import { UpdateStaffDto } from './dto'
+import { UpdateStaffDto, CreateStaffDto } from './dto'
 
 @UseGuards(IdsUserGuard, RolesGuard)
 @RolesRules(RolesRule.VEITA)
@@ -96,5 +97,19 @@ export class StaffController {
     }
 
     return updatedStaff
+  }
+
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.ADMIN)
+  @Post('')
+  @ApiOkResponse({
+    type: StaffModel,
+    description: 'Creates staff',
+  })
+  async createStaff(
+    @CurrentStaff() staff: Staff,
+    @Body() createStaffInput: CreateStaffDto,
+  ): Promise<StaffModel> {
+    return await this.staffService.createStaff(staff, createStaffInput)
   }
 }

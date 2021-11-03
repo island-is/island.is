@@ -6,7 +6,7 @@ import { BackendAPI } from '../../../services'
 
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { StaffModel } from './models'
-import { StaffInput, UpdateStaffInput } from './dto'
+import { StaffInput, UpdateStaffInput, CreateStaffInput } from './dto'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => StaffModel)
@@ -47,5 +47,16 @@ export class StaffResolver {
     this.logger.debug(`updating staff ${id}`)
 
     return backendApi.updateStaff(id, updateStaff)
+  }
+
+  @Mutation(() => StaffModel, { nullable: false })
+  createStaff(
+    @Args('input', { type: () => CreateStaffInput })
+    input: CreateStaffInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<StaffModel> {
+    this.logger.debug('Creating staff')
+
+    return backendApi.createStaff(input)
   }
 }

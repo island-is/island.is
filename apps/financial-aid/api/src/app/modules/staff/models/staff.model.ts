@@ -33,4 +33,7 @@ export class StaffModel implements Staff {
 
   @Field({ nullable: true })
   readonly nickname?: string
+
+  @Field({ nullable: true })
+  readonly email?: string
 }
