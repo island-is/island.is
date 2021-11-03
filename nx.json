@@ -307,6 +307,9 @@
     "clients-finance": {
       "tags": []
     },
+    "clients-health-insurance-v2": {
+      "tags": []
+    },
     "clients-middlewares": {
       "tags": []
     },

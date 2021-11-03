@@ -216,20 +216,9 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   {
     name: m.actions,
     children: [
-      // Fjármál
-      {
-        heading: m.comingSoon,
-        name: m.finance,
-        path: ServicePortalPath.FinanceWIP,
-        systemRoute: true,
-        icon: {
-          type: 'outline',
-          icon: 'cellular',
-        },
-      },
-
       // Stillingar
       {
+        heading: m.comingSoon,
         name: m.settings,
         path: ServicePortalPath.SettingsRoot,
         systemRoute: true,

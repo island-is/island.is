@@ -19,8 +19,8 @@ import {
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
-import { StaffModel } from '../app/modules/staff'
-import { HasSpouseAppliedModel } from '../app/modules/user/HasSpouseApplied.model'
+import { CreateStaffInput, StaffModel } from '../app/modules/staff'
+import { SpouseModel } from '../app/modules/user'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -88,16 +88,24 @@ class BackendAPI extends RESTDataSource {
     return this.post('file', createApplicationFiles)
   }
 
-  getCurrentApplication(nationalId: string): Promise<string | undefined> {
+  getCurrentApplicationId(nationalId: string): Promise<string | undefined> {
     return this.get(`application/nationalId/${nationalId}`)
   }
 
-  isSpouse(spouseNationalId: string): Promise<HasSpouseAppliedModel> {
+  getSpouse(spouseNationalId: string): Promise<SpouseModel> {
     return this.get(`application/spouse/${spouseNationalId}`)
   }
 
   getStaff(nationalId: string): Promise<StaffModel> {
-    return this.get(`staff/${nationalId}`)
+    return this.get(`staff/nationalId/${nationalId}`)
+  }
+
+  getStaffForMunicipality(): Promise<StaffModel[]> {
+    return this.get('staff/municipality')
+  }
+
+  createStaff(createStaff: CreateStaffInput): Promise<StaffModel> {
+    return this.post('staff', createStaff)
   }
 }
 

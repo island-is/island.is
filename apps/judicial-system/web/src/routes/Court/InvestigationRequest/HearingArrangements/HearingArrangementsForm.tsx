@@ -254,44 +254,20 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 backgroundColor="white"
               />
             </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                name="session-arrangements-prosecutor-present"
-                id="session-arrangements-prosecutor-present"
-                label={formatMessage(
-                  m.sections.sessionArrangements.options.prosecutorPresent,
-                )}
-                checked={
-                  workingCase.sessionArrangements ===
-                  SessionArrangements.PROSECUTOR_PRESENT
-                }
-                onChange={() => {
-                  setAndSendToServer(
-                    'sessionArrangements',
-                    SessionArrangements.PROSECUTOR_PRESENT,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }}
-                large
-                backgroundColor="white"
-              />
-            </Box>
             <RadioButton
-              name="session-arrangements-remote-session"
-              id="session-arrangements-remote-session"
+              name="session-arrangements-prosecutor-present"
+              id="session-arrangements-prosecutor-present"
               label={formatMessage(
-                m.sections.sessionArrangements.options.remoteSession,
+                m.sections.sessionArrangements.options.prosecutorPresent,
               )}
               checked={
                 workingCase.sessionArrangements ===
-                SessionArrangements.REMOTE_SESSION
+                SessionArrangements.PROSECUTOR_PRESENT
               }
               onChange={() => {
                 setAndSendToServer(
                   'sessionArrangements',
-                  SessionArrangements.REMOTE_SESSION,
+                  SessionArrangements.PROSECUTOR_PRESENT,
                   workingCase,
                   setWorkingCase,
                   updateCase,

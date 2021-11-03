@@ -126,6 +126,9 @@
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
+      "@island.is/application/core/polyfills": [
+        "libs/application/core/src/lib/polyfills.ts"
+      ],
       "@island.is/application/data-providers": [
         "libs/application/data-providers/src/index.ts"
       ],
@@ -233,6 +236,9 @@
         "libs/clients/driving-license/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
+      "@island.is/clients/health-insurance-v2": [
+        "libs/clients/health-insurance-v2/src/index.ts"
+      ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
