@@ -158,6 +158,17 @@ export const serializeService: SerializeMethod = (
   addToErrors(featureErrors)
   mergeObjects(result.secrets, featureSecrets)
 
+  serviceDef.xroadConfig.forEach((conf) => {
+    const { envs, errors } = serializeEnvironmentVariables(
+      service,
+      uberChart,
+      conf.getEnv(),
+    )
+    addToErrors(errors)
+    mergeObjects(result.env, envs)
+    mergeObjects(result.secrets, conf.getSecrets())
+  })
+
   // service account
   if (serviceDef.serviceAccountEnabled) {
     result.podSecurityContext = {
