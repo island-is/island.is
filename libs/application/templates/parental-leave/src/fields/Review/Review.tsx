@@ -103,6 +103,7 @@ export const Review: FC<ReviewScreenProps> = ({
 
   const otherParentWillApprove = requiresOtherParentApproval(
     application.answers,
+    application.externalData,
   )
 
   const hasError = (id: string) => get(errors, id) as string
