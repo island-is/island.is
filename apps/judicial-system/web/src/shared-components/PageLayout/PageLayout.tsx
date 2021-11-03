@@ -120,13 +120,16 @@ const PageLayout: React.FC<PageProps> = ({
           activeSubSection,
         ),
     isRestrictionCase(workingCase?.type)
-      ? getCourtSections(workingCase?.id, activeSubSection)
-      : getInvestigationCaseCourtSections(workingCase?.id, activeSubSection),
+      ? getCourtSections(workingCase || ({} as Case), activeSubSection)
+      : getInvestigationCaseCourtSections(
+          workingCase || ({} as Case),
+          activeSubSection,
+        ),
     {
       name: caseResult(),
     },
     getExtenstionSections(workingCase?.id, activeSubSection),
-    getCourtSections(workingCase?.id, activeSubSection),
+    getCourtSections(workingCase || ({} as Case), activeSubSection),
   ]
 
   return children ? (

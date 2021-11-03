@@ -1,6 +1,6 @@
 // TODO: Add tests
 
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
 
 export type Validation =
   | 'empty'
@@ -58,7 +58,7 @@ export const getRegexByValidation = (validation: Validation) => {
       }
     case 'date-format': {
       return {
-        regex: new RegExp(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/g),
+        regex: new RegExp(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(.\d{3})?Z$/g),
         errorMessage: '',
       }
     }
@@ -134,5 +134,49 @@ export const isPoliceDemandsStepValidIC = (workingCase: Case) => {
     validate(workingCase.demands || '', 'empty').isValid &&
     validate(workingCase.caseFacts || '', 'empty').isValid &&
     validate(workingCase.legalArguments || '', 'empty').isValid
+  )
+}
+
+export const isOverviewStepValidRC = (workingCase: Case) => {
+  return validate(workingCase.courtCaseNumber || '', 'empty').isValid
+}
+
+export const isCourtHearingArrangemenstStepValidRC = (workingCase: Case) => {
+  return (
+    validate(workingCase.defenderEmail || '', 'email-format').isValid &&
+    validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid &&
+    validate(workingCase.courtDate || '', 'date-format').isValid &&
+    workingCase.judge &&
+    workingCase.registrar
+  )
+}
+
+export const isCourtRecordStepValidRC = (workingCase: Case) => {
+  return (
+    validate(workingCase.courtStartDate || '', 'date-format').isValid &&
+    validate(workingCase.courtLocation || '', 'empty').isValid &&
+    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
+    validate(workingCase.litigationPresentations || '', 'empty').isValid
+  )
+}
+
+export const isRulingStepOneValidRC = (workingCase: Case) => {
+  return (
+    validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
+    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
+    validate(workingCase.decision || '', 'empty').isValid &&
+    validate(workingCase.courtCaseFacts || '', 'empty').isValid
+  )
+}
+
+export const isRulingStepTwoValidRC = (workingCase: Case) => {
+  console.log(workingCase.courtEndTime)
+  console.log(validate(workingCase.courtEndTime || '', 'date-format').isValid)
+
+  return (
+    workingCase.accusedAppealDecision &&
+    workingCase.prosecutorAppealDecision &&
+    validate(workingCase.conclusion || '', 'empty').isValid &&
+    validate(workingCase.courtEndTime || '', 'date-format').isValid
   )
 }

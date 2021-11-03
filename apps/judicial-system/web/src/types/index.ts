@@ -6,10 +6,10 @@ export enum AppealDecisionRole {
   ACCUSED = 'ACCUSED',
 }
 
-export interface RequiredField {
-  value: string
-  validations: Validation[]
-}
+// export interface RequiredField {
+//   value: string
+//   validations: Validation[]
+// }
 
 export enum Sections {
   PROSECUTOR = 0,

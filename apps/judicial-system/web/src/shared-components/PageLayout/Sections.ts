@@ -2,12 +2,17 @@ import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   isAccusedStepValidRC,
+  isCourtHearingArrangemenstStepValidRC,
+  isCourtRecordStepValidRC,
   isDefendantStepValidIC,
   isHearingArrangementsStepValidIC,
   isHearingArrangementsStepValidRC,
+  isOverviewStepValidRC,
   isPoliceDemandsStepValidIC,
   isPoliceDemandsStepValidRC,
   isPoliceReportStepValidRC,
+  isRulingStepOneValidRC,
+  isRulingStepTwoValidRC,
 } from '../../utils/validate'
 
 export const getCustodyAndTravelBanProsecutorSection = (
@@ -160,23 +165,25 @@ export const getInvestigationCaseProsecutorSection = (
 }
 
 export const getInvestigationCaseCourtSections = (
-  caseId?: string,
+  workingCase: Case,
   activeSubSection?: number,
 ) => {
+  const { id } = workingCase
+
   return {
     name: 'Úrskurður Héraðsdóms',
     children: [
       {
         type: 'SUB_SECTION',
         name: 'Yfirlit kröfu',
-        href: `${Constants.IC_OVERVIEW_ROUTE}/${caseId}`,
+        href: `${Constants.IC_OVERVIEW_ROUTE}/${id}`,
       },
       {
         type: 'SUB_SECTION',
         name: 'Fyrirtökutími',
         href:
           activeSubSection && activeSubSection > 1
-            ? `${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${caseId}`
+            ? `${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`
             : undefined,
       },
       {
@@ -184,7 +191,7 @@ export const getInvestigationCaseCourtSections = (
         name: 'Þingbók',
         href:
           activeSubSection && activeSubSection > 2
-            ? `${Constants.IC_COURT_RECORD_ROUTE}/${caseId}`
+            ? `${Constants.IC_COURT_RECORD_ROUTE}/${id}`
             : undefined,
       },
       {
@@ -192,7 +199,7 @@ export const getInvestigationCaseCourtSections = (
         name: 'Úrskurður',
         href:
           activeSubSection && activeSubSection > 3
-            ? `${Constants.IC_RULING_STEP_ONE_ROUTE}/${caseId}`
+            ? `${Constants.IC_RULING_STEP_ONE_ROUTE}/${id}`
             : undefined,
       },
       {
@@ -200,7 +207,7 @@ export const getInvestigationCaseCourtSections = (
         name: 'Úrskurðarorð',
         href:
           activeSubSection && activeSubSection > 4
-            ? `${Constants.IC_RULING_STEP_TWO_ROUTE}/${caseId}`
+            ? `${Constants.IC_RULING_STEP_TWO_ROUTE}/${id}`
             : undefined,
       },
       { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
@@ -209,50 +216,73 @@ export const getInvestigationCaseCourtSections = (
 }
 
 export const getCourtSections = (
-  caseId?: string,
+  workingCase: Case,
   activeSubSection?: number,
 ) => {
+  const { id } = workingCase
+
   return {
     name: 'Úrskurður Héraðsdóms',
     children: [
       {
         type: 'SUB_SECTION',
         name: 'Yfirlit kröfu',
-        href: `${Constants.COURT_SINGLE_REQUEST_BASE_ROUTE}/${caseId}`,
+        href: `${Constants.COURT_SINGLE_REQUEST_BASE_ROUTE}/${id}`,
       },
       {
         type: 'SUB_SECTION',
         name: 'Fyrirtökutími',
         href:
-          activeSubSection && activeSubSection > 1
-            ? `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${caseId}`
+          (activeSubSection && activeSubSection > 1) ||
+          isOverviewStepValidRC(workingCase)
+            ? `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`
             : undefined,
       },
       {
         type: 'SUB_SECTION',
         name: 'Þingbók',
         href:
-          activeSubSection && activeSubSection > 2
-            ? `${Constants.COURT_RECORD_ROUTE}/${caseId}`
+          (activeSubSection && activeSubSection > 2) ||
+          (isOverviewStepValidRC(workingCase) &&
+            isCourtHearingArrangemenstStepValidRC(workingCase))
+            ? `${Constants.COURT_RECORD_ROUTE}/${id}`
             : undefined,
       },
       {
         type: 'SUB_SECTION',
         name: 'Úrskurður',
         href:
-          activeSubSection && activeSubSection > 3
-            ? `${Constants.RULING_STEP_ONE_ROUTE}/${caseId}`
+          (activeSubSection && activeSubSection > 3) ||
+          (isOverviewStepValidRC(workingCase) &&
+            isCourtHearingArrangemenstStepValidRC(workingCase) &&
+            isCourtRecordStepValidRC(workingCase))
+            ? `${Constants.RULING_STEP_ONE_ROUTE}/${id}`
             : undefined,
       },
       {
         type: 'SUB_SECTION',
         name: 'Úrskurðarorð',
         href:
-          activeSubSection && activeSubSection > 4
-            ? `${Constants.RULING_STEP_TWO_ROUTE}/${caseId}`
+          (activeSubSection && activeSubSection > 4) ||
+          (isOverviewStepValidRC(workingCase) &&
+            isCourtHearingArrangemenstStepValidRC(workingCase) &&
+            isCourtRecordStepValidRC(workingCase) &&
+            isRulingStepOneValidRC(workingCase))
+            ? `${Constants.RULING_STEP_TWO_ROUTE}/${id}`
             : undefined,
       },
-      { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
+      {
+        type: 'SUB_SECTION',
+        name: 'Yfirlit úrskurðar',
+        href:
+          isOverviewStepValidRC(workingCase) &&
+          isCourtHearingArrangemenstStepValidRC(workingCase) &&
+          isCourtRecordStepValidRC(workingCase) &&
+          isRulingStepOneValidRC(workingCase) &&
+          isRulingStepTwoValidRC(workingCase)
+            ? `${Constants.CONFIRMATION_ROUTE}/${id}`
+            : undefined,
+      },
     ],
   }
 }
