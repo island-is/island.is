@@ -180,6 +180,7 @@ api:
     FILE_DOWNLOAD_BUCKET: 'island-is-staging-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
+    ISLYKILL_CERT: '/etc/config/islyklar.p12'
     NODE_OPTIONS: '--max-old-space-size=464'
     PARTY_LETTER_REGISTRY_BASE_API_URL: 'http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local'
     SEND_FROM_EMAIL: 'development@island.is'
@@ -208,6 +209,8 @@ api:
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
     XROAD_VMST_MEMBER_CODE: '7005942039'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
+  files:
+    - 'islyklar.p12'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'api-catalogue'

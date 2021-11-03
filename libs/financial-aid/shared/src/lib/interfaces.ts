@@ -43,6 +43,7 @@ export interface Aid {
   unregisteredRenting: number
   livesWithParents: number
   unknown: number
+  withOthers: number
   municipalityId: string
   type: AidType
 }
