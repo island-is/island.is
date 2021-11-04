@@ -39,8 +39,8 @@ interface UserInfo {
 const UserProfile = ({ user, onUpdateStaff }: UserProps) => {
   const [state, setState] = useState<UserInfo>({
     nationalId: user.nationalId,
-    nickname: user?.nickname,
-    email: user.email,
+    nickname: user?.nickname ?? '',
+    email: user.email ?? '',
     hasError: false,
     hasSubmitError: false,
     roles: user.roles,
@@ -176,6 +176,7 @@ const UserProfile = ({ user, onUpdateStaff }: UserProps) => {
                 className={`contentUp`}
                 marginBottom={3}
                 style={{ animationDelay: index * 10 + 30 + 'ms' }}
+                key={`inputField-${index}`}
               >
                 <Input
                   label={item.label}
