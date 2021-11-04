@@ -106,7 +106,7 @@ export function formatCourtReadyForCourtSmsNotification(
   type: CaseType,
   prosecutorName?: string,
   court?: string,
-) {
+): string {
   const submittedCaseText =
     type === CaseType.CUSTODY
       ? 'Gæsluvarðhaldskrafa'
@@ -119,6 +119,12 @@ export function formatCourtReadyForCourtSmsNotification(
   const courtText = ` Dómstóll: ${court ?? 'Ekki skráður'}.`
 
   return `${submittedCaseText} tilbúin til afgreiðslu.${prosecutorText}${courtText}`
+}
+
+export function formatCourtResubmittedToCourtSmsNotification(
+  courtCaseNumber?: string,
+) {
+  return `Ákærandi í máli ${courtCaseNumber} hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.`
 }
 
 export function formatProsecutorReceivedByCourtSmsNotification(
