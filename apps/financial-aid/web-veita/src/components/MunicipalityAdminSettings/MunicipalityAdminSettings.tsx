@@ -1,6 +1,13 @@
 import React, { useState } from 'react'
 import { NumberInput } from '@island.is/financial-aid-web/veita/src/components'
-import { Text, Box, Input, Button } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  Input,
+  Button,
+  toast,
+  ToastContainer,
+} from '@island.is/island-ui/core'
 
 import { Municipality } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
@@ -19,7 +26,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
   const { setMunicipality } = useMunicipality()
 
   const updateMunicipality = async () => {
-    const { data } = await updateMunicipalityMutation({
+    await updateMunicipalityMutation({
       variables: {
         input: {
           individualAid: omit(state.individualAid, ['__typename']),
@@ -30,7 +37,15 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
         },
       },
     })
-    setMunicipality(data.updateMunicipality)
+      .then((res) => {
+        setMunicipality(res.data.updateMunicipality)
+        toast.success('Það tókst að uppfæra sveitarfélagið')
+      })
+      .catch(() => {
+        toast.error(
+          'Ekki tókst að uppfæra sveitarfélagið, vinsamlega reynið aftur síðar',
+        )
+      })
   }
   return (
     <>
@@ -339,6 +354,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           Vista stillingar
         </Button>
       </Box>
+      <ToastContainer />
     </>
   )
 }
