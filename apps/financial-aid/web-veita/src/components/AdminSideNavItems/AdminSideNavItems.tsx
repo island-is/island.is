@@ -18,18 +18,32 @@ const AdminSideNavItems = ({ roles }: Props) => {
   }
 
   return (
-    <button
-      className={`${styles.sideNavBarButton} navBarButtonHover`}
-      onClick={() => router.push(Routes.users)}
-    >
-      <Icon
-        icon="people"
-        type="outline"
-        color="blue400"
-        className={styles.sideNavBarButtonIcon}
-      />
-      <Text> Notendur</Text>
-    </button>
+    <>
+      <button
+        className={`${styles.sideNavBarButton} navBarButtonHover`}
+        onClick={() => router.push(Routes.users)}
+      >
+        <Icon
+          icon="people"
+          type="outline"
+          color="blue400"
+          className={styles.sideNavBarButtonIcon}
+        />
+        <Text> Notendur</Text>
+      </button>
+      <button
+        className={`${styles.sideNavBarButton} navBarButtonHover`}
+        onClick={() => router.push(Routes.municipalitySettings)}
+      >
+        <Icon
+          icon="settings"
+          type="outline"
+          color="blue400"
+          className={styles.sideNavBarButtonIcon}
+        />
+        <Text> Sveitarfélagsstillingar</Text>
+      </button>
+    </>
   )
 }
 
