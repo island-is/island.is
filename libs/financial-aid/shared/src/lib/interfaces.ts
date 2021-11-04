@@ -167,6 +167,7 @@ export interface CreateApplication {
   amount?: number
   spouseNationalId?: string
   spouseEmail?: string
+  spouseName?: string
   familyStatus: FamilyStatus
   streetName?: string
   postalCode?: string
