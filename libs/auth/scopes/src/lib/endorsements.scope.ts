@@ -1,4 +1,4 @@
 export enum EndorsementsScope {
   main = '@island.is/endorsements',
-  admin = '@island.is/endorsementsAdmin',
+  admin = '@island.is/endorsements:admin',
 }
