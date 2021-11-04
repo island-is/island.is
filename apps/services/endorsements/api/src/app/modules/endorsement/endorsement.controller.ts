@@ -178,7 +178,6 @@ export class EndorsementController {
   })
   @ApiParam({ name: 'listId', type: String })
   @ApiBody({ type: EndorsementDto })
-  // @Scopes(EndorsementsScope.main)
   @Scopes(GenericScope.internal)
   @Post()
   @Audit<Endorsement>({
