@@ -11,9 +11,8 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { MunicipalityService } from './municipality.service'
 import { MunicipalityModel } from './models'
 
-import { apiBasePath, Municipality } from '@island.is/financial-aid/shared/lib'
+import { apiBasePath } from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { MunicipalityResponse } from './response'
 
 @UseGuards(IdsUserGuard)
 @Controller(apiBasePath)
@@ -23,10 +22,10 @@ export class MunicipalityController {
 
   @Get('municipality/:id')
   @ApiOkResponse({
-    type: MunicipalityResponse,
+    type: MunicipalityModel,
     description: 'Gets municipality',
   })
-  async getById(@Param('id') id: string): Promise<MunicipalityResponse> {
+  async getById(@Param('id') id: string): Promise<MunicipalityModel> {
     const municipality = await this.municipalityService.findByMunicipalityId(id)
 
     if (!municipality) {
