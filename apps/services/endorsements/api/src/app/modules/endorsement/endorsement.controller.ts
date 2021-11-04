@@ -2,7 +2,9 @@ import {
   BypassAuth,
   CurrentAuth,
   CurrentUser,
+  IdsUserGuard,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
@@ -15,6 +17,7 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -52,6 +55,7 @@ const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @ApiTags('endorsement')
 @ApiOAuth2([])
 @ApiExtraModels(PaginationDto, PaginatedEndorsementDto)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Controller('endorsement-list/:listId/endorsement')
 export class EndorsementController {
   constructor(
@@ -59,11 +63,22 @@ export class EndorsementController {
     private readonly auditService: AuditService,
   ) {}
 
+  // TESTING SCOPES
+  @ApiOperation({
+    summary: 'admin',
+  })
+  @Scopes(EndorsementsScope.admin)
+  @ApiOkResponse()
+  @Get('/admin')
+  async admin(@CurrentUser() user: User): Promise<any> {
+    return user.scope
+  }
+
   @ApiOperation({
     summary: 'Emails a PDF with list endorsements data',
   })
   @Scopes(EndorsementsScope.main)
-  @HasAccessGroup(AccessGroup.Owner, AccessGroup.Admin)
+  //@HasAccessGroup(AccessGroup.Owner, AccessGroup.Admin)
   @ApiParam({ name: 'listId', type: String })
   @ApiOkResponse({ type: sendPdfEmailResponse })
   @Post('/email-pdf')
@@ -75,6 +90,7 @@ export class EndorsementController {
     )
     endorsementList: EndorsementList,
     @Query() query: emailDto,
+    @CurrentUser() user: User,
   ): Promise<sendPdfEmailResponse> {
     return this.endorsementService.emailPDF(
       endorsementList.id,
@@ -86,7 +102,7 @@ export class EndorsementController {
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)
   @Get()
-  @HasAccessGroup(AccessGroup.Owner, AccessGroup.DMR)
+  //@HasAccessGroup(AccessGroup.Owner, AccessGroup.DMR)
   @Audit<PaginatedEndorsementDto>({
     resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),
@@ -216,7 +232,7 @@ export class EndorsementController {
   })
   @Scopes(EndorsementsScope.main)
   @Post('/bulk')
-  @HasAccessGroup(AccessGroup.Owner)
+  //@HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementBulkCreate>({
     resources: (response) => response.succeeded.map((e) => e.id),
     meta: (response) => ({ count: response.succeeded.length }),
