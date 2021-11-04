@@ -86,7 +86,7 @@ const Confirmation = () => {
             </Box>
           )}
 
-          {municipality?.homepage && (
+          {municipality?.rulesHomepage && (
             <Box marginBottom={3}>
               <Button
                 icon="open"
@@ -95,7 +95,7 @@ const Confirmation = () => {
                 preTextIconType="filled"
                 size="small"
                 onClick={() => {
-                  window.open(municipality.homepage, '_ blank')
+                  window.open(municipality.rulesHomepage, '_ blank')
                 }}
                 type="button"
                 variant="text"
