@@ -89,7 +89,7 @@ export type AttachmentEmailTemplateGenerator = (
 export type PublicDebtPaymentPlanPayment = {
   id: PaymentScheduleType
   totalAmount: number
-  distribution: PaymentSchedulePayment[]
+  distribution: string
   amountPerMonth: number
   numberOfMonths: number
   organization: string

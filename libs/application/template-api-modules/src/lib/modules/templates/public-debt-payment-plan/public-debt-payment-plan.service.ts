@@ -1,3 +1,4 @@
+import { PaymentSchedulePayment } from '@island.is/api/schema'
 import { Application, getValueViaPath } from '@island.is/application/core'
 import { DefaultApi } from '@island.is/clients/payment-schedule'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -63,18 +64,23 @@ export class PublicDebtPaymentPlanTemplateService {
       application,
     )
 
-    const schedules = paymentPlans.map((plan) => ({
-      organizationID: plan.organization,
-      chargeTypes: plan.chargetypes?.map((chargeType) => ({
-        chargeID: chargeType.id,
-      })),
-      payments: plan.distribution?.map((p) => ({
-        duedate: p.dueDate,
-        payment: p.payment,
-        accumulated: p.accumulated,
-      })),
-      type: plan.id,
-    }))
+    const schedules = paymentPlans.map((plan) => {
+      const distribution = JSON.parse(
+        plan.distribution,
+      ) as PaymentSchedulePayment[]
+      return {
+        organizationID: plan.organization,
+        chargeTypes: plan.chargetypes?.map((chargeType) => ({
+          chargeID: chargeType.id,
+        })),
+        payments: distribution.map((p) => ({
+          duedate: p.dueDate,
+          payment: p.payment,
+          accumulated: p.accumulated,
+        })),
+        type: plan.id,
+      }
+    })
 
     await this.paymentScheduleApi.schedulesPOST6({
       inputSchedules: {
