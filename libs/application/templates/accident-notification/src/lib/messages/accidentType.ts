@@ -31,17 +31,17 @@ export const accidentType = {
       description: 'Work',
     },
     rescueWork: {
-      id: 'an.application:accidentType.labels.work',
+      id: 'an.application:accidentType.labels.rescueWork',
       defaultMessage: 'Björgunarstörf',
       description: 'Rescue Work',
     },
     studies: {
-      id: 'an.application:accidentType.labels.work',
+      id: 'an.application:accidentType.labels.studies',
       defaultMessage: 'Nám',
       description: 'Studies',
     },
     sports: {
-      id: 'an.application:accidentType.labels.work',
+      id: 'an.application:accidentType.labels.sport',
       defaultMessage: 'Íþróttaiðkun',
       description: 'Sport activites',
     },
