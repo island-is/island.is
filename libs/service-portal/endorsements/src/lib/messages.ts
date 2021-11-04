@@ -202,6 +202,11 @@ export const m: MessageDir = {
       defaultMessage: 'Ekki tókst að loka lista',
       description: 'Toast error message',
     },
+    toastErrorSendList: {
+      id: 'sp.petitions:toast-error-send-list',
+      defaultMessage: 'Ekki tókst að senda lista á netfang',
+      description: 'Toast error message',
+    },
     toastSuccess: {
       id: 'sp.petitions:toast-success-message',
       defaultMessage: 'Nafn þitt er ekki lengur á þessum lista',
@@ -215,6 +220,11 @@ export const m: MessageDir = {
     toastSuccessOpenList: {
       id: 'sp.petitions:toast-success-message-open-list',
       defaultMessage: 'Tókst að opna/uppfæra lista',
+      description: 'Toast success message',
+    },
+    toastSuccessSendList: {
+      id: 'sp.petitions:toast-send-list',
+      defaultMessage: 'Listinn sendur á ',
       description: 'Toast success message',
     },
     closeListDescription: {
@@ -280,6 +290,16 @@ export const m: MessageDir = {
       id: 'sp.petitions:send-list',
       defaultMessage: 'Senda lista',
       description: 'Button title',
+    },
+    sendListTitle: {
+      id: 'sp.petitions:send-list-title',
+      defaultMessage: 'Senda lista á netfang',
+      description: 'Title',
+    },
+    sendListPlaceholder: {
+      id: 'sp.petitions:send-list-placeholder',
+      defaultMessage: 'Sláðu inn netfang',
+      description: 'Input placeholder',
     },
   }),
 }
