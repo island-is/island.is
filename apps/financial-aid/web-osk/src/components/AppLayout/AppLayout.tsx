@@ -4,7 +4,10 @@ import { Box, GridContainer } from '@island.is/island-ui/core'
 import * as styles from './AppLayout.css'
 import { Logo, Header } from '@island.is/financial-aid-web/osk/src/components'
 
-import { SideBar } from '@island.is/financial-aid-web/osk/src/components'
+import {
+  SideBar,
+  Skeleton,
+} from '@island.is/financial-aid-web/osk/src/components'
 
 import cn from 'classnames'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
@@ -14,16 +17,15 @@ interface Props {
 }
 
 const AppLayout = ({ children }: Props) => {
-  const { isAuthenticated, user } = useContext(AppContext)
+  const { isAuthenticated, user, loadingUser } = useContext(AppContext)
 
   useEffect(() => {
     document.title = 'Fjárhagsaðstoð'
   }, [])
 
-  if (isAuthenticated === false || user === undefined) {
-    return null
+  if (isAuthenticated === false || user === undefined || loadingUser) {
+    return <Skeleton />
   }
-
   return (
     <>
       <Header />

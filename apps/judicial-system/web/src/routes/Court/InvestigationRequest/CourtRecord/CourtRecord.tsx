@@ -12,7 +12,7 @@ import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import CourtRecordForm from './CourtRecordForm'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icCourtRecord } from '@island.is/judicial-system-web/messages'
+import { icCourtRecord as m } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
 
 const CourtRecord = () => {
@@ -48,8 +48,9 @@ const CourtRecord = () => {
           attendees += `${wc.accusedName} varnaraðili`
         }
       } else {
-        attendees +=
-          'Varnaraðili var ekki viðstaddur sbr. 104. gr. laga 88/2008 um meðferð sakamála.'
+        attendees += formatMessage(
+          m.sections.courtAttendees.defendantNotPresentAutofill,
+        )
       }
 
       if (
@@ -99,15 +100,28 @@ const CourtRecord = () => {
       if (theCase.sessionArrangements === SessionArrangements.REMOTE_SESSION) {
         autofill(
           'litigationPresentations',
-          formatMessage(
-            icCourtRecord.sections.litigationPresentations.autofill,
-          ),
+          formatMessage(m.sections.litigationPresentations.autofill),
           theCase,
         )
       }
+
+      if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+        autofill(
+          'accusedBookings',
+          `${formatMessage(
+            m.sections.accusedBookings.autofillRightToRemainSilent,
+          )}\n\n${formatMessage(
+            m.sections.accusedBookings.autofillCourtDocumentOne,
+          )}\n\n${formatMessage(
+            m.sections.accusedBookings.autofillAccusedPlea,
+          )}`,
+          theCase,
+        )
+      }
+
       setWorkingCase(data.case)
     }
-  }, [workingCase, setWorkingCase, data, autofill])
+  }, [workingCase, setWorkingCase, data, autofill, formatMessage])
 
   return (
     <PageLayout

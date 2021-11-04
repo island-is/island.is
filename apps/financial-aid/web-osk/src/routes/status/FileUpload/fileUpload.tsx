@@ -28,7 +28,7 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 
 const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
-  const { myApplication } = useContext(AppContext)
+  const { myApplication, user } = useContext(AppContext)
 
   const fileComment = useMemo(() => {
     if (myApplication?.applicationEvents) {
@@ -40,7 +40,7 @@ const FileUpload = () => {
   }, [myApplication])
 
   const router = useRouter()
-  const { uploadFiles } = useFileUpload(form.otherFiles)
+  const { uploadStateFiles } = useFileUpload(form.otherFiles)
 
   const [error, setError] = useState(false)
 
@@ -62,28 +62,29 @@ const FileUpload = () => {
     setIsLoading(true)
 
     try {
-      await uploadFiles(router.query.id as string, FileType.OTHER).then(
-        async () => {
-          await updateApplicationMutation({
-            variables: {
-              input: {
-                id: router.query.id,
-                state: ApplicationState.INPROGRESS,
-                event: ApplicationEventType.INPROGRESS,
-              },
+      await uploadStateFiles(
+        router.query.id as string,
+        user?.spouse?.hasPartnerApplied ? FileType.SPOUSEFILES : FileType.OTHER,
+      ).then(async () => {
+        await updateApplicationMutation({
+          variables: {
+            input: {
+              id: router.query.id,
+              state: ApplicationState.INPROGRESS,
+              event: ApplicationEventType.FILEUPLOAD,
             },
-          })
+          },
+        })
 
-          updateForm({
-            ...form,
-            status: ApplicationState.INPROGRESS,
-          })
+        updateForm({
+          ...form,
+          status: ApplicationState.INPROGRESS,
+        })
 
-          router.push(
-            `${Routes.statusFileUploadSuccess(router.query.id as string)}`,
-          )
-        },
-      )
+        router.push(
+          `${Routes.statusFileUploadSuccess(router.query.id as string)}`,
+        )
+      })
     } catch (e) {
       router.push(
         `${Routes.statusFileUploadFailure(router.query.id as string)}`,

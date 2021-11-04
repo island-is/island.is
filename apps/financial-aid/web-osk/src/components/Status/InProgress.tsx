@@ -4,8 +4,8 @@ import { ActionCard, Box, Text } from '@island.is/island-ui/core'
 import * as styles from './Status.css'
 
 import {
+  Application,
   ApplicationState,
-  CurrentApplication,
   getNextPeriod,
   getState,
   Routes,
@@ -15,26 +15,27 @@ import { Estimation } from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
 
 interface Props {
-  currentApplication: CurrentApplication
+  application: Application
+  isApplicant?: boolean
 }
 
-const InProgress = ({ currentApplication }: Props) => {
+const InProgress = ({ application, isApplicant = true }: Props) => {
   const router = useRouter()
 
   if (
-    currentApplication.state === ApplicationState.APPROVED ||
-    currentApplication.state === ApplicationState.REJECTED
+    application.state === ApplicationState.APPROVED ||
+    application.state === ApplicationState.REJECTED
   ) {
     return null
   }
   return (
     <>
       <Text as="h2" variant="h3" color="blue400" marginBottom={[4, 4, 5]}>
-        Umsókn {getState[currentApplication.state].toLowerCase()} til útgreiðslu
-        í {getNextPeriod.month} {` `} {getNextPeriod.year}
+        Umsókn {getState[application.state].toLowerCase()} til útgreiðslu í{' '}
+        {getNextPeriod.month} {` `} {getNextPeriod.year}
       </Text>
 
-      {currentApplication.state === ApplicationState.DATANEEDED && (
+      {application.state === ApplicationState.DATANEEDED && (
         <Box marginBottom={[4, 4, 5]}>
           <ActionCard
             heading="Vantar gögn"
@@ -50,21 +51,22 @@ const InProgress = ({ currentApplication }: Props) => {
           />
         </Box>
       )}
-
-      <Estimation
-        homeCircumstances={currentApplication.homeCircumstances}
-        usePersonalTaxCredit={currentApplication?.usePersonalTaxCredit}
-        aboutText={
-          <Text marginBottom={[2, 2, 3]}>
-            Athugaðu að þessi útreikningur er{' '}
-            <span className={styles.taxReturn}>
-              eingöngu til viðmiðunar og getur tekið breytingum.
-            </span>{' '}
-            Þú færð skilaboð þegar frekari útreikningur liggur fyrir. Umsóknin
-            verður afgreidd eins fljótt og auðið er.
-          </Text>
-        }
-      />
+      {isApplicant && (
+        <Estimation
+          homeCircumstances={application.homeCircumstances}
+          usePersonalTaxCredit={application?.usePersonalTaxCredit}
+          aboutText={
+            <Text marginBottom={[2, 2, 3]}>
+              Athugaðu að þessi útreikningur er{' '}
+              <span className={styles.taxReturn}>
+                eingöngu til viðmiðunar og getur tekið breytingum.
+              </span>{' '}
+              Þú færð skilaboð þegar frekari útreikningur liggur fyrir. Umsóknin
+              verður afgreidd eins fljótt og auðið er.
+            </Text>
+          }
+        />
+      )}
     </>
   )
 }

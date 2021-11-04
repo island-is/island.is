@@ -7,6 +7,7 @@ import { EndorsementMetadataModule } from '../endorsementMetadata/endorsementMet
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementValidatorModule } from '../endorsementValidator/endorsementValidator.module'
 import { EndorsementListService } from '../endorsementList/endorsementList.service'
+import { EmailModule } from '@island.is/email-service'
 import { environment } from '../../../environments'
 import {
   NationalRegistryApi,
@@ -22,6 +23,10 @@ export interface Config {
     SequelizeModule.forFeature([Endorsement, EndorsementList]),
     EndorsementMetadataModule,
     EndorsementValidatorModule,
+    EmailModule.register({
+      useTestAccount: true,
+      useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
+    }),
   ],
   controllers: [EndorsementController],
   providers: [

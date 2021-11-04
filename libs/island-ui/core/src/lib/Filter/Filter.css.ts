@@ -6,4 +6,5 @@ export const dialogDisclosure = style({
 
 export const dialogContainer = style({
   zIndex: 10000,
+  overflowY: 'scroll',
 })

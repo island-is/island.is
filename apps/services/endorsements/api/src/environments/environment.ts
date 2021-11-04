@@ -52,6 +52,10 @@ const devConfig = {
     DMR: process.env.ACCESS_GROUP_DMR ?? '',
     Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
+  emailOptions: {
+    useTestAccount: true,
+    useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
+  },
 }
 
 const prodConfig = {
@@ -96,6 +100,13 @@ const prodConfig = {
   accessGroups: {
     DMR: process.env.ACCESS_GROUP_DMR ?? '',
     Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
+  },
+  emailOptions: {
+    useTestAccount: false,
+    useNodemailerApp: false,
+    options: {
+      region: process.env.EMAIL_REGION,
+    },
   },
 }
 

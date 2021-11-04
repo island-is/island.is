@@ -21,7 +21,9 @@ export const ApplicationQuery = gql`
       interview
       employmentCustom
       homeCircumstancesCustom
+      familyStatus
       spouseNationalId
+      spouseName
       city
       streetName
       postalCode
@@ -41,6 +43,7 @@ export const ApplicationQuery = gql`
       staff {
         name
         municipalityId
+        nationalId
       }
       applicationEvents {
         id
@@ -181,7 +184,7 @@ export const CurrentUserQuery = gql`
         name
         municipalityId
         phoneNumber
-        role
+        roles
         active
         municipalityHomepage
       }
@@ -236,6 +239,26 @@ export const UpdateApplicationMutation = gql`
         name
         municipalityId
       }
+    }
+  }
+`
+
+export const StaffForMunicipalityQuery = gql`
+  query staffForMunicipality {
+    users {
+      id
+      nationalId
+      name
+      roles
+      active
+    }
+  }
+`
+
+export const StaffMutation = gql`
+  mutation StaffMutation($input: CreateStaffInput!) {
+    createStaff(input: $input) {
+      id
     }
   }
 `

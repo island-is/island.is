@@ -111,7 +111,10 @@ export class ApplicationService {
     return this.applicationModel.create(application)
   }
 
-  async update(id: string, application: UpdateApplicationDto) {
+  async update(
+    id: string,
+    application: Partial<Pick<Application, 'attachments' | 'answers'>>,
+  ) {
     const [
       numberOfAffectedRows,
       [updatedApplication],

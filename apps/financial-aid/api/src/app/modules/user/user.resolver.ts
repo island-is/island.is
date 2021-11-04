@@ -7,11 +7,11 @@ import type { User } from '@island.is/financial-aid/shared/lib'
 
 import { UserModel } from './user.model'
 
-import { CurrentApplicationModel } from '../application'
 import { StaffModel } from '../staff/models'
 import { CurrentUser } from '../decorators'
 import { BackendAPI } from '../../../services'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { SpouseModel } from './spouseModel.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => UserModel)
@@ -38,23 +38,22 @@ export class UserResolver {
     return user as UserModel
   }
 
-  @ResolveField('isSpouse', () => Boolean)
-  async isSpouse(
+  @ResolveField('spouse', () => SpouseModel)
+  async spouse(
     @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Boolean> {
-    const isSpouse = await backendApi.isSpouse(user.nationalId)
-    return isSpouse.HasApplied
+  ): Promise<SpouseModel> {
+    return await backendApi.getSpouse(user.nationalId)
   }
 
-  @ResolveField('currentApplication', () => CurrentApplicationModel)
-  async currentApplication(
+  @ResolveField('currentApplicationId', () => String)
+  async currentApplicationId(
     @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<CurrentApplicationModel | undefined> {
+  ): Promise<string | undefined> {
     this.logger.debug('Getting current application for nationalId')
     return await this.handleNotFoundException(() =>
-      backendApi.getCurrentApplication(user.nationalId),
+      backendApi.getCurrentApplicationId(user.nationalId),
     )
   }
 

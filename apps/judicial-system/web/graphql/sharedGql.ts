@@ -33,7 +33,7 @@ export const CaseQuery = gql`
       demands
       lawsBroken
       legalBasis
-      custodyProvisions
+      legalProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
       caseFacts
@@ -76,9 +76,7 @@ export const CaseQuery = gql`
       courtAttendees
       prosecutorDemands
       courtDocuments
-      isAccusedRightsHidden
-      accusedPleaDecision
-      accusedPleaAnnouncement
+      accusedBookings
       litigationPresentations
       courtCaseFacts
       courtLegalArguments
@@ -176,6 +174,24 @@ export const UploadFileToCourtMutation = gql`
   mutation UploadFileToCourtMutation($input: UploadFileToCourtInput!) {
     uploadFileToCourt(input: $input) {
       success
+    }
+  }
+`
+
+export const PoliceCaseFilesQuery = gql`
+  query GetPoliceCaseFiles($input: PoliceCaseFilesQueryInput!) {
+    policeCaseFiles(input: $input) {
+      id
+      name
+    }
+  }
+`
+
+export const UploadPoliceCaseFileMutation = gql`
+  mutation UploadPoliceCaseFileMutation($input: UploadPoliceCaseFileInput!) {
+    uploadPoliceCaseFile(input: $input) {
+      key
+      size
     }
   }
 `

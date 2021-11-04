@@ -21,6 +21,7 @@ import { environment } from '../../../environments'
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
+
 @Injectable()
 export class EndorsementListService {
   constructor(
@@ -225,11 +226,9 @@ export class EndorsementListService {
   async getOwnerInfo(endorsementList: EndorsementList) {
     try {
       return (await this.nationalRegistryApi.getUser(endorsementList.owner))
-      .Fulltnafn
-    } catch {
-      return ""
+        .Fulltnafn
+    } catch (e) {
+      return ''
     }
-    
-   
   }
 }

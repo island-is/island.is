@@ -4,6 +4,7 @@ export enum HomeCircumstances {
   WITHOTHERS = 'WithOthers',
   OWNPLACE = 'OwnPlace',
   REGISTEREDLEASE = 'RegisteredLease',
+  UNREGISTEREDLEASE = 'UnregisteredLease',
   OTHER = 'Other',
 }
 
@@ -59,9 +60,11 @@ export enum FileType {
   TAXRETURN = 'TaxReturn',
   INCOME = 'Income',
   OTHER = 'Other',
+  SPOUSEFILES = 'SpouseFiles',
 }
 
 export enum StaffRole {
+  SUPERADMIN = 'SuperAdmin',
   ADMIN = 'Admin',
   EMPLOYEE = 'Employee',
 }

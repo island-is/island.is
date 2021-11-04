@@ -14,8 +14,8 @@ import { ApplicationService } from './application.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  CurrentApplicationModel,
   ApplicationModel,
+  SpouseResponse,
   UpdateApplicationTableResponse,
 } from './models'
 
@@ -33,6 +33,7 @@ import {
 import {
   apiBasePath,
   ApplicationStateUrl,
+  StaffRole,
 } from '@island.is/financial-aid/shared/lib'
 
 import type {
@@ -50,9 +51,9 @@ import { RolesGuard } from '../../guards/roles.guard'
 import { CurrentStaff, CurrentUser, RolesRules } from '../../decorators'
 import { ApplicationGuard } from '../../guards/application.guard'
 import { StaffService } from '../staff'
-import { IsSpouseResponse } from './models/isSpouse.response'
-import { EmployeeGuard } from '../../guards/employee.guard'
+import { StaffGuard } from '../../guards/staff.guard'
 import { CurrentApplication } from '../../decorators/application.decorator'
+import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/application`)
@@ -70,14 +71,13 @@ export class ApplicationController {
   @RolesRules(RolesRule.OSK)
   @Get('nationalId/:nationalId')
   @ApiOkResponse({
-    type: CurrentApplicationModel,
     description: 'Checks if user has a current application for this period',
   })
   async getCurrentApplication(
     @Param('nationalId') nationalId: string,
-  ): Promise<CurrentApplicationModel> {
+  ): Promise<string> {
     this.logger.debug('Application controller: Getting current application')
-    const currentApplication = await this.applicationService.getCurrentApplication(
+    const currentApplication = await this.applicationService.getCurrentApplicationId(
       nationalId,
     )
 
@@ -92,23 +92,20 @@ export class ApplicationController {
   @RolesRules(RolesRule.OSK)
   @Get('spouse/:spouseNationalId')
   @ApiOkResponse({
-    type: IsSpouseResponse,
+    type: SpouseResponse,
     description: 'Checking if user is spouse',
   })
-  async isSpouse(
+  async spouse(
     @Param('spouseNationalId') spouseNationalId: string,
-  ): Promise<IsSpouseResponse> {
+  ): Promise<SpouseResponse> {
     this.logger.debug('Application controller: Checking if user is spouse')
 
-    return {
-      HasApplied: await this.applicationService.hasSpouseApplied(
-        spouseNationalId,
-      ),
-    }
+    return await this.applicationService.getSpouseInfo(spouseNationalId)
   }
 
-  @UseGuards(RolesGuard, EmployeeGuard)
+  @UseGuards(RolesGuard, StaffGuard)
   @RolesRules(RolesRule.VEITA)
+  @StaffRolesRules(StaffRole.EMPLOYEE)
   @Get('state/:stateUrl')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -141,8 +138,9 @@ export class ApplicationController {
     return application
   }
 
-  @UseGuards(RolesGuard, EmployeeGuard)
+  @UseGuards(RolesGuard, StaffGuard)
   @RolesRules(RolesRule.VEITA)
+  @StaffRolesRules(StaffRole.EMPLOYEE)
   @Get('filters')
   @ApiOkResponse({
     description: 'Gets all existing applications filters',
@@ -167,25 +165,30 @@ export class ApplicationController {
     this.logger.debug(
       `Application controller: Updating application with id ${id}`,
     )
+
+    let staff = undefined
+
+    if (user.service === RolesRule.VEITA) {
+      staff = await this.staffService.findByNationalId(user.nationalId)
+    }
+
     const {
       numberOfAffectedRows,
       updatedApplication,
-    } = await this.applicationService.update(id, applicationToUpdate)
+    } = await this.applicationService.update(id, applicationToUpdate, staff)
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Application ${id} does not exist`)
     }
 
-    if (user.service === RolesRule.VEITA) {
-      const staff = await this.staffService.findById(updatedApplication.staffId)
-      updatedApplication?.setDataValue('staff', staff)
-    }
+    updatedApplication?.setDataValue('staff', staff)
 
     return updatedApplication
   }
 
-  @UseGuards(RolesGuard, EmployeeGuard)
+  @UseGuards(RolesGuard, StaffGuard)
   @RolesRules(RolesRule.VEITA)
+  @StaffRolesRules(StaffRole.EMPLOYEE)
   @Put(':id/:stateUrl')
   @ApiOkResponse({
     type: UpdateApplicationTableResponse,

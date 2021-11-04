@@ -56,7 +56,7 @@ export interface ButtonProps {
   children?: ReactNode
   size?: ButtonSizes
   disabled?: boolean
-  focusable?: boolean
+  unfocusable?: boolean
   fluid?: boolean
   icon?: IconType
   iconType?: Type
@@ -90,6 +90,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       nowrap,
       inline,
       as,
+      unfocusable,
       ...buttonProps
     },
     ref,
@@ -124,6 +125,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
         )}
         display={variant === 'text' ? 'inline' : inline ? 'inlineFlex' : 'flex'}
         disabled={disabled || loading}
+        {...(unfocusable && { tabIndex: -1 })}
         {...buttonProps}
       >
         {loading && variant !== 'text' ? (

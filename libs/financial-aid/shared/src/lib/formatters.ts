@@ -1,3 +1,4 @@
+import { ApplicationFiltersEnum } from './enums'
 import {
   HomeCircumstances,
   ApplicationState,
@@ -18,7 +19,8 @@ export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
   WithOthers: 'Ég bý eða leigi hjá öðrum án leigusamnings',
   OwnPlace: 'Ég bý í eigin húsnæði',
   RegisteredLease: 'Ég leigi með þinglýstan leigusamning',
-  Other: 'Ekkert að ofan lýsir mínum aðstæðum',
+  UnregisteredLease: 'Ég leigi með óþinglýstan leigusamning',
+  Other: 'Annað',
 }
 
 export const getEmploymentStatus: KeyMapping<Employment, string> = {
@@ -164,6 +166,16 @@ export const isSpouseDataNeeded: KeyMapping<FamilyStatus, boolean> = {
   NotInformed: false,
 }
 
+export const showSpouseData: KeyMapping<FamilyStatus, boolean> = {
+  Unknown: false,
+  Single: false,
+  Cohabitation: true,
+  UnregisteredCohabitation: true,
+  Married: true,
+  MarriedNotLivingTogether: true,
+  NotInformed: false,
+}
+
 export const getFamilyStatus: KeyMapping<FamilyStatus, string> = {
   Unknown: 'Óþekkt',
   Cohabitation: 'Í sambúð',
@@ -171,13 +183,14 @@ export const getFamilyStatus: KeyMapping<FamilyStatus, string> = {
   Single: 'Einstæð',
   MarriedNotLivingTogether: 'Hjón ekki í samvistum',
   NotInformed: 'Óupplýst',
-  UnregisteredCohabitation: 'Óstaðfestri sambúð?',
+  UnregisteredCohabitation: 'Ég er ekki í sambúð',
 }
 
 export const getFileTypeName: KeyMapping<FileType, string> = {
   TaxReturn: 'Skattagögn',
   Income: 'Tekjugögn',
   Other: 'Innsend gögn',
+  SpouseFiles: 'Gögn frá maka',
 }
 
 export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
@@ -186,6 +199,17 @@ export const getEmailTextFromState: KeyMapping<ApplicationState, string> = {
   InProgress: 'Umsókn þín er móttekin og er nú í vinnslu',
   Rejected: 'Umsókn þinni um aðstoð hefur verið synjað',
   Approved: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+}
+
+export const applicationStateToFilterEnum: KeyMapping<
+  ApplicationState,
+  ApplicationFiltersEnum
+> = {
+  New: ApplicationFiltersEnum.NEW,
+  DataNeeded: ApplicationFiltersEnum.INPROGRESS,
+  InProgress: ApplicationFiltersEnum.INPROGRESS,
+  Rejected: ApplicationFiltersEnum.REJECTED,
+  Approved: ApplicationFiltersEnum.APPROVED,
 }
 
 export const aidCalculator = (
@@ -198,6 +222,8 @@ export const aidCalculator = (
     case 'RegisteredLease':
       return aid.registeredRenting
     case 'WithOthers':
+      return aid.withOthers
+    case 'UnregisteredLease':
       return aid.unregisteredRenting
     case 'Other':
     case 'Unknown':

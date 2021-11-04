@@ -12,7 +12,7 @@ import {
 } from '@island.is/judicial-system/types'
 import type {
   Case,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
 import {
   formatDate,
@@ -242,12 +242,12 @@ export const Overview: React.FC = () => {
                   id="id_2"
                   label="Lagaákvæði sem krafan er byggð á"
                 >
-                  {workingCase.custodyProvisions &&
-                    workingCase.custodyProvisions.map(
-                      (custodyProvision: CaseCustodyProvisions, index) => {
+                  {workingCase.legalProvisions &&
+                    workingCase.legalProvisions.map(
+                      (legalProvision: CaseLegalProvisions, index) => {
                         return (
                           <div key={index}>
-                            <Text>{laws[custodyProvision]}</Text>
+                            <Text>{laws[legalProvision]}</Text>
                           </div>
                         )
                       },
