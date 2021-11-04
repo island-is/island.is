@@ -19,6 +19,7 @@ import {
   formatDefenderRevokedEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
   formatCustodyIsolation,
+  formatCourtResubmittedToCourtSmsNotification,
 } from './formatters'
 
 describe('formatLegalProvisions', () => {
@@ -331,6 +332,21 @@ describe('formatReadyForCourtSmsNotification', () => {
     // Assert
     expect(res).toBe(
       'Krafa um rannsóknarheimild tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+    )
+  })
+})
+
+describe('formatReadyForCourtSmsNotification', () => {
+  test('should format ready for court SMS notification', () => {
+    // Arrange
+    const courtCaseNumber = 'R-123/2021'
+
+    // Act
+    const res = formatCourtResubmittedToCourtSmsNotification(courtCaseNumber)
+
+    // Assert
+    expect(res).toBe(
+      'Ákærandi í máli R-123/2021 hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.',
     )
   })
 })

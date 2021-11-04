@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react'
 
-import {
-  Municipality,
-  useAsyncLazyQuery,
-} from '@island.is/financial-aid/shared/lib'
-import { gql } from '@apollo/client'
+import { Municipality } from '@island.is/financial-aid/shared/lib'
+import { gql, useLazyQuery } from '@apollo/client'
 
 const MunicipalityQuery = gql`
   query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
@@ -15,12 +12,14 @@ const MunicipalityQuery = gql`
       active
       municipalityId
       email
+      rulesHomepage
       individualAid {
         ownPlace
         registeredRenting
         unregisteredRenting
         livesWithParents
         unknown
+        withOthers
         type
       }
       cohabitationAid {
@@ -29,6 +28,7 @@ const MunicipalityQuery = gql`
         unregisteredRenting
         livesWithParents
         unknown
+        withOthers
         type
       }
     }
@@ -40,7 +40,7 @@ export const useMunicipality = () => {
 
   const [municipality, setScopedMunicipality] = useState<Municipality>()
 
-  const getMunicipality = useAsyncLazyQuery<
+  const [getMunicipality, { data, error, loading }] = useLazyQuery<
     {
       municipality: Municipality
     },
@@ -57,17 +57,26 @@ export const useMunicipality = () => {
 
   const setMunicipality = async (municipalityId: string) => {
     try {
-      const { data } = await getMunicipality({
-        input: { id: municipalityId },
+      getMunicipality({
+        variables: {
+          input: { id: municipalityId },
+        },
       })
 
-      setScopedMunicipality(data?.municipality)
-      sessionStorage.setItem(storageKey, JSON.stringify(data?.municipality))
-      return data?.municipality
+      if (data) {
+        setScopedMunicipality(data?.municipality)
+        sessionStorage.setItem(storageKey, JSON.stringify(data?.municipality))
+        return data?.municipality
+      }
     } catch {
       return undefined
     }
   }
 
-  return { municipality, setMunicipality }
+  return {
+    municipality,
+    setMunicipality,
+    error,
+    loading,
+  }
 }

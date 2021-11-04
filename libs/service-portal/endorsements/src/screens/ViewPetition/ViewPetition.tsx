@@ -307,19 +307,22 @@ const ViewPetition = () => {
                   {formatMessage(m.viewPetition.openListDescription)}
                 </Text>
                 <Box display={['block', 'flex']} marginY={3}>
-                  <DatePicker
-                    label="Velja dagsetningu"
-                    locale="is"
-                    placeholderText="Veldu dagsetningu"
-                    selected={selectedDateToOpenList}
-                    required
-                    handleChange={(date) => setSelectedDateToOpenList(date)}
-                  />
+                  <Box>
+                    <DatePicker
+                      label="Velja dagsetningu"
+                      locale="is"
+                      placeholderText="Veldu dagsetningu"
+                      selected={selectedDateToOpenList}
+                      required
+                      handleChange={(date) => setSelectedDateToOpenList(date)}
+                    />
+                  </Box>
                   <Box
                     display="flex"
                     alignItems="center"
                     marginLeft={[0, 5]}
                     marginTop={[3, 0]}
+                    justifyContent={['flexEnd', 'center']}
                   >
                     <DialogPrompt
                       baseId="demo_dialog"
@@ -359,12 +362,10 @@ const ViewPetition = () => {
         </Stack>
       )}
 
-      <Box>
-        <Text variant="h3">
-          {formatMessage(m.viewPetition.enorsementsTableTitle)}
-        </Text>
-        <PetitionsTable petitions={petitionEndorsements} />
-      </Box>
+      <PetitionsTable
+        petitions={petitionEndorsements}
+        listId={location.state?.listId}
+      />
     </Box>
   )
 }
