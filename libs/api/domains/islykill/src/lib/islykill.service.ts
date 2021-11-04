@@ -43,7 +43,7 @@ export class IslykillService {
           nationalId,
           exception: e,
         })
-        throw new BadRequestException(errorMsg)
+        throw new BadRequestException(e, errorMsg)
       })
     return apiData
   }
@@ -82,7 +82,7 @@ export class IslykillService {
           nationalId,
           exception: e,
         })
-        throw new BadRequestException(`${errorMsg}, Details: ${e}`)
+        throw new BadRequestException(e, errorMsg)
       })
     return apiData
   }
@@ -118,32 +118,30 @@ export class IslykillService {
           nationalId,
           exception: e,
         })
-        throw new BadRequestException(errorMsg)
+        throw new BadRequestException(e, errorMsg)
       })
     return apiData
   }
 
-  /* THIS SERVICE IS NOT AVAILABLE YET.  */
+  /*
+    THIS SERVICE IS NOT AVAILABLE YET. 
+    KEEPING IN WHILE THIS IS STILL BEING DEVELOPED.
+   */
   async deleteIslykillSettings(nationalId: User['nationalId']) {
-    try {
-      // TODO this should be a possible ErrorResult from the service but something is wrong with
-      // how the swagger is setup?
-      await this.islyklarApi.islyklarDelete({ ssn: nationalId })
-    } catch (e) {
-      this.logger.error('Unable to delete islykill settings for user', {
-        category: 'islykill-settings',
-        nationalId,
-        exception: e,
-      })
-      return {
-        nationalId,
-        valid: false,
-      }
-    }
+    // try {
+    //   await this.islyklarApi.islyklarDelete({ ssn: nationalId })
+    // } catch (e) {
+    //   this.logger.error('Unable to delete islykill settings for user', {
+    //     category: 'islykill-settings',
+    //     nationalId,
+    //     exception: e,
+    //   })
+    //   return {
+    //     nationalId,
+    //     valid: false,
+    //   }
+    // }
 
-    return {
-      nationalId,
-      valid: true,
-    }
+    return null
   }
 }
