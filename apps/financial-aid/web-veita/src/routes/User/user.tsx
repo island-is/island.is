@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import React, { useEffect } from 'react'
+import { useLazyQuery } from '@apollo/client'
 
-import { Text, Box, Divider, Input, Checkbox } from '@island.is/island-ui/core'
-import * as styles from './user.css'
-import cn from 'classnames'
 import {
   ApplicationNotFound,
   ApplicationSkeleton,
@@ -17,17 +14,30 @@ import { Staff } from '@island.is/financial-aid/shared/lib'
 export const User = () => {
   const router = useRouter()
 
-  const { data, loading } = useQuery<{ user: Staff }>(StaffQuery, {
-    variables: { input: { id: router.query.id } },
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+  const [getStaffMember, { data, loading }] = useLazyQuery<{ user: Staff }>(
+    StaffQuery,
+    {
+      variables: { input: { id: router.query.id } },
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  )
 
-  console.log(data)
+  useEffect(() => {
+    getStaffMember()
+  }, [])
+
+  const refreshUser = () => {
+    getStaffMember()
+  }
 
   return (
     <LoadingContainer isLoading={loading} loader={<ApplicationSkeleton />}>
-      {data ? <UserProfile user={data.user} /> : <ApplicationNotFound />}
+      {data ? (
+        <UserProfile user={data.user} onUpdateStaff={refreshUser} />
+      ) : (
+        <ApplicationNotFound />
+      )}
     </LoadingContainer>
   )
 }

@@ -41,7 +41,7 @@ export interface Staff {
 export interface UpdateStaff {
   nationalId?: string
   roles?: StaffRole[]
-  active: boolean
+  active?: boolean
   nickname?: string
   email?: string
 }

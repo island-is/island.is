@@ -16,9 +16,15 @@ import {
   Staff,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
+import { InputComponentProps } from 'libs/island-ui/core/src/lib/Input/types'
+
+import cn from 'classnames'
+import { UpdateStaffMutation } from '@island.is/financial-aid-web/veita/graphql'
+import { useMutation } from '@apollo/client'
 
 interface UserProps {
   user: Staff
+  onUpdateStaff: () => void
 }
 
 interface UserInfo {
@@ -26,15 +32,18 @@ interface UserInfo {
   email?: string
   nickname?: string
   hasError: boolean
+  hasSubmitError: boolean
   roles: StaffRole[]
 }
 
-const UserProfile = ({ user }: UserProps) => {
+const UserProfile = ({ user, onUpdateStaff }: UserProps) => {
   const [state, setState] = useState<UserInfo>({
     nationalId: user.nationalId,
     nickname: user?.nickname,
+    email: user.email,
     hasError: false,
-    roles: [],
+    hasSubmitError: false,
+    roles: user.roles,
   })
 
   const changeStaffAccess = (role: StaffRole, isAddingRole: boolean) => {
@@ -54,6 +63,7 @@ const UserProfile = ({ user }: UserProps) => {
     {
       label: 'Kennitala',
       value: state.nationalId,
+      type: 'number' as InputComponentProps.type,
       onchange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
@@ -69,7 +79,9 @@ const UserProfile = ({ user }: UserProps) => {
     },
     {
       label: 'Netfang',
+      value: state.email,
       bgIsBlue: true,
+      type: 'email' as InputComponentProps.type,
       onchange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
@@ -80,13 +92,20 @@ const UserProfile = ({ user }: UserProps) => {
     {
       label: 'Stutt nafn',
       value: state.nickname,
+      type: 'text' as InputComponentProps.type,
       onchange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
-        setState({ ...state, nickname: event.target.value, hasError: false })
+        setState({
+          ...state,
+          nickname: event.currentTarget.value,
+          hasError: false,
+        })
       },
     },
   ]
+
+  const [updateStaffMember] = useMutation(UpdateStaffMutation)
 
   const areRequiredFieldsFilled =
     !state.email ||
@@ -102,22 +121,23 @@ const UserProfile = ({ user }: UserProps) => {
       return
     }
 
-    // try {
-    //   return await createStaff({
-    //     variables: {
-    //       input: {
-    //         name: state.staffName,
-    //         email: state.staffEmail,
-    //         nationalId: state.staffNationalId,
-    //         roles: state.roles,
-    //       },
-    //     },
-    //   }).then(() => {
-    //     onStaffCreated()
-    //   })
-    // } catch (e) {
-    //   setState({ ...state, hasSubmitError: true })
-    // }
+    try {
+      return await updateStaffMember({
+        variables: {
+          input: {
+            id: user.id,
+            nationalId: state.nationalId,
+            roles: state.roles,
+            nickname: state.nickname,
+            email: state.email,
+          },
+        },
+      }).then(() => {
+        onUpdateStaff()
+      })
+    } catch (e) {
+      setState({ ...state, hasSubmitError: true })
+    }
   }
 
   return (
@@ -146,7 +166,7 @@ const UserProfile = ({ user }: UserProps) => {
                   Notandi er {user.active ? 'virkur' : 'óvirkur'}
                 </Text>
               </Box>
-              <button className={headerStyles.button}>Sjá um</button>
+              <button className={headerStyles.button}>Óvirkja</button>
             </Box>
           </Box>
 
@@ -159,9 +179,10 @@ const UserProfile = ({ user }: UserProps) => {
               >
                 <Input
                   label={item.label}
-                  name=""
+                  name={`userInput-${index}`}
+                  type={item.type}
                   value={item.value}
-                  onClick={item.onchange}
+                  onChange={item.onchange}
                   backgroundColor={item.bgIsBlue ? 'blue' : 'white'}
                   hasError={state.hasError && item.error}
                 />
@@ -179,11 +200,40 @@ const UserProfile = ({ user }: UserProps) => {
               Réttindi notanda
             </Text>
             <Box marginBottom={3}>
-              <Checkbox label="Vinnsluaðili" />
+              <Checkbox
+                name={'employee'}
+                label="Vinnsluaðili"
+                checked={state.roles.includes(StaffRole.EMPLOYEE)}
+                strong={false}
+                hasError={state.hasError && state.roles.length === 0}
+                onChange={(event) => {
+                  changeStaffAccess(StaffRole.EMPLOYEE, event.target.checked)
+                }}
+              />
             </Box>
             <Box marginBottom={2}>
-              <Checkbox label="Stjórnandi (Admin)" />
+              <Checkbox
+                name={'admin'}
+                label="Stjórnandi (admin)"
+                checked={state.roles.includes(StaffRole.ADMIN)}
+                hasError={state.hasError && state.roles.length === 0}
+                onChange={(event) => {
+                  changeStaffAccess(StaffRole.ADMIN, event.target.checked)
+                }}
+                strong={false}
+              />
             </Box>
+            <div
+              className={cn({
+                [`errorMessage`]: true,
+                [`showErrorMessage`]:
+                  state.hasError && state.roles.length === 0,
+              })}
+            >
+              <Text color="red600" fontWeight="semiBold" variant="small">
+                Þú þarft að velja önnur hvor réttindin fyrir þennan notanda
+              </Text>
+            </div>
             <Text variant="small">
               Stjórnandi í Veitu hefur aðgang að stillingum sveitarfélagsins þar
               sem vefslóðir, netföng og upphæðir eru skilgreindar. Þessar
@@ -198,13 +248,20 @@ const UserProfile = ({ user }: UserProps) => {
             display="flex"
             justifyContent="flexEnd"
           >
-            <Button
-              icon="checkmark"
-              onClick={() => console.log('hérna gerist magic')}
-            >
+            <Button icon="checkmark" onClick={onSubmitUpdate}>
               Vista stillingar
             </Button>
           </Box>
+          <div
+            className={cn({
+              [`errorMessage`]: true,
+              [`showErrorMessage`]: state.hasSubmitError,
+            })}
+          >
+            <Text color="red600" fontWeight="semiBold" variant="small">
+              Einhvað fór úrskeiðis vinsamlegast reyndu aftur síðar
+            </Text>
+          </div>
         </Box>
       </Box>
     </>

@@ -10,10 +10,10 @@ import { ApiProperty } from '@nestjs/swagger'
 import { StaffRole } from '@island.is/financial-aid/shared/lib'
 
 export class UpdateStaffDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsBoolean()
   @ApiProperty()
-  readonly active!: boolean
+  readonly active: boolean
 
   @IsOptional()
   @IsString()
@@ -29,4 +29,9 @@ export class UpdateStaffDto {
   @IsArray()
   @ApiProperty()
   readonly roles: StaffRole[]
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly email: string
 }
