@@ -272,12 +272,10 @@ export const SignedVerdictOverview: React.FC = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={2}
       isLoading={loading}
       notFound={data?.case === undefined}
-      isValidToDateInThePast={workingCase?.isValidToDateInThePast}
-      decision={data?.case?.decision}
-      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
