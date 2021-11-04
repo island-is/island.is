@@ -1,5 +1,6 @@
 import { Application } from '@island.is/application/core'
 import {
+  accidentLocationLabelMapper,
   AccidentNotificationAnswers,
   AccidentTypeEnum,
   FishermanWorkplaceAccidentShipLocationEnum,
@@ -12,7 +13,6 @@ import { join } from 'path'
 import {
   ApplicationSubmit,
   Atvinnurekandi,
-  EmployerEntity,
   Slys,
   TilkynnandiOrSlasadi,
 } from './types/applicationSubmit'
@@ -99,6 +99,16 @@ const whoIsTheNotificationForToId = (
 const injuredPerson = (
   answers: AccidentNotificationAnswers,
 ): TilkynnandiOrSlasadi => {
+  if (
+    answers.whoIsTheNotificationFor.answer ===
+    WhoIsTheNotificationForEnum.CHILDINCUSTODY
+  ) {
+    return {
+      kennitala: answers.childInCustody.nationalId,
+      nafn: answers.childInCustody.name,
+      netfang: ' ', //the child has no email,
+    }
+  }
   const person =
     answers.whoIsTheNotificationFor.answer === WhoIsTheNotificationForEnum.ME
       ? answers.applicant
@@ -127,7 +137,11 @@ const accident = (answers: AccidentNotificationAnswers): Slys => {
     banaslys: yesOrNoToNumber(answers.wasTheAccidentFatal),
     bilslys: yesOrNoToNumber(answers.carAccidentHindrance),
     stadurslysseferindi: answers.locationAndPurpose?.location ?? '',
-    lysingerindis: 'lysingerindis', //TODO find correct field
+    lysingerindis:
+      accidentLocationLabelMapper[
+        answers.accidentLocation
+          .answer as keyof typeof accidentLocationLabelMapper
+      ],
   }
 
   switch (answers.accidentType.radioButton) {

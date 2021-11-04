@@ -34,6 +34,15 @@ export interface Staff {
   municipalityName: string
   phoneNumber?: string
   municipalityHomepage?: string
+  nickname?: string
+  email?: string
+}
+
+export interface UpdateStaff {
+  nationalId?: string
+  roles?: StaffRole[]
+  active?: boolean
+  nickname?: string
   email?: string
 }
 

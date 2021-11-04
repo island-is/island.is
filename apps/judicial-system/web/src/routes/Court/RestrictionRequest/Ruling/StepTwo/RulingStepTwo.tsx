@@ -38,7 +38,6 @@ import {
   setCheckboxAndSendToServer,
   validateAndSetTime,
   validateAndSendTimeToServer,
-  getTimeFromDate,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import {
@@ -54,11 +53,9 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { useRouter } from 'next/router'
-import {
-  useCase,
-  useDateTime,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { rcRulingStepTwo } from '@island.is/judicial-system-web/messages'
+import { isRulingStepTwoValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const RulingStepTwo: React.FC = () => {
   const router = useRouter()
@@ -74,10 +71,6 @@ export const RulingStepTwo: React.FC = () => {
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
-  })
-
-  const { isValidTime: isValidCourtEndTime } = useDateTime({
-    time: getTimeFromDate(workingCase?.courtEndTime),
   })
 
   useEffect(() => {
@@ -203,14 +196,13 @@ export const RulingStepTwo: React.FC = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.RULING_STEP_TWO}
       isLoading={loading}
       notFound={data?.case === undefined}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -717,12 +709,7 @@ export const RulingStepTwo: React.FC = () => {
             <FormFooter
               previousUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
               nextUrl={`${Constants.CONFIRMATION_ROUTE}/${id}`}
-              nextIsDisabled={
-                !workingCase.accusedAppealDecision ||
-                !workingCase.prosecutorAppealDecision ||
-                !workingCase.conclusion ||
-                !isValidCourtEndTime?.isValid
-              }
+              nextIsDisabled={!isRulingStepTwoValidRC(workingCase)}
             />
           </FormContentContainer>
         </>
