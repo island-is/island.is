@@ -22,6 +22,7 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useQuery } from '@apollo/client'
 import { AccidentNotificationStatus } from '@island.is/api/schema'
+import { hasReceivedConfirmation } from '../../utils/hasReceivedConfirmation'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 
@@ -153,7 +154,6 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
         refetch &&
         hasAccidentStatusChanged(accidentStatus, oldAccidentStatus)
       ) {
-        console.log('res', accidentStatus)
         refetch()
       }
     }
@@ -175,12 +175,14 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
     )
   }
 
+  // Todo add sentry log and design
   if (error) {
     return (
       <Text>Ekki tókst að sækja stöðu umsóknar, eitthvað fór úrskeiðis.</Text>
     )
   }
 
+  const hasReviewerSubmitted = isAssignee && hasReceivedConfirmation(answers)
   const steps = [
     {
       state: ReviewSectionState.received,
@@ -211,18 +213,32 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
     },
     // If this was a home activity accident than we don't want the user to see this step
     {
-      state: statesMap['representative'][application.state],
-      title: formatMessage(inReview.representative.title),
-      description: formatMessage(inReview.representative.summary),
-      hasActionMessage: isAssignee,
-      action: {
-        cta: () => changeScreens('inReviewOverviewScreen'),
-        title: formatMessage(inReview.action.representative.title),
-        description: formatMessage(inReview.action.representative.description),
-        actionButtonTitle: formatMessage(
-          inReview.action.representative.actionButtonTitle,
-        ),
-      },
+      state: hasReviewerSubmitted
+        ? ReviewSectionState.received
+        : ReviewSectionState.missing,
+      title: formatMessage(
+        hasReviewerSubmitted
+          ? inReview.representative.titleDone
+          : inReview.representative.title,
+      ),
+      description: formatMessage(
+        hasReviewerSubmitted
+          ? inReview.representative.summaryDone
+          : inReview.representative.summary,
+      ),
+      hasActionMessage: !hasReviewerSubmitted,
+      action: hasReviewerSubmitted
+        ? undefined
+        : {
+            cta: () => changeScreens('inReviewOverviewScreen'),
+            title: formatMessage(inReview.action.representative.title),
+            description: formatMessage(
+              inReview.action.representative.description,
+            ),
+            actionButtonTitle: formatMessage(
+              inReview.action.representative.actionButtonTitle,
+            ),
+          },
       visible:
         !isHomeActivitiesAccident(application.answers) ||
         !isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers),

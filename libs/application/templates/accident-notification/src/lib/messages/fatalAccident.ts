@@ -30,7 +30,7 @@ export const fatalAccident = {
     description: {
       id: 'an.application:fatalAccident.alertMessage.description',
       defaultMessage:
-        'Það er hægt að bæta við skjölum eftir að umsókn hefur verið send inn. Áður en að Sjúkratryggingar Íslands fer yfir umsókn og tekur afstöðu til bótaskyldu þarf lögrleskýrsla að vera til staðar.',
+        'Það er hægt að bæta við skjölum eftir að umsókn hefur verið send inn. Áður en að Sjúkratryggingar Íslands fer yfir umsókn og tekur afstöðu til bótaskyldu þarf lögregluskýrsla að vera til staðar.',
       description:
         'Description message in Alert when uploading required attachment later',
     },
