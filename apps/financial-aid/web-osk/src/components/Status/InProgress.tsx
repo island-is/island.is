@@ -28,11 +28,17 @@ const InProgress = ({ application, isApplicant = true }: Props) => {
   ) {
     return null
   }
+
+  const header = () => {
+    return application.state === ApplicationState.NEW
+      ? 'Umsókn móttekin'
+      : `Umsókn í vinnslu til útgreiðslu í ${getNextPeriod.month} ${getNextPeriod.year}`
+  }
+
   return (
     <>
       <Text as="h2" variant="h3" color="blue400" marginBottom={[4, 4, 5]}>
-        Umsókn {getState[application.state].toLowerCase()} til útgreiðslu í{' '}
-        {getNextPeriod.month} {` `} {getNextPeriod.year}
+        {header()}
       </Text>
 
       {application.state === ApplicationState.DATANEEDED && (
