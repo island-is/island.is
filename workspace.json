@@ -7738,6 +7738,57 @@
         "docker-express": {}
       }
     },
+    "services-notifications": {
+      "root": "apps/services/notifications",
+      "sourceRoot": "apps/services/notifications/src",
+      "projectType": "application",
+      "prefix": "services-notifications",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/services/notifications",
+            "main": "apps/services/notifications/src/main.ts",
+            "tsConfig": "apps/services/notifications/tsconfig.app.json",
+            "assets": ["apps/services/notifications/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/notifications/src/environments/environment.ts",
+                  "with": "apps/services/notifications/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-notifications:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/services/notifications/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/services/notifications"],
+          "options": {
+            "jestConfig": "apps/services/notifications/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "services-party-letter-registry-api": {
       "root": "apps/services/party-letter-registry-api",
       "sourceRoot": "apps/services/party-letter-registry-api/src",
@@ -8923,57 +8974,6 @@
             "linter": "eslint",
             "tsConfig": ["apps/web-e2e/tsconfig.e2e.json"],
             "exclude": ["**/node_modules/**", "!apps/web-e2e/**/*"]
-          }
-        }
-      }
-    },
-    "services-notifications": {
-      "root": "apps/services/notifications",
-      "sourceRoot": "apps/services/notifications/src",
-      "projectType": "application",
-      "prefix": "services-notifications",
-      "architect": {
-        "build": {
-          "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/apps/services/notifications",
-            "main": "apps/services/notifications/src/main.ts",
-            "tsConfig": "apps/services/notifications/tsconfig.app.json",
-            "assets": ["apps/services/notifications/src/assets"]
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/notifications/src/environments/environment.ts",
-                  "with": "apps/services/notifications/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "services-notifications:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["apps/services/notifications/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/services/notifications"],
-          "options": {
-            "jestConfig": "apps/services/notifications/jest.config.js",
-            "passWithNoTests": true
           }
         }
       }
