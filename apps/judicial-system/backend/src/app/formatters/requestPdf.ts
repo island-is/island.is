@@ -244,15 +244,18 @@ function constructInvestigationRequestPdf(
     .lineGap(4)
     .text(`Kennitala: ${formatNationalId(existingCase.accusedNationalId)}`)
     .text(`Fullt nafn: ${existingCase.accusedName}`)
-    .text(`Lögheimili: ${existingCase.accusedAddress}`)
-    .text(
+    .text(`Lögheimili/dvalarstaður: ${existingCase.accusedAddress}`)
+
+  if (existingCase.defenderName) {
+    doc.text(
       formatMessage(m.baseInfo.defender, {
         defenderName:
-          existingCase.defenderName && !existingCase.defenderIsSpokesperson
-            ? existingCase.defenderName
-            : formatMessage(m.baseInfo.noDefender),
+          !existingCase.defenderIsSpokesperson && existingCase.defenderName,
       }),
     )
+  }
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(mediumFontSize)
