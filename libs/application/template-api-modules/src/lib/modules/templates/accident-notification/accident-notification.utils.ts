@@ -1,5 +1,6 @@
 import { Application } from '@island.is/application/core'
 import {
+  accidentLocationLabelMapper,
   AccidentNotificationAnswers,
   AccidentTypeEnum,
   FishermanWorkplaceAccidentShipLocationEnum,
@@ -12,7 +13,6 @@ import { join } from 'path'
 import {
   ApplicationSubmit,
   Atvinnurekandi,
-  EmployerEntity,
   Slys,
   TilkynnandiOrSlasadi,
 } from './types/applicationSubmit'
@@ -127,7 +127,11 @@ const accident = (answers: AccidentNotificationAnswers): Slys => {
     banaslys: yesOrNoToNumber(answers.wasTheAccidentFatal),
     bilslys: yesOrNoToNumber(answers.carAccidentHindrance),
     stadurslysseferindi: answers.locationAndPurpose?.location ?? '',
-    lysingerindis: 'lysingerindis', //TODO find correct field
+    lysingerindis:
+      accidentLocationLabelMapper[
+        answers.accidentLocation
+          .answer as keyof typeof accidentLocationLabelMapper
+      ],
   }
 
   switch (answers.accidentType.radioButton) {
