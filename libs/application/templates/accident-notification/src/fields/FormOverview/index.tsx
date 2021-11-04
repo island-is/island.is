@@ -297,7 +297,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
         <>
           <Text variant="h4" paddingTop={6} paddingBottom={3}>
             {formatText(
-              workplaceData.general.title,
+              workplaceData.companyInfoMsg.general.title,
               application,
               formatMessage,
             )}
@@ -310,17 +310,25 @@ export const FormOverview: FC<FieldBaseProps> = ({
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
-                  label={workplaceData.labels.nationalId}
-                  value={workplaceData.info.nationalRegistrationId ?? ''}
+                  label={workplaceData.companyInfoMsg.labels.name}
+                  value={workplaceData.companyInfo.name}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={workplaceData.companyInfoMsg.labels.nationalId}
+                  value={
+                    workplaceData.companyInfo?.nationalRegistrationId ?? ''
+                  }
                 />
               </GridColumn>
               {isProfessionalAthleteAccident(answers as FormValue) &&
-                workplaceData.info.onPayRoll && (
+                workplaceData.companyInfo?.onPayRoll && (
                   <GridColumn span="12/12">
                     <ValueLine
                       label={sportsClubInfo.employee.sectionTitle}
                       value={
-                        workplaceData.info.onPayRoll.answer === YES
+                        workplaceData.companyInfo?.onPayRoll.answer === YES
                           ? applicationMessages.general.yesOptionLabel
                           : applicationMessages.general.noOptionLabel
                       }
@@ -376,7 +384,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
             <>
               <Text variant="h4" paddingTop={6} paddingBottom={3}>
                 {formatText(
-                  workplaceData.labels.descriptionField,
+                  workplaceData.companyInfoMsg.labels.descriptionField,
                   application,
                   formatMessage,
                 )}
@@ -387,23 +395,29 @@ export const FormOverview: FC<FieldBaseProps> = ({
                 isEditable={States.DRAFT === application.state}
               >
                 <GridRow>
-                  <GridColumn span="12/12">
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
                     <ValueLine
-                      label={workplaceData.labels.name}
-                      value={workplaceData.info.name}
+                      label={workplaceData.representitiveMsg.labels.name}
+                      value={workplaceData.representitive.name}
                     />
                   </GridColumn>
                   <GridColumn span={['12/12', '12/12', '6/12']}>
                     <ValueLine
-                      label={workplaceData.labels.email}
-                      value={workplaceData.info.email}
+                      label={workplaceData.representitiveMsg.labels.nationalId}
+                      value={workplaceData.representitive.nationalId}
                     />
                   </GridColumn>
-                  {workplaceData.info.phoneNumber && (
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={workplaceData.representitiveMsg.labels.email}
+                      value={workplaceData.representitive.email}
+                    />
+                  </GridColumn>
+                  {workplaceData.representitive.phoneNumber && (
                     <GridColumn span={['12/12', '12/12', '6/12']}>
                       <ValueLine
-                        label={workplaceData.labels.tel}
-                        value={workplaceData.info.phoneNumber}
+                        label={workplaceData.representitiveMsg.labels.tel}
+                        value={workplaceData.representitive.phoneNumber}
                       />
                     </GridColumn>
                   )}

@@ -22,7 +22,6 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
-      code-cov-hash: ${{ steps.calculate_code_cov_hash.outputs.code-cov-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
       - uses: actions/checkout@v2
@@ -42,13 +41,6 @@ jobs:
           export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
           echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
           echo "::set-output name=node-modules-hash::$NODE_MODULES_HASH"
-
-      - name: Calculate cache key for CodeCov
-        id: calculate_code_cov_hash
-        run: |
-          CODE_COV_HASH=$(curl -s https://uploader.codecov.io/latest/linux/codecov.SHA256SUM | cut -f1 -d" ")
-          echo "CODE_COV_HASH: $CODE_COV_HASH"
-          echo "::set-output name=code-cov-hash::$CODE_COV_HASH"
 
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
@@ -100,17 +92,6 @@ jobs:
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
-
-      - name: Cache CodeCov
-        id: code-cov
-        uses: actions/cache@v2
-        with:
-          path: ~/.local/bin/codecov
-          key: code-cov-cache-${{ steps.calculate_code_cov_hash.outputs.code-cov-hash }}
-
-      - name: Install codecov uploader
-        if: steps.code-cov.outputs.cache-hit != 'true'
-        run: ./scripts/install-codecov-uploader.sh
 
       - name: Prepare lint targets
         id: lint_projects
@@ -166,37 +147,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Cache for NodeJS dependencies - host OS
-        uses: actions/cache@v2
+      - uses: ./.github/actions/unit-test
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Cache for generated files
-        uses: actions/cache@v2
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Untar generated files
-        run: tar zxvf generated_files.tar.gz
-
-      - name: Running tests
-        run: ./scripts/ci/run-in-parallel.sh 30_test
-
-      - name: Cache CodeCov
-        uses: actions/cache@v2
-        with:
-          path: ~/.local/bin/codecov
-          key: code-cov-cache-${{ needs.prepare.outputs.code-cov-hash }}
-
-      - name: Set local bin directory to path
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Upload coverage reports
-        run: ./scripts/ci/run-in-parallel.sh 50_upload-coverage
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          node-modules-hash: ${{ needs.prepare.outputs.node-modules-hash }}
+          generated-files-cache-key: ${{ needs.prepare.outputs.generated-files-cache-key }}
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
 
   e2e:
     needs:
