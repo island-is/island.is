@@ -132,6 +132,7 @@ export interface Municipality {
   cohabitationAid: Aid
   homepage?: string
   email?: string
+  rulesHomepage?: string
 }
 
 export interface ApplicationFile {

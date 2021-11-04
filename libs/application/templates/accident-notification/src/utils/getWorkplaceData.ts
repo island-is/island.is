@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/core'
+import { FormValue, getValueViaPath } from '@island.is/application/core'
 import {
   isGeneralWorkplaceAccident,
   isStudiesAccident,
@@ -12,61 +12,77 @@ import {
   rescueSquadInfo,
   schoolInfo,
   sportsClubInfo,
+  representativeInfo,
 } from '../lib/messages'
 import {
   AccidentTypeEnum,
   CompanyInfo,
+  RepresentativeInfo,
   WorkAccidentTypeEnum,
   YesOrNo,
 } from '../types'
+import { isHomeActivitiesAccident } from './isHomeActivitiesAccident'
 
-const getSportsClubInfo = (answers: FormValue) => ({
-  ...(answers as { sportsClubInfo: CompanyInfo }).sportsClubInfo,
-  ...(answers as { onPayRoll: { answer: YesOrNo } }).onPayRoll,
-})
+interface WorkplaceData {
+  companyInfo: CompanyInfo
+  representitive: RepresentativeInfo
+  companyInfoMsg: typeof companyInfo
+  representitiveMsg: typeof representativeInfo
+  type: WorkAccidentTypeEnum | AccidentTypeEnum
+  onPayRoll?: YesOrNo
+  screenId: string
+}
 
-export const getWorkplaceData = (answers: FormValue) => {
+export const getWorkplaceData = (
+  answers: FormValue,
+): WorkplaceData | undefined => {
+  if (isHomeActivitiesAccident(answers)) {
+    return
+  }
+
+  const workplaceData = {
+    companyInfo: answers.companyInfo,
+    representitive: answers.representative,
+    representitiveMsg: representativeInfo,
+  } as WorkplaceData
+
   if (isGeneralWorkplaceAccident(answers))
     return {
-      info: (answers as { companyInfo: CompanyInfo }).companyInfo,
-      general: companyInfo.general,
-      labels: companyInfo.labels,
+      ...workplaceData,
+      companyInfoMsg: companyInfo,
       type: AccidentTypeEnum.WORK,
       screenId: 'companyInfo',
     }
 
   if (isStudiesAccident(answers))
     return {
-      info: (answers as { schoolInfo: CompanyInfo }).schoolInfo,
-      general: schoolInfo.general,
-      labels: schoolInfo.labels,
+      ...workplaceData,
+      companyInfoMsg: schoolInfo,
       type: AccidentTypeEnum.STUDIES,
       screenId: 'schoolInfo',
     }
 
   if (isFishermanAccident(answers))
     return {
-      info: (answers as { fishingCompanyInfo: CompanyInfo }).fishingCompanyInfo,
-      general: fishingCompanyInfo.general,
-      labels: fishingCompanyInfo.labels,
+      ...workplaceData,
+      companyInfoMsg: fishingCompanyInfo,
       type: WorkAccidentTypeEnum.FISHERMAN,
       screenId: 'fishingCompanyInfo',
     }
 
   if (isProfessionalAthleteAccident(answers))
     return {
-      info: getSportsClubInfo(answers),
-      general: sportsClubInfo.general,
-      labels: sportsClubInfo.labels,
+      ...workplaceData,
+      onPayRoll: getValueViaPath(answers, 'onPayRoll.answer') as YesOrNo,
+      companyInfoMsg: sportsClubInfo,
       type: AccidentTypeEnum.SPORTS,
       screenId: 'sportsClubInfo',
     }
 
   if (isRescueWorkAccident(answers))
     return {
-      info: (answers as { rescueSquadInfo: CompanyInfo }).rescueSquadInfo,
-      general: rescueSquadInfo.general,
-      labels: rescueSquadInfo.labels,
+      ...workplaceData,
+      companyInfoMsg: rescueSquadInfo,
       type: AccidentTypeEnum.RESCUEWORK,
       screenId: 'rescueSquad',
     }
