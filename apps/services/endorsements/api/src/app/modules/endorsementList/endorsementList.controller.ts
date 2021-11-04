@@ -83,7 +83,6 @@ export class EndorsementListController {
     )
   }
 
-  // get gp lists - relay
   @ApiOperation({ summary: 'Gets General Petition Lists' })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get('general-petition-lists')
@@ -97,7 +96,6 @@ export class EndorsementListController {
     )
   }
 
-  // get gp list  - relay
   @ApiOperation({ summary: 'Gets a General Petition List by Id' })
   @ApiOkResponse({ type: EndorsementList })
   @ApiParam({ name: 'listId', type: 'string' })

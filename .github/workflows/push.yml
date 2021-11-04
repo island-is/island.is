@@ -112,6 +112,7 @@ jobs:
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
 
     outputs:
+      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
@@ -250,6 +251,14 @@ jobs:
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --skip-cache | xargs realpath --relative-to $(pwd))
 
+      - name: Prepare test targets
+        id: test_projects
+        run: |
+          CHUNKS=$(./scripts/ci/generate-chunks.sh test)
+          if [[ $CHUNKS != "[]" ]]; then
+            echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
+          fi
+
       - name: Prepare docker build targets
         id: build_map
         run: |
@@ -276,6 +285,29 @@ jobs:
         run: |
           UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-cypress)
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
+
+  tests:
+    needs:
+      - prepare
+    if: needs.prepare.outputs.TEST_CHUNKS
+    runs-on: self-hosted
+    timeout-minutes: 25
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      MAX_JOBS: 1
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/unit-test
+        with:
+          node-modules-hash: ${{ needs.prepare.outputs.node-modules-hash }}
+          generated-files-cache-key: ${{ needs.prepare.outputs.generated-files-cache-key }}
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
 
   docker-build:
     needs:

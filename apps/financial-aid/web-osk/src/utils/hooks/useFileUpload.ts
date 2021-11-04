@@ -88,7 +88,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     return signedUrl
   }
 
-  const formatFiles = async (
+  const formatFiles = (
     allFiles: UploadFile[],
     applicationId: string,
     type: FileType,

@@ -99,6 +99,7 @@ export interface ServiceHelm {
   strategy?: {
     type: 'RollingUpdate' | 'Recreate'
   }
+  files?: string[]
 }
 
 export interface FeatureKubeJob {
@@ -137,4 +138,11 @@ export type SerializeMethod = (
   featuresOn?: FeatureNames[],
 ) => SerializeSuccess | SerializeErrors
 
-export type ValueFile = { [name: string]: ServiceHelm }
+export type Services = {
+  [name: string]: ServiceHelm
+}
+
+export type ValueFile = {
+  namespaces: string[]
+  services: Services
+}

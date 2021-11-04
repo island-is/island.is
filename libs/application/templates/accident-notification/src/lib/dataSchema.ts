@@ -15,6 +15,7 @@ import {
   StudiesAccidentTypeEnum,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
+  ReviewApprovalEnum,
 } from '../types'
 import { isValid24HFormatTime } from '../utils'
 import { error } from './messages/error'
@@ -30,16 +31,23 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
-const CompanyInfoSchema = z.object({
-  nationalRegistrationId: z
-    .string()
-    .refine((x) => (x ? kennitala.isCompany(x) : false)),
+const RepresentativeInfo = z.object({
   name: z.string().min(1),
+  nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
   email: z.string().email(),
   phoneNumber: z.string().optional(),
 })
 
+const CompanyInfo = z.object({
+  name: z.string().min(1),
+  nationalRegistrationId: z
+    .string()
+    .refine((x) => (x ? kennitala.isCompany(x) : false)),
+})
+
 export const AccidentNotificationSchema = z.object({
+  representative: RepresentativeInfo,
+  companyInfo: CompanyInfo,
   externalData: z.object({
     nationalRegistry: z.object({
       data: z.object({
@@ -98,28 +106,35 @@ export const AccidentNotificationSchema = z.object({
       AttachmentsEnum.SENDCERTIFICATELATER,
     ]),
   }),
+
   attachments: z.object({
     injuryCertificateFile: z
       .object({
-        file: z
-          .array(FileSchema)
-          .refine((v) => v.length > 0, { params: error.requiredFile }),
+        file: z.array(FileSchema),
+        // .refine((v) => v.length > 0, { params: error.requiredFile }),
       })
       .optional(),
     deathCertificateFile: z
       .object({
-        file: z
-          .array(FileSchema)
-          .refine((v) => v.length > 0, { params: error.requiredFile }),
+        file: z.array(FileSchema),
+        // .refine((v) => v.length > 0, { params: error.requiredFile }),
       })
       .optional(),
     powerOfAttorneyFile: z
       .object({
-        file: z
-          .array(FileSchema)
-          .refine((v) => v.length > 0, { params: error.requiredFile }),
+        file: z.array(FileSchema),
+        // .refine((v) => v.length > 0, { params: error.requiredFile }),
       })
       .optional(),
+    additionalFiles: z
+      .object({
+        file: z.array(FileSchema),
+        // .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
+  }),
+  ReviewFormDerp: z.object({
+    derp: z.string().min(1),
   }),
   wasTheAccidentFatal: z.enum([YES, NO]),
   fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),
@@ -132,17 +147,13 @@ export const AccidentNotificationSchema = z.object({
     descriptionOfAccident: z.string().min(1),
   }),
   isRepresentativeOfCompanyOrInstitue: z.array(z.string()).optional(),
-  companyInfo: CompanyInfoSchema,
-  schoolInfo: CompanyInfoSchema,
-  fishingCompanyInfo: CompanyInfoSchema,
-  rescueSquadInfo: CompanyInfoSchema,
-  sportsClubInfo: CompanyInfoSchema,
   fishingShipInfo: z.object({
     shipName: z.string().min(1),
     shipCharacters: z.string().min(1),
     homePort: z.string(),
     shipRegisterNumber: z.string(),
   }),
+
   onPayRoll: z.object({
     answer: z.enum([YES, NO]),
   }),
@@ -251,7 +262,14 @@ export const AccidentNotificationSchema = z.object({
   overview: z.object({
     custom: z.string().optional(),
   }),
-  reviewerApproved: z.boolean().optional(),
+  assigneeComment: z.string().optional(),
+  reviewApproval: z
+    .enum([
+      ReviewApprovalEnum.APPROVED,
+      ReviewApprovalEnum.REJECTED,
+      ReviewApprovalEnum.NOTREVIEWED,
+    ])
+    .refine((x) => (x ? x : ReviewApprovalEnum.NOTREVIEWED)),
 })
 
 export type AccidentNotification = z.TypeOf<typeof AccidentNotificationSchema>

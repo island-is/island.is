@@ -43,6 +43,7 @@ export const ApplicationQuery = gql`
       staff {
         name
         municipalityId
+        nationalId
       }
       applicationEvents {
         id
@@ -238,6 +239,52 @@ export const UpdateApplicationMutation = gql`
         name
         municipalityId
       }
+    }
+  }
+`
+
+export const StaffForMunicipalityQuery = gql`
+  query staffForMunicipality {
+    users {
+      id
+      nationalId
+      name
+      roles
+      active
+    }
+  }
+`
+
+export const StaffQuery = gql`
+  query getStaff($input: StaffInput!) {
+    user(input: $input) {
+      id
+      nationalId
+      name
+      roles
+      active
+      nickname
+      email
+    }
+  }
+`
+
+export const StaffMutation = gql`
+  mutation StaffMutation($input: CreateStaffInput!) {
+    createStaff(input: $input) {
+      id
+    }
+  }
+`
+
+export const UpdateStaffMutation = gql`
+  mutation UpdateStaffMutation($input: UpdateStaffInput!) {
+    updateStaff(input: $input) {
+      id
+      nationalId
+      roles
+      nickname
+      email
     }
   }
 `
