@@ -19,11 +19,12 @@ const caseEvent = {
   EXTEND: ':recycle: Krafa framlengd',
   OPEN: ':unlock: Krafa opnuð fyrir dómstól',
   SUBMIT: ':mailbox_with_mail: Krafa send til dómstóls',
+  RESUBMIT: ':mailbox_with_mail: Krafa send aftur til dómstóls',
   RECEIVE: ':eyes: Krafa móttekin',
   ACCEPT: ':white_check_mark: Krafa samþykkt',
   REJECT: ':negative_squared_cross_mark: Kröfu hafnað',
   DELETE: ':fire: Krafa dregin til baka',
-  COURT_DATE: ':timer_clock: Kröfu úthlutað fyrirtökutíma',
+  SCHEDULE_COURT_DATE: ':timer_clock: Kröfu úthlutað fyrirtökutíma',
   DISMISS: ':woman-shrugging: Kröfu vísað frá',
 }
 
@@ -33,11 +34,12 @@ export enum CaseEvent {
   EXTEND = 'EXTEND',
   OPEN = 'OPEN',
   SUBMIT = 'SUBMIT',
+  RESUBMIT = 'RESUBMIT',
   RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
   DELETE = 'DELETE',
-  COURT_DATE = 'COURT_DATE',
+  SCHEDULE_COURT_DATE = 'SCHEDULE_COURT_DATE',
   DISMISS = 'DISMISS',
 }
 
@@ -68,7 +70,7 @@ export class EventService {
           }`
         : ''
       const extraText =
-        event === CaseEvent.COURT_DATE
+        event === CaseEvent.SCHEDULE_COURT_DATE
           ? `\n>Dómari ${
               theCase.judge?.name ?? 'er ekki skráður'
             }\n>Dómritari ${

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import {
@@ -19,6 +20,7 @@ import {
 import OverviewForm from './OverviewForm'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { icOverview as m } from '@island.is/judicial-system-web/messages'
 
 export const Overview: React.FC = () => {
   const router = useRouter()
@@ -37,6 +39,8 @@ export const Overview: React.FC = () => {
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
+
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
     if (!workingCase && data?.case) {
@@ -67,22 +71,11 @@ export const Overview: React.FC = () => {
           )
         : false
 
-      if (shouldSubmitCase) {
-        // An SMS should have been sent
-        if (notificationSent) {
-          setModalText(
-            'Tilkynning hefur verið send á dómara og dómritara á vakt.\n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
-          )
-        } else {
-          setModalText(
-            'Ekki tókst að senda tilkynningu á dómara og dómritara á vakt.\n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
-          )
-        }
+      // An SMS should have been sent
+      if (notificationSent) {
+        setModalText(formatMessage(m.sections.modal.notificationSent))
       } else {
-        // No SMS
-        setModalText(
-          'Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
-        )
+        setModalText(formatMessage(m.sections.modal.notificationNotSent))
       }
 
       setModalVisible(true)
@@ -110,7 +103,7 @@ export const Overview: React.FC = () => {
           />
           {modalVisible && (
             <Modal
-              title="Krafa um rannsóknarheimild hefur verið send til dómstóls"
+              title={formatMessage(m.sections.modal.heading)}
               text={modalText}
               handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
               handlePrimaryButtonClick={() => {

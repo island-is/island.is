@@ -18,6 +18,7 @@ export class MunicipalityResolver {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
+
   @Query(() => MunicipalityModel, { nullable: false })
   municipality(
     @Args('input', { type: () => MunicipalityQueryInput })

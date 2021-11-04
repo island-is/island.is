@@ -81,11 +81,16 @@ export class CourtClientService {
 
       return stripResult(res)
     } catch (error) {
-      this.logger.error('Error while calling court service', error)
-
       if (isRetry) {
+        this.logger.error('Error while calling the court service', error)
+
         throw error
       }
+
+      this.logger.warn(
+        'Error while calling the court service - attempting relogin',
+        error,
+      )
 
       return this.wrappedRequest(clientId, request, true)
     }

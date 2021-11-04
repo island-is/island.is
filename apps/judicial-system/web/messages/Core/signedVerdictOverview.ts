@@ -59,7 +59,7 @@ export const signedVerdictOverview = defineMessages({
       'Notaður sem titill á yfirlitsskjá afgreiddra mála þegar máli er vísað frá.',
   },
   conclusionTitle: {
-    id: 'judicial.system.signed_verdict_overview:conclusion_title',
+    id: 'judicial.system.core:signed_verdict_overview.conclusion_title',
     defaultMessage: 'Úrskurðarorð',
     description:
       'Notaður sem titill fyrir "Úrskurðarorð" hlutanum á úrskurðar skrefi á yfirlitsskjá afgreiddra mála.',
