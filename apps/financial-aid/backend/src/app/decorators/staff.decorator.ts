@@ -15,7 +15,7 @@ export const CurrentStaff = createParamDecorator(
 
     if (!staff) {
       logger.warn(
-        'No user staff found. Did you forget to add IdsUserGuard or EmployeeGuard?',
+        'No user staff found. Did you forget to add IdsUserGuard or StaffGuard?',
       )
       throw new UnauthorizedException()
     }

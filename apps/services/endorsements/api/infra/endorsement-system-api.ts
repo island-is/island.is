@@ -27,6 +27,7 @@ export const serviceSetup = (services: {
       postgres: postgresInfo,
     })
     .env({
+      EMAIL_REGION: 'eu-west-1',
       TEMPORARY_VOTER_REGISTRY_API_URL: ref(
         (h) => `http://${h.svc(services.servicesTemporaryVoterRegistryApi)}`,
       ),

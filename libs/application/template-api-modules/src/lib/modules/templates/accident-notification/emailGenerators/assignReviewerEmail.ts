@@ -1,11 +1,18 @@
 import { utils } from '@island.is/application/templates/accident-notification'
 import { Message } from '@island.is/email-service'
-import { AssignmentEmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../accident-notification.utils'
 
-export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
+export type AnAssignmentEmailTemplateGenerator = (
+  props: EmailTemplateGeneratorProps,
+  assignLink: string,
+  ihiDocumentId?: number,
+) => Message
+
+export const generateAssignReviewerEmail: AnAssignmentEmailTemplateGenerator = (
   props,
   assignLink,
+  ihiDocumentId,
 ): Message => {
   const {
     application,
@@ -21,10 +28,10 @@ export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
   )
   const recipientEmail = isReportingOnBehalfOfEmployee
     ? injuredPersonInformation?.email
-    : workplaceData?.info.email
+    : workplaceData?.representitive.email
   const recipientName = isReportingOnBehalfOfEmployee
     ? injuredPersonInformation?.name
-    : workplaceData?.info.name
+    : workplaceData?.representitive.name
   const subject = 'Tilkynning um slys'
 
   if (!recipientEmail) throw new Error('Recipient email was undefined')
@@ -61,8 +68,8 @@ export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
           component: 'Subtitle',
           context: {
             copy: 'Skjalanúmer',
-            // TODO: Need to get application id from service
-            application: '#13568651',
+            // Need to get application id from service
+            application: `#${ihiDocumentId}`,
           },
         },
         {

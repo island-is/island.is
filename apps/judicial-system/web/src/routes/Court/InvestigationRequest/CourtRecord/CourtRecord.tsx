@@ -48,8 +48,9 @@ const CourtRecord = () => {
           attendees += `${wc.accusedName} varnaraðili`
         }
       } else {
-        attendees +=
-          'Varnaraðili var ekki viðstaddur sbr. 104. gr. laga 88/2008 um meðferð sakamála.'
+        attendees += formatMessage(
+          m.sections.courtAttendees.defendantNotPresentAutofill,
+        )
       }
 
       if (
@@ -107,7 +108,13 @@ const CourtRecord = () => {
       if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
         autofill(
           'accusedBookings',
-          `${formatMessage(m.sections.accusedBookings.autofill)}`,
+          `${formatMessage(
+            m.sections.accusedBookings.autofillRightToRemainSilent,
+          )}\n\n${formatMessage(
+            m.sections.accusedBookings.autofillCourtDocumentOne,
+          )}\n\n${formatMessage(
+            m.sections.accusedBookings.autofillAccusedPlea,
+          )}`,
           theCase,
         )
       }
