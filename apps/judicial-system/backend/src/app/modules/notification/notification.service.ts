@@ -603,7 +603,10 @@ export class NotificationService {
       ),
     ]
 
-    if (existingCase.type === CaseType.CUSTODY) {
+    if (
+      existingCase.type === CaseType.CUSTODY &&
+      existingCase.decision === CaseDecision.ACCEPTING
+    ) {
       recipients.concat(
         await this.sendRulingEmailNotificationToProsecutorAndPrison(
           existingCase,
