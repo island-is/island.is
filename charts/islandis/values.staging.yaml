@@ -171,7 +171,7 @@ api:
   enabled: true
   env:
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
-    AUTH_PUBLIC_API_URL: 'https://identity-server.staging01.devland.is'
+    AUTH_PUBLIC_API_URL: 'https://identity-server.staging01.devland.is/api'
     CONTACT_US_EMAIL: 'island@island.is'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.staging01.devland.is'
