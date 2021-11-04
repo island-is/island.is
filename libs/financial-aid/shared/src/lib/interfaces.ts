@@ -89,6 +89,7 @@ export interface UpdateApplication {
   staffId?: string
   spousePhoneNumber?: string
   spouseEmail?: string
+  spouseName?: string
 }
 
 export interface UpdateApplicationTable {
