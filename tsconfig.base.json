@@ -149,6 +149,9 @@
       "@island.is/application/templates/complaints-to-althingi-ombudsman": [
         "libs/application/templates/complaints-to-althingi-ombudsman/src/index.ts"
       ],
+      "@island.is/application/templates/criminal-record": [
+        "libs/application/templates/criminal-record/src/index.ts"
+      ],
       "@island.is/application/templates/data-protection-complaint": [
         "libs/application/templates/data-protection-complaint/src/index.ts"
       ],

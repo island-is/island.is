@@ -1,0 +1,3 @@
+import ApplicationTemplatesCriminalRecord from './lib/CriminalRecordTemplate'
+
+export default ApplicationTemplatesCriminalRecord

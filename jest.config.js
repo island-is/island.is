@@ -180,5 +180,6 @@ module.exports = {
     '<rootDir>/libs/skilavottord/types',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
+    '<rootDir>/libs/application/templates/criminal-record',
   ],
 }

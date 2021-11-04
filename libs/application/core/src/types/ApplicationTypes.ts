@@ -21,6 +21,7 @@ export enum ApplicationTypes {
   COMPLAINTS_TO_ALTHINGI_OMBUDSMAN = 'ComplaintsToAlthingiOmbudsman',
   ACCIDENT_NOTIFICATION = 'AccidentNotification',
   GENERAL_PETITION = 'GeneralPetitionService',
+  CRIMINAL_RECORD = 'CriminalRecord',
 }
 
 export const ApplicationConfigurations = {
@@ -111,5 +112,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.GENERAL_PETITION]: {
     slug: 'medmaelendalisti',
     translation: 'gpt.application',
+  },
+  [ApplicationTypes.CRIMINAL_RECORD]: {
+    slug: 'sakavottord',
+    translation: 'cr.application',
   },
 }

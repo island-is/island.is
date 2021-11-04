@@ -2016,6 +2016,36 @@
         }
       }
     },
+    "application-templates-criminal-record": {
+      "root": "libs/application/templates/criminal-record",
+      "sourceRoot": "libs/application/templates/criminal-record/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/${template-directory-name}/tsconfig.lib.json",
+              "libs/application/templates/${template-directory-name}/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/${template-directory-name}/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/application/templates/criminal-record"],
+          "options": {
+            "jestConfig": "libs/application/templates/criminal-record/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-templates-data-protection-complaint": {
       "root": "libs/application/templates/data-protection-complaint",
       "sourceRoot": "libs/application/templates/data-protection-complaint/src",
