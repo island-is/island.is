@@ -1,15 +1,9 @@
-import { Application } from '@island.is/api/schema'
 import {
   FormValue,
   getValueViaPath,
   MessageFormatter,
 } from '@island.is/application/core'
-import {
-  AttachmentsEnum,
-  FileType,
-  PowerOfAttorneyUploadEnum,
-  WhoIsTheNotificationForEnum,
-} from '..'
+import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
 import { YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import { attachments } from '../lib/messages'
