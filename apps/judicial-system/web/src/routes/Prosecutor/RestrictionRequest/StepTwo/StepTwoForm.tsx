@@ -1,17 +1,15 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import type { Case, Institution } from '@island.is/judicial-system/types'
-import { Box, Input, Text } from '@island.is/island-ui/core'
-import {
-  newSetAndSendDateToServer,
-  setAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { Case, Institution, User } from '@island.is/judicial-system/types'
+import { Box, Input, Text, Checkbox } from '@island.is/island-ui/core'
+import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   DateTime,
   FormContentContainer,
   FormFooter,
+  BlueBox,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
@@ -26,7 +24,9 @@ interface Props {
   prosecutors: ReactSelectOption[]
   courts: Institution[]
   handleNextButtonClick: () => Promise<void>
+  onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
   transitionLoading: boolean
+  user?: User
 }
 
 const StepTwoForm: React.FC<Props> = (props) => {
@@ -36,7 +36,9 @@ const StepTwoForm: React.FC<Props> = (props) => {
     prosecutors,
     courts,
     handleNextButtonClick,
+    onProsecutorChange,
     transitionLoading,
+    user,
   } = props
   const [arrestDateIsValid, setArrestDateIsValid] = useState(true)
   const [
@@ -46,11 +48,11 @@ const StepTwoForm: React.FC<Props> = (props) => {
   const [selectedCourt, setSelectedCourt] = useState<string>()
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
-  const { validateAndSendToServer, setField } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    {},
-  )
+  const {
+    validateAndSendToServer,
+    setField,
+    setAndSendToServer,
+  } = useCaseFormHelper(workingCase, setWorkingCase, {})
 
   return (
     <>
@@ -61,21 +63,36 @@ const StepTwoForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
-          <SelectProsecutor
-            workingCase={workingCase}
-            prosecutors={prosecutors}
-            onChange={(selectedOption) => {
-              setAndSendToServer(
-                'prosecutorId',
-                (selectedOption as ReactSelectOption).value.toString(),
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
-
-              return true
-            }}
-          />
+          <BlueBox>
+            <Box marginBottom={2}>
+              <SelectProsecutor
+                workingCase={workingCase}
+                prosecutors={prosecutors}
+                onChange={onProsecutorChange}
+              />
+            </Box>
+            <Checkbox
+              name="isHeightenedSecurityLevel"
+              label={formatMessage(
+                rcRequestedHearingArrangements.sections.prosecutor
+                  .heightenSecurityLevelLabel,
+              )}
+              tooltip={formatMessage(
+                rcRequestedHearingArrangements.sections.prosecutor
+                  .heightenSecurityLevelInfo,
+              )}
+              disabled={
+                user?.id !== workingCase.creatingProsecutor?.id &&
+                user?.id !==
+                  (((workingCase as unknown) as { prosecutorId: string })
+                    .prosecutorId ?? workingCase.prosecutor?.id)
+              }
+              checked={workingCase.isHeightenedSecurityLevel}
+              onChange={(event) => setAndSendToServer(event.target)}
+              large
+              filled
+            />
+          </BlueBox>
         </Box>
         <Box component="section" marginBottom={5}>
           <SelectCourt

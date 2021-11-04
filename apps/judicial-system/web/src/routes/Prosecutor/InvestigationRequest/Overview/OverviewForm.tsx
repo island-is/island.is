@@ -18,7 +18,11 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  requestCourtDate,
+  icOverview,
+} from '@island.is/judicial-system-web/messages'
 
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './Overview.css'
@@ -39,7 +43,7 @@ const OverviewForm: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Yfirlit kröfu um rannsóknarheimild
+            {formatMessage(icOverview.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>

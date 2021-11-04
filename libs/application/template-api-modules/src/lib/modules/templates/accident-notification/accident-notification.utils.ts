@@ -195,29 +195,23 @@ const shipLocation = (answers: AccidentNotificationAnswers): number => {
 const employer = (
   answers: AccidentNotificationAnswers,
 ): Atvinnurekandi | undefined => {
-  let employerEntity: EmployerEntity | undefined
-  switch (answers.accidentType.radioButton) {
-    case AccidentTypeEnum.HOMEACTIVITIES:
-      return undefined
-    case AccidentTypeEnum.SPORTS:
-      employerEntity = answers.sportsClubInfo
-      break
-    case AccidentTypeEnum.RESCUEWORK:
-      employerEntity = answers.rescueSquadInfo
-      break
-    case AccidentTypeEnum.STUDIES:
-      return undefined
-    case AccidentTypeEnum.WORK:
-      employerEntity = answers.companyInfo
-      break
+  const companyInfo = answers.companyInfo
+  const representative = answers.representative
+
+  if (
+    answers.accidentType.radioButton === AccidentTypeEnum.HOMEACTIVITIES ||
+    !companyInfo ||
+    !representative
+  ) {
+    return undefined
   }
-  if (!answers.companyInfo) return undefined
+
   return {
-    fyrirtaekikennitala: employerEntity.nationalRegistrationId,
-    fyrirtaekinafn: employerEntity.name,
-    forsjaradilinafn: employerEntity.name,
-    forsjaradilinetfang: employerEntity.email,
-    forsjaradilisimi: employerEntity.phoneNumber || '',
+    fyrirtaekikennitala: companyInfo.nationalRegistrationId,
+    fyrirtaekinafn: companyInfo.name,
+    forsjaradilinafn: representative.name,
+    forsjaradilinetfang: representative.email,
+    forsjaradilisimi: representative.phoneNumber || '',
   }
 }
 

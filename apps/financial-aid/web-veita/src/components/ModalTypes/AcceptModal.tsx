@@ -40,6 +40,9 @@ const AcceptModal = ({
     >
       <NumberInput
         placeholder="Skrifaðu upphæð útborgunar"
+        id="amountInput"
+        name="amountInput"
+        value={amount.toString()}
         onUpdate={(input) => {
           setHasError(false)
           setAmount(input)
