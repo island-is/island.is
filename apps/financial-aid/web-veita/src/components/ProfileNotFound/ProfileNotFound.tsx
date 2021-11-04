@@ -3,11 +3,15 @@ import { Text, Box, Button } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 
-import * as styles from './ApplicationNotFound.css'
+import * as styles from './ProfileNotFound.css'
 
-const ApplicationNotFound = () => {
+interface ProfileNotFoundProps {
+  backButtonHref: string
+}
+
+const ProfileNotFound = ({ backButtonHref = '/' }: ProfileNotFoundProps) => {
   const router = useRouter()
-
+  //TODO make more general
   return (
     <>
       <Box marginTop={10} marginBottom={4}>
@@ -15,7 +19,7 @@ const ApplicationNotFound = () => {
           colorScheme="default"
           iconType="filled"
           onClick={() => {
-            router.push('/nymal')
+            router.push(backButtonHref)
           }}
           preTextIcon="arrowBack"
           preTextIconType="filled"
@@ -55,4 +59,4 @@ const ApplicationNotFound = () => {
   )
 }
 
-export default ApplicationNotFound
+export default ProfileNotFound

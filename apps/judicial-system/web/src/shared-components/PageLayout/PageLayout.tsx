@@ -14,6 +14,8 @@ import {
   isRestrictionCase,
   isInvestigationCase,
   UserRole,
+  Case,
+  completedCaseStates,
 } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -32,30 +34,22 @@ import { useIntl } from 'react-intl'
 
 interface PageProps {
   children: ReactNode
-  caseId?: string
+  workingCase?: Case
   activeSection?: number
   isLoading: boolean
   notFound: boolean
-  caseType?: CaseType
   activeSubSection?: number
-  decision?: CaseDecision
-  parentCaseDecision?: CaseDecision
-  isValidToDateInThePast?: boolean
   isExtension?: boolean
   showSidepanel?: boolean
 }
 
 const PageLayout: React.FC<PageProps> = ({
+  workingCase,
   children,
-  caseId,
   activeSection,
   activeSubSection,
   isLoading,
   notFound,
-  caseType,
-  decision,
-  parentCaseDecision,
-  isValidToDateInThePast,
   showSidepanel = true,
 }) => {
   const { user } = useContext(UserContext)
@@ -63,64 +57,79 @@ const PageLayout: React.FC<PageProps> = ({
 
   const caseResult = () => {
     const decisionIsRejecting =
-      decision === CaseDecision.REJECTING ||
-      parentCaseDecision === CaseDecision.REJECTING
+      workingCase?.decision === CaseDecision.REJECTING ||
+      workingCase?.parentCase?.decision === CaseDecision.REJECTING
 
     const decisionIsAccepting =
-      decision === CaseDecision.ACCEPTING ||
-      parentCaseDecision === CaseDecision.ACCEPTING
+      workingCase?.decision === CaseDecision.ACCEPTING ||
+      workingCase?.parentCase?.decision === CaseDecision.ACCEPTING
 
     const decisionIsDismissing =
-      decision === CaseDecision.DISMISSING ||
-      parentCaseDecision === CaseDecision.DISMISSING
+      workingCase?.decision === CaseDecision.DISMISSING ||
+      workingCase?.parentCase?.decision === CaseDecision.DISMISSING
 
     const decisionIsAcceptingAlternativeTravelBan =
-      decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-      parentCaseDecision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+      workingCase?.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+      workingCase?.parentCase?.decision ===
+        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
 
     if (decisionIsRejecting) {
-      if (isInvestigationCase(caseType)) {
+      if (isInvestigationCase(workingCase.type)) {
         return 'Kröfu um rannsóknarheimild hafnað'
       } else {
         return 'Kröfu hafnað'
       }
     } else if (decisionIsAccepting) {
-      if (isInvestigationCase(caseType)) {
+      if (isInvestigationCase(workingCase.type)) {
         return 'Krafa um rannsóknarheimild samþykkt'
       } else {
-        return isValidToDateInThePast
+        return workingCase.isValidToDateInThePast
           ? `${
-              caseType === CaseType.CUSTODY ? 'Gæsluvarðhaldi' : 'Farbanni'
+              workingCase.type === CaseType.CUSTODY
+                ? 'Gæsluvarðhaldi'
+                : 'Farbanni'
             } lokið`
           : `${
-              caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
+              workingCase.type === CaseType.CUSTODY
+                ? 'Gæsluvarðhald'
+                : 'Farbann'
             } virkt`
       }
     } else if (decisionIsDismissing) {
       return formatMessage(signedVerdictOverview.dismissedTitle)
     } else if (decisionIsAcceptingAlternativeTravelBan) {
-      return isValidToDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
+      return workingCase.isValidToDateInThePast
+        ? 'Farbanni lokið'
+        : 'Farbann virkt'
     } else {
       return 'Niðurstaða'
     }
   }
 
   const sections = [
-    isRestrictionCase(caseType)
+    isRestrictionCase(workingCase?.type)
       ? getCustodyAndTravelBanProsecutorSection(
-          caseId,
-          caseType,
+          workingCase || ({} as Case),
           activeSubSection,
         )
-      : getInvestigationCaseProsecutorSection(caseId, activeSubSection),
-    isRestrictionCase(caseType)
-      ? getCourtSections(caseId, activeSubSection)
-      : getInvestigationCaseCourtSections(caseId, activeSubSection),
+      : getInvestigationCaseProsecutorSection(
+          workingCase || ({} as Case),
+          activeSubSection,
+        ),
+    isRestrictionCase(workingCase?.type)
+      ? getCourtSections(workingCase || ({} as Case), activeSubSection)
+      : getInvestigationCaseCourtSections(
+          workingCase || ({} as Case),
+          activeSubSection,
+        ),
     {
-      name: caseResult(),
+      name:
+        workingCase?.state && completedCaseStates.includes(workingCase?.state)
+          ? caseResult()
+          : 'Niðurstaða',
     },
-    getExtenstionSections(caseId, activeSubSection),
-    getCourtSections(caseId, activeSubSection),
+    getExtenstionSections(workingCase || ({} as Case), activeSubSection),
+    getCourtSections(workingCase || ({} as Case), activeSubSection),
   ]
 
   return children ? (
@@ -157,9 +166,9 @@ const PageLayout: React.FC<PageProps> = ({
                         : sections.filter((_, index) => index <= 2)
                     }
                     formName={
-                      caseType === CaseType.CUSTODY
+                      workingCase?.type === CaseType.CUSTODY
                         ? 'Gæsluvarðhald'
-                        : caseType === CaseType.TRAVEL_BAN
+                        : workingCase?.type === CaseType.TRAVEL_BAN
                         ? 'Farbann'
                         : 'Rannsóknarheimild'
                     }
