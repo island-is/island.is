@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { DatePicker } from '@island.is/island-ui/core'
 import {
   Box,
   Button,
@@ -9,6 +8,7 @@ import {
   Text,
   toast,
   AlertMessage,
+  DatePicker,
 } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import {
@@ -235,12 +235,7 @@ const ViewPetitionAdmin = () => {
             </Button>
           </Box>
 
-          <Box>
-            <Text variant="h3">
-              {formatMessage(m.viewPetition.enorsementsTableTitle)}
-            </Text>
-            <PetitionsTable />
-          </Box>
+          <PetitionsTable />
         </Stack>
       )}
     </Box>

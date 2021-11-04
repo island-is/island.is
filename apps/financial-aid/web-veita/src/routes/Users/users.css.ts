@@ -21,3 +21,9 @@ export const tableBody = style({
     },
   },
 })
+
+export const header = style({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+})

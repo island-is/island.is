@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const hindrances = {
   general: defineMessages({
     sectionTitle: {
-      id: 'an.application:general.sectionTitle',
+      id: 'an.application:hindrances.general.sectionTitle',
       defaultMessage: 'Almennt ',
       description: 'Hindrances',
     },

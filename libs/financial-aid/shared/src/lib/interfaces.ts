@@ -34,6 +34,7 @@ export interface Staff {
   municipalityName: string
   phoneNumber?: string
   municipalityHomepage?: string
+  email?: string
 }
 
 export interface Aid {
@@ -42,6 +43,7 @@ export interface Aid {
   unregisteredRenting: number
   livesWithParents: number
   unknown: number
+  withOthers: number
   municipalityId: string
   type: AidType
 }
@@ -121,6 +123,7 @@ export interface Municipality {
   cohabitationAid: Aid
   homepage?: string
   email?: string
+  rulesHomepage?: string
 }
 
 export interface ApplicationFile {
@@ -267,4 +270,11 @@ export interface ServiceCenter {
 export interface TableHeadersProps {
   filterBy?: string
   title: string
+}
+
+export interface CreateStaff {
+  name: string
+  email: string
+  nationalId: string
+  roles: StaffRole[]
 }
