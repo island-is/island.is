@@ -22,12 +22,12 @@ import cn from 'classnames'
 import { UpdateStaffMutation } from '@island.is/financial-aid-web/veita/graphql'
 import { useMutation } from '@apollo/client'
 
-interface UserProps {
+interface EmployeeProfileProps {
   user: Staff
   onUpdateStaff: () => void
 }
 
-interface UserInfo {
+interface EmployeeProfileInfo {
   nationalId: string
   email?: string
   nickname?: string
@@ -36,8 +36,8 @@ interface UserInfo {
   roles: StaffRole[]
 }
 
-const UserProfile = ({ user, onUpdateStaff }: UserProps) => {
-  const [state, setState] = useState<UserInfo>({
+const EmployeeProfile = ({ user, onUpdateStaff }: EmployeeProfileProps) => {
+  const [state, setState] = useState<EmployeeProfileInfo>({
     nationalId: user.nationalId,
     nickname: user?.nickname ?? '',
     email: user.email ?? '',
@@ -105,11 +105,10 @@ const UserProfile = ({ user, onUpdateStaff }: UserProps) => {
     },
   ]
 
-  const [updateStaffMember] = useMutation(UpdateStaffMutation)
+  const [updateStaff] = useMutation(UpdateStaffMutation)
 
   const areRequiredFieldsFilled =
     !state.email ||
-    !state.nickname ||
     !state.nationalId ||
     state.roles.length === 0 ||
     !isEmailValid(state.email) ||
@@ -122,7 +121,7 @@ const UserProfile = ({ user, onUpdateStaff }: UserProps) => {
     }
 
     try {
-      return await updateStaffMember({
+      return await updateStaff({
         variables: {
           input: {
             id: user.id,
@@ -269,4 +268,4 @@ const UserProfile = ({ user, onUpdateStaff }: UserProps) => {
   )
 }
 
-export default UserProfile
+export default EmployeeProfile

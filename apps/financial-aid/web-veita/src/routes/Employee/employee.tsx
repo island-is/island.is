@@ -2,16 +2,16 @@ import React, { useEffect } from 'react'
 import { useLazyQuery } from '@apollo/client'
 
 import {
-  ApplicationNotFound,
+  ProfileNotFound,
   ApplicationSkeleton,
   LoadingContainer,
-  UserProfile,
+  EmployeeProfile,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { StaffQuery } from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
 import { Staff } from '@island.is/financial-aid/shared/lib'
 
-export const User = () => {
+export const Employee = () => {
   const router = useRouter()
 
   const [getStaffMember, { data, loading }] = useLazyQuery<{ user: Staff }>(
@@ -34,12 +34,12 @@ export const User = () => {
   return (
     <LoadingContainer isLoading={loading} loader={<ApplicationSkeleton />}>
       {data ? (
-        <UserProfile user={data.user} onUpdateStaff={refreshUser} />
+        <EmployeeProfile user={data.user} onUpdateStaff={refreshUser} />
       ) : (
-        <ApplicationNotFound />
+        <ProfileNotFound backButtonHref="/notendur" />
       )}
     </LoadingContainer>
   )
 }
 
-export default User
+export default Employee

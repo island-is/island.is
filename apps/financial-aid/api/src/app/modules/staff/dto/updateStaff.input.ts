@@ -15,18 +15,18 @@ export class UpdateStaffInput implements UpdateStaff {
   readonly active?: boolean
 
   @Allow()
-  @Field()
+  @Field({ nullable: true })
   readonly nationalId?: string
 
   @Allow()
-  @Field(() => [String])
+  @Field(() => [String], { nullable: true })
   readonly roles?: StaffRole[]
 
   @Allow()
-  @Field()
+  @Field({ nullable: true })
   readonly nickname?: string
 
   @Allow()
-  @Field()
+  @Field({ nullable: true })
   readonly email?: string
 }

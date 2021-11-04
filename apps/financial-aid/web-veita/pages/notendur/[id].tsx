@@ -1,3 +1,3 @@
-import User from '@island.is/financial-aid-web/veita/src/routes/User/user'
+import Employee from '@island.is/financial-aid-web/veita/src/routes/Employee/employee'
 
-export default User
+export default Employee

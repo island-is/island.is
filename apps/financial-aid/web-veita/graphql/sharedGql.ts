@@ -279,7 +279,7 @@ export const StaffMutation = gql`
 
 export const UpdateStaffMutation = gql`
   mutation UpdateStaffMutation($input: UpdateStaffInput!) {
-    updateStaffMember(input: $input) {
+    updateStaff(input: $input) {
       id
       nationalId
       roles
