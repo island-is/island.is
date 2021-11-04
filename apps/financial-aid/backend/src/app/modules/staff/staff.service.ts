@@ -1,7 +1,7 @@
 import { Staff } from '@island.is/financial-aid/shared/lib'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { CreateStaffDto } from './dto'
+import { UpdateStaffDto, CreateStaffDto } from './dto'
 
 import { StaffModel } from './models'
 
@@ -34,6 +34,24 @@ export class StaffService {
         municipalityId,
       },
     })
+  }
+
+  async update(
+    id: string,
+    update: UpdateStaffDto,
+  ): Promise<{
+    numberOfAffectedRows: number
+    updatedStaff: StaffModel
+  }> {
+    const [numberOfAffectedRows, [updatedStaff]] = await this.staffModel.update(
+      update,
+      {
+        where: { id },
+        returning: true,
+      },
+    )
+
+    return { numberOfAffectedRows, updatedStaff }
   }
 
   async createStaff(user: Staff, input: CreateStaffDto): Promise<StaffModel> {

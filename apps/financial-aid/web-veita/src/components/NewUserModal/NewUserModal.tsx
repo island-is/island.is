@@ -175,18 +175,17 @@ const NewUserModal = ({ isVisible, setIsVisible, onStaffCreated }: Props) => {
           strong={false}
         />
       </Box>
-      {state.hasError && state.roles.length === 0 && (
-        <div
-          className={cn({
-            [`errorMessage`]: state.hasError && state.roles.length === 0,
-            [`showErrorMessage`]: state.hasError && state.roles.length === 0,
-          })}
-        >
-          <Text color="red600" fontWeight="semiBold" variant="small">
-            Það þarf að velja réttindi
-          </Text>
-        </div>
-      )}
+
+      <div
+        className={cn({
+          [`errorMessage`]: true,
+          [`showErrorMessage`]: state.hasError && state.roles.length === 0,
+        })}
+      >
+        <Text color="red600" fontWeight="semiBold" variant="small">
+          Það þarf að velja réttindi
+        </Text>
+      </div>
     </ActionModal>
   )
 }

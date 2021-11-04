@@ -95,5 +95,12 @@ export class StaffModel extends Model<Staff> {
     allowNull: true,
   })
   @ApiProperty()
+  nickname: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
   email: string
 }
