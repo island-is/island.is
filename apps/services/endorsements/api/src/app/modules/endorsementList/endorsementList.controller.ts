@@ -70,7 +70,7 @@ export class EndorsementListController {
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get()
   @UseInterceptors(EndorsementListsInterceptor)
-  @Scopes(EndorsementsScope.main, EndorsementsScope.admin)
+  @Scopes(EndorsementsScope.main)
   async findByTags(
     @CurrentUser() user: User,
     @Query() query: FindTagPaginationComboDto,
