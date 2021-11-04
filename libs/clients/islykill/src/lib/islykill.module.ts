@@ -7,7 +7,6 @@ import { logger } from '@island.is/logging'
 import { Configuration, IslyklarApi } from '../../gen/fetch'
 
 export interface IslykillApiModuleConfig {
-  certificateBase64: string
   cert: string
   passphrase: string
 }
@@ -15,7 +14,9 @@ export interface IslykillApiModuleConfig {
 export const ISLYKILL_OPTIONS = 'ISLYKILL_OPTIONS'
 
 export class IslykillApiModule {
-  static register(config: IslykillApiModuleConfig): DynamicModule {
+  static async register(
+    config: IslykillApiModuleConfig,
+  ): Promise<DynamicModule> {
     function lykillError(errorMsg: any) {
       logger.error(errorMsg)
     }
@@ -25,9 +26,10 @@ export class IslykillApiModule {
       if (!config.cert) {
         throw Error('IslykillApiModule certificate not provided')
       }
-      const data = fs.readFileSync(config.cert, {
+      const data = await fs.promises.readFile(config.cert, {
         encoding: 'base64',
       })
+
       pfx = Buffer.from(data, 'base64')
     } catch (err) {
       lykillError(err)

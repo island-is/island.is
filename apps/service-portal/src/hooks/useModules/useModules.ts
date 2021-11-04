@@ -16,7 +16,6 @@ export const useModules = () => {
     const flagValues = await Promise.all(
       featureFlaggedModules.map((moduleKey) => {
         const capKey = moduleKey.charAt(0).toUpperCase() + moduleKey.slice(1)
-
         return featureFlagClient.getValue(
           `isServicePortal${capKey}ModuleEnabled`,
           false,
