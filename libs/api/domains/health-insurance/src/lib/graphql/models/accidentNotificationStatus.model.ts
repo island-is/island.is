@@ -9,9 +9,9 @@ export class AccidentNotificationStatus {
   @Field(() => Number)
   numberIHI?: number
 
-  @Field(() => String)
+  @Field(() => HealthInsuranceAccidentNotificationStatusTypes)
   @IsEnum(HealthInsuranceAccidentNotificationStatusTypes)
-  status?: string
+  status?: HealthInsuranceAccidentNotificationStatusTypes
 
   @Field(() => AccidentNotificationAttachment, { nullable: true })
   receivedAttachments?: AccidentNotificationAttachment
