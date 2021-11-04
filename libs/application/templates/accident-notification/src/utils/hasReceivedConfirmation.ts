@@ -7,7 +7,6 @@ export const hasReceivedConfirmation = (answers: FormValue) => {
     answers,
     'accidentStatus.receivedConfirmations',
   ) as AccidentNotificationConfirmation
-  console.log(accidentConfirmations)
   if (!accidentConfirmations) return false
   // assignee reporting for employee
   if (isReportingOnBehalfOfEmployee(answers)) {
