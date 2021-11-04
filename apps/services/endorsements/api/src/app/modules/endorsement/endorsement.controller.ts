@@ -62,8 +62,6 @@ export class EndorsementController {
     private readonly endorsementService: EndorsementService,
     private readonly auditService: AuditService,
   ) {}
-  
-
 
   // TESTING SCOPES
   @ApiOperation({
@@ -72,15 +70,9 @@ export class EndorsementController {
   @Scopes(EndorsementsScope.admin)
   @ApiOkResponse()
   @Get('/admin')
-  async admin(
-    @CurrentUser() user: User
-  ): Promise<any> {
+  async admin(@CurrentUser() user: User): Promise<any> {
     return user.scope
   }
-
-
-
-
 
   @ApiOperation({
     summary: 'Emails a PDF with list endorsements data',
@@ -100,7 +92,6 @@ export class EndorsementController {
     @Query() query: emailDto,
     @CurrentUser() user: User,
   ): Promise<sendPdfEmailResponse> {
-
     return this.endorsementService.emailPDF(
       endorsementList.id,
       query.emailAddress,
