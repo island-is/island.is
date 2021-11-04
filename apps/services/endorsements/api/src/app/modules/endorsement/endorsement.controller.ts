@@ -58,6 +58,18 @@ export class EndorsementController {
     private readonly endorsementService: EndorsementService,
     private readonly auditService: AuditService,
   ) {}
+  
+  @ApiOperation({
+    summary: 'admin',
+  })
+  @Scopes(EndorsementsScope.admin)
+  @ApiOkResponse({ type: sendPdfEmailResponse })
+  @Get('/admin')
+  async admin(
+    @CurrentUser() user: User
+  ): Promise<any> {
+    return user.scope
+  }
 
   @ApiOperation({
     summary: 'Emails a PDF with list endorsements data',
@@ -75,7 +87,9 @@ export class EndorsementController {
     )
     endorsementList: EndorsementList,
     @Query() query: emailDto,
+    @CurrentUser() user: User,
   ): Promise<sendPdfEmailResponse> {
+   
     return this.endorsementService.emailPDF(
       endorsementList.id,
       query.emailAddress,
