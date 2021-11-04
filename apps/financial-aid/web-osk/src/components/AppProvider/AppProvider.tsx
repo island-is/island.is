@@ -19,7 +19,9 @@ interface AppProvider {
   loading: boolean
   error?: ApolloError
   municipality?: Municipality
-  setMunicipality: (municipalityId: string) => Promise<Municipality | undefined>
+  setMunicipalityById: (
+    municipalityId: string,
+  ) => Promise<Municipality | undefined>
   isAuthenticated?: boolean
   user?: User
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>
@@ -34,14 +36,14 @@ interface Props {
 
 export const AppContext = createContext<AppProvider>({
   setUser: () => undefined,
-  setMunicipality: () => Promise.resolve(undefined),
+  setMunicipalityById: () => Promise.resolve(undefined),
   setNationalRegistryData: () => {},
   loading: false,
   loadingUser: false,
 })
 
 const AppProvider = ({ children }: Props) => {
-  const { municipality, setMunicipality } = useMunicipality()
+  const { municipality, setMunicipalityById } = useMunicipality()
 
   const { isAuthenticated, user, setUser, loadingUser } = useUser()
 
@@ -59,7 +61,7 @@ const AppProvider = ({ children }: Props) => {
         error,
         loading,
         municipality,
-        setMunicipality,
+        setMunicipalityById,
         isAuthenticated,
         user,
         loadingUser,

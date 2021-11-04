@@ -262,3 +262,35 @@ export const StaffMutation = gql`
     }
   }
 `
+
+export const UpdateMunicipalityMutation = gql`
+  mutation UpdateMunicipalityMutation($input: UpdateMunicipalityInput!) {
+    updateMunicipality(input: $input) {
+      id
+      name
+      homepage
+      active
+      municipalityId
+      email
+      rulesHomepage
+      individualAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+      cohabitationAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+    }
+  }
+`

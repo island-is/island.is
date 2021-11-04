@@ -55,7 +55,12 @@ export const useMunicipality = () => {
     )
   }, [])
 
-  const setMunicipality = async (municipalityId: string) => {
+  const setMunicipality = (municipality: Municipality) => {
+    setScopedMunicipality(municipality)
+    sessionStorage.setItem(storageKey, JSON.stringify(municipality))
+  }
+
+  const setMunicipalityById = async (municipalityId: string) => {
     try {
       getMunicipality({
         variables: {
@@ -75,6 +80,7 @@ export const useMunicipality = () => {
 
   return {
     municipality,
+    setMunicipalityById,
     setMunicipality,
     error,
     loading,

@@ -3,6 +3,10 @@ import { NumberInput } from '@island.is/financial-aid-web/veita/src/components'
 import { Text, Box, Input, Button } from '@island.is/island-ui/core'
 
 import { Municipality } from '@island.is/financial-aid/shared/lib'
+import { useMutation } from '@apollo/client'
+import { UpdateMunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
+import omit from 'lodash/omit'
+import { useMunicipality } from '@island.is/financial-aid/shared/components'
 
 interface Props {
   municipality: Municipality
@@ -11,6 +15,23 @@ interface Props {
 const MunicipalityAdminSettings = ({ municipality }: Props) => {
   const maxAmountLength = 6
   const [state, setState] = useState(municipality)
+  const [updateMunicipalityMutation] = useMutation(UpdateMunicipalityMutation)
+  const { setMunicipality } = useMunicipality()
+
+  const updateMunicipality = async () => {
+    const { data } = await updateMunicipalityMutation({
+      variables: {
+        input: {
+          individualAid: omit(state.individualAid, ['__typename']),
+          cohabitationAid: omit(state.cohabitationAid, ['__typename']),
+          homepage: state.homepage,
+          rulesHomepage: state.rulesHomepage,
+          email: state.email,
+        },
+      },
+    })
+    setMunicipality(data.updateMunicipality)
+  }
   return (
     <>
       <Box className={`contentUp delay-25`} marginTop={15}>
@@ -314,7 +335,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
         />
       </Box>
       <Box display="flex" flexDirection="column" alignItems="flexEnd">
-        <Button onClick={() => console.log(state)} icon="checkmark">
+        <Button onClick={updateMunicipality} icon="checkmark">
           Vista stillingar
         </Button>
       </Box>

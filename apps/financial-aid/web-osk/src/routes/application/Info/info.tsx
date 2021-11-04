@@ -25,7 +25,7 @@ import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppP
 
 const ApplicationInfo = () => {
   const router = useRouter()
-  const { user, setMunicipality, setNationalRegistryData } = useContext(
+  const { user, setMunicipalityById, setNationalRegistryData } = useContext(
     AppContext,
   )
 
@@ -78,7 +78,7 @@ const ApplicationInfo = () => {
       return
     }
 
-    const municipality = await setMunicipality(
+    const municipality = await setMunicipalityById(
       data.nationalRegistryUserV2.address.municipalityCode,
     )
 

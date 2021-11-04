@@ -1,8 +1,10 @@
 import {
+  Body,
   Controller,
   Get,
   NotFoundException,
   Param,
+  Put,
   UseGuards,
 } from '@nestjs/common'
 
@@ -11,16 +13,24 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { MunicipalityService } from './municipality.service'
 import { MunicipalityModel } from './models'
 
-import { apiBasePath } from '@island.is/financial-aid/shared/lib'
+import {
+  apiBasePath,
+  Staff,
+  StaffRole,
+} from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { StaffGuard } from '../../guards/staff.guard'
+import { StaffRolesRules } from '../../decorators/staffRole.decorator'
+import { CurrentStaff } from '../../decorators'
+import { UpdateMunicipalityDto } from './dto'
 
 @UseGuards(IdsUserGuard)
-@Controller(apiBasePath)
+@Controller(`${apiBasePath}/municipality`)
 @ApiTags('municipality')
 export class MunicipalityController {
   constructor(private readonly municipalityService: MunicipalityService) {}
 
-  @Get('municipality/:id')
+  @Get(':id')
   @ApiOkResponse({
     type: MunicipalityModel,
     description: 'Gets municipality',
@@ -33,5 +43,22 @@ export class MunicipalityController {
     }
 
     return municipality
+  }
+
+  @Put('')
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.ADMIN)
+  @ApiOkResponse({
+    type: MunicipalityModel,
+    description: 'Gets municipality',
+  })
+  async updateMunicipality(
+    @CurrentStaff() staff: Staff,
+    @Body() input: UpdateMunicipalityDto,
+  ): Promise<MunicipalityModel> {
+    return await this.municipalityService.updateMunicipality(
+      staff.municipalityId,
+      input,
+    )
   }
 }
