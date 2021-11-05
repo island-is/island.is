@@ -15,6 +15,7 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  UseInterceptors,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -44,6 +45,8 @@ import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
 import { emailDto } from './dto/email.dto'
 import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
+import { EndorsementInterceptor } from './interceptors/endorsement.interceptor'
+import {PaginatedEndorsementInterceptor} from './interceptors/paginatedEndorsement.interceptor'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @Audit({
@@ -92,6 +95,7 @@ export class EndorsementController {
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),
   })
   @ApiOkResponse({ type: PaginatedEndorsementDto })
+  @UseInterceptors(PaginatedEndorsementInterceptor)
   @ApiResponse({
     status: 200,
     description: 'The record has been successfully created.',
@@ -119,6 +123,7 @@ export class EndorsementController {
   @ApiParam({ name: 'listId', type: String })
   @Get('/general-petition')
   @ApiOkResponse({ type: PaginatedEndorsementDto })
+  @UseInterceptors(PaginatedEndorsementInterceptor)
   @ApiResponse({ status: 200 })
   @BypassAuth()
   async find(
@@ -146,6 +151,7 @@ export class EndorsementController {
       'Uses current authenticated users national id to find any existing endorsement in a given list',
     type: Endorsement,
   })
+  @UseInterceptors(EndorsementInterceptor)
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)
   @Get('/exists')
@@ -176,6 +182,7 @@ export class EndorsementController {
       'Uses the authenticated users national id to create an endorsement',
     type: Endorsement,
   })
+  @UseInterceptors(EndorsementInterceptor)
   @ApiParam({ name: 'listId', type: String })
   @ApiBody({ type: EndorsementDto })
   @Scopes(EndorsementsScope.main)
