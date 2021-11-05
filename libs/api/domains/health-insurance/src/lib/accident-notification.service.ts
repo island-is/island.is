@@ -3,9 +3,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { DocumentApi } from '@island.is/clients/health-insurance-v2'
 import {
-  HealthInsuranceAccidentNotificationAttachmentTypes,
-  HealthInsuranceAccidentNotificationConfirmationTypes,
-  HealthInsuranceAccidentNotificationStatusTypes,
+  HealthInsuranceAccidentNotificationAttachmentTypes as AttachmentTypes,
+  HealthInsuranceAccidentNotificationConfirmationTypes as ConfirmationTypes,
+  HealthInsuranceAccidentNotificationStatusTypes as StatusTypes,
 } from './types'
 import {
   AccidentNotificationAttachment,
@@ -16,39 +16,39 @@ import {
 const mapStatus = (statusId: number) => {
   switch (statusId) {
     case 0:
-      return HealthInsuranceAccidentNotificationStatusTypes.ACCEPTED
+      return StatusTypes.ACCEPTED
     case 1:
-      return HealthInsuranceAccidentNotificationStatusTypes.REFUSED
+      return StatusTypes.REFUSED
     case 2:
-      return HealthInsuranceAccidentNotificationStatusTypes.INPROGRESS
+      return StatusTypes.INPROGRESS
     case 3:
-      return HealthInsuranceAccidentNotificationStatusTypes.INPROGRESSWAITINGFORDOCUMENT
+      return StatusTypes.INPROGRESSWAITINGFORDOCUMENT
     default:
       break
   }
 }
 
-const mapAttachmentType = (attachmentTypeId: number) => {
+const mapAttachmentType = (attachmentTypeId: number | undefined) => {
   switch (attachmentTypeId) {
     case 1:
-      return HealthInsuranceAccidentNotificationAttachmentTypes.INJURY_CERTIFICATE
+      return AttachmentTypes.INJURY_CERTIFICATE
     case 2:
-      return HealthInsuranceAccidentNotificationAttachmentTypes.PROXY_DOCUMENT
+      return AttachmentTypes.PROXY_DOCUMENT
     case 3:
-      return HealthInsuranceAccidentNotificationAttachmentTypes.POLICE_REPORT
+      return AttachmentTypes.POLICE_REPORT
     default:
-      break
+      return 'Unknown'
   }
 }
 
-const mapConfirmationType = (confirmationTypeId: number) => {
+const mapConfirmationType = (confirmationTypeId: number | undefined) => {
   switch (confirmationTypeId) {
     case 1:
-      return HealthInsuranceAccidentNotificationConfirmationTypes.INJUREDORREPRESENTATIVEPARTY
+      return ConfirmationTypes.INJUREDORREPRESENTATIVEPARTY
     case 2:
-      return HealthInsuranceAccidentNotificationConfirmationTypes.COMPANYPARTY
+      return ConfirmationTypes.COMPANYPARTY
     default:
-      break
+      return 'Unknown'
   }
 }
 
@@ -71,22 +71,22 @@ export class AccidentNotificationService {
     return {
       numberIHI: accidentStatus.numberIHI,
       status: accidentStatus.status ? mapStatus(accidentStatus.status) : '',
-      attachments: accidentStatus.attachments?.map((attachment) => {
-        return {
-          isReceived: !!attachment.isReceived,
-          attachmentType: attachment.attachmentType
-            ? mapAttachmentType(attachment.attachmentType)
-            : '',
-        } as AccidentNotificationAttachment
-      }),
-      confirmations: accidentStatus.confirmations?.map((attachment) => {
-        return {
-          isReceived: !!attachment.isReceived,
-          confirmationType: attachment.confirmationType
-            ? mapConfirmationType(attachment.confirmationType)
-            : '',
-        } as AccidentNotificationConfirmation
-      }),
+      receivedAttachments: accidentStatus.attachments
+        ?.map((x) => ({
+          [mapAttachmentType(x.attachmentType)]: !!x.isReceived,
+        }))
+        .reduce(
+          (prev, curr) => ({ ...prev, ...curr }),
+          {},
+        ) as AccidentNotificationAttachment,
+      receivedConfirmations: accidentStatus.confirmations
+        ?.map((x) => ({
+          [mapConfirmationType(x.confirmationType)]: !!x.isReceived,
+        }))
+        .reduce(
+          (prev, curr) => ({ ...prev, ...curr }),
+          {},
+        ) as AccidentNotificationConfirmation,
     } as AccidentNotificationStatus
   }
 }
