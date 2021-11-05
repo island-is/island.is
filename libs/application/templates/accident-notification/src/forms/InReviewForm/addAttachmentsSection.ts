@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildFileUploadField,
   buildMultiField,
@@ -45,6 +46,13 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             description: '',
             space: 5,
             titleVariant: 'h5',
+            condition: (formValue) =>
+              !isAssignee && !hasReceivedProxyDocument(formValue),
+          }),
+          buildCustomField({
+            id: 'attachments.powerOfAttorney.fileLink',
+            component: 'ProxyDocument',
+            title: 'test',
             condition: (formValue) =>
               !isAssignee && !hasReceivedProxyDocument(formValue),
           }),
