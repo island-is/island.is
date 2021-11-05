@@ -3,6 +3,7 @@ import { uuid } from 'uuidv4'
 
 import { BadGatewayException, NotFoundException } from '@nestjs/common'
 
+import { Case } from '../../case'
 import { PoliceCaseFile } from '../models'
 import { createTestingPoliceModule } from './createTestingPoliceModule'
 
@@ -13,7 +14,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (caseId: string) => Promise<Then>
+type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
 describe('PoliceController - Get all', () => {
   let givenWhenThen: GivenWhenThen
@@ -21,11 +22,11 @@ describe('PoliceController - Get all', () => {
   beforeEach(async () => {
     const { policeController } = await createTestingPoliceModule()
 
-    givenWhenThen = async (caseId: string): Promise<Then> => {
+    givenWhenThen = async (caseId: string, theCase: Case): Promise<Then> => {
       const then = {} as Then
 
       await policeController
-        .getAll(caseId)
+        .getAll(caseId, theCase)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -34,23 +35,25 @@ describe('PoliceController - Get all', () => {
   })
 
   describe('remote call', () => {
-    const caseId = uuid()
+    const originalAncestorCaseId = uuid()
+    const theCsae = { id: originalAncestorCaseId } as Case
 
     beforeEach(async () => {
-      await givenWhenThen(caseId)
+      await givenWhenThen(uuid(), theCsae)
     })
 
     it('should request police files for the correct case', () =>
       expect(fetch).toHaveBeenCalledWith(
         expect.stringMatching(
-          new RegExp(`.*/api/Rettarvarsla/GetDocumentListById/${caseId}`),
+          new RegExp(
+            `.*/api/Rettarvarsla/GetDocumentListById/${originalAncestorCaseId}`,
+          ),
         ),
         expect.anything(),
       ))
   })
 
   describe('police files found', () => {
-    const caseId = uuid()
     let then: Then
 
     beforeEach(async () => {
@@ -63,7 +66,7 @@ describe('PoliceController - Get all', () => {
         ],
       })
 
-      then = await givenWhenThen(caseId)
+      then = await givenWhenThen(uuid(), {} as Case)
     })
 
     it('should return police case files', () => {
@@ -75,39 +78,39 @@ describe('PoliceController - Get all', () => {
   })
 
   describe('police files not found', () => {
-    const caseId = uuid()
+    const originalAncestorCaseId = uuid()
     let then: Then
 
     beforeEach(async () => {
       const mockFetch = fetch as jest.Mock
       mockFetch.mockResolvedValueOnce({ ok: false })
 
-      then = await givenWhenThen(caseId)
+      then = await givenWhenThen(uuid(), { id: originalAncestorCaseId } as Case)
     })
 
     it('should throw not found exception', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
       expect(then.error.message).toBe(
-        `No police case files found for case ${caseId}`,
+        `No police case files found for case ${originalAncestorCaseId}`,
       )
     })
   })
 
   describe('remote call fails', () => {
-    const caseId = uuid()
+    const originalAncestorCaseId = uuid()
     let then: Then
 
     beforeEach(async () => {
       const mockFetch = fetch as jest.Mock
       mockFetch.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId)
+      then = await givenWhenThen(uuid(), { id: originalAncestorCaseId } as Case)
     })
 
     it('should throw bad gateway exception', () => {
       expect(then.error).toBeInstanceOf(BadGatewayException)
       expect(then.error.message).toBe(
-        `Failed to get police case files for case ${caseId}`,
+        `Failed to get police case files for case ${originalAncestorCaseId}`,
       )
     })
   })
