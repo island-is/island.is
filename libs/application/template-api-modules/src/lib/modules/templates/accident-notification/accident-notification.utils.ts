@@ -4,6 +4,7 @@ import {
   AccidentNotificationAnswers,
   AccidentTypeEnum,
   FishermanWorkplaceAccidentShipLocationEnum,
+  StudiesAccidentTypeEnum,
   SubmittedApplicationData,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
@@ -125,12 +126,7 @@ const accident = (answers: AccidentNotificationAnswers): Slys => {
   const accidentType = accidentTypeToId(answers.accidentType.radioButton)
   const accidentBase = {
     tegund: accidentType,
-    //the types 6 = WORK accident and 9 = STUDIES are the only ones with a subtype
-    undirtegund:
-      accidentType === 6 || accidentType === 9
-        ? workAccidentTypeToId(answers.workAccident.type)
-        : undefined,
-
+    undirtegund: determineSubType(answers),
     dagsetningslys: answers.accidentDetails.dateOfAccident,
     timislys: answers.accidentDetails.timeOfAccident,
     lysing: answers.accidentDetails.descriptionOfAccident,
@@ -248,21 +244,36 @@ const accidentTypeToId = (typeEnum: AccidentTypeEnum): number => {
   }
 }
 
-const workAccidentTypeToId = (
-  typeEnum: WorkAccidentTypeEnum | undefined,
+const determineSubType = (
+  answers: AccidentNotificationAnswers,
 ): number | undefined => {
-  switch (typeEnum) {
-    case WorkAccidentTypeEnum.GENERAL:
-      return 1
-    case WorkAccidentTypeEnum.FISHERMAN:
-      return 2
-    case WorkAccidentTypeEnum.PROFESSIONALATHLETE:
-      return 3
-    case WorkAccidentTypeEnum.AGRICULTURE:
-      return 4
-    default:
-      return undefined
+  if (answers.accidentType.radioButton === AccidentTypeEnum.WORK) {
+    switch (answers.workAccident.type) {
+      case WorkAccidentTypeEnum.GENERAL:
+        return 1
+      case WorkAccidentTypeEnum.FISHERMAN:
+        return 2
+      case WorkAccidentTypeEnum.PROFESSIONALATHLETE:
+        return 3
+      case WorkAccidentTypeEnum.AGRICULTURE:
+        return 4
+      default:
+        return undefined
+    }
   }
+  if (answers.accidentType.radioButton === AccidentTypeEnum.STUDIES) {
+    switch (answers.studiesAccident.type) {
+      case StudiesAccidentTypeEnum.INTERNSHIP:
+        return 5
+      case StudiesAccidentTypeEnum.VOCATIONALEDUCATION:
+        return 6
+      case StudiesAccidentTypeEnum.APPRENTICESHIP:
+        return 7
+      default:
+        return undefined
+    }
+  }
+  return undefined
 }
 
 export const objectToXML = (obj: object) => {
