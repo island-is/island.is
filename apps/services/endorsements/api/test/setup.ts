@@ -44,13 +44,15 @@ interface SetupAuthInput {
   scope: EndorsementsScope[]
   nationalId?: string
 }
-export const getAuthenticatedApp = ({
+export const getAuthenticatedApp = async ({
   scope,
-  nationalId = '1234567890',
+  nationalId = '0101302989',
 }: SetupAuthInput): Promise<INestApplication> =>
   setup({
     override: (builder) =>
-      builder.overrideProvider(IdsUserGuard).useValue(
+      builder
+      .overrideProvider(IdsUserGuard)
+      .useValue(
         new MockAuthGuard({
           nationalId,
           scope,

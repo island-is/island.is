@@ -1,11 +1,28 @@
 import request from 'supertest'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 import { authNationalId } from './seed'
-import { getAuthenticatedApp } from '../../../../../../test/setup'
+import { getAuthenticatedApp, setup } from '../../../../../../test/setup'
 import {
   errorExpectedStructure,
   metaDataResponse,
 } from '../../../../../../test/testHelpers'
+import { INestApplication } from '@nestjs/common'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+
+
+// let app: INestApplication
+
+// beforeAll(async () => {
+//   app = await setup({
+//     override: (builder) =>
+//       builder.overrideGuard(IdsUserGuard).useValue(
+//         new MockAuthGuard({
+//           nationalId: '1234567890',
+//           scope: [EndorsementsScope.main],
+//         }),
+//       ),
+//   })
+// })
 
 describe('bulkCreateEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement/bulk should fail and return 403 error if scope is missing`, async () => {

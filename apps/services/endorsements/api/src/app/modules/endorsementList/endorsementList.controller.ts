@@ -64,7 +64,7 @@ export class SearchPaginationComboDto extends IntersectionType(
 @ApiTags('endorsementList')
 @ApiOAuth2([])
 @ApiExtraModels(FindTagPaginationComboDto, PaginatedEndorsementListDto)
-@UseGuards(IdsUserGuard, ScopesGuard)
+// @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller('endorsement-list')
 export class EndorsementListController {
   constructor(
