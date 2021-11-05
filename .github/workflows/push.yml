@@ -485,7 +485,6 @@ jobs:
         service:
           - islandis
           - gjafakort
-          - air-discount-scheme
           - identity-auth-api
     steps:
       - uses: actions/checkout@v2
