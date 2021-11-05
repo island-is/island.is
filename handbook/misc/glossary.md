@@ -19,6 +19,6 @@ Lists here-in should be alphabetically sorted.
 - Kennitala = National ID (**not SSN**)
 - Vegabréf = Passport
 - Straumurinn = Iceland's X-Road data transfer layer
-- Prókúra = Procurate
+- Prókúra = Procuration
 - Prókúruhafi = Procuration Holder
 - Hefur prókúru = Has Procuration
