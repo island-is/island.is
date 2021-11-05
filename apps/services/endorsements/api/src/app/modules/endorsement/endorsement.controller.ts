@@ -2,7 +2,6 @@ import {
   BypassAuth,
   CurrentAuth,
   CurrentUser,
-  IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
@@ -55,7 +54,7 @@ const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @ApiTags('endorsement')
 @ApiOAuth2([])
 @ApiExtraModels(PaginationDto, PaginatedEndorsementDto)
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(ScopesGuard)
 @Controller('endorsement-list/:listId/endorsement')
 export class EndorsementController {
   constructor(
@@ -63,16 +62,7 @@ export class EndorsementController {
     private readonly auditService: AuditService,
   ) {}
 
-  // // TESTING SCOPES
-  // @ApiOperation({
-  //   summary: 'admin',
-  // })
-  // @Scopes(EndorsementsScope.admin)
-  // @ApiOkResponse()
-  // @Get('/admin')
-  // async admin(@CurrentUser() user: User): Promise<any> {
-  //   return user.scope
-  // }
+
 
   @ApiOperation({
     summary: 'Emails a PDF with list endorsements data',
