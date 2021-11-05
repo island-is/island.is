@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 
-import { Municipality } from '@island.is/financial-aid/shared/lib'
-import { gql, useLazyQuery } from '@apollo/client'
+import {
+  Municipality,
+  useAsyncLazyQuery,
+} from '@island.is/financial-aid/shared/lib'
+import { gql } from '@apollo/client'
 
 const MunicipalityQuery = gql`
   query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
@@ -40,7 +43,10 @@ export const useMunicipality = () => {
 
   const [municipality, setScopedMunicipality] = useState<Municipality>()
 
-  const [getMunicipality, { data, error, loading }] = useLazyQuery<
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(undefined)
+
+  const getMunicipality = useAsyncLazyQuery<
     {
       municipality: Municipality
     },
@@ -57,18 +63,22 @@ export const useMunicipality = () => {
 
   const setMunicipality = async (municipalityId: string) => {
     try {
-      getMunicipality({
-        variables: {
-          input: { id: municipalityId },
-        },
+      setError(undefined)
+      setLoading(true)
+      return await getMunicipality({
+        input: { id: municipalityId },
+      }).then((res) => {
+        setScopedMunicipality(res.data?.municipality)
+        sessionStorage.setItem(
+          storageKey,
+          JSON.stringify(res.data?.municipality),
+        )
+        setLoading(false)
+        return res.data?.municipality
       })
-
-      if (data) {
-        setScopedMunicipality(data?.municipality)
-        sessionStorage.setItem(storageKey, JSON.stringify(data?.municipality))
-        return data?.municipality
-      }
-    } catch {
+    } catch (error) {
+      setError(error)
+      setLoading(false)
       return undefined
     }
   }

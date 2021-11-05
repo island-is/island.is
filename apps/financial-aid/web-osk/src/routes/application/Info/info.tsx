@@ -26,9 +26,12 @@ import { useMunicipality } from '@island.is/financial-aid/shared/components'
 
 const ApplicationInfo = () => {
   const router = useRouter()
-  const { user, setNationalRegistryData } = useContext(AppContext)
-
-  const { setMunicipality } = useMunicipality()
+  const {
+    user,
+    setNationalRegistryData,
+    setMunicipality,
+    loadingMuncipality,
+  } = useContext(AppContext)
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
@@ -78,12 +81,13 @@ const ApplicationInfo = () => {
       setHasError(true)
       return
     }
+
     setNationalRegistryData(data.nationalRegistryUserV2)
 
     await setMunicipality(
       data.nationalRegistryUserV2.address.municipalityCode,
-    ).then((muni) => {
-      if (navigation.nextUrl && muni && muni.active) {
+    ).then((municipality) => {
+      if (navigation.nextUrl && municipality && municipality.active) {
         router.push(navigation?.nextUrl)
       } else {
         router.push(
@@ -166,6 +170,7 @@ const ApplicationInfo = () => {
         nextButtonText="Staðfesta"
         nextButtonIcon="checkmark"
         onNextButtonClick={errorCheck}
+        nextIsLoading={loadingMuncipality}
       />
     </>
   )
