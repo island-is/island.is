@@ -63,16 +63,16 @@ export class EndorsementController {
     private readonly auditService: AuditService,
   ) {}
 
-  // TESTING SCOPES
-  @ApiOperation({
-    summary: 'admin',
-  })
-  @Scopes(EndorsementsScope.admin)
-  @ApiOkResponse()
-  @Get('/admin')
-  async admin(@CurrentUser() user: User): Promise<any> {
-    return user.scope
-  }
+  // // TESTING SCOPES
+  // @ApiOperation({
+  //   summary: 'admin',
+  // })
+  // @Scopes(EndorsementsScope.admin)
+  // @ApiOkResponse()
+  // @Get('/admin')
+  // async admin(@CurrentUser() user: User): Promise<any> {
+  //   return user.scope
+  // }
 
   @ApiOperation({
     summary: 'Emails a PDF with list endorsements data',
