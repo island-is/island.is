@@ -59,7 +59,7 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
               !isAssignee && !hasReceivedProxyDocument(formValue),
           }),
           buildDescriptionField({
-            id: 'attachments.deathCertificate.title',
+            id: 'attachments.deathCertificateFile.title',
             title: addDocuments.deathCertificate.title,
             description: '',
             space: 5,
@@ -67,7 +67,7 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             condition: (formValue) => !hasReceivedPoliceReport(formValue),
           }),
           buildFileUploadField({
-            id: 'attachments.deathCertificate.file',
+            id: 'attachments.deathCertificateFile.file',
             title: '',
             uploadAccept: UPLOAD_ACCEPT,
             uploadHeader: addDocuments.deathCertificate.uploadHeader,
@@ -75,7 +75,6 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             uploadButtonLabel: addDocuments.general.uploadButtonLabel,
             condition: (formValue) => !hasReceivedPoliceReport(formValue),
           }),
-
           buildDescriptionField({
             id: 'attachments.additionalAttachments.title',
             title: addDocuments.additional.title,
