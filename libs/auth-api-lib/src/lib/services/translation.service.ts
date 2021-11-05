@@ -10,8 +10,8 @@ import { LanguageDTO } from '../entities/dto/language.dto'
 import { Op } from 'sequelize'
 import { trace } from '@theo.gravity/datadog-apm'
 
-@Injectable()
 @trace()
+@Injectable()
 export class TranslationService {
   constructor(
     private sequelize: Sequelize,

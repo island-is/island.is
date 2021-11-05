@@ -29,8 +29,8 @@ import { ApiScope } from '../entities/models/api-scope.model'
 import { IdpProvider } from '../entities/models/idp-provider.model'
 import { trace } from '@theo.gravity/datadog-apm'
 
-@Injectable()
 @trace()
+@Injectable()
 export class ClientsService {
   constructor(
     @InjectModel(Client)

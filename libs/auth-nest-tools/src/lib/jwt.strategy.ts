@@ -9,7 +9,9 @@ import { Auth } from './auth'
 
 const AUTH_BODY_FIELD_NAME = '__accessToken'
 const JWKS_URI = '/.well-known/openid-configuration/jwks'
+import { trace } from '@theo.gravity/datadog-apm'
 
+@trace()
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private config: AuthConfig) {

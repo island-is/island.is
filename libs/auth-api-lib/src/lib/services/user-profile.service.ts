@@ -9,7 +9,9 @@ import {
   AuthMiddlewareOptions,
 } from '@island.is/auth-nest-tools'
 import { IndividuaInfoDTO } from '../entities/dto/individual-info.dto'
+import { trace } from '@theo.gravity/datadog-apm'
 
+@trace()
 @Injectable()
 export class UserProfileService {
   constructor(

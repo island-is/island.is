@@ -8,7 +8,9 @@ import { AuthGuard } from '@nestjs/passport'
 import { BYPASS_AUTH_KEY } from './bypass-auth.decorator'
 import { getRequest } from './getRequest'
 import { User } from './user'
+import { trace } from '@theo.gravity/datadog-apm'
 
+@trace()
 @Injectable()
 export class IdsUserGuard extends AuthGuard('jwt') {
   getRequest = getRequest

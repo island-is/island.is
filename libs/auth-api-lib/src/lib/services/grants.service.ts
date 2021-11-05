@@ -12,8 +12,8 @@ import { GrantDto } from '../entities/dto/grant.dto'
 import { WhereOptions } from 'sequelize/types'
 import { trace } from '@theo.gravity/datadog-apm'
 
-@Injectable()
 @trace()
+@Injectable()
 export class GrantsService {
   constructor(
     @InjectModel(Grant)

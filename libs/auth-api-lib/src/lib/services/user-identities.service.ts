@@ -6,7 +6,9 @@ import { Claim } from '../entities/models/claim.model'
 import { Sequelize } from 'sequelize-typescript'
 import { UserIdentity } from '../entities/models/user-identity.model'
 import { UserIdentityDto } from '../entities/dto/user-identity.dto'
+import { trace } from '@theo.gravity/datadog-apm'
 
+@trace()
 @Injectable()
 export class UserIdentitiesService {
   constructor(
