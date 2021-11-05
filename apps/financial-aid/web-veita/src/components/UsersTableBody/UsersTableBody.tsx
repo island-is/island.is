@@ -32,7 +32,7 @@ const UsersTableBody = ({ user, index }: PageProps) => {
           })}
         >
           <Box display="flex">
-            <Text variant="h5">
+            <Text variant="h5" color={user.active ? 'dark400' : 'dark300'}>
               {user.name} {isLoggedInUser ? '(Þú)' : ''}
             </Text>
           </Box>
@@ -44,7 +44,9 @@ const UsersTableBody = ({ user, index }: PageProps) => {
           })}
         >
           <Box display="flex">
-            <Text>{formatNationalId(user.nationalId)}</Text>
+            <Text color={user.active ? 'dark400' : 'dark300'}>
+              {formatNationalId(user.nationalId)}
+            </Text>
           </Box>
         </td>
 
@@ -53,7 +55,9 @@ const UsersTableBody = ({ user, index }: PageProps) => {
             [`${styles.tablePadding} `]: true,
           })}
         >
-          <Text> {staffRoleDescription(user.roles)}</Text>
+          <Text color={user.active ? 'dark400' : 'dark300'}>
+            {staffRoleDescription(user.roles)}
+          </Text>
         </td>
 
         {isLoggedInUser === false && (
