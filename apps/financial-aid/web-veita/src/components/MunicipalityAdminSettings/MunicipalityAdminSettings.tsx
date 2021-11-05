@@ -22,7 +22,9 @@ interface Props {
 const MunicipalityAdminSettings = ({ municipality }: Props) => {
   const maxAmountLength = 6
   const [state, setState] = useState(municipality)
-  const [updateMunicipalityMutation] = useMutation(UpdateMunicipalityMutation)
+  const [updateMunicipalityMutation, { loading }] = useMutation(
+    UpdateMunicipalityMutation,
+  )
   const { setMunicipality } = useMunicipality()
 
   const updateMunicipality = async () => {
@@ -350,7 +352,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
         />
       </Box>
       <Box display="flex" flexDirection="column" alignItems="flexEnd">
-        <Button onClick={updateMunicipality} icon="checkmark">
+        <Button loading={loading} onClick={updateMunicipality} icon="checkmark">
           Vista stillingar
         </Button>
       </Box>
