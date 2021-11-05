@@ -22,12 +22,13 @@ import {
 import { NationalRegistryUserQuery } from '@island.is/financial-aid-web/osk/graphql'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
+import { useMunicipality } from '@island.is/financial-aid/shared/components'
 
 const ApplicationInfo = () => {
   const router = useRouter()
-  const { user, setMunicipality, setNationalRegistryData } = useContext(
-    AppContext,
-  )
+  const { user, setNationalRegistryData } = useContext(AppContext)
+
+  const { setMunicipality } = useMunicipality()
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
@@ -45,54 +46,53 @@ const ApplicationInfo = () => {
     router.pathname,
   ) as NavigationProps
 
+  // TODO: Add once national registry is connected to x-road
+  // const { data } = await nationalRegistryQuery({
+  //   input: { ssn: user?.nationalId },
+  // })
+
+  const data: { nationalRegistryUserV2: NationalRegistryData } = {
+    nationalRegistryUserV2: {
+      nationalId: user.nationalId,
+      fullName: user.name,
+      address: {
+        streetName: 'Hafnargata 7',
+        postalCode: '200',
+        city: 'Hafnarfjörður',
+        municipalityCode: '1400',
+      },
+      spouse: {
+        nationalId: undefined,
+        maritalStatus: undefined,
+        name: undefined,
+      },
+    },
+  }
+
+  if (!data || !data.nationalRegistryUserV2.address) {
+    return
+  }
+
   const errorCheck = async () => {
     if (!accept || !user) {
       setHasError(true)
       return
     }
-
-    // TODO: Add once national registry is connected to x-road
-    // const { data } = await nationalRegistryQuery({
-    //   input: { ssn: user?.nationalId },
-    // })
-
-    const data: { nationalRegistryUserV2: NationalRegistryData } = {
-      nationalRegistryUserV2: {
-        nationalId: user.nationalId,
-        fullName: user.name,
-        address: {
-          streetName: 'Hafnargata 7',
-          postalCode: '200',
-          city: 'Hafnarfjörður',
-          municipalityCode: '1400',
-        },
-        spouse: {
-          nationalId: undefined,
-          maritalStatus: undefined,
-          name: undefined,
-        },
-      },
-    }
-
-    if (!data || !data.nationalRegistryUserV2.address) {
-      return
-    }
-
-    const municipality = await setMunicipality(
-      data.nationalRegistryUserV2.address.municipalityCode,
-    )
-
     setNationalRegistryData(data.nationalRegistryUserV2)
 
-    if (municipality === undefined || municipality.active === false) {
-      router.push(
-        Routes.serviceCenter(
-          data.nationalRegistryUserV2.address.municipalityCode,
-        ),
-      )
-    } else if (navigation?.nextUrl) {
-      router.push(navigation?.nextUrl)
-    }
+    await setMunicipality(
+      data.nationalRegistryUserV2.address.municipalityCode,
+    ).then((muni) => {
+      if (navigation.nextUrl && muni && muni.active) {
+        router.push(navigation?.nextUrl)
+      } else {
+        router.push(
+          Routes.serviceCenter(
+            data.nationalRegistryUserV2.address.municipalityCode,
+          ),
+        )
+      }
+    })
   }
 
   return (
