@@ -20,8 +20,7 @@ const useMyApplication = () => {
 
   if (
     router.query.id &&
-    !router.route.includes('/umsokn') &&
-    router.query.id !== '1400' &&
+    !router.route.includes('/midstod') &&
     myApplication === undefined &&
     loading === false &&
     error === undefined
