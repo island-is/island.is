@@ -78,7 +78,6 @@ export class EndorsementController {
     )
     endorsementList: EndorsementList,
     @Query() query: emailDto,
-    @CurrentUser() user: User,
   ): Promise<sendPdfEmailResponse> {
     return this.endorsementService.emailPDF(
       endorsementList.id,

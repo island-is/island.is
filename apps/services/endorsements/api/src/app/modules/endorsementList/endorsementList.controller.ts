@@ -153,8 +153,6 @@ export class EndorsementListController {
     @CurrentUser() user: User,
     @Query() query: PaginationDto,
   ): Promise<PaginatedEndorsementListDto> {
-    console.log(user)
-    console.log(user.scope)
     return await this.endorsementListService.findAllEndorsementListsByNationalId(
       user.nationalId,
       query,

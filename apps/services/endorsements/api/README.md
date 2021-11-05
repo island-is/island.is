@@ -43,8 +43,6 @@ And go to localhost once project is ready and started
 
 ```bash
 http://localhost:4246/
-http://localhost:4246/liveness
-http://localhost:4246/version
 ```
 
 After making changes to the module code, re-initalize app to autogenerate code for swagger, openapi, fetch client etc.

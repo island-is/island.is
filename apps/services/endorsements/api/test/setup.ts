@@ -46,7 +46,7 @@ interface SetupAuthInput {
 }
 export const getAuthenticatedApp = async ({
   scope,
-  nationalId = '0101302989',
+  nationalId = '1234567890',
 }: SetupAuthInput): Promise<INestApplication> =>
   setup({
     override: (builder) =>
