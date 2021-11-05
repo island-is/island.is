@@ -94,6 +94,7 @@ export const useCaseFormHelper = (
   }
 
   return {
+    isValid,
     setField,
     validateAndSendToServer,
     setAndSendToServer,
