@@ -204,7 +204,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               id: Roles.ASSIGNEE,
               formLoader: () =>
                 import('../forms/InReviewForm/index').then((val) =>
-                  Promise.resolve(val.ApplicantReview),
+                  Promise.resolve(val.AssigneeReview),
                 ),
               read: 'all',
               write: 'all',

@@ -32,5 +32,8 @@ export class StaffModel implements Staff {
   readonly municipalityHomepage?: string
 
   @Field({ nullable: true })
+  readonly nickname?: string
+
+  @Field({ nullable: true })
   readonly email?: string
 }
