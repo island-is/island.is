@@ -68,33 +68,35 @@ export const Users = () => {
       </Box>
 
       {users && (
-        <table
-          className={cn({
-            [`${styles.tableContainer}`]: true,
-          })}
-        >
-          <thead className={`contentUp delay-50`}>
-            <tr>
-              {headers.map((item, index) => (
-                <TableHeaders
-                  header={{ title: item }}
+        <div className={`${styles.wrapper} hideScrollBar`}>
+          <table
+            className={cn({
+              [`${styles.tableContainer}`]: true,
+            })}
+          >
+            <thead className={`contentUp delay-50`}>
+              <tr>
+                {headers.map((item, index) => (
+                  <TableHeaders
+                    header={{ title: item }}
+                    index={index}
+                    key={'tableHeaders-' + index}
+                  />
+                ))}
+              </tr>
+            </thead>
+
+            <tbody className={styles.tableBody}>
+              {users.map((item: Staff, index) => (
+                <UsersTableBody
+                  user={item}
                   index={index}
-                  key={'tableHeaders-' + index}
+                  key={'tableBody-' + item.id}
                 />
               ))}
-            </tr>
-          </thead>
-
-          <tbody className={styles.tableBody}>
-            {users.map((item: Staff, index) => (
-              <UsersTableBody
-                user={item}
-                index={index}
-                key={'tableBody-' + item.id}
-              />
-            ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       )}
 
       {error && (

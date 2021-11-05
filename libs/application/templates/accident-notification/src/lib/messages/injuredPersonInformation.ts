@@ -50,7 +50,7 @@ export const injuredPersonInformation = {
   }),
   upload: defineMessages({
     uploadHeader: {
-      id: 'an.application:powerOfAttorney.upload.uploadHeader',
+      id: 'an.application:injuredPersonInformation.upload.uploadHeader',
       defaultMessage: 'Dragðu áverkavottorð hingað til að hlaða upp',
       description: 'Definition of upload header',
     },
