@@ -44,7 +44,7 @@ interface SetupAuthInput {
   scope: EndorsementsScope[]
   nationalId?: string
 }
-export const getAuthenticatedApp = async ({
+export const getAuthenticatedApp = ({
   scope,
   nationalId = '1234567890',
 }: SetupAuthInput): Promise<INestApplication> =>

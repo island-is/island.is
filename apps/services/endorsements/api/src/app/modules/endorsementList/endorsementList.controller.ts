@@ -240,7 +240,6 @@ export class EndorsementListController {
   @Scopes(EndorsementsScope.admin)
   @Put(':listId/lock')
   @UseInterceptors(EndorsementListInterceptor)
-  @HasAccessGroup(AccessGroup.Admin)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })
