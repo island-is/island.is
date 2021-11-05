@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   FormFooter,
   PageLayout,
@@ -23,6 +22,7 @@ import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import OverviewForm from './OverviewForm'
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+import { isOverviewStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const JudgeOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -88,15 +88,13 @@ export const JudgeOverview: React.FC = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.JUDGE_OVERVIEW}
       isLoading={loading}
       notFound={data?.case === undefined}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -116,12 +114,7 @@ export const JudgeOverview: React.FC = () => {
             <FormFooter
               previousUrl={Constants.REQUEST_LIST_ROUTE}
               nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
-              nextIsDisabled={isNextDisabled([
-                {
-                  value: workingCase.courtCaseNumber ?? '',
-                  validations: ['empty'],
-                },
-              ])}
+              nextIsDisabled={!isOverviewStepValidRC(workingCase)}
             />
           </FormContentContainer>
           <DraftConclusionModal

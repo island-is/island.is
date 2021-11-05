@@ -290,7 +290,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -485,7 +485,6 @@ jobs:
         service:
           - islandis
           - gjafakort
-          - air-discount-scheme
           - identity-auth-api
     steps:
       - uses: actions/checkout@v2

@@ -17,6 +17,7 @@ import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectPros
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
@@ -40,12 +41,11 @@ const StepTwoForm: React.FC<Props> = (props) => {
     transitionLoading,
     user,
   } = props
-  const [arrestDateIsValid, setArrestDateIsValid] = useState(true)
-  const [
-    requestedCourtDateIsValid,
-    setRequestedCourtDateIsValid,
-  ] = useState<boolean>(workingCase.requestedCourtDate !== null)
-  const [selectedCourt, setSelectedCourt] = useState<string>()
+  const [, setArrestDateIsValid] = useState(true)
+  const [, setRequestedCourtDateIsValid] = useState<boolean>(
+    workingCase.requestedCourtDate !== null,
+  )
+  const [, setSelectedCourt] = useState<string>()
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
   const {
@@ -178,10 +178,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.STEP_ONE_ROUTE}/${workingCase.id}`}
           onNextButtonClick={async () => await handleNextButtonClick()}
           nextIsDisabled={
-            transitionLoading ||
-            !arrestDateIsValid ||
-            (!workingCase.court && !selectedCourt) ||
-            !requestedCourtDateIsValid
+            !isHearingArrangementsStepValidRC(workingCase) || transitionLoading
           }
           nextIsLoading={transitionLoading}
         />

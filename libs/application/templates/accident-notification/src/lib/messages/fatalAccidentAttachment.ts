@@ -10,9 +10,9 @@ export const fatalAccidentAttachment = {
     sectionDescription: {
       id: 'an.application:fatalAccidentAttachment.general.sectionDescription',
       defaultMessage:
-        'Þegar um banaslys er að ræða er nauðsynlegt að skila inn dánarvottorði frá sýslumanni svo að Sjúkratryggingar Ísland getur unnið úr umsókn.',
+        'Þegar um banaslys er að ræða er nauðsynlegt að skila inn lögregluskýrslu svo að Sjúkratryggingar Ísland getur unnið úr umsókn.',
       description:
-        'In the case of a fatal accident, it is necessary to submit a death certificate from the district commissioner so that Sjúkratryggingar Ísland can process the application.',
+        'In the case of a fatal accident, it is necessary to submit a police report so that Sjúkratryggingar Ísland can process the application.',
     },
   }),
   labels: defineMessages({
@@ -24,9 +24,9 @@ export const fatalAccidentAttachment = {
     description: {
       id: 'an.application:fatalAccidentAttachment.general.sectionDescription',
       defaultMessage:
-        'Þegar um banaslys er að ræða er nauðsynlegt að skila inn dánarvottorði frá sýslumanni svo að Sjúkratryggingar Ísland getur unnið úr umsókn.',
+        'Þegar um banaslys er að ræða er nauðsynlegt að skila inn lögregluskýrslu svo að Sjúkratryggingar Ísland getur unnið úr umsókn.',
       description:
-        'In the case of a fatal accident, it is necessary to submit a death certificate from the district commissioner so that Sjúkratryggingar Ísland can process the application.',
+        'In the case of a fatal accident, it is necessary to submit a police report so that Sjúkratryggingar Ísland can process the application.',
     },
   }),
   options: defineMessages({
