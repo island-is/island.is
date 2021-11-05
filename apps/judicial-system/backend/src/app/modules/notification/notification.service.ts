@@ -522,9 +522,9 @@ export class NotificationService {
 
   /* RULING notifications */
 
-  private async sendRulingEmailNotificationToProsecutorAndPrison(
+  private async sendRulingEmailNotificationToPrison(
     existingCase: Case,
-  ): Promise<Recipient[]> {
+  ): Promise<Recipient> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
     const html = formatPrisonRulingEmailNotification(existingCase.courtEndTime)
 
@@ -541,22 +541,13 @@ export class NotificationService {
       ]
     }
 
-    return Promise.all([
-      this.sendEmail(
-        existingCase.prosecutor?.name,
-        existingCase.prosecutor?.email,
-        subject,
-        html,
-        attachments,
-      ),
-      this.sendEmail(
-        'Gæsluvarðhaldsfangelsi',
-        environment.notifications.prisonEmail,
-        subject,
-        html,
-        attachments,
-      ),
-    ])
+    return this.sendEmail(
+      'Gæsluvarðhaldsfangelsi',
+      environment.notifications.prisonEmail,
+      subject,
+      html,
+      attachments,
+    )
   }
 
   private async sendRulingEmailNotificationToPrisonAdministration(
@@ -580,7 +571,7 @@ export class NotificationService {
       'Sjá viðhengi',
       [
         {
-          filename: `Þingbók án úrskurður ${existingCase.courtCaseNumber}.pdf`,
+          filename: `Þingbók án úrskurðar ${existingCase.courtCaseNumber}.pdf`,
           content: pdf,
           encoding: 'binary',
         },
@@ -608,9 +599,7 @@ export class NotificationService {
       existingCase.decision === CaseDecision.ACCEPTING
     ) {
       recipients.concat(
-        await this.sendRulingEmailNotificationToProsecutorAndPrison(
-          existingCase,
-        ),
+        await this.sendRulingEmailNotificationToPrison(existingCase),
       )
     }
 

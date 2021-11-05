@@ -33,7 +33,7 @@ const Approved = ({
       </Text>
       {isApplicant ? (
         <Text as="h3" variant="h3" marginBottom={2}>
-          Veitt aðstoð{amount?.toLocaleString('de-DE') + ' kr.'}
+          Veitt aðstoð {amount?.toLocaleString('de-DE') + ' kr.'}
         </Text>
       ) : (
         <Text variant="intro">
