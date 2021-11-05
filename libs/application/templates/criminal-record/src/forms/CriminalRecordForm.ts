@@ -13,6 +13,9 @@ import {
   FormModes,
   FormValue,
   buildFileUploadField,
+  buildExternalDataProvider,
+  buildDataProviderItem,
+  buildCustomField,
 } from '@island.is/application/core'
 import { ApiActions } from '../shared'
 import { m } from '../lib/messages'
@@ -23,157 +26,90 @@ export const CriminalRecordForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'conditions',
-      title: m.conditionsSection,
-      children: [],
-    }),
-    buildSection({
-      id: 'intro',
-      title: m.introSection,
+      id: 'externalData',
+      title: m.externalDataSection,
       children: [
-        buildDescriptionField({
-          id: 'field',
-          title: m.introField,
-          description: (application) => ({
-            ...m.introIntroduction,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            values: { name: application.answers.name },
-          }),
-        }),
-        buildMultiField({
-          id: 'about',
-          title: m.about,
-          children: [
-            buildTextField({
-              id: 'person.name',
-              title: m.name,
+        buildExternalDataProvider({
+          title: m.externalDataTitle,
+          id: 'approveExternalData',
+          subTitle: m.externalDataSubTitle,
+          checkboxLabel: m.externalDataAgreement,
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: m.nationalRegistryTitle,
+              subTitle: m.nationalRegistrySubTitle,
             }),
-            buildTextField({
-              id: 'person.nationalId',
-              title: m.nationalId,
-              width: 'half',
+            buildDataProviderItem({
+              id: 'userProfile',
+              type: 'UserProfileProvider',
+              title: m.userProfileInformationTitle,
+              subTitle: m.userProfileInformationSubTitle,
             }),
-            buildTextField({
-              id: 'person.age',
-              title: m.age,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'person.email',
-              title: m.email,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'person.phoneNumber',
-              title: m.phoneNumber,
-              width: 'half',
-              condition: {
-                questionId: 'person.age',
-                isMultiCheck: false,
-                comparator: Comparators.GTE,
-                value: '18',
-              },
-            }),
-          ],
-        }),
-        buildFileUploadField({
-          id: 'attachments',
-          title: 'Viðhengi',
-          introduction: 'Hér getur þú bætt við viðhengjum við umsóknina þína.',
-          uploadMultiple: true,
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'career',
-      title: m.career,
-      children: [
-        buildSubSection({
-          id: 'history',
-          title: m.history,
-          children: [
-            buildRadioField({
-              id: 'careerHistory',
-              title: m.careerHistory,
-              options: [
-                { value: 'yes', label: m.yesOptionLabel },
-                { value: 'no', label: m.noOptionLabel },
-              ],
-              condition: (formValue: FormValue) => {
-                return (
-                  (formValue as { person: { age: string } })?.person?.age >=
-                  '18'
-                )
-              },
-            }),
-            buildCheckboxField({
-              id: 'careerHistoryCompanies',
-              title: m.careerHistoryCompanies,
-              options: [
-                { value: 'government', label: m.governmentOptionLabel },
-                { value: 'aranja', label: 'Aranja' },
-                { value: 'advania', label: 'Advania' },
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'future',
-          title: m.future,
-          children: [
-            buildTextField({
-              id: 'dreamJob',
-              title: m.dreamJob,
+            // buildDataProviderItem({
+            //   id: 'currentLicense',
+            //   type: 'CurrentLicenseProvider',
+            //   title: m.infoFromLicenseRegistry,
+            //   subTitle: m.confirmationStatusOfEligability,
+            // }),
+            // buildDataProviderItem({
+            //   id: 'juristictions',
+            //   type: 'JuristictionProvider',
+            //   title: '',
+            // }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'FeeInfoProvider',
+              title: '',
             }),
           ],
         }),
       ],
     }),
     buildSection({
-      id: 'confirmation',
-      title: 'Staðfesta',
+      id: 'awaitingPayment',
+      title: m.paymentCapital,
       children: [
-        buildMultiField({
-          title: '',
-          children: [
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: 'Senda inn umsókn',
-              actions: [
-                { event: 'SUBMIT', name: 'Senda inn umsókn', type: 'primary' },
-              ],
-            }),
-            buildDescriptionField({
-              id: 'overview',
-              title: 'Takk fyrir að sækja um',
-              description:
-                'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
-            }),
-          ],
-        }),
+        // TODO: ekki tókst að stofna til greiðslu skjár - condition
         buildDescriptionField({
-          id: 'final',
-          title: 'Takk',
-          description: (application) => {
-            const sendApplicationActionResult =
-              application.externalData[ApiActions.createApplication]
-
-            let id = 'unknown'
-            if (sendApplicationActionResult) {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              id = sendApplicationActionResult.data.id
-            }
-
-            return {
-              ...m.outroMessage,
-              values: {
-                id,
-              },
-            }
+          id: 'infoAwaitingPayment',
+          title: m.paymentCapital,
+          condition: () => {
+            return !window.document.location.href.match(/\?done$/)
           },
+          description: (application) => {
+            const { paymentUrl } = application.externalData.createCharge
+              .data as { paymentUrl: string }
+
+            if (!paymentUrl) {
+              throw new Error()
+            }
+
+            const returnUrl = window.document.location.href
+            const redirectUrl = `${paymentUrl}&returnURL=${encodeURIComponent(
+              returnUrl + '?done',
+            )}`
+            window.document.location.href = redirectUrl
+
+            return m.forwardingToPayment
+          },
+        }),
+        buildMultiField({
+          condition: () => {
+            return !!window.document.location.href.match(/\?done$/)
+          },
+          id: 'overviewAwaitingPayment',
+          title: '',
+          space: 1,
+          description: '',
+          children: [
+            buildCustomField({
+              component: 'ExamplePaymentPendingField',
+              id: 'paymentPendingField',
+              title: '',
+            }),
+          ],
         }),
       ],
     }),

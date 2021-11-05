@@ -3,4 +3,6 @@ export enum ApiActions {
   doStuffThatFails = 'doStuffThatFails',
   completeApplication = 'completeApplication',
   sendApplication = 'sendApplication',
+  submitApplication = 'submitApplication',
+  createCharge = 'createCharge',
 }

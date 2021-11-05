@@ -82,8 +82,8 @@ const chooseDistrictCommissionerDescription = ({
 }
 
 export const getApplication = (
-  allowFakeData = false,
-  allowPickLicense = false,
+  allowFakeData = true,
+  allowPickLicense = true,
 ): Form => {
   const allowLicenseSelection = () => allowPickLicense
 
