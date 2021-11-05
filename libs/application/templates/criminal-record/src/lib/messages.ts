@@ -1,29 +1,95 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
-  conditionsSection: {
-    id: 'example.application:conditions.section',
-    defaultMessage: 'Skilyrði',
+  externalDataSection: {
+    id: 'cr.application:externalData.section',
+    defaultMessage: 'Gagnaöflun',
     description: 'Some description',
   },
-  institutionName: {
-    id: 'example.application.institution',
-    defaultMessage: 'Institution reference',
-    description: `Institution's name`,
+  externalDataTitle: {
+    id: 'cr.application.externalData.title',
+    defaultMessage: 'Umsókn um sakaskrá',
+    description: 'Title of the application',
+  },
+  externalDataSubTitle: {
+    id: 'cr.application.externalData.title',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
+    description: 'he following data will be retrieved electronically',
+  },
+  externalDataAgreement: {
+    id: 'cr.application:externalData.agreement',
+    defaultMessage: 'Ég hef kynnt mér ofangreint',
+    description: 'I understand',
+  },
+  nationalRegistryTitle: {
+    id: 'cr.application:nationalRegistry.title',
+    defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
+    description: 'Personal information from the National Registry',
+  },
+  nationalRegistrySubTitle: {
+    id: 'cr.application:nationalRegistry.subTitle',
+    defaultMessage:
+      'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
+    description:
+      'Information from the National Registry will be used to prefill the data in the application',
+  },
+  userProfileInformationTitle: {
+    id: 'cr.application:userprofile.title',
+    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+    description: 'Your user profile information',
+  },
+  userProfileInformationSubTitle: {
+    id: 'cr.application:userprofile.subTitle',
+    defaultMessage:
+      'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
+    description:
+      'In order to apply for this application we need your email and phone number',
+  },
+  actionCardDraft: {
+    id: 'cr.application:actionCardDraft',
+    defaultMessage: 'Í vinnslu',
+    description:
+      'Description of application state/status when the application is in progress',
+  },
+  actionCardPayment: {
+    id: 'cr.application:actionCardPayment',
+    defaultMessage: 'Greiðslu vantar',
+    description:
+      'Description of application state/status when payment is pending',
+  },
+  payment: {
+    id: 'cr.application:DrivingLicenseApplicationPaymentForm',
+    defaultMessage: 'greiðsla',
+    description: 'payment',
+  },
+  paymentCapital: {
+    id: 'cr.application:awaitingPayment',
+    defaultMessage: 'Staðfesting á greiðslu',
+    description: 'Payment',
+  },
+  forwardingToPayment: {
+    id: 'cr.application:forwardingToPayment',
+    defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
+    description: 'Forwarding you to payment handler...',
   },
   name: {
-    id: 'example.application:name',
+    id: 'cr.application:name',
     defaultMessage: 'Umsókn um sakavottorð',
     description: `Application's name`,
   },
+  institutionName: {
+    id: 'cr.application.institution',
+    defaultMessage: 'Sýslumenn',
+    description: `Institution's name`,
+  },
   draftTitle: {
-    id: 'example.application:draft.title',
+    id: 'cr.application:draft.title',
     defaultMessage: 'Drög',
     description: 'First state title',
   },
   draftDescription: {
     id: 'example.application:draft.description',
-    defaultMessage: 'Notendur hafa ekkert að gera á þessu stigi',
+    defaultMessage: 'Á eftir að samþykkja gagnaöflun',
     description: 'Description of the state',
   },
   introSection: {
