@@ -62,8 +62,6 @@ export class EndorsementController {
     private readonly auditService: AuditService,
   ) {}
 
-
-
   @ApiOperation({
     summary: 'Emails a PDF with list endorsements data',
   })

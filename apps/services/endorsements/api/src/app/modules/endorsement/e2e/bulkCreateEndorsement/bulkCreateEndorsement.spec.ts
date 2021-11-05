@@ -9,7 +9,6 @@ import {
 import { INestApplication } from '@nestjs/common'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 
-
 // let app: INestApplication
 
 // beforeAll(async () => {
