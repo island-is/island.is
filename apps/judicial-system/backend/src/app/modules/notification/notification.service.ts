@@ -35,6 +35,7 @@ import {
   getCustodyNoticePdfAsString,
   formatProsecutorReceivedByCourtSmsNotification,
   getRulingPdfAsString,
+  formatCourtResubmittedToCourtSmsNotification,
 } from '../../formatters'
 import { Case } from '../case'
 import { CourtService } from '../court'
@@ -271,6 +272,19 @@ export class NotificationService {
     )
   }
 
+  private sendResubmittedToCourtSmsNotificationToCourt(
+    existingCase: Case,
+  ): Promise<Recipient> {
+    const smsText = formatCourtResubmittedToCourtSmsNotification(
+      existingCase.courtCaseNumber,
+    )
+
+    return this.sendSms(
+      this.getCourtMobileNumber(existingCase.courtId),
+      smsText,
+    )
+  }
+
   private async sendReadyForCourtEmailNotificationToProsecutor(
     existingCase: Case,
   ): Promise<Recipient> {
@@ -330,8 +344,15 @@ export class NotificationService {
       this.uploadRequestPdfToCourt(existingCase)
     }
 
-    // Notify the court only once
-    if (!notificaion) {
+    if (notificaion) {
+      if (existingCase.courtCaseNumber) {
+        promises.push(
+          this.sendResubmittedToCourtSmsNotificationToCourt(existingCase),
+        )
+      }
+
+      this.eventService.postEvent(CaseEvent.RESUBMIT, existingCase)
+    } else {
       promises.push(this.sendReadyForCourtSmsNotificationToCourt(existingCase))
     }
 
@@ -493,7 +514,7 @@ export class NotificationService {
     )
 
     if (result.notificationSent) {
-      this.eventService.postEvent(CaseEvent.COURT_DATE, existingCase)
+      this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, existingCase)
     }
 
     return result
@@ -501,9 +522,9 @@ export class NotificationService {
 
   /* RULING notifications */
 
-  private async sendRulingEmailNotificationToProsecutorAndPrison(
+  private async sendRulingEmailNotificationToPrison(
     existingCase: Case,
-  ): Promise<Recipient[]> {
+  ): Promise<Recipient> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
     const html = formatPrisonRulingEmailNotification(existingCase.courtEndTime)
 
@@ -520,22 +541,13 @@ export class NotificationService {
       ]
     }
 
-    return Promise.all([
-      this.sendEmail(
-        existingCase.prosecutor?.name,
-        existingCase.prosecutor?.email,
-        subject,
-        html,
-        attachments,
-      ),
-      this.sendEmail(
-        'Gæsluvarðhaldsfangelsi',
-        environment.notifications.prisonEmail,
-        subject,
-        html,
-        attachments,
-      ),
-    ])
+    return this.sendEmail(
+      'Gæsluvarðhaldsfangelsi',
+      environment.notifications.prisonEmail,
+      subject,
+      html,
+      attachments,
+    )
   }
 
   private async sendRulingEmailNotificationToPrisonAdministration(
@@ -559,7 +571,7 @@ export class NotificationService {
       'Sjá viðhengi',
       [
         {
-          filename: `Þingbók án úrskurður ${existingCase.courtCaseNumber}.pdf`,
+          filename: `Þingbók án úrskurðar ${existingCase.courtCaseNumber}.pdf`,
           content: pdf,
           encoding: 'binary',
         },
@@ -582,11 +594,12 @@ export class NotificationService {
       ),
     ]
 
-    if (existingCase.type === CaseType.CUSTODY) {
+    if (
+      existingCase.type === CaseType.CUSTODY &&
+      existingCase.decision === CaseDecision.ACCEPTING
+    ) {
       recipients.concat(
-        await this.sendRulingEmailNotificationToProsecutorAndPrison(
-          existingCase,
-        ),
+        await this.sendRulingEmailNotificationToPrison(existingCase),
       )
     }
 

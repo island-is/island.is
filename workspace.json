@@ -1961,7 +1961,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/accident-notification/src/lib/messages/index.ts"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/accident-notification/src/lib/messages/*.ts'"
           }
         }
       }
@@ -3336,6 +3336,33 @@
           "options": {
             "jestConfig": "libs/clients/finance/jest.config.js",
             "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-health-insurance-v2": {
+      "root": "libs/clients/health-insurance-v2",
+      "sourceRoot": "libs/clients/health-insurance-v2/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/health-insurance-v2/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/health-insurance-v2"],
+          "options": {
+            "jestConfig": "libs/clients/health-insurance-v2/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/health-insurance-v2/gen/fetch -i libs/clients/health-insurance-v2/src/openapi.yml"
           }
         }
       }

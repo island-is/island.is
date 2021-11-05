@@ -67,6 +67,13 @@ export class AidModel extends Model<Aid> {
   unknown: number
 
   @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  @ApiProperty()
+  withOthers: number
+
+  @Column({
     type: DataType.ENUM,
     allowNull: false,
     values: Object.values(AidType),

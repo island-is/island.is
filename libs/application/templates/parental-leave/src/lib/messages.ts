@@ -277,6 +277,33 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Lokadagur þinn er:',
       description: 'Your end day is:',
     },
+    transferRightsTitle: {
+      id: 'pl.application:transferRights.title',
+      defaultMessage: 'Tilfærsla réttinda',
+      description: 'Transferal of rights',
+    },
+    transferRightsDescription: {
+      id: 'pl.application:transferRights.description',
+      defaultMessage:
+        'Hægt er að færa allt að 45 daga á milli foreldra. Athugaðu að ef þú óskar eftir dögum þá þarf hitt foreldrið að samþykkja það.',
+      description:
+        'You can transfer up to {days} between parents. Note that if you choose to request days then the other parent will need to approve it.',
+    },
+    transferRightsNone: {
+      id: 'pl.application:transferRights.option.none',
+      defaultMessage: 'Ég vil ekki færa daga',
+      description: 'I do not want to transfer days',
+    },
+    transferRightsRequest: {
+      id: 'pl.application:transferRights.option.request',
+      defaultMessage: 'Ég vil óska eftir dögum frá hinu foreldrinu',
+      description: 'I want to request days from the other parent',
+    },
+    transferRightsGive: {
+      id: 'pl.application:transferRights.option.give',
+      defaultMessage: 'Ég vil færa daga yfir á hitt foreldrið',
+      description: 'I want to give days to the other parent',
+    },
     rightsTotalSmallPrint: {
       id: 'pl.application:months.total.smallprint',
       defaultMessage:
@@ -1565,7 +1592,7 @@ export const errorMessages = defineMessages({
       'Copy for when user has not chosen how to end a period (length or specific date)',
   },
   periodsEndDateDefinitionInvalid: {
-    id: 'pl.application:answerValidators.periodsEndDateDefinitionMissing',
+    id: 'pl.application:answerValidators.periodsEndDateDefinitionInvalid',
     defaultMessage: 'Ógild skilgreining á endalokum tímabils.',
     description:
       'Copy for when user has chosen how to end a period but it was an invalid choice',

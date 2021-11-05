@@ -1,9 +1,10 @@
 import { DynamicModule } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
-import { FileStorageModule } from '@island.is/file-storage'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import { AccidentNotificationService } from './accident-notification.service'
+import { HealthInsuranceV2Client } from '@island.is/clients/health-insurance-v2'
+import { AttachmentProvider } from './accident-notification-attachments.provider'
 
 const applicationRecipientName =
   process.env.ACCIDENT_NOTIFICATION_APPLICATION_RECIPIENT_NAME ?? ''
@@ -22,9 +23,10 @@ export class AccidentNotificationModule {
       module: AccidentNotificationModule,
       imports: [
         SharedTemplateAPIModule.register(config),
-        FileStorageModule.register({}),
+        HealthInsuranceV2Client.register(config.healthInsuranceV2),
       ],
       providers: [
+        AttachmentProvider,
         {
           provide: ACCIDENT_NOTIFICATION_CONFIG,
           useValue: {

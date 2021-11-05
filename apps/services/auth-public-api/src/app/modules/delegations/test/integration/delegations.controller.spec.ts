@@ -76,7 +76,7 @@ describe('DelegationsController with auth', () => {
 
       // Act
       const response = await request(app.getHttpServer())
-        .post('/public/v1/delegations')
+        .post('/v1/delegations')
         .send(payload)
 
       // Assert
@@ -125,7 +125,7 @@ describe('DelegationsController without auth', () => {
 
       // Act
       const response = await request(app.getHttpServer())
-        .post('/public/v1/delegations')
+        .post('/v1/delegations')
         .send(payload)
 
       // Assert

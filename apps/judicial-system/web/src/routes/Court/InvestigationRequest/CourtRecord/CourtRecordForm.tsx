@@ -29,6 +29,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
@@ -38,10 +39,7 @@ interface Props {
 
 const CourtRecordForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
-  const [
-    courtRecordStartDateIsValid,
-    setCourtRecordStartDateIsValid,
-  ] = useState(true)
+  const [, setCourtRecordStartDateIsValid] = useState(true)
   const [courtLocationEM, setCourtLocationEM] = useState('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
   const [
@@ -64,11 +62,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
     },
   }
 
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
+  useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   return (
     <>
@@ -329,7 +323,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isValid || !courtRecordStartDateIsValid}
+          nextIsDisabled={!isCourtRecordStepValidIC(workingCase)}
         />
       </FormContentContainer>
     </>

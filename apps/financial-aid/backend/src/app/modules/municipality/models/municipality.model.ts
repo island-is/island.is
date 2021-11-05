@@ -54,7 +54,7 @@ export class MunicipalityModel extends Model<Municipality> {
     allowNull: true,
   })
   @ApiProperty()
-  homepage: string
+  homepage?: string
 
   @ForeignKey(() => AidModel)
   @Column({
@@ -93,5 +93,12 @@ export class MunicipalityModel extends Model<Municipality> {
     allowNull: true,
   })
   @ApiProperty()
-  email: string
+  email?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  rulesHomepage?: string
 }

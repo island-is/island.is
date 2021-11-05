@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { ApplicationModel } from './models'
+import { ApplicationModel, SpouseResponse } from './models'
 
 import { Op } from 'sequelize'
 
@@ -17,6 +17,7 @@ import {
   User,
   getEmailTextFromState,
   Staff,
+  FileType,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -36,7 +37,7 @@ interface Recipient {
 }
 
 const linkToStatusPage = (applicationId: string) => {
-  return `<a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${applicationId}" target="_blank"> Getur kíkt á stöðu síðuna þína hér</a>`
+  return `<a href="https://fjarhagsadstod.dev.sveitarfelog.net/stada/${applicationId}" target="_blank"> Getur kíkt á stöðusíðuna þína hér</a>`
 }
 
 const firstDateOfMonth = () => {
@@ -55,18 +56,7 @@ export class ApplicationService {
     private readonly emailService: EmailService,
   ) {}
 
-  async hasAccessToApplication(
-    nationalId: string,
-    id: string,
-  ): Promise<boolean> {
-    const hasApplication = await this.applicationModel.findOne({
-      where: { id, nationalId },
-    })
-
-    return Boolean(hasApplication)
-  }
-
-  async hasSpouseApplied(spouseNationalId: string): Promise<boolean> {
+  async getSpouseInfo(spouseNationalId: string): Promise<SpouseResponse> {
     const application = await this.applicationModel.findOne({
       where: {
         spouseNationalId,
@@ -74,10 +64,20 @@ export class ApplicationService {
       },
     })
 
-    return Boolean(application)
+    const files = application
+      ? await this.fileService.getApplicationFilesByType(
+          application.id,
+          FileType.SPOUSEFILES,
+        )
+      : false
+
+    return {
+      hasPartnerApplied: Boolean(application),
+      hasFiles: Boolean(files),
+    }
   }
 
-  async getCurrentApplication(nationalId: string): Promise<string | null> {
+  async getCurrentApplicationId(nationalId: string): Promise<string | null> {
     const currentApplication = await this.applicationModel.findOne({
       where: {
         [Op.or]: [

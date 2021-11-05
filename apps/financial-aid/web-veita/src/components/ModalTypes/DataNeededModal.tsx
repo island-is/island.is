@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 
 import { InputModal } from '@island.is/financial-aid-web/veita/src/components'
-import { Input, Text, Box } from '@island.is/island-ui/core'
-import cn from 'classnames'
+import { Input, Box } from '@island.is/island-ui/core'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
