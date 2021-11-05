@@ -181,5 +181,6 @@ module.exports = {
     '<rootDir>/libs/skilavottord/types',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
+    '<rootDir>/libs/nest/config',
   ],
 }

@@ -516,6 +516,9 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-config": {
+      "tags": []
+    },
     "nest-pagination": {
       "tags": []
     },
