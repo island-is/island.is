@@ -118,7 +118,6 @@ module.exports = {
     '<rootDir>/libs/clients/documents',
     '<rootDir>/libs/clients/finance',
     '<rootDir>/libs/clients/health-insurance-v2',
-    '<rootDir>/libs/clients/health-insurance-v2',
     '<rootDir>/libs/clients/middlewares',
     '<rootDir>/libs/clients/mms',
     '<rootDir>/libs/clients/mms',

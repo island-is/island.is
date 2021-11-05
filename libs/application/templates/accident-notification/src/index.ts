@@ -7,6 +7,7 @@ export const getDataProviders = () => import('./dataProviders/')
 export const getFields = () => import('./fields')
 
 export * from './types'
+export * from './shared'
 
 export type AccidentNotificationAnswers = AccidentNotification
 

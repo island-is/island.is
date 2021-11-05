@@ -34,7 +34,7 @@ import {
   newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { validate } from '../../../../utils/validate'
+import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import {
   rcCourtRecord as m,
   closedCourt,
@@ -43,10 +43,7 @@ import { parseString } from '@island.is/judicial-system-web/src/utils/formatters
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [
-    courtRecordStartDateIsValid,
-    setCourtRecordStartDateIsValid,
-  ] = useState(true)
+  const [, setCourtRecordStartDateIsValid] = useState(true)
   const [courtLocationErrorMessage, setCourtLocationMessage] = useState('')
   const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] = useState(
     '',
@@ -154,15 +151,13 @@ export const CourtRecord: React.FC = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.COURT_RECORD}
       isLoading={loading}
       notFound={data?.case === undefined}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -431,14 +426,7 @@ export const CourtRecord: React.FC = () => {
             <FormFooter
               previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
               nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
-              nextIsDisabled={
-                !courtRecordStartDateIsValid ||
-                !validate(workingCase.courtLocation ?? '', 'empty').isValid ||
-                !validate(workingCase.prosecutorDemands ?? '', 'empty')
-                  .isValid ||
-                !validate(workingCase.litigationPresentations ?? '', 'empty')
-                  .isValid
-              }
+              nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
             />
           </FormContentContainer>
         </>

@@ -38,12 +38,14 @@ const RepresentativeInfo = z.object({
   phoneNumber: z.string().optional(),
 })
 
-const CompanyInfo = z.object({
-  name: z.string().min(1),
-  nationalRegistrationId: z
-    .string()
-    .refine((x) => (x ? kennitala.isCompany(x) : false)),
-})
+const CompanyInfo = z
+  .object({
+    name: z.string().min(1),
+    nationalRegistrationId: z
+      .string()
+      .refine((x) => (x ? kennitala.isCompany(x) : false)),
+  })
+  .optional()
 
 export const AccidentNotificationSchema = z.object({
   representative: RepresentativeInfo,
@@ -262,6 +264,7 @@ export const AccidentNotificationSchema = z.object({
   overview: z.object({
     custom: z.string().optional(),
   }),
+
   assigneeComment: z.string().optional(),
   reviewApproval: z
     .enum([
@@ -270,6 +273,7 @@ export const AccidentNotificationSchema = z.object({
       ReviewApprovalEnum.NOTREVIEWED,
     ])
     .refine((x) => (x ? x : ReviewApprovalEnum.NOTREVIEWED)),
+  reviewComment: z.string().optional(),
 })
 
 export type AccidentNotification = z.TypeOf<typeof AccidentNotificationSchema>

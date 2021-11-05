@@ -42,15 +42,12 @@ export class AccidentNotificationService {
     const attachments = await this.attachmentProvider.gatherAllAttachments(
       application,
     )
-
     const answers = application.answers as AccidentNotificationAnswers
     const xml = applictionAnswersToXml(answers, attachments)
-
     try {
       const { ihiDocumentID } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
       })
-
       await this.sharedTemplateAPIService.sendEmail(
         (props) =>
           generateConfirmationEmail(
@@ -61,7 +58,6 @@ export class AccidentNotificationService {
           ),
         application,
       )
-      //stop application from being submitted
       // Request representative review when applicable
       if (shouldRequestReview) {
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
@@ -115,17 +111,15 @@ export class AccidentNotificationService {
         application.answers,
         'reviewApproval',
       ) as ReviewApprovalEnum
-
+      const reviewComment =
+        getValueViaPath(application.answers, 'reviewComment') || ''
       await this.documentApi.documentSendConfirmation({
         ihiDocumentID: documentId,
         confirmationIN: {
           confirmationType:
             reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
           confirmationParty: isRepresentativeOfCompanyOrInstitue ? 2 : 1,
-          objection: getValueViaPath(
-            application.answers,
-            'assigneeComment',
-          ) as string,
+          objection: reviewComment as string,
         },
       })
     } catch (e) {
