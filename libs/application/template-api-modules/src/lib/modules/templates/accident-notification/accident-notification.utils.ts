@@ -133,11 +133,12 @@ const accident = (answers: AccidentNotificationAnswers): Slys => {
     banaslys: yesOrNoToNumber(answers.wasTheAccidentFatal),
     bilslys: yesOrNoToNumber(answers.carAccidentHindrance),
     stadurslysseferindi: answers.locationAndPurpose?.location ?? '',
-    lysingerindis:
-      accidentLocationLabelMapper[
-        answers.accidentLocation
-          .answer as keyof typeof accidentLocationLabelMapper
-      ],
+    lysingerindis: answers.accidentLocation
+      ? accidentLocationLabelMapper[
+          answers.accidentLocation
+            .answer as keyof typeof accidentLocationLabelMapper
+        ]
+      : '',
   }
 
   switch (answers.accidentType.radioButton) {
