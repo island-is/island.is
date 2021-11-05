@@ -8,9 +8,9 @@ import { restrictions as m } from '@island.is/judicial-system-web/messages'
 
 export const restrictions = [
   {
-    title: 'B - Einangrun',
-    id: CaseCustodyRestrictions.ISOLATION,
-    info: m[CaseCustodyRestrictions.ISOLATION],
+    title: 'A - Eigin nauðsynjar',
+    id: CaseCustodyRestrictions.NECESSITIES,
+    info: m[CaseCustodyRestrictions.NECESSITIES],
   },
   {
     title: 'C - Heimsóknarbann',
@@ -26,6 +26,11 @@ export const restrictions = [
     title: 'E - Fjölmiðlabann',
     id: CaseCustodyRestrictions.MEDIA,
     info: m[CaseCustodyRestrictions.MEDIA],
+  },
+  {
+    title: 'F - Vinnubann',
+    id: CaseCustodyRestrictions.WORKBAN,
+    info: m[CaseCustodyRestrictions.WORKBAN],
   },
 ]
 
