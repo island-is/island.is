@@ -899,7 +899,6 @@ export const aboutTheAccidentSection = buildSection({
               id: 'companyInfo.name',
               title: schoolInfo.labels.name,
               backgroundColor: 'blue',
-              format: '######-####',
               required: true,
               width: 'half',
             }),
