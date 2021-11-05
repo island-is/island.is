@@ -24,6 +24,8 @@ export const ApplicationQuery = gql`
       familyStatus
       spouseNationalId
       spouseName
+      spouseEmail
+      spousePhoneNumber
       city
       streetName
       postalCode
