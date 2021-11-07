@@ -6019,6 +6019,27 @@
         }
       }
     },
+    "nest-config": {
+      "root": "libs/nest/config",
+      "sourceRoot": "libs/nest/config/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/config/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/config"],
+          "options": {
+            "jestConfig": "libs/nest/config/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-pagination": {
       "root": "libs/nest/pagination",
       "sourceRoot": "libs/nest/pagination/src",
@@ -9015,27 +9036,6 @@
             "linter": "eslint",
             "tsConfig": ["apps/web-e2e/tsconfig.e2e.json"],
             "exclude": ["**/node_modules/**", "!apps/web-e2e/**/*"]
-          }
-        }
-      }
-    },
-    "nest-config": {
-      "root": "libs/nest/config",
-      "sourceRoot": "libs/nest/config/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/nest/config/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/nest/config"],
-          "options": {
-            "jestConfig": "libs/nest/config/jest.config.js",
-            "passWithNoTests": true
           }
         }
       }

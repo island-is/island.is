@@ -108,7 +108,7 @@ import * as z from 'zod'
 
 const SomeModuleConfig = z.shape({
   url: z.string().url(),
-  secret: z.string().transform(secret => Buffer.from(secret, 'base64')),
+  secret: z.string(),
   ttl: z.number().int().optional(),
 })
 
@@ -125,11 +125,11 @@ export const someModuleConfig = defineConfig({
 
 This is especially useful for a few things:
 
-- Validate that configuration values are set correctly (urls, regex, etc).
-- Validate the type of values parsed by the `*JSON` helpers. In this case, it also provides better TypeScript types for the final configuration object.
-- Transform environment variables as needed before they are used.
+- Validate that configuration values are valid (urls, regex, etc).
+- Validate the type of values parsed by the `*JSON` helpers.
+- Provide better TypeScript types for values parsed by the `*JSON` helpers.
 
-If validation fails in production the process is stopped. In all environments the following is logged:
+If configuration validation fails then the process is stopped with an error similar to this:
 
 ```
 SomeModule is not configured. Validation failed with the following errors:
