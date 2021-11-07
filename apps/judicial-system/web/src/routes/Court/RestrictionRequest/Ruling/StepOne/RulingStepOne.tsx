@@ -30,7 +30,7 @@ import {
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+import { isRulingStepOneValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
@@ -54,8 +54,8 @@ import { rcRulingStepOne as m } from '@island.is/judicial-system-web/messages'
 
 export const RulingStepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [validToDateIsValid, setValidToDateIsValid] = useState<boolean>(true)
-  const [isolationToIsValid, setIsolationToIsValid] = useState<boolean>(true)
+  const [, setValidToDateIsValid] = useState<boolean>(true)
+  const [, setIsolationToIsValid] = useState<boolean>(true)
   const [
     courtCaseFactsErrorMessage,
     setCourtCaseFactsErrorMessage,
@@ -142,15 +142,13 @@ export const RulingStepOne: React.FC = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.RULING_STEP_ONE}
       isLoading={loading}
       notFound={data?.case === undefined}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -446,14 +444,7 @@ export const RulingStepOne: React.FC = () => {
             <FormFooter
               previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
               nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
-              nextIsDisabled={
-                !workingCase.courtCaseFacts ||
-                !workingCase.courtLegalArguments ||
-                !workingCase.decision ||
-                !validate(workingCase.ruling ?? '', 'empty').isValid ||
-                (workingCase.decision !== CaseDecision.REJECTING &&
-                  (!validToDateIsValid || !isolationToIsValid))
-              }
+              nextIsDisabled={!isRulingStepOneValidRC(workingCase)}
             />
           </FormContentContainer>
         </>

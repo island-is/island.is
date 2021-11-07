@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useContext } from 'react'
 import { Box } from '@island.is/island-ui/core'
 
-import * as styles from './ApplicationProfile.css'
+import * as styles from './Profile.css'
 
 import {
   Application,
@@ -15,7 +15,7 @@ import {
 import format from 'date-fns/format'
 
 import {
-  Profile,
+  ProfileUnit,
   StateModal,
   AidAmountModal,
   History,
@@ -129,33 +129,33 @@ const ApplicationProfile = ({
           setIsLoading={setIsLoading}
         />
 
-        <Profile
+        <ProfileUnit
           heading="Umsókn"
           info={applicationInfo}
           className={`contentUp delay-50`}
         />
 
-        <Profile
+        <ProfileUnit
           heading="Umsækjandi"
           info={applicant}
           className={`contentUp delay-75`}
         />
 
         {showSpouseData[application.familyStatus] && (
-          <Profile
+          <ProfileUnit
             heading="Maki"
             info={applicantSpouse}
             className={`contentUp delay-75`}
           />
         )}
 
-        <Profile
+        <ProfileUnit
           heading="Umsóknarferli"
           info={applicantMoreInfo}
           className={`contentUp delay-100`}
         />
 
-        <Profile
+        <ProfileUnit
           heading="Þjóðskrá"
           info={nationalRegistryInfo}
           className={`contentUp delay-100`}

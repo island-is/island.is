@@ -68,15 +68,20 @@ export const addDocuments = {
     },
   }),
   deathCertificate: defineMessages({
+    title: {
+      id: 'an.application:addDocuments.deathCertificateFile.title',
+      defaultMessage: 'Lögregluskýrsla',
+      description: 'Definition of title for police report',
+    },
     uploadHeader: {
       id: 'an.application:addDocuments.deathCertificateFile.uploadHeader',
-      defaultMessage: 'Dragðu dánarvottorð hingað til að hlaða upp',
+      defaultMessage: 'Dragðu lögregluskýrslu hingað til að hlaða upp',
       description: 'Definition of upload header for death certificate',
     },
     uploadIntroduction: {
       id: 'an.application:addDocuments.deathCertificateFile.uploadIntroduction',
-      defaultMessage: `Vinsamlegast bættu við dánarvottorði hér að neðan`,
-      description: 'Upload introduction for death certificate',
+      defaultMessage: `Vinsamlegast bættu við lögregluskýrslu hér að neðan`,
+      description: 'Upload introduction for police report',
     },
   }),
   powerOfAttorney: defineMessages({
