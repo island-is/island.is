@@ -11,15 +11,42 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { AdminContext } from '../AdminProvider/AdminProvider'
 import Link from 'next/link'
+import { useMutation } from '@apollo/client'
+import { UpdateStaffMutation } from '@island.is/financial-aid-web/veita/graphql'
 
 interface PageProps {
   user: Staff
   index: number
+  onStaffUpdated: () => void
+  toast: {
+    error: (message: string) => React.ReactText
+  }
 }
 
-const UsersTableBody = ({ user, index }: PageProps) => {
+const UsersTableBody = ({ user, index, onStaffUpdated, toast }: PageProps) => {
   const { admin } = useContext(AdminContext)
+  const [updateStaff, { loading }] = useMutation(UpdateStaffMutation)
   const isLoggedInUser = admin?.nationalId === user.nationalId
+
+  const changeUserActivity = async (active: boolean) => {
+    return await updateStaff({
+      variables: {
+        input: {
+          id: user.id,
+          active,
+        },
+      },
+    })
+      .then(() => {
+        onStaffUpdated()
+      })
+      .catch(() => {
+        toast.error(
+          'Það mistókst að breyta hlutverki notanda, vinasamlega reynið aftur síðar',
+        )
+      })
+  }
+
   return (
     <Link href={'notendur/' + user.id}>
       <tr
@@ -67,11 +94,27 @@ const UsersTableBody = ({ user, index }: PageProps) => {
             })}
           >
             {user.active ? (
-              <Button variant="text" colorScheme="destructive">
+              <Button
+                onClick={(event) => {
+                  event.stopPropagation()
+                  changeUserActivity(false)
+                }}
+                variant="text"
+                loading={loading}
+                colorScheme="destructive"
+              >
                 Óvirkja
               </Button>
             ) : (
-              <Button variant="text" colorScheme="light">
+              <Button
+                onClick={(event) => {
+                  event.stopPropagation()
+                  changeUserActivity(true)
+                }}
+                variant="text"
+                loading={loading}
+                colorScheme="light"
+              >
                 Virkja
               </Button>
             )}
