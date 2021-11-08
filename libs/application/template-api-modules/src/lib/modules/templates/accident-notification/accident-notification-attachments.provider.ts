@@ -35,8 +35,14 @@ export class AttachmentProvider {
         'attachments.additionalFiles.file',
         AttachmentTypeEnum.ADDITIONAL_FILES,
       )
+      const policeReportFiles = await this.prepareApplicationAttachments(
+        application,
+        'attachments.deathCertificateFile.file',
+        AttachmentTypeEnum.POLICE_REPORT,
+      )
 
       return [
+        ...policeReportFiles,
         ...injuryCertificateFile,
         ...powerOfAttorneyFile,
         ...additionalFiles,

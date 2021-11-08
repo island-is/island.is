@@ -15,12 +15,14 @@ const MunicipalityQuery = gql`
       active
       municipalityId
       email
+      rulesHomepage
       individualAid {
         ownPlace
         registeredRenting
         unregisteredRenting
         livesWithParents
         unknown
+        withOthers
         type
       }
       cohabitationAid {
@@ -29,6 +31,7 @@ const MunicipalityQuery = gql`
         unregisteredRenting
         livesWithParents
         unknown
+        withOthers
         type
       }
     }
@@ -39,6 +42,9 @@ export const useMunicipality = () => {
   const storageKey = 'currentMunicipality'
 
   const [municipality, setScopedMunicipality] = useState<Municipality>()
+
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(undefined)
 
   const getMunicipality = useAsyncLazyQuery<
     {
@@ -57,17 +63,30 @@ export const useMunicipality = () => {
 
   const setMunicipality = async (municipalityId: string) => {
     try {
-      const { data } = await getMunicipality({
+      setError(undefined)
+      setLoading(true)
+      return await getMunicipality({
         input: { id: municipalityId },
+      }).then((res) => {
+        setScopedMunicipality(res.data?.municipality)
+        sessionStorage.setItem(
+          storageKey,
+          JSON.stringify(res.data?.municipality),
+        )
+        setLoading(false)
+        return res.data?.municipality
       })
-
-      setScopedMunicipality(data?.municipality)
-      sessionStorage.setItem(storageKey, JSON.stringify(data?.municipality))
-      return data?.municipality
-    } catch {
+    } catch (error) {
+      setError(error)
+      setLoading(false)
       return undefined
     }
   }
 
-  return { municipality, setMunicipality }
+  return {
+    municipality,
+    setMunicipality,
+    error,
+    loading,
+  }
 }

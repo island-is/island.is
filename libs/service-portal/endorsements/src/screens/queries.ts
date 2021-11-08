@@ -148,6 +148,14 @@ export const EndorseList = gql`
   }
 `
 
+export const SendEmailPdf = gql`
+  mutation Mutants($input: sendPdfEmailInput!) {
+    endorsementSystemsendPdfEmail(input: $input) {
+      success
+    }
+  }
+`
+
 export const EndorsementListsUserOwns = gql`
   query endorsementSystemUserEndorsementLists(
     $input: PaginatedEndorsementListInput!
@@ -302,6 +310,7 @@ export const useGetSinglePetitionEndorsements = (listId: string) => {
     variables: {
       input: {
         listId: listId,
+        limit: 20,
       },
     },
     pollInterval: 20000,
