@@ -241,6 +241,13 @@
             "cwd": "apps/air-discount-scheme/backend"
           }
         },
+        "seed": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "sequelize-cli db:seed:all",
+            "cwd": "apps/air-discount-scheme/backend"
+          }
+        },
         "docker-express": {}
       }
     },
