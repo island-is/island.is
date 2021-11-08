@@ -41,6 +41,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   type: ApplicationTypes.ACCIDENT_NOTIFICATION,
   name: application.general.name,
   institution: application.general.institutionName,
+  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.AccidentNotification.translation,
   ],
@@ -54,8 +55,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           progress: 0.2,
           lifecycle: {
             shouldBeListed: true,
-            shouldBePruned: false,
-            // whenToPrune: 3600 * 1000,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
           },
           roles: [
             {
