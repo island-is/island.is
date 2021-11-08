@@ -79,6 +79,10 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Umsókn um sakavottorð',
+          onEntry: {
+            apiModuleAction: ApiActions.getCriminalRecord,
+            throwOnError: true,
+          },
           actionCard: {
             description: m.draftDescription,
           },
