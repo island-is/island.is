@@ -22,14 +22,13 @@ import {
 import { NationalRegistryUserQuery } from '@island.is/financial-aid-web/osk/graphql'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
-import { useMunicipality } from '@island.is/financial-aid/shared/components'
 
 const ApplicationInfo = () => {
   const router = useRouter()
   const {
     user,
     setNationalRegistryData,
-    setMunicipality,
+    setMunicipalityById,
     loadingMuncipality,
   } = useContext(AppContext)
 
@@ -56,8 +55,8 @@ const ApplicationInfo = () => {
 
   const data: { nationalRegistryUserV2: NationalRegistryData } = {
     nationalRegistryUserV2: {
-      nationalId: user.nationalId,
-      fullName: user.name,
+      nationalId: user?.nationalId ?? '',
+      fullName: user?.name ?? '',
       address: {
         streetName: 'Hafnargata 7',
         postalCode: '200',
@@ -84,7 +83,7 @@ const ApplicationInfo = () => {
 
     setNationalRegistryData(data.nationalRegistryUserV2)
 
-    await setMunicipality(
+    await setMunicipalityById(
       data.nationalRegistryUserV2.address.municipalityCode,
     ).then((municipality) => {
       if (navigation.nextUrl && municipality && municipality.active) {
