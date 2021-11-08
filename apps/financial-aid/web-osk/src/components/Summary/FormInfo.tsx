@@ -58,7 +58,7 @@ const FormInfo = ({ info, error }: Props) => {
                     iconType="filled"
                     variant="utility"
                     onClick={() => {
-                      router.push('samskipti')
+                      router.push(item.url)
                     }}
                   >
                     Breyta
