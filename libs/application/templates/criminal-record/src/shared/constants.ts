@@ -5,4 +5,5 @@ export enum ApiActions {
   sendApplication = 'sendApplication',
   submitApplication = 'submitApplication',
   createCharge = 'createCharge',
+  getCriminalRecord = 'getCriminalRecord',
 }
