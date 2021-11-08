@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, Box, Button } from '@island.is/island-ui/core'
 
-import * as styles from './MunicipalitiesTableBody.css'
+import * as tableStyles from '../../sharedStyles/Table.css'
 import cn from 'classnames'
 
 import { Municipality } from '@island.is/financial-aid/shared/lib'
@@ -16,15 +16,15 @@ const MunicipalitiesTableBody = ({ municipality, index }: PageProps) => {
   return (
     <Link href={'sveitarfelog/' + municipality.id}>
       <tr
-        className={`${styles.link} contentUp`}
+        className={`${tableStyles.link} contentUp`}
         style={{ animationDelay: 55 + 3.5 * index + 'ms' }}
       >
         <td
           className={cn({
-            [`${styles.tablePadding} ${styles.firstChildPadding}`]: true,
+            [`${tableStyles.tablePadding} ${tableStyles.firstChildPadding}`]: true,
           })}
         >
-          <Box display="flex">
+          <Box>
             <Text
               variant="h5"
               color={municipality.active ? 'dark400' : 'dark300'}
@@ -35,10 +35,10 @@ const MunicipalitiesTableBody = ({ municipality, index }: PageProps) => {
         </td>
         <td
           className={cn({
-            [`${styles.tablePadding} `]: true,
+            [`${tableStyles.tablePadding} `]: true,
           })}
         >
-          <Box display="flex">
+          <Box>
             <Text color={municipality.active ? 'dark400' : 'dark300'}>
               {municipality.users}
             </Text>
@@ -46,7 +46,7 @@ const MunicipalitiesTableBody = ({ municipality, index }: PageProps) => {
         </td>
         <td
           className={cn({
-            [`${styles.tablePadding} `]: true,
+            [`${tableStyles.tablePadding} `]: true,
           })}
         >
           <Button
