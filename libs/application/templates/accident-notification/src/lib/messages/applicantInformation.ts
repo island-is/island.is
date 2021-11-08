@@ -9,8 +9,8 @@ export const applicantInformation = {
     },
     title: {
       id: 'an.application:applicantInfo.general.title',
-      defaultMessage: 'Upplýsingar um þig',
-      description: 'Information about you',
+      defaultMessage: 'Upplýsingar um þann slasaða',
+      description: 'Title for applicant info regarding the injured',
     },
     description: {
       id: 'an.application:applicantInfo.general.description',
