@@ -127,4 +127,40 @@ export class NationalRegistryXRoadResolver {
       data: custody,
     }
   }
+
+  @Query(() => NationalRegistryStatus, {
+    name: 'nationalRegistryCustodyParentsLoadTest',
+  })
+  @Audit()
+  async nationalRegistryCustodyParentsLoadTest(
+    @CurrentUser() user: User,
+    @Args('input') input: GetNationalRegistryPersonLoadTestInput,
+  ): Promise<NationalRegistryStatus | undefined> {
+    const parents = await this.nationalRegistryXRoadService.getCustodyParents(
+      user.nationalId,
+      input.nationalId,
+      user.authorization,
+    )
+    return {
+      status: '200',
+      data: parents,
+    }
+  }
+
+  @Query(() => NationalRegistryStatus, {
+    name: 'nationalRegistryFamilyLoadTest',
+  })
+  @Audit()
+  async nationalRegistryFamilyLoadTest(
+    @CurrentUser() user: User,
+  ): Promise<NationalRegistryStatus | undefined> {
+    const family = await this.nationalRegistryXRoadService.getFamily(
+      user.nationalId,
+      user.authorization,
+    )
+    return {
+      status: '200',
+      data: family,
+    }
+  }
 }

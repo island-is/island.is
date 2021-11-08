@@ -82,6 +82,33 @@ export class NationalRegistryXRoadService {
     )
   }
 
+  async getCustodyParents(
+    parentNationalId: string,
+    nationalId: string,
+    authToken: string,
+  ): Promise<string[]> {
+    return await this.nationalRegistryFetch<string[]>(
+      `/${parentNationalId}/forsja/${nationalId}`,
+      authToken,
+    )
+  }
+
+  async getFamily(nationalId: string, authToken: string): Promise<string[]> {
+    const family = await this.nationalRegistryFetch<Fjolskylda>(
+      `/${nationalId}/fjolskylda`,
+      authToken,
+    )
+    if (!family) {
+      this.logger.warn('Fjolskylda is null')
+      return []
+    }
+    if (!family.einstaklingar) {
+      this.logger.warn('Fjolskylda einstaklingar is null')
+      return []
+    }
+    return family.einstaklingar.map((einstaklingur) => einstaklingur.kennitala)
+  }
+
   async getChildrenCustodyInformation(
     user: User,
     parentNationalId: string,
