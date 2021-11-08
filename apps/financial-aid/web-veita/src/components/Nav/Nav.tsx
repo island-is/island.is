@@ -14,6 +14,7 @@ import {
   EmployeeSideNavItems,
   LoadingContainer,
   LogoMunicipality,
+  SuperAdminSideNavItems,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './Nav.css'
@@ -75,6 +76,7 @@ const Nav = ({ showInMobile }: Props) => {
 
       <Box display="block" marginBottom={2} marginTop={4}>
         <Box marginBottom={2}>
+          <SuperAdminSideNavItems roles={admin?.staff?.roles} />
           <AdminSideNavItems roles={admin?.staff?.roles} />
           <button
             className={`${styles.sideNavBarButton} navBarButtonHover`}

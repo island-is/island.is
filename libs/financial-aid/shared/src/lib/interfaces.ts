@@ -134,6 +134,7 @@ export interface Municipality {
   homepage?: string
   email?: string
   rulesHomepage?: string
+  users?: number
 }
 
 export interface ApplicationFile {
