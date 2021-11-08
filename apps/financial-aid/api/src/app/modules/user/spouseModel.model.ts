@@ -8,4 +8,7 @@ export class SpouseModel implements Spouse {
 
   @Field()
   readonly hasFiles!: boolean
+
+  @Field()
+  readonly spouseName?: string
 }

@@ -7,7 +7,13 @@ import {
   TableHeaders,
   UsersTableBody,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { Text, Box, Button } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  Button,
+  toast,
+  ToastContainer,
+} from '@island.is/island-ui/core'
 import * as styles from './users.css'
 import cn from 'classnames'
 
@@ -66,7 +72,6 @@ export const Users = () => {
           Nýr notandi
         </Button>
       </Box>
-
       {users && (
         <div className={`${styles.wrapper} hideScrollBar`}>
           <table
@@ -92,20 +97,20 @@ export const Users = () => {
                   user={item}
                   index={index}
                   key={'tableBody-' + item.id}
+                  onStaffUpdated={refreshList}
+                  toast={toast}
                 />
               ))}
             </tbody>
           </table>
         </div>
       )}
-
       {error && (
         <div>
           Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að þessu
           upplýsingum?
         </div>
       )}
-
       <NewUserModal
         isVisible={isModalVisible}
         setIsVisible={(visible) => {
@@ -113,6 +118,7 @@ export const Users = () => {
         }}
         onStaffCreated={refreshList}
       />
+      <ToastContainer />
     </LoadingContainer>
   )
 }
