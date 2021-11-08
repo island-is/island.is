@@ -18,7 +18,7 @@ describe('isRunningOnEnvironment', () => {
     process.env.NODE_ENV = 'development'
     process.env.name = undefined
 
-    const { isRunningOnEnvironment } = require('./isRunningOnEnvironment')
+    const { isRunningOnEnvironment } = require('./environment')
 
     expect(isRunningOnEnvironment('local')).toBe(true)
   })
@@ -26,7 +26,7 @@ describe('isRunningOnEnvironment', () => {
   it('should return true for dev environment when running on dev', () => {
     process.env.name = 'dev'
 
-    const { isRunningOnEnvironment } = require('./isRunningOnEnvironment')
+    const { isRunningOnEnvironment } = require('./environment')
 
     expect(isRunningOnEnvironment('dev')).toBe(true)
   })
@@ -34,7 +34,7 @@ describe('isRunningOnEnvironment', () => {
   it('should return false for dev environment when not running on dev', () => {
     process.env.name = 'not dev'
 
-    const { isRunningOnEnvironment } = require('./isRunningOnEnvironment')
+    const { isRunningOnEnvironment } = require('./environment')
 
     expect(isRunningOnEnvironment('dev')).toBe(false)
   })
@@ -42,7 +42,7 @@ describe('isRunningOnEnvironment', () => {
   it('should return true for staging environment when running on staging', () => {
     process.env.name = 'staging'
 
-    const { isRunningOnEnvironment } = require('./isRunningOnEnvironment')
+    const { isRunningOnEnvironment } = require('./environment')
 
     expect(isRunningOnEnvironment('staging')).toBe(true)
   })
@@ -50,7 +50,7 @@ describe('isRunningOnEnvironment', () => {
   it('should return false for staging environment when not running on staging', () => {
     process.env.name = 'not staging'
 
-    const { isRunningOnEnvironment } = require('./isRunningOnEnvironment')
+    const { isRunningOnEnvironment } = require('./environment')
 
     expect(isRunningOnEnvironment('staging')).toBe(false)
   })
@@ -58,7 +58,7 @@ describe('isRunningOnEnvironment', () => {
   it('should return true for production environment when running on production', () => {
     process.env.name = 'production'
 
-    const { isRunningOnEnvironment } = require('./isRunningOnEnvironment')
+    const { isRunningOnEnvironment } = require('./environment')
 
     expect(isRunningOnEnvironment('production')).toBe(true)
   })
@@ -66,7 +66,7 @@ describe('isRunningOnEnvironment', () => {
   it('should return false for production environment when not running on production', () => {
     process.env.name = 'not production'
 
-    const { isRunningOnEnvironment } = require('./isRunningOnEnvironment')
+    const { isRunningOnEnvironment } = require('./environment')
 
     expect(isRunningOnEnvironment('production')).toBe(false)
   })

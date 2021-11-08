@@ -67,7 +67,7 @@ export const getRoleName = (role: StaffRole) => {
     case StaffRole.ADMIN:
       return 'Stjórnandi'
     case StaffRole.EMPLOYEE:
-      return 'Starfsmaður'
+      return 'Vinnsluaðili'
     case StaffRole.SUPERADMIN:
       return 'Umsjónaraðili'
   }

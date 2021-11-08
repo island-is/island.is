@@ -25,12 +25,12 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import StepTwoForm from './StepTwoForm'
 
 export const StepTwo: React.FC = () => {
@@ -151,16 +151,13 @@ export const StepTwo: React.FC = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_TWO}
       isLoading={loading || userLoading || institutionLoading}
       notFound={data?.case === undefined}
-      decision={workingCase?.decision}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase && prosecutors && !institutionLoading ? (
         <>
