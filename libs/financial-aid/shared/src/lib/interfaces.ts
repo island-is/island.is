@@ -98,6 +98,7 @@ export interface UpdateApplication {
   staffId?: string
   spousePhoneNumber?: string
   spouseEmail?: string
+  spouseName?: string
 }
 
 export interface UpdateApplicationTable {
@@ -175,6 +176,7 @@ export interface CreateApplication {
   amount?: number
   spouseNationalId?: string
   spouseEmail?: string
+  spouseName?: string
   familyStatus: FamilyStatus
   streetName?: string
   postalCode?: string
@@ -237,6 +239,7 @@ export interface GetSignedUrlForId {
 export interface Spouse {
   hasPartnerApplied: boolean
   hasFiles: boolean
+  spouseName?: string
 }
 
 export interface UpdateApplicationTableResponseType {

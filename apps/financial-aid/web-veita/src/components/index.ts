@@ -37,3 +37,4 @@ export { default as EmployeeSideNavItems } from './EmployeeSideNavItems/Employee
 export { default as AdminSideNavItems } from './AdminSideNavItems/AdminSideNavItems'
 export { default as NewUserModal } from './NewUserModal/NewUserModal'
 export { default as ActionModal } from './ActionModal/ActionModal'
+export { default as MunicipalityAdminSettings } from './MunicipalityAdminSettings/MunicipalityAdminSettings'
