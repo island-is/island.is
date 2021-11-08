@@ -44,7 +44,7 @@ export const useMunicipality = () => {
   const [municipality, setScopedMunicipality] = useState<Municipality>()
 
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(undefined)
+  const [error, setError] = useState<Error | undefined>(undefined)
 
   const getMunicipality = useAsyncLazyQuery<
     {
@@ -81,8 +81,8 @@ export const useMunicipality = () => {
         setLoading(false)
         return res.data?.municipality
       })
-    } catch (error) {
-      setError(error)
+    } catch (error: unknown) {
+      setError(error as Error)
       setLoading(false)
       return undefined
     }
