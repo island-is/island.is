@@ -124,7 +124,7 @@ export class NationalRegistryXRoadResolver {
     )
     return {
       status: '200',
-      data: custody,
+      data: custody || [],
     }
   }
 
@@ -143,7 +143,7 @@ export class NationalRegistryXRoadResolver {
     )
     return {
       status: '200',
-      data: parents,
+      data: parents || [],
     }
   }
 
@@ -160,7 +160,7 @@ export class NationalRegistryXRoadResolver {
     )
     return {
       status: '200',
-      data: family,
+      data: family || [],
     }
   }
 }
