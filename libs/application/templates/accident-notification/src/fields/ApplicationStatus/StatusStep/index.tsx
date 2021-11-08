@@ -22,7 +22,6 @@ type ReviewSectionProps = {
   description: string
   state?: ReviewSectionState
   hasActionMessage: boolean
-  goToScreen: (id: string) => void
   action?: ActionProps
   visible?: boolean
 }
@@ -34,7 +33,6 @@ export const StatusStep: FC<ReviewSectionProps> = ({
   state,
   hasActionMessage,
   action,
-  goToScreen,
   visible = true,
 }) => {
   const handleOnCTAButtonClick = () => {

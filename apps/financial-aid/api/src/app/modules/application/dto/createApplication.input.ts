@@ -90,9 +90,11 @@ export class CreateApplicationInput implements CreateApplication {
   @Field(() => [CreateApplicationFileInput])
   readonly files!: CreateApplicationFileInput[]
 
+  @Allow()
   @Field({ nullable: true })
   readonly amount?: number
 
+  @Allow()
   @Field({ nullable: true })
   readonly spouseName?: string
 
