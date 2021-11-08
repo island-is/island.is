@@ -33,3 +33,5 @@ if (isServer) {
 export const isRunningOnEnvironment = (environment: ActiveEnvironment) => {
   return environment === activeEnvironment
 }
+
+export const getActiveEnvironment = () => activeEnvironment

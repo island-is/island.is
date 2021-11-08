@@ -31,7 +31,7 @@ const MainPage = () => {
     loading,
     error,
     municipality,
-    setMunicipality,
+    setMunicipalityById,
     user,
   } = useContext(AppContext)
 
@@ -39,7 +39,7 @@ const MainPage = () => {
 
   useEffect(() => {
     if (myApplication && myApplication.municipalityCode) {
-      setMunicipality(myApplication.municipalityCode)
+      setMunicipalityById(myApplication.municipalityCode)
     }
   }, [myApplication])
 
