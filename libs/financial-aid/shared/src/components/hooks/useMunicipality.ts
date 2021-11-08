@@ -44,7 +44,7 @@ export const useMunicipality = () => {
   const [municipality, setScopedMunicipality] = useState<Municipality>()
 
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(undefined)
+  const [error, setError] = useState<Error | undefined>(undefined)
 
   const getMunicipality = useAsyncLazyQuery<
     {
@@ -61,7 +61,12 @@ export const useMunicipality = () => {
     )
   }, [])
 
-  const setMunicipality = async (municipalityId: string) => {
+  const setMunicipality = (municipality: Municipality) => {
+    setScopedMunicipality(municipality)
+    sessionStorage.setItem(storageKey, JSON.stringify(municipality))
+  }
+
+  const setMunicipalityById = async (municipalityId: string) => {
     try {
       setError(undefined)
       setLoading(true)
@@ -76,8 +81,8 @@ export const useMunicipality = () => {
         setLoading(false)
         return res.data?.municipality
       })
-    } catch (error) {
-      setError(error)
+    } catch (error: unknown) {
+      setError(error as Error)
       setLoading(false)
       return undefined
     }
@@ -85,6 +90,7 @@ export const useMunicipality = () => {
 
   return {
     municipality,
+    setMunicipalityById,
     setMunicipality,
     error,
     loading,

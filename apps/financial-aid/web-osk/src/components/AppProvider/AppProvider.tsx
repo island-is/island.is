@@ -4,7 +4,6 @@ import {
   Application,
   Municipality,
   NationalRegistryData,
-  ServiceCenter,
   User,
 } from '@island.is/financial-aid/shared/lib'
 
@@ -19,7 +18,9 @@ interface AppProvider {
   loading: boolean
   error?: ApolloError
   municipality?: Municipality
-  setMunicipality: (municipalityId: string) => Promise<Municipality | undefined>
+  setMunicipalityById: (
+    municipalityId: string,
+  ) => Promise<Municipality | undefined>
   isAuthenticated?: boolean
   user?: User
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>
@@ -35,7 +36,7 @@ interface Props {
 
 export const AppContext = createContext<AppProvider>({
   setUser: () => undefined,
-  setMunicipality: () => Promise.resolve(undefined),
+  setMunicipalityById: () => Promise.resolve(undefined),
   setNationalRegistryData: () => {},
   loading: false,
   loadingUser: false,
@@ -45,7 +46,7 @@ export const AppContext = createContext<AppProvider>({
 const AppProvider = ({ children }: Props) => {
   const {
     municipality,
-    setMunicipality,
+    setMunicipalityById,
     loading: loadingMuncipality,
   } = useMunicipality()
 
@@ -65,7 +66,7 @@ const AppProvider = ({ children }: Props) => {
         error,
         loading,
         municipality,
-        setMunicipality,
+        setMunicipalityById,
         loadingMuncipality,
         isAuthenticated,
         user,
