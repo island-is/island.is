@@ -2,11 +2,11 @@
 
 Wraps Nest's [Configuration](https://docs.nestjs.com/techniques/configuration) functionality with the following functionality:
 
-* Validate that required environment variables are set. 
-* Support fallback values for local development.
-* Support configurations that is disabled behind [Server Side Feature Flags](../../../handbook/technical-overview/devops/service-setup.md#server-side-feature-flags). 
-* Helpers for JSON encoded environment variables.
-* Validation, transformation and TypeScript types with Zod.
+- Validate that required environment variables are set.
+- Support fallback values for local development.
+- Support configurations that is disabled behind [Server Side Feature Flags](../../../handbook/technical-overview/devops/service-setup.md#server-side-feature-flags).
+- Helpers for JSON encoded environment variables.
+- Validation, transformation and TypeScript types with Zod.
 
 This configuration system should replace NX's environment files as the primary way to configure Nest modules in our APIs. This is especially useful as we create bigger and deeper module trees.
 
@@ -15,7 +15,7 @@ This configuration system should replace NX's environment files as the primary w
 First you define a configuration and a load function.
 
 ```tsx
-import { registerConfig } from '@island.is/nest/config'
+import { defineConfig } from '@island.is/nest/config'
 
 export const someModuleConfig = defineConfig({
   name: 'SomeModule',
@@ -23,7 +23,7 @@ export const someModuleConfig = defineConfig({
     url: env.required('SOME_MODULE_URL', 'http://localhost:3000'),
     secret: env.required('SOME_MODULE_SECRET'),
     ttl: env.optionalJSON('SOME_MODULE_TTL') ?? 60,
-  })
+  }),
 })
 ```
 
@@ -46,7 +46,7 @@ These helpers have the following behaviour:
 - The `required` helpers are designed for everything that needs to be configured in production. If something is missing, its behaviour depends on NODE_ENV:
   - In production, it crashes the process after logging something like this:
     `SomeModule is not configured. Missing environment variables: SOME_MODULE_URL, SOME_MODULE_SECRET`
-  - In development, it returns the `devFallback` argument. If there is no `devFallback` specified, the process keeps running with a partial configuration and  `isConfigured === false`. It also logs the above message as a warning.
+  - In development, it returns the `devFallback` argument. If there is no `devFallback` specified, the process keeps running with a partial configuration and `isConfigured === false`. It also logs the above message as a warning.
 - The `*JSON` variants try to parse the environment variable as JSON. This is very handy for numerical environment variables or more complex configuration. If you ever use these helpers, you should specify the expected types using the Zod schema. Any parsing issues are logged as error before crashing the process (with `requiredJSON`).
 
 ### Injecting module config
@@ -64,8 +64,8 @@ export class SomeModuleService {
     private config: ConfigType<typeof someModuleConfig>,
   ) {
     config.isConfigured // boolean
-    config.data         // {url: string, secret: string, ttl: any} | undefined
-	}
+    config.data // {url: string, secret: string, ttl: any} | undefined
+  }
 }
 ```
 
@@ -103,7 +103,7 @@ If someone accidentally imports a module which is not configured, then NestJS st
 Beside validating missing environment variables with the `env.required` helpers, you can provide a Zod schema which validates the final object.
 
 ```tsx
-import { registerConfig } from '@island.is/nest/config'
+import { defineConfig } from '@island.is/nest/config'
 import * as z from 'zod'
 
 const SomeModuleConfig = z.shape({
@@ -114,12 +114,12 @@ const SomeModuleConfig = z.shape({
 
 export const someModuleConfig = defineConfig({
   name: 'SomeModule',
-	schema: SomeModuleConfig,
+  schema: SomeModuleConfig,
   load: (env) => ({
     url: env.required('SOME_MODULE_URL', 'http://localhost:3000'),
     secret: env.required('SOME_MODULE_SECRET'),
     ttl: env.optionalJSON('SOME_MODULE_TTL') ?? 60,
-  })
+  }),
 })
 ```
 
@@ -146,16 +146,16 @@ If you're working on server-side functionality or integrations which needs to be
 To handle this, you can define a configuration to depend on a specific server side feature:
 
 ```tsx
-import { registerConfig } from '@island.is/nest/config'
+import { defineConfig } from '@island.is/nest/config'
 
 const EXTERNAL_CLIENT_FEATURE = 'EXTERNAL_CLIENT'
 
 export const someModuleConfig = defineConfig({
   name: 'ExternalClient',
-	serverSideFeature: EXTERNAL_CLIENT_FEATURE,
+  serverSideFeature: EXTERNAL_CLIENT_FEATURE,
   load: (env) => ({
     url: env.required('EXTERNAL_CLIENT_URL'),
-  })
+  }),
 })
 ```
 
@@ -220,7 +220,7 @@ import { SomeModuleModule, someModuleConfig } from '@island.is/some/module'
     SomeModuleModule.register({
       host: '',
       secret: '',
-		}),
+    }),
     // ...
   ],
 })

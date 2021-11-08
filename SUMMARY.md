@@ -206,6 +206,7 @@
 - [Localization](libs/localization/README.md)
 - [Nest Modules](libs/nest/README.md)
   - [Audit Module](libs/nest/audit/README.md)
+  - [Nest Config](libs/nest/config/README.md)
   - [Nest Sequelize Cursor Pagination](libs/nest/pagination/README.md)
   - [Problem Module](libs/nest/problem/README.md)
 - [Next Ids Auth Lib](libs/next-ids-auth/README.md)

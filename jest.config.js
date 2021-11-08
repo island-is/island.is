@@ -148,6 +148,7 @@ module.exports = {
     '<rootDir>/libs/judicial-system/formatters',
     '<rootDir>/libs/judicial-system/types',
     '<rootDir>/libs/nest/audit',
+    '<rootDir>/libs/nest/config',
     '<rootDir>/libs/nest/problem',
     '<rootDir>/libs/react/feature-flags',
     '<rootDir>/libs/service-portal/applications',
@@ -181,6 +182,5 @@ module.exports = {
     '<rootDir>/libs/skilavottord/types',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
-    '<rootDir>/libs/nest/config',
   ],
 }

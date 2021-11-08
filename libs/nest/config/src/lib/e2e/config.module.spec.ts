@@ -1,6 +1,9 @@
 import { Test } from '@nestjs/testing'
 import * as z from 'zod'
-import { ServerSideFeatureClient } from '@island.is/feature-flags'
+import {
+  ServerSideFeatureClient,
+  ServerSideFeatureNames,
+} from '@island.is/feature-flags'
 import { logger } from '@island.is/logging'
 
 import { defineConfig, ConfigModule, ConfigType, ConfigFactory } from '../..'
@@ -15,9 +18,9 @@ async function testInjection<T extends ConfigFactory>(config: T) {
 
 describe('Config definitions', () => {
   const featureIsOn = jest.spyOn(ServerSideFeatureClient, 'isOn')
-  jest.spyOn(logger, 'info')
-  jest.spyOn(logger, 'warn')
-  jest.spyOn(logger, 'error')
+  jest.spyOn(logger, 'info').mockImplementation()
+  jest.spyOn(logger, 'warn').mockImplementation()
+  jest.spyOn(logger, 'error').mockImplementation()
 
   afterEach(() => {
     jest.clearAllMocks()
@@ -64,7 +67,7 @@ describe('Config definitions', () => {
 
     it('should return optional environment as undefined when not defined', () => {
       // Arrange
-      process.env.CONFIG_TEST = undefined
+      delete process.env.CONFIG_TEST
       const config = defineConfig({
         name: 'test',
         load: (env) => ({ test: env.optional('CONFIG_TEST') }),
@@ -94,12 +97,13 @@ describe('Config definitions', () => {
 
     it('should return parsed JSON environment variables when defined', () => {
       // Arrange
-      process.env.CONFIG_TEST = '{"hello": "world"}'
+      process.env.CONFIG_TEST1 = '{"hello": "world"}'
+      process.env.CONFIG_TEST2 = '{"hello": "world"}'
       const config = defineConfig({
         name: 'test',
         load: (env) => ({
-          test1: env.requiredJSON('CONFIG_TEST'),
-          test2: env.optionalJSON('CONFIG_TEST'),
+          test1: env.requiredJSON('CONFIG_TEST1'),
+          test2: env.optionalJSON('CONFIG_TEST2'),
         }),
       })
 
@@ -115,12 +119,13 @@ describe('Config definitions', () => {
 
     it('should return parsed JSON number environment variables when defined', () => {
       // Arrange
-      process.env.CONFIG_TEST = '123'
+      process.env.CONFIG_TEST1 = '123'
+      process.env.CONFIG_TEST2 = '123'
       const config = defineConfig({
         name: 'test',
         load: (env) => ({
-          test1: env.requiredJSON('CONFIG_TEST'),
-          test2: env.optionalJSON('CONFIG_TEST'),
+          test1: env.requiredJSON('CONFIG_TEST1'),
+          test2: env.optionalJSON('CONFIG_TEST2'),
         }),
       })
 
@@ -136,12 +141,13 @@ describe('Config definitions', () => {
 
     it('should log and throw an error if there is an error parsing JSON environment variables', () => {
       // Arrange
-      process.env.CONFIG_TEST = 'INVALID_JSON'
+      process.env.CONFIG_TEST1 = 'INVALID_JSON'
+      process.env.CONFIG_TEST2 = 'INVALID_JSON'
       const config = defineConfig({
         name: 'test',
         load: (env) => ({
-          test1: env.requiredJSON('CONFIG_TEST'),
-          test2: env.optionalJSON('CONFIG_TEST'),
+          test1: env.requiredJSON('CONFIG_TEST1'),
+          test2: env.optionalJSON('CONFIG_TEST2'),
         }),
       })
 
@@ -150,7 +156,7 @@ describe('Config definitions', () => {
 
       // Assert
       return expect(result).rejects.toThrow(
-        'Failed loading configuration for test. Environment variable(s) could not be parsed as JSON:\n- CONFIG_TEST\n- CONFIG_TEST',
+        'Failed loading configuration for test:\n- CONFIG_TEST1 could not be parsed as JSON\n- CONFIG_TEST2 could not be parsed as JSON',
       )
     })
 
@@ -185,7 +191,7 @@ describe('Config definitions', () => {
       featureIsOn.mockReturnValue(true)
       const config = defineConfig({
         name: 'test',
-        serverSideFeature: 'test_feature',
+        serverSideFeature: 'test_feature' as ServerSideFeatureNames,
         load: () => ({ test: 'asdf' }),
       })
 
@@ -204,7 +210,7 @@ describe('Config definitions', () => {
       featureIsOn.mockReturnValue(false)
       const config = defineConfig({
         name: 'test',
-        serverSideFeature: 'test_feature',
+        serverSideFeature: 'test_feature' as ServerSideFeatureNames,
         load: () => ({}),
       })
 
@@ -212,35 +218,20 @@ describe('Config definitions', () => {
       await testInjection(config)
 
       // Assert
-      expect(logger.info).toHaveBeenCalledWith(
-        'Ignored configuration for test. Server-side feature flag missing: test_feature',
-      )
-    })
-
-    it('should ignore required variables and return isConfigured = false if a server side feature is missing', () => {
-      // Arrange
-      process.env.CONFIG_TEST = undefined
-      featureIsOn.mockReturnValue(false)
-      const config = defineConfig({
-        name: 'test',
-        serverSideFeature: 'test_feature',
-        load: (env) => ({ test: env.required('CONFIG_TEST') }),
+      expect(logger.info).toHaveBeenCalledWith({
+        category: 'ConfigModule',
+        message:
+          'Ignored configuration for test. Server-side feature flag missing: test_feature',
       })
-
-      // Act
-      const result = testInjection(config)
-
-      // Assert
-      return expect(result).resolves.toEqual({ isConfigured: false })
     })
 
-    it('should throw useful error when reading configuration and server-side feature is missing', async () => {
+    it('should ignore required variables and return isConfigured = false if a server side feature is missing', async () => {
       // Arrange
-      process.env.CONFIG_TEST = undefined
+      delete process.env.CONFIG_TEST
       featureIsOn.mockReturnValue(false)
       const config = defineConfig({
         name: 'test',
-        serverSideFeature: 'test_feature',
+        serverSideFeature: 'test_feature' as ServerSideFeatureNames,
         load: (env) => ({ test: env.required('CONFIG_TEST') }),
       })
 
@@ -248,14 +239,32 @@ describe('Config definitions', () => {
       const result = await testInjection(config)
 
       // Assert
-      return expect(() => result.test).rejects.toThrow(
+      return expect(result.isConfigured).toEqual(false)
+    })
+
+    it('should throw useful error when reading configuration and server-side feature is missing', async () => {
+      // Arrange
+      delete process.env.CONFIG_TEST
+      featureIsOn.mockReturnValue(false)
+      const config = defineConfig({
+        name: 'test',
+        serverSideFeature: 'test_feature' as ServerSideFeatureNames,
+        load: (env) => ({ test: env.required('CONFIG_TEST') }),
+      })
+
+      // Act
+      const result = await testInjection(config)
+
+      // Assert
+      return expect(() => result.test).toThrow(
         'Unable to read configuration for test. Server-side feature flag missing: test_feature',
       )
     })
 
     it('should throw a friendly error if validation fails', async () => {
       // Arrange
-      process.env.CONFIG_TEST = 'asdf'
+      process.env.CONFIG_TEST1 = 'asdf'
+      process.env.CONFIG_TEST2 = 'asdf'
       const schema = z.object({
         test1: z.string().email(),
         test2: z.string().email(),
@@ -264,8 +273,8 @@ describe('Config definitions', () => {
         name: 'test',
         schema,
         load: (env) => ({
-          test1: env.optional('CONFIG_TEST'),
-          test2: env.optional('CONFIG_TEST'),
+          test1: env.optional('CONFIG_TEST1'),
+          test2: env.optional('CONFIG_TEST2'),
         }),
       })
 
@@ -274,8 +283,24 @@ describe('Config definitions', () => {
 
       // Assert
       return expect(result).rejects.toThrow(
-        'Failed loading configuration for test. Validation failed:\n- test1 is not an email\n- test2 is not an email',
+        'Failed loading configuration for test. Validation failed:\n- test1: Invalid email\n- test2: Invalid email',
       )
+    })
+
+    it('should not swallow errors', () => {
+      // Arrange
+      const config = defineConfig({
+        name: 'test',
+        load: (env) => {
+          throw new Error('Unexpected error')
+        },
+      })
+
+      // Act
+      const result = testInjection(config)
+
+      // Assert
+      return expect(result).rejects.toThrow('Unexpected error')
     })
 
     describe('in development', () => {
@@ -285,7 +310,7 @@ describe('Config definitions', () => {
 
       it('should return devFallback and isConfigured = true when required variables are missing', () => {
         // Arrange
-        process.env.CONFIG_TEST = undefined
+        delete process.env.CONFIG_TEST
         const config = defineConfig({
           name: 'test',
           load: (env) => ({ test: env.required('CONFIG_TEST', 'asdf') }),
@@ -301,24 +326,24 @@ describe('Config definitions', () => {
         })
       })
 
-      it("should return isConfigured = false if any missing required variables don't have a devFallback", () => {
+      it("should return isConfigured = false if any missing required variables don't have a devFallback", async () => {
         // Arrange
-        process.env.CONFIG_TEST = undefined
+        delete process.env.CONFIG_TEST
         const config = defineConfig({
           name: 'test',
           load: (env) => ({ test: env.required('CONFIG_TEST') }),
         })
 
         // Act
-        const result = testInjection(config)
+        const result = await testInjection(config)
 
         // Assert
-        return expect(result).resolves.toEqual({ isConfigured: false })
+        return expect(result.isConfigured).toEqual(false)
       })
 
       it("should log a warning if any missing required variables don't have a devFallback", async () => {
         // Arrange
-        process.env.CONFIG_TEST = undefined
+        delete process.env.CONFIG_TEST
         const config = defineConfig({
           name: 'test',
           load: (env) => ({ test: env.required('CONFIG_TEST') }),
@@ -328,19 +353,22 @@ describe('Config definitions', () => {
         await testInjection(config)
 
         // Assert
-        return expect(logger.warn).toHaveBeenCalledWith(
-          'Could not load configuration for test. Missing 1 required environment variable(s).',
-        )
+        return expect(logger.warn).toHaveBeenCalledWith({
+          category: 'ConfigModule',
+          message:
+            'Could not load configuration for test. Missing 1 required environment variable(s).',
+        })
       })
 
       it('should throw a friendly error when reading configuration and required environment variables are missing', async () => {
         // Arrange
-        process.env.CONFIG_TEST = undefined
+        delete process.env.CONFIG_TEST1
+        delete process.env.CONFIG_TEST2
         const config = defineConfig({
           name: 'test',
           load: (env) => ({
-            test1: env.required('CONFIG_TEST'),
-            test2: env.required('CONFIG_TEST'),
+            test1: env.required('CONFIG_TEST1'),
+            test2: env.required('CONFIG_TEST2'),
           }),
         })
 
@@ -349,7 +377,7 @@ describe('Config definitions', () => {
 
         // Assert
         return expect(() => result.test1).toThrow(
-          'Unable to read configuration for test. You are missing these environment variables:\n- CONFIG_TEST\n- CONFIG_TEST',
+          'Failed loading configuration for test:\n- CONFIG_TEST1 missing\n- CONFIG_TEST2 missing',
         )
       })
     })
@@ -361,12 +389,13 @@ describe('Config definitions', () => {
 
       it('should throw a friendly error when required variables are missing', () => {
         // Arrange
-        process.env.CONFIG_TEST = undefined
+        delete process.env.CONFIG_TEST1
+        delete process.env.CONFIG_TEST2
         const config = defineConfig({
           name: 'test',
           load: (env) => ({
-            test1: env.required('CONFIG_TEST'),
-            test2: env.required('CONFIG_TEST'),
+            test1: env.required('CONFIG_TEST1'),
+            test2: env.required('CONFIG_TEST2'),
           }),
         })
 
@@ -375,7 +404,27 @@ describe('Config definitions', () => {
 
         // Assert
         return expect(result).rejects.toThrow(
-          'Could not load configuration for test. Missing required environment variable(s):\n- CONFIG_TEST\n- CONFIG_TEST',
+          'Failed loading configuration for test:\n- CONFIG_TEST1 missing\n- CONFIG_TEST2 missing',
+        )
+      })
+
+      it('should swallow thrown error if there are missing environment variables', () => {
+        // Arrange
+        delete process.env.CONFIG_TEST
+        const config = defineConfig({
+          name: 'test',
+          load: (env) => {
+            env.required('CONFIG_TEST')
+            throw new Error('Failed running load')
+          },
+        })
+
+        // Act
+        const result = testInjection(config)
+
+        // Assert
+        return expect(result).rejects.toThrow(
+          'Failed loading configuration for test:\n- CONFIG_TEST missing',
         )
       })
     })
@@ -395,7 +444,7 @@ describe('Config definitions', () => {
 
     // Assert
     expect(() => moduleRef.get<ConfigType<typeof config>>(config.KEY)).toThrow(
-      'BLA',
+      'Nest could not find CONFIGURATION(test) element (this provider does not exist in the current context)',
     )
   })
 })
