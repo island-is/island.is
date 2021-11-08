@@ -3,6 +3,7 @@ import {
   CurrentAuth,
   CurrentUser,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
@@ -16,6 +17,7 @@ import {
   Post,
   Query,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -55,6 +57,7 @@ const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @ApiTags('endorsement')
 @ApiOAuth2([])
 @ApiExtraModels(PaginationDto, PaginatedEndorsementDto)
+@UseGuards(ScopesGuard)
 @Controller('endorsement-list/:listId/endorsement')
 export class EndorsementController {
   constructor(
