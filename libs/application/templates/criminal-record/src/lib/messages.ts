@@ -58,8 +58,8 @@ export const m = defineMessages({
       'Description of application state/status when payment is pending',
   },
   payment: {
-    id: 'cr.application:DrivingLicenseApplicationPaymentForm',
-    defaultMessage: 'greiðsla',
+    id: 'cr.application:payment',
+    defaultMessage: 'Greiðsla',
     description: 'payment',
   },
   paymentCapital: {
@@ -71,6 +71,11 @@ export const m = defineMessages({
     id: 'cr.application:forwardingToPayment',
     defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
     description: 'Forwarding you to payment handler...',
+  },
+  confirmation: {
+    id: 'cr.application:confirmation',
+    defaultMessage: 'Staðfesting',
+    description: 'payment',
   },
   name: {
     id: 'cr.application:name',
@@ -198,5 +203,10 @@ export const m = defineMessages({
     id: 'example.application:dataSchema.national.id',
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'Error message when the kennitala is invalid.',
+  },
+  errorDataProvider: {
+    id: 'dl.application:error.dataProvider',
+    defaultMessage: 'Reyndu aftur síðar',
+    description: 'Unhandled error in driving license data provider',
   },
 })

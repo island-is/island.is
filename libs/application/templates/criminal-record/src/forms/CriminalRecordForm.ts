@@ -18,11 +18,12 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { ApiActions } from '../shared'
+import { UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
 
 export const CriminalRecordForm: Form = buildForm({
-  id: 'ExampleFormDraft',
-  title: 'Atvinnuleysisbætur',
+  id: 'CriminalRecordFormDraft',
+  title: '',
   mode: FormModes.APPLYING,
   children: [
     buildSection({
@@ -65,53 +66,29 @@ export const CriminalRecordForm: Form = buildForm({
             }),
           ],
         }),
-      ],
-    }),
-    buildSection({
-      id: 'awaitingPayment',
-      title: m.paymentCapital,
-      children: [
-        // TODO: ekki tókst að stofna til greiðslu skjár - condition
-        buildDescriptionField({
-          id: 'infoAwaitingPayment',
-          title: m.paymentCapital,
-          condition: () => {
-            return !window.document.location.href.match(/\?done$/)
-          },
-          description: (application) => {
-            const { paymentUrl } = application.externalData.createCharge
-              .data as { paymentUrl: string }
-
-            if (!paymentUrl) {
-              throw new Error()
-            }
-
-            const returnUrl = window.document.location.href
-            const redirectUrl = `${paymentUrl}&returnURL=${encodeURIComponent(
-              returnUrl + '?done',
-            )}`
-            window.document.location.href = redirectUrl
-
-            return m.forwardingToPayment
-          },
-        }),
-        buildMultiField({
-          condition: () => {
-            return !!window.document.location.href.match(/\?done$/)
-          },
-          id: 'overviewAwaitingPayment',
-          title: '',
-          space: 1,
-          description: '',
-          children: [
-            buildCustomField({
-              component: 'ExamplePaymentPendingField',
-              id: 'paymentPendingField',
-              title: '',
-            }),
+        buildSubmitField({
+          id: 'toDraft',
+          title: 'externalData.submit',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: 'SUBMIT',
+              name: 'staðfesta',
+              type: 'primary',
+            },
           ],
         }),
       ],
+    }),
+    buildSection({
+      id: 'payment',
+      title: m.payment,
+      children: [],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: m.confirmation,
+      children: [],
     }),
   ],
 })
