@@ -93,31 +93,17 @@ const UsersTableBody = ({ user, index, onStaffUpdated, toast }: PageProps) => {
               [`${styles.tablePadding} `]: true,
             })}
           >
-            {user.active ? (
-              <Button
-                onClick={(event) => {
-                  event.stopPropagation()
-                  changeUserActivity(false)
-                }}
-                variant="text"
-                loading={loading}
-                colorScheme="destructive"
-              >
-                Óvirkja
-              </Button>
-            ) : (
-              <Button
-                onClick={(event) => {
-                  event.stopPropagation()
-                  changeUserActivity(true)
-                }}
-                variant="text"
-                loading={loading}
-                colorScheme="light"
-              >
-                Virkja
-              </Button>
-            )}
+            <Button
+              onClick={(event) => {
+                event.stopPropagation()
+                changeUserActivity(!user.active)
+              }}
+              variant="text"
+              loading={loading}
+              colorScheme={user.active ? 'destructive' : 'light'}
+            >
+              {user.active ? 'Óvirkja' : 'Virkja'}
+            </Button>
           </td>
         )}
       </tr>
