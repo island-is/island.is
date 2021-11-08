@@ -104,6 +104,9 @@ export class ApplicationModel implements Application {
   @Field({ nullable: true })
   readonly spouseEmail?: string
 
+  @Field({ nullable: true })
+  readonly spousePhoneNumber?: string
+
   @Field(() => String)
   readonly familyStatus!: FamilyStatus
 

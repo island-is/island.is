@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, Box, Link } from '@island.is/island-ui/core'
 
-import * as styles from './Profile.css'
+import * as styles from './ProfileUnit.css'
 import cn from 'classnames'
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
   className?: string
 }
 
-const Profile = ({ heading, info, className }: Props) => {
+const ProfileUnit = ({ heading, info, className }: Props) => {
   return (
     <>
       {' '}
@@ -78,4 +78,4 @@ const Profile = ({ heading, info, className }: Props) => {
   )
 }
 
-export default Profile
+export default ProfileUnit

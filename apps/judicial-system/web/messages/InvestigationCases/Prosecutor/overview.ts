@@ -25,7 +25,7 @@ export const icOverview = {
       },
       notificationNotSent: {
         id:
-          'judicial.system.investigation_cases:overview.modal.notification_sent',
+          'judicial.system.investigation_cases:overview.modal.notification_not_sent',
         defaultMessage:
           'Ekki tókst að senda tilkynningu á dómara og dómritara á vakt.\n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
         description:

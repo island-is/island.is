@@ -12,8 +12,11 @@ import {
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 import { useFileUpload } from './useFileUpload'
+import { AppContext } from '../../components/AppProvider/AppProvider'
 
 const useUpdateApplication = () => {
+  const { user } = useContext(AppContext)
+
   const { form } = useContext(FormContext)
   const { uploadFiles } = useFileUpload(form.otherFiles)
 
@@ -38,6 +41,7 @@ const useUpdateApplication = () => {
             event: ApplicationEventType.FILEUPLOAD,
             spouseEmail: form.emailAddress,
             spousePhoneNumber: form.phoneNumber,
+            spouseName: user?.name,
           },
         },
       })

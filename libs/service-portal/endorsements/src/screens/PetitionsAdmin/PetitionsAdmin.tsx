@@ -1,5 +1,12 @@
 import React from 'react'
-import { Box, Text, ActionCard, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  ActionCard,
+  Stack,
+  BulletList,
+  Bullet,
+} from '@island.is/island-ui/core'
 import { useGetAllPetitionLists } from '../queries'
 import { Link } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
@@ -44,9 +51,15 @@ const PetitionsAdmin = () => {
           {formatMessage(m.petition.intro)}
         </Text>
       </Stack>
+      <Box padding="gutter">
+        <BulletList type="ul">
+          <Bullet>{formatMessage(m.petition.bullet1Admin)}</Bullet>
+          <Bullet>{formatMessage(m.petition.bullet2Admin)}</Bullet>
+        </BulletList>
+      </Box>
 
-      <Box marginTop={10} marginBottom={7}>
-        {openLists && (
+      <Box marginTop={5} marginBottom={7}>
+        {openLists && openLists.length > 0 && (
           <>
             <Text as="p" variant="h3" marginBottom={2}>
               {formatMessage(m.petition.petitionListsOngoing)}
@@ -89,7 +102,7 @@ const PetitionsAdmin = () => {
           </>
         )}
 
-        {closedLists && (
+        {closedLists && closedLists.length > 0 && (
           <>
             <Text as="p" variant="h3" marginBottom={3} marginTop={7}>
               {formatMessage(m.petition.petitionListsClosed)}

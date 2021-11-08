@@ -637,6 +637,9 @@
     "services-endorsements-api": {
       "tags": []
     },
+    "services-notifications": {
+      "tags": []
+    },
     "services-party-letter-registry-api": {
       "tags": []
     },

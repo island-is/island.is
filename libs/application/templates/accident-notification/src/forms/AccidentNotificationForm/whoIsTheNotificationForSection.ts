@@ -230,6 +230,11 @@ export const whoIsTheNotificationForSection = buildSection({
           title: powerOfAttorney.upload.heading,
           description: powerOfAttorney.upload.description,
           children: [
+            buildCustomField({
+              id: 'attachments.powerOfAttorney.fileLink',
+              component: 'ProxyDocument',
+              title: '',
+            }),
             buildFileUploadField({
               id: 'attachments.powerOfAttorneyFile.file',
               title: '',
