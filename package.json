@@ -293,7 +293,7 @@
     "@nrwl/tao": "11.4.0",
     "@nrwl/web": "11.4.0",
     "@nrwl/workspace": "11.4.0",
-    "@openapitools/openapi-generator-cli": "1.0.15-4.3.1",
+    "@openapitools/openapi-generator-cli": "2.4.14",
     "@sentry/webpack-plugin": "1.12.1",
     "@statoscope/ui-webpack": "3.3.0",
     "@storybook/addon-a11y": "6.3.1",
