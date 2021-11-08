@@ -22,6 +22,7 @@ import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CreateStaffInput, StaffModel } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
+import { UpdateMunicipalityInput } from '../app/modules/municipality/dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -46,6 +47,12 @@ class BackendAPI extends RESTDataSource {
 
   getMunicipality(id: string): Promise<Municipality> {
     return this.get(`municipality/${id}`)
+  }
+
+  updateMunicipality(
+    updateMunicipality: UpdateMunicipalityInput,
+  ): Promise<Municipality> {
+    return this.put('municipality', updateMunicipality)
   }
 
   createApplication(
