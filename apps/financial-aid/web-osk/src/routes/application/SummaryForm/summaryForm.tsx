@@ -19,6 +19,7 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
+import { Routes } from '@island.is/financial-aid/shared/lib'
 import {
   Employment,
   FamilyStatus,
@@ -53,13 +54,13 @@ const SummaryForm = () => {
     {
       id: 'familyStatus',
       label: 'Hjúskaparstaða',
-      url: 'hjuskaparstada',
+      url: Routes.form.relationShip,
       info: getFamilyStatus[form.familyStatus as FamilyStatus],
     },
     {
       id: 'homeCircumstances',
       label: 'Búseta',
-      url: 'buseta',
+      url: Routes.form.homeCircumstances,
       info:
         form?.homeCircumstances === HomeCircumstances.OTHER
           ? form?.homeCircumstancesCustom
@@ -68,7 +69,7 @@ const SummaryForm = () => {
     {
       id: 'hasIncome',
       label: 'Tekjur',
-      url: 'tekjur',
+      url: Routes.form.hasIncome,
       info:
         form?.hasIncome === undefined
           ? undefined
@@ -79,15 +80,27 @@ const SummaryForm = () => {
     {
       id: 'employmentCustom',
       label: 'Staða',
-      url: 'atvinna',
+      url: Routes.form.employment,
       info: form?.employmentCustom
         ? form.employmentCustom
         : getEmploymentStatus[form.employment as Employment],
     },
     {
+      id: 'usePersonalTaxCredit',
+      label: 'Nýta persónuafslátt?',
+      url: Routes.form.usePersonalTaxCredit,
+      info: form?.usePersonalTaxCredit ? 'Já' : 'Nei',
+    },
+    {
+      id: 'bankInfo',
+      label: 'Bankaupplýsingar',
+      url: Routes.form.bankInfo,
+      info: form.bankNumber + '-' + form.ledger + '-' + form.accountNumber,
+    },
+    {
       id: 'emailAddress',
       label: 'Netfang',
-      url: 'samskipti',
+      url: Routes.form.contactInfo,
       info: form.emailAddress,
       secLabel: 'Símanúmer',
       secInfo: form.phoneNumber,

@@ -1,6 +1,18 @@
+export const formRoutes = '/umsokn/'
+
 export const Routes = {
   application: '/umsokn',
-  spouseApplication: '/umsokn/rettur',
+  form: {
+    info: `${formRoutes}rettur`,
+    relationShip: `${formRoutes}hjuskaparstada`,
+    homeCircumstances: `${formRoutes}buseta`,
+    hasIncome: `${formRoutes}tekjur`,
+    employment: `${formRoutes}atvinna`,
+    usePersonalTaxCredit: `${formRoutes}personuafslattur`,
+    bankInfo: `${formRoutes}bankaupplysingar`,
+    contactInfo: `${formRoutes}samskipti`,
+    conformation: `${formRoutes}stadfesting`,
+  },
   status: '/stada',
   statusPage: (id: string) => `/stada/${id}`,
   statusFileUpload: (id: string) => `/stada/${id}/gogn`,
@@ -13,7 +25,7 @@ export const Routes = {
   apiLoginRouteForRealUsers: (id: string) =>
     id ? `/api/auth/login?applicationId=${id}` : '/api/auth/login',
   filesPage: (hasIncome?: boolean) =>
-    `/umsokn/${hasIncome ? 'skattagogn' : 'gogn'}`,
+    `${formRoutes}${hasIncome ? 'skattagogn' : 'gogn'}`,
   newCases: '/nymal',
   serviceCenter: (id: string) => `/midstod/${id}`,
   users: `/notendur`,
