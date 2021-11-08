@@ -2,6 +2,7 @@ import { DynamicModule, Module } from '@nestjs/common'
 import { Base64 } from 'js-base64'
 import { Configuration, DefaultApi } from '../gen/fetch'
 import { PaymentScheduleServiceOptions } from './types'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
 @Module({})
 export class PaymentScheduleClientModule {
@@ -18,7 +19,11 @@ export class PaymentScheduleClientModule {
           useFactory: () =>
             new DefaultApi(
               new Configuration({
-                fetchApi: fetch,
+                fetchApi: createEnhancedFetch({
+                  name: 'clients-payment-schedule',
+                  treat400ResponsesAsErrors: true,
+                  logErrorResponseBody: true,
+                }),
                 basePath: baseURL,
                 headers: {
                   'Content-Type': 'application/json',
