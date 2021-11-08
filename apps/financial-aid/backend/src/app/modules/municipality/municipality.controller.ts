@@ -13,11 +13,8 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { MunicipalityService } from './municipality.service'
 import { MunicipalityModel } from './models'
 
-import {
-  apiBasePath,
-  Staff,
-  StaffRole,
-} from '@island.is/financial-aid/shared/lib'
+import { apiBasePath, StaffRole } from '@island.is/financial-aid/shared/lib'
+import type { Staff } from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'

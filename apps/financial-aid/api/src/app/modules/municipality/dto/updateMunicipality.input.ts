@@ -1,7 +1,7 @@
 import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
-import { Aid } from '@island.is/financial-aid/shared/lib'
+import type { Aid } from '@island.is/financial-aid/shared/lib'
 import { AidInput } from './aid.input'
 
 @InputType()

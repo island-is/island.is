@@ -1,7 +1,7 @@
 import { IsObject, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
-import { Aid } from '@island.is/financial-aid/shared/lib'
+import type { Aid } from '@island.is/financial-aid/shared/lib'
 
 export class UpdateMunicipalityDto {
   @IsOptional()
