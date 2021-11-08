@@ -162,6 +162,11 @@ export const m: MessageDir = {
       defaultMessage: 'Ertu viss um að vilja opna lista?',
       description: 'Dialog prompt title',
     },
+    dialogPromptUpdateListTitle: {
+      id: 'sp.petitions:dialog-prompt-update',
+      defaultMessage: 'Ertu viss um að vilja uppfæra lista?',
+      description: 'Dialog prompt title',
+    },
     closeListButton: {
       id: 'sp.petitions:close-list',
       defaultMessage: 'Loka lista',
