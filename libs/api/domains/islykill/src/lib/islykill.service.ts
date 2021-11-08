@@ -21,10 +21,6 @@ export class IslykillService {
       ssn: nationalId,
       email,
       mobile,
-
-      // Should these options be available?
-      // canNudge: false,
-      // onlyCert: false,
     }
     const errorMsg = 'Unable to update islykill settings for user'
     const apiData = await this.islyklarApi
@@ -95,10 +91,6 @@ export class IslykillService {
       ssn: nationalId,
       email,
       mobile,
-
-      // Should these options be available?
-      // canNudge: false,
-      // onlyCert: false,
     }
 
     const errorMsg = 'Unable to create islykill settings for user'
