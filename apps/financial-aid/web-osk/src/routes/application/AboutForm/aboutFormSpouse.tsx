@@ -18,8 +18,8 @@ const AboutFormSpouse = () => {
       </Text>
 
       <Text variant="intro" fontWeight="light" marginBottom={2}>
-        Maki þinn ({user?.spouse?.name}) hefur sótt um fjárhagsaðstoð fyrir{' '}
-        {currentMonth()} mánuð.
+        Maki þinn ({user?.spouse?.spouseName}) hefur sótt um fjárhagsaðstoð
+        fyrir {currentMonth()} mánuð.
       </Text>
 
       <Text variant="intro" fontWeight="light" marginBottom={3}>

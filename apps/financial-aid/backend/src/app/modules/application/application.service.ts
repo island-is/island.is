@@ -74,6 +74,7 @@ export class ApplicationService {
     return {
       hasPartnerApplied: Boolean(application),
       hasFiles: Boolean(files),
+      spouseName: application.name,
     }
   }
 
