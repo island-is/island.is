@@ -43,6 +43,7 @@ export const CurrentUserQuery = gql`
       spouse {
         hasPartnerApplied
         hasFiles
+        spouseName
       }
       currentApplicationId
     }
