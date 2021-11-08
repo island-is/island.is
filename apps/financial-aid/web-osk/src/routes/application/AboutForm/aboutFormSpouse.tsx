@@ -1,11 +1,15 @@
 import React, { useContext } from 'react'
 import { Text } from '@island.is/island-ui/core'
 
-import { months, nextMonth } from '@island.is/financial-aid/shared/lib'
+import {
+  currentMonth,
+  months,
+  nextMonth,
+} from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const AboutFormSpouse = () => {
-  const { user, municipality } = useContext(AppContext)
+  const { user } = useContext(AppContext)
 
   return (
     <>
@@ -14,9 +18,8 @@ const AboutFormSpouse = () => {
       </Text>
 
       <Text variant="intro" fontWeight="light" marginBottom={2}>
-        Maki þinn ({user?.spouse?.name}) hefur sótt um{' '}
-        <strong>fjárhagsaðstoð hjá {municipality?.name}</strong> fyrir{' '}
-        {months[nextMonth]} mánuð.
+        Maki þinn ({user?.spouse?.name}) hefur sótt um fjárhagsaðstoð fyrir{' '}
+        {currentMonth()} mánuð.
       </Text>
 
       <Text variant="intro" fontWeight="light" marginBottom={3}>
