@@ -4,7 +4,7 @@ import {
   MessageFormatter,
 } from '@island.is/application/core'
 import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
-import { YES } from '../constants'
+import { YES, NO } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import { attachments } from '../lib/messages'
 
@@ -24,6 +24,9 @@ export const hasReceivedProxyDocument = (answers: FormValue) => {
 }
 
 export const hasReceivedPoliceReport = (answers: FormValue) => {
+  const wasTheAccidentFatal = answers.wasTheAccidentFatal
+  // if accident wasn't fatal the police report isnt required
+  if (wasTheAccidentFatal === NO) return true
   return includesAttachment(answers, 'PoliceReport')
 }
 
