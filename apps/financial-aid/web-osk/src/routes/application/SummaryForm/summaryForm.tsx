@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { Text, Divider, Box } from '@island.is/island-ui/core'
+import { Text, Divider, Box, Button } from '@island.is/island-ui/core'
 
 import {
   ContentContainer,
@@ -15,6 +15,7 @@ import { FormContext } from '@island.is/financial-aid-web/osk/src/components/For
 import { useRouter } from 'next/router'
 
 import * as styles from './summaryForm.css'
+import * as summaryStyles from '@island.is/financial-aid-web/osk/src/components/Summary/summary.css'
 import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
@@ -52,12 +53,14 @@ const SummaryForm = () => {
   const formInfoOverview = [
     {
       id: 'familyStatus',
+
       label: 'Hjúskaparstaða',
       url: 'hjuskaparstada',
       info: getFamilyStatus[form.familyStatus as FamilyStatus],
     },
     {
       id: 'homeCircumstances',
+
       label: 'Búseta',
       url: 'buseta',
       info:
@@ -67,6 +70,7 @@ const SummaryForm = () => {
     },
     {
       id: 'hasIncome',
+
       label: 'Tekjur',
       url: 'tekjur',
       info:
@@ -89,6 +93,8 @@ const SummaryForm = () => {
       label: 'Netfang',
       url: 'samskipti',
       info: form.emailAddress,
+      secLabel: 'Símanúmer',
+      secInfo: form.phoneNumber,
     },
   ]
 
@@ -112,8 +118,10 @@ const SummaryForm = () => {
         })
 
         if (e.networkError?.statusCode === 400) {
-          const findErrorInFormInfo = formInfoOverview.find(
-            (el) => el.info === undefined,
+          const findErrorInFormInfo = formInfoOverview.find((el) =>
+            el.secInfo
+              ? el.secInfo === undefined || el.info === undefined
+              : el.info === undefined,
           )
 
           if (findErrorInFormInfo) {
@@ -157,10 +165,9 @@ const SummaryForm = () => {
         <Box marginTop={[4, 4, 5]}>
           <Divider />
         </Box>
-
         <UserInfo phoneNumber={form?.phoneNumber} />
-
         <FormInfo info={formInfoOverview} error={formError.status} />
+
         <Divider />
         <AllFiles />
         <FormComment />
