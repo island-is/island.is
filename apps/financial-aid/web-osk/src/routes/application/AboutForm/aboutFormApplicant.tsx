@@ -140,7 +140,7 @@ const AboutFormApplicant = () => {
           </Text>
           <Text marginBottom={[2, 2, 4]}>
             Reglur {municipality?.name} um fjárhagsaðstoð hjá{' '}
-            {municipality?.name} , síðast breytt 15. mars 2020.
+            {municipality?.name}, síðast breytt 15. mars 2020.
           </Text>
 
           <Text marginBottom={[2, 2, 4]}>
