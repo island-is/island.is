@@ -4,7 +4,6 @@ import {
   Application,
   Municipality,
   NationalRegistryData,
-  ServiceCenter,
   User,
 } from '@island.is/financial-aid/shared/lib'
 
@@ -26,6 +25,7 @@ interface AppProvider {
   user?: User
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>
   loadingUser: boolean
+  loadingMuncipality: boolean
   nationalRegistryData?: NationalRegistryData
   setNationalRegistryData: (data: NationalRegistryData) => void
 }
@@ -40,10 +40,15 @@ export const AppContext = createContext<AppProvider>({
   setNationalRegistryData: () => {},
   loading: false,
   loadingUser: false,
+  loadingMuncipality: false,
 })
 
 const AppProvider = ({ children }: Props) => {
-  const { municipality, setMunicipalityById } = useMunicipality()
+  const {
+    municipality,
+    setMunicipalityById,
+    loading: loadingMuncipality,
+  } = useMunicipality()
 
   const { isAuthenticated, user, setUser, loadingUser } = useUser()
 
@@ -62,6 +67,7 @@ const AppProvider = ({ children }: Props) => {
         loading,
         municipality,
         setMunicipalityById,
+        loadingMuncipality,
         isAuthenticated,
         user,
         loadingUser,

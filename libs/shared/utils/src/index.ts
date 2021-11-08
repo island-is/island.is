@@ -3,4 +3,4 @@
  * (or handle server side as well, e.g. isRunningOnEnvironment).
  */
 export { getStaticEnv } from './lib/getStaticEnv'
-export { isRunningOnEnvironment } from './lib/isRunningOnEnvironment'
+export { isRunningOnEnvironment, getActiveEnvironment } from './lib/environment'
