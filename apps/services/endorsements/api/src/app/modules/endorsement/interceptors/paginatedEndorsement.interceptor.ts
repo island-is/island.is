@@ -19,11 +19,9 @@ export class PaginatedEndorsementInterceptor implements NestInterceptor {
   ): Observable<PaginatedEndorsementDto> {
     return next.handle().pipe(
       map((retEndorsement: PaginatedEndorsementDto) => {
-        retEndorsement.data = retEndorsement.data.map(
-          (retEndorsement) => {
-            return maskEndorsement(retEndorsement)
-          },
-        )
+        retEndorsement.data = retEndorsement.data.map((retEndorsement) => {
+          return maskEndorsement(retEndorsement)
+        })
         return retEndorsement
       }),
     )

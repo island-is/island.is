@@ -46,7 +46,7 @@ import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
 import { emailDto } from './dto/email.dto'
 import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
 import { EndorsementInterceptor } from './interceptors/endorsement.interceptor'
-import {PaginatedEndorsementInterceptor} from './interceptors/paginatedEndorsement.interceptor'
+import { PaginatedEndorsementInterceptor } from './interceptors/paginatedEndorsement.interceptor'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @Audit({
