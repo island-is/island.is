@@ -100,17 +100,17 @@ const AboutFormApplicant = () => {
         >
           <Text marginBottom={[2, 2, 4]}>
             Til að geta sannreynt rétt umsækjanda skv. umsókn þessari, í samræmi
-            við reglur Hafnarfjarðarkaupstaðar og gildandi lög varðandi veitingu
-            þjónustunnar, þá þarf fjölskyldu- og barnamálasvið
-            Hafnarfjarðarkaupstaðar að afla persónuupplýsinga um umsækjanda.
-            Verði umbeðnar nauðsynlegar upplýsingar ekki veittar kann það að
-            leiða til þess að ekki er unnt að verða við umsókn þinni.
+            við reglur {municipality?.name} og gildandi lög varðandi veitingu
+            þjónustunnar, þá þarf fjölskyldu- og barnamálasvið{' '}
+            {municipality?.name} að afla persónuupplýsinga um umsækjanda. Verði
+            umbeðnar nauðsynlegar upplýsingar ekki veittar kann það að leiða til
+            þess að ekki er unnt að verða við umsókn þinni.
           </Text>
 
           <Text marginBottom={[1, 1, 2]}>
             Með því að senda inn umsókn þessa staðfestir umsækjandi að hann hafi
             kynnt sér efni varðandi vinnslu persónuupplýsinga af hálfu
-            fjölskyldu- og barnamálasvið Hafnarfjarðarkaupstaðar vegna umsóknar
+            fjölskyldu- og barnamálasvið {municipality?.name} vegna umsóknar
             þessarar og fylgir umsóknarformi þessu "persónuvernd og vinnsla
             persónuupplýsinga".
           </Text>
@@ -121,26 +121,26 @@ const AboutFormApplicant = () => {
 
           <Text marginBottom={[1, 1, 2]}>
             Svo unnt sé að vinna úr umsókn þinni og leggja mat á rétt þinn til
-            þjónustu hjá Hafnarfjarðarkaupstað samkvæmt umsókninni, þá þarf
-            fjölskyldu- og barnamálasvið Hafnarfjarðarkaupstaðar að vinna með
-            nánar tilgreindar persónuupplýsingar þínar. Unnið er með þær
-            upplýsingar sem þú veitir í umsóknarferlinu og jafnframt þær
-            upplýsingar sem nauðsynlegar eru og tilgreindar eru hér til að
-            sannreyna að skilyrði reglna Hafnarfjarðarkaupstaðar séu uppfyllt
-            við upphaf og á meðan þjónustusamband aðila stendur yfir.
+            þjónustu hjá {municipality?.name} samkvæmt umsókninni, þá þarf
+            fjölskyldu- og barnamálasvið {municipality?.name} að vinna með nánar
+            tilgreindar persónuupplýsingar þínar. Unnið er með þær upplýsingar
+            sem þú veitir í umsóknarferlinu og jafnframt þær upplýsingar sem
+            nauðsynlegar eru og tilgreindar eru hér til að sannreyna að skilyrði
+            reglna {municipality?.name} séu uppfyllt við upphaf og á meðan
+            þjónustusamband aðila stendur yfir.
           </Text>
 
           <Text marginBottom={[1, 1, 2]}>
             Tilgangur vinnslu og lagagrundvöllur Persónuupplýsingar þær sem
             óskað er eftir á umsóknarformi þessu og unnið er með, eru
-            nauðsynlegar fjölskyldusviði Hafnarfjarðarkaupstaðar til að geta
+            nauðsynlegar fjölskyldusviði {municipality?.name} til að geta
             sannreynt og tryggt rétt umsækjanda til þjónustu í samræmi við
             umsókn þessa, skv. eftirfarandi lögum: <br /> V, VI. og VII kafli
             laga um félagsþjónustu sveitarfélaga nr. 40/1991.
           </Text>
           <Text marginBottom={[2, 2, 4]}>
-            Reglur Hafnarfjarðarkaupstaðar um fjárhagsaðstoð hjá
-            Hafnarfjarðarbæ, síðast breytt 15. mars 2020.
+            Reglur {municipality?.name} um fjárhagsaðstoð hjá{' '}
+            {municipality?.name} , síðast breytt 15. mars 2020.
           </Text>
 
           <Text marginBottom={[2, 2, 4]}>
@@ -156,8 +156,8 @@ const AboutFormApplicant = () => {
 
           <Text marginBottom={[1, 1, 2]}>
             Hvaðan koma upplýsingarnar? Umsækjandi veitir þær upplýsingar sem
-            unnið er með vegna framkominnar umsóknar auk þess sem
-            Hafnarfjarðarkaupstaður sækir grunnupplýsingar um umsækjanda til
+            unnið er með vegna framkominnar umsóknar auk þess sem{' '}
+            {municipality?.name} ur sækir grunnupplýsingar um umsækjanda til
             Þjóðskrár.
           </Text>
 
@@ -171,20 +171,20 @@ const AboutFormApplicant = () => {
           <Text marginBottom={[2, 2, 4]}>
             Ef við á getur þurft að afla upplýsinga frá fleiri aðilum:
             Tryggingastofnun ríkisins, Hagstofa Íslands,
-            atvinnuleysistryggingasjóði og útlendingastofnun.{' '}
+            atvinnuleysistryggingasjóði og útlendingastofnun.
           </Text>
 
           <Text marginBottom={[2, 2, 4]}>
             Hversu lengi eru persónuupplýsingarnar varðveittar:
             Persónuupplýsingar þínar eru geymdar ótímabundið á grundvelli
-            lagaskyldu sem hvílir á Hafnarfjarðarkaupstað skv. lögum um opinber
-            skjalasöfn nr. 77/2014. Almennt að liðnum 30 árum er
-            Hafnarfjarðarkaupstað skylt að afhenda Þjóðskjalasafni til
-            varðveislu þau skjöl sem myndast við umsókn þína.
+            lagaskyldu sem hvílir á {municipality?.name} skv. lögum um opinber
+            skjalasöfn nr. 77/2014. Almennt að liðnum 30 árum er{' '}
+            {municipality?.name} skylt að afhenda Þjóðskjalasafni til varðveislu
+            þau skjöl sem myndast við umsókn þína.
           </Text>
 
           <Text marginBottom={[2, 2, 4]}>
-            Öryggi persónuupplýsinganna: Hafnarfjarðarkaupstaður gætir öryggis
+            Öryggi persónuupplýsinganna: {municipality?.name} gætir öryggis
             persónuupplýsinga með viðeigandi skipulagslegum og tæknilegum
             ráðstöfunum, þ. á m. aðgangsstýringum og dulkóðun. Allt það
             starfsfólk sem kemur að vinnslu persónuupplýsinga umsækjanda er
@@ -193,16 +193,16 @@ const AboutFormApplicant = () => {
 
           <Text marginBottom={[2, 2, 4]}>
             Miðlun persónuupplýsinganna til þriðja aðila Tilteknum upplýsingum
-            sem Hafnarfjarðarkaupstaður hefur aflað í tengslum við umsókn þessa
-            er miðlað til þriðja aðila. Aðeins er miðlað þeim upplýsingum sem
-            eru nauðsynlegar til að veita hér umbeðna þjónustu.
-            Persónuupplýsingar eru ekki sendar annað án leyfis umsækjanda. Nánar
-            tiltekið er um að ræða:
+            sem {municipality?.name} hefur aflað í tengslum við umsókn þessa er
+            miðlað til þriðja aðila. Aðeins er miðlað þeim upplýsingum sem eru
+            nauðsynlegar til að veita hér umbeðna þjónustu. Persónuupplýsingar
+            eru ekki sendar annað án leyfis umsækjanda. Nánar tiltekið er um að
+            ræða:
           </Text>
 
           <Text marginBottom={[2, 2, 4]}>
             Réttindi: Þú kannt að eiga rétt til þess að fá aðgang að þeim
-            persónuupplýsingum sem Hafnarfjarðarkaupstaður vinnur með í tengslum
+            persónuupplýsingum sem {municipality?.name} vinnur með í tengslum
             við umsókn þína. Þá kannt þú að hafa rétt til að andmæla vinnslunni,
             fá upplýsingar leiðréttar, krefjast þess að þeim verði eytt eða fara
             fram á að vinnslan verði takmörkuð.
@@ -210,24 +210,18 @@ const AboutFormApplicant = () => {
 
           <Text marginBottom={[2, 2, 4]}>
             Kvörtun yfir vinnslu persónuupplýsinga: Sérstök athygli er vakin á
-            því að ef þú ert ósátt/ur við meðferð Hafnarfjarðarkaupstaðar á
+            því að ef þú ert ósátt/ur við meðferð {municipality?.name} á
             persónuupplýsingum þínum getur þú ávallt haft samband við
-            persónuverndarfulltrúa Hafnarfjarðarkaupstaðar{' '}
-            <a
-              href={`mailto:personuvernd@hafnarfjordur.is`}
-              rel="noreferrer noopener"
-            >
-              <span className="linkInText">
-                {' '}
-                (personuvernd@hafnarfjordur.is)
-              </span>
+            persónuverndarfulltrúa {municipality?.name}{' '}
+            <a href={`mailto:${municipality?.email}`} rel="noreferrer noopener">
+              <span className="linkInText"> {municipality?.email}</span>
             </a>{' '}
             eða sent erindi til Persónuverndar.
           </Text>
 
           <Text marginBottom={1}>
-            Frekari upplýsingar um vinnslu persónuupplýsinga hjá
-            Hafnarfjarðarkaupstað má finna í persónuverndarstefnu
+            Frekari upplýsingar um vinnslu persónuupplýsinga hjá{' '}
+            {municipality?.name} má finna í persónuverndarstefnu
             sveitarfélagsins sem aðgengileg er á vefsíðunni
             <a
               href={municipality?.homepage}

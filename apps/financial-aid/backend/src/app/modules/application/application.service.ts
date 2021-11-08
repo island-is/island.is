@@ -71,10 +71,12 @@ export class ApplicationService {
         )
       : false
 
+    const spouseName = application ? application.name : ''
+
     return {
       hasPartnerApplied: Boolean(application),
       hasFiles: Boolean(files),
-      spouseName: application.name,
+      spouseName: spouseName,
     }
   }
 
