@@ -17,7 +17,6 @@ import {
   buildDataProviderItem,
   buildCustomField,
 } from '@island.is/application/core'
-import { ApiActions } from '../shared'
 import { UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
 
