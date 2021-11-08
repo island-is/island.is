@@ -28,7 +28,7 @@ const useNavigationTree = (hasIncome: boolean) => {
         {
           type: 'SUB_SECTION',
           name: 'Hjúskaparstaða',
-          url: Routes.form.relationShip,
+          url: Routes.form.relationship,
         },
         {
           type: 'SUB_SECTION',

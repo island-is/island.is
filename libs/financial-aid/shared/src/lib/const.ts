@@ -4,7 +4,7 @@ export const Routes = {
   application: '/umsokn',
   form: {
     info: `${formRoutes}rettur`,
-    relationShip: `${formRoutes}hjuskaparstada`,
+    relationship: `${formRoutes}hjuskaparstada`,
     homeCircumstances: `${formRoutes}buseta`,
     hasIncome: `${formRoutes}tekjur`,
     employment: `${formRoutes}atvinna`,

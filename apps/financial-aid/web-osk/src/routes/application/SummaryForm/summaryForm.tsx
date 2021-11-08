@@ -54,7 +54,7 @@ const SummaryForm = () => {
     {
       id: 'familyStatus',
       label: 'Hjúskaparstaða',
-      url: Routes.form.relationShip,
+      url: Routes.form.relationship,
       info: getFamilyStatus[form.familyStatus as FamilyStatus],
     },
     {
@@ -95,7 +95,10 @@ const SummaryForm = () => {
       id: 'bankInfo',
       label: 'Bankaupplýsingar',
       url: Routes.form.bankInfo,
-      info: form.bankNumber + '-' + form.ledger + '-' + form.accountNumber,
+      info:
+        form.bankNumber && form.ledger && form.accountNumber
+          ? form.bankNumber + '-' + form.ledger + '-' + form.accountNumber
+          : '',
     },
     {
       id: 'emailAddress',
