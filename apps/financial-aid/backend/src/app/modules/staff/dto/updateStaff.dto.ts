@@ -1,10 +1,4 @@
-import {
-  IsArray,
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator'
+import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 import { StaffRole } from '@island.is/financial-aid/shared/lib'
@@ -25,7 +19,7 @@ export class UpdateStaffDto {
   @ApiProperty()
   readonly nickname: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
   @ApiProperty()
   readonly roles: StaffRole[]
