@@ -24,7 +24,9 @@ paths:
     post:
       tags:
         - Document
-      summary: Post function for invoices. This function creates new document in IHI systems.
+      summary: >-
+        Post function for invoices. This function creates new document in IHI
+        systems.
       operationId: Document_Post
       parameters:
         - name: authHeader
@@ -37,7 +39,9 @@ paths:
           x-position: 1
       requestBody:
         x-name: document
-        description: Instance of Document witch includes a XML string representing the actual document.
+        description: >-
+          Instance of Document witch includes a XML string representing the
+          actual document.
         content:
           application/json:
             schema:
@@ -99,14 +103,18 @@ paths:
         - name: ihiDocumentID
           in: path
           required: true
-          description: Unique ID of document in IHI systems. ( Einkvæmt skjalanúmer úr kerfum SÍ )
+          description: >-
+            Unique ID of document in IHI systems. ( Einkvæmt skjalanúmer úr
+            kerfum SÍ )
           schema:
             type: integer
             format: int32
           x-position: 2
       requestBody:
         x-name: attachment
-        description: Body parameter of type DocumentAttachment. Includes attachment type, title and the attachment content as a base64 string
+        description: >-
+          Body parameter of type DocumentAttachment. Includes attachment type,
+          title and the attachment content as a base64 string
         content:
           application/json:
             schema:
@@ -162,14 +170,19 @@ paths:
         - name: ihiDocumentID
           in: path
           required: true
-          description: Unique ID of document in IHI systems. ( Einkvæmt skjalanúmer úr kerfum SÍ )
+          description: >-
+            Unique ID of document in IHI systems. ( Einkvæmt skjalanúmer úr
+            kerfum SÍ )
           schema:
             type: integer
             format: int32
           x-position: 2
       responses:
         '201':
-          description: Returns instance of GetAccidentStatusType. Includes the unique id from ihi systems, status of the report ( In progress, wait for attachments, etc.), status of the attachemts and conformations.
+          description: >-
+            Returns instance of GetAccidentStatusType. Includes the unique id
+            from ihi systems, status of the report ( In progress, wait for
+            attachments, etc.), status of the attachemts and conformations.
           content:
             application/json:
               schema:
@@ -214,14 +227,19 @@ paths:
         - name: ihiDocumentID
           in: path
           required: true
-          description: Unique ID of document in IHI systems. ( Einkvæmt skjalanúmer úr kerfum SÍ )
+          description: >-
+            Unique ID of document in IHI systems. ( Einkvæmt skjalanúmer úr
+            kerfum SÍ )
           schema:
             type: integer
             format: int32
           x-position: 2
       requestBody:
         x-name: confirmation
-        description: Instance of the  ConfirmationIN class. Has information about the confirmationParty, confirmationType and objection text if confirmationType = 2 (Objection)
+        description: >-
+          Instance of the  ConfirmationIN class. Has information about the
+          confirmationParty, confirmationType and objection text if
+          confirmationType = 2 (Objection)
         content:
           application/json:
             schema:
@@ -379,7 +397,9 @@ paths:
     get:
       tags:
         - Test
-      summary: This is a test service to check if the islandrg services are up and running or not.
+      summary: >-
+        This is a test service to check if the islandrg services are up and
+        running or not.
       operationId: Test_Ping
       parameters:
         - name: authHeader
@@ -446,20 +466,28 @@ components:
           format: int32
         errorList:
           type: array
-          description: 'List of DocumentError class which includes the errors from the database checks if any. '
+          description: >-
+            List of DocumentError class which includes the errors from the
+            database checks if any.
           nullable: true
           items:
             $ref: '#/components/schemas/DocumentError'
     DocumentError:
       type: object
-      description: |-
-        When IHI receives a document, it goes through some checks to see if the document is valid. If it's not valid for some reason, an error will be sent to the sender.
-        The document could possibly have more than one error, therefore a list of the DocumentError class will be included in the response.
+      description: >-
+        When IHI receives a document, it goes through some checks to see if the
+        document is valid. If it's not valid for some reason, an error will be
+        sent to the sender.
+
+        The document could possibly have more than one error, therefore a list
+        of the DocumentError class will be included in the response.
       additionalProperties: false
       properties:
         lineNumber:
           type: integer
-          description: If the document includes many lines of errors, this indicates for which line error refers to.
+          description: >-
+            If the document includes many lines of errors, this indicates for
+            which line error refers to.
           format: int32
         isError:
           type: integer
@@ -550,12 +578,16 @@ components:
           nullable: true
     Document:
       type: object
-      description: An instance of the Document class. Includes type of document and the document itself as XML string.
+      description: >-
+        An instance of the Document class. Includes type of document and the
+        document itself as XML string.
       additionalProperties: false
       properties:
         documentType:
           type: integer
-          description: Type of document being sent, i.e. 104 for aids, 570 for insurance application and 801 for accident.
+          description: >-
+            Type of document being sent, i.e. 104 for aids, 570 for insurance
+            application and 801 for accident.
           format: int32
         doc:
           type: string
@@ -581,7 +613,9 @@ components:
       properties:
         attachmentType:
           type: integer
-          description: Unique number for the type of attachement. This number is unique for each system.
+          description: >-
+            Unique number for the type of attachement. This number is unique for
+            each system.
           format: int32
         title:
           type: string
@@ -601,19 +635,26 @@ components:
           format: int32
         status:
           type: integer
-          description: |-
-            Status of the accident notification within IHI. ( Staða tilkynningar hjá Sjúkratryggingum Íslands ) 
-            0 = Accepted, 1 = Refused, 2 = In progress, 3 = In progress - waiting for attachments
+          description: >-
+            Status of the accident notification within IHI. ( Staða tilkynningar
+            hjá Sjúkratryggingum Íslands ) 
+
+            0 = Accepted, 1 = Refused, 2 = In progress, 3 = In progress -
+            waiting for attachments
           format: int32
         attachments:
           type: array
-          description: Information list about the attachments. Says whether the attachment has been received and what type it is
+          description: >-
+            Information list about the attachments. Says whether the attachment
+            has been received and what type it is
           nullable: true
           items:
             $ref: '#/components/schemas/AttachmentInfo'
         confirmations:
           type: array
-          description: Confirmations list. Says whether confirmations has been received or not
+          description: >-
+            Confirmations list. Says whether confirmations has been received or
+            not
           nullable: true
           items:
             $ref: '#/components/schemas/ConfirmationInfo'
@@ -652,7 +693,9 @@ components:
       properties:
         numberIHI:
           type: integer
-          description: If ping is successful it returns a unique id for the request from IHI database.
+          description: >-
+            If ping is successful it returns a unique id for the request from
+            IHI database.
           format: int32
     ConfirmationIN:
       type: object
@@ -668,7 +711,9 @@ components:
           format: int32
         objection:
           type: string
-          description: If conformationType = 2 (Objection), then this is a description text for the objection.
+          description: >-
+            If conformationType = 2 (Objection), then this is a description text
+            for the objection.
           nullable: true
     IsHealthInsuredType:
       type: object
@@ -685,10 +730,15 @@ components:
           format: int32
         date:
           type: string
-          description: |-
-            If person is health insured, this applies to the date when the insurance started.
-            If person is not insured, this applies to the date when he was last insured
-            If person has always lived in Iceland then this will be empty.
+          description: >-
+            If person is health insured, this applies to the date when the
+            insurance started.
+
+            If person is not insured, this applies to the date when he was last
+            insured
+
+            If person has always lived in Iceland then this will be
+            empty.
           format: date-time
           nullable: true
         isOnWaitPeriod:
@@ -720,5 +770,7 @@ components:
           format: decimal
         status:
           type: integer
-          description: Application's status in IHI system. 0 = Accepted, 1 = Denied, 2 = In wait, 3 = Not valid, 4 = In progress
+          description: >-
+            Application's status in IHI system. 0 = Accepted, 1 = Denied, 2 = In
+            wait, 3 = Not valid, 4 = In progress
           format: int32

@@ -24,6 +24,8 @@ export const ApplicationQuery = gql`
       familyStatus
       spouseNationalId
       spouseName
+      spouseEmail
+      spousePhoneNumber
       city
       streetName
       postalCode
@@ -255,10 +257,36 @@ export const StaffForMunicipalityQuery = gql`
   }
 `
 
+export const StaffQuery = gql`
+  query getStaff($input: StaffInput!) {
+    user(input: $input) {
+      id
+      nationalId
+      name
+      roles
+      active
+      nickname
+      email
+    }
+  }
+`
+
 export const StaffMutation = gql`
   mutation StaffMutation($input: CreateStaffInput!) {
     createStaff(input: $input) {
       id
+    }
+  }
+`
+
+export const UpdateStaffMutation = gql`
+  mutation UpdateStaffMutation($input: UpdateStaffInput!) {
+    updateStaff(input: $input) {
+      id
+      nationalId
+      roles
+      nickname
+      email
     }
   }
 `

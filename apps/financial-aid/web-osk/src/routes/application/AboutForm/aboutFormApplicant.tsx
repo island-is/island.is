@@ -1,15 +1,11 @@
 import React, { useContext } from 'react'
 import { Text, BulletList, Bullet, Box, Link } from '@island.is/island-ui/core'
 
-import {
-  currentMonth,
-  months,
-  nextMonth,
-} from '@island.is/financial-aid/shared/lib'
+import { months, nextMonth } from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const AboutFormApplicant = () => {
-  const { municipality } = useContext(AppContext)
+  const { municipality, nationalRegistryData } = useContext(AppContext)
 
   return (
     <>
