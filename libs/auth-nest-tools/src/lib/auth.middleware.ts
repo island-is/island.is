@@ -36,8 +36,7 @@ export interface TokenExchangeOptions {
  * Middleware that adds user authorization and information to OpenAPI Client requests.
  */
 
- @trace()
- export class AuthMiddleware implements Middleware {
+export class AuthMiddleware implements Middleware {
   constructor(
     private auth: Auth,
     private options: AuthMiddlewareOptions = {
@@ -45,6 +44,7 @@ export interface TokenExchangeOptions {
     },
   ) {}
 
+  @trace()
   async pre(context: RequestContext) {
     let bearerToken = this.auth.authorization
 
@@ -72,6 +72,7 @@ export interface TokenExchangeOptions {
     }
   }
 
+  @trace()
   private async exchangeToken(
     accessToken: string,
     context: RequestContext,
