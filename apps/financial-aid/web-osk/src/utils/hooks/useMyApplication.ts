@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
 
 import { ApplicationQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
@@ -20,6 +20,7 @@ const useMyApplication = () => {
 
   if (
     router.query.id &&
+    !router.route.includes('/midstod') &&
     myApplication === undefined &&
     loading === false &&
     error === undefined
