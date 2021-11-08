@@ -17,7 +17,11 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import { FileType, NavigationProps } from '@island.is/financial-aid/shared/lib'
+import {
+  FileType,
+  NavigationProps,
+  Routes,
+} from '@island.is/financial-aid/shared/lib'
 
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 import useUpdateApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useUpdateApplication'
@@ -42,7 +46,7 @@ const SpouseSummary = () => {
     {
       id: 'hasIncome',
       label: 'Tekjur',
-      url: 'tekjur',
+      url: Routes.form.hasIncome,
       info:
         form?.hasIncome === undefined
           ? undefined
@@ -53,8 +57,10 @@ const SpouseSummary = () => {
     {
       id: 'emailAddress',
       label: 'Netfang',
-      url: 'samskipti',
+      url: Routes.form.contactInfo,
       info: form.emailAddress,
+      secLabel: 'Símanúmer',
+      secInfo: form.phoneNumber,
     },
   ]
 
@@ -104,7 +110,7 @@ const SpouseSummary = () => {
           <Divider />
         </Box>
 
-        <UserInfo phoneNumber={form?.phoneNumber} />
+        <UserInfo />
 
         <FormInfo info={formInfoOverview} error={formError.status} />
         <Divider />

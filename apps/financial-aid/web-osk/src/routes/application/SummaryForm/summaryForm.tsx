@@ -19,7 +19,6 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import { Routes } from '@island.is/financial-aid/shared/lib'
 import {
   Employment,
   FamilyStatus,
@@ -28,6 +27,7 @@ import {
   getHomeCircumstances,
   HomeCircumstances,
   NavigationProps,
+  Routes,
 } from '@island.is/financial-aid/shared/lib'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useApplication'
