@@ -1,7 +1,5 @@
 'use strict'
 
-const replaceEnum = require('sequelize-replace-enum-postgres').default
-
 module.exports = {
   up: async (queryInterface) => {
     try {
@@ -25,41 +23,10 @@ module.exports = {
         throw e
       }
     }
-
-    // replaceEnum does not support transactions
-    return replaceEnum({
-      queryInterface,
-      tableName: 'case',
-      columnName: 'requested_custody_restrictions',
-      newValues: [
-        'ISOLATION',
-        'VISITAION',
-        'COMMUNICATION',
-        'MEDIA',
-        'ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
-        'ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT',
-        'NECESSITIES',
-        'WORKBAN',
-      ],
-      enumName: 'enum_case_custody_restrictions',
-    })
   },
 
-  down: (queryInterface) => {
-    // replaceEnum does not support transactions
-    return replaceEnum({
-      queryInterface,
-      tableName: 'case',
-      columnName: 'requested_custody_restrictions',
-      newValues: [
-        'ISOLATION',
-        'VISITAION',
-        'COMMUNICATION',
-        'MEDIA',
-        'ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
-        'ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT',
-      ],
-      enumName: 'enum_case_custody_restrictions',
-    })
+  down: async () => {
+    // no need to roll back
+    return
   },
 }
