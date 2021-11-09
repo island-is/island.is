@@ -19,7 +19,7 @@ export const betaTest = defineMessages({
     description: 'Description for beta test message',
   },
   emailText: {
-    id: 'an.application:betaTest.email',
+    id: 'an.application:betaTest.emailText',
     defaultMessage: 'island@island.is,',
     description: 'Mail link for beta test message',
   },
