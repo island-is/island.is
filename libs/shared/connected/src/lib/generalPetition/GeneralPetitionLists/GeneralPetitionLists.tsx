@@ -27,7 +27,11 @@ export const GeneralPetitionLists = () => {
             <Link
               href={''}
               key={petition.id}
-              onClick={() => router.push('/undirskriftalistar/' + petition.id)}
+              onClick={() =>
+                router
+                  .push('/undirskriftalistar/' + petition.id)
+                  .then(() => window.scrollTo(0, 0))
+              }
             >
               <ActionCard
                 key={petition.title}
