@@ -2,14 +2,14 @@
 
 ## Description
 
-This application template allows applicants to apply for parental leave. For further reading about application templates, have a look at `libs/application/templates/reference-template/README.md`.
+This application template allows applicants to apply for parental leave. For further reading about application templates, have a look at [the reference template](../reference-template/README.md).
 
 - It contains all the steps for parents and employers required to collect and confirm all information
 - It handles communications with external APIs to filter out valid applicants as well as sending complete applications to Vinnumálastofnun
 
-Below you'll find a flow chart for the application
+Below you'll find a flow chart for the application:
 
-[Flow chart]
+![](./assets/flow-chart.png)
 
 ### Glossary
 
@@ -21,7 +21,7 @@ Below you'll find a flow chart for the application
 
 ### States
 
-This section assumes that you are familiar with [states](https://docs.devland.is/libs/application/core#states).
+This section assumes that you are familiar with [states](../../core/README.md#states).
 
 #### Prerequisites
 
@@ -55,7 +55,7 @@ Applications that have been sent to VMST
 
 For async actions that require server side logic we have the template api modules. The module for this application contains email templates as well as external actions like `sendApplication`.
 
-Have a look at `libs/application/template-api-modules/src/lib/modules/templates/parental-leave/parental-leave.module.ts` for further information on these actions, and `libs/application/template-api-modules/README.md` to get up to speed on template api modules.
+Have a look at [the parental leave template API module](../../template-api-modules/src/lib/modules/templates/parental-leave/parental-leave.module.ts) for further information on these actions, and [template API module README](../../template-api-modules/README.md) to get up to speed on template api modules.
 
 ### API and X-Road
 
@@ -65,7 +65,7 @@ To communicate with VMST a request has to go through [X-Road](https://docs.devla
 
 To connect to VMST test API you'll want to start the [local proxy](https://docs.devland.is/#running-proxy-against-development-service) (also see [AWS secrets](https://docs.devland.is/repository/aws-secrets#getting-started)).
 
-See `libs/api/domains/directorate-of-labour/src/lib/directorate-of-labour.module.ts` for examples of VMST communication.
+See [directorate of labour graphql API module](../../../api/domains/directorate-of-labour/src/lib/directorate-of-labour.module.ts) for examples of VMST communication.
 
 ### Localisation
 
@@ -75,7 +75,7 @@ All localisation can be found on Contentful.
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
 {% hint style="warning" %}
-When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](https://docs.devland.is/libs/localization#message-extraction).
+When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../localization/README.md#message-extraction).
 {% endhint %}
 
 ### Emails
@@ -86,29 +86,38 @@ When developing locally you’ll see preview links for would-be emails where you
 
 ## Setup
 
-See [application-system](https://docs.devland.is/apps/application-system) setup on how to get started.
+See [application-system](../../../../apps/application-system/README.md) setup on how to get started.
 
-You'll want to start the `application-system-api` and `api` with these env variables to form the correct X-Road requests:
+To run the application system you'll need to run three apps:
 
-- `XROAD_BASE_PATH_WITH_ENV=http://localhost:8081/r1/IS-DEV`
-- `XROAD_VMST_MEMBER_CODE=10003`
-- `XROAD_VMST_API_PATH=/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1`
-- `XROAD_CLIENT_ID=IS-DEV/GOV/10000/island-is-client`
+- `application-system-api`
+  - Fetch secrets using: `yarn get-secrets application-system-api`
+- `api`
+  - Fetch secrets using: `yarn get-secrets api`
+- `application-system-form`
 
-Then you'll also want these env variables:
-
-- `VMST_API_KEY`: to communicate with the VMST API, found in AWS parameter store
-- `CONTENTFUL_ACCESS_TOKEN`: to fetch translations, found in Contentful
-
-Then also start `application-system-form`.
-
-Once you have everything running you can navigate to `http://localhost:4200/umsoknir/faedingarorlof` and start developing.
+Once you have everything running you can navigate to [http://localhost:4200/umsoknir/faedingarorlof](http://localhost:4200/umsoknir/faedingarorlof) and start developing.
 
 ### Local database
 
 By setting up the application-system you'll have created a local postgres database on a docker image, if you haven't already you should setup a tool to interact with your database. For example [pgAdmin](https://www.pgadmin.org/download/).
 
-You’ll find the relevant connection information in `apps/application-system/api/docker-compose.base.yml`.
+You’ll find the relevant connection information in [the docker-compose file](../../../../apps/application-system/api/docker-compose.base.yml).
+
+## Investigating errors
+
+When investigating errors on our enviornments we have two logging services. `Datadog` for backend services and `Sentry` for the client.
+
+### Datadog
+
+- env: `dev` | `staging` | `prod`
+- service: `api` | `application-system-api`
+
+### Sentry
+
+- Can select `dev` / `staging` / `prod` from the environment dropdown
+- Can filter by url with id to find a single application experiencing errors
+  - `url:https://island.is/umsoknir/:id`
 
 ## Future work
 
@@ -119,3 +128,7 @@ When the application is opened/refreshed by a user that was an assignee but no l
 ### Rights code
 
 Currently other parents have the rights code `FO` (`FOreldri` -> parent). The API we use from Þjóðskrá does not provide gender but we'll need to include this for statistics on other parents.
+
+### Localisation in emails
+
+Emails are currently hardcoded, need to pass in localisation functions to be able to use translation strings. Also need to sync with service-portal to know what locale the user prefers.
