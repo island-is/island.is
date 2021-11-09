@@ -22,6 +22,7 @@ import {
   FileType,
   NavigationProps,
   Routes,
+  scrollToId,
 } from '@island.is/financial-aid/shared/lib'
 
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
@@ -74,11 +75,7 @@ const SpouseSummary = () => {
 
     if (form.emailAddress === undefined || form.phoneNumber === undefined) {
       errorHandling('Þú verður að fylla út í alla reitina')
-      var element = document.getElementById('contactInfo')
-      console.log(element)
-      element?.scrollIntoView({
-        behavior: 'smooth',
-      })
+      scrollToId('contactInfo')
       return
     }
 

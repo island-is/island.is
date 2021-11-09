@@ -2,15 +2,11 @@ import React from 'react'
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
-import * as styles from './summary.css'
-
 interface InfoProps {
   id: string
   label: string
   url: string
   info: string | undefined
-  secLabel?: string
-  secInfo?: string
 }
 
 interface Props {

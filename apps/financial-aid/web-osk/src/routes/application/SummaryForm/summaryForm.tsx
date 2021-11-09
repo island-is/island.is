@@ -29,6 +29,7 @@ import {
   HomeCircumstances,
   NavigationProps,
   Routes,
+  scrollToId,
 } from '@island.is/financial-aid/shared/lib'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useApplication'
@@ -127,17 +128,11 @@ const SummaryForm = () => {
         )
 
         if (findErrorInFormInfo) {
-          var element = document.getElementById(findErrorInFormInfo.id)
-          element?.scrollIntoView({
-            behavior: 'smooth',
-          })
+          scrollToId(findErrorInFormInfo.id)
         }
 
         if (form.emailAddress === undefined || form.phoneNumber === undefined) {
-          var element = document.getElementById('contactInfo')
-          element?.scrollIntoView({
-            behavior: 'smooth',
-          })
+          scrollToId('contactInfo')
         }
       })
   }
