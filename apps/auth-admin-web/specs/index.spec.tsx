@@ -8,4 +8,9 @@ describe('Index', () => {
     const { baseElement } = render(<Index />)
     expect(baseElement).toBeTruthy()
   })
+
+  it('should render successfully v2', () => {
+    const { baseElement } = render(<Index />)
+    expect(baseElement).toBeTruthy()
+  })
 })
