@@ -28,6 +28,18 @@ describe('AuthService', () => {
       // Assert
       expect(role).toBe('developer')
     })
+
+    it('should return admin role', () => {
+      const admin = {
+        nationalId: '0987654321',
+        name: 'tester-admin',
+        mobile: '',
+        role: 'admin',
+      }
+      const role = authService.getRole(admin)
+
+      expect(role).toBe('admin')
+    })
   })
 
   describe('checkRole', () => {
