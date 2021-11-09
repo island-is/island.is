@@ -10,6 +10,7 @@ import {
   ApplicationModule,
   MunicipalityModule,
   FileModule,
+  StaffModule,
 } from './modules/'
 
 const debug = !environment.production
@@ -36,6 +37,7 @@ const autoSchemaFile = environment.production
     MunicipalityModule,
     FileModule,
     NationalRegistryXRoadModule.register(environment.nationalRegistryXRoad),
+    StaffModule,
   ],
   providers: [BackendAPI],
 })

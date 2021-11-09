@@ -14,6 +14,7 @@ import CourtRecordForm from './CourtRecordForm'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icCourtRecord as m } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
+import formatISO from 'date-fns/formatISO'
 
 const CourtRecord = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -48,8 +49,9 @@ const CourtRecord = () => {
           attendees += `${wc.accusedName} varnaraðili`
         }
       } else {
-        attendees +=
-          'Varnaraðili var ekki viðstaddur sbr. 104. gr. laga 88/2008 um meðferð sakamála.'
+        attendees += formatMessage(
+          m.sections.courtAttendees.defendantNotPresentAutofill,
+        )
       }
 
       if (
@@ -74,7 +76,7 @@ const CourtRecord = () => {
     if (!workingCase && data?.case) {
       const theCase = data.case
 
-      autofill('courtStartDate', new Date().toString(), theCase)
+      autofill('courtStartDate', formatISO(new Date()), theCase)
 
       if (theCase.court) {
         autofill(
@@ -107,7 +109,13 @@ const CourtRecord = () => {
       if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
         autofill(
           'accusedBookings',
-          `${formatMessage(m.sections.accusedBookings.autofill)}`,
+          `${formatMessage(
+            m.sections.accusedBookings.autofillRightToRemainSilent,
+          )}\n\n${formatMessage(
+            m.sections.accusedBookings.autofillCourtDocumentOne,
+          )}\n\n${formatMessage(
+            m.sections.accusedBookings.autofillAccusedPlea,
+          )}`,
           theCase,
         )
       }
@@ -118,15 +126,13 @@ const CourtRecord = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.COURT_RECORD}
       isLoading={loading}
       notFound={data?.case === undefined}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase && (
         <CourtRecordForm

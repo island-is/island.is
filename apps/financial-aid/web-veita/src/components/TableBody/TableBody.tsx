@@ -1,8 +1,8 @@
-import React, { useContext, useState } from 'react'
+import React from 'react'
 import { Text, Box, Button } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
-import * as styles from './TableBody.css'
+import * as tableStyles from '../../sharedStyles/Table.css'
 import cn from 'classnames'
 
 import {
@@ -34,15 +34,15 @@ const TableBody = ({ application, index, onApplicationUpdate }: PageProps) => {
   return (
     <Link href={'application/' + application.id}>
       <tr
-        className={`${styles.link} contentUp`}
+        className={`${tableStyles.link} contentUp`}
         style={{ animationDelay: 55 + 3.5 * index + 'ms' }}
       >
         <td
           className={cn({
-            [`${styles.tablePadding} ${styles.firstChildPadding}`]: true,
+            [`${tableStyles.tablePadding} ${tableStyles.firstChildPadding}`]: true,
           })}
         >
-          <Box display="flex" alignItems="center">
+          <Box className={tableStyles.rowContent} alignItems="center">
             <GeneratedProfile size={32} nationalId={application.nationalId} />
             <Box marginLeft={2}>
               <Text variant="h5">{GenerateName(application.nationalId)}</Text>
@@ -52,10 +52,10 @@ const TableBody = ({ application, index, onApplicationUpdate }: PageProps) => {
 
         <td
           className={cn({
-            [`${styles.tablePadding} `]: true,
+            [`${tableStyles.tablePadding} `]: true,
           })}
         >
-          <Box display="flex">
+          <Box>
             <div className={`tags ${getTagByState(application.state)}`}>
               {getState[application.state]}
             </div>
@@ -64,7 +64,7 @@ const TableBody = ({ application, index, onApplicationUpdate }: PageProps) => {
 
         <td
           className={cn({
-            [`${styles.tablePadding} `]: true,
+            [`${tableStyles.tablePadding} `]: true,
           })}
         >
           <Text> {calcDifferenceInDate(application.modified)}</Text>
@@ -72,18 +72,20 @@ const TableBody = ({ application, index, onApplicationUpdate }: PageProps) => {
 
         <td
           className={cn({
-            [`${styles.tablePadding} `]: true,
+            [`${tableStyles.tablePadding} `]: true,
           })}
         >
           <Text>{getMonth(new Date(application.created).getMonth())}</Text>
         </td>
         <td
           className={cn({
-            [`${styles.tablePadding} `]: true,
+            [`${tableStyles.tablePadding} `]: true,
           })}
         >
           {application.staff?.name ? (
-            <Text>{application.staff?.name}</Text>
+            <Box className={tableStyles.rowContent}>
+              <Text>{application.staff?.name}</Text>
+            </Box>
           ) : (
             <Button
               variant="text"

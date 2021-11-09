@@ -66,7 +66,7 @@ const Petitions = () => {
         </BulletList>
       </Box>
 
-      <Box marginTop={10} marginBottom={7}>
+      <Box marginTop={5} marginBottom={7}>
         {ownedLists && ownedLists.length > 0 && (
           <>
             <Text as="p" variant="h3" marginBottom={2}>

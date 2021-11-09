@@ -90,15 +90,13 @@ export const Confirmation: React.FC = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.CONFIRMATION}
       isLoading={loading}
       notFound={data?.case === undefined}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
@@ -131,9 +129,9 @@ export const Confirmation: React.FC = () => {
               </Accordion>
             </Box>
             <Box marginBottom={7}>
-              <BlueBox justifyContent="center">
-                <Box marginBottom={2}>
-                  <Text as="h4" variant="h4">
+              <BlueBox>
+                <Box marginBottom={2} textAlign="center">
+                  <Text as="h3" variant="h3">
                     {formatMessage(m.sections.conclusion.title)}
                   </Text>
                 </Box>
@@ -142,8 +140,8 @@ export const Confirmation: React.FC = () => {
                     <Text variant="intro">{workingCase.conclusion}</Text>
                   </Box>
                 </Box>
-                <Box marginBottom={1}>
-                  <Text variant="h5">
+                <Box marginBottom={1} textAlign="center">
+                  <Text variant="h4">
                     {workingCase?.judge ? workingCase.judge.name : user?.name}
                   </Text>
                 </Box>

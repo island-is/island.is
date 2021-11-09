@@ -3,6 +3,7 @@ import {
   CurrentAuth,
   CurrentUser,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
@@ -15,6 +16,8 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  UseInterceptors,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -42,6 +45,10 @@ import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
+import { emailDto } from './dto/email.dto'
+import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
+import { EndorsementInterceptor } from './interceptors/endorsement.interceptor'
+import { PaginatedEndorsementInterceptor } from './interceptors/paginatedEndorsement.interceptor'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @Audit({
@@ -50,12 +57,36 @@ const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @ApiTags('endorsement')
 @ApiOAuth2([])
 @ApiExtraModels(PaginationDto, PaginatedEndorsementDto)
+@UseGuards(ScopesGuard)
 @Controller('endorsement-list/:listId/endorsement')
 export class EndorsementController {
   constructor(
     private readonly endorsementService: EndorsementService,
     private readonly auditService: AuditService,
   ) {}
+
+  @ApiOperation({
+    summary: 'Emails a PDF with list endorsements data',
+  })
+  @Scopes(EndorsementsScope.main)
+  @HasAccessGroup(AccessGroup.Owner, AccessGroup.Admin)
+  @ApiParam({ name: 'listId', type: String })
+  @ApiOkResponse({ type: sendPdfEmailResponse })
+  @Post('/email-pdf')
+  async emailEndorsementsPDF(
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+    )
+    endorsementList: EndorsementList,
+    @Query() query: emailDto,
+  ): Promise<sendPdfEmailResponse> {
+    return this.endorsementService.emailPDF(
+      endorsementList.id,
+      query.emailAddress,
+    )
+  }
 
   @ApiOperation({ summary: 'Finds all endorsements in a given list' })
   @ApiParam({ name: 'listId', type: String })
@@ -67,6 +98,7 @@ export class EndorsementController {
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),
   })
   @ApiOkResponse({ type: PaginatedEndorsementDto })
+  @UseInterceptors(PaginatedEndorsementInterceptor)
   @ApiResponse({
     status: 200,
     description: 'The record has been successfully created.',
@@ -94,6 +126,7 @@ export class EndorsementController {
   @ApiParam({ name: 'listId', type: String })
   @Get('/general-petition')
   @ApiOkResponse({ type: PaginatedEndorsementDto })
+  @UseInterceptors(PaginatedEndorsementInterceptor)
   @ApiResponse({ status: 200 })
   @BypassAuth()
   async find(
@@ -121,6 +154,7 @@ export class EndorsementController {
       'Uses current authenticated users national id to find any existing endorsement in a given list',
     type: Endorsement,
   })
+  @UseInterceptors(EndorsementInterceptor)
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)
   @Get('/exists')
@@ -151,6 +185,7 @@ export class EndorsementController {
       'Uses the authenticated users national id to create an endorsement',
     type: Endorsement,
   })
+  @UseInterceptors(EndorsementInterceptor)
   @ApiParam({ name: 'listId', type: String })
   @ApiBody({ type: EndorsementDto })
   @Scopes(EndorsementsScope.main)

@@ -1,7 +1,10 @@
+import { Includeable } from 'sequelize/types'
+
 import {
   ForbiddenException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -37,7 +40,6 @@ import { CourtService } from '../court'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
-import { Includeable } from 'sequelize/types'
 
 interface Recipient {
   name: string
@@ -271,6 +273,26 @@ export class CaseService {
       where: { id },
       include,
     })
+  }
+
+  async findOriginalAncestor(theCase: Case): Promise<Case> {
+    let originalAncestor: Case = theCase
+
+    while (originalAncestor.parentCaseId) {
+      const parentCase = await this.caseModel.findOne({
+        where: { id: originalAncestor.parentCaseId },
+      })
+
+      if (!parentCase) {
+        throw new InternalServerErrorException(
+          `Original ancestor of case ${theCase.id} not found`,
+        )
+      }
+
+      originalAncestor = parentCase
+    }
+
+    return originalAncestor
   }
 
   async getAll(user: TUser): Promise<Case[]> {

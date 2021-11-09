@@ -58,6 +58,17 @@ export const inReview = {
         'Slysatilkynning hefur verið send til Sjúkratryggingar Íslands',
       description: 'Summary for application section in review',
     },
+    documentIdAlertTitle: {
+      id: 'an.application:inReview.application.documentIdAlertTitle',
+      defaultMessage: 'Skjalanúmer',
+      description: 'Document Id',
+    },
+    documentIdAlertMessage: {
+      id: 'an.application:inReview.application.documentIdAlertMessage',
+      defaultMessage:
+        'Skjalanúmer fyrir tilkynninguna hjá Sjúkratryggingum Íslands:',
+      description: 'Document id description text',
+    },
   }),
   documents: defineMessages({
     title: {
@@ -88,6 +99,19 @@ export const inReview = {
       defaultMessage:
         'Ef slysið átti sér stað á vinnustað/skóla/stofnun/íþróttafélagi þá þarf forsvarsmaður þess að yfirfara og staðfesta upplýsingar í tilkynningu.',
       description: 'Summary for representative section in review',
+    },
+    titleDone: {
+      id: 'an.application:inReview.action.representative.titleDone',
+      defaultMessage: 'Forsvarsmaður fer yfir tilkynningu',
+      description:
+        'Title for action message in representative section when completed by reviewer',
+    },
+    summaryDone: {
+      id: 'an.application:inReview.action.representative.summaryDone',
+      defaultMessage:
+        'Svo hægt er að greiða út bætur fyrir slysið þarf þriðji aðilli að staðfesta að upplýsingar eru réttar.',
+      description:
+        'Description for action message in representative section when done',
     },
   }),
   sjukratrygging: defineMessages({

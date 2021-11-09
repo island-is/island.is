@@ -14,7 +14,7 @@ export const addDocuments = {
     },
     description: {
       id: 'an.application:addDocuments.general.description',
-      defaultMessage: `Vinsamlegast passaðu upp á að texti sé lesanlegur til að koma í veg fyrir að það þurfi ekki að óska eftir gögnum aftur. bla bla bla`,
+      defaultMessage: `Vinsamlegast passaðu upp á að texti sé lesanlegur til að koma í veg fyrir að það þurfi ekki að óska eftir gögnum aftur.`,
       description: 'Description for add documents screen',
     },
     uploadHeader: {
@@ -50,6 +50,12 @@ export const addDocuments = {
     },
   }),
   injuryCertificate: defineMessages({
+    title: {
+      id: 'an.application:addDocuments.injuryCertificate.title',
+      defaultMessage: 'Áverkavottorð',
+      description: 'Definition of upload title for injury certificate',
+    },
+
     uploadHeader: {
       id: 'an.application:addDocuments.injuryCertificate.uploadHeader',
       defaultMessage: 'Dragðu áverkavottorð hingað til að hlaða upp',
@@ -62,18 +68,28 @@ export const addDocuments = {
     },
   }),
   deathCertificate: defineMessages({
+    title: {
+      id: 'an.application:addDocuments.deathCertificateFile.title',
+      defaultMessage: 'Lögregluskýrsla',
+      description: 'Definition of title for police report',
+    },
     uploadHeader: {
       id: 'an.application:addDocuments.deathCertificateFile.uploadHeader',
-      defaultMessage: 'Dragðu dánarvottorð hingað til að hlaða upp',
+      defaultMessage: 'Dragðu lögregluskýrslu hingað til að hlaða upp',
       description: 'Definition of upload header for death certificate',
     },
     uploadIntroduction: {
       id: 'an.application:addDocuments.deathCertificateFile.uploadIntroduction',
-      defaultMessage: `Vinsamlegast bættu við dánarvottorði hér að neðan`,
-      description: 'Upload introduction for death certificate',
+      defaultMessage: `Vinsamlegast bættu við lögregluskýrslu hér að neðan`,
+      description: 'Upload introduction for police report',
     },
   }),
   powerOfAttorney: defineMessages({
+    title: {
+      id: 'an.application:addDocuments.powerOfAttorneyFile.title',
+      defaultMessage: 'Umboðsskjal',
+      description: 'Definition of title for power of attorney',
+    },
     uploadHeader: {
       id: 'an.application:addDocuments.powerOfAttorneyFile.uploadHeader',
       defaultMessage: 'Dragðu umboðsskjal hingað til að hlaða upp',
@@ -83,6 +99,18 @@ export const addDocuments = {
       id: 'an.application:addDocuments.powerOfAttorneyFile.uploadIntroduction',
       defaultMessage: `Vinsamlegast bættu við umboðsskjali hér að neðan`,
       description: 'Upload introduction for power of attorney',
+    },
+  }),
+  additional: defineMessages({
+    uploadHeader: {
+      id: 'an.application:addDocuments.additional.uploadHeader',
+      defaultMessage: 'Dragðu auka skjöl hingað til að hlaða upp',
+      description: 'Definition of upload header for additional attachments',
+    },
+    title: {
+      id: 'an.application:addDocuments.additional.title',
+      defaultMessage: `Önnur fylgiskjöl`,
+      description: 'General title for additional attachments',
     },
   }),
 }

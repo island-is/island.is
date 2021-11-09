@@ -104,12 +104,14 @@ function constructRestrictionRulingPdf(
         startTime: formatDate(existingCase.courtStartDate, 'p'),
       }),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
 
   if (!existingCase.isClosedCourtHidden) {
     doc.text(' ').text(formatMessage(ruling.closedCourtAnnouncement), {
+      align: 'justify',
       paragraphGap: 1,
     })
   }
@@ -122,6 +124,7 @@ function constructRestrictionRulingPdf(
       .text(' ')
       .font('Times-Roman')
       .text(existingCase.courtAttendees, {
+        align: 'justify',
         paragraphGap: 1,
       })
   }
@@ -135,6 +138,7 @@ function constructRestrictionRulingPdf(
     .text(
       existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
@@ -148,10 +152,12 @@ function constructRestrictionRulingPdf(
         caseTypes: caseTypes[existingCase.type],
       }),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
     .text(formatMessage(ruling.courtDocuments.announcement), {
+      align: 'justify',
       paragraphGap: 1,
     })
 
@@ -162,6 +168,7 @@ function constructRestrictionRulingPdf(
         documentNumber: index + 2,
       }),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     ),
@@ -169,6 +176,7 @@ function constructRestrictionRulingPdf(
 
   if (existingCase.accusedBookings) {
     doc.text(' ').text(existingCase.accusedBookings, {
+      align: 'justify',
       paragraphGap: 1,
     })
   }
@@ -179,6 +187,7 @@ function constructRestrictionRulingPdf(
       existingCase.litigationPresentations ??
         formatMessage(core.missing.litigationPresentations),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
@@ -205,6 +214,7 @@ function constructRestrictionRulingPdf(
       .text(' ')
       .font('Times-Roman')
       .text(existingCase.demands ?? formatMessage(core.missing.demands), {
+        align: 'justify',
         paragraphGap: 1,
       })
       .text(' ')
@@ -215,6 +225,7 @@ function constructRestrictionRulingPdf(
       .text(
         existingCase.courtCaseFacts ?? formatMessage(core.missing.caseFacts),
         {
+          align: 'justify',
           paragraphGap: 1,
         },
       )
@@ -227,6 +238,7 @@ function constructRestrictionRulingPdf(
         existingCase.courtLegalArguments ??
           formatMessage(core.missing.legalArguments),
         {
+          align: 'justify',
           paragraphGap: 1,
         },
       )
@@ -236,6 +248,7 @@ function constructRestrictionRulingPdf(
       .text(' ')
       .font('Times-Roman')
       .text(existingCase.ruling ?? formatMessage(core.missing.conclusion), {
+        align: 'justify',
         paragraphGap: 1,
       })
   }
@@ -250,7 +263,7 @@ function constructRestrictionRulingPdf(
     .fontSize(baseFontSize)
     .lineGap(1)
     .text(existingCase.conclusion ?? formatMessage(core.missing.rulingText), {
-      align: 'center',
+      align: 'justify',
       paragraphGap: 1,
     })
     .text(' ')
@@ -263,10 +276,12 @@ function constructRestrictionRulingPdf(
     .text(' ')
     .font('Times-Roman')
     .text(formatMessage(ruling.rulingTextIntro), {
+      align: 'justify',
       paragraphGap: 1,
     })
     .text(' ')
     .text(formatMessage(ruling.appealDirections), {
+      align: 'justify',
       paragraphGap: 1,
     })
     .text(' ')
@@ -277,6 +292,7 @@ function constructRestrictionRulingPdf(
           : ''
       }`,
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
@@ -292,6 +308,7 @@ function constructRestrictionRulingPdf(
           : ''
       }`,
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
@@ -303,15 +320,18 @@ function constructRestrictionRulingPdf(
     const custodyRestrictions = formatCustodyRestrictions(
       existingCase.accusedGender,
       existingCase.custodyRestrictions,
+      true,
     )
 
     if (custodyRestrictions) {
       doc.text(' ').text(custodyRestrictions, {
+        align: 'justify',
         paragraphGap: 1,
       })
     }
 
     doc.text(' ').text(formatMessage(ruling.accusedCustodyDirections), {
+      align: 'justify',
       paragraphGap: 1,
     })
   }
@@ -331,11 +351,13 @@ function constructRestrictionRulingPdf(
 
     if (alternativeTravelBanRestrictions) {
       doc.text(' ').text(alternativeTravelBanRestrictions, {
+        align: 'justify',
         paragraphGap: 1,
       })
     }
 
     doc.text(' ').text(formatMessage(ruling.accusedTravelBanDirections), {
+      align: 'justify',
       paragraphGap: 1,
     })
   }
@@ -347,6 +369,7 @@ function constructRestrictionRulingPdf(
       }`,
     }),
     {
+      align: 'justify',
       paragraphGap: 1,
     },
   )
@@ -438,12 +461,14 @@ function constructInvestigationRulingPdf(
         startTime: formatDate(existingCase.courtStartDate, 'p'),
       }),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
 
   if (!existingCase.isClosedCourtHidden) {
     doc.text(' ').text(formatMessage(ruling.closedCourtAnnouncement), {
+      align: 'justify',
       paragraphGap: 1,
     })
   }
@@ -456,6 +481,7 @@ function constructInvestigationRulingPdf(
       .text(' ')
       .font('Times-Roman')
       .text(existingCase.courtAttendees, {
+        align: 'justify',
         paragraphGap: 1,
       })
   }
@@ -470,6 +496,7 @@ function constructInvestigationRulingPdf(
     .text(
       existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
@@ -483,10 +510,12 @@ function constructInvestigationRulingPdf(
         caseTypes: caseTypes[existingCase.type],
       }),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
     .text(formatMessage(ruling.courtDocuments.announcement), {
+      align: 'justify',
       paragraphGap: 1,
     })
 
@@ -497,6 +526,7 @@ function constructInvestigationRulingPdf(
         documentNumber: index + 2,
       }),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     ),
@@ -504,6 +534,7 @@ function constructInvestigationRulingPdf(
 
   if (existingCase.accusedBookings) {
     doc.text(' ').text(existingCase.accusedBookings, {
+      align: 'justify',
       paragraphGap: 1,
     })
   }
@@ -514,6 +545,7 @@ function constructInvestigationRulingPdf(
       existingCase.litigationPresentations ??
         formatMessage(core.missing.litigationPresentations),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
@@ -540,6 +572,7 @@ function constructInvestigationRulingPdf(
       .text(' ')
       .font('Times-Roman')
       .text(existingCase.demands ?? formatMessage(core.missing.demands), {
+        align: 'justify',
         paragraphGap: 1,
       })
       .text(' ')
@@ -550,6 +583,7 @@ function constructInvestigationRulingPdf(
       .text(
         existingCase.courtCaseFacts ?? formatMessage(core.missing.caseFacts),
         {
+          align: 'justify',
           paragraphGap: 1,
         },
       )
@@ -562,6 +596,7 @@ function constructInvestigationRulingPdf(
         existingCase.courtLegalArguments ??
           formatMessage(core.missing.legalArguments),
         {
+          align: 'justify',
           paragraphGap: 1,
         },
       )
@@ -571,6 +606,7 @@ function constructInvestigationRulingPdf(
       .text(' ')
       .font('Times-Roman')
       .text(existingCase.ruling ?? formatMessage(core.missing.conclusion), {
+        align: 'justify',
         paragraphGap: 1,
       })
   }
@@ -585,7 +621,7 @@ function constructInvestigationRulingPdf(
     .fontSize(baseFontSize)
     .lineGap(1)
     .text(existingCase.conclusion ?? formatMessage(core.missing.rulingText), {
-      align: 'center',
+      align: 'justify',
       paragraphGap: 1,
     })
     .text(' ')
@@ -599,15 +635,19 @@ function constructInvestigationRulingPdf(
 
   if (existingCase.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
     doc.text(' ').text(formatMessage(ruling.rulingTextIntro), {
+      align: 'justify',
+      paragraphGap: 1,
+    })
+  }
+
+  if (existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+    doc.text(' ').text(formatMessage(ruling.appealDirections), {
+      align: 'justify',
       paragraphGap: 1,
     })
   }
 
   doc
-    .text(' ')
-    .text(formatMessage(ruling.appealDirections), {
-      paragraphGap: 1,
-    })
     .text(' ')
     .text(
       `${formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi')} ${
@@ -616,6 +656,7 @@ function constructInvestigationRulingPdf(
           : ''
       }`,
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
@@ -633,6 +674,7 @@ function constructInvestigationRulingPdf(
             : ''
         }`,
         {
+          align: 'justify',
           paragraphGap: 1,
         },
       )
@@ -646,6 +688,7 @@ function constructInvestigationRulingPdf(
         }`,
       }),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
