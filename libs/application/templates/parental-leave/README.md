@@ -59,7 +59,7 @@ Have a look at `libs/application/template-api-modules/src/lib/modules/templates/
 
 ### API and X-Road
 
-All user interaction goes through our GraphQL API (`api`) which then handles communicating with other APIs.
+All user interactions go through our GraphQL API (`api`) which is integrated with with other APIs.
 
 To communicate with VMST a request has to go through [X-Road](https://docs.devland.is/technical-overview/x-road). Both in development and on production environments.
 
