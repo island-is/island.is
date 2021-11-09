@@ -35,7 +35,7 @@ const useNavigationTree = (hasIncome: boolean) => {
           name: 'Búseta',
           url: Routes.form.homeCircumstances,
         },
-        { type: 'SUB_SECTION', name: 'Nám', url: '/umsokn/nam' },
+        { type: 'SUB_SECTION', name: 'Nám', url: Routes.form.student },
         { type: 'SUB_SECTION', name: 'Atvinna', url: Routes.form.employment },
       ],
     },
@@ -44,11 +44,11 @@ const useNavigationTree = (hasIncome: boolean) => {
       children: hasIncome
         ? [
             { type: 'SUB_SECTION', name: 'Tekjur', url: Routes.form.hasIncome },
-            { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
+            { type: 'SUB_SECTION', name: 'Gögn', url: Routes.form.incomeFiles },
             {
               type: 'SUB_SECTION',
               name: 'Skattagögn',
-              url: '/umsokn/skattagogn',
+              url: Routes.form.taxReturnFiles,
             },
             {
               type: 'SUB_SECTION',
@@ -66,7 +66,7 @@ const useNavigationTree = (hasIncome: boolean) => {
             {
               type: 'SUB_SECTION',
               name: 'Skattagögn',
-              url: '/umsokn/skattagogn',
+              url: Routes.form.taxReturnFiles,
             },
             {
               type: 'SUB_SECTION',
@@ -86,7 +86,7 @@ const useNavigationTree = (hasIncome: boolean) => {
     },
     {
       name: 'Yfirlit',
-      url: '/umsokn/yfirlit',
+      url: Routes.form.summary,
     },
     {
       name: 'Staðfesting',
@@ -104,11 +104,11 @@ const useNavigationTree = (hasIncome: boolean) => {
       children: hasIncome
         ? [
             { type: 'SUB_SECTION', name: 'Tekjur', url: Routes.form.hasIncome },
-            { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
+            { type: 'SUB_SECTION', name: 'Gögn', url: Routes.form.incomeFiles },
             {
               type: 'SUB_SECTION',
               name: 'Skattagögn',
-              url: '/umsokn/skattagogn',
+              url: Routes.form.taxReturnFiles,
             },
           ]
         : [
@@ -117,7 +117,7 @@ const useNavigationTree = (hasIncome: boolean) => {
             {
               type: 'SUB_SECTION',
               name: 'Skattagögn',
-              url: '/umsokn/skattagogn',
+              url: Routes.form.taxReturnFiles,
             },
           ],
     },
@@ -127,7 +127,7 @@ const useNavigationTree = (hasIncome: boolean) => {
     },
     {
       name: 'Yfirlit',
-      url: '/umsokn/yfirlit-maki',
+      url: Routes.form.spouseSummary,
     },
     {
       name: 'Staðfesting',
