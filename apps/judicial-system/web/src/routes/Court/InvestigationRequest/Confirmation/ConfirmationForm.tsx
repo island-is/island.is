@@ -62,9 +62,9 @@ const Confirmation: React.FC<Props> = (props) => {
           </Accordion>
         </Box>
         <Box marginBottom={7}>
-          <BlueBox justifyContent="center">
-            <Box marginBottom={2}>
-              <Text as="h4" variant="h4">
+          <BlueBox>
+            <Box marginBottom={2} textAlign="center">
+              <Text as="h3" variant="h3">
                 {formatMessage(m.sections.conclusion.title)}
               </Text>
             </Box>
@@ -73,8 +73,8 @@ const Confirmation: React.FC<Props> = (props) => {
                 <Text variant="intro">{workingCase.conclusion}</Text>
               </Box>
             </Box>
-            <Box marginBottom={1}>
-              <Text variant="h5">
+            <Box marginBottom={1} textAlign="center">
+              <Text variant="h4">
                 {workingCase?.judge ? workingCase.judge.name : user?.name}
               </Text>
             </Box>

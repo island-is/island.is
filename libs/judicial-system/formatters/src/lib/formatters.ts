@@ -104,6 +104,10 @@ const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
       return 'Tilkynningaskylda'
     case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT:
       return 'Afhending vegabréfs'
+    case CaseCustodyRestrictions.NECESSITIES:
+      return 'A - Eigin nauðsynjar'
+    case CaseCustodyRestrictions.WORKBAN:
+      return 'F - Vinnubann'
   }
 }
 
@@ -121,6 +125,10 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
       return 'Tilkynningarskylda'
     case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT:
       return 'Afhending vegabréfs'
+    case CaseCustodyRestrictions.NECESSITIES:
+      return 'Eigin nauðsynjar'
+    case CaseCustodyRestrictions.WORKBAN:
+      return 'Vinnubann'
   }
 }
 
