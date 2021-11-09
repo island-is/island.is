@@ -44,6 +44,7 @@ const useNavigationTree = (hasIncome: boolean) => {
       children: hasIncome
         ? [
             { type: 'SUB_SECTION', name: 'Tekjur', url: Routes.form.hasIncome },
+            { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
             {
               type: 'SUB_SECTION',
               name: 'Skattagögn',
@@ -62,7 +63,6 @@ const useNavigationTree = (hasIncome: boolean) => {
           ]
         : [
             { type: 'SUB_SECTION', name: 'Tekjur', url: Routes.form.hasIncome },
-            { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
             {
               type: 'SUB_SECTION',
               name: 'Skattagögn',
@@ -104,6 +104,7 @@ const useNavigationTree = (hasIncome: boolean) => {
       children: hasIncome
         ? [
             { type: 'SUB_SECTION', name: 'Tekjur', url: Routes.form.hasIncome },
+            { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
             {
               type: 'SUB_SECTION',
               name: 'Skattagögn',
@@ -112,7 +113,7 @@ const useNavigationTree = (hasIncome: boolean) => {
           ]
         : [
             { type: 'SUB_SECTION', name: 'Tekjur', url: Routes.form.hasIncome },
-            { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
+
             {
               type: 'SUB_SECTION',
               name: 'Skattagögn',
