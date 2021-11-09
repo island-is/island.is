@@ -197,6 +197,9 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
               {`${formatMessage(m.sections.sessionArrangements.heading)} `}
+              <Text as="span" color="red600" fontWeight="semiBold">
+                *
+              </Text>
               <Tooltip
                 text={formatMessage(m.sections.sessionArrangements.tooltip)}
               />
