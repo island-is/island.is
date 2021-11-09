@@ -18,13 +18,10 @@ import {
   PaymentChargeData,
   PaymentStatusData,
 } from './shared.queries'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class SharedTemplateApiService {
   constructor(
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
     @Inject(EmailService)
     private readonly emailService: EmailService,
     @Inject(ConfigService)
@@ -176,7 +173,6 @@ export class SharedTemplateApiService {
       .then((res) => res.json())
       .then(({ errors, data }) => {
         if (errors && errors.length) {
-          errors.forEach(({ message }) => this.logger.error(message))
           throw new Error('Creating the payment charge failed')
         }
 
