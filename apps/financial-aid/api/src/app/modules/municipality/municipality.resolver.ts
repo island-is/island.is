@@ -19,7 +19,7 @@ import { MunicipalityModel } from './models'
 import { MunicipalityQueryInput, UpdateMunicipalityInput } from './dto'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { StaffModel } from '../staff/models'
-import { Municipality, Staff } from '@island.is/financial-aid/shared/lib'
+import { Municipality } from '@island.is/financial-aid/shared/lib'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => MunicipalityModel)

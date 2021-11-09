@@ -68,6 +68,7 @@ const PetitionsTable = (data: any) => {
   }
 
   useEffect(() => {
+    setPetitions(data.petitions?.data ?? [])
     handlePagination(1, data.petitions?.data ?? [])
   }, [data])
 
@@ -119,7 +120,7 @@ const PetitionsTable = (data: any) => {
                 <Box
                   cursor="pointer"
                   className={className}
-                  onClick={() => handlePagination(page, listOfPetitions)}
+                  onClick={() => handlePagination(page, data.petitions?.data)}
                 >
                   {children}
                 </Box>
