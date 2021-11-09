@@ -79,6 +79,7 @@
 - [External Contributions](handbook/repository/external-contribute.md)
 - [Generating a New Project](handbook/repository/generate.md)
 - [GitBook Contributions](handbook/repository/gitbook-contribute.md)
+- [OpenAPI](handbook/repository/openapi.md)
 - [Auto Generated Schemas](handbook/repository/schemas.md)
 - [Workspace Settings](handbook/repository/workspace-settings.md)
 
@@ -98,6 +99,7 @@
   - [Auth API](apps/services/auth-api/README.md)
   - [Documents](apps/services/documents/README.md)
     - [Endorsements API](apps/services/endorsements/api/README.md)
+  - [Notifications - Hnipp](apps/services/notifications/README.md)
   - [Party Letter Registry](apps/services/party-letter-registry-api/README.md)
   - [Search Indexer](apps/services/search-indexer/README.md)
     - [Elasticsearch Search Dev Server](apps/services/search-indexer/dev-services/README.md)

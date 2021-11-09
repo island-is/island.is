@@ -7,7 +7,13 @@ import {
   TableHeaders,
   UsersTableBody,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { Text, Box, Button } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  Button,
+  toast,
+  ToastContainer,
+} from '@island.is/island-ui/core'
 import * as styles from './users.css'
 import cn from 'classnames'
 
@@ -66,44 +72,45 @@ export const Users = () => {
           Nýr notandi
         </Button>
       </Box>
-
       {users && (
-        <table
-          className={cn({
-            [`${styles.tableContainer}`]: true,
-          })}
-        >
-          <thead className={`contentUp delay-50`}>
-            <tr>
-              {headers.map((item, index) => (
-                <TableHeaders
-                  header={{ title: item }}
+        <div className={`${styles.wrapper} hideScrollBar`}>
+          <table
+            className={cn({
+              [`${styles.tableContainer}`]: true,
+            })}
+          >
+            <thead className={`contentUp delay-50`}>
+              <tr>
+                {headers.map((item, index) => (
+                  <TableHeaders
+                    header={{ title: item }}
+                    index={index}
+                    key={'tableHeaders-' + index}
+                  />
+                ))}
+              </tr>
+            </thead>
+
+            <tbody className={styles.tableBody}>
+              {users.map((item: Staff, index) => (
+                <UsersTableBody
+                  user={item}
                   index={index}
-                  key={'tableHeaders-' + index}
+                  key={'tableBody-' + item.id}
+                  onStaffUpdated={refreshList}
+                  toast={toast}
                 />
               ))}
-            </tr>
-          </thead>
-
-          <tbody className={styles.tableBody}>
-            {users.map((item: Staff, index) => (
-              <UsersTableBody
-                user={item}
-                index={index}
-                key={'tableBody-' + item.id}
-              />
-            ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       )}
-
       {error && (
         <div>
           Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að þessu
           upplýsingum?
         </div>
       )}
-
       <NewUserModal
         isVisible={isModalVisible}
         setIsVisible={(visible) => {
@@ -111,6 +118,7 @@ export const Users = () => {
         }}
         onStaffCreated={refreshList}
       />
+      <ToastContainer />
     </LoadingContainer>
   )
 }

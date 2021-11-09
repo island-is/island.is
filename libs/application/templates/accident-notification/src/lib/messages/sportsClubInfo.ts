@@ -26,7 +26,7 @@ export const sportsClubInfo = {
     },
     title: {
       id: 'an.application:sportsClubInfo.employee.title',
-      defaultMessage: 'Þiggur þú greiðslur frá íþróttafélaginu?',
+      defaultMessage: 'Þiggur hinn slasaði greiðslur frá íþróttafélaginu?',
       description: `Title of sports club employee section.`,
     },
   }),

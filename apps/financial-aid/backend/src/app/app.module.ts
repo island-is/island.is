@@ -20,12 +20,12 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
       useClass: SequelizeConfigService,
     }),
     AuthModule.register(environment.identityServerAuth),
+    StaffModule,
     ApplicationModule,
     MunicipalityModule,
     FileModule,
     ApplicationEventModule,
     AidModule,
-    StaffModule,
   ],
 })
 export class AppModule {}
