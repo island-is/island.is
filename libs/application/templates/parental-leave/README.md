@@ -59,7 +59,7 @@ Have a look at `libs/application/template-api-modules/src/lib/modules/templates/
 
 ### API and X-Road
 
-All user interaction goes through our GraphQL API (`api`) which then handles communicating with other APIs.
+All user interactions go through our GraphQL API (`api`) which is integrated with with other APIs.
 
 To communicate with VMST a request has to go through [X-Road](https://docs.devland.is/technical-overview/x-road). Both in development and on production environments.
 
@@ -106,7 +106,7 @@ Once you have everything running you can navigate to `http://localhost:4200/umso
 
 ### Local database
 
-By setting up the application-system you'll have created a local postgres database on a docker image, if you haven't already it is recommended to a tool to interact with your database. For example [pgAdmin](https://www.pgadmin.org/download/).
+By setting up the application-system you'll have created a local postgres database on a docker image, if you haven't already you should setup a tool to interact with your database. For example [pgAdmin](https://www.pgadmin.org/download/).
 
 You’ll find the relevant connection information in `apps/application-system/api/docker-compose.base.yml`.
 
