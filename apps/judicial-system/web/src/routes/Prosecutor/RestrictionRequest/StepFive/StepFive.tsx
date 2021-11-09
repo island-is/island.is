@@ -18,6 +18,7 @@ export interface PoliceCaseFilesData {
   files: PoliceCaseFile[]
   isLoading: boolean
   hasError: boolean
+  errorMessage?: string
 }
 
 export const StepFive: React.FC = () => {
@@ -34,14 +35,15 @@ export const StepFive: React.FC = () => {
 
   const { features } = useContext(FeatureContext)
 
-  const { data: policeData, loading: policeDataLoading } = useQuery(
-    PoliceCaseFilesQuery,
-    {
-      variables: { input: { caseId: id } },
-      fetchPolicy: 'no-cache',
-      skip: !features.includes(Feature.POLICE_CASE_FILES),
-    },
-  )
+  const {
+    data: policeData,
+    loading: policeDataLoading,
+    error: policeDataError,
+  } = useQuery(PoliceCaseFilesQuery, {
+    variables: { input: { caseId: id } },
+    fetchPolicy: 'no-cache',
+    skip: !features.includes(Feature.POLICE_CASE_FILES),
+  })
 
   const resCase = data?.case
 
@@ -73,9 +75,10 @@ export const StepFive: React.FC = () => {
         files: policeData ? policeData.policeCaseFiles : [],
         isLoading: false,
         hasError: true,
+        errorMessage: policeDataError?.message,
       })
     }
-  }, [policeData, policeDataLoading])
+  }, [policeData, policeDataError?.message, policeDataLoading])
 
   return (
     <PageLayout

@@ -178,7 +178,43 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         <Box marginBottom={5}>
           <AnimateSharedLayout>
             <motion.div layout className={styles.policeCaseFilesContainer}>
-              {policeCaseFileList.length > 0 ? (
+              {policeCaseFiles?.isLoading ? (
+                <Box textAlign="center">
+                  <LoadingDots />
+                </Box>
+              ) : files.length === 0 ? (
+                <Box display="flex" alignItems="center" paddingY={3}>
+                  <Box display="flex" marginRight={2}>
+                    <Icon icon="warning" color="yellow400" />
+                  </Box>
+                  <Text variant="h5">
+                    {formatMessage(
+                      m.sections.policeCaseFiles.caseNotFoundInLOKEMessage,
+                    )}
+                  </Text>
+                </Box>
+              ) : policeCaseFiles?.errorMessage &&
+                policeCaseFiles?.errorMessage.indexOf('404') > -1 ? (
+                <Box display="flex" alignItems="center" paddingY={3}>
+                  <Box display="flex" marginRight={2}>
+                    <Icon icon="warning" color="yellow400" />
+                  </Box>
+                  <Text variant="h5">
+                    {formatMessage(
+                      m.sections.policeCaseFiles.noFilesFoundInLOKEMessage,
+                    )}
+                  </Text>
+                </Box>
+              ) : policeCaseFiles?.hasError ? (
+                <Box display="flex" alignItems="center" paddingY={3}>
+                  <Box display="flex" marginRight={2}>
+                    <Icon icon="close" color="red400" />
+                  </Box>
+                  <Text variant="h5">
+                    {formatMessage(m.sections.policeCaseFiles.errorMessage)}
+                  </Text>
+                </Box>
+              ) : policeCaseFileList.length > 0 ? (
                 <motion.ul layout>
                   <motion.li
                     layout
@@ -203,9 +239,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                           layout
                           className={styles.policeCaseFile}
                           key={listItem.label}
-                          initial={{
-                            opacity: 0,
-                          }}
+                          initial={false}
                           animate={{
                             opacity: 1,
                           }}
@@ -236,19 +270,6 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                     })}
                   </AnimatePresence>
                 </motion.ul>
-              ) : policeCaseFiles?.isLoading ? (
-                <Box textAlign="center">
-                  <LoadingDots />
-                </Box>
-              ) : policeCaseFiles?.hasError ? (
-                <Box display="flex" alignItems="center" paddingY={3}>
-                  <Box display="flex" marginRight={2}>
-                    <Icon icon="close" color="red400" />
-                  </Box>
-                  <Text variant="h5">
-                    {formatMessage(m.sections.policeCaseFiles.errorMessage)}
-                  </Text>
-                </Box>
               ) : (
                 <Box display="flex" alignItems="center" paddingY={3}>
                   <Box display="flex" marginRight={2}>
