@@ -1,4 +1,4 @@
-export const formRoutes = '/umsokn/'
+const formRoutes = '/umsokn/'
 
 export const Routes = {
   application: '/umsokn',
@@ -60,10 +60,3 @@ export const getNextPeriod = {
 }
 
 export const apiBasePath = 'api/financial-aid'
-
-export const scrollToId = (id: string) => {
-  var element = document.getElementById(id)
-  element?.scrollIntoView({
-    behavior: 'smooth',
-  })
-}
