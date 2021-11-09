@@ -163,6 +163,7 @@ export const isCourtHearingArrangementsStepValidIC = (workingCase: Case) => {
   return (
     workingCase.judge &&
     workingCase.registrar &&
+    workingCase.sessionArrangements &&
     validate(workingCase.courtDate || '', 'date-format').isValid
   )
 }
