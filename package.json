@@ -266,7 +266,7 @@
     "@babel/plugin-transform-runtime": "7.12.10",
     "@babel/preset-env": "7.8.7",
     "@babel/preset-react": "7.8.3",
-    "@babel/preset-typescript": "7.8.3",
+    "@babel/preset-typescript": "7.16.0",
     "@gperdomor/nx-docker": "0.2.3",
     "@graphql-codegen/cli": "1.17.8",
     "@graphql-codegen/fragment-matcher": "1.17.8",
