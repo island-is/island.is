@@ -350,6 +350,11 @@ export const MunicipalityQuery = gql`
       rulesHomepage
       homepage
       email
+      adminUsers {
+        name
+        nationalId
+        email
+      }
       individualAid {
         ownPlace
         registeredRenting

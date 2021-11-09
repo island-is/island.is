@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Link, Text } from '@island.is/island-ui/core'
+import { Box, Button, Link, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
 import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
@@ -19,6 +19,32 @@ interface MunicipalityProfileProps {
 
 const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
   const usersTableHeaders = ['Nafn', 'Kennitala', 'Netfang', 'Aðgerð']
+
+  const staffName = (staff: Staff) => {
+    return <Text variant="h5">{staff.name}</Text>
+  }
+  const staffNationalId = (staff: Staff) => {
+    return <Text variant="h5">{staff.nationalId}</Text>
+  }
+
+  const staffEmail = (staff: Staff) => {
+    return <Text variant="h5">{staff.email}</Text>
+  }
+  const activationButton = (staff: Staff) => {
+    return (
+      <Box>
+        <Button
+          onClick={(event) => {
+            event.stopPropagation()
+          }}
+          variant="text"
+          loading={false}
+        >
+          Óvirkja
+        </Button>
+      </Box>
+    )
+  }
   return (
     <Box
       marginTop={15}
@@ -79,8 +105,14 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
                 <tbody className={tableStyles.tableBody}>
                   {municipality.adminUsers?.map((item: Staff, index) => (
                     <TableBody
-                      municipality={item}
+                      items={[
+                        staffName(item),
+                        staffNationalId(item),
+                        staffEmail(item),
+                        activationButton(item),
+                      ]}
                       index={index}
+                      identifier={item.id}
                       key={'tableBody-' + item.id}
                     />
                   ))}

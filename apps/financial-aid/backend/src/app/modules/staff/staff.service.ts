@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
+import { Op } from 'sequelize'
 
 import { StaffModel } from './models'
 
@@ -83,7 +84,8 @@ export class StaffService {
     return await this.staffModel.findAll({
       where: {
         municipalityId,
-        role: StaffRole.ADMIN,
+        roles: { [Op.contains]: [StaffRole.ADMIN] },
+        active: true,
       },
     })
   }
