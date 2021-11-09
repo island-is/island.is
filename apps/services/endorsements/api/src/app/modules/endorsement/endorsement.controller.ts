@@ -40,8 +40,6 @@ import { EndorsementService } from './endorsement.service'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 import type { User, Auth } from '@island.is/auth-nest-tools'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
-import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
-import { AccessGroup } from '../../guards/accessGuard/access.enum'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
 import { emailDto } from './dto/email.dto'
@@ -66,7 +64,6 @@ export class EndorsementController {
     summary: 'Emails a PDF with list endorsements data',
   })
   @Scopes(EndorsementsScope.main)
-  @HasAccessGroup(AccessGroup.Owner, AccessGroup.Admin)
   @ApiParam({ name: 'listId', type: String })
   @ApiOkResponse({ type: sendPdfEmailResponse })
   @Post('/email-pdf')
@@ -91,7 +88,6 @@ export class EndorsementController {
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)
   @Get()
-  @HasAccessGroup(AccessGroup.Owner, AccessGroup.DMR)
   @Audit<PaginatedEndorsementDto>({
     resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),
@@ -221,7 +217,6 @@ export class EndorsementController {
   })
   @Scopes(EndorsementsScope.main)
   @Post('/bulk')
-  @HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementBulkCreate>({
     resources: (response) => response.succeeded.map((e) => e.id),
     meta: (response) => ({ count: response.succeeded.length }),

@@ -46,6 +46,7 @@ import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement
 import { SearchQueryDto } from './dto/searchQuery.dto'
 import { EndorsementListInterceptor } from './interceptors/endorsementList.interceptor'
 import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
+import { truncate } from 'fs'
 
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
@@ -69,6 +70,15 @@ export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
   ) {}
+  
+  hasAdminScope(user: User){
+    for (const [key, value] of Object.entries(user.scope)) {
+      if(value == EndorsementsScope.admin){
+        return true
+      }
+    }
+    return false
+  }
 
   @ApiOperation({
     summary:
@@ -77,16 +87,16 @@ export class EndorsementListController {
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get()
   @UseInterceptors(EndorsementListsInterceptor)
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.main,EndorsementsScope.admin)
   async findByTags(
     @CurrentUser() user: User,
     @Query() query: FindTagPaginationComboDto,
-  ): Promise<PaginatedEndorsementListDto> {
+    ): Promise<PaginatedEndorsementListDto> {
     return await this.endorsementListService.findListsByTags(
       // query parameters of length one are not arrays, we normalize all tags input to arrays here
       !Array.isArray(query.tags) ? [query.tags] : query.tags,
       query,
-      user.nationalId,
+      this.hasAdminScope(user),
     )
   }
 

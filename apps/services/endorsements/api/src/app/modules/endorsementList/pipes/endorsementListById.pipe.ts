@@ -18,10 +18,7 @@ export class EndorsementListByIdPipe
   ) {}
 
   async transform(id: string): Promise<EndorsementList> {
-    const endorsementList = await this.endorsementListService.findSingleList(
-      id,
-      this.request.auth?.nationalId,
-    )
+    const endorsementList = await this.endorsementListService.findSingleList(id)
     if (!endorsementList) {
       throw new NotFoundException(
         `An endorsement list with the id ${id} does not exist`,

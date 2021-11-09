@@ -1,5 +1,5 @@
 const faker = require('faker')
-const authNationalId = 'xxxxxx-xxxx' // we use gervimaður national id here to pass national id checks
+const authNationalId = '1305775399' // we use gervimaður national id here to pass national id checks
 module.exports = {
   authNationalId,
   endorsementLists: [
@@ -15,7 +15,7 @@ module.exports = {
       tags: ['generalPetition'], // default empty array in postgres
       validation_rules: '[]',
       meta: '{}',
-      owner: 'xxxxxx-xxxx', //faker.phone.phoneNumber('##########'),
+      owner: '1305775399', //faker.phone.phoneNumber('##########'),
       created: new Date(),
       modified: new Date(),
     },

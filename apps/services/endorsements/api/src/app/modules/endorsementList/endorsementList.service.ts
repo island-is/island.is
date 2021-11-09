@@ -34,10 +34,10 @@ export class EndorsementListService {
     private logger: Logger,
   ) {}
 
-  // Checks if user is admin
-  isAdmin(nationalId: string) {
-    return environment.accessGroups.Admin.split(',').includes(nationalId)
-  }
+  // // Checks if user is admin
+  // isAdmin(nationalId: string) {
+  //   return environment.accessGroups.Admin.split(',').includes(nationalId)
+  // }
 
   // generic reusable query with pagination defaults
   async findListsGenericQuery(query: any, where: any = {}) {
@@ -52,10 +52,10 @@ export class EndorsementListService {
     })
   }
 
-  async findListsByTags(tags: string[], query: any, nationalId: string) {
+  async findListsByTags(tags: string[], query: any, isAdmin: boolean) {
     this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
     // check if user is admin
-    const admin = this.isAdmin(nationalId)
+    // const admin = this.isAdmin(nationalId)
     return await paginate({
       Model: this.endorsementListModel,
       limit: query.limit || 10,
@@ -65,18 +65,18 @@ export class EndorsementListService {
       orderOption: [['counter', 'ASC']],
       where: {
         tags: { [Op.overlap]: tags },
-        adminLock: admin ? { [Op.or]: [true, false] } : false,
+        adminLock: isAdmin ? { [Op.or]: [true, false] } : false,
       },
     })
   }
 
-  async findSingleList(listId: string, nationalId?: string) {
+  async findSingleList(listId: string, isAdmin=false) {
     this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
-    const admin = nationalId ? this.isAdmin(nationalId) : false
+    // const admin = nationalId ? this.isAdmin(nationalId) : false
     const result = await this.endorsementListModel.findOne({
       where: {
         id: listId,
-        adminLock: admin ? { [Op.or]: [true, false] } : false,
+        adminLock: isAdmin ? { [Op.or]: [true, false] } : false,
       },
     })
 
