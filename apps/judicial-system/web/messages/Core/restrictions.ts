@@ -3,6 +3,12 @@ import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 // Strings for select court component
 export const restrictions = defineMessages({
+  [CaseCustodyRestrictions.NECESSITIES]: {
+    id: 'judicial.system.core:restrictions.NECESSITIES',
+    defaultMessage:
+      'Gæsluföngum er heimilt að útvega sér sjálfir og taka við fæði og öðrum persónulegum nauðsynjum, þar á meðal fatnaði.',
+    description: 'A - Eigin nauðsynjar',
+  },
   [CaseCustodyRestrictions.ISOLATION]: {
     id: 'judicial.system.core:restrictions.ISOLATION',
     defaultMessage:
@@ -40,5 +46,11 @@ export const restrictions = defineMessages({
     defaultMessage:
       'Sé krafist þess að sakborningur afhendi vegabréf sitt, er hægt að haka í þennan reit og skrifa nánari upplýsingar um hvenær og hvert sakborningur skal afhenda vegabréfið í textareitinn fyrir neðan.',
     description: 'Afhending vegabréfs',
+  },
+  [CaseCustodyRestrictions.WORKBAN]: {
+    id: 'judicial.system.core:restrictions.WORKBAN',
+    defaultMessage:
+      'Gæsluföngum er, eftir því sem unnt er, heimilt að útvega sér vinnu meðan á gæsluvarðhaldi stendur.',
+    description: 'F - Vinnubann',
   },
 })
