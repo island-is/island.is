@@ -50,15 +50,16 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
       })
   }
   return (
-    <>
-      <Box className={`contentUp delay-25`} marginTop={15}>
+    <Box marginTop={[5, 10, 15]} marginBottom={[5, 10, 15]}>
+      <Box className={`contentUp delay-25`} marginBottom={[1, 1, 3]}>
         <Text as="h1" variant="h1" marginBottom={[2, 2, 7]}>
           Sveitarfélagsstillingar
         </Text>
-        <Text as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
+        <Text as="h3" variant="h3" color="dark300">
           Reglur um fjárhagsaðstoð {municipality.name}
         </Text>
       </Box>
+
       <Box marginBottom={[1, 1, 2]} className={`contentUp delay-25`}>
         <Input
           label="Slóð"
@@ -357,7 +358,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
         </Button>
       </Box>
       <ToastContainer />
-    </>
+    </Box>
   )
 }
 

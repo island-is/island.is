@@ -240,6 +240,7 @@ export interface GetSignedUrlForId {
 export interface Spouse {
   hasPartnerApplied: boolean
   hasFiles: boolean
+  spouseName?: string
 }
 
 export interface UpdateApplicationTableResponseType {

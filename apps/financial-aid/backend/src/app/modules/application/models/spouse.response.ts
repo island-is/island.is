@@ -6,4 +6,7 @@ export class SpouseResponse {
 
   @ApiProperty()
   hasFiles: boolean
+
+  @ApiProperty()
+  spouseName?: string
 }
