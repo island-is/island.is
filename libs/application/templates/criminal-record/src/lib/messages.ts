@@ -207,6 +207,6 @@ export const m = defineMessages({
   errorDataProvider: {
     id: 'dl.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',
-    description: 'Unhandled error in driving license data provider',
+    description: 'Unhandled error in criminal record data provider',
   },
 })
