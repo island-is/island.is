@@ -639,12 +639,14 @@ function constructInvestigationRulingPdf(
     })
   }
 
-  doc
-    .text(' ')
-    .text(formatMessage(ruling.appealDirections), {
+  if (existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+    doc.text(' ').text(formatMessage(ruling.appealDirections), {
       align: 'justify',
       paragraphGap: 1,
     })
+  }
+
+  doc
     .text(' ')
     .text(
       `${formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi')} ${

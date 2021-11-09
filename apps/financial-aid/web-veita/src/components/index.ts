@@ -38,3 +38,5 @@ export { default as AdminSideNavItems } from './AdminSideNavItems/AdminSideNavIt
 export { default as NewUserModal } from './NewUserModal/NewUserModal'
 export { default as ActionModal } from './ActionModal/ActionModal'
 export { default as MunicipalityAdminSettings } from './MunicipalityAdminSettings/MunicipalityAdminSettings'
+export { default as SuperAdminSideNavItems } from './SuperAdminSideNavItems/SuperAdminSideNavItems'
+export { default as MunicipalitiesTableBody } from './MunicipalitiesTableBody/MunicipalitiesTableBody'
