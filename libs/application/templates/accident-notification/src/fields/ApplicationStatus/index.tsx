@@ -94,6 +94,9 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
       newAccidentStatus: AccidentNotificationStatus,
       oldAccidentStatus: AccidentNotificationStatus,
     ) => {
+      if (!oldAccidentStatus) {
+        return true
+      }
       if (
         newAccidentStatus.receivedAttachments?.InjuryCertificate !==
         oldAccidentStatus.receivedAttachments?.InjuryCertificate
