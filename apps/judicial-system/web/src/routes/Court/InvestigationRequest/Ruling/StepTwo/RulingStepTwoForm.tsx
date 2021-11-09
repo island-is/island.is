@@ -93,13 +93,16 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
               Ákvörðun um kæru
             </Text>
           </Box>
-          <Box marginBottom={3}>
-            <Text variant="h4" fontWeight="light">
-              {formatMessage(
-                icRulingStepTwo.sections.accusedAppealDecision.disclaimer,
-              )}
-            </Text>
-          </Box>
+          {workingCase.sessionArrangements ===
+            SessionArrangements.ALL_PRESENT && (
+            <Box marginBottom={3}>
+              <Text variant="h4" fontWeight="light">
+                {formatMessage(
+                  icRulingStepTwo.sections.accusedAppealDecision.disclaimer,
+                )}
+              </Text>
+            </Box>
+          )}
           <Box marginBottom={3}>
             <BlueBox>
               <Box marginBottom={2}>

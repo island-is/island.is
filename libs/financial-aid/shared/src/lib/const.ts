@@ -35,6 +35,7 @@ export const Routes = {
   serviceCenter: (id: string) => `/midstod/${id}`,
   users: `/notendur`,
   municipalitySettings: `/sveitarfelagsstillingar`,
+  municipalities: `/sveitarfelog`,
 }
 
 export const months = [
