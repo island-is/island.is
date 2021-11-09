@@ -165,20 +165,20 @@ const ActiveRequests: React.FC<Props> = (props) => {
               user?.role && onRowClick(c.id)
             }}
           >
-            {c.courtCaseNumber ? (
-              <td className={styles.td}>
-                <Box component="span" className={styles.blockColumn}>
-                  <Text as="span">{c.courtCaseNumber}</Text>
-                </Box>
-                <Text as="span" variant="small" color="dark400">
-                  {c.policeCaseNumber}
-                </Text>
-              </td>
-            ) : (
-              <td className={styles.td}>
+            <td className={styles.td}>
+              {c.courtCaseNumber ? (
+                <>
+                  <Box component="span" className={styles.blockColumn}>
+                    <Text as="span">{c.courtCaseNumber}</Text>
+                  </Box>
+                  <Text as="span" variant="small" color="dark400">
+                    {c.policeCaseNumber}
+                  </Text>
+                </>
+              ) : (
                 <Text as="span">{c.policeCaseNumber || '-'}</Text>
-              </td>
-            )}
+              )}
+            </td>
             <td className={cn(styles.td, styles.largeColumn)}>
               <Text>
                 <Box component="span" className={styles.blockColumn}>
