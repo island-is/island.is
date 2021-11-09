@@ -19,6 +19,7 @@ export interface PoliceCaseFilesData {
   files: PoliceCaseFile[]
   isLoading: boolean
   hasError: boolean
+  errorMessage?: string
 }
 
 export const CaseFiles: React.FC = () => {

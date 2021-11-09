@@ -178,24 +178,84 @@ const CaseFilesForm: React.FC<Props> = (props) => {
         <Box marginBottom={5}>
           <AnimateSharedLayout>
             <motion.div layout className={styles.policeCaseFilesContainer}>
-              {policeCaseFileList.length > 0 ? (
-                <motion.ul layout>
-                  <motion.li
-                    layout
-                    className={cn(styles.policeCaseFile, {
-                      [styles.selectAllPoliceCaseFiles]: true,
-                    })}
+              <motion.ul layout>
+                <motion.li
+                  layout
+                  className={cn(styles.policeCaseFile, {
+                    [styles.selectAllPoliceCaseFiles]: true,
+                  })}
+                >
+                  <Checkbox
+                    name="selectAllPoliceCaseFiles"
+                    label={formatMessage(
+                      m.sections.policeCaseFiles.selectAllLabel,
+                    )}
+                    checked={checkAllChecked}
+                    onChange={(evt) => toggleCheckbox(evt, true)}
+                    disabled={isUploading || policeCaseFileList.length === 0}
+                    strong
+                  />
+                </motion.li>
+                {policeCaseFiles?.isLoading ? (
+                  <Box
+                    textAlign="center"
+                    paddingY={2}
+                    paddingX={3}
+                    marginBottom={2}
                   >
-                    <Checkbox
-                      name="selectAllPoliceCaseFiles"
-                      label={formatMessage(
-                        m.sections.policeCaseFiles.selectAllLabel,
+                    <LoadingDots />
+                  </Box>
+                ) : files.length === 0 ? (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    paddingY={2}
+                    paddingX={3}
+                    marginBottom={2}
+                  >
+                    <Box display="flex" marginRight={2}>
+                      <Icon icon="warning" color="yellow400" />
+                    </Box>
+                    <Text variant="h5">
+                      {formatMessage(
+                        m.sections.policeCaseFiles.caseNotFoundInLOKEMessage,
                       )}
-                      checked={checkAllChecked}
-                      onChange={(evt) => toggleCheckbox(evt, true)}
-                      strong
-                    />
-                  </motion.li>
+                    </Text>
+                  </Box>
+                ) : policeCaseFiles?.errorMessage &&
+                  policeCaseFiles?.errorMessage.indexOf('404') > -1 ? (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    paddingY={2}
+                    paddingX={3}
+                    marginBottom={2}
+                  >
+                    <Box display="flex" marginRight={2}>
+                      <Icon icon="warning" color="yellow400" />
+                    </Box>
+                    <Text variant="h5">
+                      {formatMessage(
+                        m.sections.policeCaseFiles.noFilesFoundInLOKEMessage,
+                      )}
+                    </Text>
+                  </Box>
+                ) : policeCaseFiles?.hasError ? (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    paddingY={2}
+                    paddingX={3}
+                    marginBottom={2}
+                  >
+                    <Box display="flex" marginRight={2}>
+                      <Icon icon="close" color="red400" />
+                    </Box>
+                    <Text variant="h5">
+                      {formatMessage(m.sections.policeCaseFiles.errorMessage)}
+                    </Text>
+                  </Box>
+                ) : policeCaseFileList.length > 0 ? (
                   <AnimatePresence>
                     {policeCaseFileList.map((listItem) => {
                       return (
@@ -235,32 +295,25 @@ const CaseFilesForm: React.FC<Props> = (props) => {
                       )
                     })}
                   </AnimatePresence>
-                </motion.ul>
-              ) : policeCaseFiles?.isLoading ? (
-                <Box textAlign="center">
-                  <LoadingDots />
-                </Box>
-              ) : policeCaseFiles?.hasError ? (
-                <Box display="flex" alignItems="center" paddingY={3}>
-                  <Box display="flex" marginRight={2}>
-                    <Icon icon="close" color="red400" />
+                ) : (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    paddingY={2}
+                    paddingX={3}
+                    marginBottom={2}
+                  >
+                    <Box display="flex" marginRight={2}>
+                      <Icon icon="checkmark" color="blue400" />
+                    </Box>
+                    <Text variant="h5">
+                      {formatMessage(
+                        m.sections.policeCaseFiles.allFilesUploadedMessage,
+                      )}
+                    </Text>
                   </Box>
-                  <Text variant="h5">
-                    {formatMessage(m.sections.policeCaseFiles.errorMessage)}
-                  </Text>
-                </Box>
-              ) : (
-                <Box display="flex" alignItems="center" paddingY={3}>
-                  <Box display="flex" marginRight={2}>
-                    <Icon icon="checkmark" color="blue400" />
-                  </Box>
-                  <Text variant="h5">
-                    {formatMessage(
-                      m.sections.policeCaseFiles.allFilesUploadedMessage,
-                    )}
-                  </Text>
-                </Box>
-              )}
+                )}
+              </motion.ul>
             </motion.div>
             <motion.div layout className={styles.uploadToRVGButtonContainer}>
               <Button
