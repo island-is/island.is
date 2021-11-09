@@ -1,7 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
-import { Application } from '@island.is/application/core'
+import {
+  Application,
+  GraphqlGatewayResponse,
+} from '@island.is/application/core'
 import {
   BaseTemplateAPIModuleConfig,
   EmailTemplateGenerator,
@@ -14,10 +17,13 @@ import {
   PAYMENT_QUERY,
   PAYMENT_STATUS_QUERY,
 } from './shared.utils'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class SharedTemplateApiService {
   constructor(
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
     @Inject(EmailService)
     private readonly emailService: EmailService,
     @Inject(ConfigService)
@@ -123,11 +129,11 @@ export class SharedTemplateApiService {
     return this.emailService.sendEmail(template)
   }
 
-  async makeGraphqlQuery(
+  async makeGraphqlQuery<T = unknown>(
     authorization: string,
     query: string,
-    variables?: Record<string, any>,
-  ): Promise<Response> {
+    variables?: Record<string, unknown>,
+  ): Promise<GraphqlGatewayResponse<T>> {
     const baseApiUrl = getConfigValue(
       this.configService,
       'baseApiUrl',
@@ -149,7 +155,9 @@ export class SharedTemplateApiService {
     applicationId: string,
     chargeItemCode: string,
   ) {
-    return this.makeGraphqlQuery(authorization, PAYMENT_QUERY, {
+    return this.makeGraphqlQuery<{
+      applicationPaymentCharge?: { id: string; paymentUrl: string }
+    }>(authorization, PAYMENT_QUERY, {
       input: {
         applicationId,
         chargeItemCode,
@@ -163,13 +171,20 @@ export class SharedTemplateApiService {
         return res
       })
       .then((res) => res.json())
-      .then((json) => {
-        return json.data.applicationPaymentCharge
+      .then(({ errors, data }) => {
+        if (errors && errors.length) {
+          errors.forEach(({ message }) => this.logger.error(message))
+          throw new Error('Creating the payment charge failed')
+        }
+
+        return data?.applicationPaymentCharge
       })
   }
 
   async getPaymentStatus(authorization: string, applicationId: string) {
-    return await this.makeGraphqlQuery(authorization, PAYMENT_STATUS_QUERY, {
+    return await this.makeGraphqlQuery<{
+      applicationPaymentStatus: { fulfilled: boolean }
+    }>(authorization, PAYMENT_STATUS_QUERY, {
       applicationId,
     })
       .then((res) => {
@@ -179,8 +194,8 @@ export class SharedTemplateApiService {
         return res
       })
       .then((res) => res.json())
-      .then((json) => {
-        return json.data.applicationPaymentStatus
+      .then(({ data }) => {
+        return data?.applicationPaymentStatus
       })
   }
 }
