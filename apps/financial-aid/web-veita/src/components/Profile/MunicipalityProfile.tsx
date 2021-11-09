@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Link, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
 
@@ -44,6 +44,78 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
             </button>
           </Box>
         </Box>
+        <Box marginBottom={7}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3" color="dark300">
+              Stjórnendur
+            </Text>
+          </Box>
+        </Box>
+
+        <Box marginBottom={7}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3" color="dark300">
+              Grunnupphæðir
+            </Text>
+          </Box>
+        </Box>
+
+        <Box marginBottom={3}>
+          <Text as="h3" variant="h3" color="dark300">
+            Aðrar stillingar
+          </Text>
+        </Box>
+        {municipality.rulesHomepage && (
+          <Box marginBottom={3}>
+            <Box marginBottom={1}>
+              <Text as="h5" variant="h5" color="dark400">
+                Hlekkur á reglur fjárhagsaðstoðar sveitarfélagsins
+              </Text>
+            </Box>
+            <Link
+              color="blue400"
+              underline="small"
+              underlineVisibility="always"
+              href={municipality.rulesHomepage}
+            >
+              {municipality.rulesHomepage}
+            </Link>
+          </Box>
+        )}
+        {municipality.email && (
+          <Box marginBottom={3}>
+            <Box marginBottom={1}>
+              <Text as="h5" variant="h5" color="dark400">
+                Almennt netfang sveitarfélagsins (félagsþjónusta)
+              </Text>
+            </Box>
+            <Link
+              color="blue400"
+              underline="small"
+              underlineVisibility="always"
+              href={`mailto: ${municipality.email}`}
+            >
+              {municipality.email}
+            </Link>
+          </Box>
+        )}
+        {municipality.homepage && (
+          <Box marginBottom={3}>
+            <Box marginBottom={1}>
+              <Text as="h5" variant="h5" color="dark400">
+                Vefur sveitarfélagsins
+              </Text>
+            </Box>
+            <Link
+              color="blue400"
+              underline="small"
+              underlineVisibility="always"
+              href={municipality.homepage}
+            >
+              {municipality.homepage}
+            </Link>
+          </Box>
+        )}
       </Box>
     </Box>
   )
