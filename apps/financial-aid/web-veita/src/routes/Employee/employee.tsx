@@ -27,14 +27,10 @@ export const Employee = () => {
     getStaffMember()
   }, [])
 
-  const refreshUser = () => {
-    getStaffMember()
-  }
-
   return (
     <LoadingContainer isLoading={loading} loader={<ApplicationSkeleton />}>
       {data ? (
-        <EmployeeProfile user={data.user} onUpdateStaff={refreshUser} />
+        <EmployeeProfile user={data.user} />
       ) : (
         <ProfileNotFound backButtonHref="/notendur" />
       )}

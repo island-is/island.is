@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Box, Text, Input } from '@island.is/island-ui/core'
+import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
 import {
   formatAccusedByGender,
   formatDate,
   NounCases,
 } from '@island.is/judicial-system/formatters'
-import { CaseType } from '@island.is/judicial-system/types'
+import {
+  CaseCustodyRestrictions,
+  CaseType,
+} from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -81,32 +84,56 @@ const StepThreeForm: React.FC<Props> = (props) => {
               </Box>
             )}
           </Box>
-          <DateTime
-            name="reqValidToDate"
-            datepickerLabel={`${
-              workingCase.type === CaseType.CUSTODY
-                ? 'Gæsluvarðhald'
-                : 'Farbann'
-            } til`}
-            minDate={new Date()}
-            selectedDate={
-              workingCase.requestedValidToDate
-                ? new Date(workingCase.requestedValidToDate)
-                : undefined
-            }
-            onChange={(date: Date | undefined, valid: boolean) => {
-              newSetAndSendDateToServer(
-                'requestedValidToDate',
-                date,
-                valid,
-                workingCase,
-                setWorkingCase,
-                setRequestedValidToDateIsValid,
-                updateCase,
-              )
-            }}
-            required
-          />
+          <BlueBox>
+            <Box marginBottom={3}>
+              <DateTime
+                name="reqValidToDate"
+                datepickerLabel={`${
+                  workingCase.type === CaseType.CUSTODY
+                    ? 'Gæsluvarðhald'
+                    : 'Farbann'
+                } til`}
+                minDate={new Date()}
+                selectedDate={
+                  workingCase.requestedValidToDate
+                    ? new Date(workingCase.requestedValidToDate)
+                    : undefined
+                }
+                onChange={(date: Date | undefined, valid: boolean) => {
+                  newSetAndSendDateToServer(
+                    'requestedValidToDate',
+                    date,
+                    valid,
+                    workingCase,
+                    setWorkingCase,
+                    setRequestedValidToDateIsValid,
+                    updateCase,
+                  )
+                }}
+                required
+                blueBox={false}
+              />
+            </Box>
+            <Checkbox
+              name="isIsolation"
+              label={formatMessage(rcDemands.sections.demands.isolation)}
+              tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
+              checked={workingCase.requestedCustodyRestrictions?.includes(
+                CaseCustodyRestrictions.ISOLATION,
+              )}
+              onChange={() =>
+                setCheckboxAndSendToServer(
+                  'requestedCustodyRestrictions',
+                  'ISOLATION',
+                  workingCase,
+                  setWorkingCase,
+                  updateCase,
+                )
+              }
+              large
+              filled
+            />
+          </BlueBox>
         </Box>
         <Box component="section" marginBottom={7}>
           <Box marginBottom={3}>
