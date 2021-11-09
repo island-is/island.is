@@ -63,24 +63,9 @@ All user interaction goes through our GraphQL API (`api`) which then handles com
 
 To communicate with VMST a request has to go through [X-Road](https://docs.devland.is/technical-overview/x-road). Both in development and on production environments.
 
-To connect to VMST test API you'll want to start the local proxy, following these steps:
-
-- Open AWS: https://island-is.awsapps.com/start#/
-  - island-is-development01 > AWSPowerUserAccess > Command line access
-- Choose an option you prefer in the modal
-- Connect to the proxy `./scripts/run-xroad-proxy.sh`
+To connect to VMST test API you'll want to start the [local proxy](https://docs.devland.is/#running-proxy-against-development-service) (also see [AWS secrets](https://docs.devland.is/repository/aws-secrets#getting-started)).
 
 See `libs/api/domains/directorate-of-labour/src/lib/directorate-of-labour.module.ts` for examples of VMST communication.
-
-### Contacts
-
-VMST API specific questions:
-[Guðmundur K. G. Kolka](mailto:gudmundur.kolka@advania.is), API and NAV developer
-
-VMST Devops:
-[Unnar Sigurðsson](mailto:unnar.sigurdsson@vmst.is), VMST API dev ops and x-road integration
-
-We also have two channels on the islandis slack #faedingarorlof-profanir and #faedingarorlof
 
 ### Localisation
 
@@ -89,15 +74,9 @@ All localisation can be found on Contentful.
 - [Parental leave application translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/pl.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
-⚠️ When creating new text strings in the messages.ts file for the application, be sure to update Contentful, this is done using the command:
-
-```
-CONTENTFUL_MANAGEMENT_ACCESS_TOKEN={secret*} yarn nx run application-templates-parental-leave:extract-strings
-```
-
-_secret is found within AWS parameter store_
-
-See [link](https://docs.devland.is/apps/web/subpages#contentful) for further documentation for localisation in island.is repo.
+{% hint style="warning" %}
+When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](https://docs.devland.is/libs/localization#message-extraction).
+{% endhint %}
 
 ### Emails
 
@@ -136,3 +115,7 @@ You’ll find the relevant connection information in `apps/application-system/ap
 ### Screens for users that are no longer assignees
 
 When the application is opened/refreshed by a user that was an assignee but no longer is, we might want to show them something - we get their national registry id so we could see if it is the other parent visting or the employer, even though they are not an assignee anymore and show them something relevant like "The application is no longer in a state you can interact with". This is too specific for the application system to know and handle, although the application system should show some message to a user visiting an application that is not an assignee, currently they just see a loader (they could be anyone).
+
+### Rights code
+
+Currently other parents have the rights code `FO` (`FOreldri` -> parent). The API we use from Þjóðskrá does not provide gender but we'll need to include this for statistics on other parents.
