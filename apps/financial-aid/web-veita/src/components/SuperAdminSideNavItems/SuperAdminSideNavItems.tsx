@@ -2,7 +2,7 @@ import React from 'react'
 import { Text, Icon } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
-import * as styles from './SuperAdminSideNavItems.css'
+import * as sideNavButtonStyles from '../../sharedStyles/SideNavButton.css'
 
 import { Routes, StaffRole } from '@island.is/financial-aid/shared/lib'
 
@@ -19,14 +19,14 @@ const SuperAdminSideNavItems = ({ roles }: Props) => {
 
   return (
     <button
-      className={`${styles.sideNavBarButton} navBarButtonHover`}
+      className={`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`}
       onClick={() => router.push(Routes.municipalities)}
     >
       <Icon
         icon="receipt"
         type="outline"
         color="blue400"
-        className={styles.sideNavBarButtonIcon}
+        className={sideNavButtonStyles.sideNavBarButtonIcon}
       />
       <Text> Sveitarfélög</Text>
     </button>
