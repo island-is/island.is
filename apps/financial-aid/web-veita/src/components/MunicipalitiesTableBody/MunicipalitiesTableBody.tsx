@@ -14,7 +14,7 @@ interface PageProps {
 
 const MunicipalitiesTableBody = ({ municipality, index }: PageProps) => {
   return (
-    <Link href={'sveitarfelog/' + municipality.id}>
+    <Link href={'sveitarfelog/' + municipality.municipalityId}>
       <tr
         className={`${tableStyles.link} contentUp`}
         style={{ animationDelay: 55 + 3.5 * index + 'ms' }}

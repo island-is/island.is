@@ -329,6 +329,38 @@ export const MunicipalitiesQuery = gql`
       name
       active
       users
+      municipalityId
+    }
+  }
+`
+
+export const MunicipalityQuery = gql`
+  query getMunicipality($input: MunicipalityQueryInput!) {
+    municipality(input: $input) {
+      id
+      name
+      active
+      rulesHomepage
+      homepage
+      email
+      individualAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+      cohabitationAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
     }
   }
 `
