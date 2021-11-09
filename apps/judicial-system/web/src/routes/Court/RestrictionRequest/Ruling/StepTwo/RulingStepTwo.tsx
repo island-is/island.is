@@ -42,7 +42,7 @@ import {
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import {
   alternativeTravelBanRestrictions,
-  judgeRestrictions,
+  restrictions,
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import {
   capitalize,
@@ -562,7 +562,7 @@ export const RulingStepTwo: React.FC = () => {
                     </Box>
                     <BlueBox>
                       <CheckboxList
-                        checkboxes={judgeRestrictions}
+                        checkboxes={restrictions}
                         selected={workingCase.custodyRestrictions}
                         onChange={(id) =>
                           setCheckboxAndSendToServer(
