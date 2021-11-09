@@ -95,13 +95,13 @@ const insertIds = (
   }
 
   return html.replace(
-    / class="(section|chapter|article)__title"\s*>([^<]+)</g,
+    / class="(section|chapter|article)__title"\s*>([^]+?)<\/h\d/g,
     (htmlSnippet: string, _type: string, title: string) => {
       const type = _type as ItemType
       count[type] += 1
       const id = idPrefix + idPrefixes[type] + count[type]
       flatIndex.push({
-        title: title.trim(),
+        title: title.replace(/<[^]+?>/g, '').trim(),
         type,
         id,
       })
