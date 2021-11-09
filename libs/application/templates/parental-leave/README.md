@@ -1,4 +1,4 @@
-# Parental leave application
+# Parental Leave
 
 ## Description
 

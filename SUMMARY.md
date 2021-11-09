@@ -151,7 +151,7 @@
     - [Health Insurance](libs/application/templates/health-insurance/README.md)
     - [Institution Collaboration](libs/application/templates/institution-collaboration/README.md)
     - [Application Templates Login Service](libs/application/templates/login-service/README.md)
-    - [Application Templates Parental Leave](libs/application/templates/parental-leave/README.md)
+    - [Parental Leave](libs/application/templates/parental-leave/README.md)
     - [Party Application](libs/application/templates/party-application/README.md)
     - [Party Letter](libs/application/templates/party-letter/README.md)
     - [Payable Template](libs/application/templates/payable-dummy-template/README.md)
