@@ -14,6 +14,7 @@ import CourtRecordForm from './CourtRecordForm'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icCourtRecord as m } from '@island.is/judicial-system-web/messages'
 import { useIntl } from 'react-intl'
+import formatISO from 'date-fns/formatISO'
 
 const CourtRecord = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -75,7 +76,7 @@ const CourtRecord = () => {
     if (!workingCase && data?.case) {
       const theCase = data.case
 
-      autofill('courtStartDate', new Date().toString(), theCase)
+      autofill('courtStartDate', formatISO(new Date()), theCase)
 
       if (theCase.court) {
         autofill(
