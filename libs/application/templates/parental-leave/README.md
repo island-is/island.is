@@ -61,9 +61,9 @@ Have a look at [the parental leave template API module](../../template-api-modul
 
 All user interactions go through our GraphQL API (`api`) which is integrated with with other APIs.
 
-To communicate with VMST a request has to go through [X-Road](https://docs.devland.is/technical-overview/x-road). Both in development and on production environments.
+To communicate with VMST a request has to go through [X-Road](../../../../handbook/technical-overview/x-road/straumurinn-usage-and-operation.md). Both in development and on production environments.
 
-To connect to VMST test API you'll want to start the [local proxy](https://docs.devland.is/#running-proxy-against-development-service) (also see [AWS secrets](https://docs.devland.is/repository/aws-secrets#getting-started)).
+To connect to VMST test API you'll want to start the [local proxy](../../../../README.md#running-proxy-against-development-service) (also see [AWS secrets](../../../../handbook/repository/aws-secrets.md#getting-started)).
 
 See [directorate of labour graphql API module](../../../api/domains/directorate-of-labour/src/lib/directorate-of-labour.module.ts) for examples of VMST communication.
 
