@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { MunicipalityModel } from './models'
 import { AidType } from '@island.is/financial-aid/shared/lib'
 import { AidModel, AidService } from '../aid'
-import { UpdateMunicipalityDto } from './dto'
+import { CreateMunicipalityDto, UpdateMunicipalityDto } from './dto'
 import { Sequelize } from 'sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -45,6 +45,28 @@ export class MunicipalityService {
         },
       ],
     })
+  }
+
+  async create(
+    municipality: CreateMunicipalityDto,
+  ): Promise<MunicipalityModel> {
+    try {
+      await this.sequelize.transaction((t) => {
+        return Promise.all(
+          Object.values(AidType).map((item) => {
+            this.aidService.create({
+              municipalityId: municipality.municipalityId,
+              type: item,
+            })
+          }),
+        )
+      })
+    } catch {
+      this.logger.error('Error while creating aid models')
+      throw new NotFoundException(`Error while creating aid models`)
+    }
+
+    return
   }
 
   async updateMunicipality(

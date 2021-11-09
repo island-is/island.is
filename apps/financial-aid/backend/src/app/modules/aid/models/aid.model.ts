@@ -34,6 +34,7 @@ export class AidModel extends Model<Aid> {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 0,
   })
   @ApiProperty()
   ownPlace: number
@@ -41,6 +42,7 @@ export class AidModel extends Model<Aid> {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 0,
   })
   @ApiProperty()
   registeredRenting: number
@@ -48,6 +50,7 @@ export class AidModel extends Model<Aid> {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 0,
   })
   @ApiProperty()
   unregisteredRenting: number
@@ -55,6 +58,7 @@ export class AidModel extends Model<Aid> {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 0,
   })
   @ApiProperty()
   livesWithParents: number
@@ -62,6 +66,7 @@ export class AidModel extends Model<Aid> {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 0,
   })
   @ApiProperty()
   unknown: number
@@ -69,6 +74,7 @@ export class AidModel extends Model<Aid> {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 0,
   })
   @ApiProperty()
   withOthers: number

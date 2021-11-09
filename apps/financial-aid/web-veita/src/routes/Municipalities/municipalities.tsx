@@ -4,6 +4,7 @@ import {
   ApplicationOverviewSkeleton,
   LoadingContainer,
   MunicipalitiesTableBody,
+  NewMunicipalityModal,
   TableHeaders,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { Text, Box, Button } from '@island.is/island-ui/core'
@@ -21,6 +22,8 @@ export const Municipalities = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
+
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
   useEffect(() => {
     getMunicipalities()
@@ -49,7 +52,12 @@ export const Municipalities = () => {
         <Text as="h1" variant="h1">
           Sveitarfélög
         </Text>
-        <Button size="small" icon="add" variant="ghost">
+        <Button
+          size="small"
+          icon="add"
+          variant="ghost"
+          onClick={() => setIsModalVisible(true)}
+        >
           Nýtt sveitarfélag
         </Button>
       </Box>
@@ -94,6 +102,16 @@ export const Municipalities = () => {
           þessu upplýsingum?
         </div>
       )}
+
+      <NewMunicipalityModal
+        isVisible={isModalVisible}
+        setIsVisible={(visible) => {
+          setIsModalVisible(visible)
+        }}
+        activeMuncipality={municipalities
+          ?.filter((el) => el.active)
+          .map((el) => parseInt(el.municipalityId))}
+      />
     </LoadingContainer>
   )
 }

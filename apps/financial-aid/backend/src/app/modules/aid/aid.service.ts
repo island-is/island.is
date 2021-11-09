@@ -7,6 +7,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Aid } from '@island.is/financial-aid/shared/lib'
 import { Transaction } from 'sequelize/types'
+import { CreateAidDto } from './dto'
 
 @Injectable()
 export class AidService {
@@ -16,6 +17,11 @@ export class AidService {
     @InjectModel(AidModel)
     private readonly aidModel: typeof AidModel,
   ) {}
+
+  async create(aid: CreateAidDto): Promise<AidModel> {
+    this.logger.debug(`Create aid`)
+    return this.aidModel.create(aid)
+  }
 
   async findById(id: string): Promise<AidModel> {
     this.logger.debug(`Finding aid by id ${id}`)

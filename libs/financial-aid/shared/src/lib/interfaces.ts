@@ -137,6 +137,11 @@ export interface Municipality {
   users?: number
 }
 
+export interface CreateMunicipality {
+  name: string
+  municipalityId: string
+}
+
 export interface ApplicationFile {
   id: string
   created: string
