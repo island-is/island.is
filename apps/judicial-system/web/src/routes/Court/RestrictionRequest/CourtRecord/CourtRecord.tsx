@@ -40,6 +40,7 @@ import {
   closedCourt,
 } from '@island.is/judicial-system-web/messages'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import formatISO from 'date-fns/formatISO'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -96,7 +97,7 @@ export const CourtRecord: React.FC = () => {
     if (!workingCase && data?.case) {
       const theCase = data.case
 
-      autofill('courtStartDate', new Date().toString(), theCase)
+      autofill('courtStartDate', formatISO(new Date()), theCase)
 
       if (theCase.court) {
         autofill(
