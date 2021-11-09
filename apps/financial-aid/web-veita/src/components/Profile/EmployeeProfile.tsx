@@ -105,7 +105,24 @@ const EmployeeProfile = ({ user, onUpdateStaff }: EmployeeProfileProps) => {
     },
   ]
 
-  const [updateStaff] = useMutation(UpdateStaffMutation)
+  const [updateStaff, { loading }] = useMutation(UpdateStaffMutation)
+
+  const changeUserActivity = async (active: boolean) => {
+    return await updateStaff({
+      variables: {
+        input: {
+          id: user.id,
+          active,
+        },
+      },
+    })
+      .then(() => {
+        onUpdateStaff()
+      })
+      .catch(() => {
+        setState({ ...state, hasSubmitError: true })
+      })
+  }
 
   const areRequiredFieldsFilled =
     !state.email ||
@@ -165,7 +182,13 @@ const EmployeeProfile = ({ user, onUpdateStaff }: EmployeeProfileProps) => {
                   Notandi er {user.active ? 'virkur' : 'óvirkur'}
                 </Text>
               </Box>
-              <button className={headerStyles.button}>Óvirkja</button>
+              <button
+                onClick={() => changeUserActivity(!user.active)}
+                disabled={loading}
+                className={headerStyles.button}
+              >
+                {user.active ? 'Óvirkja' : 'Virkja'}
+              </button>
             </Box>
           </Box>
 

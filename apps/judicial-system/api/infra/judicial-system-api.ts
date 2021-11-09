@@ -30,8 +30,8 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: 'POLICE_CASE_FILES',
-        prod: 'POLICE_CASE_FILES',
+        staging: '',
+        prod: '',
       },
     })
     .xroad(Base, JudicialSystem)
