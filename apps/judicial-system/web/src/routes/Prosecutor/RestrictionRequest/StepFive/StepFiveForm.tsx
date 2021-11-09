@@ -143,6 +143,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
 
       if (index === filesToUpload.length - 1) {
         setIsUploading(false)
+        setCheckAllChecked(false)
       }
     })
 
@@ -205,25 +206,42 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                   >
                     <LoadingDots />
                   </Box>
-                ) : files.length === 0 ? (
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    paddingY={2}
-                    paddingX={3}
-                    marginBottom={2}
-                  >
-                    <Box display="flex" marginRight={2}>
-                      <Icon icon="warning" color="yellow400" />
-                    </Box>
-                    <Text variant="h5">
-                      {formatMessage(
-                        m.sections.policeCaseFiles.caseNotFoundInLOKEMessage,
-                      )}
-                    </Text>
-                  </Box>
-                ) : policeCaseFiles?.errorMessage &&
+                ) : policeCaseFiles?.hasError ? (
+                  policeCaseFiles?.errorMessage &&
                   policeCaseFiles?.errorMessage.indexOf('404') > -1 ? (
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      paddingY={2}
+                      paddingX={3}
+                      marginBottom={2}
+                    >
+                      <Box display="flex" marginRight={2}>
+                        <Icon icon="warning" color="yellow400" />
+                      </Box>
+                      <Text variant="h5">
+                        {formatMessage(
+                          m.sections.policeCaseFiles.caseNotFoundInLOKEMessage,
+                        )}
+                      </Text>
+                    </Box>
+                  ) : (
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      paddingY={2}
+                      paddingX={3}
+                      marginBottom={2}
+                    >
+                      <Box display="flex" marginRight={2}>
+                        <Icon icon="close" color="red400" />
+                      </Box>
+                      <Text variant="h5">
+                        {formatMessage(m.sections.policeCaseFiles.errorMessage)}
+                      </Text>
+                    </Box>
+                  )
+                ) : policeCaseFiles?.files.length === 0 ? (
                   <Box
                     display="flex"
                     alignItems="center"
@@ -238,21 +256,6 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                       {formatMessage(
                         m.sections.policeCaseFiles.noFilesFoundInLOKEMessage,
                       )}
-                    </Text>
-                  </Box>
-                ) : policeCaseFiles?.hasError ? (
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    paddingY={2}
-                    paddingX={3}
-                    marginBottom={2}
-                  >
-                    <Box display="flex" marginRight={2}>
-                      <Icon icon="close" color="red400" />
-                    </Box>
-                    <Text variant="h5">
-                      {formatMessage(m.sections.policeCaseFiles.errorMessage)}
                     </Text>
                   </Box>
                 ) : policeCaseFileList.length > 0 ? (
@@ -395,7 +398,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.STEP_SIX_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!allFilesUploaded}
+          nextIsDisabled={!allFilesUploaded || isUploading}
         />
       </FormContentContainer>
     </>
