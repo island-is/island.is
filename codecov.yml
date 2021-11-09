@@ -1,3 +1,6 @@
+comment:
+  layout: "reach, diff, flags"
+  show_carryforward_flags: true
 coverage:
   status:
     project: false
