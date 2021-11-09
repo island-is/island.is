@@ -267,6 +267,13 @@ export const StaffQuery = gql`
       active
       nickname
       email
+      adminUsers {
+        id
+        name
+        nationalId
+        active
+        email
+      }
     }
   }
 `

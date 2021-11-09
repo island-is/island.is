@@ -3,7 +3,7 @@ import { useLazyQuery } from '@apollo/client'
 import {
   ApplicationOverviewSkeleton,
   LoadingContainer,
-  MunicipalitiesTableBody,
+  TableBody,
   TableHeaders,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { Text, Box, Button } from '@island.is/island-ui/core'
@@ -13,6 +13,7 @@ import cn from 'classnames'
 
 import { Municipality } from '@island.is/financial-aid/shared/lib'
 import { MunicipalitiesQuery } from '@island.is/financial-aid-web/veita/graphql'
+import { useRouter } from 'next/router'
 
 export const Municipalities = () => {
   const [getMunicipalities, { data, error, loading }] = useLazyQuery<{
@@ -21,6 +22,8 @@ export const Municipalities = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
+
+  const router = useRouter()
 
   useEffect(() => {
     getMunicipalities()
@@ -35,6 +38,43 @@ export const Municipalities = () => {
       setMunicipalities(data.municipalities)
     }
   }, [data])
+
+  const name = (municipality: Municipality) => {
+    return (
+      <Box>
+        <Text variant="h5" color={municipality.active ? 'dark400' : 'dark300'}>
+          {municipality.name}
+        </Text>
+      </Box>
+    )
+  }
+
+  const users = (municipality: Municipality) => {
+    return (
+      <Box>
+        <Text color={municipality.active ? 'dark400' : 'dark300'}>
+          {municipality.users}
+        </Text>
+      </Box>
+    )
+  }
+
+  const activationButton = (municipality: Municipality) => {
+    return (
+      <Box>
+        <Button
+          onClick={(event) => {
+            event.stopPropagation()
+          }}
+          variant="text"
+          loading={false}
+          colorScheme={municipality.active ? 'destructive' : 'light'}
+        >
+          {municipality.active ? 'Óvirkja' : 'Virkja'}
+        </Button>
+      </Box>
+    )
+  }
 
   return (
     <LoadingContainer
@@ -76,9 +116,13 @@ export const Municipalities = () => {
 
               <tbody className={tableStyles.tableBody}>
                 {municipalities.map((item: Municipality, index) => (
-                  <MunicipalitiesTableBody
-                    municipality={item}
+                  <TableBody
+                    items={[name(item), users(item), activationButton(item)]}
                     index={index}
+                    identifier={item.id}
+                    onClick={() =>
+                      router.push(`sveitarfelog/${item.municipalityId}`)
+                    }
                     key={'tableBody-' + item.id}
                   />
                 ))}

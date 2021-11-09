@@ -1,4 +1,4 @@
-import { Staff } from '@island.is/financial-aid/shared/lib'
+import { Staff, StaffRole } from '@island.is/financial-aid/shared/lib'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -75,6 +75,15 @@ export class StaffService {
     return await this.staffModel.count({
       where: {
         municipalityId,
+      },
+    })
+  }
+
+  async getAdminUsers(municipalityId: string): Promise<StaffModel[]> {
+    return await this.staffModel.findAll({
+      where: {
+        municipalityId,
+        role: StaffRole.ADMIN,
       },
     })
   }

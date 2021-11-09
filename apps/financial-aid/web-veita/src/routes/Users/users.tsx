@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import { useLazyQuery } from '@apollo/client'
+import React, { useContext, useEffect, useState } from 'react'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import {
   ApplicationOverviewSkeleton,
   LoadingContainer,
   NewUserModal,
   TableHeaders,
-  UsersTableBody,
+  TableBody,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Text,
@@ -19,8 +19,17 @@ import * as tableStyles from '../../sharedStyles/Table.css'
 import * as headerStyles from '../../sharedStyles/Header.css'
 import cn from 'classnames'
 
-import { Staff } from '@island.is/financial-aid/shared/lib'
-import { StaffForMunicipalityQuery } from '@island.is/financial-aid-web/veita/graphql'
+import {
+  formatNationalId,
+  Staff,
+  staffRoleDescription,
+} from '@island.is/financial-aid/shared/lib'
+import {
+  StaffForMunicipalityQuery,
+  UpdateStaffMutation,
+} from '@island.is/financial-aid-web/veita/graphql'
+import { useRouter } from 'next/router'
+import { AdminContext } from '../../components/AdminProvider/AdminProvider'
 
 export const Users = () => {
   const [getStaff, { data, error, loading }] = useLazyQuery<{ users: Staff[] }>(
@@ -30,6 +39,12 @@ export const Users = () => {
       errorPolicy: 'all',
     },
   )
+  const [updateStaff, { loading: staffLoading }] = useMutation(
+    UpdateStaffMutation,
+  )
+
+  const { admin } = useContext(AdminContext)
+  const router = useRouter()
 
   useEffect(() => {
     getStaff()
@@ -50,6 +65,70 @@ export const Users = () => {
   const refreshList = () => {
     setIsModalVisible(false)
     getStaff()
+  }
+
+  const changeUserActivity = async (staff: Staff) => {
+    return await updateStaff({
+      variables: {
+        input: {
+          id: staff.id,
+          active: !staff.active,
+        },
+      },
+    })
+      .then(() => {
+        refreshList()
+      })
+      .catch(() => {
+        toast.error(
+          'Það mistókst að breyta hlutverki notanda, vinasamlega reynið aftur síðar',
+        )
+      })
+  }
+
+  const isLoggedInUser = (staff: Staff) =>
+    admin?.nationalId === staff.nationalId
+
+  const name = (staff: Staff) => {
+    return (
+      <Text variant="h5" color={staff.active ? 'dark400' : 'dark300'}>
+        {staff.name} {isLoggedInUser(staff) ? '(Þú)' : ''}
+      </Text>
+    )
+  }
+
+  const nationalId = (staff: Staff) => {
+    return (
+      <Text color={staff.active ? 'dark400' : 'dark300'}>
+        {formatNationalId(staff.nationalId)}
+      </Text>
+    )
+  }
+
+  const roleDescription = (staff: Staff) => {
+    return (
+      <Text color={staff.active ? 'dark400' : 'dark300'}>
+        {staffRoleDescription(staff.roles)}
+      </Text>
+    )
+  }
+
+  const activationButton = (staff: Staff) => {
+    return isLoggedInUser(staff) ? null : (
+      <Box>
+        <Button
+          onClick={(event) => {
+            event.stopPropagation()
+            changeUserActivity(staff)
+          }}
+          variant="text"
+          loading={staffLoading}
+          colorScheme={staff.active ? 'destructive' : 'light'}
+        >
+          {staff.active ? 'Óvirkja' : 'Virkja'}
+        </Button>
+      </Box>
+    )
   }
 
   return (
@@ -96,12 +175,17 @@ export const Users = () => {
 
               <tbody className={tableStyles.tableBody}>
                 {users.map((item: Staff, index) => (
-                  <UsersTableBody
-                    user={item}
+                  <TableBody
+                    items={[
+                      name(item),
+                      nationalId(item),
+                      roleDescription(item),
+                      activationButton(item),
+                    ]}
                     index={index}
+                    identifier={item.id}
                     key={'tableBody-' + item.id}
-                    onStaffUpdated={refreshList}
-                    toast={toast}
+                    onClick={() => router.push(`notendur/${item.id}`)}
                   />
                 ))}
               </tbody>

@@ -2,17 +2,23 @@ import React from 'react'
 import { Box, Link, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
-
 import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
-import { Municipality } from '@island.is/financial-aid/shared/lib'
-
+import * as tableStyles from '../../sharedStyles/Table.css'
 import cn from 'classnames'
+
+import { Municipality, Staff } from '@island.is/financial-aid/shared/lib'
+
+import {
+  TableHeaders,
+  TableBody,
+} from '@island.is/financial-aid-web/veita/src/components'
 
 interface MunicipalityProfileProps {
   municipality: Municipality
 }
 
 const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
+  const usersTableHeaders = ['Nafn', 'Kennitala', 'Netfang', 'Aðgerð']
   return (
     <Box
       marginTop={15}
@@ -50,6 +56,38 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
               Stjórnendur
             </Text>
           </Box>
+
+          <div className={`${tableStyles.wrapper} hideScrollBar`}>
+            <div className={tableStyles.smallTableWrapper}>
+              <table
+                className={cn({
+                  [`${tableStyles.tableContainer}`]: true,
+                })}
+              >
+                <thead className={`contentUp delay-50`}>
+                  <tr>
+                    {usersTableHeaders.map((item, index) => (
+                      <TableHeaders
+                        header={{ title: item }}
+                        index={index}
+                        key={'tableHeaders-' + index}
+                      />
+                    ))}
+                  </tr>
+                </thead>
+
+                <tbody className={tableStyles.tableBody}>
+                  {municipality.adminUsers?.map((item: Staff, index) => (
+                    <TableBody
+                      municipality={item}
+                      index={index}
+                      key={'tableBody-' + item.id}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </Box>
 
         <Box marginBottom={7}>

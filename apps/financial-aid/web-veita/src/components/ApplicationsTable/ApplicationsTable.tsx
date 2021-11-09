@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import * as tableStyles from '../../sharedStyles/Table.css'
 import { useRouter } from 'next/router'
 
@@ -10,15 +10,20 @@ import {
   TableBody,
   LoadingContainer,
   TableSkeleton,
+  GeneratedProfile,
+  GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Application,
   ApplicationState,
+  getMonth,
+  getState,
   getStateUrlFromRoute,
   TableHeadersProps,
 } from '@island.is/financial-aid/shared/lib'
 
 import { useAllApplications } from '@island.is/financial-aid-web/veita/src/utils/useAllApplications'
+import { calcDifferenceInDate, getTagByState } from '../../utils/formHelper'
 
 interface PageProps {
   applications: Application[]
@@ -59,6 +64,60 @@ const ApplicationsTable = ({
       })
   }
 
+  const name = (application: Application) => {
+    return (
+      <Box display="flex" alignItems="center">
+        <GeneratedProfile size={32} nationalId={application.nationalId} />
+        <Box marginLeft={2}>
+          <Text variant="h5">{GenerateName(application.nationalId)}</Text>
+        </Box>
+      </Box>
+    )
+  }
+
+  const state = (application: Application) => {
+    return (
+      <Box>
+        <div className={`tags ${getTagByState(application.state)}`}>
+          {getState[application.state]}
+        </div>
+      </Box>
+    )
+  }
+
+  const date = (application: Application) => {
+    return <Text> {calcDifferenceInDate(application.modified)}</Text>
+  }
+
+  const created = (application: Application) => {
+    return <Text>{getMonth(new Date(application.created).getMonth())}</Text>
+  }
+
+  const assignButton = (application: Application) => {
+    return (
+      <>
+        {application.staff?.name ? (
+          <Box className={tableStyles.rowContent}>
+            <Text>{application.staff?.name}</Text>
+          </Box>
+        ) : (
+          <Button
+            variant="text"
+            onClick={(ev) => {
+              ev.stopPropagation()
+              updateApplicationAndTable(
+                application.id,
+                ApplicationState.INPROGRESS,
+              )
+            }}
+          >
+            Sjá um
+          </Button>
+        )}
+      </>
+    )
+  }
+
   if (applications && applications.length > 0) {
     return (
       <LoadingContainer isLoading={isLoading} loader={<TableSkeleton />}>
@@ -85,10 +144,17 @@ const ApplicationsTable = ({
               <tbody className={tableStyles.tableBody}>
                 {applications.map((item: Application, index) => (
                   <TableBody
-                    application={item}
+                    items={[
+                      name(item),
+                      state(item),
+                      date(item),
+                      created(item),
+                      assignButton(item),
+                    ]}
+                    identifier={item.id}
                     index={index}
-                    key={'tableBody-' + item.id}
-                    onApplicationUpdate={updateApplicationAndTable}
+                    key={item.id}
+                    onClick={() => router.push(`application/${item.id}`)}
                   />
                 ))}
               </tbody>
