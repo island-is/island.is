@@ -126,7 +126,7 @@ const PetitionView = (namespace) => {
                   </GridColumn>
                 </GridRow>
                 <GridRow marginTop={5} marginBottom={5}>
-                  <GridColumn span={['12/12', '12/12', '12/12']}>
+                  <GridColumn span={'12/12'}>
                     <T.Table>
                       <T.Head>
                         <T.Row>
