@@ -32,4 +32,7 @@ export class MunicipalityModel implements Municipality {
 
   @Field({ nullable: true })
   readonly rulesHomepage?: string
+
+  @Field({ nullable: true })
+  readonly users?: number
 }
