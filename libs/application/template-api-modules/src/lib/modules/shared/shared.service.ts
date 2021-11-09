@@ -11,12 +11,13 @@ import {
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
 } from '../../types'
+import { createAssignToken, getConfigValue } from './shared.utils'
 import {
-  createAssignToken,
-  getConfigValue,
   PAYMENT_QUERY,
   PAYMENT_STATUS_QUERY,
-} from './shared.utils'
+  PaymentChargeData,
+  PaymentStatusData,
+} from './shared.queries'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
@@ -155,14 +156,16 @@ export class SharedTemplateApiService {
     applicationId: string,
     chargeItemCode: string,
   ) {
-    return this.makeGraphqlQuery<{
-      applicationPaymentCharge?: { id: string; paymentUrl: string }
-    }>(authorization, PAYMENT_QUERY, {
-      input: {
-        applicationId,
-        chargeItemCode,
+    return this.makeGraphqlQuery<PaymentChargeData>(
+      authorization,
+      PAYMENT_QUERY,
+      {
+        input: {
+          applicationId,
+          chargeItemCode,
+        },
       },
-    })
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error('graphql query failed')
@@ -182,11 +185,13 @@ export class SharedTemplateApiService {
   }
 
   async getPaymentStatus(authorization: string, applicationId: string) {
-    return await this.makeGraphqlQuery<{
-      applicationPaymentStatus: { fulfilled: boolean }
-    }>(authorization, PAYMENT_STATUS_QUERY, {
-      applicationId,
-    })
+    return await this.makeGraphqlQuery<PaymentStatusData>(
+      authorization,
+      PAYMENT_STATUS_QUERY,
+      {
+        applicationId,
+      },
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error('Couldnt query payment status')
