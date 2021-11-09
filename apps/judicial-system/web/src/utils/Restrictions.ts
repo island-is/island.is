@@ -34,22 +34,6 @@ export const restrictions = [
   },
 ]
 
-export const judgeRestrictions = restrictions.filter(
-  (provision) => provision.id !== CaseCustodyRestrictions.ISOLATION,
-)
-
-export const isolation = (accusedGender?: CaseGender) =>
-  restrictions
-    .filter((provision) => provision.id === CaseCustodyRestrictions.ISOLATION)
-    .map((provision) => {
-      return {
-        ...provision,
-        title: `${capitalize(
-          formatAccusedByGender(accusedGender),
-        )} skal sæta einangrun`,
-      }
-    })
-
 export const alternativeTravelBanRestrictions = [
   {
     title: 'Tilkynningarskylda',
@@ -63,3 +47,21 @@ export const alternativeTravelBanRestrictions = [
     info: m[CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT],
   },
 ]
+
+const isolationRestrictions = [
+  {
+    title: 'B - Einangrun',
+    id: CaseCustodyRestrictions.ISOLATION,
+    info: m[CaseCustodyRestrictions.ISOLATION],
+  },
+]
+
+export const isolation = (accusedGender?: CaseGender) =>
+  isolationRestrictions.map((provision) => {
+    return {
+      ...provision,
+      title: `${capitalize(
+        formatAccusedByGender(accusedGender),
+      )} skal sæta einangrun`,
+    }
+  })
