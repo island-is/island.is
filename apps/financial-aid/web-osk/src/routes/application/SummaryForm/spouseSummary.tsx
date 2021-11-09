@@ -9,6 +9,7 @@ import {
   AllFiles,
   FormInfo,
   FormComment,
+  ContactInfo,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
@@ -51,18 +52,18 @@ const SpouseSummary = () => {
         form?.hasIncome === undefined
           ? undefined
           : 'Ég hef ' +
-            (form.hasIncome ? '' : 'ekki') +
+            (form.hasIncome ? 'ekki ' : '') +
             'fengið tekjur í þessum mánuði eða síðasta',
     },
-    {
-      id: 'emailAddress',
-      label: 'Netfang',
-      url: Routes.form.contactInfo,
-      info: form.emailAddress,
-      secLabel: 'Símanúmer',
-      secInfo: form.phoneNumber,
-    },
   ]
+
+  const errorHandling = (message: string) => {
+    setIsLoading(false)
+    setFormError({
+      status: true,
+      message: message,
+    })
+  }
 
   const handleNextButtonClick = async () => {
     if (!form || !user) {
@@ -70,6 +71,16 @@ const SpouseSummary = () => {
     }
 
     setIsLoading(true)
+
+    if (form.emailAddress === undefined || form.phoneNumber === undefined) {
+      errorHandling('Þú verður að fylla út í alla reitina')
+      var element = document.getElementById('contactInfo')
+      console.log(element)
+      element?.scrollIntoView({
+        behavior: 'smooth',
+      })
+      return
+    }
 
     await updateApplication(
       user.currentApplicationId as string,
@@ -82,11 +93,7 @@ const SpouseSummary = () => {
         }
       })
       .catch((e) => {
-        setIsLoading(false)
-        setFormError({
-          status: true,
-          message: 'Obbobbob einhvað fór úrskeiðis',
-        })
+        errorHandling('Obbobbob einhvað fór úrskeiðis')
       })
   }
 
@@ -113,6 +120,13 @@ const SpouseSummary = () => {
         <UserInfo />
 
         <FormInfo info={formInfoOverview} error={formError.status} />
+
+        <ContactInfo
+          phone={form.phoneNumber}
+          email={form.emailAddress}
+          error={formError.status}
+        />
+
         <Divider />
         <AllFiles />
         <FormComment />

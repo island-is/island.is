@@ -10,6 +10,7 @@ import {
   AllFiles,
   FormInfo,
   FormComment,
+  ContactInfo,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
@@ -100,14 +101,6 @@ const SummaryForm = () => {
           ? form.bankNumber + '-' + form.ledger + '-' + form.accountNumber
           : '',
     },
-    {
-      id: 'emailAddress',
-      label: 'Netfang',
-      url: Routes.form.contactInfo,
-      info: form.emailAddress,
-      secLabel: 'Símanúmer',
-      secInfo: form.phoneNumber,
-    },
   ]
 
   const handleNextButtonClick = async () => {
@@ -129,19 +122,22 @@ const SummaryForm = () => {
           message: 'Obbobbob einhvað fór úrskeiðis',
         })
 
-        if (e.networkError?.statusCode === 400) {
-          const findErrorInFormInfo = formInfoOverview.find((el) =>
-            el.secInfo
-              ? el.secInfo === undefined || el.info === undefined
-              : el.info === undefined,
-          )
+        const findErrorInFormInfo = formInfoOverview.find(
+          (el) => el.info === undefined,
+        )
 
-          if (findErrorInFormInfo) {
-            var element = document.getElementById(findErrorInFormInfo.id)
-            element?.scrollIntoView({
-              behavior: 'smooth',
-            })
-          }
+        if (findErrorInFormInfo) {
+          var element = document.getElementById(findErrorInFormInfo.id)
+          element?.scrollIntoView({
+            behavior: 'smooth',
+          })
+        }
+
+        if (form.emailAddress === undefined || form.phoneNumber === undefined) {
+          var element = document.getElementById('contactInfo')
+          element?.scrollIntoView({
+            behavior: 'smooth',
+          })
         }
       })
   }
@@ -179,6 +175,12 @@ const SummaryForm = () => {
         </Box>
         <UserInfo />
         <FormInfo info={formInfoOverview} error={formError.status} />
+
+        <ContactInfo
+          phone={form.phoneNumber}
+          email={form.emailAddress}
+          error={formError.status}
+        />
 
         <Divider />
         <AllFiles />

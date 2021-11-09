@@ -25,49 +25,6 @@ const FormInfo = ({ info, error }: Props) => {
     <>
       {info.map((item, index) => {
         const err = error && item.info === undefined
-        if (item.secLabel) {
-          return (
-            <span key={'overview-' + index} id={item.id}>
-              <Divider />
-
-              <Box paddingY={[4, 4, 5]} className={styles.userInfoContainer}>
-                <Box className={styles.mainInfo}>
-                  <Text
-                    fontWeight="semiBold"
-                    color={err ? 'red600' : 'dark400'}
-                  >
-                    {item.label}
-                    {err && '*'}
-                  </Text>
-                  <Text>{item.info}</Text>
-                </Box>
-                <Box className={styles.contactInfo}>
-                  <Text
-                    fontWeight="semiBold"
-                    color={err ? 'red600' : 'dark400'}
-                  >
-                    {item.secLabel}
-                    {err && '*'}
-                  </Text>
-                  <Text>{item.secInfo}</Text>
-                </Box>
-
-                <Box>
-                  <Button
-                    icon="pencil"
-                    iconType="filled"
-                    variant="utility"
-                    onClick={() => {
-                      router.push(item.url)
-                    }}
-                  >
-                    Breyta
-                  </Button>
-                </Box>
-              </Box>
-            </span>
-          )
-        }
         return (
           <span key={'overview-' + index} id={item.id}>
             <Divider />
