@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Text, Box, Button } from '@island.is/island-ui/core'
 
-import * as styles from './UsersTableBody.css'
+import * as tableStyles from '../../sharedStyles/Table.css'
 import cn from 'classnames'
 
 import {
@@ -50,15 +50,15 @@ const UsersTableBody = ({ user, index, onStaffUpdated, toast }: PageProps) => {
   return (
     <Link href={'notendur/' + user.id}>
       <tr
-        className={`${styles.link} contentUp`}
+        className={`${tableStyles.link} contentUp`}
         style={{ animationDelay: 55 + 3.5 * index + 'ms' }}
       >
         <td
           className={cn({
-            [`${styles.tablePadding} ${styles.firstChildPadding}`]: true,
+            [`${tableStyles.tablePadding} ${tableStyles.firstChildPadding}`]: true,
           })}
         >
-          <Box display="flex">
+          <Box className={tableStyles.rowContent}>
             <Text variant="h5" color={user.active ? 'dark400' : 'dark300'}>
               {user.name} {isLoggedInUser ? '(Þú)' : ''}
             </Text>
@@ -67,7 +67,7 @@ const UsersTableBody = ({ user, index, onStaffUpdated, toast }: PageProps) => {
 
         <td
           className={cn({
-            [`${styles.tablePadding} `]: true,
+            [`${tableStyles.tablePadding} `]: true,
           })}
         >
           <Box display="flex">
@@ -79,18 +79,20 @@ const UsersTableBody = ({ user, index, onStaffUpdated, toast }: PageProps) => {
 
         <td
           className={cn({
-            [`${styles.tablePadding} `]: true,
+            [`${tableStyles.tablePadding} `]: true,
           })}
         >
-          <Text color={user.active ? 'dark400' : 'dark300'}>
-            {staffRoleDescription(user.roles)}
-          </Text>
+          <Box className={tableStyles.rowContent}>
+            <Text color={user.active ? 'dark400' : 'dark300'}>
+              {staffRoleDescription(user.roles)}
+            </Text>
+          </Box>
         </td>
 
         {isLoggedInUser === false && (
           <td
             className={cn({
-              [`${styles.tablePadding} `]: true,
+              [`${tableStyles.tablePadding} `]: true,
             })}
           >
             <Button

@@ -70,4 +70,12 @@ export class StaffService {
       municipalityHomepage: user.municipalityHomepage,
     })
   }
+
+  async numberOfUsersForMunicipality(municipalityId: string): Promise<number> {
+    return await this.staffModel.count({
+      where: {
+        municipalityId,
+      },
+    })
+  }
 }
