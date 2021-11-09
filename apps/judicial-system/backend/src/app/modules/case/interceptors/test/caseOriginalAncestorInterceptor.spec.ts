@@ -64,7 +64,6 @@ describe('Case Original Ancestor Interceptor', () => {
 
     beforeEach(async () => {
       mockRequest.mockImplementationOnce(() => request)
-      // mockFindOriginalAncestor.mockResolvedValueOnce(theCase)
       mockHandle.mockReturnValueOnce(result)
 
       then = await givenWhenThen()
