@@ -166,11 +166,22 @@ const ActiveRequests: React.FC<Props> = (props) => {
             }}
           >
             <td className={styles.td}>
-              <Text as="span">{c.policeCaseNumber || '-'}</Text>
+              {c.courtCaseNumber ? (
+                <>
+                  <Box component="span" className={styles.blockColumn}>
+                    <Text as="span">{c.courtCaseNumber}</Text>
+                  </Box>
+                  <Text as="span" variant="small" color="dark400">
+                    {c.policeCaseNumber}
+                  </Text>
+                </>
+              ) : (
+                <Text as="span">{c.policeCaseNumber || '-'}</Text>
+              )}
             </td>
             <td className={cn(styles.td, styles.largeColumn)}>
               <Text>
-                <Box component="span" className={styles.accusedName}>
+                <Box component="span" className={styles.blockColumn}>
                   {c.accusedName || '-'}
                 </Box>
               </Text>
