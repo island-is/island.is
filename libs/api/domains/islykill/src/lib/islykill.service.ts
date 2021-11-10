@@ -34,11 +34,6 @@ export class IslykillService {
         }
       })
       .catch((e) => {
-        this.logger.error(errorMsg, {
-          category: 'islykill-settings',
-          nationalId,
-          exception: e,
-        })
         throw new BadRequestException(e, errorMsg)
       })
     return apiData
@@ -73,11 +68,6 @@ export class IslykillService {
             noUserFound: true,
           }
         }
-        this.logger.error(errorMsg, {
-          category: 'islykill-settings',
-          nationalId,
-          exception: e,
-        })
         throw new BadRequestException(e, errorMsg)
       })
     return apiData
@@ -105,11 +95,6 @@ export class IslykillService {
         }
       })
       .catch((e) => {
-        this.logger.error(errorMsg, {
-          category: 'islykill-settings',
-          nationalId,
-          exception: e,
-        })
         throw new BadRequestException(e, errorMsg)
       })
     return apiData
@@ -123,11 +108,7 @@ export class IslykillService {
     // try {
     //   await this.islyklarApi.islyklarDelete({ ssn: nationalId })
     // } catch (e) {
-    //   this.logger.error('Unable to delete islykill settings for user', {
-    //     category: 'islykill-settings',
-    //     nationalId,
-    //     exception: e,
-    //   })
+    // throw new BadRequestException(e, 'Unable to delete islykill settings for user')
     //   return {
     //     nationalId,
     //     valid: false,
