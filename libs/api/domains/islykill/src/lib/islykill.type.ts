@@ -15,11 +15,5 @@ export type IslykillSettings = {
   email?: string
   mobile?: string
   bankInfo?: string
-  lastLogin?: string
-  nextLastLogin?: string
-  lastPassChange?: string
   canNudge?: boolean
-  onlyCert?: boolean
-  nudgeLastAsked?: string
-  noUserFound?: boolean
 }
