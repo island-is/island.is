@@ -154,10 +154,11 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
     }
 
     // This is raised when the user is signed out of the IDP.
-    const userSignedOut = () => {
+    const userSignedOut = async () => {
       dispatch({
         type: ActionType.LOGGED_OUT,
       })
+      await userManager.removeUser()
       if (autoLogin) {
         signIn()
       }
