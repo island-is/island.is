@@ -16,21 +16,22 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 
-const States = {
-  DRAFT: 'draft',
-  DONE: 'done',
-  PAYMENT: 'payment',
+enum States {
+  DRAFT = 'draft',
+  DONE = 'done',
+  PAYMENT = 'payment',
 }
 
 type CriminalRecordTemplateEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.PAYMENT }
 
 enum Roles {
   APPLICANT = 'applicant',
 }
 
-const ExampleSchema = z.object({
+const CriminalRecordSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   // person: z.object({
   //   name: z.string().nonempty().max(256),
@@ -72,17 +73,17 @@ const template: ApplicationTemplate<
   name: m.name,
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.CriminalRecord.translation],
-  dataSchema: ExampleSchema,
+  dataSchema: CriminalRecordSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
       [States.DRAFT]: {
         meta: {
           name: 'Umsókn um sakavottorð',
-          onEntry: {
-            apiModuleAction: ApiActions.getCriminalRecord,
-            throwOnError: true,
-          },
+          // onExit: {
+          //   apiModuleAction: ApiActions.getCriminalRecord,
+          //   throwOnError: true,
+          // },
           actionCard: {
             description: m.draftDescription,
           },
@@ -97,7 +98,7 @@ const template: ApplicationTemplate<
                 ),
               actions: [
                 {
-                  event: 'SUBMIT',
+                  event: DefaultEvents.PAYMENT,
                   name: 'Staðfesta',
                   type: 'primary',
                 },
@@ -107,9 +108,10 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: States.DONE,
+          [DefaultEvents.PAYMENT]: {
+            target: States.PAYMENT,
           },
+          [DefaultEvents.SUBMIT]: { target: States.DONE },
         },
       },
       [States.PAYMENT]: {

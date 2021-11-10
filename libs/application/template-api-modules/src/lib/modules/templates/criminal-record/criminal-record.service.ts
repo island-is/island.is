@@ -12,8 +12,9 @@ export class CriminalRecordService {
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     // Pretend to be doing stuff for a short while
     console.log('Before timeout')
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    // await new Promise((resolve) => setTimeout(resolve, 2000))
     console.log('After timeout')
+    return 'hello my friend'
   }
 
   async getCriminalRecord({ application }: TemplateApiModuleActionProps) {

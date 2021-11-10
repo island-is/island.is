@@ -16,9 +16,13 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
   buildCustomField,
+  DefaultEvents,
+  buildDividerField,
+  buildKeyValueField,
 } from '@island.is/application/core'
-import { UserProfile } from '../types/schema'
+import { NationalRegistryUser, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
+import { ApiActions } from '../shared'
 
 export const CriminalRecordForm: Form = buildForm({
   id: 'CriminalRecordFormDraft',
@@ -48,33 +52,10 @@ export const CriminalRecordForm: Form = buildForm({
               subTitle: m.userProfileInformationSubTitle,
             }),
             // buildDataProviderItem({
-            //   id: 'currentLicense',
-            //   type: 'CurrentLicenseProvider',
-            //   title: m.infoFromLicenseRegistry,
-            //   subTitle: m.confirmationStatusOfEligability,
-            // }),
-            // buildDataProviderItem({
-            //   id: 'juristictions',
-            //   type: 'JuristictionProvider',
+            //   id: 'payment',
+            //   type: 'FeeInfoProvider',
             //   title: '',
             // }),
-            buildDataProviderItem({
-              id: 'payment',
-              type: 'FeeInfoProvider',
-              title: '',
-            }),
-          ],
-        }),
-        buildSubmitField({
-          id: 'toDraft',
-          title: 'externalData.submit',
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: 'SUBMIT',
-              name: 'staðfesta',
-              type: 'primary',
-            },
           ],
         }),
       ],
@@ -82,12 +63,64 @@ export const CriminalRecordForm: Form = buildForm({
     buildSection({
       id: 'payment',
       title: m.payment,
-      children: [],
+      children: [
+        buildMultiField({
+          id: 'payment.info',
+          title: 'Greiðsla',
+          space: 1,
+          children: [
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: 'Áfram',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Áfram',
+                  type: 'primary',
+                },
+              ],
+            }),
+            buildKeyValueField({
+              label: 'Nafn',
+              value: ({ externalData: { nationalRegistry } }) =>
+                (nationalRegistry.data as NationalRegistryUser).fullName,
+            }),
+            buildDividerField({
+              title: '',
+              color: 'dark400',
+            }),
+          ],
+        }),
+        buildDescriptionField({
+          id: 'final',
+          title: 'Takk',
+          description: (application) => {
+            const sendApplicationActionResult =
+              application.externalData[ApiActions.createApplication]
+
+            let id = 'unknown'
+            if (sendApplicationActionResult) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              id = sendApplicationActionResult.data.id
+            }
+
+            return {
+              ...m.outroMessage,
+              values: {
+                id,
+              },
+            }
+          },
+        }),
+      ],
     }),
-    buildSection({
-      id: 'confirmation',
-      title: m.confirmation,
-      children: [],
-    }),
+    // buildSection({
+    //   id: 'confirmation',
+    //   title: m.confirmation,
+    //   children: [],
+    // }),
   ],
 })
