@@ -29,6 +29,11 @@ export const Municipalities = () => {
     getMunicipalities()
   }, [])
 
+  const refreshList = () => {
+    setIsModalVisible(false)
+    getMunicipalities()
+  }
+
   const headers = ['Nafn', 'Notendur', 'Aðgerð']
 
   const [municipalities, setMunicipalities] = useState<Municipality[]>()
@@ -108,9 +113,10 @@ export const Municipalities = () => {
         setIsVisible={(visible) => {
           setIsModalVisible(visible)
         }}
-        activeMuncipality={municipalities
+        activeMunicipality={municipalities
           ?.filter((el) => el.active)
           .map((el) => parseInt(el.municipalityId))}
+        onMunicipalityCreated={refreshList}
       />
     </LoadingContainer>
   )

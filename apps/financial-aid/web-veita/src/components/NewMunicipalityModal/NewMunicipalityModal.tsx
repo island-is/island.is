@@ -11,7 +11,8 @@ import { MunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql
 interface Props {
   isVisible: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
-  activeMuncipality?: number[]
+  activeMunicipality?: number[]
+  onMunicipalityCreated: () => void
 }
 
 interface newMunicipalitModalState {
@@ -26,10 +27,11 @@ interface newMunicipalitModalState {
 const NewMunicipalityModal = ({
   isVisible,
   setIsVisible,
-  activeMuncipality,
+  activeMunicipality,
+  onMunicipalityCreated,
 }: Props) => {
   const selectServiceCenter = serviceCenters
-    .filter((el) => el.number !== 0 && !activeMuncipality?.includes(el.number))
+    .filter((el) => el.number !== 0 && !activeMunicipality?.includes(el.number))
     .map((el) => {
       return { label: el.name, value: el.number.toString() }
     })
@@ -66,8 +68,7 @@ const NewMunicipalityModal = ({
           },
         },
       }).then(() => {
-        console.log('tókst')
-        // onStaffCreated()
+        onMunicipalityCreated()
       })
     } catch (e) {
       setState({ ...state, hasSubmitError: true })

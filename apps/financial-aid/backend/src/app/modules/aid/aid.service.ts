@@ -20,6 +20,17 @@ export class AidService {
 
   async create(aid: CreateAidDto, t: Transaction): Promise<AidModel> {
     this.logger.debug(`Create aid`)
+
+    const doesExists = await this.aidModel.findOne({
+      where: {
+        municipalityId: aid.municipalityId,
+      },
+    })
+
+    if (doesExists) {
+      return doesExists
+    }
+
     return this.aidModel.create(aid, { transaction: t })
   }
 

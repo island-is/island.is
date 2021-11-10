@@ -47,9 +47,9 @@ export class MunicipalityService {
     })
   }
 
-  // const findType = (type:AidType) => {
-  //   return
-  // } //todo, migration uniq
+  findTypeReturnId = (obj: AidModel[], type: AidType) => {
+    return obj.find((el) => el.type === type).id
+  }
 
   async create(
     municipality: CreateMunicipalityDto,
@@ -65,19 +65,19 @@ export class MunicipalityService {
             t,
           )
         }),
-      ).then((res) => {
-        municipality.individualAidId = res.find(
-          (el) => el.type === AidType.INDIVIDUAL,
-        ).id
-        municipality.cohabitationAidId = res.find(
-          (el) => el.type === AidType.COHABITATION,
-        ).id
-
-        return this.municipalityModel.create(municipality, { transaction: t })
-      })
-      // .catch(() => {
-      //   new NotFoundException(`Error while updating municipality`)
-      // })
+      )
+        .then((res) => {
+          municipality.individualAidId = this.findTypeReturnId(
+            res,
+            AidType.INDIVIDUAL,
+          )
+          municipality.cohabitationAidId = this.findTypeReturnId(
+            res,
+            AidType.COHABITATION,
+          )
+          return this.municipalityModel.create(municipality, { transaction: t })
+        })
+        .catch((err) => err)
     })
   }
 
