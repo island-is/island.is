@@ -163,6 +163,7 @@ const HearingArrangements = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
@@ -170,10 +171,6 @@ const HearingArrangements = () => {
       isLoading={loading}
       notFound={id !== undefined && data?.case === undefined}
       isExtension={workingCase?.parentCase && true}
-      decision={workingCase?.decision}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase && user && prosecutors && courts && (
         <>

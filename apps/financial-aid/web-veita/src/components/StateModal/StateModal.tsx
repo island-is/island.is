@@ -13,7 +13,6 @@ import {
 
 import {
   Application,
-  ApplicationEventType,
   ApplicationState,
   eventTypeFromApplicationState,
 } from '@island.is/financial-aid/shared/lib'

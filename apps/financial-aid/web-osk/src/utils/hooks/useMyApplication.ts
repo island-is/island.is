@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
 
 import { ApplicationQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
@@ -9,8 +9,6 @@ import { useRouter } from 'next/router'
 const useMyApplication = () => {
   const router = useRouter()
 
-  const storageKey = 'myCurrentApplication'
-
   const [myApplication, updateApplication] = useState<Application>()
 
   const [getApplication, { data, error, loading }] = useLazyQuery<
@@ -20,16 +18,13 @@ const useMyApplication = () => {
     { input: { id: string } }
   >(ApplicationQuery)
 
-  useEffect(() => {
-    const storedFormJson = sessionStorage.getItem(storageKey)
-    if (storedFormJson === null) {
-      return
-    }
-    const storedState = JSON.parse(storedFormJson)
-    updateApplication(storedState)
-  }, [])
-
-  if (router.query.id && myApplication === undefined && loading === false) {
+  if (
+    router.query.id &&
+    !router.route.includes('/midstod') &&
+    myApplication === undefined &&
+    loading === false &&
+    error === undefined
+  ) {
     try {
       getApplication({
         variables: {
@@ -39,7 +34,6 @@ const useMyApplication = () => {
 
       if (data) {
         updateApplication(data.application)
-        sessionStorage.setItem(storageKey, JSON.stringify(data.application))
       }
     } catch {
       return {

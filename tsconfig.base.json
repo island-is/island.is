@@ -234,6 +234,9 @@
         "libs/clients/driving-license/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
+      "@island.is/clients/health-insurance-v2": [
+        "libs/clients/health-insurance-v2/src/index.ts"
+      ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],

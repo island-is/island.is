@@ -110,12 +110,13 @@ export class EndorsementSystemResolver {
 
   // GET /endorsement-list ... by tags
   @Query(() => PaginatedEndorsementListResponse)
-  @BypassAuth()
   async endorsementSystemFindEndorsementLists(
     @Args('input') input: PaginatedEndorsementListInput,
+    @CurrentUser() user: User,
   ): Promise<PaginatedEndorsementListResponse> {
     return await this.endorsementSystemService.endorsementListControllerFindLists(
       input,
+      user,
     )
   }
 

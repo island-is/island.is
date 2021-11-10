@@ -15,7 +15,7 @@ export class MunicipalityModel implements Municipality {
   @Field()
   readonly active!: boolean
 
-  @Field()
+  @Field({ nullable: true })
   readonly homepage?: string
 
   @Field()
@@ -27,6 +27,12 @@ export class MunicipalityModel implements Municipality {
   @Field()
   readonly cohabitationAid!: AidModel
 
-  @Field()
+  @Field({ nullable: true })
   readonly email?: string
+
+  @Field({ nullable: true })
+  readonly rulesHomepage?: string
+
+  @Field({ nullable: true })
+  readonly users?: number
 }

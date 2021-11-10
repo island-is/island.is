@@ -52,7 +52,6 @@ export const returnMissingDocumentsList = (
   const injuryCertificate = answers.injuryCertificate
   const whoIsTheNotificationFor = answers.whoIsTheNotificationFor.answer
   const wasTheAccidentFatal = answers.wasTheAccidentFatal
-  const powerOfAttorneyType = answers.powerOfAttorney?.type
   const missingDocuments = []
 
   if (
@@ -66,7 +65,6 @@ export const returnMissingDocumentsList = (
 
   if (
     whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
-    powerOfAttorneyType !== PowerOfAttorneyUploadEnum.FORCHILDINCUSTODY &&
     !hasAttachment(answers.attachments?.powerOfAttorneyFile?.file)
   ) {
     missingDocuments.push(
@@ -106,3 +104,7 @@ export * from './isRepresentativeOfCompanyOrInstitue'
 export * from './isRescueWorkAccident'
 export * from './isStudiesAccident'
 export * from './isWorkAccident'
+export * from './isPowerOfAttorney'
+export * from './isRepresentativeOfCompanyOrInstitue'
+export * from './isFatalAccident'
+export * from './isReportingBehalfOfSelf'

@@ -9,6 +9,7 @@ interface ConfirmationEmail {
     props: EmailTemplateGeneratorProps,
     applicationSenderName: string,
     applicationSenderEmail: string,
+    ihiDocumentId?: number,
   ): SendMailOptions
 }
 
@@ -16,12 +17,12 @@ export const generateConfirmationEmail: ConfirmationEmail = (
   props,
   applicationSenderName,
   applicationSenderEmail,
+  ihiDocumentId,
 ) => {
   const {
     application,
     options: { clientLocationOrigin },
   } = props
-
   const answers = application.answers as AccidentNotificationAnswers
   const applicant = {
     name: answers.applicant.name,
@@ -51,7 +52,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
         {
           component: 'Image',
           context: {
-            src: pathToAsset('manWithBabyIllustration.jpg'),
+            src: pathToAsset('computerIllustration.jpg'),
             alt: 'Maður með barn myndskreyting',
           },
         },
@@ -63,8 +64,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
           component: 'Subtitle',
           context: {
             copy: 'Skjalanúmer',
-            // Need to get application id from service
-            application: '#13568651',
+            application: `#${ihiDocumentId}`,
           },
         },
         {

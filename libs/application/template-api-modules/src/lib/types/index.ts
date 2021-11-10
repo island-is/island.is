@@ -7,9 +7,9 @@ import { User } from '@island.is/auth-nest-tools'
 import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
 import {
   PaymentScheduleCharge,
-  PaymentSchedulePayment,
   PaymentScheduleType,
 } from '@island.is/api/schema'
+import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -55,6 +55,7 @@ export interface BaseTemplateAPIModuleConfig {
     endorsementsApiBasePath: string
   }
   paymentScheduleConfig: PaymentScheduleServiceOptions
+  healthInsuranceV2: HealthInsuranceV2Options
 }
 
 export interface TemplateApiModuleActionProps {

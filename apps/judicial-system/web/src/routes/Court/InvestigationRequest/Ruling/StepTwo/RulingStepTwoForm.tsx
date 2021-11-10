@@ -21,20 +21,17 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
-  getTimeFromDate,
   removeTabsValidateAndSet,
   validateAndSendTimeToServer,
   validateAndSendToServer,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  useCase,
-  useDateTime,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { icRulingStepTwo } from '@island.is/judicial-system-web/messages'
+import { isRulingStepTwoValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
@@ -47,9 +44,6 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
   const [courtDocumentEndEM, setCourtDocumentEndEM] = useState<string>('')
-  const { isValidTime: isValidCourtEndTime } = useDateTime({
-    time: getTimeFromDate(workingCase?.courtEndTime),
-  })
 
   return (
     <>
@@ -99,13 +93,16 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
               Ákvörðun um kæru
             </Text>
           </Box>
-          <Box marginBottom={3}>
-            <Text variant="h4" fontWeight="light">
-              {formatMessage(
-                icRulingStepTwo.sections.accusedAppealDecision.disclaimer,
-              )}
-            </Text>
-          </Box>
+          {workingCase.sessionArrangements ===
+            SessionArrangements.ALL_PRESENT && (
+            <Box marginBottom={3}>
+              <Text variant="h4" fontWeight="light">
+                {formatMessage(
+                  icRulingStepTwo.sections.accusedAppealDecision.disclaimer,
+                )}
+              </Text>
+            </Box>
+          )}
           <Box marginBottom={3}>
             <BlueBox>
               <Box marginBottom={2}>
@@ -503,12 +500,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_CONFIRMATION_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={
-            !workingCase.conclusion ||
-            !workingCase.accusedAppealDecision ||
-            !workingCase.prosecutorAppealDecision ||
-            !isValidCourtEndTime?.isValid
-          }
+          nextIsDisabled={!isRulingStepTwoValidIC(workingCase)}
         />
       </FormContentContainer>
     </>

@@ -104,6 +104,10 @@ const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
       return 'Tilkynningaskylda'
     case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT:
       return 'Afhending vegabréfs'
+    case CaseCustodyRestrictions.NECESSITIES:
+      return 'A - Eigin nauðsynjar'
+    case CaseCustodyRestrictions.WORKBAN:
+      return 'F - Vinnubann'
   }
 }
 
@@ -121,6 +125,10 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
       return 'Tilkynningarskylda'
     case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT:
       return 'Afhending vegabréfs'
+    case CaseCustodyRestrictions.NECESSITIES:
+      return 'Eigin nauðsynjar'
+    case CaseCustodyRestrictions.WORKBAN:
+      return 'Vinnubann'
   }
 }
 
@@ -156,16 +164,41 @@ export function formatAccusedByGender(
 export function formatCustodyRestrictions(
   accusedGender?: CaseGender,
   custodyRestrictions?: CaseCustodyRestrictions[],
+  isRuling?: boolean,
 ): string {
-  const relevantCustodyRestrictions = custodyRestrictions
-    ?.filter((restriction) =>
-      [
-        CaseCustodyRestrictions.VISITAION,
-        CaseCustodyRestrictions.COMMUNICATION,
-        CaseCustodyRestrictions.MEDIA,
-      ].includes(restriction),
-    )
-    .sort()
+  const caseCustodyRestrictions = [
+    {
+      id: 'a',
+      type: CaseCustodyRestrictions.NECESSITIES,
+      shortText: 'banni við útvegun persónulegra nauðsynja',
+    },
+    {
+      id: 'c',
+      type: CaseCustodyRestrictions.VISITAION,
+      shortText: 'heimsóknarbanni',
+    },
+    {
+      id: 'd',
+      type: CaseCustodyRestrictions.COMMUNICATION,
+      shortText: 'bréfaskoðun og símabanni',
+    },
+    {
+      id: 'e',
+      type: CaseCustodyRestrictions.MEDIA,
+      shortText: 'fjölmiðlabanni',
+    },
+    {
+      id: 'f',
+      type: CaseCustodyRestrictions.WORKBAN,
+      shortText: 'vinnubanni',
+    },
+  ]
+
+  const relevantCustodyRestrictions = caseCustodyRestrictions
+    ?.filter((restriction) => custodyRestrictions?.includes(restriction.type))
+    .sort((a, b) => {
+      return a.id > b.id ? 1 : -1
+    })
 
   if (
     !(relevantCustodyRestrictions && relevantCustodyRestrictions.length > 0)
@@ -173,31 +206,35 @@ export function formatCustodyRestrictions(
     return ''
   }
 
+  const custodyRestrictionSuffix = (index: number): string => {
+    const isNextLast = index === relevantCustodyRestrictions.length - 2
+    const isLast = index === relevantCustodyRestrictions.length - 1
+    const isOnly = relevantCustodyRestrictions.length === 1
+
+    return isRuling && isOnly
+      ? 'lið '
+      : isRuling && isLast
+      ? 'liðum '
+      : isLast
+      ? ' '
+      : isNextLast && !isOnly
+      ? ' og '
+      : ', '
+  }
+
   const filteredCustodyRestrictionsAsString = relevantCustodyRestrictions.reduce(
     (res, custodyRestriction, index) => {
-      const isNextLast = index === relevantCustodyRestrictions.length - 2
-      const isLast = index === relevantCustodyRestrictions.length - 1
-      const isOnly = relevantCustodyRestrictions.length === 1
+      const { id, shortText } = custodyRestriction
+      const suffix = custodyRestrictionSuffix(index)
 
-      return (res +=
-        custodyRestriction === CaseCustodyRestrictions.COMMUNICATION
-          ? `bréfaskoðun og símabanni${
-              isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
-            }`
-          : custodyRestriction === CaseCustodyRestrictions.MEDIA
-          ? `fjölmiðlabanni${
-              isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
-            }`
-          : custodyRestriction === CaseCustodyRestrictions.VISITAION
-          ? `heimsóknarbanni${
-              isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
-            }`
-          : '')
+      return (res += isRuling ? `${id}-${suffix}` : `${shortText}${suffix}`)
     },
     '',
   )
 
-  return `Sækjandi tekur fram að gæsluvarðhaldið verði með ${filteredCustodyRestrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
+  return isRuling
+    ? `Sækjandi kynnir kærða tilhögun gæsluvarðhaldsins, sem sé með takmörkunum skv. ${filteredCustodyRestrictionsAsString}1. mgr. 99. gr. laga nr. 88/2008.`
+    : `Sækjandi tekur fram að gæsluvarðhaldið verði með ${filteredCustodyRestrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
 }
 
 // Fromats the restrictions set by the judge when choosing alternative travle ban

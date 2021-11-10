@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Text } from '@island.is/island-ui/core'
-import * as styles from './ApplicationsTable.css'
+import * as tableStyles from '../../sharedStyles/Table.css'
 import { useRouter } from 'next/router'
 
 import cn from 'classnames'
@@ -14,10 +14,9 @@ import {
 import {
   Application,
   ApplicationState,
-  ApplicationStateUrl,
   getStateUrlFromRoute,
+  TableHeadersProps,
 } from '@island.is/financial-aid/shared/lib'
-import { TableHeadersProps } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
 import { useAllApplications } from '@island.is/financial-aid-web/veita/src/utils/useAllApplications'
 
@@ -63,36 +62,38 @@ const ApplicationsTable = ({
   if (applications && applications.length > 0) {
     return (
       <LoadingContainer isLoading={isLoading} loader={<TableSkeleton />}>
-        <div className={`${styles.wrapper} hideScrollBar`}>
-          <table
-            className={cn({
-              [`${styles.tableContainer}`]: true,
-            })}
-            key={router.pathname}
-          >
-            <thead className={`contentUp delay-50`}>
-              <tr>
-                {headers.map((item, index) => (
-                  <TableHeaders
-                    header={item}
+        <div className={`${tableStyles.wrapper} hideScrollBar`}>
+          <div className={tableStyles.bigTableWrapper}>
+            <table
+              className={cn({
+                [`${tableStyles.tableContainer}`]: true,
+              })}
+              key={router.pathname}
+            >
+              <thead className={`contentUp delay-50`}>
+                <tr>
+                  {headers.map((item, index) => (
+                    <TableHeaders
+                      header={item}
+                      index={index}
+                      key={'tableHeaders-' + index}
+                    />
+                  ))}
+                </tr>
+              </thead>
+
+              <tbody className={tableStyles.tableBody}>
+                {applications.map((item: Application, index) => (
+                  <TableBody
+                    application={item}
                     index={index}
-                    key={'tableHeaders-' + index}
+                    key={'tableBody-' + item.id}
+                    onApplicationUpdate={updateApplicationAndTable}
                   />
                 ))}
-              </tr>
-            </thead>
-
-            <tbody className={styles.tableBody}>
-              {applications.map((item: Application, index) => (
-                <TableBody
-                  application={item}
-                  index={index}
-                  key={'tableBody-' + item.id}
-                  onApplicationUpdate={updateApplicationAndTable}
-                />
-              ))}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </div>
       </LoadingContainer>
     )

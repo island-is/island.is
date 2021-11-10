@@ -301,6 +301,9 @@
     "clients-finance": {
       "tags": []
     },
+    "clients-health-insurance-v2": {
+      "tags": []
+    },
     "clients-middlewares": {
       "tags": []
     },
@@ -629,6 +632,9 @@
       "tags": []
     },
     "services-endorsements-api": {
+      "tags": []
+    },
+    "services-notifications": {
       "tags": []
     },
     "services-party-letter-registry-api": {

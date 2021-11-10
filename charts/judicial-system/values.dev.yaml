@@ -23,9 +23,15 @@ judicial-system-api:
     HIDDEN_FEATURES: ''
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=judicial-system.dev'
     SERVERSIDE_FEATURES_ON: ''
-    XROAD_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10014/Rettarvorslugatt-Client'
+    XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1'
     XROAD_COURT_MEMBER_CODE: '10019'
+    XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1'
+    XROAD_POLICE_MEMBER_CODE: '10005'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -59,12 +65,11 @@ judicial-system-api:
     AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
-    COURTS_CREDENTIALS: '/k8s/judicial-system/COURTS_CREDENTIALS'
     SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN'
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT'
     XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY'
     XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM'
-    XROAD_COURT_API_PATH: '/k8s/judicial-system/XROAD_COURT_API_PATH'
+    XROAD_COURTS_CREDENTIALS: '/k8s/judicial-system/COURTS_CREDENTIALS'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -90,10 +95,15 @@ judicial-system-backend:
     S3_TIME_TO_LIVE_GET: '5'
     S3_TIME_TO_LIVE_POST: '15'
     SERVERSIDE_FEATURES_ON: ''
-    XROAD_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10014/Rettarvorslugatt-Client'
+    XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1'
     XROAD_COURT_MEMBER_CODE: '10019'
+    XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1'
     XROAD_POLICE_MEMBER_CODE: '10005'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -141,7 +151,6 @@ judicial-system-backend:
     AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
-    COURTS_CREDENTIALS: '/k8s/judicial-system/COURTS_CREDENTIALS'
     COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS'
     DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
     DOKOBIT_ACCESS_TOKEN: '/k8s/judicial-system/DOKOBIT_ACCESS_TOKEN'
@@ -159,8 +168,7 @@ judicial-system-backend:
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT'
     XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY'
     XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM'
-    XROAD_COURT_API_PATH: '/k8s/judicial-system/XROAD_COURT_API_PATH'
-    XROAD_POLICE_API_PATH: '/k8s/judicial-system/XROAD_POLICE_API_PATH'
+    XROAD_COURTS_CREDENTIALS: '/k8s/judicial-system/COURTS_CREDENTIALS'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -261,3 +269,6 @@ judicial-system-xrd-api:
     name: 'judicial-system-xrd-api'
   strategy:
     type: 'Recreate'
+namespaces:
+  namespaces:
+    - 'judicial-system'
