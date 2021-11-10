@@ -46,11 +46,11 @@ export class EndorsementSystemResolver {
   }
 
   // GET /endorsement-list/{listId}/endorsement/exists
-  @Query(() => Endorsement, { nullable: true })
+  @Query(() => Boolean, { nullable: true })
   async endorsementSystemGetSingleEndorsement(
     @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
-  ): Promise<Endorsement> {
+  ): Promise<Boolean> {
     return await this.endorsementSystemService.endorsementControllerFindByAuth(
       input,
       user,

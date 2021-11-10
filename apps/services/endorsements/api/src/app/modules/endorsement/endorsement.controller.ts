@@ -152,15 +152,11 @@ export class EndorsementController {
   @ApiOkResponse({
     description:
       'Uses current authenticated users national id to find any existing endorsement in a given list',
-    type: Endorsement,
+    type: Boolean,
   })
-  @UseInterceptors(EndorsementInterceptor)
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)
   @Get('/exists')
-  @Audit<Endorsement>({
-    resources: (endorsement) => endorsement.id,
-  })
   async findByAuth(
     @Param(
       'listId',
@@ -169,7 +165,7 @@ export class EndorsementController {
     )
     endorsementList: EndorsementList,
     @CurrentUser() user: User,
-  ): Promise<Endorsement> {
+  ): Promise<Boolean> {
     return await this.endorsementService.findSingleUserEndorsement({
       listId: endorsementList.id,
       nationalId: user.nationalId,

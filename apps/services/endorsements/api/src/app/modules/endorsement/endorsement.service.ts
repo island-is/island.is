@@ -234,10 +234,10 @@ export class EndorsementService {
     })
 
     if (!result) {
-      throw new NotFoundException(["This endorsement doesn't exist"])
+      false
     }
 
-    return result
+    return true
   }
 
   async findUserEndorsementsByTags({
