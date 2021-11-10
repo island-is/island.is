@@ -53,10 +53,10 @@ const NewMunicipalityModal = ({
     state.adminNationalId.length !== 10
 
   const submit = async () => {
-    if (areRequiredFieldsFilled) {
-      setState({ ...state, hasError: true })
-      return
-    }
+    // if (areRequiredFieldsFilled) {
+    //   setState({ ...state, hasError: true })
+    //   return
+    // }
     try {
       return await createMunicipality({
         variables: {

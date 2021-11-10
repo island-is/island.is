@@ -5,7 +5,7 @@ import { AidModel } from './models'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Aid } from '@island.is/financial-aid/shared/lib'
+import { Aid, AidType } from '@island.is/financial-aid/shared/lib'
 import { Transaction } from 'sequelize/types'
 import { CreateAidDto } from './dto'
 
@@ -18,9 +18,9 @@ export class AidService {
     private readonly aidModel: typeof AidModel,
   ) {}
 
-  async create(aid: CreateAidDto): Promise<AidModel> {
+  async create(aid: CreateAidDto, t: Transaction): Promise<AidModel> {
     this.logger.debug(`Create aid`)
-    return this.aidModel.create(aid)
+    return this.aidModel.create(aid, { transaction: t })
   }
 
   async findById(id: string): Promise<AidModel> {
@@ -30,6 +30,17 @@ export class AidService {
         id,
       },
     })
+  }
+
+  async findIdByType(type: AidType): Promise<string> {
+    this.logger.debug(`Finding aid by id by type: ${type}`)
+    const findAid = await this.aidModel.findOne({
+      where: {
+        type,
+      },
+    })
+    console.log(findAid ? findAid.id : undefined)
+    return findAid ? findAid.id : undefined
   }
 
   async updateAid(

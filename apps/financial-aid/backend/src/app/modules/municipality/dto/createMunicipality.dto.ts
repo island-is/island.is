@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -12,4 +12,14 @@ export class CreateMunicipalityDto {
   @IsString()
   @ApiProperty()
   readonly municipalityId: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  individualAidId: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  cohabitationAidId: string
 }

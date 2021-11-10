@@ -47,21 +47,38 @@ export class MunicipalityService {
     })
   }
 
+  // const findType = (type:AidType) => {
+  //   return
+  // } //todo, migration uniq
+
   async create(
     municipality: CreateMunicipalityDto,
   ): Promise<MunicipalityModel> {
-    const aids = await this.sequelize.transaction((t) => {
-      return Promise.all(
+    return await this.sequelize.transaction(async (t) => {
+      return await Promise.all(
         Object.values(AidType).map((item) => {
-          return this.aidService.create({
-            municipalityId: municipality.municipalityId,
-            type: item,
-          })
+          return this.aidService.create(
+            {
+              municipalityId: municipality.municipalityId,
+              type: item,
+            },
+            t,
+          )
         }),
-      )
-    })
+      ).then((res) => {
+        municipality.individualAidId = res.find(
+          (el) => el.type === AidType.INDIVIDUAL,
+        ).id
+        municipality.cohabitationAidId = res.find(
+          (el) => el.type === AidType.COHABITATION,
+        ).id
 
-    return await this.municipalityModel.create(municipality)
+        return this.municipalityModel.create(municipality, { transaction: t })
+      })
+      // .catch(() => {
+      //   new NotFoundException(`Error while updating municipality`)
+      // })
+    })
   }
 
   async updateMunicipality(
