@@ -125,4 +125,17 @@ export class StaffController {
   ): Promise<number> {
     return await this.staffService.numberOfUsersForMunicipality(municipalityId)
   }
+
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.SUPERADMIN)
+  @Get('admin/:municipalityId')
+  @ApiOkResponse({
+    type: [StaffModel],
+    description: 'Gets admin users by municipality id',
+  })
+  async getAdminUsers(
+    @Param('municipalityId') municipalityId: string,
+  ): Promise<StaffModel[]> {
+    return this.staffService.getAdminUsers(municipalityId)
+  }
 }

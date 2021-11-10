@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { useLazyQuery } from '@apollo/client'
+import React, { useContext, useEffect, useState } from 'react'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import {
   ApplicationOverviewSkeleton,
   LoadingContainer,
   NewUserModal,
   TableHeaders,
-  UsersTableBody,
+  TableBody,
+  TextTableItem,
+  ActivationButtonTableItem,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Text,
@@ -19,8 +21,18 @@ import * as tableStyles from '../../sharedStyles/Table.css'
 import * as headerStyles from '../../sharedStyles/Header.css'
 import cn from 'classnames'
 
-import { Staff } from '@island.is/financial-aid/shared/lib'
-import { StaffForMunicipalityQuery } from '@island.is/financial-aid-web/veita/graphql'
+import {
+  formatNationalId,
+  Routes,
+  Staff,
+  staffRoleDescription,
+} from '@island.is/financial-aid/shared/lib'
+import {
+  StaffForMunicipalityQuery,
+  UpdateStaffMutation,
+} from '@island.is/financial-aid-web/veita/graphql'
+import { useRouter } from 'next/router'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 export const Users = () => {
   const [getStaff, { data, error, loading }] = useLazyQuery<{ users: Staff[] }>(
@@ -30,15 +42,18 @@ export const Users = () => {
       errorPolicy: 'all',
     },
   )
+  const [updateStaff, { loading: staffLoading }] = useMutation(
+    UpdateStaffMutation,
+  )
+
+  const { admin } = useContext(AdminContext)
+  const router = useRouter()
 
   useEffect(() => {
     getStaff()
   }, [])
 
   const [isModalVisible, setIsModalVisible] = useState(false)
-
-  const headers = ['Nafn', 'Kennitala', 'Hlutverk', 'Aðgerð']
-
   const [users, setUsers] = useState<Staff[]>()
 
   useEffect(() => {
@@ -51,6 +66,28 @@ export const Users = () => {
     setIsModalVisible(false)
     getStaff()
   }
+
+  const changeUserActivity = async (staff: Staff) => {
+    return await updateStaff({
+      variables: {
+        input: {
+          id: staff.id,
+          active: !staff.active,
+        },
+      },
+    })
+      .then(() => {
+        refreshList()
+      })
+      .catch(() => {
+        toast.error(
+          'Það mistókst að breyta hlutverki notanda, vinasamlega reynið aftur síðar',
+        )
+      })
+  }
+
+  const isLoggedInUser = (staff: Staff) =>
+    admin?.nationalId === staff.nationalId
 
   return (
     <LoadingContainer
@@ -84,24 +121,49 @@ export const Users = () => {
             >
               <thead className={`contentUp delay-50`}>
                 <tr>
-                  {headers.map((item, index) => (
-                    <TableHeaders
-                      header={{ title: item }}
-                      index={index}
-                      key={'tableHeaders-' + index}
-                    />
-                  ))}
+                  {['Nafn', 'Kennitala', 'Hlutverk', 'Aðgerð'].map(
+                    (item, index) => (
+                      <TableHeaders
+                        header={{ title: item }}
+                        index={index}
+                        key={'tableHeaders-' + index}
+                      />
+                    ),
+                  )}
                 </tr>
               </thead>
 
               <tbody className={tableStyles.tableBody}>
                 {users.map((item: Staff, index) => (
-                  <UsersTableBody
-                    user={item}
+                  <TableBody
+                    items={[
+                      TextTableItem(
+                        'h5',
+                        `${item.name} ${isLoggedInUser(item) ? '(Þú)' : ''}`,
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      TextTableItem(
+                        'default',
+                        formatNationalId(item.nationalId),
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      TextTableItem(
+                        'default',
+                        staffRoleDescription(item.roles),
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      isLoggedInUser(item) === false &&
+                        ActivationButtonTableItem(
+                          item.active ? 'Óvirkja' : 'Virkja',
+                          staffLoading,
+                          () => changeUserActivity(item),
+                          item.active,
+                        ),
+                    ]}
                     index={index}
+                    identifier={item.id}
                     key={'tableBody-' + item.id}
-                    onStaffUpdated={refreshList}
-                    toast={toast}
+                    onClick={() => router.push(Routes.userProfile(item.id))}
                   />
                 ))}
               </tbody>
