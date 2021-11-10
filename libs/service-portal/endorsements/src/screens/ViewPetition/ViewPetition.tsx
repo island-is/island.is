@@ -144,6 +144,7 @@ const ViewPetition = () => {
       toast.success(formatMessage(m.viewPetition.toastSuccessOpenList))
     }
   }
+  console.log(petition?.meta.applicationId)
 
   return (
     <Box>
