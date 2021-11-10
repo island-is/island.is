@@ -2043,6 +2043,12 @@
             "jestConfig": "libs/application/templates/criminal-record/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/criminal-record/codegen.yml"
+          }
         }
       }
     },
