@@ -669,9 +669,7 @@ export const aboutTheAccidentSection = buildSection({
                 description: attachments.general.alertMessage,
                 component: 'FieldAlertMessage',
                 condition: (formValue) =>
-                  (formValue as {
-                    attachments: { injuryCertificate: AttachmentsEnum }
-                  }).attachments?.injuryCertificate ===
+                  getValueViaPath(formValue, 'injuryCertificate.answer') ===
                   AttachmentsEnum.SENDCERTIFICATELATER,
               },
               { type: 'warning' },
@@ -693,9 +691,8 @@ export const aboutTheAccidentSection = buildSection({
             }),
           ],
           condition: (formValue) =>
-            (formValue as {
-              injuryCertificate: { answer: AttachmentsEnum }
-            }).injuryCertificate?.answer === AttachmentsEnum.INJURYCERTIFICATE,
+            getValueViaPath(formValue, 'injuryCertificate.answer') ===
+            AttachmentsEnum.INJURYCERTIFICATE,
         }),
         buildMultiField({
           id: 'fatalAccidentMulti.section',
@@ -799,9 +796,7 @@ export const aboutTheAccidentSection = buildSection({
                 description: attachments.general.alertMessage,
                 component: 'FieldAlertMessage',
                 condition: (formValue) =>
-                  (formValue as {
-                    attachments: { additionalAttachments: AttachmentsEnum }
-                  }).attachments?.additionalAttachments ===
+                  getValueViaPath(formValue, 'additionalAttachments.answer') ===
                   AttachmentsEnum.ADDITIONALLATER,
               },
               { type: 'warning' },
@@ -823,9 +818,8 @@ export const aboutTheAccidentSection = buildSection({
             }),
           ],
           condition: (formValue) =>
-            (formValue as {
-              additionalAttachments: { answer: AttachmentsEnum }
-            }).additionalAttachments?.answer === AttachmentsEnum.ADDITIONALNOW,
+            getValueViaPath(formValue, 'additionalAttachments.answer') ===
+            AttachmentsEnum.ADDITIONALNOW,
         }),
       ],
     }),
