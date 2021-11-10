@@ -8,10 +8,11 @@ import { Request, Response, NextFunction } from 'express'
  * to overwrite the redirect to include the prefix if it is set.
  *
  * This middleware should be mounted on the `swaggerPath` path.
+ * @param swaggerPath Path where the SwaggerUI is mounted
  */
 export const swaggerRedirectMiddleware = (swaggerPath: string) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    if (req.baseUrl === swaggerPath && process.env.PUBLIC_URL) {
+    if (req.originalUrl.endsWith(swaggerPath) && process.env.PUBLIC_URL) {
       const targetUrl = new URL(`${process.env.PUBLIC_URL}${swaggerPath}/`)
       return res.redirect(targetUrl.pathname)
     }
