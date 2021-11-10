@@ -124,6 +124,7 @@ export const Municipalities = () => {
                       router.push(`sveitarfelog/${item.municipalityId}`)
                     }
                     key={'tableBody-' + item.id}
+                    hasMaxWidth={false}
                   />
                 ))}
               </tbody>

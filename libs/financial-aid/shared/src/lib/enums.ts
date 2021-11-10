@@ -8,6 +8,14 @@ export enum HomeCircumstances {
   OTHER = 'Other',
 }
 
+export enum AidType {
+  OWNPLACE = 'OwnPlace',
+  REGISTEREDLEASE = 'RegisteredLease',
+  UNREGISTEREDLEASE = 'UnregisteredLease',
+  WITHPARENTS = 'WithParents',
+  UNKNOWN = 'Unknown',
+}
+
 export enum Employment {
   WORKING = 'Working',
   UNEMPLOYED = 'Unemployed',

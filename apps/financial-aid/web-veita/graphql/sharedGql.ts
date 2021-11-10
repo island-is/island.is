@@ -354,6 +354,7 @@ export const MunicipalityQuery = gql`
         name
         nationalId
         email
+        id
       }
       individualAid {
         ownPlace

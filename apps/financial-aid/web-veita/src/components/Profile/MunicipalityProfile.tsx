@@ -6,7 +6,11 @@ import * as headerStyles from '@island.is/financial-aid-web/veita/src/components
 import * as tableStyles from '../../sharedStyles/Table.css'
 import cn from 'classnames'
 
-import { Municipality, Staff } from '@island.is/financial-aid/shared/lib'
+import {
+  AidType,
+  Municipality,
+  Staff,
+} from '@island.is/financial-aid/shared/lib'
 
 import {
   TableHeaders,
@@ -19,6 +23,7 @@ interface MunicipalityProfileProps {
 
 const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
   const usersTableHeaders = ['Nafn', 'Kennitala', 'Netfang', 'Aðgerð']
+  const aidTableHeaders = ['Búsetskilyrði', 'Einstaklingar', 'Hjón/Sambúð']
 
   const staffName = (staff: Staff) => {
     return <Text variant="h5">{staff.name}</Text>
@@ -44,6 +49,55 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
         </Button>
       </Box>
     )
+  }
+
+  const aidTableBody = (value: AidType) => {
+    switch (value) {
+      case AidType.OWNPLACE:
+        return [
+          <Text variant="h5">Eigin húsnæði</Text>,
+          <Text variant="small">{municipality.individualAid.ownPlace}</Text>,
+          <Text variant="small">{municipality.cohabitationAid.ownPlace}</Text>,
+        ]
+      case AidType.REGISTEREDLEASE:
+        return [
+          <Text variant="h5">Leiga með þinglýstum leigusamning</Text>,
+          <Text variant="small">
+            {municipality.individualAid.registeredRenting}
+          </Text>,
+          <Text variant="small">
+            {municipality.cohabitationAid.registeredRenting}
+          </Text>,
+        ]
+      case AidType.UNREGISTEREDLEASE:
+        return [
+          <Text variant="h5">Býr eða leigir án þinglýsts leigusamnings</Text>,
+          <Text variant="small">
+            {municipality.individualAid.unregisteredRenting}
+          </Text>,
+          <Text variant="small">
+            {municipality.cohabitationAid.unregisteredRenting}
+          </Text>,
+        ]
+      case AidType.WITHPARENTS:
+        return [
+          <Text variant="h5">Býr hjá foreldrum</Text>,
+          <Text variant="small">
+            {municipality.individualAid.livesWithParents}
+          </Text>,
+          <Text variant="small">
+            {municipality.cohabitationAid.livesWithParents}
+          </Text>,
+        ]
+      case AidType.UNKNOWN:
+        return [
+          <Text variant="h5">Ekkert að ofantöldu</Text>,
+          <Text variant="small">{municipality.individualAid.unknown}</Text>,
+          <Text variant="small">{municipality.cohabitationAid.unknown}</Text>,
+        ]
+      default:
+        return [<></>]
+    }
   }
   return (
     <Box
@@ -83,51 +137,80 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
             </Text>
           </Box>
 
-          <div className={`${tableStyles.wrapper} hideScrollBar`}>
-            <div className={tableStyles.smallTableWrapper}>
-              <table
-                className={cn({
-                  [`${tableStyles.tableContainer}`]: true,
-                })}
-              >
-                <thead className={`contentUp delay-50`}>
-                  <tr>
-                    {usersTableHeaders.map((item, index) => (
-                      <TableHeaders
-                        header={{ title: item }}
-                        index={index}
-                        key={'tableHeaders-' + index}
-                      />
-                    ))}
-                  </tr>
-                </thead>
-
-                <tbody className={tableStyles.tableBody}>
-                  {municipality.adminUsers?.map((item: Staff, index) => (
-                    <TableBody
-                      items={[
-                        staffName(item),
-                        staffNationalId(item),
-                        staffEmail(item),
-                        activationButton(item),
-                      ]}
+          <div className={`${tableStyles.smallTableWrapper} hideScrollBar`}>
+            <table
+              className={cn({
+                [`${tableStyles.tableContainer}`]: true,
+              })}
+            >
+              <thead className={`contentUp delay-50`}>
+                <tr>
+                  {usersTableHeaders.map((item, index) => (
+                    <TableHeaders
+                      header={{ title: item }}
                       index={index}
-                      identifier={item.id}
-                      key={'tableBody-' + item.id}
+                      key={`usersTableHeaders-${index}`}
                     />
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </tr>
+              </thead>
+
+              <tbody>
+                {municipality.adminUsers?.map((item: Staff, index) => (
+                  <TableBody
+                    items={[
+                      staffName(item),
+                      staffNationalId(item),
+                      staffEmail(item),
+                      activationButton(item),
+                    ]}
+                    index={index}
+                    identifier={item.id}
+                    key={`usersTableBody-${item.id}`}
+                  />
+                ))}
+              </tbody>
+            </table>
           </div>
         </Box>
 
-        <Box marginBottom={7}>
+        <Box>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3" color="dark300">
               Grunnupphæðir
             </Text>
           </Box>
+          <div className={`${tableStyles.smallTableWrapper} hideScrollBar`}>
+            <table
+              className={cn({
+                [`${tableStyles.tableContainer}`]: true,
+              })}
+            >
+              <thead className={`contentUp delay-50`}>
+                <tr>
+                  {aidTableHeaders.map((item, index) => (
+                    <TableHeaders
+                      header={{ title: item }}
+                      index={index}
+                      key={`aidTableHeaders-${index}`}
+                    />
+                  ))}
+                </tr>
+              </thead>
+
+              <tbody>
+                {Object.values(AidType).map((value, index) => (
+                  <TableBody
+                    items={aidTableBody(value)}
+                    index={index}
+                    identifier={value}
+                    key={`aidTableBody-${value}`}
+                    hasMaxWidth={false}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
         </Box>
 
         <Box marginBottom={3}>

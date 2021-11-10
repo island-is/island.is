@@ -9,14 +9,22 @@ interface PageProps {
   index: number
   identifier: string
   onClick?: () => void
+  hasMaxWidth?: boolean
 }
 
-const TableBody = ({ items, index, identifier, onClick }: PageProps) => {
+const TableBody = ({
+  items,
+  index,
+  identifier,
+  onClick,
+  hasMaxWidth = true,
+}: PageProps) => {
   return (
     <tr
-      className={cn([
-        `${onClick === undefined ? '' : tableStyles.link} contentUp`,
-      ])}
+      className={cn({
+        ['contentUp']: true,
+        [`${tableStyles.link}`]: onClick,
+      })}
       style={{ animationDelay: 55 + 3.5 * index + 'ms' }}
       key={`tr-${identifier}`}
       onClick={onClick}
@@ -24,12 +32,19 @@ const TableBody = ({ items, index, identifier, onClick }: PageProps) => {
       {items.map((item: React.ReactNode, i) => (
         <td
           className={cn({
-            [`${tableStyles.tablePadding}
-            ${i === 0 ? tableStyles.firstChildPadding : ''}`]: true,
+            [`${tableStyles.tablePadding}`]: true,
+            [`${tableStyles.firstChildPadding}`]: i === 0,
           })}
           key={`td-${identifier}-${i}`}
         >
-          <Box className={tableStyles.rowContent}>{item}</Box>
+          <Box
+            className={cn({
+              [`${tableStyles.rowContent}`]: hasMaxWidth,
+            })}
+            key={`td-${identifier}-${i}`}
+          >
+            {item}
+          </Box>
         </td>
       ))}
     </tr>
