@@ -1,17 +1,12 @@
 import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable, BadRequestException } from '@nestjs/common'
+import { Injectable, BadRequestException } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 
 import { IslykillSettings, IslykillUpdateResponse } from './islykill.type'
 
 @Injectable()
 export class IslykillService {
-  constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly islyklarApi: IslyklarApi,
-  ) {}
+  constructor(private readonly islyklarApi: IslyklarApi) {}
 
   async updateIslykillSettings(
     nationalId: User['nationalId'],

@@ -11,8 +11,6 @@ export interface IslykillApiModuleConfig {
   passphrase: string
 }
 
-export const ISLYKILL_OPTIONS = 'ISLYKILL_OPTIONS'
-
 export class IslykillApiModule {
   static async register(
     config: IslykillApiModuleConfig,
