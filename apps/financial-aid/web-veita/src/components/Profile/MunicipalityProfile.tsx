@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Link, Text } from '@island.is/island-ui/core'
+import { Box, Link, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
 import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
@@ -24,46 +24,54 @@ interface MunicipalityProfileProps {
 }
 
 const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
+  const smallText = 'small'
+  const headline = 'h5'
   const aidTableBody = (value: AidType) => {
     switch (value) {
       case AidType.OWNPLACE:
         return [
-          TextTableItem('h5', 'Eigin húsnæði'),
-          TextTableItem('small', municipality.individualAid.ownPlace),
-          TextTableItem('small', municipality.cohabitationAid.ownPlace),
+          TextTableItem(headline, 'Eigin húsnæði'),
+          TextTableItem(smallText, municipality.individualAid.ownPlace),
+          TextTableItem(smallText, municipality.cohabitationAid.ownPlace),
         ]
       case AidType.REGISTEREDLEASE:
         return [
-          TextTableItem('h5', 'Leiga með þinglýstum leigusamning'),
-          TextTableItem('small', municipality.individualAid.registeredRenting),
+          TextTableItem(headline, 'Leiga með þinglýstum leigusamning'),
           TextTableItem(
-            'small',
+            smallText,
+            municipality.individualAid.registeredRenting,
+          ),
+          TextTableItem(
+            smallText,
             municipality.cohabitationAid.registeredRenting,
           ),
         ]
       case AidType.UNREGISTEREDLEASE:
         return [
-          TextTableItem('h5', 'Býr eða leigir án þinglýsts leigusamnings'),
+          TextTableItem(headline, 'Býr eða leigir án þinglýsts leigusamnings'),
           TextTableItem(
-            'small',
+            smallText,
             municipality.individualAid.unregisteredRenting,
           ),
           TextTableItem(
-            'small',
+            smallText,
             municipality.cohabitationAid.unregisteredRenting,
           ),
         ]
       case AidType.WITHPARENTS:
         return [
-          TextTableItem('h5', 'Býr hjá foreldrum'),
-          TextTableItem('small', municipality.individualAid.livesWithParents),
-          TextTableItem('small', municipality.cohabitationAid.livesWithParents),
+          TextTableItem(headline, 'Býr hjá foreldrum'),
+          TextTableItem(smallText, municipality.individualAid.livesWithParents),
+          TextTableItem(
+            smallText,
+            municipality.cohabitationAid.livesWithParents,
+          ),
         ]
       case AidType.UNKNOWN:
         return [
-          TextTableItem('h5', 'Ekkert að ofantöldu'),
-          TextTableItem('small', municipality.individualAid.unknown),
-          TextTableItem('small', municipality.cohabitationAid.unknown),
+          TextTableItem(headline, 'Ekkert að ofantöldu'),
+          TextTableItem(smallText, municipality.individualAid.unknown),
+          TextTableItem(smallText, municipality.cohabitationAid.unknown),
         ]
       default:
         return [<></>]
@@ -93,7 +101,7 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
               </Text>
             </Box>
             <button
-              onClick={() => console.log('bla')}
+              onClick={() => console.log('🔜')}
               className={headerStyles.button}
             >
               {municipality.active ? 'Óvirkja' : 'Virkja'}
@@ -131,13 +139,13 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
                 {municipality.adminUsers?.map((item: Staff, index) => (
                   <TableBody
                     items={[
-                      TextTableItem('h5', item.name),
-                      TextTableItem('small', item.nationalId),
-                      TextTableItem('small', item.email),
+                      TextTableItem(headline, item.name),
+                      TextTableItem(smallText, item.nationalId),
+                      TextTableItem(smallText, item.email),
                       ActivationButtonTableItem(
                         'Óvirkja',
                         false,
-                        () => console.log('bla'),
+                        () => console.log('🔜'),
                         true,
                       ),
                     ]}

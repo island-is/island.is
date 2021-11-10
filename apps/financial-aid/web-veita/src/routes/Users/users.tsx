@@ -32,7 +32,7 @@ import {
   UpdateStaffMutation,
 } from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
-import { AdminContext } from '../../components/AdminProvider/AdminProvider'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 export const Users = () => {
   const [getStaff, { data, error, loading }] = useLazyQuery<{ users: Staff[] }>(

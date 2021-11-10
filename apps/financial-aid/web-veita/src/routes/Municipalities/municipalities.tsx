@@ -94,7 +94,7 @@ export const Municipalities = () => {
                       ActivationButtonTableItem(
                         item.active ? 'Óvirkja' : 'Virkja',
                         false,
-                        () => console.log('bla'),
+                        () => console.log('🔜'),
                         item.active,
                       ),
                     ]}
