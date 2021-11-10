@@ -145,6 +145,12 @@ This project uses two types of automated tests, unit tests and e2e tests. We use
 yarn test judicial-system-web
 ```
 
+##### Lib tests
+
+```bash
+yarn test judicial-system-formatters
+```
+
 ##### e2e tests
 
 ```bash
