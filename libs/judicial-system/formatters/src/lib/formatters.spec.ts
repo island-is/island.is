@@ -198,7 +198,9 @@ describe('formatCustodyRestrictions', () => {
     const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
 
     // Assert
-    expect(res).toBe(' ')
+    expect(res).toBe(
+      'Sækjandi tekur fram að gæsluvarðhaldið verði án annarra takmarkana.',
+    )
   })
 
   test('should return formatted restrictions for isolation and one other restriction', () => {
