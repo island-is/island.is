@@ -32,14 +32,15 @@ export const CaseFiles: React.FC = () => {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-  const { data: policeData, loading: policeDataLoading } = useQuery(
-    PoliceCaseFilesQuery,
-    {
-      variables: { input: { caseId: id } },
-      fetchPolicy: 'no-cache',
-      skip: !features.includes(Feature.POLICE_CASE_FILES),
-    },
-  )
+  const {
+    data: policeData,
+    loading: policeDataLoading,
+    error: policeDataError,
+  } = useQuery(PoliceCaseFilesQuery, {
+    variables: { input: { caseId: id } },
+    fetchPolicy: 'no-cache',
+    skip: !features.includes(Feature.POLICE_CASE_FILES),
+  })
 
   useEffect(() => {
     document.title = 'Rannsóknargögn - Réttarvörslugátt'
@@ -69,9 +70,10 @@ export const CaseFiles: React.FC = () => {
         files: policeData ? policeData.policeCaseFiles : [],
         isLoading: false,
         hasError: true,
+        errorMessage: policeDataError?.message,
       })
     }
-  }, [policeData, policeDataLoading])
+  }, [policeData, policeDataLoading, policeDataError])
 
   return (
     <PageLayout

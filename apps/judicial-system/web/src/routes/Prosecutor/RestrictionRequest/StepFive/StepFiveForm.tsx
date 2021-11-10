@@ -13,7 +13,6 @@ import {
   Button,
   LoadingDots,
   UploadFile,
-  Icon,
 } from '@island.is/island-ui/core'
 import { Case, CaseFile, CaseFileState } from '@island.is/judicial-system/types'
 import {
@@ -31,6 +30,7 @@ import MarkdownWrapper from '@island.is/judicial-system-web/src/shared-component
 import { PoliceCaseFilesData } from './StepFive'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './StepFive.css'
+import { PoliceCaseFilesMessageBox } from '../../SharedComponents/PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
 
 interface Props {
   workingCase: Case
@@ -209,55 +209,30 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                 ) : policeCaseFiles?.hasError ? (
                   policeCaseFiles?.errorMessage &&
                   policeCaseFiles?.errorMessage.indexOf('404') > -1 ? (
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      paddingY={2}
-                      paddingX={3}
-                      marginBottom={2}
-                    >
-                      <Box display="flex" marginRight={2}>
-                        <Icon icon="warning" color="yellow400" />
-                      </Box>
-                      <Text variant="h5">
-                        {formatMessage(
-                          m.sections.policeCaseFiles.caseNotFoundInLOKEMessage,
-                        )}
-                      </Text>
-                    </Box>
+                    <PoliceCaseFilesMessageBox
+                      icon="warning"
+                      iconColor="yellow400"
+                      message={formatMessage(
+                        m.sections.policeCaseFiles.caseNotFoundInLOKEMessage,
+                      )}
+                    />
                   ) : (
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      paddingY={2}
-                      paddingX={3}
-                      marginBottom={2}
-                    >
-                      <Box display="flex" marginRight={2}>
-                        <Icon icon="close" color="red400" />
-                      </Box>
-                      <Text variant="h5">
-                        {formatMessage(m.sections.policeCaseFiles.errorMessage)}
-                      </Text>
-                    </Box>
+                    <PoliceCaseFilesMessageBox
+                      icon="close"
+                      iconColor="red400"
+                      message={formatMessage(
+                        m.sections.policeCaseFiles.errorMessage,
+                      )}
+                    />
                   )
                 ) : policeCaseFiles?.files.length === 0 ? (
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    paddingY={2}
-                    paddingX={3}
-                    marginBottom={2}
-                  >
-                    <Box display="flex" marginRight={2}>
-                      <Icon icon="warning" color="yellow400" />
-                    </Box>
-                    <Text variant="h5">
-                      {formatMessage(
-                        m.sections.policeCaseFiles.noFilesFoundInLOKEMessage,
-                      )}
-                    </Text>
-                  </Box>
+                  <PoliceCaseFilesMessageBox
+                    icon="warning"
+                    iconColor="yellow400"
+                    message={formatMessage(
+                      m.sections.policeCaseFiles.noFilesFoundInLOKEMessage,
+                    )}
+                  />
                 ) : policeCaseFileList.length > 0 ? (
                   <AnimatePresence>
                     {policeCaseFileList.map((listItem) => {
@@ -299,22 +274,13 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                     })}
                   </AnimatePresence>
                 ) : (
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    paddingY={2}
-                    paddingX={3}
-                    marginBottom={2}
-                  >
-                    <Box display="flex" marginRight={2}>
-                      <Icon icon="checkmark" color="blue400" />
-                    </Box>
-                    <Text variant="h5">
-                      {formatMessage(
-                        m.sections.policeCaseFiles.allFilesUploadedMessage,
-                      )}
-                    </Text>
-                  </Box>
+                  <PoliceCaseFilesMessageBox
+                    icon="checkmark"
+                    iconColor="blue400"
+                    message={formatMessage(
+                      m.sections.policeCaseFiles.allFilesUploadedMessage,
+                    )}
+                  />
                 )}
               </motion.ul>
             </motion.div>
