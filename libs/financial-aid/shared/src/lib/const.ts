@@ -34,9 +34,12 @@ export const Routes = {
   newCases: '/nymal',
   serviceCenter: (id: string) => `/midstod/${id}`,
   users: `/notendur`,
+  userProfile: (id: string) => `/notendur/${id}`,
+  municipalityProfile: (id: string) => `/sveitarfelog/${id}`,
   municipalitySettings: `/sveitarfelagsstillingar`,
   municipalities: `/sveitarfelog`,
   supervisors: `/umsjonaradilar`,
+  applicationProfile: (id: string) => `/umsokn/${id}`,
 }
 
 export const months = [
