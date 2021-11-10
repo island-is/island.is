@@ -30,6 +30,7 @@ import {
   sportsClubInfo,
   workMachine,
   representativeInfo,
+  addDocuments,
 } from '../../lib/messages'
 import { attachments } from '../../lib/messages/attachments'
 import {
@@ -771,6 +772,60 @@ export const aboutTheAccidentSection = buildSection({
             isReportingOnBehalfOfInjured(formValue) &&
             formValue.wasTheAccidentFatal === YES &&
             formValue.fatalAccidentUploadDeathCertificateNow === YES,
+        }),
+        buildMultiField({
+          id: 'attachments.additionalFilesMulti',
+          title: attachments.general.heading,
+          children: [
+            buildRadioField({
+              id: 'additionalAttachments.answer',
+              title: '',
+              description: attachments.general.additionalAttachmentDescription,
+              options: () => [
+                {
+                  value: AttachmentsEnum.ADDITIONALNOW,
+                  label: attachments.labels.additionalNow,
+                },
+                {
+                  value: AttachmentsEnum.ADDITIONALLATER,
+                  label: attachments.labels.additionalLater,
+                },
+              ],
+            }),
+            buildCustomField(
+              {
+                id: 'attachments.injuryCertificate.alert',
+                title: attachments.labels.alertMessage,
+                description: attachments.general.alertMessage,
+                component: 'FieldAlertMessage',
+                condition: (formValue) =>
+                  (formValue as {
+                    attachments: { additionalAttachments: AttachmentsEnum }
+                  }).attachments?.additionalAttachments ===
+                  AttachmentsEnum.ADDITIONALLATER,
+              },
+              { type: 'warning' },
+            ),
+          ],
+        }),
+        buildMultiField({
+          id: 'attachments.additionalAttachments.subSection',
+          title: attachments.general.heading,
+          children: [
+            buildFileUploadField({
+              id: 'attachments.additionalFiles.file',
+              title: attachments.general.heading,
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: addDocuments.general.uploadHeader,
+              uploadDescription: addDocuments.general.uploadDescription,
+              uploadButtonLabel: addDocuments.general.uploadButtonLabel,
+              introduction: addDocuments.general.additionalDocumentsDescription,
+            }),
+          ],
+          condition: (formValue) =>
+            (formValue as {
+              additionalAttachments: { answer: AttachmentsEnum }
+            }).additionalAttachments?.answer === AttachmentsEnum.ADDITIONALNOW,
         }),
       ],
     }),
