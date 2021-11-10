@@ -5,14 +5,6 @@ import * as tableStyles from '../../sharedStyles/Table.css'
 import cn from 'classnames'
 import { Colors } from '@island.is/island-ui/theme'
 
-interface PageProps {
-  items: React.ReactNode[]
-  index: number
-  identifier: string
-  onClick?: () => void
-  hasMaxWidth?: boolean
-}
-
 type TextVariants =
   | 'default'
   | 'small'
@@ -61,12 +53,22 @@ const ActivationButtonTableItem = (
   )
 }
 
+interface PageProps {
+  items: React.ReactNode[]
+  index: number
+  identifier: string
+  onClick?: () => void
+  hasMaxWidth?: boolean
+  animationDelay?: number
+}
+
 const TableBody = ({
   items,
   index,
   identifier,
   onClick,
   hasMaxWidth = true,
+  animationDelay = 55,
 }: PageProps) => {
   return (
     <tr
@@ -74,7 +76,7 @@ const TableBody = ({
         ['contentUp']: true,
         [`${tableStyles.link}`]: onClick,
       })}
-      style={{ animationDelay: 55 + 3.5 * index + 'ms' }}
+      style={{ animationDelay: animationDelay + 3.5 * index + 'ms' }}
       key={`tr-${identifier}`}
       onClick={onClick}
     >

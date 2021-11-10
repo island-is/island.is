@@ -193,6 +193,7 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
                     identifier={value}
                     key={`aidTableBody-${value}`}
                     hasMaxWidth={false}
+                    animationDelay={55 * (municipality.adminUsers?.length ?? 1)}
                   />
                 ))}
               </tbody>
