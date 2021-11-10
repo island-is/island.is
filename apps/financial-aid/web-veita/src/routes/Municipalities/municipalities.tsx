@@ -11,7 +11,7 @@ import * as tableStyles from '../../sharedStyles/Table.css'
 import * as headerStyles from '../../sharedStyles/Header.css'
 import cn from 'classnames'
 
-import { Municipality } from '@island.is/financial-aid/shared/lib'
+import { Municipality, Routes } from '@island.is/financial-aid/shared/lib'
 import { MunicipalitiesQuery } from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
 
@@ -108,7 +108,7 @@ export const Municipalities = () => {
                     <TableHeaders
                       header={{ title: item }}
                       index={index}
-                      key={'tableHeaders-' + index}
+                      key={`tableHeaders-${index}`}
                     />
                   ))}
                 </tr>
@@ -121,9 +121,11 @@ export const Municipalities = () => {
                     index={index}
                     identifier={item.id}
                     onClick={() =>
-                      router.push(`sveitarfelog/${item.municipalityId}`)
+                      router.push(
+                        Routes.municipalityProfile(item.municipalityId),
+                      )
                     }
-                    key={'tableBody-' + item.id}
+                    key={`tableBody-${item.id}`}
                     hasMaxWidth={false}
                   />
                 ))}

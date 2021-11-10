@@ -21,6 +21,7 @@ import cn from 'classnames'
 
 import {
   formatNationalId,
+  Routes,
   Staff,
   staffRoleDescription,
 } from '@island.is/financial-aid/shared/lib'
@@ -185,7 +186,7 @@ export const Users = () => {
                     index={index}
                     identifier={item.id}
                     key={'tableBody-' + item.id}
-                    onClick={() => router.push(`notendur/${item.id}`)}
+                    onClick={() => router.push(Routes.userProfile(item.id))}
                   />
                 ))}
               </tbody>

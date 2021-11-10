@@ -19,6 +19,7 @@ import {
   getMonth,
   getState,
   getStateUrlFromRoute,
+  Routes,
   TableHeadersProps,
 } from '@island.is/financial-aid/shared/lib'
 
@@ -135,7 +136,7 @@ const ApplicationsTable = ({
                     <TableHeaders
                       header={item}
                       index={index}
-                      key={'tableHeaders-' + index}
+                      key={`tableHeaders-${index}`}
                     />
                   ))}
                 </tr>
@@ -154,7 +155,9 @@ const ApplicationsTable = ({
                     identifier={item.id}
                     index={index}
                     key={item.id}
-                    onClick={() => router.push(`application/${item.id}`)}
+                    onClick={() =>
+                      router.push(Routes.applicationProfile(item.id))
+                    }
                   />
                 ))}
               </tbody>
