@@ -53,7 +53,7 @@ const RelationshipStatusForm = () => {
               ...form,
               familyStatus: newChecked
                 ? FamilyStatus.MARRIED
-                : FamilyStatus.NOT_INFORMED,
+                : FamilyStatus.NOT_COHABITATION,
             })
           }}
         />
