@@ -66,7 +66,7 @@ export class PoliceService {
 
     try {
       res = await fetch(
-        `https://localhost:8443/r1/IS-DEV${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+        `${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
         {
           headers: { 'X-Road-Client': environment.xRoad.clientId },
           agent: this.agent,
@@ -110,7 +110,7 @@ export class PoliceService {
 
     try {
       res = await fetch(
-        `https://localhost:8443/r1/IS-DEV${this.xRoadPath}/api/Rettarvarsla/GetDocumentListById/${caseId}`,
+        `${this.xRoadPath}/api/Rettarvarsla/GetDocumentListById/${caseId}`,
         {
           headers: { 'X-Road-Client': environment.xRoad.clientId },
           agent: this.agent,
