@@ -60,6 +60,7 @@ export type DocumentTypes = {
 
 export type DocumentsListTypes = {
   documentsList: DocumentsListItemTypes[]
+  downloadServiceURL: string
 }
 
 export type DocumentsListItemTypes = {

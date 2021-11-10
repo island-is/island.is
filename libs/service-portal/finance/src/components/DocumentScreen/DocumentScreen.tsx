@@ -18,16 +18,15 @@ import {
   SkeletonLoader,
   Pagination,
   Input,
-  LoadingDots,
   Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
 import amountFormat from '../../utils/amountFormat'
-import { showPdfDocument } from '@island.is/service-portal/graphql'
 import { billsFilter } from '../../utils/simpleFilter'
-import * as styles from './DocumentScreen.css'
+import { formSubmit } from '../../utils/documentFormSubmission'
+import { User } from 'oidc-client'
 
 const ITEMS_ON_PAGE = 20
 
@@ -36,11 +35,13 @@ interface Props {
   intro: string
   listPath: string
   defaultDateRangeMonths?: number
+  userInfo: User
 }
 
 const getFinanceDocumentsListQuery = gql`
   query getFinanceDocumentsListQuery($input: GetDocumentsListInput!) {
     getDocumentsList(input: $input) {
+      downloadServiceURL
       documentsList {
         id
         date
@@ -59,8 +60,8 @@ const DocumentScreen: FC<Props> = ({
   intro,
   listPath,
   defaultDateRangeMonths = 3,
+  userInfo,
 }) => {
-  const { showPdf, loadingPDF, fetchingPdfId } = showPdfDocument()
   const { formatMessage } = useLocale()
 
   const [page, setPage] = useState(1)
@@ -104,6 +105,7 @@ const DocumentScreen: FC<Props> = ({
     setToDate(new Date())
   }, [])
 
+  console.log('data?.getDocumentsList', data?.getDocumentsList)
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
@@ -246,15 +248,14 @@ const DocumentScreen: FC<Props> = ({
                         <Button
                           size="small"
                           variant="text"
-                          onClick={() => showPdf(listItem.id)}
-                          disabled={loadingPDF && fetchingPdfId === listItem.id}
+                          onClick={() =>
+                            formSubmit(
+                              `${data?.getDocumentsList?.downloadServiceURL}${listItem.id}`,
+                              userInfo.access_token,
+                            )
+                          }
                         >
                           {listItem.type}
-                          {loadingPDF && fetchingPdfId === listItem.id && (
-                            <span className={styles.loadingDot}>
-                              <LoadingDots single />
-                            </span>
-                          )}
                         </Button>
                       </T.Data>
                       <T.Data>{listItem.sender}</T.Data>

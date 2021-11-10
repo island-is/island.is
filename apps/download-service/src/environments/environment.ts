@@ -6,6 +6,17 @@ const devConfig = {
     clientSecret: process.env.POSTHOLF_CLIENT_SECRET ?? '',
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
   },
+  fjarmalDomain: {
+    xroadApiPath:
+      process.env.XROAD_FINANCES_PATH ??
+      'IS-DEV/GOV/10021/FJS-Public/financeIsland',
+    ttl: 600,
+  },
+  xroad: {
+    baseUrl: 'http://localhost:8081',
+    clientId:
+      process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
+  },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '',
@@ -28,6 +39,16 @@ const prodConfig = {
     clientId: process.env.POSTHOLF_CLIENTID ?? '',
     clientSecret: process.env.POSTHOLF_CLIENT_SECRET ?? '',
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
+  },
+  fjarmalDomain: {
+    xroadApiPath:
+      process.env.XROAD_FINANCES_PATH ??
+      'IS-DEV/GOV/10021/FJS-Public/financeIsland',
+    ttl: 600,
+  },
+  xroad: {
+    baseUrl: process.env.XROAD_BASE_PATH ?? '',
+    clientId: process.env.XROAD_CLIENT_ID ?? '',
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL!,

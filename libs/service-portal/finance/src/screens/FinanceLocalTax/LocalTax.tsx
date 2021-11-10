@@ -1,9 +1,14 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
+import { User } from 'oidc-client'
 
-const LocalTax = () => {
+interface Props {
+  userInfo: User
+}
+
+const LocalTax: FC<Props> = ({ userInfo }) => {
   useNamespaces('sp.local-tax')
   const { formatMessage } = useLocale()
   return (
@@ -15,6 +20,7 @@ const LocalTax = () => {
       })}
       listPath="localTax"
       defaultDateRangeMonths={12}
+      userInfo={userInfo}
     />
   )
 }

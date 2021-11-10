@@ -157,7 +157,7 @@ export class FinanceService extends RESTDataSource {
   ): Promise<DocumentsListTypes> {
     let response
     try {
-      response = await this.get<DocumentsListTypes>(
+      const dataResponse = await this.get<DocumentsListTypes>(
         `/documentsList/${listPath}?nationalID=${nationalID}&dateFrom=${dayFrom}&dateTo=${dayTo}`,
         {},
         {
@@ -167,6 +167,10 @@ export class FinanceService extends RESTDataSource {
           },
         },
       )
+      response = {
+        ...dataResponse,
+        downloadServiceURL: `${this.options.downloadServiceBaseUrl}/download/v1/finance/`,
+      }
     } catch (e) {
       return this.handleError('Failed to get finance document list', e)
     }
