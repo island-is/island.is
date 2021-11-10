@@ -56,7 +56,7 @@ export const generateAssignReviewerEmail: AnAssignmentEmailTemplateGenerator = (
         {
           component: 'Image',
           context: {
-            src: pathToAsset('manWithBabyIllustration.jpg'),
+            src: pathToAsset('computerIllustration.jpg'),
             alt: 'Maður með barn myndskreyting',
           },
         },
