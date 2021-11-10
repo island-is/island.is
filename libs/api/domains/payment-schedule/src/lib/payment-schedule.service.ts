@@ -84,7 +84,6 @@ export class PaymentScheduleService {
     nationalId: string,
     input: GetInitialScheduleInput,
   ): Promise<PaymentScheduleInitialSchedule> {
-    console.log('getting', input)
     const {
       distributionInitialPosition,
       error,

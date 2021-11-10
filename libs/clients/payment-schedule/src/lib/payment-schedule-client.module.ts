@@ -7,7 +7,6 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 @Module({})
 export class PaymentScheduleClientModule {
   static register(options: PaymentScheduleServiceOptions): DynamicModule {
-    console.log('PaymentScheduleClientModule.register()', options)
     const { xRoadBaseUrl, xRoadProviderId } = options
     const baseURL = `${xRoadBaseUrl}/r1/${xRoadProviderId}/paymentSchedule_v1`
     return {
