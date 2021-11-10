@@ -23,7 +23,6 @@ export class PaymentScheduleService {
   ) {}
 
   async getConditions(nationalId: string): Promise<PaymentScheduleConditions> {
-    console.log('getting conditions', nationalId)
     const {
       conditions,
       error,
