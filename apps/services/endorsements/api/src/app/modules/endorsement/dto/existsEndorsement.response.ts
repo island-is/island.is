@@ -4,5 +4,5 @@ import { IsBoolean } from 'class-validator'
 export class ExistsEndorsementResponse {
   @ApiProperty()
   @IsBoolean()
-  exists!: boolean
+  hasEndorsed!: boolean
 }

@@ -3,5 +3,5 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class ExistsEndorsementResponse {
   @Field()
-  exists!: boolean
+  hasEndorsed!: boolean
 }

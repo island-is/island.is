@@ -235,10 +235,10 @@ export class EndorsementService {
     })
 
     if (!result) {
-      return {exists: false}
+      return {hasEndorsed: false}
     }
 
-    return {exists: true}
+    return {hasEndorsed: true}
   }
 
   async findUserEndorsementsByTags({
