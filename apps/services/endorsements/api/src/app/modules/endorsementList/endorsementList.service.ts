@@ -16,7 +16,6 @@ import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
-import { environment } from '../../../environments'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
