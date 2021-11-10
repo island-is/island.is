@@ -320,6 +320,7 @@ function constructRestrictionRulingPdf(
     const custodyRestrictions = formatCustodyRestrictions(
       existingCase.accusedGender,
       existingCase.custodyRestrictions,
+      true,
     )
 
     if (custodyRestrictions) {
