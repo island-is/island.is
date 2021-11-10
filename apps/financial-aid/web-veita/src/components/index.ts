@@ -16,7 +16,11 @@ export { default as AcceptModal } from './ModalTypes/AcceptModal'
 export { default as DataNeededModal } from './ModalTypes/DataNeededModal'
 export { default as AidAmountModal } from './AidAmountModal/AidAmountModal'
 export { default as TableHeaders } from './TableHeaders/TableHeaders'
-export { default as TableBody } from './TableBody/TableBody'
+export {
+  TableBody,
+  TextTableItem,
+  ActivationButtonTableItem,
+} from './TableBody/TableBody'
 export { default as History } from './History/History'
 export { default as CommentSection } from './CommentSection/CommentSection'
 export { default as ApplicationHeader } from './ApplicationHeader/ApplicationHeader'
@@ -29,7 +33,6 @@ export { default as TableSkeleton } from './Skeletons/TableSkeleton'
 export { default as StaffComment } from './Timeline/StaffComment'
 export { default as ChatElement } from './Timeline/ChatElement'
 export { default as TimeLineContainer } from './Timeline/TimeLineContainer'
-export { default as UsersTableBody } from './UsersTableBody/UsersTableBody'
 export { default as ProfileNotFound } from './ProfileNotFound/ProfileNotFound'
 export { default as ApplicationProfile } from './Profile/ApplicationProfile'
 export { default as EmployeeProfile } from './Profile/EmployeeProfile'
@@ -38,3 +41,5 @@ export { default as AdminSideNavItems } from './AdminSideNavItems/AdminSideNavIt
 export { default as NewUserModal } from './NewUserModal/NewUserModal'
 export { default as ActionModal } from './ActionModal/ActionModal'
 export { default as MunicipalityAdminSettings } from './MunicipalityAdminSettings/MunicipalityAdminSettings'
+export { default as SuperAdminSideNavItems } from './SuperAdminSideNavItems/SuperAdminSideNavItems'
+export { default as MunicipalityProfile } from './Profile/MunicipalityProfile'

@@ -819,13 +819,14 @@ export const aboutTheAccidentSection = buildSection({
             // }),
             buildDescriptionField({
               id: 'companyInfo.descriptionField',
-              description: '',
+              description: companyInfo.labels.subDescription,
               space: 'containerGutter',
               titleVariant: 'h5',
               title: companyInfo.labels.descriptionField,
               condition: (formValue) =>
                 !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
             }),
+
             // These should all be required if the user is not the representative of the company.
             // Should look into if we can require conditionally
             buildTextField({
@@ -925,7 +926,7 @@ export const aboutTheAccidentSection = buildSection({
             // }),
             buildDescriptionField({
               id: 'schoolInfo.descriptionField',
-              description: '',
+              description: schoolInfo.labels.subDescription,
               space: 'containerGutter',
               titleVariant: 'h5',
               title: schoolInfo.labels.descriptionField,
@@ -1063,7 +1064,7 @@ export const aboutTheAccidentSection = buildSection({
             // }),
             buildDescriptionField({
               id: 'fishingCompanyInfo.descriptionField',
-              description: '',
+              description: fishingCompanyInfo.labels.subDescription,
               space: 'containerGutter',
               titleVariant: 'h5',
               title: fishingCompanyInfo.labels.descriptionField,
@@ -1168,7 +1169,7 @@ export const aboutTheAccidentSection = buildSection({
             // }),
             buildDescriptionField({
               id: 'sportsClubInfo.descriptionField',
-              description: '',
+              description: sportsClubInfo.labels.subDescription,
               space: 'containerGutter',
               titleVariant: 'h5',
               title: sportsClubInfo.labels.descriptionField,
@@ -1273,7 +1274,7 @@ export const aboutTheAccidentSection = buildSection({
             // }),
             buildDescriptionField({
               id: 'rescueSquadInfo.descriptionField',
-              description: '',
+              description: rescueSquadInfo.labels.subDescription,
               space: 'containerGutter',
               titleVariant: 'h5',
               title: rescueSquadInfo.labels.descriptionField,

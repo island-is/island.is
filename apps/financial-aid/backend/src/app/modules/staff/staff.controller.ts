@@ -112,4 +112,30 @@ export class StaffController {
   ): Promise<StaffModel> {
     return await this.staffService.createStaff(staff, createStaffInput)
   }
+
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.SUPERADMIN)
+  @Get('municipality/:municipalityId')
+  @ApiOkResponse({
+    type: Number,
+    description: 'Counts users for municipality',
+  })
+  async numberOfUsersForMunicipality(
+    @Param('municipalityId') municipalityId: string,
+  ): Promise<number> {
+    return await this.staffService.numberOfUsersForMunicipality(municipalityId)
+  }
+
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.SUPERADMIN)
+  @Get('admin/:municipalityId')
+  @ApiOkResponse({
+    type: [StaffModel],
+    description: 'Gets admin users by municipality id',
+  })
+  async getAdminUsers(
+    @Param('municipalityId') municipalityId: string,
+  ): Promise<StaffModel[]> {
+    return this.staffService.getAdminUsers(municipalityId)
+  }
 }
