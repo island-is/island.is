@@ -1,4 +1,4 @@
-import { DEFAULT_FULL_SCHEMA, dump, load } from 'js-yaml'
+import { DEFAULT_SCHEMA, dump, load } from 'js-yaml'
 import { postgresIdentifier, serializeService } from './map-to-values'
 import { PostgresInfo, Service } from './types/input-types'
 import { UberChart } from './uber-chart'
@@ -8,7 +8,7 @@ const MAX_LEVEL_DEPENDENCIES = 20
 const dumpOpts = {
   sortKeys: true,
   noRefs: true,
-  schema: DEFAULT_FULL_SCHEMA,
+  schema: DEFAULT_SCHEMA,
   forceQuotes: true,
 }
 
