@@ -135,6 +135,7 @@ export interface Municipality {
   email?: string
   rulesHomepage?: string
   users?: number
+  adminUsers?: Staff[]
 }
 
 export interface CreateMunicipality {

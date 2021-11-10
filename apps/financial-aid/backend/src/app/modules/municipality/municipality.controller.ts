@@ -57,7 +57,7 @@ export class MunicipalityController {
   @Get('')
   @ApiOkResponse({
     type: [MunicipalityModel],
-    description: 'Gets municipality',
+    description: 'Gets municipalities',
   })
   async getAllMunicipalities(): Promise<MunicipalityModel[]> {
     return await this.municipalityService.getAll()
