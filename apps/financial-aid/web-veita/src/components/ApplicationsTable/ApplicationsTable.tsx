@@ -86,6 +86,7 @@ const ApplicationsTable = ({
       </Box>
     )
   }
+
   const assignButton = (application: Application) => {
     return (
       <>

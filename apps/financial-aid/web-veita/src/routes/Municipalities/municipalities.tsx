@@ -31,8 +31,6 @@ export const Municipalities = () => {
     getMunicipalities()
   }, [])
 
-  const headers = ['Nafn', 'Notendur', 'Aðgerð']
-
   const [municipalities, setMunicipalities] = useState<Municipality[]>()
 
   useEffect(() => {
@@ -69,7 +67,7 @@ export const Municipalities = () => {
             >
               <thead className={`contentUp delay-50`}>
                 <tr>
-                  {headers.map((item, index) => (
+                  {['Nafn', 'Notendur', 'Aðgerð'].map((item, index) => (
                     <TableHeaders
                       header={{ title: item }}
                       index={index}

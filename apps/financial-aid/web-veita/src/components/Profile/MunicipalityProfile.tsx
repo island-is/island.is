@@ -24,9 +24,6 @@ interface MunicipalityProfileProps {
 }
 
 const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
-  const usersTableHeaders = ['Nafn', 'Kennitala', 'Netfang', 'Aðgerð']
-  const aidTableHeaders = ['Búsetskilyrði', 'Einstaklingar', 'Hjón/Sambúð']
-
   const aidTableBody = (value: AidType) => {
     switch (value) {
       case AidType.OWNPLACE:
@@ -118,13 +115,15 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
             >
               <thead className={`contentUp delay-50`}>
                 <tr>
-                  {usersTableHeaders.map((item, index) => (
-                    <TableHeaders
-                      header={{ title: item }}
-                      index={index}
-                      key={`usersTableHeaders-${index}`}
-                    />
-                  ))}
+                  {['Nafn', 'Kennitala', 'Netfang', 'Aðgerð'].map(
+                    (item, index) => (
+                      <TableHeaders
+                        header={{ title: item }}
+                        index={index}
+                        key={`usersTableHeaders-${index}`}
+                      />
+                    ),
+                  )}
                 </tr>
               </thead>
 
@@ -166,13 +165,15 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
             >
               <thead className={`contentUp delay-50`}>
                 <tr>
-                  {aidTableHeaders.map((item, index) => (
-                    <TableHeaders
-                      header={{ title: item }}
-                      index={index}
-                      key={`aidTableHeaders-${index}`}
-                    />
-                  ))}
+                  {['Búsetskilyrði', 'Einstaklingar', 'Hjón/Sambúð'].map(
+                    (item, index) => (
+                      <TableHeaders
+                        header={{ title: item }}
+                        index={index}
+                        key={`aidTableHeaders-${index}`}
+                      />
+                    ),
+                  )}
                 </tr>
               </thead>
 

@@ -54,9 +54,6 @@ export const Users = () => {
   }, [])
 
   const [isModalVisible, setIsModalVisible] = useState(false)
-
-  const headers = ['Nafn', 'Kennitala', 'Hlutverk', 'Aðgerð']
-
   const [users, setUsers] = useState<Staff[]>()
 
   useEffect(() => {
@@ -91,25 +88,6 @@ export const Users = () => {
 
   const isLoggedInUser = (staff: Staff) =>
     admin?.nationalId === staff.nationalId
-  5
-
-  const activationButton = (staff: Staff) => {
-    return isLoggedInUser(staff) ? null : (
-      <Box>
-        <Button
-          onClick={(event) => {
-            event.stopPropagation()
-            changeUserActivity(staff)
-          }}
-          variant="text"
-          loading={staffLoading}
-          colorScheme={staff.active ? 'destructive' : 'light'}
-        >
-          {staff.active ? 'Óvirkja' : 'Virkja'}
-        </Button>
-      </Box>
-    )
-  }
 
   return (
     <LoadingContainer
@@ -143,13 +121,15 @@ export const Users = () => {
             >
               <thead className={`contentUp delay-50`}>
                 <tr>
-                  {headers.map((item, index) => (
-                    <TableHeaders
-                      header={{ title: item }}
-                      index={index}
-                      key={'tableHeaders-' + index}
-                    />
-                  ))}
+                  {['Nafn', 'Kennitala', 'Hlutverk', 'Aðgerð'].map(
+                    (item, index) => (
+                      <TableHeaders
+                        header={{ title: item }}
+                        index={index}
+                        key={'tableHeaders-' + index}
+                      />
+                    ),
+                  )}
                 </tr>
               </thead>
 
