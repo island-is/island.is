@@ -80,10 +80,10 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Umsókn um sakavottorð',
-          // onExit: {
-          //   apiModuleAction: ApiActions.getCriminalRecord,
-          //   throwOnError: true,
-          // },
+          onExit: {
+            apiModuleAction: ApiActions.getCriminalRecord,
+            throwOnError: true,
+          },
           actionCard: {
             description: m.draftDescription,
           },
@@ -132,7 +132,7 @@ const template: ApplicationTemplate<
             {
               id: 'applicant',
               formLoader: () =>
-                import('../forms/payment').then((val) => val.payment),
+                import('../forms/Payment').then((val) => val.Payment),
               actions: [
                 { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
               ],

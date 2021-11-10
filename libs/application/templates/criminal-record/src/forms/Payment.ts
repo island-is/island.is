@@ -9,7 +9,7 @@ import {
   buildMultiField,
 } from '@island.is/application/core'
 
-export const payment: Form = buildForm({
+export const Payment: Form = buildForm({
   id: 'DrivingLicenseApplicationPaymentForm',
   title: '',
   mode: FormModes.APPLYING,

@@ -117,10 +117,10 @@ export const CriminalRecordForm: Form = buildForm({
         }),
       ],
     }),
-    // buildSection({
-    //   id: 'confirmation',
-    //   title: m.confirmation,
-    //   children: [],
-    // }),
+    buildSection({
+      id: 'confirmation',
+      title: m.confirmation,
+      children: [],
+    }),
   ],
 })
