@@ -1,33 +1,53 @@
-const faker = require('faker')
-const authNationalId = '1305775399' // we use gervimaður national id here to pass national id checks
+const {
+  getGenericEndorsementList,
+  getGenericEndorsement,
+} = require('../../../../../../test/seedHelpers')
+
+const authNationalId = '0000000004'
+
 module.exports = {
   authNationalId,
   endorsementLists: [
     {
-      id: '7d6c2b91-8d8d-42d0-82f7-cd64ce16d753',
-      title: 'titill',
-      description: 'lýsingin ..............',
-      opened_date: new Date(),
-      closed_date: new Date(),
-      admin_lock: false,
-      endorsement_meta: '{}', // default empty array in postgres
-      endorsement_metadata: '[]', // default empty array in postgres
-      tags: ['generalPetition'], // default empty array in postgres
-      validation_rules: '[]',
-      meta: '{}',
-      owner: '1305775399', //faker.phone.phoneNumber('##########'),
-      created: new Date(),
-      modified: new Date(),
+      ...getGenericEndorsementList(),
+      id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c8',
+      owner: "1305775399",
+    },
+    {
+      ...getGenericEndorsementList(),
+      id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
+      owner: authNationalId,
+      tags: ['generalPetition'], // import ??
     },
   ],
   endorsements: [
     {
-      id: faker.datatype.uuid(),
-      endorser: '1305775399',
-      endorsement_list_id: '7d6c2b91-8d8d-42d0-82f7-cd64ce16d753',
-      meta: '{}',
-      created: new Date(),
-      modified: new Date(),
+      ...getGenericEndorsement(),
+      endorsement_list_id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c8',
+    },
+    {
+      ...getGenericEndorsement(),
+      endorsement_list_id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c8',
+    },
+    {
+      ...getGenericEndorsement(),
+      endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
+    },
+    {
+      ...getGenericEndorsement(),
+      endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
+    },
+    {
+      ...getGenericEndorsement(),
+      endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
+    },
+    {
+      ...getGenericEndorsement(),
+      endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
+    },
+    {
+      ...getGenericEndorsement(),
+      endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
     },
   ],
 }
