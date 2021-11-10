@@ -77,4 +77,8 @@ export class MunicipalityService {
 
     return await this.findByMunicipalityId(municipalityId)
   }
+
+  async getAll(): Promise<MunicipalityModel[]> {
+    return await this.municipalityModel.findAll()
+  }
 }

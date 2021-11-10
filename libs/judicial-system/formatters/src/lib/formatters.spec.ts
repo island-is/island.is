@@ -198,7 +198,7 @@ describe('formatCustodyRestrictions', () => {
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði með bréfaskoðun og símabanni, fjölmiðlabanni og heimsóknarbanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með heimsóknarbanni, bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
   })
 
@@ -216,7 +216,7 @@ describe('formatCustodyRestrictions', () => {
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði með bréfaskoðun og símabanni, fjölmiðlabanni og heimsóknarbanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með heimsóknarbanni, bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
   })
 })

@@ -221,6 +221,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                       CaseCustodyRestrictions.VISITAION,
                       CaseCustodyRestrictions.COMMUNICATION,
                       CaseCustodyRestrictions.MEDIA,
+                      CaseCustodyRestrictions.WORKBAN,
+                      CaseCustodyRestrictions.NECESSITIES,
                     ].includes(restriction),
                   )
                   ?.map((custodyRestriction, index) => (

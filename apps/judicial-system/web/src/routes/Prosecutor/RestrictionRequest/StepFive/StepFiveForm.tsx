@@ -13,7 +13,6 @@ import {
   Button,
   LoadingDots,
   UploadFile,
-  Icon,
 } from '@island.is/island-ui/core'
 import { Case, CaseFile, CaseFileState } from '@island.is/judicial-system/types'
 import {
@@ -31,6 +30,7 @@ import MarkdownWrapper from '@island.is/judicial-system-web/src/shared-component
 import { PoliceCaseFilesData } from './StepFive'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './StepFive.css'
+import { PoliceCaseFilesMessageBox } from '../../SharedComponents/PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
 
 interface Props {
   workingCase: Case
@@ -143,6 +143,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
 
       if (index === filesToUpload.length - 1) {
         setIsUploading(false)
+        setCheckAllChecked(false)
       }
     })
 
@@ -178,24 +179,61 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         <Box marginBottom={5}>
           <AnimateSharedLayout>
             <motion.div layout className={styles.policeCaseFilesContainer}>
-              {policeCaseFileList.length > 0 ? (
-                <motion.ul layout>
-                  <motion.li
-                    layout
-                    className={cn(styles.policeCaseFile, {
-                      [styles.selectAllPoliceCaseFiles]: true,
-                    })}
+              <motion.ul layout>
+                <motion.li
+                  layout
+                  className={cn(styles.policeCaseFile, {
+                    [styles.selectAllPoliceCaseFiles]: true,
+                  })}
+                >
+                  <Checkbox
+                    name="selectAllPoliceCaseFiles"
+                    label={formatMessage(
+                      m.sections.policeCaseFiles.selectAllLabel,
+                    )}
+                    checked={checkAllChecked}
+                    onChange={(evt) => toggleCheckbox(evt, true)}
+                    disabled={isUploading || policeCaseFileList.length === 0}
+                    strong
+                  />
+                </motion.li>
+                {policeCaseFiles?.isLoading ? (
+                  <Box
+                    textAlign="center"
+                    paddingY={2}
+                    paddingX={3}
+                    marginBottom={2}
                   >
-                    <Checkbox
-                      name="selectAllPoliceCaseFiles"
-                      label={formatMessage(
-                        m.sections.policeCaseFiles.selectAllLabel,
+                    <LoadingDots />
+                  </Box>
+                ) : policeCaseFiles?.hasError ? (
+                  policeCaseFiles?.errorMessage &&
+                  policeCaseFiles?.errorMessage.indexOf('404') > -1 ? (
+                    <PoliceCaseFilesMessageBox
+                      icon="warning"
+                      iconColor="yellow400"
+                      message={formatMessage(
+                        m.sections.policeCaseFiles.caseNotFoundInLOKEMessage,
                       )}
-                      checked={checkAllChecked}
-                      onChange={(evt) => toggleCheckbox(evt, true)}
-                      strong
                     />
-                  </motion.li>
+                  ) : (
+                    <PoliceCaseFilesMessageBox
+                      icon="close"
+                      iconColor="red400"
+                      message={formatMessage(
+                        m.sections.policeCaseFiles.errorMessage,
+                      )}
+                    />
+                  )
+                ) : policeCaseFiles?.files.length === 0 ? (
+                  <PoliceCaseFilesMessageBox
+                    icon="warning"
+                    iconColor="yellow400"
+                    message={formatMessage(
+                      m.sections.policeCaseFiles.noFilesFoundInLOKEMessage,
+                    )}
+                  />
+                ) : policeCaseFileList.length > 0 ? (
                   <AnimatePresence>
                     {policeCaseFileList.map((listItem) => {
                       return (
@@ -235,32 +273,16 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                       )
                     })}
                   </AnimatePresence>
-                </motion.ul>
-              ) : policeCaseFiles?.isLoading ? (
-                <Box textAlign="center">
-                  <LoadingDots />
-                </Box>
-              ) : policeCaseFiles?.hasError ? (
-                <Box display="flex" alignItems="center" paddingY={3}>
-                  <Box display="flex" marginRight={2}>
-                    <Icon icon="close" color="red400" />
-                  </Box>
-                  <Text variant="h5">
-                    {formatMessage(m.sections.policeCaseFiles.errorMessage)}
-                  </Text>
-                </Box>
-              ) : (
-                <Box display="flex" alignItems="center" paddingY={3}>
-                  <Box display="flex" marginRight={2}>
-                    <Icon icon="checkmark" color="blue400" />
-                  </Box>
-                  <Text variant="h5">
-                    {formatMessage(
+                ) : (
+                  <PoliceCaseFilesMessageBox
+                    icon="checkmark"
+                    iconColor="blue400"
+                    message={formatMessage(
                       m.sections.policeCaseFiles.allFilesUploadedMessage,
                     )}
-                  </Text>
-                </Box>
-              )}
+                  />
+                )}
+              </motion.ul>
             </motion.div>
             <motion.div layout className={styles.uploadToRVGButtonContainer}>
               <Button
@@ -342,7 +364,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.STEP_SIX_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!allFilesUploaded}
+          nextIsDisabled={!allFilesUploaded || isUploading}
         />
       </FormContentContainer>
     </>

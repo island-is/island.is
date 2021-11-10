@@ -25,6 +25,12 @@ export const companyInfo = {
       defaultMessage: 'Upplýsingar um forsvarsmann fyrirtækisins',
       description: `Information about the company's representative`,
     },
+    subDescription: {
+      id: 'an.application:companyInfo.labels.subDescription',
+      defaultMessage:
+        'Athugaðu að forsvarsmaður er sá aðili sem fer yfir tilkynninguna fyrir hönd fyrirtæisins.',
+      description: `Sub description about the company's representative`,
+    },
     nationalId: {
       id: 'an.application:companyInfo.labels.nationalId',
       defaultMessage: 'Kennitala atvinnurekanda',
