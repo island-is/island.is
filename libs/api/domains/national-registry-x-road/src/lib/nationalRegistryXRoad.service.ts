@@ -101,6 +101,9 @@ export class NationalRegistryXRoadService {
         xRoadTjodskraApiPath,
         xRoadClientId,
       } = this.config
+      this.logger.warn(
+        `${xRoadBasePathWithEnv}/GOV/${xRoadTjodskraMemberCode}/SKRA-Protected/Fasteignir-v1/api/v1/fasteignir${query}`,
+      )
       return fetch(
         `${xRoadBasePathWithEnv}/GOV/${xRoadTjodskraMemberCode}/SKRA-Protected/Fasteignir-v1/api/v1/fasteignir${query}`,
         {
@@ -206,6 +209,15 @@ export class NationalRegistryXRoadService {
       `?kennitala=${nationalId}`,
       authToken,
     )
+    this.logger.warn(JSON.stringify(data))
+    if (!data) {
+      this.logger.warn('no data')
+      return []
+    }
+    if (!data.fasteignir) {
+      this.logger.warn('no fasteignir')
+      return []
+    }
     return data.fasteignir.map((fasteign) => fasteign.fasteignanumer)
   }
 
@@ -217,6 +229,15 @@ export class NationalRegistryXRoadService {
       `/${fasteignanumer}`,
       authToken,
     )
+    this.logger.warn(JSON.stringify(data))
+    if (!data) {
+      this.logger.warn('no data')
+      return []
+    }
+    if (!data.fasteignamat) {
+      this.logger.warn('no fasteignamat')
+      return []
+    }
     return [`${data.fasteignamat.gildandiFasteignamat}`]
   }
 
@@ -228,6 +249,15 @@ export class NationalRegistryXRoadService {
       `/${fasteignanumer}/thinglystir-eigendur`,
       authToken,
     )
+    this.logger.warn(JSON.stringify(data))
+    if (!data) {
+      this.logger.warn('no data')
+      return []
+    }
+    if (!data.thinglystirEigendur) {
+      this.logger.warn('no thinglystirEigendur')
+      return []
+    }
     return data.thinglystirEigendur.map((eigandi) => eigandi.nafn)
   }
 
@@ -239,6 +269,15 @@ export class NationalRegistryXRoadService {
       `/${fasteignanumer}/notkunareiningar`,
       authToken,
     )
+    this.logger.warn(JSON.stringify(data))
+    if (!data) {
+      this.logger.warn('no data')
+      return []
+    }
+    if (!data.notkunareiningar) {
+      this.logger.warn('no notkunareiningar')
+      return []
+    }
     return data.notkunareiningar.map((eining) => eining.notkunareininganumer)
   }
 
