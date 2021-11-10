@@ -13,7 +13,6 @@ import {
   Option,
 } from '@island.is/island-ui/core'
 import { Locale, User } from '@island.is/shared/types'
-import { useIslykillSettings } from '@island.is/service-portal/graphql'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
 import * as styles from './UserMenu.css'
@@ -43,8 +42,6 @@ export const UserDropdown = ({
   const onClose = () => {
     setDropdownState('closed')
   }
-
-  const { data: settings } = useIslykillSettings()
 
   const isDelegation = Boolean(user.profile.actor)
   const username = user.profile.actor
