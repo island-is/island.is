@@ -24,7 +24,7 @@ interface SinglePetitionEndorsements {
   endorsementSystemGetGeneralPetitionEndorsements?: PaginatedEndorsementResponse
 }
 interface SingleEndorsement {
-  endorsementSystemGetSingleEndorsement?: Endorsement
+  endorsementSystemGetSingleEndorsement?: any
 }
 
 const GetSingleEndorsement = gql`
@@ -32,8 +32,7 @@ const GetSingleEndorsement = gql`
     $input: FindEndorsementListInput!
   ) {
     endorsementSystemGetSingleEndorsement(input: $input) {
-      id
-      endorser
+      hasEndorsed
     }
   }
 `
@@ -299,7 +298,7 @@ export const useGetSingleEndorsement = (listId: string) => {
       pollInterval: 20000,
     },
   )
-  return endorsement
+  return endorsement?.endorsementSystemGetSingleEndorsement?.hasEndorsed
 }
 
 export const useGetSinglePetitionEndorsements = (listId: string) => {
