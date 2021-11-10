@@ -32,6 +32,12 @@ export class GetNationalRegistryPersonLoadTestInput {
   nationalId!: string
 }
 
+@InputType()
+export class GetNationalRegistryFasteignLoadTestInput {
+  @Field(() => String)
+  propertyNumber!: string
+}
+
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
 @Resolver(() => NationalRegistryPerson)
@@ -161,6 +167,77 @@ export class NationalRegistryXRoadResolver {
     return {
       status: '200',
       data: family || [],
+    }
+  }
+
+  @Query(() => NationalRegistryStatus, {
+    name: 'nationalRegistryFasteignirLoadTest',
+  })
+  @Audit()
+  async nationalRegistryFasteignirLoadTest(
+    @CurrentUser() user: User,
+  ): Promise<NationalRegistryStatus | undefined> {
+    const fasteignir = await this.nationalRegistryXRoadService.getFasteignir(
+      user.nationalId,
+      user.authorization,
+    )
+    return {
+      status: '200',
+      data: fasteignir || [],
+    }
+  }
+
+  @Query(() => NationalRegistryStatus, {
+    name: 'nationalRegistryFasteignLoadTest',
+  })
+  @Audit()
+  async nationalRegistryFasteignLoadTest(
+    @CurrentUser() user: User,
+    @Args('input') input: GetNationalRegistryFasteignLoadTestInput,
+  ): Promise<NationalRegistryStatus | undefined> {
+    const fasteign = await this.nationalRegistryXRoadService.getFasteign(
+      input.propertyNumber,
+      user.authorization,
+    )
+    return {
+      status: '200',
+      data: fasteign || [],
+    }
+  }
+
+  @Query(() => NationalRegistryStatus, {
+    name: 'nationalRegistryFasteignEigendurLoadTest',
+  })
+  @Audit()
+  async nationalRegistryFasteignEigendurLoadTest(
+    @CurrentUser() user: User,
+    @Args('input') input: GetNationalRegistryFasteignLoadTestInput,
+  ): Promise<NationalRegistryStatus | undefined> {
+    const eigendur = await this.nationalRegistryXRoadService.getFasteignEigendur(
+      input.propertyNumber,
+      user.authorization,
+    )
+    return {
+      status: '200',
+      data: eigendur || [],
+    }
+  }
+
+  @Query(() => NationalRegistryStatus, {
+    name: 'nationalRegistryFasteignNotkunLoadTest',
+  })
+  @Audit()
+  async nationalRegistryFasteignNotkunLoadTest(
+    @CurrentUser() user: User,
+    @Args('input') input: GetNationalRegistryFasteignLoadTestInput,
+  ): Promise<NationalRegistryStatus | undefined> {
+    const notkun = await this.nationalRegistryXRoadService.getFasteignNotkun(
+      input.propertyNumber,
+      user.authorization,
+    )
+    return {
+      status: '200',
+      data: notkun || [],
     }
   }
 }

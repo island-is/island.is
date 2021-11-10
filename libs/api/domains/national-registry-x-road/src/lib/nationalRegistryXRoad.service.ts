@@ -8,6 +8,69 @@ import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 
+interface FasteignirResponse {
+  fasteignir: [
+    {
+      fasteignanumer: string
+      sjalfgefidStadfang: {
+        birting: string
+        postnumer: number
+        birtingStutt: string
+        stadfanganumer: number
+        landeignarnumer: number
+        sveitarfelagBirting: string
+      }
+    },
+  ]
+}
+
+interface NotkunareiningarResponse {
+  notkunareiningar: [
+    {
+      merking: string
+      skyring: string
+      birtStaerd: number
+      brunabotamat: number
+      notkunBirting: string
+      fasteignanumer: string
+      byggingararBirting: string
+      notkunareininganumer: string
+      birtStaerdMaelieining: string
+    },
+  ]
+}
+
+interface ThinglystirEigendurResponse {
+  thinglystirEigendur: [
+    {
+      nafn: string
+      kaupdagur: string
+      kennitala: string
+      eignarhlutfall: number
+      heimildBirting: string
+    },
+  ]
+}
+
+interface FasteignResponse {
+  fasteignanumer: string
+  sjalfgefidStadfang: {
+    postnumer: number
+  }
+  fasteignamat: {
+    gildandiAr: number
+    fyrirhugadAr: number
+    gildandiFasteignamat: number
+    gildandiLodarhlutamat: number
+    gildandiMannvirkjamat: number
+    fyrirhugadFasteignamat: number
+    fyrirhugadLodarhlutamat: number
+    fyrirhugadMannvirkjamat: number
+  }
+  notkunareiningar: NotkunareiningarResponse
+  thinglystirEigendur: ThinglystirEigendurResponse
+}
+
 @Injectable()
 export class NationalRegistryXRoadService {
   constructor(
@@ -25,6 +88,32 @@ export class NationalRegistryXRoadService {
       return undefined
     }
     throw error
+  }
+
+  private async nationalRegistryFetchFasteignir<T>(
+    query: string,
+    authToken: string,
+  ): Promise<T> {
+    try {
+      const {
+        xRoadBasePathWithEnv,
+        xRoadTjodskraMemberCode,
+        xRoadTjodskraApiPath,
+        xRoadClientId,
+      } = this.config
+      return fetch(
+        `${xRoadBasePathWithEnv}/GOV/${xRoadTjodskraMemberCode}/SKRA-Protected/Fasteignir-v1/api/v1/fasteignir${query}`,
+        {
+          headers: {
+            Authorization: authToken,
+            'Authorization-Identity': authToken,
+            'X-Road-Client': xRoadClientId,
+          },
+        },
+      ).then((res) => res.json())
+    } catch (error) {
+      throw this.handleError(error)
+    }
   }
 
   async getNationalRegistryResidenceHistory(
@@ -107,6 +196,50 @@ export class NationalRegistryXRoadService {
       return []
     }
     return family.einstaklingar.map((einstaklingur) => einstaklingur.kennitala)
+  }
+
+  async getFasteignir(
+    nationalId: string,
+    authToken: string,
+  ): Promise<string[]> {
+    const data = await this.nationalRegistryFetchFasteignir<FasteignirResponse>(
+      `?kennitala=${nationalId}`,
+      authToken,
+    )
+    return data.fasteignir.map((fasteign) => fasteign.fasteignanumer)
+  }
+
+  async getFasteign(
+    fasteignanumer: string,
+    authToken: string,
+  ): Promise<string[]> {
+    const data = await this.nationalRegistryFetchFasteignir<FasteignResponse>(
+      `/${fasteignanumer}`,
+      authToken,
+    )
+    return [`${data.fasteignamat.gildandiFasteignamat}`]
+  }
+
+  async getFasteignEigendur(
+    fasteignanumer: string,
+    authToken: string,
+  ): Promise<string[]> {
+    const data = await this.nationalRegistryFetchFasteignir<ThinglystirEigendurResponse>(
+      `/${fasteignanumer}/thinglystir-eigendur`,
+      authToken,
+    )
+    return data.thinglystirEigendur.map((eigandi) => eigandi.nafn)
+  }
+
+  async getFasteignNotkun(
+    fasteignanumer: string,
+    authToken: string,
+  ): Promise<string[]> {
+    const data = await this.nationalRegistryFetchFasteignir<NotkunareiningarResponse>(
+      `/${fasteignanumer}/notkunareiningar`,
+      authToken,
+    )
+    return data.notkunareiningar.map((eining) => eining.notkunareininganumer)
   }
 
   async getChildrenCustodyInformation(
