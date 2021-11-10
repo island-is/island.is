@@ -59,4 +59,24 @@ export const core = defineMessages({
     description:
       'Notað fyrir texta á hnappi til að sækja vistunarseðil sem pdf skjal.',
   },
+  caseNumber: {
+    id: 'judicial.system.core:case_number',
+    defaultMessage: 'Mál nr.',
+    description: 'Notað fyrir texta fyrir númer á máli',
+  },
+  prosecutor: {
+    id: 'judicial.system.core:prosecutor',
+    defaultMessage: 'Sóknaraðili',
+    description: 'Notað fyrir orðið sóknaraðili í öllum flæðum.',
+  },
+  defender: {
+    id: 'judicial.system.core:defender',
+    defaultMessage: 'Varnaraðili',
+    description: 'Notað fyrir orðið varnaraðili í öllum flæðum.',
+  },
+  spokeperson: {
+    id: 'judicial.system.core:spokeperson',
+    defaultMessage: 'Talsmaður',
+    description: 'Notað fyrir orðið talsmaður í öllum flæðum.',
+  },
 })
