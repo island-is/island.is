@@ -36,6 +36,7 @@ export const Routes = {
   users: `/notendur`,
   municipalitySettings: `/sveitarfelagsstillingar`,
   municipalities: `/sveitarfelog`,
+  supervisors: `/umsjonaradilar`,
 }
 
 export const months = [
