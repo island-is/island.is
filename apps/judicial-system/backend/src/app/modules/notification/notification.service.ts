@@ -541,6 +541,11 @@ export class NotificationService {
           content: pdf,
           encoding: 'binary',
         },
+        {
+          filename: `Þingbók án úrskurðar ${existingCase.courtCaseNumber}.pdf`,
+          content: pdf,
+          encoding: 'binary',
+        },
       ]
     }
 
