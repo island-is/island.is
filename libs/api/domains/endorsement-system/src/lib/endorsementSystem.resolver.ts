@@ -18,6 +18,7 @@ import { EndorsementList } from './models/endorsementList.model'
 import { CreateEndorsementListDto } from './dto/createEndorsementList.input'
 import { BulkEndorseListInput } from './dto/bulkEndorseList.input'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
+import {ExistsEndorsementResponse} from './dto/existsEndorsement.response'
 import {
   UpdateEndorsementListInput,
   UpdateEndorsementListDto,
@@ -46,11 +47,11 @@ export class EndorsementSystemResolver {
   }
 
   // GET /endorsement-list/{listId}/endorsement/exists
-  @Query(() => Boolean, { nullable: true })
+  @Query(() => ExistsEndorsementResponse)
   async endorsementSystemGetSingleEndorsement(
     @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
-  ): Promise<Boolean> {
+  ): Promise<ExistsEndorsementResponse> {
     return await this.endorsementSystemService.endorsementControllerFindByAuth(
       input,
       user,

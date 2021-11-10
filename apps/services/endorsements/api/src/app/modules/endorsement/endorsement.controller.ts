@@ -49,6 +49,7 @@ import { emailDto } from './dto/email.dto'
 import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
 import { EndorsementInterceptor } from './interceptors/endorsement.interceptor'
 import { PaginatedEndorsementInterceptor } from './interceptors/paginatedEndorsement.interceptor'
+import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @Audit({
@@ -152,7 +153,7 @@ export class EndorsementController {
   @ApiOkResponse({
     description:
       'Uses current authenticated users national id to find any existing endorsement in a given list',
-    type: Boolean,
+    type: ExistsEndorsementResponse,
   })
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)
@@ -165,7 +166,7 @@ export class EndorsementController {
     )
     endorsementList: EndorsementList,
     @CurrentUser() user: User,
-  ): Promise<Boolean> {
+  ): Promise<ExistsEndorsementResponse> {
     return await this.endorsementService.findSingleUserEndorsement({
       listId: endorsementList.id,
       nationalId: user.nationalId,
