@@ -42,7 +42,7 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
         useUTC: true,
       },
       pool: {
-        max: 5,
+        max: parseInt(process.env.SEQUALIZE_POOL_MAX ?? '5'),
         min: 0,
         acquire: 30000,
         idle: 10000,
