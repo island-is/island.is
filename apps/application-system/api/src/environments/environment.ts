@@ -105,6 +105,7 @@ const devConfig = {
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       username: process.env.PAYMENT_SCHEDULE_USER,
       password: process.env.PAYMENT_SCHEDULE_PASSWORD,
+    },
     healthInsuranceV2: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
       xRoadProviderId:
@@ -239,6 +240,7 @@ const prodConfig = {
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       username: process.env.PAYMENT_SCHEDULE_USER,
       password: process.env.PAYMENT_SCHEDULE_PASSWORD,
+    },
     healthInsuranceV2: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
       xRoadProviderId: process.env.XROAD_HEALTH_INSURANCE_ID,
