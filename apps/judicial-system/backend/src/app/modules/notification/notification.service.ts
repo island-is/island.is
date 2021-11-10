@@ -530,24 +530,20 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
     const html = formatPrisonRulingEmailNotification(existingCase.courtEndTime)
+    const pdf = await getCustodyNoticePdfAsString(existingCase)
 
-    let attachments: Attachment[] | undefined
-
-    if (existingCase.state === CaseState.ACCEPTED) {
-      const pdf = await getCustodyNoticePdfAsString(existingCase)
-      attachments = [
-        {
-          filename: `Vistunarseðill ${existingCase.courtCaseNumber}.pdf`,
-          content: pdf,
-          encoding: 'binary',
-        },
-        {
-          filename: `Þingbók án úrskurðar ${existingCase.courtCaseNumber}.pdf`,
-          content: pdf,
-          encoding: 'binary',
-        },
-      ]
-    }
+    const attachments = [
+      {
+        filename: `Vistunarseðill ${existingCase.courtCaseNumber}.pdf`,
+        content: pdf,
+        encoding: 'binary',
+      },
+      {
+        filename: `Þingbók án úrskurðar ${existingCase.courtCaseNumber}.pdf`,
+        content: pdf,
+        encoding: 'binary',
+      },
+    ]
 
     return this.sendEmail(
       'Gæsluvarðhaldsfangelsi',
