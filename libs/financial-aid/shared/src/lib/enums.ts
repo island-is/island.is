@@ -70,13 +70,11 @@ export enum StaffRole {
 }
 
 export enum FamilyStatus {
-  UNKNOWN = 'Unknown',
-  SINGLE = 'Single',
   COHABITATION = 'Cohabitation',
   UNREGISTERED_COBAHITATION = 'UnregisteredCohabitation',
   MARRIED = 'Married',
   MARRIED_NOT_LIVING_TOGETHER = 'MarriedNotLivingTogether',
-  NOT_INFORMED = 'NotInformed',
+  NOT_COHABITATION = 'NotCohabitation',
 }
 
 export enum AidType {
