@@ -24,6 +24,12 @@ export const schoolInfo = {
       defaultMessage: 'Upplýsingar um forsvarsmann skóla',
       description: `Information about the school's representative`,
     },
+    subDescription: {
+      id: 'an.application:schoolInfo.labels.subDescription',
+      defaultMessage:
+        'Athugaðu að forsvarsmaður er sá aðili sem fer yfir tilkynninguna fyrir hönd skóla.',
+      description: `Sub description about the school's representative`,
+    },
     nationalId: {
       id: 'an.application:schoolInfo.labels.nationalId',
       defaultMessage: 'Kennitala skóla',
