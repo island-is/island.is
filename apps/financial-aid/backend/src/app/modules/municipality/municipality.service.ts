@@ -50,23 +50,18 @@ export class MunicipalityService {
   async create(
     municipality: CreateMunicipalityDto,
   ): Promise<MunicipalityModel> {
-    try {
-      await this.sequelize.transaction((t) => {
-        return Promise.all(
-          Object.values(AidType).map((item) => {
-            this.aidService.create({
-              municipalityId: municipality.municipalityId,
-              type: item,
-            })
-          }),
-        )
-      })
-    } catch {
-      this.logger.error('Error while creating aid models')
-      throw new NotFoundException(`Error while creating aid models`)
-    }
+    const aids = await this.sequelize.transaction((t) => {
+      return Promise.all(
+        Object.values(AidType).map((item) => {
+          return this.aidService.create({
+            municipalityId: municipality.municipalityId,
+            type: item,
+          })
+        }),
+      )
+    })
 
-    return
+    return await this.municipalityModel.create(municipality)
   }
 
   async updateMunicipality(

@@ -26,6 +26,7 @@ export class AidModel extends Model<Aid> {
 
   @Column({
     type: DataType.STRING,
+    unique: true,
     allowNull: false,
   })
   @ApiProperty()
