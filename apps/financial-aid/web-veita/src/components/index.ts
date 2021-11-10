@@ -16,7 +16,11 @@ export { default as AcceptModal } from './ModalTypes/AcceptModal'
 export { default as DataNeededModal } from './ModalTypes/DataNeededModal'
 export { default as AidAmountModal } from './AidAmountModal/AidAmountModal'
 export { default as TableHeaders } from './TableHeaders/TableHeaders'
-export { default as TableBody } from './TableBody/TableBody'
+export {
+  TableBody,
+  TextTableItem,
+  ActivationButtonTableItem,
+} from './TableBody/TableBody'
 export { default as History } from './History/History'
 export { default as CommentSection } from './CommentSection/CommentSection'
 export { default as ApplicationHeader } from './ApplicationHeader/ApplicationHeader'

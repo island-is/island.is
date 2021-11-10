@@ -1,8 +1,9 @@
 import React from 'react'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Text, Button } from '@island.is/island-ui/core'
 
 import * as tableStyles from '../../sharedStyles/Table.css'
 import cn from 'classnames'
+import { Colors } from '@island.is/island-ui/theme'
 
 interface PageProps {
   items: React.ReactNode[]
@@ -10,6 +11,54 @@ interface PageProps {
   identifier: string
   onClick?: () => void
   hasMaxWidth?: boolean
+}
+
+type TextVariants =
+  | 'default'
+  | 'small'
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'h4'
+  | 'h5'
+  | 'intro'
+  | 'eyebrow'
+
+const TextTableItem = (
+  variant?: TextVariants,
+  text?: string | number,
+  color?: Colors,
+) => {
+  return (
+    text && (
+      <Text variant={variant} color={color}>
+        {text}
+      </Text>
+    )
+  )
+}
+
+const ActivationButtonTableItem = (
+  title: string,
+  loading: boolean,
+  onClick: () => void,
+  destructiveColorScheme: boolean,
+) => {
+  return (
+    <Box>
+      <Button
+        onClick={(event) => {
+          event.stopPropagation()
+          onClick()
+        }}
+        variant="text"
+        loading={loading}
+        colorScheme={destructiveColorScheme ? 'destructive' : 'light'}
+      >
+        {title}
+      </Button>
+    </Box>
+  )
 }
 
 const TableBody = ({
@@ -51,4 +100,4 @@ const TableBody = ({
   )
 }
 
-export default TableBody
+export { TableBody, TextTableItem, ActivationButtonTableItem }

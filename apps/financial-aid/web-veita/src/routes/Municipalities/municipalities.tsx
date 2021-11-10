@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import {
+  ActivationButtonTableItem,
   ApplicationOverviewSkeleton,
   LoadingContainer,
   TableBody,
   TableHeaders,
+  TextTableItem,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { Text, Box, Button } from '@island.is/island-ui/core'
 import * as tableStyles from '../../sharedStyles/Table.css'
@@ -38,43 +40,6 @@ export const Municipalities = () => {
       setMunicipalities(data.municipalities)
     }
   }, [data])
-
-  const name = (municipality: Municipality) => {
-    return (
-      <Box>
-        <Text variant="h5" color={municipality.active ? 'dark400' : 'dark300'}>
-          {municipality.name}
-        </Text>
-      </Box>
-    )
-  }
-
-  const users = (municipality: Municipality) => {
-    return (
-      <Box>
-        <Text color={municipality.active ? 'dark400' : 'dark300'}>
-          {municipality.users}
-        </Text>
-      </Box>
-    )
-  }
-
-  const activationButton = (municipality: Municipality) => {
-    return (
-      <Box>
-        <Button
-          onClick={(event) => {
-            event.stopPropagation()
-          }}
-          variant="text"
-          loading={false}
-          colorScheme={municipality.active ? 'destructive' : 'light'}
-        >
-          {municipality.active ? 'Óvirkja' : 'Virkja'}
-        </Button>
-      </Box>
-    )
-  }
 
   return (
     <LoadingContainer
@@ -117,7 +82,24 @@ export const Municipalities = () => {
               <tbody className={tableStyles.tableBody}>
                 {municipalities.map((item: Municipality, index) => (
                   <TableBody
-                    items={[name(item), users(item), activationButton(item)]}
+                    items={[
+                      TextTableItem(
+                        'h5',
+                        item.name,
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      TextTableItem(
+                        'default',
+                        item.users,
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      ActivationButtonTableItem(
+                        item.active ? 'Óvirkja' : 'Virkja',
+                        false,
+                        () => console.log('bla'),
+                        item.active,
+                      ),
+                    ]}
                     index={index}
                     identifier={item.id}
                     onClick={() =>

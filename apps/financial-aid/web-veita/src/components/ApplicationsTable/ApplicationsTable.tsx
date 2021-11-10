@@ -12,6 +12,7 @@ import {
   TableSkeleton,
   GeneratedProfile,
   GenerateName,
+  TextTableItem,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Application,
@@ -85,15 +86,6 @@ const ApplicationsTable = ({
       </Box>
     )
   }
-
-  const date = (application: Application) => {
-    return <Text> {calcDifferenceInDate(application.modified)}</Text>
-  }
-
-  const created = (application: Application) => {
-    return <Text>{getMonth(new Date(application.created).getMonth())}</Text>
-  }
-
   const assignButton = (application: Application) => {
     return (
       <>
@@ -148,8 +140,14 @@ const ApplicationsTable = ({
                     items={[
                       name(item),
                       state(item),
-                      date(item),
-                      created(item),
+                      TextTableItem(
+                        'default',
+                        calcDifferenceInDate(item.modified),
+                      ),
+                      TextTableItem(
+                        'default',
+                        getMonth(new Date(item.created).getMonth()),
+                      ),
                       assignButton(item),
                     ]}
                     identifier={item.id}

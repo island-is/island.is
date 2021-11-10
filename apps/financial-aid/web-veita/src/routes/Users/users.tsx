@@ -6,6 +6,8 @@ import {
   NewUserModal,
   TableHeaders,
   TableBody,
+  TextTableItem,
+  ActivationButtonTableItem,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Text,
@@ -89,30 +91,7 @@ export const Users = () => {
 
   const isLoggedInUser = (staff: Staff) =>
     admin?.nationalId === staff.nationalId
-
-  const name = (staff: Staff) => {
-    return (
-      <Text variant="h5" color={staff.active ? 'dark400' : 'dark300'}>
-        {staff.name} {isLoggedInUser(staff) ? '(Þú)' : ''}
-      </Text>
-    )
-  }
-
-  const nationalId = (staff: Staff) => {
-    return (
-      <Text color={staff.active ? 'dark400' : 'dark300'}>
-        {formatNationalId(staff.nationalId)}
-      </Text>
-    )
-  }
-
-  const roleDescription = (staff: Staff) => {
-    return (
-      <Text color={staff.active ? 'dark400' : 'dark300'}>
-        {staffRoleDescription(staff.roles)}
-      </Text>
-    )
-  }
+  5
 
   const activationButton = (staff: Staff) => {
     return isLoggedInUser(staff) ? null : (
@@ -178,10 +157,28 @@ export const Users = () => {
                 {users.map((item: Staff, index) => (
                   <TableBody
                     items={[
-                      name(item),
-                      nationalId(item),
-                      roleDescription(item),
-                      activationButton(item),
+                      TextTableItem(
+                        'h5',
+                        `${item.name} ${isLoggedInUser(item) ? '(Þú)' : ''}`,
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      TextTableItem(
+                        'default',
+                        formatNationalId(item.nationalId),
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      TextTableItem(
+                        'default',
+                        staffRoleDescription(item.roles),
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      isLoggedInUser(item) === false &&
+                        ActivationButtonTableItem(
+                          item.active ? 'Óvirkja' : 'Virkja',
+                          staffLoading,
+                          () => changeUserActivity(item),
+                          item.active,
+                        ),
                     ]}
                     index={index}
                     identifier={item.id}
