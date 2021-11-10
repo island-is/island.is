@@ -175,6 +175,10 @@ const autoSchemaFile = environment.production
     UserProfileModule.register({
       userProfileServiceBasePath:
         environment.userProfile.userProfileServiceBasePath,
+      islykill: {
+        cert: environment.islykill.cert,
+        passphrase: environment.islykill.passphrase,
+      },
     }),
     CommunicationsModule,
     ApiCatalogueModule,
