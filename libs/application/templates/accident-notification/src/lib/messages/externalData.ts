@@ -4,25 +4,25 @@ export const externalData = {
   agreementDescription: defineMessages({
     sectionTitle: {
       id: 'an.application:section.agreementDescription.sectionTitle',
-      defaultMessage: 'Upplýsingar um meðferð á gögnum',
+      defaultMessage: 'Miðlun upplýsinga',
       description: 'Information on data handling',
     },
     bulletOne: {
       id: 'an.application:section.agreementDescription.BulletOne',
       defaultMessage:
-        'Vinnueftirlit ríkisins fær afrit þessa eyðublaðs á grundvelli 4. mgr. 79. gr. laga nr. 46/1980. Tryggingastofnun ríkisins fær upplýsingar um bótagreiðslur sem ekki greiðast samhliða bótum stofnunarinnar, sbr. 14. gr. laga nr. 45/2015.',
+        'Þegar tilkynning um slys er send Sjúkratryggingum Íslands mun stofnunin miðla upplýsingum um afstöðu til bótaskyldu með þeim atvinnurekanda eða íþróttafélagi sem á í hlut. Ástæðan þess er að umræddir aðilar kunna að eiga rétt á endurgreiðslu útlagðs kostnaðar og/eða dagpeningum ef greidd hafa verið laun í veikindaforföllum vegna slyssins. Þessir aðilar fá aldrei afhentar heilsufars- eða sjúkraskrárupplýsingar.',
       description: 'List item 1 on data gathering information',
     },
     bulletTwo: {
       id: 'an.application:section.agreementDescription.BulletTwo',
       defaultMessage:
-        'Þannig verður eitthvað óvænt að hafa átt sér stað og skilyrði er að óhappið verði ekki rakið til undirliggjandi sjúkdóms eða meinsemda hjá þeim sem fyrir óhappi verður.',
+        'Vinnueftirlit ríkisins kann einnig að fá afrit af tilkynningunni undir ákveðnum kringumstæðum á grundvelli 4. mgr. 79. gr. laga nr. 46/1980 sem og Rannsóknarnefnd samgönguslysa á grundvelli 12. og 16. gr. laga nr. 18/2013.',
       description: 'List item 2 on data gathering information',
     },
     bulletThree: {
       id: 'an.application:section.agreementDescription.BulletThree',
       defaultMessage:
-        'Eitthvað óvænt verður að hafa gerst sem veldur tjóni á líkama hins tryggða og áhorfandi getur áttað sig á að hafi gerst.',
+        'Tryggingastofnun ríkisins fær jafnframt upplýsingar um bótagreiðslur vegna ákvæðis um samspil og skörun bóta sbr. 14. gr. laga nr. lög nr 45/2015.',
       description: 'List item 3 on data gathering information',
     },
     bulletFour: {

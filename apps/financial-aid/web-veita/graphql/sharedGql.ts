@@ -321,3 +321,14 @@ export const UpdateStaffMutation = gql`
     }
   }
 `
+
+export const MunicipalitiesQuery = gql`
+  query getMunicipalities {
+    municipalities {
+      id
+      name
+      active
+      users
+    }
+  }
+`

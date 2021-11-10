@@ -49,6 +49,10 @@ class BackendAPI extends RESTDataSource {
     return this.get(`municipality/${id}`)
   }
 
+  getMunicipalities(): Promise<Municipality[]> {
+    return this.get(`municipality`)
+  }
+
   updateMunicipality(
     updateMunicipality: UpdateMunicipalityInput,
   ): Promise<Municipality> {
@@ -122,6 +126,10 @@ class BackendAPI extends RESTDataSource {
 
   createStaff(createStaff: CreateStaffInput): Promise<StaffModel> {
     return this.post('staff', createStaff)
+  }
+
+  getNumberOfStaffForMunicipality(municipalityId: string): Promise<number> {
+    return this.get(`staff/municipality/${municipalityId}`)
   }
 }
 

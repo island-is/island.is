@@ -1,4 +1,12 @@
-import { Query, Resolver, Context, Args, Mutation } from '@nestjs/graphql'
+import {
+  Query,
+  Resolver,
+  Context,
+  Args,
+  Mutation,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql'
 
 import { Inject, UseGuards } from '@nestjs/common'
 
@@ -39,5 +47,29 @@ export class MunicipalityResolver {
     this.logger.debug('Updating municipality')
 
     return backendApi.updateMunicipality(input)
+  }
+
+  @Query(() => [MunicipalityModel], { nullable: false })
+  municipalities(
+    input: MunicipalityQueryInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<MunicipalityModel[]> {
+    this.logger.debug(`Getting municipalities`)
+
+    return backendApi.getMunicipalities()
+  }
+
+  @ResolveField('users', () => Number)
+  users(
+    @Parent() municipality: MunicipalityModel,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<number> {
+    this.logger.debug(
+      `Getting number of users for ${municipality.municipalityId}`,
+    )
+
+    return backendApi.getNumberOfStaffForMunicipality(
+      municipality.municipalityId,
+    )
   }
 }

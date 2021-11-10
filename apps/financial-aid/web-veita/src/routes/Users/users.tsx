@@ -14,7 +14,9 @@ import {
   toast,
   ToastContainer,
 } from '@island.is/island-ui/core'
-import * as styles from './users.css'
+
+import * as tableStyles from '../../sharedStyles/Table.css'
+import * as headerStyles from '../../sharedStyles/Header.css'
 import cn from 'classnames'
 
 import { Staff } from '@island.is/financial-aid/shared/lib'
@@ -56,7 +58,7 @@ export const Users = () => {
       loader={<ApplicationOverviewSkeleton />}
     >
       <Box
-        className={`${styles.header} contentUp delay-25`}
+        className={`${headerStyles.header} contentUp delay-25`}
         marginTop={15}
         marginBottom={[2, 2, 4]}
       >
@@ -73,41 +75,43 @@ export const Users = () => {
         </Button>
       </Box>
       {users && (
-        <div className={`${styles.wrapper} hideScrollBar`}>
-          <table
-            className={cn({
-              [`${styles.tableContainer}`]: true,
-            })}
-          >
-            <thead className={`contentUp delay-50`}>
-              <tr>
-                {headers.map((item, index) => (
-                  <TableHeaders
-                    header={{ title: item }}
+        <div className={`${tableStyles.wrapper} hideScrollBar`}>
+          <div className={tableStyles.smallTableWrapper}>
+            <table
+              className={cn({
+                [`${tableStyles.tableContainer}`]: true,
+              })}
+            >
+              <thead className={`contentUp delay-50`}>
+                <tr>
+                  {headers.map((item, index) => (
+                    <TableHeaders
+                      header={{ title: item }}
+                      index={index}
+                      key={'tableHeaders-' + index}
+                    />
+                  ))}
+                </tr>
+              </thead>
+
+              <tbody className={tableStyles.tableBody}>
+                {users.map((item: Staff, index) => (
+                  <UsersTableBody
+                    user={item}
                     index={index}
-                    key={'tableHeaders-' + index}
+                    key={'tableBody-' + item.id}
+                    onStaffUpdated={refreshList}
+                    toast={toast}
                   />
                 ))}
-              </tr>
-            </thead>
-
-            <tbody className={styles.tableBody}>
-              {users.map((item: Staff, index) => (
-                <UsersTableBody
-                  user={item}
-                  index={index}
-                  key={'tableBody-' + item.id}
-                  onStaffUpdated={refreshList}
-                  toast={toast}
-                />
-              ))}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
       {error && (
         <div>
-          Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að þessu
+          Abbabab mistókst að sækja notendur, ertu örugglega með aðgang að þessu
           upplýsingum?
         </div>
       )}
