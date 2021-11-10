@@ -74,7 +74,7 @@ export const getRoleName = (role: StaffRole) => {
 }
 
 export const scrollToId = (id: string) => {
-  var element = document.getElementById(id)
+  const element = document.getElementById(id)
   element?.scrollIntoView({
     behavior: 'smooth',
   })
