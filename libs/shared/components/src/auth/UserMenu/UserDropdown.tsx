@@ -112,7 +112,7 @@ export const UserDropdown = ({
                   </Button>
                 </Box>
               )}
-              <UserProfileInfo onClose={onClose} />
+              {!isDelegation && <UserProfileInfo onClose={onClose} />}
               <Box>
                 <Button
                   onClick={onLogout}

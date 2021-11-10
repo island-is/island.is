@@ -13,12 +13,12 @@ interface UserProfileInfoProps {
 }
 
 export const UserProfileInfo = ({ onClose }: UserProfileInfoProps) => {
-  const { data: settings } = useIslykillSettings()
-  const { formatMessage } = useLocale()
   const { value: showPersonalInfo } = useFeatureFlag(
     'isServicePortalPersonalInformationModuleEnabled',
     false,
   )
+  const { data: settings } = useIslykillSettings({ skip: !showPersonalInfo })
+  const { formatMessage } = useLocale()
   if (showPersonalInfo) {
     return (
       <>
