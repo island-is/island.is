@@ -1,9 +1,8 @@
 import { User } from '@island.is/auth-nest-tools'
-import {
-  PaymentScheduleAPI,
-  ScheduleType,
-} from '@island.is/clients/payment-schedule'
+import { DefaultApi, ScheduleType } from '@island.is/clients/payment-schedule'
+import { Logger } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
+import { PaymentScheduleService } from '../payment-schedule.service'
 import { PaymentScheduleResolver } from './payment-schedule.resolver'
 
 describe('PaymentScheduleResolver', () => {
@@ -20,7 +19,7 @@ describe('PaymentScheduleResolver', () => {
       providers: [
         PaymentScheduleResolver,
         {
-          provide: PaymentScheduleAPI,
+          provide: PaymentScheduleService,
           useFactory: () => ({
             getConditions: jest.fn((nationalId: string) => ({
               maxDebtAmount: 100000,
@@ -79,7 +78,7 @@ describe('PaymentScheduleResolver', () => {
                 maxCountMonth: 12,
               }),
             ),
-            getPaymentDistribtion: jest.fn((nationalId: string) => ({
+            getPaymentDistribution: jest.fn((nationalId: string) => ({
               nationalId: '1234567890',
               scheduleType: ScheduleType.FinesAndLegalCost,
               payments: [
@@ -92,6 +91,8 @@ describe('PaymentScheduleResolver', () => {
             })),
           }),
         },
+        DefaultApi,
+        Logger,
       ],
     }).compile()
 
@@ -156,8 +157,8 @@ describe('PaymentScheduleResolver', () => {
     it('should get employer', async () => {
       const employer = await resolver.employer(mockedUser)
       expect(employer).toEqual({
-        name: 'island.is',
-        nationalId: '0987654321',
+        employerName: 'island.is',
+        employerNationalId: '0987654321',
       })
     })
   })
