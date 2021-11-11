@@ -12,6 +12,7 @@ const devConfig = {
   featureFlagSdkKey: 'YcfYCOwBTUeI04mWOWpPdA/KgCHhUk0_k2BdiKMaNh3qA',
 }
 
+// Dummy change to trigger deployment
 const prodConfig = {
   production: true,
   identityServer: {
