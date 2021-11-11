@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -15,13 +15,13 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
-    Promise.all([
-      queryInterface.changeColumn('municipality', 'municipality_id', {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: false,
-      }),
-    ]),
-  )
-  }
-};
+      Promise.all([
+        queryInterface.changeColumn('municipality', 'municipality_id', {
+          type: Sequelize.STRING,
+          allowNull: false,
+          unique: false,
+        }),
+      ]),
+    )
+  },
+}
