@@ -24,7 +24,7 @@ interface SinglePetitionEndorsements {
   endorsementSystemGetGeneralPetitionEndorsements?: PaginatedEndorsementResponse
 }
 interface SingleEndorsement {
-  endorsementSystemGetSingleEndorsement?: Endorsement
+  endorsementSystemGetSingleEndorsement?: any
 }
 
 const GetSingleEndorsement = gql`
@@ -32,8 +32,7 @@ const GetSingleEndorsement = gql`
     $input: FindEndorsementListInput!
   ) {
     endorsementSystemGetSingleEndorsement(input: $input) {
-      id
-      endorser
+      hasEndorsed
     }
   }
 `
@@ -144,6 +143,14 @@ export const EndorseList = gql`
       }
       created
       modified
+    }
+  }
+`
+
+export const SendEmailPdf = gql`
+  mutation Mutants($input: sendPdfEmailInput!) {
+    endorsementSystemsendPdfEmail(input: $input) {
+      success
     }
   }
 `
@@ -291,7 +298,7 @@ export const useGetSingleEndorsement = (listId: string) => {
       pollInterval: 20000,
     },
   )
-  return endorsement
+  return endorsement?.endorsementSystemGetSingleEndorsement?.hasEndorsed
 }
 
 export const useGetSinglePetitionEndorsements = (listId: string) => {
@@ -302,6 +309,7 @@ export const useGetSinglePetitionEndorsements = (listId: string) => {
     variables: {
       input: {
         listId: listId,
+        limit: 20,
       },
     },
     pollInterval: 20000,

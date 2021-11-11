@@ -47,4 +47,9 @@ export class UpdateApplicationDto {
   @IsString()
   @ApiProperty()
   readonly spousePhoneNumber: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spouseName: string
 }

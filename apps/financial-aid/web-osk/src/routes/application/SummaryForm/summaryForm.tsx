@@ -10,6 +10,7 @@ import {
   AllFiles,
   FormInfo,
   FormComment,
+  ContactInfo,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
@@ -27,6 +28,8 @@ import {
   getHomeCircumstances,
   HomeCircumstances,
   NavigationProps,
+  Routes,
+  scrollToId,
 } from '@island.is/financial-aid/shared/lib'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useApplication'
@@ -53,13 +56,13 @@ const SummaryForm = () => {
     {
       id: 'familyStatus',
       label: 'Hjúskaparstaða',
-      url: 'hjuskaparstada',
+      url: Routes.form.relationship,
       info: getFamilyStatus[form.familyStatus as FamilyStatus],
     },
     {
       id: 'homeCircumstances',
       label: 'Búseta',
-      url: 'buseta',
+      url: Routes.form.homeCircumstances,
       info:
         form?.homeCircumstances === HomeCircumstances.OTHER
           ? form?.homeCircumstancesCustom
@@ -68,27 +71,36 @@ const SummaryForm = () => {
     {
       id: 'hasIncome',
       label: 'Tekjur',
-      url: 'tekjur',
+      url: Routes.form.hasIncome,
       info:
         form?.hasIncome === undefined
           ? undefined
           : 'Ég hef ' +
-            (form.hasIncome ? '' : 'ekki') +
+            (form.hasIncome ? '' : 'ekki ') +
             'fengið tekjur í þessum mánuði eða síðasta',
     },
     {
       id: 'employmentCustom',
       label: 'Staða',
-      url: 'atvinna',
+      url: Routes.form.employment,
       info: form?.employmentCustom
         ? form.employmentCustom
         : getEmploymentStatus[form.employment as Employment],
     },
     {
-      id: 'emailAddress',
-      label: 'Netfang',
-      url: 'samskipti',
-      info: form.emailAddress,
+      id: 'usePersonalTaxCredit',
+      label: 'Nýta persónuafslátt?',
+      url: Routes.form.usePersonalTaxCredit,
+      info: form?.usePersonalTaxCredit ? 'Já' : 'Nei',
+    },
+    {
+      id: 'bankInfo',
+      label: 'Bankaupplýsingar',
+      url: Routes.form.bankInfo,
+      info:
+        form.bankNumber && form.ledger && form.accountNumber
+          ? form.bankNumber + '-' + form.ledger + '-' + form.accountNumber
+          : '',
     },
   ]
 
@@ -111,17 +123,16 @@ const SummaryForm = () => {
           message: 'Obbobbob einhvað fór úrskeiðis',
         })
 
-        if (e.networkError?.statusCode === 400) {
-          const findErrorInFormInfo = formInfoOverview.find(
-            (el) => el.info === undefined,
-          )
+        const findErrorInFormInfo = formInfoOverview.find(
+          (el) => el.info === undefined,
+        )
 
-          if (findErrorInFormInfo) {
-            var element = document.getElementById(findErrorInFormInfo.id)
-            element?.scrollIntoView({
-              behavior: 'smooth',
-            })
-          }
+        if (findErrorInFormInfo) {
+          scrollToId(findErrorInFormInfo.id)
+        }
+
+        if (form.emailAddress === undefined || form.phoneNumber === undefined) {
+          scrollToId('contactInfo')
         }
       })
   }
@@ -157,10 +168,15 @@ const SummaryForm = () => {
         <Box marginTop={[4, 4, 5]}>
           <Divider />
         </Box>
-
-        <UserInfo phoneNumber={form?.phoneNumber} />
-
+        <UserInfo />
         <FormInfo info={formInfoOverview} error={formError.status} />
+
+        <ContactInfo
+          phone={form.phoneNumber}
+          email={form.emailAddress}
+          error={formError.status}
+        />
+
         <Divider />
         <AllFiles />
         <FormComment />

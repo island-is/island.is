@@ -18,6 +18,7 @@ import { EndorsementList } from './models/endorsementList.model'
 import { CreateEndorsementListDto } from './dto/createEndorsementList.input'
 import { BulkEndorseListInput } from './dto/bulkEndorseList.input'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
+import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
 import {
   UpdateEndorsementListInput,
   UpdateEndorsementListDto,
@@ -30,6 +31,8 @@ import { PaginatedEndorsementListResponse } from './dto/paginatedEndorsementList
 
 import { EndorsementPaginationInput } from './dto/endorsementPagination.input'
 import { OpenListInput } from './dto/openList.input'
+import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
+import { sendPdfEmailInput } from './dto/sendPdfEmail.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => EndorsementList)
@@ -44,11 +47,11 @@ export class EndorsementSystemResolver {
   }
 
   // GET /endorsement-list/{listId}/endorsement/exists
-  @Query(() => Endorsement, { nullable: true })
+  @Query(() => ExistsEndorsementResponse)
   async endorsementSystemGetSingleEndorsement(
     @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
-  ): Promise<Endorsement> {
+  ): Promise<ExistsEndorsementResponse> {
     return await this.endorsementSystemService.endorsementControllerFindByAuth(
       input,
       user,
@@ -108,12 +111,13 @@ export class EndorsementSystemResolver {
 
   // GET /endorsement-list ... by tags
   @Query(() => PaginatedEndorsementListResponse)
-  @BypassAuth()
   async endorsementSystemFindEndorsementLists(
     @Args('input') input: PaginatedEndorsementListInput,
+    @CurrentUser() user: User,
   ): Promise<PaginatedEndorsementListResponse> {
     return await this.endorsementSystemService.endorsementListControllerFindLists(
       input,
+      user,
     )
   }
 
@@ -256,6 +260,17 @@ export class EndorsementSystemResolver {
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {
     return await this.endorsementSystemService.endorsementListControllerUnlock(
+      input,
+      user,
+    )
+  }
+
+  @Mutation(() => sendPdfEmailResponse)
+  async endorsementSystemsendPdfEmail(
+    @Args('input') input: sendPdfEmailInput,
+    @CurrentUser() user: User,
+  ): Promise<{ success: boolean }> {
+    return await this.endorsementSystemService.endorsementControllerSendPdfEmail(
       input,
       user,
     )

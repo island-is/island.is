@@ -21,6 +21,7 @@ import { environment } from '../../../environments'
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
+
 @Injectable()
 export class EndorsementListService {
   constructor(
@@ -69,9 +70,9 @@ export class EndorsementListService {
     })
   }
 
-  async findSingleList(listId: string, nationalId: string) {
+  async findSingleList(listId: string, nationalId?: string) {
     this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
-    const admin = this.isAdmin(nationalId)
+    const admin = nationalId ? this.isAdmin(nationalId) : false
     const result = await this.endorsementListModel.findOne({
       where: {
         id: listId,
@@ -90,7 +91,6 @@ export class EndorsementListService {
     this.logger.debug(
       `Finding endorsements for single national id ${nationalId}`,
     )
-
     return await paginate({
       Model: this.endorsementModel,
       limit: query.limit || 10,
@@ -223,7 +223,11 @@ export class EndorsementListService {
   }
 
   async getOwnerInfo(endorsementList: EndorsementList) {
-    return (await this.nationalRegistryApi.getUser(endorsementList.owner))
-      .Fulltnafn
+    try {
+      return (await this.nationalRegistryApi.getUser(endorsementList.owner))
+        .Fulltnafn
+    } catch (e) {
+      return ''
+    }
   }
 }

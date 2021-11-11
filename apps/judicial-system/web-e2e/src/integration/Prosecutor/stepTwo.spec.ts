@@ -1,11 +1,18 @@
-import { Case } from '@island.is/judicial-system/types'
-import { makeCase, makeCourt } from '../../fixtures/testDataFactory'
+import {
+  makeCase,
+  makeCourt,
+  makeProsecutor,
+} from '../../fixtures/testDataFactory'
 import { intercept } from '../../utils'
 
 describe('/krafa/fyrirtaka/:id', () => {
   beforeEach(() => {
     const caseData = makeCase()
-    const caseDataAddition = { ...caseData, court: makeCourt() }
+    const caseDataAddition = {
+      ...caseData,
+      prosecutor: makeProsecutor(),
+      court: makeCourt(),
+    }
 
     cy.stubAPIResponses()
     cy.visit('/krafa/fyrirtaka/test_id')

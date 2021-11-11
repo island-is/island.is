@@ -148,6 +148,13 @@ export const serializeService: SerializeMethod = (
   if (Object.keys(serviceDef.secrets).length > 0) {
     result.secrets = { ...serviceDef.secrets }
   }
+  if (Object.keys(serviceDef.files).length > 0) {
+    result.files = []
+    serviceDef.files.forEach((f) => {
+      result.files!.push(f.filename)
+      mergeObjects(result.env, { [f.env]: `/etc/config/${f.filename}` })
+    })
+  }
 
   const {
     envs: featureEnvs,
@@ -157,6 +164,17 @@ export const serializeService: SerializeMethod = (
   mergeObjects(result.env, featureEnvs)
   addToErrors(featureErrors)
   mergeObjects(result.secrets, featureSecrets)
+
+  serviceDef.xroadConfig.forEach((conf) => {
+    const { envs, errors } = serializeEnvironmentVariables(
+      service,
+      uberChart,
+      conf.getEnv(),
+    )
+    addToErrors(errors)
+    mergeObjects(result.env, envs)
+    mergeObjects(result.secrets, conf.getSecrets())
+  })
 
   // service account
   if (serviceDef.serviceAccountEnabled) {

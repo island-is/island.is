@@ -79,6 +79,7 @@
 - [External Contributions](handbook/repository/external-contribute.md)
 - [Generating a New Project](handbook/repository/generate.md)
 - [GitBook Contributions](handbook/repository/gitbook-contribute.md)
+- [OpenAPI](handbook/repository/openapi.md)
 - [Auto Generated Schemas](handbook/repository/schemas.md)
 - [Workspace Settings](handbook/repository/workspace-settings.md)
 
@@ -98,6 +99,7 @@
   - [Auth API](apps/services/auth-api/README.md)
   - [Documents](apps/services/documents/README.md)
     - [Endorsements API](apps/services/endorsements/api/README.md)
+  - [Notifications - Hnipp](apps/services/notifications/README.md)
   - [Party Letter Registry](apps/services/party-letter-registry-api/README.md)
   - [Search Indexer](apps/services/search-indexer/README.md)
     - [Elasticsearch Search Dev Server](apps/services/search-indexer/dev-services/README.md)
@@ -172,6 +174,7 @@
   - [Documents (Pósthólf)](libs/clients/documents/README.md)
   - [Clients Driving License V1 / V2](libs/clients/driving-license/README.md)
   - [Clients Finance](libs/clients/finance/README.md)
+  - [Clients Health Insurance V2](libs/clients/health-insurance-v2/README.md)
   - [Client Middlewares](libs/clients/middlewares/README.md)
   - [Clients Mms](libs/clients/mms/README.md)
   - [National Registry Clients](libs/clients/national-registry/README.md)

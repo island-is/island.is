@@ -9,6 +9,7 @@ import {
   AllFiles,
   FormInfo,
   FormComment,
+  ContactInfo,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
@@ -17,7 +18,12 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import { FileType, NavigationProps } from '@island.is/financial-aid/shared/lib'
+import {
+  FileType,
+  NavigationProps,
+  Routes,
+  scrollToId,
+} from '@island.is/financial-aid/shared/lib'
 
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 import useUpdateApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useUpdateApplication'
@@ -42,21 +48,23 @@ const SpouseSummary = () => {
     {
       id: 'hasIncome',
       label: 'Tekjur',
-      url: 'tekjur',
+      url: Routes.form.hasIncome,
       info:
         form?.hasIncome === undefined
           ? undefined
           : 'Ég hef ' +
-            (form.hasIncome ? '' : 'ekki') +
+            (form.hasIncome ? '' : 'ekki ') +
             'fengið tekjur í þessum mánuði eða síðasta',
     },
-    {
-      id: 'emailAddress',
-      label: 'Netfang',
-      url: 'samskipti',
-      info: form.emailAddress,
-    },
   ]
+
+  const errorHandling = (message: string) => {
+    setIsLoading(false)
+    setFormError({
+      status: true,
+      message: message,
+    })
+  }
 
   const handleNextButtonClick = async () => {
     if (!form || !user) {
@@ -65,8 +73,14 @@ const SpouseSummary = () => {
 
     setIsLoading(true)
 
+    if (form.emailAddress === undefined || form.phoneNumber === undefined) {
+      errorHandling('Þú verður að fylla út í alla reitina')
+      scrollToId('contactInfo')
+      return
+    }
+
     await updateApplication(
-      user.currentApplication?.id as string,
+      user.currentApplicationId as string,
       FileType.SPOUSEFILES,
     )
       .then(() => {
@@ -76,11 +90,7 @@ const SpouseSummary = () => {
         }
       })
       .catch((e) => {
-        setIsLoading(false)
-        setFormError({
-          status: true,
-          message: 'Obbobbob einhvað fór úrskeiðis',
-        })
+        errorHandling('Obbobbob einhvað fór úrskeiðis')
       })
   }
 
@@ -104,9 +114,16 @@ const SpouseSummary = () => {
           <Divider />
         </Box>
 
-        <UserInfo phoneNumber={form?.phoneNumber} />
+        <UserInfo />
 
         <FormInfo info={formInfoOverview} error={formError.status} />
+
+        <ContactInfo
+          phone={form.phoneNumber}
+          email={form.emailAddress}
+          error={formError.status}
+        />
+
         <Divider />
         <AllFiles />
         <FormComment />

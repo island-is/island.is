@@ -17,6 +17,11 @@ export const attachments = {
       defaultMessage: `Sjúkratryggingar Íslands kunna að óska eftir frekari gögnum við afgreiðslu málsins, svo taka megi ákvörðun um bótarétt, fjárhæð og greiðslu bóta.`,
       description: 'Description for attachments',
     },
+    additionalAttachmentDescription: {
+      id: 'an.application:attachments.additionalAttachmentDescription',
+      defaultMessage: `Hér getur þú bætt við fleiri fylgiskjölum sem kunna að gefa skýrari sýn á slysið og geta hjálpað til við úrvinnslu tilkynningarinnar. Athugið að einnig er hægt að bæta við fylgiskjölum eftir að tilkynning hefur verið send.`,
+      description: 'Description for attachments',
+    },
     alertMessage: {
       id: 'an.application:attachments.alertMessage',
       defaultMessage: `Mögulegt er að bæta við fylgiskjölum eftir að tilkynning hefur verið send til Sjúkratrygginga Íslands. Áður en hægt er að taka afstöðu til tilkynningar og bótaskyldu og þarf áverkavottorð frá þeim lækni sem sá slasaða fyrst eða bráðamóttökuskrá vegna fyrstu komu frá Landspítala að vera til staðar.`,
@@ -73,6 +78,16 @@ export const attachments = {
         'Ég vil klára að tilkynna slys en áverkavottorð verður skilað síðar',
       description: 'Label for send certificate later',
     },
+    additionalNow: {
+      id: 'an.application:attachments.additionalNow',
+      defaultMessage: 'Ég vil bæta við fylgiskjölum núna',
+      description: 'Label for adding additional attachments now',
+    },
+    additionalLater: {
+      id: 'an.application:attachments.additionalLater',
+      defaultMessage: 'Ég vil klára að tilkynna slys',
+      description: 'Label for adding additional attachments later',
+    },
     alertMessage: {
       id: 'an.application:attachments.labels.alertMessage',
       defaultMessage: 'Athugið',
@@ -88,8 +103,8 @@ export const attachments = {
     },
     deathCertificate: {
       id: 'an.application:attachments.documentNames.deathCertificate',
-      defaultMessage: 'Dánarvottorð',
-      description: 'Name of death certificate for in review',
+      defaultMessage: 'Lögregluskýrsla',
+      description: 'Name of police report for in review',
     },
     policeReport: {
       id: 'an.application:attachments.documentNames.policeReport',
@@ -100,6 +115,11 @@ export const attachments = {
       id: 'an.application:attachments.documentNames.powerOfAttorney',
       defaultMessage: 'Umboð',
       description: 'Name of power of attorney document for in review',
+    },
+    additionalDocuments: {
+      id: 'an.application:attachments.documentNames.additionalDocuments',
+      defaultMessage: 'Auka fylgiskjöl',
+      description: 'Name of additional attachments for in review',
     },
   }),
 }

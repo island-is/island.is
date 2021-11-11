@@ -3,12 +3,19 @@ import { NO, YES } from './../constants'
 export type CompanyInfo = {
   nationalRegistrationId: string
   name: string
-  email: string
-  phoneNumber: string
+  // email: string
+  // phoneNumber: string
   type: AccidentTypeEnum | WorkAccidentTypeEnum
   onPayRoll?: {
     answer: YesOrNo
   }
+}
+
+export type RepresentativeInfo = {
+  name: string
+  nationalId: string
+  email: string
+  phoneNumber?: string
 }
 
 export type FileType = {
@@ -43,6 +50,8 @@ export enum AttachmentsEnum {
   INJURYCERTIFICATE = 'injuryCertificate',
   HOSPITALSENDSCERTIFICATE = 'hospitalSendsCertificate',
   SENDCERTIFICATELATER = 'sendCertificateLater',
+  ADDITIONALNOW = 'additionalNow',
+  ADDITIONALLATER = 'additionalLater',
 }
 
 export enum GeneralWorkplaceAccidentLocationEnum {
@@ -105,6 +114,12 @@ export enum PowerOfAttorneyUploadEnum {
   FORCHILDINCUSTODY = 'forChildInCustody',
 }
 
+export enum ReviewApprovalEnum {
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+  NOTREVIEWED = 'notReviewed',
+}
+
 export enum ReviewSectionState {
   inProgress = 'In progress',
   received = 'Received',
@@ -112,4 +127,10 @@ export enum ReviewSectionState {
   pending = 'Pending',
   approved = 'Approved',
   objected = 'Objected',
+}
+
+export interface SubmittedApplicationData {
+  data?: {
+    documentId: number
+  }
 }

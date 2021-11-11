@@ -1,17 +1,29 @@
-import React, { useEffect, useState } from 'react'
-import type { Case } from '@island.is/judicial-system/types'
+import React, { useContext, useEffect, useState } from 'react'
+import { Case, Feature, PoliceCaseFile } from '@island.is/judicial-system/types'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
 import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
+import {
+  CaseQuery,
+  PoliceCaseFilesQuery,
+} from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useRouter } from 'next/router'
 import { StepFiveForm } from './StepFiveForm'
+import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
+
+export interface PoliceCaseFilesData {
+  files: PoliceCaseFile[]
+  isLoading: boolean
+  hasError: boolean
+  errorMessage?: string
+}
 
 export const StepFive: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
+  const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
   const router = useRouter()
   const id = router.query.id
@@ -19,6 +31,18 @@ export const StepFive: React.FC = () => {
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
+  })
+
+  const { features } = useContext(FeatureContext)
+
+  const {
+    data: policeData,
+    loading: policeDataLoading,
+    error: policeDataError,
+  } = useQuery(PoliceCaseFilesQuery, {
+    variables: { input: { caseId: id } },
+    fetchPolicy: 'no-cache',
+    skip: !features.includes(Feature.POLICE_CASE_FILES),
   })
 
   const resCase = data?.case
@@ -33,23 +57,44 @@ export const StepFive: React.FC = () => {
     }
   }, [id, workingCase, setWorkingCase, resCase])
 
+  useEffect(() => {
+    if (policeData && policeData.policeCaseFiles) {
+      setPoliceCaseFiles({
+        files: policeData.policeCaseFiles,
+        isLoading: false,
+        hasError: false,
+      })
+    } else if (policeDataLoading) {
+      setPoliceCaseFiles({
+        files: policeData ? policeData.policeCaseFiles : [],
+        isLoading: true,
+        hasError: false,
+      })
+    } else {
+      setPoliceCaseFiles({
+        files: policeData ? policeData.policeCaseFiles : [],
+        isLoading: false,
+        hasError: true,
+        errorMessage: policeDataError?.message,
+      })
+    }
+  }, [policeData, policeDataError?.message, policeDataLoading])
+
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_FIVE}
       isLoading={loading}
       notFound={data?.case === undefined}
-      decision={workingCase?.decision}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase ? (
         <StepFiveForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
+          policeCaseFiles={policeCaseFiles}
         />
       ) : null}
     </PageLayout>
