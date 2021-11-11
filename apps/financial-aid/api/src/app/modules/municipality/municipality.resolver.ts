@@ -61,8 +61,8 @@ export class MunicipalityResolver {
     return backendApi.getMunicipalities()
   }
 
-  @ResolveField('users', () => Number)
-  users(
+  @ResolveField('numberOfUsers', () => Number)
+  numberOfUsers(
     @Parent() municipality: MunicipalityModel,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<number> {
@@ -80,7 +80,7 @@ export class MunicipalityResolver {
     @Parent() municipality: MunicipalityModel,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<StaffModel[]> {
-    this.logger.debug(`Getting admin users for ${municipality.municipalityId}`)
+    this.logger.debug(`Getting users for ${municipality.municipalityId}`)
 
     return backendApi.getAdminUsers(municipality.municipalityId)
   }

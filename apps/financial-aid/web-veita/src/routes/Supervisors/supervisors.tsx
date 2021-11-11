@@ -1,39 +1,83 @@
-import React, { useEffect, useState } from 'react'
-import { useLazyQuery } from '@apollo/client'
+import React, { useContext, useEffect, useState } from 'react'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import {
+  ActivationButtonTableItem,
   ApplicationOverviewSkeleton,
   LoadingContainer,
+  TableBody,
   TableHeaders,
+  TextTableItem,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { Text, Box, Button } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  Button,
+  toast,
+  ToastContainer,
+} from '@island.is/island-ui/core'
 
 import * as tableStyles from '../../sharedStyles/Table.css'
 import * as headerStyles from '../../sharedStyles/Header.css'
 import cn from 'classnames'
 
-import { Staff } from '@island.is/financial-aid/shared/lib'
-import { StaffForMunicipalityQuery } from '@island.is/financial-aid-web/veita/graphql'
+import {
+  formatNationalId,
+  Staff,
+  staffRoleDescription,
+} from '@island.is/financial-aid/shared/lib'
+import {
+  SupervisorsQuery,
+  UpdateStaffMutation,
+} from '@island.is/financial-aid-web/veita/graphql'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 export const Supervisors = () => {
-  const [getStaff, { data, error, loading }] = useLazyQuery<{ users: Staff[] }>(
-    StaffForMunicipalityQuery,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
+  const [getSupervisors, { data, error, loading }] = useLazyQuery<{
+    supervisors: Staff[]
+  }>(SupervisorsQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+  const [updateStaff, { loading: staffLoading }] = useMutation(
+    UpdateStaffMutation,
   )
 
+  const [supervisors, setSupervisors] = useState<Staff[]>()
+
   useEffect(() => {
-    getStaff()
+    getSupervisors()
   }, [])
 
-  const [users, setUsers] = useState<Staff[]>()
-
   useEffect(() => {
-    if (data?.users) {
-      setUsers(data.users)
+    console.log('data', data)
+    if (data?.supervisors) {
+      setSupervisors(data.supervisors)
     }
   }, [data])
+
+  const { admin } = useContext(AdminContext)
+
+  const isLoggedInUser = (staff: Staff) =>
+    admin?.nationalId === staff.nationalId
+
+  const changeUserActivity = async (staff: Staff) => {
+    return await updateStaff({
+      variables: {
+        input: {
+          id: staff.id,
+          active: !staff.active,
+        },
+      },
+    })
+      .then(() => {
+        getSupervisors()
+      })
+      .catch(() => {
+        toast.error(
+          'Það mistókst að breyta hlutverki notanda, vinasamlega reynið aftur síðar',
+        )
+      })
+  }
 
   return (
     <LoadingContainer
@@ -57,7 +101,7 @@ export const Supervisors = () => {
           Nýr umsjónaraðili
         </Button>
       </Box>
-      {users && (
+      {supervisors && (
         <div className={`${tableStyles.wrapper} hideScrollBar`}>
           <div className={tableStyles.smallTableWrapper}>
             <table
@@ -72,14 +116,46 @@ export const Supervisors = () => {
                       <TableHeaders
                         header={{ title: item }}
                         index={index}
-                        key={'tableHeaders-' + index}
+                        key={`tableHeaders-${index}`}
                       />
                     ),
                   )}
                 </tr>
               </thead>
 
-              <tbody className={tableStyles.tableBody}></tbody>
+              <tbody className={tableStyles.tableBody}>
+                {supervisors.map((item: Staff, index) => (
+                  <TableBody
+                    items={[
+                      TextTableItem(
+                        'h5',
+                        `${item.name} ${isLoggedInUser(item) ? '(Þú)' : ''}`,
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      TextTableItem(
+                        'default',
+                        formatNationalId(item.nationalId),
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      TextTableItem(
+                        'default',
+                        staffRoleDescription(item.roles),
+                        item.active ? 'dark400' : 'dark300',
+                      ),
+                      isLoggedInUser(item) === false &&
+                        ActivationButtonTableItem(
+                          item.active ? 'Óvirkja' : 'Virkja',
+                          staffLoading,
+                          () => changeUserActivity(item),
+                          item.active,
+                        ),
+                    ]}
+                    index={index}
+                    identifier={item.id}
+                    key={`tableBody-${item.id}`}
+                  />
+                ))}
+              </tbody>
             </table>
           </div>
         </div>
@@ -90,6 +166,7 @@ export const Supervisors = () => {
           upplýsingum?
         </div>
       )}
+      <ToastContainer />
     </LoadingContainer>
   )
 }

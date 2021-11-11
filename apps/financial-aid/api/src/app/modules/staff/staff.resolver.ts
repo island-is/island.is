@@ -36,6 +36,15 @@ export class StaffResolver {
     return backendApi.getStaffById(input.id)
   }
 
+  @Query(() => [StaffModel])
+  supervisors(
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<StaffModel[]> {
+    this.logger.debug(`Getting supervisors`)
+
+    return backendApi.getSupervisors()
+  }
+
   @Mutation(() => StaffModel, { nullable: true })
   updateStaff(
     @Args('input', { type: () => UpdateStaffInput })
