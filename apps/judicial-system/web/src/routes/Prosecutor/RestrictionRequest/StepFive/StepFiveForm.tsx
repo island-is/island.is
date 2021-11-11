@@ -173,7 +173,12 @@ export const StepFiveForm: React.FC<Props> = (props) => {
           <Text variant="h3" as="h3">
             {formatMessage(m.sections.policeCaseFiles.heading, {
               policeCaseNumber: workingCase.policeCaseNumber,
-            })}
+            })}{' '}
+            <Tooltip
+              placement="right"
+              as="span"
+              text={formatMessage(m.sections.policeCaseFiles.tooltip)}
+            />
           </Text>
         </Box>
         <Box marginBottom={5}>
@@ -309,7 +314,6 @@ export const StepFiveForm: React.FC<Props> = (props) => {
               onChange={onChange}
               onRemove={(file) => {
                 onRemove(file)
-
                 setPoliceCaseFileList([
                   ...policeCaseFileList,
                   (file as unknown) as PoliceCaseFile,
