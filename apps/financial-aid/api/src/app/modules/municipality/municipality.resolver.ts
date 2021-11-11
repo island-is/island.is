@@ -50,7 +50,7 @@ export class MunicipalityResolver {
     input: CreateMunicipalityInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<MunicipalityModel> {
-    this.logger.debug('Creating application')
+    this.logger.debug('Creating municipality')
     return backendApi.createMunicipality(input)
   }
 

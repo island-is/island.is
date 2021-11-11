@@ -19,12 +19,13 @@ export class AidService {
   ) {}
 
   async create(aid: CreateAidDto, t: Transaction): Promise<AidModel> {
-    this.logger.debug(`Create aid`)
+    this.logger.debug(`Create aid or return existing one`)
 
     const doesExists = await this.aidModel.findOne({
       where: {
         municipalityId: aid.municipalityId,
       },
+      transaction: t,
     })
 
     if (doesExists) {
@@ -41,17 +42,6 @@ export class AidService {
         id,
       },
     })
-  }
-
-  async findIdByType(type: AidType): Promise<string> {
-    this.logger.debug(`Finding aid by id by type: ${type}`)
-    const findAid = await this.aidModel.findOne({
-      where: {
-        type,
-      },
-    })
-    console.log(findAid ? findAid.id : undefined)
-    return findAid ? findAid.id : undefined
   }
 
   async updateAid(

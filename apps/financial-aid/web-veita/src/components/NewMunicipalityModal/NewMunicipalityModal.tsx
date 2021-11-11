@@ -48,17 +48,18 @@ const NewMunicipalityModal = ({
   })
 
   const areRequiredFieldsFilled =
-    !state.adminEmail ||
-    !state.adminName ||
-    !state.adminNationalId ||
-    !isEmailValid(state.adminEmail) ||
-    state.adminNationalId.length !== 10
+    !state.serviceCenter.label || !state.serviceCenter.value
+  // !state.adminEmail ||
+  //   !state.adminName ||
+  //   !state.adminNationalId ||
+  //   !isEmailValid(state.adminEmail) ||
+  //   state.adminNationalId.length !== 10
 
   const submit = async () => {
-    // if (areRequiredFieldsFilled) {
-    //   setState({ ...state, hasError: true })
-    //   return
-    // }
+    if (areRequiredFieldsFilled) {
+      setState({ ...state, hasError: true })
+      return
+    }
     try {
       return await createMunicipality({
         variables: {
@@ -92,6 +93,12 @@ const NewMunicipalityModal = ({
           noOptionsMessage="Enginn valmöguleiki"
           options={selectServiceCenter}
           placeholder="Veldu tegund"
+          hasError={
+            state.hasError &&
+            !state.serviceCenter.label &&
+            !state.serviceCenter.value
+          }
+          errorMessage="Þú þarft að velja sveitarfélag"
           value={state.serviceCenter}
           onChange={(option) => {
             setState({
@@ -103,7 +110,7 @@ const NewMunicipalityModal = ({
         />
       </Box>
 
-      <Text marginBottom={2} variant="h4">
+      {/* <Text marginBottom={2} variant="h4">
         Stjórnandi
       </Text>
       <Box marginBottom={2}>
@@ -170,7 +177,7 @@ const NewMunicipalityModal = ({
       <Text marginBottom={3} variant="small">
         Notandi fær sendan tölvupóst með hlekk til að skrá sig inn með rafrænum
         skilríkjum.
-      </Text>
+      </Text> */}
     </ActionModal>
   )
 }
