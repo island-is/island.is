@@ -77,7 +77,6 @@ export class EndorsementController {
     @Query() query: emailDto,
     @CurrentUser() user: User,
   ): Promise<sendPdfEmailResponse> {
-    console.log(user,"##########################################################################")
     return this.endorsementService.emailPDF(
       endorsementList.id,
       query.emailAddress,
