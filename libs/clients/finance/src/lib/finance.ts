@@ -208,10 +208,10 @@ export class FinanceService extends RESTDataSource {
     nationalID: string,
     year: string,
     authToken: string,
-  ): Promise<AnnualStatusTypes> {
+  ): Promise<DocumentTypes> {
     let response
     try {
-      response = await this.get<AnnualStatusTypes>(
+      response = await this.get<DocumentTypes>(
         `/annualStatusDocument?nationalID=${nationalID}&year=${year}`,
         {},
         {

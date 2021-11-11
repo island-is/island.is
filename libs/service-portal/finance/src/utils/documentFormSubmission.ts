@@ -1,7 +1,6 @@
-export const formSubmit = (url: string, token: string) => {
+export const formSubmit = (url: string, token: string, annual?: boolean) => {
   // Create form elements
   const form = document.createElement('form')
-  // const documentIdInput = document.createElement('input')
   const tokenInput = document.createElement('input')
 
   // form.appendChild(documentIdInput)
@@ -12,6 +11,14 @@ export const formSubmit = (url: string, token: string) => {
   // TODO: Use correct url
   form.action = url
   form.target = '_blank'
+
+  if (annual) {
+    const annualInput = document.createElement('input')
+    form.appendChild(annualInput)
+    annualInput.type = 'hidden'
+    annualInput.name = 'annualDoc'
+    annualInput.value = 'true'
+  }
 
   // National Id values
   tokenInput.type = 'hidden'

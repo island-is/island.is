@@ -18,6 +18,7 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { formSubmit } from '../../utils/documentFormSubmission'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
@@ -25,9 +26,7 @@ import {
 import { ExpandHeader, ExpandRow } from '../../components/ExpandableTable'
 import amountFormat from '../../utils/amountFormat'
 import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
-import { showAnnualStatusDocument } from '@island.is/service-portal/graphql'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import DisabledItem from '../../components/DropdownExport/DisabledItem'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
 
 const GetFinanceStatusQuery = gql`
@@ -39,11 +38,6 @@ const GetFinanceStatusQuery = gql`
 const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
-  const {
-    showAnnualStatusPdf,
-    loadingAnnualPDF,
-    fetchingYearPDF,
-  } = showAnnualStatusDocument()
 
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
@@ -146,37 +140,23 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                           title: formatMessage(endOfYearMessage, {
                             year: previousYear,
                           }),
-                          onClick: () => showAnnualStatusPdf(previousYear),
-                          render:
-                            loadingAnnualPDF && fetchingYearPDF === previousYear
-                              ? () => (
-                                  <DisabledItem
-                                    title={formatMessage(endOfYearMessage, {
-                                      year: previousYear,
-                                    })}
-                                    loading
-                                    key={previousYear}
-                                  />
-                                )
-                              : undefined,
+                          onClick: () =>
+                            formSubmit(
+                              `${financeStatusData.downloadServiceURL}${previousYear}`,
+                              userInfo.access_token,
+                              true,
+                            ),
                         },
                         {
                           title: formatMessage(endOfYearMessage, {
                             year: twoYearsAgo,
                           }),
-                          onClick: () => showAnnualStatusPdf(twoYearsAgo),
-                          render:
-                            loadingAnnualPDF && fetchingYearPDF === twoYearsAgo
-                              ? () => (
-                                  <DisabledItem
-                                    title={formatMessage(endOfYearMessage, {
-                                      year: twoYearsAgo,
-                                    })}
-                                    loading
-                                    key={twoYearsAgo}
-                                  />
-                                )
-                              : undefined,
+                          onClick: () =>
+                            formSubmit(
+                              `${financeStatusData.downloadServiceURL}${twoYearsAgo}`,
+                              userInfo.access_token,
+                              true,
+                            ),
                         },
                       ]}
                     />

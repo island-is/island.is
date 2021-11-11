@@ -34,15 +34,20 @@ export class FinanceDocumentController {
   async getFinancePdf(
     @Param('pdfId') pdfId: string,
     @CurrentUser() user: User,
-    // @Body() resource: any, // TODO ADD TO DTO
     @Body() resource: GetFinanceDocumentDto,
     @Res() res: Response,
   ) {
-    const documentResponse = await this.financeService.getFinanceDocument(
-      user.nationalId,
-      pdfId,
-      resource.__accessToken,
-    )
+    const documentResponse = resource.annualDoc
+      ? await this.financeService.getAnnualStatusDocument(
+          user.nationalId,
+          pdfId,
+          resource.__accessToken,
+        )
+      : await this.financeService.getFinanceDocument(
+          user.nationalId,
+          pdfId,
+          resource.__accessToken,
+        )
 
     const documentBase64 = documentResponse?.docment?.document
     if (documentBase64) {
