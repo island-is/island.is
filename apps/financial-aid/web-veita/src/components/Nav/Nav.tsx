@@ -44,6 +44,7 @@ const Nav = ({ showInMobile }: Props) => {
     <nav
       className={cn({
         [`${styles.container}`]: true,
+        [`${styles.adminStyles}`]: admin,
         [`${styles.showNavInMobile}`]: showInMobile,
       })}
     >
@@ -57,9 +58,15 @@ const Nav = ({ showInMobile }: Props) => {
           </Box>
 
           <Box paddingLeft={2} className={'headLine'}>
-            <Text as="h1" lineHeight="sm">
-              <strong>Veita</strong> • Umsóknir um fjárhagsaðstoð
-            </Text>
+            {admin ? (
+              <Text as="h1" lineHeight="sm">
+                <strong>Mamma Sveitó</strong> • Umsjón með sveitarfélögum
+              </Text>
+            ) : (
+              <Text as="h1" lineHeight="sm">
+                <strong>Veita</strong> • Umsóknir um fjárhagsaðstoð
+              </Text>
+            )}
           </Box>
         </div>
       </header>
