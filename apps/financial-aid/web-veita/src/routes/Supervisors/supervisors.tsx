@@ -4,6 +4,8 @@ import {
   ActivationButtonTableItem,
   ApplicationOverviewSkeleton,
   LoadingContainer,
+  NewSupervisorModal,
+  NewUserModal,
   TableBody,
   TableHeaders,
   TextTableItem,
@@ -23,6 +25,7 @@ import cn from 'classnames'
 import {
   formatNationalId,
   Staff,
+  StaffRole,
   staffRoleDescription,
 } from '@island.is/financial-aid/shared/lib'
 import {
@@ -32,6 +35,10 @@ import {
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 export const Supervisors = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [supervisors, setSupervisors] = useState<Staff[]>()
+  const { admin } = useContext(AdminContext)
+
   const [getSupervisors, { data, error, loading }] = useLazyQuery<{
     supervisors: Staff[]
   }>(SupervisorsQuery, {
@@ -42,8 +49,6 @@ export const Supervisors = () => {
     UpdateStaffMutation,
   )
 
-  const [supervisors, setSupervisors] = useState<Staff[]>()
-
   useEffect(() => {
     getSupervisors()
   }, [])
@@ -53,8 +58,6 @@ export const Supervisors = () => {
       setSupervisors(data.supervisors)
     }
   }, [data])
-
-  const { admin } = useContext(AdminContext)
 
   const isLoggedInUser = (staff: Staff) =>
     admin?.nationalId === staff.nationalId
@@ -78,6 +81,11 @@ export const Supervisors = () => {
       })
   }
 
+  const refreshList = () => {
+    setIsModalVisible(false)
+    getSupervisors()
+  }
+
   return (
     <LoadingContainer
       isLoading={loading}
@@ -95,7 +103,7 @@ export const Supervisors = () => {
           size="small"
           icon="add"
           variant="ghost"
-          onClick={() => console.log('🔜')}
+          onClick={() => setIsModalVisible(true)}
         >
           Nýr umsjónaraðili
         </Button>
@@ -165,6 +173,15 @@ export const Supervisors = () => {
           upplýsingum?
         </div>
       )}
+      <NewUserModal
+        isVisible={isModalVisible}
+        setIsVisible={(visible) => {
+          setIsModalVisible(visible)
+        }}
+        onStaffCreated={refreshList}
+        roles={[StaffRole.SUPERADMIN]}
+        showUserRights={false}
+      />
       <ToastContainer />
     </LoadingContainer>
   )
