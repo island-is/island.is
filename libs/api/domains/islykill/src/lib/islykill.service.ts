@@ -2,7 +2,8 @@ import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
 import { Injectable, BadRequestException } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 
-import { IslykillSettings, IslykillUpdateResponse } from './islykill.type'
+import { IslykillSettings } from './graphql/models/islykillSettings.model'
+import { UpdateIslykillSettings } from './graphql/models/updateIslykillSettings.model'
 
 @Injectable()
 export class IslykillService {
@@ -11,7 +12,7 @@ export class IslykillService {
   async updateIslykillSettings(
     nationalId: User['nationalId'],
     { email, mobile }: { email: string; mobile?: string },
-  ): Promise<IslykillUpdateResponse> {
+  ): Promise<UpdateIslykillSettings> {
     const inputUserData: PublicUser = {
       ssn: nationalId,
       email,
