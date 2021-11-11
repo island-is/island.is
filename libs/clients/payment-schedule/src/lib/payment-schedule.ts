@@ -2,6 +2,7 @@ import { Inject } from '@nestjs/common'
 import { DataSourceConfig } from 'apollo-datasource'
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { Base64 } from 'js-base64'
+import { roundToUpperThousand } from './payment-schedule.utils'
 import {
   Conditions,
   DebtSchedules,
@@ -71,7 +72,12 @@ export class PaymentScheduleAPI extends RESTDataSource {
       `distributionInitialPosition/${nationalId}/${type}?totalAmount=${totalAmount}&disposableIncome=${disposableIncome}`,
     )
 
-    return response.distributionInitialPosition
+    return {
+      ...response.distributionInitialPosition,
+      minPayment: roundToUpperThousand(
+        response.distributionInitialPosition.minPayment,
+      ),
+    }
   }
 
   async getPaymentDistribtion(
