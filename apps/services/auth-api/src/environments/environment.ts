@@ -43,7 +43,7 @@ const prodConfig = {
   production: true,
   auth: {
     audience: '@identityserver.api',
-    issuer: process.env.IDS_ISSUER!,
+    issuer: 'https://feature-identity-server-clientpolling.dev01.devland.is',
   },
   port: 3333,
   rsk: {

@@ -19,7 +19,7 @@ export const Envs: EnvironmentConfigs = {
           name: 'dev',
           AUDIT_GROUP_NAME: '/island-is/audit-log',
           IDENTITY_SERVER_ISSUER_URL:
-            'https://identity-server.dev01.devland.is',
+            'https://feature-identity-server-clientpolling.dev01.devland.is',
         },
         image: {
           tag: 'latest_master',
