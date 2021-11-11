@@ -30,6 +30,7 @@ import {
   sportsClubInfo,
   workMachine,
   representativeInfo,
+  addDocuments,
 } from '../../lib/messages'
 import { attachments } from '../../lib/messages/attachments'
 import {
@@ -668,9 +669,7 @@ export const aboutTheAccidentSection = buildSection({
                 description: attachments.general.alertMessage,
                 component: 'FieldAlertMessage',
                 condition: (formValue) =>
-                  (formValue as {
-                    attachments: { injuryCertificate: AttachmentsEnum }
-                  }).attachments?.injuryCertificate ===
+                  getValueViaPath(formValue, 'injuryCertificate.answer') ===
                   AttachmentsEnum.SENDCERTIFICATELATER,
               },
               { type: 'warning' },
@@ -692,9 +691,8 @@ export const aboutTheAccidentSection = buildSection({
             }),
           ],
           condition: (formValue) =>
-            (formValue as {
-              injuryCertificate: { answer: AttachmentsEnum }
-            }).injuryCertificate?.answer === AttachmentsEnum.INJURYCERTIFICATE,
+            getValueViaPath(formValue, 'injuryCertificate.answer') ===
+            AttachmentsEnum.INJURYCERTIFICATE,
         }),
         buildMultiField({
           id: 'fatalAccidentMulti.section',
@@ -771,6 +769,57 @@ export const aboutTheAccidentSection = buildSection({
             isReportingOnBehalfOfInjured(formValue) &&
             formValue.wasTheAccidentFatal === YES &&
             formValue.fatalAccidentUploadDeathCertificateNow === YES,
+        }),
+        buildMultiField({
+          id: 'attachments.additionalFilesMulti',
+          title: attachments.general.heading,
+          children: [
+            buildRadioField({
+              id: 'additionalAttachments.answer',
+              title: '',
+              description: attachments.general.additionalAttachmentDescription,
+              options: () => [
+                {
+                  value: AttachmentsEnum.ADDITIONALNOW,
+                  label: attachments.labels.additionalNow,
+                },
+                {
+                  value: AttachmentsEnum.ADDITIONALLATER,
+                  label: attachments.labels.additionalLater,
+                },
+              ],
+            }),
+            buildCustomField(
+              {
+                id: 'attachments.injuryCertificate.alert',
+                title: attachments.labels.alertMessage,
+                description: attachments.general.alertMessage,
+                component: 'FieldAlertMessage',
+                condition: (formValue) =>
+                  getValueViaPath(formValue, 'additionalAttachments.answer') ===
+                  AttachmentsEnum.ADDITIONALLATER,
+              },
+              { type: 'warning' },
+            ),
+          ],
+        }),
+        buildMultiField({
+          id: 'attachments.additionalAttachments.subSection',
+          title: attachments.general.heading,
+          children: [
+            buildFileUploadField({
+              id: 'attachments.additionalFiles.file',
+              title: attachments.general.heading,
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: addDocuments.general.uploadHeader,
+              uploadDescription: addDocuments.general.uploadDescription,
+              uploadButtonLabel: addDocuments.general.uploadButtonLabel,
+              introduction: addDocuments.general.additionalDocumentsDescription,
+            }),
+          ],
+          condition: (formValue) =>
+            getValueViaPath(formValue, 'additionalAttachments.answer') ===
+            AttachmentsEnum.ADDITIONALNOW,
         }),
       ],
     }),
