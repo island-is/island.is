@@ -11,23 +11,23 @@ interface Props {
 const CaseNumbers: React.FC<Props> = ({ workingCase }: Props) => {
   const { formatMessage } = useIntl()
   return (
-    <>
+    <Box component="section" marginBottom={5}>
       <Box marginBottom={1}>
-        <Text variant="h2" as="h2">{`${formatMessage(core.caseNumber)} ${
-          workingCase.courtCaseNumber
-        }`}</Text>
+        <Text variant="h2" as="h2">
+          {formatMessage(core.caseNumber, {
+            caseNumber: workingCase.courtCaseNumber,
+          })}
+        </Text>
       </Box>
       <Text fontWeight="semiBold">{`${formatMessage(core.prosecutor)}: ${
-        workingCase.court?.name
+        workingCase.prosecutor?.institution?.name
       }`}</Text>
-      {workingCase.defenderName && (
-        <Text fontWeight="semiBold">{`${
-          workingCase.defenderIsSpokesperson
-            ? formatMessage(core.spokeperson)
-            : formatMessage(core.defender)
-        }: ${workingCase.defenderName}`}</Text>
+      {workingCase.accusedName && (
+        <Text fontWeight="semiBold">{`${formatMessage(core.defender)}: ${
+          workingCase.accusedName
+        }`}</Text>
       )}
-    </>
+    </Box>
   )
 }
 

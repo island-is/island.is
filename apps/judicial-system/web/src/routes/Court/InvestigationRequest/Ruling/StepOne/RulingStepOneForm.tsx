@@ -69,9 +69,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             {formatMessage(m.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={5}>
-          <CaseNumbers workingCase={workingCase} />
-        </Box>
+        <CaseNumbers workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />

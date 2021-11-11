@@ -54,9 +54,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             Úrskurður og kæra
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
-        </Box>
+        <CaseNumbers workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">

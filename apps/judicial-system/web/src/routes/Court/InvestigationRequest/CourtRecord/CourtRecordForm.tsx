@@ -72,9 +72,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             Þingbók
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
-        </Box>
+        <CaseNumbers workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <BlueBox>
             <Box marginBottom={3}>

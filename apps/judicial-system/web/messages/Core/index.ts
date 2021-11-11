@@ -61,7 +61,7 @@ export const core = defineMessages({
   },
   caseNumber: {
     id: 'judicial.system.core:case_number',
-    defaultMessage: 'Mál nr.',
+    defaultMessage: 'Mál nr. {caseNumber}',
     description: 'Notað fyrir texta fyrir númer á máli',
   },
   prosecutor: {
