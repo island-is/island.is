@@ -15,8 +15,9 @@ import { MockedAuthenticator, MockUser } from '@island.is/auth/react'
 import { Features, MockedFeatureFlagProvider } from '@island.is/feature-flags'
 import { UserMenu } from './UserMenu'
 import { ACTOR_DELEGATIONS } from './actorDelegations.graphql'
-import { GET_ISLYKILL_SETTINGS } from '@island.is/service-portal/graphql'
 import { ActorDelegationsQuery } from '../../../gen/graphql'
+import { USER_PROFILE } from './userProfile.graphql'
+import { GetUserProfileQuery } from '../../../gen/graphql'
 
 const delegation = {
   name: 'Phil',
@@ -39,7 +40,7 @@ const mocks = [
   },
   {
     request: {
-      query: GET_ISLYKILL_SETTINGS,
+      query: USER_PROFILE,
     },
     result: {
       data: {
@@ -47,7 +48,7 @@ const mocks = [
           email: 'test@test.is',
           mobile: '0000000',
         },
-      },
+      } as GetUserProfileQuery,
     },
   },
 ]

@@ -1,25 +1,20 @@
 import React from 'react'
 import { Button, Box, Icon, Text } from '@island.is/island-ui/core'
-import { Link } from 'react-router-dom'
 import { useFeatureFlag } from '@island.is/feature-flags'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-import { useIslykillSettings } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
+import { useGetUserProfileQuery } from '../../../gen/graphql'
 import * as styles from './UserMenu.css'
 
-interface UserProfileInfoProps {
-  onClose: () => void
-}
-
-export const UserProfileInfo = ({ onClose }: UserProfileInfoProps) => {
+export const UserProfileInfo = () => {
   const { value: showPersonalInfo } = useFeatureFlag(
     'isServicePortalPersonalInformationModuleEnabled',
     false,
   )
-  const { data: settings } = useIslykillSettings({ skip: !showPersonalInfo })
+  const { data } = useGetUserProfileQuery({ skip: !showPersonalInfo })
   const { formatMessage } = useLocale()
   if (showPersonalInfo) {
+    const settings = data?.getUserProfile
     return (
       <>
         {settings?.email && (
@@ -35,7 +30,7 @@ export const UserProfileInfo = ({ onClose }: UserProfileInfoProps) => {
             <Text>{settings.email}</Text>
           </Box>
         )}
-        {settings?.mobile && (
+        {settings?.mobilePhoneNumber && (
           <Box
             display="flex"
             alignItems="center"
@@ -45,15 +40,15 @@ export const UserProfileInfo = ({ onClose }: UserProfileInfoProps) => {
             <Box display="flex" alignItems="center" marginRight={2}>
               <Icon type="outline" icon="call" color="blue300" />
             </Box>
-            <Text>{settings?.mobile}</Text>
+            <Text>{settings?.mobilePhoneNumber}</Text>
           </Box>
         )}
-        {(settings?.email || settings?.mobile) && (
-          <Link to={ServicePortalPath.SettingsRoot} onClick={onClose}>
+        {(settings?.email || settings?.mobilePhoneNumber) && (
+          <a href="/minarsidur/stillingar/personuupplysingar">
             <Button variant="text" icon="arrowForward" size="small">
               {formatMessage(sharedMessages.edit)}
             </Button>
-          </Link>
+          </a>
         )}
       </>
     )

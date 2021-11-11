@@ -66,6 +66,10 @@ export class UserProfileService {
         mobilePhoneNumber:
           islyklarData?.mobilePhoneNumber ?? profile.mobilePhoneNumber,
         email: islyklarData?.email ?? profile.email,
+        mobilePhoneNumberVerified: islyklarData?.mobilePhoneNumber
+          ? true
+          : profile.mobilePhoneNumberVerified,
+        emailVerified: islyklarData?.email ? true : profile.emailVerified,
       }
     } catch (error) {
       if (error.status === 404) return null
