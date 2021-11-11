@@ -181,6 +181,7 @@ export const AccidentNotificationSchema = z.object({
       ProfessionalAthleteAccidentLocationEnum.OTHER,
       AgricultureAccidentLocationEnum.ATTHEWORKPLACE,
       AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+      AgricultureAccidentLocationEnum.OTHER,
       RescueWorkAccidentLocationEnum.TOORFROMRESCUE,
       RescueWorkAccidentLocationEnum.DURINGRESCUE,
       RescueWorkAccidentLocationEnum.OTHER,
