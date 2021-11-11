@@ -157,33 +157,27 @@ export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
 }
 
 export const isSpouseDataNeeded: KeyMapping<FamilyStatus, boolean> = {
-  Unknown: false,
-  Single: false,
+  NotCohabitation: false,
   Cohabitation: true,
   UnregisteredCohabitation: false,
   Married: true,
   MarriedNotLivingTogether: true,
-  NotInformed: false,
 }
 
 export const showSpouseData: KeyMapping<FamilyStatus, boolean> = {
-  Unknown: false,
-  Single: false,
   Cohabitation: true,
   UnregisteredCohabitation: true,
   Married: true,
   MarriedNotLivingTogether: true,
-  NotInformed: false,
+  NotCohabitation: false,
 }
 
 export const getFamilyStatus: KeyMapping<FamilyStatus, string> = {
-  Unknown: 'Óþekkt',
   Cohabitation: 'Í sambúð',
   Married: 'Gift',
-  Single: 'Einstæð',
   MarriedNotLivingTogether: 'Hjón ekki í samvistum',
-  NotInformed: 'Óupplýst',
-  UnregisteredCohabitation: 'Ég er ekki í sambúð',
+  UnregisteredCohabitation: 'Óskráð sambúð',
+  NotCohabitation: 'Ekki í sambúð',
 }
 
 export const getFileTypeName: KeyMapping<FileType, string> = {
