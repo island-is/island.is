@@ -36,6 +36,7 @@ type autofillProperties = Pick<
   | 'courtDate'
   | 'courtLocation'
   | 'accusedBookings'
+  | 'ruling'
 >
 
 interface CreateCaseMutationResponse {
