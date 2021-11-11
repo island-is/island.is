@@ -391,6 +391,8 @@ export class EndorsementService {
     const locale = 'is-IS'
     const big = 16
     const regular = 8
+    const fontRegular = 'Helvetica'
+    const fontBold = 'Helvetica-Bold'
     const rows = []
 
     for (const val of endorsementList.endorsements) {
@@ -411,27 +413,27 @@ export class EndorsementService {
       .moveDown()
 
       .fontSize(regular)
-      .font('Helvetica-Bold')
+      .font(fontBold)
       .text('Heiti meðmælendalista: ')
-      .font('Helvetica')
+      .font(fontRegular)
       .text(endorsementList.title)
       .moveDown()
 
-      .font('Helvetica-Bold')
+      .font(fontBold)
       .text('Um meðmælendalista: ')
-      .font('Helvetica')
+      .font(fontRegular)
       .text(endorsementList.description)
       .moveDown()
 
-      .font('Helvetica-Bold')
+      .font(fontBold)
       .text('Ábyrgðarmaður: ')
-      .font('Helvetica')
+      .font(fontRegular)
       .text(endorsementList.owner)
       .moveDown()
 
-      .font('Helvetica-Bold')
+      .font(fontBold)
       .text('Tímabil lista: ')
-      .font('Helvetica')
+      .font(fontRegular)
       .text(
         endorsementList.openedDate.toLocaleDateString(locale) +
           ' - ' +
@@ -439,9 +441,9 @@ export class EndorsementService {
       )
       .moveDown()
 
-      .font('Helvetica-Bold')
+      .font(fontBold)
       .text('Fjöldi skráðir: ')
-      .font('Helvetica')
+      .font(fontRegular)
       .text(endorsementList.endorsements.length)
       .moveDown(2)
 
