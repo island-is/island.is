@@ -7,6 +7,7 @@ import { BackendAPI } from '../../../services'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { StaffModel } from './models'
 import { StaffInput, UpdateStaffInput, CreateStaffInput } from './dto'
+import type { Staff } from '@island.is/financial-aid/shared/lib'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => StaffModel)
@@ -19,7 +20,7 @@ export class StaffResolver {
   @Query(() => [StaffModel], { nullable: false })
   users(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<StaffModel[]> {
+  ): Promise<Staff[]> {
     this.logger.debug('Getting all staff for municipality')
 
     return backendApi.getStaffForMunicipality()
@@ -30,7 +31,7 @@ export class StaffResolver {
     @Args('input', { type: () => StaffInput })
     input: StaffInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<StaffModel> {
+  ): Promise<Staff> {
     this.logger.debug(`Getting staff from ${input.id}`)
 
     return backendApi.getStaffById(input.id)
@@ -39,7 +40,7 @@ export class StaffResolver {
   @Query(() => [StaffModel])
   supervisors(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<StaffModel[]> {
+  ): Promise<Staff[]> {
     this.logger.debug(`Getting supervisors`)
 
     return backendApi.getSupervisors()
@@ -50,7 +51,7 @@ export class StaffResolver {
     @Args('input', { type: () => UpdateStaffInput })
     input: UpdateStaffInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<StaffModel> {
+  ): Promise<Staff> {
     const { id, ...updateStaff } = input
 
     this.logger.debug(`updating staff ${id}`)
@@ -63,7 +64,7 @@ export class StaffResolver {
     @Args('input', { type: () => CreateStaffInput })
     input: CreateStaffInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<StaffModel> {
+  ): Promise<Staff> {
     this.logger.debug('Creating staff')
 
     return backendApi.createStaff(input)
