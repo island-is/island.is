@@ -44,7 +44,7 @@ export class MunicipalityResolver {
     return backendApi.getMunicipality(input.id)
   }
 
-  @Mutation(() => MunicipalityModel, { nullable: true })
+  @Mutation(() => MunicipalityModel, { nullable: false })
   createMunicipality(
     @Args('input', { type: () => CreateMunicipalityInput })
     input: CreateMunicipalityInput,

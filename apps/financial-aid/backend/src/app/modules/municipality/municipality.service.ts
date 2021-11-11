@@ -47,7 +47,7 @@ export class MunicipalityService {
     })
   }
 
-  findTypeReturnId = (obj: AidModel[], type: AidType) => {
+  private findAidTypeId = (obj: AidModel[], type: AidType) => {
     return obj.find((el) => el.type === type).id
   }
 
@@ -67,11 +67,11 @@ export class MunicipalityService {
         }),
       )
         .then((res) => {
-          municipality.individualAidId = this.findTypeReturnId(
+          municipality.individualAidId = this.findAidTypeId(
             res,
             AidType.INDIVIDUAL,
           )
-          municipality.cohabitationAidId = this.findTypeReturnId(
+          municipality.cohabitationAidId = this.findAidTypeId(
             res,
             AidType.COHABITATION,
           )
