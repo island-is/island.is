@@ -3,6 +3,7 @@
   "external": [
     "fsevents",
     "pdfkit",
+    "pdfkit-table",
     "@nestjs/microservices",
     "class-transformer",
     "cache-manager",
