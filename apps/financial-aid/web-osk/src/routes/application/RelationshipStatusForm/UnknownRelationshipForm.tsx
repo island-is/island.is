@@ -32,7 +32,7 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
   const options = [
     {
       label: 'Nei, ég er ekki í sambúð',
-      value: FamilyStatus.UNKNOWN,
+      value: FamilyStatus.NOT_COHABITATION,
     },
     {
       label: 'Já, ég er í óstaðfestri sambúð',
@@ -51,11 +51,7 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
   }
 
   const errorCheck = () => {
-    if (
-      form?.familyStatus === undefined ||
-      !nextUrl ||
-      form?.familyStatus === FamilyStatus.NOT_INFORMED
-    ) {
+    if (form?.familyStatus === undefined || !nextUrl) {
       setHasError(true)
       return
     }
@@ -95,7 +91,7 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
         </Text>
         <RadioButtonContainer
           options={options}
-          error={hasError}
+          error={hasError && form.familyStatus === undefined}
           isChecked={(value: FamilyStatus) => {
             return value === form?.familyStatus
           }}

@@ -1,8 +1,9 @@
-import { Staff } from '@island.is/financial-aid/shared/lib'
+import { Staff, StaffRole } from '@island.is/financial-aid/shared/lib'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
+import { Op } from 'sequelize'
 
 import { StaffModel } from './models'
 
@@ -68,6 +69,24 @@ export class StaffService {
       active: true,
       municipalityName: user.municipalityName,
       municipalityHomepage: user.municipalityHomepage,
+    })
+  }
+
+  async numberOfUsersForMunicipality(municipalityId: string): Promise<number> {
+    return await this.staffModel.count({
+      where: {
+        municipalityId,
+      },
+    })
+  }
+
+  async getAdminUsers(municipalityId: string): Promise<StaffModel[]> {
+    return await this.staffModel.findAll({
+      where: {
+        municipalityId,
+        roles: { [Op.contains]: [StaffRole.ADMIN] },
+        active: true,
+      },
     })
   }
 }

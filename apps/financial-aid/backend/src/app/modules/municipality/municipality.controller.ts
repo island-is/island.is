@@ -42,12 +42,23 @@ export class MunicipalityController {
     return municipality
   }
 
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.SUPERADMIN)
+  @Get('')
+  @ApiOkResponse({
+    type: [MunicipalityModel],
+    description: 'Gets municipalities',
+  })
+  async getAllMunicipalities(): Promise<MunicipalityModel[]> {
+    return await this.municipalityService.getAll()
+  }
+
   @Put('')
   @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.ADMIN)
   @ApiOkResponse({
     type: MunicipalityModel,
-    description: 'Gets municipality',
+    description: 'Updates municipality',
   })
   async updateMunicipality(
     @CurrentStaff() staff: Staff,

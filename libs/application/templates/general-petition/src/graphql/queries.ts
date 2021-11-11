@@ -49,8 +49,7 @@ export const GetSingleEndorsement = gql`
     $input: FindEndorsementListInput!
   ) {
     endorsementSystemGetSingleEndorsement(input: $input) {
-      id
-      endorser
+      hasEndorsed
     }
   }
 `
