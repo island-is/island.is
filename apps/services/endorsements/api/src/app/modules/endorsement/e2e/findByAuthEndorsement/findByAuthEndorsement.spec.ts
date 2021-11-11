@@ -66,6 +66,6 @@ describe('findByAuthEndorsement', () => {
       .send()
       .expect(200)
 
-      await expect(response.body).toMatchObject({ hasEndorsed: true })
+    await expect(response.body).toMatchObject({ hasEndorsed: true })
   })
 })
