@@ -35,10 +35,9 @@ export class EndorsementListService {
     private logger: Logger,
   ) {}
 
-
-  async hasAdminScope(user: User): Promise<boolean>{
+  async hasAdminScope(user: User): Promise<boolean> {
     for (const [key, value] of Object.entries(user.scope)) {
-      if(value == EndorsementsScope.admin){
+      if (value == EndorsementsScope.admin) {
         return true
       }
     }
@@ -76,12 +75,15 @@ export class EndorsementListService {
     })
   }
 
-  async findSingleList(listId: string, isadmin: boolean = false) {
+  async findSingleList(listId: string, user?: User, check?: boolean) {
+    // Check variable needed since finAll function in Endorsement controller uses this function twice
+    // on the second call it passes nationalID of user but does not go throught the get list pipe
+    const isAdmin = user && check ? await this.hasAdminScope(user) : false
     this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
     const result = await this.endorsementListModel.findOne({
       where: {
         id: listId,
-        adminLock: isadmin ? { [Op.or]: [true, false] } : false,
+        adminLock: isAdmin ? { [Op.or]: [true, false] } : false,
       },
     })
 

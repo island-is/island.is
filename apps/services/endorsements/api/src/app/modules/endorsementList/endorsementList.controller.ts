@@ -86,7 +86,7 @@ export class EndorsementListController {
       // query parameters of length one are not arrays, we normalize all tags input to arrays here
       !Array.isArray(query.tags) ? [query.tags] : query.tags,
       query,
-      user
+      user,
     )
   }
 

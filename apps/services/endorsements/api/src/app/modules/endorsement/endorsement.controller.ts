@@ -70,7 +70,7 @@ export class EndorsementController {
     summary: 'Emails a PDF with list endorsements data',
   })
   @Scopes(EndorsementsScope.main)
-  @HasAccessGroup(AccessGroup.Owner, AccessGroup.Admin)
+  @HasAccessGroup(AccessGroup.Owner)
   @ApiParam({ name: 'listId', type: String })
   @ApiOkResponse({ type: sendPdfEmailResponse })
   @Post('/email-pdf')
@@ -89,6 +89,7 @@ export class EndorsementController {
     )
   }
 
+  // Only being used by party-letter and party-letter-application
   @ApiOperation({ summary: 'Finds all endorsements in a given list' })
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)
