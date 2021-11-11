@@ -528,9 +528,18 @@ export class NotificationService {
   private async sendRulingEmailNotificationToPrison(
     existingCase: Case,
   ): Promise<Recipient> {
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
     const html = formatPrisonRulingEmailNotification(existingCase.courtEndTime)
     const pdf = await getCustodyNoticePdfAsString(existingCase)
+    const rulingPDF = await getRulingPdfAsString(
+      existingCase,
+      intl.formatMessage,
+      true,
+    )
 
     const attachments = [
       {
@@ -540,7 +549,7 @@ export class NotificationService {
       },
       {
         filename: `Þingbók án úrskurðar ${existingCase.courtCaseNumber}.pdf`,
-        content: pdf,
+        content: rulingPDF,
         encoding: 'binary',
       },
     ]
