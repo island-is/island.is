@@ -18,16 +18,11 @@ import { Op, UniqueConstraintError } from 'sequelize'
 import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
 import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
-import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
-
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
-
 import { EmailService } from '@island.is/email-service'
-import PDFDocument from 'pdfkit'
+import PDFDocument from 'pdfkit-table'
 import getStream from 'get-stream'
-import model from 'sequelize/types/lib/model'
-import { emailDto } from './dto/email.dto'
 
 interface FindEndorsementInput {
   listId: string
@@ -396,40 +391,72 @@ export class EndorsementService {
     const locale = 'is-IS'
     const big = 16
     const regular = 8
+    const rows = []
+
+    for (const val of endorsementList.endorsements) {
+      rows.push([
+        val.created.toLocaleDateString(locale),
+        val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint',
+      ])
+    }
+
+    const table = {
+      headers: ['Dags skráð', 'Nafn'],
+      rows: rows,
+    }
+
     doc
       .fontSize(big)
-      .text('ISLAND.IS - þetta skjal og kerfi er í vinnslu')
-      .fontSize(regular)
-      .text(
-        'þetta skjal var framkallað sjálfvirkt þann: ' +
-          new Date().toLocaleDateString(locale),
-      )
+      .text('Upplýsingar um meðmælendalista')
       .moveDown()
-      .fontSize(big)
-      .text('Meðmælendalisti')
+
       .fontSize(regular)
-      .text('id: ' + endorsementList.id)
-      .text('titill: ' + endorsementList.title)
-      .text('lýsing: ' + endorsementList.description)
-      .text('eigandi: ' + endorsementList.owner)
+      .font('Helvetica-Bold')
+      .text('Heiti meðmælendalista: ')
+      .font('Helvetica')
+      .text(endorsementList.title)
+      .moveDown()
+
+      .font('Helvetica-Bold')
+      .text('Um meðmælendalista: ')
+      .font('Helvetica')
+      .text(endorsementList.description)
+      .moveDown()
+
+      .font('Helvetica-Bold')
+      .text('Ábyrgðarmaður: ')
+      .font('Helvetica')
+      .text(endorsementList.owner)
+      .moveDown()
+
+      .font('Helvetica-Bold')
+      .text('Tímabil lista: ')
+      .font('Helvetica')
       .text(
-        'listi opnaður: ' +
-          endorsementList.openedDate.toLocaleDateString(locale),
-      )
-      .text(
-        'listi lokaður: ' +
+        endorsementList.openedDate.toLocaleDateString(locale) +
+          ' - ' +
           endorsementList.closedDate.toLocaleDateString(locale),
       )
-      .text(`Alls undirskriftir: ${endorsementList.endorsements.length}`)
       .moveDown()
+
+      .font('Helvetica-Bold')
+      .text('Fjöldi skráðir: ')
+      .font('Helvetica')
+      .text(endorsementList.endorsements.length)
+      .moveDown(2)
+
     if (endorsementList.endorsements.length) {
-      doc.fontSize(big).text('Meðmælendur').fontSize(regular)
-      for (const val of endorsementList.endorsements) {
-        doc.text(
-          val.created.toLocaleDateString(locale) + ' ' + val.meta.fullName,
-        )
-      }
+      doc.fontSize(big).text('Yfirlit meðmæla').fontSize(regular).moveDown()
+      doc.table(table, { width: 350 })
     }
+    doc
+      .moveDown()
+
+      .fontSize(regular)
+      .text(
+        'Þetta skjal var framkallað sjálfvirkt þann: ' +
+          new Date().toLocaleDateString(locale),
+      )
     doc.end()
     return await getStream.buffer(doc)
   }
@@ -446,6 +473,7 @@ export class EndorsementService {
         },
       ],
     })
+
     try {
       const result = this.emailService.sendEmail({
         from: {
@@ -477,7 +505,7 @@ export class EndorsementService {
             {
               component: 'Copy',
               context: {
-                copy: `Þetta kjal er í þróun ...`,
+                copy: `Þetta skjal er í þróun ...`,
               },
             },
             {

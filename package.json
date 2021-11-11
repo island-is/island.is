@@ -194,6 +194,7 @@
     "passport": "0.4.1",
     "passport-jwt": "4.0.0",
     "pdfkit": "0.11.0",
+    "pdfkit-table": "0.1.59",
     "pg": "8.1.0",
     "pg-hstore": "2.3.3",
     "prom-client": "12.0.0",
