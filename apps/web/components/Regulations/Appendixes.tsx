@@ -31,9 +31,8 @@ export const Appendixes = memo((props: AppendixesProps) => {
           const id = `v${i + 1}`
           return (
             appendix.text && (
-              <div id={id}>
+              <div id={id} key={id}>
                 <AccordionItem
-                  key={id}
                   id={id + '-internals'}
                   labelVariant="h3"
                   labelUse="h2"

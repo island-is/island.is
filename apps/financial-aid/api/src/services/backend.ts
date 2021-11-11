@@ -116,6 +116,10 @@ class BackendAPI extends RESTDataSource {
     return this.get(`staff/id/${id}`)
   }
 
+  getAdminUsers(municipalityId: string): Promise<StaffModel[]> {
+    return this.get(`staff/admin/${municipalityId}`)
+  }
+
   updateStaff(id: string, updateStaff: UpdateStaff): Promise<StaffModel> {
     return this.put(`staff/id/${id}`, updateStaff)
   }

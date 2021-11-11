@@ -18,6 +18,8 @@ import { BackendAPI } from '../../../services'
 import { MunicipalityModel } from './models'
 import { MunicipalityQueryInput, UpdateMunicipalityInput } from './dto'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { StaffModel } from '../staff/models'
+import { Municipality } from '@island.is/financial-aid/shared/lib'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => MunicipalityModel)
@@ -32,7 +34,7 @@ export class MunicipalityResolver {
     @Args('input', { type: () => MunicipalityQueryInput })
     input: MunicipalityQueryInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<MunicipalityModel> {
+  ): Promise<Municipality> {
     this.logger.debug(`Getting municipality ${input.id}`)
 
     return backendApi.getMunicipality(input.id)
@@ -43,7 +45,7 @@ export class MunicipalityResolver {
     @Args('input', { type: () => UpdateMunicipalityInput })
     input: UpdateMunicipalityInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<MunicipalityModel> {
+  ): Promise<Municipality> {
     this.logger.debug('Updating municipality')
 
     return backendApi.updateMunicipality(input)
@@ -53,7 +55,7 @@ export class MunicipalityResolver {
   municipalities(
     input: MunicipalityQueryInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<MunicipalityModel[]> {
+  ): Promise<Municipality[]> {
     this.logger.debug(`Getting municipalities`)
 
     return backendApi.getMunicipalities()
@@ -71,5 +73,15 @@ export class MunicipalityResolver {
     return backendApi.getNumberOfStaffForMunicipality(
       municipality.municipalityId,
     )
+  }
+
+  @ResolveField('adminUsers', () => [StaffModel])
+  adminUsers(
+    @Parent() municipality: MunicipalityModel,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<StaffModel[]> {
+    this.logger.debug(`Getting admin users for ${municipality.municipalityId}`)
+
+    return backendApi.getAdminUsers(municipality.municipalityId)
   }
 }
