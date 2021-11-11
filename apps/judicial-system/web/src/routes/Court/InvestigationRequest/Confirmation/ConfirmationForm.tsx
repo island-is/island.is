@@ -51,7 +51,9 @@ const Confirmation: React.FC<Props> = (props) => {
             'P',
           )}`}</Text>
         </Box>
-        <CaseNumbers workingCase={workingCase} />
+        <Box component="section" marginBottom={7}>
+          <CaseNumbers workingCase={workingCase} />
+        </Box>
         <Box marginBottom={9}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />

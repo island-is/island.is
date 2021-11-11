@@ -11,7 +11,7 @@ interface Props {
 const CaseNumbers: React.FC<Props> = ({ workingCase }: Props) => {
   const { formatMessage } = useIntl()
   return (
-    <Box component="section" marginBottom={5}>
+    <>
       <Box marginBottom={1}>
         <Text variant="h2" as="h2">
           {formatMessage(core.caseNumber, {
@@ -27,7 +27,7 @@ const CaseNumbers: React.FC<Props> = ({ workingCase }: Props) => {
           workingCase.accusedName
         }`}</Text>
       )}
-    </Box>
+    </>
   )
 }
 

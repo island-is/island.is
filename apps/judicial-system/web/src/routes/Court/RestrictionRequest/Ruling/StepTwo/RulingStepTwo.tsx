@@ -212,7 +212,9 @@ export const RulingStepTwo: React.FC = () => {
                 Úrskurður og kæra
               </Text>
             </Box>
-            <CaseNumbers workingCase={workingCase} />
+            <Box component="section" marginBottom={7}>
+              <CaseNumbers workingCase={workingCase} />
+            </Box>
             <Box component="section" marginBottom={8}>
               <Box marginBottom={6}>
                 <Box marginBottom={2}>

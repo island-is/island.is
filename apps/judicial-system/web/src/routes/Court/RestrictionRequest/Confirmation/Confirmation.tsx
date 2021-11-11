@@ -118,7 +118,9 @@ export const Confirmation: React.FC = () => {
                 'P',
               )}`}</Text>
             </Box>
-            <CaseNumbers workingCase={workingCase} />
+            <Box component="section" marginBottom={7}>
+              <CaseNumbers workingCase={workingCase} />
+            </Box>
             <Box marginBottom={9}>
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
