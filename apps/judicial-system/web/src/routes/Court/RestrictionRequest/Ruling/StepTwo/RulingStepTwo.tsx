@@ -109,7 +109,9 @@ export const RulingStepTwo: React.FC = () => {
                 accusedName: theCase.accusedName,
                 extensionSuffix:
                   theCase.parentCase !== undefined &&
-                  theCase.parentCase?.decision === CaseDecision.ACCEPTING
+                  (theCase.parentCase?.decision === CaseDecision.ACCEPTING ||
+                    theCase.parentCase?.decision ===
+                      CaseDecision.ACCEPTING_PARTIALLY)
                     ? ' áframhaldandi'
                     : '',
                 caseType:
@@ -127,7 +129,9 @@ export const RulingStepTwo: React.FC = () => {
                 accusedNationalId: formatNationalId(theCase.accusedNationalId),
                 extensionSuffix:
                   theCase.parentCase !== undefined &&
-                  theCase.parentCase?.decision === CaseDecision.ACCEPTING
+                  (theCase.parentCase?.decision === CaseDecision.ACCEPTING ||
+                    theCase.parentCase?.decision ===
+                      CaseDecision.ACCEPTING_PARTIALLY)
                     ? ' áframhaldandi'
                     : '',
                 caseType:
@@ -145,10 +149,14 @@ export const RulingStepTwo: React.FC = () => {
                 accusedName: theCase.accusedName,
                 accusedNationalId: formatNationalId(theCase.accusedNationalId),
                 caseTypeAndExtensionSuffix:
-                  theCase.decision === CaseDecision.ACCEPTING
+                  theCase.decision === CaseDecision.ACCEPTING ||
+                  theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
                     ? `${
                         theCase.parentCase !== undefined &&
-                        theCase.parentCase?.decision === CaseDecision.ACCEPTING
+                        (theCase.parentCase?.decision ===
+                          CaseDecision.ACCEPTING ||
+                          theCase.parentCase?.decision ===
+                            CaseDecision.ACCEPTING_PARTIALLY)
                           ? 'áframhaldandi '
                           : ''
                       }${
@@ -168,7 +176,8 @@ export const RulingStepTwo: React.FC = () => {
                   ?.replace('dagur,', 'dagsins')
                   ?.replace(' kl.', ', kl.')}`,
                 isolationSuffix:
-                  theCase.decision === CaseDecision.ACCEPTING &&
+                  (theCase.decision === CaseDecision.ACCEPTING ||
+                    theCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
                   theCase.custodyRestrictions?.includes(
                     CaseCustodyRestrictions.ISOLATION,
                   )
@@ -552,7 +561,8 @@ export const RulingStepTwo: React.FC = () => {
                   </Box>
                 </BlueBox>
               </Box>
-              {workingCase.decision === CaseDecision.ACCEPTING &&
+              {(workingCase.decision === CaseDecision.ACCEPTING ||
+                workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
                 workingCase.type === CaseType.CUSTODY && (
                   <Box component="section" marginBottom={3}>
                     <Box marginBottom={3}>
@@ -635,6 +645,7 @@ export const RulingStepTwo: React.FC = () => {
               )}
               {(!workingCase.decision ||
                 workingCase.decision === CaseDecision.ACCEPTING ||
+                workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY ||
                 workingCase.decision ===
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
                 <Text variant="h4" fontWeight="light">
@@ -643,7 +654,9 @@ export const RulingStepTwo: React.FC = () => {
                     {
                       caseType:
                         workingCase.type === CaseType.CUSTODY &&
-                        workingCase.decision === CaseDecision.ACCEPTING
+                        (workingCase.decision === CaseDecision.ACCEPTING ||
+                          workingCase.decision ===
+                            CaseDecision.ACCEPTING_PARTIALLY)
                           ? 'gæsluvarðhaldsins'
                           : 'farbannsins',
                     },

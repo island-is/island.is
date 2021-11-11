@@ -126,7 +126,8 @@ export const RulingStepOne: React.FC = () => {
   useEffect(() => {
     if (
       workingCase?.parentCase &&
-      workingCase?.decision === CaseDecision.ACCEPTING &&
+      (workingCase.decision === CaseDecision.ACCEPTING ||
+        workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
       !workingCase.ruling
     ) {
       updateCase(
@@ -289,17 +290,27 @@ export const RulingStepOne: React.FC = () => {
                 <Decision
                   workingCase={workingCase}
                   setWorkingCase={setWorkingCase}
-                  acceptedLabelText={`Krafa um ${
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhald'
-                      : 'farbann'
-                  } samþykkt`}
-                  rejectedLabelText={`Kröfu um ${
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhald'
-                      : 'farbann'
-                  } hafnað`}
-                  partiallyAcceptedLabelText="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
+                  acceptedLabelText={formatMessage(
+                    m.sections.decision.acceptLabel,
+                    {
+                      caseType:
+                        workingCase.type === CaseType.CUSTODY
+                          ? 'gæsluvarðhald'
+                          : 'farbann',
+                    },
+                  )}
+                  rejectedLabelText={formatMessage(
+                    m.sections.decision.rejectLabel,
+                    {
+                      caseType:
+                        workingCase.type === CaseType.CUSTODY
+                          ? 'gæsluvarðhald'
+                          : 'farbann',
+                    },
+                  )}
+                  partiallyAcceptedLabelText={formatMessage(
+                    m.sections.decision.partiallyAcceptLabel,
+                  )}
                   dismissLabelText={formatMessage(
                     m.sections.decision.dismissLabel,
                     {
@@ -308,6 +319,9 @@ export const RulingStepOne: React.FC = () => {
                           ? 'gæsluvarðhald'
                           : 'farbann',
                     },
+                  )}
+                  acceptingAlternativeTravelBanLabelText={formatMessage(
+                    m.sections.decision.acceptingAlternativeTravelBanLabel,
                   )}
                 />
               </Box>
@@ -335,7 +349,9 @@ export const RulingStepOne: React.FC = () => {
                   <Box marginBottom={2}>
                     <Text as="h3" variant="h3">
                       {workingCase.type === CaseType.CUSTODY &&
-                      workingCase.decision === CaseDecision.ACCEPTING
+                      (workingCase.decision === CaseDecision.ACCEPTING ||
+                        workingCase.decision ===
+                          CaseDecision.ACCEPTING_PARTIALLY)
                         ? 'Gæsluvarðhald'
                         : 'Farbann'}
                     </Text>
@@ -344,7 +360,9 @@ export const RulingStepOne: React.FC = () => {
                     name="validToDate"
                     datepickerLabel={
                       workingCase.type === CaseType.CUSTODY &&
-                      workingCase.decision === CaseDecision.ACCEPTING
+                      (workingCase.decision === CaseDecision.ACCEPTING ||
+                        workingCase.decision ===
+                          CaseDecision.ACCEPTING_PARTIALLY)
                         ? 'Gæsluvarðhald til'
                         : 'Farbann til'
                     }
@@ -370,7 +388,8 @@ export const RulingStepOne: React.FC = () => {
                 </Box>
               )}
             {workingCase.type === CaseType.CUSTODY &&
-              workingCase.decision === CaseDecision.ACCEPTING && (
+              (workingCase.decision === CaseDecision.ACCEPTING ||
+                workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) && (
                 <Box component="section" marginBottom={8}>
                   <Box marginBottom={2}>
                     <Text as="h3" variant="h3">

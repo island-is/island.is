@@ -169,6 +169,8 @@ export const Confirmation: React.FC = () => {
               nextButtonText={formatMessage(
                 workingCase.decision === CaseDecision.ACCEPTING
                   ? m.footer.accepting.continueButtonText
+                  : workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY
+                  ? m.footer.acceptingPartially.continueButtonText
                   : workingCase.decision === CaseDecision.REJECTING
                   ? m.footer.rejecting.continueButtonText
                   : workingCase.decision === CaseDecision.DISMISSING
@@ -180,6 +182,7 @@ export const Confirmation: React.FC = () => {
                 [
                   CaseDecision.ACCEPTING,
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+                  CaseDecision.ACCEPTING_PARTIALLY,
                 ].includes(workingCase.decision)
                   ? 'checkmark'
                   : 'close'
@@ -189,6 +192,7 @@ export const Confirmation: React.FC = () => {
                 [
                   CaseDecision.ACCEPTING,
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+                  CaseDecision.ACCEPTING_PARTIALLY,
                 ].includes(workingCase.decision)
                   ? 'default'
                   : 'destructive'

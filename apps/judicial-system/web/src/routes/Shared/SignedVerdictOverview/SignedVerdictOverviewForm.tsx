@@ -212,7 +212,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           <Box display="flex" flexDirection="column">
             {
               // Custody restrictions
-              workingCase.decision === CaseDecision.ACCEPTING &&
+              (workingCase.decision === CaseDecision.ACCEPTING ||
+                workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
                 workingCase.type === CaseType.CUSTODY &&
                 workingCase.custodyRestrictions
                   ?.filter((restriction) =>
@@ -468,7 +469,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           </Box>
           {workingCase.type === CaseType.CUSTODY &&
             workingCase.state === CaseState.ACCEPTED &&
-            workingCase.decision === CaseDecision.ACCEPTING && (
+            (workingCase.decision === CaseDecision.ACCEPTING ||
+              workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) && (
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonCustodyNotice)}

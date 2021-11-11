@@ -214,7 +214,8 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </Box>
       )}
       {workingCase.type === CaseType.CUSTODY &&
-        workingCase.decision === CaseDecision.ACCEPTING && (
+        (workingCase.decision === CaseDecision.ACCEPTING ||
+          workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) && (
           <AccordionListItem title="Tilhögun gæsluvarðhalds">
             {custodyRestrictions && (
               <Box marginBottom={2}>

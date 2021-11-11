@@ -62,7 +62,9 @@ const PageLayout: React.FC<PageProps> = ({
 
     const decisionIsAccepting =
       workingCase?.decision === CaseDecision.ACCEPTING ||
-      workingCase?.parentCase?.decision === CaseDecision.ACCEPTING
+      workingCase?.decision === CaseDecision.ACCEPTING_PARTIALLY ||
+      workingCase?.parentCase?.decision === CaseDecision.ACCEPTING ||
+      workingCase?.parentCase?.decision === CaseDecision.ACCEPTING_PARTIALLY
 
     const decisionIsDismissing =
       workingCase?.decision === CaseDecision.DISMISSING ||

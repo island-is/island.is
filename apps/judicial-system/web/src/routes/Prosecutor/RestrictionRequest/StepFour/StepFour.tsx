@@ -67,7 +67,8 @@ export const StepFour: React.FC = () => {
           accusedNationalId: formatNationalId(theCase.accusedNationalId),
           extensionSuffix:
             theCase.parentCase !== undefined &&
-            theCase.parentCase?.decision === CaseDecision.ACCEPTING
+            (theCase.parentCase?.decision === CaseDecision.ACCEPTING ||
+              theCase.parentCase?.decision === CaseDecision.ACCEPTING_PARTIALLY)
               ? ' áframhaldandi'
               : '',
           caseType:
