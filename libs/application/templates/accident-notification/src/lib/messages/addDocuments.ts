@@ -48,6 +48,11 @@ export const addDocuments = {
         'Ef þú hefur auka skjöl sem þú vilt koma til skila eins og ljósmyndir af slysstað, skýrsla til vinnueftirlitsins eða önnnur gögn teng slysinu, þá vinsamlegast bættu þeim við hér að neðan.',
       description: 'Additional documents description',
     },
+    submitButtonLabel: {
+      id: 'an.application:addDocuments.general.submitButtonLabel',
+      defaultMessage: 'Senda inn skjöl',
+      description: 'Submit button label',
+    },
   }),
   injuryCertificate: defineMessages({
     title: {
