@@ -69,14 +69,9 @@ export const core = defineMessages({
     defaultMessage: 'Sóknaraðili',
     description: 'Notað fyrir orðið sóknaraðili í öllum flæðum.',
   },
-  defender: {
-    id: 'judicial.system.core:defender',
+  accused: {
+    id: 'judicial.system.core:accused',
     defaultMessage: 'Varnaraðili',
     description: 'Notað fyrir orðið varnaraðili í öllum flæðum.',
-  },
-  spokeperson: {
-    id: 'judicial.system.core:spokeperson',
-    defaultMessage: 'Talsmaður',
-    description: 'Notað fyrir orðið talsmaður í öllum flæðum.',
   },
 })

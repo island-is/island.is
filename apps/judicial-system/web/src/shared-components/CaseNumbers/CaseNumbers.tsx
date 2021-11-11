@@ -22,11 +22,9 @@ const CaseNumbers: React.FC<Props> = ({ workingCase }: Props) => {
       <Text fontWeight="semiBold">{`${formatMessage(core.prosecutor)}: ${
         workingCase.prosecutor?.institution?.name
       }`}</Text>
-      {workingCase.accusedName && (
-        <Text fontWeight="semiBold">{`${formatMessage(core.defender)}: ${
-          workingCase.accusedName
-        }`}</Text>
-      )}
+      <Text fontWeight="semiBold">{`${formatMessage(core.accused)}: ${
+        workingCase.accusedName
+      }`}</Text>
     </>
   )
 }
