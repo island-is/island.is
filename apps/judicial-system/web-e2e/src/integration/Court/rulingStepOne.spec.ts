@@ -24,7 +24,8 @@ describe('/domur/urskurdur/:id', () => {
   })
 
   it('should require a valid ruling', () => {
-    cy.getByTestid('ruling').click().blur()
+    cy.getByTestid('ruling').clear()
+    cy.clickOutside()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('ruling').type('lorem')
     cy.getByTestid('inputErrorMessage').should('not.exist')
