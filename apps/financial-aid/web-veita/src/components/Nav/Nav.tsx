@@ -60,7 +60,7 @@ const Nav = ({ showInMobile }: Props) => {
           <Box paddingLeft={2} className={'headLine'}>
             {admin ? (
               <Text as="h1" lineHeight="sm">
-                <strong>Mamma Sveitó</strong> • Umsjón með sveitarfélögum
+                <strong>Veita</strong> • Umsjón með sveitarfélögum
               </Text>
             ) : (
               <Text as="h1" lineHeight="sm">
