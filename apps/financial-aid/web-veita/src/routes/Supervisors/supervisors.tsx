@@ -49,7 +49,6 @@ export const Supervisors = () => {
   }, [])
 
   useEffect(() => {
-    console.log('data', data)
     if (data?.supervisors) {
       setSupervisors(data.supervisors)
     }
