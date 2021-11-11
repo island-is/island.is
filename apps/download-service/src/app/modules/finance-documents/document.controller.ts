@@ -48,7 +48,6 @@ export class FinanceDocumentController {
     if (documentBase64) {
       const buffer = Buffer.from(documentBase64, 'base64')
 
-      console.log('documentResponse', documentBase64)
       res.header('Content-length', buffer.length.toString())
       res.header('Content-Disposition', `inline; filename=${pdfId}.pdf`)
       res.header('Pragma: no-cache')

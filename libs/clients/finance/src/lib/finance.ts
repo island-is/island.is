@@ -56,7 +56,7 @@ export class FinanceService extends RESTDataSource {
   ): Promise<FinanceStatus | null> {
     let response
     try {
-      response = await this.get<FinanceStatus | null>(
+      const dataResponse = await this.get<FinanceStatus | null>(
         `/customerStatusByOrganization?nationalID=${nationalID}`,
         {},
         {
@@ -66,6 +66,10 @@ export class FinanceService extends RESTDataSource {
           },
         },
       )
+      response = {
+        ...dataResponse,
+        downloadServiceURL: `${this.options.downloadServiceBaseUrl}/download/v1/finance/`,
+      } as FinanceStatus | null
     } catch (e) {
       return this.handleError('Failed to get finance status', e)
     }

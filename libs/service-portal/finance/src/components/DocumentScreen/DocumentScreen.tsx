@@ -105,7 +105,6 @@ const DocumentScreen: FC<Props> = ({
     setToDate(new Date())
   }, [])
 
-  console.log('data?.getDocumentsList', data?.getDocumentsList)
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>

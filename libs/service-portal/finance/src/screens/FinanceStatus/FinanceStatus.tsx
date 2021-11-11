@@ -36,7 +36,7 @@ const GetFinanceStatusQuery = gql`
   }
 `
 
-const FinanceStatus: ServicePortalModuleComponent = () => {
+const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
   const {
@@ -199,6 +199,8 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                           <FinanceStatusTableRow
                             chargeType={chargeType}
                             organization={org}
+                            downloadURL={financeStatusData.downloadServiceURL}
+                            userInfo={userInfo}
                             key={`${org.id}-${chargeType.id}-${i}-${ii}`}
                           />
                         )),

@@ -1,21 +1,15 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { Table as T } from '@island.is/island-ui/core'
+import { User } from 'oidc-client'
 import {
   FinanceStatusOrganizationType,
   FinanceStatusDetailsType,
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
-import {
-  Box,
-  Text,
-  Columns,
-  Column,
-  Button,
-  LoadingDots,
-} from '@island.is/island-ui/core'
+import { Box, Text, Columns, Column, Button } from '@island.is/island-ui/core'
 import { exportGjoldSundurlidunFile } from '../../utils/filesGjoldSundurlidun'
 import amountFormat from '../../utils/amountFormat'
+import { formSubmit } from '../../utils/documentFormSubmission'
 import { useLocale } from '@island.is/localization'
-import { showPdfDocument } from '@island.is/service-portal/graphql'
 import { m } from '@island.is/service-portal/core'
 import cn from 'classnames'
 import * as styles from './FinanceStatusDetailTable.css'
@@ -23,13 +17,16 @@ import * as styles from './FinanceStatusDetailTable.css'
 interface Props {
   organization: FinanceStatusOrganizationType
   financeStatusDetails: FinanceStatusDetailsType
+  downloadURL: string
+  userInfo: User
 }
 
 const FinanceStatusDetailTable: FC<Props> = ({
   organization,
   financeStatusDetails,
+  downloadURL,
+  userInfo,
 }) => {
-  const { showPdf, loadingPDF, fetchingPdfId } = showPdfDocument()
   const { formatMessage } = useLocale()
 
   const headerArray = [
@@ -92,15 +89,14 @@ const FinanceStatusDetailTable: FC<Props> = ({
                     <Button
                       size="small"
                       variant="text"
-                      onClick={() => showPdf(row.documentID as string)}
-                      disabled={loadingPDF && fetchingPdfId === row.documentID}
+                      onClick={() =>
+                        formSubmit(
+                          `${downloadURL}${row.documentID}`,
+                          userInfo.access_token,
+                        )
+                      }
                     >
                       {item.value}
-                      {loadingPDF && fetchingPdfId === row.documentID && (
-                        <span className={styles.loadingDot}>
-                          <LoadingDots single />
-                        </span>
-                      )}
                     </Button>
                   </T.Data>
                 ) : (
