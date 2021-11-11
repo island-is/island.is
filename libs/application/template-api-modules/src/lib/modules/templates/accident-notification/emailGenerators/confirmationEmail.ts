@@ -52,7 +52,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
         {
           component: 'Image',
           context: {
-            src: pathToAsset('manWithBabyIllustration.jpg'),
+            src: pathToAsset('computerIllustration.jpg'),
             alt: 'Maður með barn myndskreyting',
           },
         },

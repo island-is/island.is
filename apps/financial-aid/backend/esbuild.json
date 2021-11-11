@@ -28,7 +28,8 @@
     "atob",
     "logform",
     "pg-native",
-    "form-data"
+    "form-data",
+    "sequelize-replace-enum-postgres"
   ],
   "keepNames": true
 }
