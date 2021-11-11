@@ -34,6 +34,7 @@ export class UserProfileModule {
         IslykillApiModule.register({
           cert: config.islykill.cert,
           passphrase: config.islykill.passphrase,
+          basePath: config.islykill.basePath,
         }),
       ],
       exports: [],

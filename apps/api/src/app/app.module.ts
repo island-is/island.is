@@ -178,6 +178,7 @@ const autoSchemaFile = environment.production
       islykill: {
         cert: environment.islykill.cert,
         passphrase: environment.islykill.passphrase,
+        basePath: environment.islykill.basePath,
       },
     }),
     CommunicationsModule,
@@ -265,6 +266,7 @@ const autoSchemaFile = environment.production
     IslykillModule.register({
       cert: environment.islykill.cert,
       passphrase: environment.islykill.passphrase,
+      basePath: environment.islykill.basePath,
     }),
     ProblemModule,
   ],

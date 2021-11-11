@@ -9,6 +9,7 @@ import { Configuration, IslyklarApi } from '../../gen/fetch'
 export interface IslykillApiModuleConfig {
   cert: string
   passphrase: string
+  basePath: string
 }
 
 export class IslykillApiModule {
@@ -46,6 +47,7 @@ export class IslykillApiModule {
           useFactory: () =>
             new IslyklarApi(
               new Configuration({
+                basePath: config.basePath,
                 fetchApi: createEnhancedFetch({
                   name: 'clients-islykill',
                   certificate: {
