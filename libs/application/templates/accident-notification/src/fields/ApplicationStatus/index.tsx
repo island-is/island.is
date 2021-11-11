@@ -59,8 +59,6 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
     'accidentStatus',
   ) as AccidentNotificationStatus
 
-  console.log(answers)
-
   const hasAccidentStatusChanged = useCallback(
     (
       newAccidentStatus: AccidentNotificationStatus,
