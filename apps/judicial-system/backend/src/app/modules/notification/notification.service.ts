@@ -42,6 +42,7 @@ import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
+import { notificationMessages, core } from '../../messages'
 
 interface Recipient {
   address?: string
@@ -292,30 +293,32 @@ export class NotificationService {
       ['judicial.system.backend'],
       'is',
     )
-    const pdf = await getRequestPdfAsString(existingCase, intl.formatMessage)
 
-    const subject = `Krafa í máli ${existingCase.policeCaseNumber}`
-    const html = 'Sjá viðhengi'
-    const attachments = [
+    const { type, court, policeCaseNumber } = existingCase
+
+    const subject = `Krafa í máli ${policeCaseNumber}`
+
+    const caseType =
+      type === CaseType.CUSTODY
+        ? intl.formatMessage(core.caseType.custody)
+        : type === CaseType.TRAVEL_BAN
+        ? intl.formatMessage(core.caseType.travelBan)
+        : intl.formatMessage(core.caseType.investigate)
+
+    const html = intl.formatMessage(
+      notificationMessages.readyForCourt.prosecutorHtml,
       {
-        filename: `Krafa um ${
-          existingCase.type === CaseType.CUSTODY
-            ? 'gæsluvarðhald'
-            : existingCase.type === CaseType.TRAVEL_BAN
-            ? 'farbann'
-            : 'rannsóknarheimild'
-        } ${existingCase.policeCaseNumber}.pdf`,
-        content: pdf,
-        encoding: 'binary',
+        caseType,
+        courtName: court?.name,
+        policeCaseNumber,
       },
-    ]
+    )
 
     return this.sendEmail(
       existingCase.prosecutor?.name,
       existingCase.prosecutor?.email,
       subject,
       html,
-      attachments,
     )
   }
 
