@@ -4,6 +4,8 @@ import {
   buildFileUploadField,
   buildMultiField,
   buildSection,
+  buildSubmitField,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { UPLOAD_ACCEPT } from '../../constants'
 import { addDocuments } from '../../lib/messages'
@@ -117,6 +119,17 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             uploadHeader: addDocuments.general.uploadHeader,
             uploadDescription: addDocuments.general.uploadDescription,
             uploadButtonLabel: addDocuments.general.uploadButtonLabel,
+          }),
+          buildSubmitField({
+            id: 'overview.submit',
+            title: '',
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: addDocuments.general.submitButtonLabel,
+                type: 'primary',
+              },
+            ],
           }),
         ],
       }),
