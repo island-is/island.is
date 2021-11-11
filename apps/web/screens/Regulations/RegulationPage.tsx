@@ -192,7 +192,7 @@ RegulationPage.getInitialProps = async ({
     const currentUrl = asPath || '/reglugerdir'
     const redirectUrl = currentUrl.replace(nameRe, `/nr/${name}/`)
     if (res) {
-      res.writeHead(302, { Location: redirectUrl })
+      res.writeHead(301, { Location: redirectUrl })
       res.end()
     }
     return {
@@ -237,7 +237,7 @@ RegulationPage.getInitialProps = async ({
       )
     }
     if (res) {
-      res.writeHead(302, { Location: regulation.pdfVersion })
+      res.writeHead(307, { Location: regulation.pdfVersion })
       res.end()
     }
     return {

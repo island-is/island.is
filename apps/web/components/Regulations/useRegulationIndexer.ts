@@ -75,33 +75,18 @@ const flatIndexToTree = (flatIndex: FlatIndex): IndexTree => {
 
 // ---------------------------------------------------------------------------
 
-const idPrefixes: Record<ItemType, string> = {
-  document: '',
-  section: 'hl',
-  chapter: 'k',
-  article: 'gr',
-}
-
 const insertIds = (
   flatIndex: FlatIndex,
   html: HTMLText,
-  idPrefix: string,
-): HTMLText => {
-  const count: Record<ItemType, number> = {
-    document: 0, // not used, but hey...
-    section: 0,
-    chapter: 0,
-    article: 0,
-  }
-
-  return html.replace(
-    / class="(section|chapter|article)__title"\s*>([^<]+)</g,
-    (htmlSnippet: string, _type: string, title: string) => {
+  idPrefix = '',
+): HTMLText =>
+  html.replace(
+    / class="(section|chapter|article)__title"\s*>(([^<]+)[^]+?)<\/h\d/g,
+    (htmlSnippet: string, _type: string, title: string, shortTitle: string) => {
       const type = _type as ItemType
-      count[type] += 1
-      const id = idPrefix + idPrefixes[type] + count[type]
+      const id = idPrefix + shortTitle.toLocaleLowerCase().replace(/\s/g, '')
       flatIndex.push({
-        title: title.trim(),
+        title: title.replace(/<[^]+?>/g, '').trim(),
         type,
         id,
       })
@@ -109,7 +94,6 @@ const insertIds = (
       return ` id="${id}" ${htmlSnippet}`
     },
   ) as HTMLText
-}
 
 // ===========================================================================
 
@@ -148,7 +132,7 @@ function useRegulationIndexer<Reg extends RegulationMaybeDiff>(
         })
       }
 
-      const text = insertIds(flatIndex, regulation.text, '')
+      const text = insertIds(flatIndex, regulation.text)
 
       const appendixes = (regulation as Regulation).appendixes.map(
         ({ title, text }, i) => {
