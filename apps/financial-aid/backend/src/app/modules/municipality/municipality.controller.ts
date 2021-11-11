@@ -47,7 +47,7 @@ export class MunicipalityController {
   @Get('')
   @ApiOkResponse({
     type: [MunicipalityModel],
-    description: 'Gets municipality',
+    description: 'Gets municipalities',
   })
   async getAllMunicipalities(): Promise<MunicipalityModel[]> {
     return await this.municipalityService.getAll()
@@ -58,7 +58,7 @@ export class MunicipalityController {
   @StaffRolesRules(StaffRole.ADMIN)
   @ApiOkResponse({
     type: MunicipalityModel,
-    description: 'Gets municipality',
+    description: 'Updates municipality',
   })
   async updateMunicipality(
     @CurrentStaff() staff: Staff,

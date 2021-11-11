@@ -35,6 +35,7 @@ const Confirmation = () => {
   ]
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     document.title = 'Umsókn um fjárhagsaðstoð'
   }, [])
 

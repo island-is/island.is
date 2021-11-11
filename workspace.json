@@ -7620,6 +7620,11 @@
                 "glob": "sequelize.config.js",
                 "input": "apps/services/endorsements/api",
                 "output": "./"
+              },
+              {
+                "glob": "*",
+                "input": "libs/email-service/src/tools/design",
+                "output": "./email-service-assets"
               }
             ]
           },

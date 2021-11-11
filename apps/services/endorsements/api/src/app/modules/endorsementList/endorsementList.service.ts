@@ -91,7 +91,6 @@ export class EndorsementListService {
     this.logger.debug(
       `Finding endorsements for single national id ${nationalId}`,
     )
-
     return await paginate({
       Model: this.endorsementModel,
       limit: query.limit || 10,
