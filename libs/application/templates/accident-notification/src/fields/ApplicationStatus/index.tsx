@@ -242,9 +242,10 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
               inReview.action.representative.actionButtonTitle,
             ),
           },
-      visible:
-        !isHomeActivitiesAccident(application.answers) ||
-        !isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers),
+      visible: !(
+        isHomeActivitiesAccident(application.answers) ||
+        isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
+      ),
     },
     {
       state: statesMap['sjukratrygging'][application.state],
