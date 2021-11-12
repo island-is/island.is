@@ -26,7 +26,7 @@ module.exports = {
     {
       ...getGenericEndorsementList(),
       id: listYouDoNotOwnListId,
-      owner: "1305775399",
+      owner: '1305775399',
       tags: ['generalPetition'],
     },
   ],

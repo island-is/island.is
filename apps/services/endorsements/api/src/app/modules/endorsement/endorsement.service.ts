@@ -499,7 +499,7 @@ export class EndorsementService {
           },
         ],
       })
-      console.log(result,"######################################")
+      console.log(result, '######################################')
       return { success: true }
     } catch (error) {
       this.logger.error('Failed to send email', error)
