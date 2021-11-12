@@ -94,7 +94,6 @@ export class EndorsementController {
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)
   @Get()
-  @HasAccessGroup(AccessGroup.Owner, AccessGroup.DMR)
   @Audit<PaginatedEndorsementDto>({
     resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),

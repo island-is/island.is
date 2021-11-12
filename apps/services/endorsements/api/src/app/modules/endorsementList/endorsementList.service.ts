@@ -109,6 +109,9 @@ export class EndorsementListService {
       include: [
         {
           model: EndorsementList,
+          required: true,
+          as: 'endorsementList',
+          where: { adminLock: false },
           attributes: [
             'id',
             'title',
