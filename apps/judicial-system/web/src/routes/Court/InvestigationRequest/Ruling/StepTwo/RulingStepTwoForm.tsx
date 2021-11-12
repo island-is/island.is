@@ -10,6 +10,7 @@ import {
   FormContentContainer,
   FormFooter,
   TimeInputField,
+  CaseNumbers,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Box,
@@ -53,12 +54,16 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             Úrskurður og kæra
           </Text>
         </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseNumbers workingCase={workingCase} />
+        </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Úrskurður
             </Text>
           </Box>
+
           <Input
             name="conclusion"
             label="Úrskurðarorð"
