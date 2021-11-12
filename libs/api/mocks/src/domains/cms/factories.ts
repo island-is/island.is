@@ -100,6 +100,8 @@ export const article = factory<SystemMetadata<Article>>({
 
 export const lifeEvent = factory<LifeEventPage>({
   id: () => faker.datatype.uuid(),
+  shortTitle: () => '',
+  tinyThumbnail: image(),
   title: () => title(),
   slug: slugify('title'),
   intro: () => faker.lorem.paragraph(),
