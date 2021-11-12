@@ -184,7 +184,7 @@ const prodConfig = {
       xroadPath: process.env.XROAD_DRIVING_LICENSE_PATH,
     },
     v2: {
-      xroadPath: process.env.XROAD_DRIVING_LICENSE_V2_PATH,
+      xroadPath: process.env.XROAD_DRIVING_LICENSE_PATH,
     },
   },
   education: {
