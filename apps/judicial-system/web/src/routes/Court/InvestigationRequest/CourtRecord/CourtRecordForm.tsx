@@ -64,6 +64,13 @@ const CourtRecordForm: React.FC<Props> = (props) => {
 
   useCaseFormHelper(workingCase, setWorkingCase, validations)
 
+  const displayAccusedBookings =
+    workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+    (workingCase.sessionArrangements ===
+      SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+      workingCase.defenderIsSpokesperson &&
+      workingCase.defenderName)
+
   return (
     <>
       <FormContentContainer>
@@ -233,8 +240,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             workingCase={workingCase}
           />
         </Box>
-        {workingCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT && (
+        {displayAccusedBookings && (
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">

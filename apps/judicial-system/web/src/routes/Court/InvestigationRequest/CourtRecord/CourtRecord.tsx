@@ -107,15 +107,46 @@ const CourtRecord = () => {
       }
 
       if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+        let autofillAccusedBookings = ''
+
+        if (theCase.defenderName) {
+          autofillAccusedBookings += `${formatMessage(
+            m.sections.accusedBookings.autofillDefender,
+            {
+              defender: theCase.defenderName,
+            },
+          )}\n\n`
+        }
+
+        if (theCase.translator) {
+          autofillAccusedBookings += `${formatMessage(
+            m.sections.accusedBookings.autofillTranslator,
+            {
+              translator: theCase.translator,
+            },
+          )}\n\n`
+        }
+
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillRightToRemainSilent,
+        )}\n\n${formatMessage(
+          m.sections.accusedBookings.autofillCourtDocumentOne,
+        )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
+
+        autofill('accusedBookings', autofillAccusedBookings, theCase)
+      }
+
+      if (
+        theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+        theCase.defenderIsSpokesperson &&
+        theCase.defenderName
+      ) {
         autofill(
           'accusedBookings',
-          `${formatMessage(
-            m.sections.accusedBookings.autofillRightToRemainSilent,
-          )}\n\n${formatMessage(
-            m.sections.accusedBookings.autofillCourtDocumentOne,
-          )}\n\n${formatMessage(
-            m.sections.accusedBookings.autofillAccusedPlea,
-          )}`,
+          formatMessage(m.sections.accusedBookings.autofillSpokeperson, {
+            spokesperson: theCase.defenderName,
+          }),
           theCase,
         )
       }
