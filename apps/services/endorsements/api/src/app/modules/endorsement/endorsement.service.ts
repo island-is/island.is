@@ -499,7 +499,9 @@ export class EndorsementService {
           },
         ],
       })
-      console.log(result, '######################################')
+      this.logger.debug(
+      `sending list ${listId} to ${recipientEmail}`,
+    )
       return { success: true }
     } catch (error) {
       this.logger.error('Failed to send email', error)
