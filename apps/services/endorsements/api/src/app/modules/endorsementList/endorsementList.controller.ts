@@ -86,7 +86,7 @@ export class EndorsementListController {
       // query parameters of length one are not arrays, we normalize all tags input to arrays here
       !Array.isArray(query.tags) ? [query.tags] : query.tags,
       query,
-      user.nationalId,
+      user,
     )
   }
 
@@ -336,14 +336,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @BypassAuth()
   @Get(':listId/ownerInfo')
-  async getOwnerInfo(
-    @Param(
-      'listId',
-      new ParseUUIDPipe({ version: '4' }),
-      EndorsementListByIdPipe,
-    )
-    endorsementList: EndorsementList,
-  ): Promise<String> {
-    return await this.endorsementListService.getOwnerInfo(endorsementList)
+  async getOwnerInfo(@Param('listId') listId: string): Promise<String> {
+    return await this.endorsementListService.getOwnerInfo(listId)
   }
 }
