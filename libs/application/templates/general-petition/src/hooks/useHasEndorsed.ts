@@ -3,7 +3,7 @@ import { GetSingleEndorsement } from '../graphql/queries'
 import { Endorsement } from '../types/schema'
 
 interface EndorsementData {
-  endorsementSystemUserEndorsements?: Endorsement
+  endorsementSystemUserEndorsements?: any
 }
 
 //returns user endorsement if it exists
@@ -18,5 +18,5 @@ export const useHasEndorsed = (endorsementListId: string) => {
       },
     },
   )
-  return endorsement
+  return endorsement?.endorsementSystemUserEndorsements?.hasEndorsed
 }
