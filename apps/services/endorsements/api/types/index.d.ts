@@ -16,5 +16,3 @@ export interface EndorsementRequest extends Request {
   }
   cachedEndorsementList: EndorsementList
 }
-
-declare module 'pdfkit-table'
