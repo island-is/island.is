@@ -49,6 +49,7 @@ import { emailDto } from './dto/email.dto'
 import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
 import { EndorsementInterceptor } from './interceptors/endorsement.interceptor'
 import { PaginatedEndorsementInterceptor } from './interceptors/paginatedEndorsement.interceptor'
+import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @Audit({
@@ -69,7 +70,7 @@ export class EndorsementController {
     summary: 'Emails a PDF with list endorsements data',
   })
   @Scopes(EndorsementsScope.main)
-  @HasAccessGroup(AccessGroup.Owner, AccessGroup.Admin)
+  @HasAccessGroup(AccessGroup.Owner)
   @ApiParam({ name: 'listId', type: String })
   @ApiOkResponse({ type: sendPdfEmailResponse })
   @Post('/email-pdf')
@@ -92,7 +93,6 @@ export class EndorsementController {
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)
   @Get()
-  @HasAccessGroup(AccessGroup.Owner, AccessGroup.DMR)
   @Audit<PaginatedEndorsementDto>({
     resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),
@@ -152,15 +152,11 @@ export class EndorsementController {
   @ApiOkResponse({
     description:
       'Uses current authenticated users national id to find any existing endorsement in a given list',
-    type: Endorsement,
+    type: ExistsEndorsementResponse,
   })
-  @UseInterceptors(EndorsementInterceptor)
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)
   @Get('/exists')
-  @Audit<Endorsement>({
-    resources: (endorsement) => endorsement.id,
-  })
   async findByAuth(
     @Param(
       'listId',
@@ -169,7 +165,7 @@ export class EndorsementController {
     )
     endorsementList: EndorsementList,
     @CurrentUser() user: User,
-  ): Promise<Endorsement> {
+  ): Promise<ExistsEndorsementResponse> {
     return await this.endorsementService.findSingleUserEndorsement({
       listId: endorsementList.id,
       nationalId: user.nationalId,

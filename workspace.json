@@ -3557,6 +3557,12 @@
             ]
           }
         },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/payment-schedule/src/gen/fetch/ -i libs/clients/payment-schedule/src/openapi.yml"
+          }
+        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/libs/clients/payment-schedule"],
@@ -7691,6 +7697,11 @@
                 "glob": "sequelize.config.js",
                 "input": "apps/services/endorsements/api",
                 "output": "./"
+              },
+              {
+                "glob": "*",
+                "input": "libs/email-service/src/tools/design",
+                "output": "./email-service-assets"
               }
             ]
           },

@@ -4,6 +4,9 @@ on:
   pull_request: {}
   workflow_dispatch: {}
 
+env:
+  COMPOSE_HTTP_TIMEOUT: 180
+
 jobs:
   prepare:
     runs-on: self-hosted
