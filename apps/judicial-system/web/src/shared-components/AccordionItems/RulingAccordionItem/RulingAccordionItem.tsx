@@ -46,17 +46,6 @@ const RulingAccordionItem: React.FC<Props> = ({
         <Box marginBottom={2}>
           <Text>{workingCase.courtLegalArguments}</Text>
         </Box>
-        {isInvestigationCase(workingCase.type) &&
-          workingCase.requestProsecutorOnlySession && (
-            <Box marginY={2}>
-              <Box marginBottom={1}>
-                <Text variant="eyebrow" color="blue400">
-                  {formatMessage(m.sections.requestProsecutorOnlySession.title)}
-                </Text>
-              </Box>
-              <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
-            </Box>
-          )}
         <Text variant="eyebrow" color="blue400">
           {formatMessage(m.sections.ruling.title)}
         </Text>
