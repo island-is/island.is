@@ -233,8 +233,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             workingCase={workingCase}
           />
         </Box>
-        {workingCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT && (
+        {workingCase.accusedBookings && (
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
