@@ -99,6 +99,7 @@ export class NationalRegistryXRoadService {
         city: person.logheimili?.stadur || undefined,
         municipalityCode: person.logheimili?.sveitarfelagsnumer || undefined,
       },
+      genderCode: person.kynkodi,
     }
   }
 
