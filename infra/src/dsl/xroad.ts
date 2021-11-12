@@ -203,8 +203,8 @@ export const PaymentSchedule = new XroadConf({
   env: {
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: {
       dev: 'IS-DEV/GOV/10021/FJS-Public',
-      staging: '',
-      prod: '',
+      staging: 'IS-DEV/GOV/10021/FJS-Public',
+      prod: 'IS/GOV/5402697509/FJS-Public',
     },
   },
   secrets: {
