@@ -16,6 +16,7 @@ import {
   UserRole,
   Case,
   completedCaseStates,
+  isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -61,10 +62,8 @@ const PageLayout: React.FC<PageProps> = ({
       workingCase?.parentCase?.decision === CaseDecision.REJECTING
 
     const decisionIsAccepting =
-      workingCase?.decision === CaseDecision.ACCEPTING ||
-      workingCase?.decision === CaseDecision.ACCEPTING_PARTIALLY ||
-      workingCase?.parentCase?.decision === CaseDecision.ACCEPTING ||
-      workingCase?.parentCase?.decision === CaseDecision.ACCEPTING_PARTIALLY
+      isAcceptingCaseDecision(workingCase?.decision) ||
+      isAcceptingCaseDecision(workingCase?.parentCase?.decision)
 
     const decisionIsDismissing =
       workingCase?.decision === CaseDecision.DISMISSING ||
@@ -82,17 +81,17 @@ const PageLayout: React.FC<PageProps> = ({
         return 'Kröfu hafnað'
       }
     } else if (decisionIsAccepting) {
-      if (isInvestigationCase(workingCase.type)) {
+      if (isInvestigationCase(workingCase?.type)) {
         return 'Krafa um rannsóknarheimild samþykkt'
       } else {
-        return workingCase.isValidToDateInThePast
+        return workingCase?.isValidToDateInThePast
           ? `${
               workingCase.type === CaseType.CUSTODY
                 ? 'Gæsluvarðhaldi'
                 : 'Farbanni'
             } lokið`
           : `${
-              workingCase.type === CaseType.CUSTODY
+              workingCase?.type === CaseType.CUSTODY
                 ? 'Gæsluvarðhald'
                 : 'Farbann'
             } virkt`

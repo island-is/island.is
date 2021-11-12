@@ -23,6 +23,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
+  isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -126,8 +127,7 @@ export const RulingStepOne: React.FC = () => {
   useEffect(() => {
     if (
       workingCase?.parentCase &&
-      (workingCase.decision === CaseDecision.ACCEPTING ||
-        workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
+      isAcceptingCaseDecision(workingCase.decision) &&
       !workingCase.ruling
     ) {
       updateCase(
@@ -349,9 +349,7 @@ export const RulingStepOne: React.FC = () => {
                   <Box marginBottom={2}>
                     <Text as="h3" variant="h3">
                       {workingCase.type === CaseType.CUSTODY &&
-                      (workingCase.decision === CaseDecision.ACCEPTING ||
-                        workingCase.decision ===
-                          CaseDecision.ACCEPTING_PARTIALLY)
+                      isAcceptingCaseDecision(workingCase.decision)
                         ? 'Gæsluvarðhald'
                         : 'Farbann'}
                     </Text>
@@ -360,9 +358,7 @@ export const RulingStepOne: React.FC = () => {
                     name="validToDate"
                     datepickerLabel={
                       workingCase.type === CaseType.CUSTODY &&
-                      (workingCase.decision === CaseDecision.ACCEPTING ||
-                        workingCase.decision ===
-                          CaseDecision.ACCEPTING_PARTIALLY)
+                      isAcceptingCaseDecision(workingCase.decision)
                         ? 'Gæsluvarðhald til'
                         : 'Farbann til'
                     }
@@ -388,8 +384,7 @@ export const RulingStepOne: React.FC = () => {
                 </Box>
               )}
             {workingCase.type === CaseType.CUSTODY &&
-              (workingCase.decision === CaseDecision.ACCEPTING ||
-                workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) && (
+              isAcceptingCaseDecision(workingCase.decision) && (
                 <Box component="section" marginBottom={8}>
                   <Box marginBottom={2}>
                     <Text as="h3" variant="h3">

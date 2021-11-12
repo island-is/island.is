@@ -18,7 +18,10 @@ import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { CaseDecision } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
 import type {
   Case,
   RequestSignatureResponse,
@@ -178,22 +181,16 @@ export const Confirmation: React.FC = () => {
                   : m.footer.acceptingAlternativeTravelBan.continueButtonText,
               )}
               nextButtonIcon={
-                workingCase.decision &&
-                [
-                  CaseDecision.ACCEPTING,
-                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                  CaseDecision.ACCEPTING_PARTIALLY,
-                ].includes(workingCase.decision)
+                isAcceptingCaseDecision(workingCase.decision) ||
+                workingCase.decision ===
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                   ? 'checkmark'
                   : 'close'
               }
               nextButtonColorScheme={
-                workingCase.decision &&
-                [
-                  CaseDecision.ACCEPTING,
-                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                  CaseDecision.ACCEPTING_PARTIALLY,
-                ].includes(workingCase.decision)
+                isAcceptingCaseDecision(workingCase.decision) ||
+                workingCase.decision ===
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                   ? 'default'
                   : 'destructive'
               }

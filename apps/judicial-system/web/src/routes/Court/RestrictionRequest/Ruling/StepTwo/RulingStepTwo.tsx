@@ -22,6 +22,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
+  isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -109,9 +110,7 @@ export const RulingStepTwo: React.FC = () => {
                 accusedName: theCase.accusedName,
                 extensionSuffix:
                   theCase.parentCase !== undefined &&
-                  (theCase.parentCase?.decision === CaseDecision.ACCEPTING ||
-                    theCase.parentCase?.decision ===
-                      CaseDecision.ACCEPTING_PARTIALLY)
+                  isAcceptingCaseDecision(theCase.parentCase.decision)
                     ? ' áframhaldandi'
                     : '',
                 caseType:
@@ -129,9 +128,7 @@ export const RulingStepTwo: React.FC = () => {
                 accusedNationalId: formatNationalId(theCase.accusedNationalId),
                 extensionSuffix:
                   theCase.parentCase !== undefined &&
-                  (theCase.parentCase?.decision === CaseDecision.ACCEPTING ||
-                    theCase.parentCase?.decision ===
-                      CaseDecision.ACCEPTING_PARTIALLY)
+                  isAcceptingCaseDecision(theCase.parentCase.decision)
                     ? ' áframhaldandi'
                     : '',
                 caseType:
@@ -148,36 +145,32 @@ export const RulingStepTwo: React.FC = () => {
                 ),
                 accusedName: theCase.accusedName,
                 accusedNationalId: formatNationalId(theCase.accusedNationalId),
-                caseTypeAndExtensionSuffix:
-                  theCase.decision === CaseDecision.ACCEPTING ||
-                  theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
-                    ? `${
-                        theCase.parentCase !== undefined &&
-                        (theCase.parentCase?.decision ===
-                          CaseDecision.ACCEPTING ||
-                          theCase.parentCase?.decision ===
-                            CaseDecision.ACCEPTING_PARTIALLY)
-                          ? 'áframhaldandi '
-                          : ''
-                      }${
-                        theCase.type === CaseType.CUSTODY
-                          ? 'gæsluvarðhaldi'
-                          : 'farbanni'
-                      }`
-                    : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                      `${
-                        theCase.parentCase !== undefined &&
-                        theCase.parentCase?.decision ===
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                          ? 'áframhaldandi '
-                          : ''
-                      }farbanni`,
+                caseTypeAndExtensionSuffix: isAcceptingCaseDecision(
+                  theCase.decision,
+                )
+                  ? `${
+                      theCase.parentCase !== undefined &&
+                      isAcceptingCaseDecision(theCase.parentCase.decision)
+                        ? 'áframhaldandi '
+                        : ''
+                    }${
+                      theCase.type === CaseType.CUSTODY
+                        ? 'gæsluvarðhaldi'
+                        : 'farbanni'
+                    }`
+                  : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                    `${
+                      theCase.parentCase !== undefined &&
+                      theCase.parentCase?.decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                        ? 'áframhaldandi '
+                        : ''
+                    }farbanni`,
                 validToDate: `${formatDate(theCase.validToDate, 'PPPPp')
                   ?.replace('dagur,', 'dagsins')
                   ?.replace(' kl.', ', kl.')}`,
                 isolationSuffix:
-                  (theCase.decision === CaseDecision.ACCEPTING ||
-                    theCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
+                  isAcceptingCaseDecision(theCase.decision) &&
                   theCase.custodyRestrictions?.includes(
                     CaseCustodyRestrictions.ISOLATION,
                   )
@@ -561,8 +554,7 @@ export const RulingStepTwo: React.FC = () => {
                   </Box>
                 </BlueBox>
               </Box>
-              {(workingCase.decision === CaseDecision.ACCEPTING ||
-                workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
+              {isAcceptingCaseDecision(workingCase.decision) &&
                 workingCase.type === CaseType.CUSTODY && (
                   <Box component="section" marginBottom={3}>
                     <Box marginBottom={3}>
@@ -644,8 +636,7 @@ export const RulingStepTwo: React.FC = () => {
                 </Box>
               )}
               {(!workingCase.decision ||
-                workingCase.decision === CaseDecision.ACCEPTING ||
-                workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY ||
+                isAcceptingCaseDecision(workingCase.decision) ||
                 workingCase.decision ===
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
                 <Text variant="h4" fontWeight="light">
@@ -654,9 +645,7 @@ export const RulingStepTwo: React.FC = () => {
                     {
                       caseType:
                         workingCase.type === CaseType.CUSTODY &&
-                        (workingCase.decision === CaseDecision.ACCEPTING ||
-                          workingCase.decision ===
-                            CaseDecision.ACCEPTING_PARTIALLY)
+                        isAcceptingCaseDecision(workingCase.decision)
                           ? 'gæsluvarðhaldsins'
                           : 'farbannsins',
                     },

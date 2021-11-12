@@ -16,6 +16,7 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
+  isAcceptingCaseDecision,
   isInvestigationCase,
   isRestrictionCase,
   SessionArrangements,
@@ -214,8 +215,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </Box>
       )}
       {workingCase.type === CaseType.CUSTODY &&
-        (workingCase.decision === CaseDecision.ACCEPTING ||
-          workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) && (
+        isAcceptingCaseDecision(workingCase.decision) && (
           <AccordionListItem title="Tilhögun gæsluvarðhalds">
             {custodyRestrictions && (
               <Box marginBottom={2}>

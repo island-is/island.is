@@ -32,6 +32,7 @@ import {
   isRestrictionCase,
   isInvestigationCase,
   UserRole,
+  isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -212,8 +213,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           <Box display="flex" flexDirection="column">
             {
               // Custody restrictions
-              (workingCase.decision === CaseDecision.ACCEPTING ||
-                workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
+              isAcceptingCaseDecision(workingCase.decision) &&
                 workingCase.type === CaseType.CUSTODY &&
                 workingCase.custodyRestrictions
                   ?.filter((restriction) =>
@@ -469,8 +469,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           </Box>
           {workingCase.type === CaseType.CUSTODY &&
             workingCase.state === CaseState.ACCEPTED &&
-            (workingCase.decision === CaseDecision.ACCEPTING ||
-              workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) && (
+            isAcceptingCaseDecision(workingCase.decision) && (
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonCustodyNotice)}
