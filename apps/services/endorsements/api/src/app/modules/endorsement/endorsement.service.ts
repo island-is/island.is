@@ -446,8 +446,9 @@ export class EndorsementService {
         },
       ],
     })
+    await this.createDocumentBuffer(endorsementList)
     try {
-      const result = this.emailService.sendEmail({
+      const result = await this.emailService.sendEmail({
         from: {
           name: 'TEST:Meðmælendakerfi island.is',
           address: 'noreply@island.is',
@@ -498,6 +499,7 @@ export class EndorsementService {
           },
         ],
       })
+      console.log(result,"######################################")
       return { success: true }
     } catch (error) {
       this.logger.error('Failed to send email', error)

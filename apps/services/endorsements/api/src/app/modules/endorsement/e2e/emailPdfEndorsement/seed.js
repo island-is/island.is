@@ -1,33 +1,63 @@
-const faker = require('faker')
-const authNationalId = 'xxxxxx-xxxx' // we use gervimaður national id here to pass national id checks
+const {
+  getGenericEndorsementList,
+  getGenericEndorsement,
+} = require('../../../../../../test/seedHelpers')
+
+const authNationalId = '0000000004'
+const listYouOwnListId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c8'
+const listYouDoNotOwnListId = 'cb3f3185-a3f8-42d1-8206-212cbb943aaf'
+
 module.exports = {
   authNationalId,
+  listYouOwnListId,
+  listYouDoNotOwnListId,
   endorsementLists: [
     {
-      id: '7d6c2b91-8d8d-42d0-82f7-cd64ce16d753',
-      title: 'titill',
-      description: 'lýsingin ..............',
-      opened_date: new Date(),
-      closed_date: new Date(),
-      admin_lock: false,
-      endorsement_meta: '{}', // default empty array in postgres
-      endorsement_metadata: '[]', // default empty array in postgres
-      tags: ['generalPetition'], // default empty array in postgres
-      validation_rules: '[]',
-      meta: '{}',
-      owner: 'xxxxxx-xxxx', //faker.phone.phoneNumber('##########'),
-      created: new Date(),
-      modified: new Date(),
+      ...getGenericEndorsementList(),
+      id: listYouOwnListId,
+      owner: authNationalId,
+    },
+    // {
+    //   ...getGenericEndorsementList(),
+    //   id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
+    //   owner: authNationalId,
+    //   tags: ['generalPetition'],
+    // },
+    {
+      ...getGenericEndorsementList(),
+      id: listYouDoNotOwnListId,
+      owner: "1305775399",
+      tags: ['generalPetition'],
     },
   ],
   endorsements: [
     {
-      id: faker.datatype.uuid(),
-      endorser: '1305775399',
-      endorsement_list_id: '7d6c2b91-8d8d-42d0-82f7-cd64ce16d753',
-      meta: '{}',
-      created: new Date(),
-      modified: new Date(),
+      ...getGenericEndorsement(),
+      endorsement_list_id: listYouOwnListId,
     },
+    {
+      ...getGenericEndorsement(),
+      endorsement_list_id: listYouOwnListId,
+    },
+    // {
+    //   ...getGenericEndorsement(),
+    //   endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
+    // },
+    // {
+    //   ...getGenericEndorsement(),
+    //   endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
+    // },
+    // {
+    //   ...getGenericEndorsement(),
+    //   endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
+    // },
+    // {
+    //   ...getGenericEndorsement(),
+    //   endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
+    // },
+    // {
+    //   ...getGenericEndorsement(),
+    //   endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
+    // },
   ],
 }
