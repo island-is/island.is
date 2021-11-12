@@ -337,13 +337,8 @@ export class EndorsementListController {
   @BypassAuth()
   @Get(':listId/ownerInfo')
   async getOwnerInfo(
-    @Param(
-      'listId',
-      new ParseUUIDPipe({ version: '4' }),
-      EndorsementListByIdPipe,
-    )
-    endorsementList: EndorsementList,
+    @Param('listId') listId: string,
   ): Promise<String> {
-    return await this.endorsementListService.getOwnerInfo(endorsementList)
+    return await this.endorsementListService.getOwnerInfo(listId)
   }
 }

@@ -232,7 +232,19 @@ export class EndorsementListService {
     return result
   }
 
-  async getOwnerInfo(endorsementList: EndorsementList) {
+  async getOwnerInfo(listId: string) {
+    // Is used by both unauthenticated users, authenticated users and admin
+    // Admin needs to access locked lists and can not use the EndorsementListById pipe
+    // Since the endpoint is not authenticated
+    this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
+    const endorsementList = await this.endorsementListModel.findOne({
+      where: {
+        id: listId,
+      },
+    })
+    if (!endorsementList) {
+      throw new NotFoundException(['This endorsement list does not exist.'])
+    }
     try {
       return (await this.nationalRegistryApi.getUser(endorsementList.owner))
         .Fulltnafn
