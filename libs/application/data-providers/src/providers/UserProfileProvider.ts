@@ -16,6 +16,10 @@ export class UserProfileProvider extends BasicDataProvider {
         mobilePhoneNumber
         mobilePhoneNumberVerified
       }
+
+      nationalRegistryUserV2 {
+        genderCode
+      }
     }`
     return this.useGraphqlGateway(query)
       .then(async (res: Response) => {
@@ -23,7 +27,11 @@ export class UserProfileProvider extends BasicDataProvider {
         if (response.errors) {
           return this.handleError()
         }
-        const responseObj = response.data.getUserProfile
+
+        const responseObj = {
+          ...response.data.getUserProfile,
+          ...response.data.nationalRegistryUserV2,
+        }
         if (
           !responseObj?.mobilePhoneNumber ||
           !responseObj?.mobilePhoneNumberVerified ||
