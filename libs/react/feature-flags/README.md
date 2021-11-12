@@ -35,7 +35,7 @@ Alternatively, you can pass in a `defaultUser` property to `FeatureFlagProvider`
 ### Feature flag consumer
 
 ```tsx
-import { useFeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 render() {
   const featureFlagClient = useFeatureFlagClient()
@@ -61,7 +61,7 @@ render() {
 For the common use case of checking on a feature flag, there is `useFeatureFlag` hook:
 
 ```tsx
-import { useFeatureFlag } from '@island.is/feature-flags'
+import { useFeatureFlag } from '@island.is/react/feature-flags'
 
 const MyComponent = () => {
   const { value: showAwesome, loading } = useFeatureFlag(
