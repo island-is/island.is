@@ -13,6 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   DataProviderItem,
+  DataProviderPermissionItem,
   DataProviderResult,
   ExternalData,
   FormValue,
@@ -21,6 +22,7 @@ import {
   RecordObject,
   SetBeforeSubmitCallback,
   coreErrorMessages,
+  StaticText,
 } from '@island.is/application/core'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
@@ -28,15 +30,14 @@ import { useLocale } from '@island.is/localization'
 import { ExternalDataProviderScreen } from '../types'
 import { verifyExternalData } from '../utils'
 
-const ProviderItem: FC<{
-  dataProviderResult: DataProviderResult
-  provider: DataProviderItem
-}> = ({ dataProviderResult = {}, provider }) => {
-  const { subTitle, title } = provider
+const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
+  title,
+  subTitle,
+}) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box marginBottom={3}>
+    <>
       <Text variant="h4" color="blue400">
         {formatMessage(title)}
       </Text>
@@ -46,6 +47,20 @@ const ProviderItem: FC<{
           <Markdown>{formatMessage(subTitle)}</Markdown>
         </Text>
       )}
+    </>
+  )
+}
+
+const ProviderItem: FC<{
+  dataProviderResult: DataProviderResult
+  provider: DataProviderItem
+}> = ({ dataProviderResult = {}, provider }) => {
+  const { title, subTitle } = provider
+  const { formatMessage } = useLocale()
+
+  return (
+    <Box marginBottom={3}>
+      <ItemHeader title={title} subTitle={subTitle} />
 
       {provider.type && dataProviderResult?.status === 'failure' && (
         <Box marginTop={2}>
@@ -60,6 +75,18 @@ const ProviderItem: FC<{
           />
         </Box>
       )}
+    </Box>
+  )
+}
+
+const PermissionItem: FC<{
+  permission: DataProviderPermissionItem
+}> = ({ permission }) => {
+  const { title, subTitle } = permission
+
+  return (
+    <Box marginBottom={3}>
+      <ItemHeader title={title} subTitle={subTitle} />
     </Box>
   )
 }
@@ -103,6 +130,7 @@ const FormExternalDataProvider: FC<{
   const {
     id,
     dataProviders,
+    otherPermissions,
     subTitle,
     description,
     checkboxLabel,
@@ -175,6 +203,10 @@ const FormExternalDataProvider: FC<{
             dataProviderResult={externalData[provider.id]}
           />
         ))}
+        {otherPermissions &&
+          otherPermissions.map((permission) => (
+            <PermissionItem permission={permission} key={permission.id} />
+          ))}
       </Box>
       <Controller
         name={`${id}`}

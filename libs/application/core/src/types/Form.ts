@@ -119,6 +119,7 @@ export interface ExternalDataProvider extends FormItem {
   readonly children: undefined
   isPartOfRepeater?: boolean
   dataProviders: DataProviderItem[]
+  otherPermissions?: DataProviderPermissionItem[]
   checkboxLabel?: StaticText
   subTitle?: StaticText
   description?: StaticText
@@ -133,6 +134,10 @@ export interface DataProviderItem {
   readonly parameters?: any
 }
 
+export type DataProviderPermissionItem = Omit<
+  DataProviderItem,
+  'type' | 'source' | 'parameters'
+>
 export interface FieldBaseProps {
   autoFocus?: boolean
   error?: string

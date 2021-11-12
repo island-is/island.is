@@ -9,6 +9,7 @@ import {
   Section,
   SubSection,
   DataProviderItem,
+  DataProviderPermissionItem,
 } from '../types/Form'
 
 export function buildForm(data: Omit<Form, 'type'>): Form {
@@ -48,5 +49,14 @@ export function buildDataProviderItem(
     subTitle?: MessageDescriptor | string
   },
 ): DataProviderItem {
+  return data
+}
+
+export function buildDataProviderPermissionItem(
+  data: DataProviderPermissionItem & {
+    title: MessageDescriptor | string
+    subTitle?: MessageDescriptor | string
+  },
+): DataProviderPermissionItem {
   return data
 }
