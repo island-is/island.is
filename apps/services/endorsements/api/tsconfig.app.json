@@ -4,7 +4,7 @@
     "declaration": true,
     "allowSyntheticDefaultImports": true,
     "outDir": "../../../../dist/out-tsc",
-    "types": ["node", "pdfkit"]
+    "types": ["node"]
   },
   "exclude": ["**/*.spec.ts", "test/**", "**/e2e/**"],
   "include": ["**/*.ts"]
