@@ -108,6 +108,12 @@ export const AccidentNotificationSchema = z.object({
       AttachmentsEnum.SENDCERTIFICATELATER,
     ]),
   }),
+  additionalAttachments: z.object({
+    answer: z.enum([
+      AttachmentsEnum.ADDITIONALNOW,
+      AttachmentsEnum.ADDITIONALLATER,
+    ]),
+  }),
 
   attachments: z.object({
     injuryCertificateFile: z
@@ -175,6 +181,7 @@ export const AccidentNotificationSchema = z.object({
       ProfessionalAthleteAccidentLocationEnum.OTHER,
       AgricultureAccidentLocationEnum.ATTHEWORKPLACE,
       AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+      AgricultureAccidentLocationEnum.OTHER,
       RescueWorkAccidentLocationEnum.TOORFROMRESCUE,
       RescueWorkAccidentLocationEnum.DURINGRESCUE,
       RescueWorkAccidentLocationEnum.OTHER,
