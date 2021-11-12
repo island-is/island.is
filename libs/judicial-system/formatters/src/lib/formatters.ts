@@ -87,6 +87,7 @@ export const caseTypes = {
   AUTOPSY: 'krufning',
   BODY_SEARCH: 'leit og líkamsrannsókn',
   INTERNET_USAGE: 'upplýsingar um vefnotkun',
+  RESTRAINING_ORDER: 'nálgunarbann',
   OTHER: 'annað',
 }
 
