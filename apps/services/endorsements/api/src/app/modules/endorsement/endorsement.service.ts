@@ -21,8 +21,10 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 import { EmailService } from '@island.is/email-service'
-import PDFDocument from 'pdfkit-table'
 import getStream from 'get-stream'
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const PDFDocument = require('pdfkit-table')
 
 interface FindEndorsementInput {
   listId: string

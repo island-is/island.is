@@ -1,8 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
     "outDir": "../../../../dist/out-tsc",
-    "types": ["node"]
+    "types": ["node", "pdfkit"]
   },
   "exclude": ["**/*.spec.ts", "test/**", "**/e2e/**"],
   "include": ["**/*.ts"]
