@@ -25,7 +25,7 @@ const devConfig = {
     Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
   emailOptions: {
-    useTestAccount: true,
+    useTestAccount: false,
     useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
   },
 }
