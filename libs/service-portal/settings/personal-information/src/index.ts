@@ -47,6 +47,14 @@ export const personalInformationModule: ServicePortalModule = {
         render: () => lazy(() => import('./screens/EditLanguage/EditLanguage')),
       },
       {
+        name: defineMessage({
+          id: 'sp.settings:edit-nudge',
+          defaultMessage: 'Breyta Hnippi',
+        }),
+        path: ServicePortalPath.SettingsPersonalInformationEditNudge,
+        render: () => lazy(() => import('./screens/EditNudge/EditNudge')),
+      },
+      {
         name: m.messages,
         path: ServicePortalPath.MessagesRoot,
         render: () => lazy(() => import('./screens/Messages/Messages')),

@@ -39,6 +39,7 @@ export class MainResolver {
     return this.islykillService.updateIslykillSettings(user.nationalId, {
       email: input.email,
       mobile: input.mobile,
+      canNudge: input.canNudge,
     })
   }
 
