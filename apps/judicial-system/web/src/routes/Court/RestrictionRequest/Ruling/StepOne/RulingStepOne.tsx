@@ -120,27 +120,6 @@ export const RulingStepOne: React.FC = () => {
     }
   }, [workingCase, setWorkingCase, data, updateCase, autofill])
 
-  /**
-   * Prefills the ruling of extension cases with the parent case ruling
-   * if this case descition is ACCEPTING.
-   */
-  useEffect(() => {
-    if (
-      workingCase?.parentCase &&
-      isAcceptingCaseDecision(workingCase.decision) &&
-      !workingCase.ruling
-    ) {
-      updateCase(
-        workingCase.id,
-        parseString('ruling', workingCase.parentCase.ruling ?? ''),
-      )
-      setWorkingCase({
-        ...workingCase,
-        ruling: workingCase.parentCase.ruling,
-      })
-    }
-  }, [workingCase, updateCase, setWorkingCase])
-
   return (
     <PageLayout
       workingCase={workingCase}
