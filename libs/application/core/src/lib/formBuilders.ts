@@ -44,19 +44,13 @@ export function buildExternalDataProvider(
 }
 
 export function buildDataProviderItem(
-  data: DataProviderItem & {
-    title: MessageDescriptor | string
-    subTitle?: MessageDescriptor | string
-  },
+  data: DataProviderItem,
 ): DataProviderItem {
   return data
 }
 
 export function buildDataProviderPermissionItem(
-  data: DataProviderPermissionItem & {
-    title: MessageDescriptor | string
-    subTitle?: MessageDescriptor | string
-  },
+  data: DataProviderPermissionItem,
 ): DataProviderPermissionItem {
   return data
 }
