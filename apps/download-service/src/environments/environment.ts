@@ -41,9 +41,7 @@ const prodConfig = {
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
   },
   fjarmalDomain: {
-    xroadApiPath:
-      process.env.XROAD_FINANCES_PATH ??
-      'IS-DEV/GOV/10021/FJS-Public/financeIsland',
+    xroadApiPath: process.env.XROAD_FINANCES_PATH ?? '',
     ttl: 600,
   },
   xroad: {
