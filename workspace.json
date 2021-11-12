@@ -3503,6 +3503,12 @@
             ]
           }
         },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/payment-schedule/src/gen/fetch/ -i libs/clients/payment-schedule/src/openapi.yml"
+          }
+        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/libs/clients/payment-schedule"],
