@@ -3,7 +3,6 @@ import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
 import {
-  CaseAppealDecision,
   CaseDecision,
   CaseType,
   isRestrictionCase,
