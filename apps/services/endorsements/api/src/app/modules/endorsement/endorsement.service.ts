@@ -18,6 +18,7 @@ import { Op, UniqueConstraintError } from 'sequelize'
 import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
 import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
+import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
 
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
@@ -234,10 +235,10 @@ export class EndorsementService {
     })
 
     if (!result) {
-      throw new NotFoundException(["This endorsement doesn't exist"])
+      return { hasEndorsed: false }
     }
 
-    return result
+    return { hasEndorsed: true }
   }
 
   async findUserEndorsementsByTags({
@@ -445,8 +446,9 @@ export class EndorsementService {
         },
       ],
     })
+    await this.createDocumentBuffer(endorsementList)
     try {
-      const result = this.emailService.sendEmail({
+      const result = await this.emailService.sendEmail({
         from: {
           name: 'TEST:Meðmælendakerfi island.is',
           address: 'noreply@island.is',
@@ -497,6 +499,7 @@ export class EndorsementService {
           },
         ],
       })
+      this.logger.debug(`sending list ${listId} to ${recipientEmail}`)
       return { success: true }
     } catch (error) {
       this.logger.error('Failed to send email', error)

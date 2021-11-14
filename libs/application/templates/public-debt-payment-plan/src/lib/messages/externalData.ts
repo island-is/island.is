@@ -23,7 +23,7 @@ export const externalData = {
     description: {
       id: `pdpp.application:application.externalData.description`,
       defaultMessage:
-        'Tilagangur neðangreindrar upplýsingaöflunar er að gera greiðsluáætlun skv. 12. gr. laga um innheimtu opinberra skatta og gjalda, nr. 150/2019.',
+        'Tilgangur neðangreindrar upplýsingaöflunar er að gera greiðsluáætlun skv. 12. gr. laga um innheimtu opinberra skatta og gjalda, nr. 150/2019.',
       description: 'External data description',
     },
   }),

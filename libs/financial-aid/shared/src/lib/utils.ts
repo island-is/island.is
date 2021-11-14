@@ -72,3 +72,10 @@ export const getRoleName = (role: StaffRole) => {
       return 'Umsjónaraðili'
   }
 }
+
+export const scrollToId = (id: string) => {
+  const element = document.getElementById(id)
+  element?.scrollIntoView({
+    behavior: 'smooth',
+  })
+}

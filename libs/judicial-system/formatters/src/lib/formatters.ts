@@ -87,6 +87,7 @@ export const caseTypes = {
   AUTOPSY: 'krufning',
   BODY_SEARCH: 'leit og líkamsrannsókn',
   INTERNET_USAGE: 'upplýsingar um vefnotkun',
+  RESTRAINING_ORDER: 'nálgunarbann',
   OTHER: 'annað',
 }
 
@@ -203,7 +204,11 @@ export function formatCustodyRestrictions(
   if (
     !(relevantCustodyRestrictions && relevantCustodyRestrictions.length > 0)
   ) {
-    return ''
+    return !isRuling
+      ? custodyRestrictions?.includes(CaseCustodyRestrictions.ISOLATION)
+        ? 'Sækjandi tekur fram að gæsluvarðhaldið verði án annarra takmarkana.'
+        : 'Sækjandi tekur fram að gæsluvarðhaldið verði án takmarkana.'
+      : ''
   }
 
   const custodyRestrictionSuffix = (index: number): string => {
