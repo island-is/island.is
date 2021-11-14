@@ -251,7 +251,7 @@
     "unified": "9.2.0",
     "uuidv4": "6.0.8",
     "winston": "3.3.3",
-    "winston-cloudwatch": "2.4.0",
+    "winston-cloudwatch": "3.1.1",
     "winston-transport": "4.4.0",
     "xlsx": "0.17.0",
     "xml2js": "0.4.23",
