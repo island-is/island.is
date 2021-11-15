@@ -138,29 +138,6 @@ function constructRestrictionRequestPdf(
     )
     .text(' ')
     .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
-    .lineGap(8)
-    .text(
-      `${formatMessage(m.baseInfo.restrictions)} ${
-        existingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-      }`,
-      {},
-    )
-    .font('Helvetica')
-    .fontSize(baseFontSize)
-    .text(
-      `${formatRequestedCustodyRestrictions(
-        existingCase.type,
-        existingCase.requestedCustodyRestrictions,
-        existingCase.requestedOtherRestrictions,
-      )}`,
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
-    .text(' ')
-    .font('Helvetica-Bold')
     .fontSize(largeFontSize)
     .lineGap(8)
     .text(formatMessage(m.factsAndArguments.heading))
