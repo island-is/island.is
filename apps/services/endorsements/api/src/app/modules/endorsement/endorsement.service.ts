@@ -443,7 +443,6 @@ export class EndorsementService {
         },
       ],
     })
-    await this.createDocumentBuffer(endorsementList)
     try {
       const result = await this.emailService.sendEmail({
         from: {
