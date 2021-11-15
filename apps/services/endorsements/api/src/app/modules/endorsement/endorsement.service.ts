@@ -438,6 +438,7 @@ export class EndorsementService {
     listId: string,
     recipientEmail: string,
   ): Promise<{ success: boolean }> {
+    // OWNERNAME
     const endorsementList = await this.endorsementListModel.findOne({
       where: { id: listId },
       include: [
@@ -454,7 +455,7 @@ export class EndorsementService {
         },
         to: [
           {
-            // message can be sent to any email so recipient name in unknown
+            // message can be sent to any email so recipient name is unknown
             name: recipientEmail,
             address: recipientEmail,
           },
