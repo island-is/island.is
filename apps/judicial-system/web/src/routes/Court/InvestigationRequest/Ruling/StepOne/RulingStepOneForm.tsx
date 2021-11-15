@@ -196,9 +196,11 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             <Decision
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
-              acceptedLabelText="Krafa samþykkt"
-              rejectedLabelText="Kröfu hafnað"
-              partiallyAcceptedLabelText="Krafa tekin til greina að hluta"
+              acceptedLabelText={formatMessage(m.sections.decision.acceptLabel)}
+              rejectedLabelText={formatMessage(m.sections.decision.rejectLabel)}
+              partiallyAcceptedLabelText={formatMessage(
+                m.sections.decision.partiallyAcceptLabel,
+              )}
               dismissLabelText={formatMessage(m.sections.decision.dismissLabel)}
             />
           </Box>

@@ -79,6 +79,27 @@ export const icRulingStepOne = {
         description:
           'Notaður sem titill fyrir "Úrskurður" hlutann á úrskurðar skrefi í rannsóknarheimildum.',
       },
+      acceptLabel: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.decision.accept_label',
+        defaultMessage: 'Krafa samþykkt',
+        description:
+          'Notaður sem texti við radio takka með vali um að samþykkja rannsóknarheimild á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+      rejectLabel: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.decision.reject_label',
+        defaultMessage: 'Kröfu hafnað',
+        description:
+          'Notaður sem texti við radio takka með vali um að hafna rannsóknarheimild á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+      partiallyAcceptLabel: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.decision.partially_accept_label',
+        defaultMessage: 'Krafa tekin til greina að hluta',
+        description:
+          'Notaður sem texti við radio takka með vali um að samþykkja rannsóknarheimild að hluta á úrskurðar skrefi í rannsóknarheimildum.',
+      },
       dismissLabel: {
         id:
           'judicial.system.investigation_cases:ruling_step_one.decision.dismiss_label',
