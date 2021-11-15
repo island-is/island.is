@@ -143,7 +143,7 @@ export const defendant = {
           id:
             'judicial.system.investigation_cases:defendant.defender_info.send_request.tooltip',
           defaultMessage:
-            'Ef hakað er hér þá fær verjandi kröfunnar senda þegar fyrirtökutíma hefur verið úthlutað',
+            'Ef hakað er hér þá fær verjandi kröfuna senda þegar fyrirtökutíma hefur verið úthlutað',
           description:
             'Notaður sem upplýsingatexti í upplýsingasvæði við "senda kröfu sjálfvirkt..." gátreit á sakbornings skrefi í rannsóknarheimildum.',
         },
