@@ -64,7 +64,7 @@ const prodConfig = {
     useTestAccount: false,
     useNodemailerApp: false,
     options: {
-      region: process.env.EMAIL_REGION ?? '',
+      region: 'eu-west-1',
     },
   },
 }
