@@ -210,7 +210,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
               checked={workingCase.sendRequestToDefender}
               onChange={(event) => setAndSendToServer(event.target)}
               large
-              backgroundColor="white"
+              filled
             />
           </BlueBox>
         </Box>

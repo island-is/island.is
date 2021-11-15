@@ -252,17 +252,11 @@ const DefendantForm: React.FC<Props> = (props) => {
                     )}
                     tooltip={formatMessage(
                       m.sections.defenderInfo.sendRequest.tooltip,
-                      {
-                        caseType:
-                          workingCase.type === CaseType.CUSTODY
-                            ? 'gæsluvarðhaldskröfuna'
-                            : 'farbannskröfuna',
-                      },
                     )}
                     checked={workingCase.sendRequestToDefender}
                     onChange={(event) => setAndSendToServer(event.target)}
                     large
-                    backgroundColor="white"
+                    filled
                   />
                 </BlueBox>
               </motion.section>
