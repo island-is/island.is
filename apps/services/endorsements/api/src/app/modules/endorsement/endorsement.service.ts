@@ -435,7 +435,6 @@ export class EndorsementService {
     listId: string,
     recipientEmail: string,
   ): Promise<{ success: boolean }> {
-    // OWNERNAME // console.log(endorsementList.owner)
     const endorsementList = await this.endorsementListModel.findOne({
       where: { id: listId },
       include: [
