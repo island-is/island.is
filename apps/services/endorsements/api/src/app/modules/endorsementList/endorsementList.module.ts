@@ -14,15 +14,10 @@ export interface Config {
   nationalRegistry: NationalRegistryConfig
 }
 
-import { EmailModule } from '@island.is/email-service'
 
 @Module({
   imports: [
     SequelizeModule.forFeature([EndorsementList, Endorsement]),
-    EmailModule.register({
-      useTestAccount: true,
-      useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
-    }),
   ],
   controllers: [EndorsementListController],
   providers: [
