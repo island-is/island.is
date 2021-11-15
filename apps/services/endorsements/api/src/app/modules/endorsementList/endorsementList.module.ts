@@ -14,11 +14,8 @@ export interface Config {
   nationalRegistry: NationalRegistryConfig
 }
 
-
 @Module({
-  imports: [
-    SequelizeModule.forFeature([EndorsementList, Endorsement]),
-  ],
+  imports: [SequelizeModule.forFeature([EndorsementList, Endorsement])],
   controllers: [EndorsementListController],
   providers: [
     EndorsementListService,

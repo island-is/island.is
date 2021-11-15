@@ -26,7 +26,6 @@ import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
 
-
 interface FindEndorsementInput {
   listId: string
   nationalId: string
@@ -445,10 +444,9 @@ export class EndorsementService {
         },
       ],
     })
-    
+    await this.createDocumentBuffer(endorsementList)
     try {
-      
-      const result = this.emailService.sendEmail({
+      const result = await this.emailService.sendEmail({
         from: {
           name: 'TEST:Meðmælendakerfi island.is',
           address: 'noreply@island.is',
@@ -499,6 +497,7 @@ export class EndorsementService {
           },
         ],
       })
+      this.logger.debug(`sending list ${listId} to ${recipientEmail}`)
       return { success: true }
     } catch (error) {
       this.logger.error('Failed to send email', error)

@@ -16,6 +16,7 @@ export enum CaseType {
   AUTOPSY = 'AUTOPSY',
   BODY_SEARCH = 'BODY_SEARCH',
   INTERNET_USAGE = 'INTERNET_USAGE',
+  RESTRAINING_ORDER = 'RESTRAINING_ORDER',
   OTHER = 'OTHER',
 }
 
@@ -287,6 +288,7 @@ export const investigationCases = [
   CaseType.AUTOPSY,
   CaseType.BODY_SEARCH,
   CaseType.INTERNET_USAGE,
+  CaseType.RESTRAINING_ORDER,
   CaseType.OTHER,
 ]
 

@@ -23,7 +23,7 @@ export interface Config {
     SequelizeModule.forFeature([Endorsement, EndorsementList]),
     EndorsementMetadataModule,
     EndorsementValidatorModule,
-    EmailModule.register(environment.emailOptions as EmailServiceOptions),
+    EmailModule.register(environment.emailOptions),
   ],
   controllers: [EndorsementController],
   providers: [
