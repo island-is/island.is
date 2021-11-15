@@ -58,12 +58,13 @@ export const externalData = {
   nationalRegistry: defineMessages({
     title: {
       id: 'an.application:section.externalData.nationalRegistry.title',
-      defaultMessage: 'Upplýsingar frá þjóðskrá',
+      defaultMessage: 'Þjóðskrá Íslands:',
       description: 'Title: National Registry',
     },
     description: {
       id: 'an.application:section.externalData.nationalRegistry.description',
-      defaultMessage: 'Nafn, kennitala, símanúmer, netfang',
+      defaultMessage:
+        'Upplýsingar um nafn, kennitölu og heimilisfang. Upplýsingar um börn og maka.',
       description: 'Description: National Registry',
     },
   }),
@@ -76,19 +77,20 @@ export const externalData = {
     description: {
       id: 'an.application:section.externalData.accidentProvider.description',
       defaultMessage:
-        'Við vinnslu málsins munu Sjúkratryggingar Íslands afla nauðsynlegra upplýsinga frá skattyfirvöldum, Tryggingastofnun ríkisins, Vinnumálastofnun, Þjóðskrá Íslands og evrópskum sjúkratryggingastofnunum, þegar það á við.',
+        'Í einstaka tilvikum getur verið nauðsynlegt að afla upplýsinga frá atvinnurekanda eða eftir atvikum íþróttafélaga um slysið ef þær fást ekki frá slasaða.',
       description: 'Description: Accident Provider',
     },
   }),
   revAndCustoms: defineMessages({
     title: {
       id: 'an.application:section.externalData.revAndCustoms.title',
-      defaultMessage: 'Upplýsingar frá skattinum',
+      defaultMessage: 'Skattinum:',
       description: 'Title: External Info about applicants insurance ',
     },
     description: {
       id: 'an.application:section.externalData.revAndCustoms.description',
-      defaultMessage: 'Upplýsingar um slysatryggingu við heimilisstörf',
+      defaultMessage:
+        'Upplýsingar um launagreiðslur/reiknað endurgjald. Nafn og kennitölu launagreiðanda. Upplýsingar um hvort heimilistrygging sé í gildi.',
       description: 'Description: External Info about applicants insurance',
     },
   }),
@@ -103,6 +105,47 @@ export const externalData = {
       defaultMessage: 'Send verða til þín skilaboð um stöðu mála o.s.frv.',
       description:
         'Notifications will be sent regarding the status of your application',
+    },
+  }),
+  directoryOfLabor: defineMessages({
+    title: {
+      id: 'an.application:section.externalData.directoryOfLabor.title',
+      defaultMessage: 'Vinnumálastofnun:',
+      description: 'Approval of directory of labor',
+    },
+    description: {
+      id: 'an.application:section.externalData.directoryOfLabor.description',
+      defaultMessage:
+        'Upplýsingar um tímabil atvinnuleysisbóta og greiðslna úr fæðingarorlofssjóði.',
+      description: 'Approval of gathering information from directory of labor',
+    },
+  }),
+
+  nationalInsurancy: defineMessages({
+    title: {
+      id: 'an.application:section.externalData.nationalInsurancy.title',
+      defaultMessage: 'Tryggingastofnun ríkisins:',
+      description: 'Approval of National insurancy',
+    },
+    description: {
+      id: 'an.application:section.externalData.nationalInsurancy.description',
+      defaultMessage:
+        'Upplýsingar um örorku- eða endurhæfingarmat (stöðu). Upplýsingar um greiðslur sem ekki má greiða samhliða bótum slysatrygginga (stöðu).',
+      description: 'Approval of gathering information from National insurancy',
+    },
+  }),
+  municipalCollectionAgency: defineMessages({
+    title: {
+      id: 'an.application:section.externalData.municipalCollectionAgency.title',
+      defaultMessage: 'Innheimtustofnun sveitarfélaga:',
+      description: 'Approval of Municipal Collection Agency',
+    },
+    description: {
+      id:
+        'an.application:section.externalData.municipalCollectionAgency.description',
+      defaultMessage: 'Upplýsingar um stöðu meðlagsgreiðslna.',
+      description:
+        'Approval of gathering information from Approval of Municipal Collection Agency',
     },
   }),
 }
