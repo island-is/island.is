@@ -8,6 +8,7 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { UserProfileScope } from '@island.is/auth/scopes'
+import { Audit } from '@island.is/nest/audit'
 import { IslykillService } from '../islykill.service'
 
 import { IslykillSettings } from './models/islykillSettings.model'
@@ -19,11 +20,13 @@ import { CreateIslykillSettingsInput } from './dto/createIslykillSettings.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
+@Audit({ namespace: '@island.is/api/islykill' })
 export class MainResolver {
   constructor(private readonly islykillService: IslykillService) {}
 
   @Scopes(UserProfileScope.read)
   @Query(() => IslykillSettings)
+  @Audit()
   async getIslykillSettings(
     @CurrentUser() user: User,
   ): Promise<IslykillSettings> {
@@ -32,6 +35,7 @@ export class MainResolver {
 
   @Scopes(UserProfileScope.write)
   @Mutation(() => UpdateIslykillSettings)
+  @Audit()
   async updateIslykillSettings(
     @CurrentUser() user: User,
     @Args('input') input: UpdateIslykillSettingsInput,
@@ -44,6 +48,7 @@ export class MainResolver {
 
   @Scopes(UserProfileScope.write)
   @Mutation(() => CreateIslykillSettings)
+  @Audit()
   async createIslykillSettings(
     @CurrentUser() user: User,
     @Args('input') input: CreateIslykillSettingsInput,
@@ -56,6 +61,7 @@ export class MainResolver {
 
   @Scopes(UserProfileScope.write)
   @Mutation(() => DeleteIslykillSettings)
+  @Audit()
   async deleteIslykillSettings(@CurrentUser() user: User) {
     return this.islykillService.deleteIslykillSettings(user.nationalId)
   }
