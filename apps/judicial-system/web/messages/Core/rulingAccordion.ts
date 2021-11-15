@@ -47,5 +47,21 @@ export const rulingAccordion = {
           'Notaður sem titill fyrir "Niðurstaða" hlutanum í úrskurðar fellilista í öllum málategundum.',
       },
     }),
+    appealDecisions: defineMessages({
+      title: {
+        id: 'judicial.system.core:ruling_accordion.appeal_decisions.title',
+        defaultMessage: 'Ákvörðun um kæru',
+        description:
+          'Notaður sem titill fyrir "Ákvörðun um kæru" hlutanum í úrskurðar fellilista í öllum málategundum.',
+      },
+      appealDirections: {
+        id:
+          'judicial.system.core:ruling_accordion.appeal_decisions.appeal_directions',
+        defaultMessage:
+          'Dómari kynnir rétt til að kæra úrskurð og um kærufrest skv. 193. gr. laga nr. 88/2008.',
+        description:
+          'Texti sem útskýrir kærufrest í úrskurðar fellilista í öllum málategundum.',
+      },
+    }),
   },
 }
