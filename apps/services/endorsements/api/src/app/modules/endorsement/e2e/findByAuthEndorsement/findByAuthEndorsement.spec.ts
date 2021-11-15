@@ -2,7 +2,6 @@ import { EndorsementsScope } from '@island.is/auth/scopes'
 import request from 'supertest'
 import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
-import { Endorsement } from '../../models/endorsement.model'
 import { authNationalId } from './seed'
 
 describe('findByAuthEndorsement', () => {
@@ -35,7 +34,7 @@ describe('findByAuthEndorsement', () => {
       .send()
       .expect(404)
 
-    await expect(response.body).toMatchObject({
+    expect(response.body).toMatchObject({
       ...errorExpectedStructure,
       statusCode: 404,
     })
@@ -52,7 +51,7 @@ describe('findByAuthEndorsement', () => {
       .send()
       .expect(200)
 
-    await expect(response.body).toMatchObject({ hasEndorsed: false })
+    expect(response.body).toMatchObject({ hasEndorsed: false })
   })
   it(`GET /endorsement-list/:listId/endorsement/exists should return 200 and hasEndorsed: true in response body`, async () => {
     const app = await getAuthenticatedApp({
@@ -66,6 +65,6 @@ describe('findByAuthEndorsement', () => {
       .send()
       .expect(200)
 
-    await expect(response.body).toMatchObject({ hasEndorsed: true })
+    expect(response.body).toMatchObject({ hasEndorsed: true })
   })
 })
