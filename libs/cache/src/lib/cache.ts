@@ -52,7 +52,7 @@ class Cache {
   }
 
   async ping(): Promise<boolean> {
-    return (await this.client.ping()) == 'pong'
+    return (await this.client.ping()) === 'pong'
   }
 }
 

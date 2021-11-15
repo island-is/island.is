@@ -38,7 +38,6 @@ export const uploadChunkStream = (
       })
       .promise(),
   }
-  // return pass
 }
 
 export class GetContentInfoError extends Error {}

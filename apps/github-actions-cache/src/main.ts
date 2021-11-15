@@ -1,8 +1,3 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
 import * as express from 'express'
 import {
   commitCache,
@@ -20,11 +15,6 @@ const app = express.default()
 
 app.use(express.json())
 
-// app.use((req, res, next) => {
-//   logger.info(req.method, req.path)
-//   logger.info('headers:', req.headers)
-//   next()
-// })
 app.get('/health', healthCheck)
 app.get('/liveness', livenessCheck)
 

@@ -31,7 +31,7 @@ export const reserveCache = async (
       version,
     )
     logger.debug(`Reservation: ${reservation}`)
-    if (reservation != 1) {
+    if (reservation !== 1) {
       return error(res, 'cache id already reserved', 409)
     }
     logger.debug(`Creating multipartupload for ${cacheId}`)
