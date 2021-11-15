@@ -5,6 +5,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
+  isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -67,7 +68,7 @@ export const StepFour: React.FC = () => {
           accusedNationalId: formatNationalId(theCase.accusedNationalId),
           extensionSuffix:
             theCase.parentCase !== undefined &&
-            theCase.parentCase?.decision === CaseDecision.ACCEPTING
+            isAcceptingCaseDecision(theCase.parentCase.decision)
               ? ' áframhaldandi'
               : '',
           caseType:

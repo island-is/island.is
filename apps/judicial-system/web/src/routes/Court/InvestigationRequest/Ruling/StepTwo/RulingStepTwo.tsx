@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import { CaseDecision } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseData,
@@ -31,7 +34,7 @@ const RulingStepTwo = () => {
 
   useEffect(() => {
     if (!workingCase && data?.case) {
-      if (data.case.decision === CaseDecision.ACCEPTING && data.case.demands) {
+      if (isAcceptingCaseDecision(data.case.decision) && data.case.demands) {
         autofill('conclusion', data.case.demands, data.case)
       }
       setWorkingCase(data.case)
