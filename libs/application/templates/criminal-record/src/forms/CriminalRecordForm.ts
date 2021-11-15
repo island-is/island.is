@@ -51,11 +51,11 @@ export const CriminalRecordForm: Form = buildForm({
               title: m.userProfileInformationTitle,
               subTitle: m.userProfileInformationSubTitle,
             }),
-            // buildDataProviderItem({
-            //   id: 'payment',
-            //   type: 'FeeInfoProvider',
-            //   title: '',
-            // }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'FeeInfoProvider',
+              title: '',
+            }),
           ],
         }),
       ],
@@ -86,6 +86,35 @@ export const CriminalRecordForm: Form = buildForm({
               label: 'Nafn',
               value: ({ externalData: { nationalRegistry } }) =>
                 (nationalRegistry.data as NationalRegistryUser).fullName,
+            }),
+            buildKeyValueField({
+              label: m.overviewPaymentCharge,
+              value: ({ externalData }) => {
+                const item = externalData.payment.data as {
+                  priceAmount: number
+                  chargeItemName: string
+                }
+
+                return [
+                  item?.chargeItemName,
+                  (item?.priceAmount?.toLocaleString('de-DE') +
+                    ' kr.') as StaticText,
+                ]
+              },
+              width: 'half',
+            }),
+            buildKeyValueField({
+              label: '',
+              value: ({ externalData }) => {
+                const item = externalData.payment.data as {
+                  priceAmount: number
+                  chargeItemCode: string
+                }
+
+                return (item?.priceAmount?.toLocaleString('de-DE') +
+                  ' kr.') as StaticText
+              },
+              width: 'half',
             }),
             buildDividerField({
               title: '',

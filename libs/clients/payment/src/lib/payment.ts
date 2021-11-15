@@ -41,6 +41,7 @@ export class PaymentAPI extends RESTDataSource {
   }
 
   getCatalogByPerformingOrg(performingOrganizationID: string) {
+    console.log(this.options)
     return this.get<Catalog>(
       `catalog/performingOrg/${performingOrganizationID}`,
     )
