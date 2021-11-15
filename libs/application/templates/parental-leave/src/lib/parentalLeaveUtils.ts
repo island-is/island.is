@@ -360,7 +360,13 @@ export function getApplicationExternalData(
     'userProfile.data.mobilePhoneNumber',
   ) as string
 
+  const applicantGenderCode = getValueViaPath(
+    externalData,
+    'userProfile.data.genderCode',
+  )
+
   return {
+    applicantGenderCode,
     dataProvider,
     children,
     existingApplications,
@@ -623,6 +629,14 @@ export const getOtherParentId = (application: Application): string | null => {
   }
 
   return otherParentId
+}
+
+export const applicantIsMale = (application: Application): boolean => {
+  const { applicantGenderCode } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  return applicantGenderCode === '1'
 }
 
 interface IncompletePeriod {

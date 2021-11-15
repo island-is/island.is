@@ -333,4 +333,64 @@ describe('getRightsCode', () => {
   })
   // TODO:
   // it('should return FO-FL-L-GR-SJ for secondary parent that is both self employed and employed with custody', () => {})
+
+  it('should look at genderCode when creating rights code for other parent and return FO if applicant is not male', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+    const base = createApplicationBase()
+
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(
+        false,
+        '2022-03-01',
+        primaryParentNationalRegistryId,
+      ),
+    ])
+    set(base, 'externalData.family.data', [
+      {
+        fullName: 'Spouse Spousson',
+        nationalId: primaryParentNationalRegistryId,
+        familyRelation: 'spouse',
+      },
+    ])
+    set(base, 'externalData.userProfile.data', {
+      genderCode: '0',
+    })
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'no')
+
+    const expected = 'FO-L-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should look at genderCode when creating rights code for other parent and return F if applicant is male', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+    const base = createApplicationBase()
+
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(
+        false,
+        '2022-03-01',
+        primaryParentNationalRegistryId,
+      ),
+    ])
+    set(base, 'externalData.family.data', [
+      {
+        fullName: 'Spouse Spousson',
+        nationalId: primaryParentNationalRegistryId,
+        familyRelation: 'spouse',
+      },
+    ])
+    set(base, 'externalData.userProfile.data', {
+      genderCode: '1',
+    })
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'no')
+
+    const expected = 'F-L-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
 })

@@ -1,3 +1,4 @@
+import set from 'lodash/set'
 import addDays from 'date-fns/addDays'
 import type { FamilyMember } from '@island.is/api/domains/national-registry'
 import {
@@ -19,6 +20,7 @@ import {
   getOtherParentId,
   calculateEndDateForPeriodWithStartAndLength,
   calculatePeriodLengthInMonths,
+  applicantIsMale,
 } from './parentalLeaveUtils'
 
 function buildApplication(data?: {
@@ -398,5 +400,35 @@ describe('calculatePeriodLengthInMonths', () => {
     expect(calculatePeriodLengthInMonths('2021-02-28', '2021-07-13')).toBe(4.5)
     expect(calculatePeriodLengthInMonths('2021-02-28', '2022-07-13')).toBe(16.5)
     expect(calculatePeriodLengthInMonths('2021-03-27', '2021-04-11')).toBe(0.5)
+  })
+})
+
+describe('applicantIsMale', () => {
+  it('should return false if genderCode is missing', () => {
+    const application = buildApplication()
+
+    expect(applicantIsMale(application)).toBe(false)
+  })
+
+  it('should return false if genderCode is present and !== "1"', () => {
+    const application1 = buildApplication()
+    const application2 = buildApplication()
+    const application3 = buildApplication()
+
+    set(application1.externalData, 'userProfile.data.genderCode', '0')
+    set(application2.externalData, 'userProfile.data.genderCode', 'invalid')
+    set(application3.externalData, 'userProfile.data.genderCode', '11')
+
+    expect(applicantIsMale(application1)).toBe(false)
+    expect(applicantIsMale(application2)).toBe(false)
+    expect(applicantIsMale(application3)).toBe(false)
+  })
+
+  it('should return true if genderCode is === "1"', () => {
+    const application = buildApplication()
+
+    set(application.externalData, 'userProfile.data.genderCode', '1')
+
+    expect(applicantIsMale(application)).toBe(true)
   })
 })
