@@ -95,6 +95,7 @@ export class AuditTrailService {
       this.trail = winston.createLogger({
         transports: [
           new WinstonCloudWatch({
+            name: 'CloudWatch',
             logGroupName: this.options.groupName,
             logStreamName: function () {
               // Spread log streams across dates
