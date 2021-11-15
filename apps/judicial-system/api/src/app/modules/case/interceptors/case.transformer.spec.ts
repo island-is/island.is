@@ -1,7 +1,5 @@
 import each from 'jest-each'
 
-import { SessionArrangements } from '@island.is/judicial-system/types'
-
 import { Case } from '../models'
 import { transformCase } from './case.transformer'
 
