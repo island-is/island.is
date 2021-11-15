@@ -56,7 +56,12 @@ export const AccidentNotificationSchema = z.object({
         address: z.object({
           city: z.string(),
           code: z.string(),
-          postalCode: z.string(),
+          postalCode: z
+            .string()
+            .refine(
+              (x) => +x >= 100 && +x <= 999,
+              error.required.defaultMessage,
+            ),
           streetAddress: z.string(),
         }),
         age: z.number(),
@@ -88,7 +93,9 @@ export const AccidentNotificationSchema = z.object({
     name: z.string().min(1, error.required.defaultMessage),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
     address: z.string().min(1, error.required.defaultMessage),
-    postalCode: z.string().min(1, error.required.defaultMessage),
+    postalCode: z
+      .string()
+      .refine((x) => +x >= 100 && +x <= 999, error.required.defaultMessage),
     city: z.string().min(1, error.required.defaultMessage),
     email: z.string().email(),
     phoneNumber: z.string().optional(),
@@ -191,7 +198,9 @@ export const AccidentNotificationSchema = z.object({
   }),
   homeAccident: z.object({
     address: z.string().min(1),
-    postalCode: z.string().min(1),
+    postalCode: z
+      .string()
+      .refine((x) => +x >= 100 && +x <= 999, error.required.defaultMessage),
     community: z.string().min(1),
     moreDetails: z.string().optional(),
   }),
