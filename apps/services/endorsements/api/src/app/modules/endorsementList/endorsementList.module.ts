@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListController } from './endorsementList.controller'
