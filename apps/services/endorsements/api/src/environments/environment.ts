@@ -1,4 +1,5 @@
 const isProductionEnvironment = process.env.NODE_ENV === 'production'
+
 const devConfig = {
   production: isProductionEnvironment,
   metadataProvider: {
@@ -28,7 +29,7 @@ const devConfig = {
     useTestAccount: false,
     useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
     options: {
-      region: process.env.EMAIL_REGION ?? '',
+      region: 'eu-west-1',
     },
   },
 }

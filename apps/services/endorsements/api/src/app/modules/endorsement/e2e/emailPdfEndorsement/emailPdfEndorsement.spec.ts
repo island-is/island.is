@@ -6,6 +6,7 @@ import { authNationalId, listYouOwnListId, listYouDoNotOwnListId } from './seed'
 
 const invalidEmail = 'NOT_A_VALID_EMAIL_ADDRESS.is'
 const validEmail = 'VALID@EMAIL.is'
+
 describe('emailPdfEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement should fail trying to send list you dont own`, async () => {
     const app = await getAuthenticatedApp({
