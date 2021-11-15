@@ -25,9 +25,11 @@ const devConfig = {
     Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
   emailOptions: {
-    useTestAccount: true,
+    useTestAccount: false,
     useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
-    
+    options: {
+      region: process.env.EMAIL_REGION ?? '',
+    },
   },
 }
 
@@ -62,13 +64,9 @@ const prodConfig = {
     useTestAccount: false,
     useNodemailerApp: false,
     options: {
-      region: process.env.EMAIL_REGION ?? "is",
+      region: process.env.EMAIL_REGION ?? '',
     },
   },
-}
-
-interface EndofmentConfig{
-
 }
 
 export default isProductionEnvironment ? prodConfig : devConfig
