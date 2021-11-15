@@ -95,6 +95,7 @@ describe('CaseController', () => {
       ${CaseType.AUTOPSY}
       ${CaseType.BODY_SEARCH}
       ${CaseType.INTERNET_USAGE}
+      ${CaseType.RESTRAINING_ORDER}
       ${CaseType.OTHER}
       `.describe('given a $type case', ({ type }) => {
       each`
