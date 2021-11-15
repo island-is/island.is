@@ -26,8 +26,7 @@ import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/
 import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
-import model from 'sequelize/types/lib/model'
-import { emailDto } from './dto/email.dto'
+
 
 interface FindEndorsementInput {
   listId: string
@@ -438,7 +437,7 @@ export class EndorsementService {
     listId: string,
     recipientEmail: string,
   ): Promise<{ success: boolean }> {
-    // OWNERNAME
+    // OWNERNAME // console.log(endorsementList.owner)
     const endorsementList = await this.endorsementListModel.findOne({
       where: { id: listId },
       include: [
@@ -447,7 +446,9 @@ export class EndorsementService {
         },
       ],
     })
+    
     try {
+      
       const result = this.emailService.sendEmail({
         from: {
           name: 'TEST:Meðmælendakerfi island.is',

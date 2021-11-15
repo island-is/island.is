@@ -27,6 +27,7 @@ const devConfig = {
   emailOptions: {
     useTestAccount: true,
     useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
+    
   },
 }
 
@@ -61,9 +62,13 @@ const prodConfig = {
     useTestAccount: false,
     useNodemailerApp: false,
     options: {
-      region: process.env.EMAIL_REGION,
+      region: process.env.EMAIL_REGION ?? "is",
     },
   },
+}
+
+interface EndofmentConfig{
+
 }
 
 export default isProductionEnvironment ? prodConfig : devConfig
