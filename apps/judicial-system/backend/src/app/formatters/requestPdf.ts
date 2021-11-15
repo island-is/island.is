@@ -5,7 +5,6 @@ import { FormatMessage } from '@island.is/cms-translations'
 import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import {
   caseTypes,
-  formatRequestedCustodyRestrictions,
   formatNationalId,
   capitalize,
   formatDate,
