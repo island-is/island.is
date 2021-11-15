@@ -1,3 +1,4 @@
+import { ServerSideFeatureClient } from '@island.is/feature-flags'
 const devConfig = {
   production: false,
   xroad: {
@@ -184,7 +185,11 @@ const prodConfig = {
       xroadPath: process.env.XROAD_DRIVING_LICENSE_PATH,
     },
     v2: {
-      xroadPath: process.env.XROAD_DRIVING_LICENSE_V2_PATH,
+      xroadPath: ServerSideFeatureClient.isOn(
+        'driving-license-use-v1-endpoint-for-v2-comms',
+      )
+        ? process.env.XROAD_DRIVING_LICENSE_PATH
+        : process.env.XROAD_DRIVING_LICENSE_V2_PATH,
     },
   },
   education: {
