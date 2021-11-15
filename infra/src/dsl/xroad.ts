@@ -198,3 +198,17 @@ export const Labor = new XroadConf({
     XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY',
   },
 })
+
+export const PaymentSchedule = new XroadConf({
+  env: {
+    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public',
+      staging: 'IS-DEV/GOV/10021/FJS-Public',
+      prod: 'IS/GOV/5402697509/FJS-Public',
+    },
+  },
+  secrets: {
+    PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER',
+    PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD',
+  },
+})
