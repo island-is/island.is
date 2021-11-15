@@ -22,7 +22,7 @@ judicial-system-api:
     CONTENTFUL_HOST: 'cdn.contentful.com'
     HIDDEN_FEATURES: ''
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=rettarvorslugatt.prod'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5804170510/Rettarvorslugatt-Client'
@@ -92,7 +92,7 @@ judicial-system-backend:
     S3_REGION: 'eu-west-1'
     S3_TIME_TO_LIVE_GET: '5'
     S3_TIME_TO_LIVE_POST: '15'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5804170510/Rettarvorslugatt-Client'
@@ -127,7 +127,7 @@ judicial-system-backend:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'judicial_system'
       DB_USER: 'judicial_system'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
   namespace: 'judicial-system'
@@ -180,7 +180,7 @@ judicial-system-web:
   env:
     API_URL: 'https://rettarvorslugatt.island.is'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -220,7 +220,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
