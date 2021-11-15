@@ -18,6 +18,9 @@ import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import type { User } from '@island.is/auth-nest-tools'
 import { EndorsementsScope } from '@island.is/auth/scopes'
+import { EmailService } from '@island.is/email-service'
+import PDFDocument from 'pdfkit'
+import getStream from 'get-stream'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -33,6 +36,8 @@ export class EndorsementListService {
     private readonly nationalRegistryApi: NationalRegistryApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(EmailService)
+    private emailService: EmailService,
   ) {}
 
   async hasAdminScope(user: User): Promise<boolean> {
@@ -232,24 +237,149 @@ export class EndorsementListService {
     return result
   }
 
-  async getOwnerInfo(listId: string) {
+  async getOwnerInfo(listId: string, owner?: string) {
     // Is used by both unauthenticated users, authenticated users and admin
     // Admin needs to access locked lists and can not use the EndorsementListById pipe
     // Since the endpoint is not authenticated
     this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
+    if (!owner) {
+      const endorsementList = await this.endorsementListModel.findOne({
+        where: {
+          id: listId,
+        },
+      })
+      if (!endorsementList) {
+        throw new NotFoundException(['This endorsement list does not exist.'])
+      }
+      owner = endorsementList.owner
+    }
+
+    try {
+      return (await this.nationalRegistryApi.getUser(owner))
+        .Fulltnafn
+    } catch (e) {
+      return ''
+    }
+  }
+
+  async createDocumentBuffer(endorsementList: any, ownerName: string) {
+    // build pdf
+    const doc = new PDFDocument()
+    const locale = 'is-IS'
+    const big = 16
+    const regular = 8
+    doc
+      .fontSize(big)
+      .text('ISLAND.IS - þetta skjal og kerfi er í vinnslu')
+      .fontSize(regular)
+      .text(
+        'þetta skjal var framkallað sjálfvirkt þann: ' +
+          new Date().toLocaleDateString(locale),
+      )
+      .moveDown()
+      .fontSize(big)
+      .text('Meðmælendalisti')
+      .fontSize(regular)
+      .text('id: ' + endorsementList.id)
+      .text('titill: ' + endorsementList.title)
+      .text('lýsing: ' + endorsementList.description)
+      .text('eigandi: ' + ownerName)
+      .text(
+        'listi opnaður: ' +
+          endorsementList.openedDate.toLocaleDateString(locale),
+      )
+      .text(
+        'listi lokaður: ' +
+          endorsementList.closedDate.toLocaleDateString(locale),
+      )
+      .text(`Alls undirskriftir: ${endorsementList.endorsements.length}`)
+      .moveDown()
+    if (endorsementList.endorsements.length) {
+      doc.fontSize(big).text('Meðmælendur').fontSize(regular)
+      for (const val of endorsementList.endorsements) {
+        doc.text(
+          val.created.toLocaleDateString(locale) + ' ' + val.meta.fullName,
+        )
+      }
+    }
+    doc.end()
+    return await getStream.buffer(doc)
+  }
+
+  async emailPDF(
+    listId: string,
+    recipientEmail: string,
+  ): Promise<{ success: boolean }> {
     const endorsementList = await this.endorsementListModel.findOne({
-      where: {
-        id: listId,
-      },
+      where: { id: listId },
+      include: [
+        {
+          model: Endorsement,
+        },
+      ],
     })
     if (!endorsementList) {
       throw new NotFoundException(['This endorsement list does not exist.'])
     }
+    const ownerName = await this.getOwnerInfo(endorsementList?.id, endorsementList.owner)
+    await this.createDocumentBuffer(endorsementList, ownerName)
     try {
-      return (await this.nationalRegistryApi.getUser(endorsementList.owner))
-        .Fulltnafn
-    } catch (e) {
-      return ''
+      const result = await this.emailService.sendEmail({
+        from: {
+          name: 'TEST:Meðmælendakerfi island.is',
+          address: 'noreply@island.is',
+        },
+        to: [
+          {
+            // message can be sent to any email so recipient name in unknown
+            name: recipientEmail,
+            address: recipientEmail,
+          },
+        ],
+        subject: 'TEST:Afrit af meðmælendalista',
+        template: {
+          title: 'Afrit af meðmælendalista',
+          body: [
+            {
+              component: 'Heading',
+              context: { copy: 'Afrit af meðmælendalista' },
+            },
+            { component: 'Copy', context: { copy: 'Góðan dag.' } },
+            {
+              component: 'Copy',
+              context: {
+                copy: `... copy copy copy`,
+              },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy: `Þetta kjal er í þróun ...`,
+              },
+            },
+            {
+              component: 'Button',
+              context: {
+                copy: 'Takki',
+                href: 'http://www.island.is',
+              },
+            },
+            { component: 'Copy', context: { copy: 'Með kveðju,' } },
+            { component: 'Copy', context: { copy: 'TEST' } },
+          ],
+        },
+        attachments: [
+          {
+            filename: 'Meðmælendalisti.pdf',
+            content: await this.createDocumentBuffer(endorsementList, ownerName),
+          },
+        ],
+      })
+      this.logger.debug(`sending list ${listId} to ${recipientEmail}`)
+      return { success: true }
+    } catch (error) {
+      this.logger.error('Failed to send email', error)
+      return { success: false }
     }
   }
 }

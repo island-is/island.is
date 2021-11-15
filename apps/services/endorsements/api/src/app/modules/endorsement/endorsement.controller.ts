@@ -45,8 +45,6 @@ import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
-import { emailDto } from './dto/email.dto'
-import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
 import { EndorsementInterceptor } from './interceptors/endorsement.interceptor'
 import { PaginatedEndorsementInterceptor } from './interceptors/paginatedEndorsement.interceptor'
 import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
@@ -66,28 +64,6 @@ export class EndorsementController {
     private readonly auditService: AuditService,
   ) {}
 
-  @ApiOperation({
-    summary: 'Emails a PDF with list endorsements data',
-  })
-  @Scopes(EndorsementsScope.main)
-  @HasAccessGroup(AccessGroup.Owner)
-  @ApiParam({ name: 'listId', type: String })
-  @ApiOkResponse({ type: sendPdfEmailResponse })
-  @Post('/email-pdf')
-  async emailEndorsementsPDF(
-    @Param(
-      'listId',
-      new ParseUUIDPipe({ version: '4' }),
-      EndorsementListByIdPipe,
-    )
-    endorsementList: EndorsementList,
-    @Query() query: emailDto,
-  ): Promise<sendPdfEmailResponse> {
-    return this.endorsementService.emailPDF(
-      endorsementList.id,
-      query.emailAddress,
-    )
-  }
 
   @ApiOperation({ summary: 'Finds all endorsements in a given list' })
   @ApiParam({ name: 'listId', type: String })
