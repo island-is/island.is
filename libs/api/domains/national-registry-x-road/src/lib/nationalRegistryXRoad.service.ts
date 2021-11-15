@@ -177,6 +177,7 @@ export class NationalRegistryXRoadService {
           return {
             nationalId: child.kennitala,
             fullName: child.nafn,
+            genderCode: child.kynkodi,
             livesWithApplicant,
             livesWithBothParents: livesWithParentB && livesWithApplicant,
             otherParent: parentBObject,
