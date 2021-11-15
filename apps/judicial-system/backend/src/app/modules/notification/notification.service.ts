@@ -10,7 +10,6 @@ import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseState,
   CaseType,
   NotificationType,
   isRestrictionCase,
