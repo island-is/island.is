@@ -10,7 +10,7 @@ import {
 import { Link, Redirect } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { gql, useMutation } from '@apollo/client'
-import { useIslykillSettings } from '@island.is/service-portal/graphql'
+import { useUserProfile } from '@island.is/service-portal/graphql'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -39,14 +39,14 @@ export const EditPhoneNumber: ServicePortalModuleComponent = () => {
     'passive',
   )
 
-  const { data: settings } = useIslykillSettings()
+  const { data: settings } = useUserProfile()
   const [updateIslykill, { loading, error }] = useMutation(
     UpdateIslykillSettings,
   )
   const { formatMessage } = useLocale()
 
   useEffect(() => {
-    if (settings?.mobile) setTel(settings.mobile)
+    if (settings?.mobilePhoneNumber) setTel(settings?.mobilePhoneNumber)
   }, [settings])
 
   const submitFormData = async (formData: PhoneFormData) => {

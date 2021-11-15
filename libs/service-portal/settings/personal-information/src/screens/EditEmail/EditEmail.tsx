@@ -8,7 +8,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { gql, useMutation } from '@apollo/client'
-import { useIslykillSettings } from '@island.is/service-portal/graphql'
+import { useUserProfile } from '@island.is/service-portal/graphql'
 import { Link, Redirect } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -30,7 +30,7 @@ const UpdateIslykillSettings = gql`
 export const EditEmail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.settings')
   const [email, setEmail] = useState('')
-  const { data: settings } = useIslykillSettings()
+  const { data: settings } = useUserProfile()
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
     'passive',
   )
@@ -51,7 +51,7 @@ export const EditEmail: ServicePortalModuleComponent = () => {
       // Update the profile if it exists, otherwise create one
       await updateIslykill({
         variables: {
-          input: { email: formData.email, mobile: settings?.mobile },
+          input: { email: formData.email, mobile: settings?.mobilePhoneNumber },
         },
       })
       setStatus('success')
