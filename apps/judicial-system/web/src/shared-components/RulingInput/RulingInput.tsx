@@ -1,5 +1,5 @@
 import { Input } from '@island.is/island-ui/core'
-import type { Case } from '@island.is/judicial-system/types'
+import { Case, isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -23,11 +23,20 @@ const RulingInput: React.FC<Props> = (props) => {
   const [rulingErrorMessage, setRulingErrorMessage] = useState('')
 
   useEffect(() => {
-    autofill(
-      'ruling',
-      `\n${formatMessage(m.autofill, { judgeName: workingCase.judge?.name })}`,
-      workingCase,
-    )
+    if (!workingCase.parentCase) {
+      autofill(
+        'ruling',
+        `\n${formatMessage(m.autofill, {
+          judgeName: workingCase.judge?.name,
+        })}`,
+        workingCase,
+      )
+    } else if (
+      workingCase.parentCase.ruling &&
+      isAcceptingCaseDecision(workingCase.decision)
+    ) {
+      autofill('ruling', workingCase.parentCase.ruling, workingCase)
+    }
   }, [workingCase, autofill, formatMessage])
 
   return (
