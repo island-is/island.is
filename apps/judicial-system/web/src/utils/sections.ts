@@ -20,10 +20,24 @@ import {
   isRulingStepTwoValidRC,
 } from '../utils/validate'
 
+interface Section {
+  name: string
+  children: {
+    type: string
+    name: string
+    href: string | undefined
+  }[]
+}
+
+export const findLastValidStep = (section: Section) => {
+  const filterValidSteps = section.children.filter((c) => c.href)
+  return filterValidSteps[filterValidSteps.length - 1]?.href
+}
+
 export const getCustodyAndTravelBanProsecutorSection = (
   workingCase: Case,
   activeSubSection?: number,
-) => {
+): Section => {
   const { type, id } = workingCase
 
   return {
