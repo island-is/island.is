@@ -103,6 +103,10 @@ export const RulingStepOne: React.FC = () => {
         )
       }
 
+      if (theCase.demands) {
+        autofill('prosecutorDemands', theCase.demands, theCase)
+      }
+
       if (theCase.requestedValidToDate) {
         autofill('validToDate', theCase.requestedValidToDate, theCase)
       }

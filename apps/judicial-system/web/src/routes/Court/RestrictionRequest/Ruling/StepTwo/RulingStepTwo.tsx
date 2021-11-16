@@ -140,7 +140,7 @@ export const RulingStepTwo: React.FC = () => {
               caseTypeAndExtensionSuffix:
                 theCase.decision === CaseDecision.ACCEPTING
                   ? `${
-                      theCase.parentCase !== undefined &&
+                      theCase.parentCase &&
                       isAcceptingCaseDecision(theCase.parentCase.decision)
                         ? 'áframhaldandi '
                         : ''
@@ -151,7 +151,7 @@ export const RulingStepTwo: React.FC = () => {
                     }`
                   : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                     `${
-                      theCase.parentCase !== undefined &&
+                      theCase.parentCase &&
                       theCase.parentCase?.decision ===
                         CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                         ? 'áframhaldandi '
