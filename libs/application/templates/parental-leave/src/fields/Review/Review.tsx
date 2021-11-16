@@ -27,6 +27,7 @@ import {
   getOtherParentOptions,
   getSelectedChild,
   requiresOtherParentApproval,
+  getApplicationExternalData,
 } from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
@@ -88,6 +89,7 @@ export const Review: FC<ReviewScreenProps> = ({
     },
     setStateful,
   ] = useStatefulAnswers(application)
+  const { applicantName } = getApplicationExternalData(application.externalData)
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
@@ -161,6 +163,19 @@ export const Review: FC<ReviewScreenProps> = ({
         }
         triggerValidation
       >
+        {applicantName !== '' && (
+          <GridRow marginBottom={3}>
+            <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.applicant.fullName,
+                )}
+                value={applicantName}
+              />
+            </GridColumn>
+          </GridRow>
+        )}
+
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue

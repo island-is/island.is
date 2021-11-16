@@ -365,7 +365,14 @@ export function getApplicationExternalData(
     'userProfile.data.genderCode',
   )
 
+  const applicantName = getValueViaPath(
+    externalData,
+    'userProfile.data.fullName',
+    '',
+  )
+
   return {
+    applicantName,
     applicantGenderCode,
     dataProvider,
     children,
