@@ -65,6 +65,9 @@ export const RulingStepOne: React.FC = () => {
     courtLegalArgumentsErrorMessage,
     setCourtLegalArgumentsErrorMessage,
   ] = useState<string>('')
+  const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] = useState(
+    '',
+  )
 
   const router = useRouter()
   const id = router.query.id
@@ -161,6 +164,48 @@ export const RulingStepOne: React.FC = () => {
                   />
                 </AccordionItem>
               </Accordion>
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  {formatMessage(m.sections.prosecutorDemands.title)}
+                </Text>
+              </Box>
+              <Input
+                data-testid="prosecutorDemands"
+                name="prosecutorDemands"
+                label={formatMessage(m.sections.prosecutorDemands.label)}
+                defaultValue={workingCase.prosecutorDemands}
+                placeholder={formatMessage(
+                  m.sections.prosecutorDemands.placeholder,
+                )}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'prosecutorDemands',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    prosecutorDemandsErrorMessage,
+                    setProsecutorDemandsMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'prosecutorDemands',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setProsecutorDemandsMessage,
+                  )
+                }
+                errorMessage={prosecutorDemandsErrorMessage}
+                hasError={prosecutorDemandsErrorMessage !== ''}
+                textarea
+                rows={7}
+                required
+              />
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
