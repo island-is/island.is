@@ -1,6 +1,11 @@
 import { PaymentScheduleType } from '@island.is/api/schema'
 import { Application, getValueViaPath } from '@island.is/application/core'
-import { DefaultApi, PaymentsDT } from '@island.is/clients/payment-schedule'
+import {
+  DefaultApi,
+  PaymentsDT,
+  ScheduleType,
+} from '@island.is/clients/payment-schedule'
+import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
@@ -17,17 +22,6 @@ export class PublicDebtPaymentPlanTemplateService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
-
-  private mapScheduleTypes(scheduleType: PaymentScheduleType) {
-    const mapper = {
-      FinesAndLegalCost: 'SR',
-      OverpaidBenefits: 'OR',
-      Wagedection: 'NR',
-      OtherFees: 'MR',
-    }
-
-    return mapper[scheduleType]
-  }
 
   private getValuesFromApplication(
     application: Application,
@@ -87,9 +81,9 @@ export class PublicDebtPaymentPlanTemplateService {
           payment: p.payment,
           accumulated: p.accumulated,
         })),
-        type: this.mapScheduleTypes(plan.id),
-      }
-    })
+          type: ScheduleType[plan.id],
+        }
+      })
 
     await this.paymentScheduleApi.schedulesPOST6({
       inputSchedules: {
