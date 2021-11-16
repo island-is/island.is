@@ -3,7 +3,6 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
-  isAcceptingCaseDecision,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'

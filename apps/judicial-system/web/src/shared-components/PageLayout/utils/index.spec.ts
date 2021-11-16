@@ -4,7 +4,7 @@ import {
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'
-import { caseResult } from '.'
+import { caseResult } from './'
 
 describe('Page layout utils', () => {
   describe('caseResult function', () => {
