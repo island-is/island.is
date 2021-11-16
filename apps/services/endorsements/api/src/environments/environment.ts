@@ -1,4 +1,5 @@
 const isProductionEnvironment = process.env.NODE_ENV === 'production'
+
 const devConfig = {
   production: isProductionEnvironment,
   metadataProvider: {
@@ -25,8 +26,11 @@ const devConfig = {
     Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
   emailOptions: {
-    useTestAccount: true,
+    useTestAccount: false,
     useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
+    options: {
+      region: 'eu-west-1',
+    },
   },
 }
 
@@ -61,7 +65,7 @@ const prodConfig = {
     useTestAccount: false,
     useNodemailerApp: false,
     options: {
-      region: process.env.EMAIL_REGION,
+      region: 'eu-west-1',
     },
   },
 }
