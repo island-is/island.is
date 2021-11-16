@@ -1,11 +1,13 @@
 import { Input } from '@island.is/island-ui/core'
-import type { Case } from '@island.is/judicial-system/types'
-import React, { useState } from 'react'
+import { Case, isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '../../utils/formHelper'
 import { useCase } from '../../utils/hooks'
+import { ruling as m } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -16,15 +18,33 @@ interface Props {
 
 const RulingInput: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isRequired, rows } = props
-  const { updateCase } = useCase()
+  const { updateCase, autofill } = useCase()
+  const { formatMessage } = useIntl()
   const [rulingErrorMessage, setRulingErrorMessage] = useState('')
+
+  useEffect(() => {
+    if (!workingCase.parentCase) {
+      autofill(
+        'ruling',
+        `\n${formatMessage(m.autofill, {
+          judgeName: workingCase.judge?.name,
+        })}`,
+        workingCase,
+      )
+    } else if (
+      workingCase.parentCase.ruling &&
+      isAcceptingCaseDecision(workingCase.decision)
+    ) {
+      autofill('ruling', workingCase.parentCase.ruling, workingCase)
+    }
+  }, [workingCase, autofill, formatMessage])
 
   return (
     <Input
       data-testid="ruling"
       name="ruling"
-      label="Efni úrskurðar"
-      placeholder="Hver er niðurstaðan að mati dómara?"
+      label={formatMessage(m.label)}
+      placeholder={formatMessage(m.placeholder)}
       defaultValue={workingCase.ruling}
       rows={rows ?? 16}
       errorMessage={rulingErrorMessage}

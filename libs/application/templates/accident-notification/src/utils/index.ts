@@ -28,6 +28,9 @@ export const getAttachmentTitles = (answers: AccidentNotification) => {
     answers.attachments?.injuryCertificateFile?.file || undefined
   const powerOfAttorneyFile =
     answers.attachments?.powerOfAttorneyFile?.file || undefined
+  const additionalFiles =
+    answers.attachments?.additionalFiles?.file || undefined
+
   const files = []
 
   if (hasAttachment(deathCertificateFile))
@@ -41,6 +44,8 @@ export const getAttachmentTitles = (answers: AccidentNotification) => {
     AttachmentsEnum.HOSPITALSENDSCERTIFICATE
   )
     files.push(overview.labels.hospitalSendsCertificate)
+  if (hasAttachment(additionalFiles))
+    files.push(attachments.documentNames.additionalDocuments)
 
   return files
 }
@@ -106,3 +111,5 @@ export * from './isStudiesAccident'
 export * from './isWorkAccident'
 export * from './isPowerOfAttorney'
 export * from './isRepresentativeOfCompanyOrInstitue'
+export * from './isFatalAccident'
+export * from './isReportingBehalfOfSelf'

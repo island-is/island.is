@@ -33,6 +33,12 @@ export const restrictions = defineMessages({
       'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
     description: 'E - Fjölmiðlabann',
   },
+  [CaseCustodyRestrictions.WORKBAN]: {
+    id: 'judicial.system.core:restrictions.WORKBAN',
+    defaultMessage:
+      'Gæsluföngum er, eftir því sem unnt er, heimilt að útvega sér vinnu meðan á gæsluvarðhaldi stendur.',
+    description: 'F - Vinnubann',
+  },
   [CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION]: {
     id:
       'judicial.system.core:restrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
@@ -46,11 +52,5 @@ export const restrictions = defineMessages({
     defaultMessage:
       'Sé krafist þess að sakborningur afhendi vegabréf sitt, er hægt að haka í þennan reit og skrifa nánari upplýsingar um hvenær og hvert sakborningur skal afhenda vegabréfið í textareitinn fyrir neðan.',
     description: 'Afhending vegabréfs',
-  },
-  [CaseCustodyRestrictions.WORKBAN]: {
-    id: 'judicial.system.core:restrictions.WORKBAN',
-    defaultMessage:
-      'Gæsluföngum er, eftir því sem unnt er, heimilt að útvega sér vinnu meðan á gæsluvarðhaldi stendur.',
-    description: 'F - Vinnubann',
   },
 })
