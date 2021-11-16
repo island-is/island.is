@@ -1,6 +1,7 @@
 export { Case } from './models'
 export {
   CaseExistsGuard,
+  CaseReadGuard,
   CaseExistsForUpdateGuard,
   CaseNotCompletedGuard,
   CaseCompletedGuard,

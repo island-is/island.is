@@ -1,4 +1,5 @@
 export { CaseExistsGuard } from './caseExists.guard'
+export { CaseReadGuard } from './caseRead.guard'
 export { CaseExistsForUpdateGuard } from './caseExistsForUpdate.guard'
 export { CaseNotCompletedGuard } from './caseNotCompleted.guard'
 export { CaseCompletedGuard } from './caseCompleted.guard'

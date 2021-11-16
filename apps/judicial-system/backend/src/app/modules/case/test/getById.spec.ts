@@ -1,27 +1,45 @@
 import { uuid } from 'uuidv4'
 
 import { Case } from '../models'
-import { CaseController } from '../case.controller'
 import { createTestingCaseModule } from './createTestingCaseModule'
 
+interface Then {
+  result: Case
+  error: Error
+}
+
+type GivenWhenThen = (caseId: string, theCase: Case) => Then
+
 describe('CaseController - Get by id', () => {
-  let caseController: CaseController
+  let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    caseController = await createTestingCaseModule()
+    const caseController = await createTestingCaseModule()
+
+    givenWhenThen = (caseId: string, theCase: Case) => {
+      const then = {} as Then
+
+      try {
+        then.result = caseController.getById(caseId, theCase)
+      } catch (error) {
+        then.error = error as Error
+      }
+
+      return then
+    }
   })
 
   describe('case exists', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
-    let result: Case
+    let then: Then
 
     beforeEach(async () => {
-      result = await caseController.getById(caseId, theCase)
+      then = givenWhenThen(caseId, theCase)
     })
 
     it('should return the case', () => {
-      expect(result).toBe(theCase)
+      expect(then.result).toBe(theCase)
     })
   })
 })
