@@ -58,7 +58,7 @@ const PetitionsTable = (data: any) => {
     return petitions.map((pet: any) => {
       return {
         Dagsetning: formatDate(pet.created),
-        Nafn: pet.name ? pet.name : formatMessage(m.viewPetition.noNameLabel),
+        Nafn: pet.meta.fullName ? pet.meta.fullName : formatMessage(m.viewPetition.noNameLabel),
       }
     })
   }
