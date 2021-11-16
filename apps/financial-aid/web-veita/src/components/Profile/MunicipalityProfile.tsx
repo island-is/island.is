@@ -109,7 +109,7 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
           </Box>
         </Box>
         <Box marginBottom={7}>
-          <Box marginBottom={3}>
+          <Box marginBottom={3} className={`contentUp delay-50`}>
             <Text as="h3" variant="h3" color="dark300">
               Stjórnendur
             </Text>
@@ -118,10 +118,10 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
           <div className={`${tableStyles.smallTableWrapper} hideScrollBar`}>
             <table
               className={cn({
-                [`${tableStyles.tableContainer}`]: true,
+                [`${tableStyles.tableContainer} contentUp delay-75`]: true,
               })}
             >
-              <thead className={`contentUp delay-50`}>
+              <thead>
                 <tr>
                   {['Nafn', 'Kennitala', 'Netfang', 'Aðgerð'].map(
                     (item, index) => (
@@ -160,7 +160,7 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
         </Box>
 
         <Box>
-          <Box marginBottom={3}>
+          <Box marginBottom={3} className={`contentUp delay-100`}>
             <Text as="h3" variant="h3" color="dark300">
               Grunnupphæðir
             </Text>
@@ -168,10 +168,10 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
           <div className={`${tableStyles.smallTableWrapper} hideScrollBar`}>
             <table
               className={cn({
-                [`${tableStyles.tableContainer}`]: true,
+                [`${tableStyles.tableContainer} contentUp delay-125`]: true,
               })}
             >
-              <thead className={`contentUp delay-50`}>
+              <thead>
                 <tr>
                   {['Búsetskilyrði', 'Einstaklingar', 'Hjón/Sambúð'].map(
                     (item, index) => (
@@ -201,7 +201,7 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
           </div>
         </Box>
 
-        <Box marginBottom={3}>
+        <Box marginBottom={3} className={`contentUp delay-125`}>
           <Text as="h3" variant="h3" color="dark300">
             Aðrar stillingar
           </Text>
