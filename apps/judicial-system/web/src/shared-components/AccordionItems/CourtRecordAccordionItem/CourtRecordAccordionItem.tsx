@@ -31,6 +31,7 @@ import { rcConfirmation } from '@island.is/judicial-system-web/messages'
 interface Props {
   workingCase: Case
 }
+
 const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
   const { formatMessage } = useIntl()
 
@@ -45,6 +46,18 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
     workingCase.otherRestrictions,
   )
 
+  const prosecutorAppeal = formatAppeal(
+    workingCase.prosecutorAppealDecision,
+    'Sækjandi',
+  )
+
+  const accusedAppeal = formatAppeal(
+    workingCase.accusedAppealDecision,
+    isRestrictionCase(workingCase.type)
+      ? capitalize(formatAccusedByGender(workingCase.accusedGender))
+      : 'Varnaraðili',
+    isRestrictionCase(workingCase.type) ? workingCase.accusedGender : undefined,
+  )
   return (
     <AccordionItem
       id="courtRecordAccordionItem"
@@ -153,57 +166,27 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             )}
             {workingCase.prosecutorAppealDecision !==
               CaseAppealDecision.NOT_APPLICABLE && (
-              <Box marginBottom={1}>
-                <Text variant="h4">
-                  {formatAppeal(
-                    workingCase.prosecutorAppealDecision,
-                    'Sækjandi',
-                  )}
+              <Box marginBottom={2}>
+                <Text>
+                  {`${prosecutorAppeal}${
+                    workingCase.prosecutorAppealAnnouncement
+                      ? ` ${workingCase.prosecutorAppealAnnouncement}`
+                      : ''
+                  }`}
                 </Text>
               </Box>
             )}
             {workingCase.accusedAppealDecision !==
               CaseAppealDecision.NOT_APPLICABLE && (
-              <Text variant="h4">
-                {formatAppeal(
-                  workingCase.accusedAppealDecision,
-                  isRestrictionCase(workingCase.type)
-                    ? capitalize(
-                        formatAccusedByGender(workingCase.accusedGender),
-                      )
-                    : 'Varnaraðili',
-                  isRestrictionCase(workingCase.type)
-                    ? workingCase.accusedGender
-                    : undefined,
-                )}
+              <Text>
+                {`${accusedAppeal}${
+                  workingCase.accusedAppealAnnouncement
+                    ? ` ${workingCase.accusedAppealAnnouncement}`
+                    : ''
+                }`}
               </Text>
             )}
           </AccordionListItem>
-        </Box>
-      )}
-      {(workingCase.accusedAppealAnnouncement ||
-        workingCase.prosecutorAppealAnnouncement) && (
-        <Box component="section" marginBottom={6}>
-          {workingCase.accusedAppealAnnouncement && (
-            <Box marginBottom={2}>
-              <Text variant="eyebrow" color="blue400">
-                {`Yfirlýsing um kæru ${formatAccusedByGender(
-                  workingCase.accusedGender,
-                  NounCases.GENITIVE,
-                  isInvestigationCase(workingCase.type),
-                )}`}
-              </Text>
-              <Text>{workingCase.accusedAppealAnnouncement}</Text>
-            </Box>
-          )}
-          {workingCase.prosecutorAppealAnnouncement && (
-            <Box marginBottom={2}>
-              <Text variant="eyebrow" color="blue400">
-                Yfirlýsing um kæru sækjanda
-              </Text>
-              <Text>{workingCase.prosecutorAppealAnnouncement}</Text>
-            </Box>
-          )}
         </Box>
       )}
       {workingCase.type === CaseType.CUSTODY &&
