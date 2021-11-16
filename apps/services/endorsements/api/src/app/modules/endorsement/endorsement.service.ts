@@ -440,7 +440,9 @@ export class EndorsementService {
       doc.fontSize(big).text('Yfirlit meðmæla').fontSize(regular).moveDown()
       for (const val of endorsementList.endorsements) {
         doc.text(
-          val.created.toLocaleDateString(locale) + ' ' + (val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint'),
+          val.created.toLocaleDateString(locale) +
+            ' ' +
+            (val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint'),
         )
       }
     }
@@ -515,8 +517,8 @@ export class EndorsementService {
         },
         attachments: [
           {
-             filename: 'Meðmælendalisti.pdf',
-             content: await this.createDocumentBuffer(endorsementList),
+            filename: 'Meðmælendalisti.pdf',
+            content: await this.createDocumentBuffer(endorsementList),
           },
         ],
       })

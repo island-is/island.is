@@ -14982,7 +14982,7 @@ font-awesome@4.7.0:
   resolved "https://registry.yarnpkg.com/font-awesome/-/font-awesome-4.7.0.tgz#8fa8cf0411a1a31afd07b06d2902bb9fc815a133"
   integrity sha1-j6jPBBGhoxr9B7BtKQK7n8gVoTM=
 
-fontkit@^1.8.0, fontkit@^1.8.1:
+fontkit@^1.8.0:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/fontkit/-/fontkit-1.8.1.tgz#ae77485376f1096b45548bf6ced9a07af62a7846"
   integrity sha512-BsNCjDoYRxmNWFdAuK1y9bQt+igIxGtTC9u/jSFjR9MKhmI00rP1fwSvERt+5ddE82544l0XH5mzXozQVUy2Tw==
@@ -21960,13 +21960,6 @@ pbkdf2@^3.0.3:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-pdfkit-table@0.1.59:
-  version "0.1.59"
-  resolved "https://registry.yarnpkg.com/pdfkit-table/-/pdfkit-table-0.1.59.tgz#9475187a463a1653f4cfbda5240772f8f7e89528"
-  integrity sha512-fsTF/lLSkJQj8cmaYz81P1kXilCjb3VkzVkvw1Kneyr32ETkeH2L1xfTVblCAG9D++0iU/llECjSy37GMrei7A==
-  dependencies:
-    pdfkit latest
-
 pdfkit@0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/pdfkit/-/pdfkit-0.11.0.tgz#9cdb2fc42bd2913587fe3ddf48cc5bbb3c36f7de"
@@ -21974,16 +21967,6 @@ pdfkit@0.11.0:
   dependencies:
     crypto-js "^3.1.9-1"
     fontkit "^1.8.0"
-    linebreak "^1.0.2"
-    png-js "^1.0.0"
-
-pdfkit@latest:
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/pdfkit/-/pdfkit-0.13.0.tgz#da4c2becd63a129e3aae448fdaed4ee7be790f8f"
-  integrity sha512-AW79eHU5eLd2vgRDS9z3bSoi0FA+gYm+100LLosrQQMLUzOBGVOhG7ABcMFpJu7Bpg+MT74XYHi4k9EuU/9EZw==
-  dependencies:
-    crypto-js "^4.0.0"
-    fontkit "^1.8.1"
     linebreak "^1.0.2"
     png-js "^1.0.0"
 
