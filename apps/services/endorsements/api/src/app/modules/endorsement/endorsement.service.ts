@@ -20,7 +20,9 @@ import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 
 import { paginate } from '@island.is/nest/pagination'
-import environment, { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
+import environment, {
+  ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
+} from '../../../environments/environment'
 
 import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
