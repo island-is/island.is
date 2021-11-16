@@ -5,6 +5,7 @@ import { intercept } from '../../utils'
 describe('/domur/thingbok/:id', () => {
   beforeEach(() => {
     const caseData = makeCase()
+
     const caseDataAddition: Case = {
       ...caseData,
       prosecutor: makeProsecutor(),
@@ -21,12 +22,6 @@ describe('/domur/thingbok/:id', () => {
   it('should autofill court attendees', () => {
     cy.getByTestid('courtAttendees').contains(
       'Áki Ákærandi aðstoðarsaksóknari Donald Duck kærði',
-    )
-  })
-
-  it('should autofill prosecutor demands', () => {
-    cy.getByTestid('prosecutorDemands').contains(
-      'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     )
   })
 
