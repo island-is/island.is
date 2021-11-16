@@ -470,7 +470,7 @@ export class EndorsementService {
         },
       ],
     })
-    this.logger.debug(
+    this.logger.info(
       `sending list ${listId} to ${recipientEmail} from ${environment.email.sender}`,
     )
     try {
