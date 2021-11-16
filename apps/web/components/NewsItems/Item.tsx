@@ -52,6 +52,7 @@ export const Item = ({
       borderRadius="large"
       borderWidth="standard"
       height="full"
+      color="blue"
     >
       <span className={styles.wrapper}>
         <span className={styles.content}>

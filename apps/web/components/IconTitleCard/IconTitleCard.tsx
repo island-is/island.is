@@ -27,6 +27,7 @@ export const IconTitleCard = ({
     borderWidth="standard"
     height="full"
     className={styles.container}
+    color="purple"
   >
     <span className={styles.iconContainer}>
       <img src={src} alt={alt} className={styles.icon} />
