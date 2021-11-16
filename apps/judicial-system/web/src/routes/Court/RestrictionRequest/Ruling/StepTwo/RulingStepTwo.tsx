@@ -107,7 +107,7 @@ export const RulingStepTwo: React.FC = () => {
               genderedAccused: formatAccusedByGender(theCase.accusedGender),
               accusedName: theCase.accusedName,
               extensionSuffix:
-                theCase.parentCase !== undefined &&
+                theCase.parentCase &&
                 isAcceptingCaseDecision(theCase.parentCase.decision)
                   ? ' áframhaldandi'
                   : '',
@@ -122,7 +122,7 @@ export const RulingStepTwo: React.FC = () => {
               accusedName: theCase.accusedName,
               accusedNationalId: formatNationalId(theCase.accusedNationalId),
               extensionSuffix:
-                theCase.parentCase !== undefined &&
+                theCase.parentCase &&
                 isAcceptingCaseDecision(theCase.parentCase.decision)
                   ? ' áframhaldandi'
                   : '',
@@ -151,9 +151,8 @@ export const RulingStepTwo: React.FC = () => {
                     }`
                   : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                     `${
-                      theCase.parentCase &&
                       theCase.parentCase?.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                      CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                         ? 'áframhaldandi '
                         : ''
                     }farbanni`,
