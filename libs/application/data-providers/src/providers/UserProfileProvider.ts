@@ -4,7 +4,12 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 
-/** This data provider fetches email and phone number information from user profile service and resolves even though the user has not set it up in my pages **/
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+
+/** This data provider fetches email and phone number information
+ * from user profile service and resolves even though the user has
+ * not set it up in my pages, it also fethes fullName and genderCode
+ * from the national registry **/
 export class UserProfileProvider extends BasicDataProvider {
   readonly type = 'UserProfile'
 
@@ -18,6 +23,7 @@ export class UserProfileProvider extends BasicDataProvider {
       }
 
       nationalRegistryUserV2 {
+        fullName,
         genderCode
       }
     }`
@@ -32,28 +38,25 @@ export class UserProfileProvider extends BasicDataProvider {
           ...response.data.getUserProfile,
           ...response.data.nationalRegistryUserV2,
         }
-        if (
-          !responseObj?.mobilePhoneNumber ||
-          !responseObj?.mobilePhoneNumberVerified ||
-          !responseObj?.email ||
-          !responseObj?.emailVerified
-        ) {
-          return this.handleError()
-        }
+
         return Promise.resolve(responseObj)
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log('Error in user profile provider', e)
         return this.handleError()
       })
   }
   handleError() {
-    if (process.env.NODE_ENV === 'development') {
+    if (isRunningOnEnvironment('local')) {
       return Promise.resolve({
         email: 'mockEmail@island.is',
         mobilePhoneNumber: '9999999',
+        fullName: 'Tester Testerson',
+        genderCode: '1',
       })
     }
-    return Promise.resolve({})
+
+    return Promise.reject({})
   }
   onProvideError(result: string): FailedDataProviderResult {
     return {
