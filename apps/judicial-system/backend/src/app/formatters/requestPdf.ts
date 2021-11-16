@@ -5,7 +5,6 @@ import { FormatMessage } from '@island.is/cms-translations'
 import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import {
   caseTypes,
-  formatRequestedCustodyRestrictions,
   formatNationalId,
   capitalize,
   formatDate,
@@ -131,29 +130,6 @@ function constructRestrictionRequestPdf(
         existingCase.legalProvisions,
         existingCase.legalBasis,
       ),
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
-    .lineGap(8)
-    .text(
-      `${formatMessage(m.baseInfo.restrictions)} ${
-        existingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-      }`,
-      {},
-    )
-    .font('Helvetica')
-    .fontSize(baseFontSize)
-    .text(
-      `${formatRequestedCustodyRestrictions(
-        existingCase.type,
-        existingCase.requestedCustodyRestrictions,
-        existingCase.requestedOtherRestrictions,
-      )}`,
       {
         lineGap: 6,
         paragraphGap: 0,

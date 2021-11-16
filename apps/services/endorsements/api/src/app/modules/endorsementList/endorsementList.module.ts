@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListController } from './endorsementList.controller'
@@ -14,16 +14,8 @@ export interface Config {
   nationalRegistry: NationalRegistryConfig
 }
 
-import { EmailModule } from '@island.is/email-service'
-
 @Module({
-  imports: [
-    SequelizeModule.forFeature([EndorsementList, Endorsement]),
-    EmailModule.register({
-      useTestAccount: true,
-      useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
-    }),
-  ],
+  imports: [SequelizeModule.forFeature([EndorsementList, Endorsement])],
   controllers: [EndorsementListController],
   providers: [
     EndorsementListService,
