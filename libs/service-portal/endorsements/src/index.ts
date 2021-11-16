@@ -7,6 +7,7 @@ import {
 } from '@island.is/service-portal/core'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 
+
 export const endorsementsModule: ServicePortalModule = {
   name: 'Meðmæli',
   widgets: () => [],
@@ -20,18 +21,18 @@ export const endorsementsModule: ServicePortalModule = {
 }
 
 const hasGeneralPetitionAdminScope = (user: ServicePortalModuleProps) => {
-  for (const [key, value] of Object.entries(user.userInfo.scope.split(' '))) {
+  for (const [key, value] of Object.entries(user.userInfo.scopes)) {
+    console.log(value)
     if (value == EndorsementsScope.admin) {
       return true
     }
   }
   return false
 }
-
 export const petitionsModule: ServicePortalModule = {
   name: 'Almennir undirskriftalistar',
   widgets: () => [],
-  routes: (userInfo) => {
+  routes: ({userInfo}) => {
     const applicationRoutes = [
       {
         name: m.endorsements,
@@ -43,23 +44,39 @@ export const petitionsModule: ServicePortalModule = {
         path: ServicePortalPath.PetitionList,
         render: () => lazy(() => import('./screens/ViewPetition')),
       },
+      {
+        name: m.endorsementsAdmin,
+        path: ServicePortalPath.PetitionsAdminView,
+        enabled: userInfo.scopes.includes(EndorsementsScope.admin),
+        render: () => lazy(() => import('./screens/PetitionsAdmin')),
+      },
+      {
+        name: m.endorsementsAdmin,
+        path: ServicePortalPath.PetitionListAdmin,
+        enabled: userInfo.scopes.includes(EndorsementsScope.admin),
+        render: () => lazy(() => import('./screens/ViewPetitionAdmin')),
+      },
     ]
-    const adminScope = hasGeneralPetitionAdminScope(userInfo)
 
-    if (adminScope) {
-      applicationRoutes.push(
-        {
-          name: m.endorsementsAdmin,
-          path: ServicePortalPath.PetitionsAdminView,
-          render: () => lazy(() => import('./screens/PetitionsAdmin')),
-        },
-        {
-          name: m.endorsementsAdmin,
-          path: ServicePortalPath.PetitionListAdmin,
-          render: () => lazy(() => import('./screens/ViewPetitionAdmin')),
-        },
-      )
-    }
+    console.log(userInfo)
+    // const adminScope = hasGeneralPetitionAdminScope(userInfo)
+
+    // if (adminScope) {
+      // applicationRoutes.push(
+      //   {
+      //     name: m.endorsementsAdmin,
+      //     path: ServicePortalPath.PetitionsAdminView,
+      //     enabled: userInfo.scopes.includes(EndorsementsScope.admin),
+      //     render: () => lazy(() => import('./screens/PetitionsAdmin')),
+      //   },
+      //   {
+      //     name: m.endorsementsAdmin,
+      //     path: ServicePortalPath.PetitionListAdmin,
+      //     enabled: userInfo.scopes.includes(EndorsementsScope.admin),
+      //     render: () => lazy(() => import('./screens/ViewPetitionAdmin')),
+      //   },
+      // )
+    // }
 
     return applicationRoutes
   },
