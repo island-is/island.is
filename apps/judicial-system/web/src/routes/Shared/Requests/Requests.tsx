@@ -17,7 +17,13 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { getCustodyAndTravelBanProsecutorSection } from '@island.is/judicial-system-web/src/utils/sections'
+import {
+  getCustodyAndTravelBanProsecutorSection,
+  getInvestigationCaseProsecutorSection,
+  getInvestigationCaseCourtSections,
+  getCourtSections,
+  findLastValidStep,
+} from '@island.is/judicial-system-web/src/utils/sections'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
@@ -49,17 +55,14 @@ export const Requests: React.FC = () => {
     errorPolicy: 'all',
   })
 
-  const [getCaseToOpen, { loading: caseLoading }] = useLazyQuery<CaseData>(
-    CaseQuery,
-    {
-      fetchPolicy: 'no-cache',
-      onCompleted: (caseData) => {
-        if (user?.role && caseData?.case) {
-          openCase(caseData.case, user.role)
-        }
-      },
+  const [getCaseToOpen] = useLazyQuery<CaseData>(CaseQuery, {
+    fetchPolicy: 'no-cache',
+    onCompleted: (caseData) => {
+      if (user?.role && caseData?.case) {
+        openCase(caseData.case, user.role)
+      }
     },
-  )
+  })
 
   const { transitionCase, sendNotification } = useCase()
   const { formatMessage } = useIntl()
@@ -128,27 +131,27 @@ export const Requests: React.FC = () => {
   }
 
   const handleRowClick = (id: string) => {
-    const caseToOpen = resCases.find((c: Case) => c.id === id)
-
     getCaseToOpen({
-      variables: { input: { id: caseToOpen.id } },
+      variables: { input: { id } },
     })
   }
 
   const openCase = (caseToOpen: Case, role: UserRole) => {
+    let routeTo = null
+
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
       caseToOpen.state === CaseState.REJECTED ||
       caseToOpen.state === CaseState.DISMISSED
     ) {
-      router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`)
+      routeTo = `${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
       if (isRestrictionCase(caseToOpen.type)) {
-        router.push(
-          `${Constants.COURT_SINGLE_REQUEST_BASE_ROUTE}/${caseToOpen.id}`,
-        )
+        routeTo = findLastValidStep(getCourtSections(caseToOpen))
       } else {
-        router.push(`${Constants.IC_OVERVIEW_ROUTE}/${caseToOpen.id}`)
+        routeTo = findLastValidStep(
+          getInvestigationCaseCourtSections(caseToOpen),
+        )
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
@@ -156,28 +159,27 @@ export const Requests: React.FC = () => {
           caseToOpen.state === CaseState.RECEIVED ||
           caseToOpen.state === CaseState.SUBMITTED
         ) {
-          router.push(`${Constants.STEP_SIX_ROUTE}/${caseToOpen.id}`)
+          routeTo = `${Constants.STEP_SIX_ROUTE}/${caseToOpen.id}`
         } else {
-          const custodySections = getCustodyAndTravelBanProsecutorSection(
-            caseToOpen,
+          routeTo = findLastValidStep(
+            getCustodyAndTravelBanProsecutorSection(caseToOpen),
           )
-          const filterChildren = custodySections.children.filter((c) => c.href)
-          const findChild = filterChildren[filterChildren.length - 1]
-          router.push(findChild.href)
         }
       } else {
         if (
           caseToOpen.state === CaseState.RECEIVED ||
           caseToOpen.state === CaseState.SUBMITTED
         ) {
-          router.push(
-            `${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${caseToOpen.id}`,
-          )
+          routeTo = `${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${caseToOpen.id}`
         } else {
-          router.push(`${Constants.IC_DEFENDANT_ROUTE}/${caseToOpen.id}`)
+          routeTo = findLastValidStep(
+            getInvestigationCaseProsecutorSection(caseToOpen),
+          )
         }
       }
     }
+
+    if (routeTo) router.push(routeTo)
   }
 
   return (
@@ -321,7 +323,7 @@ export const Requests: React.FC = () => {
             type="error"
           />
         </div>
-      ) : loading || caseLoading ? (
+      ) : loading ? (
         <Box className={styles.table}>
           <Loading />
         </Box>
