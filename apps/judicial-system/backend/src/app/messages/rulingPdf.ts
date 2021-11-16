@@ -24,6 +24,11 @@ export const ruling = {
     defaultMessage: 'Mættir eru:',
     description: 'Notaður sem fyrirsögn á lista yfir viðstadda.',
   }),
+  demandsHeading: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.demands_heading',
+    defaultMessage: 'Krafa:',
+    description: 'Notaður sem fyrirsögn á kröfu.',
+  }),
   courtDocuments: defineMessages({
     heading: {
       id: 'judicial.system.backend:pdf.ruling.court_documents.heading',
