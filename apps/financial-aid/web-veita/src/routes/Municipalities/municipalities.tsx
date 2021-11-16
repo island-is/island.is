@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useLazyQuery } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import {
   ActivationButtonTableItem,
   ApplicationOverviewSkeleton,
@@ -8,13 +8,22 @@ import {
   TableHeaders,
   TextTableItem,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { Text, Box, Button } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  Button,
+  ToastContainer,
+  toast,
+} from '@island.is/island-ui/core'
 import * as tableStyles from '../../sharedStyles/Table.css'
 import * as headerStyles from '../../sharedStyles/Header.css'
 import cn from 'classnames'
 
 import { Municipality, Routes } from '@island.is/financial-aid/shared/lib'
-import { MunicipalitiesQuery } from '@island.is/financial-aid-web/veita/graphql'
+import {
+  MunicipalitiesQuery,
+  UpdateMunicipalityMutation,
+} from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
 
 export const Municipalities = () => {
@@ -38,6 +47,28 @@ export const Municipalities = () => {
       setMunicipalities(data.municipalities)
     }
   }, [data])
+
+  const [updateMunicipalityMutation] = useMutation(UpdateMunicipalityMutation)
+
+  const changeMunicipalityActivity = async (id: string, active: boolean) => {
+    await updateMunicipalityMutation({
+      variables: {
+        input: {
+          id,
+          active,
+        },
+      },
+    })
+      .then(() => {
+        getMunicipalities()
+        toast.success('Það tókst að uppfæra sveitarfélag')
+      })
+      .catch(() => {
+        toast.error(
+          'Ekki tókst að uppfæra sveitarfélag, vinsamlega reynið aftur síðar',
+        )
+      })
+  }
 
   return (
     <LoadingContainer
@@ -94,7 +125,7 @@ export const Municipalities = () => {
                       ActivationButtonTableItem(
                         item.active ? 'Óvirkja' : 'Virkja',
                         false,
-                        () => console.log('🔜'),
+                        () => changeMunicipalityActivity(item.id, item.active),
                         item.active,
                       ),
                     ]}
@@ -121,6 +152,7 @@ export const Municipalities = () => {
           þessu upplýsingum?
         </div>
       )}
+      <ToastContainer />
     </LoadingContainer>
   )
 }

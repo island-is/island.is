@@ -55,7 +55,7 @@ export class MunicipalityController {
 
   @Put('')
   @UseGuards(StaffGuard)
-  @StaffRolesRules(StaffRole.ADMIN)
+  @StaffRolesRules(StaffRole.ADMIN, StaffRole.SUPERADMIN)
   @ApiOkResponse({
     type: MunicipalityModel,
     description: 'Updates municipality',
@@ -64,6 +64,13 @@ export class MunicipalityController {
     @CurrentStaff() staff: Staff,
     @Body() input: UpdateMunicipalityDto,
   ): Promise<MunicipalityModel> {
+    console.log('kemuru hingad?', staff)
+    if (staff.roles.includes(StaffRole.SUPERADMIN)) {
+      console.log('kemuru hingad?')
+
+      return
+    }
+
     return await this.municipalityService.updateMunicipality(
       staff.municipalityId,
       input,
