@@ -18,8 +18,8 @@ import { m } from './messages'
 
 enum States {
   DRAFT = 'draft',
-  DONE = 'done',
   PAYMENT = 'payment',
+  DONE = 'done',
 }
 
 type CriminalRecordTemplateEvent =
@@ -80,10 +80,10 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Umsókn um sakavottorð',
-          onExit: {
-            apiModuleAction: ApiActions.getCriminalRecord,
-            throwOnError: true,
-          },
+          // onExit: {
+          //   apiModuleAction: ApiActions.getCriminalRecord,
+          //   throwOnError: true,
+          // },
           actionCard: {
             description: m.draftDescription,
           },
@@ -111,7 +111,7 @@ const template: ApplicationTemplate<
           [DefaultEvents.PAYMENT]: {
             target: States.PAYMENT,
           },
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
       [States.PAYMENT]: {

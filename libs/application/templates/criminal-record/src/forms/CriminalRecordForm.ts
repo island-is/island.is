@@ -19,6 +19,7 @@ import {
   DefaultEvents,
   buildDividerField,
   buildKeyValueField,
+  StaticText,
 } from '@island.is/application/core'
 import { NationalRegistryUser, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
@@ -72,53 +73,58 @@ export const CriminalRecordForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: 'Áfram',
+              title: 'Staðfesta',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Áfram',
+                  name: 'Staðfesta',
                   type: 'primary',
                 },
               ],
             }),
-            buildKeyValueField({
-              label: 'Nafn',
-              value: ({ externalData: { nationalRegistry } }) =>
-                (nationalRegistry.data as NationalRegistryUser).fullName,
-            }),
-            buildKeyValueField({
-              label: m.overviewPaymentCharge,
-              value: ({ externalData }) => {
-                const item = externalData.payment.data as {
-                  priceAmount: number
-                  chargeItemName: string
-                }
+            // buildKeyValueField({
+            //   label: 'Nafn',
+            //   value: ({ externalData: { nationalRegistry } }) =>
+            //     (nationalRegistry.data as NationalRegistryUser).fullName,
+            // }),
+            // buildKeyValueField({
+            //   label: m.overviewPaymentCharge,
+            //   value: ({ externalData }) => {
+            //     const item = externalData.payment.data as {
+            //       priceAmount: number
+            //       chargeItemName: string
+            //     }
 
-                return [
-                  item?.chargeItemName,
-                  (item?.priceAmount?.toLocaleString('de-DE') +
-                    ' kr.') as StaticText,
-                ]
-              },
-              width: 'half',
-            }),
-            buildKeyValueField({
-              label: '',
-              value: ({ externalData }) => {
-                const item = externalData.payment.data as {
-                  priceAmount: number
-                  chargeItemCode: string
-                }
+            //     return [
+            //       item?.chargeItemName,
+            //       (item?.priceAmount?.toLocaleString('de-DE') +
+            //         ' kr.') as StaticText,
+            //     ]
+            //   },
+            //   width: 'half',
+            // }),
+            // buildKeyValueField({
+            //   label: ' ',
+            //   value: ({ externalData }) => {
+            //     const item = externalData.payment.data as {
+            //       priceAmount: number
+            //       chargeItemCode: string
+            //     }
 
-                return (item?.priceAmount?.toLocaleString('de-DE') +
-                  ' kr.') as StaticText
-              },
-              width: 'half',
-            }),
-            buildDividerField({
+            //     return (item?.priceAmount?.toLocaleString('de-DE') +
+            //       ' kr.') as StaticText
+            //   },
+            //   width: 'half',
+            // }),
+            // buildDividerField({
+            //   title: '',
+            //   color: 'dark400',
+            // }),
+            buildCustomField({
+              id: 'payment.over',
               title: '',
-              color: 'dark400',
+              component: 'OverviewPaymentCharge',
             }),
           ],
         }),
