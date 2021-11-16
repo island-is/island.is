@@ -50,6 +50,7 @@ import {
   SubArticle,
   GetSearchResultsTotalQuery,
   OrganizationSubpage,
+  Link as LinkItem,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 import * as styles from './Search.css'
@@ -201,12 +202,18 @@ const Search: Screen<CategoryProps> = ({
       News &
       AdgerdirPage &
       SubArticle &
-      OrganizationSubpage
+      OrganizationSubpage &
+      LinkItem
   >).map((item) => ({
     title: item.title,
     parentTitle: item.parent?.title,
     description: item.intro ?? item.description ?? item.parent?.intro,
-    link: linkResolver(item.__typename, item?.url ?? item.slug.split('/')),
+    link: linkResolver(
+      item.__typename === 'Link' ? 'linkurl' : item.__typename,
+      item?.url ?? item.__typename == 'Link'
+        ? [item.slug]
+        : item.slug.split('/'),
+    ),
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
@@ -214,6 +221,8 @@ const Search: Screen<CategoryProps> = ({
     ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
     labels: getLabels(item),
   }))
+
+  console.log(searchResults.items)
 
   const onRemoveFilters = () => {
     Router.replace({
@@ -510,6 +519,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       'webLifeEventPage' as SearchableContentTypes,
       'webAdgerdirPage' as SearchableContentTypes,
       'webSubArticle' as SearchableContentTypes,
+      'webLink' as SearchableContentTypes,
     ]
   }
 
