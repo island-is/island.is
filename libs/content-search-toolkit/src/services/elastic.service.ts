@@ -4,7 +4,7 @@ import * as AWS from 'aws-sdk'
 import AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import { autocompleteTermQuery } from '../queries/autocomplete'
+import { autocompleteSearchQuery, autocompleteTermQuery } from '../queries/autocomplete'
 import { searchQuery } from '../queries/search'
 import { documentByMetaDataQuery } from '../queries/documentByMetaData'
 import {
@@ -22,6 +22,8 @@ import {
   RankEvaluationInput,
   GroupedRankEvaluationResponse,
   rankEvaluationMetrics,
+  AutocompleteSearchQueryInput,
+  AutocompleteSearchQueryResponse,
 } from '../types'
 import {
   DeleteByQueryResponse,
@@ -302,6 +304,21 @@ export class ElasticService {
 
     const data = await this.findByQuery<
       AutocompleteTermResponse,
+      typeof requestBody
+    >(index, requestBody)
+
+    return data.body
+  }
+
+  async fetchAutocompleteSuggestions(
+    index: string,
+    input: AutocompleteSearchQueryInput
+  ): Promise<AutocompleteSearchQueryResponse> {
+    const { searchQuery } = input
+    const requestBody = autocompleteSearchQuery({searchQuery});
+
+    const data = await this.findByQuery<
+      AutocompleteSearchQueryResponse,
       typeof requestBody
     >(index, requestBody)
 

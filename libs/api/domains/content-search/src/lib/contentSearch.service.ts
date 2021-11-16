@@ -7,9 +7,11 @@ import {
 import { logger } from '@island.is/logging'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
+import { WebSearchAutocompleteSuggestions } from './models/webSearchAutocompleteSuggestions.model'
 import { TagCount } from './models/tagCount'
 import { SearcherInput } from './dto/searcher.input'
 import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
+import { WebSearchAutocompleteSuggestionsInput } from './dto/webSearchAutocompleteSuggestions.input'
 import { TypeCount } from './models/typeCount'
 import {
   ElasticsearchIndexLocale,
@@ -91,6 +93,23 @@ export class ContentSearchService {
       completions: firstWordSuggestions.map(
         (suggestionObjects) => suggestionObjects.text,
       ),
+    }
+  }
+
+  async fetchAutocompleteSuggestion(
+    input: WebSearchAutocompleteSuggestionsInput
+  ): Promise<WebSearchAutocompleteSuggestions> {
+    const {
+      suggest: { contentSuggest, titleSuggest }
+    } = await this.elasticService.fetchAutocompleteSuggestions(
+      this.getIndex(input.language),
+      {
+        ...input
+      }
+    )
+    console.log(contentSuggest, titleSuggest)
+    return {
+      completions: ["this is a test"]
     }
   }
 }
