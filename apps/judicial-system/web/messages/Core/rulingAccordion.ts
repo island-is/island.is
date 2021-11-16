@@ -14,9 +14,9 @@ export const rulingAccordion = {
       'Notaður sem titill fyrir úrskurðar fellilista í öllum málategundum.',
   }),
   sections: {
-    demands: defineMessages({
+    prosecutorDemands: defineMessages({
       title: {
-        id: 'judicial.system.core:ruling_accordion.demands.title',
+        id: 'judicial.system.core:ruling_accordion.prosecutor_demands.title',
         defaultMessage: 'Dómkröfur',
         description:
           'Notaður sem titill fyrir "Dómkröfur" hlutanum í úrskurðar fellilista í öllum málategundum.',
