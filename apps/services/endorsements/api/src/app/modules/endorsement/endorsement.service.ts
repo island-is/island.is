@@ -445,7 +445,9 @@ export class EndorsementService {
         },
       ],
     })
-    this.logger.debug(`sending list ${listId} to ${recipientEmail} from ${environment.email.sender}`)
+    this.logger.debug(
+      `sending list ${listId} to ${recipientEmail} from ${environment.email.sender}`,
+    )
     try {
       const result = await this.emailService.sendEmail({
         from: {
@@ -498,7 +500,7 @@ export class EndorsementService {
           },
         ],
       })
-      
+
       return { success: true }
     } catch (error) {
       this.logger.error('Failed to send email', error)
