@@ -627,6 +627,8 @@ endorsement-system-api:
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
+  podSecurityContext:
+    fsGroup: 65534
   replicaCount:
     default: 2
     max: 3
@@ -642,6 +644,11 @@ endorsement-system-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/endorsement-system-api'
+    create: true
+    name: 'endorsement-system-api'
   strategy:
     type: 'Recreate'
 endorsement-system-scripts-update-metadata:

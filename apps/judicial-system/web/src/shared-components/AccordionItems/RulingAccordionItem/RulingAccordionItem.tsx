@@ -31,6 +31,14 @@ const RulingAccordionItem: React.FC<Props> = ({
         </Box>
         <Box marginBottom={1}>
           <Text variant="eyebrow" color="blue400">
+            {formatMessage(m.sections.prosecutorDemands.title)}
+          </Text>
+        </Box>
+        <Box marginBottom={2}>
+          <Text>{workingCase.prosecutorDemands}</Text>
+        </Box>
+        <Box marginBottom={1}>
+          <Text variant="eyebrow" color="blue400">
             {formatMessage(m.sections.courtCaseFacts.title)}
           </Text>
         </Box>
