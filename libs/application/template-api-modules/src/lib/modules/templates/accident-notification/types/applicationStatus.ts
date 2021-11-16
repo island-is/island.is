@@ -1,6 +1,6 @@
 export interface AccidentNotificationAttachmentStatus {
-  InjuryCertificate?: boolean
-  ProxyDocument?: boolean
-  PoliceReport?: boolean
-  Unknown?: boolean
+  InjuryCertificate?: boolean | null
+  ProxyDocument?: boolean | null
+  PoliceReport?: boolean | null
+  Unknown?: boolean | null
 }
