@@ -266,6 +266,7 @@ export const aboutTheAccidentSection = buildSection({
               title: accidentLocation.homeAccidentLocation.postalCode,
               backgroundColor: 'blue',
               width: 'half',
+              format: '###',
               required: true,
             }),
             buildTextField({

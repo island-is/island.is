@@ -481,6 +481,7 @@ export class CaseService {
       defenderPhoneNumber: existingCase.defenderPhoneNumber,
       leadInvestigator: existingCase.leadInvestigator,
       courtId: existingCase.courtId,
+      translator: existingCase.translator,
       lawsBroken: existingCase.lawsBroken,
       legalBasis: existingCase.legalBasis,
       legalProvisions: existingCase.legalProvisions,

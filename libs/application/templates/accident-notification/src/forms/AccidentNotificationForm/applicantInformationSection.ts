@@ -51,6 +51,7 @@ export const applicantInformationSection = buildSection({
           id: 'applicant.postalCode',
           title: applicantInformation.labels.postalCode,
           width: 'half',
+          format: '###',
           backgroundColor: 'white',
           disabled: true,
           required: true,

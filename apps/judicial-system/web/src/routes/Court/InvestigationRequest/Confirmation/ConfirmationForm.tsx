@@ -19,6 +19,7 @@ import {
   icConfirmation as m,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case
@@ -110,18 +111,12 @@ const Confirmation: React.FC<Props> = (props) => {
               : m.footer.acceptingPartially.continueButtonText,
           )}
           nextButtonIcon={
-            workingCase.decision &&
-            [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
-              workingCase.decision,
-            )
+            isAcceptingCaseDecision(workingCase.decision)
               ? 'checkmark'
               : 'close'
           }
           nextButtonColorScheme={
-            workingCase.decision &&
-            [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY].includes(
-              workingCase.decision,
-            )
+            isAcceptingCaseDecision(workingCase.decision)
               ? 'default'
               : 'destructive'
           }
