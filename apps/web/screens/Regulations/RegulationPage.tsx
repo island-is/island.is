@@ -1,4 +1,4 @@
-import { ISODate, RegQueryName } from '@island.is/regulations'
+import { ISODate, prettyName, RegQueryName } from '@island.is/regulations'
 import {
   Regulation,
   RegulationRedirect,
@@ -22,6 +22,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_REGULATION_QUERY } from '../queries'
 import { Text } from '@island.is/island-ui/core'
+import { HeadWithSocialSharing } from '@island.is/web/components'
 
 // ---------------------------------------------------------------------------
 
@@ -29,6 +30,7 @@ type RegulationPageProps =
   | {
       regulation: Regulation | RegulationDiff | RegulationRedirect
       texts: RegulationPageTexts
+      nonCurrent: boolean
       urlDate?: ISODate
     }
   | { redirect: string }
@@ -45,16 +47,28 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
     )
   }
 
-  const { regulation, texts, urlDate } = props
+  const { regulation, texts, nonCurrent, urlDate } = props
 
-  return 'redirectUrl' in regulation ? (
-    <RegulationRedirectMessage texts={texts} regulation={regulation} />
-  ) : (
-    <RegulationDisplay
-      texts={texts}
-      regulation={regulation}
-      urlDate={urlDate}
-    />
+  const title = prettyName(regulation.name) + ' – ' + regulation.title
+  const robotsDirective =
+    'redirectUrl' in regulation ? 'noindex' : nonCurrent && 'noindex, nofollow'
+
+  return (
+    <>
+      <HeadWithSocialSharing title={title} description=" ">
+        {robotsDirective && <meta name="robots" content={robotsDirective} />}
+      </HeadWithSocialSharing>
+
+      {'redirectUrl' in regulation ? (
+        <RegulationRedirectMessage texts={texts} regulation={regulation} />
+      ) : (
+        <RegulationDisplay
+          texts={texts}
+          regulation={regulation}
+          urlDate={urlDate}
+        />
+      )}
+    </>
   )
 }
 
@@ -229,6 +243,13 @@ RegulationPage.getInitialProps = async ({
     throw new CustomNextError(404, 'Þessi reglugerð finnst ekki!')
   }
 
+  const nonCurrent = viewType !== RegulationViewTypes.current
+
+  if (res && nonCurrent) {
+    //  !('redirectUrl' in regulation) && (regulation.timelineDate || regulation.showingDiff)
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow')
+  }
+
   if (isPdf) {
     if ('redirectUrl' in regulation) {
       throw new CustomNextError(
@@ -261,6 +282,7 @@ RegulationPage.getInitialProps = async ({
     regulation,
     texts,
     urlDate,
+    nonCurrent,
   }
 }
 
