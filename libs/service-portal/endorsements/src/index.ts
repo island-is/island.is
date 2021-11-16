@@ -3,7 +3,9 @@ import {
   ServicePortalModule,
   ServicePortalPath,
   m,
+  ServicePortalModuleProps,
 } from '@island.is/service-portal/core'
+import { EndorsementsScope } from '@island.is/auth/scopes'
 
 export const endorsementsModule: ServicePortalModule = {
   name: 'Meðmæli',
@@ -17,29 +19,48 @@ export const endorsementsModule: ServicePortalModule = {
   ],
 }
 
+const hasGeneralPetitionAdminScope = (user: ServicePortalModuleProps) => {
+  for (const [key, value] of Object.entries(user.userInfo.scope.split(' '))) {
+    if (value == EndorsementsScope.admin) {
+      return true
+    }
+  }
+  return false
+}
+
 export const petitionsModule: ServicePortalModule = {
   name: 'Almennir undirskriftalistar',
   widgets: () => [],
-  routes: () => [
-    {
-      name: m.endorsements,
-      path: ServicePortalPath.Petitions,
-      render: () => lazy(() => import('./screens/Petitions')),
-    },
-    {
-      name: m.endorsements,
-      path: ServicePortalPath.PetitionList,
-      render: () => lazy(() => import('./screens/ViewPetition')),
-    },
-    {
-      name: m.endorsementsAdmin,
-      path: ServicePortalPath.PetitionsAdminView,
-      render: () => lazy(() => import('./screens/PetitionsAdmin')),
-    },
-    {
-      name: m.endorsementsAdmin,
-      path: ServicePortalPath.PetitionListAdmin,
-      render: () => lazy(() => import('./screens/ViewPetitionAdmin')),
-    },
-  ],
+  routes: (userInfo) => {
+    const applicationRoutes = [
+      {
+        name: m.endorsements,
+        path: ServicePortalPath.Petitions,
+        render: () => lazy(() => import('./screens/Petitions')),
+      },
+      {
+        name: m.endorsements,
+        path: ServicePortalPath.PetitionList,
+        render: () => lazy(() => import('./screens/ViewPetition')),
+      },
+    ]
+    const adminScope = hasGeneralPetitionAdminScope(userInfo)
+
+    if (adminScope) {
+      applicationRoutes.push(
+        {
+          name: m.endorsementsAdmin,
+          path: ServicePortalPath.PetitionsAdminView,
+          render: () => lazy(() => import('./screens/PetitionsAdmin')),
+        },
+        {
+          name: m.endorsementsAdmin,
+          path: ServicePortalPath.PetitionListAdmin,
+          render: () => lazy(() => import('./screens/ViewPetitionAdmin')),
+        },
+      )
+    }
+
+    return applicationRoutes
+  },
 }
