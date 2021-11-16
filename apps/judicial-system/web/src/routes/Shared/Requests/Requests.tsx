@@ -17,15 +17,18 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useQuery } from '@apollo/client'
+import { getCustodyAndTravelBanProsecutorSection } from '@island.is/judicial-system-web/src/utils/sections'
+import { useQuery, useLazyQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import ActiveRequests from './ActiveRequests'
 import PastRequests from './PastRequests'
 import router from 'next/router'
 import * as styles from './Requests.css'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
+import { CaseData } from '@island.is/judicial-system-web/src/types'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const Requests: React.FC = () => {
@@ -45,6 +48,18 @@ export const Requests: React.FC = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
+
+  const [getCaseToOpen, { loading: caseLoading }] = useLazyQuery<CaseData>(
+    CaseQuery,
+    {
+      fetchPolicy: 'no-cache',
+      onCompleted: (caseData) => {
+        if (user?.role && caseData?.case) {
+          openCase(caseData.case, user.role)
+        }
+      },
+    },
+  )
 
   const { transitionCase, sendNotification } = useCase()
   const { formatMessage } = useIntl()
@@ -115,9 +130,9 @@ export const Requests: React.FC = () => {
   const handleRowClick = (id: string) => {
     const caseToOpen = resCases.find((c: Case) => c.id === id)
 
-    if (user?.role) {
-      openCase(caseToOpen, user.role)
-    }
+    getCaseToOpen({
+      variables: { input: { id: caseToOpen.id } },
+    })
   }
 
   const openCase = (caseToOpen: Case, role: UserRole) => {
@@ -143,7 +158,12 @@ export const Requests: React.FC = () => {
         ) {
           router.push(`${Constants.STEP_SIX_ROUTE}/${caseToOpen.id}`)
         } else {
-          router.push(`${Constants.STEP_ONE_ROUTE}/${caseToOpen.id}`)
+          const custodySections = getCustodyAndTravelBanProsecutorSection(
+            caseToOpen,
+          )
+          const filterChildren = custodySections.children.filter((c) => c.href)
+          const findChild = filterChildren[filterChildren.length - 1]
+          router.push(findChild.href)
         }
       } else {
         if (
@@ -301,7 +321,7 @@ export const Requests: React.FC = () => {
             type="error"
           />
         </div>
-      ) : loading ? (
+      ) : loading || caseLoading ? (
         <Box className={styles.table}>
           <Loading />
         </Box>
