@@ -13,6 +13,12 @@ import { Aid, AidType } from '@island.is/financial-aid/shared/lib'
 @Table({
   tableName: 'aid',
   timestamps: true,
+  indexes: [
+    {
+      unique: true,
+      fields: ['municipality_id'],
+    },
+  ],
 })
 export class AidModel extends Model<Aid> {
   @Column({

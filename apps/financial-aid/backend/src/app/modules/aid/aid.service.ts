@@ -5,7 +5,7 @@ import { AidModel } from './models'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Aid, AidType } from '@island.is/financial-aid/shared/lib'
+import { Aid } from '@island.is/financial-aid/shared/lib'
 import { Transaction } from 'sequelize/types'
 import { CreateAidDto } from './dto'
 
@@ -19,18 +19,7 @@ export class AidService {
   ) {}
 
   async create(aid: CreateAidDto, t: Transaction): Promise<AidModel> {
-    this.logger.debug(`Create aid or return existing one`)
-    const doesExists = await this.aidModel.findOne({
-      where: {
-        municipalityId: aid.municipalityId,
-      },
-      transaction: t,
-    })
-
-    if (doesExists) {
-      return doesExists
-    }
-
+    this.logger.debug(`Create aid`)
     return this.aidModel.create(aid, { transaction: t })
   }
 
