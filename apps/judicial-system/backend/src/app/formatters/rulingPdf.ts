@@ -131,18 +131,6 @@ function constructRestrictionRulingPdf(
   doc
     .text(' ')
     .font('Times-Bold')
-    .text(formatMessage(ruling.demandsHeading))
-    .text(' ')
-    .font('Times-Roman')
-    .text(
-      existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
-      {
-        align: 'justify',
-        paragraphGap: 1,
-      },
-    )
-    .text(' ')
-    .font('Times-Bold')
     .text(formatMessage(ruling.courtDocuments.heading))
     .text(' ')
     .font('Times-Roman')
@@ -493,19 +481,6 @@ function constructInvestigationRulingPdf(
   }
 
   doc
-    .text(' ')
-    .font('Times-Bold')
-    .text(formatMessage(ruling.demandsHeading))
-    .text(' ')
-    .font('Times-Roman')
-    .fontSize(baseFontSize)
-    .text(
-      existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
-      {
-        align: 'justify',
-        paragraphGap: 1,
-      },
-    )
     .text(' ')
     .font('Times-Bold')
     .text(formatMessage(ruling.courtDocuments.heading))

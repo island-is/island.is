@@ -78,9 +78,6 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </Box>
         )}
       </AccordionListItem>
-      <AccordionListItem title="Krafa" breakSpaces>
-        <Text>{workingCase.prosecutorDemands}</Text>
-      </AccordionListItem>
       {workingCase.courtAttendees?.trim() && (
         <AccordionListItem
           title={formatMessage(m.sections.courtAttendees.title)}
