@@ -26,8 +26,8 @@ const devConfig = {
     Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
   email: {
-    sender: 'localhost',
-    address: 'localhost@yourcomputer.is',
+    sender: 'devland.is',
+    address: 'development@island.is',
   },
   emailOptions: {
     useTestAccount: false,
