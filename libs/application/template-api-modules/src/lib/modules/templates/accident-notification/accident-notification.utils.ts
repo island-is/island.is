@@ -8,7 +8,6 @@ import {
   SubmittedApplicationData,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
-  ReceivedAttachemnt,
 } from '@island.is/application/templates/accident-notification'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
@@ -19,6 +18,7 @@ import {
   policeReportRequest,
   powerOfAttorneyRequest,
 } from './config'
+import { AccidentNotificationAttachmentStatus } from './types/applicationStatus'
 import {
   ApplicationSubmit,
   Atvinnurekandi,
@@ -323,7 +323,7 @@ export const getApplicationDocumentId = (application: Application): number => {
 }
 
 export const attachmentStatusToAttachmentRequests = (
-  receivedAttachments?: ReceivedAttachemnt,
+  receivedAttachments?: AccidentNotificationAttachmentStatus,
 ): AccidentNotificationAttachmentGatherRequest[] => {
   if (!receivedAttachments) return allAttachmentRequestConfig.requests
 
@@ -356,11 +356,11 @@ export const attachmentStatusToAttachmentRequests = (
 
 export const getApplicationAttachmentStatus = (
   application: Application,
-): ReceivedAttachemnt => {
+): AccidentNotificationAttachmentStatus => {
   const status = getValueViaPath(
     application.answers,
     'accidentStatus.recievedAttachments',
-  ) as ReceivedAttachemnt
+  ) as AccidentNotificationAttachmentStatus
 
   return status
 }
