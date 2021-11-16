@@ -489,10 +489,10 @@ export class EndorsementService {
           ],
         },
         attachments: [
-          // {
-          //   filename: 'Meðmælendalisti.pdf',
-          //   content: await this.createDocumentBuffer(endorsementList),
-          // },
+          {
+            filename: 'Meðmælendalisti.pdf',
+            content: await this.createDocumentBuffer(endorsementList),
+          },
         ],
       })
       this.logger.debug(`sending list ${listId} to ${recipientEmail}`)
