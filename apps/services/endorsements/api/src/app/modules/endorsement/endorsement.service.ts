@@ -19,12 +19,12 @@ import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
 import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { paginate } from '@island.is/nest/pagination'
-import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
+import environment, {
+  ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
+} from '../../../environments/environment'
 import { EmailService } from '@island.is/email-service'
 import getStream from 'get-stream'
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const PDFDocument = require('pdfkit-table')
+import PDFDocument from 'pdfkit'
 
 interface FindEndorsementInput {
   listId: string
@@ -395,19 +395,6 @@ export class EndorsementService {
     const regular = 8
     const fontRegular = 'Helvetica'
     const fontBold = 'Helvetica-Bold'
-    const rows = []
-
-    for (const val of endorsementList.endorsements) {
-      rows.push([
-        val.created.toLocaleDateString(locale),
-        val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint',
-      ])
-    }
-
-    const table = {
-      headers: ['Dags skráð', 'Nafn'],
-      rows: rows,
-    }
 
     doc
       .fontSize(big)
@@ -451,7 +438,11 @@ export class EndorsementService {
 
     if (endorsementList.endorsements.length) {
       doc.fontSize(big).text('Yfirlit meðmæla').fontSize(regular).moveDown()
-      doc.table(table, { width: 350 })
+      for (const val of endorsementList.endorsements) {
+        doc.text(
+          val.created.toLocaleDateString(locale) + ' ' + (val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint'),
+        )
+      }
     }
     doc
       .moveDown()
@@ -477,17 +468,15 @@ export class EndorsementService {
         },
       ],
     })
-
-    await this.createDocumentBuffer(endorsementList)
     try {
       const result = await this.emailService.sendEmail({
         from: {
-          name: 'TEST:Meðmælendakerfi island.is',
-          address: 'noreply@island.is',
+          name: environment.email.sender,
+          address: environment.email.address,
         },
         to: [
           {
-            // message can be sent to any email so recipient name in unknown
+            // message can be sent to any email so recipient name is unknown
             name: recipientEmail,
             address: recipientEmail,
           },
@@ -526,8 +515,8 @@ export class EndorsementService {
         },
         attachments: [
           {
-            filename: 'Meðmælendalisti.pdf',
-            content: await this.createDocumentBuffer(endorsementList),
+             filename: 'Meðmælendalisti.pdf',
+             content: await this.createDocumentBuffer(endorsementList),
           },
         ],
       })

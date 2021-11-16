@@ -22,6 +22,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
+  isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -106,8 +107,8 @@ export const RulingStepTwo: React.FC = () => {
               genderedAccused: formatAccusedByGender(theCase.accusedGender),
               accusedName: theCase.accusedName,
               extensionSuffix:
-                theCase.parentCase !== undefined &&
-                theCase.parentCase?.decision === CaseDecision.ACCEPTING
+                theCase.parentCase &&
+                isAcceptingCaseDecision(theCase.parentCase.decision)
                   ? ' áframhaldandi'
                   : '',
               caseType:
@@ -121,8 +122,8 @@ export const RulingStepTwo: React.FC = () => {
               accusedName: theCase.accusedName,
               accusedNationalId: formatNationalId(theCase.accusedNationalId),
               extensionSuffix:
-                theCase.parentCase !== undefined &&
-                theCase.parentCase?.decision === CaseDecision.ACCEPTING
+                theCase.parentCase &&
+                isAcceptingCaseDecision(theCase.parentCase.decision)
                   ? ' áframhaldandi'
                   : '',
               caseType:
@@ -139,8 +140,8 @@ export const RulingStepTwo: React.FC = () => {
               caseTypeAndExtensionSuffix:
                 theCase.decision === CaseDecision.ACCEPTING
                   ? `${
-                      theCase.parentCase !== undefined &&
-                      theCase.parentCase?.decision === CaseDecision.ACCEPTING
+                      theCase.parentCase &&
+                      isAcceptingCaseDecision(theCase.parentCase.decision)
                         ? 'áframhaldandi '
                         : ''
                     }${
@@ -150,9 +151,8 @@ export const RulingStepTwo: React.FC = () => {
                     }`
                   : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                     `${
-                      theCase.parentCase !== undefined &&
                       theCase.parentCase?.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                      CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                         ? 'áframhaldandi '
                         : ''
                     }farbanni`,
@@ -160,7 +160,7 @@ export const RulingStepTwo: React.FC = () => {
                 ?.replace('dagur,', 'dagsins')
                 ?.replace(' kl.', ', kl.')}`,
               isolationSuffix:
-                theCase.decision === CaseDecision.ACCEPTING &&
+                isAcceptingCaseDecision(theCase.decision) &&
                 theCase.custodyRestrictions?.includes(
                   CaseCustodyRestrictions.ISOLATION,
                 )
@@ -642,7 +642,7 @@ export const RulingStepTwo: React.FC = () => {
                   </Box>
                 </BlueBox>
               </Box>
-              {workingCase.decision === CaseDecision.ACCEPTING &&
+              {isAcceptingCaseDecision(workingCase.decision) &&
                 workingCase.type === CaseType.CUSTODY && (
                   <Box component="section" marginBottom={3}>
                     <Box marginBottom={3}>
@@ -724,14 +724,14 @@ export const RulingStepTwo: React.FC = () => {
                 </Box>
               )}
               {(!workingCase.decision ||
-                workingCase.decision === CaseDecision.ACCEPTING ||
+                isAcceptingCaseDecision(workingCase.decision) ||
                 workingCase.decision ===
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
                 <Text variant="h4" fontWeight="light">
                   {formatMessage(m.sections.custodyRestrictions.disclaimer, {
                     caseType:
                       workingCase.type === CaseType.CUSTODY &&
-                      workingCase.decision === CaseDecision.ACCEPTING
+                      isAcceptingCaseDecision(workingCase.decision)
                         ? 'gæsluvarðhaldsins'
                         : 'farbannsins',
                   })}
