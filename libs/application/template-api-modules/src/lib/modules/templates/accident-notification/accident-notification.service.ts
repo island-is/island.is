@@ -23,7 +23,6 @@ import {
   generateAssignReviewerEmail,
   generateConfirmationEmail,
 } from './emailGenerators'
-import { AccidentNotificationStatus } from '@island.is/api/schema'
 
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 

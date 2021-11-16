@@ -1,8 +1,3 @@
-import {
-  Application,
-  ApplicationStatus,
-  ApplicationTypes,
-} from '@island.is/application/core'
 import { attachmentStatusToAttachmentRequests } from './accident-notification.utils'
 import {
   additionalFilesRequest,
