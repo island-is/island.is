@@ -18,7 +18,6 @@ import { Op, UniqueConstraintError } from 'sequelize'
 import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
 import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
-import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
 
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
@@ -26,8 +25,6 @@ import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/
 import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
-import model from 'sequelize/types/lib/model'
-import { emailDto } from './dto/email.dto'
 
 interface FindEndorsementInput {
   listId: string
@@ -446,7 +443,6 @@ export class EndorsementService {
         },
       ],
     })
-    await this.createDocumentBuffer(endorsementList)
     try {
       const result = await this.emailService.sendEmail({
         from: {
@@ -455,7 +451,7 @@ export class EndorsementService {
         },
         to: [
           {
-            // message can be sent to any email so recipient name in unknown
+            // message can be sent to any email so recipient name is unknown
             name: recipientEmail,
             address: recipientEmail,
           },
@@ -493,10 +489,10 @@ export class EndorsementService {
           ],
         },
         attachments: [
-          {
-            filename: 'Meðmælendalisti.pdf',
-            content: await this.createDocumentBuffer(endorsementList),
-          },
+          // {
+          //   filename: 'Meðmælendalisti.pdf',
+          //   content: await this.createDocumentBuffer(endorsementList),
+          // },
         ],
       })
       this.logger.debug(`sending list ${listId} to ${recipientEmail}`)
