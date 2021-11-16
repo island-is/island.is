@@ -12,7 +12,7 @@ import {
 
 @Injectable()
 export class AttachmentProvider {
-  private readonly s3: AWS.S3
+  s3 = new S3()
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {
     this.s3 = new S3()
   }
