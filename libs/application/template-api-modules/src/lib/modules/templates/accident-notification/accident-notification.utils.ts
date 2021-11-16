@@ -1,4 +1,3 @@
-import { AccidentNotificationAttachment as ReceivedAttachment } from '@island.is/api/schema'
 import { Application, getValueViaPath } from '@island.is/application/core'
 import {
   accidentLocationLabelMapper,
@@ -9,6 +8,7 @@ import {
   SubmittedApplicationData,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
+  ReceivedAttachemnt,
 } from '@island.is/application/templates/accident-notification'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
@@ -323,7 +323,7 @@ export const getApplicationDocumentId = (application: Application): number => {
 }
 
 export const attachmentStatusToAttachmentRequests = (
-  receivedAttachments?: ReceivedAttachment,
+  receivedAttachments?: ReceivedAttachemnt,
 ): AccidentNotificationAttachmentGatherRequest[] => {
   if (!receivedAttachments) return allAttachmentRequestConfig.requests
 
@@ -356,11 +356,11 @@ export const attachmentStatusToAttachmentRequests = (
 
 export const getApplicationAttachmentStatus = (
   application: Application,
-): ReceivedAttachment => {
+): ReceivedAttachemnt => {
   const status = getValueViaPath(
     application.answers,
     'accidentStatus.recievedAttachments',
-  ) as ReceivedAttachment
+  ) as ReceivedAttachemnt
 
   return status
 }
