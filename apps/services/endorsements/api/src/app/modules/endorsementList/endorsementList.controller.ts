@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 import {
@@ -26,7 +27,12 @@ import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
 import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
 import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
-import { BypassAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
+import {
+  BypassAuth,
+  CurrentUser,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
 import { environment } from '../../../environments'
 import { EndorsementsScope } from '@island.is/auth/scopes'
@@ -55,9 +61,10 @@ export class SearchPaginationComboDto extends IntersectionType(
   namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
 })
 @ApiTags('endorsementList')
-@Controller('endorsement-list')
 @ApiOAuth2([])
 @ApiExtraModels(FindTagPaginationComboDto, PaginatedEndorsementListDto)
+@UseGuards(ScopesGuard)
+@Controller('endorsement-list')
 export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
@@ -79,7 +86,7 @@ export class EndorsementListController {
       // query parameters of length one are not arrays, we normalize all tags input to arrays here
       !Array.isArray(query.tags) ? [query.tags] : query.tags,
       query,
-      user.nationalId,
+      user,
     )
   }
 
@@ -141,6 +148,7 @@ export class EndorsementListController {
     resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),
   })
+  @Scopes(EndorsementsScope.main)
   async findEndorsementLists(
     @CurrentUser() user: User,
     @Query() query: PaginationDto,
@@ -229,10 +237,9 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.admin)
   @Put(':listId/lock')
   @UseInterceptors(EndorsementListInterceptor)
-  @HasAccessGroup(AccessGroup.Admin)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })
@@ -252,10 +259,9 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.admin)
   @Put(':listId/unlock')
   @UseInterceptors(EndorsementListInterceptor)
-  @HasAccessGroup(AccessGroup.Admin)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })
@@ -277,9 +283,8 @@ export class EndorsementListController {
   })
   @ApiParam({ name: 'listId', type: 'string' })
   @ApiBody({ type: UpdateEndorsementListDto })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.admin)
   @Put(':listId/update')
-  @HasAccessGroup(AccessGroup.Admin)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })
@@ -331,14 +336,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @BypassAuth()
   @Get(':listId/ownerInfo')
-  async getOwnerInfo(
-    @Param(
-      'listId',
-      new ParseUUIDPipe({ version: '4' }),
-      EndorsementListByIdPipe,
-    )
-    endorsementList: EndorsementList,
-  ): Promise<String> {
-    return await this.endorsementListService.getOwnerInfo(endorsementList)
+  async getOwnerInfo(@Param('listId') listId: string): Promise<String> {
+    return await this.endorsementListService.getOwnerInfo(listId)
   }
 }

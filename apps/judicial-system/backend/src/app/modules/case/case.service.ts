@@ -4,6 +4,7 @@ import {
   ForbiddenException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -274,6 +275,26 @@ export class CaseService {
     })
   }
 
+  async findOriginalAncestor(theCase: Case): Promise<Case> {
+    let originalAncestor: Case = theCase
+
+    while (originalAncestor.parentCaseId) {
+      const parentCase = await this.caseModel.findOne({
+        where: { id: originalAncestor.parentCaseId },
+      })
+
+      if (!parentCase) {
+        throw new InternalServerErrorException(
+          `Original ancestor of case ${theCase.id} not found`,
+        )
+      }
+
+      originalAncestor = parentCase
+    }
+
+    return originalAncestor
+  }
+
   async getAll(user: TUser): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
@@ -455,7 +476,12 @@ export class CaseService {
       accusedName: existingCase.accusedName,
       accusedAddress: existingCase.accusedAddress,
       accusedGender: existingCase.accusedGender,
+      defenderName: existingCase.defenderName,
+      defenderEmail: existingCase.defenderEmail,
+      defenderPhoneNumber: existingCase.defenderPhoneNumber,
+      leadInvestigator: existingCase.leadInvestigator,
       courtId: existingCase.courtId,
+      translator: existingCase.translator,
       lawsBroken: existingCase.lawsBroken,
       legalBasis: existingCase.legalBasis,
       legalProvisions: existingCase.legalProvisions,

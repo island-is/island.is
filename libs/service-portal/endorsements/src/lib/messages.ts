@@ -124,7 +124,7 @@ export const m: MessageDir = {
   viewPetition: defineMessages({
     numberSigned: {
       id: 'sp.petitions:number-signed',
-      defaultMessage: 'Fjöldi skráðir',
+      defaultMessage: 'Fjöldi skráðir:',
       description: 'Number of petitions signed',
     },
     openTil: {
@@ -160,6 +160,11 @@ export const m: MessageDir = {
     dialogPromptOpenListTitle: {
       id: 'sp.petitions:dialog-prompt-open',
       defaultMessage: 'Ertu viss um að vilja opna lista?',
+      description: 'Dialog prompt title',
+    },
+    dialogPromptUpdateListTitle: {
+      id: 'sp.petitions:dialog-prompt-update',
+      defaultMessage: 'Ertu viss um að vilja uppfæra lista?',
       description: 'Dialog prompt title',
     },
     closeListButton: {

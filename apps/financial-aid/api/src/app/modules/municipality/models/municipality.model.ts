@@ -3,6 +3,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { Municipality } from '@island.is/financial-aid/shared/lib'
 
 import { AidModel } from '../../aid'
+import { StaffModel } from '../../staff/models'
 
 @ObjectType()
 export class MunicipalityModel implements Municipality {
@@ -32,4 +33,10 @@ export class MunicipalityModel implements Municipality {
 
   @Field({ nullable: true })
   readonly rulesHomepage?: string
+
+  @Field({ nullable: true })
+  readonly users?: number
+
+  @Field(() => [StaffModel], { nullable: true })
+  readonly adminUsers?: StaffModel[]
 }

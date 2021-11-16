@@ -5,10 +5,10 @@ import {
   Input,
   Stack,
   DialogPrompt,
-  Text,
   toast,
   AlertMessage,
   DatePicker,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import {
@@ -16,6 +16,7 @@ import {
   LockList,
   UnlockList,
   UpdateList,
+  useGetSinglePetitionEndorsements,
 } from '../queries'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -30,6 +31,9 @@ const ViewPetitionAdmin = () => {
     location.state?.listId,
   )
   const petition = petitionData as EndorsementList
+  const { petitionEndorsements } = useGetSinglePetitionEndorsements(
+    location.state?.listId,
+  )
 
   const [title, setTitle] = useState(petition?.title)
   const [description, setDescription] = useState(petition?.description)
@@ -117,7 +121,7 @@ const ViewPetitionAdmin = () => {
 
   return (
     <Box>
-      {Object.entries(petition).length !== 0 && (
+      {Object.entries(petition).length !== 0 ? (
         <Stack space={3}>
           {petition.adminLock && (
             <AlertMessage
@@ -144,12 +148,12 @@ const ViewPetitionAdmin = () => {
             textarea
             rows={10}
           />
-          {petition?.closedDate && petition?.openedDate && (
+          {closedDate && openedDate && (
             <Box display={['block', 'flex']} justifyContent="spaceBetween">
               <Box width="half" marginRight={[0, 2]}>
                 <DatePicker
-                  selected={new Date(petition?.openedDate)}
-                  handleChange={(date: Date) => setOpenedDate(date)}
+                  selected={new Date(openedDate)}
+                  handleChange={(date) => setOpenedDate(date)}
                   label="Tímabil frá"
                   locale="is"
                   placeholderText="Veldu dagsetningu"
@@ -157,8 +161,8 @@ const ViewPetitionAdmin = () => {
               </Box>
               <Box width="half" marginLeft={[0, 2]} marginTop={[2, 0]}>
                 <DatePicker
-                  selected={new Date(petition?.closedDate)}
-                  handleChange={(date: Date) => setClosedDate(date)}
+                  selected={new Date(closedDate)}
+                  handleChange={(date) => setClosedDate(date)}
                   label="Tímabil til"
                   locale="is"
                   placeholderText="Veldu dagsetningu"
@@ -226,17 +230,37 @@ const ViewPetitionAdmin = () => {
                 )}
               />
             )}
-            <Button
-              icon="checkmark"
-              iconType="outline"
-              onClick={() => onUpdateList()}
-            >
-              {formatMessage(m.viewPetition.updateListButton)}
-            </Button>
+            <DialogPrompt
+              baseId="demo_dialog"
+              title={formatMessage(m.viewPetition.dialogPromptUpdateListTitle)}
+              ariaLabel={formatMessage(
+                m.viewPetition.dialogPromptUpdateListTitle,
+              )}
+              disclosureElement={
+                <Button icon="checkmark" iconType="outline">
+                  {formatMessage(m.viewPetition.updateListButton)}
+                </Button>
+              }
+              onConfirm={() => onUpdateList()}
+              buttonTextConfirm={formatMessage(
+                m.viewPetition.dialogPromptConfirm,
+              )}
+              buttonTextCancel={formatMessage(
+                m.viewPetition.dialogPromptCancel,
+              )}
+            />
           </Box>
 
-          <PetitionsTable />
+          <PetitionsTable
+            petitions={petitionEndorsements}
+            listId={location.state?.listId}
+            isSendEmailVisible={true}
+          />
         </Stack>
+      ) : (
+        <Box display="flex" justifyContent="center" marginY={5}>
+          <LoadingDots />
+        </Box>
       )}
     </Box>
   )

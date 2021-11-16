@@ -99,6 +99,7 @@
   - [Auth API](apps/services/auth-api/README.md)
   - [Documents](apps/services/documents/README.md)
     - [Endorsements API](apps/services/endorsements/api/README.md)
+  - [Notifications - Hnipp](apps/services/notifications/README.md)
   - [Party Letter Registry](apps/services/party-letter-registry-api/README.md)
   - [Search Indexer](apps/services/search-indexer/README.md)
     - [Elasticsearch Search Dev Server](apps/services/search-indexer/dev-services/README.md)
@@ -123,7 +124,7 @@
     - [API Domains Identity](libs/api/domains/identity/README.md)
     - [API Domains License Service](libs/api/domains/license-service/README.md)
     - [API Domains Party Letter Registry](libs/api/domains/party-letter-registry/README.md)
-    - [API Domains Rsk](libs/api/domains/payment/README.md)
+    - [API Domains Payment](libs/api/domains/payment/README.md)
     - [API Domains Payment Schedule](libs/api/domains/payment-schedule/README.md)
     - [API Domains Regulations](libs/api/domains/regulations/README.md)
     - [API Domains Rsk](libs/api/domains/rsk/README.md)
@@ -247,5 +248,6 @@
 
 ## Misc
 
+- [Guide: Adding a Payment Step to an Application](handbook/misc/application-payment-guide.md)
 - [GitBook Template](handbook/misc/gitbook-template.md)
 - [Glossary](handbook/misc/glossary.md)

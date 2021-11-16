@@ -25,8 +25,6 @@ import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/
 import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
-import model from 'sequelize/types/lib/model'
-import { emailDto } from './dto/email.dto'
 
 interface FindEndorsementInput {
   listId: string
@@ -234,10 +232,10 @@ export class EndorsementService {
     })
 
     if (!result) {
-      throw new NotFoundException(["This endorsement doesn't exist"])
+      return { hasEndorsed: false }
     }
 
-    return result
+    return { hasEndorsed: true }
   }
 
   async findUserEndorsementsByTags({
@@ -446,14 +444,14 @@ export class EndorsementService {
       ],
     })
     try {
-      const result = this.emailService.sendEmail({
+      const result = await this.emailService.sendEmail({
         from: {
           name: 'TEST:Meðmælendakerfi island.is',
           address: 'noreply@island.is',
         },
         to: [
           {
-            // message can be sent to any email so recipient name in unknown
+            // message can be sent to any email so recipient name is unknown
             name: recipientEmail,
             address: recipientEmail,
           },
@@ -491,12 +489,13 @@ export class EndorsementService {
           ],
         },
         attachments: [
-          {
-            filename: 'Meðmælendalisti.pdf',
-            content: await this.createDocumentBuffer(endorsementList),
-          },
+          // {
+          //   filename: 'Meðmælendalisti.pdf',
+          //   content: await this.createDocumentBuffer(endorsementList),
+          // },
         ],
       })
+      this.logger.debug(`sending list ${listId} to ${recipientEmail}`)
       return { success: true }
     } catch (error) {
       this.logger.error('Failed to send email', error)

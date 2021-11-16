@@ -279,6 +279,37 @@ export const StaffMutation = gql`
   }
 `
 
+export const UpdateMunicipalityMutation = gql`
+  mutation UpdateMunicipalityMutation($input: UpdateMunicipalityInput!) {
+    updateMunicipality(input: $input) {
+      id
+      name
+      homepage
+      active
+      municipalityId
+      email
+      rulesHomepage
+      individualAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+      cohabitationAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+    }
+  }
+`
 export const UpdateStaffMutation = gql`
   mutation UpdateStaffMutation($input: UpdateStaffInput!) {
     updateStaff(input: $input) {
@@ -287,6 +318,55 @@ export const UpdateStaffMutation = gql`
       roles
       nickname
       email
+    }
+  }
+`
+
+export const MunicipalitiesQuery = gql`
+  query getMunicipalities {
+    municipalities {
+      id
+      name
+      active
+      users
+      municipalityId
+    }
+  }
+`
+
+export const MunicipalityQuery = gql`
+  query getMunicipality($input: MunicipalityQueryInput!) {
+    municipality(input: $input) {
+      id
+      name
+      active
+      rulesHomepage
+      homepage
+      email
+      adminUsers {
+        name
+        nationalId
+        email
+        id
+      }
+      individualAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+      cohabitationAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
     }
   }
 `

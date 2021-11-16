@@ -16,6 +16,7 @@ export enum CaseType {
   AUTOPSY = 'AUTOPSY',
   BODY_SEARCH = 'BODY_SEARCH',
   INTERNET_USAGE = 'INTERNET_USAGE',
+  RESTRAINING_ORDER = 'RESTRAINING_ORDER',
   OTHER = 'OTHER',
 }
 
@@ -53,12 +54,14 @@ export enum CaseLegalProvisions {
 /* eslint-enable @typescript-eslint/naming-convention */
 
 export enum CaseCustodyRestrictions {
+  NECESSITIES = 'NECESSITIES',
   ISOLATION = 'ISOLATION',
   VISITAION = 'VISITAION',
   COMMUNICATION = 'COMMUNICATION',
   MEDIA = 'MEDIA',
   ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION = 'ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
   ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT = 'ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT',
+  WORKBAN = 'WORKBAN',
 }
 
 export enum CaseAppealDecision {
@@ -285,6 +288,7 @@ export const investigationCases = [
   CaseType.AUTOPSY,
   CaseType.BODY_SEARCH,
   CaseType.INTERNET_USAGE,
+  CaseType.RESTRAINING_ORDER,
   CaseType.OTHER,
 ]
 
@@ -296,10 +300,19 @@ export function isInvestigationCase(type?: CaseType): boolean {
   return Boolean(type && investigationCases.includes(type))
 }
 
+export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {
+  return Boolean(decision && acceptedCaseDecisions.includes(decision))
+}
+
 export const completedCaseStates = [
   CaseState.ACCEPTED,
   CaseState.REJECTED,
   CaseState.DISMISSED,
+]
+
+export const acceptedCaseDecisions = [
+  CaseDecision.ACCEPTING,
+  CaseDecision.ACCEPTING_PARTIALLY,
 ]
 
 export function hasCaseBeenAppealed(theCase: Case): boolean {

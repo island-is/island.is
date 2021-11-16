@@ -134,6 +134,8 @@ export interface Municipality {
   homepage?: string
   email?: string
   rulesHomepage?: string
+  users?: number
+  adminUsers?: Staff[]
 }
 
 export interface ApplicationFile {
@@ -239,6 +241,7 @@ export interface GetSignedUrlForId {
 export interface Spouse {
   hasPartnerApplied: boolean
   hasFiles: boolean
+  spouseName?: string
 }
 
 export interface UpdateApplicationTableResponseType {

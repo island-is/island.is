@@ -68,6 +68,7 @@ const PetitionsTable = (data: any) => {
   }
 
   useEffect(() => {
+    setPetitions(data.petitions?.data ?? [])
     handlePagination(1, data.petitions?.data ?? [])
   }, [data])
 
@@ -119,47 +120,49 @@ const PetitionsTable = (data: any) => {
                 <Box
                   cursor="pointer"
                   className={className}
-                  onClick={() => handlePagination(page, listOfPetitions)}
+                  onClick={() => handlePagination(page, data.petitions?.data)}
                 >
                   {children}
                 </Box>
               )}
             />
 
-            <Box marginTop={5}>
-              <Text variant="h3" marginBottom={2}>
-                {formatMessage(m.viewPetition.sendListTitle)}
-              </Text>
+            {data.isSendEmailVisible && (
+              <Box marginTop={5}>
+                <Text variant="h3" marginBottom={2}>
+                  {formatMessage(m.viewPetition.sendListTitle)}
+                </Text>
 
-              <Box display={['block', 'flex']}>
-                <Input
-                  type="email"
-                  name={formatMessage(m.viewPetition.sendListButton)}
-                  value={email}
-                  label={formatMessage(m.viewPetition.sendListButton)}
-                  placeholder={formatMessage(
-                    m.viewPetition.sendListPlaceholder,
-                  )}
-                  onChange={(e: any) => setEmail(e.target.value)}
-                />
-                <Box
-                  marginLeft={[0, 5]}
-                  marginTop={[3, 0]}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent={['flexEnd', 'center']}
-                >
-                  <Button
-                    icon="arrowForward"
-                    iconType="outline"
-                    disabled={email === ''}
-                    onClick={() => onSendEmail()}
+                <Box display={['block', 'flex']}>
+                  <Input
+                    type="email"
+                    name={formatMessage(m.viewPetition.sendListButton)}
+                    value={email}
+                    label={formatMessage(m.viewPetition.sendListButton)}
+                    placeholder={formatMessage(
+                      m.viewPetition.sendListPlaceholder,
+                    )}
+                    onChange={(e: any) => setEmail(e.target.value)}
+                  />
+                  <Box
+                    marginLeft={[0, 5]}
+                    marginTop={[3, 0]}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent={['flexEnd', 'center']}
                   >
-                    {formatMessage(m.viewPetition.sendListButton)}
-                  </Button>
+                    <Button
+                      icon="arrowForward"
+                      iconType="outline"
+                      disabled={email === ''}
+                      onClick={() => onSendEmail()}
+                    >
+                      {formatMessage(m.viewPetition.sendListButton)}
+                    </Button>
+                  </Box>
                 </Box>
               </Box>
-            </Box>
+            )}
           </>
         )}
       </Stack>

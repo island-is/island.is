@@ -10,7 +10,6 @@ import {
   Tooltip,
   Checkbox,
   LoadingDots,
-  Icon,
   Button,
   UploadFile,
 } from '@island.is/island-ui/core'
@@ -31,6 +30,7 @@ import MarkdownWrapper from '@island.is/judicial-system-web/src/shared-component
 import { PoliceCaseFilesData } from './CaseFiles'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
 import * as styles from './CaseFiles.css'
+import { PoliceCaseFilesMessageBox } from '../../SharedComponents/PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
 
 interface Props {
   workingCase: Case
@@ -143,6 +143,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
 
       if (index === filesToUpload.length - 1) {
         setIsUploading(false)
+        setCheckAllChecked(false)
       }
     })
 
@@ -178,24 +179,61 @@ const CaseFilesForm: React.FC<Props> = (props) => {
         <Box marginBottom={5}>
           <AnimateSharedLayout>
             <motion.div layout className={styles.policeCaseFilesContainer}>
-              {policeCaseFileList.length > 0 ? (
-                <motion.ul layout>
-                  <motion.li
-                    layout
-                    className={cn(styles.policeCaseFile, {
-                      [styles.selectAllPoliceCaseFiles]: true,
-                    })}
+              <motion.ul layout>
+                <motion.li
+                  layout
+                  className={cn(styles.policeCaseFile, {
+                    [styles.selectAllPoliceCaseFiles]: true,
+                  })}
+                >
+                  <Checkbox
+                    name="selectAllPoliceCaseFiles"
+                    label={formatMessage(
+                      m.sections.policeCaseFiles.selectAllLabel,
+                    )}
+                    checked={checkAllChecked}
+                    onChange={(evt) => toggleCheckbox(evt, true)}
+                    disabled={isUploading || policeCaseFileList.length === 0}
+                    strong
+                  />
+                </motion.li>
+                {policeCaseFiles?.isLoading ? (
+                  <Box
+                    textAlign="center"
+                    paddingY={2}
+                    paddingX={3}
+                    marginBottom={2}
                   >
-                    <Checkbox
-                      name="selectAllPoliceCaseFiles"
-                      label={formatMessage(
-                        m.sections.policeCaseFiles.selectAllLabel,
+                    <LoadingDots />
+                  </Box>
+                ) : policeCaseFiles?.hasError ? (
+                  policeCaseFiles?.errorMessage &&
+                  policeCaseFiles?.errorMessage.indexOf('404') > -1 ? (
+                    <PoliceCaseFilesMessageBox
+                      icon="warning"
+                      iconColor="yellow400"
+                      message={formatMessage(
+                        m.sections.policeCaseFiles.caseNotFoundInLOKEMessage,
                       )}
-                      checked={checkAllChecked}
-                      onChange={(evt) => toggleCheckbox(evt, true)}
-                      strong
                     />
-                  </motion.li>
+                  ) : (
+                    <PoliceCaseFilesMessageBox
+                      icon="close"
+                      iconColor="red400"
+                      message={formatMessage(
+                        m.sections.policeCaseFiles.errorMessage,
+                      )}
+                    />
+                  )
+                ) : policeCaseFiles?.files.length === 0 ? (
+                  <PoliceCaseFilesMessageBox
+                    icon="warning"
+                    iconColor="yellow400"
+                    message={formatMessage(
+                      m.sections.policeCaseFiles.noFilesFoundInLOKEMessage,
+                    )}
+                  />
+                ) : policeCaseFileList.length > 0 ? (
                   <AnimatePresence>
                     {policeCaseFileList.map((listItem) => {
                       return (
@@ -235,32 +273,16 @@ const CaseFilesForm: React.FC<Props> = (props) => {
                       )
                     })}
                   </AnimatePresence>
-                </motion.ul>
-              ) : policeCaseFiles?.isLoading ? (
-                <Box textAlign="center">
-                  <LoadingDots />
-                </Box>
-              ) : policeCaseFiles?.hasError ? (
-                <Box display="flex" alignItems="center" paddingY={3}>
-                  <Box display="flex" marginRight={2}>
-                    <Icon icon="close" color="red400" />
-                  </Box>
-                  <Text variant="h5">
-                    {formatMessage(m.sections.policeCaseFiles.errorMessage)}
-                  </Text>
-                </Box>
-              ) : (
-                <Box display="flex" alignItems="center" paddingY={3}>
-                  <Box display="flex" marginRight={2}>
-                    <Icon icon="checkmark" color="blue400" />
-                  </Box>
-                  <Text variant="h5">
-                    {formatMessage(
+                ) : (
+                  <PoliceCaseFilesMessageBox
+                    icon="checkmark"
+                    iconColor="blue400"
+                    message={formatMessage(
                       m.sections.policeCaseFiles.allFilesUploadedMessage,
                     )}
-                  </Text>
-                </Box>
-              )}
+                  />
+                )}
+              </motion.ul>
             </motion.div>
             <motion.div layout className={styles.uploadToRVGButtonContainer}>
               <Button
@@ -334,7 +356,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!allFilesUploaded}
+          nextIsDisabled={!allFilesUploaded || isUploading}
           nextIsLoading={isLoading}
         />
       </FormContentContainer>

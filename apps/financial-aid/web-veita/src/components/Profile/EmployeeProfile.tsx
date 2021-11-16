@@ -6,6 +6,8 @@ import {
   Text,
   Checkbox,
   Button,
+  toast,
+  ToastContainer,
 } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
@@ -16,7 +18,6 @@ import {
   Staff,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
-import { InputComponentProps } from 'libs/island-ui/core/src/lib/Input/types'
 
 import cn from 'classnames'
 import { UpdateStaffMutation } from '@island.is/financial-aid-web/veita/graphql'
@@ -24,7 +25,6 @@ import { useMutation } from '@apollo/client'
 
 interface EmployeeProfileProps {
   user: Staff
-  onUpdateStaff: () => void
 }
 
 interface EmployeeProfileInfo {
@@ -32,17 +32,17 @@ interface EmployeeProfileInfo {
   email?: string
   nickname?: string
   hasError: boolean
-  hasSubmitError: boolean
   roles: StaffRole[]
 }
 
-const EmployeeProfile = ({ user, onUpdateStaff }: EmployeeProfileProps) => {
+type InputType = 'text' | 'number' | 'email' | 'tel'
+
+const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
   const [state, setState] = useState<EmployeeProfileInfo>({
     nationalId: user.nationalId,
     nickname: user?.nickname ?? '',
     email: user.email ?? '',
     hasError: false,
-    hasSubmitError: false,
     roles: user.roles,
   })
 
@@ -63,7 +63,7 @@ const EmployeeProfile = ({ user, onUpdateStaff }: EmployeeProfileProps) => {
     {
       label: 'Kennitala',
       value: state.nationalId,
-      type: 'number' as InputComponentProps.type,
+      type: 'number' as InputType,
       onchange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
@@ -81,7 +81,7 @@ const EmployeeProfile = ({ user, onUpdateStaff }: EmployeeProfileProps) => {
       label: 'Netfang',
       value: state.email,
       bgIsBlue: true,
-      type: 'email' as InputComponentProps.type,
+      type: 'email' as InputType,
       onchange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
@@ -92,7 +92,7 @@ const EmployeeProfile = ({ user, onUpdateStaff }: EmployeeProfileProps) => {
     {
       label: 'Stutt nafn',
       value: state.nickname,
-      type: 'text' as InputComponentProps.type,
+      type: 'text' as InputType,
       onchange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
@@ -105,7 +105,26 @@ const EmployeeProfile = ({ user, onUpdateStaff }: EmployeeProfileProps) => {
     },
   ]
 
-  const [updateStaff] = useMutation(UpdateStaffMutation)
+  const [updateStaff, { loading }] = useMutation(UpdateStaffMutation)
+
+  const changeUserActivity = async (active: boolean) => {
+    await updateStaff({
+      variables: {
+        input: {
+          id: user.id,
+          active,
+        },
+      },
+    })
+      .then(() => {
+        toast.success('Það tókst að uppfæra notanda')
+      })
+      .catch(() => {
+        toast.error(
+          'Ekki tókst að uppfæra notanda, vinsamlega reynið aftur síðar',
+        )
+      })
+  }
 
   const areRequiredFieldsFilled =
     !state.email ||
@@ -121,7 +140,7 @@ const EmployeeProfile = ({ user, onUpdateStaff }: EmployeeProfileProps) => {
     }
 
     try {
-      return await updateStaff({
+      await updateStaff({
         variables: {
           input: {
             id: user.id,
@@ -132,10 +151,12 @@ const EmployeeProfile = ({ user, onUpdateStaff }: EmployeeProfileProps) => {
           },
         },
       }).then(() => {
-        onUpdateStaff()
+        toast.success('Það tókst að uppfæra notanda')
       })
     } catch (e) {
-      setState({ ...state, hasSubmitError: true })
+      toast.error(
+        'Ekki tókst að uppfæra notanda, vinsamlega reynið aftur síðar',
+      )
     }
   }
 
@@ -165,7 +186,13 @@ const EmployeeProfile = ({ user, onUpdateStaff }: EmployeeProfileProps) => {
                   Notandi er {user.active ? 'virkur' : 'óvirkur'}
                 </Text>
               </Box>
-              <button className={headerStyles.button}>Óvirkja</button>
+              <button
+                onClick={() => changeUserActivity(!user.active)}
+                disabled={loading}
+                className={headerStyles.button}
+              >
+                {user.active ? 'Óvirkja' : 'Virkja'}
+              </button>
             </Box>
           </Box>
 
@@ -248,22 +275,13 @@ const EmployeeProfile = ({ user, onUpdateStaff }: EmployeeProfileProps) => {
             display="flex"
             justifyContent="flexEnd"
           >
-            <Button icon="checkmark" onClick={onSubmitUpdate}>
+            <Button loading={loading} icon="checkmark" onClick={onSubmitUpdate}>
               Vista stillingar
             </Button>
           </Box>
-          <div
-            className={cn({
-              [`errorMessage`]: true,
-              [`showErrorMessage`]: state.hasSubmitError,
-            })}
-          >
-            <Text color="red600" fontWeight="semiBold" variant="small">
-              Einhvað fór úrskeiðis vinsamlegast reyndu aftur síðar
-            </Text>
-          </div>
         </Box>
       </Box>
+      <ToastContainer />
     </>
   )
 }

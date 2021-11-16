@@ -40,6 +40,7 @@ import {
   closedCourt,
 } from '@island.is/judicial-system-web/messages'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import formatISO from 'date-fns/formatISO'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -96,7 +97,7 @@ export const CourtRecord: React.FC = () => {
     if (!workingCase && data?.case) {
       const theCase = data.case
 
-      autofill('courtStartDate', new Date().toString(), theCase)
+      autofill('courtStartDate', formatISO(new Date()), theCase)
 
       if (theCase.court) {
         autofill(
@@ -135,15 +136,33 @@ export const CourtRecord: React.FC = () => {
         )
       }
 
-      autofill(
-        'accusedBookings',
-        `${formatMessage(
-          m.sections.accusedBookings.autofillRightToRemainSilent,
-        )}\n\n${formatMessage(
-          m.sections.accusedBookings.autofillCourtDocumentOne,
-        )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`,
-        theCase,
-      )
+      let autofillAccusedBookings = ''
+
+      if (theCase.defenderName) {
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillDefender,
+          {
+            defender: theCase.defenderName,
+          },
+        )}\n\n`
+      }
+
+      if (theCase.translator) {
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillTranslator,
+          {
+            translator: theCase.translator,
+          },
+        )}\n\n`
+      }
+
+      autofillAccusedBookings += `${formatMessage(
+        m.sections.accusedBookings.autofillRightToRemainSilent,
+      )}\n\n${formatMessage(
+        m.sections.accusedBookings.autofillCourtDocumentOne,
+      )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
+
+      autofill('accusedBookings', autofillAccusedBookings, theCase)
 
       setWorkingCase(theCase)
     }
