@@ -10,7 +10,7 @@ import {
 import { isCaseBlockedFromUser } from '../filters'
 
 @Injectable()
-export class CaseReadGuard implements CanActivate {
+export class CaseWriteGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
@@ -26,9 +26,9 @@ export class CaseReadGuard implements CanActivate {
       throw new BadRequestException('Missing case')
     }
 
-    if (isCaseBlockedFromUser(theCase, user, false)) {
+    if (isCaseBlockedFromUser(theCase, user, true)) {
       throw new ForbiddenException(
-        `User ${user.id} does not have read access to case ${theCase.id}`,
+        `User ${user.id} does not have write access to case ${theCase.id}`,
       )
     }
 

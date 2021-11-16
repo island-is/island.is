@@ -18,12 +18,12 @@ import {
 import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import {
   Case,
-  CaseExistsForUpdateGuard,
   CaseNotCompletedGuard,
   CurrentCase,
   CaseExistsGuard,
   CaseReadGuard,
   CaseCompletedGuard,
+  CaseWriteGuard,
 } from '../case'
 import {
   CaseFileExistsGuard,
@@ -46,7 +46,7 @@ import { FileService } from './file.service'
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @UseGuards(CaseExistsForUpdateGuard, CaseNotCompletedGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
   @RolesRules(prosecutorRule)
   @Post('file/url')
   @ApiCreatedResponse({
@@ -60,7 +60,7 @@ export class FileController {
     return this.fileService.createPresignedPost(caseId, createPresignedPost)
   }
 
-  @UseGuards(CaseExistsForUpdateGuard, CaseNotCompletedGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
   @RolesRules(prosecutorRule)
   @Post('file')
   @ApiCreatedResponse({
@@ -87,7 +87,8 @@ export class FileController {
   }
 
   @UseGuards(
-    CaseExistsForUpdateGuard,
+    CaseExistsGuard,
+    CaseWriteGuard,
     CaseNotCompletedGuard,
     CaseFileExistsGuard,
   )
@@ -125,7 +126,12 @@ export class FileController {
     return this.fileService.getCaseFileSignedUrl(caseFile)
   }
 
-  @UseGuards(CaseExistsForUpdateGuard, CaseCompletedGuard, CaseFileExistsGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    CaseWriteGuard,
+    CaseCompletedGuard,
+    CaseFileExistsGuard,
+  )
   @RolesRules(judgeRule, registrarRule)
   @Post('file/:fileId/court')
   @ApiOkResponse({
