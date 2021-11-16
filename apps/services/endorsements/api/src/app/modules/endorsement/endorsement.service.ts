@@ -483,36 +483,32 @@ export class EndorsementService {
             address: recipientEmail,
           },
         ],
-        subject: 'TEST:Afrit af meðmælendalista',
+        subject: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
         template: {
-          title: 'Afrit af meðmælendalista',
+          title: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
           body: [
             {
               component: 'Heading',
-              context: { copy: 'Afrit af meðmælendalista' },
+              context: {
+                copy: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
+              },
             },
-            { component: 'Copy', context: { copy: 'Góðan dag.' } },
+            { component: 'Copy', context: { copy: 'Sæl/l' } },
             {
               component: 'Copy',
               context: {
-                copy: `... copy copy copy`,
+                copy:
+                  'Meðfylgjandi er meðmælendalisti ' +
+                  '"' +
+                  endorsementList?.title +
+                  '"' +
+                  ', sem ' +
+                  endorsementList?.owner +
+                  ' er skráður ábyrgðarmaður fyrir. Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.',
               },
             },
-            {
-              component: 'Copy',
-              context: {
-                copy: `Þetta skjal er í þróun ...`,
-              },
-            },
-            {
-              component: 'Button',
-              context: {
-                copy: 'Takki',
-                href: 'http://www.island.is',
-              },
-            },
-            { component: 'Copy', context: { copy: 'Með kveðju,' } },
-            { component: 'Copy', context: { copy: 'TEST' } },
+            { component: 'Copy', context: { copy: 'Kær kveðja,' } },
+            { component: 'Copy', context: { copy: 'Ísland.is' } },
           ],
         },
         attachments: [
