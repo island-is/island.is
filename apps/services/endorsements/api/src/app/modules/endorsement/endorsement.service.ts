@@ -18,12 +18,10 @@ import { Op, UniqueConstraintError } from 'sequelize'
 import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
 import { EndorsementTag } from '../endorsementList/constants'
 import type { Auth, User } from '@island.is/auth-nest-tools'
-
 import { paginate } from '@island.is/nest/pagination'
 import environment, {
   ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
 } from '../../../environments/environment'
-
 import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
@@ -395,40 +393,67 @@ export class EndorsementService {
     const locale = 'is-IS'
     const big = 16
     const regular = 8
+    const fontRegular = 'Helvetica'
+    const fontBold = 'Helvetica-Bold'
+
     doc
       .fontSize(big)
-      .text('ISLAND.IS - þetta skjal og kerfi er í vinnslu')
-      .fontSize(regular)
-      .text(
-        'þetta skjal var framkallað sjálfvirkt þann: ' +
-          new Date().toLocaleDateString(locale),
-      )
+      .text('Upplýsingar um meðmælendalista')
       .moveDown()
-      .fontSize(big)
-      .text('Meðmælendalisti')
+
       .fontSize(regular)
-      .text('id: ' + endorsementList.id)
-      .text('titill: ' + endorsementList.title)
-      .text('lýsing: ' + endorsementList.description)
-      .text('eigandi: ' + endorsementList.owner)
+      .font(fontBold)
+      .text('Heiti meðmælendalista: ')
+      .font(fontRegular)
+      .text(endorsementList.title)
+      .moveDown()
+
+      .font(fontBold)
+      .text('Um meðmælendalista: ')
+      .font(fontRegular)
+      .text(endorsementList.description)
+      .moveDown()
+
+      .font(fontBold)
+      .text('Ábyrgðarmaður: ')
+      .font(fontRegular)
+      .text(endorsementList.owner)
+      .moveDown()
+
+      .font(fontBold)
+      .text('Tímabil lista: ')
+      .font(fontRegular)
       .text(
-        'listi opnaður: ' +
-          endorsementList.openedDate.toLocaleDateString(locale),
-      )
-      .text(
-        'listi lokaður: ' +
+        endorsementList.openedDate.toLocaleDateString(locale) +
+          ' - ' +
           endorsementList.closedDate.toLocaleDateString(locale),
       )
-      .text(`Alls undirskriftir: ${endorsementList.endorsements.length}`)
       .moveDown()
+
+      .font(fontBold)
+      .text('Fjöldi skráðir: ')
+      .font(fontRegular)
+      .text(endorsementList.endorsements.length)
+      .moveDown(2)
+
     if (endorsementList.endorsements.length) {
-      doc.fontSize(big).text('Meðmælendur').fontSize(regular)
+      doc.fontSize(big).text('Yfirlit meðmæla').fontSize(regular).moveDown()
       for (const val of endorsementList.endorsements) {
         doc.text(
-          val.created.toLocaleDateString(locale) + ' ' + val.meta.fullName,
+          val.created.toLocaleDateString(locale) +
+            ' ' +
+            (val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint'),
         )
       }
     }
+    doc
+      .moveDown()
+
+      .fontSize(regular)
+      .text(
+        'Þetta skjal var framkallað sjálfvirkt þann: ' +
+          new Date().toLocaleDateString(locale),
+      )
     doc.end()
     return await getStream.buffer(doc)
   }
@@ -461,36 +486,32 @@ export class EndorsementService {
             address: recipientEmail,
           },
         ],
-        subject: 'TEST:Afrit af meðmælendalista',
+        subject: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
         template: {
-          title: 'Afrit af meðmælendalista',
+          title: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
           body: [
             {
               component: 'Heading',
-              context: { copy: 'Afrit af meðmælendalista' },
+              context: {
+                copy: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
+              },
             },
-            { component: 'Copy', context: { copy: 'Góðan dag.' } },
+            { component: 'Copy', context: { copy: 'Sæl/l' } },
             {
               component: 'Copy',
               context: {
-                copy: `... copy copy copy`,
+                copy:
+                  'Meðfylgjandi er meðmælendalisti ' +
+                  '"' +
+                  endorsementList?.title +
+                  '"' +
+                  ', sem ' +
+                  endorsementList?.owner +
+                  ' er skráður ábyrgðarmaður fyrir. Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.',
               },
             },
-            {
-              component: 'Copy',
-              context: {
-                copy: `Þetta kjal er í þróun ...`,
-              },
-            },
-            {
-              component: 'Button',
-              context: {
-                copy: 'Takki',
-                href: 'http://www.island.is',
-              },
-            },
-            { component: 'Copy', context: { copy: 'Með kveðju,' } },
-            { component: 'Copy', context: { copy: 'TEST' } },
+            { component: 'Copy', context: { copy: 'Kær kveðja,' } },
+            { component: 'Copy', context: { copy: 'Ísland.is' } },
           ],
         },
         attachments: [

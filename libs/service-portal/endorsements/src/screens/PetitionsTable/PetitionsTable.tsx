@@ -30,7 +30,7 @@ const PetitionsTable = (data: any) => {
   const [sendEmailPdf] = useMutation(SendEmailPdf)
 
   const onSendEmail = async () => {
-    const success = await sendEmailPdf({
+    const response = await sendEmailPdf({
       variables: {
         input: {
           listId: data.listId,
@@ -41,9 +41,16 @@ const PetitionsTable = (data: any) => {
       toast.error(formatMessage(m.viewPetition.toastErrorSendList))
     })
 
-    if (success) {
+    if (response) {
+      const isSuccess = response.data?.endorsementSystemsendPdfEmail.success
+      if (isSuccess) {
+        toast.success(
+          formatMessage(m.viewPetition.toastSuccessSendList) + email,
+        )
+      } else {
+        toast.error(formatMessage(m.viewPetition.toastErrorSendList))
+      }
       setEmail('')
-      toast.success(formatMessage(m.viewPetition.toastSuccessSendList) + email)
     }
   }
 
