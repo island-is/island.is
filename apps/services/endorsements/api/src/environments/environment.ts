@@ -66,8 +66,8 @@ const prodConfig = {
     Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
   email: {
-    sender: process.env.EMAIL_SENDER ?? '',
-    address: process.env.EMAIL_ADDRESS ?? '',
+    sender: process.env.EMAIL_FROM_NAME ?? '',
+    address: process.env.EMAIL_FROM_ADDRESS ?? '',
   },
   emailOptions: {
     useTestAccount: false,
