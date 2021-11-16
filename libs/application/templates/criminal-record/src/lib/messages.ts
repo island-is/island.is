@@ -214,4 +214,14 @@ export const m = defineMessages({
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in criminal record data provider',
   },
+  criminalRecordInformationTitle: {
+    id: 'cr.application:criminalrecord.title',
+    defaultMessage: 'Sakavottorð',
+    description: 'Criminal record',
+  },
+  criminalRecordInformationSubTitle: {
+    id: 'cr.application:criminalrecord.subTitle',
+    defaultMessage: 'Einhver lýsing',
+    description: 'Some description',
+  },
 })

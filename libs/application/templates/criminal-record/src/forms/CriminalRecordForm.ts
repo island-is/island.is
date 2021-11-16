@@ -56,6 +56,12 @@ export const CriminalRecordForm: Form = buildForm({
               type: 'FeeInfoProvider',
               title: '',
             }),
+            buildDataProviderItem({
+              id: 'criminalRecord',
+              type: 'CriminalRecordProvider',
+              title: m.criminalRecordInformationTitle,
+              subTitle: m.criminalRecordInformationSubTitle,
+            }),
           ],
         }),
       ],
