@@ -65,35 +65,45 @@ export class PublicDebtPaymentPlanTemplateService {
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    const { email, phoneNumber, paymentPlans } = this.getValuesFromApplication(
-      application,
-    )
+    try {
+      const {
+        email,
+        phoneNumber,
+        paymentPlans,
+      } = this.getValuesFromApplication(application)
 
-    const schedules = paymentPlans.map((plan) => {
-      const distribution = JSON.parse(plan.distribution) as PaymentsDT[]
-      return {
-        organizationID: plan.organization,
-        chargeTypes: plan.chargetypes?.map((chargeType) => ({
-          chargeID: chargeType.id,
-        })),
-        payments: distribution.map((p) => ({
-          duedate: p.dueDate,
-          payment: p.payment,
-          accumulated: p.accumulated,
-        })),
+      const schedules = paymentPlans.map((plan) => {
+        const distribution = JSON.parse(plan.distribution) as PaymentsDT[]
+        return {
+          organizationID: plan.organization,
+          chargeTypes: plan.chargetypes?.map((chargeType) => ({
+            chargeID: chargeType.id,
+          })),
+          payments: distribution.map((p) => ({
+            duedate: p.dueDate,
+            payment: p.payment,
+            accumulated: p.accumulated,
+          })),
           type: ScheduleType[plan.id],
         }
       })
 
-    await this.paymentScheduleApi.schedulesPOST6({
-      inputSchedules: {
-        serviceInput: {
-          email: email,
-          nationalId: application.applicant,
-          phoneNumber: phoneNumber,
-          schedules: schedules,
+      await this.paymentScheduleApi.schedulesPOST6({
+        inputSchedules: {
+          serviceInput: {
+            email: email,
+            nationalId: application.applicant,
+            phoneNumber: phoneNumber,
+            schedules: schedules,
+          },
         },
-      },
-    })
+      })
+    } catch (error) {
+      this.logger.error(
+        'Failed to send public debt payment plan application',
+        error,
+      )
+      throw error
+    }
   }
 }
