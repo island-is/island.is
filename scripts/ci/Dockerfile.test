@@ -14,4 +14,4 @@ ARG APP
 ENV DB_NAME=$DB_NAME
 ENV APP=$APP
 
-ENTRYPOINT /code/scripts/ci/_wait-for.sh $DB_NAME:5432 -t 60 -- yarn test $APP --runInBand --runner=docker-test --codeCoverage
+ENTRYPOINT /code/scripts/ci/_wait-for.sh $DB_NAME:5432 -t 60 -- yarn test $APP --runInBand --runner=docker-test --codeCoverage --testTimeout=10000
