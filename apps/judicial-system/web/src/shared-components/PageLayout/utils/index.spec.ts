@@ -35,48 +35,12 @@ describe('Page layout utils', () => {
         expect(result).toEqual('Kröfu um rannsóknarheimild hafnað')
       })
 
-      it(`should return the correct string if the case is an investigation case and it's parent case state is REJECTED`, () => {
-        // Arrange
-        const workingCase = {
-          ...makeCase(),
-          type: CaseType.AUTOPSY,
-          parentCase: {
-            ...makeCase(),
-            state: CaseState.REJECTED,
-          },
-        }
-
-        // Act
-        const result = caseResult({ dismissedTitle: 'test' }, workingCase)
-
-        // Assert
-        expect(result).toEqual('Kröfu um rannsóknarheimild hafnað')
-      })
-
       it('should return the correct string if the case is an restriction case and the state is REJECTED', () => {
         // Arrange
         const workingCase = {
           ...makeCase(),
           type: CaseType.TRAVEL_BAN,
           state: CaseState.REJECTED,
-        }
-
-        // Act
-        const result = caseResult({ dismissedTitle: 'test' }, workingCase)
-
-        // Assert
-        expect(result).toEqual('Kröfu hafnað')
-      })
-
-      it(`should return the correct string if the case is an restriction case and it's parent case state is REJECTED`, () => {
-        // Arrange
-        const workingCase = {
-          ...makeCase(),
-          type: CaseType.CUSTODY,
-          parentCase: {
-            ...makeCase(),
-            state: CaseState.REJECTED,
-          },
         }
 
         // Act

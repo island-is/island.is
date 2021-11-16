@@ -26,18 +26,15 @@ export const caseResult = (
     return ''
   }
 
-  const isRejected =
-    workingCase?.state === CaseState.REJECTED ||
-    workingCase?.parentCase?.state === CaseState.REJECTED
-
   const isAccepted =
     workingCase.state === CaseState.ACCEPTED ||
     workingCase?.parentCase?.state === CaseState.ACCEPTED
 
   /**
    * No need to check the parent case state because you can't extend a
-   * travel ban cases or dissmissed cases
+   * travel ban cases, dissmissed or rejected cases
    */
+  const isRejected = workingCase?.state === CaseState.REJECTED
   const isDismissed = workingCase.state === CaseState.DISMISSED
 
   const isAlternativeTravelBan =
