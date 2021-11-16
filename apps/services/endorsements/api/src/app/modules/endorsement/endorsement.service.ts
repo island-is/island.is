@@ -23,8 +23,8 @@ import environment, {
   ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
 } from '../../../environments/environment'
 import { EmailService } from '@island.is/email-service'
-import getStream from 'get-stream'
 import PDFDocument from 'pdfkit'
+import getStream from 'get-stream'
 
 interface FindEndorsementInput {
   listId: string
