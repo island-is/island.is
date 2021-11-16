@@ -251,7 +251,7 @@ export function formatPrisonRulingEmailNotification(
   return `Meðfylgjandi er vistunarseðill gæsluvarðhaldsfanga sem var úrskurðaður í gæsluvarðhald í héraðsdómi ${formatDate(
     courtEndTime,
     'PPP',
-  )}.`
+  )}, auk þingbókar þar sem úrskurðarorðin koma fram.`
 }
 
 export function formatCourtRevokedSmsNotification(

@@ -12,7 +12,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
-import { restrictionRequest as m } from '../messages'
+import { restrictionRequest as m, core } from '../messages'
 import { Case } from '../modules/case/models'
 import { formatLegalProvisions } from './formatters'
 import {
@@ -43,8 +43,8 @@ function constructRestrictionRequestPdf(
   const title = formatMessage(m.heading, {
     caseType:
       existingCase.type === CaseType.CUSTODY
-        ? formatMessage(m.caseType.custody)
-        : formatMessage(m.caseType.travelBan),
+        ? formatMessage(core.caseType.custody)
+        : formatMessage(core.caseType.travelBan),
   })
 
   if (doc.info) {
@@ -222,7 +222,7 @@ function constructInvestigationRequestPdf(
   })
 
   const title = formatMessage(m.heading, {
-    caseType: formatMessage(m.caseType.investigate),
+    caseType: formatMessage(core.caseType.investigate),
   })
 
   if (doc.info) {
