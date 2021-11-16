@@ -1,4 +1,9 @@
-import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadGatewayException,
+  Inject,
+  Injectable,
+  UnsupportedMediaTypeException,
+} from '@nestjs/common'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -52,19 +57,18 @@ export class CourtClientService {
   ) {}
 
   private async login(clientId: string) {
-    try {
-      const res = await this.authenticateApi.authenticate(
-        this.options[clientId],
-      )
+    return this.authenticateApi
+      .authenticate(this.options[clientId])
+      .then((res) => {
+        // Strip the quotation marks from the result
+        this.authenticationToken[clientId] = stripResult(res)
+      })
+      .catch(() => {
+        // Cannot log the error as it contains username and password in plain text
+        this.logger.error('Unable to log into the court service')
 
-      // Strip the quotation marks from the result
-      this.authenticationToken[clientId] = stripResult(res)
-    } catch (_) {
-      // Cannot log the error as it contains username and password in plain text
-      this.logger.error('Unable to log into the court service')
-
-      throw new BadGatewayException('Unable to log into the court service')
-    }
+        throw new BadGatewayException('Unable to log into the court service')
+      })
   }
 
   private async wrappedRequest(
@@ -76,24 +80,48 @@ export class CourtClientService {
       await this.login(clientId)
     }
 
-    try {
-      const res = await request(this.authenticationToken[clientId])
+    return request(this.authenticationToken[clientId])
+      .then((res) => stripResult(res))
+      .catch((reason) => {
+        const { statusCode, body } = reason as {
+          statusCode: number
+          body: string
+        }
 
-      return stripResult(res)
-    } catch (error) {
-      if (isRetry) {
-        this.logger.error('Error while calling the court service', error)
+        if (
+          !isRetry &&
+          statusCode === 400 &&
+          body?.startsWith('authenticationToken is expired')
+        ) {
+          this.logger.warn(
+            'Error while calling the court service - attempting relogin',
+            { reason },
+          )
 
-        throw error
-      }
+          return this.wrappedRequest(clientId, request, true)
+        }
 
-      this.logger.warn(
-        'Error while calling the court service - attempting relogin',
-        error,
-      )
+        const { status, statusText } = reason as {
+          status: number
+          statusText: string
+        }
 
-      return this.wrappedRequest(clientId, request, true)
-    }
+        if (status === 400 && statusText === 'FileNotSupported') {
+          this.logger.warn('File type not supported', { reason })
+
+          throw new UnsupportedMediaTypeException(
+            reason,
+            'Media type not supported',
+          )
+        } else {
+          this.logger.error('Error while calling the court service', { reason })
+
+          throw new BadGatewayException(
+            reason,
+            'Error while calling the court service',
+          )
+        }
+      })
   }
 
   createCase(clientId: string, args: CreateCaseArgs): Promise<string> {
