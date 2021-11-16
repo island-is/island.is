@@ -236,9 +236,10 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
               inReview.action.representative.actionButtonTitle,
             ),
           },
-      visible:
-        !isHomeActivitiesAccident(answers) ||
-        !isInjuredAndRepresentativeOfCompanyOrInstitute(answers),
+      visible: !(
+        isHomeActivitiesAccident(application.answers) ||
+        isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
+      ),
     },
     {
       tagText: formatMessage(
