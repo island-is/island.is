@@ -117,7 +117,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           <Accordion>
             <AccordionItem
               labelVariant="h3"
-              id="id_2"
+              id="id_1"
               label="Lagaákvæði sem brot varða við"
             >
               <Text>
