@@ -251,18 +251,23 @@ RegulationPage.getInitialProps = async ({
   }
 
   if (isPdf) {
-    if ('redirectUrl' in regulation) {
+    const pdfUrl =
+      'redirectUrl' in regulation
+        ? regulation.originalDoc
+        : regulation.pdfVersion
+
+    if (!pdfUrl) {
       throw new CustomNextError(
         404,
         'Þessi reglugerð á ekki PDF útgáfu (ennþá)',
       )
     }
     if (res) {
-      res.writeHead(307, { Location: regulation.pdfVersion })
+      res.writeHead(307, { Location: pdfUrl })
       res.end()
     }
     return {
-      redirect: regulation.pdfVersion,
+      redirect: pdfUrl,
     }
   }
 
