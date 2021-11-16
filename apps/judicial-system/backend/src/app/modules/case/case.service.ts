@@ -40,6 +40,7 @@ import { CourtService } from '../court'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
+import { FileService } from '../file/file.service'
 
 interface Recipient {
   name: string
@@ -81,6 +82,7 @@ export class CaseService {
   constructor(
     @InjectModel(Case)
     private readonly caseModel: typeof Case,
+    private readonly fileService: FileService,
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
@@ -95,6 +97,10 @@ export class CaseService {
   ): Promise<boolean> {
     // TODO: Find a better place for this
     try {
+      existingCase.caseFiles = await this.fileService.getAllCaseFiles(
+        existingCase.id,
+      )
+
       if (existingCase.caseFiles && existingCase.caseFiles.length > 0) {
         this.logger.debug(
           `Uploading case files overview pdf to court for case ${existingCase.id}`,
@@ -303,29 +309,6 @@ export class CaseService {
       where: getCasesQueryFilter(user),
       include: standardIncludes,
     })
-  }
-
-  async findByIdAndUser(
-    id: string,
-    user: TUser,
-    forUpdate = true,
-    additionalIncludes: Includeable[] = [],
-  ): Promise<Case> {
-    const existingCase = await this.findById(id, additionalIncludes)
-
-    if (!existingCase) {
-      throw new NotFoundException(`Case ${id} does not exist`)
-    }
-
-    if (isCaseBlockedFromUser(existingCase, user, forUpdate)) {
-      throw new ForbiddenException(
-        `User ${user.id} does not have${
-          forUpdate ? ' update' : ' read'
-        } access to case ${id}`,
-      )
-    }
-
-    return existingCase
   }
 
   async create(caseToCreate: CreateCaseDto, user?: TUser): Promise<Case> {

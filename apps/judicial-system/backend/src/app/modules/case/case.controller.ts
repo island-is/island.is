@@ -52,7 +52,12 @@ import {
 import { CaseFile } from '../file/models/file.model'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
-import { CaseExistsGuard, CaseReadGuard, CurrentCase } from './guards'
+import {
+  CaseExistsGuard,
+  CaseReadGuard,
+  CaseWriteGuard,
+  CurrentCase,
+} from './guards'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
@@ -247,28 +252,26 @@ export class CaseController {
     return resCase
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(prosecutorUpdateRule, judgeUpdateRule, registrarUpdateRule)
-  @Put('case/:id')
+  @Put('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
-    @Param('id') id: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case | null> {
-    // Make sure the user has access to this case
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
-
     // Make sure valid users are assigned to the case's roles
     if (caseToUpdate.prosecutorId) {
       await this.validateAssignedUser(
         caseToUpdate.prosecutorId,
         UserRole.PROSECUTOR,
-        existingCase.creatingProsecutor?.institutionId,
+        theCase.creatingProsecutor?.institutionId,
       )
 
       // If the case was created via xRoad, then there is no creating prosecutor
-      if (!existingCase.creatingProsecutor) {
+      if (!theCase.creatingProsecutor) {
         caseToUpdate = {
           ...caseToUpdate,
           creatingProsecutorId: caseToUpdate.prosecutorId,
@@ -280,7 +283,7 @@ export class CaseController {
       await this.validateAssignedUser(
         caseToUpdate.judgeId,
         UserRole.JUDGE,
-        existingCase.courtId,
+        theCase.courtId,
       )
     }
 
@@ -288,54 +291,53 @@ export class CaseController {
       await this.validateAssignedUser(
         caseToUpdate.registrarId,
         UserRole.REGISTRAR,
-        existingCase.courtId,
+        theCase.courtId,
       )
     }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
-      id,
+      caseId,
       caseToUpdate,
     )
 
     if (numberOfAffectedRows === 0) {
       // TODO: Find a more suitable exception to throw
-      throw new NotFoundException(`Case ${id} does not exist`)
+      throw new NotFoundException(`Case ${caseId} does not exist`)
     }
 
     if (
-      existingCase.courtId &&
-      IntegratedCourts.includes(existingCase.courtId) &&
+      theCase.courtId &&
+      IntegratedCourts.includes(theCase.courtId) &&
       Boolean(caseToUpdate.courtCaseNumber) &&
-      caseToUpdate.courtCaseNumber !== existingCase.courtCaseNumber
+      caseToUpdate.courtCaseNumber !== theCase.courtCaseNumber
     ) {
       // TODO: Find a better place for this
       // No need to wait for the upload
-      this.caseService.uploadRequestPdfToCourt(id)
+      this.caseService.uploadRequestPdfToCourt(caseId)
     }
 
     return this.caseService.findById(updatedCase.id)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorTransitionRule,
     judgeTransitionRule,
     registrarTransitionRule,
   )
-  @Put('case/:id/state')
+  @Put('case/:caseId/state')
   @ApiOkResponse({
     type: Case,
     description: 'Transitions an existing case to a new state',
   })
   async transition(
-    @Param('id') id: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
   ): Promise<Case | null> {
     // Use existingCase.modified when client is ready to send last modified timestamp with all updates
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
-
-    const state = transitionCase(transition.transition, existingCase.state)
+    const state = transitionCase(transition.transition, theCase.state)
 
     // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
     const update: { state: CaseState; parentCaseId?: null } = { state }
@@ -345,13 +347,13 @@ export class CaseController {
     }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
-      id,
+      caseId,
       update as UpdateCaseDto,
     )
 
     if (numberOfAffectedRows === 0) {
       throw new ConflictException(
-        `A more recent version exists of the case with id ${id}`,
+        `A more recent version exists of the case with id ${caseId}`,
       )
     }
 
@@ -385,33 +387,31 @@ export class CaseController {
     return theCase
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
-  @Get('case/:id/request')
+  @Get('case/:caseId/request')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description: 'Gets the request for an existing case as a pdf document',
   })
   async getRequestPdf(
-    @Param('id') id: string,
+    @Param('caseId') _0: string,
     @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
     @Res() res: Response,
   ) {
-    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
-
     if (
-      isInvestigationCase(existingCase.type) &&
-      ((user.role === UserRole.JUDGE && user.id !== existingCase.judge?.id) ||
-        (user.role === UserRole.REGISTRAR &&
-          user.id !== existingCase.registrar?.id))
+      isInvestigationCase(theCase.type) &&
+      ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
+        (user.role === UserRole.REGISTRAR && user.id !== theCase.registrar?.id))
     ) {
       throw new ForbiddenException(
         'Only the assigned judge and registrar can get the request pdf for investigation cases',
       )
     }
 
-    const pdf = await this.caseService.getRequestPdf(existingCase)
+    const pdf = await this.caseService.getRequestPdf(theCase)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,
@@ -424,34 +424,32 @@ export class CaseController {
     return stream.pipe(res)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
-  @Get('case/:id/ruling')
+  @Get('case/:caseId/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description: 'Gets the ruling for an existing case as a pdf document',
   })
   async getRulingPdf(
-    @Param('id') id: string,
+    @Param('caseId') _0: string,
     @Query('shortVersion', ParseBoolPipe) shortVersion: boolean,
     @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
     @Res() res: Response,
   ) {
-    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
-
     if (
-      isInvestigationCase(existingCase.type) &&
-      ((user.role === UserRole.JUDGE && user.id !== existingCase.judge?.id) ||
-        (user.role === UserRole.REGISTRAR &&
-          user.id !== existingCase.registrar?.id))
+      isInvestigationCase(theCase.type) &&
+      ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
+        (user.role === UserRole.REGISTRAR && user.id !== theCase.registrar?.id))
     ) {
       throw new ForbiddenException(
         'Only the assigned judge and registrar can get the ruling pdf for investigation cases',
       )
     }
 
-    const pdf = await this.caseService.getRulingPdf(existingCase, shortVersion)
+    const pdf = await this.caseService.getRulingPdf(theCase, shortVersion)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,
@@ -464,9 +462,9 @@ export class CaseController {
     return stream.pipe(res)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
-  @Get('case/:id/custodyNotice')
+  @Get('case/:caseId/custodyNotice')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -474,25 +472,23 @@ export class CaseController {
       'Gets custody notice for an existing custody case as a pdf document',
   })
   async getCustodyNoticePdf(
-    @Param('id') id: string,
-    @CurrentHttpUser() user: User,
+    @Param('caseId') _0: string,
+    @CurrentCase() theCase: Case,
     @Res() res: Response,
   ) {
-    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
-
-    if (existingCase.type !== CaseType.CUSTODY) {
+    if (theCase.type !== CaseType.CUSTODY) {
       throw new BadRequestException(
-        `Cannot generate a custody notice for ${existingCase.type} cases`,
+        `Cannot generate a custody notice for ${theCase.type} cases`,
       )
     }
 
-    if (existingCase.state !== CaseState.ACCEPTED) {
+    if (theCase.state !== CaseState.ACCEPTED) {
       throw new BadRequestException(
-        `Cannot generate a custody notice for ${existingCase.state} cases`,
+        `Cannot generate a custody notice for ${theCase.state} cases`,
       )
     }
 
-    const pdf = await this.caseService.getCustodyPdf(existingCase)
+    const pdf = await this.caseService.getCustodyPdf(theCase)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,
@@ -505,28 +501,27 @@ export class CaseController {
     return stream.pipe(res)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(judgeRule)
-  @Post('case/:id/signature')
+  @Post('case/:caseId/signature')
   @ApiCreatedResponse({
     type: SigningServiceResponse,
     description: 'Requests a signature for an existing case',
   })
   async requestSignature(
-    @Param('id') id: string,
+    @Param('caseId') _0: string,
     @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
     @Res() res: Response,
   ) {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
-
-    if (user?.id !== existingCase.judgeId) {
+    if (user?.id !== theCase.judgeId) {
       throw new ForbiddenException(
         'A ruling must be signed by the assigned judge',
       )
     }
 
     try {
-      const response = await this.caseService.requestSignature(existingCase)
+      const response = await this.caseService.requestSignature(theCase)
       return res.status(201).send(response)
     } catch (error) {
       if (error instanceof DokobitError) {
@@ -540,63 +535,46 @@ export class CaseController {
     }
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(judgeRule)
-  @Get('case/:id/signature')
+  @Get('case/:caseId/signature')
   @ApiOkResponse({
     type: SignatureConfirmationResponse,
     description:
       'Confirms a previously requested signature for an existing case',
   })
   async getSignatureConfirmation(
-    @Param('id') id: string,
+    @Param('caseId') _0: string,
     @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
-    const existingCase = await this.caseService.findByIdAndUser(
-      id,
-      user,
-      true,
-      [
-        {
-          model: CaseFile,
-          as: 'caseFiles',
-          separate: true,
-          order: [['created', 'DESC']],
-        },
-      ],
-    )
-
-    if (user?.id !== existingCase.judgeId) {
+    if (user?.id !== theCase.judgeId) {
       throw new ForbiddenException(
         'A ruling must be signed by the assigned judge',
       )
     }
 
-    return this.caseService.getSignatureConfirmation(
-      existingCase,
-      documentToken,
-    )
+    return this.caseService.getSignatureConfirmation(theCase, documentToken)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(prosecutorRule)
-  @Post('case/:id/extend')
+  @Post('case/:caseId/extend')
   @ApiCreatedResponse({
     type: Case,
     description: 'Clones a new case based on an existing case',
   })
   async extend(
-    @Param('id') id: string,
+    @Param('caseId') _0: string,
     @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
   ): Promise<Case | null> {
-    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
-
-    if (existingCase.childCase) {
-      return existingCase.childCase
+    if (theCase.childCase) {
+      return theCase.childCase
     }
 
-    const extendedCase = await this.caseService.extend(existingCase, user)
+    const extendedCase = await this.caseService.extend(theCase, user)
 
     const resCase = await this.caseService.findById(extendedCase.id)
 

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { SigningModule } from '@island.is/dokobit-signing'
@@ -7,6 +7,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { environment } from '../../../environments'
 import { UserModule } from '../user'
+import { FileModule } from '../file'
 import { CourtModule } from '../court'
 import { EventModule } from '../event'
 import { Case } from './models'
@@ -18,6 +19,7 @@ import { CaseService } from './case.service'
     SigningModule.register(environment.signingOptions),
     EmailModule.register(environment.emailOptions),
     UserModule,
+    forwardRef(() => FileModule),
     CourtModule,
     SequelizeModule.forFeature([Case]),
     CmsTranslationsModule,
