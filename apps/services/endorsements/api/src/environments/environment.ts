@@ -66,11 +66,8 @@ const prodConfig = {
     Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
   email: {
-    sender: process.env.NODE_ENV === 'production' ? 'island.is' : 'devland.is',
-    address:
-      process.env.NODE_ENV === 'production'
-        ? 'noreply@island.is'
-        : 'development@island.is',
+    sender: process.env.EMAIL_SENDER ?? '',
+    address: process.env.EMAIL_ADDRESS ?? '',
   },
   emailOptions: {
     useTestAccount: false,
