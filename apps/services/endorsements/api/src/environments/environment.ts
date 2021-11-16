@@ -26,8 +26,8 @@ const devConfig = {
     Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
   email: {
-    sender: 'devland.is',
-    address: 'development@island.is',
+    sender: 'localhost',
+    address: 'localhost@yourcomputer.is',
   },
   emailOptions: {
     useTestAccount: false,
@@ -66,8 +66,11 @@ const prodConfig = {
     Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
   email: {
-    sender: 'island.is',
-    address: 'island@island.is',
+    sender: process.env.NODE_ENV === 'production' ? 'island.is' : 'devland.is',
+    address:
+      process.env.NODE_ENV === 'production'
+        ? 'noreply@island.is'
+        : 'development@island.is',
   },
   emailOptions: {
     useTestAccount: false,
