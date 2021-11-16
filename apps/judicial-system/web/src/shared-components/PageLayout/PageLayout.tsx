@@ -9,6 +9,13 @@ import {
 } from '@island.is/island-ui/core'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
+  getCourtSections,
+  getCustodyAndTravelBanProsecutorSection,
+  getExtenstionSections,
+  getInvestigationCaseCourtSections,
+  getInvestigationCaseProsecutorSection,
+} from '@island.is/judicial-system-web/src/utils/sections'
+import {
   CaseDecision,
   CaseType,
   isRestrictionCase,
@@ -23,13 +30,7 @@ import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
 import Loading from '../Loading/Loading'
 import * as styles from './PageLayout.css'
-import {
-  getCourtSections,
-  getCustodyAndTravelBanProsecutorSection,
-  getExtenstionSections,
-  getInvestigationCaseCourtSections,
-  getInvestigationCaseProsecutorSection,
-} from './Sections'
+
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { useIntl } from 'react-intl'
 
