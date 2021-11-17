@@ -62,7 +62,6 @@ export const Municipalities = () => {
     })
       .then(() => {
         getMunicipalities()
-        toast.success('Það tókst að uppfæra sveitarfélag')
       })
       .catch(() => {
         toast.error(
