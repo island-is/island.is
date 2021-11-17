@@ -816,11 +816,12 @@ export const aboutTheAccidentSection = buildSection({
       ],
     }),
 
-    // Company information if work accident without the injured being a fisherman
+    // Company information if work accident without the injured being a fisherman or in agriculture
     buildSubSection({
       id: 'companyInfo.subSection',
       title: companyInfo.general.title,
       condition: (formValue) =>
+        !isAgricultureAccident(formValue) &&
         !isReportingOnBehalfOfEmployee(formValue) &&
         !isHomeActivitiesAccident(formValue) &&
         (isGeneralWorkplaceAccident(formValue) ||

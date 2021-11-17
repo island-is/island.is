@@ -25,7 +25,9 @@ export class IntlService {
         messages,
         onError: (err) => {
           if (err.code === 'MISSING_TRANSLATION') {
-            logger.warn({ message: err.message })
+            if (process.env.NODE_ENV !== 'test') {
+              logger.warn({ message: err.message })
+            }
             return
           }
 
