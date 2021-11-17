@@ -45,12 +45,12 @@ export const externalData = {
     },
     nationalRegistrySubTitle: {
       id: `pdpp.application:section.externalData.nationalRegistrySubTitle`,
-      defaultMessage: 'Nafn, kennitala, símanúmer, netfang.',
+      defaultMessage: 'Nafn og kennitala.',
       description: 'National Registry Subtitle',
     },
     userProfileTitle: {
       id: `pdpp.application:section.externalData.userProfileTitle`,
-      defaultMessage: 'Upplýsingar frá Skattinum og Fjársýslunni',
+      defaultMessage: 'Upplýsingar frá Skattinum og Innheimtumanni ríkissjóðs',
       description: 'User Profile Title',
     },
     userProfileSubTitle: {
