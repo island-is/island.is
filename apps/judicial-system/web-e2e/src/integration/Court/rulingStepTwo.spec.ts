@@ -4,7 +4,7 @@ import {
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system/types'
-import { makeCase } from '../../fixtures/testDataFactory'
+import { makeCase } from '@island.is/judicial-system/formatters'
 import { intercept } from '../../utils'
 
 describe('/domur/urskurdarord/:id', () => {
