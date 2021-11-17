@@ -13,11 +13,9 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealDecision,
   CaseDecision,
   CaseType,
   isAcceptingCaseDecision,
-  isInvestigationCase,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
