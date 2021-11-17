@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Case, Feature, PoliceCaseFile } from '@island.is/judicial-system/types'
+import React, { useEffect, useState } from 'react'
+import { Case, PoliceCaseFile } from '@island.is/judicial-system/types'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
 import { useQuery } from '@apollo/client'
 import {
@@ -13,7 +13,6 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useRouter } from 'next/router'
 import CaseFilesForm from './CaseFilesForm'
-import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 
 export interface PoliceCaseFilesData {
   files: PoliceCaseFile[]
@@ -27,7 +26,6 @@ export const CaseFiles: React.FC = () => {
   const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
-  const { features } = useContext(FeatureContext)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -39,7 +37,6 @@ export const CaseFiles: React.FC = () => {
   } = useQuery(PoliceCaseFilesQuery, {
     variables: { input: { caseId: id } },
     fetchPolicy: 'no-cache',
-    skip: !features.includes(Feature.POLICE_CASE_FILES),
   })
 
   useEffect(() => {
