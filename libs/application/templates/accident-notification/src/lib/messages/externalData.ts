@@ -22,7 +22,7 @@ export const externalData = {
     bulletThree: {
       id: 'an.application:section.agreementDescription.BulletThree',
       defaultMessage:
-        'Tryggingastofnun ríkisins fær jafnframt upplýsingar um bótagreiðslur vegna ákvæðis um samspil og skörun bóta sbr. 14. gr. laga nr. lög nr 45/2015.',
+        'Eitthvað óvænt verður að hafa gerst sem veldur tjóni á líkama hins tryggða og áhorfandi getur áttað sig á að hafi gerst.',
       description: 'List item 3 on data gathering information',
     },
     bulletFour: {
