@@ -6,7 +6,6 @@ import {
 } from '@island.is/service-portal/core'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 
-
 export const endorsementsModule: ServicePortalModule = {
   name: 'Meðmæli',
   widgets: () => [],
@@ -22,7 +21,7 @@ export const endorsementsModule: ServicePortalModule = {
 export const petitionsModule: ServicePortalModule = {
   name: 'Almennir undirskriftalistar',
   widgets: () => [],
-  routes: ({userInfo}) => {
+  routes: ({ userInfo }) => {
     const applicationRoutes = [
       {
         name: m.endorsements,
