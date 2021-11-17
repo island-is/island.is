@@ -5,7 +5,7 @@ import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { authNationalId, listYouOwnListId, listYouDoNotOwnListId } from './seed'
 
 const invalidEmail = 'NOT_A_VALID_EMAIL_ADDRESS.is'
-const validEmail = 'rafn@juni.is'
+const validEmail = 'rafn@juni.is' // valid whitelisted
 
 describe('emailPdfEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement should fail trying to send list you dont own`, async () => {
