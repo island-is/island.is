@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEmail, IsNotEmpty } from 'class-validator'
+import { Transform } from 'class-transformer/decorators'
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional } from 'class-validator'
 
 export class emailDto {
   @ApiProperty()

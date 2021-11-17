@@ -43,7 +43,21 @@ describe('emailPdfEndorsement', () => {
     })
   })
 
-  it(`POST /endorsement-list/:listId/endorsement should work sending a list you own`, async () => {
+  it(`POST /endorsement-list/:listId/endorsement should work emailing a list you own`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
+    const response = await request(app.getHttpServer())
+      .post(
+        `/endorsement-list/${listYouOwnListId}/endorsement/email?emailAddress=${validEmail}`,
+      )
+      .send()
+      .expect(201)
+
+    expect(response.body.success).toBe(true)
+  })
+  it(`POST /endorsement-list/:listId/endorsement should work emailing with PDF a list you own`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
       scope: [EndorsementsScope.main],
