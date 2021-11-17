@@ -1,4 +1,8 @@
-import { FeatureFlagClient, User, FeatureFlagClientProps } from './types'
+import {
+  FeatureFlagClient,
+  FeatureFlagUser,
+  FeatureFlagClientProps,
+} from './types'
 import { createClient, IJSAutoPollOptions, DataGovernance } from 'configcat-js'
 
 export class Client implements FeatureFlagClient {
@@ -28,7 +32,11 @@ export class Client implements FeatureFlagClient {
     }
   }
 
-  async getValue(key: string, defaultValue: boolean | string, user: User) {
+  async getValue(
+    key: string,
+    defaultValue: boolean | string,
+    user: FeatureFlagUser,
+  ) {
     return await this.configcat.getValueAsync(
       key,
       defaultValue,
