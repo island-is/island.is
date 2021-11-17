@@ -37,24 +37,34 @@ const ConclusionDraft: React.FC<Props> = (props) => {
         <Decision
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
-          acceptedLabelText={`Krafa ${
-            workingCase.type === CaseType.CUSTODY
-              ? 'um gæsluvarðhald '
-              : workingCase.type === CaseType.TRAVEL_BAN
-              ? 'um farbann '
-              : ''
-          }samþykkt`}
-          rejectedLabelText={`Kröfu ${
-            workingCase.type === CaseType.CUSTODY
-              ? 'um gæsluvarðhald '
-              : workingCase.type === CaseType.TRAVEL_BAN
-              ? 'um farbann '
-              : ''
-          }hafnað`}
+          acceptedLabelText={
+            isRestrictionCase(workingCase.type)
+              ? formatMessage(rcRulingStepOne.sections.decision.acceptLabel, {
+                  caseType:
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhald'
+                      : 'farbann',
+                })
+              : formatMessage(icRulingStepOne.sections.decision.acceptLabel)
+          }
+          rejectedLabelText={
+            isRestrictionCase(workingCase.type)
+              ? formatMessage(rcRulingStepOne.sections.decision.rejectLabel, {
+                  caseType:
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhald'
+                      : 'farbann',
+                })
+              : formatMessage(icRulingStepOne.sections.decision.rejectLabel)
+          }
           partiallyAcceptedLabelText={`${
             isRestrictionCase(workingCase.type)
-              ? 'Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann'
-              : 'Krafa tekin til greina að hluta'
+              ? formatMessage(
+                  rcRulingStepOne.sections.decision.partiallyAcceptLabel,
+                )
+              : formatMessage(
+                  icRulingStepOne.sections.decision.partiallyAcceptLabel,
+                )
           }`}
           dismissLabelText={
             isRestrictionCase(workingCase.type)
@@ -66,6 +76,10 @@ const ConclusionDraft: React.FC<Props> = (props) => {
                 })
               : formatMessage(icRulingStepOne.sections.decision.dismissLabel)
           }
+          acceptingAlternativeTravelBanLabelText={formatMessage(
+            rcRulingStepOne.sections.decision
+              .acceptingAlternativeTravelBanLabel,
+          )}
         />
       </Box>
       <Box marginBottom={3}>
