@@ -4,7 +4,6 @@ import {
   ActivationButtonTableItem,
   ApplicationOverviewSkeleton,
   LoadingContainer,
-  NewSupervisorModal,
   NewUserModal,
   TableBody,
   TableHeaders,
