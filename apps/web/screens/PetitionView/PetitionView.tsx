@@ -153,7 +153,7 @@ const PetitionView = (namespace) => {
                     </T.Table>
                   </GridColumn>
                 </GridRow>
-                {!!list.signedPetitions?.length && (
+                {pagePetitions && pagePetitions.length ? (
                   <Box marginY={3}>
                     <Pagination
                       page={page}
@@ -163,7 +163,7 @@ const PetitionView = (namespace) => {
                           cursor="pointer"
                           className={className}
                           onClick={() =>
-                            handlePagination(page, list.signedPetitions)
+                            handlePagination(page, pagePetitions)
                           }
                         >
                           {children}
@@ -171,6 +171,8 @@ const PetitionView = (namespace) => {
                       )}
                     />
                   </Box>
+                ) : (
+                  <Text>{n('noPetitions', 'Engin meðmæli komin enn')}</Text>
                 )}
               </GridColumn>
             ) : (
