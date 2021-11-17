@@ -16,7 +16,7 @@ import { Aid, AidType } from '@island.is/financial-aid/shared/lib'
   indexes: [
     {
       unique: true,
-      fields: ['municipality_id'],
+      fields: ['municipality_id', 'type'],
     },
   ],
 })
