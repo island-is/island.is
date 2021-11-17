@@ -470,6 +470,10 @@ export class EndorsementService {
         },
       ],
     })
+    const pdfBuffer = await this.createDocumentBuffer(endorsementList)
+    this.logger.info(
+      `pdf buffer length ${pdfBuffer.length}`,
+    )
     this.logger.info(
       `sending list ${listId} to ${recipientEmail} from ${environment.email.sender}`,
     )
@@ -486,14 +490,14 @@ export class EndorsementService {
             address: recipientEmail,
           },
         ],
-        subject: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
+        subject: `Meðmælendalisti "${endorsementList?.title}"`,
         template: {
-          title: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
+          title: `Meðmælendalisti "${endorsementList?.title}"`,
           body: [
             {
               component: 'Heading',
               context: {
-                copy: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
+                copy: `Meðmælendalisti "${endorsementList?.title}"`,
               },
             },
             { component: 'Copy', context: { copy: 'Sæl/l' } },
@@ -501,13 +505,7 @@ export class EndorsementService {
               component: 'Copy',
               context: {
                 copy:
-                  'Meðfylgjandi er meðmælendalisti ' +
-                  '"' +
-                  endorsementList?.title +
-                  '"' +
-                  ', sem ' +
-                  endorsementList?.owner +
-                  ' er skráður ábyrgðarmaður fyrir. Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.',
+                `Meðfylgjandi er meðmælendalisti "${endorsementList?.title}", sem ${endorsementList?.owner} er skráður ábyrgðarmaður fyrir. Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.`,
               },
             },
             { component: 'Copy', context: { copy: 'Kær kveðja,' } },
@@ -517,7 +515,7 @@ export class EndorsementService {
         attachments: [
           {
             filename: 'Meðmælendalisti.pdf',
-            content: await this.createDocumentBuffer(endorsementList),
+            content: pdfBuffer,
           },
         ],
       })
