@@ -21,7 +21,7 @@ interface SinglePetition {
   endorsementSystemGetSingleEndorsementList?: EndorsementList
 }
 interface SinglePetitionEndorsements {
-  endorsementSystemGetGeneralPetitionEndorsements?: PaginatedEndorsementResponse
+  endorsementSystemGetEndorsements?: PaginatedEndorsementResponse
 }
 interface SingleEndorsement {
   endorsementSystemGetSingleEndorsement?: any
@@ -108,11 +108,9 @@ export const GetSinglePetitionList = gql`
   }
 `
 
-const GetGeneralPetitionListEndorsements = gql`
-  query endorsementSystemGetGeneralPetitionEndorsements(
-    $input: PaginatedEndorsementInput!
-  ) {
-    endorsementSystemGetGeneralPetitionEndorsements(input: $input) {
+const GetEndorsements = gql`
+  query endorsementSystemGetEndorsements($input: PaginatedEndorsementInput!) {
+    endorsementSystemGetEndorsements(input: $input) {
       totalCount
       data {
         id
@@ -305,7 +303,7 @@ export const useGetSinglePetitionEndorsements = (listId: string) => {
   const {
     data: endorsements,
     refetch: refetchSinglePetitionEndorsements,
-  } = useQuery<SinglePetitionEndorsements>(GetGeneralPetitionListEndorsements, {
+  } = useQuery<SinglePetitionEndorsements>(GetEndorsements, {
     variables: {
       input: {
         listId: listId,
@@ -316,6 +314,6 @@ export const useGetSinglePetitionEndorsements = (listId: string) => {
   })
 
   const petitionEndorsements =
-    endorsements?.endorsementSystemGetGeneralPetitionEndorsements ?? []
+    endorsements?.endorsementSystemGetEndorsements ?? []
   return { petitionEndorsements, refetchSinglePetitionEndorsements }
 }

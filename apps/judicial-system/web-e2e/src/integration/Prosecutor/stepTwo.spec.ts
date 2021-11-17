@@ -2,7 +2,7 @@ import {
   makeCase,
   makeCourt,
   makeProsecutor,
-} from '../../fixtures/testDataFactory'
+} from '@island.is/judicial-system/formatters'
 import { intercept } from '../../utils'
 
 describe('/krafa/fyrirtaka/:id', () => {

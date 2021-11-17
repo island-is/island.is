@@ -1,0 +1,664 @@
+openapi: 3.0.1
+info:
+  title: Payment schedule 1.0
+  version: '1.0'
+servers:
+  - url: https://tbrws-s.hysing.is/rad/TBRIslandis.api.v1:paymentSchedule_v1
+paths:
+  /wagesdeduction/{nationalId}:
+    get:
+      operationId: wagesdeductionnationalId_GET_1
+      parameters:
+        - name: nationalId
+          in: path
+          description: National identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/wagesdeductionnationalId_GET_response'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/wagesdeductionnationalId_GET_response'
+        '401':
+          description: Access Denied
+          content: {}
+    put:
+      description: Set employer for input nationalid
+      operationId: wagesdeductionnationalId_PUT_1
+      parameters:
+        - name: nationalId
+          in: path
+          description: National identifier
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/input'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/input'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/wagesdeductionnationalId_PUT_response'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/wagesdeductionnationalId_PUT_response'
+        '401':
+          description: Access Denied
+          content: {}
+      x-codegen-request-body-name: input
+    post:
+      description: Set employer for input nationalid
+      operationId: wagesdeductionnationalId_POST_1
+      parameters:
+        - name: nationalId
+          in: path
+          description: National identifier
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/input'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/input'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/wagesdeductionnationalId_POST_response'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/wagesdeductionnationalId_POST_response'
+        '204':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/wagesdeductionnationalId_POST_response'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/wagesdeductionnationalId_POST_response'
+        '401':
+          description: Access Denied
+          content: {}
+      x-codegen-request-body-name: input
+  /debtsandschedules/{nationalId}:
+    get:
+      operationId: debtsandschedulesnationalId_GET_2
+      parameters:
+        - name: nationalId
+          in: path
+          description: National identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/debtsandschedulesnationalId_GET_response'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/debtsandschedulesnationalId_GET_response'
+        '401':
+          description: Access Denied
+          content: {}
+  /conditions/{nationalId}:
+    get:
+      description: Returns current condidtion for given nationalId.
+      operationId: conditionsnationalId_GET_3
+      parameters:
+        - name: nationalId
+          in: path
+          description: National identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/conditionsnationalId_GET_response'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/conditionsnationalId_GET_response'
+        '401':
+          description: Access Denied
+          content: {}
+  /distributionInitialPosition/{nationalId}/{scheduleType}:
+    get:
+      operationId: distributionInitialPositionnationalIdscheduleType_GET_4
+      parameters:
+        - name: nationalId
+          in: path
+          description: National identifier
+          required: true
+          schema:
+            type: string
+        - name: scheduleType
+          in: path
+          description: schedule type
+          required: true
+          schema:
+            type: string
+        - name: totalAmount
+          in: query
+          description: 'total due amount '
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: disposableIncome
+          in: query
+          description: disposable income amount
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/distributionInitialPositionnationalIdscheduleType_GET_response'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/distributionInitialPositionnationalIdscheduleType_GET_response'
+        '401':
+          description: Access Denied
+          content: {}
+  /paymentDistribution/{nationalId}/{scheduleType}:
+    get:
+      operationId: paymentDistributionnationalIdscheduleType_GET_5
+      parameters:
+        - name: nationalId
+          in: path
+          description: National identifier
+          required: true
+          schema:
+            type: string
+        - name: scheduleType
+          in: path
+          description: schedule type
+          required: true
+          schema:
+            type: string
+        - name: totalAmount
+          in: query
+          description: 'total due amount '
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: monthAmount
+          in: query
+          description: disposable income amount
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: monthCount
+          in: query
+          description: disposable income amount
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/paymentDistributionnationalIdscheduleType_GET_response'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/paymentDistributionnationalIdscheduleType_GET_response'
+        '401':
+          description: Access Denied
+          content: {}
+  /schedules:
+    post:
+      description: store  schedules , return 201 if ok
+      operationId: schedules_POST_6
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/inputSchedules'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/inputSchedules'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/schedules_POST_response'
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/schedules_POST_response'
+        '401':
+          description: Access Denied
+          content: {}
+      x-codegen-request-body-name: inputSchedules
+components:
+  schemas:
+    DebtsAndSchedules_DT:
+      required:
+        - chargetypes
+        - explanation
+        - nationalId
+        - organization
+        - paymentSchedule
+        - totalAmount
+        - type
+      type: object
+      properties:
+        totalAmount:
+          type: integer
+          format: int64
+        nationalId:
+          type: string
+          description: National identifier
+        chargetypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChargeTypes_DT'
+        organization:
+          type: string
+        paymentSchedule:
+          type: string
+        type:
+          type: string
+        explanation:
+          type: string
+    errors:
+      required:
+        - detail
+        - title
+      type: object
+      properties:
+        traceId:
+          type: string
+        param:
+          type: string
+        detail:
+          type: string
+        type:
+          type: string
+        title:
+          type: string
+    Payments_DT:
+      required:
+        - accumulated
+        - dueDate
+        - payment
+      type: object
+      properties:
+        dueDate:
+          type: string
+          description: due date
+        payment:
+          type: integer
+          format: int64
+        accumulated:
+          type: integer
+          description: accumulated
+          format: int64
+    SchedulesInput_DT:
+      required:
+        - email
+        - nationalId
+        - phoneNumber
+        - schedules
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+          description: Phone number
+        nationalId:
+          type: string
+          description: Icelandic nationalID
+        schedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/schedules'
+        email:
+          type: string
+          description: e-mail
+    WagesDetuction_DT:
+      required:
+        - employerName
+        - employerNationalId
+      type: object
+      properties:
+        employerName:
+          type: string
+        employerNationalId:
+          type: string
+          description: Employer national id
+    schedules_POST_response:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ProblemDetails_DT'
+    payments:
+      required:
+        - accumulated
+        - duedate
+        - payment
+      type: object
+      properties:
+        duedate:
+          type: string
+        payment:
+          type: integer
+          format: int64
+        accumulated:
+          type: integer
+          format: int64
+    debtsandschedulesnationalId_GET_response:
+      required:
+        - deptAndSchedules
+      type: object
+      properties:
+        deptAndSchedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/DebtsAndSchedules_DT'
+        error:
+          $ref: '#/components/schemas/ProblemDetails_DT'
+    input:
+      required:
+        - employer
+      type: object
+      properties:
+        employer:
+          $ref: '#/components/schemas/employer'
+    schedules:
+      required:
+        - chargeTypes
+        - organizationID
+        - payments
+        - type
+      type: object
+      properties:
+        organizationID:
+          type: string
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/payments'
+        chargeTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/chargeTypes'
+        type:
+          type: string
+          description: schedule type
+    wagesdeductionnationalId_PUT_response:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ProblemDetails_DT'
+    inputSchedules:
+      required:
+        - ServiceInput
+      type: object
+      properties:
+        ServiceInput:
+          $ref: '#/components/schemas/SchedulesInput_DT'
+    ChargeTypes_DT:
+      required:
+        - expenses
+        - id
+        - intrest
+        - name
+        - principal
+        - total
+      type: object
+      properties:
+        principal:
+          type: number
+          format: double
+        total:
+          type: number
+          format: double
+        name:
+          type: string
+        intrest:
+          type: number
+          format: double
+        id:
+          type: string
+        expenses:
+          type: number
+          format: double
+    conditionsnationalId_GET_response:
+      type: object
+      properties:
+        conditions:
+          $ref: '#/components/schemas/Conditions_DT'
+        error:
+          $ref: '#/components/schemas/ProblemDetails_DT'
+    paymentDistributionnationalIdscheduleType_GET_response:
+      required:
+        - paymentDistribution
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ProblemDetails_DT'
+        paymentDistribution:
+          $ref: '#/components/schemas/paymentDistribution_DT'
+    wagesdeductionnationalId_GET_response:
+      required:
+        - wagesDeduction
+      type: object
+      properties:
+        wagesDeduction:
+          $ref: '#/components/schemas/WagesDetuction_DT'
+        error:
+          $ref: '#/components/schemas/ProblemDetails_DT'
+    employer:
+      required:
+        - employerNationalId
+      type: object
+      properties:
+        employerNationalId:
+          type: string
+          description: Employer national identifier
+    wagesdeductionnationalId_POST_response:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ProblemDetails_DT'
+    distributionInitialPositionnationalIdscheduleType_GET_response:
+      required:
+        - distributionInitialPosition
+      type: object
+      properties:
+        distributionInitialPosition:
+          $ref: '#/components/schemas/DistributionInitialPosition_DT'
+        error:
+          $ref: '#/components/schemas/ProblemDetails_DT'
+    Conditions_DT:
+      required:
+        - accommodationTaxReturns
+        - alimony
+        - citReturns
+        - collectionActions
+        - disposableIncome
+        - doNotOwe
+        - maxDebt
+        - maxDebtAmount
+        - maxPayment
+        - minPayment
+        - minWagePayment
+        - nationalId
+        - oweTaxes
+        - percent
+        - taxReturns
+        - totalDebtAmount
+        - vatReturns
+        - wageReturns
+        - withholdingTaxReturns
+      type: object
+      properties:
+        doNotOwe:
+          type: boolean
+        collectionActions:
+          type: boolean
+        citReturns:
+          type: boolean
+        totalDebtAmount:
+          type: integer
+          format: int64
+        alimony:
+          type: integer
+          format: int64
+        taxReturns:
+          type: boolean
+        percent:
+          type: string
+        minWagePayment:
+          type: integer
+          format: int64
+        wageReturns:
+          type: boolean
+        disposableIncome:
+          type: integer
+          format: int64
+        withholdingTaxReturns:
+          type: boolean
+        oweTaxes:
+          type: boolean
+          description: true if taxes are owed
+        nationalId:
+          type: string
+          description: National identifier
+        maxPayment:
+          type: integer
+          format: int64
+        minPayment:
+          type: integer
+          format: int64
+        vatReturns:
+          type: boolean
+        maxDebtAmount:
+          type: integer
+          format: int64
+        accommodationTaxReturns:
+          type: boolean
+        maxDebt:
+          type: boolean
+    ProblemDetails_DT:
+      required:
+        - detail
+        - status
+        - title
+      type: object
+      properties:
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.It may or may not yield further information if dereferenced.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        type:
+          type: string
+          description: A URI reference [RFC3986] that identifies the problem type. This specification encourages that, when dereferenced, it provide human-readable documentation for the problem type (e.g., using HTML [W3C.REC-html5-20141028]). When this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization(e.g., using proactive content negotiation; see[RFC7231], Section 3.4).
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/errors'
+        status:
+          type: string
+          description: The HTTP status code([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.
+    DistributionInitialPosition_DT:
+      required:
+        - maxCountMonth
+        - maxPayment
+        - minCountMonth
+        - minPayment
+        - nationalId
+        - scheduleType
+      type: object
+      properties:
+        nationalId:
+          type: string
+          description: National identifier
+        scheduleType:
+          type: string
+          description: schedule type
+        maxPayment:
+          type: integer
+          description: max payment
+          format: int64
+        minPayment:
+          type: integer
+          description: min Payment
+          format: int64
+        minCountMonth:
+          type: integer
+          description: month min count
+          format: int64
+        maxCountMonth:
+          type: integer
+          description: month max count
+          format: int64
+    chargeTypes:
+      required:
+        - chargeID
+      type: object
+      properties:
+        chargeID:
+          type: string
+    paymentDistribution_DT:
+      required:
+        - nationalId
+        - payments
+        - scheduleType
+      type: object
+      properties:
+        nationalId:
+          type: string
+          description: National identifier
+        scheduleType:
+          type: string
+          description: schedule type
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payments_DT'
