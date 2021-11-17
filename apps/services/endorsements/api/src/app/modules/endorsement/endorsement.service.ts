@@ -472,20 +472,21 @@ export class EndorsementService {
       ],
     })
     // pdf tests
-    let attachments = []
-    if (attachPdf) {
-      const pdfBuffer = await this.createDocumentBuffer(endorsementList)
-      this.logger.info(`pdf buffer length ${pdfBuffer.length}`)
-      attachments.push({
-        filename: 'Meðmælendalisti.pdf',
-        content: pdfBuffer,
-      })
-    }
+
     this.logger.info(
       `sending list ${listId} to ${recipientEmail} from ${environment.email.sender}`,
     )
     try {
-      const result = await this.emailService.sendEmail({
+      const attachments = []
+      if (attachPdf) {
+        const pdfBuffer = await this.createDocumentBuffer(endorsementList)
+        this.logger.info(`pdf buffer length ${pdfBuffer.length}`)
+        attachments.push({
+          filename: 'Meðmælendalisti.pdf',
+          content: pdfBuffer,
+        })
+      }
+      await this.emailService.sendEmail({
         from: {
           name: environment.email.sender,
           address: environment.email.address,
@@ -520,7 +521,7 @@ export class EndorsementService {
             { component: 'Copy', context: { copy: 'Ísland.is' } },
           ],
         },
-        attachments,
+        attachments: attachments,
       })
 
       return { success: true }
