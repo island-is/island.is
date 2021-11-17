@@ -17,7 +17,6 @@ import {
   CaseDecision,
   CaseType,
   isAcceptingCaseDecision,
-  isInvestigationCase,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
