@@ -21,7 +21,7 @@ const SuperAdminSideNavItems = ({ roles }: Props) => {
     <>
       <button
         className={`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`}
-        onClick={() => router.push(Routes.municipalities)}
+        onClick={() => router.push(Routes.settings.municipalities)}
       >
         <Icon
           icon="receipt"
@@ -33,7 +33,7 @@ const SuperAdminSideNavItems = ({ roles }: Props) => {
       </button>
       <button
         className={`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`}
-        onClick={() => router.push(Routes.supervisors)}
+        onClick={() => router.push(Routes.settings.supervisors)}
       >
         <Icon
           icon="people"

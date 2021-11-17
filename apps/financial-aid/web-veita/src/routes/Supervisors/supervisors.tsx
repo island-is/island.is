@@ -179,8 +179,7 @@ export const Supervisors = () => {
           setIsModalVisible(visible)
         }}
         onStaffCreated={refreshList}
-        roles={[StaffRole.SUPERADMIN]}
-        showUserRights={false}
+        predefinedRoles={[StaffRole.SUPERADMIN]}
       />
       <ToastContainer />
     </LoadingContainer>

@@ -10,8 +10,7 @@ interface Props {
   isVisible: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
   onStaffCreated: () => void
-  roles?: StaffRole[]
-  showUserRights?: boolean
+  predefinedRoles?: StaffRole[]
 }
 
 interface newUsersModalState {
@@ -27,8 +26,7 @@ const NewUserModal = ({
   isVisible,
   setIsVisible,
   onStaffCreated,
-  roles = [],
-  showUserRights = true,
+  predefinedRoles = [],
 }: Props) => {
   const [state, setState] = useState<newUsersModalState>({
     staffNationalId: '',
@@ -36,7 +34,7 @@ const NewUserModal = ({
     staffEmail: '',
     hasError: false,
     hasSubmitError: false,
-    roles: roles,
+    roles: predefinedRoles,
   })
   const [createStaff] = useMutation(StaffMutation)
 
@@ -156,7 +154,7 @@ const NewUserModal = ({
         Notandi fær sendan tölvupóst með hlekk til að skrá sig inn með rafrænum
         skilríkjum.
       </Text>
-      {showUserRights && (
+      {predefinedRoles.length === 0 && (
         <>
           <Text marginBottom={3} variant="h4">
             Réttindi notanda
