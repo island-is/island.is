@@ -635,7 +635,12 @@ export const parentalLeaveFormMessages: MessageDir = {
     fullName: {
       id: 'pl.application:applicant.fullName',
       defaultMessage: 'Nafn',
-      description: 'Full name',
+      description: 'Name',
+    },
+    nationalId: {
+      id: 'pl.application:applicant.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'National id',
     },
   }),
 

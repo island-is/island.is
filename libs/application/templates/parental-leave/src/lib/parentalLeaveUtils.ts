@@ -369,7 +369,7 @@ export function getApplicationExternalData(
     externalData,
     'userProfile.data.fullName',
     '',
-  )
+  ) as string
 
   return {
     applicantName,

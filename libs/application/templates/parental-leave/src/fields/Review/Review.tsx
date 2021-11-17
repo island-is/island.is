@@ -165,12 +165,20 @@ export const Review: FC<ReviewScreenProps> = ({
       >
         {applicantName !== '' && (
           <GridRow marginBottom={3}>
-            <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
                 label={formatMessage(
                   parentalLeaveFormMessages.applicant.fullName,
                 )}
                 value={applicantName}
+              />
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.applicant.nationalId,
+                )}
+                value={application.applicant}
               />
             </GridColumn>
           </GridRow>
