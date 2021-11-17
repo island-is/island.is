@@ -9,6 +9,20 @@ export class CriminalRecordService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
+  async createCharge({
+    application: { id },
+    auth,
+  }: TemplateApiModuleActionProps) {
+    console.log('halló')
+    console.log(id)
+    const result = this.sharedTemplateAPIService.createCharge(
+      auth.authorization,
+      id,
+      'AY101',
+    )
+    return result
+  }
+
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     console.log('TODO sendApplication')
   }

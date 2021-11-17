@@ -147,6 +147,7 @@ export class PaymentService {
         ],
       },
     })
+    console.log(application)
     if (!application) {
       Promise.reject('Failed to find application').catch()
     }
