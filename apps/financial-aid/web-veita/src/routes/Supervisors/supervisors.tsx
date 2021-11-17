@@ -130,7 +130,7 @@ export const Supervisors = () => {
                 </tr>
               </thead>
 
-              <tbody className={tableStyles.tableBody}>
+              <tbody className={`${tableStyles.tableBody} contentUp delay-75`}>
                 {supervisors.map((item: Staff, index) => (
                   <TableBody
                     items={[
