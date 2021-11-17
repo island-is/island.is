@@ -1138,6 +1138,12 @@ export interface ILinkFields {
 
   /** Searchable */
   searchable?: boolean | undefined
+
+  /** Search Description */
+  description?: string | undefined
+
+  /** Search Labels */
+  labels?: string[] | undefined
 }
 
 export interface ILink extends Entry<ILinkFields> {

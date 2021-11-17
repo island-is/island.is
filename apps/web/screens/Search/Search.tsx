@@ -193,6 +193,10 @@ const Search: Screen<CategoryProps> = ({
       }
     }
 
+    if (item?.labels && item.labels?.length) {
+      labels.push(...item.labels)
+    }
+
     return labels
   }
 
