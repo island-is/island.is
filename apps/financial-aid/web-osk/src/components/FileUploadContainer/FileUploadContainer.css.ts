@@ -14,13 +14,13 @@ export const container = style({
 })
 
 export const fileContainer = style({
-  display: 'grid',
   gridTemplateColumns: 'repeat(1, 1fr)',
   alignItems: 'flex-start',
   columnGap: theme.spacing[3],
   marginBottom: theme.spacing[5],
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      display: 'grid',
       gridTemplateColumns: 'repeat(8, 1fr)',
     },
   },
