@@ -150,6 +150,7 @@ module.exports = {
     '<rootDir>/libs/judicial-system/types',
     '<rootDir>/libs/nest/audit',
     '<rootDir>/libs/nest/problem',
+    '<rootDir>/libs/react/feature-flags',
     '<rootDir>/libs/service-portal/applications',
     '<rootDir>/libs/service-portal/assets',
     '<rootDir>/libs/service-portal/constants',
