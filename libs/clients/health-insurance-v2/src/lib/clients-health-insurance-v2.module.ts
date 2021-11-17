@@ -26,6 +26,7 @@ export class HealthInsuranceV2Client {
                   name: 'clients-health-insurance',
                   treat400ResponsesAsErrors: true,
                   logErrorResponseBody: true,
+                  timeout: 20000, // needed because the external service is taking a while to respond to submitting the document
                 }),
                 basePath: basePath,
                 headers: {
