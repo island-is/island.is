@@ -360,6 +360,9 @@ export class EndorsementListService {
       endorsementList?.id,
       endorsementList.owner,
     )
+    this.logger.info(
+      `sending list ${listId} to ${recipientEmail} from ${environment.email.sender}`,
+    )
     try {
       await this.emailService.sendEmail({
         from: {
@@ -373,28 +376,23 @@ export class EndorsementListService {
             address: recipientEmail,
           },
         ],
-        subject: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
+        subject: `Meðmælendalisti "${endorsementList?.title}"`,
         template: {
-          title: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
+          title: `Meðmælendalisti "${endorsementList?.title}"`,
           body: [
             {
               component: 'Heading',
               context: {
-                copy: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
+                copy: `Meðmælendalisti "${endorsementList?.title}"`,
               },
             },
             { component: 'Copy', context: { copy: 'Sæl/l/t' } },
             {
               component: 'Copy',
               context: {
-                copy:
-                  'Meðfylgjandi er meðmælendalisti ' +
-                  '"' +
-                  endorsementList?.title +
-                  '"' +
-                  ', sem ' +
-                  ownerName +
-                  ' er skráður ábyrgðarmaður fyrir. Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.',
+                copy: `Meðfylgjandi er meðmælendalisti "${endorsementList?.title}", 
+                sem ${ownerName} er skráður ábyrgðarmaður fyrir. 
+                Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.`,
               },
             },
             { component: 'Copy', context: { copy: 'Kær kveðja,' } },
@@ -411,7 +409,6 @@ export class EndorsementListService {
           },
         ],
       })
-      this.logger.debug(`sending list ${listId} to ${recipientEmail}`)
       return { success: true }
     } catch (error) {
       this.logger.error('Failed to send email', error)
