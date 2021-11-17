@@ -29,7 +29,7 @@ judicial-system-api:
     XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1'
     XROAD_COURT_MEMBER_CODE: '4707171140'
     XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1'
-    XROAD_POLICE_MEMBER_CODE: '5306972079'
+    XROAD_POLICE_MEMBER_CODE: '5309672079'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
@@ -99,7 +99,7 @@ judicial-system-backend:
     XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1'
     XROAD_COURT_MEMBER_CODE: '4707171140'
     XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1'
-    XROAD_POLICE_MEMBER_CODE: '5306972079'
+    XROAD_POLICE_MEMBER_CODE: '5309672079'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
