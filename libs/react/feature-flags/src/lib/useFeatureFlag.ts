@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
+import { FeatureFlagUser } from '@island.is/feature-flags'
 
 import { useFeatureFlagClient } from './context'
-import { User } from './types'
 
 export interface FeatureFlagHookValue<T> {
   value: T
@@ -14,7 +14,7 @@ export interface FeatureFlagHookValue<T> {
 export const useFeatureFlag = <T extends boolean | string>(
   featureFlag: string,
   defaultValue: T,
-  user?: User,
+  user?: FeatureFlagUser,
 ): FeatureFlagHookValue<T> => {
   const featureFlagClient = useFeatureFlagClient()
   const [state, setState] = useState<FeatureFlagHookValue<T>>({

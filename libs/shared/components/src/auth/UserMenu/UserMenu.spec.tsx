@@ -1,4 +1,5 @@
 import React, { FC, ReactNode } from 'react'
+import { BrowserRouter as Router } from 'react-router-dom'
 import {
   render,
   screen,
@@ -11,10 +12,15 @@ import '@testing-library/jest-dom'
 import { MockedProvider } from '@apollo/client/testing'
 import { LocaleProvider, LocaleContext } from '@island.is/localization'
 import { MockedAuthenticator, MockUser } from '@island.is/auth/react'
-import { Features, MockedFeatureFlagProvider } from '@island.is/feature-flags'
+import {
+  Features,
+  MockedFeatureFlagProvider,
+} from '@island.is/react/feature-flags'
 import { UserMenu } from './UserMenu'
 import { ACTOR_DELEGATIONS } from './actorDelegations.graphql'
 import { ActorDelegationsQuery } from '../../../gen/graphql'
+import { USER_PROFILE } from './userProfile.graphql'
+import { GetUserProfileQuery } from '../../../gen/graphql'
 
 const delegation = {
   name: 'Phil',
@@ -35,12 +41,27 @@ const mocks = [
       } as ActorDelegationsQuery,
     },
   },
+  {
+    request: {
+      query: USER_PROFILE,
+    },
+    result: {
+      data: {
+        getIslykillSettings: {
+          email: 'test@test.is',
+          mobile: '0000000',
+        },
+      } as GetUserProfileQuery,
+    },
+  },
 ]
 
 const wrapper: FC = ({ children }) => (
   <MockedFeatureFlagProvider flags={[Features.delegationsEnabled]}>
     <MockedProvider mocks={mocks} addTypename={false}>
-      <LocaleProvider skipPolyfills>{children}</LocaleProvider>
+      <Router>
+        <LocaleProvider skipPolyfills>{children}</LocaleProvider>
+      </Router>
     </MockedProvider>
   </MockedFeatureFlagProvider>
 )
