@@ -38,11 +38,9 @@ export class FinanceService extends RESTDataSource {
     this.initialize({} as DataSourceConfig<any>)
   }
 
-  private headers() {
-    return {
-      'X-Road-Client': this.options.xroadClientId,
-      'Content-Type': 'application/json',
-    }
+  willSendRequest(request: RequestOptions) {
+    request.headers.set('Content-Type', 'application/json')
+    request.headers.set('X-Road-Client', this.options.xroadClientId)
   }
 
   handleError(error: string, exception: Error): any {
@@ -65,7 +63,6 @@ export class FinanceService extends RESTDataSource {
           cacheOptions: { ttl: this.options.ttl },
           headers: {
             Authorization: authToken,
-            ...this.headers(),
           },
         },
       )
@@ -94,7 +91,6 @@ export class FinanceService extends RESTDataSource {
           cacheOptions: { ttl: this.options.ttl },
           headers: {
             Authorization: authToken,
-            ...this.headers(),
           },
         },
       )
@@ -117,7 +113,6 @@ export class FinanceService extends RESTDataSource {
           cacheOptions: { ttl: this.options.ttl },
           headers: {
             Authorization: authToken,
-            ...this.headers(),
           },
         },
       )
@@ -148,7 +143,6 @@ export class FinanceService extends RESTDataSource {
           cacheOptions: { ttl: this.options.ttl },
           headers: {
             Authorization: authToken,
-            ...this.headers(),
           },
         },
       )
@@ -174,7 +168,6 @@ export class FinanceService extends RESTDataSource {
           cacheOptions: { ttl: this.options.ttl },
           headers: {
             Authorization: authToken,
-            ...this.headers(),
           },
         },
       )
@@ -202,7 +195,6 @@ export class FinanceService extends RESTDataSource {
           cacheOptions: { ttl: this.options.ttl },
           headers: {
             Authorization: authToken,
-            ...this.headers(),
           },
         },
       )
@@ -226,7 +218,6 @@ export class FinanceService extends RESTDataSource {
           cacheOptions: { ttl: this.options.ttl },
           headers: {
             Authorization: authToken,
-            ...this.headers(),
           },
         },
       )
@@ -249,7 +240,6 @@ export class FinanceService extends RESTDataSource {
           cacheOptions: { ttl: this.options.ttl },
           headers: {
             Authorization: authToken,
-            ...this.headers(),
           },
         },
       )
