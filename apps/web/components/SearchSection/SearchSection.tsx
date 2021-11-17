@@ -19,7 +19,7 @@ import * as styles from './SearchSection.css'
 
 type SearchSectionProps = Pick<
   GetFrontpageQuery['getFrontpage'],
-  'featured' | 'image' | 'heading'
+  'featured' | 'image' | 'imageMobile' | 'heading'
 > & {
   headingId: string
   activeLocale: Locale
@@ -32,6 +32,7 @@ export const SearchSection = ({
   headingId,
   featured = [],
   image,
+  imageMobile,
   activeLocale,
   quickContentLabel = '',
   placeholder = '',
@@ -94,7 +95,7 @@ export const SearchSection = ({
         >
           {image?.url && (
             <Box
-              display="flex"
+              display={['none', 'none', 'flex']}
               width="full"
               height="full"
               justifyContent="center"
@@ -103,6 +104,22 @@ export const SearchSection = ({
             >
               <img
                 src={image?.url}
+                alt="front page"
+                className={styles.illustration}
+              />
+            </Box>
+          )}
+          {imageMobile?.url && (
+            <Box
+              display={['flex', 'flex', 'none']}
+              width="full"
+              height="full"
+              justifyContent="center"
+              alignItems="center"
+              aria-hidden="true"
+            >
+              <img
+                src={imageMobile?.url}
                 alt="front page"
                 className={styles.illustration}
               />

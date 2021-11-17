@@ -10,6 +10,10 @@ export const GET_FRONTPAGE_QUERY = gql`
         url
         title
       }
+      imageMobile {
+        url
+        title
+      }
       featured {
         title
         attention

@@ -705,6 +705,9 @@ export interface IFrontpageFields {
   /** Image */
   image?: Asset | undefined
 
+  /** Image (mobile) */
+  imageMobile?: Asset | undefined
+
   /** Featured */
   featured?: IFeatured[] | undefined
 

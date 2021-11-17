@@ -19,6 +19,9 @@ export class Frontpage {
   @Field(() => Image, { nullable: true })
   image?: Image | null
 
+  @Field(() => Image, { nullable: true })
+  imageMobile?: Image | null
+
   @Field(() => [Featured])
   featured?: Array<Featured>
 
@@ -37,6 +40,7 @@ export const mapFrontpage = ({ fields, sys }: IFrontpage): Frontpage => ({
   title: fields.title ?? '',
   heading: fields.heading ?? '',
   image: fields.image ? mapImage(fields.image) : null,
+  imageMobile: fields.imageMobile ? mapImage(fields.imageMobile) : null,
   featured: (fields.featured ?? []).map(mapFeatured),
   slides: (fields.slides ?? []).map(mapFrontpageSlider),
   namespace: fields.namespace ? mapNamespace(fields.namespace) : null,

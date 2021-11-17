@@ -64,6 +64,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
           placeholder={n('heroSearchPlaceholder')}
           activeLocale={activeLocale}
           image={page.image}
+          imageMobile={page.imageMobile}
         />
       </Box>
       <Box

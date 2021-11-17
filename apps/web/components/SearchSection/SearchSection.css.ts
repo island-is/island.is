@@ -9,6 +9,8 @@ export const borderBottom = style({
 
 export const illustration = style({
   position: 'relative',
+  height: 'auto',
+  width: '100%',
   bottom: '-10%',
   ...themeUtils.responsiveStyle({
     md: {
