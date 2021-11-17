@@ -6163,6 +6163,29 @@
         }
       }
     },
+    "react-feature-flags": {
+      "root": "libs/react/feature-flags",
+      "sourceRoot": "libs/react/feature-flags/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/react/feature-flags/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/react/feature-flags"],
+          "options": {
+            "jestConfig": "libs/react/feature-flags/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "reference-backend": {
       "root": "apps/reference-backend",
       "sourceRoot": "apps/reference-backend/src",
