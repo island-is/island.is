@@ -12,7 +12,7 @@ import {
   getExtenstionSections,
   getInvestigationCaseCourtSections,
   getInvestigationCaseProsecutorSection,
-} from '../Sections'
+} from '@island.is/judicial-system-web/src/utils/sections'
 
 interface TranslationStrings {
   dismissedTitle: string
