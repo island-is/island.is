@@ -19,7 +19,7 @@ import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { CurrentStaff } from '../../decorators'
-import { UpdateMunicipalityDto } from './dto'
+import { ActivityMunicipalityDto, UpdateMunicipalityDto } from './dto'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/municipality`)
@@ -55,7 +55,7 @@ export class MunicipalityController {
 
   @Put('')
   @UseGuards(StaffGuard)
-  @StaffRolesRules(StaffRole.ADMIN, StaffRole.SUPERADMIN)
+  @StaffRolesRules(StaffRole.ADMIN)
   @ApiOkResponse({
     type: MunicipalityModel,
     description: 'Updates municipality',
@@ -64,16 +64,24 @@ export class MunicipalityController {
     @CurrentStaff() staff: Staff,
     @Body() input: UpdateMunicipalityDto,
   ): Promise<MunicipalityModel> {
-    console.log('kemuru hingad?', staff)
-    if (staff.roles.includes(StaffRole.SUPERADMIN)) {
-      console.log('kemuru hingad?')
-
-      return
-    }
-
     return await this.municipalityService.updateMunicipality(
       staff.municipalityId,
       input,
     )
+  }
+
+  @Put('id/:id')
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.SUPERADMIN)
+  @ApiOkResponse({
+    type: MunicipalityModel,
+    description: 'Updates activity for municipality',
+  })
+  async updateActivityMunicipality(
+    @Param('id') id: string,
+    @Body() municipalityToUpdate: ActivityMunicipalityDto,
+  ): Promise<MunicipalityModel> {
+    console.log('kemuru hingad? ')
+    return
   }
 }

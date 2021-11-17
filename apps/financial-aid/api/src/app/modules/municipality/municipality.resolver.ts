@@ -16,7 +16,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BackendAPI } from '../../../services'
 
 import { MunicipalityModel } from './models'
-import { MunicipalityQueryInput, UpdateMunicipalityInput } from './dto'
+import {
+  ActivityMunicipality,
+  MunicipalityQueryInput,
+  UpdateMunicipalityInput,
+} from './dto'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { StaffModel } from '../staff/models'
 import { Municipality } from '@island.is/financial-aid/shared/lib'
@@ -38,6 +42,17 @@ export class MunicipalityResolver {
     this.logger.debug(`Getting municipality ${input.id}`)
 
     return backendApi.getMunicipality(input.id)
+  }
+
+  @Mutation(() => MunicipalityModel, { nullable: false })
+  updateActivityMunicipality(
+    @Args('input', { type: () => ActivityMunicipality })
+    input: ActivityMunicipality,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Municipality> {
+    this.logger.debug('Updating activity municipality')
+
+    return backendApi.updateMunicipality(input.id)
   }
 
   @Mutation(() => MunicipalityModel, { nullable: false })

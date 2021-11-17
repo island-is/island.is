@@ -51,8 +51,6 @@ export class MunicipalityService {
     municipalityId: string,
     municipality: UpdateMunicipalityDto,
   ): Promise<MunicipalityModel> {
-    console.log('kemstu HINGAD???')
-
     try {
       await this.sequelize.transaction((t) => {
         return Promise.all([

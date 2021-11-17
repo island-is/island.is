@@ -7,14 +7,6 @@ import { AidInput } from './aid.input'
 @InputType()
 export class UpdateMunicipalityInput {
   @Allow()
-  @Field({ nullable: true })
-  readonly id?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly active?: boolean
-
-  @Allow()
   @Field(() => AidInput, { nullable: true })
   readonly individualAid?: Aid
 
