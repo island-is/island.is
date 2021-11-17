@@ -149,10 +149,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           <Text>{formatMessage(m.sections.conclusion.disclaimer)}</Text>
         </Box>
       )}
-      {(workingCase.prosecutorAppealDecision !==
-        CaseAppealDecision.NOT_APPLICABLE ||
-        workingCase.accusedAppealDecision !==
-          CaseAppealDecision.NOT_APPLICABLE) && (
+      {
         <Box component="section" marginBottom={3}>
           <AccordionListItem title="Ákvörðun um kæru">
             {(isRestrictionCase(workingCase.type) ||
@@ -164,31 +161,25 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
                 </Text>
               </Box>
             )}
-            {workingCase.prosecutorAppealDecision !==
-              CaseAppealDecision.NOT_APPLICABLE && (
-              <Box marginBottom={2}>
-                <Text>
-                  {`${prosecutorAppeal}${
-                    workingCase.prosecutorAppealAnnouncement
-                      ? ` ${workingCase.prosecutorAppealAnnouncement}`
-                      : ''
-                  }`}
-                </Text>
-              </Box>
-            )}
-            {workingCase.accusedAppealDecision !==
-              CaseAppealDecision.NOT_APPLICABLE && (
+            <Box marginBottom={2}>
               <Text>
-                {`${accusedAppeal}${
-                  workingCase.accusedAppealAnnouncement
-                    ? ` ${workingCase.accusedAppealAnnouncement}`
+                {`${prosecutorAppeal}${
+                  workingCase.prosecutorAppealAnnouncement
+                    ? ` ${workingCase.prosecutorAppealAnnouncement}`
                     : ''
                 }`}
               </Text>
-            )}
+            </Box>
+            <Text>
+              {`${accusedAppeal}${
+                workingCase.accusedAppealAnnouncement
+                  ? ` ${workingCase.accusedAppealAnnouncement}`
+                  : ''
+              }`}
+            </Text>
           </AccordionListItem>
         </Box>
-      )}
+      }
       {workingCase.type === CaseType.CUSTODY &&
         isAcceptingCaseDecision(workingCase.decision) && (
           <AccordionListItem title="Tilhögun gæsluvarðhalds">
