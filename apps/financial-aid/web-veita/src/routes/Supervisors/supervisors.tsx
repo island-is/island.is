@@ -92,7 +92,7 @@ export const Supervisors = () => {
       loader={<ApplicationOverviewSkeleton />}
     >
       <Box
-        className={`${headerStyles.header} contentUp delay-25`}
+        className={headerStyles.header}
         marginTop={15}
         marginBottom={[2, 2, 4]}
       >
@@ -116,7 +116,7 @@ export const Supervisors = () => {
                 [`${tableStyles.tableContainer}`]: true,
               })}
             >
-              <thead className={`contentUp delay-50`}>
+              <thead className={`contentUp delay-25`}>
                 <tr>
                   {['Nafn', 'Kennitala', 'Hlutverk', 'Aðgerð'].map(
                     (item, index) => (
@@ -130,7 +130,7 @@ export const Supervisors = () => {
                 </tr>
               </thead>
 
-              <tbody className={`${tableStyles.tableBody} contentUp delay-75`}>
+              <tbody className={`${tableStyles.tableBody} contentUp delay-50`}>
                 {supervisors.map((item: Staff, index) => (
                   <TableBody
                     items={[
