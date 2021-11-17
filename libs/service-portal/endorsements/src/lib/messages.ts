@@ -306,5 +306,10 @@ export const m: MessageDir = {
       defaultMessage: 'Sláðu inn netfang',
       description: 'Input placeholder',
     },
+    noPetitionsText: {
+      id: 'sp.petitions:no-petitions',
+      defaultMessage: 'Engin meðmæli komin enn',
+      description: 'No petitions text',
+    },
   }),
 }
