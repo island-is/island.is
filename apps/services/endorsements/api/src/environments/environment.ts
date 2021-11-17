@@ -1,4 +1,5 @@
 const isProductionEnvironment = process.env.NODE_ENV === 'production'
+
 const devConfig = {
   production: isProductionEnvironment,
   metadataProvider: {
@@ -24,9 +25,16 @@ const devConfig = {
     DMR: process.env.ACCESS_GROUP_DMR ?? '',
     Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
+  email: {
+    sender: 'devland.is',
+    address: 'development@island.is',
+  },
   emailOptions: {
     useTestAccount: false,
     useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
+    options: {
+      region: 'eu-west-1',
+    },
   },
 }
 
@@ -57,11 +65,15 @@ const prodConfig = {
     DMR: process.env.ACCESS_GROUP_DMR ?? '',
     Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
+  email: {
+    sender: 'island.is',
+    address: 'island@island.is',
+  },
   emailOptions: {
     useTestAccount: false,
     useNodemailerApp: false,
     options: {
-      region: process.env.EMAIL_REGION,
+      region: 'eu-west-1',
     },
   },
 }

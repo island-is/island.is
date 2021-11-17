@@ -165,6 +165,11 @@ const devConfig = {
     username: process.env.PAYMENT_SCHEDULE_USER,
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
   },
+  islykill: {
+    cert: process.env.ISLYKILL_CERT,
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+  },
 }
 
 const prodConfig = {
@@ -317,6 +322,11 @@ const prodConfig = {
     xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_SCHEDULE_USER,
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
+  },
+  islykill: {
+    cert: process.env.ISLYKILL_CERT,
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
 }
 

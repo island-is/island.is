@@ -5,7 +5,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
 } from '@island.is/judicial-system/types'
-import { makeCase } from '../../fixtures/testDataFactory'
+import { makeCase } from '@island.is/judicial-system/formatters'
 import { intercept } from '../../utils'
 
 describe('/domur/urskurdur/:id', () => {
@@ -15,12 +15,20 @@ describe('/domur/urskurdur/:id', () => {
       ...caseData,
       caseFacts: 'lorem ipsum',
       legalArguments: 'lorem ipsum',
+      demands:
+        'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     }
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
 
     cy.visit('/domur/urskurdur/test_id_stadfest')
+  })
+
+  it('should autofill prosecutor demands', () => {
+    cy.getByTestid('prosecutorDemands').contains(
+      'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+    )
   })
 
   it('should require a valid ruling', () => {
