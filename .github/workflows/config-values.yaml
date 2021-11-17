@@ -2,11 +2,19 @@ name: Config values
 
 on:
   push:
+    branches:
+      - 'main'
+      - 'release/**'
     paths:
       - 'charts/**'
       - 'infra/**'
       - '**/infra/**'
   workflow_dispatch: {}
+  pull_request:
+    paths:
+      - 'charts/**'
+      - 'infra/**'
+      - '**/infra/**'
 
 env:
   DEVOPS_DEBUG: ${{ secrets.DEVOPS_DEBUG }}
