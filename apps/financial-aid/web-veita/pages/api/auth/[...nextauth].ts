@@ -1,6 +1,5 @@
 import NextAuth, { CallbacksOptions, JWTEventCallbacks } from 'next-auth'
 import Providers from 'next-auth/providers'
-import { uuid } from 'uuidv4'
 import {
   identityServerConfig,
   RolesRule,
@@ -50,7 +49,6 @@ async function jwt(token: JWT, user: AuthUser) {
       refreshToken: user.refreshToken,
       idToken: user.idToken,
       isRefreshTokenExpired: false,
-      folder: token.folder ?? uuid(),
       service: RolesRule.VEITA,
     }
   }
