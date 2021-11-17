@@ -86,31 +86,6 @@ export class EndorsementController {
     return this.endorsementService.emailPDF(
       endorsementList.id,
       query.emailAddress,
-      true,
-    )
-  }
-
-  @ApiOperation({
-    summary: 'Emails list endorsements data',
-  })
-  @Scopes(EndorsementsScope.main)
-  @HasAccessGroup(AccessGroup.Owner)
-  @ApiParam({ name: 'listId', type: String })
-  @ApiOkResponse({ type: sendPdfEmailResponse })
-  @Post('/email')
-  async emailEndorsementsEmail(
-    @Param(
-      'listId',
-      new ParseUUIDPipe({ version: '4' }),
-      EndorsementListByIdPipe,
-    )
-    endorsementList: EndorsementList,
-    @Query() query: emailDto,
-  ): Promise<sendPdfEmailResponse> {
-    return this.endorsementService.emailPDF(
-      endorsementList.id,
-      query.emailAddress,
-      false,
     )
   }
 

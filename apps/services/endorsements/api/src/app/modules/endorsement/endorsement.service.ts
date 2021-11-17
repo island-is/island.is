@@ -461,7 +461,6 @@ export class EndorsementService {
   async emailPDF(
     listId: string,
     recipientEmail: string,
-    attachPdf: boolean,
   ): Promise<{ success: boolean }> {
     const endorsementList = await this.endorsementListModel.findOne({
       where: { id: listId },
@@ -471,21 +470,10 @@ export class EndorsementService {
         },
       ],
     })
-    // pdf tests
-
     this.logger.info(
       `sending list ${listId} to ${recipientEmail} from ${environment.email.sender}`,
     )
     try {
-      const attachments = []
-      if (attachPdf) {
-        const pdfBuffer = await this.createDocumentBuffer(endorsementList)
-        this.logger.info(`pdf buffer length ${pdfBuffer.length}`)
-        attachments.push({
-          filename: 'Meðmælendalisti.pdf',
-          content: pdfBuffer,
-        })
-      }
       await this.emailService.sendEmail({
         from: {
           name: environment.email.sender,
@@ -521,7 +509,12 @@ export class EndorsementService {
             { component: 'Copy', context: { copy: 'Ísland.is' } },
           ],
         },
-        attachments: attachments,
+        attachments: [
+          //   {
+          //   filename: 'Meðmælendalisti.pdf',
+          //   content: await this.createDocumentBuffer(endorsementList),
+          // }
+        ],
       })
 
       return { success: true }
