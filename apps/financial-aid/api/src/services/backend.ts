@@ -24,7 +24,7 @@ import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CreateStaffInput, StaffModel } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
 import {
-  ActivityMunicipalityInput,
+  MunicipalityActivityInput,
   UpdateMunicipalityInput,
 } from '../app/modules/municipality/dto'
 
