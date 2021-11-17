@@ -3,7 +3,6 @@ import cn from 'classnames'
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { Stack, StackProps } from '../Stack/Stack'
-import { Icon } from '../Icon/Icon'
 
 import * as styles from './BulletList.css'
 
@@ -27,11 +26,7 @@ export const Bullet: FC<{}> = ({ children }) => {
               [styles.numbered]: type === 'ol',
             })}
           >
-            {type === 'ul' && (
-              <span className={styles.icon}>
-                <Icon type="bullet" color="red400" width="8" height="8" />
-              </span>
-            )}
+            {type === 'ul' && <span className={styles.icon} />}
           </span>
         </Box>
         <Box>{children}</Box>
