@@ -64,7 +64,6 @@ export class EndorsementController {
     private readonly auditService: AuditService,
   ) {}
 
-
   @ApiOperation({ summary: 'Finds all endorsements in a given list' })
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)

@@ -12,7 +12,7 @@ import {
   NationalRegistryApi,
   NationalRegistryConfig,
 } from '@island.is/clients/national-registry-v1'
-import { EmailModule  } from '@island.is/email-service'
+import { EmailModule } from '@island.is/email-service'
 
 export interface Config {
   nationalRegistry: NationalRegistryConfig

@@ -46,7 +46,7 @@ import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement
 import { SearchQueryDto } from './dto/searchQuery.dto'
 import { EndorsementListInterceptor } from './interceptors/endorsementList.interceptor'
 import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
-import { emailDto } from './dto/email.dto';
+import { emailDto } from './dto/email.dto'
 import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
 
 export class FindTagPaginationComboDto extends IntersectionType(

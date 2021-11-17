@@ -261,7 +261,7 @@ export class EndorsementListService {
     } catch (e) {
       if (e instanceof Error) {
         this.logger.warn(
-          `Occured when fetching owner name from NationalRegistryApi ${e.message} \n${e.stack}`
+          `Occured when fetching owner name from NationalRegistryApi ${e.message} \n${e.stack}`,
         )
         return ''
       } else {
