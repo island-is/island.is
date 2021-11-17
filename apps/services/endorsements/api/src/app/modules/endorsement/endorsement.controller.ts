@@ -86,7 +86,7 @@ export class EndorsementController {
     return this.endorsementService.emailPDF(
       endorsementList.id,
       query.emailAddress,
-      true
+      true,
     )
   }
 
@@ -110,10 +110,9 @@ export class EndorsementController {
     return this.endorsementService.emailPDF(
       endorsementList.id,
       query.emailAddress,
-      false
+      false,
     )
   }
-
 
   @ApiOperation({ summary: 'Finds all endorsements in a given list' })
   @ApiParam({ name: 'listId', type: String })
