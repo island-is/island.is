@@ -78,6 +78,8 @@ judicial-system-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/judicial-system-api'
     create: true
     name: 'judicial-system-api'
+  strategy:
+    type: 'RollingUpdate'
 judicial-system-backend:
   enabled: true
   env:
@@ -175,6 +177,8 @@ judicial-system-backend:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/judicial-system-backend'
     create: true
     name: 'judicial-system-backend'
+  strategy:
+    type: 'RollingUpdate'
 judicial-system-web:
   enabled: true
   env:
@@ -213,6 +217,8 @@ judicial-system-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  strategy:
+    type: 'RollingUpdate'
 judicial-system-xrd-api:
   enabled: true
   env:
@@ -261,6 +267,8 @@ judicial-system-xrd-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/judicial-system-xrd-api'
     create: true
     name: 'judicial-system-xrd-api'
+  strategy:
+    type: 'RollingUpdate'
 namespaces:
   namespaces:
     - 'judicial-system'
