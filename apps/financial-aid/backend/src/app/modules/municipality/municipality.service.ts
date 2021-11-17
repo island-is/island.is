@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { MunicipalityModel } from './models'
 import { AidType } from '@island.is/financial-aid/shared/lib'
 import { AidModel, AidService } from '../aid'
-import { ActivityMunicipalityDto, UpdateMunicipalityDto } from './dto'
+import { MunicipalityActivityDto, UpdateMunicipalityDto } from './dto'
 import { Sequelize } from 'sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -84,7 +84,7 @@ export class MunicipalityService {
 
   async update(
     id: string,
-    update: ActivityMunicipalityDto,
+    update: MunicipalityActivityDto,
   ): Promise<{
     numberOfAffectedRows: number
     updatedMunicipality: MunicipalityModel

@@ -19,7 +19,7 @@ import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { CurrentStaff } from '../../decorators'
-import { ActivityMunicipalityDto, UpdateMunicipalityDto } from './dto'
+import { MunicipalityActivityDto, UpdateMunicipalityDto } from './dto'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/municipality`)
@@ -79,7 +79,7 @@ export class MunicipalityController {
   })
   async updateActivityMunicipality(
     @Param('id') id: string,
-    @Body() municipalityToUpdate: ActivityMunicipalityDto,
+    @Body() municipalityToUpdate: MunicipalityActivityDto,
   ): Promise<MunicipalityModel> {
     const {
       numberOfAffectedRows,
