@@ -109,7 +109,7 @@ export const getCustodyAndTravelBanProsecutorSection = (
 export const getInvestigationCaseProsecutorSection = (
   workingCase: Case,
   activeSubSection?: number,
-) => {
+): Section => {
   const { id } = workingCase
 
   return {
@@ -178,7 +178,7 @@ export const getInvestigationCaseProsecutorSection = (
 export const getInvestigationCaseCourtSections = (
   workingCase: Case,
   activeSubSection?: number,
-) => {
+): Section => {
   const { id } = workingCase
 
   return {
@@ -250,7 +250,7 @@ export const getInvestigationCaseCourtSections = (
 export const getCourtSections = (
   workingCase: Case,
   activeSubSection?: number,
-) => {
+): Section => {
   const { id } = workingCase
 
   return {
@@ -322,7 +322,7 @@ export const getCourtSections = (
 export const getExtenstionSections = (
   workingCase: Case,
   activeSubSection?: number,
-) => {
+): Section => {
   const { id } = workingCase
 
   return {
