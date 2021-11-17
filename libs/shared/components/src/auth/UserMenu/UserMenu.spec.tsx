@@ -11,7 +11,10 @@ import '@testing-library/jest-dom'
 import { MockedProvider } from '@apollo/client/testing'
 import { LocaleProvider, LocaleContext } from '@island.is/localization'
 import { MockedAuthenticator, MockUser } from '@island.is/auth/react'
-import { Features, MockedFeatureFlagProvider } from '@island.is/feature-flags'
+import {
+  Features,
+  MockedFeatureFlagProvider,
+} from '@island.is/react/feature-flags'
 import { UserMenu } from './UserMenu'
 import { ACTOR_DELEGATIONS } from './actorDelegations.graphql'
 import { ActorDelegationsQuery } from '../../../gen/graphql'
