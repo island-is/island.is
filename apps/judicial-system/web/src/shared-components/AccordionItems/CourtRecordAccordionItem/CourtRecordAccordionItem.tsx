@@ -17,7 +17,6 @@ import {
   CaseDecision,
   CaseType,
   isAcceptingCaseDecision,
-  isInvestigationCase,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
@@ -90,9 +89,6 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             <Text>{formatMessage(closedCourt.text)}</Text>
           </Box>
         )}
-      </AccordionListItem>
-      <AccordionListItem title="Krafa" breakSpaces>
-        <Text>{workingCase.prosecutorDemands}</Text>
       </AccordionListItem>
       {workingCase.courtAttendees?.trim() && (
         <AccordionListItem

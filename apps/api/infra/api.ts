@@ -148,6 +148,7 @@ export const serviceSetup = (services: {
       RSK_API_USERNAME: '/k8s/shared/api/RSK_API_USERNAME',
       RSK_API_PASSWORD: '/k8s/shared/api/RSK_API_PASSWORD',
       RSK_API_URL: '/k8s/shared/api/RSK_API_URL',
+      ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
     })
     .xroad(
       Base,

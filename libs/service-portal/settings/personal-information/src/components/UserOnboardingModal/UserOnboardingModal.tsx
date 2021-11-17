@@ -6,7 +6,10 @@ import {
   Modal,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import { useCreateUserProfile } from '@island.is/service-portal/graphql'
+import {
+  useCreateUserProfile,
+  useCreateIslykillSettings,
+} from '@island.is/service-portal/graphql'
 import React, { useState } from 'react'
 import { EmailFormData } from '../Forms/EmailForm'
 import { LanguageFormData, LanguageFormOption } from '../Forms/LanguageForm'
@@ -15,7 +18,7 @@ import { OnboardingStepper } from './OnboardingStepper'
 import { EmailStep } from './Steps/EmailStep'
 import { FormSubmittedStep } from './Steps/FormSubmittedStep'
 import { LanguageStep } from './Steps/LanguageStep'
-import { PhoneStep } from './Steps/PhoneStep'
+import { PhoneStep } from './Islykill/PhoneStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
 import {
   servicePortalCloseOnBoardingModal,
@@ -44,6 +47,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
     defaultLanguageOption,
   )
   const { createUserProfile } = useCreateUserProfile()
+  const { createIslykillSettings } = useCreateIslykillSettings()
   const { changeLanguage } = useNamespaces()
   const { pathname } = useLocation()
 
@@ -76,9 +80,11 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
 
     try {
       await createUserProfile({
-        email,
         locale,
-        mobilePhoneNumber,
+      })
+      await createIslykillSettings({
+        email,
+        mobile: mobilePhoneNumber,
       })
       gotoStep('form-submitted')
       if (pathname) {
