@@ -1,5 +1,4 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildFileUploadField,
@@ -10,7 +9,6 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { WorkTypeIllustration } from '../../assets/WorkTypeIllustration'
 import { NO, UPLOAD_ACCEPT, YES } from '../../constants'
 import {
   accidentDetails,
@@ -50,6 +48,7 @@ import {
   hideLocationAndPurpose,
   isAboardShip,
   isAgricultureAccident,
+  isFatalAccident,
   isFishermanAccident,
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
@@ -153,22 +152,18 @@ export const aboutTheAccidentSection = buildSection({
                 {
                   value: WorkAccidentTypeEnum.GENERAL,
                   label: accidentType.workAccidentType.generalWorkAccident,
-                  // illustration: WorkTypeIllustration,
                 },
                 {
                   value: WorkAccidentTypeEnum.FISHERMAN,
                   label: accidentType.workAccidentType.fishermanAccident,
-                  // illustration: WorkTypeIllustration,
                 },
                 {
                   value: WorkAccidentTypeEnum.PROFESSIONALATHLETE,
                   label: accidentType.workAccidentType.professionalAthlete,
-                  // illustration: WorkTypeIllustration,
                 },
                 {
                   value: WorkAccidentTypeEnum.AGRICULTURE,
                   label: accidentType.workAccidentType.agricultureAccident,
-                  // illustration: WorkTypeIllustration,
                 },
               ],
             }),
@@ -195,6 +190,7 @@ export const aboutTheAccidentSection = buildSection({
           id: 'studiesAccident.section',
           title: accidentType.studiesAccidentType.heading,
           description: accidentType.studiesAccidentType.description,
+          condition: (formValue) => isStudiesAccident(formValue),
           children: [
             buildRadioField({
               id: 'studiesAccident.type',
@@ -217,7 +213,6 @@ export const aboutTheAccidentSection = buildSection({
           ],
         }),
       ],
-      condition: (formValue) => isStudiesAccident(formValue),
     }),
     // Location Subsection
     buildSubSection({
@@ -404,9 +399,7 @@ export const aboutTheAccidentSection = buildSection({
           id: 'accidentLocation.professionalAthleteAccident',
           title: accidentLocation.general.heading,
           description: accidentLocation.general.description,
-          condition: (formValue) =>
-            isProfessionalAthleteAccident(formValue) &&
-            !isHomeActivitiesAccident(formValue),
+          condition: (formValue) => isProfessionalAthleteAccident(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -439,6 +432,7 @@ export const aboutTheAccidentSection = buildSection({
           id: 'accidentLocation.agricultureAccident',
           title: accidentLocation.general.heading,
           description: accidentLocation.general.description,
+          condition: (formValue) => isAgricultureAccident(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -460,16 +454,14 @@ export const aboutTheAccidentSection = buildSection({
               ],
             }),
           ],
-          condition: (formValue) => isAgricultureAccident(formValue),
         }),
         // Fisherman information only applicable to fisherman workplace accidents
         // that happen aboard a ship.
         buildMultiField({
           id: 'fishermanLocation.multifield',
           title: accidentLocation.fishermanAccidentLocation.heading,
-          condition: (formValue) => isAboardShip(formValue),
-
           description: accidentLocation.fishermanAccidentLocation.description,
+          condition: (formValue) => isAboardShip(formValue),
           children: [
             buildRadioField({
               id: 'fishermanLocation.answer',
@@ -516,8 +508,7 @@ export const aboutTheAccidentSection = buildSection({
           description: locationAndPurpose.general.description,
           condition: (formValue) =>
             !isFishermanAccident(formValue) &&
-            !hideLocationAndPurpose(formValue) &&
-            !isHomeActivitiesAccident(formValue),
+            !hideLocationAndPurpose(formValue),
           children: [
             buildTextField({
               id: 'locationAndPurpose.location',
@@ -755,6 +746,10 @@ export const aboutTheAccidentSection = buildSection({
         buildMultiField({
           id: 'attachments.deathCertificateFile.subSection',
           title: attachments.general.uploadTitle,
+          condition: (formValue) =>
+            isReportingOnBehalfOfInjured(formValue) &&
+            isFatalAccident(formValue) &&
+            formValue.fatalAccidentUploadDeathCertificateNow === YES,
           children: [
             buildFileUploadField({
               id: 'attachments.deathCertificateFile.file',
@@ -766,10 +761,6 @@ export const aboutTheAccidentSection = buildSection({
               introduction: attachments.general.uploadIntroduction,
             }),
           ],
-          condition: (formValue) =>
-            isReportingOnBehalfOfInjured(formValue) &&
-            formValue.wasTheAccidentFatal === YES &&
-            formValue.fatalAccidentUploadDeathCertificateNow === YES,
         }),
         buildMultiField({
           id: 'attachments.additionalFilesMulti',
@@ -807,6 +798,9 @@ export const aboutTheAccidentSection = buildSection({
         buildMultiField({
           id: 'attachments.additionalAttachments.subSection',
           title: attachments.general.heading,
+          condition: (formValue) =>
+            getValueViaPath(formValue, 'additionalAttachments.answer') ===
+            AttachmentsEnum.ADDITIONALNOW,
           children: [
             buildFileUploadField({
               id: 'attachments.additionalFiles.file',
@@ -818,9 +812,6 @@ export const aboutTheAccidentSection = buildSection({
               introduction: addDocuments.general.additionalDocumentsDescription,
             }),
           ],
-          condition: (formValue) =>
-            getValueViaPath(formValue, 'additionalAttachments.answer') ===
-            AttachmentsEnum.ADDITIONALNOW,
         }),
       ],
     }),
@@ -831,6 +822,7 @@ export const aboutTheAccidentSection = buildSection({
       title: companyInfo.general.title,
       condition: (formValue) =>
         !isReportingOnBehalfOfEmployee(formValue) &&
+        !isHomeActivitiesAccident(formValue) &&
         (isGeneralWorkplaceAccident(formValue) ||
           isInternshipStudiesAccident(formValue)),
       children: [
