@@ -10,6 +10,7 @@ interface Props {
   isVisible: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
   onStaffCreated: () => void
+  predefinedRoles?: StaffRole[]
 }
 
 interface newUsersModalState {
@@ -21,14 +22,19 @@ interface newUsersModalState {
   roles: StaffRole[]
 }
 
-const NewUserModal = ({ isVisible, setIsVisible, onStaffCreated }: Props) => {
+const NewUserModal = ({
+  isVisible,
+  setIsVisible,
+  onStaffCreated,
+  predefinedRoles = [],
+}: Props) => {
   const [state, setState] = useState<newUsersModalState>({
     staffNationalId: '',
     staffName: '',
     staffEmail: '',
     hasError: false,
     hasSubmitError: false,
-    roles: [],
+    roles: predefinedRoles,
   })
   const [createStaff] = useMutation(StaffMutation)
 
@@ -148,44 +154,48 @@ const NewUserModal = ({ isVisible, setIsVisible, onStaffCreated }: Props) => {
         Notandi fær sendan tölvupóst með hlekk til að skrá sig inn með rafrænum
         skilríkjum.
       </Text>
-      <Text marginBottom={3} variant="h4">
-        Réttindi notanda
-      </Text>
-      <Box marginBottom={3}>
-        <Checkbox
-          name={'employee'}
-          label="Vinnsluaðili"
-          checked={state.roles.includes(StaffRole.EMPLOYEE)}
-          strong={false}
-          hasError={state.hasError && state.roles.length === 0}
-          onChange={(event) => {
-            changeStaffAccess(StaffRole.EMPLOYEE, event.target.checked)
-          }}
-        />
-      </Box>
-      <Box marginBottom={2}>
-        <Checkbox
-          name={'admin'}
-          label="Stjórnandi (admin)"
-          checked={state.roles.includes(StaffRole.ADMIN)}
-          hasError={state.hasError && state.roles.length === 0}
-          onChange={(event) => {
-            changeStaffAccess(StaffRole.ADMIN, event.target.checked)
-          }}
-          strong={false}
-        />
-      </Box>
+      {predefinedRoles.length === 0 && (
+        <>
+          <Text marginBottom={3} variant="h4">
+            Réttindi notanda
+          </Text>
+          <Box marginBottom={3}>
+            <Checkbox
+              name={'employee'}
+              label="Vinnsluaðili"
+              checked={state.roles.includes(StaffRole.EMPLOYEE)}
+              strong={false}
+              hasError={state.hasError && state.roles.length === 0}
+              onChange={(event) => {
+                changeStaffAccess(StaffRole.EMPLOYEE, event.target.checked)
+              }}
+            />
+          </Box>
+          <Box marginBottom={2}>
+            <Checkbox
+              name={'admin'}
+              label="Stjórnandi (admin)"
+              checked={state.roles.includes(StaffRole.ADMIN)}
+              hasError={state.hasError && state.roles.length === 0}
+              onChange={(event) => {
+                changeStaffAccess(StaffRole.ADMIN, event.target.checked)
+              }}
+              strong={false}
+            />
+          </Box>
 
-      <div
-        className={cn({
-          [`errorMessage`]: true,
-          [`showErrorMessage`]: state.hasError && state.roles.length === 0,
-        })}
-      >
-        <Text color="red600" fontWeight="semiBold" variant="small">
-          Það þarf að velja réttindi
-        </Text>
-      </div>
+          <div
+            className={cn({
+              [`errorMessage`]: true,
+              [`showErrorMessage`]: state.hasError && state.roles.length === 0,
+            })}
+          >
+            <Text color="red600" fontWeight="semiBold" variant="small">
+              Það þarf að velja réttindi
+            </Text>
+          </div>
+        </>
+      )}
     </ActionModal>
   )
 }
