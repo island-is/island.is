@@ -257,10 +257,16 @@ export class EndorsementListService {
     }
 
     try {
-      return (await this.nationalRegistryApi.getUser(owner))
-        .Fulltnafn
+      return (await this.nationalRegistryApi.getUser(owner)).Fulltnafn
     } catch (e) {
-      return ''
+      if (e instanceof Error) {
+        this.logger.warn(
+          `Occured when fetching owner name from NationalRegistryApi ${e.message} \n${e.stack}`
+        )
+        return ''
+      } else {
+        throw e
+      }
     }
   }
 
@@ -350,9 +356,12 @@ export class EndorsementListService {
     if (!endorsementList) {
       throw new NotFoundException(['This endorsement list does not exist.'])
     }
-    const ownerName = await this.getOwnerInfo(endorsementList?.id, endorsementList.owner)
+    let ownerName = await this.getOwnerInfo(
+      endorsementList?.id,
+      endorsementList.owner,
+    )
     try {
-      const result = await this.emailService.sendEmail({
+      await this.emailService.sendEmail({
         from: {
           name: environment.email.sender,
           address: environment.email.address,
@@ -374,7 +383,7 @@ export class EndorsementListService {
                 copy: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
               },
             },
-            { component: 'Copy', context: { copy: 'Sæl/l' } },
+            { component: 'Copy', context: { copy: 'Sæl/l/t' } },
             {
               component: 'Copy',
               context: {
@@ -395,7 +404,10 @@ export class EndorsementListService {
         attachments: [
           {
             filename: 'Meðmælendalisti.pdf',
-            content: await this.createDocumentBuffer(endorsementList, ownerName),
+            content: await this.createDocumentBuffer(
+              endorsementList,
+              ownerName,
+            ),
           },
         ],
       })
