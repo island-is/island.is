@@ -13,6 +13,7 @@ export enum ServicePortalPath {
 
   // Settings
   SettingsRoot = '/stillingar',
+
   SettingsAccessControl = '/stillingar/adgangsstyring',
   SettingsAccessControlGrant = '/stillingar/adgangsstyring/veita',
   SettingsAccessControlAccess = '/stillingar/adgangsstyring/:nationalId(\\d+)',
@@ -22,6 +23,7 @@ export enum ServicePortalPath {
   SettingsPersonalInformationEditLanguage = '/stillingar/personuupplysingar/breyta-tungumali',
   SettingsPersonalInformationEmailConfirmation = '/stillingar/personuupplysingar/stadfesta-netfang/:hash',
   SettingsExternal = 'https://minarsidur.island.is/minar-sidur/minn-adgangur/stillingar/',
+  SettingsIslykill = '/stillingar/islykill',
 
   // Family
   FamilyRoot = '/min-gogn/fjolskyldan',

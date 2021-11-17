@@ -34,6 +34,7 @@ import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
 import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
+import { IslykillModule } from '@island.is/api/domains/islykill'
 import { AuditModule } from '@island.is/nest/audit'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { ProblemModule } from '@island.is/nest/problem'
@@ -174,6 +175,11 @@ const autoSchemaFile = environment.production
     UserProfileModule.register({
       userProfileServiceBasePath:
         environment.userProfile.userProfileServiceBasePath,
+      islykill: {
+        cert: environment.islykill.cert,
+        passphrase: environment.islykill.passphrase,
+        basePath: environment.islykill.basePath,
+      },
     }),
     CommunicationsModule,
     ApiCatalogueModule,
@@ -256,6 +262,11 @@ const autoSchemaFile = environment.production
       xRoadClientId: environment.xroad.clientId,
       password: environment.paymentSchedule.password,
       username: environment.paymentSchedule.username,
+    }),
+    IslykillModule.register({
+      cert: environment.islykill.cert,
+      passphrase: environment.islykill.passphrase,
+      basePath: environment.islykill.basePath,
     }),
     ProblemModule,
   ],
