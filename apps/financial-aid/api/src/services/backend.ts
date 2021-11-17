@@ -67,7 +67,7 @@ class BackendAPI extends RESTDataSource {
     id: string,
     updateMunicipality: UpdateActivityMunicipality,
   ): Promise<Municipality> {
-    return this.put(`municipality/id/${id}`, updateMunicipality)
+    return this.put(`municipality/update/activity/${id}`, updateMunicipality)
   }
 
   createApplication(

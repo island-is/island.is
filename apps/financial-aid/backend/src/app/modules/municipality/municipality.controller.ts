@@ -70,7 +70,7 @@ export class MunicipalityController {
     )
   }
 
-  @Put('id/:id')
+  @Put('update/activity/:id')
   @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
   @ApiOkResponse({
