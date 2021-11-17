@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import {
+  ActivationButtonTableItem,
   ApplicationOverviewSkeleton,
   LoadingContainer,
   NewUserModal,
-  TableHeaders,
   TableBody,
+  TableHeaders,
   TextTableItem,
-  ActivationButtonTableItem,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Text,
@@ -23,49 +23,43 @@ import cn from 'classnames'
 
 import {
   formatNationalId,
-  Routes,
   Staff,
+  StaffRole,
   staffRoleDescription,
 } from '@island.is/financial-aid/shared/lib'
 import {
-  StaffForMunicipalityQuery,
+  SupervisorsQuery,
   UpdateStaffMutation,
 } from '@island.is/financial-aid-web/veita/graphql'
-import { useRouter } from 'next/router'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
-export const Users = () => {
-  const [getStaff, { data, error, loading }] = useLazyQuery<{ users: Staff[] }>(
-    StaffForMunicipalityQuery,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+export const Supervisors = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [supervisors, setSupervisors] = useState<Staff[]>()
+  const { admin } = useContext(AdminContext)
+
+  const [getSupervisors, { data, error, loading }] = useLazyQuery<{
+    supervisors: Staff[]
+  }>(SupervisorsQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
   const [updateStaff, { loading: staffLoading }] = useMutation(
     UpdateStaffMutation,
   )
 
-  const { admin } = useContext(AdminContext)
-  const router = useRouter()
-
   useEffect(() => {
-    getStaff()
+    getSupervisors()
   }, [])
 
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  const [users, setUsers] = useState<Staff[]>()
-
   useEffect(() => {
-    if (data?.users) {
-      setUsers(data.users)
+    if (data?.supervisors) {
+      setSupervisors(data.supervisors)
     }
   }, [data])
 
-  const refreshList = () => {
-    setIsModalVisible(false)
-    getStaff()
-  }
+  const isLoggedInUser = (staff: Staff) =>
+    admin?.nationalId === staff.nationalId
 
   const changeUserActivity = async (staff: Staff) => {
     return await updateStaff({
@@ -77,7 +71,7 @@ export const Users = () => {
       },
     })
       .then(() => {
-        refreshList()
+        getSupervisors()
       })
       .catch(() => {
         toast.error(
@@ -86,8 +80,10 @@ export const Users = () => {
       })
   }
 
-  const isLoggedInUser = (staff: Staff) =>
-    admin?.nationalId === staff.nationalId
+  const refreshList = () => {
+    setIsModalVisible(false)
+    getSupervisors()
+  }
 
   return (
     <LoadingContainer
@@ -95,12 +91,12 @@ export const Users = () => {
       loader={<ApplicationOverviewSkeleton />}
     >
       <Box
-        className={`${headerStyles.header} contentUp delay-25`}
+        className={headerStyles.header}
         marginTop={15}
         marginBottom={[2, 2, 4]}
       >
         <Text as="h1" variant="h1">
-          Notendur
+          Umsjónaraðilar
         </Text>
         <Button
           size="small"
@@ -108,10 +104,10 @@ export const Users = () => {
           variant="ghost"
           onClick={() => setIsModalVisible(true)}
         >
-          Nýr notandi
+          Nýr umsjónaraðili
         </Button>
       </Box>
-      {users && (
+      {supervisors && (
         <div className={`${tableStyles.wrapper} hideScrollBar`}>
           <div className={tableStyles.smallTableWrapper}>
             <table
@@ -119,7 +115,7 @@ export const Users = () => {
                 [`${tableStyles.tableContainer}`]: true,
               })}
             >
-              <thead className={`contentUp delay-50`}>
+              <thead className={`contentUp delay-25`}>
                 <tr>
                   {['Nafn', 'Kennitala', 'Hlutverk', 'Aðgerð'].map(
                     (item, index) => (
@@ -133,8 +129,8 @@ export const Users = () => {
                 </tr>
               </thead>
 
-              <tbody className={tableStyles.tableBody}>
-                {users.map((item: Staff, index) => (
+              <tbody className={`${tableStyles.tableBody} contentUp delay-50`}>
+                {supervisors.map((item: Staff, index) => (
                   <TableBody
                     items={[
                       TextTableItem(
@@ -163,7 +159,6 @@ export const Users = () => {
                     index={index}
                     identifier={item.id}
                     key={`tableBody-${item.id}`}
-                    onClick={() => router.push(Routes.userProfile(item.id))}
                   />
                 ))}
               </tbody>
@@ -183,10 +178,11 @@ export const Users = () => {
           setIsModalVisible(visible)
         }}
         onStaffCreated={refreshList}
+        predefinedRoles={[StaffRole.SUPERADMIN]}
       />
       <ToastContainer />
     </LoadingContainer>
   )
 }
 
-export default Users
+export default Supervisors
