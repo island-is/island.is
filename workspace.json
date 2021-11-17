@@ -1982,7 +1982,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/accident-notification/src/lib/messages/index.ts"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/accident-notification/src/lib/messages/*.ts'"
           }
         }
       }
@@ -3549,6 +3549,12 @@
               "**/node_modules/**",
               "!libs/clients/payment-schedule/**/*"
             ]
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/payment-schedule/src/gen/fetch/ -i libs/clients/payment-schedule/src/openapi.yml"
           }
         },
         "test": {
@@ -6205,6 +6211,29 @@
         }
       }
     },
+    "react-feature-flags": {
+      "root": "libs/react/feature-flags",
+      "sourceRoot": "libs/react/feature-flags/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/react/feature-flags/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/react/feature-flags"],
+          "options": {
+            "jestConfig": "libs/react/feature-flags/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "reference-backend": {
       "root": "apps/reference-backend",
       "sourceRoot": "apps/reference-backend/src",
@@ -7662,6 +7691,11 @@
                 "glob": "sequelize.config.js",
                 "input": "apps/services/endorsements/api",
                 "output": "./"
+              },
+              {
+                "glob": "*",
+                "input": "libs/email-service/src/tools/design",
+                "output": "./email-service-assets"
               }
             ]
           },
@@ -7784,6 +7818,64 @@
           }
         },
         "docker-express": {}
+      }
+    },
+    "services-notifications": {
+      "root": "apps/services/notifications",
+      "sourceRoot": "apps/services/notifications/src",
+      "projectType": "application",
+      "prefix": "services-notifications",
+      "architect": {
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/services/notifications",
+            "main": "apps/services/notifications/src/main.ts",
+            "tsConfig": "apps/services/notifications/tsconfig.app.json",
+            "assets": ["apps/services/notifications/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/notifications/src/environments/environment.ts",
+                  "with": "apps/services/notifications/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-notifications:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/services/notifications/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/services/notifications"],
+          "options": {
+            "jestConfig": "apps/services/notifications/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/services/notifications/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/services/notifications/tsconfig.app.json apps/services/notifications/src/buildOpenApi.ts"
+          }
+        }
       }
     },
     "services-party-letter-registry-api": {

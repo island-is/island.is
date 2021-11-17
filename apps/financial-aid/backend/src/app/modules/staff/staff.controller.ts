@@ -3,7 +3,9 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  NotFoundException,
   Param,
+  Put,
   Post,
   UseGuards,
 } from '@nestjs/common'
@@ -24,7 +26,7 @@ import { RolesGuard } from '../../guards/roles.guard'
 import { CurrentStaff, RolesRules } from '../../decorators'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
-import { CreateStaffDto } from './dto'
+import { UpdateStaffDto, CreateStaffDto } from './dto'
 
 @UseGuards(IdsUserGuard, RolesGuard)
 @RolesRules(RolesRule.VEITA)
@@ -48,6 +50,21 @@ export class StaffController {
     return staff
   }
 
+  @Get('id/:id')
+  @ApiOkResponse({
+    type: StaffModel,
+    description: 'Gets staff by id',
+  })
+  async getStaffById(@Param('id') id: string): Promise<StaffModel> {
+    const staff = await this.staffService.findById(id)
+
+    if (staff === null) {
+      throw new ForbiddenException('Staff not found')
+    }
+
+    return staff
+  }
+
   @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.ADMIN)
   @Get('municipality')
@@ -59,6 +76,27 @@ export class StaffController {
     @CurrentStaff() staff: Staff,
   ): Promise<StaffModel[]> {
     return await this.staffService.findByMunicipalityId(staff.municipalityId)
+  }
+
+  @Put('id/:id')
+  @ApiOkResponse({
+    type: StaffModel,
+    description: 'Updates an existing staff',
+  })
+  async update(
+    @Param('id') id: string,
+    @Body() staffToUpdate: UpdateStaffDto,
+  ): Promise<StaffModel> {
+    const {
+      numberOfAffectedRows,
+      updatedStaff,
+    } = await this.staffService.update(id, staffToUpdate)
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Staff ${id} does not exist`)
+    }
+
+    return updatedStaff
   }
 
   @UseGuards(StaffGuard)
@@ -73,5 +111,31 @@ export class StaffController {
     @Body() createStaffInput: CreateStaffDto,
   ): Promise<StaffModel> {
     return await this.staffService.createStaff(staff, createStaffInput)
+  }
+
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.SUPERADMIN)
+  @Get('municipality/:municipalityId')
+  @ApiOkResponse({
+    type: Number,
+    description: 'Counts users for municipality',
+  })
+  async numberOfUsersForMunicipality(
+    @Param('municipalityId') municipalityId: string,
+  ): Promise<number> {
+    return await this.staffService.numberOfUsersForMunicipality(municipalityId)
+  }
+
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.SUPERADMIN)
+  @Get('admin/:municipalityId')
+  @ApiOkResponse({
+    type: [StaffModel],
+    description: 'Gets admin users by municipality id',
+  })
+  async getAdminUsers(
+    @Param('municipalityId') municipalityId: string,
+  ): Promise<StaffModel[]> {
+    return this.staffService.getAdminUsers(municipalityId)
   }
 }

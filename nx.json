@@ -540,6 +540,9 @@
     "plausible": {
       "tags": []
     },
+    "react-feature-flags": {
+      "tags": []
+    },
     "reference-backend": {
       "tags": []
     },
@@ -638,6 +641,9 @@
       "tags": []
     },
     "services-endorsements-api": {
+      "tags": []
+    },
+    "services-notifications": {
       "tags": []
     },
     "services-party-letter-registry-api": {

@@ -48,6 +48,11 @@ export const addDocuments = {
         'Ef þú hefur auka skjöl sem þú vilt koma til skila eins og ljósmyndir af slysstað, skýrsla til vinnueftirlitsins eða önnnur gögn teng slysinu, þá vinsamlegast bættu þeim við hér að neðan.',
       description: 'Additional documents description',
     },
+    submitButtonLabel: {
+      id: 'an.application:addDocuments.general.submitButtonLabel',
+      defaultMessage: 'Senda inn skjöl',
+      description: 'Submit button label',
+    },
   }),
   injuryCertificate: defineMessages({
     title: {
@@ -68,15 +73,20 @@ export const addDocuments = {
     },
   }),
   deathCertificate: defineMessages({
+    title: {
+      id: 'an.application:addDocuments.deathCertificateFile.title',
+      defaultMessage: 'Lögregluskýrsla',
+      description: 'Definition of title for police report',
+    },
     uploadHeader: {
       id: 'an.application:addDocuments.deathCertificateFile.uploadHeader',
-      defaultMessage: 'Dragðu dánarvottorð hingað til að hlaða upp',
+      defaultMessage: 'Dragðu lögregluskýrslu hingað til að hlaða upp',
       description: 'Definition of upload header for death certificate',
     },
     uploadIntroduction: {
       id: 'an.application:addDocuments.deathCertificateFile.uploadIntroduction',
-      defaultMessage: `Vinsamlegast bættu við dánarvottorði hér að neðan`,
-      description: 'Upload introduction for death certificate',
+      defaultMessage: `Vinsamlegast bættu við lögregluskýrslu hér að neðan`,
+      description: 'Upload introduction for police report',
     },
   }),
   powerOfAttorney: defineMessages({

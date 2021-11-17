@@ -177,7 +177,7 @@ api:
   enabled: true
   env:
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
-    AUTH_PUBLIC_API_URL: 'https://identity-server.dev01.devland.is'
+    AUTH_PUBLIC_API_URL: 'https://identity-server.dev01.devland.is/api'
     CONTACT_US_EMAIL: 's@kogk.is'
     CONTENTFUL_HOST: 'preview.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
@@ -189,6 +189,7 @@ api:
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     NODE_OPTIONS: '--max-old-space-size=464'
     PARTY_LETTER_REGISTRY_BASE_API_URL: 'http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local'
+    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
@@ -338,6 +339,7 @@ application-system-api:
     NOVA_USERNAME: 'IslandIs_User_Development'
     PARTY_LETTER_REGISTRY_API_BASE_PATH: 'http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local'
     PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: 'thorhildur@parallelradgjof.is'
+    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
@@ -434,6 +436,8 @@ application-system-api:
     PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL: '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL'
     PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS'
     PARTY_LETTER_ASSIGNED_ADMINS: '/k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS'
+    PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD'
+    PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER'
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
@@ -624,6 +628,8 @@ endorsement-system-api:
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
+  podSecurityContext:
+    fsGroup: 65534
   replicaCount:
     default: 2
     max: 3
@@ -639,6 +645,11 @@ endorsement-system-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/endorsement-system-api'
+    create: true
+    name: 'endorsement-system-api'
   strategy:
     type: 'Recreate'
 endorsement-system-scripts-update-metadata:

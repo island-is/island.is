@@ -30,6 +30,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icRulingStepOne as m } from '@island.is/judicial-system-web/messages'
+import { isRulingStepOneValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
@@ -58,11 +59,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
     },
   }
 
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
+  useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   return (
     <>
@@ -199,9 +196,11 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             <Decision
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
-              acceptedLabelText="Krafa samþykkt"
-              rejectedLabelText="Kröfu hafnað"
-              partiallyAcceptedLabelText="Krafa tekin til greina að hluta"
+              acceptedLabelText={formatMessage(m.sections.decision.acceptLabel)}
+              rejectedLabelText={formatMessage(m.sections.decision.rejectLabel)}
+              partiallyAcceptedLabelText={formatMessage(
+                m.sections.decision.partiallyAcceptLabel,
+              )}
               dismissLabelText={formatMessage(m.sections.decision.dismissLabel)}
             />
           </Box>
@@ -224,7 +223,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isValid || !workingCase.decision}
+          nextIsDisabled={!isRulingStepOneValidIC(workingCase)}
         />
       </FormContentContainer>
     </>

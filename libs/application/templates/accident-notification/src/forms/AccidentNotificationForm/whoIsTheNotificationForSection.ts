@@ -140,6 +140,7 @@ export const whoIsTheNotificationForSection = buildSection({
               title: '',
               large: false,
               backgroundColor: 'white',
+              defaultValue: [],
               options: [
                 {
                   value: YES,
@@ -230,6 +231,11 @@ export const whoIsTheNotificationForSection = buildSection({
           title: powerOfAttorney.upload.heading,
           description: powerOfAttorney.upload.description,
           children: [
+            buildCustomField({
+              id: 'attachments.powerOfAttorney.fileLink',
+              component: 'ProxyDocument',
+              title: '',
+            }),
             buildFileUploadField({
               id: 'attachments.powerOfAttorneyFile.file',
               title: '',

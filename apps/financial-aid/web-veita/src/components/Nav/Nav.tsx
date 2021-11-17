@@ -14,9 +14,12 @@ import {
   EmployeeSideNavItems,
   LoadingContainer,
   LogoMunicipality,
+  SuperAdminSideNavItems,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './Nav.css'
+import * as sideNavButtonStyles from '../../sharedStyles/SideNavButton.css'
+
 import cn from 'classnames'
 import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/src/components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 
@@ -75,16 +78,17 @@ const Nav = ({ showInMobile }: Props) => {
 
       <Box display="block" marginBottom={2} marginTop={4}>
         <Box marginBottom={2}>
+          <SuperAdminSideNavItems roles={admin?.staff?.roles} />
           <AdminSideNavItems roles={admin?.staff?.roles} />
           <button
-            className={`${styles.sideNavBarButton} navBarButtonHover`}
+            className={`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`}
             onClick={() => logOut()}
           >
             <Icon
               icon="logOut"
               type="outline"
               color="blue400"
-              className={styles.sideNavBarButtonIcon}
+              className={sideNavButtonStyles.sideNavBarButtonIcon}
             />
             <Text> Útskráning</Text>
           </button>

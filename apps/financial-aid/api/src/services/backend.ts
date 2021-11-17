@@ -15,12 +15,14 @@ import {
   apiBasePath,
   ApplicationStateUrl,
   UpdateApplicationTableResponseType,
+  UpdateStaff,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CreateStaffInput, StaffModel } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
+import { UpdateMunicipalityInput } from '../app/modules/municipality/dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -45,6 +47,16 @@ class BackendAPI extends RESTDataSource {
 
   getMunicipality(id: string): Promise<Municipality> {
     return this.get(`municipality/${id}`)
+  }
+
+  getMunicipalities(): Promise<Municipality[]> {
+    return this.get(`municipality`)
+  }
+
+  updateMunicipality(
+    updateMunicipality: UpdateMunicipalityInput,
+  ): Promise<Municipality> {
+    return this.put('municipality', updateMunicipality)
   }
 
   createApplication(
@@ -100,12 +112,28 @@ class BackendAPI extends RESTDataSource {
     return this.get(`staff/nationalId/${nationalId}`)
   }
 
+  getStaffById(id: string): Promise<StaffModel> {
+    return this.get(`staff/id/${id}`)
+  }
+
+  getAdminUsers(municipalityId: string): Promise<StaffModel[]> {
+    return this.get(`staff/admin/${municipalityId}`)
+  }
+
+  updateStaff(id: string, updateStaff: UpdateStaff): Promise<StaffModel> {
+    return this.put(`staff/id/${id}`, updateStaff)
+  }
+
   getStaffForMunicipality(): Promise<StaffModel[]> {
     return this.get('staff/municipality')
   }
 
   createStaff(createStaff: CreateStaffInput): Promise<StaffModel> {
     return this.post('staff', createStaff)
+  }
+
+  getNumberOfStaffForMunicipality(municipalityId: string): Promise<number> {
+    return this.get(`staff/municipality/${municipalityId}`)
   }
 }
 

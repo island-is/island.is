@@ -12,7 +12,7 @@ import { Case } from '../models'
 
 @Injectable()
 export class CaseCompletedGuard implements CanActivate {
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
     const theCase: Case = request.case

@@ -24,6 +24,8 @@ export const ApplicationQuery = gql`
       familyStatus
       spouseNationalId
       spouseName
+      spouseEmail
+      spousePhoneNumber
       city
       streetName
       postalCode
@@ -255,10 +257,116 @@ export const StaffForMunicipalityQuery = gql`
   }
 `
 
+export const StaffQuery = gql`
+  query getStaff($input: StaffInput!) {
+    user(input: $input) {
+      id
+      nationalId
+      name
+      roles
+      active
+      nickname
+      email
+    }
+  }
+`
+
 export const StaffMutation = gql`
   mutation StaffMutation($input: CreateStaffInput!) {
     createStaff(input: $input) {
       id
+    }
+  }
+`
+
+export const UpdateMunicipalityMutation = gql`
+  mutation UpdateMunicipalityMutation($input: UpdateMunicipalityInput!) {
+    updateMunicipality(input: $input) {
+      id
+      name
+      homepage
+      active
+      municipalityId
+      email
+      rulesHomepage
+      individualAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+      cohabitationAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+    }
+  }
+`
+export const UpdateStaffMutation = gql`
+  mutation UpdateStaffMutation($input: UpdateStaffInput!) {
+    updateStaff(input: $input) {
+      id
+      nationalId
+      roles
+      nickname
+      email
+    }
+  }
+`
+
+export const MunicipalitiesQuery = gql`
+  query getMunicipalities {
+    municipalities {
+      id
+      name
+      active
+      users
+      municipalityId
+    }
+  }
+`
+
+export const MunicipalityQuery = gql`
+  query getMunicipality($input: MunicipalityQueryInput!) {
+    municipality(input: $input) {
+      id
+      name
+      active
+      rulesHomepage
+      homepage
+      email
+      adminUsers {
+        name
+        nationalId
+        email
+        id
+      }
+      individualAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+      cohabitationAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
     }
   }
 `

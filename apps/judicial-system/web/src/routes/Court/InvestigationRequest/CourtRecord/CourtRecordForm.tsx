@@ -29,6 +29,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
@@ -38,10 +39,7 @@ interface Props {
 
 const CourtRecordForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
-  const [
-    courtRecordStartDateIsValid,
-    setCourtRecordStartDateIsValid,
-  ] = useState(true)
+  const [, setCourtRecordStartDateIsValid] = useState(true)
   const [courtLocationEM, setCourtLocationEM] = useState('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
   const [
@@ -64,11 +62,14 @@ const CourtRecordForm: React.FC<Props> = (props) => {
     },
   }
 
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
+  useCaseFormHelper(workingCase, setWorkingCase, validations)
+
+  const displayAccusedBookings =
+    workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+    (workingCase.sessionArrangements ===
+      SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+      workingCase.defenderIsSpokesperson &&
+      workingCase.defenderName)
 
   return (
     <>
@@ -239,8 +240,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             workingCase={workingCase}
           />
         </Box>
-        {workingCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT && (
+        {displayAccusedBookings && (
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
@@ -329,7 +329,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isValid || !courtRecordStartDateIsValid}
+          nextIsDisabled={!isCourtRecordStepValidIC(workingCase)}
         />
       </FormContentContainer>
     </>

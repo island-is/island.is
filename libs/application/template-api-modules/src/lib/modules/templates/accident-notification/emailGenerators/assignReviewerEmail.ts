@@ -28,10 +28,10 @@ export const generateAssignReviewerEmail: AnAssignmentEmailTemplateGenerator = (
   )
   const recipientEmail = isReportingOnBehalfOfEmployee
     ? injuredPersonInformation?.email
-    : workplaceData?.info.email
+    : workplaceData?.representitive.email
   const recipientName = isReportingOnBehalfOfEmployee
     ? injuredPersonInformation?.name
-    : workplaceData?.info.name
+    : workplaceData?.representitive.name
   const subject = 'Tilkynning um slys'
 
   if (!recipientEmail) throw new Error('Recipient email was undefined')
@@ -56,7 +56,7 @@ export const generateAssignReviewerEmail: AnAssignmentEmailTemplateGenerator = (
         {
           component: 'Image',
           context: {
-            src: pathToAsset('manWithBabyIllustration.jpg'),
+            src: pathToAsset('computerIllustration.jpg'),
             alt: 'Maður með barn myndskreyting',
           },
         },

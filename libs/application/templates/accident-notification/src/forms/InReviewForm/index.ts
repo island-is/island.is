@@ -10,8 +10,8 @@ export const ApplicantReview: Form = buildForm({
   title: inReview.general.formTitle,
   logo: Logo,
   children: [
-    applicationStatusSection,
-    addAttachmentsSection,
+    applicationStatusSection(),
+    addAttachmentsSection(),
     inReviewOverviewSection(),
   ],
 })
@@ -20,8 +20,8 @@ export const AssigneeReview: Form = buildForm({
   title: inReview.general.formTitle,
   logo: Logo,
   children: [
-    applicationStatusSection,
-    addAttachmentsSection,
+    applicationStatusSection(true),
+    addAttachmentsSection(true),
     inReviewOverviewSection(true),
   ],
 })

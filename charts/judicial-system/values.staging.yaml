@@ -20,7 +20,7 @@ judicial-system-api:
     AUTH_AUDIENCE: 'judicial-system.staging01.devland.is'
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    HIDDEN_FEATURES: 'POLICE_CASE_FILES'
+    HIDDEN_FEATURES: ''
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=judicial-system.staging'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'

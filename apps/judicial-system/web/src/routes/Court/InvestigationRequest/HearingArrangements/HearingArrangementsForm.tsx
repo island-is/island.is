@@ -45,6 +45,7 @@ import {
 import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './HearingArrangements.css'
+import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
@@ -59,7 +60,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [defenderEmailEM, setDefenderEmailEM] = useState('')
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
-  const [courtDateIsValid, setCourtDateIsValid] = useState(true)
+  const [, setCourtDateIsValid] = useState(true)
   const { updateCase, sendNotification, isSendingNotification } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -73,11 +74,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
     },
   }
 
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
+  useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   const setJudge = (id: string) => {
     if (workingCase) {
@@ -200,6 +197,9 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
               {`${formatMessage(m.sections.sessionArrangements.heading)} `}
+              <Text as="span" color="red600" fontWeight="semiBold">
+                *
+              </Text>
               <Tooltip
                 text={formatMessage(m.sections.sessionArrangements.tooltip)}
               />
@@ -490,7 +490,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isLoading}
-          nextIsDisabled={!isValid || !courtDateIsValid}
+          nextIsDisabled={!isCourtHearingArrangementsStepValidIC(workingCase)}
           hideNextButton={
             user.id !== workingCase.judge?.id &&
             user.id !== workingCase.registrar?.id

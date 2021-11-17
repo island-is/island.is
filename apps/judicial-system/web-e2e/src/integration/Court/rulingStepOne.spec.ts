@@ -15,6 +15,8 @@ describe('/domur/urskurdur/:id', () => {
       ...caseData,
       caseFacts: 'lorem ipsum',
       legalArguments: 'lorem ipsum',
+      demands:
+        'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     }
 
     cy.stubAPIResponses()
@@ -23,8 +25,15 @@ describe('/domur/urskurdur/:id', () => {
     cy.visit('/domur/urskurdur/test_id_stadfest')
   })
 
+  it('should autofill prosecutor demands', () => {
+    cy.getByTestid('prosecutorDemands').contains(
+      'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+    )
+  })
+
   it('should require a valid ruling', () => {
-    cy.getByTestid('ruling').click().blur()
+    cy.getByTestid('ruling').clear()
+    cy.clickOutside()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('ruling').type('lorem')
     cy.getByTestid('inputErrorMessage').should('not.exist')

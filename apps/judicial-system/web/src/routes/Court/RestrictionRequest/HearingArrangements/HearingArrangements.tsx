@@ -18,8 +18,7 @@ import {
   FormContentContainer,
   Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   Case,
@@ -52,14 +51,13 @@ import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messa
 
 export const HearingArrangements: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [modalVisible, setModalVisible] = useState(false)
   const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState('')
   const [
     defenderPhoneNumberErrorMessage,
     setDefenderPhoneNumberErrorMessage,
   ] = useState('')
-  const [courtDateIsValid, setCourtDateIsValid] = useState(true)
+  const [, setCourtDateIsValid] = useState(true)
 
   const router = useRouter()
   const id = router.query.id
@@ -129,27 +127,6 @@ export const HearingArrangements: React.FC = () => {
     }
   }, [setWorkingCase, workingCase, autofill, data])
 
-  useEffect(() => {
-    const requiredFields: { value: string; validations: Validation[] }[] = [
-      {
-        value: workingCase?.defenderEmail ?? '',
-        validations: ['email-format'],
-      },
-      {
-        value: workingCase?.defenderPhoneNumber ?? '',
-        validations: ['phonenumber'],
-      },
-    ]
-
-    if (workingCase) {
-      setIsStepIllegal(
-        isNextDisabled(requiredFields) ||
-          !workingCase.judge ||
-          !workingCase.registrar,
-      )
-    }
-  }, [workingCase, isStepIllegal])
-
   const setJudge = (id: string) => {
     if (workingCase) {
       setAndSendToServer('judgeId', id, workingCase, setWorkingCase, updateCase)
@@ -190,20 +167,18 @@ export const HearingArrangements: React.FC = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
       isLoading={loading || userLoading}
       notFound={data?.case === undefined}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
           <FormContentContainer>
-            <Box marginBottom={10}>
+            <Box marginBottom={7}>
               <Text as="h1" variant="h1">
                 {formatMessage(m.title)}
               </Text>
@@ -424,7 +399,9 @@ export const HearingArrangements: React.FC = () => {
             <FormFooter
               previousUrl={`${Constants.COURT_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
               onNextButtonClick={handleNextButtonClick}
-              nextIsDisabled={isStepIllegal || !courtDateIsValid}
+              nextIsDisabled={
+                !isCourtHearingArrangemenstStepValidRC(workingCase)
+              }
             />
           </FormContentContainer>
           {modalVisible && (

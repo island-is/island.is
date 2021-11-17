@@ -1,8 +1,4 @@
-import {
-  buildRegulationApiPath,
-  ISODate,
-  RegQueryName,
-} from '@island.is/regulations'
+import { ISODate, RegQueryName } from '@island.is/regulations'
 import {
   Regulation,
   RegulationRedirect,
@@ -159,6 +155,7 @@ RegulationPage.getInitialProps = async ({
   locale,
   query,
   res,
+  asPath,
 }) => {
   const params = query.params as Partial<Array<string>>
   const isPdf = params[params.length - 1] === 'pdf'
@@ -188,6 +185,19 @@ RegulationPage.getInitialProps = async ({
 
   if (!name || !viewType) {
     throw new CustomNextError(404)
+  }
+
+  if (name !== p.name) {
+    const nameRe = new RegExp(`/nr/${p.name}(?:/|$)`)
+    const currentUrl = asPath || '/reglugerdir'
+    const redirectUrl = currentUrl.replace(nameRe, `/nr/${name}/`)
+    if (res) {
+      res.writeHead(301, { Location: redirectUrl })
+      res.end()
+    }
+    return {
+      redirect: redirectUrl,
+    }
   }
 
   const [texts, regulation] = await Promise.all([
@@ -227,7 +237,7 @@ RegulationPage.getInitialProps = async ({
       )
     }
     if (res) {
-      res.writeHead(302, { Location: regulation.pdfVersion })
+      res.writeHead(307, { Location: regulation.pdfVersion })
       res.end()
     }
     return {

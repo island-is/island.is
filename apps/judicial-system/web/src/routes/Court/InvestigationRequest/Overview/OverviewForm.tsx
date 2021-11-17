@@ -31,6 +31,7 @@ import {
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
+import { isOverviewStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
@@ -62,11 +63,7 @@ const OverviewForm: React.FC<Props> = (props) => {
     },
   }
 
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
+  useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
     if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
@@ -326,7 +323,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           previousUrl={Constants.REQUEST_LIST_ROUTE}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isValid}
+          nextIsDisabled={!isOverviewStepValidIC(workingCase)}
         />
       </FormContentContainer>
     </>

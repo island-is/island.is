@@ -10,6 +10,7 @@ import {
   FormContentContainer,
   FormFooter,
   TimeInputField,
+  CaseNumbers,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Box,
@@ -21,20 +22,17 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
-  getTimeFromDate,
   removeTabsValidateAndSet,
   validateAndSendTimeToServer,
   validateAndSendToServer,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  useCase,
-  useDateTime,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { icRulingStepTwo } from '@island.is/judicial-system-web/messages'
+import { icRulingStepTwo as m } from '@island.is/judicial-system-web/messages'
+import { isRulingStepTwoValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
@@ -47,28 +45,29 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
   const [courtDocumentEndEM, setCourtDocumentEndEM] = useState<string>('')
-  const { isValidTime: isValidCourtEndTime } = useDateTime({
-    time: getTimeFromDate(workingCase?.courtEndTime),
-  })
 
   return (
     <>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Úrskurður og kæra
+            {formatMessage(m.title)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseNumbers workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Úrskurður
+              {formatMessage(m.sections.conclusion.title)}
             </Text>
           </Box>
+
           <Input
             name="conclusion"
-            label="Úrskurðarorð"
-            placeholder="Hver eru úrskurðarorðin?"
+            label={formatMessage(m.sections.conclusion.label)}
+            placeholder={formatMessage(m.sections.conclusion.placeholder)}
             defaultValue={workingCase.conclusion}
             onChange={(event) =>
               removeTabsValidateAndSet(
@@ -96,21 +95,22 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Ákvörðun um kæru
+              {formatMessage(m.sections.appealDecision.title)}
             </Text>
           </Box>
-          <Box marginBottom={3}>
-            <Text variant="h4" fontWeight="light">
-              {formatMessage(
-                icRulingStepTwo.sections.accusedAppealDecision.disclaimer,
-              )}
-            </Text>
-          </Box>
+          {workingCase.sessionArrangements ===
+            SessionArrangements.ALL_PRESENT && (
+            <Box marginBottom={3}>
+              <Text variant="h4" fontWeight="light">
+                {formatMessage(m.sections.appealDecision.disclaimer)}
+              </Text>
+            </Box>
+          )}
           <Box marginBottom={3}>
             <BlueBox>
               <Box marginBottom={2}>
                 <Text as="h4" variant="h4">
-                  Varnaraðili{' '}
+                  {formatMessage(m.sections.appealDecision.accusedTitle)}{' '}
                   <Text as="span" color="red600" fontWeight="semiBold">
                     *
                   </Text>
@@ -122,7 +122,9 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                     <RadioButton
                       name="accused-appeal-decision"
                       id="accused-appeal"
-                      label="Varnaraðili kærir úrskurðinn"
+                      label={formatMessage(
+                        m.sections.appealDecision.accusedAppeal,
+                      )}
                       value={CaseAppealDecision.APPEAL}
                       checked={
                         workingCase.accusedAppealDecision ===
@@ -150,7 +152,9 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                     <RadioButton
                       name="accused-appeal-decision"
                       id="accused-accept"
-                      label="Varnaraðili unir úrskurðinum"
+                      label={formatMessage(
+                        m.sections.appealDecision.accusedAccept,
+                      )}
                       value={CaseAppealDecision.ACCEPT}
                       checked={
                         workingCase.accusedAppealDecision ===
@@ -182,7 +186,9 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                     <RadioButton
                       name="accused-appeal-decision"
                       id="accused-postpone"
-                      label="Varnaraðili tekur sér lögboðinn frest"
+                      label={formatMessage(
+                        m.sections.appealDecision.accusedPostpone,
+                      )}
                       value={CaseAppealDecision.POSTPONE}
                       checked={
                         workingCase.accusedAppealDecision ===
@@ -210,7 +216,9 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                     <RadioButton
                       name="accused-appeal-decision"
                       id="accused-not-applicable"
-                      label="Á ekki við"
+                      label={formatMessage(
+                        m.sections.appealDecision.accusedNotApplicable,
+                      )}
                       value={CaseAppealDecision.NOT_APPLICABLE}
                       checked={
                         workingCase.accusedAppealDecision ===
@@ -240,13 +248,13 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
               <Input
                 name="accusedAppealAnnouncement"
                 data-testid="accusedAppealAnnouncement"
-                label="Yfirlýsing um kæru varnaraðila"
+                label={formatMessage(
+                  m.sections.appealDecision.accusedAnnouncementLabel,
+                )}
                 defaultValue={workingCase.accusedAppealAnnouncement}
-                disabled={
-                  workingCase.accusedAppealDecision !==
-                  CaseAppealDecision.APPEAL
-                }
-                placeholder="Í hvaða skyni er kært?"
+                placeholder={formatMessage(
+                  m.sections.appealDecision.accusedAnnouncementPlaceholder,
+                )}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'accusedAppealAnnouncement',
@@ -274,7 +282,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             <BlueBox>
               <Box marginBottom={2}>
                 <Text as="h4" variant="h4">
-                  Sækjandi{' '}
+                  {formatMessage(m.sections.appealDecision.prosecutorTitle)}{' '}
                   <Text as="span" color="red400" fontWeight="semiBold">
                     *
                   </Text>
@@ -286,7 +294,9 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                     <RadioButton
                       name="prosecutor-appeal-decision"
                       id="prosecutor-appeal"
-                      label="Sækjandi kærir úrskurðinn"
+                      label={formatMessage(
+                        m.sections.appealDecision.prosecutorAppeal,
+                      )}
                       value={CaseAppealDecision.APPEAL}
                       checked={
                         workingCase.prosecutorAppealDecision ===
@@ -314,7 +324,9 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                     <RadioButton
                       name="prosecutor-appeal-decision"
                       id="prosecutor-accept"
-                      label="Sækjandi unir úrskurðinum"
+                      label={formatMessage(
+                        m.sections.appealDecision.prosecutorAccept,
+                      )}
                       value={CaseAppealDecision.ACCEPT}
                       checked={
                         workingCase.prosecutorAppealDecision ===
@@ -349,10 +361,9 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                       label={formatMessage(
                         workingCase.sessionArrangements ===
                           SessionArrangements.REMOTE_SESSION
-                          ? icRulingStepTwo.sections.prosecutorAppealDecision
-                              .decisionPostponeInRemoteSession
-                          : icRulingStepTwo.sections.prosecutorAppealDecision
-                              .decisionPostpone,
+                          ? m.sections.appealDecision
+                              .prosecutorPostponeInRemoteSession
+                          : m.sections.appealDecision.prosecutorPostpone,
                       )}
                       value={CaseAppealDecision.POSTPONE}
                       checked={
@@ -381,7 +392,9 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                     <RadioButton
                       name="prosecutor-appeal-decision"
                       id="prosecutor-not-applicable"
-                      label="Á ekki við"
+                      label={formatMessage(
+                        m.sections.appealDecision.prosecutorNotApplicable,
+                      )}
                       value={CaseAppealDecision.NOT_APPLICABLE}
                       checked={
                         workingCase.prosecutorAppealDecision ===
@@ -412,13 +425,13 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 <Input
                   name="prosecutorAppealAnnouncement"
                   data-testid="prosecutorAppealAnnouncement"
-                  label="Yfirlýsing um kæru sækjanda"
+                  label={formatMessage(
+                    m.sections.appealDecision.prosecutorAnnouncementLabel,
+                  )}
                   defaultValue={workingCase.prosecutorAppealAnnouncement}
-                  disabled={
-                    workingCase.prosecutorAppealDecision !==
-                    CaseAppealDecision.APPEAL
-                  }
-                  placeholder="Í hvaða skyni er kært?"
+                  placeholder={formatMessage(
+                    m.sections.appealDecision.prosecutorAnnouncementPlaceholder,
+                  )}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'prosecutorAppealAnnouncement',
@@ -503,12 +516,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_CONFIRMATION_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={
-            !workingCase.conclusion ||
-            !workingCase.accusedAppealDecision ||
-            !workingCase.prosecutorAppealDecision ||
-            !isValidCourtEndTime?.isValid
-          }
+          nextIsDisabled={!isRulingStepTwoValidIC(workingCase)}
         />
       </FormContentContainer>
     </>

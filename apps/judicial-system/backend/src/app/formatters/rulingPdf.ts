@@ -3,7 +3,6 @@ import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
 import {
-  CaseAppealDecision,
   CaseDecision,
   CaseType,
   isRestrictionCase,
@@ -104,12 +103,14 @@ function constructRestrictionRulingPdf(
         startTime: formatDate(existingCase.courtStartDate, 'p'),
       }),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
 
   if (!existingCase.isClosedCourtHidden) {
     doc.text(' ').text(formatMessage(ruling.closedCourtAnnouncement), {
+      align: 'justify',
       paragraphGap: 1,
     })
   }
@@ -122,22 +123,12 @@ function constructRestrictionRulingPdf(
       .text(' ')
       .font('Times-Roman')
       .text(existingCase.courtAttendees, {
+        align: 'justify',
         paragraphGap: 1,
       })
   }
 
   doc
-    .text(' ')
-    .font('Times-Bold')
-    .text(formatMessage(ruling.demandsHeading))
-    .text(' ')
-    .font('Times-Roman')
-    .text(
-      existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
-      {
-        paragraphGap: 1,
-      },
-    )
     .text(' ')
     .font('Times-Bold')
     .text(formatMessage(ruling.courtDocuments.heading))
@@ -148,10 +139,12 @@ function constructRestrictionRulingPdf(
         caseTypes: caseTypes[existingCase.type],
       }),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
     .text(formatMessage(ruling.courtDocuments.announcement), {
+      align: 'justify',
       paragraphGap: 1,
     })
 
@@ -162,6 +155,7 @@ function constructRestrictionRulingPdf(
         documentNumber: index + 2,
       }),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     ),
@@ -169,6 +163,7 @@ function constructRestrictionRulingPdf(
 
   if (existingCase.accusedBookings) {
     doc.text(' ').text(existingCase.accusedBookings, {
+      align: 'justify',
       paragraphGap: 1,
     })
   }
@@ -179,6 +174,7 @@ function constructRestrictionRulingPdf(
       existingCase.litigationPresentations ??
         formatMessage(core.missing.litigationPresentations),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
@@ -204,9 +200,13 @@ function constructRestrictionRulingPdf(
       .text(formatMessage(ruling.courtDemandsHeading))
       .text(' ')
       .font('Times-Roman')
-      .text(existingCase.demands ?? formatMessage(core.missing.demands), {
-        paragraphGap: 1,
-      })
+      .text(
+        existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
+        {
+          align: 'justify',
+          paragraphGap: 1,
+        },
+      )
       .text(' ')
       .font('Times-Bold')
       .text(formatMessage(ruling.courtCaseFactsHeading))
@@ -215,6 +215,7 @@ function constructRestrictionRulingPdf(
       .text(
         existingCase.courtCaseFacts ?? formatMessage(core.missing.caseFacts),
         {
+          align: 'justify',
           paragraphGap: 1,
         },
       )
@@ -227,6 +228,7 @@ function constructRestrictionRulingPdf(
         existingCase.courtLegalArguments ??
           formatMessage(core.missing.legalArguments),
         {
+          align: 'justify',
           paragraphGap: 1,
         },
       )
@@ -236,6 +238,7 @@ function constructRestrictionRulingPdf(
       .text(' ')
       .font('Times-Roman')
       .text(existingCase.ruling ?? formatMessage(core.missing.conclusion), {
+        align: 'justify',
         paragraphGap: 1,
       })
   }
@@ -250,7 +253,7 @@ function constructRestrictionRulingPdf(
     .fontSize(baseFontSize)
     .lineGap(1)
     .text(existingCase.conclusion ?? formatMessage(core.missing.rulingText), {
-      align: 'center',
+      align: 'justify',
       paragraphGap: 1,
     })
     .text(' ')
@@ -263,38 +266,49 @@ function constructRestrictionRulingPdf(
     .text(' ')
     .font('Times-Roman')
     .text(formatMessage(ruling.rulingTextIntro), {
+      align: 'justify',
       paragraphGap: 1,
     })
     .text(' ')
     .text(formatMessage(ruling.appealDirections), {
+      align: 'justify',
       paragraphGap: 1,
     })
-    .text(' ')
-    .text(
-      `${formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi')} ${
-        existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
-          ? existingCase.prosecutorAppealAnnouncement ?? ''
-          : ''
-      }`,
-      {
-        paragraphGap: 1,
-      },
-    )
-    .text(' ')
-    .text(
-      `${formatAppeal(
-        existingCase.accusedAppealDecision,
-        capitalize(formatAccusedByGender(existingCase.accusedGender)),
-        existingCase.accusedGender,
-      )} ${
-        existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
-          ? existingCase.accusedAppealAnnouncement ?? ''
-          : ''
-      }`,
-      {
-        paragraphGap: 1,
-      },
-    )
+
+  let prosecutorAppeal = formatAppeal(
+    existingCase.prosecutorAppealDecision,
+    'Sækjandi',
+  )
+
+  if (prosecutorAppeal) {
+    prosecutorAppeal = `${prosecutorAppeal} ${
+      existingCase.prosecutorAppealAnnouncement ?? ''
+    }`
+  } else {
+    prosecutorAppeal = existingCase.prosecutorAppealAnnouncement ?? ''
+  }
+
+  if (prosecutorAppeal) {
+    doc.text(' ').text(prosecutorAppeal, { align: 'justify', paragraphGap: 1 })
+  }
+
+  let accusedAppeal = formatAppeal(
+    existingCase.accusedAppealDecision,
+    capitalize(formatAccusedByGender(existingCase.accusedGender)),
+    existingCase.accusedGender,
+  )
+
+  if (accusedAppeal) {
+    accusedAppeal = `${accusedAppeal} ${
+      existingCase.accusedAppealAnnouncement ?? ''
+    }`
+  } else {
+    accusedAppeal = existingCase.accusedAppealAnnouncement ?? ''
+  }
+
+  if (accusedAppeal) {
+    doc.text(' ').text(accusedAppeal, { align: 'justify', paragraphGap: 1 })
+  }
 
   if (
     existingCase.type === CaseType.CUSTODY &&
@@ -303,15 +317,18 @@ function constructRestrictionRulingPdf(
     const custodyRestrictions = formatCustodyRestrictions(
       existingCase.accusedGender,
       existingCase.custodyRestrictions,
+      true,
     )
 
     if (custodyRestrictions) {
       doc.text(' ').text(custodyRestrictions, {
+        align: 'justify',
         paragraphGap: 1,
       })
     }
 
     doc.text(' ').text(formatMessage(ruling.accusedCustodyDirections), {
+      align: 'justify',
       paragraphGap: 1,
     })
   }
@@ -331,11 +348,13 @@ function constructRestrictionRulingPdf(
 
     if (alternativeTravelBanRestrictions) {
       doc.text(' ').text(alternativeTravelBanRestrictions, {
+        align: 'justify',
         paragraphGap: 1,
       })
     }
 
     doc.text(' ').text(formatMessage(ruling.accusedTravelBanDirections), {
+      align: 'justify',
       paragraphGap: 1,
     })
   }
@@ -347,6 +366,7 @@ function constructRestrictionRulingPdf(
       }`,
     }),
     {
+      align: 'justify',
       paragraphGap: 1,
     },
   )
@@ -438,12 +458,14 @@ function constructInvestigationRulingPdf(
         startTime: formatDate(existingCase.courtStartDate, 'p'),
       }),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
 
   if (!existingCase.isClosedCourtHidden) {
     doc.text(' ').text(formatMessage(ruling.closedCourtAnnouncement), {
+      align: 'justify',
       paragraphGap: 1,
     })
   }
@@ -456,23 +478,12 @@ function constructInvestigationRulingPdf(
       .text(' ')
       .font('Times-Roman')
       .text(existingCase.courtAttendees, {
+        align: 'justify',
         paragraphGap: 1,
       })
   }
 
   doc
-    .text(' ')
-    .font('Times-Bold')
-    .text(formatMessage(ruling.demandsHeading))
-    .text(' ')
-    .font('Times-Roman')
-    .fontSize(baseFontSize)
-    .text(
-      existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
-      {
-        paragraphGap: 1,
-      },
-    )
     .text(' ')
     .font('Times-Bold')
     .text(formatMessage(ruling.courtDocuments.heading))
@@ -483,10 +494,12 @@ function constructInvestigationRulingPdf(
         caseTypes: caseTypes[existingCase.type],
       }),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
     .text(formatMessage(ruling.courtDocuments.announcement), {
+      align: 'justify',
       paragraphGap: 1,
     })
 
@@ -497,6 +510,7 @@ function constructInvestigationRulingPdf(
         documentNumber: index + 2,
       }),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     ),
@@ -504,6 +518,7 @@ function constructInvestigationRulingPdf(
 
   if (existingCase.accusedBookings) {
     doc.text(' ').text(existingCase.accusedBookings, {
+      align: 'justify',
       paragraphGap: 1,
     })
   }
@@ -514,6 +529,7 @@ function constructInvestigationRulingPdf(
       existingCase.litigationPresentations ??
         formatMessage(core.missing.litigationPresentations),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )
@@ -539,9 +555,13 @@ function constructInvestigationRulingPdf(
       .text(formatMessage(ruling.courtDemandsHeading))
       .text(' ')
       .font('Times-Roman')
-      .text(existingCase.demands ?? formatMessage(core.missing.demands), {
-        paragraphGap: 1,
-      })
+      .text(
+        existingCase.prosecutorDemands ?? formatMessage(core.missing.demands),
+        {
+          align: 'justify',
+          paragraphGap: 1,
+        },
+      )
       .text(' ')
       .font('Times-Bold')
       .text(formatMessage(ruling.courtCaseFactsHeading))
@@ -550,6 +570,7 @@ function constructInvestigationRulingPdf(
       .text(
         existingCase.courtCaseFacts ?? formatMessage(core.missing.caseFacts),
         {
+          align: 'justify',
           paragraphGap: 1,
         },
       )
@@ -562,6 +583,7 @@ function constructInvestigationRulingPdf(
         existingCase.courtLegalArguments ??
           formatMessage(core.missing.legalArguments),
         {
+          align: 'justify',
           paragraphGap: 1,
         },
       )
@@ -571,6 +593,7 @@ function constructInvestigationRulingPdf(
       .text(' ')
       .font('Times-Roman')
       .text(existingCase.ruling ?? formatMessage(core.missing.conclusion), {
+        align: 'justify',
         paragraphGap: 1,
       })
   }
@@ -585,7 +608,7 @@ function constructInvestigationRulingPdf(
     .fontSize(baseFontSize)
     .lineGap(1)
     .text(existingCase.conclusion ?? formatMessage(core.missing.rulingText), {
-      align: 'center',
+      align: 'justify',
       paragraphGap: 1,
     })
     .text(' ')
@@ -599,43 +622,50 @@ function constructInvestigationRulingPdf(
 
   if (existingCase.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
     doc.text(' ').text(formatMessage(ruling.rulingTextIntro), {
+      align: 'justify',
       paragraphGap: 1,
     })
   }
 
-  doc
-    .text(' ')
-    .text(formatMessage(ruling.appealDirections), {
+  if (existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+    doc.text(' ').text(formatMessage(ruling.appealDirections), {
+      align: 'justify',
       paragraphGap: 1,
     })
-    .text(' ')
-    .text(
-      `${formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi')} ${
-        existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
-          ? existingCase.prosecutorAppealAnnouncement ?? ''
-          : ''
-      }`,
-      {
-        paragraphGap: 1,
-      },
-    )
+  }
 
-  // Only show accused appeal decision if applicable
-  if (
-    existingCase.accusedAppealDecision !== CaseAppealDecision.NOT_APPLICABLE
-  ) {
-    doc
-      .text(' ')
-      .text(
-        `${formatAppeal(existingCase.accusedAppealDecision, 'Varnaraðili')} ${
-          existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
-            ? existingCase.accusedAppealAnnouncement ?? ''
-            : ''
-        }`,
-        {
-          paragraphGap: 1,
-        },
-      )
+  let prosecutorAppeal = formatAppeal(
+    existingCase.prosecutorAppealDecision,
+    'Sækjandi',
+  )
+
+  if (prosecutorAppeal) {
+    prosecutorAppeal = `${prosecutorAppeal} ${
+      existingCase.prosecutorAppealAnnouncement ?? ''
+    }`
+  } else {
+    prosecutorAppeal = existingCase.prosecutorAppealAnnouncement ?? ''
+  }
+
+  if (prosecutorAppeal) {
+    doc.text(' ').text(prosecutorAppeal, { align: 'justify', paragraphGap: 1 })
+  }
+
+  let accusedAppeal = formatAppeal(
+    existingCase.accusedAppealDecision,
+    'Varnaraðili',
+  )
+
+  if (accusedAppeal) {
+    accusedAppeal = `${accusedAppeal} ${
+      existingCase.accusedAppealAnnouncement ?? ''
+    }`
+  } else {
+    accusedAppeal = existingCase.accusedAppealAnnouncement ?? ''
+  }
+
+  if (accusedAppeal) {
+    doc.text(' ').text(accusedAppeal, { align: 'justify', paragraphGap: 1 })
   }
 
   if (existingCase.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
@@ -646,6 +676,7 @@ function constructInvestigationRulingPdf(
         }`,
       }),
       {
+        align: 'justify',
         paragraphGap: 1,
       },
     )

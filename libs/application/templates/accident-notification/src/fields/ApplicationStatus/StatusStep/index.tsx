@@ -1,40 +1,16 @@
-import { Application } from '@island.is/application/core'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import React, { FC } from 'react'
-import { ReviewSectionState } from '../../../types'
 import * as styles from './ReviewSection.css'
-import { ReviewTag } from './ReviewTag'
-
-type ActionProps = {
-  title: string
-  description: string
-  fileNames?: string
-  actionButtonTitle: string
-  hasActionButtonIcon?: boolean
-  showAlways?: boolean
-  cta?: () => void
-}
-
-type ReviewSectionProps = {
-  application: Application
-  title: string
-  description: string
-  state?: ReviewSectionState
-  hasActionMessage: boolean
-  goToScreen: (id: string) => void
-  action?: ActionProps
-  visible?: boolean
-}
+import { ReviewSectionProps } from './types'
 
 export const StatusStep: FC<ReviewSectionProps> = ({
-  application,
   title,
   description,
-  state,
+  tagVariant = 'blue',
+  tagText = 'Í bið',
   hasActionMessage,
   action,
-  goToScreen,
   visible = true,
 }) => {
   const handleOnCTAButtonClick = () => {
@@ -54,7 +30,9 @@ export const StatusStep: FC<ReviewSectionProps> = ({
         <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
           <Box display="flex" justifyContent="spaceBetween">
             <Text variant="h3">{title}</Text>
-            <ReviewTag application={application} state={state} />
+            <Tag variant={tagVariant} disabled>
+              {tagText}
+            </Tag>
           </Box>
           <Box
             display="flex"
