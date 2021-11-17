@@ -3,16 +3,15 @@ export const formSubmit = (url: string, token: string, annual?: boolean) => {
   const form = document.createElement('form')
   const tokenInput = document.createElement('input')
 
-  // form.appendChild(documentIdInput)
   form.appendChild(tokenInput)
 
   // Form values
   form.method = 'post'
-  // TODO: Use correct url
   form.action = url
   form.target = '_blank'
 
   if (annual) {
+    // Optional param
     const annualInput = document.createElement('input')
     form.appendChild(annualInput)
     annualInput.type = 'hidden'
