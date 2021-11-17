@@ -1004,6 +1004,7 @@ describe('Case', () => {
           leadInvestigator: dbCase.leadInvestigator,
           courtId: dbCase.courtId,
           court,
+          translator: dbCase.translator,
           lawsBroken: dbCase.lawsBroken,
           legalBasis: dbCase.legalBasis,
           legalProvisions: dbCase.legalProvisions,
