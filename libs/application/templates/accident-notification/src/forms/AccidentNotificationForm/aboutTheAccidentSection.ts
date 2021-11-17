@@ -48,14 +48,12 @@ import {
 import {
   getAccidentTypeOptions,
   hideLocationAndPurpose,
-  isAboardShip,
   isAgricultureAccident,
   isFishermanAccident,
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
   isInjuredAndRepresentativeOfCompanyOrInstitute,
   isInternshipStudiesAccident,
-  isLocatedOnShipOther,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
@@ -464,14 +462,14 @@ export const aboutTheAccidentSection = buildSection({
         // Fisherman information only applicable to fisherman workplace accidents
         // that happen aboard a ship.
         buildMultiField({
-          id: 'fishermanLocation.multifield',
+          id: 'shipLocation.multifield',
           title: accidentLocation.fishermanAccidentLocation.heading,
-          condition: (formValue) => isAboardShip(formValue),
+          condition: (formValue) => isFishermanAccident(formValue),
 
           description: accidentLocation.fishermanAccidentLocation.description,
           children: [
             buildRadioField({
-              id: 'fishermanLocation.answer',
+              id: 'shipLocation.answer',
               title: '',
               backgroundColor: 'blue',
               options: [
@@ -490,22 +488,6 @@ export const aboutTheAccidentSection = buildSection({
                   label: accidentLocation.fishermanAccidentLocation.other,
                 },
               ],
-            }),
-          ],
-        }),
-        buildMultiField({
-          id: 'fishermanLocation.other',
-          title: fishingLocationAndPurpose.general.title,
-          description: fishingLocationAndPurpose.general.description,
-          condition: (formValue) => isLocatedOnShipOther(formValue),
-          children: [
-            buildTextField({
-              id: 'fishermanLocation.locationAndPurpose.location',
-              title: fishingLocationAndPurpose.labels.location,
-              backgroundColor: 'blue',
-              variant: 'textarea',
-              required: true,
-              rows: 4,
             }),
           ],
         }),

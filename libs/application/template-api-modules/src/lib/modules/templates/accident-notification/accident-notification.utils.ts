@@ -191,7 +191,7 @@ const work = (
 }
 
 const shipLocation = (answers: AccidentNotificationAnswers): number => {
-  const location = answers.fishermanLocation
+  const location = answers.shipLocation
     .answer as FishermanWorkplaceAccidentShipLocationEnum
   switch (location) {
     case FishermanWorkplaceAccidentShipLocationEnum.SAILINGORFISHING:
