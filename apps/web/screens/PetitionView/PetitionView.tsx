@@ -162,9 +162,7 @@ const PetitionView = (namespace) => {
                         <Box
                           cursor="pointer"
                           className={className}
-                          onClick={() =>
-                            handlePagination(page, pagePetitions)
-                          }
+                          onClick={() => handlePagination(page, pagePetitions)}
                         >
                           {children}
                         </Box>
