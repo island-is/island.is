@@ -81,7 +81,15 @@ export class MunicipalityController {
     @Param('id') id: string,
     @Body() municipalityToUpdate: ActivityMunicipalityDto,
   ): Promise<MunicipalityModel> {
-    console.log('kemuru hingad? ')
-    return
+    const {
+      numberOfAffectedRows,
+      updatedMunicipality,
+    } = await this.municipalityService.update(id, municipalityToUpdate)
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Staff ${id} does not exist`)
+    }
+
+    return updatedMunicipality
   }
 }

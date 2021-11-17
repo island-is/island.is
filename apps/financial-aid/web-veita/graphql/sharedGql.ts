@@ -279,6 +279,15 @@ export const StaffMutation = gql`
   }
 `
 
+export const ActivityMunicipalityMutation = gql`
+  mutation ActivityMunicipalityMutation($input: ActivityMunicipalityInput!) {
+    activityMunicipality(input: $input) {
+      id
+      active
+    }
+  }
+`
+
 export const UpdateMunicipalityMutation = gql`
   mutation UpdateMunicipalityMutation($input: UpdateMunicipalityInput!) {
     updateMunicipality(input: $input) {

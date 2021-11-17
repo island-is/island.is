@@ -6,5 +6,5 @@ export class ActivityMunicipalityDto {
   @IsNotEmpty()
   @IsBoolean()
   @ApiProperty()
-  readonly active?: boolean
+  readonly active: boolean
 }

@@ -138,6 +138,10 @@ export interface Municipality {
   adminUsers?: Staff[]
 }
 
+export interface UpdateActivityMunicipality {
+  active: boolean
+}
+
 export interface ApplicationFile {
   id: string
   created: string

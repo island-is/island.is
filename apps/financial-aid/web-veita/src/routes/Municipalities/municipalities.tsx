@@ -21,6 +21,7 @@ import cn from 'classnames'
 
 import { Municipality, Routes } from '@island.is/financial-aid/shared/lib'
 import {
+  ActivityMunicipalityMutation,
   MunicipalitiesQuery,
   UpdateMunicipalityMutation,
 } from '@island.is/financial-aid-web/veita/graphql'
@@ -48,10 +49,10 @@ export const Municipalities = () => {
     }
   }, [data])
 
-  const [updateMunicipalityMutation] = useMutation(UpdateMunicipalityMutation)
+  const [activityMunicipality] = useMutation(ActivityMunicipalityMutation)
 
   const changeMunicipalityActivity = async (id: string, active: boolean) => {
-    await updateMunicipalityMutation({
+    await activityMunicipality({
       variables: {
         input: {
           id,
@@ -125,7 +126,7 @@ export const Municipalities = () => {
                       ActivationButtonTableItem(
                         item.active ? 'Óvirkja' : 'Virkja',
                         false,
-                        () => changeMunicipalityActivity(item.id, item.active),
+                        () => changeMunicipalityActivity(item.id, !item.active),
                         item.active,
                       ),
                     ]}
