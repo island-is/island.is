@@ -20,7 +20,6 @@ import {
   StaticText,
   buildDividerField,
   buildKeyValueField,
-  StaticText,
 } from '@island.is/application/core'
 import { NationalRegistryUser, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
