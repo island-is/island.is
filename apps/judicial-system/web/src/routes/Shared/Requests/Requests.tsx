@@ -147,11 +147,11 @@ export const Requests: React.FC = () => {
       routeTo = `${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
       if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findLastValidStep(getCourtSections(caseToOpen))
+        routeTo = findLastValidStep(getCourtSections(caseToOpen)).href
       } else {
         routeTo = findLastValidStep(
           getInvestigationCaseCourtSections(caseToOpen),
-        )
+        ).href
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
@@ -163,7 +163,7 @@ export const Requests: React.FC = () => {
         } else {
           routeTo = findLastValidStep(
             getCustodyAndTravelBanProsecutorSection(caseToOpen),
-          )
+          ).href
         }
       } else {
         if (
@@ -174,7 +174,7 @@ export const Requests: React.FC = () => {
         } else {
           routeTo = findLastValidStep(
             getInvestigationCaseProsecutorSection(caseToOpen),
-          )
+          ).href
         }
       }
     }

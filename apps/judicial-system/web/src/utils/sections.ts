@@ -31,7 +31,7 @@ interface Section {
 
 export const findLastValidStep = (section: Section) => {
   const filterValidSteps = section.children.filter((c) => c.href)
-  return filterValidSteps[filterValidSteps.length - 1]?.href
+  return filterValidSteps[filterValidSteps.length - 1]
 }
 
 export const getCustodyAndTravelBanProsecutorSection = (

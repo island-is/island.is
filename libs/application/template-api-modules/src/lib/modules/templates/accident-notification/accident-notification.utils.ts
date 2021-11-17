@@ -1,4 +1,4 @@
-import { Application } from '@island.is/application/core'
+import { Application, getValueViaPath } from '@island.is/application/core'
 import {
   accidentLocationLabelMapper,
   AccidentNotificationAnswers,
@@ -12,12 +12,23 @@ import {
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
 import {
+  additionalFilesRequest,
+  allAttachmentRequestConfig,
+  injuryCertificateRequest,
+  policeReportRequest,
+  powerOfAttorneyRequest,
+} from './config'
+import { AccidentNotificationAttachmentStatus } from './types/applicationStatus'
+import {
   ApplicationSubmit,
   Atvinnurekandi,
   Slys,
   TilkynnandiOrSlasadi,
 } from './types/applicationSubmit'
-import { AccidentNotificationAttachment } from './types/attachments'
+import {
+  AccidentNotificationAttachment,
+  AccidentNotificationAttachmentGatherRequest,
+} from './types/attachments'
 
 export const pathToAsset = (file: string) => {
   if (isRunningOnEnvironment('local')) {
@@ -309,4 +320,47 @@ export const getApplicationDocumentId = (application: Application): number => {
     throw new Error('No documentId found on application')
   }
   return documentId
+}
+
+export const attachmentStatusToAttachmentRequests = (
+  receivedAttachments?: AccidentNotificationAttachmentStatus,
+): AccidentNotificationAttachmentGatherRequest[] => {
+  if (!receivedAttachments) return allAttachmentRequestConfig.requests
+
+  const attachmentRequests: AccidentNotificationAttachmentGatherRequest[] = []
+
+  if (
+    !receivedAttachments.InjuryCertificate &&
+    receivedAttachments.InjuryCertificate != null
+  ) {
+    attachmentRequests.push(injuryCertificateRequest)
+  }
+  if (
+    !receivedAttachments.ProxyDocument &&
+    receivedAttachments.ProxyDocument != null
+  ) {
+    attachmentRequests.push(powerOfAttorneyRequest)
+  }
+  if (
+    !receivedAttachments.PoliceReport &&
+    receivedAttachments.PoliceReport != null
+  ) {
+    attachmentRequests.push(policeReportRequest)
+  }
+  if (!receivedAttachments.Unknown && receivedAttachments.Unknown != null) {
+    attachmentRequests.push(additionalFilesRequest)
+  }
+
+  return attachmentRequests
+}
+
+export const getApplicationAttachmentStatus = (
+  application: Application,
+): AccidentNotificationAttachmentStatus => {
+  const status = getValueViaPath(
+    application.answers,
+    'accidentStatus.recievedAttachments',
+  ) as AccidentNotificationAttachmentStatus
+
+  return status
 }

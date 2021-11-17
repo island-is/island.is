@@ -144,6 +144,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           onEntry: {
             apiModuleAction: ApiActions.addAttachment,
           },
+
           roles: [
             {
               id: Roles.APPLICANT,
@@ -169,6 +170,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.REVIEW_ADD_ATTACHMENT,
+            actions: 'attachments',
           },
           [DefaultEvents.REJECT]: {
             target: States.IN_FINAL_REVIEW,
@@ -222,6 +224,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      attachments: assign((context) => {
+        return context
+      }),
       approveApplication: assign((context) => {
         const { application } = context
         const { answers } = application
