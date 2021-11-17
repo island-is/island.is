@@ -172,7 +172,7 @@ const PetitionView = (namespace) => {
                     />
                   </Box>
                 ) : (
-                  <Text>{n('noPetitions', 'Engin meðmæli komin enn')}</Text>
+                  <Text>{n('noPetitions', 'Engin meðmæli komin')}</Text>
                 )}
               </GridColumn>
             ) : (
