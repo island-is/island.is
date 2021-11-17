@@ -70,7 +70,7 @@ export class EndorsementController {
     summary: 'Emails a PDF with list endorsements data',
   })
   @Scopes(EndorsementsScope.main)
-  @HasAccessGroup(AccessGroup.Owner, AccessGroup.Admin)
+  @HasAccessGroup(AccessGroup.Owner)
   @ApiParam({ name: 'listId', type: String })
   @ApiOkResponse({ type: sendPdfEmailResponse })
   @Post('/email-pdf')
@@ -93,7 +93,6 @@ export class EndorsementController {
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)
   @Get()
-  @HasAccessGroup(AccessGroup.Owner, AccessGroup.DMR)
   @Audit<PaginatedEndorsementDto>({
     resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),

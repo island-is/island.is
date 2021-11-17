@@ -85,3 +85,7 @@ export const actorName = style({
   lineHeight: '16px',
   fontWeight: theme.typography.regular,
 })
+
+export const breakWord = style({
+  wordBreak: 'break-word',
+})

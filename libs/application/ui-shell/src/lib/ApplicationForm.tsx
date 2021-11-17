@@ -15,7 +15,7 @@ import {
   getApplicationUIFields,
 } from '@island.is/application/template-loader'
 import { useApplicationNamespaces, useLocale } from '@island.is/localization'
-import { useFeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 import { RefetchProvider } from '../context/RefetchContext'
 import { FieldProvider, useFields } from '../context/FieldContext'

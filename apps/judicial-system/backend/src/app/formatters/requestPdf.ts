@@ -5,7 +5,6 @@ import { FormatMessage } from '@island.is/cms-translations'
 import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import {
   caseTypes,
-  formatRequestedCustodyRestrictions,
   formatNationalId,
   capitalize,
   formatDate,
@@ -138,29 +137,6 @@ function constructRestrictionRequestPdf(
     )
     .text(' ')
     .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
-    .lineGap(8)
-    .text(
-      `${formatMessage(m.baseInfo.restrictions)} ${
-        existingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-      }`,
-      {},
-    )
-    .font('Helvetica')
-    .fontSize(baseFontSize)
-    .text(
-      `${formatRequestedCustodyRestrictions(
-        existingCase.type,
-        existingCase.requestedCustodyRestrictions,
-        existingCase.requestedOtherRestrictions,
-      )}`,
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
-    .text(' ')
-    .font('Helvetica-Bold')
     .fontSize(largeFontSize)
     .lineGap(8)
     .text(formatMessage(m.factsAndArguments.heading))
@@ -268,11 +244,10 @@ function constructInvestigationRequestPdf(
     .text(`${formatMessage(m.baseInfo.fullName)} ${existingCase.accusedName}`)
     .text(`${formatMessage(m.baseInfo.address)} ${existingCase.accusedAddress}`)
 
-  if (existingCase.defenderName) {
+  if (existingCase.defenderName && !existingCase.defenderIsSpokesperson) {
     doc.text(
       formatMessage(m.baseInfo.defender, {
-        defenderName:
-          !existingCase.defenderIsSpokesperson && existingCase.defenderName,
+        defenderName: existingCase.defenderName,
       }),
     )
   }
