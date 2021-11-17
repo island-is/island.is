@@ -1,4 +1,3 @@
-import { PaymentScheduleType } from '@island.is/api/schema'
 import { Application, getValueViaPath } from '@island.is/application/core'
 import {
   DefaultApi,
