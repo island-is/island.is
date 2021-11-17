@@ -1,14 +1,9 @@
-import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator'
+import { IsObject, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 import type { Aid } from '@island.is/financial-aid/shared/lib'
 
 export class UpdateMunicipalityDto {
-  @IsOptional()
-  @IsBoolean()
-  @ApiProperty()
-  readonly active?: boolean
-
   @IsOptional()
   @IsObject()
   @ApiProperty()

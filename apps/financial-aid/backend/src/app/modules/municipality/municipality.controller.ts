@@ -87,7 +87,7 @@ export class MunicipalityController {
     } = await this.municipalityService.update(id, municipalityToUpdate)
 
     if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(`Staff ${id} does not exist`)
+      throw new NotFoundException(`Municipality ${id} does not exist`)
     }
 
     return updatedMunicipality
