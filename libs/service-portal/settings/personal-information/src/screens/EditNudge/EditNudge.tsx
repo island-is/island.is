@@ -83,7 +83,7 @@ export const EditNudge: ServicePortalModuleComponent = () => {
                 defaultMessage: `
                     Hér getur þú gert breytingar á hnipp möguleikum. 
                     Hnipp stillingar segja til um hvort þú viljir að Island.is láti 
-                    þig vita þegar eitthvað hnippvert gerist.
+                    þig vita þegar eitthvað markvert gerist.
                   `,
               })}
             </Text>
