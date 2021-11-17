@@ -32,6 +32,16 @@ export const serviceSetup = (services: {
       TEMPORARY_VOTER_REGISTRY_API_URL: ref(
         (h) => `http://${h.svc(services.servicesTemporaryVoterRegistryApi)}`,
       ),
+      EMAIL_FROM_NAME: {
+        dev: 'devland.is',
+        staging: 'devland.is',
+        prod: 'island.is',
+      },
+      EMAIL_FROM_ADDRESS: {
+        dev: 'development@island.is',
+        staging: 'development@island.is',
+        prod: 'noreply@island.is',
+      },
     })
     .secrets({
       ACCESS_GROUP_DMR:

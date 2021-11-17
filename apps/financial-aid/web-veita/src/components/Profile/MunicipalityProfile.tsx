@@ -1,5 +1,5 @@
-import React from 'react'
-import { Box, Link, Text } from '@island.is/island-ui/core'
+import React, { useState } from 'react'
+import { Box, Button, Link, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
 import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
@@ -10,6 +10,7 @@ import {
   AidType,
   Municipality,
   Staff,
+  StaffRole,
 } from '@island.is/financial-aid/shared/lib'
 
 import {
@@ -17,13 +18,25 @@ import {
   TableBody,
   TextTableItem,
   ActivationButtonTableItem,
+  NewUserModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 interface MunicipalityProfileProps {
   municipality: Municipality
+  getMunicipality: () => void
 }
 
-const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
+const MunicipalityProfile = ({
+  municipality,
+  getMunicipality,
+}: MunicipalityProfileProps) => {
+  const [isModalVisible, setIsModalVisible] = useState(false)
+
+  const refreshList = () => {
+    setIsModalVisible(false)
+    getMunicipality()
+  }
+
   const smallText = 'small'
   const headline = 'h5'
   const aidTableBody = (value: AidType) => {
@@ -85,9 +98,19 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
     >
       <Box className={`${styles.widthAlmostFull}`}>
         <Box className={`contentUp delay-25`} marginBottom={[3, 3, 7]}>
-          <Text as="h1" variant="h1" marginBottom={2}>
-            {municipality.name}
-          </Text>
+          <Box display="flex" justifyContent="spaceBetween" alignItems="center">
+            <Text as="h1" variant="h1" marginBottom={2}>
+              {municipality.name}
+            </Text>
+            <Button
+              size="small"
+              icon="add"
+              variant="ghost"
+              onClick={() => setIsModalVisible(true)}
+            >
+              Nýr stjórnandi
+            </Button>
+          </Box>
 
           <Box display="flex" marginRight={1} marginTop={5}>
             <Box marginRight={1}>
@@ -258,6 +281,14 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
           </Box>
         )}
       </Box>
+      <NewUserModal
+        isVisible={isModalVisible}
+        setIsVisible={(visible) => {
+          setIsModalVisible(visible)
+        }}
+        onStaffCreated={refreshList}
+        predefinedRoles={[StaffRole.ADMIN]}
+      />
     </Box>
   )
 }
