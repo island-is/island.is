@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, Box, Icon, Text } from '@island.is/island-ui/core'
-import { useFeatureFlag } from '@island.is/feature-flags'
+import { useFeatureFlag } from '@island.is/react/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useGetUserProfileQuery } from '../../../gen/graphql'
