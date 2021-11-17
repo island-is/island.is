@@ -37,6 +37,7 @@ import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { AuditModule } from '@island.is/nest/audit'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { ProblemModule } from '@island.is/nest/problem'
+import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 
@@ -258,6 +259,15 @@ const autoSchemaFile = environment.production
       username: environment.paymentSchedule.username,
     }),
     ProblemModule,
+    CriminalRecordModule.register({
+      clientConfig: {
+        xroadBaseUrl: environment.xroad.baseUrl,
+        xroadClientId: environment.xroad.clientId,
+        secret: environment.drivingLicense.secret,
+        xroadPathV1: environment.drivingLicense.v1.xroadPath,
+        xroadPathV2: environment.drivingLicense.v2.xroadPath,
+      },
+    }),
   ],
 })
 export class AppModule {}

@@ -88,6 +88,9 @@
     "api-domains-content-search": {
       "tags": []
     },
+    "api-domains-criminal-record": {
+      "tags": []
+    },
     "api-domains-directorate-of-labour": {
       "tags": []
     },
@@ -291,6 +294,9 @@
     "clients-auth-public-api": {
       "tags": [],
       "implicitDependencies": ["services-auth-public-api"]
+    },
+    "clients-criminal-record": {
+      "tags": []
     },
     "clients-document-provider": {
       "tags": []

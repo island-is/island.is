@@ -54,6 +54,9 @@
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
+      "@island.is/api/domains/criminal-record": [
+        "libs/api/domains/criminal-record/src/index.ts"
+      ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
       ],
@@ -228,6 +231,9 @@
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/clients/auth-public-api": [
         "libs/clients/auth-public-api/src/index.ts"
+      ],
+      "@island.is/clients/criminal-record": [
+        "libs/clients/criminal-record/src/index.ts"
       ],
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"

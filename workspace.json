@@ -9020,6 +9020,48 @@
           }
         }
       }
+    },
+    "api-domains-criminal-record": {
+      "root": "libs/api/domains/criminal-record",
+      "sourceRoot": "libs/api/domains/criminal-record/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/criminal-record/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/criminal-record"],
+          "options": {
+            "jestConfig": "libs/api/domains/criminal-record/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-criminal-record": {
+      "root": "libs/clients/criminal-record",
+      "sourceRoot": "libs/clients/criminal-record/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/criminal-record/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/criminal-record"],
+          "options": {
+            "jestConfig": "libs/clients/criminal-record/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }

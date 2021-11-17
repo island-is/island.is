@@ -17,6 +17,7 @@ import {
   buildDataProviderItem,
   buildCustomField,
   DefaultEvents,
+  StaticText,
   buildDividerField,
   buildKeyValueField,
 } from '@island.is/application/core'

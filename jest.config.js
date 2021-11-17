@@ -181,5 +181,7 @@ module.exports = {
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
     '<rootDir>/libs/application/templates/criminal-record',
+    '<rootDir>/libs/api/domains/criminal-record',
+    '<rootDir>/libs/clients/criminal-record',
   ],
 }
