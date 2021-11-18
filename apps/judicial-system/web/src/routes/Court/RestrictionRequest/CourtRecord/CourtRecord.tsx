@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
+import formatISO from 'date-fns/formatISO'
+
 import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   FormFooter,
@@ -13,17 +14,13 @@ import {
   DateTime,
   HideableText,
 } from '@island.is/judicial-system-web/src/components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   caseTypes,
   formatAccusedByGender,
   NounCases,
 } from '@island.is/judicial-system/formatters'
 import { CaseType } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -34,16 +31,18 @@ import {
   newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isCourtRecordStepValidRC } from '../../../../utils/validate'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   rcCourtRecord as m,
   closedCourt,
 } from '@island.is/judicial-system-web/messages'
-import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import formatISO from 'date-fns/formatISO'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 
 export const CourtRecord: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
   const [, setCourtRecordStartDateIsValid] = useState(true)
   const [courtLocationErrorMessage, setCourtLocationMessage] = useState('')
   const [
@@ -52,14 +51,15 @@ export const CourtRecord: React.FC = () => {
   ] = useState('')
 
   const router = useRouter()
+  const id = router.query.id
   const { updateCase, autofill } = useCase()
   const { formatMessage } = useIntl()
-
-  const id = router.query.id
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'
@@ -91,9 +91,10 @@ export const CourtRecord: React.FC = () => {
       return attendees
     }
 
-    if (!workingCase && data?.case) {
-      const theCase = data.case
+    if (workingCase.id !== '') {
+      const theCase = workingCase
 
+      // TODO: Is it possible to use new Date().toISOString() here?
       autofill('courtStartDate', formatISO(new Date()), theCase)
 
       if (theCase.court) {
@@ -159,7 +160,7 @@ export const CourtRecord: React.FC = () => {
 
       setWorkingCase(theCase)
     }
-  }, [workingCase, updateCase, setWorkingCase, data, autofill, formatMessage])
+  }, [workingCase, updateCase, setWorkingCase, autofill, formatMessage])
 
   return (
     <PageLayout
@@ -168,246 +169,244 @@ export const CourtRecord: React.FC = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.COURT_RECORD}
-      isLoading={loading}
-      notFound={data?.case === undefined}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
     >
-      {workingCase ? (
-        <>
-          <FormContentContainer>
-            <Box marginBottom={10}>
-              <Text as="h1" variant="h1">
-                Þingbók
-              </Text>
-            </Box>
-            <Box component="section" marginBottom={7}>
-              <CaseNumbers workingCase={workingCase} />
-            </Box>
-            <Box component="section" marginBottom={3}>
-              <BlueBox>
-                <Box marginBottom={3}>
-                  <DateTime
-                    name="courtStartDate"
-                    datepickerLabel="Dagsetning þinghalds"
-                    timeLabel="Þinghald hófst (kk:mm)"
-                    maxDate={new Date()}
-                    selectedDate={
-                      workingCase.courtStartDate
-                        ? new Date(workingCase.courtStartDate)
-                        : new Date()
-                    }
-                    onChange={(date: Date | undefined, valid: boolean) => {
-                      newSetAndSendDateToServer(
-                        'courtStartDate',
-                        date,
-                        valid,
-                        workingCase,
-                        setWorkingCase,
-                        setCourtRecordStartDateIsValid,
-                        updateCase,
-                      )
-                    }}
-                    blueBox={false}
-                    required
-                  />
-                </Box>
-                <Input
-                  data-testid="courtLocation"
-                  name="courtLocation"
-                  tooltip={formatMessage(m.sections.courtLocation.tooltip)}
-                  label={formatMessage(m.sections.courtLocation.label)}
-                  defaultValue={workingCase.courtLocation}
-                  placeholder={formatMessage(
-                    m.sections.courtLocation.placeholder,
-                  )}
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'courtLocation',
-                      event,
-                      ['empty'],
-                      workingCase,
-                      setWorkingCase,
-                      courtLocationErrorMessage,
-                      setCourtLocationMessage,
-                    )
-                  }
-                  onBlur={(event) =>
-                    validateAndSendToServer(
-                      'courtLocation',
-                      event.target.value,
-                      ['empty'],
-                      workingCase,
-                      updateCase,
-                      setCourtLocationMessage,
-                    )
-                  }
-                  errorMessage={courtLocationErrorMessage}
-                  hasError={courtLocationErrorMessage !== ''}
-                  autoComplete="off"
-                  required
-                />
-              </BlueBox>
-            </Box>
-            <Box component="section" marginBottom={8}>
+      <>
+        <FormContentContainer>
+          <Box marginBottom={10}>
+            <Text as="h1" variant="h1">
+              Þingbók
+            </Text>
+          </Box>
+          <Box component="section" marginBottom={7}>
+            <CaseNumbers workingCase={workingCase} />
+          </Box>
+          <Box component="section" marginBottom={3}>
+            <BlueBox>
               <Box marginBottom={3}>
-                <HideableText
-                  text={formatMessage(closedCourt.text)}
-                  isHidden={workingCase.isClosedCourtHidden}
-                  onToggleVisibility={(isVisible: boolean) =>
-                    setAndSendToServer(
-                      'isClosedCourtHidden',
-                      isVisible,
+                <DateTime
+                  name="courtStartDate"
+                  datepickerLabel="Dagsetning þinghalds"
+                  timeLabel="Þinghald hófst (kk:mm)"
+                  maxDate={new Date()}
+                  selectedDate={
+                    workingCase.courtStartDate
+                      ? new Date(workingCase.courtStartDate)
+                      : new Date()
+                  }
+                  onChange={(date: Date | undefined, valid: boolean) => {
+                    newSetAndSendDateToServer(
+                      'courtStartDate',
+                      date,
+                      valid,
                       workingCase,
                       setWorkingCase,
+                      setCourtRecordStartDateIsValid,
                       updateCase,
                     )
-                  }
-                  tooltip={formatMessage(closedCourt.tooltip)}
+                  }}
+                  blueBox={false}
+                  required
                 />
               </Box>
               <Input
-                data-testid="courtAttendees"
-                name="courtAttendees"
-                label="Mættir eru"
-                defaultValue={workingCase.courtAttendees}
-                placeholder="Skrifa hér..."
+                data-testid="courtLocation"
+                name="courtLocation"
+                tooltip={formatMessage(m.sections.courtLocation.tooltip)}
+                label={formatMessage(m.sections.courtLocation.label)}
+                defaultValue={workingCase.courtLocation}
+                placeholder={formatMessage(
+                  m.sections.courtLocation.placeholder,
+                )}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
-                    'courtAttendees',
+                    'courtLocation',
                     event,
                     ['empty'],
                     workingCase,
                     setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  updateCase(
-                    workingCase.id,
-                    parseString('courtAttendees', event.target.value),
-                  )
-                }
-                textarea
-                rows={7}
-              />
-            </Box>
-            <Box component="section" marginBottom={8}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Dómskjöl
-                </Text>
-              </Box>
-              <CourtDocuments
-                title={`Krafa um ${caseTypes[workingCase.type]}`}
-                tagText="Þingmerkt nr. 1"
-                tagVariant="darkerBlue"
-                text="Rannsóknargögn málsins liggja frammi."
-                caseId={workingCase.id}
-                selectedCourtDocuments={workingCase.courtDocuments ?? []}
-                onUpdateCase={updateCase}
-                setWorkingCase={setWorkingCase}
-                workingCase={workingCase}
-              />
-            </Box>
-            <Box component="section" marginBottom={8}>
-              <Box marginBottom={1}>
-                <Text as="h3" variant="h3">
-                  {`${formatMessage(m.sections.accusedBookings.title, {
-                    genderedAccused: formatAccusedByGender(
-                      workingCase.accusedGender,
-                      NounCases.GENITIVE,
-                    ),
-                  })} `}
-                  <Tooltip
-                    text={formatMessage(m.sections.accusedBookings.tooltip)}
-                  />
-                </Text>
-              </Box>
-              <Input
-                data-testid="accusedBookings"
-                name="accusedBookings"
-                label={formatMessage(m.sections.accusedBookings.label, {
-                  genderedAccused: formatAccusedByGender(
-                    workingCase.accusedGender,
-                    NounCases.GENITIVE,
-                  ),
-                })}
-                defaultValue={workingCase.accusedBookings}
-                placeholder={formatMessage(
-                  m.sections.accusedBookings.placeholder,
-                )}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'accusedBookings',
-                    event,
-                    [],
-                    workingCase,
-                    setWorkingCase,
+                    courtLocationErrorMessage,
+                    setCourtLocationMessage,
                   )
                 }
                 onBlur={(event) =>
                   validateAndSendToServer(
-                    'accusedBookings',
+                    'courtLocation',
                     event.target.value,
-                    [],
+                    ['empty'],
                     workingCase,
+                    updateCase,
+                    setCourtLocationMessage,
+                  )
+                }
+                errorMessage={courtLocationErrorMessage}
+                hasError={courtLocationErrorMessage !== ''}
+                autoComplete="off"
+                required
+              />
+            </BlueBox>
+          </Box>
+          <Box component="section" marginBottom={8}>
+            <Box marginBottom={3}>
+              <HideableText
+                text={formatMessage(closedCourt.text)}
+                isHidden={workingCase.isClosedCourtHidden}
+                onToggleVisibility={(isVisible: boolean) =>
+                  setAndSendToServer(
+                    'isClosedCourtHidden',
+                    isVisible,
+                    workingCase,
+                    setWorkingCase,
                     updateCase,
                   )
                 }
-                textarea
-                rows={7}
+                tooltip={formatMessage(closedCourt.tooltip)}
               />
             </Box>
-            <Box component="section" marginBottom={8}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Málflutningur
-                </Text>
-              </Box>
-              <Box marginBottom={3}>
-                <Input
-                  data-testid="litigationPresentations"
-                  name="litigationPresentations"
-                  label="Málflutningur og aðrar bókanir"
-                  defaultValue={workingCase.litigationPresentations}
-                  placeholder="Málflutningsræður og annað sem fram kom í þinghaldi er skráð hér..."
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'litigationPresentations',
-                      event,
-                      ['empty'],
-                      workingCase,
-                      setWorkingCase,
-                      litigationPresentationsErrorMessage,
-                      setLitigationPresentationsMessage,
-                    )
-                  }
-                  onBlur={(event) =>
-                    validateAndSendToServer(
-                      'litigationPresentations',
-                      event.target.value,
-                      ['empty'],
-                      workingCase,
-                      updateCase,
-                      setLitigationPresentationsMessage,
-                    )
-                  }
-                  errorMessage={litigationPresentationsErrorMessage}
-                  hasError={litigationPresentationsErrorMessage !== ''}
-                  textarea
-                  rows={7}
-                  required
-                />
-              </Box>
-            </Box>
-          </FormContentContainer>
-          <FormContentContainer isFooter>
-            <FormFooter
-              previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-              nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
-              nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
+            <Input
+              data-testid="courtAttendees"
+              name="courtAttendees"
+              label="Mættir eru"
+              defaultValue={workingCase.courtAttendees}
+              placeholder="Skrifa hér..."
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'courtAttendees',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                updateCase(
+                  workingCase.id,
+                  parseString('courtAttendees', event.target.value),
+                )
+              }
+              textarea
+              rows={7}
             />
-          </FormContentContainer>
-        </>
-      ) : null}
+          </Box>
+          <Box component="section" marginBottom={8}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                Dómskjöl
+              </Text>
+            </Box>
+            <CourtDocuments
+              title={`Krafa um ${caseTypes[workingCase.type]}`}
+              tagText="Þingmerkt nr. 1"
+              tagVariant="darkerBlue"
+              text="Rannsóknargögn málsins liggja frammi."
+              caseId={workingCase.id}
+              selectedCourtDocuments={workingCase.courtDocuments ?? []}
+              onUpdateCase={updateCase}
+              setWorkingCase={setWorkingCase}
+              workingCase={workingCase}
+            />
+          </Box>
+          <Box component="section" marginBottom={8}>
+            <Box marginBottom={1}>
+              <Text as="h3" variant="h3">
+                {`${formatMessage(m.sections.accusedBookings.title, {
+                  genderedAccused: formatAccusedByGender(
+                    workingCase.accusedGender,
+                    NounCases.GENITIVE,
+                  ),
+                })} `}
+                <Tooltip
+                  text={formatMessage(m.sections.accusedBookings.tooltip)}
+                />
+              </Text>
+            </Box>
+            <Input
+              data-testid="accusedBookings"
+              name="accusedBookings"
+              label={formatMessage(m.sections.accusedBookings.label, {
+                genderedAccused: formatAccusedByGender(
+                  workingCase.accusedGender,
+                  NounCases.GENITIVE,
+                ),
+              })}
+              defaultValue={workingCase.accusedBookings}
+              placeholder={formatMessage(
+                m.sections.accusedBookings.placeholder,
+              )}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'accusedBookings',
+                  event,
+                  [],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'accusedBookings',
+                  event.target.value,
+                  [],
+                  workingCase,
+                  updateCase,
+                )
+              }
+              textarea
+              rows={7}
+            />
+          </Box>
+          <Box component="section" marginBottom={8}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                Málflutningur
+              </Text>
+            </Box>
+            <Box marginBottom={3}>
+              <Input
+                data-testid="litigationPresentations"
+                name="litigationPresentations"
+                label="Málflutningur og aðrar bókanir"
+                defaultValue={workingCase.litigationPresentations}
+                placeholder="Málflutningsræður og annað sem fram kom í þinghaldi er skráð hér..."
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'litigationPresentations',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    litigationPresentationsErrorMessage,
+                    setLitigationPresentationsMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'litigationPresentations',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setLitigationPresentationsMessage,
+                  )
+                }
+                errorMessage={litigationPresentationsErrorMessage}
+                hasError={litigationPresentationsErrorMessage !== ''}
+                textarea
+                rows={7}
+                required
+              />
+            </Box>
+          </Box>
+        </FormContentContainer>
+        <FormContentContainer isFooter>
+          <FormFooter
+            previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+            nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
+            nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
+          />
+        </FormContentContainer>
+      </>
     </PageLayout>
   )
 }

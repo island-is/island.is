@@ -65,7 +65,7 @@ export const SignedVerdictOverview: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (!workingCase && data?.case) {
+    if (workingCase.id !== '') {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
@@ -275,7 +275,7 @@ export const SignedVerdictOverview: React.FC = () => {
       workingCase={workingCase}
       activeSection={2}
       isLoading={loading}
-      notFound={data?.case === undefined}
+      notFound={caseNotFound}
     >
       {workingCase ? (
         <>
