@@ -250,7 +250,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           id
           title: text
           slug: url
-          intro: description
+          intro
           labels
         }
       }

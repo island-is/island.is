@@ -25,7 +25,7 @@ export class LinkSyncService implements CmsSyncProvider<ILink> {
           return {
             _id: mapped.id,
             title: mapped.text,
-            content: mapped.description,
+            content: mapped.intro,
             type: 'webLink',
             response: JSON.stringify({ ...mapped, typename: 'Link' }),
             dateCreated: entry.sys.createdAt,

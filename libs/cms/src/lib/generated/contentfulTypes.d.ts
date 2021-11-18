@@ -1140,7 +1140,7 @@ export interface ILinkFields {
   searchable?: boolean | undefined
 
   /** Search Description */
-  description?: string | undefined
+  intro?: string | undefined
 
   /** Search Labels */
   labels?: string[] | undefined

@@ -14,7 +14,7 @@ export class Link {
   url!: string
 
   @Field({ nullable: true })
-  description?: string
+  intro?: string
 
   @Field(() => [String], { nullable: true })
   labels: string[] = []
@@ -25,7 +25,7 @@ export const mapLink = ({ sys, fields }: ILink): Link => {
     id: sys.id,
     text: fields?.text ?? '',
     url: fields?.url ?? '',
-    description: fields?.description ?? '',
+    intro: fields?.intro ?? '',
     labels: fields?.labels ?? [],
   }
 }
