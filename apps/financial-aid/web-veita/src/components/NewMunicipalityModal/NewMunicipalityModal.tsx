@@ -51,8 +51,9 @@ const NewMunicipalityModal = ({
   })
 
   const areRequiredFieldsFilled =
-    !state.serviceCenter.label || !state.serviceCenter.value
-  !state.adminEmail ||
+    !state.serviceCenter.label ||
+    !state.serviceCenter.value ||
+    !state.adminEmail ||
     !state.adminName ||
     !state.adminNationalId ||
     !isEmailValid(state.adminEmail) ||
