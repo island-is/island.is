@@ -1,42 +1,33 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
-import { CaseState } from '@island.is/judicial-system/types'
-import type { Case, CaseType } from '@island.is/judicial-system/types'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  CaseData,
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-
-import { StepOneForm } from './StepOneForm'
 import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
-interface Props {
-  type?: CaseType
-}
+import { StepOneForm } from './StepOneForm'
 
-export const StepOne: React.FC<Props> = ({ type }: Props) => {
+export const StepOne: React.FC = () => {
   const router = useRouter()
-  const id = router.query.id
-  const [workingCase, setWorkingCase] = useState<Case>()
   const { createCase, isCreatingCase } = useCase()
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-    skip: !id,
-  })
-
   const { loading: institutionLoading } = useInstitution()
+
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   const handleNextButtonClick = async (theCase: Case) => {
     const caseId = theCase.id === '' ? await createCase(theCase) : theCase.id
@@ -48,29 +39,6 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
     document.title = 'Sakborningur - Réttarvörslugátt'
   }, [])
 
-  // Run this if id is in url, i.e. if user is opening an existing request.
-  useEffect(() => {
-    if (id && !workingCase && data?.case) {
-      setWorkingCase(data?.case)
-    } else if (!id && !workingCase && type !== undefined) {
-      setWorkingCase({
-        id: '',
-        created: '',
-        modified: '',
-        type,
-        state: CaseState.NEW,
-        policeCaseNumber: '',
-        accusedNationalId: '',
-        accusedName: '',
-        accusedAddress: '',
-        defenderName: '',
-        defenderEmail: '',
-        sendRequestToDefender: false,
-        accusedGender: undefined,
-      })
-    }
-  }, [id, workingCase, setWorkingCase, data, type])
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -78,11 +46,11 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_ONE}
-      isLoading={loading}
-      notFound={id !== undefined && data?.case === undefined}
-      isExtension={workingCase?.parentCase && true}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
+      isExtension={workingCase.parentCase !== undefined}
     >
-      {workingCase && !institutionLoading && (
+      {!institutionLoading && (
         <StepOneForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}

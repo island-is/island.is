@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
+
 import {
   CaseState,
   CaseTransition,
@@ -10,9 +11,7 @@ import {
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { Case, User } from '@island.is/judicial-system/types'
 import {
-  CaseData,
   ProsecutorSubsections,
   Sections,
   ReactSelectOption,
@@ -21,9 +20,7 @@ import {
   Modal,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import {
   useCase,
@@ -31,21 +28,32 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import type { User } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import StepTwoForm from './StepTwoForm'
 
 export const StepTwo: React.FC = () => {
-  const router = useRouter()
-  const id = router.query.id
-  const { formatMessage } = useIntl()
-  const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-
   const [substituteProsecutorId, setSubstituteProsecutorId] = useState<string>()
   const [
     isProsecutorAccessModalVisible,
     setIsProsecutorAccessModalVisible,
   ] = useState<boolean>(false)
+
+  const router = useRouter()
+  const { formatMessage } = useIntl()
+  const { courts, loading: institutionLoading } = useInstitution()
   const { user } = useContext(UserContext)
+
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
+
   const {
     sendNotification,
     isSendingNotification,
@@ -54,27 +62,14 @@ export const StepTwo: React.FC = () => {
     updateCase,
   } = useCase()
 
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
   const { data: userData, loading: userLoading } = useQuery(UsersQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const { courts, loading: institutionLoading } = useInstitution()
-
   useEffect(() => {
     document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
   }, [])
-
-  useEffect(() => {
-    if (!workingCase && data) {
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
 
   const prosecutors = userData?.users
     .filter(
@@ -156,10 +151,10 @@ export const StepTwo: React.FC = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_TWO}
-      isLoading={loading || userLoading || institutionLoading}
-      notFound={data?.case === undefined}
+      isLoading={isLoadingWorkingCase || userLoading || institutionLoading}
+      notFound={caseNotFound}
     >
-      {workingCase && prosecutors && !institutionLoading ? (
+      {prosecutors && !institutionLoading ? (
         <>
           <StepTwoForm
             workingCase={workingCase}
