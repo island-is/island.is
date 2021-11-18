@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { Case, PoliceCaseFile } from '@island.is/judicial-system/types'
+import React, { useContext, useEffect, useState } from 'react'
+import { PoliceCaseFile } from '@island.is/judicial-system/types'
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { useQuery } from '@apollo/client'
+import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  CaseQuery,
-  PoliceCaseFilesQuery,
-} from '@island.is/judicial-system-web/graphql'
-import {
-  CaseData,
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useRouter } from 'next/router'
 import CaseFilesForm from './CaseFilesForm'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 export interface PoliceCaseFilesData {
   files: PoliceCaseFile[]
@@ -24,12 +21,13 @@ export interface PoliceCaseFilesData {
 export const CaseFiles: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
-  const [workingCase, setWorkingCase] = useState<Case>()
+
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
+
+  const { workingCase, setWorkingCase, isLoadingWorkingCase } = useContext(
+    FormContext,
+  )
+
   const {
     data: policeData,
     loading: policeDataLoading,
@@ -42,12 +40,6 @@ export const CaseFiles: React.FC = () => {
   useEffect(() => {
     document.title = 'Rannsóknargögn - Réttarvörslugátt'
   }, [])
-
-  useEffect(() => {
-    if (id && !workingCase && data) {
-      setWorkingCase(data.case)
-    }
-  }, [id, workingCase, setWorkingCase, data])
 
   useEffect(() => {
     if (policeData && policeData.policeCaseFiles) {
@@ -79,17 +71,15 @@ export const CaseFiles: React.FC = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_FIVE}
-      isLoading={loading}
-      notFound={data?.case === undefined}
+      isLoading={isLoadingWorkingCase || policeDataLoading}
+      notFound={!workingCase}
     >
-      {workingCase ? (
-        <CaseFilesForm
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          isLoading={loading}
-          policeCaseFiles={policeCaseFiles}
-        />
-      ) : null}
+      <CaseFilesForm
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+        isLoading={isLoadingWorkingCase || policeDataLoading}
+        policeCaseFiles={policeCaseFiles}
+      />
     </PageLayout>
   )
 }

@@ -10,7 +10,7 @@ import { selectCourt as m } from '@island.is/judicial-system-web/messages/Core/s
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   setSelectedCourt: React.Dispatch<React.SetStateAction<string | undefined>>
   courts: Institution[]
 }

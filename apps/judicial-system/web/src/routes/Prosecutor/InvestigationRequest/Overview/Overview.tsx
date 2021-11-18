@@ -1,18 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 import {
   NotificationType,
   CaseState,
   CaseTransition,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import {
   Modal,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
@@ -21,32 +17,24 @@ import OverviewForm from './OverviewForm'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icOverview as m } from '@island.is/judicial-system-web/messages'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { useRouter } from 'next/router'
 
 export const Overview: React.FC = () => {
-  const router = useRouter()
-  const id = router.query.id
-
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [modalText, setModalText] = useState('')
-  const [workingCase, setWorkingCase] = useState<Case>()
 
+  const router = useRouter()
   const { transitionCase, sendNotification, isSendingNotification } = useCase()
-  const { data, loading } = useQuery(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
+  const { workingCase, setWorkingCase, isLoadingWorkingCase } = useContext(
+    FormContext,
+  )
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
   const { formatMessage } = useIntl()
-
-  useEffect(() => {
-    if (!workingCase && data?.case) {
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
@@ -91,15 +79,15 @@ export const Overview: React.FC = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
-      isLoading={loading}
-      notFound={data?.case === undefined}
+      isLoading={isLoadingWorkingCase}
+      notFound={!workingCase}
     >
       {workingCase ? (
         <>
           <OverviewForm
             workingCase={workingCase}
             handleNextButtonClick={handleNextButtonClick}
-            isLoading={loading || isSendingNotification}
+            isLoading={isLoadingWorkingCase || isSendingNotification}
           />
           {modalVisible && (
             <Modal

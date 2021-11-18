@@ -17,7 +17,7 @@ export const removeTabsValidateAndSet = (
   evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   validations: Validation[],
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
@@ -46,7 +46,7 @@ export const validateAndSet = (
   value: string,
   validations: Validation[],
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
@@ -147,7 +147,7 @@ export const newSetAndSendDateToServer = (
   date: Date | undefined,
   isValid: boolean,
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   setIsValid: (value: React.SetStateAction<boolean>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
@@ -232,7 +232,7 @@ export const setAndSendToServer = (
   field: string,
   value: string | boolean | null,
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
   let stringValue = ''
