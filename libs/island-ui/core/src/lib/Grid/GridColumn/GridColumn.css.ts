@@ -140,7 +140,7 @@ const makeOrder = (breakpoint: Breakpoint) =>
     mapValues(order, (order) =>
       themeUtils.responsiveStyle({ [breakpoint]: { order } }),
     ),
-    `order_${breakpoint}:${order}`,
+    `order_${breakpoint}`,
   ) as Orders
 
 export const orderXs = makeOrder('xs')

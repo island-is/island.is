@@ -35,7 +35,7 @@ export class MunicipalityModel implements Municipality {
   readonly rulesHomepage?: string
 
   @Field({ nullable: true })
-  readonly users?: number
+  readonly numberOfUsers?: number
 
   @Field(() => [StaffModel], { nullable: true })
   readonly adminUsers?: StaffModel[]
