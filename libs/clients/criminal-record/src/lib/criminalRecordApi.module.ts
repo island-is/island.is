@@ -11,8 +11,7 @@ export interface CriminalRecordApiConfig {
   xroadBaseUrl: string
   xroadClientId: string
   secret: string
-  xroadPathV1: string
-  xroadPathV2: string
+  xroadPath: string
   fetchOptions?: Partial<EnhancedFetchOptions>
 }
 

@@ -4,18 +4,18 @@ import { Injectable } from '@nestjs/common'
 // } from './graphql/models/checkCriminalRecordObj.model';
 import {
   CriminalRecordApi,
+  CriminalRecord,
 } from '@island.is/clients/criminal-record'
 
 @Injectable()
 export class CriminalRecordService {
   constructor(private readonly criminalRecordApi: CriminalRecordApi) {}
 
+  async getCriminalRecord(): Promise<CriminalRecord> {
+    return await this.criminalRecordApi.getCriminalRecord()
+  }
+
   async checkCriminalRecord(): Promise<Boolean> {
-    const criminalRecord = await this.criminalRecordApi.getCriminalRecord()
-
-    //TODO save criminalRecord in some storage
-
-    // return true if no error was caught
-    return true
+    return await this.criminalRecordApi.checkCriminalRecord()
   }
 }

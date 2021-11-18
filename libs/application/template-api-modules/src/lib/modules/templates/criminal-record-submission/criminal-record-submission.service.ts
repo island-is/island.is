@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common'
-
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
+import {
+  CriminalRecordService,
+} from '@island.is/api/domains/criminal-record'
+import { CriminalRecord } from '@island.is/clients/criminal-record'
 
 @Injectable()
-export class CriminalRecordService {
+export class CriminalRecordSubmissionService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly criminalRecordService: CriminalRecordService,
   ) {}
 
   async createCharge({
@@ -23,11 +27,7 @@ export class CriminalRecordService {
     return result
   }
 
-  async sendApplication({ application }: TemplateApiModuleActionProps) {
-    console.log('TODO sendApplication')
-  }
-
-  async getCriminalRecord({ application }: TemplateApiModuleActionProps) {
-    console.log('TODO getCriminalRecord')
+  async getCriminalRecord({ application }: TemplateApiModuleActionProps): Promise<CriminalRecord> {
+    return this.criminalRecordService.getCriminalRecord()
   }
 }

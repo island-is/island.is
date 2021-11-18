@@ -23,6 +23,10 @@ const devConfig = {
         'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
     },
   },
+  criminalRecord: {
+    secret: process.env.XROAD_CRIMINAL_RECORD_SECRET,
+    xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH ?? 'TODO',//'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2'
+  },
   education: {
     xroadLicenseServiceId: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
     xroadGradeServiceId: 'IS-DEV/EDU/10020/MMS-Protected/grade-api-v1',
@@ -186,6 +190,10 @@ const prodConfig = {
     v2: {
       xroadPath: process.env.XROAD_DRIVING_LICENSE_V2_PATH,
     },
+  },
+  criminalRecord: {
+    secret: process.env.XROAD_CRIMINAL_RECORD_SECRET,
+    xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH,
   },
   education: {
     xroadLicenseServiceId: process.env.XROAD_MMS_LICENSE_SERVICE_ID,

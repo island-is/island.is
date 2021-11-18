@@ -80,10 +80,6 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Umsókn um sakavottorð',
-          // onExit: {
-          //   apiModuleAction: ApiActions.getCriminalRecord,
-          //   throwOnError: true,
-          // },
           actionCard: {
             description: m.draftDescription,
           },
@@ -125,9 +121,6 @@ const template: ApplicationTemplate<
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
           roles: [
             {
               id: 'applicant',
@@ -149,6 +142,9 @@ const template: ApplicationTemplate<
           name: 'Approved',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.getCriminalRecord,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

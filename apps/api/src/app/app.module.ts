@@ -263,9 +263,8 @@ const autoSchemaFile = environment.production
       clientConfig: {
         xroadBaseUrl: environment.xroad.baseUrl,
         xroadClientId: environment.xroad.clientId,
-        secret: environment.drivingLicense.secret,
-        xroadPathV1: environment.drivingLicense.v1.xroadPath,
-        xroadPathV2: environment.drivingLicense.v2.xroadPath,
+        secret: environment.criminalRecord.secret,
+        xroadPath: environment.criminalRecord.xroadPath,
       },
     }),
   ],

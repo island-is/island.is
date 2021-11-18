@@ -216,12 +216,12 @@ export const m = defineMessages({
   },
   criminalRecordInformationTitle: {
     id: 'cr.application:criminalrecord.title',
-    defaultMessage: 'Sakavottorð',
-    description: 'Criminal record',
+    defaultMessage: 'Upplýsingar úr sakaskrá',
+    description: 'Information from the criminal record database',
   },
   criminalRecordInformationSubTitle: {
     id: 'cr.application:criminalrecord.subTitle',
-    defaultMessage: 'Einhver lýsing',
-    description: 'Some description',
+    defaultMessage: 'Skjal sem inniheldur sakavottorðið þitt.',
+    description: 'Document that contains your criminal record.',
   },
 })
