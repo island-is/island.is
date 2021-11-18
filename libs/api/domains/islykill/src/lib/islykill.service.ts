@@ -11,12 +11,17 @@ export class IslykillService {
 
   async updateIslykillSettings(
     nationalId: User['nationalId'],
-    { email, mobile }: { email: string; mobile?: string },
+    {
+      email,
+      mobile,
+      canNudge,
+    }: { email: string; mobile: string; canNudge?: boolean },
   ): Promise<UpdateIslykillSettings> {
     const inputUserData: PublicUser = {
       ssn: nationalId,
       email,
       mobile,
+      ...(canNudge !== undefined && { canNudge }),
     }
     const errorMsg = 'Unable to update islykill settings for user'
     const apiData = await this.islyklarApi
