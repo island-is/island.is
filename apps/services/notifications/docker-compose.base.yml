@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+  localstack:
+    image: localstack/localstack
+    networks:
+      - local
+    ports:
+      - 4566:4566
+    environment:
+      - SERVICES=sqs
+
+networks:
+  local:

@@ -7930,6 +7930,12 @@
             "buildTarget": "services-notifications:build"
           }
         },
+        "worker": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P apps/services/notifications/tsconfig.app.json apps/services/notifications/src/worker.ts"
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
