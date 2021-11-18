@@ -15,6 +15,7 @@ export enum ActionType {
   SetMobileMenuState = 'setMobileMenuState',
   SetUserMenuState = 'setUserMenuState',
   SetRoutesFulfilled = 'setRoutesFulfilled',
+  SetSidebarMenuState = 'setSidebarMenuState',
   UpdateFulfilledRoutes = 'updateFulfilledRoutes',
   SetModulesList = 'setModulesList',
 }
@@ -45,4 +46,8 @@ export type Action =
   | {
       type: ActionType.SetModulesList
       payload: Record<ModuleKeys, ServicePortalModule>
+    }
+  | {
+      type: ActionType.SetSidebarMenuState
+      payload: MenuState
     }
