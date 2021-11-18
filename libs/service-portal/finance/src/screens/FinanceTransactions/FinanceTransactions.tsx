@@ -210,17 +210,22 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
                 />
               </GridColumn>
             </GridRow>
-            <Box marginTop={3}>
-              <Input
-                label={formatMessage(m.searchLabel)}
-                name="Search"
-                icon="search"
-                placeholder={formatMessage(m.searchPlaceholder)}
-                size="xs"
-                onChange={(e) => setQ(e.target.value)}
-                value={q}
-              />
-            </Box>
+            <GridRow>
+              <GridColumn span={['1/1', '6/12', '6/12', '6/12', '4/12']}>
+                <Box marginTop={3}>
+                  <Input
+                    backgroundColor="blue"
+                    label={formatMessage(m.searchLabel)}
+                    name="Search"
+                    icon="search"
+                    placeholder={formatMessage(m.searchPlaceholder)}
+                    size="xs"
+                    onChange={(e) => setQ(e.target.value)}
+                    value={q}
+                  />
+                </Box>
+              </GridColumn>
+            </GridRow>
           </Box>
         </Hidden>
 
