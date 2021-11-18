@@ -29,7 +29,7 @@ export const fileContainer = style({
 export const files = style({
   gridColumn: '1/-1',
   '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       gridColumn: '2/8',
     },
   },
