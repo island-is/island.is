@@ -244,6 +244,11 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           url
           intro
+          organizationPage {
+            organization {
+              title
+            }
+          }
         }
       }
       tagCounts {

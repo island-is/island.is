@@ -192,6 +192,10 @@ const Search: Screen<CategoryProps> = ({
       }
     }
 
+    if (item.organizationPage?.organization?.title) {
+      labels.push(item.organizationPage.organization.title)
+    }
+
     return labels
   }
 
@@ -510,6 +514,8 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       'webLifeEventPage' as SearchableContentTypes,
       'webAdgerdirPage' as SearchableContentTypes,
       'webSubArticle' as SearchableContentTypes,
+      'webNews' as SearchableContentTypes,
+      'webOrganizationSubpage' as SearchableContentTypes,
     ]
   }
 
