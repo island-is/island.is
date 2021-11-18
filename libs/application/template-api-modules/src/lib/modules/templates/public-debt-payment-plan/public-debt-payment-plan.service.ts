@@ -1,5 +1,10 @@
 import { Application, getValueViaPath } from '@island.is/application/core'
-import { DefaultApi, PaymentsDT } from '@island.is/clients/payment-schedule'
+import {
+  DefaultApi,
+  PaymentsDT,
+  ScheduleType,
+} from '@island.is/clients/payment-schedule'
+import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
@@ -59,35 +64,45 @@ export class PublicDebtPaymentPlanTemplateService {
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    const { email, phoneNumber, paymentPlans } = this.getValuesFromApplication(
-      application,
-    )
+    try {
+      const {
+        email,
+        phoneNumber,
+        paymentPlans,
+      } = this.getValuesFromApplication(application)
 
-    const schedules = paymentPlans.map((plan) => {
-      const distribution = JSON.parse(plan.distribution) as PaymentsDT[]
-      return {
-        organizationID: plan.organization,
-        chargeTypes: plan.chargetypes?.map((chargeType) => ({
-          chargeID: chargeType.id,
-        })),
-        payments: distribution.map((p) => ({
-          duedate: p.dueDate,
-          payment: p.payment,
-          accumulated: p.accumulated,
-        })),
-        type: plan.id,
-      }
-    })
+      const schedules = paymentPlans.map((plan) => {
+        const distribution = JSON.parse(plan.distribution) as PaymentsDT[]
+        return {
+          organizationID: plan.organization,
+          chargeTypes: plan.chargetypes?.map((chargeType) => ({
+            chargeID: chargeType.id,
+          })),
+          payments: distribution.map((p) => ({
+            duedate: p.dueDate,
+            payment: p.payment,
+            accumulated: p.accumulated,
+          })),
+          type: ScheduleType[plan.id],
+        }
+      })
 
-    await this.paymentScheduleApi.schedulesPOST6({
-      inputSchedules: {
-        serviceInput: {
-          email: email,
-          nationalId: application.applicant,
-          phoneNumber: phoneNumber,
-          schedules: schedules,
+      await this.paymentScheduleApi.schedulesPOST6({
+        inputSchedules: {
+          serviceInput: {
+            email: email,
+            nationalId: application.applicant,
+            phoneNumber: phoneNumber,
+            schedules: schedules,
+          },
         },
-      },
-    })
+      })
+    } catch (error) {
+      this.logger.error(
+        'Failed to send public debt payment plan application',
+        error,
+      )
+      throw error
+    }
   }
 }
