@@ -34,6 +34,8 @@ export const reserveCache = async (
     if (reservation !== 1) {
       return error(res, 'cache id already reserved', 409)
     }
+    // Invalidate reservation after 300 seconds
+    await cache.expire(cacheId, 300)
     logger.debug(`Creating multipartupload for ${cacheId}`)
     const { UploadId } = await s3.createMultipartUpload(objectParams).promise()
     if (!UploadId) {
