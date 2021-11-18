@@ -88,7 +88,7 @@ export type AttachmentEmailTemplateGenerator = (
 ) => Message
 
 export type PublicDebtPaymentPlanPayment = {
-  id: PaymentScheduleType
+  id: PublicDebtPaymentScheduleType
   totalAmount: number
   distribution: string
   amountPerMonth: number
@@ -102,7 +102,7 @@ export type PublicDebtPaymentPlanPaymentCollection = {
 }
 
 export type PublicDebtPaymentPlanPrerequisites = {
-  type: PaymentScheduleType
+  type: PublicDebtPaymentScheduleType
   organizationId: string
   chargetypes: {
     id: string
@@ -112,4 +112,11 @@ export type PublicDebtPaymentPlanPrerequisites = {
     expenses: number
     principal: number
   }[]
+}
+
+export enum PublicDebtPaymentScheduleType {
+  FinesAndLegalCost = 'FinesAndLegalCost',
+  OverpaidBenefits = 'OverpaidBenefits',
+  Wagedection = 'Wagedection',
+  OtherFees = 'OtherFees',
 }
