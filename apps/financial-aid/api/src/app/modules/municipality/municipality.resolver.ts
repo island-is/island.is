@@ -50,8 +50,9 @@ export class MunicipalityResolver {
     input: CreateMunicipalityInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<MunicipalityModel> {
+    const { admin, ...createMunicipality } = input
     this.logger.debug('Creating municipality')
-    return backendApi.createMunicipality(input)
+    return backendApi.createMunicipality(createMunicipality, admin)
   }
 
   @Mutation(() => MunicipalityModel, { nullable: false })

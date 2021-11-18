@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Box, Input, Select, Text, Option } from '@island.is/island-ui/core'
 import { ActionModal } from '@island.is/financial-aid-web/veita/src/components'
 import { useMutation } from '@apollo/client'
-import { isEmailValid } from '@island.is/financial-aid/shared/lib'
+import { isEmailValid, StaffRole } from '@island.is/financial-aid/shared/lib'
 
 import { serviceCenters } from '@island.is/financial-aid/shared/data'
 import cn from 'classnames'
@@ -52,11 +52,11 @@ const NewMunicipalityModal = ({
 
   const areRequiredFieldsFilled =
     !state.serviceCenter.label || !state.serviceCenter.value
-  // !state.adminEmail ||
-  //   !state.adminName ||
-  //   !state.adminNationalId ||
-  //   !isEmailValid(state.adminEmail) ||
-  //   state.adminNationalId.length !== 10
+  !state.adminEmail ||
+    !state.adminName ||
+    !state.adminNationalId ||
+    !isEmailValid(state.adminEmail) ||
+    state.adminNationalId.length !== 10
 
   const submit = async () => {
     if (areRequiredFieldsFilled) {
@@ -69,6 +69,12 @@ const NewMunicipalityModal = ({
           input: {
             name: state.serviceCenter.label,
             municipalityId: state.serviceCenter.value,
+            admin: {
+              name: state.adminName,
+              email: state.adminEmail,
+              nationalId: state.adminNationalId,
+              roles: [StaffRole.ADMIN],
+            },
           },
         },
       }).then(() => {
@@ -113,7 +119,7 @@ const NewMunicipalityModal = ({
         />
       </Box>
 
-      {/* <Text marginBottom={2} variant="h4">
+      <Text marginBottom={2} variant="h4">
         Stjórnandi
       </Text>
       <Box marginBottom={2}>
@@ -180,7 +186,7 @@ const NewMunicipalityModal = ({
       <Text marginBottom={3} variant="small">
         Notandi fær sendan tölvupóst með hlekk til að skrá sig inn með rafrænum
         skilríkjum.
-      </Text> */}
+      </Text>
     </ActionModal>
   )
 }

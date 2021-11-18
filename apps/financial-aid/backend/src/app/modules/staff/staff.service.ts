@@ -4,8 +4,10 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
 import { Op } from 'sequelize'
+import { Transaction } from 'sequelize/types'
 
 import { StaffModel } from './models'
+import { CreateMunicipalityDto } from '../municipality/dto'
 
 @Injectable()
 export class StaffService {
@@ -70,6 +72,26 @@ export class StaffService {
       municipalityName: user.municipalityName,
       municipalityHomepage: user.municipalityHomepage,
     })
+  }
+
+  async createAdmin(
+    input: CreateStaffDto,
+    municipalityInput: CreateMunicipalityDto,
+    t: Transaction,
+  ): Promise<StaffModel> {
+    return await this.staffModel.create(
+      {
+        nationalId: input.nationalId,
+        name: input.name,
+        municipalityId: municipalityInput.municipalityId,
+        email: input.email,
+        roles: input.roles,
+        active: true,
+        municipalityName: municipalityInput.name,
+        municipalityHomepage: '',
+      },
+      { transaction: t },
+    )
   }
 
   async numberOfUsersForMunicipality(municipalityId: string): Promise<number> {
