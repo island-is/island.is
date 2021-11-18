@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/core'
+import { FormValue, getValueViaPath } from '@island.is/application/core'
 import {
   FishermanWorkplaceAccidentLocationEnum,
   WorkAccidentTypeEnum,
@@ -8,9 +8,10 @@ import { isWorkAccident } from './isWorkAccident'
 // As this is a second question the user is asked there is a case where he could go back and select home activities and keep the workaccident type.
 // Therefore we need to check also whether this is a work accident
 export const isFishermanAccident = (formValue: FormValue) => {
-  const workAccidentType = (formValue as {
-    workAccident: { type: WorkAccidentTypeEnum }
-  })?.workAccident?.type
+  const workAccidentType = getValueViaPath(
+    formValue,
+    'workAccident.type',
+  ) as WorkAccidentTypeEnum
   return (
     workAccidentType === WorkAccidentTypeEnum.FISHERMAN &&
     isWorkAccident(formValue)
@@ -22,9 +23,10 @@ export const isFishermanAccident = (formValue: FormValue) => {
 // accident happened.
 // Therefore we need to check ifFishermanAccident function again
 export const isAboardShip = (formValue: FormValue) => {
-  const fishermanWorkplaceAccidentLocationAnswer = (formValue as {
-    accidentLocation: { answer: FishermanWorkplaceAccidentLocationEnum }
-  })?.accidentLocation?.answer
+  const fishermanWorkplaceAccidentLocationAnswer = getValueViaPath(
+    formValue,
+    'accidentLocation.asnwer',
+  ) as FishermanWorkplaceAccidentLocationEnum
   return (
     isFishermanAccident(formValue) &&
     fishermanWorkplaceAccidentLocationAnswer ===

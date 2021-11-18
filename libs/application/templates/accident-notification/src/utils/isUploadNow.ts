@@ -1,20 +1,20 @@
-import { FormValue } from '@island.is/application/core'
+import { FormValue, getValueViaPath } from '@island.is/application/core'
 import {
   PowerOfAttorneyUploadEnum,
   WhoIsTheNotificationForEnum,
 } from '../types'
 
 export const isUploadNow = (formValue: FormValue) => {
-  const reportingOnBehalfType = (formValue as {
-    whoIsTheNotificationFor: { answer: WhoIsTheNotificationForEnum }
-  })?.whoIsTheNotificationFor?.answer
-
-  const powerOfAttorneyType = (formValue as {
-    powerOfAttorney: { type: PowerOfAttorneyUploadEnum }
-  })?.powerOfAttorney?.type
-
+  const whoIsTheNotificationFor = getValueViaPath(
+    formValue,
+    'whoIsTheNotificationFor.answer',
+  ) as WhoIsTheNotificationForEnum
+  const powerOfAttorneyType = getValueViaPath(
+    formValue,
+    'powerOfAttorney.type',
+  ) as PowerOfAttorneyUploadEnum
   return (
-    reportingOnBehalfType === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
+    whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
     powerOfAttorneyType === PowerOfAttorneyUploadEnum.UPLOADNOW
   )
 }

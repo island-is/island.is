@@ -4,17 +4,28 @@ import {
   MessageFormatter,
 } from '@island.is/application/core'
 import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
-import { YES, NO } from '../constants'
-import { AccidentNotification } from '../lib/dataSchema'
+import { YES } from '../constants'
 import { attachments } from '../lib/messages'
+import {
+  AccidentNotificationAttachmentStatus,
+  AccidentNotifTypes,
+  YesOrNo,
+} from '../types'
 import { isFatalAccident } from './isFatalAccident'
 import { isReportingOnBehalfSelf } from './isReportingBehalfOfSelf'
 
 const hasAttachment = (attachment: FileType[] | undefined) =>
   attachment && attachment.length > 0
 
-const includesAttachment = (answers: any, attachmentType: string): boolean => {
-  return answers?.accidentStatus?.receivedAttachments?.[attachmentType]
+const includesAttachment = (
+  answers: FormValue,
+  attachmentType: AccidentNotifTypes,
+): boolean => {
+  const accidentNotifications = getValueViaPath(
+    answers,
+    'accidentStatus.receivedAttachments',
+  ) as AccidentNotificationAttachmentStatus
+  return accidentNotifications[attachmentType] || false
 }
 
 export const hasReceivedInjuryCertificate = (answers: FormValue) => {
@@ -56,7 +67,10 @@ export const getErrorMessageForMissingDocuments = (
     answers,
     'whoIsTheNotificationFor.answer',
   )
-  const wasTheAccidentFatal = answers.wasTheAccidentFatal
+  const wasTheAccidentFatal = getValueViaPath(
+    answers,
+    'wasTheAccidentFatal',
+  ) as YesOrNo
   const missingDocuments = []
 
   if (!hasReceivedInjuryCertificate(answers)) {
@@ -84,39 +98,51 @@ export const getErrorMessageForMissingDocuments = (
 }
 
 export const hasMissingInjuryCertificate = (answers: FormValue) => {
-  const injuryCertificate = (answers as AccidentNotification).injuryCertificate
-  return injuryCertificate?.answer === AttachmentsEnum.SENDCERTIFICATELATER
+  const injuryCertificate = getValueViaPath(
+    answers,
+    'injuryCertificate.answer',
+  ) as AttachmentsEnum
+  return injuryCertificate === AttachmentsEnum.SENDCERTIFICATELATER
 }
 
 export const hasMissingDeathCertificate = (answers: FormValue) => {
-  const wasTheAccidentFatal = (answers as AccidentNotification)
-    .wasTheAccidentFatal
-
+  const wasTheAccidentFatal = getValueViaPath(
+    answers,
+    'wasTheAccidentFatal',
+  ) as YesOrNo
   return wasTheAccidentFatal === YES
 }
 
 export const hasMissingPowerOfAttorneyFile = (answers: FormValue): boolean => {
-  const whoIsTheNotificationFor = (answers as AccidentNotification)
-    .whoIsTheNotificationFor.answer
+  const whoIsTheNotificationFor = getValueViaPath(
+    answers,
+    'whoIsTheNotificationFor.asnwer',
+  ) as WhoIsTheNotificationForEnum
   return whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY
 }
 
 export const hasMissingDocuments = (answers: FormValue) => {
+  const injuryCertificateFile = getValueViaPath(
+    answers,
+    'attachments.injuryCertificateFile.file',
+  ) as FileType[]
+
+  const deathCertificateFile = getValueViaPath(
+    answers,
+    'attachments.deathCertificateFile.file',
+  ) as FileType[]
+
+  const powerOfAttorneyFile = getValueViaPath(
+    answers,
+    'attachments.powerOfAttorneyFile.file',
+  ) as FileType[]
+
   return (
     (hasMissingInjuryCertificate(answers) &&
-      !hasAttachment(
-        (answers as AccidentNotification).attachments?.injuryCertificateFile
-          ?.file,
-      )) ||
+      !hasAttachment(injuryCertificateFile)) ||
     (hasMissingDeathCertificate(answers) &&
-      !hasAttachment(
-        (answers as AccidentNotification).attachments?.deathCertificateFile
-          ?.file,
-      )) ||
+      !hasAttachment(deathCertificateFile)) ||
     (hasMissingPowerOfAttorneyFile(answers) &&
-      !hasAttachment(
-        (answers as AccidentNotification).attachments?.powerOfAttorneyFile
-          ?.file,
-      ))
+      !hasAttachment(powerOfAttorneyFile))
   )
 }

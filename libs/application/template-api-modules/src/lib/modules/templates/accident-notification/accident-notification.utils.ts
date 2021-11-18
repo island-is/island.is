@@ -3,11 +3,15 @@ import {
   accidentLocationLabelMapper,
   AccidentNotificationAnswers,
   AccidentTypeEnum,
+  CompanyInfo,
   FishermanWorkplaceAccidentShipLocationEnum,
+  RepresentativeInfo,
   StudiesAccidentTypeEnum,
   SubmittedApplicationData,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
+  Applicant,
+  YesOrNo,
 } from '@island.is/application/templates/accident-notification'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
@@ -68,16 +72,19 @@ export const applictionAnswersToXml = (
   const applicationJson: ApplicationSubmit = {
     slysatilkynning: {
       tilkynnandi: {
-        kennitala: answers.applicant.nationalId,
-        nafn: answers.applicant.name,
-        heimili: answers.applicant.address,
-        stadur: answers.applicant.city,
-        postfang: answers.applicant.postalCode,
-        netfang: answers.applicant.email,
+        kennitala: getValueViaPath(answers, '.applicant.nationalId') as string,
+        nafn: getValueViaPath(answers, '.applicant.name') as string,
+        heimili: getValueViaPath(answers, 'applicant.address') as string,
+        stadur: getValueViaPath(answers, 'applicant.city') as string,
+        postfang: getValueViaPath(answers, 'applicant.postalCode') as string,
+        netfang: getValueViaPath(answers, 'applicant.email') as string,
         fyrirhvernerveridadtilkynna: whoIsTheNotificationForToId(
-          answers.whoIsTheNotificationFor.answer,
+          getValueViaPath(
+            answers,
+            'whoIsTheNotificationFor.answer',
+          ) as WhoIsTheNotificationForEnum,
         ),
-        simi: answers.applicant.phoneNumber,
+        simi: getValueViaPath(answers, 'applicant.phoneNumber') as string,
       },
       slasadi: injuredPerson(answers),
       slys: accident(answers),
@@ -111,20 +118,24 @@ const whoIsTheNotificationForToId = (
 const injuredPerson = (
   answers: AccidentNotificationAnswers,
 ): TilkynnandiOrSlasadi => {
-  if (
-    answers.whoIsTheNotificationFor.answer ===
-    WhoIsTheNotificationForEnum.CHILDINCUSTODY
-  ) {
+  const whoIsTheNotificationFor = getValueViaPath(
+    answers,
+    'whoIsTheNotificationFor.answer',
+  ) as WhoIsTheNotificationForEnum
+  if (whoIsTheNotificationFor === WhoIsTheNotificationForEnum.CHILDINCUSTODY) {
     return {
-      kennitala: answers.childInCustody.nationalId,
-      nafn: answers.childInCustody.name,
+      kennitala: getValueViaPath(
+        answers,
+        'childInCustody.nationalId',
+      ) as string,
+      nafn: getValueViaPath(answers, 'childInCustody.name') as string,
       netfang: ' ', //the child has no email,
     }
   }
   const person =
-    answers.whoIsTheNotificationFor.answer === WhoIsTheNotificationForEnum.ME
-      ? answers.applicant
-      : answers.injuredPersonInformation
+    whoIsTheNotificationFor === WhoIsTheNotificationForEnum.ME
+      ? (getValueViaPath(answers, 'applicant') as Applicant)
+      : (getValueViaPath(answers, 'injuredPersonInformation') as Applicant)
   return {
     kennitala: person.nationalId,
     nafn: person.name,
@@ -134,33 +145,60 @@ const injuredPerson = (
 }
 
 const accident = (answers: AccidentNotificationAnswers): Slys => {
-  const accidentType = accidentTypeToId(answers.accidentType.radioButton)
+  const accidentType = accidentTypeToId(
+    getValueViaPath(answers, 'accidentType.radioButton') as AccidentTypeEnum,
+  )
   const accidentBase = {
     tegund: accidentType,
     undirtegund: determineSubType(answers),
-    dagsetningslys: answers.accidentDetails.dateOfAccident,
-    timislys: answers.accidentDetails.timeOfAccident,
-    lysing: answers.accidentDetails.descriptionOfAccident,
-    banaslys: yesOrNoToNumber(answers.wasTheAccidentFatal),
-    bilslys: yesOrNoToNumber(answers.carAccidentHindrance),
-    stadurslysseferindi: answers.locationAndPurpose?.location ?? '',
-    lysingerindis: answers.accidentLocation
+    dagsetningslys: getValueViaPath(
+      answers,
+      'accidentDetails.dateOfAccident',
+    ) as string,
+    timislys: getValueViaPath(
+      answers,
+      'accidentDetails.timeOfAccident',
+    ) as string,
+    lysing: getValueViaPath(
+      answers,
+      'accidentDetails.descriptionOfAccident',
+    ) as string,
+    banaslys: yesOrNoToNumber(
+      getValueViaPath(answers, 'wasTheAccidentFatal') as YesOrNo,
+    ),
+    bilslys: yesOrNoToNumber(
+      getValueViaPath(answers, 'carAccidentHindrance') as YesOrNo,
+    ),
+    stadurslysseferindi:
+      (getValueViaPath(answers, 'locationAndPurpose?.location') as string) ??
+      '',
+    lysingerindis: (getValueViaPath(answers, 'accidentLocation') as string)
       ? accidentLocationLabelMapper[
-          answers.accidentLocation
-            .answer as keyof typeof accidentLocationLabelMapper
+          getValueViaPath(
+            answers,
+            'accidentLocation.answer',
+          ) as keyof typeof accidentLocationLabelMapper
         ]
       : '',
   }
 
-  switch (answers.accidentType.radioButton) {
+  switch (
+    getValueViaPath(answers, 'accidentType.radioButton') as AccidentTypeEnum
+  ) {
     case AccidentTypeEnum.HOMEACTIVITIES: {
       return {
         ...accidentBase,
         slysvidheimilisstorf: {
-          heimili: answers.homeAccident.address,
-          postnumer: answers.homeAccident.postalCode,
-          sveitarfelag: answers.homeAccident.community,
-          nanar: answers.homeAccident.moreDetails,
+          heimili: getValueViaPath(answers, 'homeAccident.address') as string,
+          postnumer: getValueViaPath(
+            answers,
+            'homeAccident.postalCode',
+          ) as string,
+          sveitarfelag: getValueViaPath(
+            answers,
+            'homeAccident.community',
+          ) as string,
+          nanar: getValueViaPath(answers, 'homeAccident.moreDetails') as string,
         },
       }
     }
@@ -180,30 +218,45 @@ const work = (
   answers: AccidentNotificationAnswers,
   accidentBase: Slys,
 ): Slys => {
-  if (answers.workAccident.type === WorkAccidentTypeEnum.FISHERMAN) {
+  const workAccidentType = getValueViaPath(
+    answers,
+    'workAccident.type',
+  ) as WorkAccidentTypeEnum
+  if (workAccidentType === WorkAccidentTypeEnum.FISHERMAN) {
     return {
       ...accidentBase,
       slysvidvinnusjomanna: {
         stadsetningskips: shipLocation(answers),
-        nafnskips: answers.fishingShipInfo.shipName,
-        einkennisstafirskips: answers.fishingShipInfo.shipCharacters,
+        nafnskips: getValueViaPath(
+          answers,
+          'fishingShipInfo.shipName',
+        ) as string,
+        einkennisstafirskips: getValueViaPath(
+          answers,
+          'fishingShipInfo.shipCharacters',
+        ) as string,
       },
     }
   }
 
-  return answers.workMachineRadio === 'yes'
+  return (getValueViaPath(answers, 'workMachineRadio') as YesOrNo) === 'yes'
     ? {
         ...accidentBase,
         slysvidvinnu: {
-          lysingavinnuvel: answers.workMachine.desriptionOfMachine,
+          lysingavinnuvel: getValueViaPath(
+            answers,
+            'workMachine.desriptionOfMachine',
+          ) as string,
         },
       }
     : accidentBase
 }
 
 const shipLocation = (answers: AccidentNotificationAnswers): number => {
-  const location = answers.shipLocation
-    .answer as FishermanWorkplaceAccidentShipLocationEnum
+  const location = getValueViaPath(
+    answers,
+    'shipLocation.answer',
+  ) as FishermanWorkplaceAccidentShipLocationEnum
   switch (location) {
     case FishermanWorkplaceAccidentShipLocationEnum.SAILINGORFISHING:
       return 1
@@ -217,11 +270,17 @@ const shipLocation = (answers: AccidentNotificationAnswers): number => {
 const employer = (
   answers: AccidentNotificationAnswers,
 ): Atvinnurekandi | undefined => {
-  const companyInfo = answers.companyInfo
-  const representative = answers.representative
+  const companyInfo = getValueViaPath(answers, 'companyInfo') as CompanyInfo
+  const representative = getValueViaPath(
+    answers,
+    'representative',
+  ) as RepresentativeInfo
 
   if (
-    answers.accidentType.radioButton === AccidentTypeEnum.HOMEACTIVITIES ||
+    (getValueViaPath(
+      answers,
+      'accidentType.radioButton',
+    ) as AccidentTypeEnum) === AccidentTypeEnum.HOMEACTIVITIES ||
     !companyInfo ||
     !representative
   ) {
@@ -259,8 +318,15 @@ const accidentTypeToId = (typeEnum: AccidentTypeEnum): number => {
 const determineSubType = (
   answers: AccidentNotificationAnswers,
 ): number | undefined => {
-  if (answers.accidentType.radioButton === AccidentTypeEnum.WORK) {
-    switch (answers.workAccident.type) {
+  if (
+    (getValueViaPath(
+      answers,
+      'accidentType.radioButton',
+    ) as AccidentTypeEnum) === AccidentTypeEnum.WORK
+  ) {
+    switch (
+      getValueViaPath(answers, 'workAccident.type') as WorkAccidentTypeEnum
+    ) {
       case WorkAccidentTypeEnum.GENERAL:
         return 1
       case WorkAccidentTypeEnum.FISHERMAN:
@@ -273,8 +339,18 @@ const determineSubType = (
         return undefined
     }
   }
-  if (answers.accidentType.radioButton === AccidentTypeEnum.STUDIES) {
-    switch (answers.studiesAccident.type) {
+  if (
+    (getValueViaPath(
+      answers,
+      'accidentType.radioButton',
+    ) as AccidentTypeEnum) === AccidentTypeEnum.STUDIES
+  ) {
+    switch (
+      getValueViaPath(
+        answers,
+        'studiesAccident.type',
+      ) as StudiesAccidentTypeEnum
+    ) {
       case StudiesAccidentTypeEnum.INTERNSHIP:
         return 5
       case StudiesAccidentTypeEnum.VOCATIONALEDUCATION:
