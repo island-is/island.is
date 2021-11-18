@@ -400,13 +400,13 @@ export class EndorsementListService {
           ],
         },
         attachments: [
-          // {
-          //   filename: 'Meðmælendalisti.pdf',
-          //   content: await this.createDocumentBuffer(
-          //     endorsementList,
-          //     ownerName,
-          //   ),
-          // },
+          {
+            filename: 'Meðmælendalisti.pdf',
+            content: await this.createDocumentBuffer(
+              endorsementList,
+              ownerName,
+            ),
+          },
         ],
       })
       return { success: true }
