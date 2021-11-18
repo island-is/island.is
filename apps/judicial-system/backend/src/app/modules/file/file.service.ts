@@ -65,17 +65,9 @@ export class FileService {
     file: CaseFile,
     courtId: string | undefined,
   ): Promise<string> {
-    this.logger.debug(
-      `Waiting to upload file ${file.id} of case ${file.caseId}`,
-    )
-
     await this.throttle.catch((reason) => {
-      this.logger.error('Previous upload failed', { reason })
+      this.logger.warn('Previous upload failed', { reason })
     })
-
-    this.logger.debug(
-      `Starting to upload file ${file.id} of case ${file.caseId}`,
-    )
 
     const content = await this.awsS3Service.getObject(file.key)
 
@@ -83,16 +75,12 @@ export class FileService {
       writeFile(`${file.name}`, content)
     }
 
-    const streamId = this.courtService.uploadStream(
+    return this.courtService.uploadStream(
       courtId,
       file.name,
       file.type,
       content,
     )
-
-    this.logger.debug(`Done uploading file ${file.id} of case ${file.caseId}`)
-
-    return streamId
   }
 
   async findById(id: string, caseId: string): Promise<CaseFile | null> {
