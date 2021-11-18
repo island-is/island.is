@@ -70,7 +70,7 @@ export const validateAndSetTime = (
   time: string,
   validations: Validation[],
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
   setTime?: (value: React.SetStateAction<string | undefined>) => void,

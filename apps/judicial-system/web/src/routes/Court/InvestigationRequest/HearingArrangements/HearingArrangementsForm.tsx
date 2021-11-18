@@ -49,7 +49,7 @@ import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-syste
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
   users: UserData
   user: User

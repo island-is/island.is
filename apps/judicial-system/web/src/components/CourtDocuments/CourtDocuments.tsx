@@ -13,6 +13,7 @@ import type { Case } from '@island.is/judicial-system/types'
 import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
 import BlueBox from '../BlueBox/BlueBox'
 import * as styles from './CourtDocuments.css'
+
 interface CourtDocumentsProps {
   title: string
   text: string
@@ -24,7 +25,7 @@ interface CourtDocumentsProps {
     id: string,
     updatedCase: { courtDocuments: Array<string> },
   ) => void
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   workingCase: Case
 }
 

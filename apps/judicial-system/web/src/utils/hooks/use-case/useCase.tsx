@@ -123,7 +123,7 @@ const useCase = () => {
   const createCourtCase = useMemo(
     () => async (
       workingCase: Case,
-      setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
+      setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
       setCourtCaseNumberErrorMessage: React.Dispatch<
         React.SetStateAction<string>
       >,

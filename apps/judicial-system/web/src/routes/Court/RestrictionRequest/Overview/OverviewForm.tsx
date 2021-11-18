@@ -26,7 +26,7 @@ import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNum
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   handleCreateCourtCase: (wc: Case) => void
   createCourtCaseSuccess: boolean
   setCreateCourtCaseSuccess: React.Dispatch<React.SetStateAction<boolean>>

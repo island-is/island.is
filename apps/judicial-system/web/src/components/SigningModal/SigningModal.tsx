@@ -27,7 +27,7 @@ import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 
 interface SigningModalProps {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   requestSignatureResponse?: RequestSignatureResponse
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
 }

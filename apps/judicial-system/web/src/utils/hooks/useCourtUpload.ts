@@ -29,7 +29,7 @@ export enum UploadState {
 
 export const useCourtUpload = (
   workingCase: Case,
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => {
   const [uploadState, setUploadState] = useState<UploadState>()
   const [uploadFileToCourtMutation] = useMutation(UploadFileToCourtMutation)

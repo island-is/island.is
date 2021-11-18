@@ -8,7 +8,7 @@ import {
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isDraftingConclusion: boolean | undefined
   setIsDraftingConclusion: React.Dispatch<
     React.SetStateAction<boolean | undefined>
