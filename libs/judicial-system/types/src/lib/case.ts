@@ -170,6 +170,7 @@ export interface Case {
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   isMasked?: boolean
+  initialRulingDate?: string
 }
 
 export interface CreateCase {

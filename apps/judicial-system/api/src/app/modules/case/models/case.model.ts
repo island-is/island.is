@@ -249,4 +249,7 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly isMasked?: boolean
+
+  @Field({ nullable: true })
+  readonly initialRulingDate?: string
 }

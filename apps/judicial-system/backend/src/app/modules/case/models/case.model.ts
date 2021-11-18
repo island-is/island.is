@@ -828,4 +828,14 @@ export class Case extends Model<Case> {
   @HasMany(() => CaseFile, 'caseId')
   @ApiProperty({ type: CaseFile, isArray: true })
   caseFiles?: CaseFile[]
+
+  /**********
+   * The date and time of the judge's inital ruling signature - used for extended cases
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  initialRulingDate?: Date
 }

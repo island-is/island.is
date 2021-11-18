@@ -1017,6 +1017,7 @@ describe('Case', () => {
           prosecutor,
           parentCaseId: dbCase.id,
           parentCase: dbCase,
+          initialRulingDate: dbCase.initialRulingDate ?? dbCase.rulingDate,
         } as CCase)
       })
   })

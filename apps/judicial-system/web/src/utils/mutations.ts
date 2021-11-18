@@ -33,6 +33,7 @@ export const CasesQuery = gql`
       parentCase {
         id
       }
+      initialRulingDate
     }
   }
 `
