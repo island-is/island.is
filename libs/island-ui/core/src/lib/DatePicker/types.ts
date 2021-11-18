@@ -19,7 +19,7 @@ const languageConfig = {
 type LocaleKeys = keyof typeof languageConfig
 
 export type DatePickerBackgroundColor = 'white' | 'blue'
-export type DatePickerSize = 'md' | 'sm'
+export type DatePickerSize = 'xs' | 'sm' | 'md'
 
 export interface DatePickerProps {
   label: string

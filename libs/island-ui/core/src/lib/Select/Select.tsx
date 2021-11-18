@@ -52,7 +52,7 @@ export interface SelectProps {
   defaultValue?: Option
   icon?: string
   isSearchable?: boolean
-  size?: 'sm' | 'md'
+  size?: 'xs' | 'sm' | 'md'
   backgroundColor?: InputBackgroundColor
   required?: boolean
   ariaError?: AriaError
@@ -152,15 +152,22 @@ const Option = (props: OptionProps<Option>) => {
   )
 }
 
-const IndicatorsContainer = (props: IndicatorContainerProps<Option>) => (
-  <components.IndicatorsContainer
-    className={styles.indicatorsContainer}
-    {...props}
-  />
-)
+const IndicatorsContainer = (props: IndicatorContainerProps<Option>) => {
+  const size: SelectProps['size'] = props.selectProps.size || 'md'
+
+  return (
+    <components.IndicatorsContainer
+      className={cn(styles.indicatorsContainer, {
+        [styles.indicatorsContainerExtraSmall]: size === 'xs',
+      })}
+      {...props}
+    />
+  )
+}
 
 const DropdownIndicator = (props: IndicatorProps<Option>) => {
   const { icon, hasError } = props.selectProps
+  const size: SelectProps['size'] = props.selectProps.size || 'md'
 
   return (
     <components.DropdownIndicator
@@ -171,7 +178,9 @@ const DropdownIndicator = (props: IndicatorProps<Option>) => {
         icon={icon}
         size="large"
         color={hasError ? 'red600' : 'blue400'}
-        className={styles.icon}
+        className={cn(styles.icon, {
+          [styles.iconExtraSmall]: size === 'xs',
+        })}
       />
     </components.DropdownIndicator>
   )
@@ -221,6 +230,34 @@ const Input: ComponentType<InputProps> = (
 
 const Control = (props: ControlProps<Option>) => {
   const size: SelectProps['size'] = props.selectProps.size || 'md'
+
+  // If size is xs then the label is above the select box
+  if (size === 'xs') {
+    return (
+      <>
+        <label
+          htmlFor={props.selectProps.name}
+          className={cn(styles.label, styles.labelSizes[size!])}
+        >
+          {props.selectProps.label}
+          {props.selectProps.required && (
+            <span aria-hidden="true" className={styles.isRequiredStar}>
+              {' '}
+              *
+            </span>
+          )}
+        </label>
+        <components.Control
+          className={cn(styles.container, styles.containerSizes[size!], {
+            [styles.hasError]: props.selectProps.hasError,
+          })}
+          {...props}
+        >
+          {props.children}
+        </components.Control>
+      </>
+    )
+  }
   return (
     <components.Control
       className={cn(styles.container, styles.containerSizes[size!], {
