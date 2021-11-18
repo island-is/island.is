@@ -55,6 +55,26 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                 }}
               />
               <UserInfoLine
+                label={m.nudge}
+                labelColumnSpan={['8/12', '3/12']}
+                editColumnSpan={['1/1', '2/12']}
+                valueColumnSpan={['1/1', '7/12']}
+                content={
+                  settings?.canNudge
+                    ? formatMessage({
+                        id: 'sp.settings:nudge-active',
+                        defaultMessage: 'Hnipp virkt',
+                      })
+                    : formatMessage({
+                        id: 'sp.settings:nudge-inactive',
+                        defaultMessage: 'Hnipp óvirkt',
+                      })
+                }
+                editLink={{
+                  url: ServicePortalPath.SettingsPersonalInformationEditNudge,
+                }}
+              />
+              <UserInfoLine
                 label={m.language}
                 content={
                   settings
@@ -72,6 +92,13 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                   url:
                     ServicePortalPath.SettingsPersonalInformationEditLanguage,
                 }}
+              />
+              <UserInfoLine
+                label={m.bankAccountInfo}
+                labelColumnSpan={['8/12', '3/12']}
+                editColumnSpan={['1/1', '2/12']}
+                valueColumnSpan={['1/1', '7/12']}
+                content={settings?.bankInfo ?? ''}
               />
             </>
           )}

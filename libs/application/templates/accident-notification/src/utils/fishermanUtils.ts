@@ -1,7 +1,6 @@
 import { FormValue } from '@island.is/application/core'
 import {
   FishermanWorkplaceAccidentLocationEnum,
-  FishermanWorkplaceAccidentShipLocationEnum,
   WorkAccidentTypeEnum,
 } from '../types'
 import { isWorkAccident } from './isWorkAccident'
@@ -30,20 +29,5 @@ export const isAboardShip = (formValue: FormValue) => {
     isFishermanAccident(formValue) &&
     fishermanWorkplaceAccidentLocationAnswer ===
       FishermanWorkplaceAccidentLocationEnum.ONTHESHIP
-  )
-}
-
-// As this is a fourth question the user is asked there is a case where he could go back
-// and select home activities and keep the workaccident type or go back and change where the
-// accident happened.
-// Therefore we need to check isAboardShip function again
-export const isLocatedOnShipOther = (formValue: FormValue) => {
-  const fishermanWorkplaceAccidentShipLocationAnswer = (formValue as {
-    fishermanLocation: { answer: FishermanWorkplaceAccidentShipLocationEnum }
-  })?.fishermanLocation?.answer
-  return (
-    isAboardShip(formValue) &&
-    fishermanWorkplaceAccidentShipLocationAnswer ===
-      FishermanWorkplaceAccidentShipLocationEnum.OTHER
   )
 }
