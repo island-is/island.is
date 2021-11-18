@@ -97,7 +97,7 @@ export class CaseService {
     pdf: string,
   ): Promise<boolean> {
     return this.awsS3Service
-      .putObject(`${existingCase.id}/ruling.pdf`, pdf)
+      .putObject(`generated/${existingCase.id}/ruling.pdf`, pdf)
       .then(() => true)
       .catch(() => {
         this.logger.error(
@@ -421,6 +421,16 @@ export class CaseService {
     this.logger.debug(
       `Getting the ruling for case ${existingCase.id} as a pdf document`,
     )
+
+    if (!shortversion) {
+      const pdf = await this.awsS3Service
+        .getObject(`generated/${existingCase.id}/ruling.pdf`)
+        .then((res) => res.toString('binary'))
+        .catch(() => undefined)
+      if (pdf) {
+        return pdf
+      }
+    }
 
     const intl = await this.intlService.useIntl(
       ['judicial.system.backend'],
