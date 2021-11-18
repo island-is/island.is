@@ -43,21 +43,6 @@ describe('emailPdfEndorsement', () => {
     })
   })
 
-  // it(`POST /endorsement-list/:listId/endorsement should work sending a list you own`, async () => {
-  //   const app = await getAuthenticatedApp({
-  //     nationalId: authNationalId,
-  //     scope: [EndorsementsScope.main],
-  //   })
-  //   const response = await request(app.getHttpServer())
-  //     .post(
-  //       `/endorsement-list/${listYouOwnListId}/endorsement/email-pdf?emailAddress=${validEmail}`,
-  //     )
-  //     .send()
-  //     .expect(201)
-
-  //   expect(response.body.success).toBe(true)
-  // })
-
   it(`POST /endorsement-list/:listId/endorsement should fail and return 403 error if scope is missing`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
