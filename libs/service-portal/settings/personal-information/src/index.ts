@@ -53,6 +53,14 @@ export const personalInformationModule: ServicePortalModule = {
       },
       {
         name: defineMessage({
+          id: 'sp.settings:edit-nudge',
+          defaultMessage: 'Breyta Hnippi',
+        }),
+        path: ServicePortalPath.SettingsPersonalInformationEditNudge,
+        render: () => lazy(() => import('./screens/EditNudge/EditNudge')),
+      },
+      {
+        name: defineMessage({
           id: 'sp.settings:email-confirmation',
           defaultMessage: 'Staðfesta netfang',
         }),
