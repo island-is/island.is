@@ -11,6 +11,7 @@ interface Props {
   enabled?: boolean
   external?: boolean
   variant?: 'blue' | 'blueberry'
+  hasArray?: boolean
   onClick?: () => void
 }
 
@@ -18,54 +19,58 @@ const NavItemContent: FC<Props> = ({
   icon,
   active,
   enabled,
+  hasArray,
   onClick,
   variant = 'blue',
   children,
 }) => {
+  const chevron = active ? 'chevronUp' : 'chevronDown'
   return (
     <Box
+      className={styles.navItemActive[`${active ? 'active' : 'inactive'}`]}
       display="flex"
       alignItems="center"
       justifyContent="spaceBetween"
       cursor={enabled === false ? undefined : 'pointer'}
       position="relative"
-      onClick={enabled === false ? undefined : onClick}
-      className={styles.navItem}
+      onClick={enabled === false ? (active ? onClick : undefined) : onClick}
+      paddingY={'p2'}
+      paddingLeft={3}
+      paddingRight={2}
     >
       <Box display="flex" height="full" alignItems="center">
         {icon ? (
-          <Box display="flex" alignItems="center" marginRight={2}>
+          <Box display="flex" alignItems="center" marginRight={'p2'}>
             <Icon
               type={icon.type}
               icon={icon.icon}
               size="medium"
-              color={
-                enabled === false
-                  ? 'dark200'
-                  : active
-                  ? variant === 'blue'
-                    ? 'blue600'
-                    : 'blueberry600'
-                  : variant === 'blue'
-                  ? 'blue300'
-                  : 'blueberry300'
-              }
+              color={enabled === false ? 'dark200' : 'blue400'}
             />
           </Box>
         ) : null}
         <Text
-          fontWeight={active ? 'semiBold' : 'regular'}
+          fontWeight={'regular'}
+          variant="sidebar"
           color={
             enabled === false
               ? 'dark200'
               : variant === 'blue'
-              ? 'blue600'
+              ? 'blue400'
               : 'blueberry600'
           }
         >
           {children}
         </Text>
       </Box>
+      {hasArray && (
+        <Icon
+          type={'filled'}
+          icon={chevron}
+          size="medium"
+          color={enabled === false ? 'dark200' : 'blue400'}
+        />
+      )}
     </Box>
   )
 }

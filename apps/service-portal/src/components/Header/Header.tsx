@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import { Link } from 'react-router-dom'
 import {
   Box,
   Hidden,
@@ -31,28 +30,10 @@ export const Header: FC<{}> = () => {
     <>
       <div className={styles.placeholder} />
       <header className={styles.header}>
-        <Box width="full">
+        <Box>
           <ContentBlock>
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              height="full"
-              background="white"
-              paddingX={[2, 2, 4, 4, 6]}
-            >
-              <Link to={ServicePortalPath.MinarSidurRoot}>
-                <FocusableBox component="div">
-                  <Hidden above="md">
-                    <Logo width={40} iconOnly />
-                  </Hidden>
-                  <Hidden below="lg">
-                    <Logo width={160} />
-                  </Hidden>
-                  <BetaTag />
-                </FocusableBox>
-              </Link>
-              <Box display="flex" alignItems="center" flexWrap="nowrap">
+            <Box height="full" background="white" paddingX={[2, 2, 4, 4, 6]}>
+              <Box className={styles.menuBox}>
                 <UserMenu />
                 <Hidden above="md">
                   <Box marginLeft={2}>

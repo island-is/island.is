@@ -26,6 +26,7 @@ const ModuleNavigation: FC<Props> = ({
   onItemClick,
 }) => {
   const [expand, setExpand] = useState(false)
+  // eslint-disable-next-line no-empty-pattern
   const { pathname } = useLocation()
   const isModuleActive =
     (nav.path &&
@@ -36,10 +37,13 @@ const ModuleNavigation: FC<Props> = ({
     expand ||
     nav.path === pathname
   const { formatMessage } = useLocale()
-  const handleExpand = () => setExpand(!expand)
-
+  const handleExpand = () => {
+    setExpand(!expand)
+  }
   const handleRootItemClick = (external?: boolean) => {
-    if (nav.path === undefined) handleExpand()
+    if (nav.path === undefined) {
+      handleExpand()
+    }
     if (onItemClick) onItemClick()
     if (external) {
       servicePortalOutboundLink()
@@ -47,15 +51,17 @@ const ModuleNavigation: FC<Props> = ({
   }
 
   const navChildren = nav?.children?.filter((child) => !child.navHide)
+  const navArray = Array.isArray(navChildren) && navChildren.length > 0
 
   return (
     <Box>
       {nav.heading && (
         <Text
           variant="eyebrow"
-          color={variant === 'blue' ? 'blue600' : 'blueberry600'}
+          color={variant === 'blue' ? 'blue400' : 'blueberry600'}
           fontWeight="semiBold"
           marginBottom={2}
+          marginTop={2}
         >
           {formatMessage(nav.heading)}
         </Text>
@@ -67,8 +73,9 @@ const ModuleNavigation: FC<Props> = ({
       )}
       <NavItem
         path={nav.path}
-        icon={nav.icon}
+        icon={isModuleActive ? nav.activeIcon : nav.icon}
         active={isModuleActive}
+        hasArray={navArray}
         enabled={nav.enabled}
         external={nav.external}
         onClick={() => {
@@ -78,7 +85,7 @@ const ModuleNavigation: FC<Props> = ({
       >
         {formatMessage(nav.name)}
       </NavItem>
-      {Array.isArray(navChildren) && navChildren.length > 0 && (
+      {navArray && (
         <AnimateHeight
           duration={300}
           height={isModuleActive || alwaysExpanded ? 'auto' : 0}
@@ -86,7 +93,7 @@ const ModuleNavigation: FC<Props> = ({
           <div>
             <Box className={styles.subnav} marginTop={2}>
               <Stack space={1}>
-                {navChildren.map((child, index) => (
+                {navChildren?.map((child, index) => (
                   <SubNavItem
                     path={child.path}
                     enabled={child.enabled}

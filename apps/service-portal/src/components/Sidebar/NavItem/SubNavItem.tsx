@@ -29,6 +29,7 @@ const SubNavItemContent: FC<Props> = ({
   >
     <Text
       fontWeight={active ? 'semiBold' : 'regular'}
+      variant="small"
       color={
         enabled === false
           ? 'dark200'
@@ -37,7 +38,7 @@ const SubNavItemContent: FC<Props> = ({
           : 'blueberry600'
       }
     >
-      <span className={styles.subNavItem}>{children}</span>
+      <span>{children}</span>
     </Text>
   </Box>
 )

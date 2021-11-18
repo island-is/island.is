@@ -5,11 +5,17 @@ export const dotState = styleVariants({
   active: {},
   inactive: {},
 })
-
 export const navItem = style({})
 
-export const subNavItem = style({
-  fontSize: 16,
+export const navItemActive = styleVariants({
+  active: {
+    backgroundColor: '#E0ECFF',
+    borderTopLeftRadius: '8px',
+    borderBottomLeftRadius: '8px',
+  },
+  inactive: {
+    backgroundColor: `${theme.color.blue100}`,
+  },
 })
 
 export const dot = style({

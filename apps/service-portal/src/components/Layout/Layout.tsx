@@ -1,39 +1,65 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Header from '../Header/Header'
 import Sidebar from '../Sidebar/Sidebar'
 import {
   Box,
-  Columns,
-  Column,
   Hidden,
-  Footer,
-  ContentBlock,
   ToastContainer,
+  GridContainer,
+  GridColumn,
+  GridRow,
+  ResponsiveProp,
+  GridColumns,
 } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import * as styles from './Layout.css'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import useRoutes from '../../hooks/useRoutes/useRoutes'
 import { useModules } from '../../hooks/useModules/useModules'
-import { getFooterProps } from './footerProps'
 import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import MobileMenu from '../MobileMenu/MobileMenu'
-import { useFooterContent } from '@island.is/service-portal/graphql'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useNamespaces } from '@island.is/localization'
 import { useStore } from '../../store/stateProvider'
 import { RemoveScroll } from 'react-remove-scroll'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
   useModules()
-  const { locale, formatMessage } = useLocale()
   useNamespaces('service.portal')
-  const data = useFooterContent(locale)
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
-  const footerProps = getFooterProps(data, formatMessage)
-  const [{ mobileMenuState }] = useStore()
+  const [{ mobileMenuState, sidebarState }] = useStore()
+  const [span, setSpan] = useState<ResponsiveProp<GridColumns>>([
+    '12/12',
+    '12/12',
+    '12/12',
+    '8/12',
+    '9/12',
+  ])
+  const [offset, setOffset] = useState<ResponsiveProp<GridColumns>>([
+    '0',
+    '0',
+    '0',
+    '4/12',
+    '3/12',
+  ])
+
+  useEffect(() => {
+    if (sidebarState === 'closed' && pathname.includes('fjarmal')) {
+      setSpan(['12/12', '12/12', '12/12', '11/12', '11/12'])
+      setOffset(['0', '0', '0', '1/12', '1/12'])
+    } else if (sidebarState === 'closed' && !pathname.includes('fjarmal')) {
+      setSpan(['12/12', '12/12', '12/12', '10/12', '10/12'])
+      setOffset(['0', '0', '0', '2/12', '2/12'])
+    } else if (sidebarState === 'open' && pathname.includes('fjarmal')) {
+      setSpan(['12/12', '12/12', '12/12', '9/12', '10/12'])
+      setOffset(['0', '0', '0', '3/12', '2/12'])
+    } else {
+      setSpan(['12/12', '12/12', '12/12', '8/12', '9/12'])
+      setOffset(['0', '0', '0', '4/12', '3/12'])
+    }
+  }, [sidebarState, pathname])
 
   return (
     <>
@@ -46,27 +72,20 @@ const Layout: FC = ({ children }) => {
           <MobileMenu />
         </Hidden>
       </RemoveScroll>
-      <Box overflow="hidden" className={styles.layoutWrapper}>
-        <ContentBlock>
-          <Box paddingX={[2, 2, 4, 4, 6]} paddingY={[2, 2, 2, 7]}>
-            <Columns space={[0, 0, 0, 3, 5]} collapseBelow="lg">
-              <Column width="content">
-                <Hidden below="lg">
-                  <Sidebar />
-                </Hidden>
-              </Column>
-              <Column>
-                <Box as="main">
-                  <ContentBreadcrumbs />
-                  <div>{children}</div>
-                </Box>
-              </Column>
-            </Columns>
-          </Box>
-        </ContentBlock>
-        <Hidden print={true}>
-          <Footer {...footerProps} />
+      <Box overflow="hidden" className={styles.layoutWrapper} width="full">
+        <Hidden below="lg">
+          <Sidebar />
         </Hidden>
+        <Box as="main">
+          <GridContainer>
+            <GridRow>
+              <GridColumn span={span} offset={offset}>
+                <ContentBreadcrumbs />
+                <div>{children}</div>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        </Box>
       </Box>
     </>
   )

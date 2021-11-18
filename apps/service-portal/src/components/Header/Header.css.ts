@@ -13,6 +13,7 @@ export const header = style({
   zIndex: zIndex.header,
   display: 'flex',
   alignItems: 'center',
+  justifyContent: 'flex-end',
   width: '100%',
   height: SERVICE_PORTAL_HEADER_HEIGHT_SM,
   backgroundColor: theme.color.white,
@@ -28,6 +29,14 @@ export const placeholder = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       height: SERVICE_PORTAL_HEADER_HEIGHT_LG,
+    },
+  },
+})
+
+export const menuBox = style({
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
+      display: 'flex',
     },
   },
 })

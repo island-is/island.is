@@ -15,6 +15,7 @@ export interface ServicePortalNavigationItem {
   // System routes are always rendered in the navigation
   systemRoute?: boolean
   icon?: Pick<IconProps, 'icon' | 'type'>
+  activeIcon?: Pick<IconProps, 'icon' | 'type'>
   children?: ServicePortalNavigationItem[]
 
   // Hides the child item from the navigation bar, displays the breadcrumb.
