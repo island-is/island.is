@@ -30,6 +30,7 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
   const externalData = application.externalData as PaymentPlanExternalData
   const conditions =
     externalData.paymentPlanPrerequisites?.data?.conditions || null
+  const debts = externalData.paymentPlanPrerequisites?.data?.debts || null
 
   return (
     <Box>
@@ -58,17 +59,18 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
         title={`${conditions?.minPayment.toLocaleString('is-IS') || 0} kr.`}
         text={formatMessage(employer.labels.yourMinimumPayment)}
       />
-      {!!conditions?.minWagePayment && (
-        <Box marginTop={3}>
-          <AlertMessage
-            type="info"
-            title={formatMessage(employer.labels.alertTitle)}
-            message={formatMessage(employer.labels.alertMessage, {
-              minPayment: formatIsk(conditions?.minWagePayment),
-            })}
-          />
-        </Box>
-      )}
+      {!!conditions?.minWagePayment &&
+        debts?.find((x) => x.type === 'Wagedection') !== undefined && (
+          <Box marginTop={3}>
+            <AlertMessage
+              type="info"
+              title={formatMessage(employer.labels.alertTitle)}
+              message={formatMessage(employer.labels.alertMessage, {
+                minPayment: formatIsk(conditions?.minWagePayment),
+              })}
+            />
+          </Box>
+        )}
     </Box>
   )
 }
