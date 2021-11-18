@@ -14,7 +14,7 @@ import {
   hasReceivedPoliceReport,
   hasReceivedProxyDocument,
   isFatalAccident,
-  isReportingOnBehalfSelf,
+  isReportingOnBehalfOfInjured,
 } from '../../utils'
 
 export const addAttachmentsSection = (isAssignee?: boolean) =>
@@ -51,14 +51,18 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             space: 5,
             titleVariant: 'h5',
             condition: (formValue) =>
-              !isAssignee && !hasReceivedProxyDocument(formValue),
+              !isAssignee &&
+              isReportingOnBehalfOfInjured(formValue) &&
+              !hasReceivedProxyDocument(formValue),
           }),
           buildCustomField({
             id: 'attachments.powerOfAttorney.fileLink',
             component: 'ProxyDocument',
-            title: 'test',
+            title: '',
             condition: (formValue) =>
-              !isAssignee && !hasReceivedProxyDocument(formValue),
+              !isAssignee &&
+              isReportingOnBehalfOfInjured(formValue) &&
+              !hasReceivedProxyDocument(formValue),
           }),
           buildFileUploadField({
             id: 'attachments.powerOfAttorneyFile.file',
@@ -68,7 +72,9 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             uploadDescription: addDocuments.general.uploadDescription,
             uploadButtonLabel: addDocuments.general.uploadButtonLabel,
             condition: (formValue) =>
-              !isAssignee && !hasReceivedProxyDocument(formValue),
+              !isAssignee &&
+              isReportingOnBehalfOfInjured(formValue) &&
+              !hasReceivedProxyDocument(formValue),
           }),
           buildDescriptionField({
             id: 'attachments.deathCertificateFile.title',
@@ -78,7 +84,7 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             titleVariant: 'h5',
             condition: (formValue) => {
               return (
-                !isReportingOnBehalfSelf(formValue) &&
+                isReportingOnBehalfOfInjured(formValue) &&
                 isFatalAccident(formValue) &&
                 !hasReceivedPoliceReport(formValue)
               )
@@ -93,7 +99,7 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             uploadButtonLabel: addDocuments.general.uploadButtonLabel,
             condition: (formValue) => {
               return (
-                !isReportingOnBehalfSelf(formValue) &&
+                isReportingOnBehalfOfInjured(formValue) &&
                 isFatalAccident(formValue) &&
                 !hasReceivedPoliceReport(formValue)
               )
