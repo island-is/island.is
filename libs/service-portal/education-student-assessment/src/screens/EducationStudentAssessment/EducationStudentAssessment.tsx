@@ -22,7 +22,6 @@ function EducationStudentAssessment(): JSX.Element {
             'sp.education-student-assessment:education-student-assessment-intro',
           defaultMessage: 'Hér getur þú skoðað námsmat.',
         })}
-        img="./assets/images/educationGrades.svg"
       />
       <StudentAssessmentTable />
     </Box>
