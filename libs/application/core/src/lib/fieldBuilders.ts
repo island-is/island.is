@@ -83,6 +83,7 @@ export function buildDateField(
     excludeDates,
     placeholder,
     backgroundColor = 'blue',
+    required,
   } = data
   return {
     ...extractCommonFields(data),
@@ -94,6 +95,7 @@ export function buildDateField(
     type: FieldTypes.DATE,
     component: FieldComponents.DATE,
     backgroundColor,
+    required,
   }
 }
 
