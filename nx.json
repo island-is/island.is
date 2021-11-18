@@ -121,6 +121,9 @@
     "api-domains-identity": {
       "tags": []
     },
+    "api-domains-islykill": {
+      "tags": []
+    },
     "api-domains-license-service": {
       "tags": []
     },
@@ -304,6 +307,9 @@
     "clients-health-insurance-v2": {
       "tags": []
     },
+    "clients-islykill": {
+      "tags": []
+    },
     "clients-middlewares": {
       "tags": []
     },
@@ -395,6 +401,9 @@
       "tags": []
     },
     "financial-aid-web-veita": {
+      "tags": []
+    },
+    "github-actions-cache": {
       "tags": []
     },
     "gjafakort-api": {
@@ -614,6 +623,9 @@
       "tags": []
     },
     "service-portal-settings-access-control": {
+      "tags": []
+    },
+    "service-portal-settings-islykill": {
       "tags": []
     },
     "service-portal-settings-personal-information": {
