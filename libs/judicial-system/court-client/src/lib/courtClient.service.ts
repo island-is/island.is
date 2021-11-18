@@ -19,7 +19,6 @@ import {
   CreateThingbokRequest,
 } from '../../gen/fetch'
 import { UploadStreamApi } from './uploadStreamApi'
-import { Exception } from '@sentry/types'
 
 function stripResult(str: string): string {
   if (str[0] !== '"') {
