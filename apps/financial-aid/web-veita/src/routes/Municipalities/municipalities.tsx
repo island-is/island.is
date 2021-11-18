@@ -4,6 +4,7 @@ import {
   ActivationButtonTableItem,
   ApplicationOverviewSkeleton,
   LoadingContainer,
+  NewMunicipalityModal,
   TableBody,
   TableHeaders,
   TextTableItem,
@@ -25,11 +26,17 @@ export const Municipalities = () => {
     errorPolicy: 'all',
   })
 
+  const [isModalVisible, setIsModalVisible] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
     getMunicipalities()
   }, [])
+
+  const refreshList = () => {
+    setIsModalVisible(false)
+    getMunicipalities()
+  }
 
   const [municipalities, setMunicipalities] = useState<Municipality[]>()
 
@@ -52,7 +59,12 @@ export const Municipalities = () => {
         <Text as="h1" variant="h1">
           Sveitarfélög
         </Text>
-        <Button size="small" icon="add" variant="ghost">
+        <Button
+          size="small"
+          icon="add"
+          variant="ghost"
+          onClick={() => setIsModalVisible(true)}
+        >
           Nýtt sveitarfélag
         </Button>
       </Box>
@@ -121,6 +133,17 @@ export const Municipalities = () => {
           þessu upplýsingum?
         </div>
       )}
+
+      <NewMunicipalityModal
+        isVisible={isModalVisible}
+        setIsVisible={(visible) => {
+          setIsModalVisible(visible)
+        }}
+        activeMunicipalitiesCodes={municipalities
+          ?.filter((el) => el.active)
+          .map((el) => parseInt(el.municipalityId))}
+        onMunicipalityCreated={refreshList}
+      />
     </LoadingContainer>
   )
 }
