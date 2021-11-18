@@ -69,6 +69,7 @@ export const useGetPetitionListEndorsements = (listId: string) => {
       variables: {
         input: {
           listId: listId,
+          limit: 100,
         },
       },
     },
