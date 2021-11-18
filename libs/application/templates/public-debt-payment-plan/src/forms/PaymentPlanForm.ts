@@ -290,6 +290,11 @@ export const PaymentPlanForm: Form = buildForm({
           component: 'DisposableIncome',
         }),
       ],
+      condition: (_, externalData) => {
+        const employer = (externalData as PaymentPlanExternalData)
+          ?.paymentPlanPrerequisites?.data?.employer
+        return !!employer
+      },
     }),
     buildSection({
       id: 'paymentPlanSection',

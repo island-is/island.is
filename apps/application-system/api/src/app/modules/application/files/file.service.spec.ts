@@ -274,7 +274,7 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    expect(act).not.toThrow()
+    await expect(act).resolves
   })
 
   it('should throw error for requestFileSignature since application type is not supported', async () => {
@@ -300,7 +300,7 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    expect(act).not.toThrow()
+    await expect(act).resolves
   })
 
   it('should throw error for getPresignedUrl since application type is not supported', async () => {

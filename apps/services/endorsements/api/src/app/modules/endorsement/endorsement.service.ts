@@ -470,8 +470,11 @@ export class EndorsementService {
         },
       ],
     })
+    this.logger.info(
+      `sending list ${listId} to ${recipientEmail} from ${environment.email.sender}`,
+    )
     try {
-      const result = await this.emailService.sendEmail({
+      await this.emailService.sendEmail({
         from: {
           name: environment.email.sender,
           address: environment.email.address,
@@ -483,28 +486,23 @@ export class EndorsementService {
             address: recipientEmail,
           },
         ],
-        subject: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
+        subject: `Meðmælendalisti "${endorsementList?.title}"`,
         template: {
-          title: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
+          title: `Meðmælendalisti "${endorsementList?.title}"`,
           body: [
             {
               component: 'Heading',
               context: {
-                copy: 'Meðmælendalisti ' + '"' + endorsementList?.title + '"',
+                copy: `Meðmælendalisti "${endorsementList?.title}"`,
               },
             },
             { component: 'Copy', context: { copy: 'Sæl/l' } },
             {
               component: 'Copy',
               context: {
-                copy:
-                  'Meðfylgjandi er meðmælendalisti ' +
-                  '"' +
-                  endorsementList?.title +
-                  '"' +
-                  ', sem ' +
-                  endorsementList?.owner +
-                  ' er skráður ábyrgðarmaður fyrir. Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.',
+                copy: `Meðfylgjandi er meðmælendalisti "${endorsementList?.title}", 
+                sem ${endorsementList?.owner} er skráður ábyrgðarmaður fyrir. 
+                Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.`,
               },
             },
             { component: 'Copy', context: { copy: 'Kær kveðja,' } },
@@ -512,13 +510,13 @@ export class EndorsementService {
           ],
         },
         attachments: [
-          {
-            filename: 'Meðmælendalisti.pdf',
-            content: await this.createDocumentBuffer(endorsementList),
-          },
+          //   {
+          //   filename: 'Meðmælendalisti.pdf',
+          //   content: await this.createDocumentBuffer(endorsementList),
+          // }
         ],
       })
-      this.logger.debug(`sending list ${listId} to ${recipientEmail}`)
+
       return { success: true }
     } catch (error) {
       this.logger.error('Failed to send email', error)

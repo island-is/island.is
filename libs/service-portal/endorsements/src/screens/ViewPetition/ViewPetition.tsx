@@ -387,7 +387,7 @@ const ViewPetition = () => {
           <PetitionsTable
             petitions={petitionEndorsements}
             listId={location.state?.listId}
-            isSendEmailVisible={viewTypeEdit}
+            isViewTypeEdit={viewTypeEdit}
           />
         </>
       ) : (
