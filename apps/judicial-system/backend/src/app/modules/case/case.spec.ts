@@ -12,19 +12,14 @@ import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { SigningService } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import { IntlService } from '@island.is/cms-translations'
-import {
-  CaseState,
-  CaseType,
-  InstitutionType,
-  User,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import * as formatters from '../../formatters'
 import { CourtService } from '../court'
 import { UserService } from '../user'
 import { EventService } from '../event'
+import { FileService } from '../file'
 import { Case } from './models'
 import { CaseService } from './case.service'
 import { CaseController } from './case.controller'
@@ -52,6 +47,10 @@ describe('CaseController', () => {
         },
         {
           provide: UserService,
+          useClass: jest.fn(() => ({})),
+        },
+        {
+          provide: FileService,
           useClass: jest.fn(() => ({})),
         },
         {
@@ -98,134 +97,111 @@ describe('CaseController', () => {
       ${CaseType.RESTRAINING_ORDER}
       ${CaseType.OTHER}
       `.describe('given a $type case', ({ type }) => {
-      each`
-        role
-        ${UserRole.PROSECUTOR}
-        ${UserRole.JUDGE}
-        ${UserRole.REGISTRAR}
-      `.describe('given a $role user', ({ role }) => {
-        // RolesGuard blocks access for the ADMIN role. Also, mockFindByIdAndUser
-        // blocks access for some roles to some cases. This is not relevant in
-        // this test.
-        const user = { role } as User
-        const id = uuid()
-        const mockCase = { id, type }
+      const id = uuid()
+      const mockCase = { id, type } as Case
 
-        beforeEach(() => {
-          caseModel.findOne.mockResolvedValueOnce(mockCase)
-        })
+      beforeEach(() => {
+        caseModel.findOne.mockResolvedValueOnce(mockCase)
+      })
 
-        it('should throw', async () => {
-          const response = {} as Response
+      it('should throw', async () => {
+        const response = {} as Response
 
-          await expect(
-            caseController.getCustodyNoticePdf(id, user, response),
-          ).rejects.toThrow(BadRequestException)
-        })
+        await expect(
+          caseController.getCustodyNoticePdf(id, mockCase, response),
+        ).rejects.toThrow(BadRequestException)
       })
     })
 
     describe('given a custody case', () => {
       const id = uuid()
-      const mockCase = { id, type: CaseType.CUSTODY }
+      const mockCase = { id, type: CaseType.CUSTODY } as Case
+
       each`
-        state                  | role                   | institutionType
-        ${CaseState.NEW}       | ${UserRole.PROSECUTOR} | ${InstitutionType.PROSECUTORS_OFFICE}
-        ${CaseState.DRAFT}     | ${UserRole.PROSECUTOR} | ${InstitutionType.PROSECUTORS_OFFICE}
-        ${CaseState.DRAFT}     | ${UserRole.JUDGE}      | ${InstitutionType.COURT}
-        ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}
-        ${CaseState.SUBMITTED} | ${UserRole.PROSECUTOR} | ${InstitutionType.PROSECUTORS_OFFICE}
-        ${CaseState.SUBMITTED} | ${UserRole.JUDGE}      | ${InstitutionType.COURT}
-        ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}
-        ${CaseState.RECEIVED}  | ${UserRole.PROSECUTOR} | ${InstitutionType.PROSECUTORS_OFFICE}
-        ${CaseState.RECEIVED}  | ${UserRole.JUDGE}      | ${InstitutionType.COURT}
-        ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}
-        ${CaseState.REJECTED}  | ${UserRole.PROSECUTOR} | ${InstitutionType.PROSECUTORS_OFFICE}
-        ${CaseState.REJECTED}  | ${UserRole.JUDGE}      | ${InstitutionType.COURT}
-        ${CaseState.REJECTED}  | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}
-        ${CaseState.REJECTED}  | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}
-        ${CaseState.REJECTED}  | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}
-        ${CaseState.DISMISSED} | ${UserRole.PROSECUTOR} | ${InstitutionType.PROSECUTORS_OFFICE}
-        ${CaseState.DISMISSED} | ${UserRole.JUDGE}      | ${InstitutionType.COURT}
-        ${CaseState.DISMISSED} | ${UserRole.REGISTRAR}  | ${InstitutionType.COURT}
-        ${CaseState.DISMISSED}  | ${UserRole.JUDGE}      | ${InstitutionType.HIGH_COURT}
-        ${CaseState.DISMISSED}  | ${UserRole.REGISTRAR}  | ${InstitutionType.HIGH_COURT}
+        state
+        ${CaseState.NEW}
+        ${CaseState.DRAFT}
+        ${CaseState.DRAFT}
+        ${CaseState.DRAFT}
+        ${CaseState.SUBMITTED}
+        ${CaseState.SUBMITTED}
+        ${CaseState.SUBMITTED}
+        ${CaseState.RECEIVED}
+        ${CaseState.RECEIVED}
+        ${CaseState.RECEIVED}
+        ${CaseState.REJECTED}
+        ${CaseState.REJECTED}
+        ${CaseState.REJECTED}
+        ${CaseState.REJECTED}
+        ${CaseState.REJECTED}
+        ${CaseState.DISMISSED}
+        ${CaseState.DISMISSED}
+        ${CaseState.DISMISSED}
+        ${CaseState.DISMISSED}
+        ${CaseState.DISMISSED}
       `.it(
         'should throw if the case has not been accepted',
-        async ({ state, role, institutionType }) => {
-          // RolesGuard blocks access for the ADMIN role. Also, mockFindByIdAndUser
-          // blocks access for some roles to some cases. This is not relevant in
-          // this test.
-          const user = { role, institution: { type: institutionType } } as User
-
-          caseModel.findOne.mockResolvedValueOnce({ ...mockCase, state })
-
+        async ({ state }) => {
           const response = {} as Response
 
+          const mockNotAcceptedCase = { ...mockCase, state } as Case
+
           await expect(
-            caseController.getCustodyNoticePdf(id, user, response),
+            caseController.getCustodyNoticePdf(
+              id,
+              mockNotAcceptedCase,
+              response,
+            ),
           ).rejects.toThrow(BadRequestException)
         },
       )
 
-      each`
-        role
-        ${UserRole.PROSECUTOR}
-        ${UserRole.JUDGE}
-        ${UserRole.REGISTRAR}
-        ${UserRole.STAFF}
-      `.it(
-        'should get the custody notice pdf if the case has been accepted',
-        async ({ role }) => {
-          // RolesGuard blocks access for the ADMIN role. Also, mockFindByIdAndUser
-          // blocks access for some roles to some cases. This is not relevant in
-          // this test.
-          const user = { role } as User
+      it('should get the custody notice pdf if the case has been accepted', async () => {
+        const mockAcceptedCase = {
+          ...mockCase,
+          state: CaseState.ACCEPTED,
+        } as Case
 
-          const mockAcceptedCase = { ...mockCase, state: CaseState.ACCEPTED }
-          caseModel.findOne.mockResolvedValueOnce(mockAcceptedCase)
+        const mockPdf = 'Mock PDF content'
+        const mockGetCustodyNoticePdfAsString = jest.spyOn(
+          formatters,
+          'getCustodyNoticePdfAsString',
+        )
+        mockGetCustodyNoticePdfAsString.mockResolvedValueOnce(mockPdf)
 
-          const mockPdf = 'Mock PDF content'
-          const mockGetCustodyNoticePdfAsString = jest.spyOn(
-            formatters,
-            'getCustodyNoticePdfAsString',
-          )
-          mockGetCustodyNoticePdfAsString.mockResolvedValueOnce(mockPdf)
+        const mockPut = jest.fn()
+        const mockPipe = jest.fn()
+        const mockReadableStreamBuffer = jest.spyOn(
+          streamBuffers,
+          'ReadableStreamBuffer',
+        )
+        mockReadableStreamBuffer.mockReturnValueOnce(({
+          put: mockPut,
+          pipe: mockPipe,
+        } as unknown) as streamBuffers.ReadableStreamBuffer)
+        const mockResponse = {} as Response
+        mockPipe.mockReturnValueOnce(mockResponse)
 
-          const mockPut = jest.fn()
-          const mockPipe = jest.fn()
-          const mockReadableStreamBuffer = jest.spyOn(
-            streamBuffers,
-            'ReadableStreamBuffer',
-          )
-          mockReadableStreamBuffer.mockReturnValueOnce(({
-            put: mockPut,
-            pipe: mockPipe,
-          } as unknown) as streamBuffers.ReadableStreamBuffer)
-          const mockResponse = {} as Response
-          mockPipe.mockReturnValueOnce(mockResponse)
+        const response = ({ header: jest.fn() } as unknown) as Response
 
-          const response = ({ header: jest.fn() } as unknown) as Response
+        const result = await caseController.getCustodyNoticePdf(
+          id,
+          mockAcceptedCase,
+          response,
+        )
 
-          const result = await caseController.getCustodyNoticePdf(
-            id,
-            user,
-            response,
-          )
+        expect(mockGetCustodyNoticePdfAsString).toHaveBeenCalledWith(
+          mockAcceptedCase,
+        )
 
-          expect(mockGetCustodyNoticePdfAsString).toHaveBeenCalledWith(
-            mockAcceptedCase,
-          )
+        expect(mockPut).toHaveBeenCalledWith(mockPdf, 'binary')
 
-          expect(mockPut).toHaveBeenCalledWith(mockPdf, 'binary')
+        expect(response.header).toHaveBeenCalledWith('Content-length', '16')
 
-          expect(response.header).toHaveBeenCalledWith('Content-length', '16')
+        expect(mockPipe).toHaveBeenCalledWith(response)
 
-          expect(mockPipe).toHaveBeenCalledWith(response)
-
-          expect(result).toBe(mockResponse)
-        },
-      )
+        expect(result).toBe(mockResponse)
+      })
     })
   })
 })

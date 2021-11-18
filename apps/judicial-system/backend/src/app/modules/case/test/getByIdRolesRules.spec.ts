@@ -6,13 +6,12 @@ import {
 } from '../../../guards'
 import { CaseController } from '../case.controller'
 
-describe('CaseController - get by id rules', () => {
+describe('CaseController - Get by id rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let rules: any[]
 
   beforeEach(() => {
     rules = Reflect.getMetadata('roles-rules', CaseController.prototype.getById)
-    console.log(rules)
   })
 
   it('should give permission to four roles', () => {

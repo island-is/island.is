@@ -49,7 +49,6 @@ import {
   registrarRule,
   staffRule,
 } from '../../guards'
-import { CaseFile } from '../file/models/file.model'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
 import {

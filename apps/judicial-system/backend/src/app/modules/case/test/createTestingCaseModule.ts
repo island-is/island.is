@@ -11,6 +11,7 @@ import { environment } from '../../../../environments'
 import { CourtService } from '../../court'
 import { EventService } from '../../event'
 import { UserService } from '../../user'
+import { FileService } from '../../file'
 import { Case } from '../models'
 import { CaseService } from '../case.service'
 import { CaseController } from '../case.controller'
@@ -21,6 +22,7 @@ jest.mock('@island.is/cms-translations')
 jest.mock('../../court/court.service.ts')
 jest.mock('../../event/event.service.ts')
 jest.mock('../../user/user.service.ts')
+jest.mock('../../file/file.service.ts')
 
 export const createTestingCaseModule = async (): Promise<CaseController> => {
   const caseModule = await Test.createTestingModule({
@@ -35,6 +37,7 @@ export const createTestingCaseModule = async (): Promise<CaseController> => {
     providers: [
       CourtService,
       UserService,
+      FileService,
       EventService,
       SigningService,
       EmailService,

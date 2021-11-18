@@ -1,11 +1,9 @@
 import { Includeable } from 'sequelize/types'
 
 import {
-  ForbiddenException,
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -34,13 +32,13 @@ import {
   writeFile,
   getCustodyNoticePdfAsString,
 } from '../../formatters'
+import { FileService } from '../file/file.service'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { CourtService } from '../court'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { getCasesQueryFilter, isCaseBlockedFromUser } from './filters'
+import { getCasesQueryFilter } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
-import { FileService } from '../file/file.service'
 
 interface Recipient {
   name: string
