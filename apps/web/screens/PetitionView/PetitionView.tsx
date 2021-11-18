@@ -35,7 +35,7 @@ const PetitionView = (namespace) => {
 
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const [pagePetitions, setPetitions] = useState(listEndorsements.data)
+  const [pagePetitions, setPetitions] = useState(listEndorsements.data ?? [])
 
   const getBaseUrl = () => {
     const isLocalhost = window?.location.origin.includes('localhost')
@@ -62,8 +62,8 @@ const PetitionView = (namespace) => {
   }
 
   useEffect(() => {
-    handlePagination(1, listEndorsements.data)
-    setPetitions(listEndorsements.data)
+    setPetitions(listEndorsements.data ?? [])
+    handlePagination(1, listEndorsements.data ?? [])
   }, [listEndorsements])
 
   return (
@@ -153,7 +153,7 @@ const PetitionView = (namespace) => {
                     </T.Table>
                   </GridColumn>
                 </GridRow>
-                {!!list.signedPetitions?.length && (
+                {pagePetitions && pagePetitions.length ? (
                   <Box marginY={3}>
                     <Pagination
                       page={page}
@@ -163,7 +163,7 @@ const PetitionView = (namespace) => {
                           cursor="pointer"
                           className={className}
                           onClick={() =>
-                            handlePagination(page, list.signedPetitions)
+                            handlePagination(page, listEndorsements.data)
                           }
                         >
                           {children}
@@ -171,6 +171,8 @@ const PetitionView = (namespace) => {
                       )}
                     />
                   </Box>
+                ) : (
+                  <Text>{n('noPetitions', 'Engin meðmæli komin')}</Text>
                 )}
               </GridColumn>
             ) : (
