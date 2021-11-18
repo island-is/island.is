@@ -1,6 +1,6 @@
 import { PaymentScheduleAPI } from '@island.is/clients/payment-schedule'
 import { UseGuards } from '@nestjs/common'
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { GetInitialScheduleInput, GetScheduleDistributionInput } from './dto'
 import {
   PaymentScheduleConditions,
@@ -17,6 +17,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { PaymentScheduleService } from '../payment-schedule.service'
+import { UpdateCurrentEmployerInput } from './dto/updateCurrentEmployerInput'
+import { UpdateCurrentEmployerResponse } from './models/updateCurrentEmployer.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -79,6 +81,21 @@ export class PaymentScheduleResolver {
     input: GetScheduleDistributionInput,
   ): Promise<PaymentScheduleDistribution> {
     return await this.paymentScheduleService.getPaymentDistribution(
+      user.nationalId,
+      input,
+    )
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'updateCurrentEmployer',
+  })
+  @Audit()
+  async updateCurrentEmployer(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => UpdateCurrentEmployerInput })
+    input: UpdateCurrentEmployerInput,
+  ): Promise<UpdateCurrentEmployerResponse> {
+    return await this.paymentScheduleService.updateCurrentEmployer(
       user.nationalId,
       input,
     )
