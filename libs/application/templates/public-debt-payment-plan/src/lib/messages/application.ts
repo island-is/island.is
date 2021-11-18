@@ -38,6 +38,11 @@ export const section = defineMessages({
     defaultMessage: 'Ráðstöfunartekjur',
     description: 'Employer section',
   },
+  deptOverview: {
+    id: `pdpp.application:section.deptOverview`,
+    defaultMessage: 'Yfirlit yfir skuldir',
+    description: 'Debt overview section',
+  },
   paymentPlan: {
     id: `pdpp.application:section.paymentPlan`,
     defaultMessage: 'Greiðsludreifing',

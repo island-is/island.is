@@ -292,16 +292,20 @@ export const PaymentPlanForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'paymentPlanSection',
-      title: section.paymentPlan,
+      id: 'deptOverview',
+      title: section.deptOverview,
       children: [
         buildCustomField({
           id: `payment-plan-list`,
           title: paymentPlan.general.pageTitle,
           component: 'PaymentPlanList',
         }),
-        ...buildPaymentPlanSteps(),
       ],
+    }),
+    buildSection({
+      id: 'paymentPlanSection',
+      title: section.paymentPlan,
+      children: [...buildPaymentPlanSteps()],
     }),
     buildSection({
       id: 'overview',
