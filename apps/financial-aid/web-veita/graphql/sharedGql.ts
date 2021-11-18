@@ -336,7 +336,7 @@ export const MunicipalitiesQuery = gql`
       id
       name
       active
-      users
+      numberOfUsers
       municipalityId
     }
   }
@@ -375,6 +375,18 @@ export const MunicipalityQuery = gql`
         withOthers
         type
       }
+    }
+  }
+`
+
+export const SupervisorsQuery = gql`
+  query supervisorsQuery {
+    supervisors {
+      id
+      nationalId
+      name
+      roles
+      active
     }
   }
 `

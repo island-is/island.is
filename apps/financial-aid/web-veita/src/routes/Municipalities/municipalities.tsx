@@ -100,7 +100,7 @@ export const Municipalities = () => {
                       ),
                       TextTableItem(
                         'default',
-                        item.users,
+                        item.numberOfUsers,
                         item.active ? 'dark400' : 'dark300',
                       ),
                       ActivationButtonTableItem(

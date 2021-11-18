@@ -17,15 +17,24 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useQuery } from '@apollo/client'
+import {
+  getCustodyAndTravelBanProsecutorSection,
+  getInvestigationCaseProsecutorSection,
+  getInvestigationCaseCourtSections,
+  getCourtSections,
+  findLastValidStep,
+} from '@island.is/judicial-system-web/src/utils/sections'
+import { useQuery, useLazyQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import ActiveRequests from './ActiveRequests'
 import PastRequests from './PastRequests'
 import router from 'next/router'
 import * as styles from './Requests.css'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
+import { CaseData } from '@island.is/judicial-system-web/src/types'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const Requests: React.FC = () => {
@@ -44,6 +53,15 @@ export const Requests: React.FC = () => {
   const { data, error, loading } = useQuery(CasesQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
+  })
+
+  const [getCaseToOpen] = useLazyQuery<CaseData>(CaseQuery, {
+    fetchPolicy: 'no-cache',
+    onCompleted: (caseData) => {
+      if (user?.role && caseData?.case) {
+        openCase(caseData.case, user.role)
+      }
+    },
   })
 
   const { transitionCase, sendNotification } = useCase()
@@ -113,27 +131,27 @@ export const Requests: React.FC = () => {
   }
 
   const handleRowClick = (id: string) => {
-    const caseToOpen = resCases.find((c: Case) => c.id === id)
-
-    if (user?.role) {
-      openCase(caseToOpen, user.role)
-    }
+    getCaseToOpen({
+      variables: { input: { id } },
+    })
   }
 
   const openCase = (caseToOpen: Case, role: UserRole) => {
+    let routeTo = null
+
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
       caseToOpen.state === CaseState.REJECTED ||
       caseToOpen.state === CaseState.DISMISSED
     ) {
-      router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`)
+      routeTo = `${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
       if (isRestrictionCase(caseToOpen.type)) {
-        router.push(
-          `${Constants.COURT_SINGLE_REQUEST_BASE_ROUTE}/${caseToOpen.id}`,
-        )
+        routeTo = findLastValidStep(getCourtSections(caseToOpen)).href
       } else {
-        router.push(`${Constants.IC_OVERVIEW_ROUTE}/${caseToOpen.id}`)
+        routeTo = findLastValidStep(
+          getInvestigationCaseCourtSections(caseToOpen),
+        ).href
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
@@ -141,23 +159,27 @@ export const Requests: React.FC = () => {
           caseToOpen.state === CaseState.RECEIVED ||
           caseToOpen.state === CaseState.SUBMITTED
         ) {
-          router.push(`${Constants.STEP_SIX_ROUTE}/${caseToOpen.id}`)
+          routeTo = `${Constants.STEP_SIX_ROUTE}/${caseToOpen.id}`
         } else {
-          router.push(`${Constants.STEP_ONE_ROUTE}/${caseToOpen.id}`)
+          routeTo = findLastValidStep(
+            getCustodyAndTravelBanProsecutorSection(caseToOpen),
+          ).href
         }
       } else {
         if (
           caseToOpen.state === CaseState.RECEIVED ||
           caseToOpen.state === CaseState.SUBMITTED
         ) {
-          router.push(
-            `${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${caseToOpen.id}`,
-          )
+          routeTo = `${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${caseToOpen.id}`
         } else {
-          router.push(`${Constants.IC_DEFENDANT_ROUTE}/${caseToOpen.id}`)
+          routeTo = findLastValidStep(
+            getInvestigationCaseProsecutorSection(caseToOpen),
+          ).href
         }
       }
     }
+
+    if (routeTo) router.push(routeTo)
   }
 
   return (
