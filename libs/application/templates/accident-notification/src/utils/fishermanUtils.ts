@@ -25,7 +25,7 @@ export const isFishermanAccident = (formValue: FormValue) => {
 export const isAboardShip = (formValue: FormValue) => {
   const fishermanWorkplaceAccidentLocationAnswer = getValueViaPath(
     formValue,
-    'accidentLocation.asnwer',
+    'accidentLocation.answer',
   ) as FishermanWorkplaceAccidentLocationEnum
   return (
     isFishermanAccident(formValue) &&

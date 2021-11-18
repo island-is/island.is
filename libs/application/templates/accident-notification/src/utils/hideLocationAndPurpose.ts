@@ -9,10 +9,10 @@ import { isHomeActivitiesAccident } from './isHomeActivitiesAccident'
 // Location and purpose of accident only relevant in work and studies and never in home
 // activities
 export const hideLocationAndPurpose = (formValue: FormValue) => {
-  const answer = getValueViaPath(
-    formValue,
-    'accidentLocation.answers',
-  ) as GeneralWorkplaceAccidentLocationEnum & StudiesAccidentLocationEnum
+  const answer = getValueViaPath(formValue, 'accidentLocation.answer') as
+    | GeneralWorkplaceAccidentLocationEnum
+    | StudiesAccidentLocationEnum
+    | ProfessionalAthleteAccidentLocationEnum
 
   if (isHomeActivitiesAccident(formValue)) {
     return true

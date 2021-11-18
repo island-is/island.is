@@ -116,7 +116,7 @@ export const hasMissingDeathCertificate = (answers: FormValue) => {
 export const hasMissingPowerOfAttorneyFile = (answers: FormValue): boolean => {
   const whoIsTheNotificationFor = getValueViaPath(
     answers,
-    'whoIsTheNotificationFor.asnwer',
+    'whoIsTheNotificationFor.answer',
   ) as WhoIsTheNotificationForEnum
   return whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY
 }
