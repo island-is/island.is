@@ -356,7 +356,7 @@ export class EndorsementListService {
     if (!endorsementList) {
       throw new NotFoundException(['This endorsement list does not exist.'])
     }
-    let ownerName = await this.getOwnerInfo(
+    const ownerName = await this.getOwnerInfo(
       endorsementList?.id,
       endorsementList.owner,
     )
