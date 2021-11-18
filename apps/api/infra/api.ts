@@ -9,6 +9,7 @@ import {
   Labor,
   NationalRegistry,
   Payment,
+  PaymentSchedule,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -40,9 +41,9 @@ export const serviceSetup = (services: {
         prod: 'island-is-prod-upload-api',
       },
       AUTH_PUBLIC_API_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
+        dev: 'https://identity-server.dev01.devland.is/api',
+        staging: 'https://identity-server.staging01.devland.is/api',
+        prod: 'https://innskra.island.is/api',
       },
       ELASTIC_NODE: {
         dev:
@@ -147,8 +148,7 @@ export const serviceSetup = (services: {
       RSK_API_USERNAME: '/k8s/shared/api/RSK_API_USERNAME',
       RSK_API_PASSWORD: '/k8s/shared/api/RSK_API_PASSWORD',
       RSK_API_URL: '/k8s/shared/api/RSK_API_URL',
-      PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER',
-      PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD',
+      ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
     })
     .xroad(
       Base,
@@ -160,6 +160,7 @@ export const serviceSetup = (services: {
       Finance,
       Education,
       NationalRegistry,
+      PaymentSchedule,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

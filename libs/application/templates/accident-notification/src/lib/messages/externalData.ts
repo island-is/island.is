@@ -4,19 +4,19 @@ export const externalData = {
   agreementDescription: defineMessages({
     sectionTitle: {
       id: 'an.application:section.agreementDescription.sectionTitle',
-      defaultMessage: 'Upplýsingar um meðferð á gögnum',
+      defaultMessage: 'Miðlun upplýsinga',
       description: 'Information on data handling',
     },
     bulletOne: {
       id: 'an.application:section.agreementDescription.BulletOne',
       defaultMessage:
-        'Vinnueftirlit ríkisins fær afrit þessa eyðublaðs á grundvelli 4. mgr. 79. gr. laga nr. 46/1980. Tryggingastofnun ríkisins fær upplýsingar um bótagreiðslur sem ekki greiðast samhliða bótum stofnunarinnar, sbr. 14. gr. laga nr. 45/2015.',
+        'Þegar tilkynning um slys er send Sjúkratryggingum Íslands mun stofnunin miðla upplýsingum um afstöðu til bótaskyldu með þeim atvinnurekanda eða íþróttafélagi sem á í hlut. Ástæðan þess er að umræddir aðilar kunna að eiga rétt á endurgreiðslu útlagðs kostnaðar og/eða dagpeningum ef greidd hafa verið laun í veikindaforföllum vegna slyssins. Þessir aðilar fá aldrei afhentar heilsufars- eða sjúkraskrárupplýsingar.',
       description: 'List item 1 on data gathering information',
     },
     bulletTwo: {
       id: 'an.application:section.agreementDescription.BulletTwo',
       defaultMessage:
-        'Þannig verður eitthvað óvænt að hafa átt sér stað og skilyrði er að óhappið verði ekki rakið til undirliggjandi sjúkdóms eða meinsemda hjá þeim sem fyrir óhappi verður.',
+        'Vinnueftirlit ríkisins kann einnig að fá afrit af tilkynningunni undir ákveðnum kringumstæðum á grundvelli 4. mgr. 79. gr. laga nr. 46/1980 sem og Rannsóknarnefnd samgönguslysa á grundvelli 12. og 16. gr. laga nr. 18/2013.',
       description: 'List item 2 on data gathering information',
     },
     bulletThree: {
@@ -58,12 +58,13 @@ export const externalData = {
   nationalRegistry: defineMessages({
     title: {
       id: 'an.application:section.externalData.nationalRegistry.title',
-      defaultMessage: 'Upplýsingar frá þjóðskrá',
+      defaultMessage: 'Þjóðskrá Íslands:',
       description: 'Title: National Registry',
     },
     description: {
       id: 'an.application:section.externalData.nationalRegistry.description',
-      defaultMessage: 'Nafn, kennitala, símanúmer, netfang',
+      defaultMessage:
+        'Upplýsingar um nafn, kennitölu og heimilisfang. Upplýsingar um börn og maka.',
       description: 'Description: National Registry',
     },
   }),
@@ -76,19 +77,20 @@ export const externalData = {
     description: {
       id: 'an.application:section.externalData.accidentProvider.description',
       defaultMessage:
-        'Við vinnslu málsins munu Sjúkratryggingar Íslands afla nauðsynlegra upplýsinga frá skattyfirvöldum, Tryggingastofnun ríkisins, Vinnumálastofnun, Þjóðskrá Íslands og evrópskum sjúkratryggingastofnunum, þegar það á við.',
+        'Í einstaka tilvikum getur verið nauðsynlegt að afla upplýsinga frá atvinnurekanda eða eftir atvikum íþróttafélaga um slysið ef þær fást ekki frá slasaða.',
       description: 'Description: Accident Provider',
     },
   }),
   revAndCustoms: defineMessages({
     title: {
       id: 'an.application:section.externalData.revAndCustoms.title',
-      defaultMessage: 'Upplýsingar frá skattinum',
+      defaultMessage: 'Skattinum:',
       description: 'Title: External Info about applicants insurance ',
     },
     description: {
       id: 'an.application:section.externalData.revAndCustoms.description',
-      defaultMessage: 'Upplýsingar um slysatryggingu við heimilisstörf',
+      defaultMessage:
+        'Upplýsingar um launagreiðslur/reiknað endurgjald. Nafn og kennitölu launagreiðanda. Upplýsingar um hvort heimilistrygging sé í gildi.',
       description: 'Description: External Info about applicants insurance',
     },
   }),
@@ -103,6 +105,47 @@ export const externalData = {
       defaultMessage: 'Send verða til þín skilaboð um stöðu mála o.s.frv.',
       description:
         'Notifications will be sent regarding the status of your application',
+    },
+  }),
+  directoryOfLabor: defineMessages({
+    title: {
+      id: 'an.application:section.externalData.directoryOfLabor.title',
+      defaultMessage: 'Vinnumálastofnun:',
+      description: 'Approval of directory of labor',
+    },
+    description: {
+      id: 'an.application:section.externalData.directoryOfLabor.description',
+      defaultMessage:
+        'Upplýsingar um tímabil atvinnuleysisbóta og greiðslna úr fæðingarorlofssjóði.',
+      description: 'Approval of gathering information from directory of labor',
+    },
+  }),
+
+  nationalInsurancy: defineMessages({
+    title: {
+      id: 'an.application:section.externalData.nationalInsurancy.title',
+      defaultMessage: 'Tryggingastofnun ríkisins:',
+      description: 'Approval of National insurancy',
+    },
+    description: {
+      id: 'an.application:section.externalData.nationalInsurancy.description',
+      defaultMessage:
+        'Upplýsingar um örorku- eða endurhæfingarmat (stöðu). Upplýsingar um greiðslur sem ekki má greiða samhliða bótum slysatrygginga (stöðu).',
+      description: 'Approval of gathering information from National insurancy',
+    },
+  }),
+  municipalCollectionAgency: defineMessages({
+    title: {
+      id: 'an.application:section.externalData.municipalCollectionAgency.title',
+      defaultMessage: 'Innheimtustofnun sveitarfélaga:',
+      description: 'Approval of Municipal Collection Agency',
+    },
+    description: {
+      id:
+        'an.application:section.externalData.municipalCollectionAgency.description',
+      defaultMessage: 'Upplýsingar um stöðu meðlagsgreiðslna.',
+      description:
+        'Approval of gathering information from Approval of Municipal Collection Agency',
     },
   }),
 }

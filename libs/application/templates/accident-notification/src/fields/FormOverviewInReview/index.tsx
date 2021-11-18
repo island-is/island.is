@@ -61,7 +61,7 @@ export const FormOverviewInReview: FC<
       <FormOverview
         field={field}
         application={application}
-        goToScreen={() => undefined}
+        goToScreen={() => null}
       />
       <Box display="flex" justifyContent="flexEnd" marginBottom={6}>
         <Button icon="attach" variant="utility" onClick={goToAttachmentScreen}>
@@ -78,7 +78,7 @@ export const FormOverviewInReview: FC<
             {formatMessage(thirdPartyComment.general.description)}
           </Text>
           <InputController
-            id="assigneeComment"
+            id="reviewComment"
             textarea
             backgroundColor="blue"
             rows={10}

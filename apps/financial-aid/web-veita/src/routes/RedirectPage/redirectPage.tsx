@@ -17,7 +17,9 @@ export const RedirectPage = () => {
     if (admin.staff.roles.includes(StaffRole.EMPLOYEE)) {
       router.push(Routes.newCases)
     } else if (admin.staff.roles.includes(StaffRole.ADMIN)) {
-      router.push(Routes.users)
+      router.push(Routes.settings.users)
+    } else if (admin.staff.roles.includes(StaffRole.SUPERADMIN)) {
+      router.push(Routes.settings.municipalities)
     }
   }
 

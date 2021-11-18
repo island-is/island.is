@@ -79,6 +79,7 @@
 - [External Contributions](handbook/repository/external-contribute.md)
 - [Generating a New Project](handbook/repository/generate.md)
 - [GitBook Contributions](handbook/repository/gitbook-contribute.md)
+- [OpenAPI](handbook/repository/openapi.md)
 - [Auto Generated Schemas](handbook/repository/schemas.md)
 - [Workspace Settings](handbook/repository/workspace-settings.md)
 
@@ -98,6 +99,7 @@
   - [Auth API](apps/services/auth-api/README.md)
   - [Documents](apps/services/documents/README.md)
     - [Endorsements API](apps/services/endorsements/api/README.md)
+  - [Notifications - Hnipp](apps/services/notifications/README.md)
   - [Party Letter Registry](apps/services/party-letter-registry-api/README.md)
   - [Search Indexer](apps/services/search-indexer/README.md)
     - [Elasticsearch Search Dev Server](apps/services/search-indexer/dev-services/README.md)
@@ -122,7 +124,7 @@
     - [API Domains Identity](libs/api/domains/identity/README.md)
     - [API Domains License Service](libs/api/domains/license-service/README.md)
     - [API Domains Party Letter Registry](libs/api/domains/party-letter-registry/README.md)
-    - [API Domains Rsk](libs/api/domains/payment/README.md)
+    - [API Domains Payment](libs/api/domains/payment/README.md)
     - [API Domains Payment Schedule](libs/api/domains/payment-schedule/README.md)
     - [API Domains Regulations](libs/api/domains/regulations/README.md)
     - [API Domains Rsk](libs/api/domains/rsk/README.md)
@@ -173,6 +175,7 @@
   - [Clients Driving License V1 / V2](libs/clients/driving-license/README.md)
   - [Clients Finance](libs/clients/finance/README.md)
   - [Clients Health Insurance V2](libs/clients/health-insurance-v2/README.md)
+  - [Clients Islykill](libs/clients/islykill/README.md)
   - [Client Middlewares](libs/clients/middlewares/README.md)
   - [Clients Mms](libs/clients/mms/README.md)
   - [National Registry Clients](libs/clients/national-registry/README.md)
@@ -209,6 +212,7 @@
 - [Next Ids Auth Lib](libs/next-ids-auth/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)
 - [Plausible](libs/plausible/README.md)
+  - [React Feature Flagging Library](libs/react/feature-flags/README.md)
 - [Regulations](libs/regulations/README.md)
 - [Service Portal](libs/service-portal/README.md)
   - [Service Portal Applications](libs/service-portal/applications/README.md)
@@ -225,6 +229,7 @@
   - [Service Portal Licenses](libs/service-portal/licenses/README.md)
   - [Service Portal Settings](libs/service-portal/settings/README.md)
     - [Service Portal Settings Access Control](libs/service-portal/settings/access-control/README.md)
+    - [Service Portal Settings Islykill](libs/service-portal/settings/islykill/README.md)
   - [Service Portal Wip](libs/service-portal/wip/README.md)
 - [Shared](libs/shared/README.md)
   - [Babel](libs/shared/babel/README.md)
@@ -246,5 +251,6 @@
 
 ## Misc
 
+- [Guide: Adding a Payment Step to an Application](handbook/misc/application-payment-guide.md)
 - [GitBook Template](handbook/misc/gitbook-template.md)
 - [Glossary](handbook/misc/glossary.md)

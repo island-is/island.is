@@ -16,7 +16,8 @@ import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
-import { environment } from '../../../environments'
+import type { User } from '@island.is/auth-nest-tools'
+import { EndorsementsScope } from '@island.is/auth/scopes'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -34,9 +35,13 @@ export class EndorsementListService {
     private logger: Logger,
   ) {}
 
-  // Checks if user is admin
-  isAdmin(nationalId: string) {
-    return environment.accessGroups.Admin.split(',').includes(nationalId)
+  async hasAdminScope(user: User): Promise<boolean> {
+    for (const [key, value] of Object.entries(user.scope)) {
+      if (value == EndorsementsScope.admin) {
+        return true
+      }
+    }
+    return false
   }
 
   // generic reusable query with pagination defaults
@@ -52,10 +57,10 @@ export class EndorsementListService {
     })
   }
 
-  async findListsByTags(tags: string[], query: any, nationalId: string) {
+  async findListsByTags(tags: string[], query: any, user: User) {
+    const isAdmin = await this.hasAdminScope(user)
     this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
     // check if user is admin
-    const admin = this.isAdmin(nationalId)
     return await paginate({
       Model: this.endorsementListModel,
       limit: query.limit || 10,
@@ -65,18 +70,20 @@ export class EndorsementListService {
       orderOption: [['counter', 'ASC']],
       where: {
         tags: { [Op.overlap]: tags },
-        adminLock: admin ? { [Op.or]: [true, false] } : false,
+        adminLock: isAdmin ? { [Op.or]: [true, false] } : false,
       },
     })
   }
 
-  async findSingleList(listId: string, nationalId: string) {
+  async findSingleList(listId: string, user?: User, check?: boolean) {
+    // Check variable needed since finAll function in Endorsement controller uses this function twice
+    // on the second call it passes nationalID of user but does not go throught the get list pipe
+    const isAdmin = user && check ? await this.hasAdminScope(user) : false
     this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
-    const admin = this.isAdmin(nationalId)
     const result = await this.endorsementListModel.findOne({
       where: {
         id: listId,
-        adminLock: admin ? { [Op.or]: [true, false] } : false,
+        adminLock: isAdmin ? { [Op.or]: [true, false] } : false,
       },
     })
 
@@ -91,7 +98,6 @@ export class EndorsementListService {
     this.logger.debug(
       `Finding endorsements for single national id ${nationalId}`,
     )
-
     return await paginate({
       Model: this.endorsementModel,
       limit: query.limit || 10,
@@ -103,6 +109,9 @@ export class EndorsementListService {
       include: [
         {
           model: EndorsementList,
+          required: true,
+          as: 'endorsementList',
+          where: { adminLock: false },
           attributes: [
             'id',
             'title',
@@ -223,8 +232,24 @@ export class EndorsementListService {
     return result
   }
 
-  async getOwnerInfo(endorsementList: EndorsementList) {
-    return (await this.nationalRegistryApi.getUser(endorsementList.owner))
-      .Fulltnafn
+  async getOwnerInfo(listId: string) {
+    // Is used by both unauthenticated users, authenticated users and admin
+    // Admin needs to access locked lists and can not use the EndorsementListById pipe
+    // Since the endpoint is not authenticated
+    this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
+    const endorsementList = await this.endorsementListModel.findOne({
+      where: {
+        id: listId,
+      },
+    })
+    if (!endorsementList) {
+      throw new NotFoundException(['This endorsement list does not exist.'])
+    }
+    try {
+      return (await this.nationalRegistryApi.getUser(endorsementList.owner))
+        .Fulltnafn
+    } catch (e) {
+      return ''
+    }
   }
 }

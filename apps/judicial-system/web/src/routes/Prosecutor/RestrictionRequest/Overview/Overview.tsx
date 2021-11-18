@@ -40,7 +40,11 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  rcOverview,
+  requestCourtDate,
+} from '@island.is/judicial-system-web/messages'
 
 import * as styles from './Overview.css'
 
@@ -83,21 +87,12 @@ export const Overview: React.FC = () => {
           )
         : false
 
-      if (shouldSubmitCase) {
-        // An SMS should have been sent
-        if (notificationSent) {
-          setModalText(
-            'Tilkynning hefur verið send á dómara og dómritara á vakt.\n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
-          )
-        } else {
-          setModalText(
-            'Ekki tókst að senda tilkynningu á dómara og dómritara á vakt.\n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
-          )
-        }
+      // An SMS should have been sent
+      if (notificationSent) {
+        setModalText(formatMessage(rcOverview.sections.modal.notificationSent))
       } else {
-        // No SMS
         setModalText(
-          'Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
+          formatMessage(rcOverview.sections.modal.notificationNotSent),
         )
       }
 
@@ -119,29 +114,28 @@ export const Overview: React.FC = () => {
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
       isLoading={loading}
       notFound={data?.case === undefined}
-      decision={workingCase?.decision}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
     >
       {workingCase ? (
         <>
           <FormContentContainer>
             <Box marginBottom={10}>
               <Text as="h1" variant="h1">
-                {`Yfirlit kröfu um ${
-                  workingCase.parentCase ? 'framlengingu á' : ''
-                } ${
-                  workingCase.type === CaseType.CUSTODY
-                    ? `gæsluvarðhald${workingCase.parentCase ? 'i' : ''}`
-                    : `farbann${workingCase.parentCase ? 'i' : ''}`
-                }`}
+                {formatMessage(rcOverview.heading, {
+                  caseType: `${
+                    workingCase.parentCase ? 'framlengingu á ' : ''
+                  }${
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhald'
+                      : 'farbann'
+                  }${workingCase.parentCase ? 'i' : ''}`,
+                })}
               </Text>
             </Box>
             <Box component="section" marginBottom={5}>
@@ -228,7 +222,7 @@ export const Overview: React.FC = () => {
               <Accordion>
                 <AccordionItem
                   labelVariant="h3"
-                  id="id_2"
+                  id="id_1"
                   label="Lagaákvæði sem brot varða við"
                 >
                   <Text>
@@ -388,11 +382,12 @@ export const Overview: React.FC = () => {
           </FormContentContainer>
           {modalVisible && (
             <Modal
-              title={`Krafa um ${
-                workingCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhald'
-                  : 'farbann'
-              }  hefur verið send til dómstóls`}
+              title={formatMessage(rcOverview.sections.modal.heading, {
+                caseType:
+                  workingCase.type === CaseType.CUSTODY
+                    ? 'gæsluvarðhald'
+                    : 'farbann',
+              })}
               text={modalText}
               handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
               handlePrimaryButtonClick={() => {

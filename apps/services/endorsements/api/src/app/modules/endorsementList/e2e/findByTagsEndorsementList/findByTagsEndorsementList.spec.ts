@@ -53,7 +53,7 @@ describe('findByTagsEndorsementList', () => {
   it(`GET /endorsement-list/general-petition-lists should return 200 and 2 lists`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [],
     })
     const response = await request(app.getHttpServer())
       .get(`/endorsement-list/general-petition-lists?limit=5`)

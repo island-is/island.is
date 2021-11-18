@@ -32,6 +32,7 @@ describe('Case Type', () => {
     ${CaseType.AUTOPSY}
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
+    ${CaseType.RESTRAINING_ORDER}
     ${CaseType.OTHER}
   `.it('should categorize $type as an investigation case', ({ type }) => {
     expect(isRestrictionCase(type)).toBe(false)

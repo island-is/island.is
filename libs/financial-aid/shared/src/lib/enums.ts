@@ -4,7 +4,16 @@ export enum HomeCircumstances {
   WITHOTHERS = 'WithOthers',
   OWNPLACE = 'OwnPlace',
   REGISTEREDLEASE = 'RegisteredLease',
+  UNREGISTEREDLEASE = 'UnregisteredLease',
   OTHER = 'Other',
+}
+
+export enum AidType {
+  OWNPLACE = 'OwnPlace',
+  REGISTEREDLEASE = 'RegisteredLease',
+  UNREGISTEREDLEASE = 'UnregisteredLease',
+  WITHPARENTS = 'WithParents',
+  UNKNOWN = 'Unknown',
 }
 
 export enum Employment {
@@ -69,13 +78,11 @@ export enum StaffRole {
 }
 
 export enum FamilyStatus {
-  UNKNOWN = 'Unknown',
-  SINGLE = 'Single',
   COHABITATION = 'Cohabitation',
   UNREGISTERED_COBAHITATION = 'UnregisteredCohabitation',
   MARRIED = 'Married',
   MARRIED_NOT_LIVING_TOGETHER = 'MarriedNotLivingTogether',
-  NOT_INFORMED = 'NotInformed',
+  NOT_COHABITATION = 'NotCohabitation',
 }
 
 export enum AidType {

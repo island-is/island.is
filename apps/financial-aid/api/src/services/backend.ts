@@ -15,12 +15,15 @@ import {
   apiBasePath,
   ApplicationStateUrl,
   UpdateApplicationTableResponseType,
+  UpdateStaff,
+  Staff,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
-import { StaffModel } from '../app/modules/staff'
+import { CreateStaffInput } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
+import { UpdateMunicipalityInput } from '../app/modules/municipality/dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -45,6 +48,16 @@ class BackendAPI extends RESTDataSource {
 
   getMunicipality(id: string): Promise<Municipality> {
     return this.get(`municipality/${id}`)
+  }
+
+  getMunicipalities(): Promise<Municipality[]> {
+    return this.get(`municipality`)
+  }
+
+  updateMunicipality(
+    updateMunicipality: UpdateMunicipalityInput,
+  ): Promise<Municipality> {
+    return this.put('municipality', updateMunicipality)
   }
 
   createApplication(
@@ -96,12 +109,36 @@ class BackendAPI extends RESTDataSource {
     return this.get(`application/spouse/${spouseNationalId}`)
   }
 
-  getStaff(nationalId: string): Promise<StaffModel> {
+  getStaff(nationalId: string): Promise<Staff> {
     return this.get(`staff/nationalId/${nationalId}`)
   }
 
-  getStaffForMunicipality(): Promise<StaffModel[]> {
+  getStaffById(id: string): Promise<Staff> {
+    return this.get(`staff/id/${id}`)
+  }
+
+  getAdminUsers(municipalityId: string): Promise<Staff[]> {
+    return this.get(`staff/users/${municipalityId}`)
+  }
+
+  getSupervisors(): Promise<Staff[]> {
+    return this.get('staff/supervisors')
+  }
+
+  updateStaff(id: string, updateStaff: UpdateStaff): Promise<Staff> {
+    return this.put(`staff/id/${id}`, updateStaff)
+  }
+
+  getStaffForMunicipality(): Promise<Staff[]> {
     return this.get('staff/municipality')
+  }
+
+  createStaff(createStaff: CreateStaffInput): Promise<Staff> {
+    return this.post('staff', createStaff)
+  }
+
+  getNumberOfStaffForMunicipality(municipalityId: string): Promise<number> {
+    return this.get(`staff/municipality/${municipalityId}`)
   }
 }
 

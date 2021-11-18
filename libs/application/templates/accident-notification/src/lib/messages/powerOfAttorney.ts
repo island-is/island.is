@@ -60,8 +60,19 @@ export const powerOfAttorney = {
     description: {
       id: 'an.application:powerOfAttorney.upload.description',
       defaultMessage:
-        'Athugaðu að það er hægt að tilkynna slys án þess að öll nauðsynleg skjöl eru til staðar.... blabla Þú getur sótt umboðsskjal hér til útfyllingar umboð.docx',
+        'Sé verið að tilkynna slys fyrir hönd slasaða skal skila inn skriflegu og undirrituðu umboði þér til handa, staðfestu af tveimur vitundarvottum. Umboðinu skal skila inn sem fylgiskjali með tilkynningunni.',
       description: 'Description of upload section',
+    },
+    powerOfAttorneyFileLinkText: {
+      id: 'an.application:powerOfAttorney.upload.powerOfAttorneyFileLinkText',
+      defaultMessage: `Þú getur sótt umboðsskjal hér til útfyllingar.`,
+      description: 'Proxy document text followed by link',
+    },
+    powerOfAttorneyFileLinkButtonName: {
+      id:
+        'an.application:powerOfAttorney.upload.powerOfAttorneyFileLinkButtonName',
+      defaultMessage: `Umboð.docx.`,
+      description: 'Button title for document provided for power of attorney',
     },
     sectionTitle: {
       id: 'an.application:powerOfAttorney.upload.sectionTitle',

@@ -1,19 +1,20 @@
-import React from 'react'
-import { Box, Stack, Tag, Text } from '@island.is/island-ui/core'
+import React, { useState } from 'react'
+import { Box, Stack, Text, SkeletonLoader } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { defineMessage } from 'react-intl'
-import { useUserProfile } from '@island.is/service-portal/graphql'
 import { UserInfoLine, m } from '@island.is/service-portal/core'
 import { FamilyMemberCard } from '@island.is/service-portal/family'
+import { useUserProfileAndIslykill } from '@island.is/service-portal/graphql'
+import CreateWithEmail from '../../components/UserOnboardingModal/Islykill/CreateWithEmail'
 
 const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { data: userProfile } = useUserProfile()
+
+  const { data: settings, loading } = useUserProfileAndIslykill()
 
   return (
     <>
@@ -25,90 +26,57 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
       <Box marginBottom={[2, 3]}>
         <FamilyMemberCard title={userInfo.profile.name || ''} />
       </Box>
-      <Stack space={1}>
-        <UserInfoLine
-          label={m.email}
-          labelColumnSpan={['8/12', '3/12']}
-          editColumnSpan={['1/1', '2/12']}
-          valueColumnSpan={['1/1', '7/12']}
-          renderContent={() => (
-            <Box display="flex" alignItems="center">
-              <Box marginRight={2}>{userProfile?.email || ''}</Box>
-              {userProfile?.email && userProfile?.emailVerified === true ? (
-                <Tag variant="blueberry" outlined disabled>
-                  {formatMessage({
-                    id: 'sp.settings:verified',
-                    defaultMessage: 'Staðfest',
-                  })}
-                </Tag>
-              ) : userProfile?.email && userProfile?.emailVerified === false ? (
-                <Tag variant="red" disabled>
-                  {formatMessage({
-                    id: 'sp.settings:not-verified',
-                    defaultMessage: 'Óstaðfest',
-                  })}
-                </Tag>
-              ) : (
-                <div />
-              )}
-            </Box>
+      {loading && <SkeletonLoader width="100%" height={100} />}
+      {!loading && (
+        <Stack space={1}>
+          {settings && settings.noUserFound ? (
+            <CreateWithEmail />
+          ) : (
+            <>
+              <UserInfoLine
+                label={m.email}
+                labelColumnSpan={['8/12', '3/12']}
+                editColumnSpan={['1/1', '2/12']}
+                valueColumnSpan={['1/1', '7/12']}
+                content={settings?.email ?? ''}
+                editLink={{
+                  url: ServicePortalPath.SettingsPersonalInformationEditEmail,
+                }}
+              />
+              <UserInfoLine
+                label={m.telNumber}
+                labelColumnSpan={['8/12', '3/12']}
+                editColumnSpan={['1/1', '2/12']}
+                valueColumnSpan={['1/1', '7/12']}
+                content={settings?.mobile ?? ''}
+                editLink={{
+                  url:
+                    ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
+                }}
+              />
+              <UserInfoLine
+                label={m.language}
+                content={
+                  settings
+                    ? settings.locale === 'is'
+                      ? 'Íslenska'
+                      : settings.locale === 'en'
+                      ? 'English'
+                      : ''
+                    : ''
+                }
+                labelColumnSpan={['8/12', '3/12']}
+                editColumnSpan={['1/1', '2/12']}
+                valueColumnSpan={['1/1', '7/12']}
+                editLink={{
+                  url:
+                    ServicePortalPath.SettingsPersonalInformationEditLanguage,
+                }}
+              />
+            </>
           )}
-          editLink={{
-            url: ServicePortalPath.SettingsPersonalInformationEditEmail,
-          }}
-        />
-        <UserInfoLine
-          label={m.telNumber}
-          renderContent={() => (
-            <Box display="flex" alignItems="center">
-              <Box marginRight={2}>{userProfile?.mobilePhoneNumber || ''}</Box>
-              {userProfile?.mobilePhoneNumber &&
-              userProfile?.mobilePhoneNumberVerified === true ? (
-                <Tag variant="blueberry" outlined disabled>
-                  {formatMessage({
-                    id: 'sp.settings:verified',
-                    defaultMessage: 'Staðfest',
-                  })}
-                </Tag>
-              ) : userProfile?.mobilePhoneNumber &&
-                userProfile?.mobilePhoneNumberVerified === false ? (
-                <Tag variant="red" disabled>
-                  {formatMessage({
-                    id: 'sp.settings:not-verified',
-                    defaultMessage: 'Óstaðfest',
-                  })}
-                </Tag>
-              ) : (
-                <div />
-              )}
-            </Box>
-          )}
-          labelColumnSpan={['8/12', '3/12']}
-          editColumnSpan={['1/1', '2/12']}
-          valueColumnSpan={['1/1', '7/12']}
-          editLink={{
-            url: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
-          }}
-        />
-        <UserInfoLine
-          label={m.language}
-          content={
-            userProfile
-              ? userProfile.locale === 'is'
-                ? 'Íslenska'
-                : userProfile.locale === 'en'
-                ? 'English'
-                : ''
-              : ''
-          }
-          labelColumnSpan={['8/12', '3/12']}
-          editColumnSpan={['1/1', '2/12']}
-          valueColumnSpan={['1/1', '7/12']}
-          editLink={{
-            url: ServicePortalPath.SettingsPersonalInformationEditLanguage,
-          }}
-        />
-      </Stack>
+        </Stack>
+      )}
     </>
   )
 }

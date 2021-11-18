@@ -121,6 +121,9 @@
     "api-domains-identity": {
       "tags": []
     },
+    "api-domains-islykill": {
+      "tags": []
+    },
     "api-domains-license-service": {
       "tags": []
     },
@@ -304,6 +307,9 @@
     "clients-health-insurance-v2": {
       "tags": []
     },
+    "clients-islykill": {
+      "tags": []
+    },
     "clients-middlewares": {
       "tags": []
     },
@@ -395,6 +401,9 @@
       "tags": []
     },
     "financial-aid-web-veita": {
+      "tags": []
+    },
+    "github-actions-cache": {
       "tags": []
     },
     "gjafakort-api": {
@@ -534,6 +543,9 @@
     "plausible": {
       "tags": []
     },
+    "react-feature-flags": {
+      "tags": []
+    },
     "reference-backend": {
       "tags": []
     },
@@ -613,6 +625,9 @@
     "service-portal-settings-access-control": {
       "tags": []
     },
+    "service-portal-settings-islykill": {
+      "tags": []
+    },
     "service-portal-settings-personal-information": {
       "tags": []
     },
@@ -632,6 +647,9 @@
       "tags": []
     },
     "services-endorsements-api": {
+      "tags": []
+    },
+    "services-notifications": {
       "tags": []
     },
     "services-party-letter-registry-api": {

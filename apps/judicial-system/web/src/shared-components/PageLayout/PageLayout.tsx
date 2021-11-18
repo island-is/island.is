@@ -1,4 +1,6 @@
 import React, { ReactNode, useContext } from 'react'
+import { useIntl } from 'react-intl'
+
 import {
   Box,
   GridContainer,
@@ -8,120 +10,43 @@ import {
   AlertBanner,
 } from '@island.is/island-ui/core'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import {
-  CaseDecision,
-  CaseType,
-  isRestrictionCase,
-  isInvestigationCase,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseType, UserRole, Case } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
+import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
 import Loading from '../Loading/Loading'
+import { getSections } from './utils'
 import * as styles from './PageLayout.css'
-import {
-  getCourtSections,
-  getCustodyAndTravelBanProsecutorSection,
-  getExtenstionSections,
-  getInvestigationCaseCourtSections,
-  getInvestigationCaseProsecutorSection,
-} from './Sections'
-import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
-import { useIntl } from 'react-intl'
 
 interface PageProps {
   children: ReactNode
-  caseId?: string
+  workingCase?: Case
   activeSection?: number
   isLoading: boolean
   notFound: boolean
-  caseType?: CaseType
   activeSubSection?: number
-  decision?: CaseDecision
-  parentCaseDecision?: CaseDecision
-  isValidToDateInThePast?: boolean
   isExtension?: boolean
   showSidepanel?: boolean
 }
 
 const PageLayout: React.FC<PageProps> = ({
+  workingCase,
   children,
-  caseId,
   activeSection,
   activeSubSection,
   isLoading,
   notFound,
-  caseType,
-  decision,
-  parentCaseDecision,
-  isValidToDateInThePast,
   showSidepanel = true,
 }) => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-
-  const caseResult = () => {
-    const decisionIsRejecting =
-      decision === CaseDecision.REJECTING ||
-      parentCaseDecision === CaseDecision.REJECTING
-
-    const decisionIsAccepting =
-      decision === CaseDecision.ACCEPTING ||
-      parentCaseDecision === CaseDecision.ACCEPTING
-
-    const decisionIsDismissing =
-      decision === CaseDecision.DISMISSING ||
-      parentCaseDecision === CaseDecision.DISMISSING
-
-    const decisionIsAcceptingAlternativeTravelBan =
-      decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-      parentCaseDecision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-
-    if (decisionIsRejecting) {
-      if (isInvestigationCase(caseType)) {
-        return 'Kröfu um rannsóknarheimild hafnað'
-      } else {
-        return 'Kröfu hafnað'
-      }
-    } else if (decisionIsAccepting) {
-      if (isInvestigationCase(caseType)) {
-        return 'Krafa um rannsóknarheimild samþykkt'
-      } else {
-        return isValidToDateInThePast
-          ? `${
-              caseType === CaseType.CUSTODY ? 'Gæsluvarðhaldi' : 'Farbanni'
-            } lokið`
-          : `${
-              caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
-            } virkt`
-      }
-    } else if (decisionIsDismissing) {
-      return formatMessage(signedVerdictOverview.dismissedTitle)
-    } else if (decisionIsAcceptingAlternativeTravelBan) {
-      return isValidToDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
-    } else {
-      return 'Niðurstaða'
-    }
-  }
-
-  const sections = [
-    isRestrictionCase(caseType)
-      ? getCustodyAndTravelBanProsecutorSection(
-          caseId,
-          caseType,
-          activeSubSection,
-        )
-      : getInvestigationCaseProsecutorSection(caseId, activeSubSection),
-    isRestrictionCase(caseType)
-      ? getCourtSections(caseId, activeSubSection)
-      : getInvestigationCaseCourtSections(caseId, activeSubSection),
-    {
-      name: caseResult(),
-    },
-    getExtenstionSections(caseId, activeSubSection),
-    getCourtSections(caseId, activeSubSection),
-  ]
+  const sections = getSections(
+    { dismissedTitle: formatMessage(signedVerdictOverview.dismissedTitle) },
+    workingCase,
+    activeSubSection,
+  )
 
   return children ? (
     <Box
@@ -157,9 +82,9 @@ const PageLayout: React.FC<PageProps> = ({
                         : sections.filter((_, index) => index <= 2)
                     }
                     formName={
-                      caseType === CaseType.CUSTODY
+                      workingCase?.type === CaseType.CUSTODY
                         ? 'Gæsluvarðhald'
-                        : caseType === CaseType.TRAVEL_BAN
+                        : workingCase?.type === CaseType.TRAVEL_BAN
                         ? 'Farbann'
                         : 'Rannsóknarheimild'
                     }

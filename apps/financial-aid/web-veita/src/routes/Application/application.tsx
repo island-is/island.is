@@ -10,7 +10,7 @@ import { Application } from '@island.is/financial-aid/shared/lib'
 import {
   ApplicationSkeleton,
   LoadingContainer,
-  ApplicationNotFound,
+  ProfileNotFound,
   ApplicationProfile,
 } from '@island.is/financial-aid-web/veita/src/components'
 
@@ -48,7 +48,7 @@ const UserApplication = () => {
           setIsLoading={setIsLoading}
         />
       ) : (
-        <ApplicationNotFound />
+        <ProfileNotFound backButtonHref="/nymal" />
       )}
     </LoadingContainer>
   )

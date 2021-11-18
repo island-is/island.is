@@ -34,6 +34,16 @@ export interface Staff {
   municipalityName: string
   phoneNumber?: string
   municipalityHomepage?: string
+  nickname?: string
+  email?: string
+}
+
+export interface UpdateStaff {
+  nationalId?: string
+  roles?: StaffRole[]
+  active?: boolean
+  nickname?: string
+  email?: string
 }
 
 export interface Aid {
@@ -42,6 +52,7 @@ export interface Aid {
   unregisteredRenting: number
   livesWithParents: number
   unknown: number
+  withOthers: number
   municipalityId: string
   type: AidType
 }
@@ -87,6 +98,7 @@ export interface UpdateApplication {
   staffId?: string
   spousePhoneNumber?: string
   spouseEmail?: string
+  spouseName?: string
 }
 
 export interface UpdateApplicationTable {
@@ -121,6 +133,9 @@ export interface Municipality {
   cohabitationAid: Aid
   homepage?: string
   email?: string
+  rulesHomepage?: string
+  numberOfUsers?: number
+  adminUsers?: Staff[]
 }
 
 export interface ApplicationFile {
@@ -163,6 +178,7 @@ export interface CreateApplication {
   amount?: number
   spouseNationalId?: string
   spouseEmail?: string
+  spouseName?: string
   familyStatus: FamilyStatus
   streetName?: string
   postalCode?: string
@@ -225,6 +241,7 @@ export interface GetSignedUrlForId {
 export interface Spouse {
   hasPartnerApplied: boolean
   hasFiles: boolean
+  spouseName?: string
 }
 
 export interface UpdateApplicationTableResponseType {
@@ -267,4 +284,11 @@ export interface ServiceCenter {
 export interface TableHeadersProps {
   filterBy?: string
   title: string
+}
+
+export interface CreateStaff {
+  name: string
+  email: string
+  nationalId: string
+  roles: StaffRole[]
 }

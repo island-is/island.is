@@ -68,8 +68,8 @@ export const JudicialSystem = new XroadConf({
     },
     XROAD_POLICE_MEMBER_CODE: {
       dev: '10005',
-      staging: '5306972079',
-      prod: '5306972079',
+      staging: '5309672079',
+      prod: '5309672079',
     },
     XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1',
     XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1',
@@ -196,5 +196,19 @@ export const Labor = new XroadConf({
   },
   secrets: {
     XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY',
+  },
+})
+
+export const PaymentSchedule = new XroadConf({
+  env: {
+    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public',
+      staging: 'IS-DEV/GOV/10021/FJS-Public',
+      prod: 'IS/GOV/5402697509/FJS-Public',
+    },
+  },
+  secrets: {
+    PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER',
+    PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD',
   },
 })

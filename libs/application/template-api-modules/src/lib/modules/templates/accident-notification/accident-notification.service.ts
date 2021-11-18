@@ -13,6 +13,8 @@ import { SharedTemplateApiService } from '../../shared'
 import { AttachmentProvider } from './accident-notification-attachments.provider'
 import {
   applictionAnswersToXml,
+  attachmentStatusToAttachmentRequests,
+  getApplicationAttachmentStatus,
   getApplicationDocumentId,
 } from './accident-notification.utils'
 import type { AccidentNotificationConfig } from './config'
@@ -39,13 +41,16 @@ export class AccidentNotificationService {
     const shouldRequestReview =
       !utils.isHomeActivitiesAccident(application.answers) &&
       !utils.isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
+
+    const requests = attachmentStatusToAttachmentRequests()
+
     const attachments = await this.attachmentProvider.gatherAllAttachments(
       application,
+      requests,
     )
 
     const answers = application.answers as AccidentNotificationAnswers
     const xml = applictionAnswersToXml(answers, attachments)
-
     try {
       const { ihiDocumentID } = await this.documentApi.documentPost({
         document: { doc: xml, documentType: 801 },
@@ -61,7 +66,6 @@ export class AccidentNotificationService {
           ),
         application,
       )
-      //stop application from being submitted
       // Request representative review when applicable
       if (shouldRequestReview) {
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
@@ -82,9 +86,14 @@ export class AccidentNotificationService {
 
   async addAdditionalAttachment({ application }: TemplateApiModuleActionProps) {
     try {
+      const attachmentStatus = getApplicationAttachmentStatus(application)
+      const requests = attachmentStatusToAttachmentRequests(attachmentStatus)
+
       const attachments = await this.attachmentProvider.gatherAllAttachments(
         application,
+        requests,
       )
+
       const documentId = getApplicationDocumentId(application)
 
       const promises = attachments.map((attachment) =>
@@ -115,17 +124,15 @@ export class AccidentNotificationService {
         application.answers,
         'reviewApproval',
       ) as ReviewApprovalEnum
-
+      const reviewComment =
+        getValueViaPath(application.answers, 'reviewComment') || ''
       await this.documentApi.documentSendConfirmation({
         ihiDocumentID: documentId,
         confirmationIN: {
           confirmationType:
             reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
           confirmationParty: isRepresentativeOfCompanyOrInstitue ? 2 : 1,
-          objection: getValueViaPath(
-            application.answers,
-            'assigneeComment',
-          ) as string,
+          objection: reviewComment as string,
         },
       })
     } catch (e) {

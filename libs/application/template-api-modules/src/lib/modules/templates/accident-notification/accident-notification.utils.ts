@@ -1,8 +1,10 @@
-import { Application } from '@island.is/application/core'
+import { Application, getValueViaPath } from '@island.is/application/core'
 import {
+  accidentLocationLabelMapper,
   AccidentNotificationAnswers,
   AccidentTypeEnum,
   FishermanWorkplaceAccidentShipLocationEnum,
+  StudiesAccidentTypeEnum,
   SubmittedApplicationData,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
@@ -10,13 +12,23 @@ import {
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
 import {
+  additionalFilesRequest,
+  allAttachmentRequestConfig,
+  injuryCertificateRequest,
+  policeReportRequest,
+  powerOfAttorneyRequest,
+} from './config'
+import { AccidentNotificationAttachmentStatus } from './types/applicationStatus'
+import {
   ApplicationSubmit,
   Atvinnurekandi,
-  EmployerEntity,
   Slys,
   TilkynnandiOrSlasadi,
 } from './types/applicationSubmit'
-import { AccidentNotificationAttachment } from './types/attachments'
+import {
+  AccidentNotificationAttachment,
+  AccidentNotificationAttachmentGatherRequest,
+} from './types/attachments'
 
 export const pathToAsset = (file: string) => {
   if (isRunningOnEnvironment('local')) {
@@ -99,6 +111,16 @@ const whoIsTheNotificationForToId = (
 const injuredPerson = (
   answers: AccidentNotificationAnswers,
 ): TilkynnandiOrSlasadi => {
+  if (
+    answers.whoIsTheNotificationFor.answer ===
+    WhoIsTheNotificationForEnum.CHILDINCUSTODY
+  ) {
+    return {
+      kennitala: answers.childInCustody.nationalId,
+      nafn: answers.childInCustody.name,
+      netfang: ' ', //the child has no email,
+    }
+  }
   const person =
     answers.whoIsTheNotificationFor.answer === WhoIsTheNotificationForEnum.ME
       ? answers.applicant
@@ -115,19 +137,19 @@ const accident = (answers: AccidentNotificationAnswers): Slys => {
   const accidentType = accidentTypeToId(answers.accidentType.radioButton)
   const accidentBase = {
     tegund: accidentType,
-    //the types 6 = WORK accident and 9 = STUDIES are the only ones with a subtype
-    undirtegund:
-      accidentType === 6 || accidentType === 9
-        ? workAccidentTypeToId(answers.workAccident.type)
-        : undefined,
-
+    undirtegund: determineSubType(answers),
     dagsetningslys: answers.accidentDetails.dateOfAccident,
     timislys: answers.accidentDetails.timeOfAccident,
     lysing: answers.accidentDetails.descriptionOfAccident,
     banaslys: yesOrNoToNumber(answers.wasTheAccidentFatal),
     bilslys: yesOrNoToNumber(answers.carAccidentHindrance),
     stadurslysseferindi: answers.locationAndPurpose?.location ?? '',
-    lysingerindis: 'lysingerindis', //TODO find correct field
+    lysingerindis: answers.accidentLocation
+      ? accidentLocationLabelMapper[
+          answers.accidentLocation
+            .answer as keyof typeof accidentLocationLabelMapper
+        ]
+      : '',
   }
 
   switch (answers.accidentType.radioButton) {
@@ -195,29 +217,23 @@ const shipLocation = (answers: AccidentNotificationAnswers): number => {
 const employer = (
   answers: AccidentNotificationAnswers,
 ): Atvinnurekandi | undefined => {
-  let employerEntity: EmployerEntity | undefined
-  switch (answers.accidentType.radioButton) {
-    case AccidentTypeEnum.HOMEACTIVITIES:
-      return undefined
-    case AccidentTypeEnum.SPORTS:
-      employerEntity = answers.sportsClubInfo
-      break
-    case AccidentTypeEnum.RESCUEWORK:
-      employerEntity = answers.rescueSquadInfo
-      break
-    case AccidentTypeEnum.STUDIES:
-      return undefined
-    case AccidentTypeEnum.WORK:
-      employerEntity = answers.companyInfo
-      break
+  const companyInfo = answers.companyInfo
+  const representative = answers.representative
+
+  if (
+    answers.accidentType.radioButton === AccidentTypeEnum.HOMEACTIVITIES ||
+    !companyInfo ||
+    !representative
+  ) {
+    return undefined
   }
-  if (!answers.companyInfo) return undefined
+
   return {
-    fyrirtaekikennitala: employerEntity.nationalRegistrationId,
-    fyrirtaekinafn: employerEntity.name,
-    forsjaradilinafn: employerEntity.name,
-    forsjaradilinetfang: employerEntity.email,
-    forsjaradilisimi: employerEntity.phoneNumber || '',
+    fyrirtaekikennitala: companyInfo.nationalRegistrationId,
+    fyrirtaekinafn: companyInfo.name,
+    forsjaradilinafn: representative.name,
+    forsjaradilinetfang: representative.email,
+    forsjaradilisimi: representative.phoneNumber || '',
   }
 }
 
@@ -240,21 +256,36 @@ const accidentTypeToId = (typeEnum: AccidentTypeEnum): number => {
   }
 }
 
-const workAccidentTypeToId = (
-  typeEnum: WorkAccidentTypeEnum | undefined,
+const determineSubType = (
+  answers: AccidentNotificationAnswers,
 ): number | undefined => {
-  switch (typeEnum) {
-    case WorkAccidentTypeEnum.GENERAL:
-      return 1
-    case WorkAccidentTypeEnum.FISHERMAN:
-      return 2
-    case WorkAccidentTypeEnum.PROFESSIONALATHLETE:
-      return 3
-    case WorkAccidentTypeEnum.AGRICULTURE:
-      return 4
-    default:
-      return undefined
+  if (answers.accidentType.radioButton === AccidentTypeEnum.WORK) {
+    switch (answers.workAccident.type) {
+      case WorkAccidentTypeEnum.GENERAL:
+        return 1
+      case WorkAccidentTypeEnum.FISHERMAN:
+        return 2
+      case WorkAccidentTypeEnum.PROFESSIONALATHLETE:
+        return 3
+      case WorkAccidentTypeEnum.AGRICULTURE:
+        return 4
+      default:
+        return undefined
+    }
   }
+  if (answers.accidentType.radioButton === AccidentTypeEnum.STUDIES) {
+    switch (answers.studiesAccident.type) {
+      case StudiesAccidentTypeEnum.INTERNSHIP:
+        return 5
+      case StudiesAccidentTypeEnum.VOCATIONALEDUCATION:
+        return 6
+      case StudiesAccidentTypeEnum.APPRENTICESHIP:
+        return 7
+      default:
+        return undefined
+    }
+  }
+  return undefined
 }
 
 export const objectToXML = (obj: object) => {
@@ -289,4 +320,47 @@ export const getApplicationDocumentId = (application: Application): number => {
     throw new Error('No documentId found on application')
   }
   return documentId
+}
+
+export const attachmentStatusToAttachmentRequests = (
+  receivedAttachments?: AccidentNotificationAttachmentStatus,
+): AccidentNotificationAttachmentGatherRequest[] => {
+  if (!receivedAttachments) return allAttachmentRequestConfig.requests
+
+  const attachmentRequests: AccidentNotificationAttachmentGatherRequest[] = []
+
+  if (
+    !receivedAttachments.InjuryCertificate &&
+    receivedAttachments.InjuryCertificate != null
+  ) {
+    attachmentRequests.push(injuryCertificateRequest)
+  }
+  if (
+    !receivedAttachments.ProxyDocument &&
+    receivedAttachments.ProxyDocument != null
+  ) {
+    attachmentRequests.push(powerOfAttorneyRequest)
+  }
+  if (
+    !receivedAttachments.PoliceReport &&
+    receivedAttachments.PoliceReport != null
+  ) {
+    attachmentRequests.push(policeReportRequest)
+  }
+  if (!receivedAttachments.Unknown && receivedAttachments.Unknown != null) {
+    attachmentRequests.push(additionalFilesRequest)
+  }
+
+  return attachmentRequests
+}
+
+export const getApplicationAttachmentStatus = (
+  application: Application,
+): AccidentNotificationAttachmentStatus => {
+  const status = getValueViaPath(
+    application.answers,
+    'accidentStatus.recievedAttachments',
+  ) as AccidentNotificationAttachmentStatus
+
+  return status
 }
