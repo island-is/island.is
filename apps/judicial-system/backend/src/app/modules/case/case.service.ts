@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { IntlService } from '@island.is/cms-translations'
+import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
@@ -32,9 +32,11 @@ import {
   writeFile,
   getCustodyNoticePdfAsString,
 } from '../../formatters'
+import { notificationMessages as m } from '../../messages'
 import { FileService } from '../file/file.service'
 import { Institution } from '../institution'
 import { User } from '../user'
+import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter } from './filters'
@@ -81,6 +83,7 @@ export class CaseService {
     @InjectModel(Case)
     private readonly caseModel: typeof Case,
     private readonly fileService: FileService,
+    private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
@@ -88,6 +91,22 @@ export class CaseService {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
+
+  private async uploadSignedRulingPdfToS3(
+    existingCase: Case,
+    pdf: string,
+  ): Promise<boolean> {
+    return this.awsS3Service
+      .putObject(`${existingCase.id}/ruling.pdf`, pdf)
+      .then(() => true)
+      .catch(() => {
+        this.logger.error(
+          `Failed to upload signed ruling pdf to AWS S3 for case ${existingCase.id}`,
+        )
+
+        return false
+      })
+  }
 
   private async uploadSignedRulingPdfToCourt(
     existingCase: Case,
@@ -166,9 +185,10 @@ export class CaseService {
 
   private async sendEmail(
     to: Recipient | Recipient[],
-    courtCaseNumber: string | undefined,
-    signedRulingPdf: string,
     body: string,
+    formatMessage: FormatMessage,
+    courtCaseNumber?: string,
+    signedRulingPdf?: string,
   ) {
     try {
       await this.emailService.sendEmail({
@@ -181,16 +201,22 @@ export class CaseService {
           address: environment.email.replyToEmail,
         },
         to,
-        subject: `Úrskurður í máli ${courtCaseNumber}`,
+        subject: formatMessage(m.signedRuling.subject, {
+          courtCaseNumber,
+        }),
         text: body,
         html: body,
-        attachments: [
-          {
-            filename: `Þingbók og úrskurður ${courtCaseNumber}.pdf`,
-            content: signedRulingPdf,
-            encoding: 'binary',
-          },
-        ],
+        attachments: signedRulingPdf
+          ? [
+              {
+                filename: formatMessage(m.signedRuling.attachment, {
+                  courtCaseNumber,
+                }),
+                content: signedRulingPdf,
+                encoding: 'binary',
+              },
+            ]
+          : undefined,
       })
     } catch (error) {
       this.logger.error('Failed to send email', error)
@@ -201,31 +227,65 @@ export class CaseService {
     existingCase: Case,
     signedRulingPdf: string,
   ): Promise<void> {
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
     if (!environment.production) {
       writeFile(`${existingCase.id}-ruling-signed.pdf`, signedRulingPdf)
     }
 
-    const uploaded =
+    let uploadedToS3 = false
+    let uploadedToCourt = false
+
+    const uploadPromises = [
+      this.uploadSignedRulingPdfToS3(existingCase, signedRulingPdf).then(
+        (res) => {
+          uploadedToS3 = res
+        },
+      ),
+    ]
+
+    if (
       existingCase.courtId &&
       existingCase.courtCaseNumber &&
       IntegratedCourts.includes(existingCase.courtId)
-        ? await this.uploadSignedRulingPdfToCourt(existingCase, signedRulingPdf)
-        : false
+    ) {
+      uploadPromises.push(
+        this.uploadSignedRulingPdfToCourt(existingCase, signedRulingPdf).then(
+          (res) => {
+            uploadedToCourt = res
+          },
+        ),
+      )
+    }
 
-    const promises = [
+    await Promise.all(uploadPromises)
+
+    const emailPromises = [
       this.sendEmail(
         {
           name: existingCase.prosecutor?.name ?? '',
           address: existingCase.prosecutor?.email ?? '',
         },
+        uploadedToS3
+          ? intl.formatMessage(m.signedRuling.prosecutorBodyS3, {
+              courtCaseNumber: existingCase.courtCaseNumber,
+              courtName: existingCase.court?.name?.replace('dómur', 'dómi'),
+            })
+          : intl.formatMessage(m.signedRuling.prosecutorBodyAttachment, {
+              courtName: existingCase.court?.name,
+              courtCaseNumber: existingCase.courtCaseNumber,
+            }),
+        intl.formatMessage,
         existingCase.courtCaseNumber,
-        signedRulingPdf,
-        `${existingCase.court?.name} hefur sent þér endurrit úr þingbók í máli ${existingCase.courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.`,
+        uploadedToS3 ? undefined : signedRulingPdf,
       ),
     ]
 
-    if (!uploaded) {
-      promises.push(
+    if (!uploadedToCourt) {
+      emailPromises.push(
         this.sendEmail(
           [
             {
@@ -237,9 +297,10 @@ export class CaseService {
               address: existingCase.judge?.email ?? '',
             },
           ],
+          intl.formatMessage(m.signedRuling.courtBodyAttachment),
+          intl.formatMessage,
           existingCase.courtCaseNumber,
           signedRulingPdf,
-          'Ekki tókst að vista meðfylgjandi skjal í Auði.',
         ),
       )
     }
@@ -249,20 +310,24 @@ export class CaseService {
       (isRestrictionCase(existingCase.type) ||
         existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT)
     ) {
-      promises.push(
+      emailPromises.push(
         this.sendEmail(
           {
             name: existingCase.defenderName ?? '',
             address: existingCase.defenderEmail,
           },
+          intl.formatMessage(m.signedRuling.defenderBodyAttachment, {
+            courtName: existingCase.court?.name,
+            courtCaseNumber: existingCase.courtCaseNumber,
+          }),
+          intl.formatMessage,
           existingCase.courtCaseNumber,
           signedRulingPdf,
-          `${existingCase.court?.name} hefur sent þér endurrit úr þingbók í máli ${existingCase.courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.`,
         ),
       )
     }
 
-    await Promise.all(promises)
+    await Promise.all(emailPromises)
   }
 
   async findById(

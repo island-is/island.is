@@ -1,4 +1,4 @@
 export { core } from './corePdf'
 export { restrictionRequest } from './requestPdf'
 export { ruling } from './rulingPdf'
-export { notificationMessages } from './notifications'
+export { m as notificationMessages } from './notifications'

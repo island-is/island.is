@@ -23,6 +23,7 @@ import { FileService } from '../file'
 import { Case } from './models'
 import { CaseService } from './case.service'
 import { CaseController } from './case.controller'
+import { AwsS3Service } from '../aws-s3'
 
 describe('CaseController', () => {
   let caseModel: { findOne: jest.Mock }
@@ -51,6 +52,10 @@ describe('CaseController', () => {
         },
         {
           provide: FileService,
+          useClass: jest.fn(() => ({})),
+        },
+        {
+          provide: AwsS3Service,
           useClass: jest.fn(() => ({})),
         },
         {
