@@ -1,4 +1,4 @@
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   getNameAbbreviation,
@@ -6,9 +6,11 @@ import {
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
+import { spmm } from '../../lib/messages'
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
 import * as styles from './FamilyMemberCard.css'
+import { FamilyMemberEnum } from '../../helpers/familyMember.enum'
 
 interface Props {
   title: string
@@ -21,6 +23,7 @@ export const FamilyMemberCard: FC<Props> = ({
   title,
   nationalId,
   currentUser,
+  familyRelation,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -28,7 +31,7 @@ export const FamilyMemberCard: FC<Props> = ({
     <Box
       display={['block', 'flex']}
       alignItems="center"
-      paddingY={[2, 3, 4]}
+      paddingY={[2, 3, 3]}
       paddingX={[2, 3, 4]}
       border="standard"
       borderRadius="large"
@@ -44,13 +47,13 @@ export const FamilyMemberCard: FC<Props> = ({
           background="blue100"
           className={styles.avatar}
         >
-          <Text variant="h2" as="h2" color="blue400">
+          <Text variant="h3" as="h2" color="blue400">
             {getNameAbbreviation(title)}
           </Text>
         </Box>
         <div>
           <Box marginBottom={nationalId ? 1 : 0}>
-            <Text variant="h3" as="h3" color="dark400">
+            <Text variant="h4" as="h3" color="dark400">
               {title}
             </Text>
           </Box>
@@ -65,27 +68,34 @@ export const FamilyMemberCard: FC<Props> = ({
         <Box
           display="flex"
           alignItems="flexEnd"
-          justifyContent="flexEnd"
-          marginTop={[2, 'auto']}
+          justifyContent="spaceAround"
+          flexDirection="column"
           marginLeft="auto"
         >
-          <Link
-            to={
-              currentUser
-                ? ServicePortalPath.UserInfo
-                : ServicePortalPath.FamilyMember.replace(
-                    ':nationalId',
-                    nationalId,
-                  )
-            }
-          >
-            <Button variant="text" size="small">
-              {formatMessage({
-                id: 'sp.family:see-info',
-                defaultMessage: 'Skoða upplýsingar',
-              })}
-            </Button>
-          </Link>
+          {familyRelation && (
+            <Tag variant="purple">
+              {formatMessage(spmm.family[familyRelation as FamilyMemberEnum])}
+            </Tag>
+          )}
+          <Box marginTop="p2">
+            <Link
+              to={
+                currentUser
+                  ? ServicePortalPath.UserInfo
+                  : ServicePortalPath.FamilyMember.replace(
+                      ':nationalId',
+                      nationalId,
+                    )
+              }
+            >
+              <Button variant="text" size="small">
+                {formatMessage({
+                  id: 'sp.family:see-info',
+                  defaultMessage: 'Skoða upplýsingar',
+                })}
+              </Button>
+            </Link>
+          </Box>
         </Box>
       )}
     </Box>

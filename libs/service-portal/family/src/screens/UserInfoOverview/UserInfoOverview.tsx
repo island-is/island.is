@@ -39,10 +39,10 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
-              <Text variant="h1" as="h1">
+              <Text variant="h3" as="h1">
                 {formatMessage(m.myInfo)}
               </Text>
-              <Text as="p" variant="intro">
+              <Text as="p" variant="default">
                 {formatMessage({
                   id: 'sp.family:user-info-description',
                   defaultMessage:
@@ -54,8 +54,8 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
         </GridRow>
       </Box>
       {error && (
-        <Box textAlign="center">
-          <Text variant="h3" as="h3">
+        <Box textAlign="center" marginBottom={2}>
+          <Text variant="h4" as="h2">
             {formatMessage({
               id: 'sp.family:could-not-fetch-family-info',
               defaultMessage:
