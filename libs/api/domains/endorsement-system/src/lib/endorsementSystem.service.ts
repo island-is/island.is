@@ -20,7 +20,7 @@ import {
   EndorsementListControllerOpenRequest,
   EndorsementListControllerLockRequest,
   EndorsementListControllerUnlockRequest,
-  EndorsementControllerEmailEndorsementsPDFRequest,
+  EndorsementListControllerEmailEndorsementsPDFRequest,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -221,12 +221,12 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
-  async endorsementControllerSendPdfEmail(
-    endorsementList: EndorsementControllerEmailEndorsementsPDFRequest,
+  async endorsementListControllerSendPdfEmail(
+    endorsementList: EndorsementListControllerEmailEndorsementsPDFRequest,
     auth: Auth,
   ) {
-    return await this.endorsementApiWithAuth(auth)
-      .endorsementControllerEmailEndorsementsPDF(endorsementList)
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerEmailEndorsementsPDF(endorsementList)
       .catch(this.handleError.bind(this))
   }
 }
