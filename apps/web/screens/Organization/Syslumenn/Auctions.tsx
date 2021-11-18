@@ -518,7 +518,7 @@ const Auctions: Screen<AuctionsProps> = ({
   /**
    * The following code handles special cases in order to display certain information for certain Auctions, information that should be handed from the external Syslumenn API but has not been implemented yet. To accomplish this, we utilize Contentful to store Keywords to identify certain Auctions.
    */
-  const vakaAuctionKeywords = (n('auctionVakaAuctionKeywords', 'Brautarholt') as string).split(';')
+  const vakaAuctionKeywords = (n('auctionVakaAuctionKeywords', '') as string).split(';')
   const capitalAreaOffice = 'Sýslumaðurinn á höfuðborgarsvæðinu'
   const auctionContainsVakaKeyword = (auction : SyslumennAuction) => {
     return vakaAuctionKeywords.some((keyword) => {
