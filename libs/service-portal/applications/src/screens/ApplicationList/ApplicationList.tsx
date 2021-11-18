@@ -44,11 +44,11 @@ const ApplicationList: ServicePortalModuleComponent = () => {
         <GridRow>
           <GridColumn>
             <Stack space={2}>
-              <Text variant="h1" as="h1">
+              <Text variant="h3" as="h1">
                 {formatMessage(m.heading)}
               </Text>
 
-              <Text as="p" variant="intro">
+              <Text as="p" variant="default">
                 {formatMessage(m.introCopy)}
               </Text>
             </Stack>
@@ -60,7 +60,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
       {error && (
         <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-          <Text variant="h3" as="h3">
+          <Text variant="h4" as="h3">
             {formatMessage(m.error)}
           </Text>
         </Box>

@@ -204,17 +204,17 @@ const Endorsements = () => {
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {formatMessage(m.endorsement.introTitle)}
         </Text>
 
-        <Text as="p" variant="intro">
+        <Text as="p" variant="default">
           {formatMessage(m.endorsement.intro)}
         </Text>
       </Stack>
       {endorsements && endorsements.length > 0 && (
         <>
-          <Text variant="h3" marginTop={4} marginBottom={2}>
+          <Text variant="h4" as="h3" marginTop={4} marginBottom={2}>
             {formatMessage(m.endorsement.myEndorsements)}
           </Text>
           <Stack space={4}>
