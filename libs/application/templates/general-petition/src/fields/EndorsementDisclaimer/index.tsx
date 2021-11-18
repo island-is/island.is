@@ -64,10 +64,16 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
           </Box>
           <Box marginBottom={3}>
             <Text variant="h4">{formatMessage(m.endorsementForm.openTil)}</Text>
-            {answers && answers.dateTil && <Text variant="default">{format(new Date(answers.dateTil), 'dd.MM.yyyy')}</Text>}
+            {answers && answers.dateTil && (
+              <Text variant="default">
+                {format(new Date(answers.dateTil), 'dd.MM.yyyy')}
+              </Text>
+            )}
           </Box>
           <Box marginBottom={3}>
-            <Text variant="h4">{formatMessage(m.endorsementForm.listOwner)}</Text>
+            <Text variant="h4">
+              {formatMessage(m.endorsementForm.listOwner)}
+            </Text>
             <Text variant="default">{listOwner}</Text>
           </Box>
           <Box display="flex" marginBottom={10}>
