@@ -21,6 +21,7 @@ env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
   SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
   COMPOSE_HTTP_TIMEOUT: 180
+  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
 
 jobs:
   pre-checks:
@@ -125,6 +126,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - uses: actions/checkout@v2
+        with:
+          repository: 'island-is/cache'
+          path: 'cache/'
 
       - name: Cleanup disk space
         run: |
@@ -211,14 +216,14 @@ jobs:
 
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps
-        uses: actions/cache@v2
+        uses: ./cache/
         with:
           path: cache
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-deps
 
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps-base
-        uses: actions/cache@v2
+        uses: ./cache/
         with:
           path: cache_output
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-output-base
@@ -229,7 +234,7 @@ jobs:
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
-        uses: actions/cache@v2
+        uses: ./cache/
         with:
           path: node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
@@ -243,7 +248,7 @@ jobs:
 
       - name: Cache for generated files
         id: generated-files-cache
-        uses: actions/cache@v2
+        uses: ./cache/
         with:
           path: generated_files.tar.gz
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
@@ -303,6 +308,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - uses: actions/checkout@v2
+        with:
+          repository: 'island-is/cache'
+          path: 'cache/'
 
       - uses: ./.github/actions/unit-test
         with:
@@ -337,9 +346,14 @@ jobs:
         continue-on-error: true
       - uses: actions/checkout@v2
         if: steps.gather.outcome == 'success'
+      - uses: actions/checkout@v2
+        if: steps.gather.outcome == 'success'
+        with:
+          repository: 'island-is/cache'
+          path: 'cache/'
       - name: Cache for generated files
         if: steps.gather.outcome == 'success'
-        uses: actions/cache@v2
+        uses: ./cache/
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
@@ -351,14 +365,14 @@ jobs:
       - name: Cache for dependencies Docker layer
         if: steps.gather.outcome == 'success'
         id: cache-deps
-        uses: actions/cache@v2
+        uses: ./cache/
         with:
           path: cache_output
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-output-base
 
       - name: Cache for NodeJS dependencies - Docker layer
         if: steps.gather.outcome == 'success'
-        uses: actions/cache@v2
+        uses: ./cache/
         with:
           path: cache
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps
