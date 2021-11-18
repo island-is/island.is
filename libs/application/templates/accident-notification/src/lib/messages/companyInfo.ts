@@ -15,7 +15,7 @@ export const companyInfo = {
     description: {
       id: 'an.application:companyInfo.general.description',
       defaultMessage:
-        'Vinsamlegast fylltu út upplýsingar um atvinnurekanda sem slasaði starfaði hjá þegar slysið átti sér stað.',
+        'Vinsamlegast fylltu út upplýsingar um atvinnurekanda sem hinn slasaði starfaði hjá þegar slysið átti sér stað.',
       description: `Please fill in the details of the employer with whom the injured person was working at the time of the accident.`,
     },
   }),

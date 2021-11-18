@@ -8,6 +8,29 @@ export const rcRulingStepOne = {
       'Notaður sem titill á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
   sections: {
+    prosecutorDemands: defineMessages({
+      title: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.prosecutor_demands.title',
+        defaultMessage: 'Dómkröfur',
+        description:
+          'Notaður sem titill fyrir "dómkröfur" hlutann á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      label: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.prosecutor_demands.label',
+        defaultMessage: 'Krafa lögreglu',
+        description:
+          'Notaður sem titill fyrir í "Krafa lögreglu" textaboxi á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      placeholder: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.prosecutor_demands.placeholder',
+        defaultMessage: 'Hvað hafði ákæruvaldið að segja?',
+        description:
+          'Notaður sem skýritexti fyrir í "Hvað hafði ákæruvaldið að segja?" textabox á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
     courtCaseFacts: defineMessages({
       title: {
         id:
@@ -79,12 +102,40 @@ export const rcRulingStepOne = {
         description:
           'Notaður sem titill fyrir "Úrskurður" hlutann á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      acceptLabel: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.decision.accept_label',
+        defaultMessage: 'Krafa um {caseType} samþykkt',
+        description:
+          'Notaður sem texti við radio takka með vali um að samþykkja gæsluvarðhald á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      partiallyAcceptLabel: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.decision.partially_accept_label',
+        defaultMessage: 'Krafa um gæsluvarðhald tekin til greina að hluta',
+        description:
+          'Notaður sem texti við radio takka með vali um að samþykkja gæsluvarðhald að hluta á úrskurðar skrefi í gæsluvarðhaldsmálum.',
+      },
+      rejectLabel: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.decision.reject_label',
+        defaultMessage: 'Kröfu um {caseType} hafnað',
+        description:
+          'Notaður sem texti við radio takka með vali um að hafna gæsluvarðhaldi á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
       dismissLabel: {
         id:
           'judicial.system.restriction_cases:ruling_step_one.decision.dismiss_label',
         defaultMessage: 'Kröfu um {caseType} vísað frá',
         description:
           'Notaður sem texti við radio takka með vali um að vísa máli frá á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      acceptingAlternativeTravelBanLabel: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.decision.accepting_alternative_travel_ban_label',
+        defaultMessage: 'Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann',
+        description:
+          'Notaður sem texti við radio takka með vali um að hafna gæsluvarðhaldi en úrskurða í farbann á úrskurðar skrefi í gæsluvarðhaldsmálum.',
       },
     }),
     ruling: defineMessages({
