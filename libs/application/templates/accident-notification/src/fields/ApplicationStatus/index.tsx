@@ -175,7 +175,7 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
     },
   }
 
-  const hasReviewerSubmitted = isAssignee && hasReceivedConfirmation(answers)
+  const hasReviewerSubmitted = hasReceivedConfirmation(answers)
 
   const steps = [
     {
@@ -280,6 +280,7 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
             action={step.action}
             tagText={step.tagText}
             tagVariant={step.tagVariant}
+            visible={step.visible}
           />
         ))}
       </Box>
