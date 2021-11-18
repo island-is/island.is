@@ -16,7 +16,7 @@ import Logo from '../assets/Logo'
 
 export const PetitionApplicationForm: Form = buildForm({
   id: 'PetitionApplicationForm',
-  title: 'Undirskriftarlistar',
+  title: 'Meðmælendalistar',
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
