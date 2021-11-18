@@ -5,6 +5,7 @@ import { openApi } from './openApi'
 
 bootstrap({
   appModule: AppModule,
-  name: 'reference-backend',
+  name: 'services-notifications',
   openApi,
+  swaggerPath: '',
 })
