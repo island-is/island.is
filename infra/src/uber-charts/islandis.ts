@@ -24,6 +24,7 @@ import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/
 import { serviceSetup as endorsementServiceUpdateMetadataSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-scripts-update-metadata'
 import { serviceSetup as partyLetterServiceSetup } from '../../../apps/services/party-letter-registry-api/infra/party-letter-registry-api'
 import { serviceSetup as temporaryVoterRegistryServiceSetup } from '../../../apps/services/temporary-voter-registry-api/infra/temporary-voter-registry-api'
+import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-actions-cache/infra/github-actions-cache'
 
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
 import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
@@ -76,6 +77,7 @@ const downloadService = downloadServiceSetup()
 const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
 const adsWeb = adsWebSetup({ adsApi })
+const githubActionsCache = githubActionsCacheSetup()
 
 export const Services: EnvironmentServices = {
   prod: [
@@ -149,6 +151,7 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    githubActionsCache,
   ],
 }
 

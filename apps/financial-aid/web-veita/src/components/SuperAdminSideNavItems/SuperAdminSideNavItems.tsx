@@ -18,18 +18,32 @@ const SuperAdminSideNavItems = ({ roles }: Props) => {
   }
 
   return (
-    <button
-      className={`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`}
-      onClick={() => router.push(Routes.municipalities)}
-    >
-      <Icon
-        icon="receipt"
-        type="outline"
-        color="blue400"
-        className={sideNavButtonStyles.sideNavBarButtonIcon}
-      />
-      <Text> Sveitarfélög</Text>
-    </button>
+    <>
+      <button
+        className={`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`}
+        onClick={() => router.push(Routes.settings.municipalities)}
+      >
+        <Icon
+          icon="receipt"
+          type="outline"
+          color="blue400"
+          className={sideNavButtonStyles.sideNavBarButtonIcon}
+        />
+        <Text> Sveitarfélög</Text>
+      </button>
+      <button
+        className={`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`}
+        onClick={() => router.push(Routes.settings.supervisors)}
+      >
+        <Icon
+          icon="people"
+          type="outline"
+          color="blue400"
+          className={sideNavButtonStyles.sideNavBarButtonIcon}
+        />
+        <Text> Umsjónaraðilar</Text>
+      </button>
+    </>
   )
 }
 
