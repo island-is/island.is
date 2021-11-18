@@ -4,10 +4,10 @@ import { ApolloError } from '@apollo/client'
 import AnimateHeight from 'react-animate-height'
 import {
   Box,
-  Button,
   Text,
   LoadingDots,
   Table as T,
+  Icon,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import * as styles from './ExpandableTable.css'
@@ -83,18 +83,28 @@ const ExpandableLine: FC<Props> = ({
           }}
         >
           {!last && !loading && (
-            <Box display="flex" alignItems="flexEnd" justifyContent="flexEnd">
-              <Button
-                circle
-                colorScheme="light"
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="flexEnd"
+              onClick={onExpandButton}
+              cursor="pointer"
+            >
+              <Text
+                variant={last ? 'eyebrow' : 'small'}
+                as="span"
+                color="blue400"
+              >
+                {expanded
+                  ? formatMessage(m.closeFinanceDetail)
+                  : formatMessage(m.openFinanceDetail)}
+              </Text>
+              <Icon
+                className={styles.detailsIcon}
+                type={'filled'}
                 icon={expanded ? 'remove' : 'add'}
-                iconType="filled"
-                onClick={onExpandButton}
-                preTextIconType="filled"
                 size="small"
-                title="Sundurliðun"
-                type="button"
-                variant="primary"
+                color="blue400"
               />
             </Box>
           )}

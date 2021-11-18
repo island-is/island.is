@@ -39,6 +39,7 @@ import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 import * as styles from './Overview.css'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import getOrganizationLogoUrl from '../../utils/getOrganizationLogoUrl'
+import { m } from '@island.is/service-portal/core'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 15
@@ -64,6 +65,7 @@ const getFilteredDocuments = (
   filterValues: FilterValues,
 ): Document[] => {
   const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
+
   let filteredDocuments = documents.filter((document) => {
     const minDate = dateFrom || new Date('1900-01-01')
     const maxDate = dateTo || startOfTomorrow()
@@ -181,7 +183,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {formatMessage({
             id: 'sp.documents:title',
             defaultMessage: 'Pósthólf',
@@ -189,7 +191,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
         </Text>
         <Columns collapseBelow="sm">
           <Column width="7/12">
-            <Text variant="intro">
+            <Text variant="default">
               {formatMessage({
                 id: 'sp.documents:intro',
                 defaultMessage:
@@ -199,20 +201,18 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
           </Column>
         </Columns>
         <Box marginTop={[1, 1, 2, 2, 6]}>
-          <GridRow>
+          <GridRow alignItems="flexEnd">
             <GridColumn paddingBottom={[1, 0]} span={['1/1', '3/8']}>
               <Box height="full">
                 <Input
                   icon="search"
                   backgroundColor="blue"
-                  size="md"
+                  size="xs"
                   value={filterValue.searchQuery}
                   onChange={(ev) => handleSearchChange(ev.target.value)}
                   name="rafraen-skjol-leit"
-                  placeholder={formatMessage({
-                    id: 'sp.documents:search-placeholder',
-                    defaultMessage: 'Leitaðu að skjali',
-                  })}
+                  label={formatMessage(m.searchLabel)}
+                  placeholder={formatMessage(m.searchPlaceholder)}
                 />
               </Box>
             </GridColumn>
@@ -220,7 +220,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               <Select
                 name="categories"
                 backgroundColor="blue"
-                size="sm"
+                size="xs"
                 defaultValue={categories[0]}
                 options={categories}
                 value={filterValue.activeCategory}
@@ -238,6 +238,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   fluid
                   icon={isDateRangeOpen ? 'close' : 'filter'}
                   iconType="outline"
+                  size="small"
                   onClick={handleDateRangeButtonClick}
                 >
                   {formatMessage({
@@ -263,7 +264,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     })}
                     locale="is"
                     backgroundColor="blue"
-                    size="sm"
+                    size="xs"
                     selected={filterValue.dateFrom}
                     handleChange={handleDateFromInput}
                   />
@@ -280,7 +281,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     })}
                     locale="is"
                     backgroundColor="blue"
-                    size="sm"
+                    size="xs"
                     selected={filterValue.dateTo}
                     handleChange={handleDateToInput}
                     minDate={filterValue.dateFrom || undefined}
