@@ -18,7 +18,7 @@ import {
   CaseFileList,
   Decision,
   RulingInput,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
@@ -46,11 +46,11 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
-import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
+import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import { useRouter } from 'next/router'
-import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
+import DateTime from '@island.is/judicial-system-web/src/components/DateTime/DateTime'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { rcRulingStepOne as m } from '@island.is/judicial-system-web/messages'
 
 export const RulingStepOne: React.FC = () => {

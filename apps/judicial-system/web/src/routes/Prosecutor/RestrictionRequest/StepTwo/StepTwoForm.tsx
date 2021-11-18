@@ -10,7 +10,7 @@ import {
   FormContentContainer,
   FormFooter,
   BlueBox,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'

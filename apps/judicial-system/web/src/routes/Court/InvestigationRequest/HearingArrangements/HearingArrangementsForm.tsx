@@ -20,7 +20,7 @@ import {
   FormContentContainer,
   FormFooter,
   Modal,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   NotificationType,
   SessionArrangements,

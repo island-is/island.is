@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
+import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import { CaseState } from '@island.is/judicial-system/types'

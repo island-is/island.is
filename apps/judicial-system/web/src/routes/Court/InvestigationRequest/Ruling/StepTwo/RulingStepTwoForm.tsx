@@ -11,7 +11,7 @@ import {
   FormFooter,
   TimeInputField,
   CaseNumbers,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   Box,
   GridColumn,

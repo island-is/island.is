@@ -6,7 +6,7 @@ import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { ApolloProvider } from '@apollo/client'
 import { QueryGetTranslationsArgs, Query } from '@island.is/api/schema'
 import { LocaleProvider, GET_TRANSLATIONS } from '@island.is/localization'
-import { UserProvider, Header, FeatureProvider } from '../src/shared-components'
+import { UserProvider, Header, FeatureProvider } from '../src/components'
 import { client } from '../graphql'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 

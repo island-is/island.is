@@ -11,7 +11,7 @@ import type { Case } from '@island.is/judicial-system/types'
 import {
   Modal,
   PageLayout,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,

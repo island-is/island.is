@@ -16,7 +16,7 @@ import {
   DateTime,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
@@ -24,7 +24,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
+import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
   legalProvisions,
   travelBanProvisions,

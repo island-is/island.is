@@ -14,7 +14,7 @@ import {
   BlueBox,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'

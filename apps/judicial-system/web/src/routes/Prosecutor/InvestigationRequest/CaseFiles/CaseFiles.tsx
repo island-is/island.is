@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Case, PoliceCaseFile } from '@island.is/judicial-system/types'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
+import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { useQuery } from '@apollo/client'
 import {
   CaseQuery,

@@ -22,11 +22,11 @@ import {
 import {
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import { rcCaseFiles as m } from '@island.is/judicial-system-web/messages'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/shared-components/MarkdownWrapper/MarkdownWrapper'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import { PoliceCaseFilesData } from './StepFive'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './StepFive.css'
