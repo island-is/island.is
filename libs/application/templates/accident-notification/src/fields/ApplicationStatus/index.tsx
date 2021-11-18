@@ -31,9 +31,7 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
   goToScreen,
   application,
   refetch,
-  field,
 }) => {
-  const isAssignee = field?.props?.isAssignee || false
   const subAppData = application.externalData
     .submitApplication as SubmittedApplicationData
   const ihiDocumentID = +(subAppData.data?.documentId || 0)
