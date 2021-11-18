@@ -35,7 +35,7 @@ const PetitionView = (namespace) => {
 
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const [pagePetitions, setPetitions] = useState(listEndorsements.data)
+  const [pagePetitions, setPetitions] = useState(listEndorsements.data ?? [])
 
   const getBaseUrl = () => {
     const isLocalhost = window?.location.origin.includes('localhost')
@@ -62,8 +62,8 @@ const PetitionView = (namespace) => {
   }
 
   useEffect(() => {
-    handlePagination(1, listEndorsements.data)
-    setPetitions(listEndorsements.data)
+    setPetitions(listEndorsements.data ?? [])
+    handlePagination(1, listEndorsements.data ?? [])
   }, [listEndorsements])
 
   return (
@@ -162,7 +162,9 @@ const PetitionView = (namespace) => {
                         <Box
                           cursor="pointer"
                           className={className}
-                          onClick={() => handlePagination(page, pagePetitions)}
+                          onClick={() =>
+                            handlePagination(page, listEndorsements.data)
+                          }
                         >
                           {children}
                         </Box>
