@@ -55,17 +55,6 @@ export const rcRulingStepTwo = {
           'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar krafa er samþykkt á úrskurðar og kæru skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
-    /* Depricated - remove in a later PR */
-    accusedAppealDecision: defineMessages({
-      disclaimer: {
-        id:
-          'judicial.system.restriction_cases:ruling_step_two.accused_appeal_decision.disclaimer',
-        defaultMessage:
-          'Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa.',
-        description:
-          'Notaður sem texti í "Ákvörðun um kæru" hlutanum á úrskurðar og kæru skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-    }),
     appealDecision: defineMessages({
       title: {
         id:
