@@ -226,8 +226,6 @@ const Search: Screen<CategoryProps> = ({
     labels: getLabels(item),
   }))
 
-  console.log(searchResults.items)
-
   const onRemoveFilters = () => {
     Router.replace({
       pathname: linkResolver('search').href,
