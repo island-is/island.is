@@ -288,6 +288,14 @@ export const ActivityMunicipalityMutation = gql`
   }
 `
 
+export const MunicipalityMutation = gql`
+  mutation MunicipalityMutation($input: CreateMunicipalityInput!) {
+    createMunicipality(input: $input) {
+      id
+    }
+  }
+`
+
 export const UpdateMunicipalityMutation = gql`
   mutation UpdateMunicipalityMutation($input: UpdateMunicipalityInput!) {
     updateMunicipality(input: $input) {

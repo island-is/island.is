@@ -18,6 +18,7 @@ import { BackendAPI } from '../../../services'
 import { MunicipalityModel } from './models'
 import {
   MunicipalityActivityInput,
+  CreateMunicipalityInput,
   MunicipalityQueryInput,
   UpdateMunicipalityInput,
 } from './dto'
@@ -55,6 +56,15 @@ export class MunicipalityResolver {
     this.logger.debug('Updating activity municipality')
 
     return backendApi.updateActivityMunicipality(id, activityMunicipality)
+  }
+
+  createMunicipality(
+    @Args('input', { type: () => CreateMunicipalityInput })
+    input: CreateMunicipalityInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<MunicipalityModel> {
+    this.logger.debug('Creating municipality')
+    return backendApi.createMunicipality(input)
   }
 
   @Mutation(() => MunicipalityModel, { nullable: false })

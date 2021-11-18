@@ -4,7 +4,11 @@ import { InjectModel } from '@nestjs/sequelize'
 import { MunicipalityModel } from './models'
 import { AidType } from '@island.is/financial-aid/shared/lib'
 import { AidModel, AidService } from '../aid'
-import { MunicipalityActivityDto, UpdateMunicipalityDto } from './dto'
+import {
+  MunicipalityActivityDto,
+  UpdateMunicipalityDto,
+  CreateMunicipalityDto,
+} from './dto'
 import { Sequelize } from 'sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -44,6 +48,40 @@ export class MunicipalityService {
           },
         },
       ],
+    })
+  }
+
+  private findAidTypeId = (obj: AidModel[], type: AidType) => {
+    return obj.find((el) => el.type === type).id
+  }
+
+  async create(
+    municipality: CreateMunicipalityDto,
+  ): Promise<MunicipalityModel> {
+    return await this.sequelize.transaction(async (t) => {
+      return await Promise.all(
+        Object.values(AidType).map((item) => {
+          return this.aidService.create(
+            {
+              municipalityId: municipality.municipalityId,
+              type: item,
+            },
+            t,
+          )
+        }),
+      )
+        .then((res) => {
+          municipality.individualAidId = this.findAidTypeId(
+            res,
+            AidType.INDIVIDUAL,
+          )
+          municipality.cohabitationAidId = this.findAidTypeId(
+            res,
+            AidType.COHABITATION,
+          )
+          return this.municipalityModel.create(municipality, { transaction: t })
+        })
+        .catch((err) => err)
     })
   }
 

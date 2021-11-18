@@ -25,7 +25,7 @@ import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CreateStaffInput } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
 import {
-  MunicipalityActivityInput,
+  CreateMunicipalityInput,
   UpdateMunicipalityInput,
 } from '../app/modules/municipality/dto'
 
@@ -56,6 +56,12 @@ class BackendAPI extends RESTDataSource {
 
   getMunicipalities(): Promise<Municipality[]> {
     return this.get(`municipality`)
+  }
+
+  createMunicipality(
+    createMunicipality: CreateMunicipalityInput,
+  ): Promise<Municipality> {
+    return this.post('municipality', createMunicipality)
   }
 
   updateMunicipality(
