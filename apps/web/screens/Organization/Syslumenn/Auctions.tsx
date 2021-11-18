@@ -24,6 +24,7 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
   QueryGetSyslumennAuctionsArgs,
+  SyslumennAuction,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -514,6 +515,47 @@ const Auctions: Screen<AuctionsProps> = ({
     )
   })
 
+  /**
+   * The following code handles special cases in order to display certain information for certain Auctions, information that should be handed from the external Syslumenn API but has not been implemented yet. To accomplish this, we utilize Contentful to store Keywords to identify certain Auctions.
+   */
+  const vakaAuctionKeywords = (n('auctionVakaAuctionKeywords', 'Brautarholt') as string).split(';')
+  const capitalAreaOffice = 'Sýslumaðurinn á höfuðborgarsvæðinu'
+  const auctionContainsVakaKeyword = (auction : SyslumennAuction) => {
+    return vakaAuctionKeywords.some((keyword) => {
+      return keyword && (auction.lotId === keyword || auction.lotName.includes(keyword) || auction.lotItems.includes(keyword))
+    })
+  }
+  const auctionAtVaka = (auction : SyslumennAuction) => {
+    return auction.office.toLowerCase() === capitalAreaOffice.toLowerCase() && (auction.lotType === LOT_TYPES.VEHICLE || auctionContainsVakaKeyword(auction))
+  }
+  const getAuctionTakesPlaceAtAndExtraInfo = (auction : SyslumennAuction) => {
+    if (auctionAtVaka(auction)) {
+      return <div>
+        <Text paddingBottom={1}>
+          {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:{' '}
+          {n('auctionTakesPlaceAtVaka', 'Uppboð verður haldið í aðstöðu Vöku hf., Héðinsgötu 1 - 3.')}
+        </Text>
+        <Text variant="small">
+          {n('auctionRequiresNegativeTestResult', 'Allir, fæddir 2015 og fyrr, þurfa að framvísa neikvæðri niðurstöðu úr hraðprófi (antigen) sem má ekki vera eldra en 48 klst.')}
+        </Text>
+        <Text variant="small">
+          {n('auctionRequiresFaceMask', 'Grímuskylda er á uppboðinu.')}
+        </Text>
+        <Text variant="small">
+          {n('auctionPaymentInfo', 'Hvorki ávísanir né kreditkort eru tekin gild sem greiðsla einungis debetkort eða peningar. Greiðsla við hamarshögg.')}
+        </Text>
+      </div>
+    }
+    else if (auction.lotId && auction.lotType === LOT_TYPES.REAL_ESTATE && auction.auctionType === AUCTION_TYPES.CONTINUATION) {
+      return <Text paddingBottom={1}>
+        {n(
+          'auctionRealEstateAuctionContinuationLocation',
+          'Framhald uppboðs fasteignarinnar verður háð á fasteigninni sjálfri.',
+        )}
+      </Text>
+    }
+  }
+
   return (
     <OrganizationWrapper
       pageTitle={n('auctions', 'Uppboð')}
@@ -733,13 +775,8 @@ const Auctions: Screen<AuctionsProps> = ({
                     />
                   )}
 
-                  {/* Auction takes place at */}
-                  {auction.takesPlaceAt && (
-                    <Text paddingBottom={1}>
-                      {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:{' '}
-                      {auction.takesPlaceAt}
-                    </Text>
-                  )}
+                  {/* Auction takes place at & auction extra info */}
+                  { getAuctionTakesPlaceAtAndExtraInfo(auction) }
 
                   {/* Respondents */}
                   {auctionRespondents &&
@@ -833,7 +870,6 @@ const LotLink = ({
         <a
           style={{
             color: theme.color.blue400,
-            textDecoration: 'underline',
           }}
           href={href}
           rel="noopener noreferrer"
