@@ -525,7 +525,10 @@ const Auctions: Screen<AuctionsProps> = ({
     'auctionVakaAuctionKeywords',
     '',
   ) as string).split(';')
-  const capitalAreaOffice = 'Sýslumaðurinn á höfuðborgarsvæðinu'
+  const capitalAreaOffice = n(
+    'auctionCapitalAreaOffice',
+    'Sýslumaðurinn á höfuðborgarsvæðinu',
+  )
   const auctionContainsVakaKeyword = (auction: SyslumennAuction) => {
     return vakaAuctionKeywords.some((keyword) => {
       return (
