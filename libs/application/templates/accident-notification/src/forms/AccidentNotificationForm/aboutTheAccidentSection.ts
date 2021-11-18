@@ -124,20 +124,21 @@ export const aboutTheAccidentSection = buildSection({
 
     buildSubSection({
       id: 'accidentType.section',
-      title: 'Aðstæður slyss',
+      title: accidentType.general.subsectionTitle,
       children: [
         buildRadioField({
           id: 'accidentType.radioButton',
           width: 'half',
           title: accidentType.general.heading,
           description: accidentType.general.description,
-          options: (app) => getAccidentTypeOptions(app.answers),
+          options: (formValue) => getAccidentTypeOptions(formValue.answers),
         }),
       ],
     }),
     buildSubSection({
       id: 'workAccident.subSection',
       title: accidentType.workAccidentType.subSectionTitle,
+      condition: (formValue) => isWorkAccident(formValue),
       children: [
         buildMultiField({
           id: 'workAccident.section',
@@ -180,17 +181,16 @@ export const aboutTheAccidentSection = buildSection({
           ],
         }),
       ],
-      condition: (formValue) => isWorkAccident(formValue),
     }),
     buildSubSection({
       id: 'studiesAccident.subSection',
       title: accidentType.workAccidentType.subSectionTitle,
+      condition: (formValue) => isStudiesAccident(formValue),
       children: [
         buildMultiField({
           id: 'studiesAccident.section',
           title: accidentType.studiesAccidentType.heading,
           description: accidentType.studiesAccidentType.description,
-          condition: (formValue) => isStudiesAccident(formValue),
           children: [
             buildRadioField({
               id: 'studiesAccident.type',

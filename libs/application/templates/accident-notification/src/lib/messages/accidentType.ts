@@ -18,6 +18,11 @@ export const accidentType = {
       description:
         'Please select the category of accident that best describes the situation of the accident.',
     },
+    subsectionTitle: {
+      id: 'an.application:accidentType.subsectionTitle',
+      defaultMessage: `Aðstæður slyss`,
+      description: 'AccidentType subsection title.',
+    },
   }),
   labels: defineMessages({
     homeActivities: {
