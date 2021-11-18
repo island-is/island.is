@@ -1,6 +1,9 @@
 import React, { FC, createContext, useContext, useMemo } from 'react'
-import { createClient } from './feature-flags'
-import { FeatureFlagClient, User } from './types'
+import {
+  createClient,
+  FeatureFlagClient,
+  FeatureFlagUser,
+} from '@island.is/feature-flags'
 import { useAuth } from '@island.is/auth/react'
 
 const FeatureFlagContext = createContext<FeatureFlagClient>({
@@ -9,7 +12,7 @@ const FeatureFlagContext = createContext<FeatureFlagClient>({
 
 export interface FeatureFlagContextProviderProps {
   sdkKey: string
-  defaultUser?: User
+  defaultUser?: FeatureFlagUser
 }
 
 export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
@@ -38,7 +41,7 @@ export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
       getValue(
         key: string,
         defaultValue: boolean | string,
-        user: User | undefined = defaultUser,
+        user: FeatureFlagUser | undefined = defaultUser,
       ) {
         return featureFlagClient.getValue(key, defaultValue, user)
       },

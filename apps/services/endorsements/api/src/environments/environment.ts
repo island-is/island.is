@@ -25,6 +25,10 @@ const devConfig = {
     DMR: process.env.ACCESS_GROUP_DMR ?? '',
     Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
   },
+  email: {
+    sender: 'devland.is',
+    address: 'development@island.is',
+  },
   emailOptions: {
     useTestAccount: false,
     useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
@@ -60,6 +64,10 @@ const prodConfig = {
   accessGroups: {
     DMR: process.env.ACCESS_GROUP_DMR ?? '',
     Admin: process.env.ACCESS_GROUP_ADMIN ?? '',
+  },
+  email: {
+    sender: process.env.EMAIL_FROM_NAME ?? '',
+    address: process.env.EMAIL_FROM_ADDRESS ?? '',
   },
   emailOptions: {
     useTestAccount: false,
