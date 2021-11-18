@@ -292,6 +292,14 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
               },
             ],
           },
+          {
+            name: m.personalInformation,
+            path: ServicePortalPath.SettingsPersonalInformation,
+          },
+          {
+            name: m.islykill,
+            path: ServicePortalPath.SettingsIslykill,
+          },
         ],
       },
 

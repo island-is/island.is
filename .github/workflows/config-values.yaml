@@ -2,15 +2,25 @@ name: Config values
 
 on:
   push:
+    branches:
+      - 'main'
+      - 'release/**'
     paths:
       - 'charts/**'
       - 'infra/**'
       - '**/infra/**'
   workflow_dispatch: {}
+  pull_request:
+    paths:
+      - 'charts/**'
+      - 'infra/**'
+      - '**/infra/**'
 
 env:
   DEVOPS_DEBUG: ${{ secrets.DEVOPS_DEBUG }}
   AWS_MAX_ATTEMPTS: 10
+  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
+
 jobs:
   prepare:
     runs-on: ubuntu-20.04
@@ -35,9 +45,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: actions/checkout@v2
+        with:
+          repository: 'island-is/cache'
+          path: 'cache/'
+
       - name: Cache for NodeJS dependencies
         id: node-modules
-        uses: actions/cache@v2
+        uses: ./cache/
         with:
           path: infra/node_modules
           key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra
@@ -64,9 +79,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: actions/checkout@v2
+        with:
+          repository: 'island-is/cache'
+          path: 'cache/'
+
       - name: Cache for NodeJS dependencies
         id: node-modules
-        uses: actions/cache@v2
+        uses: ./cache/
         with:
           path: infra/node_modules
           key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra

@@ -46,6 +46,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
 
   const [courtCaseFactsEM, setCourtCaseFactsEM] = useState<string>('')
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
+  const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
 
   const validations: FormSettings = {
     ruling: {
@@ -90,6 +91,46 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               />
             </AccordionItem>
           </Accordion>
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.prosecutorDemands.title)}
+            </Text>
+          </Box>
+          <Input
+            data-testid="prosecutorDemands"
+            name="prosecutorDemands"
+            label={formatMessage(m.sections.prosecutorDemands.label)}
+            defaultValue={workingCase.prosecutorDemands}
+            placeholder={formatMessage(m.sections.prosecutorDemands.label)}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'prosecutorDemands',
+                event,
+                ['empty'],
+                workingCase,
+                setWorkingCase,
+                prosecutorDemandsEM,
+                setProsecutorDemandsEM,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'prosecutorDemands',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                updateCase,
+                setProsecutorDemandsEM,
+              )
+            }
+            errorMessage={prosecutorDemandsEM}
+            hasError={prosecutorDemandsEM !== ''}
+            textarea
+            rows={7}
+            required
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
@@ -196,9 +237,11 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             <Decision
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
-              acceptedLabelText="Krafa samþykkt"
-              rejectedLabelText="Kröfu hafnað"
-              partiallyAcceptedLabelText="Krafa tekin til greina að hluta"
+              acceptedLabelText={formatMessage(m.sections.decision.acceptLabel)}
+              rejectedLabelText={formatMessage(m.sections.decision.rejectLabel)}
+              partiallyAcceptedLabelText={formatMessage(
+                m.sections.decision.partiallyAcceptLabel,
+              )}
               dismissLabelText={formatMessage(m.sections.decision.dismissLabel)}
             />
           </Box>

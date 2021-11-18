@@ -25,6 +25,7 @@ export const ruling = {
     description: 'Notaður sem fyrirsögn á lista yfir viðstadda.',
   }),
   demandsHeading: defineMessage({
+    // Deprecated
     id: 'judicial.system.backend:pdf.ruling.demands_heading',
     defaultMessage: 'Krafa:',
     description: 'Notaður sem fyrirsögn á kröfu.',

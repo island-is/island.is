@@ -6,7 +6,7 @@ import { client } from '@island.is/service-portal/graphql'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { LocaleProvider } from '@island.is/localization'
 import { defaultLanguage } from '@island.is/shared/constants'
-import { FeatureFlagProvider } from '@island.is/feature-flags'
+import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 
 import { environment } from '../environments'
 import { StateProvider } from '../store/stateProvider'

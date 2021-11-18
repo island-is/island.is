@@ -12,6 +12,8 @@ export type Hash = { [name: string]: Hash | string }
 export type ValueSource = string | ((e: Context) => string)
 export type ValueType = MissingSettingType | ValueSource
 
+export type RolloutStrategy = 'RollingUpdate' | 'Recreate'
+
 export type PostgresInfo = {
   host?: {
     [idx in OpsEnv]: ValueType
@@ -79,6 +81,7 @@ export type ServiceDefinition = {
   }
   xroadConfig: XroadConfig[]
   files: MountedFile[]
+  rolloutStrategy?: RolloutStrategy
 }
 
 export interface Ingress {
