@@ -129,7 +129,7 @@ export const m: MessageDir = {
     },
     openTil: {
       id: 'sp.petitions:open-til',
-      defaultMessage: 'Meðmælendalistinn er opinn:',
+      defaultMessage: 'Meðmælendalistinn er opinn til:',
       description: 'List is open til',
     },
     listOwner: {
