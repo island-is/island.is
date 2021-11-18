@@ -16,12 +16,26 @@ export const externalDataSection = buildSection({
     buildMultiField({
       title: externalData.agreementDescription.sectionTitle,
       id: 'agreementDescriptionMultiField',
+      space: 2,
       children: [
         buildCustomField({
           id: 'agreementDescriptionCustomField',
           title: '',
           component: 'AgreementDescription',
         }),
+        buildCustomField(
+          {
+            id: 'extrainformationWithDataprovider',
+            title: '',
+            component: 'DescriptionWithLink',
+          },
+          {
+            descriptionFirstPart: externalData.extraInformation.description,
+            descriptionSecondPart: '',
+            linkName: externalData.extraInformation.linkText,
+            url: externalData.extraInformation.link,
+          },
+        ),
       ],
     }),
     buildSubSection({
@@ -53,7 +67,6 @@ export const externalDataSection = buildSection({
               title: externalData.nationalInsurancy.title,
               subTitle: externalData.nationalInsurancy.description,
             }),
-
             buildDataProviderItem({
               id: 'municipalCollectionAgency',
               type: '',

@@ -148,4 +148,23 @@ export const externalData = {
         'Approval of gathering information from Approval of Municipal Collection Agency',
     },
   }),
+  extraInformation: defineMessages({
+    description: {
+      id:
+        'an.application:section.externalData.extraInformation.descriptionFirstPart',
+      defaultMessage:
+        'Nánari upplýsingar um vinnslu persónuupplýsinga hjá Sjúkratryggingum Íslands ',
+      description: 'Description for link in extrainformation',
+    },
+    linkText: {
+      id: 'an.application:section.externalData.extraInformation.linkText',
+      defaultMessage: 'Persónuverndarsíðu SÍ.',
+      description: 'Link text for link',
+    },
+    link: {
+      id: 'an.application:section.externalData.extraInformation.link',
+      defaultMessage: 'https://www.sjukra.is/personuvernd.',
+      description: 'The url the link text links to',
+    },
+  }),
 }
