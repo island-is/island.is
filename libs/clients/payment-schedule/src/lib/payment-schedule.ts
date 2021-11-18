@@ -74,9 +74,7 @@ export class PaymentScheduleAPI extends RESTDataSource {
 
     return {
       ...response.distributionInitialPosition,
-      minPayment: roundToUpperThousand(
-        response.distributionInitialPosition.minPayment,
-      ),
+      minPayment: response.distributionInitialPosition.minPayment,
     }
   }
 
