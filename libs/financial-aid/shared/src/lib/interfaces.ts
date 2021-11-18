@@ -134,7 +134,7 @@ export interface Municipality {
   homepage?: string
   email?: string
   rulesHomepage?: string
-  users?: number
+  numberOfUsers?: number
   adminUsers?: Staff[]
 }
 

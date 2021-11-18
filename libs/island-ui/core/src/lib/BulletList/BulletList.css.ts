@@ -27,4 +27,13 @@ export const icon = style({
   position: 'relative',
   display: 'inline-block',
   top: '-2px',
+
+  ':before': {
+    content: ' ',
+    display: 'block',
+    width: theme.spacing[1],
+    height: theme.spacing[1],
+    backgroundColor: theme.color.red400,
+    borderRadius: '50%',
+  },
 })

@@ -22,8 +22,8 @@ import {
   UpdateMunicipalityInput,
 } from './dto'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { Municipality, Staff } from '@island.is/financial-aid/shared/lib'
 import { StaffModel } from '../staff/models'
-import { Municipality } from '@island.is/financial-aid/shared/lib'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => MunicipalityModel)
@@ -78,8 +78,8 @@ export class MunicipalityResolver {
     return backendApi.getMunicipalities()
   }
 
-  @ResolveField('users', () => Number)
-  users(
+  @ResolveField('numberOfUsers', () => Number)
+  numberOfUsers(
     @Parent() municipality: MunicipalityModel,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<number> {
@@ -96,7 +96,7 @@ export class MunicipalityResolver {
   adminUsers(
     @Parent() municipality: MunicipalityModel,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<StaffModel[]> {
+  ): Promise<Staff[]> {
     this.logger.debug(`Getting admin users for ${municipality.municipalityId}`)
 
     return backendApi.getAdminUsers(municipality.municipalityId)
