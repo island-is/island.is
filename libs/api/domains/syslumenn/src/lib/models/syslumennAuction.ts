@@ -35,9 +35,6 @@ export class SyslumennAuction {
 
   @Field({ nullable: true })
   respondent?: string
-
-  @Field({ nullable: true })
-  takesPlaceAt?: string
 }
 
 export const mapSyslumennAuction = (
@@ -54,5 +51,4 @@ export const mapSyslumennAuction = (
   auctionTime: auction.klukkan ?? '',
   petitioners: auction.gerdarbeidendur ?? '',
   respondent: auction.gerdartholar ?? '',
-  takesPlaceAt: auction.uppbodStadur ?? '',
 })
