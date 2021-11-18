@@ -48,7 +48,32 @@ const PageLayout: React.FC<PageProps> = ({
     activeSubSection,
   )
 
-  return children ? (
+  return isLoading ? (
+    <Box className={styles.loadingWrapper}>
+      <Loading />
+    </Box>
+  ) : notFound ? (
+    <AlertBanner
+      title={
+        user?.role === UserRole.ADMIN
+          ? 'Notandi fannst ekki'
+          : 'Mál fannst ekki'
+      }
+      description={
+        user?.role === UserRole.ADMIN
+          ? 'Vinsamlegast reynið aftur með því að opna notandann aftur frá yfirlitssíðunni'
+          : 'Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni'
+      }
+      variant="error"
+      link={{
+        href:
+          user?.role === UserRole.ADMIN
+            ? Constants.USER_LIST_ROUTE
+            : Constants.REQUEST_LIST_ROUTE,
+        title: 'Fara á yfirlitssíðu',
+      }}
+    />
+  ) : children ? (
     <Box
       paddingY={[3, 3, 3, 6]}
       background="purple100"
@@ -98,31 +123,6 @@ const PageLayout: React.FC<PageProps> = ({
         </GridRow>
       </GridContainer>
     </Box>
-  ) : isLoading ? (
-    <Box className={styles.loadingWrapper}>
-      <Loading />
-    </Box>
-  ) : notFound ? (
-    <AlertBanner
-      title={
-        user?.role === UserRole.ADMIN
-          ? 'Notandi fannst ekki'
-          : 'Mál fannst ekki'
-      }
-      description={
-        user?.role === UserRole.ADMIN
-          ? 'Vinsamlegast reynið aftur með því að opna notandann aftur frá yfirlitssíðunni'
-          : 'Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni'
-      }
-      variant="error"
-      link={{
-        href:
-          user?.role === UserRole.ADMIN
-            ? Constants.USER_LIST_ROUTE
-            : Constants.REQUEST_LIST_ROUTE,
-        title: 'Fara á yfirlitssíðu',
-      }}
-    />
   ) : null
 }
 

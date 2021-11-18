@@ -24,9 +24,12 @@ export const CaseFiles: React.FC = () => {
 
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
-  const { workingCase, setWorkingCase, isLoadingWorkingCase } = useContext(
-    FormContext,
-  )
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   const {
     data: policeData,
@@ -72,7 +75,7 @@ export const CaseFiles: React.FC = () => {
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_FIVE}
       isLoading={isLoadingWorkingCase || policeDataLoading}
-      notFound={!workingCase}
+      notFound={caseNotFound}
     >
       <CaseFilesForm
         workingCase={workingCase}

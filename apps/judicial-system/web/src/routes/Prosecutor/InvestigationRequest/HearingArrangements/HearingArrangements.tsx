@@ -49,9 +49,12 @@ const HearingArrangements = () => {
   const { courts } = useInstitution()
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const { workingCase, setWorkingCase, isLoadingWorkingCase } = useContext(
-    FormContext,
-  )
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   const { data: userData } = useQuery<{ users: User[] }>(UsersQuery, {
     fetchPolicy: 'no-cache',
@@ -151,7 +154,7 @@ const HearingArrangements = () => {
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_TWO}
       isLoading={isLoadingWorkingCase}
-      notFound={!workingCase}
+      notFound={caseNotFound}
       isExtension={workingCase.parentCase && true}
     >
       {user && prosecutors && courts && (

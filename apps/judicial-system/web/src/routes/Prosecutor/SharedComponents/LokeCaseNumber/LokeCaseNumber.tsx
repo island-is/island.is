@@ -12,7 +12,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { policeCaseNumber } from '@island.is/judicial-system-web/messages'
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
 
 const LokeCaseNumber: React.FC<Props> = (props) => {

@@ -6,9 +6,10 @@ import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 
 interface FormProvider {
-  isLoadingWorkingCase: boolean
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  isLoadingWorkingCase: boolean
+  caseNotFound: boolean
 }
 
 interface Props {
@@ -29,6 +30,7 @@ export const FormContext = createContext<FormProvider>({
   workingCase: initialState,
   setWorkingCase: () => initialState,
   isLoadingWorkingCase: true,
+  caseNotFound: false,
 })
 
 const FormProvider = ({ children }: Props) => {
@@ -37,23 +39,30 @@ const FormProvider = ({ children }: Props) => {
 
   const [workingCase, setWorkingCase] = useState<Case>(initialState)
 
-  const { data: workingCaseData, loading: isLoadingWorkingCase } = useQuery(
-    CaseQuery,
-    {
-      variables: { input: { id: id } },
-      fetchPolicy: 'no-cache',
-    },
-  )
+  const {
+    data: workingCaseData,
+    loading: isLoadingWorkingCase,
+    error,
+  } = useQuery(CaseQuery, {
+    variables: { input: { id: id } },
+    fetchPolicy: 'no-cache',
+    skip: !id,
+  })
 
   useEffect(() => {
     if (workingCaseData) {
       setWorkingCase(workingCaseData.case)
     }
   }, [workingCaseData])
-  console.log(workingCase)
+
   return (
     <FormContext.Provider
-      value={{ workingCase, setWorkingCase, isLoadingWorkingCase }}
+      value={{
+        workingCase,
+        setWorkingCase,
+        isLoadingWorkingCase,
+        caseNotFound: error !== undefined,
+      }}
     >
       {children}
     </FormContext.Provider>

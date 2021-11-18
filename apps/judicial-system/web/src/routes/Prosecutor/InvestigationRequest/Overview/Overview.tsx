@@ -26,9 +26,12 @@ export const Overview: React.FC = () => {
 
   const router = useRouter()
   const { transitionCase, sendNotification, isSendingNotification } = useCase()
-  const { workingCase, setWorkingCase, isLoadingWorkingCase } = useContext(
-    FormContext,
-  )
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
@@ -80,7 +83,7 @@ export const Overview: React.FC = () => {
       }
       activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
       isLoading={isLoadingWorkingCase}
-      notFound={!workingCase}
+      notFound={caseNotFound}
     >
       {workingCase ? (
         <>

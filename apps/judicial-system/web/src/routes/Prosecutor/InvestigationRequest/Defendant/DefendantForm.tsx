@@ -28,7 +28,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   handleNextButtonClick: (theCase: Case) => void
   isLoading: boolean
 }
