@@ -63,7 +63,7 @@ export class CourtClientService {
   // login operation should be ongoing at any given time.
   private loginPromise?: Promise<void>
 
-  // Detecting authentication token expioration is imperfect and brittle.
+  // Detecting authentication token expiration is imperfect and brittle.
   // Therefore, relogin is forced after a certain number of consecutive unknown errors from the api.
   private errorCount = 3
 
