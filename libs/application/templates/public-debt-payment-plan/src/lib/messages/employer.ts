@@ -15,6 +15,12 @@ export const employer = {
         'Samkvæmt 11. gr. laga um innheimtu opinberra skatta og gjalda, nr. 150/2019 ber launagreiðanda að draga af launum opinber gjöld utan staðgreiðslu, þ.e. þing- og sveitarsjóðsgjöld. Nánar má lesa um launaafdrátt á ',
       description: 'Employer page description',
     },
+    taxHomePageUrl: {
+      id: `pdpp.application:application.employer.general.taxHomePageUrl`,
+      defaultMessage:
+        'https://www.skatturinn.is/innheimta/vanskil/launaafdrattur/',
+      description: 'Disposable income tax home page url',
+    },
     disposableIncomePageTitle: {
       id: `pdpp.application:application.employer.general.disposableIncomePageTitle`,
       defaultMessage: 'Ráðstöfunartekjur',
