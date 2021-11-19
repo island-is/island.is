@@ -32,7 +32,6 @@ export const Sidebar: FC<{}> = () => {
         display="flex"
         flexDirection="column"
         justifyContent="flexStart"
-        height="full"
         marginBottom={3}
         background={collapsed ? 'transparent' : 'blue100'}
         padding={3}

@@ -2,7 +2,7 @@ import { style, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const sidebarBase = style({
-  position: 'fixed',
+  position: 'absolute',
   top: 0,
   zIndex: 10,
   height: '100%',
