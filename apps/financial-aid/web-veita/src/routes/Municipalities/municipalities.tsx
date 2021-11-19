@@ -171,9 +171,9 @@ export const Municipalities = () => {
         setIsVisible={(visible) => {
           setIsModalVisible(visible)
         }}
-        activeMunicipalitiesCodes={municipalities
-          ?.filter((el) => el.active)
-          .map((el) => parseInt(el.municipalityId))}
+        activeMunicipalitiesCodes={municipalities?.map((el) =>
+          parseInt(el.municipalityId),
+        )}
         onMunicipalityCreated={refreshList}
       />
     </LoadingContainer>
