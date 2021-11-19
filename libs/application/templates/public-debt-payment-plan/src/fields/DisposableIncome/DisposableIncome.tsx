@@ -1,5 +1,11 @@
 import { FieldBaseProps } from '@island.is/application/core'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Link,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React from 'react'
 import { employer } from '../../lib/messages'
@@ -35,7 +41,12 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
   return (
     <Box>
       <Text marginBottom={3}>
-        {formatMessage(employer.general.pageDescription)}
+        {`${formatMessage(employer.general.pageDescription)} `}
+        <Link href={`${formatMessage(employer.general.taxHomePageUrl)}`} newTab>
+          <Button variant="text" icon="open" iconType="outline">
+            {formatMessage(employer.labels.taxHomePage)}
+          </Button>
+        </Link>
       </Text>
       <Box marginBottom={[3, 3, 5]}>
         {/* TODO: Handle null values? */}
