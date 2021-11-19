@@ -1,27 +1,31 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
+
 import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { Case } from '@island.is/judicial-system/types'
-import { ValueType } from 'react-select'
 import { Option } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
 import { selectProsecutor as m } from '@island.is/judicial-system-web/messages/Core/selectProsecutor'
 
 interface Props {
   workingCase: Case
   prosecutors: ReactSelectOption[]
-  onChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
+  onChange: (selectedOption: ReactSelectOption) => boolean
 }
 
 const SelectProsecutor: React.FC<Props> = (props) => {
   const { workingCase, prosecutors, onChange } = props
+  const [selectedProsecutor, setSelectedProsecutor] = useState<Option>()
   const { formatMessage } = useIntl()
-  const [selectedProsecutor, setSelectedProsecutor] = useState<
-    ValueType<Option>
-  >({
-    label: workingCase.prosecutor?.name || '',
-    value: workingCase.prosecutor?.id || '',
-  })
+
+  useEffect(() => {
+    if (workingCase.prosecutor) {
+      setSelectedProsecutor({
+        label: workingCase.prosecutor.name || '',
+        value: workingCase.prosecutor.id || '',
+      })
+    }
+  }, [workingCase.prosecutor])
 
   return (
     <>
@@ -39,7 +43,8 @@ const SelectProsecutor: React.FC<Props> = (props) => {
         value={selectedProsecutor}
         options={prosecutors}
         onChange={(selectedOption) => {
-          onChange(selectedOption) && setSelectedProsecutor(selectedOption)
+          onChange(selectedOption as ReactSelectOption) &&
+            setSelectedProsecutor(selectedOption as ReactSelectOption)
         }}
         required
       />

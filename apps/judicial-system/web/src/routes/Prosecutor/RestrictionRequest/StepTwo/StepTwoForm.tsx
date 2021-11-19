@@ -26,7 +26,7 @@ interface Props {
   prosecutors: ReactSelectOption[]
   courts: Institution[]
   handleNextButtonClick: () => Promise<void>
-  onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
+  onProsecutorChange: (selectedOption: ReactSelectOption) => boolean
   transitionLoading: boolean
   user?: User
 }

@@ -123,12 +123,10 @@ export const StepTwo: React.FC = () => {
     }
   }
 
-  const handleProsecutorChange = (
-    selectedOption: ValueType<ReactSelectOption>,
-  ) => {
+  const handleProsecutorChange = (selectedOption: ReactSelectOption) => {
     if (!workingCase) return false
 
-    const option = selectedOption as ReactSelectOption
+    const option = selectedOption
     const isRemovingCaseAccessFromSelf =
       user?.id !== workingCase.creatingProsecutor?.id
 
