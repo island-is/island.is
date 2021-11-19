@@ -283,6 +283,18 @@ export const PaymentPlanForm: Form = buildForm({
             }),
           ],
         }),
+      ],
+      condition: (_formValue, externalData) => {
+        const debts = (externalData as PaymentPlanExternalData)
+          ?.paymentPlanPrerequisites?.data?.debts
+
+        return debts?.find((x) => x.type === 'Wagedection') !== undefined
+      },
+    }),
+    buildSection({
+      id: 'disposableIncomeSection',
+      title: section.disposableIncome,
+      children: [
         buildCustomField({
           id: 'disposableIncome',
           title: employer.general.disposableIncomePageTitle,
@@ -290,11 +302,6 @@ export const PaymentPlanForm: Form = buildForm({
           component: 'DisposableIncome',
         }),
       ],
-      condition: (_, externalData) => {
-        const employer = (externalData as PaymentPlanExternalData)
-          ?.paymentPlanPrerequisites?.data?.employer
-        return !!employer
-      },
     }),
     buildSection({
       id: 'deptOverview',
