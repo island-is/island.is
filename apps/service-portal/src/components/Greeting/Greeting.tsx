@@ -75,7 +75,12 @@ const Greeting: FC<{}> = () => {
           <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>
           <div>
             <a href={LEGACY_MY_PAGES_URL} target="_blank">
-              <Button variant="text" icon="open" iconType="outline">
+              <Button
+                variant="text"
+                icon="open"
+                iconType="outline"
+                size="small"
+              >
                 {formatMessage(m.olderVersion)}
               </Button>
             </a>

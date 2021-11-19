@@ -377,6 +377,10 @@ export const m = defineMessages({
     id: 'service.portal:finance-local-tax',
     defaultMessage: 'Útsvar',
   },
+  searchLabel: {
+    id: 'service.portal:search-label',
+    defaultMessage: 'Leit',
+  },
   searchPlaceholder: {
     id: 'service.portal:search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
@@ -572,6 +576,14 @@ export const m = defineMessages({
   endpoint: {
     id: 'service.portal:endpoint',
     defaultMessage: 'Endapunktur',
+  },
+  openFinanceDetail: {
+    id: 'service.portal:open-finance-detail',
+    defaultMessage: 'Skoða sundurliðun',
+  },
+  closeFinanceDetail: {
+    id: 'service.portal:close-finance-detail',
+    defaultMessage: 'Loka sundurliðun',
   },
   islykill: {
     id: 'service.portal:islykill',

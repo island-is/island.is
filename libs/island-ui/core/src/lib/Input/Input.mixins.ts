@@ -27,6 +27,14 @@ export const label = {
 }
 
 export const labelSizes = {
+  xs: {
+    marginBottom: 7,
+    ...themeUtils.responsiveStyle({
+      md: {
+        marginBottom: 7,
+      },
+    }),
+  },
   sm: {
     marginBottom: 4,
     ...themeUtils.responsiveStyle({
@@ -55,6 +63,14 @@ export const container = {
 }
 
 export const containerSizes = {
+  xs: {
+    padding: 8,
+    ...themeUtils.responsiveStyle({
+      md: {
+        padding: '10px 16px 10px 10px',
+      },
+    }),
+  },
   sm: {
     padding: 8,
     ...themeUtils.responsiveStyle({
@@ -90,7 +106,24 @@ export const input = {
   }),
 }
 
+export const inputExtraSmallPlaceholder = {
+  color: theme.color.dark300,
+  fontWeight: theme.typography.light,
+  fontSize: theme.typography.baseFontSize,
+}
+
 export const inputSizes = {
+  xs: {
+    fontSize: mobileInputFontSizeSmall,
+    lineHeight: 1.25,
+    '::placeholder': inputExtraSmallPlaceholder,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: inputFontSizeSmall,
+        lineHeight: 1.555556,
+      },
+    }),
+  },
   sm: {
     fontSize: mobileInputFontSizeSmall,
     lineHeight: 1.25,

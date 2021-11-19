@@ -72,6 +72,7 @@ export const SimplePhoneForm: FC<Props> = ({
           defaultValue={tel}
           render={({ onChange, value, name }) => (
             <Input
+              size="xs"
               label={formatMessage(sharedMessages.phoneNumber)}
               placeholder={formatMessage(sharedMessages.phoneNumber)}
               name={name}

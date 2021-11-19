@@ -100,6 +100,29 @@ export const Input = forwardRef(
 
     return (
       <div>
+        {/* If size is xs then the label is above the input box */}
+        {size === 'xs' && (
+          <label
+            htmlFor={id}
+            className={cn(styles.label, styles.labelSizes[size], {
+              [styles.labelDisabledEmptyInput]:
+                disabled && !value && !defaultValue,
+            })}
+          >
+            {label}
+            {required && (
+              <span aria-hidden="true" className={styles.isRequiredStar}>
+                {' '}
+                *
+              </span>
+            )}
+            {tooltip && (
+              <Box marginLeft={1} display="inlineBlock">
+                <Tooltip text={tooltip} />
+              </Box>
+            )}
+          </label>
+        )}
         <Box
           display="flex"
           alignItems="center"
@@ -118,26 +141,28 @@ export const Input = forwardRef(
           }}
         >
           <Box flexGrow={1}>
-            <label
-              htmlFor={id}
-              className={cn(styles.label, styles.labelSizes[size], {
-                [styles.labelDisabledEmptyInput]:
-                  disabled && !value && !defaultValue,
-              })}
-            >
-              {label}
-              {required && (
-                <span aria-hidden="true" className={styles.isRequiredStar}>
-                  {' '}
-                  *
-                </span>
-              )}
-              {tooltip && (
-                <Box marginLeft={1} display="inlineBlock">
-                  <Tooltip text={tooltip} />
-                </Box>
-              )}
-            </label>
+            {size !== 'xs' && (
+              <label
+                htmlFor={id}
+                className={cn(styles.label, styles.labelSizes[size], {
+                  [styles.labelDisabledEmptyInput]:
+                    disabled && !value && !defaultValue,
+                })}
+              >
+                {label}
+                {required && (
+                  <span aria-hidden="true" className={styles.isRequiredStar}>
+                    {' '}
+                    *
+                  </span>
+                )}
+                {tooltip && (
+                  <Box marginLeft={1} display="inlineBlock">
+                    <Tooltip text={tooltip} />
+                  </Box>
+                )}
+              </label>
+            )}
             <InputComponent
               className={cn(
                 styles.input,
@@ -206,6 +231,7 @@ export const Input = forwardRef(
               skipPlaceholderSize
               className={cn(styles.icon, {
                 [styles.iconError]: hasError,
+                [styles.iconExtraSmall]: size === 'xs',
               })}
               ariaHidden
             />

@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Text, Tag } from '@island.is/island-ui/core'
 import * as styles from './EducationCard.css'
 interface ActionCard {
   eyebrow?: string
@@ -47,11 +47,6 @@ export const EducationCard = ({
           </Box>
         )}
         <div>
-          {eyebrow && (
-            <Text variant="eyebrow" color="purple400">
-              {eyebrow}
-            </Text>
-          )}
           {title && (
             <Text variant="h3" as="h3" color="dark400" marginBottom={1}>
               {title}
@@ -60,11 +55,20 @@ export const EducationCard = ({
           {description && <Text fontWeight="light">{description}</Text>}
         </div>
       </Box>
-      {CTA && (
-        <Box marginTop={[2, 'auto']} marginLeft="auto" textAlign="right">
-          {CTA}
-        </Box>
-      )}
+      <Box
+        marginTop={[2, 'auto']}
+        marginLeft="auto"
+        textAlign="right"
+        display="flex"
+        flexDirection="column"
+      >
+        {eyebrow && <Tag variant="purple">{eyebrow}</Tag>}
+        {CTA && (
+          <Box marginTop={'p2'} marginLeft="auto" textAlign="right">
+            {CTA}
+          </Box>
+        )}
+      </Box>
     </Box>
   )
 }

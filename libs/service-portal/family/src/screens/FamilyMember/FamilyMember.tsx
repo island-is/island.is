@@ -2,10 +2,10 @@ import React from 'react'
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { useQuery, gql } from '@apollo/client'
-
 import { Query } from '@island.is/api/schema'
 import {
   Box,
+  Divider,
   GridColumn,
   GridRow,
   Stack,
@@ -64,7 +64,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
-              <Text variant="h1" as="h1">
+              <Text variant="h3" as="h1">
                 {person?.fullName || ''}
               </Text>
             </Stack>
@@ -77,11 +77,13 @@ const FamilyMember: ServicePortalModuleComponent = () => {
           content={person?.fullName || '...'}
           loading={loading}
         />
+        <Divider />
         <UserInfoLine
           label={defineMessage(m.natreg)}
           content={formatNationalId(nationalId)}
           loading={loading}
         />
+        <Divider />
         <UserInfoLine
           label={defineMessage(m.gender)}
           content={
@@ -95,6 +97,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
           }
           loading={loading}
         />
+        <Divider />
       </Stack>
     </>
   )

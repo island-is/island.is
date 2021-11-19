@@ -116,57 +116,51 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {formatMessage({
             id: 'sp.finance-transactions:title',
             defaultMessage: 'Hreyfingar',
           })}
         </Text>
-        <Columns collapseBelow="sm">
-          <Column width="8/12">
-            <Text variant="intro">
+        <GridRow>
+          <GridColumn span={['11/12', '6/12']}>
+            <Text variant="default">
               {formatMessage({
                 id: 'sp.finance-transactions:intro',
                 defaultMessage:
                   'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
               })}
             </Text>
-          </Column>
-        </Columns>
+          </GridColumn>
+          {recordsDataArray.length > 0 ? (
+            <Box display="flex" marginLeft="auto" marginTop={1}>
+              <GridColumn>
+                <Button
+                  colorScheme="default"
+                  icon="print"
+                  iconType="filled"
+                  onClick={() => window.print()}
+                  preTextIconType="filled"
+                  size="default"
+                  type="button"
+                  variant="utility"
+                >
+                  {formatMessage(m.print)}
+                </Button>
+              </GridColumn>
+              <GridColumn>
+                <DropdownExport
+                  onGetCSV={() => exportHreyfingarFile(recordsDataArray, 'csv')}
+                  onGetExcel={() =>
+                    exportHreyfingarFile(recordsDataArray, 'xlsx')
+                  }
+                />
+              </GridColumn>
+            </Box>
+          ) : null}
+        </GridRow>
         <Hidden print={true}>
           <Box marginTop={[1, 1, 2, 2, 5]}>
-            {recordsDataArray.length > 0 ? (
-              <GridRow>
-                <GridColumn paddingBottom={2} span={['1/1', '12/12']}>
-                  <Columns space="p2" align="right">
-                    <Column width="content">
-                      <Button
-                        colorScheme="default"
-                        icon="print"
-                        iconType="filled"
-                        onClick={() => window.print()}
-                        preTextIconType="filled"
-                        size="default"
-                        type="button"
-                        variant="utility"
-                      >
-                        {formatMessage(m.print)}
-                      </Button>
-                    </Column>
-                    <Column width="content">
-                      <DropdownExport
-                        onGetCSV={() =>
-                          exportHreyfingarFile(recordsDataArray, 'csv')
-                        }
-                        onGetExcel={() =>
-                          exportHreyfingarFile(recordsDataArray, 'xlsx')
-                        }
-                      />
-                    </Column>
-                  </Columns>
-                </GridColumn>
-              </GridRow>
-            ) : null}
             <GridRow>
               <GridColumn
                 paddingBottom={[1, 0]}
@@ -178,7 +172,7 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
                   placeholder={formatMessage(m.transactions)}
                   label={formatMessage(m.transactionsLabel)}
                   defaultValue={allChargeTypes}
-                  size="sm"
+                  size="xs"
                   options={[allChargeTypes, ...chargeTypeSelect]}
                   onChange={(sel) => onDropdownSelect(sel)}
                 />
@@ -193,7 +187,7 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
                   selected={fromDate}
                   icon="calendar"
                   iconType="outline"
-                  size="sm"
+                  size="xs"
                   label={formatMessage(m.dateFrom)}
                   locale="is"
                   placeholderText={formatMessage(m.chooseDate)}
@@ -209,25 +203,32 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
                   selected={toDate}
                   icon="calendar"
                   iconType="outline"
-                  size="sm"
+                  size="xs"
                   label={formatMessage(m.dateTo)}
                   locale="is"
                   placeholderText={formatMessage(m.chooseDate)}
                 />
               </GridColumn>
             </GridRow>
-            <Box marginTop={3}>
-              <Input
-                label="Leit"
-                name="Search"
-                placeholder={formatMessage(m.searchPlaceholder)}
-                size="sm"
-                onChange={(e) => setQ(e.target.value)}
-                value={q}
-              />
-            </Box>
+            <GridRow>
+              <GridColumn span={['1/1', '6/12', '6/12', '6/12', '4/12']}>
+                <Box marginTop={3}>
+                  <Input
+                    backgroundColor="blue"
+                    label={formatMessage(m.searchLabel)}
+                    name="Search"
+                    icon="search"
+                    placeholder={formatMessage(m.searchPlaceholder)}
+                    size="xs"
+                    onChange={(e) => setQ(e.target.value)}
+                    value={q}
+                  />
+                </Box>
+              </GridColumn>
+            </GridRow>
           </Box>
         </Hidden>
+
         <Box marginTop={2}>
           {(error || chargeTypeDataError) && (
             <AlertBanner

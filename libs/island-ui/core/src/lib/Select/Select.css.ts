@@ -116,6 +116,7 @@ export const placeholderSizes = styleVariants(inputMixins.inputSizes)
 export const input = style(inputMixins.input, 'input')
 export const inputSize = styleVariants(
   {
+    xs: wrapMedia(inputMixins.inputSizes.xs, `${wrapper} &`),
     sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
     md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
   },
@@ -189,6 +190,16 @@ export const icon = style({
     },
   }),
 })
+
+export const iconExtraSmall = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: 24,
+      height: 24,
+    },
+  }),
+})
+
 export const label = style({
   ...inputMixins.label,
   selectors: {
@@ -196,6 +207,7 @@ export const label = style({
   },
 })
 export const labelSizes = styleVariants({
+  xs: inputMixins.labelSizes.xs,
   sm: inputMixins.labelSizes.sm,
   md: inputMixins.labelSizes.md,
 })
@@ -210,6 +222,7 @@ export const singleValue = style(
 )
 export const singleValueSizes = styleVariants(
   {
+    xs: wrapMedia(inputMixins.inputSizes.xs, `${wrapper} &`),
     sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
     md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
   },
@@ -233,6 +246,15 @@ export const indicatorsContainer = style(
   },
   'indicatorsContainer',
 )
+
+export const indicatorsContainerExtraSmall = style({
+  selectors: {
+    [`${wrapper} &`]: {
+      right: 20,
+    },
+  },
+})
+
 export const dropdownIndicator = style(
   {
     cursor: 'pointer',
@@ -284,6 +306,7 @@ export const option = style({
 })
 
 export const optionSizes = styleVariants({
+  xs: wrapMedia(inputMixins.inputSizes.xs, `${wrapper} &`),
   sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
   md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
 })

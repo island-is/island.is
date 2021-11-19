@@ -43,11 +43,7 @@ const MobileMenu = (): ReactElement | null => {
         </a>
       </Box>
       {navigation.map((rootItem, rootIndex) => (
-        <Box
-          background={rootIndex === 0 ? 'white' : 'blueberry100'}
-          key={rootIndex}
-          padding={4}
-        >
+        <Box background={'white'} key={rootIndex} padding={4}>
           <Stack space={3}>
             {rootItem.children?.map(
               (navRoot, index) =>

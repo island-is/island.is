@@ -9,6 +9,7 @@ import {
   Stack,
   GridRow,
   GridColumn,
+  Divider,
 } from '@island.is/island-ui/core'
 import {
   formatNationalId,
@@ -51,11 +52,11 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
       <Box marginBottom={5}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={2}>
-              <Text variant="h1" as="h1">
+            <Stack space={0}>
+              <Text variant="h3" as="h1" paddingTop={0}>
                 {userInfo.profile.name}
               </Text>
-              <Text as="p" variant="intro">
+              <Text as="p" variant="default">
                 {formatMessage({
                   id: 'sp.family:user-info-description',
                   defaultMessage:
@@ -80,10 +81,13 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
               'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2',
           }}
         />
+        <Divider />
         <UserInfoLine
           label={m.natreg}
           content={formatNationalId(userInfo.profile.nationalId)}
         />
+        <Divider />
+
         <UserInfoLine
           label={m.legalResidence}
           content={
@@ -102,6 +106,8 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
               'https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/',
           }}
         />
+        <Divider />
+
         <UserInfoLine
           label={m.birthPlace}
           content={
@@ -111,12 +117,16 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }
           loading={loading}
         />
+        <Divider />
+
         <UserInfoLine
           label={m.citizenship}
           content={
             userInfo.profile.nat === 'IS' ? 'Ísland' : userInfo.profile.nat
           }
         />
+        <Divider />
+
         <UserInfoLine
           label={m.gender}
           content={
@@ -132,6 +142,8 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }
           loading={loading}
         />
+        <Divider />
+
         <UserInfoLine
           label={m.maritalStatus}
           content={
@@ -147,6 +159,8 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }
           loading={loading}
         />
+        <Divider />
+
         <UserInfoLine
           label={defineMessage(m.religion)}
           content={
@@ -165,6 +179,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
               'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
           }}
         />
+        <Divider />
       </Stack>
     </>
   )

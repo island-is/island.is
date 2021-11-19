@@ -1,5 +1,11 @@
 import React, { useState } from 'react'
-import { Box, Stack, Text, SkeletonLoader } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Text,
+  SkeletonLoader,
+  Divider,
+} from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -19,7 +25,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
     <>
       <Box marginBottom={5}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {formatMessage(m.personalInformation)}
         </Text>
       </Box>
@@ -43,6 +49,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                   url: ServicePortalPath.SettingsPersonalInformationEditEmail,
                 }}
               />
+              <Divider />
               <UserInfoLine
                 label={m.telNumber}
                 labelColumnSpan={['8/12', '3/12']}
@@ -54,6 +61,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                     ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
                 }}
               />
+              <Divider />
               <UserInfoLine
                 label={m.nudge}
                 labelColumnSpan={['8/12', '3/12']}
@@ -74,6 +82,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                   url: ServicePortalPath.SettingsPersonalInformationEditNudge,
                 }}
               />
+              <Divider />
               <UserInfoLine
                 label={m.language}
                 content={
@@ -93,6 +102,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                     ServicePortalPath.SettingsPersonalInformationEditLanguage,
                 }}
               />
+              <Divider />
               <UserInfoLine
                 label={m.bankAccountInfo}
                 labelColumnSpan={['8/12', '3/12']}
@@ -100,6 +110,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                 valueColumnSpan={['1/1', '7/12']}
                 content={settings?.bankInfo ?? ''}
               />
+              <Divider />
             </>
           )}
         </Stack>

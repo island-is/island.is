@@ -46,7 +46,7 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
     <Box marginBottom={[2, 3, 5]}>
       <Box marginBottom={[2, 3]}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {organisationName}
         </Text>
       </Box>
