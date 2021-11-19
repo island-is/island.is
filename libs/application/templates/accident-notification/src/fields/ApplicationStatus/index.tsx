@@ -8,10 +8,9 @@ import {
 import { useLocale } from '@island.is/localization'
 import { SubmittedApplicationData } from '../../types'
 import {
-  isHomeActivitiesAccident,
-  isInjuredAndRepresentativeOfCompanyOrInstitute,
   hasReceivedAllDocuments,
   getErrorMessageForMissingDocuments,
+  shouldRequestReview,
 } from '../../utils'
 import { inReview } from '../../lib/messages'
 import { StatusStep } from './StatusStep'
@@ -26,6 +25,7 @@ import {
   Steps,
 } from './StatusStep/types'
 import { AccidentNotificationStatus } from '@island.is/api/schema'
+import { AccidentNotificationAnswers } from '../..'
 
 export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
   goToScreen,
@@ -236,9 +236,8 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
               inReview.action.representative.actionButtonTitle,
             ),
           },
-      visible: !(
-        isHomeActivitiesAccident(application.answers) ||
-        isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)
+      visible: shouldRequestReview(
+        application.answers as AccidentNotificationAnswers,
       ),
     },
     {
@@ -280,6 +279,7 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
             action={step.action}
             tagText={step.tagText}
             tagVariant={step.tagVariant}
+            visible={step.visible}
           />
         ))}
       </Box>
