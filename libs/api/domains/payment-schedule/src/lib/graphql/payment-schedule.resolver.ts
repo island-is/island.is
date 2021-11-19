@@ -86,7 +86,7 @@ export class PaymentScheduleResolver {
     )
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => UpdateCurrentEmployerResponse, {
     name: 'updateCurrentEmployer',
   })
   @Audit()
