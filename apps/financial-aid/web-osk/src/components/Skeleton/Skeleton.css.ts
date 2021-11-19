@@ -10,9 +10,20 @@ export const wrapper = style({
 })
 
 export const boxWidthPercent = style({
-  width: 'calc(75% - 24px)',
+  width: '100%',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      width: 'calc(75% - 24px)',
+    },
+  },
 })
 
 export const sideBarWidth = style({
-  width: 'calc(25% - 24px)',
+  display: 'none',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      display: 'block',
+      width: 'calc(25% - 24px)',
+    },
+  },
 })

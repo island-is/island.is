@@ -48,7 +48,6 @@ const Header = () => {
           </Link>
 
           <Box
-            display="flex"
             height="full"
             flexDirection="column"
             justifyContent="center"
