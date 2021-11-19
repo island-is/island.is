@@ -245,6 +245,14 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           url
           intro
         }
+
+        ... on Link {
+          id
+          title: text
+          slug: url
+          intro
+          labels
+        }
       }
       tagCounts {
         key
