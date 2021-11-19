@@ -4,8 +4,7 @@ import {
   EnhancedFetchOptions,
 } from '@island.is/clients/middlewares'
 import { CriminalRecordApi } from './criminalRecordApi.service'
-// import { ApiV1, ConfigV1 } from '../v1'
-// import { ApiV2, ConfigV2 } from '../v2'
+import { CrimeCertificateApi, Configuration } from '../../gen/fetch'
 
 export interface CriminalRecordApiConfig {
   xroadBaseUrl: string
@@ -37,7 +36,16 @@ export class CriminalRecordApiModule {
         {
           provide: CriminalRecordApi,
           useFactory: () => {
-            return new CriminalRecordApi()
+            const api = new CrimeCertificateApi(
+              new Configuration(
+                configFactory(
+                  config,
+                  `${config.xroadBaseUrl}/${config.xroadPath}`,
+                ),
+              ),
+            )
+
+            return new CriminalRecordApi(api)
           },
         },
       ],

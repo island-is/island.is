@@ -9060,6 +9060,24 @@
             "jestConfig": "libs/clients/criminal-record/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=Sakavottord-PDF-v2 -H 'Accept: application/json' > src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/criminal-record"
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn openapi-generator -o libs/clients/criminal-record/gen/fetch -i libs/clients/criminal-record/src/clientConfig.json"
+            ]
+          }
         }
       }
     }

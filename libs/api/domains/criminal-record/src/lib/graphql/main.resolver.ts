@@ -23,7 +23,7 @@ export class MainResolver {
   ) {}
   
   @Query(() => Boolean)
-  checkCriminalRecord() {
-    return this.criminalRecordService.checkCriminalRecord()
+  async checkCriminalRecord() {
+    return await this.criminalRecordService.checkCriminalRecord()
   }
 }

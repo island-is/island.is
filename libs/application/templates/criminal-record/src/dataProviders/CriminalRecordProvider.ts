@@ -11,7 +11,7 @@ export class CriminalRecordProvider extends BasicDataProvider {
 
   async provide(): Promise<unknown> {
     const query = `
-    query checkCriminalRecord {
+    query CheckCriminalRecord {
         checkCriminalRecord
       }
     `

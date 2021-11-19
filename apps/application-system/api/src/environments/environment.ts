@@ -55,9 +55,9 @@ const devConfig = {
     criminalRecord: {
       clientConfig: {
         secret: process.env.XROAD_CRIMINAL_RECORD_SECRET,
-        xroadClientId: 'TODO',//'IS-DEV/GOV/10000/island-is-client',
+        xroadClientId: process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
         xroadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
-        xroadPath: 'TODO',//'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
+        xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH ?? 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
       },
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
