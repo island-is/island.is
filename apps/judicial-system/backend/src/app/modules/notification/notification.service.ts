@@ -497,7 +497,10 @@ export class NotificationService {
 
     if (
       (isRestrictionCase(existingCase.type) ||
-        existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) &&
+        existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+        (existingCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+          existingCase.defenderIsSpokesperson)) &&
       existingCase.defenderEmail
     ) {
       promises.push(this.sendCourtDateEmailNotificationToDefender(existingCase))
