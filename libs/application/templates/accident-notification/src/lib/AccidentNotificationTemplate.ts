@@ -55,8 +55,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           progress: 0.2,
           lifecycle: {
             shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
+            shouldBePruned: false,
           },
           roles: [
             {
