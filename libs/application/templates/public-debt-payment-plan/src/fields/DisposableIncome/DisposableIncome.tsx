@@ -71,6 +71,7 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
         text={formatMessage(employer.labels.yourMinimumPayment)}
       />
       {!!conditions?.minWagePayment &&
+        conditions?.minPayment < conditions?.minWagePayment &&
         debts?.find((x) => x.type === 'Wagedection') !== undefined && (
           <Box marginTop={3}>
             <AlertMessage
