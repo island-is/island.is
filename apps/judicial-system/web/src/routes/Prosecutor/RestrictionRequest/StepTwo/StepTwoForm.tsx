@@ -27,6 +27,7 @@ interface Props {
   courts: Institution[]
   handleNextButtonClick: () => Promise<void>
   onProsecutorChange: (selectedOption: ReactSelectOption) => boolean
+  onCourtChange: (selectedOption: ReactSelectOption) => boolean
   transitionLoading: boolean
   user?: User
 }
@@ -39,6 +40,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
     courts,
     handleNextButtonClick,
     onProsecutorChange,
+    onCourtChange,
     transitionLoading,
     user,
   } = props
@@ -46,7 +48,6 @@ const StepTwoForm: React.FC<Props> = (props) => {
   const [, setRequestedCourtDateIsValid] = useState<boolean>(
     workingCase.requestedCourtDate !== null,
   )
-  const [selectedCourt, setSelectedCourt] = useState<Option>()
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
   const {
@@ -59,10 +60,6 @@ const StepTwoForm: React.FC<Props> = (props) => {
     label: court.name,
     value: court.id,
   }))
-
-  const defaultCourt = courtsAsOptions.find(
-    (court) => court.label === workingCase.court?.name,
-  )
 
   return (
     <>
@@ -108,10 +105,8 @@ const StepTwoForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <SelectCourt
             workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            setSelectedCourt={setSelectedCourt}
             courts={courtsAsOptions}
-            defaultCourt={selectedCourt ?? defaultCourt}
+            onChange={onCourtChange}
           />
         </Box>
         {!workingCase.parentCase && (

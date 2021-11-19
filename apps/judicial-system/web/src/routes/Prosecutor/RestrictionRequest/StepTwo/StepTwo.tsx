@@ -123,6 +123,18 @@ export const StepTwo: React.FC = () => {
     }
   }
 
+  const setCourt = async (courtId: string) => {
+    if (workingCase) {
+      return setAndSendToServer(
+        'courtId',
+        courtId,
+        workingCase,
+        setWorkingCase,
+        updateCase,
+      )
+    }
+  }
+
   const handleProsecutorChange = (selectedOption: ReactSelectOption) => {
     if (!workingCase) return false
 
@@ -142,6 +154,12 @@ export const StepTwo: React.FC = () => {
     }
   }
 
+  const handleCourtChange = (selectedOption: ReactSelectOption) => {
+    setCourt(selectedOption.value.toString())
+
+    return true
+  }
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -152,7 +170,7 @@ export const StepTwo: React.FC = () => {
       isLoading={isLoadingWorkingCase || userLoading || institutionLoading}
       notFound={caseNotFound}
     >
-      {prosecutors && !institutionLoading ? (
+      {courts && prosecutors && !institutionLoading ? (
         <>
           <StepTwoForm
             workingCase={workingCase}
@@ -163,6 +181,7 @@ export const StepTwo: React.FC = () => {
             transitionLoading={isTransitioningCase}
             user={user}
             onProsecutorChange={handleProsecutorChange}
+            onCourtChange={handleCourtChange}
           />
           {modalVisible && (
             <Modal
