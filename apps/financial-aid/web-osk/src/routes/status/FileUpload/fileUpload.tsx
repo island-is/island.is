@@ -52,6 +52,8 @@ const FileUpload = () => {
 
   const [createApplicationEventMutation] = useMutation(ApplicationEventMutation)
 
+  const isSpouse = user?.nationalId === myApplication?.spouseNationalId
+
   useEffect(() => {
     if (error) {
       setError(false)
@@ -64,14 +66,16 @@ const FileUpload = () => {
     try {
       await uploadStateFiles(
         router.query.id as string,
-        user?.spouse?.hasPartnerApplied ? FileType.SPOUSEFILES : FileType.OTHER,
+        isSpouse ? FileType.SPOUSEFILES : FileType.OTHER,
       ).then(async () => {
         await updateApplicationMutation({
           variables: {
             input: {
               id: router.query.id,
               state: ApplicationState.INPROGRESS,
-              event: ApplicationEventType.FILEUPLOAD,
+              event: isSpouse
+                ? ApplicationEventType.SPOUSEFILEUPLOAD
+                : ApplicationEventType.FILEUPLOAD,
             },
           },
         })

@@ -19,9 +19,15 @@ interface Props {
   className?: string
   applicantName: string
   applicationEvents?: ApplicationEvent[]
+  spouseName: string
 }
 
-const History = ({ className, applicantName, applicationEvents }: Props) => {
+const History = ({
+  className,
+  applicantName,
+  spouseName,
+  applicationEvents,
+}: Props) => {
   return (
     <Box
       className={cn({
@@ -41,6 +47,7 @@ const History = ({ className, applicantName, applicationEvents }: Props) => {
                 event={item}
                 key={'timeline-' + index}
                 applicantName={applicantName}
+                spouseName={spouseName}
               >
                 <StaffComment
                   isVisable={
@@ -52,6 +59,7 @@ const History = ({ className, applicantName, applicationEvents }: Props) => {
                 <ChatElement
                   isVisable={
                     item.eventType === ApplicationEventType.FILEUPLOAD ||
+                    item.eventType === ApplicationEventType.SPOUSEFILEUPLOAD ||
                     item.eventType === ApplicationEventType.DATANEEDED
                   }
                   comment={item.comment}

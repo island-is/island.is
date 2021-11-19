@@ -8,7 +8,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 export class UpdateApplicationDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiProperty()
   readonly state: ApplicationState

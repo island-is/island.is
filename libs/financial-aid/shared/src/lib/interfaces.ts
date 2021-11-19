@@ -90,7 +90,7 @@ export interface Address {
 }
 
 export interface UpdateApplication {
-  state: ApplicationState
+  state?: ApplicationState
   event: ApplicationEventType
   amount?: number
   rejection?: string

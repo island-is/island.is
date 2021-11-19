@@ -67,6 +67,7 @@ export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
 export const getEventData = (
   event: ApplicationEvent,
   applicantName: string,
+  spouseName: string,
 ): { header: string; text: string; prefix: string } => {
   switch (event.eventType) {
     case ApplicationEventType.NEW:
@@ -110,6 +111,12 @@ export const getEventData = (
         header: 'Athugasemd',
         text: 'skrifaði athugasemd',
         prefix: `Umsækjandi ${applicantName}`,
+      }
+    case ApplicationEventType.SPOUSEFILEUPLOAD:
+      return {
+        header: 'Ný gögn',
+        text: 'sendi inn gögn',
+        prefix: `Maki ${spouseName}`,
       }
     case ApplicationEventType.FILEUPLOAD:
       return {

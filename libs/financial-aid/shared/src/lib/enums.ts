@@ -56,6 +56,7 @@ export enum ApplicationEventType {
   STAFFCOMMENT = 'StaffComment',
   USERCOMMENT = 'UserComment',
   FILEUPLOAD = 'FileUpload',
+  SPOUSEFILEUPLOAD = 'SpouseFileUpload',
   ASSIGNCASE = 'AssignCase',
 }
 

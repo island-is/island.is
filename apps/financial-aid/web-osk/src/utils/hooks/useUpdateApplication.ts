@@ -4,7 +4,6 @@ import { useMutation } from '@apollo/client'
 import { ApplicationMutation } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import {
-  ApplicationState,
   FileType,
   Application,
   ApplicationEventType,
@@ -37,8 +36,7 @@ const useUpdateApplication = () => {
         variables: {
           input: {
             id: applicationId,
-            state: ApplicationState.INPROGRESS,
-            event: ApplicationEventType.FILEUPLOAD,
+            event: ApplicationEventType.SPOUSEFILEUPLOAD,
             spouseEmail: form.emailAddress,
             spousePhoneNumber: form.phoneNumber,
             spouseName: user?.name,
