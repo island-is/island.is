@@ -28,20 +28,12 @@ const CREATE_ENDORSEMENT_LIST_QUERY = `
 
 export const DEFAULT_CLOSED_DATE = 'default closed date'
 
-type ErrorResponse = {
-  errors: {
-    message: string
+type EndorsementListResponse = {
+  endorsementSystemCreateEndorsementList: {
+    id: string
   }
 }
-type EndorsementListResponse =
-  | {
-      data: {
-        endorsementSystemCreateEndorsementList: {
-          id: string
-        }
-      }
-    }
-  | ErrorResponse
+
 @Injectable()
 export class PartyLetterService {
   constructor(
@@ -120,32 +112,36 @@ export class PartyLetterService {
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(auth.authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
-        input: {
-          title: application.answers.partyName,
-          description: application.answers.partyLetter,
-          endorsementMetadata: [
-            { field: EndorsementMetadataDtoFieldEnum.fullName },
-            { field: EndorsementMetadataDtoFieldEnum.signedTags },
-            { field: EndorsementMetadataDtoFieldEnum.address },
-          ],
-          tags: [EndorsementListTagsEnum.partyLetter2021],
-          validationRules: [
-            {
-              type: 'minAge',
-              value: {
-                age: 18,
+    const endorsementList = await this.sharedTemplateAPIService
+      .makeGraphqlQuery<EndorsementListResponse>(
+        auth.authorization,
+        CREATE_ENDORSEMENT_LIST_QUERY,
+        {
+          input: {
+            title: application.answers.partyName,
+            description: application.answers.partyLetter,
+            endorsementMetadata: [
+              { field: EndorsementMetadataDtoFieldEnum.fullName },
+              { field: EndorsementMetadataDtoFieldEnum.signedTags },
+              { field: EndorsementMetadataDtoFieldEnum.address },
+            ],
+            tags: [EndorsementListTagsEnum.partyLetter2021],
+            validationRules: [
+              {
+                type: 'minAge',
+                value: {
+                  age: 18,
+                },
               },
+            ],
+            meta: {
+              // to be able to link back to this application
+              applicationTypeId: application.typeId,
+              applicationId: application.id,
             },
-          ],
-          meta: {
-            // to be able to link back to this application
-            applicationTypeId: application.typeId,
-            applicationId: application.id,
           },
         },
-      })
+      )
       .then((response) => response.json())
 
     if ('errors' in endorsementList) {
@@ -155,7 +151,7 @@ export class PartyLetterService {
 
     // This gets written to externalData under the key createEndorsementList
     return {
-      id: endorsementList.data.endorsementSystemCreateEndorsementList.id,
+      id: endorsementList.data?.endorsementSystemCreateEndorsementList?.id,
     }
   }
 

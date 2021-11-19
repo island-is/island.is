@@ -79,7 +79,9 @@ function constructRestrictionRulingPdf(
     .text(formatMessage(ruling.proceedingsHeading), { align: 'center' })
     .lineGap(30)
     .text(
-      `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
+      formatMessage(ruling.caseNumber, {
+        caseNumber: existingCase.courtCaseNumber,
+      }),
       { align: 'center' },
     )
     .fontSize(baseFontSize)
@@ -434,7 +436,9 @@ function constructInvestigationRulingPdf(
     .text(formatMessage(ruling.proceedingsHeading), { align: 'center' })
     .lineGap(30)
     .text(
-      `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
+      formatMessage(ruling.caseNumber, {
+        caseNumber: existingCase.courtCaseNumber,
+      }),
       { align: 'center' },
     )
     .fontSize(baseFontSize)
