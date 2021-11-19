@@ -8849,6 +8849,27 @@
         }
       }
     },
+    "user-monitoring": {
+      "root": "libs/user-monitoring",
+      "sourceRoot": "libs/user-monitoring/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/user-monitoring/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/user-monitoring"],
+          "options": {
+            "jestConfig": "libs/user-monitoring/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "web": {
       "root": "apps/web",
       "sourceRoot": "apps/web",

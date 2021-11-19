@@ -3154,6 +3154,30 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
+"@datadog/browser-core@3.8.0":
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/@datadog/browser-core/-/browser-core-3.8.0.tgz#5f9b694331512b9b25b585f483e2428ff16ae44b"
+  integrity sha512-JC2t2wEvXuqaxOOXP1a7CAEP8WZW9rdtQLeMc65E/5G6Ir1baSghEU3ajEwnzw0bSaJtz6jUJPJHqek5TrHbKw==
+  dependencies:
+    tslib "^1.10.0"
+
+"@datadog/browser-rum-core@3.8.0":
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/@datadog/browser-rum-core/-/browser-rum-core-3.8.0.tgz#58eda0c2a095b7fb2eaedf977d15b05124d91e2d"
+  integrity sha512-7mJ27+vlgjDfVWD1FCRpEirky9hDoacbQ7G4BPgKGfz38RUwWcjFwjV/pFmhhQnNwqI0fIaitO2KZz4U7VR3WA==
+  dependencies:
+    "@datadog/browser-core" "3.8.0"
+    tslib "^1.10.0"
+
+"@datadog/browser-rum@3.8.0":
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/@datadog/browser-rum/-/browser-rum-3.8.0.tgz#4b7485ed475d7104c4ebc34a5a9abc7c2abce0d1"
+  integrity sha512-ZJbkZU/rgUqF9FpYDgFSmpSTIb+v/9jIuaVHvkNmRWNG9vCwVDtTTur7uoliBFCQGvA3zlhPkEzOEQ6KJWm8yg==
+  dependencies:
+    "@datadog/browser-core" "3.8.0"
+    "@datadog/browser-rum-core" "3.8.0"
+    tslib "^1.10.0"
+
 "@discoveryjs/json-ext@^0.5.1":
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.2.tgz#8f03a22a04de437254e8ce8cc84ba39689288752"

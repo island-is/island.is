@@ -1128,9 +1128,11 @@ web:
   enabled: true
   env:
     API_URL: 'http://web-api'
+    DD_RUM_ENABLED: 'true'
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
+    ENVIRONMENT: 'staging'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
     TRACKING_DOMAIN: 'beta.staging01.devland.is'

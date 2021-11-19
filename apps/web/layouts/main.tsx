@@ -12,11 +12,13 @@ import {
   ColorSchemeContext,
   ColorSchemes,
 } from '@island.is/island-ui/core'
+import getConfig from 'next/config'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
 import Cookies from 'js-cookie'
 import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
+import { userMonitoring } from '@island.is/user-monitoring'
 import { useRouter } from 'next/router'
 import {
   Header,
@@ -58,6 +60,8 @@ import { stringHash } from '@island.is/web/utils/stringHash'
 
 import Illustration from './Illustration'
 import * as styles from './main.css'
+
+const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
@@ -111,6 +115,14 @@ if (environment.sentryDsn) {
         },
       }),
     ],
+  })
+}
+
+if (publicRuntimeConfig.ddRumEnabled && typeof window !== 'undefined') {
+  userMonitoring.initDdRum({
+    service: 'islandis',
+    env: publicRuntimeConfig.environment || 'local',
+    version: publicRuntimeConfig.appVersion || 'local',
   })
 }
 

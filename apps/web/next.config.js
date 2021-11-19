@@ -6,12 +6,16 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const StatoscopeWebpackPlugin = require('@statoscope/ui-webpack')
 const { DuplicatesPlugin } = require('inspectpack/plugin')
 
-const { API_URL = 'http://localhost:4444', SENTRY_DSN } = process.env
 const graphqlPath = '/api/graphql'
 const {
+  API_URL = 'http://localhost:4444',
+  SENTRY_DSN,
   DISABLE_API_CATALOGUE,
   DISABLE_SYSLUMENN_PAGE,
   DISABLE_ORGANIZATION_CHATBOT,
+  DD_RUM_ENABLED,
+  APP_VERSION,
+  ENVIRONMENT,
 } = process.env
 
 module.exports = withVanillaExtract(
@@ -92,6 +96,9 @@ module.exports = withVanillaExtract(
       disableApiCatalog: DISABLE_API_CATALOGUE,
       disableSyslumennPage: DISABLE_SYSLUMENN_PAGE,
       disableOrganizationChatbot: DISABLE_ORGANIZATION_CHATBOT,
+      ddRumEnabled: DD_RUM_ENABLED === 'true',
+      appVersion: APP_VERSION,
+      environment: ENVIRONMENT,
     },
 
     env: {

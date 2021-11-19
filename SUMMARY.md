@@ -247,6 +247,7 @@
   - [Testing Containers](libs/testing/containers/README.md)
   - [Testing Fixtures](libs/testing/fixtures/README.md)
   - [Testing Nest](libs/testing/nest/README.md)
+- [User Monitoring](libs/user-monitoring/README.md)
 
 ## Reference
 
