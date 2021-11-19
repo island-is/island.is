@@ -699,6 +699,12 @@ export interface IFrontpageFields {
   /** Title */
   title: string
 
+  /** Heading */
+  heading?: string | undefined
+
+  /** Image */
+  image?: Asset | undefined
+
   /** Featured */
   featured?: IFeatured[] | undefined
 
@@ -1075,6 +1081,9 @@ export interface ILifeEventPageFields {
   /** title */
   title: string
 
+  /** short title */
+  shortTitle?: string | undefined
+
   /** slug */
   slug: string
 
@@ -1086,6 +1095,9 @@ export interface ILifeEventPageFields {
 
   /** thumbnail */
   thumbnail?: Asset | undefined
+
+  /** tiny thumbnail */
+  tinyThumbnail?: Asset | undefined
 
   /** content */
   content: Document
@@ -1123,6 +1135,15 @@ export interface ILinkFields {
 
   /** Link reference */
   linkReference?: IArticle | IArticleCategory | ILinkUrl | INews | undefined
+
+  /** Searchable */
+  searchable?: boolean | undefined
+
+  /** Search Description */
+  intro?: string | undefined
+
+  /** Search Labels */
+  labels?: string[] | undefined
 }
 
 export interface ILink extends Entry<ILinkFields> {

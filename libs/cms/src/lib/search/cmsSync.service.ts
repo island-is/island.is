@@ -24,6 +24,7 @@ import { OrganizationPageSyncService } from './importers/organizationPage.servic
 import { OrganizationSubpageSyncService } from './importers/organizationSubpage.service'
 import { FrontpageSyncService } from './importers/frontpage.service'
 import { SupportQNASyncService } from './importers/supportQNA.service'
+import { LinkSyncService } from './importers/link.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -59,6 +60,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly organizationSubpageSyncService: OrganizationSubpageSyncService,
     private readonly frontpageSyncService: FrontpageSyncService,
     private readonly supportQNASyncService: SupportQNASyncService,
+    private readonly linkSyncService: LinkSyncService,
     private readonly elasticService: ElasticService,
   ) {
     this.contentSyncProviders = [
@@ -74,6 +76,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.organizationSubpageSyncService,
       this.frontpageSyncService,
       this.supportQNASyncService,
+      this.linkSyncService,
     ]
   }
 
