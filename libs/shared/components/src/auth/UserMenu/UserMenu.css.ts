@@ -19,6 +19,15 @@ export const dropdown = style({
   }),
 })
 
+export const fullScreen = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      top: spacing[4],
+      right: spacing[6],
+    },
+  }),
+})
+
 export const closeButton = style({
   display: 'flex',
   justifyContent: 'center',
