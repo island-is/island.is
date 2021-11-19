@@ -58,6 +58,7 @@ export class MunicipalityResolver {
     return backendApi.updateActivityMunicipality(id, activityMunicipality)
   }
 
+  @Mutation(() => MunicipalityModel, { nullable: false })
   createMunicipality(
     @Args('input', { type: () => CreateMunicipalityInput })
     input: CreateMunicipalityInput,
@@ -80,7 +81,6 @@ export class MunicipalityResolver {
 
   @Query(() => [MunicipalityModel], { nullable: false })
   municipalities(
-    input: MunicipalityQueryInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Municipality[]> {
     this.logger.debug(`Getting municipalities`)
