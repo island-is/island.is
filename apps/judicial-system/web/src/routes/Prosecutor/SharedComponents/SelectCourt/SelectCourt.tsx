@@ -1,7 +1,8 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
-import { Box, Select, Text } from '@island.is/island-ui/core'
+
+import { Box, Option, Select, Text } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import type { Case, Institution } from '@island.is/judicial-system/types'
@@ -11,23 +12,22 @@ import { selectCourt as m } from '@island.is/judicial-system-web/messages/Core/s
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  setSelectedCourt: React.Dispatch<React.SetStateAction<string | undefined>>
-  courts: Institution[]
+  setSelectedCourt: React.Dispatch<React.SetStateAction<Option | undefined>>
+  courts: ReactSelectOption[]
+  defaultCourt?: ReactSelectOption
 }
 
 const SelectCourt: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, setSelectedCourt, courts } = props
+  const {
+    workingCase,
+    setWorkingCase,
+    setSelectedCourt,
+    courts,
+    defaultCourt,
+  } = props
+
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
-
-  const selectCourts = courts.map((court) => ({
-    label: court.name,
-    value: court.id,
-  }))
-
-  const defaultCourt = selectCourts.find(
-    (court) => court.label === workingCase.court?.name,
-  )
 
   return (
     <>
@@ -40,8 +40,8 @@ const SelectCourt: React.FC<Props> = (props) => {
         name="court"
         label={formatMessage(m.label)}
         placeholder={formatMessage(m.placeholder)}
-        defaultValue={defaultCourt}
-        options={selectCourts}
+        value={defaultCourt}
+        options={courts}
         onChange={(selectedOption: ValueType<ReactSelectOption>) => {
           setAndSendToServer(
             'courtId',
@@ -51,9 +51,7 @@ const SelectCourt: React.FC<Props> = (props) => {
             updateCase,
           )
 
-          setSelectedCourt(
-            (selectedOption as ReactSelectOption).value as string,
-          )
+          setSelectedCourt(selectedOption as ReactSelectOption)
         }}
         required
       />

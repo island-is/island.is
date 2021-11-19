@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { Case, Institution, User } from '@island.is/judicial-system/types'
-import { Box, Input, Text, Checkbox } from '@island.is/island-ui/core'
+import { Box, Input, Text, Checkbox, Option } from '@island.is/island-ui/core'
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -46,7 +46,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
   const [, setRequestedCourtDateIsValid] = useState<boolean>(
     workingCase.requestedCourtDate !== null,
   )
-  const [, setSelectedCourt] = useState<string>()
+  const [selectedCourt, setSelectedCourt] = useState<Option>()
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
   const {
@@ -54,6 +54,15 @@ const StepTwoForm: React.FC<Props> = (props) => {
     setField,
     setAndSendToServer,
   } = useCaseFormHelper(workingCase, setWorkingCase, {})
+
+  const courtsAsOptions = courts.map((court) => ({
+    label: court.name,
+    value: court.id,
+  }))
+
+  const defaultCourt = courtsAsOptions.find(
+    (court) => court.label === workingCase.court?.name,
+  )
 
   return (
     <>
@@ -95,12 +104,14 @@ const StepTwoForm: React.FC<Props> = (props) => {
             />
           </BlueBox>
         </Box>
+
         <Box component="section" marginBottom={5}>
           <SelectCourt
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
             setSelectedCourt={setSelectedCourt}
-            courts={courts}
+            courts={courtsAsOptions}
+            defaultCourt={selectedCourt ?? defaultCourt}
           />
         </Box>
         {!workingCase.parentCase && (
