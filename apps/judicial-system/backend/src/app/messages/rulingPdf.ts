@@ -6,6 +6,11 @@ export const ruling = {
     defaultMessage: 'Þingbók og úrskurður',
     description: 'Notaður sem fyrirsögn á þingbók.',
   }),
+  caseNumber: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.case_number',
+    defaultMessage: 'Mál nr. {caseNumber}',
+    description: 'Notað sem undirsögn á þingbók fyrir númer á máli',
+  }),
   intro: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.into',
     defaultMessage:
@@ -23,12 +28,6 @@ export const ruling = {
     id: 'judicial.system.backend:pdf.ruling.attendees_heading',
     defaultMessage: 'Mættir eru:',
     description: 'Notaður sem fyrirsögn á lista yfir viðstadda.',
-  }),
-  demandsHeading: defineMessage({
-    // Deprecated
-    id: 'judicial.system.backend:pdf.ruling.demands_heading',
-    defaultMessage: 'Krafa:',
-    description: 'Notaður sem fyrirsögn á kröfu.',
   }),
   courtDocuments: defineMessages({
     heading: {
