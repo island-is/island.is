@@ -1137,6 +1137,27 @@
         }
       }
     },
+    "api-domains-islykill": {
+      "root": "libs/api/domains/islykill",
+      "sourceRoot": "libs/api/domains/islykill/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/islykill/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/islykill"],
+          "options": {
+            "jestConfig": "libs/api/domains/islykill/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-license-service": {
       "root": "libs/api/domains/license-service",
       "sourceRoot": "libs/api/domains/license-service/src",
@@ -1780,7 +1801,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumError": "6mb"
                 }
               ]
             }
@@ -3367,6 +3388,39 @@
         }
       }
     },
+    "clients-islykill": {
+      "root": "libs/clients/islykill",
+      "sourceRoot": "libs/clients/islykill/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/islykill/tsconfig.lib.json",
+              "libs/clients/islykill/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/clients/islykill/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/clients/islykill/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/clients/islykill"]
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/islykill/gen/fetch -i libs/clients/islykill/src/clientConfig.yaml"
+          }
+        }
+      }
+    },
     "clients-middlewares": {
       "root": "libs/clients/middlewares",
       "sourceRoot": "libs/clients/middlewares/src",
@@ -3501,6 +3555,12 @@
               "**/node_modules/**",
               "!libs/clients/payment-schedule/**/*"
             ]
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/payment-schedule/src/gen/fetch/ -i libs/clients/payment-schedule/src/openapi.yml"
           }
         },
         "test": {
@@ -4449,6 +4509,52 @@
           "outputs": ["coverage/apps/financial-aid/web-veita"]
         },
         "docker-next": {}
+      }
+    },
+    "github-actions-cache": {
+      "root": "apps/github-actions-cache",
+      "sourceRoot": "apps/github-actions-cache/src",
+      "projectType": "application",
+      "prefix": "github-actions-cache",
+      "architect": {
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/github-actions-cache",
+            "main": "apps/github-actions-cache/src/main.ts",
+            "tsConfig": "apps/github-actions-cache/tsconfig.app.json",
+            "assets": ["apps/github-actions-cache/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "github-actions-cache:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/github-actions-cache/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/github-actions-cache"],
+          "options": {
+            "jestConfig": "apps/github-actions-cache/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "docker-express": {}
       }
     },
     "gjafakort-api": {
@@ -6157,6 +6263,29 @@
         }
       }
     },
+    "react-feature-flags": {
+      "root": "libs/react/feature-flags",
+      "sourceRoot": "libs/react/feature-flags/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/react/feature-flags/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/react/feature-flags"],
+          "options": {
+            "jestConfig": "libs/react/feature-flags/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "reference-backend": {
       "root": "apps/reference-backend",
       "sourceRoot": "apps/reference-backend/src",
@@ -7198,6 +7327,29 @@
           "outputs": ["coverage/libs/service-portal/settings/access-control"],
           "options": {
             "jestConfig": "libs/service-portal/settings/access-control/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-settings-islykill": {
+      "root": "libs/service-portal/settings/islykill",
+      "sourceRoot": "libs/service-portal/settings/islykill/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/settings/islykill/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/settings/islykill"],
+          "options": {
+            "jestConfig": "libs/service-portal/settings/islykill/jest.config.js",
             "passWithNoTests": true
           }
         }

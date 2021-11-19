@@ -1,4 +1,9 @@
-import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadGatewayException,
+  Inject,
+  Injectable,
+  UnsupportedMediaTypeException,
+} from '@nestjs/common'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -14,6 +19,7 @@ import {
   CreateThingbokRequest,
 } from '../../gen/fetch'
 import { UploadStreamApi } from './uploadStreamApi'
+import { Exception } from '@sentry/types'
 
 function stripResult(str: string): string {
   if (str[0] !== '"') {
@@ -35,6 +41,8 @@ export interface CourtClientServiceOptions {
   [key: string]: AuthenticateRequest
 }
 
+const MAX_ERRORS_BEFORE_RELOGIN = 5
+
 @Injectable()
 export class CourtClientService {
   private readonly authenticationToken: { [key: string]: string } = {}
@@ -51,53 +59,120 @@ export class CourtClientService {
     private readonly logger: Logger,
   ) {}
 
+  // The service has a 'logged in' state and at most one in progress
+  // login operation should be ongoing at any given time.
+  private loginPromise?: Promise<void>
+
+  // Detecting authentication token expiration is imperfect and brittle.
+  // Therefore, relogin is forced after a certain number of consecutive unknown errors from the api.
+  private errorCount = 3
+
   private async login(clientId: string) {
-    try {
-      const res = await this.authenticateApi.authenticate(
-        this.options[clientId],
-      )
-
-      // Strip the quotation marks from the result
-      this.authenticationToken[clientId] = stripResult(res)
-    } catch (_) {
-      // Cannot log the error as it contains username and password in plain text
-      this.logger.error('Unable to log into the court service')
-
-      throw new BadGatewayException('Unable to log into the court service')
+    // Login is already in progress
+    if (this.loginPromise) {
+      return this.loginPromise
     }
+
+    // Reset the error counter
+    this.errorCount = 0
+
+    this.loginPromise = this.authenticateApi
+      .authenticate(this.options[clientId])
+      .then((res) => {
+        // Strip the quotation marks from the result
+        this.authenticationToken[clientId] = stripResult(res)
+      })
+      .catch(() => {
+        // Cannot log the error as it contains username and password in plain text
+        this.logger.error('Unable to log into the court service')
+
+        throw new BadGatewayException('Unable to log into the court service')
+      })
+      .finally(() => (this.loginPromise = undefined))
+
+    return this.loginPromise
   }
 
-  private async wrappedRequest(
+  private handleError(reason: { status?: number; statusText?: string }): Error {
+    // Now check for other known errors
+    if (reason.status === 400 && reason.statusText === 'FileNotSupported') {
+      this.logger.warn('Media type not supported', { reason })
+
+      return new UnsupportedMediaTypeException(
+        reason,
+        'Media type not supported',
+      )
+    }
+
+    this.logger.error('Error while calling the court service', { reason })
+
+    // One step closer to forced relogin.
+    // Relying on body above to contain the correct string is brittle.
+    // Therefore, the error count is used as backup.
+    this.errorCount++
+
+    return new BadGatewayException(
+      reason,
+      'Error while calling the court service',
+    )
+  }
+
+  private async authenticatedRequest(
     clientId: string,
     request: (authenticationToken: string) => Promise<string>,
-    isRetry = false,
   ): Promise<string> {
-    if (!this.authenticationToken[clientId] || isRetry) {
+    // Login if there is no authentication token or too many errors since last login
+    if (
+      !this.authenticationToken[clientId] ||
+      this.errorCount > MAX_ERRORS_BEFORE_RELOGIN
+    ) {
       await this.login(clientId)
     }
 
-    try {
-      const res = await request(this.authenticationToken[clientId])
+    const currentAuthenticationToken = this.authenticationToken[clientId]
 
-      return stripResult(res)
-    } catch (error) {
-      if (isRetry) {
-        this.logger.error('Error while calling the court service', error)
+    return request(currentAuthenticationToken)
+      .then((res) => stripResult(res))
+      .catch(
+        async (reason: {
+          statusCode?: number
+          body?: string
+          status?: number
+          statusText?: string
+        }) => {
+          // Error responses from the court system are a bit tricky.
+          // There are at least two types of possible error objects
+          // that are used for different types of errors.
 
-        throw error
-      }
+          // Start by checking for authentication token expiration.
+          if (
+            reason.statusCode === 400 &&
+            reason.body ===
+              `authenticationToken is expired - ${currentAuthenticationToken}`
+          ) {
+            this.logger.warn(
+              'Error while calling the court service - attempting relogin',
+              { reason },
+            )
 
-      this.logger.warn(
-        'Error while calling the court service - attempting relogin',
-        error,
+            return this.login(clientId).then(() =>
+              request(this.authenticationToken[clientId])
+                .then((res) => stripResult(res))
+                .catch((reason) => {
+                  // Throw an appropriate eception
+                  throw this.handleError(reason)
+                }),
+            )
+          }
+
+          // Throw an appropriate eception
+          throw this.handleError(reason)
+        },
       )
-
-      return this.wrappedRequest(clientId, request, true)
-    }
   }
 
   createCase(clientId: string, args: CreateCaseArgs): Promise<string> {
-    return this.wrappedRequest(clientId, (authenticationToken) =>
+    return this.authenticatedRequest(clientId, (authenticationToken) =>
       this.createCaseApi.createCase({
         createCaseData: {
           ...args,
@@ -108,7 +183,7 @@ export class CourtClientService {
   }
 
   createDocument(clientId: string, args: CreateDocumentArgs): Promise<string> {
-    return this.wrappedRequest(clientId, (authenticationToken) =>
+    return this.authenticatedRequest(clientId, (authenticationToken) =>
       this.createDocumentApi.createDocument({
         createDocumentData: {
           ...args,
@@ -119,7 +194,7 @@ export class CourtClientService {
   }
 
   createThingbok(clientId: string, args: CreateThingbokArgs): Promise<string> {
-    return this.wrappedRequest(clientId, (authenticationToken) =>
+    return this.authenticatedRequest(clientId, (authenticationToken) =>
       this.createThingbokApi.createThingbok({
         ...args,
         authenticationToken,
@@ -137,7 +212,7 @@ export class CourtClientService {
       }
     },
   ): Promise<string> {
-    return this.wrappedRequest(clientId, (authenticationToken) =>
+    return this.authenticatedRequest(clientId, (authenticationToken) =>
       this.uploadStreamApi.uploadStream(authenticationToken, file),
     )
   }

@@ -91,7 +91,7 @@ export class TemplateAPIService {
       } catch (e) {
         return {
           success: false,
-          error: e.message,
+          error: (e as Error).message,
         }
       }
     }

@@ -124,6 +124,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/accident-notification/       @island-is/sendiradid
 /libs/health-insurance/                                                                       @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/health-insurance/            @island-is/sendiradid
+/libs/application/template-api-modules/src/lib/modules/templates/public-debt-payment-plan     @island-is/sendiradid
 /libs/api/domains/health-insurance/                                                           @island-is/sendiradid
 /libs/application/templates/health-insurance/                                                 @island-is/sendiradid
 /libs/clients/health-insurance-v2/                                                            @island-is/sendiradid
@@ -143,6 +144,7 @@
 /.github/actions/                                                                             @island-is/devops
 /.github/workflows/                                                                           @island-is/devops
 /apps/reference-backend/                                                                      @island-is/devops
+/apps/github-actions-cache/                                                                   @island-is/devops
 /libs/infra*/                                                                                 @island-is/devops
 /libs/logging/                                                                                @island-is/devops
 /scripts/                                                                                     @island-is/devops

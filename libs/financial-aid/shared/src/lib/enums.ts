@@ -8,7 +8,7 @@ export enum HomeCircumstances {
   OTHER = 'Other',
 }
 
-export enum AidType {
+export enum AidTypeHomeCircumstances {
   OWNPLACE = 'OwnPlace',
   REGISTEREDLEASE = 'RegisteredLease',
   UNREGISTEREDLEASE = 'UnregisteredLease',

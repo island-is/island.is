@@ -129,7 +129,7 @@ export const m: MessageDir = {
     },
     openTil: {
       id: 'sp.petitions:open-til',
-      defaultMessage: 'Meðmælendalistinn er opinn:',
+      defaultMessage: 'Meðmælendalistinn er opinn til:',
       description: 'List is open til',
     },
     listOwner: {
@@ -305,6 +305,11 @@ export const m: MessageDir = {
       id: 'sp.petitions:send-list-placeholder',
       defaultMessage: 'Sláðu inn netfang',
       description: 'Input placeholder',
+    },
+    noPetitionsText: {
+      id: 'sp.petitions:no-petitions',
+      defaultMessage: 'Engin meðmæli komin enn',
+      description: 'No petitions text',
     },
   }),
 }

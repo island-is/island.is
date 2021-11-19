@@ -46,9 +46,6 @@ export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [, setCourtRecordStartDateIsValid] = useState(true)
   const [courtLocationErrorMessage, setCourtLocationMessage] = useState('')
-  const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] = useState(
-    '',
-  )
   const [
     litigationPresentationsErrorMessage,
     setLitigationPresentationsMessage,
@@ -115,10 +112,6 @@ export const CourtRecord: React.FC = () => {
         autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
       }
 
-      if (theCase.demands) {
-        autofill('prosecutorDemands', theCase.demands, theCase)
-      }
-
       if (theCase.type === CaseType.CUSTODY) {
         autofill(
           'litigationPresentations',
@@ -136,15 +129,33 @@ export const CourtRecord: React.FC = () => {
         )
       }
 
-      autofill(
-        'accusedBookings',
-        `${formatMessage(
-          m.sections.accusedBookings.autofillRightToRemainSilent,
-        )}\n\n${formatMessage(
-          m.sections.accusedBookings.autofillCourtDocumentOne,
-        )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`,
-        theCase,
-      )
+      let autofillAccusedBookings = ''
+
+      if (theCase.defenderName) {
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillDefender,
+          {
+            defender: theCase.defenderName,
+          },
+        )}\n\n`
+      }
+
+      if (theCase.translator) {
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillTranslator,
+          {
+            translator: theCase.translator,
+          },
+        )}\n\n`
+      }
+
+      autofillAccusedBookings += `${formatMessage(
+        m.sections.accusedBookings.autofillRightToRemainSilent,
+      )}\n\n${formatMessage(
+        m.sections.accusedBookings.autofillCourtDocumentOne,
+      )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
+
+      autofill('accusedBookings', autofillAccusedBookings, theCase)
 
       setWorkingCase(theCase)
     }
@@ -253,64 +264,29 @@ export const CourtRecord: React.FC = () => {
                   tooltip={formatMessage(closedCourt.tooltip)}
                 />
               </Box>
-              <Box marginBottom={3}>
-                <Input
-                  data-testid="courtAttendees"
-                  name="courtAttendees"
-                  label="Mættir eru"
-                  defaultValue={workingCase.courtAttendees}
-                  placeholder="Skrifa hér..."
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'courtAttendees',
-                      event,
-                      ['empty'],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }
-                  onBlur={(event) =>
-                    updateCase(
-                      workingCase.id,
-                      parseString('courtAttendees', event.target.value),
-                    )
-                  }
-                  textarea
-                  rows={7}
-                />
-              </Box>
               <Input
-                data-testid="prosecutorDemands"
-                name="prosecutorDemands"
-                label="Krafa"
-                defaultValue={workingCase.prosecutorDemands}
-                placeholder="Hvað hafði ákæruvaldið að segja?"
+                data-testid="courtAttendees"
+                name="courtAttendees"
+                label="Mættir eru"
+                defaultValue={workingCase.courtAttendees}
+                placeholder="Skrifa hér..."
                 onChange={(event) =>
                   removeTabsValidateAndSet(
-                    'prosecutorDemands',
+                    'courtAttendees',
                     event,
                     ['empty'],
                     workingCase,
                     setWorkingCase,
-                    prosecutorDemandsErrorMessage,
-                    setProsecutorDemandsMessage,
                   )
                 }
                 onBlur={(event) =>
-                  validateAndSendToServer(
-                    'prosecutorDemands',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setProsecutorDemandsMessage,
+                  updateCase(
+                    workingCase.id,
+                    parseString('courtAttendees', event.target.value),
                   )
                 }
-                errorMessage={prosecutorDemandsErrorMessage}
-                hasError={prosecutorDemandsErrorMessage !== ''}
                 textarea
                 rows={7}
-                required
               />
             </Box>
             <Box component="section" marginBottom={8}>

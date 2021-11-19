@@ -507,6 +507,14 @@ export const m = defineMessages({
     id: 'service.portal:tel',
     defaultMessage: 'Símanúmer',
   },
+  bankAccountInfo: {
+    id: 'service.portal:bank-account-info',
+    defaultMessage: 'Reikningsnúmer',
+  },
+  nudge: {
+    id: 'service.portal:nudge-info',
+    defaultMessage: 'Hnipp',
+  },
   nextStep: {
     id: 'service.portal:next-step',
     defaultMessage: 'Næsta skref',
@@ -564,5 +572,9 @@ export const m = defineMessages({
   endpoint: {
     id: 'service.portal:endpoint',
     defaultMessage: 'Endapunktur',
+  },
+  islykill: {
+    id: 'service.portal:islykill',
+    defaultMessage: 'Íslykill',
   },
 })
