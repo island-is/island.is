@@ -1,6 +1,10 @@
 import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
+export const paddingForButton = style({
+  paddingBottom: '2px',
+})
+
 export const tablePadding = style({
   paddingRight: theme.spacing[7],
   paddingTop: theme.spacing[2],
