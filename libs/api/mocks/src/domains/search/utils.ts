@@ -1,4 +1,4 @@
-import { Items, SearcherInput, TagCount } from '../../types'
+import { Items, Link, SearcherInput, TagCount } from '../../types'
 import sortBy from 'lodash/sortBy'
 
 export function getTagCounts(filteredItems: Items[]) {
@@ -23,8 +23,8 @@ export function getTagCounts(filteredItems: Items[]) {
   return sortBy(Object.values(tagMap), 'value')
 }
 
-export function filterItem(item: Items, query: SearcherInput) {
-  if (!('title' in item) || !item.title.includes(query.queryString)) {
+export function filterItem(item: Exclude<Items, Link>, query: SearcherInput) {
+  if (!item.title.includes(query.queryString)) {
     return false
   }
 
