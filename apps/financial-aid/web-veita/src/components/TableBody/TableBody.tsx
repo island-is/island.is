@@ -37,7 +37,7 @@ const ActivationButtonTableItem = (
   destructiveColorScheme: boolean,
 ) => {
   return (
-    <Box>
+    <Box className={tableStyles.paddingForButton}>
       <Button
         onClick={(event) => {
           event.stopPropagation()
