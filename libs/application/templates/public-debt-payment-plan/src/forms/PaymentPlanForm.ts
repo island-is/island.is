@@ -34,6 +34,7 @@ import {
   paymentPlanIndexKeyMapper,
   PublicDebtPaymentPlan,
 } from '../types'
+import { betaTestSection } from './BetaTestSection'
 
 // Builds a payment plan step that exists of two custom fields:
 // The overview step detailing a list of all payment plans and their status
@@ -70,6 +71,7 @@ export const PaymentPlanForm: Form = buildForm({
   mode: FormModes.APPLYING,
   logo: Logo,
   children: [
+    betaTestSection,
     buildSection({
       id: 'externalData',
       title: section.externalData,
