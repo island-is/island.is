@@ -24,7 +24,7 @@ export function getTagCounts(filteredItems: Items[]) {
 }
 
 export function filterItem(item: Items, query: SearcherInput) {
-  if (!item.title.includes(query.queryString)) {
+  if (!('title' in item) || !item.title.includes(query.queryString)) {
     return false
   }
 
