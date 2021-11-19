@@ -126,7 +126,7 @@ const Slider = ({
       const roundedMin = toFixedNumber(min, 1, 10)
       dragX.current = Math.max(0, Math.min(size.width, currentX))
       // Get value to display in slider.
-      // Get max if more or equel to max, get min if less or equel to min and then show rest with only one desimal point.
+      // Get max if more or equal to max, get min if less or equal to min and then show rest with only one decimal point.
       const index =
         dragX.current / sizePerCell + min >= max
           ? max
