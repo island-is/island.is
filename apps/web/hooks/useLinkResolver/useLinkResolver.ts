@@ -230,6 +230,13 @@ export const linkResolver = (
     }
   }
 
+  // special case when link with slug is passed directly to the linkresolver
+  if (type === 'link') {
+    return {
+      href: variables.join('/'),
+    }
+  }
+
   // We consider path not found if it has no entry in routesTemplate or if the found path is empty
   if (type && routesTemplate[type] && routesTemplate[type][locale]) {
     const typePath = routesTemplate[type][locale]

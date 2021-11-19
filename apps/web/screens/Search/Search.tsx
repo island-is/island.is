@@ -193,7 +193,7 @@ const Search: Screen<CategoryProps> = ({
       }
     }
 
-    if (item?.labels && item.labels?.length) {
+    if (item?.labels?.length) {
       labels.push(...item.labels)
     }
 
@@ -212,12 +212,7 @@ const Search: Screen<CategoryProps> = ({
     title: item.title,
     parentTitle: item.parent?.title,
     description: item.intro ?? item.description ?? item.parent?.intro,
-    link: linkResolver(
-      item.__typename === 'Link' ? 'linkurl' : item.__typename,
-      item?.url ?? item.__typename == 'Link'
-        ? [item.slug]
-        : item.slug.split('/'),
-    ),
+    link: linkResolver(item.__typename, item?.url ?? item.slug.split('/')),
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
