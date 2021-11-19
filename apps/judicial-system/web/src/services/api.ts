@@ -5,15 +5,11 @@ import { deleteCookie } from '@island.is/judicial-system-web/src/utils/cookies'
 const { API_URL = '' } = process.env // eslint-disable-line @typescript-eslint/naming-convention
 export const apiUrl = API_URL
 
-export const logOut = (path = '') => {
-  if (window.location.pathname !== '/') {
-    // We don't need to wait for the call
-    fetch('/api/auth/logout')
+export const logOut = () => {
+  deleteCookie('judicial-system.csrf')
 
-    deleteCookie('judicial-system.csrf')
-
-    window.location.assign(`/${path}`)
-  }
+  // No need to wait for the call
+  fetch('/api/auth/logout')
 }
 
 export const getFeature = async (name: string): Promise<boolean> => {

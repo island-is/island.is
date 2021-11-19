@@ -34,10 +34,10 @@ interface Props {
 }
 
 const UserProvider: React.FC<Props> = ({ children, authenticated = false }) => {
-  const [isAuthenticated] = useState<boolean>(
-    authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME)),
-  )
   const [user, setUser] = useState<User>()
+
+  const isAuthenticated =
+    authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME))
 
   const { data } = useQuery(CurrentUserQuery, {
     fetchPolicy: 'no-cache',

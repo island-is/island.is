@@ -11,7 +11,7 @@ import * as styles from './Header.css'
 
 const Header: React.FC = () => {
   const router = useRouter()
-  const { isAuthenticated, setUser, user } = useContext(UserContext)
+  const { isAuthenticated, user } = useContext(UserContext)
 
   return (
     <header className={styles.header}>
@@ -46,7 +46,7 @@ const Header: React.FC = () => {
           size="small"
           onClick={() => {
             api.logOut()
-            setUser && setUser(undefined)
+            window.location.assign('/')
           }}
           data-testid="logout-button"
         >
