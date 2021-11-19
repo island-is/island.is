@@ -14,7 +14,6 @@
 export * from './Card/Card'
 export * from './Categories/Categories'
 export * from './Header/Header'
-export * from './Sidebar/Sidebar'
 export * from './SearchInput/SearchInput'
 export * from './LanguageToggler/LanguageToggler'
 export * from './Sticky/Sticky'
