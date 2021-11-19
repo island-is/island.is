@@ -3,20 +3,13 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { Screen } from '../../types'
-import {
-  Sidebar,
-  SearchInput,
-  Card,
-  CardTagsProps,
-} from '@island.is/web/components'
+import { SearchInput, Card, CardTagsProps } from '@island.is/web/components'
 import {
   Box,
   Text,
   Stack,
   Breadcrumbs,
   Hidden,
-  Select,
-  Option,
   Pagination,
   Link,
   LinkContext,
@@ -222,13 +215,6 @@ const Search: Screen<CategoryProps> = ({
     labels: getLabels(item),
   }))
 
-  const onSelectSidebarTag = (type: 'category' | 'type', key: string) => {
-    Router.push({
-      pathname: linkResolver('search').href,
-      query: { q, [type]: key },
-    })
-  }
-
   const byCategory = (item) => {
     if (!item.category && filters.category === 'uncategorized') {
       return true
@@ -254,15 +240,6 @@ const Search: Screen<CategoryProps> = ({
     label: n('allCategories', 'Allir flokkar'),
     value: '',
   })
-
-  const defaultSelectedCategory = {
-    label:
-      sidebarData.tags[filters.category]?.title ??
-      n('allCategories', 'Allir flokkar'),
-    value: filters.category ?? '',
-  }
-
-  const isServer = typeof window === 'undefined'
 
   const items: NavigationItem[] = [
     {
@@ -354,19 +331,22 @@ const Search: Screen<CategoryProps> = ({
             initialInputValue={q}
           />
           <Hidden above="sm">
-            {totalSearchResults > 0 && (
-              <Select
-                label={n('sidebarHeader')}
-                placeholder={n('sidebarHeader', 'Flokkar')}
-                defaultValue={defaultSelectedCategory}
-                options={categorySelectOptions}
-                name="results-by-category"
-                isSearchable={false}
-                onChange={({ value }: Option) => {
-                  onSelectSidebarTag('category', value as string)
-                }}
-              />
-            )}
+            <Navigation
+              title={n('filterResults', 'Sía niðurstöður')}
+              label={n('filterResults', 'Sía niðurstöður')}
+              baseId="search-navigation-mobile"
+              colorScheme="purple"
+              activeItemTitle={selectedTitle}
+              items={items}
+              isMenuDialog
+              renderLink={(link, item) => {
+                return item?.href ? (
+                  <NextLink href={item?.href}>{link}</NextLink>
+                ) : (
+                  link
+                )
+              }}
+            />
           </Hidden>
 
           {filteredItems.length === 0 ? (
@@ -391,19 +371,14 @@ const Search: Screen<CategoryProps> = ({
               <Text variant="intro" as="p">
                 {totalSearchResults}{' '}
                 {totalSearchResults === 1
-                  ? n('searchResult', 'leitarniðurstaða')
-                  : n('searchResults', 'leitarniðurstöður')}{' '}
-                {(filters.category || filters.type) && (
-                  <>
-                    {n('inCategory', 'í flokki')}
-                    {
-                      <>
-                        {': '}
-                        <strong>{selectedTitle}</strong>
-                      </>
-                    }
-                  </>
-                )}
+                  ? (n(
+                      'searchResult',
+                      'leitarniðurstaða',
+                    ) as string).toLowerCase()
+                  : (n(
+                      'searchResults',
+                      'leitarniðurstöður',
+                    ) as string).toLowerCase()}
               </Text>
             </Box>
           )}
@@ -451,25 +426,6 @@ const Search: Screen<CategoryProps> = ({
               />
             </Box>
           )}
-          <Hidden above="sm">
-            <Box paddingTop={4}>
-              <Sidebar title={n('otherCategories')}>
-                <Stack space={[1, 1, 2]}>
-                  {sidebarDataTypes.map(([key, { title, total }]) => (
-                    <Filter
-                      key={key}
-                      selected={filters.type === key}
-                      onClick={() => {
-                        onSelectSidebarTag('type', key)
-                        !isServer && window.scrollTo(0, 0)
-                      }}
-                      text={`${title} (${total})`}
-                    />
-                  ))}
-                </Stack>
-              </Sidebar>
-            </Box>
-          </Hidden>
         </Stack>
       </SidebarLayout>
     </>
@@ -567,30 +523,6 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     showSearchInHeader: false,
     page,
   }
-}
-
-const Filter = ({ selected, text, onClick, truncate = false, ...props }) => {
-  return (
-    <Box
-      component="button"
-      display="flex"
-      width="full"
-      height="full"
-      onClick={onClick}
-      {...props}
-      textAlign="left"
-    >
-      <Text
-        as="span"
-        variant="h5"
-        truncate={truncate}
-        fontWeight={selected ? 'medium' : 'light'}
-        color="purple600"
-      >
-        {text}
-      </Text>
-    </Box>
-  )
 }
 
 interface EnglishResultsLinkProps {
