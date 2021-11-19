@@ -50,6 +50,7 @@ import {
   SubArticle,
   GetSearchResultsTotalQuery,
   OrganizationSubpage,
+  Link as LinkItem,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 import * as styles from './Search.css'
@@ -192,6 +193,10 @@ const Search: Screen<CategoryProps> = ({
       }
     }
 
+    if (item?.labels?.length) {
+      labels.push(...item.labels)
+    }
+
     return labels
   }
 
@@ -201,7 +206,8 @@ const Search: Screen<CategoryProps> = ({
       News &
       AdgerdirPage &
       SubArticle &
-      OrganizationSubpage
+      OrganizationSubpage &
+      LinkItem
   >).map((item) => ({
     title: item.title,
     parentTitle: item.parent?.title,
@@ -510,6 +516,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       'webLifeEventPage' as SearchableContentTypes,
       'webAdgerdirPage' as SearchableContentTypes,
       'webSubArticle' as SearchableContentTypes,
+      'webLink' as SearchableContentTypes,
     ]
   }
 
