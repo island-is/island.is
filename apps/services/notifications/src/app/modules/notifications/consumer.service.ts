@@ -59,14 +59,11 @@ export class NotificationConsumerService implements OnModuleDestroy {
           await this.messageHandler.process(JSON.parse(msg.Body ?? ''))
           return true
         } catch (e) {
-          this.logger.warn(e)
+          this.logger.error(e)
           return false
         }
       }),
     )
-
-    const failures = messages.filter((_, i) => !results[i])
-    this.logger.warn('Failed processing messages', failures)
 
     const successful = messages.filter((_, i) => results[i])
     await this.deleteMessageBatch(successful)
