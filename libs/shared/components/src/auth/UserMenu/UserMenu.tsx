@@ -4,7 +4,7 @@ import { useAuth } from '@island.is/auth/react'
 import { UserDropdown } from './UserDropdown'
 import { UserButton } from './UserButton'
 
-export const UserMenu = () => {
+export const UserMenu = ({ fullScreen = false }: { fullScreen?: boolean }) => {
   const [dropdownState, setDropdownState] = useState<'closed' | 'open'>(
     'closed',
   )
@@ -34,6 +34,7 @@ export const UserMenu = () => {
           setDropdownState('closed')
           switchUser(nationalId)
         }}
+        fullScreen={fullScreen}
       />
     </Box>
   )

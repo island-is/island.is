@@ -19,6 +19,7 @@ import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
 import { UserProfileInfo } from './UserProfileInfo'
 import { ValueType } from 'react-select'
+import cn from 'classnames'
 
 interface UserDropdownProps {
   user: User
@@ -26,6 +27,7 @@ interface UserDropdownProps {
   setDropdownState: Dispatch<SetStateAction<'closed' | 'open'>>
   onLogout?: () => void
   onSwitchUser: (nationalId: string) => void
+  fullScreen?: boolean
 }
 
 export const UserDropdown = ({
@@ -34,6 +36,7 @@ export const UserDropdown = ({
   setDropdownState,
   onSwitchUser,
   onLogout,
+  fullScreen = false,
 }: UserDropdownProps) => {
   const { lang, formatMessage, changeLanguage } = useLocale()
   const handleLanguageChange = (option: ValueType<Option>) =>
@@ -72,7 +75,7 @@ export const UserDropdown = ({
             borderRadius="large"
             display="flex"
             flexDirection="column"
-            className={styles.dropdown}
+            className={cn(styles.dropdown, { [styles.fullScreen]: fullScreen })}
           >
             <Stack space={2}>
               <Box display="flex" flexWrap="nowrap" alignItems="center">

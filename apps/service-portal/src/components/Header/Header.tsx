@@ -34,7 +34,7 @@ export const Header: FC<{}> = () => {
           <ContentBlock>
             <Box height="full" background="white" paddingX={[2, 2, 4, 4, 6]}>
               <Box className={styles.menuBox}>
-                <UserMenu />
+                <UserMenu fullScreen />
                 <Hidden above="md">
                   <Box marginLeft={2}>
                     <Button
