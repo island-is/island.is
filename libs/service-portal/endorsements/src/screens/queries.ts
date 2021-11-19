@@ -87,6 +87,7 @@ const GetAllEndorsementsLists = gql`
         description
         closedDate
         openedDate
+        adminLock
       }
     }
   }

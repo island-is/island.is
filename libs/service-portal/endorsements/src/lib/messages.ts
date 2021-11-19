@@ -80,6 +80,11 @@ export const m: MessageDir = {
       defaultMessage: 'Lokaða meðmælendalista',
       description: 'Petitions intro text bullet',
     },
+    bullet3Admin: {
+      id: 'sp.petitions:intro-bullet2-admin',
+      defaultMessage: 'Læsta meðmælendalista',
+      description: 'Petitions intro text bullet',
+    },
     petitionListsIown: {
       id: 'sp.petitions:petition-lists-i-own',
       defaultMessage: 'Listar stofnaðir af mér',
@@ -94,6 +99,11 @@ export const m: MessageDir = {
       id: 'sp.petitions:petition-lists-closed',
       defaultMessage: 'Lokaðir listar',
       description: 'Section title for closed petition lists',
+    },
+    petitionListsLocked: {
+      id: 'sp.petitions:petition-lists-locked',
+      defaultMessage: 'Læstir listar',
+      description: 'Section title for locked petition lists',
     },
     petitionListsSignedByMe: {
       id: 'sp.petitions:petition-lists-signed-by-me',
