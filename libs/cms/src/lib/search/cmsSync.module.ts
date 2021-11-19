@@ -14,6 +14,7 @@ import { OrganizationSubpageSyncService } from './importers/organizationSubpage.
 import { FrontpageSyncService } from './importers/frontpage.service'
 import { SubArticleSyncService } from './importers/subArticle.service'
 import { SupportQNASyncService } from './importers/supportQNA.service'
+import { LinkSyncService } from './importers/link.service'
 
 @Module({
   providers: [
@@ -32,6 +33,7 @@ import { SupportQNASyncService } from './importers/supportQNA.service'
     OrganizationSubpageSyncService,
     FrontpageSyncService,
     SupportQNASyncService,
+    LinkSyncService,
   ],
   exports: [CmsSyncService],
 })
