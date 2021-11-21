@@ -111,6 +111,7 @@ export const lifeEvent = factory<LifeEventPage>({
 export const link = factory<Link>({
   text: () => faker.lorem.words(),
   url: () => faker.internet.url(),
+  id: () => faker.datatype.uuid(),
 })
 
 export const menuLink = factory<MenuLinkWithChildren>({
