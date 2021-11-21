@@ -3,6 +3,8 @@ import { EnvironmentConfigs } from './dsl/types/charts'
 export const Envs: EnvironmentConfigs = {
   dev: {
     auroraHost: 'postgres-applications.internal',
+    auroraReplica:
+      'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
     domain: 'dev01.devland.is',
     type: 'dev',
     featuresOn: [],
