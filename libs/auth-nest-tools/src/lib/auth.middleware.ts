@@ -59,7 +59,7 @@ export class AuthMiddleware implements Middleware {
       authorization: bearerToken,
       ...(this.options.authID && {
         ['Authorization-Identity']: bearerToken,
-      }), // TODO: Here for testing.
+      }),
     })
 
     if (this.options.forwardUserInfo) {

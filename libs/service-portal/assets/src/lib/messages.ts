@@ -6,7 +6,7 @@ export const messages = defineMessages({
     defaultMessage: 'Þinglýstir eigendur',
   },
   ssn: {
-    id: 'sp.assets:ssn', // FIXME: This should come from global
+    id: 'sp.assets:ssn',
     defaultMessage: 'Kennitala',
   },
   authorization: {
@@ -44,6 +44,10 @@ export const messages = defineMessages({
   unitsOfUse: {
     id: 'sp.assets:units-of-use',
     defaultMessage: 'Notkunareiningar',
+  },
+  unitsOfUseNr: {
+    id: 'sp.assets:units-of-use-number',
+    defaultMessage: 'Notkunareiningarnúmer',
   },
   marking: {
     id: 'sp.assets:marking',

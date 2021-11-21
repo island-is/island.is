@@ -47,7 +47,7 @@ const unitsArray = (
       rows: chunk(
         [
           {
-            title: formatMessage(messages.unitsOfUse),
+            title: formatMessage(messages.unitsOfUseNr),
             value: unit.notkunareininganumer || '',
           },
           {
