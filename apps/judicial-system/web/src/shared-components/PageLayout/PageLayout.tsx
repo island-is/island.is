@@ -1,4 +1,6 @@
 import React, { ReactNode, useContext } from 'react'
+import { useIntl } from 'react-intl'
+
 import {
   Box,
   GridContainer,
@@ -8,30 +10,15 @@ import {
   AlertBanner,
 } from '@island.is/island-ui/core'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import {
-  CaseDecision,
-  CaseType,
-  isRestrictionCase,
-  isInvestigationCase,
-  UserRole,
-  Case,
-  completedCaseStates,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
+import { CaseType, UserRole, Case } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
+import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
 import Loading from '../Loading/Loading'
+import { getSections } from './utils'
 import * as styles from './PageLayout.css'
-import {
-  getCourtSections,
-  getCustodyAndTravelBanProsecutorSection,
-  getExtenstionSections,
-  getInvestigationCaseCourtSections,
-  getInvestigationCaseProsecutorSection,
-} from './Sections'
-import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
-import { useIntl } from 'react-intl'
 
 interface PageProps {
   children: ReactNode
@@ -55,83 +42,11 @@ const PageLayout: React.FC<PageProps> = ({
 }) => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-
-  const caseResult = () => {
-    const decisionIsRejecting =
-      workingCase?.decision === CaseDecision.REJECTING ||
-      workingCase?.parentCase?.decision === CaseDecision.REJECTING
-
-    const decisionIsAccepting =
-      isAcceptingCaseDecision(workingCase?.decision) ||
-      isAcceptingCaseDecision(workingCase?.parentCase?.decision)
-
-    const decisionIsDismissing =
-      workingCase?.decision === CaseDecision.DISMISSING ||
-      workingCase?.parentCase?.decision === CaseDecision.DISMISSING
-
-    const decisionIsAcceptingAlternativeTravelBan =
-      workingCase?.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-      workingCase?.parentCase?.decision ===
-        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-
-    if (decisionIsRejecting) {
-      if (isInvestigationCase(workingCase.type)) {
-        return 'Kröfu um rannsóknarheimild hafnað'
-      } else {
-        return 'Kröfu hafnað'
-      }
-    } else if (decisionIsAccepting) {
-      if (isInvestigationCase(workingCase?.type)) {
-        return 'Krafa um rannsóknarheimild samþykkt'
-      } else {
-        return workingCase?.isValidToDateInThePast
-          ? `${
-              workingCase.type === CaseType.CUSTODY
-                ? 'Gæsluvarðhaldi'
-                : 'Farbanni'
-            } lokið`
-          : `${
-              workingCase?.type === CaseType.CUSTODY
-                ? 'Gæsluvarðhald'
-                : 'Farbann'
-            } virkt`
-      }
-    } else if (decisionIsDismissing) {
-      return formatMessage(signedVerdictOverview.dismissedTitle)
-    } else if (decisionIsAcceptingAlternativeTravelBan) {
-      return workingCase.isValidToDateInThePast
-        ? 'Farbanni lokið'
-        : 'Farbann virkt'
-    } else {
-      return 'Niðurstaða'
-    }
-  }
-
-  const sections = [
-    isRestrictionCase(workingCase?.type)
-      ? getCustodyAndTravelBanProsecutorSection(
-          workingCase || ({} as Case),
-          activeSubSection,
-        )
-      : getInvestigationCaseProsecutorSection(
-          workingCase || ({} as Case),
-          activeSubSection,
-        ),
-    isRestrictionCase(workingCase?.type)
-      ? getCourtSections(workingCase || ({} as Case), activeSubSection)
-      : getInvestigationCaseCourtSections(
-          workingCase || ({} as Case),
-          activeSubSection,
-        ),
-    {
-      name:
-        workingCase?.state && completedCaseStates.includes(workingCase?.state)
-          ? caseResult()
-          : 'Niðurstaða',
-    },
-    getExtenstionSections(workingCase || ({} as Case), activeSubSection),
-    getCourtSections(workingCase || ({} as Case), activeSubSection),
-  ]
+  const sections = getSections(
+    { dismissedTitle: formatMessage(signedVerdictOverview.dismissedTitle) },
+    workingCase,
+    activeSubSection,
+  )
 
   return children ? (
     <Box

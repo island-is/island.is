@@ -1,9 +1,8 @@
 import React, { FC, createContext, useContext, ReactNode } from 'react'
 import cn from 'classnames'
 import { Box } from '../Box/Box'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import { Stack, StackProps } from '../Stack/Stack'
-import { Icon } from '../Icon/Icon'
 
 import * as styles from './BulletList.css'
 
@@ -15,14 +14,11 @@ const BulletListContext = createContext<BulletListContextValue>({
   type: 'ul',
 })
 
-export const Bullet: FC<{ typographyLinks?: boolean }> = ({
-  children,
-  typographyLinks,
-}) => {
+export const Bullet: FC<{}> = ({ children }) => {
   const { type } = useContext(BulletListContext)
 
   return (
-    <Typography variant="p" as="span" links={typographyLinks}>
+    <Text as="span">
       <Box display="flex">
         <Box display="flex">
           <span
@@ -30,16 +26,12 @@ export const Bullet: FC<{ typographyLinks?: boolean }> = ({
               [styles.numbered]: type === 'ol',
             })}
           >
-            {type === 'ul' && (
-              <span className={styles.icon}>
-                <Icon type="bullet" color="red400" width="8" height="8" />
-              </span>
-            )}
+            {type === 'ul' && <span className={styles.icon} />}
           </span>
         </Box>
         <Box>{children}</Box>
       </Box>
-    </Typography>
+    </Text>
   )
 }
 

@@ -45,7 +45,7 @@ export class DrivingLicenseSubmissionService {
       application.id,
     )
 
-    if (isPayment.fulfilled) {
+    if (isPayment?.fulfilled) {
       const result = await this.createLicense(nationalId, answers).catch(
         (e) => {
           return {

@@ -1,5 +1,5 @@
 import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
-import { makeCase, makeCourt } from '../../fixtures/testDataFactory'
+import { makeCase, makeCourt } from '@island.is/judicial-system/formatters'
 import { intercept } from '../../utils'
 
 describe('/domur/krafa/fyrirtokutimi/:id', () => {
