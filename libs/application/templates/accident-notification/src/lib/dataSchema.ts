@@ -48,6 +48,7 @@ const CompanyInfo = z
   .optional()
 
 export const AccidentNotificationSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
   representative: RepresentativeInfo,
   companyInfo: CompanyInfo,
   externalData: z.object({
