@@ -84,7 +84,6 @@ export const AccidentNotificationSchema = z.object({
       }),
     }),
   }),
-  approveExternalData: z.boolean().refine((p) => p),
   info: z.object({
     onBehalf: z.enum([OnBehalf.MYSELF, OnBehalf.OTHERS]),
   }),
