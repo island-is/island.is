@@ -18,26 +18,23 @@ export const Routes = {
     spouseSummary: `${formRoutes}yfirlit-maki`,
     conformation: `${formRoutes}stadfesting`,
   },
+  settings: {
+    municipality: '/sveitarfelagsstillingar',
+    municipalities: '/sveitarfelog',
+    supervisors: '/umsjonaradilar',
+    users: `/notendur`,
+  },
   status: '/stada',
   statusPage: (id: string) => `/stada/${id}`,
   statusFileUpload: (id: string) => `/stada/${id}/gogn`,
   statusFileUploadSuccess: (id: string) => `/stada/${id}/gogn/send`,
   statusFileUploadFailure: (id: string) => `/stada/${id}/gogn/villa`,
-  apiLoginRouteForFake: (id: string) =>
-    id
-      ? `/api/auth/login?applicationId=${id}&nationalId=`
-      : '/api/auth/login?nationalId=',
-  apiLoginRouteForRealUsers: (id: string) =>
-    id ? `/api/auth/login?applicationId=${id}` : '/api/auth/login',
   filesPage: (hasIncome?: boolean) =>
     `${formRoutes}${hasIncome ? 'skattagogn' : 'gogn'}`,
   newCases: '/nymal',
   serviceCenter: (id: string) => `/midstod/${id}`,
-  users: `/notendur`,
   userProfile: (id: string) => `/notendur/${id}`,
   municipalityProfile: (id: string) => `/sveitarfelog/${id}`,
-  municipalitySettings: `/sveitarfelagsstillingar`,
-  municipalities: `/sveitarfelog`,
   applicationProfile: (id: string) => `/umsokn/${id}`,
 }
 

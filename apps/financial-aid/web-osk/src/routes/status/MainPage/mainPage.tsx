@@ -74,6 +74,7 @@ const MainPage = () => {
             <Timeline
               state={myApplication.state}
               created={myApplication.created}
+              modified={myApplication.modified}
             />
           </>
         )}
