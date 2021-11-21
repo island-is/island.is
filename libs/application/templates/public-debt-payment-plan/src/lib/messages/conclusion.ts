@@ -10,7 +10,7 @@ export const conclusion = {
     alertTitle: {
       id: 'pdpp.application:conclusion.general.alertTitle',
       defaultMessage:
-        'Umsókn um greiðsluáætlun um skuldir hefur verið send til Innheimtumanns ',
+        'Umsókn um greiðsluáætlun hefur verið send til Innheimtumanns',
       description: 'Conclusion screen alert title',
     },
   }),

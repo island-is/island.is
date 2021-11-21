@@ -9,7 +9,7 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
 import { FinanceService } from '@island.is/api/domains/finance'
 import type { User } from '@island.is/auth-nest-tools'
@@ -17,7 +17,6 @@ import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { GetFinanceDocumentDto } from './dto/getFinanceDocument.dto'
 
 @UseGuards(IdsUserGuard)
-@ApiTags('finance-documents')
 @Controller('finance')
 export class FinanceDocumentController {
   constructor(

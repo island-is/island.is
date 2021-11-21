@@ -204,17 +204,12 @@ export const AccidentNotificationSchema = z.object({
     community: z.string().min(1),
     moreDetails: z.string().optional(),
   }),
-  fishermanLocation: z.object({
+  shipLocation: z.object({
     answer: z.enum([
       FishermanWorkplaceAccidentShipLocationEnum.SAILINGORFISHING,
       FishermanWorkplaceAccidentShipLocationEnum.HARBOR,
       FishermanWorkplaceAccidentShipLocationEnum.OTHER,
     ]),
-    locationAndPurpose: z
-      .object({
-        location: z.string().min(1),
-      })
-      .optional(),
   }),
   workMachineRadio: z.enum([YES, NO]),
   workMachine: z.object({
