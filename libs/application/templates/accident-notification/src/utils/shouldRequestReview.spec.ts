@@ -14,7 +14,7 @@ describe('shouldRequestReview', () => {
     workAccident: { type: WorkAccidentTypeEnum.GENERAL },
   }
 
-  it('should return true for work accidents', () => {
+  it('should return false for work accidents', () => {
     expect(shouldRequestReview(agricultureAccident)).toEqual(false)
   })
   it('should return true for general work accident', () => {
