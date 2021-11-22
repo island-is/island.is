@@ -224,4 +224,43 @@ export const m = defineMessages({
     defaultMessage: 'Skjal sem inniheldur sakavottorðið þitt.',
     description: 'Document that contains your criminal record.',
   },
+  examplePaymentPendingFieldError: {
+    id: 'cr.application:example.waitingForPaymentError',
+    defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
+    description: 'An error came up while getting payment information',
+  },
+  examplePaymentPendingDescription: {
+    id: 'cr.application:example.waitingDescription',
+    defaultMessage: 'Texti um hvað er að gerast',
+    description: 'Text about current payment proceedures.',
+  },
+  paymentPendingDescription: {
+    id: 'cr.application:paymentPendingDescription',
+    defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
+    description: 'Please wait until the payment is confirmed',
+  },
+  paymentImage: {
+    id: 'dl.application:paymentImage',
+    defaultMessage: `Skrautmynd`,
+    description: 'Company Image',
+  },
+  submitErrorButtonCaption: {
+    id: 'cr.application:submitErrorButtonCaption',
+    defaultMessage: 'Reyna aftur',
+    description:
+      'Button that shows up when submitting the application fails, allowing you to retry',
+  },
+  submitErrorTitle: {
+    id: 'cr.application:submitErrorTitle',
+    defaultMessage: 'Móttaka umsóknar tókst ekki',
+    description:
+      'title that shows up when an error occurs while submitting the application',
+  },
+  submitErrorMessage: {
+    id: 'cr.application:submitErrorMessage',
+    defaultMessage:
+      'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
+    description:
+      'Text that shows up when an error occurs while submitting the application',
+  },
 })

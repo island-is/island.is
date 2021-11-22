@@ -121,6 +121,9 @@ const template: ApplicationTemplate<
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
+          onExit: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
           roles: [
             {
               id: 'applicant',
