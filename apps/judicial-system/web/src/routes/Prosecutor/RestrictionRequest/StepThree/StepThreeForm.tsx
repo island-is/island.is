@@ -100,6 +100,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                     : undefined
                 }
                 onChange={(date: Date | undefined, valid: boolean) => {
+                  console.log(date, valid)
                   newSetAndSendDateToServer(
                     'requestedValidToDate',
                     date,

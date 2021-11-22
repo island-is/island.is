@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
 import { DatePicker, Input } from '@island.is/island-ui/core'
-import { TimeInputField, BlueBox } from '..'
-import * as styles from './DateTime.css'
-
 import {
   validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
+import { TimeInputField, BlueBox } from '..'
+import * as styles from './DateTime.css'
 
 interface Props {
   name: string
@@ -43,17 +42,17 @@ const DateTime: React.FC<Props> = (props) => {
     onChange,
   } = props
 
-  const getTimeFromDate = (date: Date | undefined): string =>
-    date
+  const getTimeFromDate = (date: Date | undefined): string => {
+    return date
       ? `${date
           .getHours()
           .toString()
           .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
       : ''
+  }
 
   const [currentDate, setCurrentDate] = useState(selectedDate)
   const [currentTime, setCurrentTime] = useState(getTimeFromDate(selectedDate))
-
   const [datepickerErrorMessage, setDatepickerErrorMessage] = useState<string>()
   const [timeErrorMessage, setTimeErrorMessage] = useState<string>()
 
@@ -76,11 +75,11 @@ const DateTime: React.FC<Props> = (props) => {
   }
 
   const onCalendarClose = (date: Date | null) => {
-    if (date === null && required) {
+    if (!date && required) {
       return
     }
 
-    const correctTime = date === null ? undefined : date
+    const correctTime = date || undefined
 
     setCurrentDate(correctTime)
 
@@ -90,28 +89,21 @@ const DateTime: React.FC<Props> = (props) => {
       setDatepickerErrorMessage(undefined)
     }
 
-    sendToParent(correctTime, currentTime)
+    sendToParent(correctTime, getTimeFromDate(date || undefined))
   }
 
-  const onTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onTimeChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const time = event.target.value
 
+    setTimeErrorMessage(undefined)
     setCurrentTime(time)
-
-    const validations: Validation[] = ['empty', 'time-format']
-
-    const error = validations
-      .map((v) => validate(time, v))
-      .find((v) => v.isValid === false)
-
-    if (error === undefined) {
-      setTimeErrorMessage(undefined)
-    }
-
-    sendToParent(currentDate, time)
   }
 
-  const onTimeBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  const onTimeBlur = (
+    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const time = event.target.value
 
     const validations: Validation[] = ['empty', 'time-format']
@@ -123,6 +115,7 @@ const DateTime: React.FC<Props> = (props) => {
     if (error) {
       setTimeErrorMessage(error.errorMessage)
     }
+    sendToParent(currentDate, time)
   }
 
   const sendToParent = (date: Date | undefined, time: string | undefined) => {
@@ -165,7 +158,7 @@ const DateTime: React.FC<Props> = (props) => {
           size={size}
         />
         <TimeInputField
-          value={getTimeFromDate(selectedDate)}
+          value={currentTime}
           disabled={disabled || locked || currentDate === undefined}
           onChange={onTimeChange}
           onBlur={onTimeBlur}

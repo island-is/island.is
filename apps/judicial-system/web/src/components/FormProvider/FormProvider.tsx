@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useEffect, useState } from 'react'
+import React, { createContext, ReactNode, useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
@@ -49,7 +49,7 @@ const FormProvider = ({ children }: Props) => {
     skip: !id,
   })
 
-  useEffect(() => {
+  useMemo(() => {
     if (workingCaseData) {
       setWorkingCase(workingCaseData.case)
     }
