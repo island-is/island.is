@@ -80,7 +80,7 @@ const SpouseInfo = ({
         />
       </Box>
 
-      <Box marginBottom={[5, 5, 10]}>
+      <Box>
         <Checkbox
           name={'accept'}
           id="accept"

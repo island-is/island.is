@@ -6,6 +6,20 @@ export const divider = style({
   height: 1,
 })
 
+export const largerClickableArea = style({
+  ':after': {
+    position: 'absolute',
+    display: 'inline-block',
+    cursor: 'pointer',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: 0,
+    content: '""',
+    margin: -10,
+  },
+})
+
 export const root = style({
   transition: 'background-color 150ms',
 })
@@ -22,7 +36,16 @@ export const colorScheme = styleVariants({
   darkBlue: {},
 })
 
+export const text = style({
+  position: 'relative',
+})
+
+export const textNarrower = style({
+  width: 'calc(100% - 34px)',
+})
+
 export const link = style({
+  position: 'relative',
   ':hover': {
     textDecoration: 'none',
   },
@@ -55,17 +78,63 @@ export const menuBtn = style({
   },
 })
 
-export const menuIcon = style({
+export const listItem = style({
+  position: 'relative',
+})
+
+const translate = 'translateX(-50%) translateY(-50%)'
+
+export const icon = style({
   position: 'absolute',
-  top: '2px',
-  right: '8px',
+  left: '50%',
+  top: '50%',
+  opacity: 1,
+  transform: `${translate} rotateZ(0deg)`,
+  transition: 'opacity 150ms ease, transform 300ms ease',
+})
+
+export const iconRemoveHidden = style({
+  opacity: 0,
+  transform: `${translate} rotateZ(-90deg)`,
+})
+
+export const iconRemoveVisible = style({
+  opacity: 1,
+  transform: `${translate} rotateZ(0deg)`,
+})
+
+export const iconAddHidden = style({
+  opacity: 0,
+  transform: `${translate} rotateZ(0deg)`,
+})
+
+export const iconAddVisible = style({
+  opacity: 1,
+  transform: `${translate} rotateZ(-90deg)`,
+})
+
+export const rotated = style({
+  transition: 'transform 300ms ease',
+})
+
+export const accordionIcon = style({
+  position: 'absolute',
+  display: 'inline-block',
+  lineHeight: 0,
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: '50%',
+  top: 10,
+  right: 0,
+  width: 24,
+  height: 24,
+  outline: 0,
 })
 
 export const dropdownIcon = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  background: theme.color.white,
   height: 24,
   width: 24,
   borderRadius: '50%',
