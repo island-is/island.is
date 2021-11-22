@@ -62,10 +62,6 @@ const FileUpload = () => {
     }
   }, [form?.otherFiles, form?.spouseFiles])
 
-  useEffect(() => {
-    console.log('file upload form', form)
-  }, [form])
-
   const sendFiles = async () => {
     setIsLoading(true)
 
