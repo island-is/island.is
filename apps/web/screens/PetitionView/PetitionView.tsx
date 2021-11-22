@@ -65,7 +65,7 @@ const PetitionView = (namespace) => {
   useEffect(() => {
     setPetitions(listEndorsements.data ?? [])
     handlePagination(1, listEndorsements.data ?? [])
-  }, [listEndorsements])
+  }, [listEndorsements.data])
 
   return (
     <Box marginTop={5} marginBottom={5}>
