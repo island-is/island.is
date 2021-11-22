@@ -18,6 +18,7 @@ import { sharedMessages } from '@island.is/shared/translations'
 import { useAuth } from '@island.is/auth/react'
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
+import cn from 'classnames'
 
 export const Sidebar: FC<{}> = () => {
   const { formatMessage } = useLocale()
@@ -27,7 +28,7 @@ export const Sidebar: FC<{}> = () => {
   const [collapsed, setCollapsed] = useState(sidebarState === 'closed')
 
   return (
-    <aside className={styles.sidebar[`${collapsed ? 'closed' : 'open'}`]}>
+    <aside className={cn(styles.sidebar, { [styles.collapsed]: collapsed })}>
       <Box
         display="flex"
         flexDirection="column"
@@ -40,12 +41,7 @@ export const Sidebar: FC<{}> = () => {
         <Box paddingBottom={6} paddingTop={3}>
           <Link to={ServicePortalPath.MinarSidurRoot}>
             <FocusableBox component="div">
-              <Hidden above="md">
-                <Logo width={40} iconOnly />
-              </Hidden>
-              <Hidden below="lg">
-                <Logo width={collapsed ? 40 : 160} iconOnly={collapsed} />
-              </Hidden>
+              <Logo width={collapsed ? 40 : 160} iconOnly={collapsed} />
               <BetaTag />
             </FocusableBox>
           </Link>

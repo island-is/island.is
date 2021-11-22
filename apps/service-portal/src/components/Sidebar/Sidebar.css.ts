@@ -1,38 +1,27 @@
 import { style, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-const sidebarBase = style({
+export const sidebar = style({
   position: 'absolute',
   top: 0,
+  left: 0,
   zIndex: 10,
   height: '100%',
   marginBottom: theme.spacing['10'],
+  transition: 'all 150ms ease-in-out',
+  width: 252,
   ...themeUtils.responsiveStyle({
-    lg: {
-      width: 252,
-    },
+    lg: {},
   }),
 })
 
-export const sidebar = styleVariants({
-  open: [
-    sidebarBase,
-    {
-      background: `${theme.color.blue100}`,
-      minWidth: '252px',
-    },
-  ],
-  closed: [
-    sidebarBase,
-    {
-      background: `${theme.color.transparent}`,
-      maxWidth: '144px',
-      minWidth: '144px',
-    },
-  ],
+export const collapsed = style({
+  left: '-108px',
 })
 
 export const subnav = style({
+  width: 228,
+  transition: 'all 150ms ease-in-out',
   marginLeft: 12,
   paddingLeft: 26,
   borderLeft: `1px solid ${theme.color.blue200}`,
