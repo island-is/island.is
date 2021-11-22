@@ -217,7 +217,7 @@ export const RulingStepTwo: React.FC = () => {
               name="conclusion"
               data-testid="conclusion"
               label={formatMessage(m.sections.conclusion.label)}
-              defaultValue={workingCase.conclusion}
+              value={workingCase.conclusion}
               placeholder={formatMessage(m.sections.conclusion.placeholder)}
               onChange={(event) =>
                 removeTabsValidateAndSet(
@@ -425,7 +425,7 @@ export const RulingStepTwo: React.FC = () => {
                     ),
                   },
                 )}
-                defaultValue={workingCase.accusedAppealAnnouncement}
+                value={workingCase.accusedAppealAnnouncement}
                 placeholder={formatMessage(
                   m.sections.appealDecision.accusedAnnouncementPlaceholder,
                   {
@@ -601,7 +601,7 @@ export const RulingStepTwo: React.FC = () => {
                   label={formatMessage(
                     m.sections.appealDecision.prosecutorAnnouncementLabel,
                   )}
-                  defaultValue={workingCase.prosecutorAppealAnnouncement}
+                  value={workingCase.prosecutorAppealAnnouncement}
                   placeholder={formatMessage(
                     m.sections.appealDecision.prosecutorAnnouncementPlaceholder,
                   )}
@@ -684,7 +684,7 @@ export const RulingStepTwo: React.FC = () => {
                   name="otherRestrictions"
                   data-testid="otherRestrictions"
                   label="Nánari útlistun eða aðrar takmarkanir"
-                  defaultValue={workingCase.otherRestrictions}
+                  value={workingCase.otherRestrictions}
                   placeholder="Til dæmis hvernig tilkynningarskyldu sé háttað..."
                   onChange={(event) =>
                     removeTabsValidateAndSet(
@@ -765,10 +765,7 @@ export const RulingStepTwo: React.FC = () => {
                     label="Þinghaldi lauk (kk:mm)"
                     placeholder="Veldu tíma"
                     autoComplete="off"
-                    defaultValue={formatDate(
-                      workingCase.courtEndTime,
-                      TIME_FORMAT,
-                    )}
+                    value={formatDate(workingCase.courtEndTime, TIME_FORMAT)}
                     errorMessage={courtDocumentEndErrorMessage}
                     hasError={courtDocumentEndErrorMessage !== ''}
                     required

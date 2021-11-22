@@ -165,6 +165,7 @@ const DateTime: React.FC<Props> = (props) => {
           size={size}
         />
         <TimeInputField
+          value={getTimeFromDate(selectedDate)}
           disabled={disabled || locked || currentDate === undefined}
           onChange={onTimeChange}
           onBlur={onTimeBlur}
@@ -176,7 +177,6 @@ const DateTime: React.FC<Props> = (props) => {
             placeholder="Veldu tíma"
             errorMessage={timeErrorMessage}
             hasError={timeErrorMessage !== undefined}
-            defaultValue={getTimeFromDate(selectedDate)}
             icon={locked ? 'lockClosed' : undefined}
             iconType="outline"
             required={required}

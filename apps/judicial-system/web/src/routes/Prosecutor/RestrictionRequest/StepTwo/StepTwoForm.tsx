@@ -174,7 +174,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
             placeholder={formatMessage(
               rcRequestedHearingArrangements.sections.translator.placeholder,
             )}
-            defaultValue={workingCase.translator}
+            value={workingCase.translator}
             onChange={(event) => setField(event.target)}
             onBlur={(event) => validateAndSendToServer(event.target)}
           />

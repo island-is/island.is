@@ -164,7 +164,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             name="judge"
             label="Veldu dómara"
             placeholder="Velja héraðsdómara"
-            defaultValue={defaultJudge}
+            value={defaultJudge}
             options={judges}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setJudge((selectedOption as ReactSelectOption).value.toString())
@@ -183,7 +183,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             name="registrar"
             label="Veldu dómritara"
             placeholder="Velja dómritara"
-            defaultValue={defaultRegistrar}
+            value={defaultRegistrar}
             options={registrars}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setRegistrar(
@@ -314,7 +314,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 data-testid="courtroom"
                 name="courtroom"
                 label="Dómsalur"
-                defaultValue={workingCase.courtRoom}
+                value={workingCase.courtRoom}
                 placeholder="Skráðu inn dómsal"
                 autoComplete="off"
                 onChange={(event) =>
@@ -388,7 +388,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 label={`Nafn ${
                   workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
                 }`}
-                defaultValue={workingCase.defenderName}
+                value={workingCase.defenderName}
                 placeholder="Fullt nafn"
                 autoComplete="off"
                 onChange={(event) =>
@@ -417,7 +417,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 label={`Netfang ${
                   workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
                 }`}
-                defaultValue={workingCase.defenderEmail}
+                value={workingCase.defenderEmail}
                 placeholder="Netfang"
                 autoComplete="off"
                 errorMessage={defenderEmailEM}
@@ -448,6 +448,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             <InputMask
               mask="999-9999"
               maskPlaceholder={null}
+              value={workingCase.defenderPhoneNumber}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'defenderPhoneNumber',
@@ -475,7 +476,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 label={`Símanúmer ${
                   workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
                 }`}
-                defaultValue={workingCase.defenderPhoneNumber}
                 placeholder="Símanúmer"
                 autoComplete="off"
                 errorMessage={defenderPhoneNumberEM}

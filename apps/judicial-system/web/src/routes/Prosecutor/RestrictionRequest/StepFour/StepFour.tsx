@@ -127,7 +127,7 @@ export const StepFour: React.FC = () => {
                 placeholder={formatMessage(
                   rcReportForm.sections.demands.placeholder,
                 )}
-                defaultValue={workingCase?.demands}
+                value={workingCase?.demands}
                 errorMessage={demandsErrorMessage}
                 hasError={demandsErrorMessage !== ''}
                 onChange={(event) =>
@@ -178,7 +178,7 @@ export const StepFour: React.FC = () => {
                 )}
                 errorMessage={caseFactsErrorMessage}
                 hasError={caseFactsErrorMessage !== ''}
-                defaultValue={workingCase?.caseFacts}
+                value={workingCase?.caseFacts}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'caseFacts',
@@ -229,7 +229,7 @@ export const StepFour: React.FC = () => {
                 placeholder={formatMessage(
                   rcReportForm.sections.legalArguments.placeholder,
                 )}
-                defaultValue={workingCase?.legalArguments}
+                value={workingCase?.legalArguments}
                 errorMessage={legalArgumentsErrorMessage}
                 hasError={legalArgumentsErrorMessage !== ''}
                 onChange={(event) =>
@@ -276,7 +276,7 @@ export const StepFour: React.FC = () => {
                   placeholder={formatMessage(
                     rcReportForm.sections.comments.placeholder,
                   )}
-                  defaultValue={workingCase?.comments}
+                  value={workingCase?.comments}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'comments',

@@ -152,7 +152,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
             autoComplete="off"
             label={formatMessage(m.sections.translator.label)}
             placeholder={formatMessage(m.sections.translator.placeholder)}
-            defaultValue={workingCase.translator}
+            value={workingCase.translator}
             onChange={(event) => setField(event.target)}
             onBlur={(event) => validateAndSendToServer(event.target)}
           />

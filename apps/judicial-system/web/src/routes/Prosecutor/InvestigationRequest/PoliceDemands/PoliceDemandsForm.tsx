@@ -119,7 +119,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             name="demands"
             label={formatMessage(icDemands.sections.demands.label)}
             placeholder={formatMessage(icDemands.sections.demands.placeholder)}
-            defaultValue={workingCase.demands}
+            value={workingCase.demands}
             errorMessage={demandsEM}
             hasError={demandsEM !== ''}
             onChange={(event) =>
@@ -163,7 +163,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             placeholder={formatMessage(
               icDemands.sections.lawsBroken.placeholder,
             )}
-            defaultValue={workingCase.lawsBroken}
+            value={workingCase.lawsBroken}
             errorMessage={lawsBrokenEM}
             hasError={lawsBrokenEM !== ''}
             onChange={(event) =>
@@ -205,7 +205,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             placeholder={formatMessage(
               icDemands.sections.legalBasis.placeholder,
             )}
-            defaultValue={workingCase.legalBasis}
+            value={workingCase.legalBasis}
             errorMessage={legalBasisEM}
             hasError={legalBasisEM !== ''}
             onChange={(event) =>

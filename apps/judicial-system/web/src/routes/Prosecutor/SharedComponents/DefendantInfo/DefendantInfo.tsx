@@ -114,6 +114,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
         <InputMask
           mask="999999-9999"
           maskPlaceholder={null}
+          value={workingCase.accusedNationalId}
           onChange={(event) =>
             removeTabsValidateAndSet(
               'accusedNationalId',
@@ -142,7 +143,6 @@ const DefendantInfo: React.FC<Props> = (props) => {
             autoComplete="off"
             label={formatMessage(core.nationalId)}
             placeholder={formatMessage(core.nationalId)}
-            defaultValue={workingCase.accusedNationalId}
             errorMessage={nationalIdErrorMessage}
             hasError={nationalIdErrorMessage !== ''}
             required
@@ -156,7 +156,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           autoComplete="off"
           label={formatMessage(core.fullName)}
           placeholder={formatMessage(core.fullName)}
-          defaultValue={workingCase.accusedName}
+          value={workingCase.accusedName}
           errorMessage={accusedNameErrorMessage}
           hasError={accusedNameErrorMessage !== ''}
           onChange={(event) =>
@@ -189,7 +189,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
         autoComplete="off"
         label={formatMessage(core.addressOrResidence)}
         placeholder={formatMessage(core.addressOrResidence)}
-        defaultValue={workingCase.accusedAddress}
+        value={workingCase.accusedAddress}
         errorMessage={accusedAddressErrorMessage}
         hasError={
           Boolean(accusedAddressErrorMessage) &&

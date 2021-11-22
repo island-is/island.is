@@ -2,6 +2,7 @@ import React, { PropsWithChildren } from 'react'
 import InputMask from 'react-input-mask'
 
 interface Props {
+  value?: string
   disabled?: boolean
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void
@@ -13,6 +14,7 @@ const TimeInputField: React.FC<Props> = (props: PropsWithChildren<Props>) => {
     <InputMask
       mask={[/([0-9]|1[0-9]|2[0-3])/, /([0-9])?/, ':', /[0-9]/, /[0-9]/]}
       maskPlaceholder={null}
+      value={props.value}
       beforeMaskedStateChange={({ nextState }) => {
         let { value } = nextState
         value = value.replace('::', ':')

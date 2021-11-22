@@ -120,7 +120,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                       updateCase,
                     )
                   }
-                  defaultValue={
+                  value={
                     workingCase?.id
                       ? {
                           value: CaseType[workingCase.type],
@@ -150,7 +150,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                 placeholder={formatMessage(
                   m.sections.investigationType.description.placeholder,
                 )}
-                defaultValue={workingCase.description}
+                value={workingCase.description}
                 autoComplete="off"
                 onChange={(event) => {
                   setField(event.target)
@@ -201,7 +201,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                       placeholder={formatMessage(
                         m.sections.defenderInfo.name.placeholder,
                       )}
-                      defaultValue={workingCase.defenderName}
+                      value={workingCase.defenderName}
                       onChange={(event) => setField(event.target)}
                       onBlur={(event) => validateAndSendToServer(event.target)}
                     />
@@ -215,7 +215,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                       placeholder={formatMessage(
                         m.sections.defenderInfo.email.placeholder,
                       )}
-                      defaultValue={workingCase.defenderEmail}
+                      value={workingCase.defenderEmail}
                       errorMessage={defenderEmailErrorMessage}
                       hasError={defenderEmailErrorMessage !== ''}
                       onChange={(event) => setField(event.target)}
@@ -226,6 +226,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                     <InputMask
                       mask="999-9999"
                       maskPlaceholder={null}
+                      value={workingCase.defenderPhoneNumber}
                       onChange={(event) => setField(event.target)}
                       onBlur={(event) => validateAndSendToServer(event.target)}
                     >
@@ -239,7 +240,6 @@ const DefendantForm: React.FC<Props> = (props) => {
                         placeholder={formatMessage(
                           m.sections.defenderInfo.phoneNumber.placeholder,
                         )}
-                        defaultValue={workingCase.defenderPhoneNumber}
                         errorMessage={defenderPhoneNumberErrorMessage}
                         hasError={defenderPhoneNumberErrorMessage !== ''}
                       />
