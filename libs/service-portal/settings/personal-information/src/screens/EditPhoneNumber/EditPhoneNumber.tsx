@@ -9,55 +9,62 @@ import {
 } from '@island.is/island-ui/core'
 import { Link, Redirect } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { gql, useMutation } from '@apollo/client'
+import { useUserProfile } from '@island.is/service-portal/graphql'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
-import {
-  useCreateUserProfile,
-  useUpdateUserProfile,
-  useUserProfile,
-} from '@island.is/service-portal/graphql'
 import React, { useEffect, useState } from 'react'
-import { PhoneForm } from '../../components/Forms/PhoneForm/PhoneForm'
-import { defineMessage } from 'react-intl'
+import { SimplePhoneForm } from '../../components/UserOnboardingModal/Islykill/PhoneForm'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+
+const UpdateIslykillSettings = gql`
+  mutation updateIslykillSettings($input: UpdateIslykillSettingsInput!) {
+    updateIslykillSettings(input: $input) {
+      nationalId
+    }
+  }
+`
 
 interface PhoneFormData {
   tel: string
 }
 
-export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
+export const EditPhoneNumber: ServicePortalModuleComponent = () => {
   useNamespaces('sp.settings')
   const [tel, setTel] = useState('')
-  const { data: userProfile } = useUserProfile()
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
     'passive',
   )
+
+  const { data: settings } = useUserProfile()
+  const [updateIslykill, { loading, error }] = useMutation(
+    UpdateIslykillSettings,
+  )
   const { formatMessage } = useLocale()
-  const { createUserProfile } = useCreateUserProfile()
-  const { updateUserProfile } = useUpdateUserProfile()
 
   useEffect(() => {
-    if (!userProfile || !userProfile.mobilePhoneNumber) return
-    if (userProfile.mobilePhoneNumber.length > 0)
-      setTel(userProfile.mobilePhoneNumber)
-  }, [userProfile])
+    if (settings?.mobilePhoneNumber) setTel(settings?.mobilePhoneNumber)
+  }, [settings])
 
   const submitFormData = async (formData: PhoneFormData) => {
     if (status !== 'passive') setStatus('passive')
 
+    const parsePhoneNumber = parsePhoneNumberFromString(formData.tel, 'IS')
     try {
-      // Update the profile if it exists, otherwise create one
-      if (userProfile) {
-        await updateUserProfile({
-          mobilePhoneNumber: formData.tel,
-        })
-      } else {
-        await createUserProfile({
-          mobilePhoneNumber: formData.tel,
-        })
+      if (!parsePhoneNumber?.isValid()) {
+        throw Error('Not valid phone number')
       }
+      await updateIslykill({
+        variables: {
+          input: {
+            mobile: `+${parsePhoneNumber?.countryCallingCode}-${parsePhoneNumber?.nationalNumber}`,
+            email: settings?.email,
+          },
+        },
+      })
       setStatus('success')
       toast.success(
         formatMessage({
@@ -70,10 +77,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
     }
   }
 
-  const handleSubmit = (data: PhoneFormData) => {
-    submitFormData(data)
-  }
-
+  const phoneNumber = parsePhoneNumberFromString(tel, 'IS')
   return (
     <>
       <Box marginBottom={4}>
@@ -100,23 +104,26 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <PhoneForm
-        tel={tel}
-        natReg={userInfo.profile.nationalId}
+      <SimplePhoneForm
+        tel={phoneNumber?.nationalNumber ? `${phoneNumber.nationalNumber}` : ''}
         renderBackButton={() => (
           <Link to={ServicePortalPath.SettingsPersonalInformation}>
             <Button variant="ghost">{formatMessage(m.goBack)}</Button>
           </Link>
         )}
-        submitButtonText={defineMessage({
-          id: 'sp.settings:save-changes',
-          defaultMessage: 'Vista breytingar',
-        })}
-        onSubmit={handleSubmit}
+        renderSubmitButton={() => (
+          <Button type="submit" variant="primary" icon="arrowForward">
+            {formatMessage({
+              id: 'sp.settings:save-changes',
+              defaultMessage: 'Vista breytingar',
+            })}
+          </Button>
+        )}
+        onSubmit={submitFormData}
       />
-      {status !== 'passive' && (
+      {status !== 'passive' && !loading && (
         <Box marginTop={[5, 7, 15]}>
-          {status === 'error' && (
+          {(status === 'error' || error) && (
             <AlertMessage
               type="error"
               title={formatMessage({

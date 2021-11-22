@@ -1,8 +1,7 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { Text, Button, Box, AlertMessage } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
 import { login } from '@island.is/judicial-system-web/messages'
 import { useRouter } from 'next/router'
@@ -10,22 +9,11 @@ import * as styles from './Login.css'
 
 const Login = () => {
   const router = useRouter()
-  const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
   useEffect(() => {
     document.title = 'Réttarvörslugátt'
   }, [])
-
-  useEffect(() => {
-    /**
-     * When users go to the login screen we want to make sure
-     * that any logged in user is logged out.
-     */
-    if (user) {
-      api.logOut()
-    }
-  }, [user])
 
   const getErrorAlert = (errorCode: LoginErrorCodes): JSX.Element | null => {
     switch (errorCode) {

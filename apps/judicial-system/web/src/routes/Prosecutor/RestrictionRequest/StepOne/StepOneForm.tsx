@@ -24,7 +24,7 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { accused } from '@island.is/judicial-system-web/messages'
+import { accused as m } from '@island.is/judicial-system-web/messages'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 import { isAccusedStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -102,15 +102,15 @@ export const StepOneForm: React.FC<Props> = (props) => {
         {workingCase.state === CaseState.RECEIVED && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(accused.receivedAlert.title)}
-              message={formatMessage(accused.receivedAlert.message)}
+              title={formatMessage(m.receivedAlert.title)}
+              message={formatMessage(m.receivedAlert.message)}
               type="warning"
             />
           </Box>
         )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(accused.heading)}
+            {formatMessage(m.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
@@ -122,7 +122,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {formatMessage(accused.sections.accusedInfo.heading)}
+              {formatMessage(m.sections.accusedInfo.heading)}
             </Text>
           </Box>
           <DefendantInfo
@@ -138,7 +138,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
             marginBottom={2}
           >
             <Text as="h3" variant="h3">
-              {formatMessage(accused.sections.defenderInfo.heading)}
+              {formatMessage(m.sections.defenderInfo.heading)}
             </Text>
           </Box>
           <BlueBox>
@@ -147,9 +147,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 data-testid="defenderName"
                 name="defenderName"
                 autoComplete="off"
-                label={formatMessage(accused.sections.defenderInfo.name.label)}
+                label={formatMessage(m.sections.defenderInfo.name.label)}
                 placeholder={formatMessage(
-                  accused.sections.defenderInfo.name.placeholder,
+                  m.sections.defenderInfo.name.placeholder,
                 )}
                 defaultValue={workingCase.defenderName}
                 onChange={(event) => setField(event.target)}
@@ -161,9 +161,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 data-testid="defenderEmail"
                 name="defenderEmail"
                 autoComplete="off"
-                label={formatMessage(accused.sections.defenderInfo.email.label)}
+                label={formatMessage(m.sections.defenderInfo.email.label)}
                 placeholder={formatMessage(
-                  accused.sections.defenderInfo.email.placeholder,
+                  m.sections.defenderInfo.email.placeholder,
                 )}
                 defaultValue={workingCase.defenderEmail}
                 errorMessage={defenderEmailErrorMessage}
@@ -184,10 +184,10 @@ export const StepOneForm: React.FC<Props> = (props) => {
                   name="defenderPhoneNumber"
                   autoComplete="off"
                   label={formatMessage(
-                    accused.sections.defenderInfo.phoneNumber.label,
+                    m.sections.defenderInfo.phoneNumber.label,
                   )}
                   placeholder={formatMessage(
-                    accused.sections.defenderInfo.phoneNumber.placeholder,
+                    m.sections.defenderInfo.phoneNumber.placeholder,
                   )}
                   defaultValue={workingCase.defenderPhoneNumber}
                   errorMessage={defenderPhoneNumberErrorMessage}
@@ -197,11 +197,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
             </Box>
             <Checkbox
               name="sendRequestToDefender"
-              label={formatMessage(
-                accused.sections.defenderInfo.sendRequest.label,
-              )}
+              label={formatMessage(m.sections.defenderInfo.sendRequest.label)}
               tooltip={formatMessage(
-                accused.sections.defenderInfo.sendRequest.tooltip,
+                m.sections.defenderInfo.sendRequest.tooltip,
                 {
                   caseType:
                     workingCase.type === CaseType.CUSTODY
@@ -212,7 +210,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
               checked={workingCase.sendRequestToDefender}
               onChange={(event) => setAndSendToServer(event.target)}
               large
-              backgroundColor="white"
+              filled
             />
           </BlueBox>
         </Box>
@@ -225,11 +223,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
               marginBottom={2}
             >
               <Text as="h3" variant="h3">
-                {formatMessage(accused.sections.leadInvestigator.heading)}{' '}
+                {formatMessage(m.sections.leadInvestigator.heading)}{' '}
                 <Tooltip
-                  text={formatMessage(
-                    accused.sections.leadInvestigator.tooltip,
-                  )}
+                  text={formatMessage(m.sections.leadInvestigator.tooltip)}
                 />
               </Text>
             </Box>
@@ -238,9 +234,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 data-testid="leadInvestigator"
                 name="leadInvestigator"
                 autoComplete="off"
-                label={formatMessage(accused.sections.leadInvestigator.label)}
+                label={formatMessage(m.sections.leadInvestigator.label)}
                 placeholder={formatMessage(
-                  accused.sections.leadInvestigator.placeholder,
+                  m.sections.leadInvestigator.placeholder,
                 )}
                 defaultValue={workingCase.leadInvestigator}
                 errorMessage={leadInvestigatorErrorMessage}

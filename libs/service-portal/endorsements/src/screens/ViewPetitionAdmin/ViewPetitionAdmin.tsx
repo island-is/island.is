@@ -254,7 +254,7 @@ const ViewPetitionAdmin = () => {
           <PetitionsTable
             petitions={petitionEndorsements}
             listId={location.state?.listId}
-            isSendEmailVisible={true}
+            isViewTypeEdit={true}
           />
         </Stack>
       ) : (

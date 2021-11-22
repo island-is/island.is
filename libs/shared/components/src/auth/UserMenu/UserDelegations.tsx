@@ -7,7 +7,7 @@ import {
 } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
-import { Features, useFeatureFlag } from '@island.is/feature-flags'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { userMessages } from '@island.is/shared/translations'
 import * as styles from './UserMenu.css'
 import { useActorDelegationsQuery } from '../../../gen/graphql'
