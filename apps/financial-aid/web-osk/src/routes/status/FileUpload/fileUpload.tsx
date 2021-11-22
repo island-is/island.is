@@ -137,7 +137,6 @@ const FileUpload = () => {
             />
           </Box>
         )}
-
         <Files
           header="Senda inn gögn"
           fileKey="otherFiles"
