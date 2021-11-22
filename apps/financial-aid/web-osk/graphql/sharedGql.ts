@@ -62,6 +62,7 @@ export const ApplicationQuery = gql`
       created
       modified
       municipalityCode
+      spouseNationalId
       applicationEvents {
         id
         applicationId
