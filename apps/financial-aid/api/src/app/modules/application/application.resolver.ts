@@ -16,6 +16,7 @@ import {
   UpdateApplicationInputTable,
   ApplicationInput,
   AllApplicationInput,
+  SearchApplicationInput,
 } from './dto'
 import {
   Application,
@@ -52,6 +53,17 @@ export class ApplicationResolver {
     this.logger.debug(`Getting application ${input.id}`)
 
     return backendApi.getApplication(input.id)
+  }
+
+  @Query(() => [ApplicationModel], { nullable: false })
+  applicationsResults(
+    @Args('input', { type: () => SearchApplicationInput })
+    input: SearchApplicationInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Application[]> {
+    this.logger.debug(`Getting application ${input.nationalId}`)
+
+    return backendApi.searchForApplication(input.nationalId)
   }
 
   @Mutation(() => ApplicationModel, { nullable: true })

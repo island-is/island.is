@@ -60,6 +60,21 @@ export const ApplicationQuery = gql`
   }
 `
 
+export const SearchApplicationQuery = gql`
+  query SearchApplicationQuery($input: SearchApplicationInput!) {
+    applicationsResults(input: $input) {
+      id
+      nationalId
+      created
+      name
+      state
+      files {
+        id
+      }
+    }
+  }
+`
+
 export const UpdateApplicationTableMutation = gql`
   mutation UpdateApplicationTableMutation(
     $input: UpdateApplicationInputTable!

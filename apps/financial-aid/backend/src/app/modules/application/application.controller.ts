@@ -89,6 +89,23 @@ export class ApplicationController {
   }
 
   @UseGuards(RolesGuard)
+  @RolesRules(RolesRule.VEITA)
+  @Get('find/:nationalId')
+  @ApiOkResponse({
+    type: ApplicationModel,
+    isArray: true,
+    description: 'Checks if any application has nationalId',
+  })
+  async findApplication(
+    @Param('nationalId') nationalId: string,
+  ): Promise<ApplicationModel[]> {
+    console.log('ferdu hingad?')
+    this.logger.debug('Search for application')
+
+    return await this.applicationService.findByNationalId(nationalId)
+  }
+
+  @UseGuards(RolesGuard)
   @RolesRules(RolesRule.OSK)
   @Get('spouse/:spouseNationalId')
   @ApiOkResponse({

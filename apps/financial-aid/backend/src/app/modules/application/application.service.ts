@@ -80,6 +80,22 @@ export class ApplicationService {
     }
   }
 
+  async findByNationalId(nationalId: string): Promise<ApplicationModel[]> {
+    return this.applicationModel.findAll({
+      where: {
+        [Op.or]: [
+          {
+            nationalId,
+          },
+          {
+            spouseNationalId: nationalId,
+          },
+        ],
+      },
+      order: [['modified', 'DESC']],
+    })
+  }
+
   async getCurrentApplicationId(nationalId: string): Promise<string | null> {
     const currentApplication = await this.applicationModel.findOne({
       where: {
