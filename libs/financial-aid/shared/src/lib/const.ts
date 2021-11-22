@@ -20,6 +20,7 @@ export const Routes = {
   },
   settings: {
     search: '/leit',
+    settings: '/stillingar',
     municipality: '/sveitarfelagsstillingar',
     municipalities: '/sveitarfelog',
     supervisors: '/umsjonaradilar',

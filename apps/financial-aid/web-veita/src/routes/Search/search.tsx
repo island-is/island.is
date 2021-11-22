@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import {
   ApplicationOverviewSkeleton,
@@ -6,7 +6,7 @@ import {
   TableHeaders,
   SearchSkeleton,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, AsyncSearch, Input } from '@island.is/island-ui/core'
 
 import * as tableStyles from '../../sharedStyles/Table.css'
 import * as headerStyles from '../../sharedStyles/Header.css'
@@ -14,15 +14,20 @@ import * as styles from './search.css'
 import cn from 'classnames'
 
 export const Search = () => {
+  const [searchNationalId, setSearchNationalId] = useState<string>('')
+
   return (
     <LoadingContainer
       isLoading={false}
       loader={<ApplicationOverviewSkeleton />}
     >
-      <Box marginTop={15} marginBottom={2}>
-        <Text as="h1" variant="h1" color="dark200">
-          Leit verður hér
-        </Text>
+      <Box marginTop={15} marginBottom={2} className={``}>
+        <Input
+          label="s"
+          name="Test1"
+          placeholder="This is the placeholder"
+          value={searchNationalId}
+        />
 
         <Text variant="h5">Kennitöluleit</Text>
       </Box>

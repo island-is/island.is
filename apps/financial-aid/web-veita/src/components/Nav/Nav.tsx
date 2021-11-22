@@ -89,7 +89,11 @@ const Nav = ({ showInMobile }: Props) => {
       <Box display="block" marginBottom={2} marginTop={4}>
         <Box marginBottom={2}>
           <button
-            className={`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`}
+            className={cn({
+              [`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`]: true,
+              [`${sideNavButtonStyles.activeNavButton}`]:
+                router.pathname === Routes.settings.search,
+            })}
             onClick={() => router.push(Routes.settings.search)}
           >
             <Icon
@@ -99,6 +103,22 @@ const Nav = ({ showInMobile }: Props) => {
               className={sideNavButtonStyles.sideNavBarButtonIcon}
             />
             <Text> Leit</Text>
+          </button>
+          <button
+            className={cn({
+              [`${sideNavButtonStyles.sideNavBarButton} navBarButtonHover`]: true,
+              [`${sideNavButtonStyles.activeNavButton}`]:
+                router.pathname === Routes.settings.settings,
+            })}
+            onClick={() => router.push(Routes.settings.settings)}
+          >
+            <Icon
+              icon="person"
+              type="outline"
+              color="blue400"
+              className={sideNavButtonStyles.sideNavBarButtonIcon}
+            />
+            <Text> Mínar stillingar</Text>
           </button>
           <SuperAdminSideNavItems roles={admin?.staff?.roles} />
           <AdminSideNavItems roles={admin?.staff?.roles} />
