@@ -1,19 +1,23 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
-import { Application } from '@island.is/application/core'
+import {
+  Application,
+  GraphqlGatewayResponse,
+} from '@island.is/application/core'
 import {
   BaseTemplateAPIModuleConfig,
   EmailTemplateGenerator,
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
 } from '../../types'
+import { createAssignToken, getConfigValue } from './shared.utils'
 import {
-  createAssignToken,
-  getConfigValue,
   PAYMENT_QUERY,
   PAYMENT_STATUS_QUERY,
-} from './shared.utils'
+  PaymentChargeData,
+  PaymentStatusData,
+} from './shared.queries'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -123,11 +127,11 @@ export class SharedTemplateApiService {
     return this.emailService.sendEmail(template)
   }
 
-  async makeGraphqlQuery(
+  async makeGraphqlQuery<T = unknown>(
     authorization: string,
     query: string,
-    variables?: Record<string, any>,
-  ): Promise<Response> {
+    variables?: Record<string, unknown>,
+  ): Promise<GraphqlGatewayResponse<T>> {
     const baseApiUrl = getConfigValue(
       this.configService,
       'baseApiUrl',
@@ -149,12 +153,16 @@ export class SharedTemplateApiService {
     applicationId: string,
     chargeItemCode: string,
   ) {
-    return this.makeGraphqlQuery(authorization, PAYMENT_QUERY, {
-      input: {
-        applicationId,
-        chargeItemCode,
+    return this.makeGraphqlQuery<PaymentChargeData>(
+      authorization,
+      PAYMENT_QUERY,
+      {
+        input: {
+          applicationId,
+          chargeItemCode,
+        },
       },
-    })
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error('graphql query failed')
@@ -163,15 +171,23 @@ export class SharedTemplateApiService {
         return res
       })
       .then((res) => res.json())
-      .then((json) => {
-        return json.data.applicationPaymentCharge
+      .then(({ errors, data }) => {
+        if (errors && errors.length) {
+          throw new Error('Creating the payment charge failed')
+        }
+
+        return data?.applicationPaymentCharge
       })
   }
 
   async getPaymentStatus(authorization: string, applicationId: string) {
-    return await this.makeGraphqlQuery(authorization, PAYMENT_STATUS_QUERY, {
-      applicationId,
-    })
+    return await this.makeGraphqlQuery<PaymentStatusData>(
+      authorization,
+      PAYMENT_STATUS_QUERY,
+      {
+        applicationId,
+      },
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error('Couldnt query payment status')
@@ -179,8 +195,8 @@ export class SharedTemplateApiService {
         return res
       })
       .then((res) => res.json())
-      .then((json) => {
-        return json.data.applicationPaymentStatus
+      .then(({ data }) => {
+        return data?.applicationPaymentStatus
       })
   }
 }

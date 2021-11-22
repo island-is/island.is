@@ -1,5 +1,5 @@
-import React from 'react'
-import { Box, Link, Text } from '@island.is/island-ui/core'
+import React, { useState } from 'react'
+import { Box, Button, Link, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
 import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
@@ -7,9 +7,10 @@ import * as tableStyles from '../../sharedStyles/Table.css'
 import cn from 'classnames'
 
 import {
-  AidType,
+  AidTypeHomeCircumstances,
   Municipality,
   Staff,
+  StaffRole,
 } from '@island.is/financial-aid/shared/lib'
 
 import {
@@ -17,24 +18,36 @@ import {
   TableBody,
   TextTableItem,
   ActivationButtonTableItem,
+  NewUserModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 interface MunicipalityProfileProps {
   municipality: Municipality
+  getMunicipality: () => void
 }
 
-const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
+const MunicipalityProfile = ({
+  municipality,
+  getMunicipality,
+}: MunicipalityProfileProps) => {
+  const [isModalVisible, setIsModalVisible] = useState(false)
+
+  const refreshList = () => {
+    setIsModalVisible(false)
+    getMunicipality()
+  }
+
   const smallText = 'small'
   const headline = 'h5'
-  const aidTableBody = (value: AidType) => {
+  const aidTableBody = (value: AidTypeHomeCircumstances) => {
     switch (value) {
-      case AidType.OWNPLACE:
+      case AidTypeHomeCircumstances.OWNPLACE:
         return [
           TextTableItem(headline, 'Eigin húsnæði'),
           TextTableItem(smallText, municipality.individualAid.ownPlace),
           TextTableItem(smallText, municipality.cohabitationAid.ownPlace),
         ]
-      case AidType.REGISTEREDLEASE:
+      case AidTypeHomeCircumstances.REGISTEREDLEASE:
         return [
           TextTableItem(headline, 'Leiga með þinglýstum leigusamning'),
           TextTableItem(
@@ -46,7 +59,7 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
             municipality.cohabitationAid.registeredRenting,
           ),
         ]
-      case AidType.UNREGISTEREDLEASE:
+      case AidTypeHomeCircumstances.UNREGISTEREDLEASE:
         return [
           TextTableItem(headline, 'Býr eða leigir án þinglýsts leigusamnings'),
           TextTableItem(
@@ -58,7 +71,7 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
             municipality.cohabitationAid.unregisteredRenting,
           ),
         ]
-      case AidType.WITHPARENTS:
+      case AidTypeHomeCircumstances.WITHPARENTS:
         return [
           TextTableItem(headline, 'Býr hjá foreldrum'),
           TextTableItem(smallText, municipality.individualAid.livesWithParents),
@@ -67,7 +80,7 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
             municipality.cohabitationAid.livesWithParents,
           ),
         ]
-      case AidType.UNKNOWN:
+      case AidTypeHomeCircumstances.UNKNOWN:
         return [
           TextTableItem(headline, 'Ekkert að ofantöldu'),
           TextTableItem(smallText, municipality.individualAid.unknown),
@@ -85,9 +98,19 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
     >
       <Box className={`${styles.widthAlmostFull}`}>
         <Box className={`contentUp delay-25`} marginBottom={[3, 3, 7]}>
-          <Text as="h1" variant="h1" marginBottom={2}>
-            {municipality.name}
-          </Text>
+          <Box display="flex" justifyContent="spaceBetween" alignItems="center">
+            <Text as="h1" variant="h1" marginBottom={2}>
+              {municipality.name}
+            </Text>
+            <Button
+              size="small"
+              icon="add"
+              variant="ghost"
+              onClick={() => setIsModalVisible(true)}
+            >
+              Nýr stjórnandi
+            </Button>
+          </Box>
 
           <Box display="flex" marginRight={1} marginTop={5}>
             <Box marginRight={1}>
@@ -109,7 +132,7 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
           </Box>
         </Box>
         <Box marginBottom={7}>
-          <Box marginBottom={3}>
+          <Box marginBottom={3} className={`contentUp delay-50`}>
             <Text as="h3" variant="h3" color="dark300">
               Stjórnendur
             </Text>
@@ -118,10 +141,10 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
           <div className={`${tableStyles.smallTableWrapper} hideScrollBar`}>
             <table
               className={cn({
-                [`${tableStyles.tableContainer}`]: true,
+                [`${tableStyles.tableContainer} contentUp delay-75`]: true,
               })}
             >
-              <thead className={`contentUp delay-50`}>
+              <thead>
                 <tr>
                   {['Nafn', 'Kennitala', 'Netfang', 'Aðgerð'].map(
                     (item, index) => (
@@ -160,7 +183,7 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
         </Box>
 
         <Box>
-          <Box marginBottom={3}>
+          <Box marginBottom={3} className={`contentUp delay-100`}>
             <Text as="h3" variant="h3" color="dark300">
               Grunnupphæðir
             </Text>
@@ -168,10 +191,10 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
           <div className={`${tableStyles.smallTableWrapper} hideScrollBar`}>
             <table
               className={cn({
-                [`${tableStyles.tableContainer}`]: true,
+                [`${tableStyles.tableContainer} contentUp delay-125`]: true,
               })}
             >
-              <thead className={`contentUp delay-50`}>
+              <thead>
                 <tr>
                   {['Búsetskilyrði', 'Einstaklingar', 'Hjón/Sambúð'].map(
                     (item, index) => (
@@ -186,7 +209,7 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
               </thead>
 
               <tbody>
-                {Object.values(AidType).map((value, index) => (
+                {Object.values(AidTypeHomeCircumstances).map((value, index) => (
                   <TableBody
                     items={aidTableBody(value)}
                     index={index}
@@ -201,7 +224,7 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
           </div>
         </Box>
 
-        <Box marginBottom={3}>
+        <Box marginBottom={3} className={`contentUp delay-125`}>
           <Text as="h3" variant="h3" color="dark300">
             Aðrar stillingar
           </Text>
@@ -258,6 +281,14 @@ const MunicipalityProfile = ({ municipality }: MunicipalityProfileProps) => {
           </Box>
         )}
       </Box>
+      <NewUserModal
+        isVisible={isModalVisible}
+        setIsVisible={(visible) => {
+          setIsModalVisible(visible)
+        }}
+        onStaffCreated={refreshList}
+        predefinedRoles={[StaffRole.ADMIN]}
+      />
     </Box>
   )
 }

@@ -15,6 +15,12 @@ export const employer = {
         'Samkvæmt 11. gr. laga um innheimtu opinberra skatta og gjalda, nr. 150/2019 ber launagreiðanda að draga af launum opinber gjöld utan staðgreiðslu, þ.e. þing- og sveitarsjóðsgjöld. Nánar má lesa um launaafdrátt á ',
       description: 'Employer page description',
     },
+    taxHomePageUrl: {
+      id: `pdpp.application:application.employer.general.taxHomePageUrl`,
+      defaultMessage:
+        'https://www.skatturinn.is/innheimta/vanskil/launaafdrattur/',
+      description: 'Disposable income tax home page url',
+    },
     disposableIncomePageTitle: {
       id: `pdpp.application:application.employer.general.disposableIncomePageTitle`,
       defaultMessage: 'Ráðstöfunartekjur',
@@ -77,7 +83,7 @@ export const employer = {
     minimumMonthlyPaymentDescription: {
       id: `pdpp.application:application.employer.labels.minimumMonthlyPaymentDescription`,
       defaultMessage: `
-      Í sjálfsafgreiðsluferlinu er miðað við lágmarksgreiðsla á skuld sé {percent} af ráðstöfunartekjum þínum. Ef þú telur þessa fjárhæð of háa miðað við framfærslukostnað þinn þá skaltu hafa samband við innheimtumann ríkissjóð. 
+      Í sjálfsafgreiðsluferlinu er miðað við að lágmarksgreiðsla á skuld sé {percent} af ráðstöfunartekjum þínum. Ef þú telur þessa fjárhæð of háa miðað við framfærslukostnað þinn þá skaltu hafa samband við innheimtumann ríkissjóðs. 
       `,
       description: 'Minimum monthly payment description',
     },

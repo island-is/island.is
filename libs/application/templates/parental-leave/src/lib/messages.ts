@@ -443,6 +443,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Staðfesting á að það sé yfir höfuð barn á leiðinni',
       description: 'Confirmation on date of birth',
     },
+    salaryInformationTitle: {
+      id: 'pl.application:permission.salaryInformation.title',
+      defaultMessage: 'Upplýsingar um laun',
+      description: 'Salary information',
+    },
+    salaryInformationSubTitle: {
+      id: 'pl.application:permission.salaryInformation.subtitle',
+      defaultMessage: 'Sóttar til Skattsins.',
+      description: 'Salary information will be fetched from the tax office.',
+    },
     salaryTitle: {
       id: 'pl.application:salary.title',
       defaultMessage: 'Áætlaður fæðingardagur barns',
