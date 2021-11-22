@@ -1,6 +1,6 @@
 import { defineMessages } from '@formatjs/intl'
 
-export const m = {
+export const notificationMessages = {
   readyForCourt: defineMessages({
     prosecutorHtml: {
       id:
