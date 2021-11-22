@@ -333,9 +333,5 @@ export const getConfig = () => {
     },
   })
 
-  if (process.env.NODE_ENV === 'production') {
-    return prodConfig()
-  } else {
-    return devConfig()
-  }
+  return process.env.NODE_ENV === 'production' ? prodConfig() : devConfig()
 }
