@@ -1,20 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import {
   ApplicationOverviewSkeleton,
   LoadingContainer,
-  TableHeaders,
-  SearchSkeleton,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { Text, Box, AsyncSearch, Input } from '@island.is/island-ui/core'
-
-import * as tableStyles from '../../sharedStyles/Table.css'
-import * as headerStyles from '../../sharedStyles/Header.css'
-import cn from 'classnames'
+import { Text, Box, Input } from '@island.is/island-ui/core'
 
 export const MySettings = () => {
-  const [searchNationalId, setSearchNationalId] = useState<string>('')
-
   return (
     <LoadingContainer
       isLoading={false}
