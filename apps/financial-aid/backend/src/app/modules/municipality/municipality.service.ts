@@ -80,7 +80,14 @@ export class MunicipalityService {
             AidType.COHABITATION,
           )
 
-          this.staffService.createAdmin(admin, municipality, t)
+          this.staffService.createStaff(
+            admin,
+            {
+              id: municipality.municipalityId,
+              name: municipality.name,
+            },
+            t,
+          )
 
           return this.municipalityModel.create(municipality, { transaction: t })
         })

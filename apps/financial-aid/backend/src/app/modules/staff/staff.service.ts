@@ -61,34 +61,25 @@ export class StaffService {
     return { numberOfAffectedRows, updatedStaff }
   }
 
-  async createStaff(user: Staff, input: CreateStaffDto): Promise<StaffModel> {
-    return await this.staffModel.create({
-      nationalId: input.nationalId,
-      name: input.name,
-      municipalityId: user.municipalityId,
-      email: input.email,
-      roles: input.roles,
-      active: true,
-      municipalityName: user.municipalityName,
-      municipalityHomepage: user.municipalityHomepage,
-    })
-  }
-
-  async createAdmin(
+  async createStaff(
     input: CreateStaffDto,
-    municipalityInput: CreateMunicipalityDto,
-    t: Transaction,
+    municipality: {
+      id: string
+      name: string
+      homepage?: string
+    },
+    t?: Transaction,
   ): Promise<StaffModel> {
     return await this.staffModel.create(
       {
         nationalId: input.nationalId,
         name: input.name,
-        municipalityId: municipalityInput.municipalityId,
+        municipalityId: municipality.id,
         email: input.email,
         roles: input.roles,
         active: true,
-        municipalityName: municipalityInput.name,
-        municipalityHomepage: '',
+        municipalityName: municipality.name,
+        municipalityHomepage: municipality.homepage,
       },
       { transaction: t },
     )
