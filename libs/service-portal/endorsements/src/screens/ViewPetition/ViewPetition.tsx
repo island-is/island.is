@@ -150,7 +150,7 @@ const ViewPetition = () => {
       {Object.entries(petition).length !== 0 ? (
         <>
           <Box marginBottom={5}>
-            <Text variant="h2" marginBottom={3}>
+            <Text variant="h2" marginBottom={1}>
               {petition?.title}
             </Text>
             <Text variant="default" marginBottom={3}>

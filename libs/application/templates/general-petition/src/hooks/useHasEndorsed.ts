@@ -19,6 +19,5 @@ export const useHasEndorsed = (endorsementListId: string) => {
     },
   )
 
-  console.log(endorsement)
   return endorsement?.endorsementSystemGetSingleEndorsement?.hasEndorsed
 }

@@ -3,15 +3,15 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Text, Box, Button, Input, toast } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { GeneralPetition } from '../../lib/dataSchema'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { useMutation, useQuery } from '@apollo/client'
 import EndorsementApproved from '../EndorsementApproved'
 import { useHasEndorsed } from '../../hooks/useHasEndorsed'
+import { useGetSinglePetitionList } from '../../hooks/useGetSinglePetitionList'
 import { GetFullName } from '../../graphql/queries'
 import { EndorseList } from '../../graphql/mutations'
-import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 import format from 'date-fns/format'
+import { EndorsementList } from '../../types/schema'
 
 const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -23,15 +23,13 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const [allowName, setAllowName] = useState(true)
   const [hasEndorsed, setHasEndorsed] = useState(false)
 
+  const { petitionData } = useGetSinglePetitionList(endorsementListId)
+  const petition = petitionData as EndorsementList
+
   const endorsedBefore = useHasEndorsed(endorsementListId)
-  const isClosed = useIsClosed(endorsementListId)
+  const isClosed = new Date() >= petition.closedDate
   const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
   const { data: userData } = useQuery(GetFullName)
-
-  const answers = application.answers as GeneralPetition
-  const listOwner = (application.externalData.nationalRegistry?.data as {
-    fullName?: string
-  })?.fullName
 
   const onEndorse = async () => {
     const success = await createEndorsement({
@@ -59,14 +57,18 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
       ) : (
         <Box>
           <Box marginBottom={2}>
-            <Text variant="h2">{answers.listName}</Text>
-            <Text>{answers.aboutList}</Text>
+            <Text variant="h2" marginBottom={1}>
+              {petition?.title}
+            </Text>
+            <Text variant="default" marginBottom={3}>
+              {petition?.description}
+            </Text>
           </Box>
           <Box marginBottom={3}>
             <Text variant="h4">{formatMessage(m.endorsementForm.openTil)}</Text>
-            {answers && answers.dateTil && (
+            {petition && petition.closedDate && (
               <Text variant="default">
-                {format(new Date(answers.dateTil), 'dd.MM.yyyy')}
+                {format(new Date(petition.closedDate), 'dd.MM.yyyy')}
               </Text>
             )}
           </Box>
@@ -74,7 +76,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
             <Text variant="h4">
               {formatMessage(m.endorsementForm.listOwner)}
             </Text>
-            <Text variant="default">{listOwner}</Text>
+            <Text variant="default">{petition.ownerName}</Text>
           </Box>
           <Box display="flex" marginBottom={10}>
             <Box width="half">
