@@ -59,7 +59,9 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
       ) : (
         <Box>
           <Box marginBottom={2}>
-            <Text variant="h2">{answers.listName}</Text>
+            <Text variant="h2">
+              {answers.listName}
+            </Text>
             <Text>{answers.aboutList}</Text>
           </Box>
           <Box marginBottom={3}>
