@@ -23,6 +23,7 @@ const useUpdateApplication = () => {
   const allFiles = form.incomeFiles
     .concat(form.taxReturnFiles)
     .concat(form.otherFiles)
+    .concat(form.spouseFiles)
 
   const [updateApplicationMutation] = useMutation<{ application: Application }>(
     ApplicationMutation,

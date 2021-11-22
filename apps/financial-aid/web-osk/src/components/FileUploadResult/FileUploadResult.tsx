@@ -29,9 +29,16 @@ const FileUploadResult = ({
 
   const { form, updateForm } = useContext(FormContext)
 
+  console.log('form', form)
+
   useEffect(() => {
     router.events.on('routeChangeComplete', () => {
-      updateForm({ ...form, otherFiles: [], fileUploadComment: undefined })
+      updateForm({
+        ...form,
+        otherFiles: [],
+        spouseFiles: [],
+        fileUploadComment: undefined,
+      })
     })
   }, [])
 
