@@ -1,7 +1,7 @@
 import { ServerSideFeatureClient } from '@island.is/feature-flags'
 
 export const getConfig = () => {
-  const prodConfig = {
+  const prodConfig = () => ({
     production: true,
     xroad: {
       baseUrl: process.env.XROAD_BASE_PATH,
@@ -157,8 +157,8 @@ export const getConfig = () => {
       passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
       basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
     },
-  }
-  const devConfig = {
+  })
+  const devConfig = () => ({
     production: false,
     xroad: {
       baseUrl: 'http://localhost:8081',
@@ -331,6 +331,11 @@ export const getConfig = () => {
       passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
       basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
     },
+  })
+
+  if (process.env.NODE_ENV === 'production') {
+    return prodConfig()
+  } else {
+    return devConfig()
   }
-  return process.env.NODE_ENV === 'production' ? prodConfig : devConfig
 }
