@@ -1,4 +1,4 @@
-import NextAuth, { CallbacksOptions, JWTEventCallbacks } from 'next-auth'
+import NextAuth, { CallbacksOptions } from 'next-auth'
 import Providers from 'next-auth/providers'
 import {
   identityServerConfig,
