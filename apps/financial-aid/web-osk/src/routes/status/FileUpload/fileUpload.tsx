@@ -30,8 +30,6 @@ const FileUpload = () => {
   const { form, updateForm } = useContext(FormContext)
   const { myApplication, user } = useContext(AppContext)
 
-  const isSpouse = user?.nationalId === myApplication?.spouseNationalId
-
   const fileComment = useMemo(() => {
     if (myApplication?.applicationEvents) {
       return getCommentFromLatestEvent(
@@ -42,9 +40,7 @@ const FileUpload = () => {
   }, [myApplication])
 
   const router = useRouter()
-  const { uploadStateFiles } = useFileUpload(
-    isSpouse ? form.spouseFiles : form.otherFiles,
-  )
+  const { uploadStateFiles } = useFileUpload(form.otherFiles)
 
   const [error, setError] = useState(false)
 
@@ -60,7 +56,7 @@ const FileUpload = () => {
     if (error) {
       setError(false)
     }
-  }, [form?.otherFiles, form?.spouseFiles])
+  }, [form?.otherFiles])
 
   const sendFiles = async () => {
     setIsLoading(true)
@@ -137,22 +133,12 @@ const FileUpload = () => {
             />
           </Box>
         )}
-
-        {isSpouse ? (
-          <Files
-            header="Senda inn gögn"
-            fileKey="spouseFiles"
-            uploadFiles={form.spouseFiles}
-            hasError={error && form?.spouseFiles.length <= 0}
-          />
-        ) : (
-          <Files
-            header="Senda inn gögn"
-            fileKey="otherFiles"
-            uploadFiles={form.otherFiles}
-            hasError={error && form?.otherFiles.length <= 0}
-          />
-        )}
+        <Files
+          header="Senda inn gögn"
+          fileKey="otherFiles"
+          uploadFiles={form.otherFiles}
+          hasError={error && form?.otherFiles.length <= 0}
+        />
 
         <Text as="h2" variant="h3" marginBottom={[2, 2, 3]}>
           Viltu láta fylgja með athugasemd?
@@ -182,11 +168,7 @@ const FileUpload = () => {
         nextButtonText={'Senda gögn'}
         nextIsLoading={isLoading}
         onNextButtonClick={() => {
-          if (
-            isSpouse
-              ? form?.spouseFiles.length <= 0
-              : form?.otherFiles.length <= 0
-          ) {
+          if (form?.otherFiles.length <= 0) {
             return setError(true)
           }
           Promise.all([sendFiles(), sendUserComment()])

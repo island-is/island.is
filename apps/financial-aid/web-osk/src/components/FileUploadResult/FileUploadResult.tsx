@@ -31,7 +31,6 @@ const FileUploadResult = ({
       updateForm({
         ...form,
         otherFiles: [],
-        spouseFiles: [],
         fileUploadComment: undefined,
       })
   }, [])
@@ -46,10 +45,7 @@ const FileUploadResult = ({
           {subtitle}
         </Text>
         <Box marginTop={3}>
-          <FileList
-            files={form.otherFiles.concat(form.spouseFiles)}
-            className={`contentUp delay-125`}
-          />
+          <FileList files={form.otherFiles} className={`contentUp delay-125`} />
         </Box>
 
         <FileUploadComment comment={form.fileUploadComment} />

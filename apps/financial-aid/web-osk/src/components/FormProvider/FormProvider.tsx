@@ -23,7 +23,6 @@ export interface Form {
   incomeFiles: UploadFile[]
   taxReturnFiles: UploadFile[]
   otherFiles: UploadFile[]
-  spouseFiles: UploadFile[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string
   ledger?: string
@@ -44,7 +43,6 @@ export const initialState = {
   incomeFiles: [],
   taxReturnFiles: [],
   otherFiles: [],
-  spouseFiles: [],
 }
 
 interface FormProvider {
@@ -84,7 +82,6 @@ const FormProvider = ({ children }: Props) => {
       incomeFiles: [],
       taxReturnFiles: [],
       otherFiles: [],
-      spouseFiles: [],
     })
   }
 
