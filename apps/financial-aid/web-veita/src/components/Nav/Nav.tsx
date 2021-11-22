@@ -26,6 +26,7 @@ import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/sr
 import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
 
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import { StaffRole } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   showInMobile: boolean
@@ -40,10 +41,13 @@ const Nav = ({ showInMobile }: Props) => {
 
   const { admin } = useContext(AdminContext)
 
+  const isSuperAdmin = admin?.staff?.roles.includes(StaffRole.SUPERADMIN)
+
   return (
     <nav
       className={cn({
         [`${styles.container}`]: true,
+        [`${styles.adminStyles}`]: isSuperAdmin,
         [`${styles.showNavInMobile}`]: showInMobile,
       })}
     >
@@ -57,9 +61,15 @@ const Nav = ({ showInMobile }: Props) => {
           </Box>
 
           <Box paddingLeft={2} className={'headLine'}>
-            <Text as="h1" lineHeight="sm">
-              <strong>Veita</strong> • Umsóknir um fjárhagsaðstoð
-            </Text>
+            {isSuperAdmin ? (
+              <Text as="h1" lineHeight="sm">
+                <strong>Veita</strong> • Umsjón með sveitarfélögum
+              </Text>
+            ) : (
+              <Text as="h1" lineHeight="sm">
+                <strong>Veita</strong> • Umsóknir um fjárhagsaðstoð
+              </Text>
+            )}
           </Box>
         </div>
       </header>
@@ -94,7 +104,7 @@ const Nav = ({ showInMobile }: Props) => {
           </button>
         </Box>
         <Divider weight="purple200" />
-        {admin && (
+        {isSuperAdmin && (
           <>
             <Box display="flex" alignItems="center" paddingTop={3}>
               <Icon
