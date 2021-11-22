@@ -10,7 +10,7 @@ export const error = (res: express.Response, error: string, status = 400) => {
 }
 
 // In case we want to invalidate all caches in code
-const salt = '3'
+const salt = '4'
 export const getCacheId = (key: string, version: string) =>
   `${key}:${version}:${salt}`
 
