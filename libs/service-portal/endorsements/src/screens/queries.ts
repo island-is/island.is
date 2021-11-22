@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import {
   EndorsementList,
-  Endorsement,
+  ExistsEndorsementResponse,
   PaginatedEndorsementResponse,
   PaginatedEndorsementListResponse,
 } from '../types/schema'
@@ -24,7 +24,7 @@ interface SinglePetitionEndorsements {
   endorsementSystemGetEndorsements?: PaginatedEndorsementResponse
 }
 interface SingleEndorsement {
-  endorsementSystemGetSingleEndorsement?: any
+  endorsementSystemGetSingleEndorsement?: ExistsEndorsementResponse
 }
 
 const GetSingleEndorsement = gql`
@@ -228,7 +228,7 @@ export const useGetAllPetitionLists = () => {
       variables: {
         input: {
           tags: 'generalPetition',
-          limit: 20,
+          limit: 1000,
         },
       },
       pollInterval: 20000,
@@ -244,7 +244,7 @@ export const useGetListsUserSigned = () => {
     {
       variables: {
         input: {
-          limit: 20,
+          limit: 1000,
         },
       },
       pollInterval: 20000,
@@ -260,7 +260,7 @@ export const useListsUserOwns = () => {
       variables: {
         input: {
           tags: 'generalPetition',
-          limit: 20,
+          limit: 1000,
         },
       },
       pollInterval: 20000,
@@ -308,7 +308,7 @@ export const useGetSinglePetitionEndorsements = (listId: string) => {
     variables: {
       input: {
         listId: listId,
-        limit: 20,
+        limit: 1000,
       },
     },
     pollInterval: 20000,
