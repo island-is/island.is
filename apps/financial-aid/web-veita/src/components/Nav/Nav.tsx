@@ -136,7 +136,7 @@ const Nav = ({ showInMobile }: Props) => {
           </button>
         </Box>
         <Divider weight="purple200" />
-        {isSuperAdmin && (
+        {admin && (
           <>
             <Box display="flex" alignItems="center" paddingTop={3}>
               <Icon

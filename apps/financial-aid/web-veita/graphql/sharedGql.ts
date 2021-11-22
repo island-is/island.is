@@ -188,6 +188,7 @@ export const CurrentUserQuery = gql`
         phoneNumber
         roles
         active
+        nickname
         municipalityHomepage
       }
     }
