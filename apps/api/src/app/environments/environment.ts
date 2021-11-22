@@ -1,5 +1,5 @@
 import { ServerSideFeatureClient } from '@island.is/feature-flags'
-const devConfig = {
+const devConfig = () => ({
   production: false,
   xroad: {
     baseUrl: 'http://localhost:8081',
@@ -170,9 +170,9 @@ const devConfig = {
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
-}
+})
 
-const prodConfig = {
+const prodConfig = () => ({
   production: true,
   xroad: {
     baseUrl: process.env.XROAD_BASE_PATH,
@@ -328,6 +328,8 @@ const prodConfig = {
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
-}
+})
 
-export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
+export default process.env.NODE_ENV === 'production'
+  ? prodConfig()
+  : devConfig()
