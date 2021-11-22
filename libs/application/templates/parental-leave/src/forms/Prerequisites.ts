@@ -248,9 +248,10 @@ export const PrerequisitesForm: Form = buildForm({
                 buildDataProviderItem({
                   id: 'person',
                   type: 'PersonInformationProvider',
-                  title: 'Upplýsingar um fjölskyldu',
+                  title:
+                    parentalLeaveFormMessages.shared.familyInformationTitle,
                   subTitle:
-                    'Sækir upplýsingar um þig, maka og börn frá Þjóðskrá',
+                    parentalLeaveFormMessages.shared.familyInformationSubTitle,
                 }),
                 buildDataProviderItem({
                   id: 'children',
