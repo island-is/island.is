@@ -168,7 +168,7 @@ const FileUpload = () => {
         nextButtonText={'Senda gögn'}
         nextIsLoading={isLoading}
         onNextButtonClick={() => {
-          if (form?.otherFiles.length <= 0) {
+          if (form?.otherFiles.length <= 0 || router.query.id === undefined) {
             return setError(true)
           }
           Promise.all([sendFiles(), sendUserComment()])
