@@ -182,6 +182,7 @@ module.exports = {
     '<rootDir>/libs/shared/constants',
     '<rootDir>/libs/shared/form-fields',
     '<rootDir>/libs/shared/mocking',
+    '<rootDir>/libs/shared/pii',
     '<rootDir>/libs/shared/problem',
     '<rootDir>/libs/shared/table',
     '<rootDir>/libs/shared/translations',
