@@ -1,6 +1,5 @@
 import set from 'lodash/set'
 import addDays from 'date-fns/addDays'
-import type { FamilyMember } from '@island.is/api/domains/national-registry'
 import {
   Application,
   ApplicationStatus,
@@ -22,6 +21,7 @@ import {
   calculatePeriodLengthInMonths,
   applicantIsMale,
 } from './parentalLeaveUtils'
+import { PersonInformation } from '../types'
 
 function buildApplication(data?: {
   answers?: FormValue
@@ -279,17 +279,15 @@ describe('getOtherParentId', () => {
   })
 
   it('should return spouse if spouse is selected', () => {
-    const expectedSpouse: Pick<
-      FamilyMember,
-      'fullName' | 'familyRelation' | 'nationalId'
-    > = {
-      familyRelation: 'spouse' as FamilyMember['familyRelation'],
-      fullName: 'Spouse Spouseson',
+    const expectedSpouse: PersonInformation['spouse'] = {
+      name: 'Spouse Spouseson',
       nationalId: '1234567890',
     }
 
-    application.externalData.family = {
-      data: [expectedSpouse],
+    application.externalData.person = {
+      data: {
+        spouse: expectedSpouse,
+      },
       date: new Date(),
       status: 'success',
     }

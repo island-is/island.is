@@ -6,10 +6,7 @@ import {
 
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-/** This data provider fetches email and phone number information
- * from user profile service and resolves even though the user has
- * not set it up in my pages, it also fethes fullName and genderCode
- * from the national registry **/
+/** This data provider fetches email and phone number information from user profile service and resolves even though the user has not set it up in my pages **/
 export class UserProfileProvider extends BasicDataProvider {
   readonly type = 'UserProfile'
 
@@ -21,28 +18,30 @@ export class UserProfileProvider extends BasicDataProvider {
         mobilePhoneNumber
         mobilePhoneNumberVerified
       }
-
-      nationalRegistryUserV2 {
-        fullName,
-        genderCode
-      }
     }`
     return this.useGraphqlGateway(query)
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
+          console.error(
+            `graphql error in ${this.type}: ${response.errors[0].message}`,
+          )
           return this.handleError()
         }
 
-        const responseObj = {
-          ...response.data.getUserProfile,
-          ...response.data.nationalRegistryUserV2,
+        const responseObj = response.data.getUserProfile
+        if (
+          !responseObj?.mobilePhoneNumber ||
+          !responseObj?.mobilePhoneNumberVerified ||
+          !responseObj?.email ||
+          !responseObj?.emailVerified
+        ) {
+          return this.handleError()
         }
 
         return Promise.resolve(responseObj)
       })
-      .catch((e) => {
-        console.log('Error in user profile provider', e)
+      .catch(() => {
         return this.handleError()
       })
   }
@@ -51,12 +50,10 @@ export class UserProfileProvider extends BasicDataProvider {
       return Promise.resolve({
         email: 'mockEmail@island.is',
         mobilePhoneNumber: '9999999',
-        fullName: 'Tester Testerson',
-        genderCode: '1',
       })
     }
 
-    return Promise.reject({})
+    return Promise.resolve({})
   }
   onProvideError(result: string): FailedDataProviderResult {
     return {

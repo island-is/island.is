@@ -264,13 +264,13 @@ describe('getRightsCode', () => {
         primaryParentNationalRegistryId,
       ),
     ])
-    set(base, 'externalData.family.data', [
-      {
+    set(base, 'externalData.person.data', {
+      spouse: {
         fullName: 'Spouse Spousson',
         nationalId: primaryParentNationalRegistryId,
         familyRelation: 'spouse',
       },
-    ])
+    })
     set(base, 'answers.selectedChild', '0')
     set(base, 'answers.employer.isSelfEmployed', 'no')
 
@@ -286,13 +286,13 @@ describe('getRightsCode', () => {
     set(base, 'externalData.children.data.children', [
       createExternalDataChild(false, '2022-03-01'),
     ])
-    set(base, 'externalData.family.data', [
-      {
+    set(base, 'externalData.person.data', {
+      spouse: {
         fullName: 'Spouse Spousson',
         nationalId: primaryParentNationalRegistryId,
         familyRelation: 'spouse',
       },
-    ])
+    })
     set(base, 'answers.selectedChild', '0')
     set(base, 'answers.employer.isSelfEmployed', 'yes')
 
@@ -345,14 +345,12 @@ describe('getRightsCode', () => {
         primaryParentNationalRegistryId,
       ),
     ])
-    set(base, 'externalData.family.data', [
-      {
+    set(base, 'externalData.person.data', {
+      spouse: {
         fullName: 'Spouse Spousson',
         nationalId: primaryParentNationalRegistryId,
         familyRelation: 'spouse',
       },
-    ])
-    set(base, 'externalData.userProfile.data', {
       genderCode: '0',
     })
     set(base, 'answers.selectedChild', '0')
@@ -375,14 +373,12 @@ describe('getRightsCode', () => {
         primaryParentNationalRegistryId,
       ),
     ])
-    set(base, 'externalData.family.data', [
-      {
+    set(base, 'externalData.person.data', {
+      spouse: {
         fullName: 'Spouse Spousson',
         nationalId: primaryParentNationalRegistryId,
         familyRelation: 'spouse',
       },
-    ])
-    set(base, 'externalData.userProfile.data', {
       genderCode: '1',
     })
     set(base, 'answers.selectedChild', '0')

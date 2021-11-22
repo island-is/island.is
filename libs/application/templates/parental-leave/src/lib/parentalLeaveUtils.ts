@@ -15,7 +15,6 @@ import {
   getValueViaPath,
   Option,
 } from '@island.is/application/core'
-import { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
@@ -38,8 +37,7 @@ import {
   ChildInformation,
   ChildrenAndExistingApplications,
 } from '../dataProviders/Children/types'
-import { YesOrNo, Period } from '../types'
-import { maxDaysToGiveOrReceive } from '../config'
+import { YesOrNo, Period, PersonInformation } from '../types'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -54,20 +52,6 @@ export function getExpectedDateOfBirth(
   }
 
   return selectedChild.expectedDateOfBirth
-}
-
-export function getNameAndIdOfSpouse(
-  familyMembers?: FamilyMember[],
-): [string?, string?] {
-  const spouse = familyMembers?.find(
-    (member) => member.familyRelation === SPOUSE,
-  )
-
-  if (!spouse) {
-    return [undefined, undefined]
-  }
-
-  return [spouse.fullName, spouse.nationalId]
 }
 
 // TODO: Once we have the data, add the otherParentPeriods here.
@@ -215,20 +199,20 @@ export const getAvailablePersonalRightsInMonths = (application: Application) =>
 export const getAvailableRightsInMonths = (application: Application) =>
   daysToMonths(getAvailableRightsInDays(application))
 
-export const getSpouse = (application: Application): FamilyMember | null => {
-  const family = getValueViaPath(
+export const getSpouse = (
+  application: Application,
+): PersonInformation['spouse'] | null => {
+  const person = getValueViaPath(
     application.externalData,
-    'family.data',
-    [],
-  ) as FamilyMember[]
+    'person.data',
+    null,
+  ) as PersonInformation
 
-  if (!family) {
+  if (!person || !person.spouse || !person.spouse.nationalId) {
     return null
   }
 
-  const spouse = family.find((member) => member.familyRelation === SPOUSE)
-
-  return spouse ?? null
+  return person.spouse
 }
 
 export const getOtherParentOptions = (application: Application) => {
@@ -251,7 +235,7 @@ export const getOtherParentOptions = (application: Application) => {
       label: {
         ...parentalLeaveFormMessages.shared.otherParentSpouse,
         values: {
-          spouseName: spouse.fullName,
+          spouseName: spouse.name,
           spouseId: spouse.nationalId,
         },
       },
@@ -346,10 +330,6 @@ export function getApplicationExternalData(
     [],
   ) as ChildrenAndExistingApplications['existingApplications']
 
-  const familyMembers = getValueViaPath(externalData, 'family.data', null) as
-    | FamilyMember[]
-    | null
-
   const userEmail = getValueViaPath(
     externalData,
     'userProfile.data.email',
@@ -362,12 +342,12 @@ export function getApplicationExternalData(
 
   const applicantGenderCode = getValueViaPath(
     externalData,
-    'userProfile.data.genderCode',
+    'person.data.genderCode',
   )
 
   const applicantName = getValueViaPath(
     externalData,
-    'userProfile.data.fullName',
+    'person.data.fullName',
     '',
   ) as string
 
@@ -377,7 +357,6 @@ export function getApplicationExternalData(
     dataProvider,
     children,
     existingApplications,
-    familyMembers,
     userEmail,
     userPhoneNumber,
   }
@@ -609,33 +588,44 @@ export const allowOtherParent = (answers: Application['answers']) => {
   )
 }
 
-export const getOtherParentId = (application: Application): string | null => {
-  const { familyMembers } = getApplicationExternalData(application.externalData)
+export const getOtherParentId = (
+  application: Application,
+): string | undefined => {
   const { otherParent, otherParentId } = getApplicationAnswers(
     application.answers,
   )
 
   if (otherParent === SPOUSE) {
-    if (familyMembers === null) {
-      throw new Error(
-        'transformApplicationToParentalLeaveDTO: Cannot find spouse. Missing data for family members.',
-      )
-    }
+    const spouse = getSpouse(application)
 
-    const spouse = familyMembers.find(
-      (member) => member.familyRelation === SPOUSE,
-    )
-
-    if (!spouse) {
-      throw new Error(
-        'transformApplicationToParentalLeaveDTO: Cannot find spouse. No family member with this relation.',
-      )
+    if (!spouse || !spouse.nationalId) {
+      throw new Error('Cannot find spouse national id.')
     }
 
     return spouse.nationalId
   }
 
   return otherParentId
+}
+
+export const getOtherParentName = (
+  application: Application,
+): string | undefined => {
+  const { otherParent, otherParentName } = getApplicationAnswers(
+    application.answers,
+  )
+
+  if (otherParent === SPOUSE) {
+    const spouse = getSpouse(application)
+
+    if (!spouse || !spouse.name) {
+      throw new Error('Cannot find spouse name.')
+    }
+
+    return spouse.name
+  }
+
+  return otherParentName
 }
 
 export const applicantIsMale = (application: Application): boolean => {
