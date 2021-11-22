@@ -35,16 +35,14 @@ const HearingArrangements = () => {
   }, [])
 
   useEffect(() => {
-    if (workingCase.id !== '') {
-      const theCase = workingCase
+    const theCase = workingCase
 
-      if (theCase.requestedCourtDate) {
-        autofill('courtDate', theCase.requestedCourtDate, theCase)
-      }
-
-      setWorkingCase(theCase)
+    if (theCase.requestedCourtDate) {
+      autofill('courtDate', theCase.requestedCourtDate, theCase)
     }
-  }, [workingCase, setWorkingCase, autofill])
+
+    setWorkingCase(theCase)
+  }, [])
 
   return (
     <PageLayout

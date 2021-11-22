@@ -114,16 +114,14 @@ export const HearingArrangements: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (workingCase.id !== '') {
-      const theCase = workingCase
+    const theCase = workingCase
 
-      if (theCase.requestedCourtDate) {
-        autofill('courtDate', theCase.requestedCourtDate, theCase)
-      }
-
-      setWorkingCase(theCase)
+    if (theCase.requestedCourtDate) {
+      autofill('courtDate', theCase.requestedCourtDate, theCase)
     }
-  }, [setWorkingCase, workingCase, autofill])
+
+    setWorkingCase(theCase)
+  }, [])
 
   const setJudge = (id: string) => {
     if (workingCase) {

@@ -467,6 +467,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             <GridRow>
               <GridColumn>
                 <TimeInputField
+                  value={formatDate(workingCase.courtEndTime, TIME_FORMAT)}
                   onChange={(evt) =>
                     validateAndSetTime(
                       'courtEndTime',
@@ -497,7 +498,6 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                     label="Þinghaldi lauk (kk:mm)"
                     placeholder="Veldu tíma"
                     autoComplete="off"
-                    value={formatDate(workingCase.courtEndTime, TIME_FORMAT)}
                     errorMessage={courtDocumentEndEM}
                     hasError={courtDocumentEndEM !== ''}
                     required

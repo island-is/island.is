@@ -252,9 +252,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={Constants.REQUEST_LIST_ROUTE}
-          onNextButtonClick={async () =>
-            await handleNextButtonClick(workingCase)
-          }
+          onNextButtonClick={() => handleNextButtonClick(workingCase)}
           nextIsLoading={loading}
           nextIsDisabled={!isAccusedStepValidRC(workingCase)}
           nextButtonText={

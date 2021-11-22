@@ -11,17 +11,16 @@ import {
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import type { Case } from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import { StepOneForm } from './StepOneForm'
 
 export const StepOne: React.FC = () => {
   const router = useRouter()
+
   const { createCase, isCreatingCase } = useCase()
-
   const { loading: institutionLoading } = useInstitution()
-
   const {
     workingCase,
     setWorkingCase,

@@ -91,76 +91,74 @@ export const CourtRecord: React.FC = () => {
       return attendees
     }
 
-    if (workingCase.id !== '') {
-      const theCase = workingCase
+    const theCase = workingCase
 
-      // TODO: Is it possible to use new Date().toISOString() here?
-      autofill('courtStartDate', formatISO(new Date()), theCase)
+    // TODO: Is it possible to use new Date().toISOString() here?
+    autofill('courtStartDate', formatISO(new Date()), theCase)
 
-      if (theCase.court) {
-        autofill(
-          'courtLocation',
-          `í ${
-            theCase.court.name.indexOf('dómur') > -1
-              ? theCase.court.name.replace('dómur', 'dómi')
-              : theCase.court.name
-          }`,
-          theCase,
-        )
-      }
-
-      if (theCase.courtAttendees !== '') {
-        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
-      }
-
-      if (theCase.type === CaseType.CUSTODY) {
-        autofill(
-          'litigationPresentations',
-          `Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi ${formatAccusedByGender(
-            theCase.accusedGender,
-            NounCases.GENITIVE,
-          )} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að ${formatAccusedByGender(
-            theCase.accusedGender,
-            NounCases.DATIVE,
-          )} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að ${formatAccusedByGender(
-            theCase.accusedGender,
-            NounCases.DATIVE,
-          )} verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.`,
-          theCase,
-        )
-      }
-
-      let autofillAccusedBookings = ''
-
-      if (theCase.defenderName) {
-        autofillAccusedBookings += `${formatMessage(
-          m.sections.accusedBookings.autofillDefender,
-          {
-            defender: theCase.defenderName,
-          },
-        )}\n\n`
-      }
-
-      if (theCase.translator) {
-        autofillAccusedBookings += `${formatMessage(
-          m.sections.accusedBookings.autofillTranslator,
-          {
-            translator: theCase.translator,
-          },
-        )}\n\n`
-      }
-
-      autofillAccusedBookings += `${formatMessage(
-        m.sections.accusedBookings.autofillRightToRemainSilent,
-      )}\n\n${formatMessage(
-        m.sections.accusedBookings.autofillCourtDocumentOne,
-      )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
-
-      autofill('accusedBookings', autofillAccusedBookings, theCase)
-
-      setWorkingCase(theCase)
+    if (theCase.court) {
+      autofill(
+        'courtLocation',
+        `í ${
+          theCase.court.name.indexOf('dómur') > -1
+            ? theCase.court.name.replace('dómur', 'dómi')
+            : theCase.court.name
+        }`,
+        theCase,
+      )
     }
-  }, [workingCase, updateCase, setWorkingCase, autofill, formatMessage])
+
+    if (theCase.courtAttendees !== '') {
+      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+    }
+
+    if (theCase.type === CaseType.CUSTODY) {
+      autofill(
+        'litigationPresentations',
+        `Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi ${formatAccusedByGender(
+          theCase.accusedGender,
+          NounCases.GENITIVE,
+        )} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að ${formatAccusedByGender(
+          theCase.accusedGender,
+          NounCases.DATIVE,
+        )} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að ${formatAccusedByGender(
+          theCase.accusedGender,
+          NounCases.DATIVE,
+        )} verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.`,
+        theCase,
+      )
+    }
+
+    let autofillAccusedBookings = ''
+
+    if (theCase.defenderName) {
+      autofillAccusedBookings += `${formatMessage(
+        m.sections.accusedBookings.autofillDefender,
+        {
+          defender: theCase.defenderName,
+        },
+      )}\n\n`
+    }
+
+    if (theCase.translator) {
+      autofillAccusedBookings += `${formatMessage(
+        m.sections.accusedBookings.autofillTranslator,
+        {
+          translator: theCase.translator,
+        },
+      )}\n\n`
+    }
+
+    autofillAccusedBookings += `${formatMessage(
+      m.sections.accusedBookings.autofillRightToRemainSilent,
+    )}\n\n${formatMessage(
+      m.sections.accusedBookings.autofillCourtDocumentOne,
+    )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
+
+    autofill('accusedBookings', autofillAccusedBookings, theCase)
+
+    setWorkingCase(theCase)
+  }, [])
 
   return (
     <PageLayout

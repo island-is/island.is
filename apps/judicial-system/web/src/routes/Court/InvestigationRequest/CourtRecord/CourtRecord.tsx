@@ -69,87 +69,85 @@ const CourtRecord = () => {
       return attendees
     }
 
-    if (workingCase.id !== '') {
-      const theCase = workingCase
+    const theCase = workingCase
 
-      autofill('courtStartDate', formatISO(new Date()), theCase)
+    autofill('courtStartDate', formatISO(new Date()), theCase)
 
-      if (theCase.court) {
-        autofill(
-          'courtLocation',
-          `í ${
-            theCase.court.name.indexOf('dómur') > -1
-              ? theCase.court.name.replace('dómur', 'dómi')
-              : theCase.court.name
-          }`,
-          theCase,
-        )
-      }
-
-      if (theCase.courtAttendees !== '') {
-        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
-      }
-
-      if (theCase.demands) {
-        autofill('prosecutorDemands', theCase.demands, theCase)
-      }
-
-      if (theCase.sessionArrangements === SessionArrangements.REMOTE_SESSION) {
-        autofill(
-          'litigationPresentations',
-          formatMessage(m.sections.litigationPresentations.autofill),
-          theCase,
-        )
-      }
-
-      if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-        let autofillAccusedBookings = ''
-
-        if (theCase.defenderName) {
-          autofillAccusedBookings += `${formatMessage(
-            m.sections.accusedBookings.autofillDefender,
-            {
-              defender: theCase.defenderName,
-            },
-          )}\n\n`
-        }
-
-        if (theCase.translator) {
-          autofillAccusedBookings += `${formatMessage(
-            m.sections.accusedBookings.autofillTranslator,
-            {
-              translator: theCase.translator,
-            },
-          )}\n\n`
-        }
-
-        autofillAccusedBookings += `${formatMessage(
-          m.sections.accusedBookings.autofillRightToRemainSilent,
-        )}\n\n${formatMessage(
-          m.sections.accusedBookings.autofillCourtDocumentOne,
-        )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
-
-        autofill('accusedBookings', autofillAccusedBookings, theCase)
-      }
-
-      if (
-        theCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
-        theCase.defenderIsSpokesperson &&
-        theCase.defenderName
-      ) {
-        autofill(
-          'accusedBookings',
-          formatMessage(m.sections.accusedBookings.autofillSpokeperson, {
-            spokesperson: theCase.defenderName,
-          }),
-          theCase,
-        )
-      }
-
-      setWorkingCase(theCase)
+    if (theCase.court) {
+      autofill(
+        'courtLocation',
+        `í ${
+          theCase.court.name.indexOf('dómur') > -1
+            ? theCase.court.name.replace('dómur', 'dómi')
+            : theCase.court.name
+        }`,
+        theCase,
+      )
     }
-  }, [workingCase, setWorkingCase, autofill, formatMessage])
+
+    if (theCase.courtAttendees !== '') {
+      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+    }
+
+    if (theCase.demands) {
+      autofill('prosecutorDemands', theCase.demands, theCase)
+    }
+
+    if (theCase.sessionArrangements === SessionArrangements.REMOTE_SESSION) {
+      autofill(
+        'litigationPresentations',
+        formatMessage(m.sections.litigationPresentations.autofill),
+        theCase,
+      )
+    }
+
+    if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+      let autofillAccusedBookings = ''
+
+      if (theCase.defenderName) {
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillDefender,
+          {
+            defender: theCase.defenderName,
+          },
+        )}\n\n`
+      }
+
+      if (theCase.translator) {
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillTranslator,
+          {
+            translator: theCase.translator,
+          },
+        )}\n\n`
+      }
+
+      autofillAccusedBookings += `${formatMessage(
+        m.sections.accusedBookings.autofillRightToRemainSilent,
+      )}\n\n${formatMessage(
+        m.sections.accusedBookings.autofillCourtDocumentOne,
+      )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
+
+      autofill('accusedBookings', autofillAccusedBookings, theCase)
+    }
+
+    if (
+      theCase.sessionArrangements ===
+        SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+      theCase.defenderIsSpokesperson &&
+      theCase.defenderName
+    ) {
+      autofill(
+        'accusedBookings',
+        formatMessage(m.sections.accusedBookings.autofillSpokeperson, {
+          spokesperson: theCase.defenderName,
+        }),
+        theCase,
+      )
+    }
+
+    setWorkingCase(theCase)
+  }, [])
 
   return (
     <PageLayout

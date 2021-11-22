@@ -26,18 +26,16 @@ const RulingStepOne = () => {
   useEffect(() => {
     const theCase = workingCase
 
-    if (theCase.id !== '') {
-      if (theCase.caseFacts) {
-        autofill('courtCaseFacts', theCase.caseFacts, theCase)
-      }
-
-      if (theCase.legalArguments) {
-        autofill('courtLegalArguments', theCase.legalArguments, theCase)
-      }
-
-      setWorkingCase(theCase)
+    if (theCase.caseFacts) {
+      autofill('courtCaseFacts', theCase.caseFacts, theCase)
     }
-  }, [workingCase, setWorkingCase, autofill])
+
+    if (theCase.legalArguments) {
+      autofill('courtLegalArguments', theCase.legalArguments, theCase)
+    }
+
+    setWorkingCase(theCase)
+  }, [])
 
   return (
     <PageLayout

@@ -57,42 +57,37 @@ export const StepFour: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (!caseNotFound && workingCase.id !== '') {
-      const theCase: Case = workingCase
+    const theCase: Case = workingCase
 
-      autofill(
-        'demands',
-        `${formatMessage(rcReportForm.sections.demands.autofill, {
-          accusedName: theCase.accusedName,
-          accusedNationalId: formatNationalId(theCase.accusedNationalId),
-          extensionSuffix:
-            theCase.parentCase &&
-            isAcceptingCaseDecision(theCase.parentCase.decision)
-              ? ' áframhaldandi'
-              : '',
-          caseType:
-            theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
-          court: theCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
-          requestedValidToDate: formatDate(
-            theCase.requestedValidToDate,
-            'PPPPp',
+    autofill(
+      'demands',
+      `${formatMessage(rcReportForm.sections.demands.autofill, {
+        accusedName: theCase.accusedName,
+        accusedNationalId: formatNationalId(theCase.accusedNationalId),
+        extensionSuffix:
+          theCase.parentCase &&
+          isAcceptingCaseDecision(theCase.parentCase.decision)
+            ? ' áframhaldandi'
+            : '',
+        caseType:
+          theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
+        court: theCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
+        requestedValidToDate: formatDate(theCase.requestedValidToDate, 'PPPPp')
+          ?.replace('dagur,', 'dagsins')
+          ?.replace(' kl.', ', kl.'),
+        isolationSuffix:
+          theCase.type === CaseType.CUSTODY &&
+          theCase.requestedCustodyRestrictions?.includes(
+            CaseCustodyRestrictions.ISOLATION,
           )
-            ?.replace('dagur,', 'dagsins')
-            ?.replace(' kl.', ', kl.'),
-          isolationSuffix:
-            theCase.type === CaseType.CUSTODY &&
-            theCase.requestedCustodyRestrictions?.includes(
-              CaseCustodyRestrictions.ISOLATION,
-            )
-              ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
-              : '',
-        })}`,
-        theCase,
-      )
+            ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
+            : '',
+      })}`,
+      theCase,
+    )
 
-      setWorkingCase(theCase)
-    }
-  }, [id, workingCase, setWorkingCase, autofill, formatMessage])
+    setWorkingCase(theCase)
+  }, [])
 
   return (
     <PageLayout

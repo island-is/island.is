@@ -33,7 +33,8 @@ interface Props {
   courts: Institution[]
   isLoading: boolean
   onNextButtonClick: () => Promise<void>
-  onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
+  onProsecutorChange: (selectedOption: ReactSelectOption) => boolean
+  onCourtChange: (selectedOption: ReactSelectOption) => boolean
   updateCase: (id: string, updateCase: UpdateCase) => Promise<Case | undefined>
 }
 
@@ -47,6 +48,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     isLoading,
     onNextButtonClick,
     onProsecutorChange,
+    onCourtChange,
     updateCase,
   } = props
 
@@ -60,6 +62,10 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
   }
+  const courtsAsOptions = courts.map((court) => ({
+    label: court.name,
+    value: court.id,
+  }))
   const [, setRequestedCourtDateIsValid] = useState<boolean>(
     workingCase.requestedCourtDate !== null,
   )
@@ -118,9 +124,8 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
           <Box component="section" marginBottom={5}>
             <SelectCourt
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              setSelectedCourt={setSelectedCourt}
-              courts={courts}
+              courts={courtsAsOptions}
+              onChange={onCourtChange}
             />
           </Box>
         )}

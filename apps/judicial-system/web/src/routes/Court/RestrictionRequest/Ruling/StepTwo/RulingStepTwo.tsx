@@ -17,7 +17,7 @@ import {
   BlueBox,
   CaseNumbers,
   FormContentContainer,
-  TimeInputField,
+  DateTime,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
@@ -35,8 +35,7 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
-  validateAndSetTime,
-  validateAndSendTimeToServer,
+  newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
@@ -49,26 +48,16 @@ import {
   formatDate,
   formatNationalId,
   NounCases,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingStepTwoValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { rcRulingStepTwo as m } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 export const RulingStepTwo: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
-  const [
-    courtDocumentEndErrorMessage,
-    setCourtDocumentEndErrorMessage,
-  ] = useState<string>('')
-
-  const { updateCase, autofill } = useCase()
-  const { formatMessage } = useIntl()
-
   const {
     workingCase,
     setWorkingCase,
@@ -76,116 +65,111 @@ export const RulingStepTwo: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
 
+  const [, setIsCourtEndTimeValid] = useState<boolean>(true)
+
+  const { updateCase, autofill } = useCase()
+  const { formatMessage } = useIntl()
+
   useEffect(() => {
     document.title = 'Úrskurðarorð - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    if (id && workingCase.id !== '') {
-      const theCase = workingCase
-      const isolationEndsBeforeValidToDate =
-        theCase.validToDate &&
-        theCase.isolationToDate &&
-        new Date(theCase.validToDate) > new Date(theCase.isolationToDate)
+    const theCase = workingCase
+    const isolationEndsBeforeValidToDate =
+      theCase.validToDate &&
+      theCase.isolationToDate &&
+      new Date(theCase.validToDate) > new Date(theCase.isolationToDate)
 
-      // Normally we always autofill if the target has a "falsy" value.
-      // However, if the target is optional, then it should not be autofilled after
-      // the autofilled value has been deleted (is the empty string).
-      if (
-        theCase.requestedOtherRestrictions &&
-        theCase.otherRestrictions !== ''
-      ) {
-        autofill(
-          'otherRestrictions',
-          theCase.requestedOtherRestrictions,
-          theCase,
-        )
-      }
-
-      autofill(
-        'conclusion',
-        theCase.decision === CaseDecision.DISMISSING
-          ? formatMessage(m.sections.conclusion.dismissingAutofill, {
-              genderedAccused: formatAccusedByGender(theCase.accusedGender),
-              accusedName: theCase.accusedName,
-              extensionSuffix:
-                theCase.parentCase &&
-                isAcceptingCaseDecision(theCase.parentCase.decision)
-                  ? ' áframhaldandi'
-                  : '',
-              caseType:
-                theCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhaldi'
-                  : 'farbanni',
-            })
-          : theCase.decision === CaseDecision.REJECTING
-          ? formatMessage(m.sections.conclusion.rejectingAutofill, {
-              genderedAccused: formatAccusedByGender(theCase.accusedGender),
-              accusedName: theCase.accusedName,
-              accusedNationalId: formatNationalId(theCase.accusedNationalId),
-              extensionSuffix:
-                theCase.parentCase &&
-                isAcceptingCaseDecision(theCase.parentCase.decision)
-                  ? ' áframhaldandi'
-                  : '',
-              caseType:
-                theCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhaldi'
-                  : 'farbanni',
-            })
-          : formatMessage(m.sections.conclusion.acceptingAutofill, {
-              genderedAccused: capitalize(
-                formatAccusedByGender(theCase.accusedGender),
-              ),
-              accusedName: theCase.accusedName,
-              accusedNationalId: formatNationalId(theCase.accusedNationalId),
-              caseTypeAndExtensionSuffix:
-                theCase.decision === CaseDecision.ACCEPTING
-                  ? `${
-                      theCase.parentCase &&
-                      isAcceptingCaseDecision(theCase.parentCase.decision)
-                        ? 'áframhaldandi '
-                        : ''
-                    }${
-                      theCase.type === CaseType.CUSTODY
-                        ? 'gæsluvarðhaldi'
-                        : 'farbanni'
-                    }`
-                  : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                    `${
-                      theCase.parentCase?.decision ===
-                      CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                        ? 'áframhaldandi '
-                        : ''
-                    }farbanni`,
-              validToDate: `${formatDate(theCase.validToDate, 'PPPPp')
-                ?.replace('dagur,', 'dagsins')
-                ?.replace(' kl.', ', kl.')}`,
-              isolationSuffix:
-                isAcceptingCaseDecision(theCase.decision) &&
-                theCase.custodyRestrictions?.includes(
-                  CaseCustodyRestrictions.ISOLATION,
-                )
-                  ? ` ${capitalize(
-                      formatAccusedByGender(theCase.accusedGender),
-                    )} skal sæta einangrun ${
-                      isolationEndsBeforeValidToDate
-                        ? `ekki lengur en til ${formatDate(
-                            theCase.isolationToDate,
-                            'PPPPp',
-                          )
-                            ?.replace('dagur,', 'dagsins')
-                            ?.replace(' kl.', ', kl.')}.`
-                        : 'á meðan á gæsluvarðhaldinu stendur.'
-                    }`
-                  : '',
-            }),
-        theCase,
-      )
-
-      setWorkingCase(theCase)
+    // Normally we always autofill if the target has a "falsy" value.
+    // However, if the target is optional, then it should not be autofilled after
+    // the autofilled value has been deleted (is the empty string).
+    if (
+      theCase.requestedOtherRestrictions &&
+      theCase.otherRestrictions !== ''
+    ) {
+      autofill('otherRestrictions', theCase.requestedOtherRestrictions, theCase)
     }
-  }, [id, workingCase, setWorkingCase, autofill, formatMessage])
+
+    autofill(
+      'conclusion',
+      theCase.decision === CaseDecision.DISMISSING
+        ? formatMessage(m.sections.conclusion.dismissingAutofill, {
+            genderedAccused: formatAccusedByGender(theCase.accusedGender),
+            accusedName: theCase.accusedName,
+            extensionSuffix:
+              theCase.parentCase &&
+              isAcceptingCaseDecision(theCase.parentCase.decision)
+                ? ' áframhaldandi'
+                : '',
+            caseType:
+              theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
+          })
+        : theCase.decision === CaseDecision.REJECTING
+        ? formatMessage(m.sections.conclusion.rejectingAutofill, {
+            genderedAccused: formatAccusedByGender(theCase.accusedGender),
+            accusedName: theCase.accusedName,
+            accusedNationalId: formatNationalId(theCase.accusedNationalId),
+            extensionSuffix:
+              theCase.parentCase &&
+              isAcceptingCaseDecision(theCase.parentCase.decision)
+                ? ' áframhaldandi'
+                : '',
+            caseType:
+              theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
+          })
+        : formatMessage(m.sections.conclusion.acceptingAutofill, {
+            genderedAccused: capitalize(
+              formatAccusedByGender(theCase.accusedGender),
+            ),
+            accusedName: theCase.accusedName,
+            accusedNationalId: formatNationalId(theCase.accusedNationalId),
+            caseTypeAndExtensionSuffix:
+              theCase.decision === CaseDecision.ACCEPTING
+                ? `${
+                    theCase.parentCase &&
+                    isAcceptingCaseDecision(theCase.parentCase.decision)
+                      ? 'áframhaldandi '
+                      : ''
+                  }${
+                    theCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhaldi'
+                      : 'farbanni'
+                  }`
+                : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                  `${
+                    theCase.parentCase?.decision ===
+                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                      ? 'áframhaldandi '
+                      : ''
+                  }farbanni`,
+            validToDate: `${formatDate(theCase.validToDate, 'PPPPp')
+              ?.replace('dagur,', 'dagsins')
+              ?.replace(' kl.', ', kl.')}`,
+            isolationSuffix:
+              isAcceptingCaseDecision(theCase.decision) &&
+              theCase.custodyRestrictions?.includes(
+                CaseCustodyRestrictions.ISOLATION,
+              )
+                ? ` ${capitalize(
+                    formatAccusedByGender(theCase.accusedGender),
+                  )} skal sæta einangrun ${
+                    isolationEndsBeforeValidToDate
+                      ? `ekki lengur en til ${formatDate(
+                          theCase.isolationToDate,
+                          'PPPPp',
+                        )
+                          ?.replace('dagur,', 'dagsins')
+                          ?.replace(' kl.', ', kl.')}.`
+                      : 'á meðan á gæsluvarðhaldinu stendur.'
+                  }`
+                : '',
+          }),
+      theCase,
+    )
+
+    setWorkingCase(theCase)
+  }, [])
 
   return (
     <PageLayout
@@ -734,43 +718,37 @@ export const RulingStepTwo: React.FC = () => {
           <GridContainer>
             <GridRow>
               <GridColumn>
-                <TimeInputField
-                  onChange={(evt) =>
-                    validateAndSetTime(
-                      'courtEndTime',
-                      workingCase.courtStartDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      setWorkingCase,
-                      courtDocumentEndErrorMessage,
-                      setCourtDocumentEndErrorMessage,
-                    )
+                <DateTime
+                  name="courtEndTime"
+                  timeLabel="Þinghaldi lauk (kk:mm)"
+                  selectedDate={
+                    workingCase.courtEndTime
+                      ? new Date(workingCase.courtEndTime)
+                      : undefined
                   }
-                  onBlur={(evt) =>
-                    validateAndSendTimeToServer(
-                      'courtEndTime',
-                      workingCase.courtStartDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      updateCase,
-                      setCourtDocumentEndErrorMessage,
-                    )
-                  }
-                >
-                  <Input
-                    data-testid="courtEndTime"
-                    name="courtEndTime"
-                    label="Þinghaldi lauk (kk:mm)"
-                    placeholder="Veldu tíma"
-                    autoComplete="off"
-                    value={formatDate(workingCase.courtEndTime, TIME_FORMAT)}
-                    errorMessage={courtDocumentEndErrorMessage}
-                    hasError={courtDocumentEndErrorMessage !== ''}
-                    required
-                  />
-                </TimeInputField>
+                  onChange={(date: Date | undefined, valid: boolean) => {
+                    if (date && workingCase.courtStartDate) {
+                      const courtStartDate = new Date(
+                        workingCase.courtStartDate,
+                      )
+
+                      courtStartDate.setHours(date.getHours())
+                      courtStartDate.setMinutes(date.getMinutes())
+
+                      newSetAndSendDateToServer(
+                        'courtEndTime',
+                        courtStartDate,
+                        valid,
+                        workingCase,
+                        setWorkingCase,
+                        setIsCourtEndTimeValid,
+                        updateCase,
+                      )
+                    }
+                  }}
+                  blueBox={false}
+                  onlyTime
+                />
               </GridColumn>
             </GridRow>
           </GridContainer>

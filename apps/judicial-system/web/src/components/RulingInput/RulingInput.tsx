@@ -37,7 +37,7 @@ const RulingInput: React.FC<Props> = (props) => {
     ) {
       autofill('ruling', workingCase.parentCase.ruling, workingCase)
     }
-  }, [workingCase, autofill, formatMessage])
+  }, [])
 
   return (
     <Input

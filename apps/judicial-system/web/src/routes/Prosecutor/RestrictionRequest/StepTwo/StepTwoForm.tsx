@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { Case, Institution, User } from '@island.is/judicial-system/types'
-import { Box, Input, Text, Checkbox, Option } from '@island.is/island-ui/core'
+import { Box, Input, Text, Checkbox } from '@island.is/island-ui/core'
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -18,7 +18,6 @@ import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { ValueType } from 'react-select/src/types'
 
 interface Props {
   workingCase: Case

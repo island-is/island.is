@@ -83,22 +83,22 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   )
 
   useEffect(() => {
-    if (workingCase) {
-      const courtClaim = courtClaimPrefill[workingCase.type]
-      const courtClaimText = courtClaim
-        ? formatMessage(courtClaim.text, {
-            ...(courtClaim.format?.accusedName && {
-              accusedName: workingCase.accusedName,
-            }),
-            ...(courtClaim.format?.address && {
-              address: workingCase.accusedAddress,
-            }),
-          })
-        : ''
-      autofill('demands', courtClaimText, workingCase)
-      setWorkingCase(workingCase)
-    }
-  }, [workingCase, setWorkingCase, autofill])
+    const courtClaim = courtClaimPrefill[workingCase.type]
+    const courtClaimText = courtClaim
+      ? formatMessage(courtClaim.text, {
+          ...(courtClaim.format?.accusedName && {
+            accusedName: workingCase.accusedName,
+          }),
+          ...(courtClaim.format?.address && {
+            address: workingCase.accusedAddress,
+          }),
+        })
+      : ''
+
+    autofill('demands', courtClaimText, workingCase)
+
+    setWorkingCase(workingCase)
+  }, [])
 
   return (
     <>

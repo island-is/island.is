@@ -22,6 +22,7 @@ interface Props {
   locked?: boolean
   backgroundColor?: 'blue' | 'white'
   size?: 'sm' | 'md'
+  onlyTime?: boolean
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
@@ -40,6 +41,7 @@ const DateTime: React.FC<Props> = (props) => {
     locked = false,
     backgroundColor = 'white',
     size = 'md',
+    onlyTime,
     onChange,
   } = props
 
@@ -97,16 +99,7 @@ const DateTime: React.FC<Props> = (props) => {
     const time = event.target.value
 
     setCurrentTime(time)
-
-    const validations: Validation[] = ['empty', 'time-format']
-
-    const error = validations
-      .map((v) => validate(time, v))
-      .find((v) => v.isValid === false)
-
-    if (error === undefined) {
-      setTimeErrorMessage(undefined)
-    }
+    setTimeErrorMessage(undefined)
 
     sendToParent(currentDate, time)
   }
@@ -147,23 +140,25 @@ const DateTime: React.FC<Props> = (props) => {
   const renderDateTime = () => {
     return (
       <div data-testid="date-time" className={styles.dateTimeContainer}>
-        <DatePicker
-          id={name}
-          label={datepickerLabel}
-          placeholderText={datepickerPlaceholder}
-          locale="is"
-          errorMessage={datepickerErrorMessage}
-          hasError={datepickerErrorMessage !== undefined}
-          icon={locked ? 'lockClosed' : undefined}
-          minDate={minDate}
-          maxDate={maxDate}
-          selected={selectedDate ? new Date(selectedDate) : undefined}
-          disabled={disabled || locked}
-          handleCloseCalendar={onCalendarClose}
-          required={required}
-          backgroundColor={backgroundColor}
-          size={size}
-        />
+        {!onlyTime && (
+          <DatePicker
+            id={name}
+            label={datepickerLabel}
+            placeholderText={datepickerPlaceholder}
+            locale="is"
+            errorMessage={datepickerErrorMessage}
+            hasError={datepickerErrorMessage !== undefined}
+            icon={locked ? 'lockClosed' : undefined}
+            minDate={minDate}
+            maxDate={maxDate}
+            selected={selectedDate ? new Date(selectedDate) : undefined}
+            disabled={disabled || locked}
+            handleCloseCalendar={onCalendarClose}
+            required={required}
+            backgroundColor={backgroundColor}
+            size={size}
+          />
+        )}
         <TimeInputField
           disabled={disabled || locked || currentDate === undefined}
           onChange={onTimeChange}

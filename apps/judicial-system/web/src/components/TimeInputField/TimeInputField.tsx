@@ -12,8 +12,7 @@ interface Props {
 const TimeInputField: React.FC<Props> = (props: PropsWithChildren<Props>) => {
   return (
     <InputMask
-      // mask={[/([0-9]|1[0-9]|2[0-3])/, /([0-9])?/, ':', /[0-9]/, /[0-9]/]}
-      mask="99:99"
+      mask={[/([0-9]|1[0-9]|2[0-3])/, /([0-9])?/, ':', /[0-9]/, /[0-9]/]}
       maskPlaceholder={null}
       value={props.value}
       beforeMaskedStateChange={({ nextState }) => {

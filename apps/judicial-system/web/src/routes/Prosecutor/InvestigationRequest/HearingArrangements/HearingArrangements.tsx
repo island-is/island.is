@@ -127,6 +127,18 @@ const HearingArrangements = () => {
     }
   }
 
+  const setCourt = async (courtId: string) => {
+    if (workingCase) {
+      return setAndSendToServer(
+        'courtId',
+        courtId,
+        workingCase,
+        setWorkingCase,
+        updateCase,
+      )
+    }
+  }
+
   const handleProsecutorChange = (
     selectedOption: ValueType<ReactSelectOption>,
   ) => {
@@ -144,6 +156,12 @@ const HearingArrangements = () => {
 
       return true
     }
+  }
+
+  const handleCourtChange = (selectedOption: ReactSelectOption) => {
+    setCourt(selectedOption.value.toString())
+
+    return true
   }
 
   return (
@@ -168,6 +186,7 @@ const HearingArrangements = () => {
             isLoading={isLoadingWorkingCase || isTransitioningCase}
             onNextButtonClick={handleNextButtonClick}
             onProsecutorChange={handleProsecutorChange}
+            onCourtChange={handleCourtChange}
             updateCase={updateCase}
           />
           {isNotificationModalVisible && (

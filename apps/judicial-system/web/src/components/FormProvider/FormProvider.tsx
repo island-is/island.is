@@ -36,8 +36,18 @@ export const FormContext = createContext<FormProvider>({
 const FormProvider = ({ children }: Props) => {
   const router = useRouter()
   const id = router.query.id
+  const caseType = router.pathname.includes('farbann')
+    ? CaseType.TRAVEL_BAN
+    : router.pathname.includes('gaesluvardhald')
+    ? CaseType.CUSTODY
+    : // This is just a random investigation case type for the default value. This
+      // is updated when the case is created.
+      CaseType.OTHER
 
-  const [workingCase, setWorkingCase] = useState<Case>(initialState)
+  const [workingCase, setWorkingCase] = useState<Case>({
+    ...initialState,
+    type: caseType,
+  })
 
   const {
     data: workingCaseData,

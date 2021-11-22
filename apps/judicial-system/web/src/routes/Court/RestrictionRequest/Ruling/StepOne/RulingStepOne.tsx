@@ -81,47 +81,45 @@ export const RulingStepOne: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (workingCase.id !== '') {
-      let theCase = workingCase
+    let theCase = workingCase
 
-      if (!theCase.custodyRestrictions) {
-        theCase = {
-          ...theCase,
-          custodyRestrictions: theCase.requestedCustodyRestrictions,
-        }
-
-        updateCase(
-          theCase.id,
-          parseArray(
-            'custodyRestrictions',
-            theCase.requestedCustodyRestrictions ?? [],
-          ),
-        )
+    if (!theCase.custodyRestrictions) {
+      theCase = {
+        ...theCase,
+        custodyRestrictions: theCase.requestedCustodyRestrictions,
       }
 
-      if (theCase.demands) {
-        autofill('prosecutorDemands', theCase.demands, theCase)
-      }
-
-      if (theCase.requestedValidToDate) {
-        autofill('validToDate', theCase.requestedValidToDate, theCase)
-      }
-
-      if (theCase.validToDate) {
-        autofill('isolationToDate', theCase.validToDate, theCase)
-      }
-
-      if (theCase.caseFacts) {
-        autofill('courtCaseFacts', theCase.caseFacts, theCase)
-      }
-
-      if (theCase.legalArguments) {
-        autofill('courtLegalArguments', theCase.legalArguments, theCase)
-      }
-
-      setWorkingCase(theCase)
+      updateCase(
+        theCase.id,
+        parseArray(
+          'custodyRestrictions',
+          theCase.requestedCustodyRestrictions ?? [],
+        ),
+      )
     }
-  }, [workingCase, setWorkingCase, updateCase, autofill])
+
+    if (theCase.demands) {
+      autofill('prosecutorDemands', theCase.demands, theCase)
+    }
+
+    if (theCase.requestedValidToDate) {
+      autofill('validToDate', theCase.requestedValidToDate, theCase)
+    }
+
+    if (theCase.validToDate) {
+      autofill('isolationToDate', theCase.validToDate, theCase)
+    }
+
+    if (theCase.caseFacts) {
+      autofill('courtCaseFacts', theCase.caseFacts, theCase)
+    }
+
+    if (theCase.legalArguments) {
+      autofill('courtLegalArguments', theCase.legalArguments, theCase)
+    }
+
+    setWorkingCase(theCase)
+  }, [])
 
   return (
     <PageLayout

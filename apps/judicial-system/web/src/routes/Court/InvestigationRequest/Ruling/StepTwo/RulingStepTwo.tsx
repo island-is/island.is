@@ -26,13 +26,12 @@ const RulingStepTwo = () => {
 
   useEffect(() => {
     const theCase = workingCase
-    if (workingCase.id !== '') {
-      if (isAcceptingCaseDecision(theCase.decision) && theCase.demands) {
-        autofill('conclusion', theCase.demands, theCase)
-      }
-      setWorkingCase(theCase)
+
+    if (isAcceptingCaseDecision(theCase.decision) && theCase.demands) {
+      autofill('conclusion', theCase.demands, theCase)
     }
-  }, [workingCase, setWorkingCase, autofill])
+    setWorkingCase(theCase)
+  }, [])
 
   return (
     <PageLayout
