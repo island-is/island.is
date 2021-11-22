@@ -19,7 +19,7 @@ interface TypeResolverResponse {
   slug?: string[]
 }
 
-export type LinkType = keyof typeof routesTemplate | 'linkurl'
+export type LinkType = keyof typeof routesTemplate | 'linkurl' | 'link'
 
 /*
 The order here matters for type resolution, arrange overlapping types from most specific to least specific for correct type resolution
@@ -227,6 +227,13 @@ export const linkResolver = (
   if (type === 'linkurl') {
     return {
       href: variables[0],
+    }
+  }
+
+  // special case when link with slug is passed directly to the linkresolver
+  if (type === 'link') {
+    return {
+      href: variables.join('/'),
     }
   }
 
