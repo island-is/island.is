@@ -2,8 +2,8 @@ import { ApolloError, ServerError } from '@apollo/client'
 import { onError, ErrorResponse } from '@apollo/client/link/error'
 
 import {
-  NotificationService,
   api,
+  NotificationService,
 } from '@island.is/judicial-system-web/src/services'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
@@ -15,7 +15,9 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
     graphQLErrors.forEach((err) => {
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
-          return api.logOut('?villa=innskraning-utrunnin')
+          api.logOut()
+          window.location.assign('/?villa=innskraning-utrunnin')
+          return
         case 'FORBIDDEN':
           return
         default:
