@@ -95,18 +95,20 @@ const ApplicationsTable = ({
             <Text>{application.staff?.name}</Text>
           </Box>
         ) : (
-          <Button
-            variant="text"
-            onClick={(ev) => {
-              ev.stopPropagation()
-              updateApplicationAndTable(
-                application.id,
-                ApplicationState.INPROGRESS,
-              )
-            }}
-          >
-            Sjá um
-          </Button>
+          <Box>
+            <Button
+              variant="text"
+              onClick={(ev) => {
+                ev.stopPropagation()
+                updateApplicationAndTable(
+                  application.id,
+                  ApplicationState.INPROGRESS,
+                )
+              }}
+            >
+              Sjá um
+            </Button>
+          </Box>
         )}
       </>
     )
