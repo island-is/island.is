@@ -35,6 +35,10 @@ export const container = style({
   },
 })
 
+export const adminStyles = style({
+  backgroundColor: theme.color.dark100,
+})
+
 export const showNavInMobile = style({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
