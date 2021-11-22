@@ -24,7 +24,10 @@ import {
   coreErrorMessages,
   StaticText,
 } from '@island.is/application/core'
-import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
+import {
+  UPDATE_APPLICATION_EXTERNAL_DATA,
+  UPDATE_APPLICATION,
+} from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 
 import { ExternalDataProviderScreen } from '../types'
@@ -121,6 +124,7 @@ const FormExternalDataProvider: FC<{
 }) => {
   const { formatMessage, lang: locale } = useLocale()
   const { setValue, clearErrors } = useFormContext()
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
     onCompleted(responseData: UpdateApplicationExternalDataResponse) {
       addExternalData(getExternalDataFromResponse(responseData))
@@ -153,6 +157,17 @@ const FormExternalDataProvider: FC<{
                 id,
                 type,
               })),
+            },
+            locale,
+          },
+        })
+
+        // Update checkbox value in application
+        await updateApplication({
+          variables: {
+            input: {
+              id: applicationId,
+              answers: { [id as string]: checked },
             },
             locale,
           },
